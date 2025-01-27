@@ -36,7 +36,7 @@ import Table from './Table/Table.js';
 import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Time from '../../Core/Time.js';
-import BaseGlobals from './BaseGlobals';
+import Globals from './Globals.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
@@ -56,7 +56,75 @@ const {
 /**
  * Abstract class as a base for GridLite & GridPro classes.
  */
-abstract class Grid {
+class Grid {
+
+    /* *
+    *
+    *  Static Methods
+    *
+    * */
+
+    /**
+     * Creates a new Grid.
+     *
+     * @param renderTo
+     * The render target (html element or id) of the Grid.
+     *
+     * @param options
+     * The options of the Grid.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the dashboard instance.
+     *
+     * @return
+     * The new Grid.
+     */
+    public static grid(
+        renderTo: string|HTMLElement,
+        options: Options,
+        async?: boolean
+    ): Grid;
+
+    /**
+     * Creates a new Grid.
+     *
+     * @param renderTo
+     * The render target (html element or id) of the Grid.
+     *
+     * @param options
+     * The options of the Grid.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the dashboard instance.
+     *
+     * @return
+     * Promise that resolves with the new Grid.
+     */
+    public static grid(
+        renderTo: string|HTMLElement,
+        options: Options,
+        async: true
+    ): Promise<Grid>;
+
+    // Implementation
+    public static grid(
+        renderTo: string|HTMLElement,
+        options: Options,
+        async?: boolean
+    ): (Grid | Promise<Grid>) {
+
+        if (async) {
+            return new Promise<Grid>((resolve): void => {
+                void new Grid(renderTo, options, (grid): void => {
+                    resolve(grid);
+                });
+            });
+        }
+
+        return new Grid(renderTo, options);
+    }
 
     /* *
     *
@@ -68,11 +136,6 @@ abstract class Grid {
      * An array containing the current Grid objects in the page.
      */
     public static readonly grids: Array<(Grid|undefined)> = [];
-
-    /**
-     * The global parameters of the Grid package.
-     */
-    public readonly globals: BaseGlobals;
 
     /**
      * The accessibility controller.
@@ -221,20 +284,14 @@ abstract class Grid {
      * @param options
      * The options of the Grid.
      *
-     * @param globals
-     * The global parameters of the Grid package.
-     *
      * @param afterLoadCallback
      * The callback that is called after the Grid is loaded.
      */
     constructor(
         renderTo: string | HTMLElement,
         options: Options,
-        globals: BaseGlobals,
         afterLoadCallback?: Grid.AfterLoadCallback
     ) {
-        this.globals = globals;
-
         this.loadUserOptions(options);
 
         this.querying = new QueryingController(this);
@@ -307,7 +364,7 @@ abstract class Grid {
         this.container = container;
         this.container.innerHTML = AST.emptyHTML;
         this.contentWrapper = makeHTMLElement('div', {
-            className: this.globals.getClassName('container')
+            className: Globals.getClassName('container')
         }, this.container);
     }
 
@@ -655,7 +712,7 @@ abstract class Grid {
 
         // Create a caption element.
         this.captionElement = makeHTMLElement('div', {
-            className: this.globals.getClassName('captionElement'),
+            className: Globals.getClassName('captionElement'),
             id: this.id + '-caption'
         }, this.contentWrapper);
 
@@ -684,7 +741,7 @@ abstract class Grid {
 
         // Create a description element.
         this.descriptionElement = makeHTMLElement('div', {
-            className: this.globals.getClassName('descriptionElement'),
+            className: Globals.getClassName('descriptionElement'),
             id: this.id + '-description'
         }, this.contentWrapper);
 
@@ -709,7 +766,7 @@ abstract class Grid {
 
         this.contentWrapper.innerHTML = AST.emptyHTML;
         this.contentWrapper.className =
-            this.globals.getClassName('container') + ' ' +
+            Globals.getClassName('container') + ' ' +
             this.options?.rendering?.theme || '';
     }
 
@@ -761,7 +818,7 @@ abstract class Grid {
      */
     private renderTable(): Table {
         this.tableElement = makeHTMLElement('table', {
-            className: this.globals.getClassName('tableElement')
+            className: Globals.getClassName('tableElement')
         }, this.contentWrapper);
 
         return new Table(this, this.tableElement);
@@ -772,7 +829,7 @@ abstract class Grid {
      */
     private renderNoData(): void {
         makeHTMLElement('div', {
-            className: this.globals.getClassName('noData'),
+            className: Globals.getClassName('noData'),
             innerText: this.options?.lang?.noData
         }, this.contentWrapper);
     }
@@ -875,7 +932,7 @@ abstract class Grid {
         if (this.container) {
             this.container.innerHTML = AST.emptyHTML;
             this.container.classList.remove(
-                this.globals.getClassName('container')
+                Globals.getClassName('container')
             );
         }
 
@@ -902,7 +959,7 @@ abstract class Grid {
         this.loadingWrapper = makeHTMLElement(
             'div',
             {
-                className: this.globals.getClassName('loadingWrapper')
+                className: Globals.getClassName('loadingWrapper')
             },
             this.contentWrapper
         );
@@ -911,7 +968,7 @@ abstract class Grid {
         makeHTMLElement(
             'div',
             {
-                className: this.globals.getClassName('loadingSpinner')
+                className: Globals.getClassName('loadingSpinner')
             },
             this.loadingWrapper
         );
@@ -921,7 +978,7 @@ abstract class Grid {
         const loadingSpan = makeHTMLElement(
             'span',
             {
-                className: this.globals.getClassName('loadingMessage')
+                className: Globals.getClassName('loadingMessage')
             },
             this.loadingWrapper
         );

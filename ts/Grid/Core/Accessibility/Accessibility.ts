@@ -26,6 +26,7 @@ import type Grid from '../Grid';
 import type { ColumnSortingOrder } from '../Options';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
+import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 
 const { makeHTMLElement } = GridUtils;
@@ -79,7 +80,7 @@ class Accessibility {
         this.grid = grid;
 
         this.element = document.createElement('div');
-        this.element.classList.add(grid.globals.getClassName('visuallyHidden'));
+        this.element.classList.add(Globals.getClassName('visuallyHidden'));
         this.grid.container?.prepend(this.element);
 
         this.announcerElement = document.createElement('p');
@@ -101,16 +102,15 @@ class Accessibility {
      * The cell element to add the description to.
      */
     public addEditableCellHint(cellElement: HTMLElement): void {
-        const { grid } = this;
         const editableLang =
-            grid.options?.lang?.accessibility?.cellEditing?.editable;
+            this.grid.options?.lang?.accessibility?.cellEditing?.editable;
 
         if (!editableLang) {
             return;
         }
 
         makeHTMLElement('span', {
-            className: grid.globals.getClassName('visuallyHidden'),
+            className: Globals.getClassName('visuallyHidden'),
             innerText: ', ' + editableLang
         }, cellElement);
     }
@@ -122,16 +122,15 @@ class Accessibility {
      * The element to add the description to.
      */
     public addSortableColumnHint(element: HTMLElement): void {
-        const { grid } = this;
         const sortableLang =
-            grid.options?.lang?.accessibility?.sorting?.sortable;
+            this.grid.options?.lang?.accessibility?.sorting?.sortable;
 
         if (!sortableLang) {
             return;
         }
 
         makeHTMLElement('span', {
-            className: grid.globals.getClassName('visuallyHidden'),
+            className: Globals.getClassName('visuallyHidden'),
             innerText: ', ' + sortableLang
         }, element);
     }

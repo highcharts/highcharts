@@ -24,29 +24,6 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 namespace GridUtils {
 
     /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Utility type to mark recursively all properties and sub-properties
-     * optional.
-     */
-    export type DeepPartial<T> = {
-        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
-    };
-
-    /**
-     * Utility type to mark recursively all properties and sub-properties
-     * required.
-     */
-    export type DeepRequired<T> = {
-        [K in keyof T]-?: DeepRequired<T[K]>;
-    };
-
-
-    /* *
     *
     *  Functions
     *

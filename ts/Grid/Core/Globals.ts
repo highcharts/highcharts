@@ -22,17 +22,36 @@
  * */
 
 /**
- * Common globals namespace for all Grid-based modules.
+ * Globals Grid namespace.
  */
-class BaseGlobals {
+namespace Globals {
 
     /* *
-    *
-    *  Static Properties
-    *
-    * */
+     *
+     *  Declarations
+     *
+     * */
 
-    protected static rawClassNames = {
+    export type DeepPartial<T> = {
+        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
+    };
+
+    export type DeepRequired<T> = {
+        [K in keyof T]-?: DeepRequired<T[K]>;
+    };
+
+    export type ClassNameKey = keyof typeof rawClassNames;
+
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const classNamePrefix: string = 'hcg-';
+
+    export const rawClassNames = {
         container: 'container',
         tableElement: 'table',
         captionElement: 'caption',
@@ -75,45 +94,13 @@ class BaseGlobals {
         loadingMessage: 'loading-message'
     } as const;
 
+    export const win = window;
+    export const userAgent = (win.navigator && win.navigator.userAgent) || '';
+    export const isChrome = userAgent.indexOf('Chrome') !== -1;
+    export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
+    export const getClassName = (classNameKey: ClassNameKey): string =>
+        classNamePrefix + rawClassNames[classNameKey];
 
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public readonly classNamePrefix: string;
-    public readonly win: Window;
-    public readonly userAgent: string;
-    public readonly isChrome: boolean;
-    public readonly isSafari: boolean;
-
-
-    /* *
-     *
-     *  Constructors
-     *
-     * */
-
-    public constructor(classNamePrefix: string) {
-        this.classNamePrefix = classNamePrefix;
-        this.win = window;
-        this.userAgent = (window.navigator && window.navigator.userAgent) || '';
-        this.isChrome = this.userAgent.indexOf('Chrome') !== -1;
-        this.isSafari =
-            !this.isChrome && this.userAgent.indexOf('Safari') !== -1;
-    }
-
-
-    /* *
-     *
-     * Functions
-     *
-     * */
-
-    public getClassName(key: keyof typeof BaseGlobals.rawClassNames): string {
-        return this.classNamePrefix + BaseGlobals.rawClassNames[key];
-    }
 }
 
 /* *
@@ -122,4 +109,4 @@ class BaseGlobals {
  *
  * */
 
-export default BaseGlobals;
+export default Globals;

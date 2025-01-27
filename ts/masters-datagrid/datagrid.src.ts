@@ -22,12 +22,12 @@ import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
-import GridPro from '../Grid/Pro/GridPro.js';
+import _Grid from '../Grid/Core/Grid.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
-import Globals from '../Grid/Pro/GirdProGlobals.js';
+import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 
 // Fill registries
@@ -50,10 +50,12 @@ import '../Data/Modifiers/SortModifier.js';
 declare global {
     interface DataGridNamespace {
         win: typeof Globals.win;
+        product: 'GridPro';
         AST: typeof AST;
-        DataGrid: typeof GridPro;
-        dataGrid: typeof GridPro.grid;
-        dataGrids: Array<(GridPro|undefined)>;
+        classNamePrefix: typeof Globals.classNamePrefix;
+        DataGrid: typeof _Grid;
+        dataGrid: typeof _Grid.grid;
+        dataGrids: Array<(_Grid|undefined)>;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -81,18 +83,20 @@ declare global {
 const G = Globals as unknown as DataGridNamespace;
 
 G.AST = AST;
+G.classNamePrefix = 'highcharts-datagrid-';
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
 G.DataConverter = DataConverter;
-G.DataGrid = GridPro;
-G.dataGrid = GridPro.grid;
-G.dataGrids = GridPro.grids;
+G.DataGrid = _Grid;
+G.dataGrid = _Grid.grid;
+G.dataGrids = _Grid.grids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
-G.setOptions = Defaults.setOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
+G.product = 'GridPro';
+G.setOptions = Defaults.setOptions;
 
 
 /* *

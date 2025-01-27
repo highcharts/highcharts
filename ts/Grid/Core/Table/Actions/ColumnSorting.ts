@@ -26,6 +26,7 @@ import type { ColumnSortingOrder } from '../../Options.js';
 
 import Column from '../Column.js';
 import GridUtils from '../../GridUtils.js';
+import Globals from '../../Globals.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -79,19 +80,17 @@ class ColumnSorting {
         this.addHeaderElementAttributes();
 
         if (column.options.sorting?.sortable) {
-            const globals = column.viewport.grid.globals;
-
             makeHTMLElement(
                 'span',
                 {
-                    className: globals.getClassName('columnSortableIcon'),
+                    className: Globals.getClassName('columnSortableIcon'),
                     innerText: '▲'
                 },
                 headerCellElement
             ).setAttribute('aria-hidden', true);
 
             headerCellElement.classList.add(
-                globals.getClassName('columnSortable')
+                Globals.getClassName('columnSortable')
             );
         }
     }
@@ -111,9 +110,8 @@ class ColumnSorting {
         const a11y = col.viewport.grid.accessibility;
         const sortingOptions = col.options.sorting;
         const { currentSorting } = col.viewport.grid.querying.sorting;
-        const globals = col.viewport.grid.globals;
-        const sortedAscClassName = globals.getClassName('columnSortedAsc');
-        const sortedDescClassName = globals.getClassName('columnSortedDesc');
+        const sortedAscClassName = Globals.getClassName('columnSortedAsc');
+        const sortedDescClassName = Globals.getClassName('columnSortedDesc');
 
         const el = this.headerCellElement;
 

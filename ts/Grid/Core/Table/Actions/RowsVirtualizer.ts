@@ -28,6 +28,7 @@ import type Cell from '../Cell';
 import Table from '../Table.js';
 import GridUtils from '../../GridUtils.js';
 import TableRow from '../Content/TableRow.js';
+import Globals from '../../Globals.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -117,7 +118,7 @@ class RowsVirtualizer {
 
         if (this.strictRowHeights) {
             viewport.tbodyElement.classList.add(
-                viewport.grid.globals.getClassName('rowsContentNowrap')
+                Globals.getClassName('rowsContentNowrap')
             );
         }
     }
@@ -468,10 +469,8 @@ class RowsVirtualizer {
      * once on initialization.
      */
     private getDefaultRowHeight(): number {
-        const globals = this.viewport.grid.globals;
-
         const mockRow = makeHTMLElement('tr', {
-            className: globals.getClassName('rowElement'),
+            className: Globals.getClassName('rowElement'),
             style: {
                 position: 'absolute'
             }
@@ -479,7 +478,7 @@ class RowsVirtualizer {
 
         const mockCell = makeHTMLElement('td', {
             innerText: 'mock',
-            className: globals.getClassName('mockedCell')
+            className: Globals.getClassName('mockedCell')
         }, mockRow);
 
         const defaultRowHeight = mockRow.offsetHeight;

@@ -17,17 +17,16 @@
  *
  * */
 
-
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
-import GridLite from '../Grid/Lite/GridLite.js';
+import _Grid from '../Grid/Core/Grid.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
-import GridLiteGlobals from '../Grid/Lite/GridLiteGlobals.js';
+import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 
 // Fill registries
@@ -46,14 +45,14 @@ import '../Data/Modifiers/SortModifier.js';
  *
  * */
 
-
 declare global {
     interface GridNamespace {
-        win: typeof GridLiteGlobals.win;
+        win: typeof Globals.win;
+        product: 'GridLite',
         AST: typeof AST;
-        Grid: typeof GridLite;
-        grid: typeof GridLite.grid;
-        grids: Array<(GridLite|undefined)>;
+        Grid: typeof _Grid;
+        grid: typeof _Grid.grid;
+        grids: Array<(_Grid|undefined)>;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -78,21 +77,22 @@ declare global {
  * */
 
 
-const G = GridLiteGlobals as unknown as GridNamespace;
+const G = Globals as unknown as GridNamespace;
 
 G.AST = AST;
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
 G.DataConverter = DataConverter;
-G.Grid = GridLite;
-G.grid = GridLite.grid;
-G.grids = GridLite.grids;
+G.Grid = _Grid;
+G.grid = _Grid.grid;
+G.grids = _Grid.grids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
-G.setOptions = Defaults.setOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
+G.product = 'GridLite';
+G.setOptions = Defaults.setOptions;
 
 
 /* *

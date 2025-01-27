@@ -24,13 +24,14 @@
 import type { CreditsOptions } from './Options';
 import type Grid from './Grid';
 
+import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
 
 const { makeHTMLElement } = GridUtils;
 
 /* *
  *
- *  Abstract Class of Row
+ *  Class
  *
  * */
 
@@ -83,11 +84,11 @@ class Credits {
         this.options = grid.options?.credits ?? {};
 
         this.containerElement = makeHTMLElement('div', {
-            className: grid.globals.getClassName('creditsContainer')
+            className: Globals.getClassName('creditsContainer')
         });
 
         this.textElement = makeHTMLElement<HTMLAnchorElement>('a', {
-            className: grid.globals.getClassName('creditsText')
+            className: Globals.getClassName('creditsText')
         }, this.containerElement);
         this.textElement.setAttribute('target', '_top');
 

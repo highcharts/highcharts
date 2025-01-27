@@ -35,6 +35,7 @@ import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import CellEditing from './Actions/CellEditing.js';
+import Globals from '../Globals.js';
 
 const { makeHTMLElement } = GridUtils;
 const { getStyle, defined } = Utils;
@@ -194,7 +195,7 @@ class Table {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
         if (this.virtualRows) {
             tableElement.classList.add(
-                grid.globals.getClassName('virtualization')
+                Globals.getClassName('virtualization')
             );
         }
 
@@ -222,7 +223,7 @@ class Table {
 
         if (this.scrollable) {
             tableElement.classList.add(
-                grid.globals.getClassName('scrollableContent')
+                Globals.getClassName('scrollableContent')
             );
         }
 
@@ -378,7 +379,7 @@ class Table {
             return;
         }
 
-        const rowClass = '.' + this.grid.globals.getClassName('rowElement');
+        const rowClass = '.' + Globals.getClassName('rowElement');
         const firstRowTop = this.tbodyElement
             .querySelectorAll(rowClass)[0]
             .getBoundingClientRect().top;

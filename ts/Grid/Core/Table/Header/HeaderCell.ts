@@ -29,6 +29,7 @@ import Column from '../Column';
 import Row from '../Row';
 import GridUtils from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
+import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
@@ -124,10 +125,8 @@ class HeaderCell extends Cell {
      * Init element.
      */
     public override init(): HTMLTableCellElement {
-        const { globals } = this.row.viewport.grid;
-
         const elem = document.createElement('th', {});
-        elem.classList.add(globals.getClassName('headerCell'));
+        elem.classList.add(Globals.getClassName('headerCell'));
         return elem;
     }
 
@@ -135,7 +134,6 @@ class HeaderCell extends Cell {
      * Render the cell container.
      */
     public override render(): void {
-        const { globals } = this.row.viewport.grid;
         const { column } = this;
         const options = merge(column?.options || {}, this.options);
         const headerCellOptions = options.header || {};
@@ -155,7 +153,7 @@ class HeaderCell extends Cell {
         this.row.htmlElement.appendChild(this.htmlElement);
 
         this.headerContent = makeHTMLElement('span', {
-            className: globals.getClassName('headerCellContent')
+            className: Globals.getClassName('headerCellContent')
         }, this.htmlElement);
 
         // Render the header cell element content.
