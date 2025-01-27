@@ -324,7 +324,7 @@ class Column {
      * The formatted string.
      */
     public format(template: string): string {
-        return Templating.format(template, this);
+        return Templating.format(template, this, this.viewport.dataGrid);
     }
 }
 
