@@ -30,7 +30,7 @@ import TableRow from './TableRow';
 import Utils from '../../../../Core/Utilities.js';
 import GridUtils from '../../GridUtils.js';
 
-const { defined, fireEvent } = Utils;
+const { defined } = Utils;
 const { setHTMLContent } = GridUtils;
 
 
@@ -132,43 +132,32 @@ class TableCell extends Cell {
      *
      * @param e
      * The mouse event object.
+     *
+     * @internal
      */
-    protected onMouseDown(e: MouseEvent): void {
-        const { grid } = this.row.viewport;
-
+    public onMouseDown(e: MouseEvent): void {
         if (e.target === this.htmlElement) {
             this.htmlElement.focus();
         }
-
-        fireEvent(grid, 'cellMouseDown', {
-            target: this
-        });
     }
 
     /**
      * Handles the mouse over event on the cell.
+     * @internal
      */
-    protected onMouseOver(): void {
+    public onMouseOver(): void {
         const { grid } = this.row.viewport;
         grid.hoverRow(this.row.index);
         grid.hoverColumn(this.column.id);
-        grid.options?.events?.cell?.mouseOver?.call(this);
-        fireEvent(grid, 'cellMouseOver', {
-            target: this
-        });
     }
 
     /**
      * Handles the mouse out event on the cell.
      */
-    protected onMouseOut(): void {
+    public onMouseOut(): void {
         const { grid } = this.row.viewport;
         grid.hoverRow();
         grid.hoverColumn();
-        grid.options?.events?.cell?.mouseOut?.call(this);
-        fireEvent(grid, 'cellMouseOut', {
-            target: this
-        });
     }
 
     /**
@@ -176,30 +165,18 @@ class TableCell extends Cell {
      *
      * @param e
      * The mouse event object.
+     *
+     * @internal
      */
-    protected onDblClick(e: MouseEvent): void {
-        const vp = this.row.viewport;
-        const { grid } = vp;
-
+    public onDblClick(e: MouseEvent): void {
         if (this.column.options.cells?.editable) {
             e.preventDefault();
-            vp.cellEditing.startEditing(this);
+            this.row.viewport.cellEditing.startEditing(this);
         }
-
-        grid.options?.events?.cell?.dblClick?.call(this);
-        fireEvent(grid, 'cellDblClick', {
-            target: this
-        });
     }
 
-    protected override onClick(): void {
-        const vp = this.row.viewport;
-        const { grid } = vp;
-
-        grid.options?.events?.cell?.click?.call(this);
-        fireEvent(grid, 'cellClick', {
-            target: this
-        });
+    public override onClick(): void {
+        // Hook for the extensions.
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {
@@ -247,7 +224,7 @@ class TableCell extends Cell {
             vp.grid.accessibility?.addEditableCellHint(this.htmlElement);
         }
 
-        vp.grid.options?.events?.cell?.afterSetValue?.call(this);
+        this.onAfterSetValue();
 
         if (!updateTable) {
             return;
@@ -294,6 +271,14 @@ class TableCell extends Cell {
                     ?.cells[vp.focusCursor[1]].htmlElement.focus();
             }
         }
+    }
+
+    /**
+     * Hook for the extensions to be called after setting the value.
+     * @internal
+     */
+    public onAfterSetValue(): void {
+        // Hook for the extensions.
     }
 
     /**

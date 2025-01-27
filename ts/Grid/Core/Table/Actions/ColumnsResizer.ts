@@ -58,8 +58,9 @@ class ColumnsResizer {
 
     /**
      * The column being dragged.
+     * @internal
      */
-    private draggedColumn?: Column;
+    public draggedColumn?: Column;
 
     /**
      * The start X position of the drag.
@@ -68,8 +69,9 @@ class ColumnsResizer {
 
     /**
      * The element when dragging.
+     * @internal
      */
-    private draggedResizeHandle?: HTMLElement;
+    public draggedResizeHandle?: HTMLElement;
 
     /**
      * The width of the dragged column when dragging started.
@@ -208,8 +210,10 @@ class ColumnsResizer {
      *
      * @param e
      * The mouse event.
+     *
+     * @internal
      */
-    private onDocumentMouseMove = (e: MouseEvent): void => {
+    public onDocumentMouseMove = (e: MouseEvent): void => {
         if (!this.draggedResizeHandle || !this.draggedColumn) {
             return;
         }
@@ -228,10 +232,6 @@ class ColumnsResizer {
         if (vp.grid.options?.rendering?.rows?.virtualization) {
             vp.rowsVirtualizer.adjustRowHeights();
         }
-
-        vp.grid.options?.events?.column?.afterResize?.call(
-            this.draggedColumn
-        );
     };
 
     /**

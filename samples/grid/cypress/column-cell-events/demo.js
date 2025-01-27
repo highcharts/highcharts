@@ -1,6 +1,6 @@
 const doc = document;
 
-Grid.grid('container', {
+DataGrid.dataGrid('container', {
     dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],

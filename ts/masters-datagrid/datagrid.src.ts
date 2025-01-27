@@ -29,6 +29,12 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
+import TableCell from '../Grid/Core/Table/Content/TableCell.js';
+import CellEditing from '../Grid/Core/Table/Actions/CellEditing.js';
+import ColumnSorting from '../Grid/Core/Table/Actions/ColumnSorting.js';
+import ColumnsResizer from '../Grid/Core/Table/Actions/ColumnsResizer.js';
+
+import GridEvents from '../Grid/Pro/GridEvents.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -65,6 +71,10 @@ declare global {
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
+        TableCell: typeof TableCell;
+        CellEditing: typeof CellEditing;
+        ColumnSorting: typeof ColumnSorting;
+        ColumnsResizer: typeof ColumnsResizer;
     }
     interface Window {
         DataGrid: DataGridNamespace;
@@ -95,8 +105,20 @@ G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
-G.product = 'GridPro';
 G.setOptions = Defaults.setOptions;
+G.product = 'GridPro';
+
+G.TableCell = TableCell;
+G.CellEditing = CellEditing;
+G.ColumnSorting = ColumnSorting;
+G.ColumnsResizer = ColumnsResizer;
+
+GridEvents.compose(
+    G.TableCell,
+    G.ColumnSorting,
+    G.ColumnsResizer,
+    G.CellEditing
+);
 
 
 /* *

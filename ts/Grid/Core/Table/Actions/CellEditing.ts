@@ -120,7 +120,6 @@ class CellEditing {
             return;
         }
 
-        const grid = cell.column.viewport.grid;
         let newValue: string | number = input.value;
 
         this.destroyInput();
@@ -140,7 +139,6 @@ class CellEditing {
             submit && cell.value !== newValue
         );
 
-        grid.options?.events?.cell?.afterEdit?.call(cell);
         this.viewport.grid.accessibility?.userEditedCell(
             submit ? 'edited' : 'cancelled'
         );

@@ -164,10 +164,6 @@ class ColumnSorting {
         }
 
         a11y?.userSortedColumn(order);
-
-        viewport.grid.options?.events?.column?.afterSorting?.call(
-            this.column
-        );
     }
 
     /**

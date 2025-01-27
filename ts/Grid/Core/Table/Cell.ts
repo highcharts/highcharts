@@ -142,6 +142,8 @@ abstract class Cell {
      *
      * @param e
      * Mouse event object.
+     *
+     * @internal
      */
     protected abstract onClick(e: MouseEvent): void;
 

@@ -24,7 +24,6 @@ import type A11yOptions from './Accessibility/A11yOptions';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
-import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Core/Options';
 
 
@@ -38,16 +37,6 @@ import type { LangOptionsCore } from '../../Core/Options';
  * The distribution of the columns in the grid structure.
  */
 export type ColumnDistribution = 'full' | 'fixed';
-
-/**
- * Callback function to be called when a cell event is triggered.
- */
-export type CellEventCallback = (this: Cell) => void;
-
-/**
- * Callback function to be called when a column event is triggered.
- */
-export type ColumnEventCallback = (this: Column) => void;
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -103,11 +92,6 @@ export interface Options {
      * Options for the description of the grid.
      */
     description?: DescriptionOptions;
-
-    /**
-     * Events options triggered by the grid elements.
-     */
-    events?: GridEvents;
 
     /**
      * Defines the structure of levels in header. Used for grouping columns
@@ -480,91 +464,6 @@ export interface DescriptionOptions {
      * The description of the grid.
      */
     text?: string;
-}
-
-/**
- * Events options.
- */
-export interface GridEvents {
-    /**
-     * Events related to the cells.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-events/ | Datagrid events}
-     */
-    cell?: CellEvents;
-
-    /**
-     * Events related to the column.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-events/ | Datagrid events}
-     */
-    column?: ColumnEvents
-
-    /**
-     * Events related to the header.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-events/ | Datagrid events}
-     */
-    header?: HeaderEvents
-}
-
-/**
- * Events related to the cells.
- */
-export interface CellEvents {
-    /**
-     * Callback function to be called when the cell is clicked.
-     */
-    click?: CellEventCallback;
-
-    /**
-     * Callback function to be called when the cell is double clicked.
-     */
-    dblClick?: CellEventCallback;
-
-    /**
-     * Callback function to be called when the cell is hovered.
-     */
-    mouseOver?: CellEventCallback;
-
-    /**
-     * Callback function to be called when the cell is no longer hovered.
-     */
-    mouseOut?: CellEventCallback;
-
-    /**
-     * Callback function to be called after editing of cell value.
-     */
-    afterEdit?: CellEventCallback;
-
-    /**
-     * Callback function to be called after the cell value is set (on init or
-     * after editing).
-     */
-    afterSetValue?: CellEventCallback;
-}
-
-/**
- * Event callbacks option group related to the column.
- */
-export interface ColumnEvents {
-    /**
-     * Callback function to be called when the column is sorted for instance,
-     * after clicking on header.
-     */
-    afterSorting?: ColumnEventCallback;
-
-    /**
-     * Callback function to be called when the column is resized.
-     */
-    afterResize?: ColumnEventCallback;
-}
-
-export interface HeaderEvents {
-    /**
-     * Callback function to be called when the header is clicked.
-     */
-    click?: ColumnEventCallback;
 }
 
 /**
