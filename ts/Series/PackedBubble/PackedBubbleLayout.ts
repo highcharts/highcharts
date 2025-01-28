@@ -160,31 +160,21 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
             box = layout.box,
             nodes = layout.nodes as Array<PackedBubblePoint>,
             nodesLength = nodes.length + 1,
-            angle = 2 * Math.PI / nodesLength;
+            angle = 2 * Math.PI / nodesLength,
+            radius = layout.options.initialPositionRadius;
 
         let centerX: number,
             centerY: number,
-            index = 0,
-            radius = layout.options.initialPositionRadius;
+            index = 0;
 
         for (const node of nodes) {
-            const isParentNode = node.isParentNode;
             if (
                 layout.options.splitSeries &&
-                !isParentNode
+                !node.isParentNode
             ) {
                 centerX = (node.series.parentNode as any).plotX;
                 centerY = (node.series.parentNode as any).plotY;
             } else {
-                if (isParentNode) {
-                    radius = node
-                        .series
-                        .options
-                        ?.layoutAlgorithm
-                        ?.initialPositionRadius ||
-                        radius;
-                }
-
                 centerX = box.width / 2;
                 centerY = box.height / 2;
             }
