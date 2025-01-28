@@ -822,23 +822,23 @@ class Tick {
             axisEnd = axisStart + axis.len,
             pxPos = horiz ? x : y;
 
-        const labelOpacity = pick(
-            opacity,
-            tick.label?.newOpacity, // #15528
-            1
-        );
-
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`
         // should not be visible (#20166). The `correctFloat` is for reversed
         // axes in Safari.
         if (
             !axis.chart.polar &&
+            tick.isNew &&
             (correctFloat(pxPos) < axisStart || pxPos > axisEnd)
         ) {
             opacity = 0;
         }
 
-        opacity ??= 1;
+        const labelOpacity = pick(
+            opacity,
+            tick.label?.newOpacity, // #15528
+            1
+        );
+        opacity = pick(opacity, 1);
         this.isActive = true;
 
         // Create the grid line

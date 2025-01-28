@@ -195,4 +195,3 @@ BLGZ
 CUSIP
 MSID
 OHLCV
-indexmundi

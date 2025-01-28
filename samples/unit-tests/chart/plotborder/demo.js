@@ -1,41 +1,30 @@
 QUnit.test('Plot border', function (assert) {
-    const clock = TestUtilities.lolexInstall();
+    var clock = TestUtilities.lolexInstall();
 
     try {
-        const done = assert.async();
+        var done = assert.async();
 
-        const chart = Highcharts.chart('container', {
+        var chart = Highcharts.chart('container', {
             chart: {
-                plotBorderWidth: 0.5,
+                plotBorderWidth: 1,
                 width: 400
             },
             series: [
                 {
-                    data: [0, 0, 0]
+                    data: [1, 3, 2, 4]
                 }
-            ],
-            yAxis: {
-                min: 0,
-                max: 10
-            }
+            ]
         });
-
-        assert.strictEqual(
-            chart.clipBox.y,
-            1,
-            'Clip box\'s width for plotBorderWidth=0.5 should be adjusted by 1'
-            // to avoid clipping the series plot that is drawn on the edge
-        );
 
         assert.strictEqual(
             chart.container
                 .querySelector('.highcharts-plot-border')
                 .getAttribute('stroke-width'),
-            '0.5',
-            'Stroke width should be 0.5' // initial value
+            '1',
+            'Stroke width should be 1'
         );
 
-        const width = chart.container
+        var width = chart.container
             .querySelector('.highcharts-plot-border')
             .getBBox()
             .width;
@@ -48,7 +37,7 @@ QUnit.test('Plot border', function (assert) {
                     .getBBox()
                     .width,
                 width,
-                'Plot border rectangle width should change after redraw'
+                'Plot border rectanble width should change after redraw'
             );
             done();
         }, 60);

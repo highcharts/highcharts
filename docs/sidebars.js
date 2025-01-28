@@ -11,8 +11,7 @@ module.exports = {
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
             'getting-started/how-to-create-custom-highcharts-packages',
-            'getting-started/optional-dependencies',
-            'getting-started/version-12'
+            'getting-started/optional-dependencies'
         ],
         'Chart concepts': [
             'chart-concepts/understanding-highcharts',
