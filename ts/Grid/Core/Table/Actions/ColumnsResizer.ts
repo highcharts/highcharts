@@ -213,7 +213,7 @@ class ColumnsResizer {
      *
      * @internal
      */
-    public onDocumentMouseMove = (e: MouseEvent): void => {
+    private onDocumentMouseMove = (e: MouseEvent): void => {
         if (!this.draggedResizeHandle || !this.draggedColumn) {
             return;
         }
@@ -232,7 +232,17 @@ class ColumnsResizer {
         if (vp.grid.options?.rendering?.rows?.virtualization) {
             vp.rowsVirtualizer.adjustRowHeights();
         }
+
+        this.onColumnResize();
     };
+
+    /**
+     * Handles the column resize event.
+     * @internal
+     */
+    public onColumnResize(): void {
+        // Hook for the column resize extensions
+    }
 
     /**
      * Handles the mouse up event on the document.

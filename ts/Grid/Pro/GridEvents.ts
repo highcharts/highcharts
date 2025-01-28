@@ -158,18 +158,16 @@ function compose(
         );
     });
 
-    wrap(ColumnsResizerClass.prototype, 'onDocumentMouseMove', function (
+    wrap(ColumnsResizerClass.prototype, 'onColumnResize', function (
         this: ColumnsResizer,
         proceed
     ): void {
         proceed.call(this);
 
-        if (this.draggedResizeHandle) {
-            this.draggedColumn?.viewport.grid
-                .options?.events?.column?.afterResize?.call(
-                    this.draggedColumn
-                );
-        }
+        this.draggedColumn?.viewport.grid.options?.events?.column
+            ?.afterResize?.call(
+                this.draggedColumn
+            );
     });
 
     wrap(CellEditingClass.prototype, 'stopEditing', function (
