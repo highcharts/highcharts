@@ -605,13 +605,16 @@ function updateCustomComponent() {
 }
 
 function setupScreenReaderSection(selectedVerbosity, chart) {
-    addPrefButtonScreenReader(chart);
     applyInfoRegion(selectedVerbosity, chart);
 }
 
 
 // TODO: Refactor function to be only about applying info region and rename
 function applyInfoRegion(selectedVerbosity, chart) {
+
+    // Add preference button to screen reader section
+    addPrefButtonScreenReader(chart);
+
     const screenReaderDiv = document
         .getElementById('highcharts-screen-reader-region-before-0');
     const innerScreenReaderDiv = screenReaderDiv.children[0];
@@ -662,14 +665,16 @@ function applyInfoRegion(selectedVerbosity, chart) {
         });
     });
 
-    const chartInfoElements = innerScreenReaderDiv.querySelectorAll('div');
+    const chartInfoElements = Array.from(innerScreenReaderDiv.children);
+    console.log(chartInfoElements);
+
 
     if (selectedVerbosity === 'short') {
         description.textContent = shortDesc;
 
         // Hide specific elements
         chartInfoElements.forEach((el, index) => {
-            if (index >= 4) {
+            if (index >= 6) {
                 el.style.display = 'none';
             }
         });
@@ -678,8 +683,10 @@ function applyInfoRegion(selectedVerbosity, chart) {
         description.textContent = longDesc;
 
         // Show all divs
-        chartInfoElements.forEach(el => {
-            el.style.display = 'block';
+        chartInfoElements.forEach((el, index) => {
+            if (index >= 4) {
+                el.style.display = 'block';
+            }
         });
     }
 }
