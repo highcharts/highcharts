@@ -247,10 +247,10 @@ function compose<T extends typeof Series>(
                     event &&
                     eType === 'click' &&
                     event
-                        .target
+                        ?.target
                         ?.className
                         ?.baseVal
-                        .includes('highcharts-tracker')
+                        ?.includes('highcharts-tracker')
                 ) {
                     return false;
                 }
