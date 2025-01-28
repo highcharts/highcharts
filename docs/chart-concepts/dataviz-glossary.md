@@ -15,7 +15,7 @@ coordinate system to map data points.
 - **Related Highcharts concepts:** [Axes](/docs/chart-concepts/axes),
 [Series](/docs/chart-concepts/series).
 
-### Choropleth Map
+### Choropleth map
 - **Definition:** A thematic map that uses differences in shading, coloring, or
 patterns within predefined areas (e.g., countries or regions) to represent the
 magnitude of a variable, such as population density or income levels.  
