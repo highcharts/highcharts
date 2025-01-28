@@ -39,6 +39,8 @@ For an asynchronous approach, one needs to use the ESM variants, which can be fo
 
 * HTML Example:
   Note that this is not recommend for production, as ES modules in a browser should always be bundled.
+  Otherwise the latency will be noticeable, as the browser needs to load all the small master
+  modules. We are planning to serve pre-bundled ESM modules in the future.
   ```html
   <script type="module">
   import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
