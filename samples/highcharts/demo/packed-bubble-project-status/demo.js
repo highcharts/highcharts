@@ -18,13 +18,16 @@ Highcharts.chart('container', {
             minSize: '15%',
             maxSize: '50%',
             layoutAlgorithm: {
-                initialPositionRadius: 100,
+                maxSpeed: 2,
+                initialPositionRadius: 1,
                 splitSeries: true,
                 parentNodeLimit: true,
                 dragBetweenSeries: true,
-                friction: -0.5,
+                friction: -0.9,
                 parentNodeOptions: {
-                    bubblePadding: 20
+                    maxSpeed: 1,
+                    bubblePadding: 20,
+                    initialPositionRadius: 120
                 }
             },
             dataLabels: {
