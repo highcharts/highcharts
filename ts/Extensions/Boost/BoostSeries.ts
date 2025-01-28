@@ -201,6 +201,7 @@ function boostEnabled(chart: Chart): boolean {
 function compose<T extends typeof Series>(
     SeriesClass: T,
     seriesTypes: typeof SeriesRegistry.seriesTypes,
+    PointClass: typeof Point,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
     if (pushUnique(composed, 'Boost.Series')) {
@@ -234,6 +235,27 @@ function compose<T extends typeof Series>(
             )>
         ).forEach((method): void =>
             wrapSeriesFunctions(seriesProto, seriesTypes, method)
+        );
+
+        wrap(
+            PointClass.prototype,
+            'firePointEvent',
+            function (this: typeof PointClass.prototype, proceed): boolean {
+                const eType = arguments[1];
+                const event = arguments[2];
+                if (
+                    event &&
+                    eType === 'click' &&
+                    event
+                        .target
+                        ?.className
+                        ?.baseVal
+                        .includes('highcharts-tracker')
+                ) {
+                    return false;
+                }
+                return proceed.apply(this, [].slice.call(arguments, 1));
+            }
         );
 
         // Set default options
