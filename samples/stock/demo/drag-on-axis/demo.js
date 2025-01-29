@@ -23,13 +23,17 @@
         const axis = this,
             renderer = axis.chart.renderer;
 
-        if (!axis.isXAxis && !axis.options.isInternal) {
+        if (
+            !axis.isXAxis &&
+            !axis.options.isInternal &&
+            !axis.chart.inverted &&
+            !axis.chart.polar
+        ) {
             // Create a transparent rectangle on yAxis to create a zoom area
             axis.axisZoomRect = renderer.rect()
                 .attr({
                     width: 50,
-                    height: 300,
-                    fill: 'transparent',
+                    fill: 'red',
                     zIndex: 8
                 })
                 .addClass('highcharts-no-mousewheel')
@@ -67,7 +71,11 @@
 
         yAxes.forEach(yAxis => {
             if (yAxis.axisZoomRect) {
-                yAxis.axisZoomRect.attr({ x: yAxis.width - 20, y: yAxis.top });
+                yAxis.axisZoomRect.attr({
+                    x: yAxis.width - 20,
+                    y: yAxis.top,
+                    height: yAxis.len
+                });
             }
         });
     });
@@ -109,12 +117,14 @@ const AMDPriceConnector =
         yAxis: [{
             startOnTick: false,
             endOnTick: false,
-            height: '50%'
+            height: '48%',
+            lineWidth: 2
         }, {
             startOnTick: false,
             endOnTick: false,
-            height: '50%',
-            top: '50%'
+            height: '48%',
+            top: '52%',
+            lineWidth: 2
         }],
         series: [{
             name: 'AMD',
