@@ -28,6 +28,8 @@ import type DataTable from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
 
 import ColumnUtils from './ColumnUtils.js';
+const { setLength, splice } = ColumnUtils;
+
 import U from '../Core/Utilities.js';
 const {
     fireEvent,
@@ -144,8 +146,7 @@ class DataTableCore {
         this.rowCount = rowCount;
         objectEach(this.columns, (column, columnName): void => {
             if (column.length !== rowCount) {
-                this.columns[columnName] =
-                    ColumnUtils.setLength(column, rowCount);
+                this.columns[columnName] = setLength(column, rowCount);
             }
         });
     }
@@ -172,7 +173,7 @@ class DataTableCore {
             let length = 0;
             objectEach(this.columns, (column, columnName): void => {
                 this.columns[columnName] =
-                    ColumnUtils.splice(column, rowIndex, rowCount).array;
+                    splice(column, rowIndex, rowCount).array;
                 length = column.length;
             });
             this.rowCount = length;
@@ -342,7 +343,7 @@ class DataTableCore {
                 eventDetail?.addColumns !== false && new Array(indexRowCount);
             if (column) {
                 if (insert) {
-                    column = ColumnUtils.splice(
+                    column = splice(
                         column,
                         rowIndex,
                         0,
