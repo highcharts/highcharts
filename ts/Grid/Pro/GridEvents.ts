@@ -19,8 +19,8 @@
  *
  * */
 
-import type Column from '../Core/Table/Column';
-import type TableCell from '../Core/Table/Content/TableCell';
+import Column from '../Core/Table/Column';
+import TableCell from '../Core/Table/Content/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 
@@ -79,41 +79,30 @@ function compose(
         return;
     }
 
-    addEvent(TableCellClass, 'mouseOver', (e: GridEvent<TableCell>): void => {
-        const cell = e.target;
-        cell.row.viewport.grid.options?.events?.cell?.mouseOver?.call(cell);
+    ([ // TableCell Events
+        'mouseOver',
+        'mouseOut',
+        'dblClick',
+        'click',
+        'afterSetValue'
+    ] as const).forEach((name): void => {
+        addEvent(TableCellClass, name, (e: GridEvent<TableCell>): void => {
+            const cell = e.target;
+            cell.row.viewport.grid.options?.events?.cell?.[name]?.call(cell);
+        });
     });
 
-    addEvent(TableCellClass, 'mouseOut', (e: GridEvent<TableCell>): void => {
-        const cell = e.target;
-        cell.row.viewport.grid.options?.events?.cell?.mouseOut?.call(cell);
+    ([ // Column Events
+        'afterResize',
+        'afterSorting'
+    ] as const).forEach((name): void => {
+        addEvent(ColumnClass, name, (e: GridEvent<Column>): void => {
+            const column = e.target;
+            column.viewport.grid.options?.events?.column?.[name]?.call(column);
+        });
     });
 
-    addEvent(TableCellClass, 'dblClick', (e: GridEvent<TableCell>): void => {
-        const cell = e.target;
-        cell.row.viewport.grid.options?.events?.cell?.dblClick?.call(cell);
-    });
-
-    addEvent(TableCellClass, 'click', (e: GridEvent<TableCell>): void => {
-        const cell = e.target;
-        cell.row.viewport.grid.options?.events?.cell?.click?.call(cell);
-    });
-
-    addEvent(TableCellClass, 'afterSetValue', (e: GridEvent<TableCell>): void => {
-        const cell = e.target;
-        cell.row.viewport.grid.options?.events?.cell?.afterSetValue?.call(cell);
-    });
-
-    addEvent(ColumnClass, 'afterResize', (e: GridEvent<Column>): void => {
-        const col = e.target;
-        col.viewport.grid.options?.events?.column?.afterResize?.call(col);
-    });
-
-    addEvent(ColumnClass, 'afterSorting', (e: GridEvent<Column>): void => {
-        const col = e.target;
-        col.viewport.grid.options?.events?.column?.afterSorting?.call(col);
-    });
-
+    // HeaderCell Events
     addEvent(HeaderCellClass, 'click', (e: GridEvent<Column>): void => {
         const col = e.target;
         col.viewport.grid.options?.events?.header?.click?.call(col);

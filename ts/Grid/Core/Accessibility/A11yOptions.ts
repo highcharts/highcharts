@@ -33,7 +33,7 @@
 /**
  * Accessibility options for the Grid.
  */
-export interface GeneralA11yOptions {
+export interface A11yOptions {
     /**
      * Enable accessibility features for the Grid.
      *
@@ -50,13 +50,13 @@ export interface GeneralA11yOptions {
     /**
      * VoiceOver announcer options for Grid actions.
      */
-    announcements?: GeneralA11yAnnouncementsOptions
+    announcements?: A11yAnnouncementsOptions
 }
 
 /**
  * VoiceOver announcer options for Grid actions.
  */
-export interface GeneralA11yAnnouncementsOptions {
+export interface A11yAnnouncementsOptions {
     /**
      * Enable accessibility announcements for the sorting.
      *

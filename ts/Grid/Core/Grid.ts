@@ -347,7 +347,7 @@ class Grid {
      */
     private initContainers(renderTo: string|HTMLElement): void {
         const container = (typeof renderTo === 'string') ?
-            document.getElementById(renderTo) : renderTo;
+            Globals.win.document.getElementById(renderTo) : renderTo;
 
         // Display an error if the renderTo is wrong
         if (!container) {

@@ -28,7 +28,7 @@ import Cell from '../Cell.js';
 import Column from '../Column';
 import TableRow from './TableRow';
 import Utils from '../../../../Core/Utilities.js';
-import GridUtils, { GridEventMeta } from '../../GridUtils.js';
+import GridUtils from '../../GridUtils.js';
 
 const { setHTMLContent } = GridUtils;
 const {
@@ -208,16 +208,12 @@ class TableCell extends Cell {
             return;
         }
 
-        const meta: GridEventMeta = { preventNextSteps: false };
         fireEvent(this, 'keyDown', {
             target: this,
-            originalEvent: e,
-            meta
+            originalEvent: e
         });
 
-        if (!meta.preventNextSteps) {
-            super.onKeyDown(e);
-        }
+        super.onKeyDown(e);
     }
 
     /**

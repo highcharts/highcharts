@@ -141,13 +141,9 @@ namespace CellEditingComposition {
         this: TableCell,
         e: GridEvent<TableCell, KeyboardEvent>
     ): void {
-        if (e.originalEvent.key === 'Enter') {
+        if (e.originalEvent?.key === 'Enter') {
             if (this.column.options.cells?.editable) {
                 this.row.viewport.cellEditing?.startEditing(this);
-            }
-
-            if (e.meta) {
-                e.meta.preventNextSteps = true;
             }
         }
     }
@@ -273,7 +269,7 @@ declare module '../GridEvents' {
 }
 
 declare module '../../Core/Accessibility/A11yOptions' {
-    interface GeneralA11yAnnouncementsOptions {
+    interface A11yAnnouncementsOptions {
         /**
          * Enable accessibility announcements for the cell editing.
          *

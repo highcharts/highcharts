@@ -20,7 +20,11 @@
  *
  * */
 
-import type * as A11yOptions from './Accessibility/A11yOptions';
+import type {
+    A11yOptions,
+    HeaderCellA11yOptions,
+    LangAccessibilityOptions
+} from './Accessibility/A11yOptions';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
@@ -58,7 +62,7 @@ export interface Options {
     /**
      * Accessibility options for the grid.
      */
-    accessibility?: A11yOptions.GeneralA11yOptions;
+    accessibility?: A11yOptions;
 
     /**
      * Options for the table caption.
@@ -474,7 +478,7 @@ export interface GroupedHeaderOptions {
     /**
      * Accessibility options for one of the column header cells.
      */
-    accessibility?: A11yOptions.HeaderCellA11yOptions;
+    accessibility?: HeaderCellA11yOptions;
 
     /**
      * The format of the column header. Use `{id}` to display the column id.
@@ -545,7 +549,7 @@ export interface LangOptions extends LangOptionsCore {
     /**
      * Configure the accessibility strings in the chart.
      */
-    accessibility?: A11yOptions.LangAccessibilityOptions;
+    accessibility?: LangAccessibilityOptions;
 
     /**
      * The text to display when the loading indicator is shown.

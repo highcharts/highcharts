@@ -22,31 +22,17 @@ import AST from '../../Core/Renderer/HTML/AST.js';
  * */
 
 /**
- * The meta information about the event provided by the client.
- */
-export interface GridEventMeta {
-    /**
-     * Prevent the default action.
-     */
-    preventNextSteps?: boolean;
-}
-
-/**
  * The event object for the grid.
  */
-export interface GridEvent<T, E = Event> {
+export interface GridEvent<T, E extends Event = Event> {
     /**
      * The original browser event.
      */
-    originalEvent: E;
+    originalEvent?: E;
     /**
      * The target of the event.
      */
     target: T;
-    /**
-     * Meta information about the event provided by the client.
-     */
-    meta?: GridEventMeta;
 }
 
 /* *
