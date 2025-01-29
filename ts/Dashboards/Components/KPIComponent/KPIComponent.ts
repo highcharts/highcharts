@@ -418,7 +418,7 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    private calculateValueSum(values: number[]): number {
+    private calculateSumValue(values: number[]): number {
         let calculatedValue = 0;
 
         for (let i = 0; i < values.length; i++) {
@@ -443,8 +443,8 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    private calculateValueAverage(values: number[]): number {
-        const valueSum = this.calculateValueSum(values);
+    private calculateAverageValue(values: number[]): number {
+        const valueSum = this.calculateSumValue(values);
         return valueSum / values.length;
     }
 
@@ -459,7 +459,7 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    private calculateValueMedian(values: number[]): number {
+    private calculateMedianValue(values: number[]): number {
         const sortedValues = Array.from(values).sort((a, b): number => a - b);
         const middleValue = Math.floor(sortedValues.length / 2);
         const middleSortedValue = sortedValues[middleValue];
@@ -479,7 +479,7 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    private getValueCalculated(): string|number {
+    private getCalculatedValue(): string|number {
         const calculateValueAs = this.options.calculateValueAs;
 
         const connector = this.getFirstConnector();
@@ -499,14 +499,14 @@ class KPIComponent extends Component {
         // Make sure all values are numbers to perform accurate calculations.
         } else if (parsedColumnValues?.every(isNumber)) {
             if (calculateValueAs === 'sum') {
-                calculatedValue = this.calculateValueSum(parsedColumnValues);
+                calculatedValue = this.calculateSumValue(parsedColumnValues);
 
             } else if (calculateValueAs === 'average') {
                 calculatedValue =
-                    this.calculateValueAverage(parsedColumnValues);
+                    this.calculateAverageValue(parsedColumnValues);
 
             } else if (calculateValueAs === 'median') {
-                calculatedValue = this.calculateValueMedian(parsedColumnValues);
+                calculatedValue = this.calculateMedianValue(parsedColumnValues);
 
             } else {
                 console.warn('Invalid calculate option value provided.'); // eslint-disable-line no-console
@@ -533,7 +533,7 @@ class KPIComponent extends Component {
 
         if (connector && this.options.columnName) {
             if (defined(this.options.calculateValueAs)) {
-                return this.getValueCalculated();
+                return this.getCalculatedValue();
             }
             
             const table = connector.table.modified,
