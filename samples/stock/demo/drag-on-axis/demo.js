@@ -33,7 +33,7 @@
             axis.axisZoomRect = renderer.rect()
                 .attr({
                     width: 50,
-                    fill: 'red',
+                    fill: 'transparent',
                     zIndex: 8
                 })
                 .addClass('highcharts-no-mousewheel')
