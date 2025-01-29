@@ -36,10 +36,16 @@ import Globals from './Globals.js';
 import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
+import Time from '../Core/Time.js';
 
-const { makeHTMLElement } = DataGridUtils;
+const { makeHTMLElement, setHTMLContent } = DataGridUtils;
 const { win } = Globals;
-const { merge, getStyle } = U;
+const {
+    extend,
+    getStyle,
+    merge,
+    pick
+} = U;
 
 
 /* *
@@ -175,6 +181,11 @@ class DataGrid {
     public descriptionElement?: HTMLElement;
 
     /**
+     * The container element of the loading indicator overlaying the data grid.
+     */
+    public loadingWrapper?: HTMLElement;
+
+    /**
      * The presentation table of the data grid. It contains a modified version
      * of the data table that is used for rendering the data grid content. If
      * not modified, just a reference to the original data table.
@@ -239,6 +250,16 @@ class DataGrid {
     public querying: QueryingController;
 
     /**
+     * The time instance.
+     */
+    public time: Time;
+
+    /**
+     * The locale of the data grid.
+     */
+    public locale?: string | string[];
+
+    /**
      * The initial height of the container. Can be 0 also if not set.
      */
     public initialContainerHeight: number = 0;
@@ -281,6 +302,15 @@ class DataGrid {
         this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
 
+        this.locale = this.options?.lang?.locale || (
+            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+        );
+
+        this.time = new Time(extend<Time.TimeOptions>(
+            this.options?.time,
+            { locale: this.locale }
+        ), this.options?.lang);
+
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
@@ -297,7 +327,7 @@ class DataGrid {
      *
      * */
 
-    /**
+    /*
      * Initializes the accessibility controller.
      */
     private initAccessibility(): void {
@@ -675,15 +705,20 @@ class DataGrid {
      */
     public renderCaption(): void {
         const captionOptions = this.options?.caption;
-        if (!captionOptions?.text) {
+        const captionText = captionOptions?.text;
+
+        if (!captionText) {
             return;
         }
 
+        // Create a caption element.
         this.captionElement = makeHTMLElement('div', {
-            innerText: captionOptions.text,
             className: Globals.classNames.captionElement,
             id: this.id + '-caption'
         }, this.contentWrapper);
+
+        // Render the caption element content.
+        setHTMLContent(this.captionElement, captionText);
 
         if (captionOptions.className) {
             this.captionElement.classList.add(
@@ -699,15 +734,20 @@ class DataGrid {
      */
     public renderDescription(): void {
         const descriptionOptions = this.options?.description;
-        if (!descriptionOptions?.text) {
+        const descriptionText = descriptionOptions?.text;
+
+        if (!descriptionText) {
             return;
         }
 
+        // Create a description element.
         this.descriptionElement = makeHTMLElement('div', {
-            innerText: descriptionOptions.text,
             className: Globals.classNames.descriptionElement,
             id: this.id + '-description'
         }, this.contentWrapper);
+
+        // Render the description element content.
+        setHTMLContent(this.descriptionElement, descriptionText);
 
         if (descriptionOptions.className) {
             this.descriptionElement.classList.add(
@@ -845,7 +885,7 @@ class DataGrid {
      * Extracts all references to columnIds on all levels below defined level
      * in the settings.header structure.
      *
-     * @param columns
+     * @param columnsTree
      * Structure that we start calculation
      *
      * @param [onlyEnabledColumns=true]
@@ -853,13 +893,13 @@ class DataGrid {
      * @returns
      */
     public getColumnIds(
-        columns: Array<GroupedHeaderOptions|string>,
+        columnsTree: Array<GroupedHeaderOptions|string>,
         onlyEnabledColumns: boolean = true
     ): string[] {
         let columnIds: string[] = [];
         const { enabledColumns } = this;
 
-        for (const column of columns) {
+        for (const column of columnsTree) {
             const columnId: string | undefined =
                 typeof column === 'string' ? column : column.columnId;
 
@@ -901,6 +941,59 @@ class DataGrid {
         });
 
         DataGrid.dataGrids.splice(dgIndex, 1);
+    }
+
+    /**
+     * Grey out the data grid and show a loading indicator.
+     *
+     * @param message
+     * The message to display in the loading indicator.
+     */
+    public showLoading(message?: string): void {
+        if (this.loadingWrapper) {
+            return;
+        }
+
+        // Create loading wrapper.
+        this.loadingWrapper = makeHTMLElement(
+            'div',
+            {
+                className: Globals.classNames.loadingWrapper
+            },
+            this.contentWrapper
+        )
+
+        // Create spinner element.
+        makeHTMLElement(
+            'div',
+            {
+                className: Globals.classNames.loadingSpinner
+            },
+            this.loadingWrapper
+        );
+
+
+        // Create loading message span element.
+        const loadingSpan = makeHTMLElement(
+            'span',
+            {
+                className: Globals.classNames.loadingMessage
+            },
+            this.loadingWrapper
+        );
+
+        setHTMLContent(
+            loadingSpan,
+            pick(message, this.options?.lang?.loading, '')
+        )
+    }
+
+    /**
+     * Removes the loading indicator.
+     */
+    public hideLoading(): void {
+        this.loadingWrapper?.remove();
+        delete this.loadingWrapper;
     }
 
     /**

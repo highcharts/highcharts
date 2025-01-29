@@ -755,6 +755,12 @@ class Series {
             ),
             userPlotOptionsType = userPlotOptions[this.type] || {};
 
+        // Merge in multiple data label options from the plot option. (#21928)
+        typeOptions.dataLabels = this.mergeArrays(
+            defaultPlotOptionsType.dataLabels,
+            typeOptions.dataLabels
+        );
+
         // Use copy to prevent undetected changes (#9762)
         /**
          * Contains series options by the user without defaults.
