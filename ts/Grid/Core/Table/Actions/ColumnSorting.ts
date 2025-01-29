@@ -27,8 +27,10 @@ import type { ColumnSortingOrder } from '../../Options.js';
 import Column from '../Column.js';
 import GridUtils from '../../GridUtils.js';
 import Globals from '../../Globals.js';
+import U from '../../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
+const { fireEvent } = U;
 
 /* *
  *
@@ -164,6 +166,10 @@ class ColumnSorting {
         }
 
         a11y?.userSortedColumn(order);
+
+        fireEvent(this.column, 'afterSorting', {
+            target: this.column
+        });
     }
 
     /**

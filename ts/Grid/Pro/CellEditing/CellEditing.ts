@@ -23,12 +23,14 @@
  *
  * */
 
-import TableCell from '../Content/TableCell.js';
-import GridUtils from '../../GridUtils.js';
-import Table from '../Table.js';
-import Globals from '../../Globals.js';
+import TableCell from '../../Core/Table/Content/TableCell.js';
+import GridUtils from '../../Core/Table/../GridUtils.js';
+import Table from '../../Core/Table/Table.js';
+import Globals from '../../Core/Globals.js';
+import U from '../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
+const { fireEvent } = U;
 
 
 /* *
@@ -102,8 +104,8 @@ class CellEditing {
         cellElement.innerHTML = '';
         cellElement.classList.add(Globals.getClassName('editedCell'));
 
-        this.viewport.grid.accessibility?.userEditedCell('started');
         this.renderInput();
+        fireEvent(cell, 'startedEditing');
     }
 
     /**
@@ -139,9 +141,7 @@ class CellEditing {
             submit && cell.value !== newValue
         );
 
-        this.viewport.grid.accessibility?.userEditedCell(
-            submit ? 'edited' : 'cancelled'
-        );
+        fireEvent(cell, 'stoppedEditing', { submit });
 
         delete this.editedCell;
     }
@@ -206,6 +206,7 @@ class CellEditing {
         delete this.inputElement;
     }
 }
+
 
 /* *
  *

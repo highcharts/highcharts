@@ -20,20 +20,33 @@
  * */
 
 import type Column from '../Core/Table/Column';
-import type { ColumnSortingOrder } from '../Core/Options';
-import type TableCell from '../Core/Table/Content/TableCell.js';
-import type CellEditing from '../Core/Table/Actions/CellEditing.js';
-import type ColumnSorting from '../Core/Table/Actions/ColumnSorting.js';
-import type ColumnsResizer from '../Core/Table/Actions/ColumnsResizer.js';
+import type TableCell from '../Core/Table/Content/TableCell';
+import type HeaderCell from '../Core/Table/Header/HeaderCell';
+import type { GridEvent } from '../Core/GridUtils';
 
 import U from '../../Core/Utilities.js';
 import Globals from '../../Core/Globals.js';
 
 const {
-    fireEvent,
-    wrap,
+    addEvent,
     pushUnique
 } = U;
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Options' {
+    interface Options {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        events?: GridEvents;
+    }
+}
 
 
 /* *
@@ -45,144 +58,68 @@ const {
 /**
  * Composition to add events to the TableCellClass methods.
  *
+ * @param ColumnClass
+ * The class to extend.
+ *
+ * @param HeaderCellClass
+ * The class to extend.
+ *
  * @param TableCellClass
- * Class to extend.
- *
- * @param ColumnSortingClass
- * Class to extend.
- *
- * @param ColumnsResizerClass
- * Class to extend.
- *
- * @param CellEditingClass
- * Class to extend.
+ * The class to extend.
  *
  * @private
  */
 function compose(
-    TableCellClass: typeof TableCell,
-    ColumnSortingClass: typeof ColumnSorting,
-    ColumnsResizerClass: typeof ColumnsResizer,
-    CellEditingClass: typeof CellEditing
+    ColumnClass: typeof Column,
+    HeaderCellClass: typeof HeaderCell,
+    TableCellClass: typeof TableCell
 ): void {
 
     if (!pushUnique(Globals.composed, 'GridEvents')) {
         return;
     }
 
-    wrap(TableCellClass.prototype, 'onMouseDown', function (
-        this: TableCell,
-        proceed
-    ): void {
-        proceed.call(this);
-
-        fireEvent(this.row.viewport.grid, 'cellMouseDown', {
-            target: this
-        });
+    addEvent(TableCellClass, 'mouseOver', (e: GridEvent<TableCell>): void => {
+        const cell = e.target;
+        cell.row.viewport.grid.options?.events?.cell?.mouseOver?.call(cell);
     });
 
-    wrap(TableCellClass.prototype, 'onMouseDown', function (
-        this: TableCell,
-        proceed
-    ): void {
-        proceed.call(this);
-
-        const grid = this.row.viewport.grid;
-
-        grid.options?.events?.cell?.mouseOver?.call(this);
-        fireEvent(grid, 'cellMouseOver', {
-            target: this
-        });
+    addEvent(TableCellClass, 'mouseOut', (e: GridEvent<TableCell>): void => {
+        const cell = e.target;
+        cell.row.viewport.grid.options?.events?.cell?.mouseOut?.call(cell);
     });
 
-    wrap(TableCellClass.prototype, 'onMouseOut', function (
-        this: TableCell,
-        proceed
-    ): void {
-        proceed.call(this);
-
-        const grid = this.row.viewport.grid;
-
-        grid.options?.events?.cell?.mouseOut?.call(this);
-        fireEvent(grid, 'cellMouseOut', {
-            target: this
-        });
+    addEvent(TableCellClass, 'dblClick', (e: GridEvent<TableCell>): void => {
+        const cell = e.target;
+        cell.row.viewport.grid.options?.events?.cell?.dblClick?.call(cell);
     });
 
-    wrap(TableCellClass.prototype, 'onDblClick', function (
-        this: TableCell,
-        proceed
-    ): void {
-        proceed.call(this);
-
-        const grid = this.row.viewport.grid;
-
-        grid.options?.events?.cell?.dblClick?.call(this);
-        fireEvent(grid, 'cellDblClick', {
-            target: this
-        });
+    addEvent(TableCellClass, 'click', (e: GridEvent<TableCell>): void => {
+        const cell = e.target;
+        cell.row.viewport.grid.options?.events?.cell?.click?.call(cell);
     });
 
-    wrap(TableCellClass.prototype, 'onClick', function (
-        this: TableCell,
-        proceed
-    ): void {
-        proceed.call(this);
-
-        const grid = this.row.viewport.grid;
-
-        grid.options?.events?.cell?.click?.call(this);
-        fireEvent(grid, 'cellClick', {
-            target: this
-        });
+    addEvent(TableCellClass, 'afterSetValue', (e: GridEvent<TableCell>): void => {
+        const cell = e.target;
+        cell.row.viewport.grid.options?.events?.cell?.afterSetValue?.call(cell);
     });
 
-    wrap(TableCellClass.prototype, 'onAfterSetValue', function (
-        this: TableCell,
-        proceed
-    ): void {
-        proceed.call(this);
-
-        this.row.viewport.grid.options?.events?.cell?.afterSetValue?.call(this);
+    addEvent(ColumnClass, 'afterResize', (e: GridEvent<Column>): void => {
+        const col = e.target;
+        col.viewport.grid.options?.events?.column?.afterResize?.call(col);
     });
 
-    wrap(ColumnSortingClass.prototype, 'setOrder', async function (
-        this: ColumnSorting,
-        proceed,
-        order: ColumnSortingOrder
-    ): Promise<void> {
-        await proceed.call(this, order);
-
-        this.column.viewport.grid.options?.events?.column?.afterSorting?.call(
-            this.column
-        );
+    addEvent(ColumnClass, 'afterSorting', (e: GridEvent<Column>): void => {
+        const col = e.target;
+        col.viewport.grid.options?.events?.column?.afterSorting?.call(col);
     });
 
-    wrap(ColumnsResizerClass.prototype, 'onColumnResize', function (
-        this: ColumnsResizer,
-        proceed
-    ): void {
-        proceed.call(this);
-
-        this.draggedColumn?.viewport.grid.options?.events?.column
-            ?.afterResize?.call(
-                this.draggedColumn
-            );
+    addEvent(HeaderCellClass, 'click', (e: GridEvent<Column>): void => {
+        const col = e.target;
+        col.viewport.grid.options?.events?.header?.click?.call(col);
     });
-
-    wrap(CellEditingClass.prototype, 'stopEditing', function (
-        this: CellEditing,
-        proceed,
-        submit: boolean
-    ): void {
-        const cell = this.editedCell;
-
-        proceed.call(this, submit);
-
-        cell?.row.viewport.grid.options?.events?.cell?.afterEdit?.call(cell);
-    });
-
 }
+
 
 /* *
  *
@@ -223,11 +160,6 @@ export interface CellEvents {
      * Callback function to be called when the cell is no longer hovered.
      */
     mouseOut?: CellEventCallback;
-
-    /**
-     * Callback function to be called after editing of cell value.
-     */
-    afterEdit?: CellEventCallback;
 
     /**
      * Callback function to be called after the cell value is set (on init or
@@ -285,15 +217,6 @@ export interface GridEvents {
     header?: HeaderEvents
 }
 
-declare module '../Core/Options' {
-    interface Options {
-        /**
-         * Events options triggered by the grid elements.
-         */
-        events?: GridEvents;
-    }
-}
-
 
 /* *
  *
@@ -301,8 +224,4 @@ declare module '../Core/Options' {
  *
  * */
 
-const GridEvents = {
-    compose
-};
-
-export default GridEvents;
+export default { compose };

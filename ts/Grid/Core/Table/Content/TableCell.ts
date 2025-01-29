@@ -28,10 +28,13 @@ import Cell from '../Cell.js';
 import Column from '../Column';
 import TableRow from './TableRow';
 import Utils from '../../../../Core/Utilities.js';
-import GridUtils from '../../GridUtils.js';
+import GridUtils, { GridEventMeta } from '../../GridUtils.js';
 
-const { defined } = Utils;
 const { setHTMLContent } = GridUtils;
+const {
+    defined,
+    fireEvent
+} = Utils;
 
 
 /* *
@@ -101,9 +104,9 @@ class TableCell extends Cell {
     }
 
     public override initEvents(): void {
-        this.cellEvents.push(['dblclick', (e): void => {
-            this.onDblClick(e as MouseEvent);
-        }]);
+        this.cellEvents.push(['dblclick', (e): void => (
+            this.onDblClick(e as MouseEvent)
+        )]);
         this.cellEvents.push(['mouseout', (): void => this.onMouseOut()]);
         this.cellEvents.push(['mouseover', (): void => this.onMouseOver()]);
         this.cellEvents.push(['mousedown', (e): void => {
@@ -135,29 +138,42 @@ class TableCell extends Cell {
      *
      * @internal
      */
-    public onMouseDown(e: MouseEvent): void {
+    protected onMouseDown(e: MouseEvent): void {
         if (e.target === this.htmlElement) {
             this.htmlElement.focus();
         }
+
+        fireEvent(this, 'mouseDown', {
+            target: this,
+            originalEvent: e
+        });
     }
 
     /**
      * Handles the mouse over event on the cell.
      * @internal
      */
-    public onMouseOver(): void {
+    protected onMouseOver(): void {
         const { grid } = this.row.viewport;
         grid.hoverRow(this.row.index);
         grid.hoverColumn(this.column.id);
+
+        fireEvent(this, 'mouseOver', {
+            target: this
+        });
     }
 
     /**
      * Handles the mouse out event on the cell.
      */
-    public onMouseOut(): void {
+    protected onMouseOut(): void {
         const { grid } = this.row.viewport;
         grid.hoverRow();
         grid.hoverColumn();
+
+        fireEvent(this, 'mouseOut', {
+            target: this
+        });
     }
 
     /**
@@ -165,34 +181,43 @@ class TableCell extends Cell {
      *
      * @param e
      * The mouse event object.
-     *
-     * @internal
      */
-    public onDblClick(e: MouseEvent): void {
-        if (this.column.options.cells?.editable) {
-            e.preventDefault();
-            this.row.viewport.cellEditing.startEditing(this);
-        }
+    protected onDblClick(e: MouseEvent): void {
+        fireEvent(this, 'dblClick', {
+            target: this,
+            originalEvent: e
+        });
     }
 
     public override onClick(): void {
-        // Hook for the extensions.
+        fireEvent(this, 'click', {
+            target: this
+        });
     }
 
-    protected override onKeyDown(e: KeyboardEvent): void {
+    /**
+     * Handles the key down event on the cell.
+     *
+     * @param e
+     * Keyboard event object.
+     *
+     * @internal
+     */
+    public override onKeyDown(e: KeyboardEvent): void {
         if (e.target !== this.htmlElement) {
             return;
         }
 
-        if (e.key === 'Enter') {
-            if (this.column.options.cells?.editable) {
-                this.row.viewport.cellEditing.startEditing(this);
-            }
+        const meta: GridEventMeta = { preventNextSteps: false };
+        fireEvent(this, 'keyDown', {
+            target: this,
+            originalEvent: e,
+            meta
+        });
 
-            return;
+        if (!meta.preventNextSteps) {
+            super.onKeyDown(e);
         }
-
-        super.onKeyDown(e);
     }
 
     /**
@@ -220,11 +245,9 @@ class TableCell extends Cell {
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
 
-        if (this.column.options.cells?.editable) {
-            vp.grid.accessibility?.addEditableCellHint(this.htmlElement);
-        }
-
-        this.onAfterSetValue();
+        fireEvent(this, 'afterSetValue', {
+            target: this
+        });
 
         if (!updateTable) {
             return;
@@ -271,14 +294,6 @@ class TableCell extends Cell {
                     ?.cells[vp.focusCursor[1]].htmlElement.focus();
             }
         }
-    }
-
-    /**
-     * Hook for the extensions to be called after setting the value.
-     * @internal
-     */
-    public onAfterSetValue(): void {
-        // Hook for the extensions.
     }
 
     /**

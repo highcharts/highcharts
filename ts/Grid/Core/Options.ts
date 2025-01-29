@@ -20,7 +20,7 @@
  *
  * */
 
-import type A11yOptions from './Accessibility/A11yOptions';
+import type * as A11yOptions from './Accessibility/A11yOptions';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';

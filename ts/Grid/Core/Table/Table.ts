@@ -23,7 +23,6 @@
  * */
 
 import type { ColumnDistribution } from '../Options';
-import type TableCell from './Content/TableCell';
 import type TableRow from './Content/TableRow';
 
 import GridUtils from '../GridUtils.js';
@@ -34,11 +33,14 @@ import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
-import CellEditing from './Actions/CellEditing.js';
 import Globals from '../Globals.js';
 
 const { makeHTMLElement } = GridUtils;
-const { getStyle, defined } = Utils;
+const {
+    fireEvent,
+    getStyle,
+    defined
+} = Utils;
 
 /* *
  *
@@ -128,19 +130,6 @@ class Table {
     public rowsWidth?: number;
 
     /**
-     * The input element of a cell after mouse focus.
-     * @internal
-     */
-    public editedCell?: TableCell;
-
-    /**
-     * The cell editing instance that handles the manual editing of cells in
-     * the data grid.
-     * @internal
-     */
-    public cellEditing: CellEditing;
-
-    /**
      * The focus cursor position: [rowIndex, columnIndex] or `undefined` if the
      * table cell is not focused.
      */
@@ -204,8 +193,6 @@ class Table {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
-        this.cellEditing = new CellEditing(this);
-
         if (customClassName) {
             tableElement.classList.add(...customClassName.split(/\s+/g));
         }
@@ -240,6 +227,8 @@ class Table {
      * Initializes the data grid table.
      */
     private init(): void {
+        fireEvent(this, 'beforeInit');
+
         this.setTbodyMinHeight();
 
         // Load columns

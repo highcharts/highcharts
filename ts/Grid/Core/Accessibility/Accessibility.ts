@@ -96,26 +96,6 @@ class Accessibility {
     * */
 
     /**
-     * Add the 'editable' hint span element for the editable cell.
-     *
-     * @param cellElement
-     * The cell element to add the description to.
-     */
-    public addEditableCellHint(cellElement: HTMLElement): void {
-        const editableLang =
-            this.grid.options?.lang?.accessibility?.cellEditing?.editable;
-
-        if (!editableLang) {
-            return;
-        }
-
-        makeHTMLElement('span', {
-            className: Globals.getClassName('visuallyHidden'),
-            innerText: ', ' + editableLang
-        }, cellElement);
-    }
-
-    /**
      * Add the 'sortable' hint span element for the sortable column.
      *
      * @param element
@@ -217,29 +197,6 @@ class Accessibility {
     }
 
     /**
-     * Announce the message to the screen reader that the user edited the cell.
-     *
-     * @param msgType
-     * The type of the edit message.
-     */
-    public userEditedCell(msgType: Accessibility.EditMsgType): void {
-        const { options } = this.grid;
-        const announcementsLang = options?.lang
-            ?.accessibility?.cellEditing?.announcements;
-
-        if (!options?.accessibility?.announcements?.cellEditing) {
-            return;
-        }
-
-        const msg = announcementsLang?.[msgType];
-        if (!msg) {
-            return;
-        }
-
-        this.announce(msg);
-    }
-
-    /**
      * Set the aria sort state of the column header cell element.
      *
      * @param thElement
@@ -333,11 +290,6 @@ namespace Accessibility {
      * The possible states of the aria-sort attribute.
      */
     export type AriaSortState = 'ascending' | 'descending' | 'none';
-
-    /**
-     * The possible types of the edit message.
-     */
-    export type EditMsgType = 'started' | 'edited' | 'cancelled';
 }
 
 

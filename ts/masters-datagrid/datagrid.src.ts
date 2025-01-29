@@ -29,12 +29,14 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
+
+import Table from '../Grid/Core/Table/Table.js';
+import Column from '../Grid/Core/Table/Column.js';
+import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableCell from '../Grid/Core/Table/Content/TableCell.js';
-import CellEditing from '../Grid/Core/Table/Actions/CellEditing.js';
-import ColumnSorting from '../Grid/Core/Table/Actions/ColumnSorting.js';
-import ColumnsResizer from '../Grid/Core/Table/Actions/ColumnsResizer.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
+import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -71,10 +73,10 @@ declare global {
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
+        Table: typeof Table;
+        Column: typeof Column;
+        HeaderCell: typeof HeaderCell;
         TableCell: typeof TableCell;
-        CellEditing: typeof CellEditing;
-        ColumnSorting: typeof ColumnSorting;
-        ColumnsResizer: typeof ColumnsResizer;
     }
     interface Window {
         DataGrid: DataGridNamespace;
@@ -108,17 +110,13 @@ G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.setOptions = Defaults.setOptions;
 G.product = 'GridPro';
 
-G.TableCell = TableCell;
-G.CellEditing = CellEditing;
-G.ColumnSorting = ColumnSorting;
-G.ColumnsResizer = ColumnsResizer;
+G.Table = G.Table || Table;
+G.Column = G.Column || Column;
+G.HeaderCell = G.HeaderCell || HeaderCell;
+G.TableCell = G.TableCell || TableCell;
 
-GridEvents.compose(
-    G.TableCell,
-    G.ColumnSorting,
-    G.ColumnsResizer,
-    G.CellEditing
-);
+GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
+CellEditingComposition.compose(G.Table, G.TableCell);
 
 
 /* *

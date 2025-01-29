@@ -31,7 +31,10 @@ import Globals from '../../Globals.js';
 import Utils from '../../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { getStyle } = Utils;
+const {
+    fireEvent,
+    getStyle
+} = Utils;
 
 
 /* *
@@ -233,16 +236,11 @@ class ColumnsResizer {
             vp.rowsVirtualizer.adjustRowHeights();
         }
 
-        this.onColumnResize();
+        fireEvent(this.draggedColumn, 'afterResize', {
+            target: this.draggedColumn,
+            originalEvent: e
+        });
     };
-
-    /**
-     * Handles the column resize event.
-     * @internal
-     */
-    public onColumnResize(): void {
-        // Hook for the column resize extensions
-    }
 
     /**
      * Handles the mouse up event on the document.

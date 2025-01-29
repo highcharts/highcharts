@@ -32,8 +32,15 @@ import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 
-const { makeHTMLElement, setHTMLContent } = GridUtils;
-const { merge, isString } = Utilities;
+const {
+    makeHTMLElement,
+    setHTMLContent
+} = GridUtils;
+const {
+    fireEvent,
+    merge,
+    isString
+} = Utilities;
 
 
 /* *
@@ -245,7 +252,10 @@ class HeaderCell extends Cell {
             column.sorting?.toggle();
         }
 
-        column.viewport.grid.options?.events?.header?.click?.call(column);
+        fireEvent(this, 'click', {
+            originalEvent: e,
+            target: this.column
+        });
     }
 
     /**
