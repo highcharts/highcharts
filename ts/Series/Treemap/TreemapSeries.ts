@@ -1464,20 +1464,35 @@ class TreemapSeries extends ScatterSeries {
 
             // Points which is ignored, have no values.
             if (values && visible) {
-                const { height, width, x, y } = values;
-                const strokeWidth = getStrokeWidth(point);
-                const x1 = crisp(xAxis.toPixels(x, true), strokeWidth, true);
-                const x2 = crisp(
-                    xAxis.toPixels(x + width, true),
-                    strokeWidth,
-                    true
-                );
-                const y1 = crisp(yAxis.toPixels(y, true), strokeWidth, true);
-                const y2 = crisp(
-                    yAxis.toPixels(y + height, true),
-                    strokeWidth,
-                    true
-                );
+                const { height, width, x, y } = values,
+                    strokeWidth = getStrokeWidth(point),
+                    xValue = xAxis.toPixels(x, true),
+                    x2Value = xAxis.toPixels(x + width, true),
+                    yValue = yAxis.toPixels(y, true),
+                    y2Value = yAxis.toPixels(y + height, true),
+                    // If the edge of a rectangle is on the edge, make sure it
+                    // stays within the plot area by adding or substracting half
+                    // of the stroke width.
+                    x1 = xValue === 0 ?
+                        strokeWidth / 2 :
+                        crisp(xAxis.toPixels(x, true), strokeWidth, true),
+                    x2 = x2Value === xAxis.len ?
+                        xAxis.len - strokeWidth / 2 :
+                        crisp(
+                            xAxis.toPixels(x + width, true),
+                            strokeWidth,
+                            true
+                        ),
+                    y1 = yValue === yAxis.len ?
+                        yAxis.len - strokeWidth / 2 :
+                        crisp(yAxis.toPixels(y, true), strokeWidth, true),
+                    y2 = y2Value === 0 ?
+                        strokeWidth / 2 :
+                        crisp(
+                            yAxis.toPixels(y + height, true),
+                            strokeWidth,
+                            true
+                        );
 
                 // Set point values
                 const shapeArgs = {
