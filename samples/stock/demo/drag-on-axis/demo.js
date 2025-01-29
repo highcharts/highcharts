@@ -114,6 +114,9 @@ const AMDPriceConnector =
         rangeSelector: {
             selected: 4
         },
+        title: {
+            text: 'Drag or scroll on yAxis to zoom'
+        },
         yAxis: [{
             startOnTick: false,
             endOnTick: false,
