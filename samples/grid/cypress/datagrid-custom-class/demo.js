@@ -24,4 +24,6 @@ DataGrid.dataGrid('container', {
         id: 'weight',
         className: 'custom-column-class-name'
     }]
+}, true).then(dg => {
+    window.dataGrid = dg;
 });
