@@ -41,6 +41,20 @@ const productMasters = [
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+
+function getMasterName(masterPath) {
+    return masterPath
+        .replace(/(?:\.src)?\.js$/u, '')
+        .replaceAll(Path.sep, Path.posix.sep);
+}
+
+
+/* *
+ *
  *  Distribution
  *
  * */
@@ -54,9 +68,7 @@ const umdWebpacks = FSLib
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
         const masterPath = Path.relative(mastersFolder, masterFile)
-        const masterName = masterPath
-            .replace(/(?:\.src)?\.js$/u, '')
-            .replaceAll(Path.sep, Path.posix.sep);
+        const masterName = getMasterName(masterPath);
         const umdWebpack = {
             // path to the main file
             entry: './' + masterFile.replaceAll(Path.sep, Path.posix.sep),
@@ -132,7 +144,8 @@ const umdWebpacks = FSLib
                     info,
                     masterName,
                     sourceFolder,
-                    namespace
+                    namespace,
+                    'umd'
                 )
             ];
         }
@@ -144,17 +157,19 @@ const umdWebpacks = FSLib
  * ES module bundles
  */
 const esmWebpacks = umdWebpacks.map(umdWebpack => {
+    const masterPath = umdWebpack.output.filename;
+    const masterName = getMasterName(masterPath);
     const esmWebpack = {
         entry: umdWebpack.entry,
         experiments: {
             outputModule: true
         },
-        externalsType: 'module',
         mode: 'production',
         optimization: umdWebpack.optimization,
         output: {
             chunkFormat: 'module',
-            filename: umdWebpack.output.filename,
+            filename: masterPath,
+            globalObject: 'this',
             libraryTarget: 'module',
             module: true,
             path: Path.resolve(esmTargetFolder)
@@ -168,8 +183,15 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
     ];
 
     if (umdWebpack.externals) {
+        esmWebpack.externalsType = 'import';
         esmWebpack.externals = [
-            (info) => umdWebpack.externals[0](info)?.commonjs2
+            (info) => resolveExternals(
+                info,
+                masterName,
+                sourceFolder,
+                namespace,
+                'import'
+            )
         ];
     }
 
