@@ -243,7 +243,7 @@ function compose<T extends typeof Series>(
                 this: typeof PointClass.prototype,
                 proceed, type, e
             ): boolean | undefined {
-                if (type === 'click') {
+                if (type === 'click' && this.series.boosted) {
                     const point = e.point,
                         { xAxis, yAxis } = point.series,
                         distance = Math.sqrt(
