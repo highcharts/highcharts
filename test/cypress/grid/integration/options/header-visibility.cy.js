@@ -5,8 +5,8 @@ describe('DataGrid Header visibility.', () => {
 
     it('Visibility of the table header should be toggled.', () => {
         cy.get('#toggle-header').click();
-        cy.get('.highcharts-datagrid-table thead').should('not.exist');
+        cy.get('.hcg-table thead').should('not.exist');
         cy.get('#toggle-header').click();
-        cy.get('.highcharts-datagrid-table thead').should('exist');
+        cy.get('.hcg-table thead').should('exist');
     });
 });
