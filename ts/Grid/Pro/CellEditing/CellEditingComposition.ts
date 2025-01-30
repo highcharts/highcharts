@@ -141,11 +141,14 @@ namespace CellEditingComposition {
         this: TableCell,
         e: GridEvent<TableCell, KeyboardEvent>
     ): void {
-        if (e.originalEvent?.key === 'Enter') {
-            if (this.column.options.cells?.editable) {
-                this.row.viewport.cellEditing?.startEditing(this);
-            }
+        if (
+            e.originalEvent?.key !== 'Enter' ||
+            !this.column.options.cells?.editable
+        ) {
+            return;
         }
+
+        this.row.viewport.cellEditing?.startEditing(this);
     }
 
     /**
