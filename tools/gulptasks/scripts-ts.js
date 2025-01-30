@@ -9,6 +9,7 @@
  * */
 
 const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -128,7 +129,24 @@ async function scriptsTS(argv) {
 
         fsLib.deleteDirectory('js', true);
 
-        if (product !== 'Grid') {
+        if (product === 'Grid') {
+            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
+            const codeGridFolder = 'code/grid/';
+
+            fsLib.copyAllFiles(
+                bundleDtsFolder,
+                codeGridFolder,
+                true
+            );
+
+            fsLib.copyFile(
+                codeGridFolder + 'gridlite.src.d.ts',
+                codeGridFolder + 'gridlite.d.ts'
+            );
+
+            logLib.success('Copied stand-alone DTS for Grid');
+
+        } else {
             fsLib.copyAllFiles(
                 'ts',
                 argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),

@@ -134,7 +134,8 @@ function scriptCSS(argv) {
 scriptCSS.description = 'Creates CSS files for given product';
 scriptCSS.flags = {
     '--dashboards': 'Creates CSS files for dashboards',
-    '--grid': 'Creates CSS files for Grid'
+    '--datagrid': 'Creates CSS files for datagrid',
+    '--product': 'Creates CSS files for product: Highcharts (default), Grid'
 };
 
 gulp.task('scripts-css', () => scriptCSS(require('yargs').argv));

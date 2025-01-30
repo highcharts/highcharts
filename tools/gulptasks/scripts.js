@@ -23,8 +23,6 @@ const JS_DIRECTORY = 'js';
 
 const TS_DIRECTORY = 'ts';
 
-const PRODUCTS = ['Highcharts', 'Grid'];
-
 /* *
  *
  *  Functions
@@ -151,9 +149,9 @@ function task() {
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
+    const utils = require('./utils');
 
-    if (PRODUCTS.indexOf(argv.product || 'Highcharts') < 0) {
-        logLib.warn('Cannot find a product.');
+    if (!utils.validateProduct(argv.product)) {
         return Promise.resolve();
     }
 
