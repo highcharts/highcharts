@@ -24,9 +24,9 @@
 import type { GroupedHeaderOptions } from '../../Options';
 import Table from '../Table.js';
 import Row from '../Row.js';
-import Globals from '../../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
+import Globals from '../../Globals.js';
 import Utils from '../../../../Core/Utilities.js';
 
 const { isString } = Utils;
@@ -99,7 +99,7 @@ class HeaderRow extends Row {
 
         // Render element
         vp.theadElement?.appendChild(this.htmlElement);
-        this.htmlElement.classList.add(Globals.classNames.headerRow);
+        this.htmlElement.classList.add(Globals.getClassName('headerRow'));
 
         if (!header) {
             super.render();
@@ -156,7 +156,7 @@ class HeaderRow extends Row {
                 // Add class to disable left border on first column
                 if (dataColumn?.index === 0 && i === 0) {
                     headerCell.htmlElement.classList.add(
-                        Globals.classNames.columnFirst
+                        Globals.getClassName('columnFirst')
                     );
                 }
 
@@ -178,7 +178,7 @@ class HeaderRow extends Row {
         const lastCell = this.cells[this.cells.length - 1] as HeaderCell;
         if (lastCell.isLastColumn()) {
             lastCell.htmlElement.classList.add(
-                Globals.classNames.lastHeaderCellInRow
+                Globals.getClassName('lastHeaderCellInRow')
             );
         }
     }

@@ -80,7 +80,7 @@ class Accessibility {
         this.grid = grid;
 
         this.element = document.createElement('div');
-        this.element.classList.add(Globals.classNames.visuallyHidden);
+        this.element.classList.add(Globals.getClassName('visuallyHidden'));
         this.grid.container?.prepend(this.element);
 
         this.announcerElement = document.createElement('p');
@@ -94,26 +94,6 @@ class Accessibility {
     *  Methods
     *
     * */
-
-    /**
-     * Add the 'editable' hint span element for the editable cell.
-     *
-     * @param cellElement
-     * The cell element to add the description to.
-     */
-    public addEditableCellHint(cellElement: HTMLElement): void {
-        const editableLang =
-            this.grid.options?.lang?.accessibility?.cellEditing?.editable;
-
-        if (!editableLang) {
-            return;
-        }
-
-        makeHTMLElement('span', {
-            className: Globals.classNames.visuallyHidden,
-            innerText: ', ' + editableLang
-        }, cellElement);
-    }
 
     /**
      * Add the 'sortable' hint span element for the sortable column.
@@ -130,7 +110,7 @@ class Accessibility {
         }
 
         makeHTMLElement('span', {
-            className: Globals.classNames.visuallyHidden,
+            className: Globals.getClassName('visuallyHidden'),
             innerText: ', ' + sortableLang
         }, element);
     }
@@ -214,29 +194,6 @@ class Accessibility {
         }
 
         this.announce(msg, true);
-    }
-
-    /**
-     * Announce the message to the screen reader that the user edited the cell.
-     *
-     * @param msgType
-     * The type of the edit message.
-     */
-    public userEditedCell(msgType: Accessibility.EditMsgType): void {
-        const { options } = this.grid;
-        const announcementsLang = options?.lang
-            ?.accessibility?.cellEditing?.announcements;
-
-        if (!options?.accessibility?.announcements?.cellEditing) {
-            return;
-        }
-
-        const msg = announcementsLang?.[msgType];
-        if (!msg) {
-            return;
-        }
-
-        this.announce(msg);
     }
 
     /**
@@ -333,11 +290,6 @@ namespace Accessibility {
      * The possible states of the aria-sort attribute.
      */
     export type AriaSortState = 'ascending' | 'descending' | 'none';
-
-    /**
-     * The possible types of the edit message.
-     */
-    export type EditMsgType = 'started' | 'edited' | 'cancelled';
 }
 
 

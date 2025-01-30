@@ -31,7 +31,7 @@ const { makeHTMLElement } = GridUtils;
 
 /* *
  *
- *  Abstract Class of Row
+ *  Class
  *
  * */
 
@@ -84,11 +84,11 @@ class Credits {
         this.options = grid.options?.credits ?? {};
 
         this.containerElement = makeHTMLElement('div', {
-            className: Globals.classNames.creditsContainer
+            className: Globals.getClassName('creditsContainer')
         });
 
         this.textElement = makeHTMLElement<HTMLAnchorElement>('a', {
-            className: Globals.classNames.creditsText
+            className: Globals.getClassName('creditsText')
         }, this.containerElement);
         this.textElement.setAttribute('target', '_top');
 

@@ -23,8 +23,8 @@
  * */
 
 import type Options from './Options';
+import type Globals from './Globals';
 
-import Globals from './Globals.js';
 import Utils from '../../Core/Utilities.js';
 
 const { merge } = Utils;
@@ -43,20 +43,11 @@ namespace Defaults {
             enabled: true,
             highContrastMode: 'auto',
             announcements: {
-                cellEditing: true,
                 sorting: true
             }
         },
         lang: {
             accessibility: {
-                cellEditing: {
-                    editable: 'Editable.',
-                    announcements: {
-                        started: 'Entered cell editing mode.',
-                        edited: 'Edited cell value.',
-                        cancelled: 'Editing canceled.'
-                    }
-                },
                 sorting: {
                     sortable: 'Sortable.',
                     announcements: {

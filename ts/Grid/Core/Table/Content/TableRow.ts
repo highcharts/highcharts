@@ -31,6 +31,7 @@ import Table from '../Table.js';
 import TableCell from './TableCell.js';
 import Globals from '../../Globals.js';
 
+
 /* *
  *
  *  Class
@@ -123,7 +124,7 @@ class TableRow extends Row {
      */
     public setHoveredState(hovered: boolean): void {
         this.htmlElement.classList[hovered ? 'add' : 'remove'](
-            Globals.classNames.hoveredRow
+            Globals.getClassName('hoveredRow')
         );
 
         if (hovered) {
@@ -139,7 +140,7 @@ class TableRow extends Row {
      */
     public setSyncedState(synced: boolean): void {
         this.htmlElement.classList[synced ? 'add' : 'remove'](
-            Globals.classNames.syncedRow
+            Globals.getClassName('syncedRow')
         );
 
         if (synced) {
@@ -155,7 +156,7 @@ class TableRow extends Row {
         const el = this.htmlElement;
         const a11y = this.viewport.grid.accessibility;
 
-        el.classList.add(Globals.classNames.rowElement);
+        el.classList.add(Globals.getClassName('rowElement'));
 
         // Index of the row in the presentation data table
         el.setAttribute('data-row-index', idx);
@@ -169,14 +170,14 @@ class TableRow extends Row {
         a11y?.setRowIndex(el, idx + (this.viewport.header?.levels ?? 1) + 1);
 
         // Indexing from 0, so rows with even index are odd.
-        el.classList.add(Globals.classNames[idx % 2 ? 'rowEven' : 'rowOdd']);
+        el.classList.add(Globals.getClassName(idx % 2 ? 'rowEven' : 'rowOdd'));
 
         if (this.viewport.grid.hoveredRowIndex === idx) {
-            el.classList.add(Globals.classNames.hoveredRow);
+            el.classList.add(Globals.getClassName('hoveredRow'));
         }
 
         if (this.viewport.grid.syncedRowIndex === idx) {
-            el.classList.add(Globals.classNames.syncedRow);
+            el.classList.add(Globals.getClassName('syncedRow'));
         }
     }
 

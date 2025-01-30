@@ -30,8 +30,11 @@ import TableRow from './TableRow';
 import Utils from '../../../../Core/Utilities.js';
 import GridUtils from '../../GridUtils.js';
 
-const { defined, fireEvent } = Utils;
 const { setHTMLContent } = GridUtils;
+const {
+    defined,
+    fireEvent
+} = Utils;
 
 
 /* *
@@ -101,9 +104,9 @@ class TableCell extends Cell {
     }
 
     public override initEvents(): void {
-        this.cellEvents.push(['dblclick', (e): void => {
-            this.onDblClick(e as MouseEvent);
-        }]);
+        this.cellEvents.push(['dblclick', (e): void => (
+            this.onDblClick(e as MouseEvent)
+        )]);
         this.cellEvents.push(['mouseout', (): void => this.onMouseOut()]);
         this.cellEvents.push(['mouseover', (): void => this.onMouseOver()]);
         this.cellEvents.push(['mousedown', (e): void => {
@@ -132,28 +135,30 @@ class TableCell extends Cell {
      *
      * @param e
      * The mouse event object.
+     *
+     * @internal
      */
     protected onMouseDown(e: MouseEvent): void {
-        const { grid } = this.row.viewport;
-
         if (e.target === this.htmlElement) {
             this.htmlElement.focus();
         }
 
-        fireEvent(grid, 'cellMouseDown', {
-            target: this
+        fireEvent(this, 'mouseDown', {
+            target: this,
+            originalEvent: e
         });
     }
 
     /**
      * Handles the mouse over event on the cell.
+     * @internal
      */
     protected onMouseOver(): void {
         const { grid } = this.row.viewport;
         grid.hoverRow(this.row.index);
         grid.hoverColumn(this.column.id);
-        grid.options?.events?.cell?.mouseOver?.call(this);
-        fireEvent(grid, 'cellMouseOver', {
+
+        fireEvent(this, 'mouseOver', {
             target: this
         });
     }
@@ -165,8 +170,8 @@ class TableCell extends Cell {
         const { grid } = this.row.viewport;
         grid.hoverRow();
         grid.hoverColumn();
-        grid.options?.events?.cell?.mouseOut?.call(this);
-        fireEvent(grid, 'cellMouseOut', {
+
+        fireEvent(this, 'mouseOut', {
             target: this
         });
     }
@@ -178,42 +183,35 @@ class TableCell extends Cell {
      * The mouse event object.
      */
     protected onDblClick(e: MouseEvent): void {
-        const vp = this.row.viewport;
-        const { grid } = vp;
+        fireEvent(this, 'dblClick', {
+            target: this,
+            originalEvent: e
+        });
+    }
 
-        if (this.column.options.cells?.editable) {
-            e.preventDefault();
-            vp.cellEditing.startEditing(this);
-        }
-
-        grid.options?.events?.cell?.dblClick?.call(this);
-        fireEvent(grid, 'cellDblClick', {
+    public override onClick(): void {
+        fireEvent(this, 'click', {
             target: this
         });
     }
 
-    protected override onClick(): void {
-        const vp = this.row.viewport;
-        const { grid } = vp;
-
-        grid.options?.events?.cell?.click?.call(this);
-        fireEvent(grid, 'cellClick', {
-            target: this
-        });
-    }
-
-    protected override onKeyDown(e: KeyboardEvent): void {
+    /**
+     * Handles the key down event on the cell.
+     *
+     * @param e
+     * Keyboard event object.
+     *
+     * @internal
+     */
+    public override onKeyDown(e: KeyboardEvent): void {
         if (e.target !== this.htmlElement) {
             return;
         }
 
-        if (e.key === 'Enter') {
-            if (this.column.options.cells?.editable) {
-                this.row.viewport.cellEditing.startEditing(this);
-            }
-
-            return;
-        }
+        fireEvent(this, 'keyDown', {
+            target: this,
+            originalEvent: e
+        });
 
         super.onKeyDown(e);
     }
@@ -243,11 +241,9 @@ class TableCell extends Cell {
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
 
-        if (this.column.options.cells?.editable) {
-            vp.grid.accessibility?.addEditableCellHint(this.htmlElement);
-        }
-
-        vp.grid.options?.events?.cell?.afterSetValue?.call(this);
+        fireEvent(this, 'afterSetValue', {
+            target: this
+        });
 
         if (!updateTable) {
             return;

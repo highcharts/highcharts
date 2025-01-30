@@ -32,14 +32,13 @@ import Credits from './Credits.js';
 import Defaults from './Defaults.js';
 import GridUtils from './GridUtils.js';
 import DataTable from '../../Data/DataTable.js';
-import Globals from './Globals.js';
 import Table from './Table/Table.js';
 import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Time from '../../Core/Time.js';
+import Globals from './Globals.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
-const { win } = Globals;
 const {
     extend,
     getStyle,
@@ -55,7 +54,7 @@ const {
  * */
 
 /**
- * Creates a grid structure (table).
+ * Abstract class as a base for GridLite & GridPro classes.
  */
 class Grid {
 
@@ -66,20 +65,20 @@ class Grid {
     * */
 
     /**
-     * Creates a new grid.
+     * Creates a new Grid.
      *
      * @param renderTo
-     * The render target (html element or id) of the grid.
+     * The render target (html element or id) of the Grid.
      *
      * @param options
-     * The options of the grid.
+     * The options of the Grid.
      *
      * @param async
      * Whether to initialize the dashboard asynchronously. When true, the
      * function returns a promise that resolves with the dashboard instance.
      *
      * @return
-     * The new grid.
+     * The new Grid.
      */
     public static grid(
         renderTo: string|HTMLElement,
@@ -88,20 +87,20 @@ class Grid {
     ): Grid;
 
     /**
-     * Creates a new grid.
+     * Creates a new Grid.
      *
      * @param renderTo
-     * The render target (html element or id) of the grid.
+     * The render target (html element or id) of the Grid.
      *
      * @param options
-     * The options of the grid.
+     * The options of the Grid.
      *
      * @param async
      * Whether to initialize the dashboard asynchronously. When true, the
      * function returns a promise that resolves with the dashboard instance.
      *
      * @return
-     * Promise that resolves with the new grid.
+     * Promise that resolves with the new Grid.
      */
     public static grid(
         renderTo: string|HTMLElement,
@@ -144,7 +143,7 @@ class Grid {
     public accessibility?: Accessibility;
 
     /**
-     * The caption element of the data grid.
+     * The caption element of the Grid.
      */
     public captionElement?: HTMLElement;
 
@@ -155,39 +154,39 @@ class Grid {
     public columnOptionsMap: Record<string, Column.Options> = {};
 
     /**
-     * The container of the data grid.
+     * The container of the grid.
      */
     public container?: HTMLElement;
 
     /**
-     * The content container of the data grid.
+     * The content container of the Grid.
      */
     public contentWrapper?: HTMLElement;
 
     /**
-     * The credits of the data grid.
+     * The credits of the Grid.
      */
     public credits?: Credits;
 
     /**
-     * The data source of the data grid. It contains the original data table
-     * that was passed to the data grid.
+     * The data source of the Grid. It contains the original data table
+     * that was passed to the Grid.
      */
     public dataTable?: DataTable;
 
     /**
-     * The description element of the data grid.
+     * The description element of the Grid.
      */
     public descriptionElement?: HTMLElement;
 
     /**
-     * The container element of the loading indicator overlaying the data grid.
+     * The container element of the loading indicator overlaying the Grid.
      */
     public loadingWrapper?: HTMLElement;
 
     /**
-     * The presentation table of the data grid. It contains a modified version
-     * of the data table that is used for rendering the data grid content. If
+     * The presentation table of the Grid. It contains a modified version
+     * of the data table that is used for rendering the Grid content. If
      * not modified, just a reference to the original data table.
      */
     public presentationTable?: DataTable;
@@ -198,24 +197,24 @@ class Grid {
     public tableElement?: HTMLTableElement;
 
     /**
-     * The options of the data grid. Contains the options that were declared
+     * The options of the Grid. Contains the options that were declared
      * by the user and some of the default options.
      */
     public options?: Options;
 
     /**
-     * The options that were declared by the user when creating the data grid
+     * The options that were declared by the user when creating the Grid
      * or when updating it.
      */
     public userOptions: Partial<Options> = {};
 
     /**
-     * The table (viewport) element of the data grid.
+     * The table (viewport) element of the Grid.
      */
     public viewport?: Table;
 
     /**
-     * The list of columns that are displayed in the data grid.
+     * The list of columns that are displayed in the Grid.
      * @internal
      */
     public enabledColumns?: string[];
@@ -255,7 +254,7 @@ class Grid {
     public time: Time;
 
     /**
-     * The locale of the data grid.
+     * The locale of the Grid.
      */
     public locale?: string | string[];
 
@@ -265,7 +264,7 @@ class Grid {
     public initialContainerHeight: number = 0;
 
     /**
-     * The unique ID of the data grid.
+     * The unique ID of the Grid.
      */
     public id: string;
 
@@ -277,16 +276,16 @@ class Grid {
     * */
 
     /**
-     * Constructs a new data grid.
+     * Constructs a new Grid.
      *
      * @param renderTo
-     * The render target (container) of the data grid.
+     * The render target (container) of the Grid.
      *
      * @param options
-     * The options of the data grid.
+     * The options of the Grid.
      *
      * @param afterLoadCallback
-     * The callback that is called after the data grid is loaded.
+     * The callback that is called after the Grid is loaded.
      */
     constructor(
         renderTo: string | HTMLElement,
@@ -340,15 +339,15 @@ class Grid {
     }
 
     /**
-     * Initializes the container of the data grid.
+     * Initializes the container of the Grid.
      *
      * @param renderTo
-     * The render target (html element or id) of the data grid.
+     * The render target (html element or id) of the Grid.
      *
      */
     private initContainers(renderTo: string|HTMLElement): void {
         const container = (typeof renderTo === 'string') ?
-            win.document.getElementById(renderTo) : renderTo;
+            Globals.win.document.getElementById(renderTo) : renderTo;
 
         // Display an error if the renderTo is wrong
         if (!container) {
@@ -365,7 +364,7 @@ class Grid {
         this.container = container;
         this.container.innerHTML = AST.emptyHTML;
         this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.classNames.container
+            className: Globals.getClassName('container')
         }, this.container);
     }
 
@@ -512,15 +511,15 @@ class Grid {
     ): void;
 
     /**
-     * Updates the data grid with new options.
+     * Updates the Grid with new options.
      *
      * @param options
-     * The options of the data grid that should be updated. If not provided,
+     * The options of the Grid that should be updated. If not provided,
      * the update will be proceeded based on the `this.userOptions` property.
      * The `column` options are merged using the `id` property as a key.
      *
      * @param render
-     * Whether to re-render the data grid after updating the options.
+     * Whether to re-render the Grid after updating the options.
      *
      * @param oneToOne
      * When `false` (default), the existing column options will be merged with
@@ -566,7 +565,7 @@ class Grid {
     ): Promise<void>;
 
     /**
-     * Updates the column of the data grid with new options.
+     * Updates the column of the Grid with new options.
      *
      * @param columnId
      * The ID of the column that should be updated.
@@ -576,7 +575,7 @@ class Grid {
      * column options for this column ID will be removed.
      *
      * @param render
-     * Whether to re-render the data grid after updating the columns.
+     * Whether to re-render the Grid after updating the columns.
      *
      * @param overwrite
      * If true, the column options will be updated by replacing the existing
@@ -713,7 +712,7 @@ class Grid {
 
         // Create a caption element.
         this.captionElement = makeHTMLElement('div', {
-            className: Globals.classNames.captionElement,
+            className: Globals.getClassName('captionElement'),
             id: this.id + '-caption'
         }, this.contentWrapper);
 
@@ -742,7 +741,7 @@ class Grid {
 
         // Create a description element.
         this.descriptionElement = makeHTMLElement('div', {
-            className: Globals.classNames.descriptionElement,
+            className: Globals.getClassName('descriptionElement'),
             id: this.id + '-description'
         }, this.contentWrapper);
 
@@ -757,7 +756,7 @@ class Grid {
     }
 
     /**
-     * Resets the content wrapper of the data grid. It clears the content and
+     * Resets the content wrapper of the Grid. It clears the content and
      * resets the class names.
      */
     public resetContentWrapper(): void {
@@ -766,13 +765,13 @@ class Grid {
         }
 
         this.contentWrapper.innerHTML = AST.emptyHTML;
-        this.contentWrapper.className = Globals.classNames.container + ' ' + (
-            this.options?.rendering?.theme || ''
-        );
+        this.contentWrapper.className =
+            Globals.getClassName('container') + ' ' +
+            this.options?.rendering?.theme || '';
     }
 
     /**
-     * Renders the viewport of the data grid. If the data grid is already
+     * Renders the viewport of the Grid. If the Grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
      * @internal
      */
@@ -812,14 +811,14 @@ class Grid {
     }
 
     /**
-     * Renders the table (viewport) of the data grid.
+     * Renders the table (viewport) of the Grid.
      *
      * @returns
-     * The newly rendered table (viewport) of the data grid.
+     * The newly rendered table (viewport) of the Grid.
      */
     private renderTable(): Table {
         this.tableElement = makeHTMLElement('table', {
-            className: Globals.classNames.tableElement
+            className: Globals.getClassName('tableElement')
         }, this.contentWrapper);
 
         return new Table(this, this.tableElement);
@@ -830,7 +829,7 @@ class Grid {
      */
     private renderNoData(): void {
         makeHTMLElement('div', {
-            className: Globals.classNames.noData,
+            className: Globals.getClassName('noData'),
             innerText: this.options?.lang?.noData
         }, this.contentWrapper);
     }
@@ -921,7 +920,7 @@ class Grid {
     }
 
     /**
-     * Destroys the data grid.
+     * Destroys the Grid.
      */
     public destroy(): void {
         const dgIndex = Grid.grids.findIndex(
@@ -932,7 +931,9 @@ class Grid {
 
         if (this.container) {
             this.container.innerHTML = AST.emptyHTML;
-            this.container.classList.remove(Globals.classNames.container);
+            this.container.classList.remove(
+                Globals.getClassName('container')
+            );
         }
 
         // Clear all properties
@@ -944,7 +945,7 @@ class Grid {
     }
 
     /**
-     * Grey out the data grid and show a loading indicator.
+     * Grey out the Grid and show a loading indicator.
      *
      * @param message
      * The message to display in the loading indicator.
@@ -958,7 +959,7 @@ class Grid {
         this.loadingWrapper = makeHTMLElement(
             'div',
             {
-                className: Globals.classNames.loadingWrapper
+                className: Globals.getClassName('loadingWrapper')
             },
             this.contentWrapper
         );
@@ -967,7 +968,7 @@ class Grid {
         makeHTMLElement(
             'div',
             {
-                className: Globals.classNames.loadingSpinner
+                className: Globals.getClassName('loadingSpinner')
             },
             this.loadingWrapper
         );
@@ -977,7 +978,7 @@ class Grid {
         const loadingSpan = makeHTMLElement(
             'span',
             {
-                className: Globals.classNames.loadingMessage
+                className: Globals.getClassName('loadingMessage')
             },
             this.loadingWrapper
         );
