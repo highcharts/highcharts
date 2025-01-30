@@ -28,11 +28,11 @@ import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
 import DataTable from '../../../Data/DataTable.js';
-import Globals from '../Globals.js';
 import Utils from '../../../Core/Utilities.js';
 import GridUtils from '../GridUtils.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import Templating from '../../../Core/Templating.js';
+import Globals from '../Globals.js';
 
 const { merge } = Utils;
 const { makeHTMLElement } = GridUtils;
@@ -181,7 +181,9 @@ class Column {
             );
         }
         if (this.viewport.grid.hoveredColumnId === this.id) {
-            cell.htmlElement.classList.add(Globals.classNames.hoveredColumn);
+            cell.htmlElement.classList.add(
+                Globals.getClassName('hoveredColumn')
+            );
         }
         this.cells.push(cell);
     }
@@ -220,12 +222,12 @@ class Column {
      */
     public setHoveredState(hovered: boolean): void {
         this.header?.htmlElement?.classList[hovered ? 'add' : 'remove'](
-            Globals.classNames.hoveredColumn
+            Globals.getClassName('hoveredColumn')
         );
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             this.cells[i].htmlElement.classList[hovered ? 'add' : 'remove'](
-                Globals.classNames.hoveredColumn
+                Globals.getClassName('hoveredColumn')
             );
         }
     }
@@ -239,12 +241,12 @@ class Column {
      */
     public setSyncedState(synced: boolean): void {
         this.header?.htmlElement?.classList[synced ? 'add' : 'remove'](
-            Globals.classNames.syncedColumn
+            Globals.getClassName('syncedColumn')
         );
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             this.cells[i].htmlElement.classList[synced ? 'add' : 'remove'](
-                Globals.classNames.syncedColumn
+                Globals.getClassName('syncedColumn')
             );
         }
     }
@@ -259,9 +261,10 @@ class Column {
     private getInitialWidth(): number {
         let result: number;
         const { viewport } = this;
+
         // Set the initial width of the column.
         const mock = makeHTMLElement('div', {
-            className: Globals.classNames.columnElement
+            className: Globals.getClassName('columnElement')
         }, viewport.grid.container);
 
         mock.setAttribute('data-column-id', this.id);

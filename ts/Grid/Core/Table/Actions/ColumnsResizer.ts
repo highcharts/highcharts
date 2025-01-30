@@ -25,12 +25,16 @@
 
 import Table from '../Table.js';
 import Column from '../Column.js';
-import Globals from '../../Globals.js';
 import GridUtils from '../../GridUtils.js';
 import Cell from '../Cell.js';
+import Globals from '../../Globals.js';
 import Utils from '../../../../Core/Utilities.js';
+
 const { makeHTMLElement } = GridUtils;
-const { getStyle } = Utils;
+const {
+    fireEvent,
+    getStyle
+} = Utils;
 
 
 /* *
@@ -57,8 +61,9 @@ class ColumnsResizer {
 
     /**
      * The column being dragged.
+     * @internal
      */
-    private draggedColumn?: Column;
+    public draggedColumn?: Column;
 
     /**
      * The start X position of the drag.
@@ -67,8 +72,9 @@ class ColumnsResizer {
 
     /**
      * The element when dragging.
+     * @internal
      */
-    private draggedResizeHandle?: HTMLElement;
+    public draggedResizeHandle?: HTMLElement;
 
     /**
      * The width of the dragged column when dragging started.
@@ -128,7 +134,7 @@ class ColumnsResizer {
             )
         ) {
             const handle = makeHTMLElement('div', {
-                className: Globals.classNames.resizerHandles
+                className: Globals.getClassName('resizerHandles')
             }, cell.htmlElement);
 
             handle.setAttribute('aria-hidden', true);
@@ -207,6 +213,8 @@ class ColumnsResizer {
      *
      * @param e
      * The mouse event.
+     *
+     * @internal
      */
     private onDocumentMouseMove = (e: MouseEvent): void => {
         if (!this.draggedResizeHandle || !this.draggedColumn) {
@@ -228,9 +236,10 @@ class ColumnsResizer {
             vp.rowsVirtualizer.adjustRowHeights();
         }
 
-        vp.grid.options?.events?.column?.afterResize?.call(
-            this.draggedColumn
-        );
+        fireEvent(this.draggedColumn, 'afterResize', {
+            target: this.draggedColumn,
+            originalEvent: e
+        });
     };
 
     /**
@@ -238,7 +247,7 @@ class ColumnsResizer {
      */
     private onDocumentMouseUp = (): void => {
         this.draggedColumn?.header?.htmlElement?.classList.remove(
-            Globals.classNames.resizedColumn
+            Globals.getClassName('resizedColumn')
         );
 
         this.dragStartX = void 0;
@@ -263,13 +272,14 @@ class ColumnsResizer {
     ): void {
         const onHandleMouseDown = (e: MouseEvent): void => {
             const vp = column.viewport;
+            const { grid } = vp;
 
-            if (!vp.grid.options?.rendering?.rows?.virtualization) {
-                vp.grid.contentWrapper?.classList.add(
-                    Globals.classNames.resizerWrapper
+            if (!grid.options?.rendering?.rows?.virtualization) {
+                grid.contentWrapper?.classList.add(
+                    Globals.getClassName('resizerWrapper')
                 );
                 // Apply widths before resizing
-                this.viewport.reflow(true);
+                vp.reflow(true);
             }
 
             this.dragStartX = e.pageX;
@@ -277,10 +287,10 @@ class ColumnsResizer {
             this.draggedResizeHandle = handle;
             this.columnStartWidth = column.getWidth();
             this.nextColumnStartWidth =
-                this.viewport.columns[column.index + 1]?.getWidth();
+                vp.columns[column.index + 1]?.getWidth();
 
             column.header?.htmlElement.classList.add(
-                Globals.classNames.resizedColumn
+                Globals.getClassName('resizedColumn')
             );
         };
 

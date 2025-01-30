@@ -28,12 +28,19 @@ import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
 import GridUtils from '../../GridUtils.js';
-import Globals from '../../Globals.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
+import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 
-const { makeHTMLElement, setHTMLContent } = GridUtils;
-const { merge, isString } = Utilities;
+const {
+    makeHTMLElement,
+    setHTMLContent
+} = GridUtils;
+const {
+    fireEvent,
+    merge,
+    isString
+} = Utilities;
 
 
 /* *
@@ -126,7 +133,7 @@ class HeaderCell extends Cell {
      */
     public override init(): HTMLTableCellElement {
         const elem = document.createElement('th', {});
-        elem.classList.add(Globals.classNames.headerCell);
+        elem.classList.add(Globals.getClassName('headerCell'));
         return elem;
     }
 
@@ -134,7 +141,7 @@ class HeaderCell extends Cell {
      * Render the cell container.
      */
     public override render(): void {
-        const column = this.column;
+        const { column } = this;
         const options = merge(column?.options || {}, this.options);
         const headerCellOptions = options.header || {};
         const isSortableData = options.sorting?.sortable && column?.data;
@@ -153,7 +160,7 @@ class HeaderCell extends Cell {
         this.row.htmlElement.appendChild(this.htmlElement);
 
         this.headerContent = makeHTMLElement('span', {
-            className: Globals.classNames.headerCellContent
+            className: Globals.getClassName('headerCellContent')
         }, this.htmlElement);
 
         // Render the header cell element content.
@@ -245,7 +252,10 @@ class HeaderCell extends Cell {
             column.sorting?.toggle();
         }
 
-        column.viewport.grid.options?.events?.header?.click?.call(column);
+        fireEvent(this, 'click', {
+            originalEvent: e,
+            target: this.column
+        });
     }
 
     /**

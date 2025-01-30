@@ -17,7 +17,6 @@
  *
  * */
 
-
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
@@ -46,10 +45,10 @@ import '../Data/Modifiers/SortModifier.js';
  *
  * */
 
-
 declare global {
     interface GridNamespace {
         win: typeof Globals.win;
+        product: 'GridLite',
         AST: typeof AST;
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
@@ -91,8 +90,9 @@ G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
-G.setOptions = Defaults.setOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
+G.product = 'GridLite';
+G.setOptions = Defaults.setOptions;
 
 
 /* *

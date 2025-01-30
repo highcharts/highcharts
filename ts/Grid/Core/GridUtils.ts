@@ -17,6 +17,26 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+/**
+ * The event object for the grid.
+ */
+export interface GridEvent<T, E extends Event = Event> {
+    /**
+     * The original browser event.
+     */
+    originalEvent?: E;
+    /**
+     * The target of the event.
+     */
+    target: T;
+}
+
+/* *
+ *
  *  Namespace
  *
  * */
@@ -24,10 +44,10 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 namespace GridUtils {
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Parameters for the makeHTMLElement utils function.
@@ -41,10 +61,10 @@ namespace GridUtils {
 
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Creates a HTML element with the provided options.
@@ -123,7 +143,7 @@ namespace GridUtils {
      *
      * @returns
      * Sanitized plain text string
-    */
+     */
     export function sanitizeText(text: string): string {
         try {
             return new DOMParser().parseFromString(text, 'text/html')
@@ -136,7 +156,7 @@ namespace GridUtils {
     /**
      * Sets an element's content, checking whether it is HTML or plain text.
      * Should be used instead of element.innerText when the content can be HTML.
-     * 
+     *
      * @param element
      * Parent element where the content should be.
      *
