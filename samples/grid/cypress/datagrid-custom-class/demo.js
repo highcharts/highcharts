@@ -1,4 +1,4 @@
-Grid.grid('container', {
+DataGrid.dataGrid('container', {
     dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -24,4 +24,6 @@ Grid.grid('container', {
         id: 'weight',
         className: 'custom-column-class-name'
     }]
+}, true).then(dg => {
+    window.dataGrid = dg;
 });
