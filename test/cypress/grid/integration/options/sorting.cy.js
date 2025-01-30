@@ -92,5 +92,5 @@ describe('DataGrid events.', () => {
                 'Weight column should be sorted.',
             ).to.deep.equal([0.5, 100, 200, 40000]);
         });
-    })
+    });
 });

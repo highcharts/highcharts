@@ -31,7 +31,7 @@ DataGrid.dataGrid('container', {
     events: {
         column: {
             afterSorting: function () {
-                const { sorting } = this.viewport.grid.querying;
+                const { sorting } = this.viewport.dataGrid.querying;
 
                 columnSelectEl.value = this.id;
                 orderSelectEl.value = sorting.currentSorting.order || '';
@@ -39,7 +39,7 @@ DataGrid.dataGrid('container', {
         }
     }
 }, true).then(dg => {
-    window.grid = dg;
+    window.dataGrid = dg;
 
     const currentSorting = dg.querying.sorting.currentSorting;
 
