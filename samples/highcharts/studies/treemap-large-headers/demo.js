@@ -77,7 +77,10 @@
                 level: 1,
                 dataLabels: {
                     enabled: true,
-                     inside: false
+                    inside: false,
+                    style: {
+                        lineClamp: 1
+                    }
                 },
                 borderWidth: 3,
                 levelIsConstant: false
@@ -90,6 +93,7 @@
                         fontWeight: 'normal'
                     }
                 },
+                groupPadding: 1,
                 levelIsConstant: false
             }, {
                 level: 1,

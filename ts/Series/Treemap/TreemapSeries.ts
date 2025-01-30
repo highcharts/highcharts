@@ -855,7 +855,7 @@ class TreemapSeries extends ScatterSeries {
                     const innerWidth = width -
                         2 * (options.padding || padding || 0);
                     style.width = `${innerWidth}px`;
-                    style.lineClamp = Math.floor(height / 16);
+                    style.lineClamp ??= Math.floor(height / 16);
                     if (point.dataLabel) {
 
                         // Make the label box itself fill the width
