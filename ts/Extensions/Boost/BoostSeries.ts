@@ -236,27 +236,27 @@ function compose<T extends typeof Series>(
         ).forEach((method): void =>
             wrapSeriesFunctions(seriesProto, seriesTypes, method)
         );
-
         wrap(
             PointClass.prototype,
             'firePointEvent',
-            function (this: typeof PointClass.prototype, proceed): boolean {
-                const eType = arguments[1];
-                const event = arguments[2];
-                if (
-                    event &&
-                    eType === 'click' &&
-                    event
-                        ?.target
-                        ?.className
-                        ?.baseVal
-                        ?.includes('highcharts-tracker')
-                ) {
-                    return false;
+            function (
+                this: typeof PointClass.prototype,
+                proceed, type, e
+            ): boolean | undefined {
+                if (type === 'click') {
+                    const point = e.point,
+                        { xAxis, yAxis } = point.series,
+                        distance = Math.sqrt(
+                            Math.pow(point.plotX + xAxis.pos - e.chartX, 2) +
+                            Math.pow(point.plotY + yAxis.pos - e.chartY, 2)
+                        );
+
+                    if (distance > 10) {
+                        return;
+                    }
                 }
                 return proceed.apply(this, [].slice.call(arguments, 1));
-            }
-        );
+            });
 
         // Set default options
         Boostables.forEach((type: string): void => {
