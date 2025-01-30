@@ -18,6 +18,6 @@ document.getElementById('destroy-btn').addEventListener('click', () => {
 
 document.getElementById('load-btn').addEventListener('click', () => {
     dg.destroy();
-    dg = new Grid.grid('container', options);
+    dg = Grid.grid('container', options);
     console.log('created:', dg);
 });

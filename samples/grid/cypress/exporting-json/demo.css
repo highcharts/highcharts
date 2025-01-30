@@ -1,6 +1,8 @@
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 .content {
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
     padding: 8px;
 }
 

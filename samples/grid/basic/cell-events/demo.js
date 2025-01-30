@@ -1,6 +1,6 @@
 const msg = document.getElementById('msg');
 
-Grid.grid('container', {
+DataGrid.dataGrid('container', {
     dataTable: {
         columns: {
             date: [1640995200000, 1641081600000, 1641168000000, 1641254400000],
