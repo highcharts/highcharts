@@ -130,11 +130,22 @@ async function scriptsTS(argv) {
         fsLib.deleteDirectory('js', true);
 
         if (product === 'Grid') {
+            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
+            const codeGridFolder = 'code/grid/';
+
             fsLib.copyAllFiles(
-                path.join(__dirname, 'scripts-dts/'),
-                'code/grid/',
+                bundleDtsFolder,
+                codeGridFolder,
                 true
             );
+
+            fsLib.copyFile(
+                codeGridFolder + 'gridlite.src.d.ts',
+                codeGridFolder + 'gridlite.d.ts'
+            );
+
+            logLib.success('Copied stand-alone DTS for Grid');
+
         } else {
             fsLib.copyAllFiles(
                 'ts',

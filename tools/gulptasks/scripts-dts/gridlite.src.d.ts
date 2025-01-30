@@ -4,11 +4,11 @@
  *
  *!*/
 
-import Grid from "./es-modules/Grid/Pro/GridPro";
-import Globals from "./es-modules/Grid/Pro/GridProGlobals";
+import Grid from "./es-modules/Grid/Core/Grid";
+import Globals from "./es-modules/Grid/Core/Globals";
 import Defaults from "./es-modules/Grid/Core/Defaults";
 
-export { default as Grid } from './es-modules/Grid/Pro/GridPro.js';
+export { default as Grid } from './es-modules/Grid/Core/Grid.js';
 export { default as Column } from './es-modules/Grid/Core/Table/Column.js';
 export { default as TableRow } from './es-modules/Grid/Core/Table/Content/TableRow.js';
 export { default as TableCell } from './es-modules/Grid/Core/Table/Content/TableCell.js';
