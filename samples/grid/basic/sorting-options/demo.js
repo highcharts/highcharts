@@ -2,7 +2,7 @@ const columnSelectEl = document.getElementById('select-column');
 const orderSelectEl = document.getElementById('select-order');
 const applyBtnEl = document.getElementById('apply-btn');
 
-Grid.grid('container', {
+DataGrid.dataGrid('container', {
     dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],

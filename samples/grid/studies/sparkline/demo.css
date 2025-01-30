@@ -1,7 +1,9 @@
-@import url("https://code.highcharts.com/grid/css/grid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 #container {
+    background-color: var(--highcharts-background-color);
     height: 800px;
+    padding: 8px;
 }
 
 .highcharts-datagrid-table tbody td {

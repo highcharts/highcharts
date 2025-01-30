@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/grid/css/grid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 #demo {
     margin: 10px;
@@ -17,6 +17,7 @@
 }
 
 .grid {
+    background-color: var(--highcharts-background-color);
     border: 1px solid red;
 }
 

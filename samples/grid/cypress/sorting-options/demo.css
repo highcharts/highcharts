@@ -1,10 +1,11 @@
-@import url("https://code.highcharts.com/grid/css/grid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 #demo {
-    margin: 8px;
+    padding: 8px;
 }
 
 #container {
+    background-color: var(--highcharts-background-color);
     height: 250px;
 }
 

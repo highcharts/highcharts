@@ -1,6 +1,7 @@
 @import url("https://code.highcharts.com/grid/css/grid.css");
 
 #container {
+    background-color: var(--highcharts-background-color);
     height: 250px;
-    margin: 8px;
+    padding: 8px;
 }

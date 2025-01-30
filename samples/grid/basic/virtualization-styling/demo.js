@@ -35,13 +35,13 @@ function generateRandomData(rows) {
 
 const dataColumns = generateRandomData(100);
 
-const staticDatagrid = Grid.grid('container', {
+const staticGrid = DataGrid.dataGrid('container', {
     dataTable: {
         columns: dataColumns
     }
 });
 
-const autoDataGrid = Grid.grid('container-noheight', {
+const autoGrid = DataGrid.dataGrid('container-noheight', {
     dataTable: {
         columns: dataColumns
     }
@@ -85,7 +85,7 @@ radioButtons.forEach(el => {
     el.addEventListener('change', e => {
         const isVirtualized = e.target.value === 'yes';
 
-        staticDatagrid.update({
+        staticGrid.update({
             rendering: {
                 rows: {
                     virtualization: isVirtualized
@@ -93,7 +93,7 @@ radioButtons.forEach(el => {
             }
         });
 
-        autoDataGrid.update({
+        autoGrid.update({
             rendering: {
                 rows: {
                     virtualization: isVirtualized
