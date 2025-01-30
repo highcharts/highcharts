@@ -41,9 +41,10 @@ import Time from '../Core/Time.js';
 const { makeHTMLElement, setHTMLContent } = DataGridUtils;
 const { win } = Globals;
 const {
-    merge,
+    extend,
     getStyle,
-    extend
+    merge,
+    pick
 } = U;
 
 
@@ -178,6 +179,11 @@ class DataGrid {
      * The description element of the data grid.
      */
     public descriptionElement?: HTMLElement;
+
+    /**
+     * The container element of the loading indicator overlaying the data grid.
+     */
+    public loadingWrapper?: HTMLElement;
 
     /**
      * The presentation table of the data grid. It contains a modified version
@@ -935,6 +941,59 @@ class DataGrid {
         });
 
         DataGrid.dataGrids.splice(dgIndex, 1);
+    }
+
+    /**
+     * Grey out the data grid and show a loading indicator.
+     *
+     * @param message
+     * The message to display in the loading indicator.
+     */
+    public showLoading(message?: string): void {
+        if (this.loadingWrapper) {
+            return;
+        }
+
+        // Create loading wrapper.
+        this.loadingWrapper = makeHTMLElement(
+            'div',
+            {
+                className: Globals.classNames.loadingWrapper
+            },
+            this.contentWrapper
+        );
+
+        // Create spinner element.
+        makeHTMLElement(
+            'div',
+            {
+                className: Globals.classNames.loadingSpinner
+            },
+            this.loadingWrapper
+        );
+
+
+        // Create loading message span element.
+        const loadingSpan = makeHTMLElement(
+            'span',
+            {
+                className: Globals.classNames.loadingMessage
+            },
+            this.loadingWrapper
+        );
+
+        setHTMLContent(
+            loadingSpan,
+            pick(message, this.options?.lang?.loading, '')
+        );
+    }
+
+    /**
+     * Removes the loading indicator.
+     */
+    public hideLoading(): void {
+        this.loadingWrapper?.remove();
+        delete this.loadingWrapper;
     }
 
     /**

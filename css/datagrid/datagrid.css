@@ -270,6 +270,11 @@
     --idg-positive-border-size: var(--hcdg-positive-border-size, var(--idg-highlight-border-size));
     --idg-positive-background: var(--hcdg-positive-background, var(--idg-positive-default-background));
 
+    /* Loading indicator */
+    --idg-loading-wrapper-background: var(--hcdg-loading-wrapper-background, var(--idg-neutral-default-background));
+    --idg-loading-wrapper-border-size: var(--hcdg-loading-wrapper-border-size, 4px);
+
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -689,6 +694,46 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table thead tr th.hcdg-left,
 .highcharts-datagrid-table tbody tr td.hcdg-left {
     text-align: left;
+}
+
+.highcharts-datagrid-loading-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--idg-loading-wrapper-background);
+    opacity: 0.5;
+    gap: 10px;
+}
+
+.highcharts-datagrid-loading-wrapper .highcharts-datagrid-loading-message {
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-datagrid-container:has(.highcharts-datagrid-loading-wrapper) .highcharts-datagrid-no-data,
+.highcharts-datagrid-container:has(.highcharts-datagrid-loading-wrapper) .highcharts-datagrid-credits-container {
+    opacity: 0;
+}
+
+.highcharts-datagrid-loading-wrapper .highcharts-datagrid-spinner {
+    border: var(--idg-loading-wrapper-border-size) solid var(--highcharts-neutral-color-60);
+    border-top: var(--idg-loading-wrapper-border-size) solid var(--highcharts-neutral-color-100);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* End DataGrid CSS Helpers Classes */
