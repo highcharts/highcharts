@@ -10,7 +10,7 @@ describe('DataGrid events.', () => {
     it('Hidden columns.', () => {
         cy.get('table thead tr:nth-child(3) th').should('have.length', 2);
         cy.window().then((win) => {
-            win.dataGrid.update({
+            win.grid.update({
                 columns: [{
                     id: 'icon',
                     enabled: false
@@ -26,7 +26,7 @@ describe('DataGrid events.', () => {
 
     it('All hidden columns in group, hide group header.', () => {
         cy.window().then((win) => {
-            win.dataGrid.update({
+            win.grid.update({
                 columns: [{
                     id: 'url',
                     enabled: false
@@ -44,12 +44,12 @@ describe('DataGrid events.', () => {
         // Click header that has direct reference to column
         cy.get('th[data-column-id="id"]')
             .click()
-            .should('have.class', 'highcharts-datagrid-column-sortable');
+            .should('have.class', 'hcg-column-sortable');
 
         // Click header that group columns
         cy.get('th')
             .contains('Product')
             .click()
-            .should('not.have.class', 'highcharts-datagrid-column-sortable');
+            .should('not.have.class', 'hcg-column-sortable');
     });
 });
