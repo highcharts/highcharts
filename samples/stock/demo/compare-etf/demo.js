@@ -20,10 +20,10 @@ const timeSeriesConnector =
             type: 'Price'
         },
         securities: [{
-            id: CSPXid, // CSSPX
+            id: CSPXid,
             idType: 'MSID'
         }, {
-            id: ESPOid, // ESPO
+            id: ESPOid,
             idType: 'MSID'
         }]
     });
