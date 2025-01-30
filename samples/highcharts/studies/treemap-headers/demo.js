@@ -8,46 +8,64 @@ Highcharts.chart('container', {
         type: 'treemap',
         allowTraversingTree: true,
         alternateStartingDirection: true,
-        borderColor: '#fff',
-        borderRadius: 6,
-        borderWidth: 2,
         dataLabels: {
             format: '{point.name}',
             style: {
                 textOutline: 'none'
             }
         },
+        borderColor: '#ffffff',
+        borderRadius: 3,
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
+            groupPadding: 5,
             dataLabels: {
                 allowOverlap: true,
                 enabled: true,
-                backgroundColor: '#cfcfef80',
-                borderColor: '#fff',
-                borderRadius: 6,
+                /*
+                backgroundColor: '#333',
+                borderColor: '#333',
+                borderRadius: 3,
                 borderWidth: 2,
+                */
                 inside: false,
                 style: {
                     fontSize: '0.6em',
                     fontWeight: 'normal',
                     textTransform: 'uppercase'
                 }
+            },
+            borderColor: '#333',
+            borderRadius: 3,
+            borderWidth: 1,
+            colorByPoint: true
+
+        }, {
+            level: 2,
+            dataLabels: {
+                enabled: true,
+                inside: false
             }
         }],
         _data: [{
-            id: 'A'
+            id: 'A',
+            name: 'A'
         }, {
             id: 'B',
+            name: 'B',
             value: 1
         }, {
             id: 'C',
+            name: 'C',
             value: 1
         }, {
             id: 'A.1',
+            name: 'A.1',
             parent: 'A'
         }, {
             id: 'A.2',
+            name: 'A.2',
             parent: 'A',
             value: 1
         }, {

@@ -557,13 +557,16 @@ class TreemapSeries extends ScatterSeries {
                     series[level?.layoutAlgorithm] &&
                     level.layoutAlgorithm
                 ),
-                series.options.layoutAlgorithm
+                options.layoutAlgorithm
             ),
             alternate = options.alternateStartingDirection,
             // Collect all children which should be included
             children = parent.children.filter((n): boolean =>
                 parent.isGroup || !n.ignore
-            );
+            ),
+            groupPadding = level?.groupPadding ?? options.groupPadding ?? 0,
+            groupPaddingXValues = groupPadding / (series.xAxis.len / 100),
+            groupPaddingYValues = groupPadding / (series.yAxis.len / 100);
 
         if (!algorithm) {
             return;
@@ -613,10 +616,19 @@ class TreemapSeries extends ScatterSeries {
                     ))
                 ) / series.yAxis.len * axisRange;
 
-                child.areaCorrection = (child.values.height + dlHeight) /
-                    child.values.height;
+                if (options.sizeBy === 'leaf') {
+                    child.areaCorrection = (child.values.height + dlHeight) /
+                        child.values.height;
+                }
                 child.values.y += dlHeight;
                 child.values.height -= dlHeight;
+            }
+
+            if (groupPadding) {
+                child.values.x += groupPaddingXValues;
+                child.values.y += groupPaddingYValues;
+                child.values.width -= 2 * groupPaddingXValues;
+                child.values.height -= 2 * groupPaddingYValues;
             }
 
             child.pointValues = merge(values, {
@@ -633,7 +645,11 @@ class TreemapSeries extends ScatterSeries {
         }
 
         // Experimental block to make space for the outside data labels
-        if (parent.level === 0 && this.hasOutsideDataLabels) {
+        if (
+            options.sizeBy === 'leaf' &&
+            parent.level === 0 &&
+            this.hasOutsideDataLabels
+        ) {
             const leafs = this.points.filter(
                     (p): boolean|undefined => p.node.isLeaf
                 ),
@@ -834,11 +850,12 @@ class TreemapSeries extends ScatterSeries {
             // Set dataLabel width to the width of the point shape minus the
             // padding
             if (point.shapeArgs) {
-                const width = point.shapeArgs.width;
-                if (width) {
-                    const innerWidth = (width || 0) -
+                const { height = 0, width = 0 } = point.shapeArgs;
+                if (width > 32 && height > 16) {
+                    const innerWidth = width -
                         2 * (options.padding || padding || 0);
                     style.width = `${innerWidth}px`;
+                    style.lineClamp = Math.floor(height / 16);
                     if (point.dataLabel) {
 
                         // Make the label box itself fill the width
@@ -850,10 +867,7 @@ class TreemapSeries extends ScatterSeries {
                         }
 
                         point.dataLabel.css({
-                            width: `${width}px`,
-                            lineClamp: Math.floor(
-                                (point.shapeArgs.height || 0) / 16
-                            )
+                            width: `${width}px`
                         });
                     }
                 // Hide labels for shapes that are too small
