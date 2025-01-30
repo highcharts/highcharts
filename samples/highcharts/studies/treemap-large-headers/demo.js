@@ -70,6 +70,7 @@
             layoutAlgorithm: 'squarified',
             allowDrillToNode: true,
             animationLimit: 1000,
+            borderRadius: 3,
             dataLabels: {
                 enabled: false
             },
@@ -79,7 +80,11 @@
                     enabled: true,
                     inside: false,
                     style: {
-                        lineClamp: 1
+                        lineClamp: 1,
+                        textOutline: 'none',
+                        textTransform: 'uppercase',
+                        fontWeight: 'normal',
+                        fontSize: '0.8em'
                     }
                 },
                 borderWidth: 3,
@@ -95,13 +100,6 @@
                 },
                 groupPadding: 1,
                 levelIsConstant: false
-            }, {
-                level: 1,
-                dataLabels: {
-                    style: {
-                        fontSize: '14px'
-                    }
-                }
             }],
             accessibility: {
                 exposeAsGroupOnly: true

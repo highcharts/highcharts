@@ -577,11 +577,7 @@ class TreemapSeries extends ScatterSeries {
 
         // We need to pre-render the data labels in order to measure the height
         // of data label group
-        if (
-            parent.level === 0 &&
-            !this.dataLabelsGroup &&
-            this.hasOutsideDataLabels
-        ) {
+        if (parent.level === 0 && this.hasOutsideDataLabels) {
             this.drawDataLabels();
         }
 
