@@ -9,6 +9,7 @@
  * */
 
 const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -128,7 +129,13 @@ async function scriptsTS(argv) {
 
         fsLib.deleteDirectory('js', true);
 
-        if (product !== 'Grid') {
+        if (product === 'Grid') {
+            fsLib.copyAllFiles(
+                path.join(__dirname, 'scripts-dts/'),
+                'code/grid/',
+                true
+            );
+        } else {
             fsLib.copyAllFiles(
                 'ts',
                 argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
