@@ -53,6 +53,7 @@ function getChartConfig() {
                 contextButton: {
                     menuItems: [
                         'printChart',
+                        'viewData',
                         'downloadPNG',
                         'downloadJPEG',
                         'downloadPDF',
@@ -622,6 +623,15 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const infoRegion = document.querySelector(
         '#highcharts-screen-reader-region-before-0 > div:first-child'
     );
+    const prefButton = document.getElementById('hc-pref-button');
+    const dataTableButton = document.getElementById(
+        'hc-linkto-highcharts-data-table-0'
+    );
+    // Hack......needs a fix TODO
+    const hideIndex = dataTableButton.getAttribute(
+        'aria-expanded'
+    ) === 'true' ? 5 : 6;
+
     // Check if info region is already displayed
     if (!infoRegion) {
         return;
@@ -666,15 +676,13 @@ function applyInfoRegion(selectedVerbosity, chart) {
     });
 
     const chartInfoElements = Array.from(innerScreenReaderDiv.children);
-    console.log(chartInfoElements);
-
 
     if (selectedVerbosity === 'short') {
         description.textContent = shortDesc;
 
         // Hide specific elements
         chartInfoElements.forEach((el, index) => {
-            if (index >= 6) {
+            if (index >= hideIndex) {
                 el.style.display = 'none';
             }
         });
@@ -688,6 +696,15 @@ function applyInfoRegion(selectedVerbosity, chart) {
                 el.style.display = 'block';
             }
         });
+    }
+
+    // Re insert data table button if disappeard
+    if (
+        !document.getElementById('hc-linkto-highcharts-data-table-0') &&
+        dataTableButton
+    ) {
+        prefButton.insertAdjacentElement('afterend', dataTableButton);
+        dataTableButton.style.display = 'block';
     }
 }
 
