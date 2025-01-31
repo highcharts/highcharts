@@ -621,6 +621,7 @@ class TreemapSeries extends ScatterSeries {
                         child.values.height;
                 }
 
+                // Make room for data label unless the group is too small
                 if (dlHeight < child.values.height / 2) {
                     child.values.y += dlHeight;
                     child.values.height -= dlHeight;
@@ -859,25 +860,12 @@ class TreemapSeries extends ScatterSeries {
             if (point.shapeArgs) {
                 const { height = 0, width = 0 } = point.shapeArgs;
                 if (width > 32 && height > 16 && point.shouldDraw()) {
-                    const innerWidth = width -
-                        2 * (options.padding || padding || 0);
-                    style.width = `${innerWidth}px`;
+                    style.width = (
+                        width - 2 * (options.padding || padding || 0)
+                    ) + 'px';
                     style.lineClamp ??= Math.floor(height / 16);
                     style.visibility = 'inherit';
-                    if (point.dataLabel) {
 
-                        // Make the label box itself fill the width
-                        if (options.inside === false) {
-                            point.dataLabel.attr({
-                                width: width - 2 * point.dataLabel.padding,
-                                'text-align': options.align
-                            });
-                        }
-
-                        point.dataLabel.css({
-                            width: `${width}px`
-                        });
-                    }
                 // Hide labels for shapes that are too small
                 } else if (point.dataLabel) {
                     style.visibility = 'hidden';
