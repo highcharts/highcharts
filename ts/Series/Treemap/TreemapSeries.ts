@@ -855,11 +855,12 @@ class TreemapSeries extends ScatterSeries {
             // padding
             if (point.shapeArgs) {
                 const { height = 0, width = 0 } = point.shapeArgs;
-                if (width > 32 && height > 16) {
+                if (width > 32 && height > 16 && point.shouldDraw()) {
                     const innerWidth = width -
                         2 * (options.padding || padding || 0);
                     style.width = `${innerWidth}px`;
                     style.lineClamp ??= Math.floor(height / 16);
+                    style.visibility = 'inherit';
                     if (point.dataLabel) {
 
                         // Make the label box itself fill the width
