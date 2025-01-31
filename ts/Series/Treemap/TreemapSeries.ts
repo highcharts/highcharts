@@ -575,14 +575,14 @@ class TreemapSeries extends ScatterSeries {
             groupPaddingYValues = useAxes ?
                 groupPadding / (series.yAxis.len / 100) :
                 groupPadding,
-            rootNode = series.nodeMap[series.rootNode],
-            axisHeight = rootNode.pointValues?.height || 0;
+            rootNode = series.nodeMap[series.rootNode];
 
         if (!algorithm) {
             return;
         }
 
-        let childrenValues: Array<TreemapNode.NodeValuesObject> = [];
+        let childrenValues: Array<TreemapNode.NodeValuesObject> = [],
+            axisHeight = rootNode.pointValues?.height || 0;
 
         if (level?.layoutStartingDirection) {
             area.direction = level.layoutStartingDirection === 'vertical' ?
@@ -593,6 +593,10 @@ class TreemapSeries extends ScatterSeries {
         let i = -1;
         for (const child of children) {
             const values = childrenValues[++i];
+
+            if (!axisHeight && child === rootNode) {
+                axisHeight = values.height;
+            }
 
             child.values = merge(values, {
                 val: child.childrenTotal,
