@@ -241,17 +241,18 @@ function compose<T extends typeof Series>(
             'firePointEvent',
             function (
                 this: typeof PointClass.prototype,
-                proceed, type, e
+                proceed,
+                type,
+                e
             ): boolean | undefined {
                 if (type === 'click' && this.series.boosted) {
-                    const point = e.point,
-                        { xAxis, yAxis } = point.series,
-                        distance = Math.sqrt(
-                            Math.pow(point.plotX + xAxis.pos - e.chartX, 2) +
-                            Math.pow(point.plotY + yAxis.pos - e.chartY, 2)
-                        );
+                    const point = e.point;
 
-                    if (distance > 10) {
+                    if (
+                        (point.dist || point.distX) >= (
+                            point.series.options.marker?.radius ?? 10
+                        )
+                    ) {
                         return;
                     }
                 }
