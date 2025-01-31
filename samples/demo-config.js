@@ -53,5 +53,10 @@ module.exports = {
         categories: ['Basic', 'Advanced'],
         filter: { tags: ['Highcharts Dashboards demo'] },
         path: '/dashboards/'
+    },
+    'Highcharts Grid': {
+        categories: ['Basic'],
+        filter: { tags: ['Highcharts Grid demo'] },
+        path: '/grid/'
     }
 };
