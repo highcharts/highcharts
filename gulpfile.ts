@@ -77,6 +77,7 @@ Gulp.registry(new GulpForwardReference());
     'lint-ts',
     'palette',
     'prep-release',
+    'prepare-react-samples',
     'reset-clone',
     'reset-visual-references',
     'scripts',
@@ -130,4 +131,4 @@ Gulp.registry(new GulpForwardReference());
     'examples': 'dist-examples',
     'start-api-server': 'jsdoc-server',
     'styles': 'scripts-css'
-}));
+} as Record<string, string>));
