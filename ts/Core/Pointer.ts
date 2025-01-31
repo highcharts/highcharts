@@ -1718,13 +1718,7 @@ class Pointer {
 
                 // Draw tooltip if necessary
                 if (tooltip && hoverPoint) {
-                    tooltip.refresh(
-                        useSharedTooltip ? (
-                            (points.length && points) || [hoverPoint]
-                        ) :
-                            hoverPoint,
-                        e
-                    );
+                    tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
                 }
             });
         // Update positions (regardless of kdpoint or hoverPoint)
