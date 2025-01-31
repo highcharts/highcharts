@@ -79,7 +79,6 @@ const getCurrentTotal = arrOfArr => {
 };
 
 (async () => {
-    // eslint-disable-next-line no-undef
     const timeSeriesConnector = new HighchartsConnectors.Morningstar
         .TimeSeriesConnector({
             ...commonMSOptions,

@@ -92,7 +92,6 @@ const commonOptions = {
 };
 
 const AMDPriceConnector =
-    // eslint-disable-next-line no-undef
     new HighchartsConnectors.Morningstar.TimeSeriesConnector({
         ...commonOptions,
         series: {
