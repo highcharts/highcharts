@@ -72,7 +72,11 @@
             animationLimit: 1000,
             borderRadius: 3,
             dataLabels: {
-                enabled: false
+                enabled: false,
+                style: {
+                    fontSize: '0.9em',
+                    fontWeight: 'normal'
+                }
             },
             levels: [{
                 level: 1,
@@ -82,9 +86,7 @@
                     style: {
                         lineClamp: 1,
                         textOutline: 'none',
-                        textTransform: 'uppercase',
-                        fontWeight: 'normal',
-                        fontSize: '0.8em'
+                        textTransform: 'uppercase'
                     }
                 },
                 borderWidth: 3,
@@ -94,9 +96,14 @@
                 dataLabels: {
                     enabled: true,
                     style: {
+                        lineClamp: 0,
                         textOutline: 'none',
-                        fontWeight: 'normal'
+                        textTransform: 'none'
                     }
+                },
+                colorVariation: {
+                    key: 'brightness',
+                    to: 0.5
                 },
                 groupPadding: 1,
                 levelIsConstant: false

@@ -19,7 +19,7 @@ Highcharts.chart('container', {
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
-            groupPadding: 5,
+            groupPadding: 3,
             dataLabels: {
                 allowOverlap: true,
                 enabled: true,
