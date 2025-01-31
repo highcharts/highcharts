@@ -620,8 +620,11 @@ class TreemapSeries extends ScatterSeries {
                     child.areaCorrection = (child.values.height + dlHeight) /
                         child.values.height;
                 }
-                child.values.y += dlHeight;
-                child.values.height -= dlHeight;
+
+                if (dlHeight < child.values.height / 2) {
+                    child.values.y += dlHeight;
+                    child.values.height -= dlHeight;
+                }
             }
 
             if (groupPadding) {

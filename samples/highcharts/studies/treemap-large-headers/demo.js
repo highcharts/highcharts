@@ -74,20 +74,22 @@
             dataLabels: {
                 enabled: false,
                 style: {
-                    fontSize: '0.9em',
-                    fontWeight: 'normal'
+                    fontSize: '0.9em'
                 }
             },
+            // sizeBy: 'leaf',
             levels: [{
                 level: 1,
                 dataLabels: {
                     enabled: true,
                     inside: false,
                     style: {
+                        fontWeight: 'bold',
                         lineClamp: 1,
-                        textOutline: 'none',
+                        textOutline: '2px #eeeeee',
                         textTransform: 'uppercase'
-                    }
+                    },
+                    padding: 3
                 },
                 borderWidth: 3,
                 levelIsConstant: false
@@ -96,6 +98,7 @@
                 dataLabels: {
                     enabled: true,
                     style: {
+                        fontWeight: 'normal',
                         lineClamp: 0,
                         textOutline: 'none',
                         textTransform: 'none'
