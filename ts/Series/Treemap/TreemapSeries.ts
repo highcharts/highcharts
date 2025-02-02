@@ -633,10 +633,16 @@ class TreemapSeries extends ScatterSeries {
             }
 
             if (groupPadding) {
-                child.values.x += groupPaddingXValues;
-                child.values.y += groupPaddingYValues;
-                child.values.width -= 2 * groupPaddingXValues;
-                child.values.height -= 2 * groupPaddingYValues;
+                const xPad = Math.min(
+                        groupPaddingXValues, child.values.width / 4
+                    ),
+                    yPad = Math.min(
+                        groupPaddingYValues, child.values.height / 4
+                    );
+                child.values.x += xPad;
+                child.values.width -= 2 * xPad;
+                child.values.y += yPad;
+                child.values.height -= 2 * yPad;
             }
 
             if (useAxes) {
@@ -727,14 +733,11 @@ class TreemapSeries extends ScatterSeries {
             /* /
             console.log('--- simulation',
                 this.simulation,
-                'minName',
-                minName,
-                'maxName',
-                maxName,
                 'worstMiss',
-                Math.max(Math.abs(minMiss), Math.abs(maxMiss))
+                Math.max(Math.abs(minMiss), Math.abs(maxMiss)),
+
             );
-            */
+            // */
 
             if (
                 // An area error less than 5% is acceptable, the human ability
