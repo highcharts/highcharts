@@ -193,6 +193,7 @@ function addPrefButtonScreenReader(chart) {
         const prefButton = document.createElement('button');
         prefButton.textContent = 'Preferences';
         prefButton.id = 'hc-pref-button';
+        prefButton.style.fontSize = fontSize;
         prefButton.addEventListener('click', () =>
             handlePrefButtonClick(chart)
         );
