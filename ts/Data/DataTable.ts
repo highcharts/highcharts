@@ -1235,7 +1235,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      *
      * @param {boolean} [typeAsOriginal=false]
      * Determines whether the original column retains its type when data
-     * replaced. If `true`, the original column keeps its type. If `false`
+     * replaced. If `true`, the original column keeps its type. If not
      * (default), the original column will adopt the type of the replacement
      * column.
      *
@@ -1246,7 +1246,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
         columns: DataTable.ColumnCollection,
         rowIndex?: number,
         eventDetail?: DataEvent.Detail,
-        typeAsOriginal: boolean = false
+        typeAsOriginal?: boolean
     ): void {
         const table = this,
             tableColumns = table.columns,
@@ -1266,7 +1266,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
         if (!defined(rowIndex) && !typeAsOriginal) {
             super.setColumns(
                 columns,
-                void 0,
+                rowIndex,
                 extend(eventDetail, { silent: true })
             );
         } else {
@@ -1283,7 +1283,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                 columnName = columnNames[i];
                 column = columns[columnName];
                 tableColumn = tableColumns[columnName];
-                rowCount = Math.max(rowCount, column.length);
 
                 ArrayConstructor = Object.getPrototypeOf(
                     (tableColumn && typeAsOriginal) ? tableColumn : column
@@ -1312,6 +1311,8 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                 ) {
                     tableColumn[i] = column[i];
                 }
+
+                rowCount = Math.max(rowCount, column.length);
             }
 
             this.applyRowCount(rowCount);
@@ -1490,16 +1491,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             modifier = table.modifier,
             rowCount = rows.length;
 
-        if (insert) {
-            for (const columnName of columnNames) {
-                if (!Array.isArray(columns[columnName])) {
-                    // eslint-disable-next-line no-console
-                    console.error('Typed array columns are not supported yet.');
-                    return;
-                }
-            }
-        }
-
         table.emit({
             type: 'setRows',
             detail: eventDetail,
@@ -1521,16 +1512,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                     const column = columns[columnNames[j]];
 
                     if (insert) {
-                        if (!Array.isArray(column)) {
-                            // eslint-disable-next-line no-console
-                            console.error(
-                                'Typed array columns are not fully ' +
-                                'supported yet.'
-                            );
-                            return;
-                        }
-
-                        column.splice(i2, 0, null);
+                        columns[columnNames[j]] = CU.splice(
+                            column, i2, 0, true, [null]
+                        ).array;
                     } else {
                         column[i2] = null;
                     }
@@ -1550,15 +1534,11 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
         if (indexRowCount > table.rowCount) {
             table.rowCount = indexRowCount;
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                const column = columns[columnNames[i]];
-
-                if (!Array.isArray(column)) {
-                    // eslint-disable-next-line no-console
-                    console.error('Typed array columns are not supported yet.');
-                    return;
-                }
-
-                column.length = indexRowCount;
+                const columnName = columnNames[i];
+                columns[columnName] = CU.setLength(
+                    columns[columnName],
+                    indexRowCount
+                );
             }
         }
 
