@@ -67,6 +67,10 @@ const lightTheme = {
         style: {
             color: '#000000'
         }
+    },
+    outsideChart: {
+        backgroundColor: '#ffffff',
+        textColor: '#000000'
     }
 };
 
@@ -122,6 +126,10 @@ const darkTheme = {
         style: {
             color: '#ffffff'
         }
+    },
+    outsideChart: {
+        backgroundColor: '#333333',
+        textColor: '#ffffff'
     }
 
 };
@@ -192,6 +200,13 @@ function applyChartTheme(chart) {
         },
         colors: theme.colors
     });
+
+    const highchartsFigure =
+        document.getElementsByClassName('highcharts-figure')[0];
+    highchartsFigure.style.backgroundColor = theme.outsideChart.backgroundColor;
+    highchartsFigure.style.color = theme.outsideChart.textColor;
+    highchartsFigure.style.margin = '0';
+    highchartsFigure.style.padding = '40px';
 }
 
 function initializeChart() {
