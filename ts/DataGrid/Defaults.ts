@@ -85,7 +85,7 @@ namespace Defaults {
             header: {
                 enabled: true
             },
-            theme: 'hcdg-theme-default'
+            theme: 'hcg-theme-default'
         },
         credits: {
             enabled: true,
