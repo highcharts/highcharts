@@ -427,6 +427,13 @@ function setupEventListeners(prefContent, chart) {
                 }]
             });
         }
+
+        chart.altTextDivs.forEach(div => {
+            const currentTop = parseInt(div.style.top, 10);
+            div.style.top =
+                isChecked ? `${currentTop - 20}px` : `${currentTop + 20}px`;
+        });
+
         setupScreenReaderSection(selectedVerbosity, chart);
 
     });
@@ -459,6 +466,11 @@ function setupEventListeners(prefContent, chart) {
                     `${rect.left + rect.width / 2 - chartRect.left}px`;
                 altTextDiv.style.top = `${rect.top - chartRect.top}px`;
                 altTextDiv.style.fontSize = fontSize;
+
+                // Adjust position if altPointLabel is checked
+                if (isAltPointLabelChecked) {
+                    altTextDiv.style.top = `${rect.top - chartRect.top - 20}px`;
+                }
 
                 // Add to chart container
                 chart.container.appendChild(altTextDiv);
