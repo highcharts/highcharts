@@ -40,6 +40,7 @@ function initializeChart() {
     const innerScreenReaderDiv = screenReaderDiv.children[0];
     longDesc = innerScreenReaderDiv.children[3].textContent;
     shortDesc = longDesc.split('. ')[0] + '.';
+
     return chart;
 }
 
@@ -628,6 +629,8 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const dataTableButton = document.getElementById(
         'hc-linkto-highcharts-data-table-0'
     );
+
+    dataTableButton.style.fontSize = fontSize;
     // Hack......needs a fix TODO
     const hideIndex = dataTableButton.getAttribute(
         'aria-expanded'
@@ -706,6 +709,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
     ) {
         prefButton.insertAdjacentElement('afterend', dataTableButton);
         dataTableButton.style.display = 'block';
+        dataTableButton.style.fontSize = fontSize;
     }
 }
 
