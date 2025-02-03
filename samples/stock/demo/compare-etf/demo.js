@@ -1,52 +1,25 @@
-const PERIOD_CAP = 12.03,
-    PERIOD_BUFFER = 15,
-    CSPXid = '0P0000OO1Z',
-    ESPOid = '0P0001HVAN';
-
-const timeSeriesConnector =
-// eslint-disable-next-line no-undef
-    new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-        api: {
-            url: 'https://demo-live-data.highcharts.com',
-            access: {
-                url: 'https://demo-live-data.highcharts.com/token/oauth',
-                token: 'token'
-            }
-        },
-        currencyId: 'EUR',
-        startDate: '2024-01-01',
-        endDate: '2025-01-01',
-        series: {
-            type: 'Price'
-        },
-        securities: [{
-            id: CSPXid,
-            idType: 'MSID'
-        }, {
-            id: ESPOid,
-            idType: 'MSID'
-        }]
-    });
 (async () => {
-    await timeSeriesConnector.load();
 
-    const {
-        [CSPXid]: CSPXValues,
-        [ESPOid]: ESPOValues,
-        Date: date
-    } = timeSeriesConnector.table.getColumns();
+    const PERIOD_CAP = 31.97,
+        PERIOD_BUFFER = 6.5;
 
-    const CSPXdata = [],
-        ESPOdata = [];
-
-    for (let i = 0; i < date.length; i++) {
-        CSPXdata.push([date[i], CSPXValues[i]]);
-        ESPOdata.push([date[i], ESPOValues[i]]);
-    }
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@25f540deda/samples/data/etfs.json'
+    ).then(response => response.json());
 
     Highcharts.stockChart('container', {
         rangeSelector: {
-            selected: 4
+            enabled: false
+        },
+
+        navigator: {
+            enabled: false
+        },
+
+        legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            align: 'left'
         },
 
         yAxis: {
@@ -57,21 +30,21 @@ const timeSeriesConnector =
             plotLines: [{
                 value: PERIOD_CAP,
                 width: 2,
-                color: 'rgba(6, 79, 233, 1)',
+                color: 'rgba(152, 251, 152, 0.4)',
                 dashStyle: 'Dash',
                 label: {
                     align: 'right',
                     text: `OUTCOME PERIOD CAP: ${PERIOD_CAP}%`,
                     x: -3,
                     style: {
-                        color: 'rgba(6, 79, 233, 1)',
+                        color: '#006666',
                         fontWeight: 'bold'
                     }
                 }
             }, {
                 value: -PERIOD_BUFFER,
                 width: 2,
-                color: 'rgba(233, 6, 41, 1)',
+                color: 'rgba(175, 238, 238, 0.6)',
                 dashStyle: 'Dash',
                 label: {
                     align: 'right',
@@ -80,7 +53,7 @@ const timeSeriesConnector =
                     x: -3,
                     y: 13,
                     style: {
-                        color: 'rgba(233, 6, 41, 1)',
+                        color: '#008B8B',
                         fontWeight: 'bold'
                     }
                 }
@@ -92,11 +65,11 @@ const timeSeriesConnector =
             plotBands: [{
                 from: 0,
                 to: PERIOD_CAP,
-                color: 'rgba(6, 79, 233, 0.2)'
+                color: 'rgba(152, 251, 152, 0.4)'
             }, {
                 from: 0,
                 to: -PERIOD_BUFFER,
-                color: 'rgba(233, 6, 41, 0.2)'
+                color: 'rgba(175, 238, 238, 0.6)'
             }]
         },
 
@@ -117,10 +90,11 @@ const timeSeriesConnector =
 
         series: [{
             name: 'iShares Core S&P 500 UCITS ETF',
-            data: CSPXdata
+            data: data.CSPX
         }, {
-            name: 'VanEck Video Gaming and eSports ETF',
-            data: ESPOdata
+            name: 'Example Buffer ETF',
+            data: data.Other
         }]
     });
+
 })();
