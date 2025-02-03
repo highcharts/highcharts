@@ -569,12 +569,6 @@ class TreemapSeries extends ScatterSeries {
                 parent.isGroup || !n.ignore
             ),
             groupPadding = level?.groupPadding ?? options.groupPadding ?? 0,
-            groupPaddingXValues = useAxes ?
-                groupPadding / (series.xAxis.len / 100) :
-                groupPadding,
-            groupPaddingYValues = useAxes ?
-                groupPadding / (series.yAxis.len / 100) :
-                groupPadding,
             rootNode = series.nodeMap[series.rootNode];
 
         if (!algorithm) {
@@ -582,6 +576,7 @@ class TreemapSeries extends ScatterSeries {
         }
 
         let childrenValues: Array<TreemapNode.NodeValuesObject> = [],
+            axisWidth = rootNode.pointValues?.width || 0,
             axisHeight = rootNode.pointValues?.height || 0;
 
         if (level?.layoutStartingDirection) {
@@ -594,9 +589,17 @@ class TreemapSeries extends ScatterSeries {
         for (const child of children) {
             const values = childrenValues[++i];
 
-            if (!axisHeight && child === rootNode) {
+            if (child === rootNode) {
+                axisWidth = axisWidth || values.width;
                 axisHeight = values.height;
             }
+
+            const groupPaddingXValues = useAxes ?
+                    groupPadding / (series.xAxis.len / axisHeight) :
+                    groupPadding,
+                groupPaddingYValues = useAxes ?
+                    groupPadding / (series.yAxis.len / axisHeight) :
+                    groupPadding;
 
             child.values = merge(values, {
                 val: child.childrenTotal,
