@@ -431,7 +431,7 @@ class SidebarPopup extends BaseForm {
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
-                            addEvent(
+                            const unbindLayoutChanged = addEvent(
                                 this.editMode,
                                 'layoutChanged',
                                 (e): void => {
@@ -450,6 +450,7 @@ class SidebarPopup extends BaseForm {
                                                     newCell.setHighlight();
 
                                                     unbind();
+                                                    unbindLayoutChanged();
                                                 }
                                             );
                                         } else {
