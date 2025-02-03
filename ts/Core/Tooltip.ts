@@ -52,6 +52,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isArrow,
     isNumber,
     isObject,
     isString,
@@ -991,7 +992,7 @@ class Tooltip {
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             formatString = options.format,
-            formatter = options.formatter || tooltip.defaultFormatter,
+            suppliedFn = options.formatter,
             styledMode = chart.styledMode;
         let wasShared = tooltip.allowShared;
 
@@ -1033,7 +1034,15 @@ class Tooltip {
         this.len = points.length; // #6128
         const text = isString(formatString) ?
             format(formatString, point, chart) :
-            formatter.call(point, tooltip);
+            (
+                suppliedFn ? (
+                    isArrow(suppliedFn) ?
+                        (suppliedFn as any)(tooltip, point) :
+                        suppliedFn.call(point, tooltip)
+                ) :
+                    tooltip.defaultFormatter.call(point, tooltip)
+            );
+
 
         // Reset the preliminary circular references
         point.points = void 0;

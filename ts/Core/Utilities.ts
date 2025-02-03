@@ -54,6 +54,17 @@ type NullType = (null|undefined);
  * */
 
 /**
+ * Check if a function is an arrow function.
+ *
+ * @param {function|undefined} fn
+ *        A potential arrow function.
+ */
+export function isArrow(fn: Function | undefined): boolean | undefined {
+    return fn?.toString().includes('=>');
+}
+
+
+/**
  * Provide error messages for debugging, with links to online explanation. This
  * function can be overridden to provide custom error handling.
  *
@@ -2029,6 +2040,9 @@ function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
 
+/**
+ *
+ */
 function ucfirst(s: unknown): string {
     return (
         (isString(s) ?
@@ -2186,6 +2200,7 @@ const Utilities = {
     getStyle,
     insertItem,
     isArray,
+    isArrow,
     isClass,
     isDOMElement,
     isFunction,
