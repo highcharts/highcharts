@@ -41,8 +41,7 @@ import type {
     SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
-    SeriesZonesOptions,
-    TypedArray
+    SeriesZonesOptions
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
@@ -54,6 +53,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
+import type Types from '../../Shared/Types';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -1607,7 +1607,7 @@ class Series {
             xExtremes,
             min,
             max,
-            xData: Array<number>|TypedArray = series.getColumn('x'),
+            xData: Array<number>|Types.TypedArray = series.getColumn('x'),
             modified = table,
             updatingNames = false;
 
@@ -1949,7 +1949,7 @@ class Series {
      * The data to inspect. Defaults to the current data within the visible
      * range.
      */
-    public getXExtremes(xData: Array<number>|TypedArray): RangeSelector.RangeObject {
+    public getXExtremes(xData: Array<number>|Types.TypedArray): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -1972,7 +1972,7 @@ class Series {
         yData?: (
             Array<(number|null)>|
             Array<Array<(number|null)>>|
-            TypedArray
+            Types.TypedArray
         ),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {

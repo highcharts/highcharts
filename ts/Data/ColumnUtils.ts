@@ -19,6 +19,7 @@
 * */
 
 import type DataTable from './DataTable';
+import type Types from '../Shared/Types';
 
 
 /**
@@ -34,14 +35,6 @@ namespace ColumnUtils {
     * */
 
     /**
-     * A typed array.
-     */
-    export type TypedArray = (
-        Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|
-        Int32Array|Uint32Array|Float32Array|Float64Array
-    );
-
-    /**
      * Result of the `shift` function.
      */
     export interface ShiftResult {
@@ -55,13 +48,6 @@ namespace ColumnUtils {
     export interface SpliceResult<T extends DataTable.Column> {
         removed: T
         array: T
-    }
-
-    /**
-     * Constructor of a typed array.
-     */
-    export interface TypedArrayConstructor {
-        new (length: number): TypedArray;
     }
 
 
@@ -93,7 +79,7 @@ namespace ColumnUtils {
     export function setLength(
         column: DataTable.Column,
         length: number,
-        asSubarray: boolean = false
+        asSubarray?: boolean
     ): DataTable.Column {
         if (Array.isArray(column)) {
             column.length = length;
@@ -101,43 +87,6 @@ namespace ColumnUtils {
         }
 
         return column[asSubarray ? 'subarray' : 'slice'](0, length);
-    }
-
-    /**
-     * Shifts first element of a column array and returns it and the rest of the
-     * array.
-     *
-     * If the column is a typed array, it will be not modified, but a subarray
-     * will be returned.
-     *
-     * @param {Highcharts.DataTableColumn} column
-     * Column to be shifted.
-     *
-     * @param {boolean} asSubarray
-     * If column is a typed array, return a subarray instead of a new array. It
-     * is faster `O(1)`, but the entire buffer will be kept in memory until all
-     * views to it are destroyed. Default is `false`.
-     *
-     * @return {ShiftResult}
-     * Object containing shifted value and the rest of the column.
-     *
-     * @private
-     */
-    export function shift(
-        column: DataTable.Column,
-        asSubarray: boolean = false
-    ): ShiftResult {
-        if (Array.isArray(column)) {
-            return {
-                value: column.shift(),
-                array: column
-            };
-        }
-
-        return {
-            value: column[0],
-            array: column[asSubarray ? 'subarray' : 'slice'](1)
-        };
     }
 
     /**
@@ -171,8 +120,8 @@ namespace ColumnUtils {
         column: DataTable.Column,
         start: number,
         deleteCount: number,
-        removedAsSubarray: boolean = true,
-        items: DataTable.CellType[]|TypedArray = []
+        removedAsSubarray?: boolean,
+        items: DataTable.CellType[]|Types.TypedArray = []
     ): SpliceResult<DataTable.Column> {
         if (Array.isArray(column)) {
             if (!Array.isArray(items)) {
@@ -186,7 +135,7 @@ namespace ColumnUtils {
         }
 
         const Constructor = Object.getPrototypeOf(column)
-            .constructor as TypedArrayConstructor;
+            .constructor as Types.TypedArrayConstructor;
 
         const removed = column[
             removedAsSubarray ? 'subarray' : 'slice'
@@ -196,7 +145,7 @@ namespace ColumnUtils {
         const result = new Constructor(newLength);
 
         result.set(column.subarray(0, start), 0);
-        result.set(items as (number[]|TypedArray), start);
+        result.set(items as (number[]|Types.TypedArray), start);
         result.set(column.subarray(start + deleteCount), start + items.length);
 
         return {
