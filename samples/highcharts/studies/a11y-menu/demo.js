@@ -15,6 +15,122 @@ let longDesc = '';
 let shortDesc = '';
 
 
+const lightTheme = {
+    colors: defaultColors,
+    chart: {
+        backgroundColor: '#ffffff',
+        style: {
+            color: '#000000'
+        }
+    },
+    title: {
+        style: {
+            color: '#000000'
+        }
+    },
+    subtitle: {
+        style: {
+            color: '#000000'
+        }
+    },
+    yAxis: {
+        labels: {
+            style: {
+                color: '#000000'
+            }
+        },
+        title: {
+            style: {
+                color: '#000000'
+            }
+        }
+    },
+    xAxis: {
+        labels: {
+            style: {
+                color: '#000000'
+            }
+        }
+    },
+    legend: {
+        itemStyle: {
+            color: '#000000'
+        }
+    },
+    credits: {
+        style: {
+            color: '#000000'
+        }
+    },
+    tooltip: {
+        backgroundColor: '#ffffff',
+        style: {
+            color: '#000000'
+        }
+    }
+};
+
+const darkTheme = {
+    colors: defaultColors,
+    chart: {
+        backgroundColor: '#333333',
+        style: {
+            color: '#ffffff'
+        }
+    },
+    title: {
+        style: {
+            color: '#ffffff'
+        }
+    },
+    subtitle: {
+        style: {
+            color: '#ffffff'
+        }
+    },
+    yAxis: {
+        labels: {
+            style: {
+                color: '#ffffff'
+            }
+        },
+        title: {
+            style: {
+                color: '#ffffff'
+            }
+        }
+    },
+    xAxis: {
+        labels: {
+            style: {
+                color: '#ffffff'
+            }
+        }
+    },
+    legend: {
+        itemStyle: {
+            color: '#ffffff'
+        }
+    },
+    credits: {
+        style: {
+            color: '#ffffff'
+        }
+    },
+    tooltip: {
+        backgroundColor: '#333333',
+        style: {
+            color: '#ffffff'
+        }
+    }
+
+};
+
+const themeMap = {
+    dark: darkTheme,
+    light: lightTheme
+};
+
 // Storing preference states globally
 let selectedVerbosity = 'full',
     selectedTextSize = 'default',
@@ -24,7 +140,59 @@ let selectedVerbosity = 'full',
     isAltPointLabelChecked = false,
     isInfoChecked = false,
     isPatternChecked = false,
-    fontSize = '';
+    fontSize = '',
+    isSelectedTheme = 'default';
+
+function getThemeConfig() {
+    const themeChoice =
+        (!isSelectedTheme || isSelectedTheme === 'default') ?
+            (window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches ?
+                'dark' : 'light') : isSelectedTheme;
+    return themeMap[themeChoice];
+}
+
+function applyChartTheme(chart) {
+    const theme = getThemeConfig();
+    chart.update({
+        chart: {
+            backgroundColor: theme.chart.backgroundColor,
+            style: theme.chart.style
+        },
+        title: {
+            style: theme.title.style
+        },
+        subtitle: {
+            style: theme.title.style
+        },
+        yAxis: {
+            labels: {
+                style: theme.yAxis.labels.style
+            },
+            title: {
+                style: theme.yAxis.title.style
+            }
+        },
+        xAxis: {
+            labels: {
+                style: theme.yAxis.labels.style
+            }
+        },
+        legend: {
+            itemStyle: theme.legend.itemStyle
+        },
+        credits: {
+            style: theme.chart.style
+        },
+        tooltip: {
+            backgroundColor: theme.chart.backgroundColor,
+            style: {
+                color: theme.chart.style.color
+            }
+        },
+        colors: theme.colors
+    });
+}
 
 function initializeChart() {
     const chart = Highcharts.chart('container', getChartConfig());
@@ -233,6 +401,18 @@ function createPreferencesDialog(chart) {
     </button>
     <h2>Preferences</h2>
     <p>Customize your chart settings to enhance your experience.</p>
+    <h3>Chart theme:</h3>
+    <div class="pref theme">
+        <input type="radio" id="theme-default" name="theme" value="default"
+        ${isSelectedTheme === 'default' ? 'checked' : ''}>
+        <label for="theme-default">System default</label>
+        <input type="radio" id="theme-dark" name="theme" value="dark"
+        ${isSelectedTheme === 'dark' ? 'checked' : ''}>
+        <label for="theme-dark">Dark</label>
+        <input type="radio" id="theme-light" name="theme" value="light"
+        ${isSelectedTheme === 'light' ? 'checked' : ''}>
+        <label for="theme-light">Light</label>
+    </div>
     <h3>Text description:</h3>
     <div class="pref verbosity">
         <input type="radio" id="short" name="verbosity" value="short"
@@ -294,6 +474,8 @@ function createPreferencesDialog(chart) {
 }
 
 function setupEventListeners(prefContent, chart) {
+    const themeRadioButtons = prefContent
+        .querySelectorAll('input[name="theme"]');
     const textSizeRadioButtons =
         prefContent.querySelectorAll('input[name="textsize"]');
     const verbosityRadioButtons =
@@ -313,6 +495,13 @@ function setupEventListeners(prefContent, chart) {
     const description = document
         .getElementsByClassName('highcharts-description')[0];
 
+    themeRadioButtons.forEach(radio => {
+        radio.addEventListener('change', event => {
+            isSelectedTheme = event.target.value;
+            applyChartTheme(chart);
+            setupScreenReaderSection(selectedVerbosity, chart);
+        });
+    });
 
     textSizeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
@@ -773,4 +962,16 @@ function createKeyboardNavigationHandler() {
 }
 
 // Initialize chart
-initializeChart();
+const chart = initializeChart();
+
+applyChartTheme(chart);
+
+// Listen for system changes if "System default" is selected
+if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    mq.addEventListener('change', () => {
+        if (isSelectedTheme === 'default') {
+            applyChartTheme(chart);
+        }
+    });
+}
