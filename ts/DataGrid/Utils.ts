@@ -136,7 +136,7 @@ namespace DataGridUtils {
     /**
      * Sets an element's content, checking whether it is HTML or plain text.
      * Should be used instead of element.innerText when the content can be HTML.
-     * 
+     *
      * @param element
      * Parent element where the content should be.
      *
