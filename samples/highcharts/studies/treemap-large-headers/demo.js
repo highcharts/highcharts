@@ -257,11 +257,18 @@
             breadcrumbs: {
                 buttonTheme: {
                     style: {
-                        color: 'white'
+                        color: 'silver'
+                    },
+                    states: {
+                        hover: {
+                            fill: '#333'
+                        },
+                        select: {
+                            style: {
+                                color: 'white'
+                            }
+                        }
                     }
-                },
-                style: {
-                    color: 'white'
                 }
             },
             dataLabels: {
@@ -320,6 +327,7 @@
                 level: 3,
                 dataLabels: {
                     enabled: true,
+                    align: 'center',
                     format: '{point.id}<br><span style="font-size: 0.7em">' +
                         '{point.custom.change}</span>',
                     style: {
@@ -343,11 +351,12 @@
             text: 'Click points to drill down. Source: <a href="http://okfn.org/">okfn.org</a>.',
             align: 'left',
             style: {
-                color: 'white'
+                color: 'silver'
             }
         },
         tooltip: {
             followPointer: true,
+            outside: true,
             headerFormat:
                 '<span style="font-size: 0.9em">{point.key}</span><br/>',
             pointFormat: '<b>Market Cap:</b>' +
@@ -400,6 +409,18 @@
         legend: {
             itemStyle: {
                 color: 'white'
+            }
+        },
+        exporting: {
+            sourceWidth: 1200,
+            sourceHeight: 800,
+            buttons: {
+                contextButton: {
+                    theme: {
+                        fill: '#252931'
+                    },
+                    symbolStroke: 'silver'
+                }
             }
         }
     });
