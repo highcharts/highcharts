@@ -223,12 +223,24 @@ function applyChartTheme(chart) {
     tableButton.style.backgroundColor = theme.button.backgroundColor;
     tableButton.style.color = theme.button.textColor;
 
+    // Update the dialog colors if the dialog is open
+    const dialog = document.getElementById('pref-menu-dialog');
+    if (dialog) {
+        setDialogColors(dialog);
+    }
+
 }
 
 function setDialogColors(dialog) {
     const theme = getThemeConfig();
     dialog.style.backgroundColor = theme.outsideChart.backgroundColor;
     dialog.style.color = theme.outsideChart.textColor;
+
+    const closeButton = dialog.querySelector('.dlg-close');
+    if (closeButton) {
+        closeButton.style.backgroundColor = theme.button.backgroundColor;
+        closeButton.style.color = theme.button.textColor;
+    }
 
 }
 
