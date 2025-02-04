@@ -191,7 +191,7 @@
         // Google class C usually left out in visualizations like this
         .filter(row => row.Symbol !== 'GOOG')
         .forEach(row => {
-            const change = 10 * (Math.random() - 0.5);
+            const change = 6 * (Math.random() - 0.5);
             data.push({
                 name: row.Name,
                 id: row.Symbol,
@@ -205,14 +205,17 @@
         });
 
     Highcharts.chart('container', {
+        chart: {
+            backgroundColor: '#252931'
+        },
         series: [{
             name: 'All',
             type: 'treemap',
             layoutAlgorithm: 'squarified',
             allowDrillToNode: true,
             animationLimit: 1000,
-            borderRadius: 3,
-            // borderColor: '#252931',
+            // borderRadius: 3,
+            borderColor: '#252931',
             color: '#252931',
             dataLabels: {
                 enabled: false,
@@ -245,8 +248,15 @@
                 dataLabels: {
                     enabled: true,
                     inside: false,
-                    align: 'left',
+                    align: 'center',
+                    shape: 'callout',
+                    backgroundColor: 'gray',
+                    // borderRadius: 3,
+                    borderWidth: 1,
+                    borderColor: '#252931',
+                    padding: 0,
                     style: {
+                        color: 'white',
                         fontWeight: 'normal',
                         fontSize: '0.6em',
                         lineClamp: 1,
@@ -273,15 +283,22 @@
             },
             data
         }],
-        subtitle: {
-            text: 'Click points to drill down. Source: <a href="http://okfn.org/">okfn.org</a>.',
-            align: 'left'
-        },
         title: {
             text: 'S&P 500 Companies',
-            align: 'left'
+            align: 'left',
+            style: {
+                color: 'white'
+            }
+        },
+        subtitle: {
+            text: 'Click points to drill down. Source: <a href="http://okfn.org/">okfn.org</a>.',
+            align: 'left',
+            style: {
+                color: 'white'
+            }
         },
         tooltip: {
+            followPointer: true,
             headerFormat:
                 '<span style="font-size: 0.9em">{point.key}</span><br/>',
             pointFormat: '<b>Market Cap:</b>' +
@@ -296,7 +313,7 @@
                 color: '#f73539',
                 name: '< -3%'
             }, {
-                from: -2.5,
+                from: -3,
                 to: -1.5,
                 color: '#bf4044',
                 name: '-2%'
@@ -316,20 +333,25 @@
                 from: 0.5,
                 to: 1.5,
                 color: '#33774e',
-                name: '1%'
+                name: '+1%'
             },
             {
                 from: 1.5,
-                to: 2.5,
+                to: 3,
                 color: '#309e4e',
-                name: '2%'
+                name: '+2%'
             },
             {
                 from: 2.5,
                 to: 999,
                 color: '#2ecc59',
-                name: '> 3%'
+                name: '> +3%'
             }]
+        },
+        legend: {
+            itemStyle: {
+                color: 'white'
+            }
         }
     });
 })();

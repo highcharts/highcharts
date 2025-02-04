@@ -737,8 +737,7 @@ class TreemapSeries extends ScatterSeries {
             console.log('--- simulation',
                 this.simulation,
                 'worstMiss',
-                Math.max(Math.abs(minMiss), Math.abs(maxMiss)),
-
+                Math.max(Math.abs(minMiss), Math.abs(maxMiss))
             );
             // */
 
@@ -870,11 +869,18 @@ class TreemapSeries extends ScatterSeries {
             if (point.shapeArgs) {
                 const { height = 0, width = 0 } = point.shapeArgs;
                 if (width > 32 && height > 16 && point.shouldDraw()) {
-                    style.width = (
-                        width - 2 * (options.padding || padding || 0)
-                    ) + 'px';
+                    const dataLabelWidth = width -
+                        2 * (options.padding || padding || 0);
+                    style.width = `${dataLabelWidth}px`;
                     style.lineClamp ??= Math.floor(height / 16);
                     style.visibility = 'inherit';
+
+                    // Make the label box itself fill the width
+                    if (options.inside === false) {
+                        point.dataLabel?.attr({
+                            width: dataLabelWidth
+                        });
+                    }
 
                 // Hide labels for shapes that are too small
                 } else if (point.dataLabel) {
