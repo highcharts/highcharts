@@ -224,7 +224,7 @@
                 }
             },
             opacity: 0.01,
-            // sizeBy: 'leaf',
+            sizeBy: 'leaf',
             levels: [{
                 level: 1,
                 dataLabels: {

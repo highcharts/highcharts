@@ -668,15 +668,25 @@ class TreemapSeries extends ScatterSeries {
         // Experimental block to make space for the outside data labels
         if (
             options.sizeBy === 'leaf' &&
-            parent.level === 0 &&
+            parent === rootNode &&
             this.hasOutsideDataLabels
         ) {
-            const leafs = this.points.filter(
-                    (p): boolean|undefined => p.node.isLeaf
+            const leaves: TreemapPoint[] = [];
+            const pushLeavesRecursive = (node: TreemapNode): void => {
+                node.children.forEach((child): void => {
+                    if (child.isLeaf) {
+                        leaves.push(child.point);
+                    } else {
+                        pushLeavesRecursive(child);
+                    }
+                });
+            };
+            pushLeavesRecursive(parent);
+            const values = leaves.map((point): number =>
+                    point.options.value || 0
                 ),
-                values = leafs.map((point): number => point.options.value || 0),
                 // Areas in terms of axis units squared
-                areas = leafs.map(({ node: { pointValues } }): number => (
+                areas = leaves.map(({ node: { pointValues } }): number => (
                     pointValues ?
                         pointValues.width * pointValues.height :
                         0
@@ -694,7 +704,7 @@ class TreemapSeries extends ScatterSeries {
             let minMiss = 0,
                 maxMiss = 0;
 
-            leafs.forEach((point, i): void => {
+            leaves.forEach((point, i): void => {
                 // Less than 1 => rendered too small, greater than 1 =>
                 // rendered too big
                 let fit = values[i] ?
@@ -756,7 +766,7 @@ class TreemapSeries extends ScatterSeries {
             // Simulation is settled, proceed to rendering. Reset the simulated
             // values and set the tree values with real data.
             } else {
-                leafs.forEach((point): void => {
+                leaves.forEach((point): void => {
                     delete point.simulatedValue;
                 });
                 this.setTreeValues(parent);
