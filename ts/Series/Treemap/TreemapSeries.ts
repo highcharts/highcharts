@@ -1010,19 +1010,8 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drillToByGroup(point: TreemapPoint): (boolean|string) {
-        let drillId: (boolean|string) = false;
-
-        if (
-            (
-                !point.node.isLeaf ||
-                point.node.isGroup
-            ) &&
-            (point.node.level - this.nodeMap[this.rootNode].level) === 1
-        ) {
-            drillId = point.id;
-        }
-
-        return drillId;
+        return (!point.node.isLeaf || point.node.isGroup) ?
+            point.id : false;
     }
 
     /**
