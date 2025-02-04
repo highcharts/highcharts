@@ -71,6 +71,10 @@ const lightTheme = {
     outsideChart: {
         backgroundColor: '#ffffff',
         textColor: '#000000'
+    },
+    button: {
+        backgroundColor: 'lightgray',
+        textColor: 'black'
     }
 };
 
@@ -129,6 +133,10 @@ const darkTheme = {
     },
     outsideChart: {
         backgroundColor: '#333333',
+        textColor: '#ffffff'
+    },
+    button: {
+        backgroundColor: '#444444',
         textColor: '#ffffff'
     }
 
@@ -201,12 +209,27 @@ function applyChartTheme(chart) {
         colors: theme.colors
     });
 
+    // Set background color for the whole chart and the text color
     const highchartsFigure =
         document.getElementsByClassName('highcharts-figure')[0];
     highchartsFigure.style.backgroundColor = theme.outsideChart.backgroundColor;
     highchartsFigure.style.color = theme.outsideChart.textColor;
     highchartsFigure.style.margin = '0';
     highchartsFigure.style.padding = '40px';
+
+    // Buttons in dark mode
+    const tableButton = document
+        .getElementById('hc-linkto-highcharts-data-table-0');
+    tableButton.style.backgroundColor = theme.button.backgroundColor;
+    tableButton.style.color = theme.button.textColor;
+
+}
+
+function setDialogColors(dialog) {
+    const theme = getThemeConfig();
+    dialog.style.backgroundColor = theme.outsideChart.backgroundColor;
+    dialog.style.color = theme.outsideChart.textColor;
+
 }
 
 function initializeChart() {
@@ -373,11 +396,15 @@ function addPrefButtonScreenReader(chart) {
     const existingPrefButton =
         screenReaderDivInnerDiv?.querySelector('#hc-pref-button');
 
+    const theme = getThemeConfig();
+
     if (!existingPrefButton) {
         const prefButton = document.createElement('button');
         prefButton.textContent = 'Preferences';
         prefButton.id = 'hc-pref-button';
         prefButton.style.fontSize = fontSize;
+        prefButton.style.backgroundColor = theme.button.backgroundColor;
+        prefButton.style.color = theme.button.textColor;
         prefButton.addEventListener('click', () =>
             handlePrefButtonClick(chart)
         );
@@ -395,7 +422,9 @@ function handlePrefButtonClick(chart) {
     chart.accessibility.keyboardNavigation.blocked = true;
     const dialog = createPreferencesDialog(chart);
     document.body.appendChild(dialog);
+
     dialog.showModal();
+    setDialogColors(dialog);
 
     trapFocusInDialog(dialog);
 
