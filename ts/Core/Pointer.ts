@@ -186,7 +186,7 @@ class Pointer {
      * Currently hovered points
      */
     public applyInactiveState(points: Array<Point> = []): void {
-        let activeSeries: Array<Series> = [];
+        const activeSeries: Array<Series> = [];
 
         // Get all active series from the hovered points
         points.forEach((item): void => {
@@ -202,9 +202,7 @@ class Pointer {
 
             // Include all child series
             if (series.linkedSeries) {
-                activeSeries = activeSeries.concat(
-                    series.linkedSeries
-                );
+                activeSeries.push.apply(activeSeries, series.linkedSeries);
             }
 
             // Include navigator series
@@ -214,15 +212,16 @@ class Pointer {
 
             // Include boosed series when they share markerGroup
             if (series.boosted && series.markerGroup) {
-                activeSeries = activeSeries.concat(
-                    this.chart.series.filter(function (otherSeries): boolean {
-                        return otherSeries.markerGroup === series.markerGroup;
-                    })
+                activeSeries.push.apply(
+                    activeSeries,
+                    this.chart.series.filter((otherSeries): boolean =>
+                        otherSeries.markerGroup === series.markerGroup
+                    )
                 );
             }
         });
         // Now loop over all series, filtering out active series
-        this.chart.series.forEach(function (series): void {
+        this.chart.series.forEach((series): void => {
             if (activeSeries.indexOf(series) === -1) {
                 // Inactive series
                 series.setState('inactive', true);
