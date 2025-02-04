@@ -1,5 +1,42 @@
 (async () => {
 
+    // Plugin for relative font size
+    Highcharts.addEvent(Highcharts.Series, 'drawDataLabels', function () {
+        if (this.type === 'treemap') {
+            this.points.forEach(point => {
+
+                // Color the level 2 headers with the combined change of its
+                // chilren
+                if (point.node.level === 2) {
+                    const previousValue = point.node.children
+                        .reduce(
+                            (acc, child) => acc + child.point.value -
+                            child.point.value * child.point.colorValue / 100,
+                            0
+                        );
+
+                    // Percentage change from previous value to point.value
+                    const change = 100 * (point.value - previousValue) /
+                        previousValue;
+                    point.custom = {
+                        change: (change < 0 ? '' : '+') +
+                            change.toFixed(2) + '%'
+                    };
+
+                    point.dlOptions.backgroundColor = this.colorAxis
+                        .toColor(change);
+                }
+
+                // Set font size based on area of the point
+                if (point.node.level === 3 && point.shapeArgs) {
+                    const area = point.shapeArgs.width * point.shapeArgs.height;
+                    point.dlOptions.style.fontSize =
+                        `${Math.min(32, 7 + Math.round(area * 0.0008))}px`;
+                }
+            });
+        }
+    });
+
     const csv = await fetch(
         'https://cdn.jsdelivr.net/gh/datasets/s-and-p-500-companies-financials/data/constituents-financials.csv'
     ).then(response => response.text());
@@ -217,11 +254,22 @@
             // borderRadius: 3,
             borderColor: '#252931',
             color: '#252931',
+            breadcrumbs: {
+                buttonTheme: {
+                    style: {
+                        color: 'white'
+                    }
+                },
+                style: {
+                    color: 'white'
+                }
+            },
             dataLabels: {
                 enabled: false,
                 allowOverlap: true,
                 style: {
-                    fontSize: '0.9em'
+                    fontSize: '0.9em',
+                    textOutline: 'none'
                 }
             },
             opacity: 0.01,
