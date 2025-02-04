@@ -219,6 +219,7 @@
             color: '#252931',
             dataLabels: {
                 enabled: false,
+                allowOverlap: true,
                 style: {
                     fontSize: '0.9em'
                 }

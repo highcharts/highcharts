@@ -668,9 +668,11 @@ class TreemapSeries extends ScatterSeries {
         // Experimental block to make space for the outside data labels
         if (
             options.sizeBy === 'leaf' &&
-            parent === rootNode &&
+            /// parent === rootNode &&
+            parent.level === 0 &&
             this.hasOutsideDataLabels
         ) {
+            /*/
             const leaves: TreemapPoint[] = [];
             const pushLeavesRecursive = (node: TreemapNode): void => {
                 node.children.forEach((child): void => {
@@ -682,6 +684,10 @@ class TreemapSeries extends ScatterSeries {
                 });
             };
             pushLeavesRecursive(parent);
+            */
+            const leaves = series.points.filter((point): boolean|undefined =>
+                point.node.isLeaf
+            );
             const values = leaves.map((point): number =>
                     point.options.value || 0
                 ),
