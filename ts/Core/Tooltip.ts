@@ -1035,7 +1035,7 @@ class Tooltip {
         const text = isString(formatString) ?
             format(formatString, point, chart) :
             (
-                suppliedFn ? (
+                suppliedFn && (point as any)?.value !== null ? (
                     isArrow(suppliedFn) ?
                         (suppliedFn as any)(point, tooltip) :
                         suppliedFn.call(point, tooltip)
@@ -1793,15 +1793,19 @@ class Tooltip {
                 height = 0,
                 width = 0
             } = this.getLabel(),
+            suppliedFn = options.positioner,
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
-            pos = (options.positioner || this.getPosition).call(
-                this,
-                width,
-                height,
-                point
-            ),
+            pos = isArrow(suppliedFn) ?
+                (suppliedFn as any)(this, width, height, point) :
+                (suppliedFn || this.getPosition).call(
+                    this,
+                    width,
+                    height,
+                    point
+                ),
             doc = H.doc;
+
 
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
