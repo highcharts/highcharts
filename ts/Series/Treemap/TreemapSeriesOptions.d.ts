@@ -548,6 +548,16 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     cluster?: TreemapSeriesClusterOptions;
 
     /**
+     * Group padding for parent elements in terms of pixels. See also the
+     * `nodeSizeBy` option that controls how the leaf nodes' size is affected by
+     * the padding.
+     *
+     * @sample {highcharts} highcharts/series-treemap/grouppadding/
+     * @since next
+     */
+    groupPadding?: number;
+
+    /**
      * Whether to ignore hidden points when the layout algorithm runs.
      * If `false`, hidden points will leave open spaces.
      *

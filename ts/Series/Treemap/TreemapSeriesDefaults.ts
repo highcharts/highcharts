@@ -331,6 +331,18 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
         }
     },
 
+    /**
+     * Group padding for parent elements in terms of pixels. See also the
+     * `nodeSizeBy` option that controls how the leaf nodes' size is affected by
+     * the padding.
+     *
+     * @sample    {highcharts} highcharts/series-treemap/grouppadding/
+     *
+     * @type      {number}
+     * @since     next
+     * @product   highcharts
+     * @apioption plotOptions.treemap.groupPadding
+     */
 
     /**
      * Set options on specific levels. Takes precedence over series options,
