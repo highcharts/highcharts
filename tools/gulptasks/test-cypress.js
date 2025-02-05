@@ -23,6 +23,10 @@ async function testCypress() {
     const argv = require('yargs').argv;
     const product = argv.product;
 
+    if (!product) {
+        return;
+    }
+
     logLib.success('Cypress tests running ' + product + '...');
 
     await processLib.exec(

@@ -392,10 +392,6 @@ specified by config.imageCapture.resultsOutputPath.
                 'They can be reviewed in ' + consoleLogPath.cyan + '.'
             );
         }
-
-        if (argv.product === 'Grid') {
-            await gulp.task('test-cypress')();
-        }
     }
 }
 
