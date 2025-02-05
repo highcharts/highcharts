@@ -21,7 +21,7 @@ async function testCypress() {
     const processLib = require('../libs/process');
     const logLib = require('../libs/log');
     const argv = require('yargs').argv;
-    const product = argv.product || 'highcharts';
+    const product = argv.product;
 
     logLib.success('Cypress tests running ' + product + '...');
 
