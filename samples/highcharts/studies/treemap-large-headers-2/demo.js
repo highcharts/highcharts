@@ -34,7 +34,7 @@
             for (country in data[region]) {
                 if (Object.hasOwnProperty.call(data[region], country)) {
                     countryP = {
-                        id: regionP.id + '_' + countryI,
+                        id: regionP.id + '_' + country.replace(' ', '-'),
                         name: country,
                         parent: regionP.id
                     };

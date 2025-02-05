@@ -65,6 +65,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,
+    clamp,
     correctFloat,
     crisp,
     defined,
@@ -623,11 +624,6 @@ class TreemapSeries extends ScatterSeries {
                     dlHeight /= (series.yAxis.len / axisHeight);
                 }
 
-                if (options.sizeBy === 'leaf') {
-                    child.areaCorrection = (child.values.height + dlHeight) /
-                        child.values.height;
-                }
-
                 // Make room for data label unless the group is too small
                 if (dlHeight < child.values.height / 2) {
                     child.values.y += dlHeight;
@@ -670,7 +666,15 @@ class TreemapSeries extends ScatterSeries {
             options.sizeBy === 'leaf' &&
             /// parent === rootNode &&
             parent.level === 0 &&
-            this.hasOutsideDataLabels
+            this.hasOutsideDataLabels &&
+
+            // Sizing by leaf value is not possible if any of the groups have
+            // explicit values
+            !series.points
+                .filter((point): boolean|undefined => !point.node.isLeaf)
+                .some((point): boolean =>
+                    typeof point.options.value === 'number'
+                )
         ) {
             /*/
             const leaves: TreemapPoint[] = [];
@@ -711,37 +715,31 @@ class TreemapSeries extends ScatterSeries {
                 maxMiss = 0;
 
             leaves.forEach((point, i): void => {
-                // Less than 1 => rendered too small, greater than 1 =>
-                // rendered too big
-                let fit = values[i] ?
-                    (areas[i] / values[i]) / expectedAreaPerValue :
-                    1;
-                const miss = 1 - fit,
-                    areaCorrection = point.node.parentNode?.areaCorrection || 1,
-                    lowerThreshold = 1 - 0.05,
-                    upperThreshold = 1 + 0.2;
+                const areaPerValue = values[i] ? (areas[i] / values[i]) : 1,
+                    // Less than 1 => rendered too small, greater than 1 =>
+                    // rendered too big
+                    fit = clamp(
+                        areaPerValue / expectedAreaPerValue,
+                        0.8,
+                        1.4
+                    );
 
-                // Negative fit means the outside data label requires more space
-                // than is available in the group. Gradually increase.
-                if (fit <= 0) {
-                    fit = 2 / areaCorrection;
+                let miss = 1 - fit;
 
-                // Small areas are sensitive to size correction and the model
-                // risks exploding. Moderate.
-                } else if (fit < lowerThreshold) {
-                    fit = lowerThreshold;
-                } else if (fit > upperThreshold) {
-                    fit = upperThreshold;
-                }
+                if (point.value) {
 
-                if (miss > maxMiss) {
-                    maxMiss = miss;
-                }
-                if (miss < minMiss) {
-                    minMiss = miss;
-                }
+                    // Very small areas are more sensitive, and matter less to
+                    // the visual impression. Give them less weight.
+                    if (areas[i] < 20) {
+                        miss *= areas[i] / 20;
+                    }
+                    if (miss > maxMiss) {
+                        maxMiss = miss;
+                    }
+                    if (miss < minMiss) {
+                        minMiss = miss;
+                    }
 
-                if (typeof point.value === 'number') {
                     point.simulatedValue = (
                         point.simulatedValue || point.value
                     ) / fit;
@@ -753,7 +751,8 @@ class TreemapSeries extends ScatterSeries {
             console.log('--- simulation',
                 this.simulation,
                 'worstMiss',
-                Math.max(Math.abs(minMiss), Math.abs(maxMiss))
+                minMiss,
+                maxMiss
             );
             // */
 

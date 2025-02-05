@@ -16,6 +16,7 @@ Highcharts.chart('container', {
         },
         borderColor: '#ffffff',
         borderRadius: 3,
+        sizeBy: 'leaf',
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
