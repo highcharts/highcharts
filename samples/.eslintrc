@@ -13,6 +13,7 @@ globals:
     Grid: true
     GOOGL: true
     Highcharts: true
+    HighchartsConnectors: true
     hs: true                    # Highslide
     jQuery: true
     moment: true                # moment.js, used in gettimezoneoffset demo
