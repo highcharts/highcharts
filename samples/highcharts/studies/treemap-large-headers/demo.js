@@ -5,8 +5,8 @@
         if (this.type === 'treemap') {
             this.points.forEach(point => {
 
-                // Color the level 2 headers with the combined change of its
-                // chilren
+                // Color the level 2 headers with the combined performance of
+                // its children
                 if (point.node.level === 2) {
                     const previousValue = point.node.children
                         .reduce(
@@ -16,15 +16,15 @@
                         );
 
                     // Percentage change from previous value to point.value
-                    const change = 100 * (point.value - previousValue) /
+                    const perf = 100 * (point.value - previousValue) /
                         previousValue;
                     point.custom = {
-                        change: (change < 0 ? '' : '+') +
-                            change.toFixed(2) + '%'
+                        performance: (perf < 0 ? '' : '+') +
+                            perf.toFixed(2) + '%'
                     };
 
                     point.dlOptions.backgroundColor = this.colorAxis
-                        .toColor(change);
+                        .toColor(perf);
                 }
 
                 // Set font size based on area of the point
@@ -37,17 +37,26 @@
         }
     });
 
-    const csv = await fetch(
-        'https://cdn.jsdelivr.net/gh/datasets/s-and-p-500-companies-financials/data/constituents-financials.csv'
-    ).then(response => response.text());
+    const getCSV = async url => {
+        const csv = await fetch(url).then(response => response.text());
 
-    const dataParser = new Highcharts.Data({ csv });
+        const data = new Highcharts.Data({ csv });
 
-    const csvData = dataParser.columns[0]
-        .map((_, i) => dataParser.columns.reduce((obj, column) => {
-            obj[column[0]] = column[i];
-            return obj;
-        }, {}));
+        const arr = data.columns[0]
+            .map((_, i) => data.columns.reduce((obj, column) => {
+                obj[column[0]] = column[i];
+                return obj;
+            }, {}));
+        return arr;
+    };
+
+    const csvData = await getCSV(
+        'https://cdn.jsdelivr.net/gh/datasets/s-and-p-500-companies-financials@67dd99e/data/constituents-financials.csv'
+    );
+
+    const oldData = await getCSV(
+        'https://cdn.jsdelivr.net/gh/datasets/s-and-p-500-companies-financials@9f63bc5/data/constituents-financials.csv'
+    );
 
     // Create the industries for the top level
     const data = [{
@@ -225,18 +234,31 @@
     });
 
     csvData
-        // Google class C usually left out in visualizations like this
-        .filter(row => row.Symbol !== 'GOOG')
+        .filter(row =>
+            // Google class C usually left out in visualizations like this
+            row.Symbol !== 'GOOG' &&
+            row.Price &&
+            row['Market Cap']
+        )
         .forEach(row => {
-            const change = 6 * (Math.random() - 0.5);
+            const old = oldData
+                .find(oldRow => oldRow.Symbol === row.Symbol);
+
+            let perf = null;
+            if (old) {
+                const oldPrice = parseFloat(old.Price),
+                    newPrice = parseFloat(row.Price);
+                perf = 100 * (newPrice - oldPrice) / oldPrice;
+            }
+
             data.push({
                 name: row.Name,
                 id: row.Symbol,
                 value: parseFloat(row['Market Cap']),
                 parent: row.Sector,
-                colorValue: change,
+                colorValue: perf,
                 custom: {
-                    change: (change < 0 ? '' : '+') + change.toFixed(2) + '%'
+                    performance: (perf < 0 ? '' : '+') + perf.toFixed(2) + '%'
                 }
             });
         });
@@ -329,7 +351,7 @@
                     enabled: true,
                     align: 'center',
                     format: '{point.id}<br><span style="font-size: 0.7em">' +
-                        '{point.custom.change}</span>',
+                        '{point.custom.performance}</span>',
                     style: {
                         color: 'white'
                     }
@@ -361,50 +383,27 @@
                 '<span style="font-size: 0.9em">{point.key}</span><br/>',
             pointFormat: '<b>Market Cap:</b>' +
                 ' USD {(divide point.value 1000000000):.1f} bln<br/>' +
-                '{#if point.custom.change}' +
-                '<b>Change:</b> {point.custom.change}{/if}'
+                '{#if point.custom.performance}' +
+                '<b>1 month performance:</b> {point.custom.performance}{/if}'
         },
         colorAxis: {
-            dataClasses: [{
-                from: -999,
-                to: -2.5,
-                color: '#f73539',
-                name: '< -3%'
-            }, {
-                from: -3,
-                to: -1.5,
-                color: '#bf4044',
-                name: '-2%'
-            }, {
-                from: -1.5,
-                to: -0.5,
-                color: '#8a444e',
-                name: '-1%'
-            },
-            {
-                from: -0.5,
-                to: 0.5,
-                color: '#414555',
-                name: '0%'
-            },
-            {
-                from: 0.5,
-                to: 1.5,
-                color: '#33774e',
-                name: '+1%'
-            },
-            {
-                from: 1.5,
-                to: 3,
-                color: '#309e4e',
-                name: '+2%'
-            },
-            {
-                from: 2.5,
-                to: 999,
-                color: '#2ecc59',
-                name: '> +3%'
-            }]
+            minColor: '#f73539',
+            maxColor: '#2ecc59',
+            stops: [
+                [0, '#f73539'],
+                [0.5, '#414555'],
+                [1, '#2ecc59']
+            ],
+            min: -10,
+            max: 10,
+            gridLineWidth: 0,
+            labels: {
+                overflow: 'allow',
+                format: '{#gt value 0}+{value}{else}{value}{/gt}%',
+                style: {
+                    color: 'white'
+                }
+            }
         },
         legend: {
             itemStyle: {
