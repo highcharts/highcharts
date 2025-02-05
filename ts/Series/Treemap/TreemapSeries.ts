@@ -91,10 +91,6 @@ const {
 
 const axisMax = 100;
 
-// The `false` implementation is experimental. Makes calculation of header
-// height and padding more accurate, but sacrifices `chart.zoomType`.
-const useAxes = true;
-
 /* *
  *
  *  Variables
@@ -596,12 +592,10 @@ class TreemapSeries extends ScatterSeries {
                 axisHeight = values.height;
             }
 
-            const groupPaddingXValues = useAxes ?
-                    groupPadding / (series.xAxis.len / axisHeight) :
-                    groupPadding,
-                groupPaddingYValues = useAxes ?
-                    groupPadding / (series.yAxis.len / axisHeight) :
-                    groupPadding;
+            const groupPaddingXValues =
+                    groupPadding / (series.xAxis.len / axisHeight),
+                groupPaddingYValues =
+                    groupPadding / (series.yAxis.len / axisHeight);
 
             child.values = merge(values, {
                 val: child.childrenTotal,
@@ -613,17 +607,13 @@ class TreemapSeries extends ScatterSeries {
                 child.children.length &&
                 child.point.dataLabels?.length
             ) {
-                let dlHeight = arrayMax(
+                const dlHeight = arrayMax(
                     child.point.dataLabels.map((dl): number => (
                         dl.options?.inside === false ?
                             dl.height || 0 :
                             0
                     ))
-                );
-
-                if (useAxes) {
-                    dlHeight /= (series.yAxis.len / axisHeight);
-                }
+                ) / (series.yAxis.len / axisHeight);
 
                 // Make room for data label unless the group is too small
                 if (dlHeight < child.values.height / 2) {
@@ -645,17 +635,14 @@ class TreemapSeries extends ScatterSeries {
                 child.values.height -= 2 * yPad;
             }
 
-            if (useAxes) {
-                child.pointValues = merge(values, {
-                    x: (values.x / series.axisRatio),
-                    // Flip y-values to avoid visual regression with csvCoord in
-                    // Axis.translate at setPointValues. #12488
-                    y: axisMax - values.y - values.height,
-                    width: (values.width / series.axisRatio)
-                } as TreemapNode.NodeValuesObject);
-            } else {
-                child.pointValues = values;
-            }
+            child.pointValues = merge(values, {
+                x: (values.x / series.axisRatio),
+                // Flip y-values to avoid visual regression with csvCoord in
+                // Axis.translate at setPointValues. #12488
+                y: axisMax - values.y - values.height,
+                width: (values.width / series.axisRatio)
+            } as TreemapNode.NodeValuesObject);
+
             // If node has children, then call method recursively
             if (child.children.length) {
                 series.calculateChildrenAreas(child, child.values);
@@ -1498,19 +1485,11 @@ class TreemapSeries extends ScatterSeries {
             // Points which is ignored, have no values.
             if (values && visible) {
                 const { height, width, x, y } = values,
-                    strokeWidth = getStrokeWidth(point);
-
-                let
-                    x1 = x,
-                    x2 = x + width,
-                    y1 = y,
-                    y2 = y + height;
-
-                if (useAxes) {
-                    const xValue = xAxis.toPixels(x, true),
-                        x2Value = xAxis.toPixels(x + width, true),
-                        yValue = yAxis.toPixels(y, true),
-                        y2Value = yAxis.toPixels(y + height, true);
+                    strokeWidth = getStrokeWidth(point),
+                    xValue = xAxis.toPixels(x, true),
+                    x2Value = xAxis.toPixels(x + width, true),
+                    yValue = yAxis.toPixels(y, true),
+                    y2Value = yAxis.toPixels(y + height, true),
 
                     // If the edge of a rectangle is on the edge, make sure it
                     // stays within the plot area by adding or substracting half
@@ -1535,7 +1514,6 @@ class TreemapSeries extends ScatterSeries {
                             strokeWidth,
                             true
                         );
-                }
 
                 // Set point values
                 const shapeArgs = {
@@ -1831,38 +1809,20 @@ class TreemapSeries extends ScatterSeries {
         series.setTreeValues(tree);
 
         // Calculate plotting values.
-        if (useAxes) {
-            series.axisRatio = (series.xAxis.len / series.yAxis.len);
-            series.nodeMap[''].pointValues = pointValues = {
-                x: 0,
-                y: 0,
-                width: axisMax,
-                height: axisMax
-            } as any;
-            series.nodeMap[''].values = seriesArea = merge(pointValues, {
-                width: (pointValues.width * series.axisRatio),
-                direction: (
-                    options.layoutStartingDirection === 'vertical' ? 0 : 1
-                ),
-                val: tree.val
-            });
-
-
-        } else {
-            series.axisRatio = (series.xAxis.len / series.yAxis.len);
-            rootNode.pointValues = pointValues = {
-                x: 0,
-                y: 0,
-                width: this.chart.plotWidth,
-                height: this.chart.plotHeight
-            } as any;
-            rootNode.values = seriesArea = merge(pointValues, {
-                direction: (
-                    options.layoutStartingDirection === 'vertical' ? 0 : 1
-                ),
-                val: rootNode.childrenTotal
-            });
-        }
+        series.axisRatio = (series.xAxis.len / series.yAxis.len);
+        series.nodeMap[''].pointValues = pointValues = {
+            x: 0,
+            y: 0,
+            width: axisMax,
+            height: axisMax
+        } as any;
+        series.nodeMap[''].values = seriesArea = merge(pointValues, {
+            width: (pointValues.width * series.axisRatio),
+            direction: (
+                options.layoutStartingDirection === 'vertical' ? 0 : 1
+            ),
+            val: tree.val
+        });
 
         // We need to pre-render the data labels in order to measure the height
         // of data label group
@@ -1870,7 +1830,7 @@ class TreemapSeries extends ScatterSeries {
             this.drawDataLabels();
         }
 
-        series.calculateChildrenAreas(useAxes ? tree : rootNode, seriesArea);
+        series.calculateChildrenAreas(tree, seriesArea);
 
         // Logic for point colors
         if (
