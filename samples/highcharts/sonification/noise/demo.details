@@ -1,0 +1,8 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Sophie Bremer
+   - Askel Johansson
+ requiresManualTesting: true
+ js_wrap: b
+...
