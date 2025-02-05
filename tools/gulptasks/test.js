@@ -392,8 +392,7 @@ specified by config.imageCapture.resultsOutputPath.
                 'They can be reviewed in ' + consoleLogPath.cyan + '.'
             );
         }
-
     }
 }
 
-gulp.task('test', gulp.series('test-docs', test));
+gulp.task('test', gulp.series('test-docs', test, 'test-cypress'));
