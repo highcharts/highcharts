@@ -1037,7 +1037,7 @@ class Tooltip {
             (
                 suppliedFn ? (
                     isArrow(suppliedFn) ?
-                        (suppliedFn as any)(tooltip, point) :
+                        (suppliedFn as any)(point, tooltip) :
                         suppliedFn.call(point, tooltip)
                 ) :
                     tooltip.defaultFormatter.call(point, tooltip)
