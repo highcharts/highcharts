@@ -6,6 +6,7 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'treemap',
+        name: 'Norge',
         allowTraversingTree: true,
         alternateStartingDirection: true,
         dataLabels: {

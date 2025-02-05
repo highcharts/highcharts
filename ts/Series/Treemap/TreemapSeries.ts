@@ -73,6 +73,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isNumber,
     isObject,
     isString,
     merge,
@@ -661,38 +662,38 @@ class TreemapSeries extends ScatterSeries {
             }
         }
 
+        const getChildrenRecursive = (
+            node: TreemapNode,
+            result: Array<TreemapPoint> = [],
+            getLeaves = true
+        ): TreemapPoint[] => {
+            node.children.forEach((child): void => {
+                if (getLeaves && child.isLeaf) {
+                    result.push(child.point);
+                } else if (!getLeaves && !child.isLeaf) {
+                    result.push(child.point);
+                }
+                if (child.children.length) {
+                    getChildrenRecursive(child, result, getLeaves);
+                }
+            });
+            return result;
+        };
+
         // Experimental block to make space for the outside data labels
         if (
             options.sizeBy === 'leaf' &&
-            /// parent === rootNode &&
-            parent.level === 0 &&
+            parent === rootNode &&
             this.hasOutsideDataLabels &&
 
             // Sizing by leaf value is not possible if any of the groups have
             // explicit values
-            !series.points
-                .filter((point): boolean|undefined => !point.node.isLeaf)
-                .some((point): boolean =>
-                    typeof point.options.value === 'number'
-                )
+            !getChildrenRecursive(rootNode, void 0, false)
+                .some((point): boolean => isNumber(point.options.value)) &&
+            !isNumber(rootNode.point?.options.value)
         ) {
-            /*/
-            const leaves: TreemapPoint[] = [];
-            const pushLeavesRecursive = (node: TreemapNode): void => {
-                node.children.forEach((child): void => {
-                    if (child.isLeaf) {
-                        leaves.push(child.point);
-                    } else {
-                        pushLeavesRecursive(child);
-                    }
-                });
-            };
-            pushLeavesRecursive(parent);
-            */
-            const leaves = series.points.filter((point): boolean|undefined =>
-                point.node.isLeaf
-            );
-            const values = leaves.map((point): number =>
+            const leaves = getChildrenRecursive(rootNode),
+                values = leaves.map((point): number =>
                     point.options.value || 0
                 ),
                 // Areas in terms of axis units squared
