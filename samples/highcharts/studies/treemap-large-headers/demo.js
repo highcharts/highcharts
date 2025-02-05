@@ -280,7 +280,7 @@
                 }
             },
             opacity: 0.01,
-            sizeBy: 'leaf',
+            nodeSizeBy: 'leaf',
             levels: [{
                 level: 1,
                 dataLabels: {

@@ -77,7 +77,7 @@
                     fontSize: '0.9em'
                 }
             },
-            sizeBy: 'leaf',
+            nodeSizeBy: 'leaf',
             levels: [{
                 level: 1,
                 dataLabels: {

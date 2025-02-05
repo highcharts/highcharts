@@ -637,6 +637,19 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     marker?: PointMarkerOptions;
 
     /**
+     * Experimental. How to set the size of child nodes when a header or padding
+     * is present. When `leaf`, the group is expanded to make room for headers
+     * and padding in order to preserve the relative sizes between leaves. When
+     * `group`, the leaves are naïvely fit into the remaining area after the
+     * header and padding are subtracted.
+     *
+     * @sample {highcharts} highcharts/series-treemap/nodesizeby/
+     * @since next
+     * @default 'parent'
+     */
+    nodeSizeBy?: 'group'|'leaf';
+
+    /**
      * The opacity of a point in treemap. When a point has children, the
      * visibility of the children is determined by the opacity.
      *
@@ -660,12 +673,6 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @product highcharts
      */
     setRootNode?: Function;
-
-    /**
-     * Experimental. How to set the size of child nodes when a header or padding
-     * is present.
-     */
-    sizeBy?: 'parent'|'leaf';
 
     /**
      * Whether to display this series type or specific series item in the

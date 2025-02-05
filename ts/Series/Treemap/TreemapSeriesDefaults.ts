@@ -348,6 +348,21 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      */
 
     /**
+     * Experimental. How to set the size of child nodes when a header or padding
+     * is present. When `leaf`, the group is expanded to make room for headers
+     * and padding in order to preserve the relative sizes between leaves. When
+     * `group`, the leaves are naïvely fit into the remaining area after the
+     * header and padding are subtracted.
+     *
+     * @sample    {highcharts} highcharts/series-treemap/nodesizeby/
+     * @since     next
+     * @type      {string}
+     * @validvalue ["group", "leaf"]
+     * @default   group
+     * @apioption plotOptios.treemap.nodeSizeBy
+     */
+
+    /**
      * Can set a `borderColor` on all points which lies on the same level.
      *
      * @type      {Highcharts.ColorString}

@@ -682,7 +682,7 @@ class TreemapSeries extends ScatterSeries {
 
         // Experimental block to make space for the outside data labels
         if (
-            options.sizeBy === 'leaf' &&
+            options.nodeSizeBy === 'leaf' &&
             parent === rootNode &&
             this.hasOutsideDataLabels &&
 
@@ -1339,6 +1339,8 @@ class TreemapSeries extends ScatterSeries {
                 }
             })
         );
+
+        this.simulation = 0;
     }
 
     /**

@@ -1,6 +1,4 @@
-// window.misses = [];
-
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         width: 600
     },
@@ -17,7 +15,6 @@ Highcharts.chart('container', {
         },
         borderColor: '#ffffff',
         borderRadius: 3,
-        sizeBy: 'leaf',
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
@@ -25,12 +22,6 @@ Highcharts.chart('container', {
             dataLabels: {
                 allowOverlap: true,
                 enabled: true,
-                /*
-                backgroundColor: '#333',
-                borderColor: '#333',
-                borderRadius: 3,
-                borderWidth: 2,
-                */
                 inside: false,
                 style: {
                     fontSize: '0.6em',
@@ -49,35 +40,6 @@ Highcharts.chart('container', {
                 enabled: true,
                 inside: false
             }
-        }],
-        _data: [{
-            id: 'A',
-            name: 'A'
-        }, {
-            id: 'B',
-            name: 'B',
-            value: 1
-        }, {
-            id: 'C',
-            name: 'C',
-            value: 1
-        }, {
-            id: 'A.1',
-            name: 'A.1',
-            parent: 'A'
-        }, {
-            id: 'A.2',
-            name: 'A.2',
-            parent: 'A',
-            value: 1
-        }, {
-            id: 'A.1.1',
-            parent: 'A.1',
-            value: 1
-        }, {
-            id: 'A.1.2',
-            parent: 'A.1',
-            value: 1
         }],
         data: [{
             id: 'A',
@@ -164,30 +126,11 @@ Highcharts.chart('container', {
     }
 });
 
-// Enable the update button
-document.getElementById('update').addEventListener('click', function () {
-    var chart = Highcharts.charts[0],
-        series = chart.series[0],
-        points = series.points,
-        point = points[Math.floor(points.length / 2)];
-
-    point.update({
-        color: '#FF0000',
-        value: 3
+// Enable the radio buttons
+document.querySelectorAll('input[name=nodeSizeBy]').forEach(input => {
+    input.addEventListener('change', () => {
+        chart.series[0].update({
+            nodeSizeBy: input.value
+        });
     });
 });
-
-/*
-Highcharts.chart('container-range', {
-    chart: {
-        type: 'columnrange'
-    },
-    title: {
-        text: 'Misses'
-    },
-    series: [{
-        name: 'Misses',
-        data: window.misses
-    }]
-});
-*/
