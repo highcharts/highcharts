@@ -389,13 +389,13 @@ QUnit.test('General Navigator tests', function (assert) {
     assert.strictEqual(
         definedScrollbarNavigatorSpace,
         scrollbarMargin,
-        'The space between scrollbar and navigator should match' +
+        'The space between scrollbar and navigator should match ' +
             'the defined scrollbar margin'
     );
     assert.strictEqual(
         definedNavigatorAxisSpace,
         navigatorMargin,
-        'The space between navigator and axis should match' +
+        'The space between navigator and axis should match ' +
             'the defined navigator margin'
     );
 
