@@ -310,8 +310,8 @@
                 level: 1,
                 dataLabels: {
                     enabled: true,
+                    headers: true,
                     align: 'left',
-                    inside: false,
                     style: {
                         // color: 'white',
                         fontWeight: 'bold',
@@ -328,7 +328,7 @@
                 level: 2,
                 dataLabels: {
                     enabled: true,
-                    inside: false,
+                    headers: true,
                     align: 'center',
                     shape: 'callout',
                     backgroundColor: 'gray',

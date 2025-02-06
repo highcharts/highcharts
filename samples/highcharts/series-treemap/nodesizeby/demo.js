@@ -20,9 +20,8 @@ const chart = Highcharts.chart('container', {
             layoutAlgorithm: 'sliceAndDice',
             groupPadding: 3,
             dataLabels: {
-                allowOverlap: true,
                 enabled: true,
-                inside: false,
+                headers: true,
                 style: {
                     fontSize: '0.6em',
                     fontWeight: 'normal',

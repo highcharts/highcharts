@@ -82,7 +82,7 @@
                 level: 1,
                 dataLabels: {
                     enabled: true,
-                    inside: false,
+                    headers: true,
                     style: {
                         fontWeight: 'bold',
                         lineClamp: 1,
