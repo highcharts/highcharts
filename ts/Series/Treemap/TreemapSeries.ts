@@ -25,7 +25,6 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type Series from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -44,6 +43,7 @@ const {
     composed,
     noop
 } = H;
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -82,6 +82,8 @@ const {
     splat,
     stableSort
 } = U;
+
+Series.keepProps.push('simulation', 'hadOutsideDataLabels');
 
 /* *
  *
@@ -213,6 +215,8 @@ class TreemapSeries extends ScatterSeries {
     public parentList?: TreemapSeries.ListOfParentsObject;
 
     public points!: Array<TreemapPoint>;
+
+    private hadOutsideDataLabels?: boolean;
 
     private hasOutsideDataLabels?: boolean;
 
@@ -608,11 +612,9 @@ class TreemapSeries extends ScatterSeries {
                 child.point.dataLabels?.length
             ) {
                 const dlHeight = arrayMax(
-                    child.point.dataLabels.map((dl): number => (
-                        dl.options?.inside === false ?
-                            dl.height || 0 :
-                            0
-                    ))
+                    child.point.dataLabels.map((dl): number =>
+                        dl.options?.inside === false && dl.height || 0
+                    )
                 ) / (series.yAxis.len / axisHeight);
 
                 // Make room for data label unless the group is too small
@@ -1289,6 +1291,8 @@ class TreemapSeries extends ScatterSeries {
                         if (breadcrumbs && e.options.breadcrumbs) {
                             breadcrumbs.update(e.options.breadcrumbs);
                         }
+
+                        this.hadOutsideDataLabels = this.hasOutsideDataLabels;
                     })
             );
 
@@ -1326,8 +1330,6 @@ class TreemapSeries extends ScatterSeries {
                 }
             })
         );
-
-        this.simulation = 0;
     }
 
     /**
@@ -1826,7 +1828,7 @@ class TreemapSeries extends ScatterSeries {
 
         // We need to pre-render the data labels in order to measure the height
         // of data label group
-        if (this.hasOutsideDataLabels) {
+        if (this.hasOutsideDataLabels || this.hadOutsideDataLabels) {
             this.drawDataLabels();
         }
 

@@ -50,6 +50,9 @@
         return arr;
     };
 
+    // Data updated every month, so we load this month and the last and make a
+    // comparison.
+    // https://github.com/datasets/s-and-p-500-companies-financials/commits/main/data/constituents-financials.csv
     const csvData = await getCSV(
         'https://cdn.jsdelivr.net/gh/datasets/s-and-p-500-companies-financials@67dd99e/data/constituents-financials.csv'
     );

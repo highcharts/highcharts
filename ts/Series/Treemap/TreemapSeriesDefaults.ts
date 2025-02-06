@@ -206,6 +206,17 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
 
             return name;
         },
+        /**
+         * Whether the data label should be rendered inside the point rectangle.
+         * When `false`, and the point is a group/parent point, the data label
+         * will be rendered as a header on top of the group. For leaf nodes,
+         * `inside: false` is not supported and it is always rendered inside.
+         *
+         * @sample {highcharts} highcharts/series-treemap/headers
+         *         Headers for parent nodes
+         *
+         * @since next
+         */
         inside: true,
         padding: 2,
         verticalAlign: 'middle',
@@ -337,7 +348,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * the padding.
      *
      * @sample    {highcharts} highcharts/series-treemap/grouppadding/
-     *
+     *            Group padding
      * @type      {number}
      * @since     next
      * @product   highcharts
@@ -367,6 +378,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * header and padding are subtracted.
      *
      * @sample    {highcharts} highcharts/series-treemap/nodesizeby/
+     *            Node sizing
      * @since     next
      * @type      {string}
      * @validvalue ["group", "leaf"]

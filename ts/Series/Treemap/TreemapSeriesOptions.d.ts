@@ -553,7 +553,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * the padding.
      *
      * @sample {highcharts} highcharts/series-treemap/grouppadding/
-     * @since next
+     *         Group padding
+     * @since  next
      */
     groupPadding?: number;
 
@@ -653,9 +654,10 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * `group`, the leaves are naïvely fit into the remaining area after the
      * header and padding are subtracted.
      *
-     * @sample {highcharts} highcharts/series-treemap/nodesizeby/
-     * @since next
-     * @default 'parent'
+     * @sample  {highcharts} highcharts/series-treemap/nodesizeby/
+     *          Node sizing
+     * @since   next
+     * @default parent
      */
     nodeSizeBy?: 'group'|'leaf';
 
