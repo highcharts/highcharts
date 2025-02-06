@@ -21,37 +21,28 @@ require('./scripts-css');
 require('./scripts-js');
 require('./scripts-webpack');
 
-Gulp.task(
-    'dist',
-    (
-        process.argv.includes('--assembler') ?
-            // < v12
-            Gulp.series(
-                'lint-ts',
-                'scripts-clean',
-                'scripts',
-                'scripts-compile',
-                'dist-clean',
-                'dist-copy',
-                'dist-examples',
-                'dist-productsjs',
-                'jsdoc-dts',
-                'lint-dts',
-                'dist-compress'
-            ) :
-            // >= v12
-            Gulp.series(
-                'lint-ts',
-                'scripts-clean',
-                'scripts',
-                'scripts-compile',
-                'dist-clean',
-                'dist-copy',
-                'dist-examples',
-                'dist-productsjs',
-                'jsdoc-dts',
-                'lint-dts',
-                'dist-compress'
-            )
-    )
-);
+function dist() {
+    const argv = require('yargs').argv;
+    const product = argv.product || 'Highcharts';
+
+    const tasks = [
+        'lint-ts',
+        'scripts-clean',
+        'scripts',
+        'scripts-compile',
+        'dist-clean',
+        'dist-copy',
+        'dist-examples',
+        'dist-productsjs'
+    ];
+
+    if (product === 'Highcharts') {
+        tasks.push('jsdoc-dts');
+    }
+
+    tasks.push('lint-dts', 'dist-compress');
+
+    return Gulp.series(tasks);
+}
+
+Gulp.task('dist', dist());

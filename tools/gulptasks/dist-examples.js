@@ -275,28 +275,46 @@ function convertURLToLocal(str) {
  */
 function distExamples() {
     const FS = require('fs');
+    const argv = require('yargs').argv;
+    const distProduct = argv.product || 'Highcharts';
 
     return new Promise((resolve, reject) => {
 
         const promises = [];
-        const samplesSubfolder = {
-            highcharts: {
-                path: ['highcharts', 'demo'],
-                title: 'Highcharts'
-            },
-            highstock: {
-                path: ['stock', 'demo'],
-                title: 'Highstock'
-            },
-            highmaps: {
-                path: ['maps', 'demo'],
-                title: 'Highmaps'
-            },
-            gantt: {
-                path: ['gantt', 'demo'],
-                title: 'Highcharts Gantt'
-            }
-        };
+        let samplesSubfolder = {};
+
+        if (distProduct === 'Highcharts') {
+            samplesSubfolder = {
+                highcharts: {
+                    path: ['highcharts', 'demo'],
+                    title: 'Highcharts'
+                },
+                highstock: {
+                    path: ['stock', 'demo'],
+                    title: 'Highstock'
+                },
+                highmaps: {
+                    path: ['maps', 'demo'],
+                    title: 'Highmaps'
+                },
+                gantt: {
+                    path: ['gantt', 'demo'],
+                    title: 'Highcharts Gantt'
+                }
+            };
+        } else if (distProduct === 'Grid') {
+            samplesSubfolder = {
+                gridlite: {
+                    path: ['grid', 'demo'],
+                    title: 'Highcharts GridLite'
+                },
+                gridpro: {
+                    path: ['grid', 'demo'],
+                    title: 'Highcharts GridPro'
+                }
+            };
+        }
+
         const template = FS
             .readFileSync(TEMPLATE_FILE)
             .toString();

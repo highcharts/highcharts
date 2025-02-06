@@ -32,18 +32,31 @@ function lintDTS(argv) {
     const fsLib = require('../libs/fs');
     const processLib = require('../libs/process');
     const logLib = require('../libs/log');
+    const product = argv.product || (
+        argv.dashboards ? 'Dashboards' : 'Highcharts'
+    );
 
     return new Promise((resolve, reject) => {
 
-        logLib.message(`Linting TypeScript declarations (.d.ts) for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
+        logLib.message(`Linting TypeScript declarations (.d.ts) for ${product} ...`);
 
         let directories = fsLib.getDirectoryPaths(TEST_FOLDER, false);
 
         directories = directories.filter(folder => {
-            if (argv.dashboards) {
-                return folder.includes('dashboards');
+            switch (product) {
+                case 'Dashboards':
+                    return folder.includes('dashboards');
+                case 'Highcharts':
+                    return !(
+                        folder.includes('dashboards') ||
+                        folder.includes('grid')
+                    );
+                case 'Grid':
+                    // TODO: Implement grid dts linting
+                    return false;
+                default:
+                    return false;
             }
-            return !folder.includes('dashboards');
         });
 
         let promiseChain = Promise.resolve();
@@ -58,7 +71,7 @@ function lintDTS(argv) {
             .then(() => logLib.success('Finished linting'))
             .then(resolve)
             .catch(error => {
-                if (argv.dashboards) {
+                if (product === 'Dashboards') {
                     logLib.failure('Linting failed, make sure you have built the Highcharts declarations first using "npx gulp dist"');
                 }
 

@@ -137,6 +137,16 @@ const CODE_FILTER = {
         ['modules', 'stock.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
+    ),
+    gridlite: [
+
+    ].map(
+        filePath => Path.join(CODE_DIRECTORY, ...filePath)
+    ),
+    gridpro: [
+
+    ].map(
+        filePath => Path.join(CODE_DIRECTORY, ...filePath)
     )
 };
 
@@ -176,6 +186,14 @@ const VENDOR_FILTER = [
     filePath => Path.join(VENDOR_DIRECTORY, filePath + '.')
 );
 
+/**
+ * Division into products.
+ */
+const PRODUCTS = {
+    Highcharts: ['highcharts', 'highstock', 'highmaps', 'gantt'],
+    Grid: ['gridlite', 'gridpro']
+};
+
 /* *
  *
  *  Tasks
@@ -192,6 +210,9 @@ function distCopy() {
 
     const FsLib = require('../libs/fs');
     const LogLib = require('../libs/log');
+    const argv = require('yargs').argv;
+
+    const distProduct = argv.product || 'Highcharts';
 
     return new Promise(resolve => {
 
@@ -199,60 +220,58 @@ function distCopy() {
 
         LogLib.message('Copying files...');
 
-        Object
-            .keys(CODE_FILTER)
-            .forEach(product => {
+        PRODUCTS[distProduct].forEach(product => {
 
-                const productFilter = CODE_FILTER[product];
+            const productFilter = CODE_FILTER[product];
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'code');
+            directory = Path.join(TARGET_DIRECTORY, product, 'code');
 
-                FsLib.copyAllFiles(
-                    CODE_DIRECTORY, directory, true,
-                    sourcePath => (
-                        !productFilter.some(
-                            filterPath => sourcePath.startsWith(filterPath)
-                        ) &&
-                        CODE_EXTENSIONS.includes(Path.extname(sourcePath))
-                    )
-                    /*
-                    if (targetPath.endsWith('.src.js')) {
-                        return targetPath.replace('.src.js', '.js');
-                    }
+            FsLib.copyAllFiles(
+                CODE_DIRECTORY, directory, true,
+                sourcePath => (
+                    !productFilter.some(
+                        filterPath => sourcePath.startsWith(filterPath)
+                    ) &&
+                    CODE_EXTENSIONS.includes(Path.extname(sourcePath))
+                )
+                /*
+                if (targetPath.endsWith('.src.js')) {
+                    return targetPath.replace('.src.js', '.js');
+                }
 
-                    return (
-                        productFilter.indexOf(sourcePath) === -1 &&
-                        sourcePath.indexOf('.src.') === -1
-                    );
-                    */
+                return (
+                    productFilter.indexOf(sourcePath) === -1 &&
+                    sourcePath.indexOf('.src.') === -1
                 );
+                */
+            );
 
-                LogLib.success('Created', directory);
+            LogLib.success('Created', directory);
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
-                FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid']
-                    .some(name => fileName.includes(`${name}.css`)));
+            directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
+            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid']
+                .some(name => fileName.includes(`${name}.css`)));
 
-                FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
-                LogLib.success('Created', directory);
+            FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
+            LogLib.success('Created', directory);
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'code', 'lib');
-                FsLib.copyAllFiles(
-                    VENDOR_DIRECTORY, directory, false,
-                    filePath => VENDOR_FILTER.some(
-                        filterPath => filePath.startsWith(filterPath)
-                    )
-                );
-                LogLib.success('Created', directory);
+            directory = Path.join(TARGET_DIRECTORY, product, 'code', 'lib');
+            FsLib.copyAllFiles(
+                VENDOR_DIRECTORY, directory, false,
+                filePath => VENDOR_FILTER.some(
+                    filterPath => filePath.startsWith(filterPath)
+                )
+            );
+            LogLib.success('Created', directory);
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
-                FsLib.copyAllFiles(GFX_DIRECTORY, directory, true, fileName => !(fileName.includes('dashboards-icons')));
-                LogLib.success('Created', directory);
+            directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
+            FsLib.copyAllFiles(GFX_DIRECTORY, directory, true, fileName => !(fileName.includes('dashboards-icons')));
+            LogLib.success('Created', directory);
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'graphics');
-                FsLib.copyAllFiles(GRAPHICS_DIRECTORY, directory, true);
-                LogLib.success('Created', directory);
-            });
+            directory = Path.join(TARGET_DIRECTORY, product, 'graphics');
+            FsLib.copyAllFiles(GRAPHICS_DIRECTORY, directory, true);
+            LogLib.success('Created', directory);
+        });
 
         resolve();
     });

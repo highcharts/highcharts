@@ -14,6 +14,17 @@ const Path = require('path');
 const TARGET_FILE = Path.join('build', 'dist', 'products.js');
 const JS_PREFIX = 'var products = ';
 
+const PRODUCT_NAMES = {
+    Highcharts: [
+        'Highcharts',
+        'Highcharts Stock',
+        'Highcharts Maps',
+        'Highcharts Gantt'
+    ],
+    Dashboards: ['Highcharts Dashboards'],
+    Grid: ['Highcharts GridLite', 'Highcharts GridPro']
+};
+
 /* *
  *
  *  Tasks
@@ -74,29 +85,34 @@ async function writeProducts(products) {
  */
 async function distProductsJS(options) {
     const LogLib = require('../libs/log');
-    const { dashboards, release } = options;
+    const argv = require('yargs').argv;
+    const distProduct = argv.product || (
+        options.dashboards ? 'Dashboards' : 'Highcharts'
+    );
+    const release = options.release || argv.release;
 
-    LogLib.message(`Creating ${TARGET_FILE} for ${dashboards ? 'dashboards' : 'highcharts'} ...`);
+    LogLib.message(`Creating ${TARGET_FILE} for ${distProduct} ...`);
     const products = await fetchCurrentProducts();
 
-    if (dashboards) {
-        products['Highcharts Dashboards'] = {
-            date: new Date().toISOString().split('T')[0],
-            nr: release
-        };
-    } else {
+    let date, nr;
+
+    if (distProduct === 'Highcharts') {
         const buildProperties = require('../../build-properties.json');
         const packageJson = require('../../package.json');
-        const date = buildProperties.date || '';
-        const nr = (buildProperties.version || packageJson.version || '').split('-')[0];
+        date = buildProperties.date || '';
+        nr = (buildProperties.version || packageJson.version || '').split('-')[0];
+    } else {
+        if (!release) {
+            throw new Error('No `--release x.x.x` provided.');
+        }
 
-        Object.entries(products).forEach(([productName, productObj]) => {
-            if (productName !== 'Highcharts Dashboards') {
-                productObj.date = date;
-                productObj.nr = nr;
-            }
-        });
+        date = new Date().toISOString().split('T')[0];
+        nr = release;
     }
+
+    PRODUCT_NAMES[distProduct].forEach(productName => {
+        products[productName] = { date, nr };
+    });
 
     await writeProducts(products);
 
