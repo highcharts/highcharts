@@ -196,7 +196,6 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @since 4.1.0
      */
     dataLabels: {
-        defer: false,
         enabled: true,
         formatter: function (): string {
             const point: TreemapPoint = this && this.point ?
