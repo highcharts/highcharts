@@ -1503,7 +1503,7 @@ class Navigator {
                 chart.options.scrollbar,
                 { vertical: chart.inverted }
             );
-            if (navigator.navigatorEnabled && !isNumber(options.margin)) {
+            if (!isNumber(options.margin)) {
                 options.margin = chart.inverted ? -3 : 3;
             }
             chart.scrollbar = navigator.scrollbar = new Scrollbar(
