@@ -1580,14 +1580,9 @@ namespace DataTable {
 
 
     /**
-     * Primitive value types for a table cell.
-     */
-    export type BasicCellType = (boolean|number|null|string|undefined);
-
-    /**
      * Possible value types for a table cell.
      */
-    export type CellType = BasicCellType|Array<BasicCellType>;
+    export type CellType = (boolean|number|null|string|undefined);
 
     /**
      * Conventional array of table cells typed as `CellType`.

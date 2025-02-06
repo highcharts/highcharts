@@ -49,9 +49,7 @@ export interface DataTableOptions {
 }
 
 
-export type DataTablePrimitiveValue = (boolean|null|number|string|undefined);
-
-export type DataTableValue = DataTablePrimitiveValue|DataTablePrimitiveValue[];
+export type DataTableValue = (boolean|null|number|string|undefined);
 
 
 /* *
