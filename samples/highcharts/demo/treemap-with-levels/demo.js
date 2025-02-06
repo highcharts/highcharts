@@ -1,27 +1,40 @@
 Highcharts.chart('container', {
     series: [{
         type: 'treemap',
-        layoutAlgorithm: 'stripes',
+        name: 'Norge',
+        allowTraversingTree: true,
         alternateStartingDirection: true,
-        borderColor: '#fff',
-        borderRadius: 6,
-        borderWidth: 2,
         dataLabels: {
+            format: '{point.name}',
             style: {
                 textOutline: 'none'
             }
         },
+        borderColor: '#ffffff',
+        borderRadius: 3,
+        nodeSizeBy: 'leaf',
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
+            groupPadding: 3,
+            dataLabels: {
+                headers: true,
+                enabled: true,
+                style: {
+                    fontSize: '0.6em',
+                    fontWeight: 'normal',
+                    textTransform: 'uppercase'
+                }
+            },
+            borderRadius: 3,
+            borderWidth: 1,
+            colorByPoint: true
+
+        }, {
+            level: 2,
             dataLabels: {
                 enabled: true,
-                align: 'left',
-                verticalAlign: 'top',
-                style: {
-                    fontSize: '15px',
-                    fontWeight: 'bold'
-                }
+                inside: false
             }
         }],
         data: [{
@@ -104,8 +117,7 @@ Highcharts.chart('container', {
     },
     tooltip: {
         useHTML: true,
-        pointFormat:
-            'The area of <b>{point.name}</b> is <b>{point.value} km<sup>' +
-            '2</sup></b>'
+        pointFormat: 'The area of <b>{point.name}</b> is \
+            <b>{point.value} km<sup>2</sup></b>'
     }
 });

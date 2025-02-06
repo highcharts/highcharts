@@ -1,16 +1,19 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/treemap.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/modules/coloraxis.js"></script>
 
 <figure class="highcharts-figure">
     <div id="container"></div>
     <p class="highcharts-description">
-        This demo shows a large data set visualized with a tree map.
-        Each country of the world has a data point, grouped by
-        continent. Click on a continent to view more detailed data.
-        Clicking on a country breaks the mortality rate further down
-        into different types.
+        This demo shows a large data set visualized with a tree map. Stock
+        symbols are grouped by sector, further grouped by top-level categories.
+        The size of each node represents the market capitalization of the stock,
+        while the color represents the change in stock price over the last
+        month. Click on a group or a single header to zoom in.
     </p>
 </figure>
