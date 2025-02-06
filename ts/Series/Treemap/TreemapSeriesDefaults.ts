@@ -383,7 +383,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @type      {string}
      * @validvalue ["group", "leaf"]
      * @default   group
-     * @apioption plotOptios.treemap.nodeSizeBy
+     * @apioption plotOptions.treemap.nodeSizeBy
      */
 
     /**
