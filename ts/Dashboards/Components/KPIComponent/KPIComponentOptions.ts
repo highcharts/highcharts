@@ -156,11 +156,10 @@ export interface Options extends Component.Options {
      * provided option. Allows to provide the callback function that updates the
      * internal KPI component value.
      */
-    calculateValueAs?:
-    | 'sum'
-    | 'average'
-    | 'median'
-    | CalculateValueAsCallbackFunction;
+    calculateValueAs?: (
+        KPIComponent.ValueCalculationType |
+        CalculateValueAsCallbackFunction
+    );
 }
 /**
  * Options for linking KPI value to the chart point.

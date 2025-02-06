@@ -210,11 +210,14 @@ class KPIComponent extends Component {
         }
     };
 
-    static calculationMethods: Record<string, (column: number[]) => number> = {
+    /**
+     * The calculateValueAs option's default calculation methods map.
+     */
+    public static calculationMethods = {
         sum: KPIComponent.calculateSumValue,
         average: KPIComponent.calculateAverageValue,
         median: KPIComponent.calculateMedianValue
-    };
+    } as const;
 
     /* *
      *
@@ -417,7 +420,7 @@ class KPIComponent extends Component {
     /**
      * Calculates value sum based on the provided column values.
      *
-     * @param colunn
+     * @param column
      * All particular column values.
      *
      * @returns
@@ -425,7 +428,7 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    static calculateSumValue(column: number[]): number {
+    private static calculateSumValue(column: number[]): number {
         let calculatedValue = 0;
 
         for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
@@ -447,7 +450,7 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    static calculateAverageValue(column: number[]): number {
+    private static calculateAverageValue(column: number[]): number {
         const valueSum = KPIComponent.calculateSumValue(column);
         return valueSum / column.length;
     }
@@ -463,7 +466,7 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    static calculateMedianValue(column: number[]): number {
+    private static calculateMedianValue(column: number[]): number {
         const sortedValues = Array.from(column).sort((a, b): number => a - b);
         const middleValue = Math.floor(sortedValues.length / 2);
         const middleSortedValue = sortedValues[middleValue];
@@ -835,6 +838,10 @@ namespace KPIComponent {
 
     /** @internal */
     export type ComponentType = KPIComponent;
+
+    /** @internal */
+    export type ValueCalculationType =
+        keyof typeof KPIComponent.calculationMethods;
 
     /** @internal */
     export interface ClassJSON extends Component.JSON {
