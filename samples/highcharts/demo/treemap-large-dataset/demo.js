@@ -1,3 +1,194 @@
+const renderChart = data => {
+    Highcharts.chart('container', {
+        chart: {
+            backgroundColor: '#252931'
+        },
+        series: [{
+            name: 'All',
+            type: 'treemap',
+            layoutAlgorithm: 'squarified',
+            allowDrillToNode: true,
+            animationLimit: 1000,
+            borderColor: '#252931',
+            color: '#252931',
+            opacity: 0.01,
+            nodeSizeBy: 'leaf',
+            dataLabels: {
+                enabled: false,
+                allowOverlap: true,
+                style: {
+                    fontSize: '0.9em',
+                    textOutline: 'none'
+                }
+            },
+            levels: [{
+                level: 1,
+                dataLabels: {
+                    enabled: true,
+                    headers: true,
+                    align: 'left',
+                    style: {
+                        fontWeight: 'bold',
+                        fontSize: '0.7em',
+                        lineClamp: 1,
+                        textTransform: 'uppercase'
+                    },
+                    padding: 3
+                },
+                borderWidth: 3,
+                levelIsConstant: false
+            }, {
+                level: 2,
+                dataLabels: {
+                    enabled: true,
+                    headers: true,
+                    align: 'center',
+                    shape: 'callout',
+                    backgroundColor: 'gray',
+                    borderWidth: 1,
+                    borderColor: '#252931',
+                    padding: 0,
+                    style: {
+                        color: 'white',
+                        fontWeight: 'normal',
+                        fontSize: '0.6em',
+                        lineClamp: 1,
+                        textOutline: 'none',
+                        textTransform: 'uppercase'
+                    }
+                },
+                groupPadding: 1
+
+            // The companies
+            }, {
+                level: 3,
+                dataLabels: {
+                    enabled: true,
+                    align: 'center',
+                    format: '{point.name}<br><span style="font-size: 0.7em">' +
+                        '{point.custom.performance}</span>',
+                    style: {
+                        color: 'white'
+                    }
+                }
+            }],
+            accessibility: {
+                exposeAsGroupOnly: true
+            },
+            breadcrumbs: {
+                buttonTheme: {
+                    style: {
+                        color: 'silver'
+                    },
+                    states: {
+                        hover: {
+                            fill: '#333'
+                        },
+                        select: {
+                            style: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+            },
+            data
+        }],
+        title: {
+            text: 'S&P 500 Companies',
+            align: 'left',
+            style: {
+                color: 'white'
+            }
+        },
+        subtitle: {
+            text: 'Click points to drill down. Source: <a href="http://okfn.org/">okfn.org</a>.',
+            align: 'left',
+            style: {
+                color: 'silver'
+            }
+        },
+        tooltip: {
+            followPointer: true,
+            outside: true,
+            headerFormat: '<span style="font-size: 0.9em">' +
+                '{point.custom.fullName}</span><br/>',
+            pointFormat: '<b>Market Cap:</b>' +
+                ' USD {(divide point.value 1000000000):.1f} bln<br/>' +
+                '{#if point.custom.performance}' +
+                '<b>1 month performance:</b> {point.custom.performance}{/if}'
+        },
+        colorAxis: {
+            minColor: '#f73539',
+            maxColor: '#2ecc59',
+            stops: [
+                [0, '#f73539'],
+                [0.5, '#414555'],
+                [1, '#2ecc59']
+            ],
+            min: -10,
+            max: 10,
+            gridLineWidth: 0,
+            labels: {
+                overflow: 'allow',
+                format: '{#gt value 0}+{value}{else}{value}{/gt}%',
+                style: {
+                    color: 'white'
+                }
+            }
+        },
+        legend: {
+            itemStyle: {
+                color: 'white'
+            }
+        },
+        exporting: {
+            sourceWidth: 1200,
+            sourceHeight: 800,
+            buttons: {
+                fullscreen: {
+                    text: '<i class="fa fa-arrows-alt"></i> Fullscreen',
+                    onclick: function () {
+                        this.fullscreen.toggle();
+                    }
+                },
+                contextButton: {
+                    menuItems: [
+                        'downloadPNG',
+                        'downloadJPEG',
+                        'downloadPDF',
+                        'downloadSVG'
+                    ],
+                    text: '<i class="fa fa-share-alt"></i> Export',
+                    symbol: void 0,
+                    y: 0
+                }
+            }
+        },
+        navigation: {
+            buttonOptions: {
+                theme: {
+                    fill: '#252931',
+                    style: {
+                        color: 'silver',
+                        whiteSpace: 'nowrap'
+                    },
+                    states: {
+                        hover: {
+                            fill: '#333',
+                            style: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                },
+                symbolStroke: 'silver',
+                useHTML: true
+            }
+        }
+    });
+};
+
 (async () => {
 
     // Plugin for relative font size
@@ -10,21 +201,25 @@
                 if (point.node.level === 2) {
                     const previousValue = point.node.children
                         .reduce(
-                            (acc, child) => acc + child.point.value -
-                            child.point.value * child.point.colorValue / 100,
+                            (acc, child) => acc + (child.point.value || 0) -
+                            (child.point.value || 0) *
+                            (child.point.colorValue || 0) / 100,
                             0
                         );
 
                     // Percentage change from previous value to point.value
                     const perf = 100 * (point.value - previousValue) /
                         previousValue;
+
                     point.custom = {
                         performance: (perf < 0 ? '' : '+') +
                             perf.toFixed(2) + '%'
                     };
 
-                    point.dlOptions.backgroundColor = this.colorAxis
-                        .toColor(perf);
+                    if (point.dlOptions) {
+                        point.dlOptions.backgroundColor = this.colorAxis
+                            .toColor(perf);
+                    }
                 }
 
                 // Set font size based on area of the point
@@ -234,6 +429,9 @@
     // Register name for the categories and sectors
     data.forEach(point => {
         point.name = point.id;
+        point.custom = {
+            fullName: point.id
+        };
     });
 
     csvData
@@ -255,204 +453,17 @@
             }
 
             data.push({
-                name: row.Name,
+                name: row.Symbol,
                 id: row.Symbol,
                 value: parseFloat(row['Market Cap']),
                 parent: row.Sector,
                 colorValue: perf,
                 custom: {
+                    fullName: row.Name,
                     performance: (perf < 0 ? '' : '+') + perf.toFixed(2) + '%'
                 }
             });
         });
 
-    Highcharts.chart('container', {
-        chart: {
-            backgroundColor: '#252931'
-        },
-        series: [{
-            name: 'All',
-            type: 'treemap',
-            layoutAlgorithm: 'squarified',
-            allowDrillToNode: true,
-            animationLimit: 1000,
-            // borderRadius: 3,
-            borderColor: '#252931',
-            color: '#252931',
-            breadcrumbs: {
-                buttonTheme: {
-                    style: {
-                        color: 'silver'
-                    },
-                    states: {
-                        hover: {
-                            fill: '#333'
-                        },
-                        select: {
-                            style: {
-                                color: 'white'
-                            }
-                        }
-                    }
-                }
-            },
-            dataLabels: {
-                enabled: false,
-                allowOverlap: true,
-                style: {
-                    fontSize: '0.9em',
-                    textOutline: 'none'
-                }
-            },
-            opacity: 0.01,
-            nodeSizeBy: 'leaf',
-            levels: [{
-                level: 1,
-                dataLabels: {
-                    enabled: true,
-                    headers: true,
-                    align: 'left',
-                    style: {
-                        fontWeight: 'bold',
-                        fontSize: '0.7em',
-                        lineClamp: 1,
-                        textTransform: 'uppercase'
-                    },
-                    padding: 3
-                },
-                borderWidth: 3,
-                levelIsConstant: false
-            }, {
-                level: 2,
-                dataLabels: {
-                    enabled: true,
-                    headers: true,
-                    align: 'center',
-                    shape: 'callout',
-                    backgroundColor: 'gray',
-                    borderWidth: 1,
-                    borderColor: '#252931',
-                    padding: 0,
-                    style: {
-                        color: 'white',
-                        fontWeight: 'normal',
-                        fontSize: '0.6em',
-                        lineClamp: 1,
-                        textOutline: 'none',
-                        textTransform: 'uppercase'
-                    }
-                },
-                groupPadding: 1
-
-            // The companies
-            }, {
-                level: 3,
-                dataLabels: {
-                    enabled: true,
-                    align: 'center',
-                    format: '{point.id}<br><span style="font-size: 0.7em">' +
-                        '{point.custom.performance}</span>',
-                    style: {
-                        color: 'white'
-                    }
-                }
-            }],
-            accessibility: {
-                exposeAsGroupOnly: true
-            },
-            data
-        }],
-        title: {
-            text: 'S&P 500 Companies',
-            align: 'left',
-            style: {
-                color: 'white'
-            }
-        },
-        subtitle: {
-            text: 'Click points to drill down. Source: <a href="http://okfn.org/">okfn.org</a>.',
-            align: 'left',
-            style: {
-                color: 'silver'
-            }
-        },
-        tooltip: {
-            followPointer: true,
-            outside: true,
-            headerFormat:
-                '<span style="font-size: 0.9em">{point.key}</span><br/>',
-            pointFormat: '<b>Market Cap:</b>' +
-                ' USD {(divide point.value 1000000000):.1f} bln<br/>' +
-                '{#if point.custom.performance}' +
-                '<b>1 month performance:</b> {point.custom.performance}{/if}'
-        },
-        colorAxis: {
-            minColor: '#f73539',
-            maxColor: '#2ecc59',
-            stops: [
-                [0, '#f73539'],
-                [0.5, '#414555'],
-                [1, '#2ecc59']
-            ],
-            min: -10,
-            max: 10,
-            gridLineWidth: 0,
-            labels: {
-                overflow: 'allow',
-                format: '{#gt value 0}+{value}{else}{value}{/gt}%',
-                style: {
-                    color: 'white'
-                }
-            }
-        },
-        legend: {
-            itemStyle: {
-                color: 'white'
-            }
-        },
-        exporting: {
-            sourceWidth: 1200,
-            sourceHeight: 800,
-            buttons: {
-                fullscreen: {
-                    text: '<i class="fa fa-arrows-alt"></i> Fullscreen',
-                    onclick: function () {
-                        this.fullscreen.toggle();
-                    }
-                },
-                contextButton: {
-                    menuItems: [
-                        'downloadPNG',
-                        'downloadJPEG',
-                        'downloadPDF',
-                        'downloadSVG'
-                    ],
-                    text: '<i class="fa fa-share-alt"></i> Export',
-                    symbol: void 0,
-                    y: 0
-                }
-            }
-        },
-        navigation: {
-            buttonOptions: {
-                theme: {
-                    fill: '#252931',
-                    style: {
-                        color: 'silver',
-                        whiteSpace: 'nowrap'
-                    },
-                    states: {
-                        hover: {
-                            fill: '#333',
-                            style: {
-                                color: 'white'
-                            }
-                        }
-                    }
-                },
-                symbolStroke: 'silver',
-                useHTML: true
-            }
-        }
-    });
+    renderChart(data);
 })();
