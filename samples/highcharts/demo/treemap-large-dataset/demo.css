@@ -13,7 +13,9 @@ body {
 }
 
 #container {
+    min-width: 320px;
     height: 90vh;
+    min-height: 600px;
 }
 
 .highcharts-figure {
@@ -27,4 +29,10 @@ body {
 
 tspan {
     fill: inherit;
+}
+
+@media screen and (max-width: 600px) {
+    #container {
+        height: 400px;
+    }
 }

@@ -161,7 +161,7 @@ const renderChart = data => {
                     ],
                     text: '<i class="fa fa-share-alt"></i> Export',
                     symbol: void 0,
-                    y: 0
+                    y: -2
                 }
             }
         },
@@ -183,7 +183,8 @@ const renderChart = data => {
                     }
                 },
                 symbolStroke: 'silver',
-                useHTML: true
+                useHTML: true,
+                y: -2
             }
         }
     });
