@@ -30,6 +30,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type {
+    TreemapDataLabelOptions,
     TreemapSeriesLevelOptions,
     TreemapSeriesOptions
 } from './TreemapSeriesOptions';
@@ -613,7 +614,8 @@ class TreemapSeries extends ScatterSeries {
             ) {
                 const dlHeight = arrayMax(
                     child.point.dataLabels.map((dl): number =>
-                        dl.options?.inside === false && dl.height || 0
+                        (dl.options as TreemapDataLabelOptions|undefined)
+                            ?.headers && dl.height || 0
                     )
                 ) / (series.yAxis.len / axisHeight);
 
@@ -839,7 +841,7 @@ class TreemapSeries extends ScatterSeries {
         for (const point of points) {
             const style: CSSObject = {},
                 // Set options to new object to avoid problems with scope
-                options: DataLabelOptions = { style },
+                options: TreemapDataLabelOptions = { style },
                 level = mapOptionsToLevel[point.node.level];
 
             // If not a leaf, then label should be disabled as default
@@ -863,9 +865,8 @@ class TreemapSeries extends ScatterSeries {
             // Headers are always top-aligned. Leaf nodes no not support
             // headers.
             if (point.node.isLeaf) {
-                delete options.inside;
-            }
-            if (options.inside === false) {
+                options.inside = true;
+            } else if (options.headers) {
                 options.verticalAlign = 'top';
             }
 
@@ -881,7 +882,7 @@ class TreemapSeries extends ScatterSeries {
                     style.visibility = 'inherit';
 
                     // Make the label box itself fill the width
-                    if (options.inside === false) {
+                    if (options.headers) {
                         point.dataLabel?.attr({
                             width: dataLabelWidth
                         });
@@ -1239,7 +1240,7 @@ class TreemapSeries extends ScatterSeries {
                 }
 
                 // Check if we need to reserve space for headers
-                const dataLabels: Array<DataLabelOptions> = splat(
+                const dataLabels: Array<TreemapDataLabelOptions> = splat(
                     options.dataLabels || {}
                 );
 
@@ -1251,7 +1252,7 @@ class TreemapSeries extends ScatterSeries {
                 });
 
                 this.hasOutsideDataLabels = dataLabels.some(
-                    (dl): boolean => dl.inside === false
+                    (dl): boolean|undefined => dl.headers
                 );
             });
 

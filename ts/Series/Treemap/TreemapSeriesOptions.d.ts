@@ -52,6 +52,20 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
+export interface TreemapDataLabelOptions extends DataLabelOptions {
+    /**
+     * Whether the data label should act as a group-level header. For leaf
+     * nodes, headers are not supported and the data label will be rendered
+     * inside.
+     *
+     * @sample {highcharts} highcharts/series-treemap/headers
+     *         Headers for parent nodes
+     *
+     * @since next
+     */
+    headers?: boolean
+}
+
 export type TreemapSeriesLayoutAlgorithmValue = (
     'sliceAndDice'|'stripes'|'squarified'|'strip'
 );
@@ -284,7 +298,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      *
      * @product highcharts
      */
-    dataLabels?: Partial<DataLabelOptions>;
+    dataLabels?: Partial<TreemapDataLabelOptions>;
 
     /**
      * Can set the layoutAlgorithm option on a specific level.
@@ -520,7 +534,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     /**
      * @since 4.1.0
      */
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    dataLabels?: (TreemapDataLabelOptions|Array<TreemapDataLabelOptions>);
 
     drillUpButton?: TreemapSeriesUpButtonOptions;
 

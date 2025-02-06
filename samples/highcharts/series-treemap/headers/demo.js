@@ -20,9 +20,8 @@ const chart = Highcharts.chart('container', {
             layoutAlgorithm: 'sliceAndDice',
             groupPadding: 3,
             dataLabels: {
-                allowOverlap: true,
+                headers: true,
                 enabled: true,
-                inside: false,
                 style: {
                     fontSize: '0.6em',
                     fontWeight: 'normal',
@@ -126,18 +125,17 @@ const chart = Highcharts.chart('container', {
     }
 });
 
-// Enable the radio buttons
-document.querySelectorAll('input[name=dataLabels\\.inside]').forEach(input => {
-    input.addEventListener('change', () => {
+// Enable the checkbox
+document.querySelector('input[name=dataLabels\\.headers]')
+    .addEventListener('change', e => {
         chart.series[0].update({
             levels: [Highcharts.merge(
                 chart.series[0].options.levels[0],
                 {
                     dataLabels: {
-                        inside: input.value === 'true'
+                        headers: e.target.checked
                     }
                 }
             )]
         });
     });
-});
