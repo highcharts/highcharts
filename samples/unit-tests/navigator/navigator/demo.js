@@ -359,8 +359,8 @@ QUnit.test('General Navigator tests', function (assert) {
     });
     const defaultScrollbarMargin = 3;
     const actualScrollbarNavigatorSpace =
-    chart.scrollbar.renderer.spacingBox.height -
-    chart.navigator.top - chart.navigator.height;
+        chart.scrollbar.renderer.spacingBox.height -
+        chart.navigator.top - chart.navigator.height;
     assert.strictEqual(
         actualScrollbarNavigatorSpace,
         defaultScrollbarMargin,
@@ -381,10 +381,10 @@ QUnit.test('General Navigator tests', function (assert) {
         }
     });
     const definedScrollbarNavigatorSpace =
-    chart.scrollbar.y - chart.scrollbar.trackBorderWidth -
-    chart.navigator.top - chart.navigator.height;
+        chart.scrollbar.y - chart.scrollbar.trackBorderWidth -
+        chart.navigator.top - chart.navigator.height;
     const definedNavigatorAxisSpace =
-    chart.xAxis[0].bottom - (chart.chartHeight - chart.navigator.top);
+        chart.xAxis[0].bottom - (chart.chartHeight - chart.navigator.top);
 
     assert.strictEqual(
         definedScrollbarNavigatorSpace,
