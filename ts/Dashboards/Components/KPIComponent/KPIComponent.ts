@@ -50,7 +50,8 @@ const {
     isArray,
     isNumber,
     merge,
-    isFunction
+    isFunction,
+    isString
 } = U;
 
 /* *
@@ -207,6 +208,12 @@ class KPIComponent extends Component {
                 }
             }
         }
+    };
+
+    static calculationMethods: Record<string, (column: number[]) => number> = {
+        sum: KPIComponent.calculateSumValue,
+        average: KPIComponent.calculateAverageValue,
+        median: KPIComponent.calculateMedianValue
     };
 
     /* *
@@ -408,9 +415,9 @@ class KPIComponent extends Component {
     }
 
     /**
-     * Calculates value sum based on the provided values.
+     * Calculates value sum based on the provided column values.
      *
-     * @param values
+     * @param colunn
      * All particular column values.
      *
      * @returns
@@ -418,24 +425,21 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    private calculateSumValue(values: number[]): number {
+    static calculateSumValue(column: number[]): number {
         let calculatedValue = 0;
 
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
-
-            if (isNumber(value)) {
-                calculatedValue += value;
-            }
+        for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+            const value = column[i];
+            calculatedValue += value;
         }
 
         return calculatedValue;
     }
 
     /**
-     * Calculates value average based on the provided values.
+     * Calculates value average based on the provided column values.
      *
-     * @param values
+     * @param column
      * All particular column values.
      *
      * @returns
@@ -443,15 +447,15 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    private calculateAverageValue(values: number[]): number {
-        const valueSum = this.calculateSumValue(values);
-        return valueSum / values.length;
+    static calculateAverageValue(column: number[]): number {
+        const valueSum = KPIComponent.calculateSumValue(column);
+        return valueSum / column.length;
     }
 
     /**
-     * Calculates value median based on the provided values.
+     * Calculates value median based on the provided column values.
      *
-     * @param values
+     * @param column
      * All particular column values.
      *
      * @returns
@@ -459,8 +463,8 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    private calculateMedianValue(values: number[]): number {
-        const sortedValues = Array.from(values).sort((a, b): number => a - b);
+    static calculateMedianValue(column: number[]): number {
+        const sortedValues = Array.from(column).sort((a, b): number => a - b);
         const middleValue = Math.floor(sortedValues.length / 2);
         const middleSortedValue = sortedValues[middleValue];
 
@@ -474,7 +478,7 @@ class KPIComponent extends Component {
      * calculateValueAs option.
      *
      * @returns
-     * The calculated value or 0 if can't perform the calculation. Can be a 
+     * The calculated value or 0 if can't perform the calculation. Can be a
      * number internally, or a string from the callback function.
      *
      * @internal
@@ -485,7 +489,7 @@ class KPIComponent extends Component {
         const connector = this.getFirstConnector();
         const table = connector?.table.modified;
         const column = table?.getColumn(this.options.columnName);
-        
+
         // Parse into numerical values to perform calculations.
         const parsedColumnValues =
             column?.map((value): number => Number(value));
@@ -496,18 +500,17 @@ class KPIComponent extends Component {
         if (defined(parsedColumnValues) && isFunction(calculateValueAs)) {
             calculatedValue = calculateValueAs.call(this, parsedColumnValues);
 
-        // Make sure all values are numbers to perform accurate calculations.
-        } else if (parsedColumnValues?.every(isNumber)) {
-            if (calculateValueAs === 'sum') {
-                calculatedValue = this.calculateSumValue(parsedColumnValues);
+        // The calculateValueAs should be a string to map externally updated
+        // calculationMethods. All column values must be numerical for accuracy.
+        } else if (
+            isString(calculateValueAs) &&
+            parsedColumnValues?.every(isNumber)
+        ) {
+            const calculationMethod =
+                KPIComponent.calculationMethods[calculateValueAs];
 
-            } else if (calculateValueAs === 'average') {
-                calculatedValue =
-                    this.calculateAverageValue(parsedColumnValues);
-
-            } else if (calculateValueAs === 'median') {
-                calculatedValue = this.calculateMedianValue(parsedColumnValues);
-
+            if (calculationMethod) {
+                calculatedValue = calculationMethod(parsedColumnValues);
             } else {
                 console.warn('Invalid calculate option value provided.'); // eslint-disable-line no-console
             }
@@ -535,7 +538,7 @@ class KPIComponent extends Component {
             if (defined(this.options.calculateValueAs)) {
                 return this.getCalculatedValue();
             }
-            
+
             const table = connector.table.modified,
                 column = table.getColumn(this.options.columnName),
                 length = column?.length || 0;
