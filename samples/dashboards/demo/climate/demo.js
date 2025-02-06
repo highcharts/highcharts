@@ -244,10 +244,7 @@ async function setupBoard() {
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
-                    ).then(response => response.json()),
-                    // NB! Workaround for issue #22144 (#21982)
-                    // "Map animation on zoom broken". Remove when fixed.
-                    animation: false
+                    ).then(response => response.json())
                 },
                 colorAxis: {
                     startOnTick: false,

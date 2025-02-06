@@ -1,5 +1,4 @@
-Layout
-===
+# Layout
 
 ## Overview
 The positioning of its components is an essential part of any dashboard. The layout can initially be defined from the configuration object and then changed when Edit mode is enabled. Here are the building blocks of a dashboard layout.
@@ -128,7 +127,6 @@ If you prefer to use your custom layout structure, feel free to do so. The only 
     }]
 ```
 
-[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
-[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+Here is the [standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout) and the [tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
 
 *NB! Disabled `gui` does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.

@@ -17,6 +17,7 @@
  * */
 
 import type Chart from './Chart/Chart';
+import type Time from './Time';
 
 import D from './Defaults.js';
 const {
@@ -25,10 +26,10 @@ const {
 } = D;
 import G from './Globals.js';
 const {
-    doc
+    pageLang
 } = G;
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import U from './Utilities.js';
+import { LangOptionsCore } from './Options';
 const {
     extend,
     getNestedProperty,
@@ -170,25 +171,30 @@ function dateFormat(
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
+ * @param {Highcharts.Chart} [owner]
+ *        A `Chart` or `DataGrid` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-function format(str = '', ctx: any, chart?: Chart): string {
+function format(
+    str = '',
+    ctx: any,
+    owner?: Templating.Owner
+): string {
 
-    const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu,
+    // Notice: using u flag will require a refactor for ES5 (#22450).
+    const regex = /\{([a-zA-Z\u00C0-\u017F\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/g, // eslint-disable-line max-len
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/gu,
+        subRegex = /\(([a-zA-Z\u00C0-\u017F\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/g,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
-        lang = chart?.options.lang || defaultOptions.lang,
-        time = chart && chart.time || defaultTime,
-        numberFormatter = chart && chart.numberFormatter || numberFormat;
+        lang = owner?.options?.lang || defaultOptions.lang,
+        time = owner?.time || defaultTime,
+        numberFormatter = owner?.numberFormatter || numberFormat;
 
     /*
      * Get a literal or variable value inside a template expression. May be
@@ -231,7 +237,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
             match = subMatch;
             hasSub = true;
         }
-        if (!currentMatch || !currentMatch.isBlock) {
+        if (!currentMatch?.isBlock) {
             currentMatch = {
                 ctx,
                 expression: match[1],
@@ -353,7 +359,9 @@ function format(str = '', ctx: any, chart?: Chart): string {
             // Block helpers may return true or false. They may also return a
             // string, like the `each` helper.
             if (match.isBlock && typeof replacement === 'boolean') {
-                replacement = format(replacement ? body : elseBody, ctx, chart);
+                replacement = format(
+                    replacement ? body : elseBody, ctx, owner
+                );
             }
 
 
@@ -396,7 +404,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         }
         str = str.replace(match.find, pick(replacement, ''));
     });
-    return hasSub ? format(str, ctx, chart) : str;
+    return hasSub ? format(str, ctx, owner) : str;
 }
 
 /**
@@ -490,11 +498,7 @@ function numberFormat(
     const hasSeparators = thousandsSep || decimalPoint,
         locale = hasSeparators ?
             'en' :
-            (
-                (this as Chart)?.locale ||
-                lang.locale ||
-                (doc.body.closest('[lang]') as HTMLDOMElement|null)?.lang
-            ),
+            ((this as Chart)?.locale || lang.locale || pageLang),
         cacheKey = JSON.stringify(options) + locale,
         nf = numberFormatCache[cacheKey] ??=
             new Intl.NumberFormat(locale, options);
@@ -505,8 +509,10 @@ function numberFormat(
     // format with string replacement for the separators.
     if (hasSeparators) {
         ret = ret
-            .replace(/\,/g, thousandsSep ?? ',')
-            .replace('.', decimalPoint ?? '.');
+            // Preliminary step to avoid re-swapping (#22402)
+            .replace(/([,\.])/g, '_$1')
+            .replace(/_\,/g, thousandsSep ?? ',')
+            .replace('_.', decimalPoint ?? '.');
     }
 
     if (
@@ -541,6 +547,14 @@ const Templating = {
 namespace Templating {
     export interface FormatterCallback<T> {
         (this: T): string;
+    }
+    export interface OwnerOptions {
+        lang?: LangOptionsCore;
+    }
+    export interface Owner {
+        options?: OwnerOptions;
+        time?: Time;
+        numberFormatter?: Function
     }
 }
 

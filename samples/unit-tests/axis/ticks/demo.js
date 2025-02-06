@@ -990,7 +990,7 @@ QUnit.test('Ticks and setSize', assert => {
     }
 });
 
-QUnit.only(
+QUnit.test(
     'Expected space for ticks, calculation of chart plot height (#19896).',
     function (assert) {
         const optionsToCheck = [{
@@ -1087,11 +1087,15 @@ QUnit.only(
             let precision = 2;
 
             // A strange case of shifting, only when the font-family contains
-            // the `-apple-system` font, and only with FirefoxHeadless. Not
-            // reproducible with Firefox regular or Chrome.
+            // the `-apple-system` font, and only with FirefoxHeadless (and
+            // ChromeHeadless on Windows). Not reproducible with regular Firefox
+            // or Chrome.
             if (
                 options.chart?.styledMode &&
-                navigator.userAgent.indexOf('Firefox') !== -1
+                (
+                    navigator.userAgent.indexOf('Firefox') !== -1 ||
+                    window.navigator.platform.indexOf('Win') >= 0
+                )
             ) {
                 precision = 9;
             }
@@ -1235,3 +1239,51 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Tick and label overflow (#16307)', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            marginRight: 50
+        },
+        xAxis: {
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+                'Oct', 'Nov', 'Dec'
+            ],
+            tickLength: 10,
+            tickWidth: 1
+        },
+        series: [{
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0,
+                176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+            ]
+        }],
+        plotOptions: {
+            series: {
+                pointPlacement: 'on'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks['11'].mark.opacity,
+        0,
+        'The last tick mark should not be visible (#20166)'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks['11'].label.opacity,
+        1,
+        '... but the last tick label should be visible (#20375)'
+    );
+
+    chart.redraw();
+    assert.strictEqual(
+        chart.xAxis[0].ticks['11'].mark.opacity,
+        0,
+        'After redraw, the last tick mark should still not be visible'
+    );
+
+});

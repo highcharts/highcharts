@@ -127,7 +127,7 @@ class ConnectorHandler {
                 dataPool.isNewConnector(connectorId)
             )
         ) {
-            if (component.cell instanceof Cell) {
+            if (Cell.isCell(component.cell)) {
                 component.cell.setLoadingState();
             }
 

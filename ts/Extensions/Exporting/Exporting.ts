@@ -64,6 +64,7 @@ const {
     objectEach,
     pick,
     removeEvent,
+    splat,
     uniqueKey
 } = U;
 
@@ -1242,26 +1243,40 @@ namespace Exporting {
 
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis): void {
-            const axisCopy = find(chartCopy.axes, function (
-                    copy: Axis
-                ): boolean {
-                    return copy.options.internalKey ===
-                        axis.userOptions.internalKey;
-                }),
-                extremes = axis.getExtremes(),
-                userMin = extremes.userMin,
-                userMax = extremes.userMax;
+            const axisCopy = find(chartCopy.axes, (copy: Axis): boolean =>
+                copy.options.internalKey === axis.userOptions.internalKey
+            );
 
-            if (
-                axisCopy &&
-                ((
-                    typeof userMin !== 'undefined' &&
-                    userMin !== axisCopy.min) || (
-                    typeof userMax !== 'undefined' &&
-                    userMax !== axisCopy.max
-                ))
-            ) {
-                axisCopy.setExtremes(userMin, userMax, true, false);
+            if (axisCopy) {
+                const extremes = axis.getExtremes(),
+                    // Make sure min and max overrides in the
+                    // `exporting.chartOptions.xAxis` settings are reflected.
+                    // These should override user-set extremes via zooming,
+                    // scrollbar etc (#7873).
+                    exportOverride = splat(chartOptions?.[axis.coll] || {})[0],
+                    userMin = 'min' in exportOverride ?
+                        exportOverride.min :
+                        extremes.userMin,
+                    userMax = 'max' in exportOverride ?
+                        exportOverride.max :
+                        extremes.userMax;
+
+                if (
+                    ((
+                        typeof userMin !== 'undefined' &&
+                        userMin !== axisCopy.min
+                    ) || (
+                        typeof userMax !== 'undefined' &&
+                        userMax !== axisCopy.max
+                    ))
+                ) {
+                    axisCopy.setExtremes(
+                        userMin ?? void 0,
+                        userMax ?? void 0,
+                        true,
+                        false
+                    );
+                }
             }
         });
 
@@ -1804,11 +1819,6 @@ namespace Exporting {
             )
             .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
             .replace(/\n+/g, ' ')
-            // Batik doesn't support rgba fills and strokes (#3095)
-            .replace(
-                /(fill|stroke)="rgba\(([ \d]+,[ \d]+,[ \d]+),([ \d\.]+)\)"/g, // eslint-disable-line max-len
-                '$1="rgb($2)" $1-opacity="$3"'
-            )
 
             // Replace HTML entities, issue #347
             .replace(/&nbsp;/g, '\u00A0') // No-break space

@@ -48,7 +48,7 @@ Dashboards.board('container', {
         html: `
             <div>
                 <h1>Custom HTML 2</h1>
-                <span id="custom-html-div-2">Custom HTML added as string </span>
+                <span id="custom-html-div-2">Custom HTML added as string</span>
             </div>`
     },
     {

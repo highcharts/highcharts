@@ -51,7 +51,7 @@ class TableRow extends Row {
     /**
      * The row values from the data table in the original column order.
      */
-    public data: DataTable.Row = [];
+    public data: DataTable.RowObject = {};
 
     /**
      * The local index of the row in the presentation data table.
@@ -100,14 +100,14 @@ class TableRow extends Row {
     * */
 
     public override createCell(column: Column): Cell {
-        return new TableCell(column, this);
+        return new TableCell(this, column);
     }
 
     /**
      * Loads the row data from the data table.
      */
     private loadData(): void {
-        const data = this.viewport.dataTable.getRow(this.index);
+        const data = this.viewport.dataTable.getRowObject(this.index);
         if (!data) {
             return;
         }
@@ -128,6 +128,22 @@ class TableRow extends Row {
 
         if (hovered) {
             this.viewport.dataGrid.hoveredRowIndex = this.index;
+        }
+    }
+
+    /**
+     * Adds or removes the synced CSS class to the row element.
+     *
+     * @param synced
+     * Whether the row should be synced.
+     */
+    public setSyncedState(synced: boolean): void {
+        this.htmlElement.classList[synced ? 'add' : 'remove'](
+            Globals.classNames.syncedRow
+        );
+
+        if (synced) {
+            this.viewport.dataGrid.syncedRowIndex = this.index;
         }
     }
 
@@ -157,6 +173,10 @@ class TableRow extends Row {
 
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
             el.classList.add(Globals.classNames.hoveredRow);
+        }
+
+        if (this.viewport.dataGrid.syncedRowIndex === idx) {
+            el.classList.add(Globals.classNames.syncedRow);
         }
     }
 

@@ -107,6 +107,7 @@ QUnit.test('RangeSelector.dropdown', assert => {
         'Dropdown label should be visible'
     );
 
+    // Responsive dropdown
     chart.update({
         rangeSelector: {
             dropdown: 'responsive'
@@ -128,9 +129,57 @@ QUnit.test('RangeSelector.dropdown', assert => {
         'Dropdown label should be visible'
     );
 
+    // Responsive dropdown, no inputs
+    chart.update({
+        chart: {
+            width: 200
+        },
+        rangeSelector: {
+            inputEnabled: false
+        }
+    });
+
+    assert.ok(
+        chart.rangeSelector.buttons.every(b => b.visibility === 'hidden'),
+        '200px + resonsive: Every button should be hidden'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be visible'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be visible'
+    );
+
+    chart.update({
+        chart: {
+            width: 400
+        }
+    });
+
+    assert.ok(
+        chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
+        '400px + resonsive: Every button should be visible'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be hidden'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be hidden'
+    );
+
+    // Never dropdown
     chart.update({
         rangeSelector: {
-            dropdown: 'never'
+            dropdown: 'never',
+            inputEnabled: true
         }
     });
 

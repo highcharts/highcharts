@@ -185,13 +185,12 @@ class Pointer {
      * @param {Array<Highcharts.Point>} points
      * Currently hovered points
      */
-    public applyInactiveState(points: Array<Point>): void {
-        let activeSeries = [] as Array<Series>,
-            series: Series;
+    public applyInactiveState(points: Array<Point> = []): void {
+        const activeSeries: Array<Series> = [];
 
         // Get all active series from the hovered points
-        (points || []).forEach(function (item): void {
-            series = item.series;
+        points.forEach((item): void => {
+            const series = item.series;
 
             // Include itself
             activeSeries.push(series);
@@ -203,24 +202,32 @@ class Pointer {
 
             // Include all child series
             if (series.linkedSeries) {
-                activeSeries = activeSeries.concat(
-                    series.linkedSeries
-                );
+                activeSeries.push.apply(activeSeries, series.linkedSeries);
             }
 
             // Include navigator series
             if (series.navigatorSeries) {
                 activeSeries.push(series.navigatorSeries);
             }
+
+            // Include boosed series when they share markerGroup
+            if (series.boosted && series.markerGroup) {
+                activeSeries.push.apply(
+                    activeSeries,
+                    this.chart.series.filter((otherSeries): boolean =>
+                        otherSeries.markerGroup === series.markerGroup
+                    )
+                );
+            }
         });
         // Now loop over all series, filtering out active series
-        this.chart.series.forEach(function (inactiveSeries): void {
-            if (activeSeries.indexOf(inactiveSeries) === -1) {
+        this.chart.series.forEach((series): void => {
+            if (activeSeries.indexOf(series) === -1) {
                 // Inactive series
-                inactiveSeries.setState('inactive', true);
-            } else if (inactiveSeries.options.inactiveOtherPoints) {
+                series.setState('inactive', true);
+            } else if (series.options.inactiveOtherPoints) {
                 // Active series, but other points should be inactivated
-                inactiveSeries.setAllPointsToState('inactive');
+                series.setAllPointsToState('inactive');
             }
         });
     }
@@ -647,7 +654,7 @@ class Pointer {
             };
         }
 
-        if (shapeArgs && shapeArgs.x && shapeArgs.y) {
+        if (shapeArgs?.x && shapeArgs.y) {
             // E.g. pies do not have axes
             return {
                 chartX: shapeArgs.x,
@@ -799,7 +806,7 @@ class Pointer {
             this.findNearestKDPoint(searchSeries, shared, e) as any;
 
         // Assign hover series
-        hoverSeries = hoverPoint && hoverPoint.series;
+        hoverSeries = hoverPoint?.series;
 
         // If we have a hoverPoint, assign hoverPoints.
         if (hoverPoint) {
@@ -1159,10 +1166,7 @@ class Pointer {
             // If the tooltip has stickOnContact enabled, do nothing. This
             // applies regardless of any combinations of the `split` and
             // `useHTML` options.
-            !(
-                tooltip &&
-                tooltip.shouldStickOnContact(pEvt)
-            )
+            !tooltip?.shouldStickOnContact(pEvt)
         ) {
             if (
                 this.inClass(pEvt.target as any, 'highcharts-no-tooltip')
@@ -1230,10 +1234,7 @@ class Pointer {
                     visiblePlotOnly: true
                 }
             ) &&
-            !(
-                tooltip &&
-                tooltip.shouldStickOnContact(pEvt)
-            ) && (
+            !tooltip?.shouldStickOnContact(pEvt) && (
                 pEvt.target === chart.container.ownerDocument ||
                 !this.inClass(pEvt.target as any, 'highcharts-tracker')
             )
@@ -1502,7 +1503,7 @@ class Pointer {
 
     /**
      * Reset the tracking by hiding the tooltip, the hover series state and the
-     * hover point
+     * hover point.
      *
      * @function Highcharts.Pointer#reset
      *
@@ -1511,6 +1512,7 @@ class Pointer {
      * possible.
      *
      * @param {number} [delay]
+     * The tooltip hide delay in ms.
      */
     public reset(allowMove?: boolean, delay?: number): void {
         const pointer = this,
@@ -1519,7 +1521,7 @@ class Pointer {
             hoverPoint = chart.hoverPoint,
             hoverPoints = chart.hoverPoints,
             tooltip = chart.tooltip,
-            tooltipPoints = tooltip && tooltip.shared ?
+            tooltipPoints = tooltip?.shared ?
                 hoverPoints :
                 hoverPoint;
 
@@ -1616,7 +1618,7 @@ class Pointer {
             chart = pointer.chart,
             series = chart.series,
             tooltip = (
-                chart.tooltip && chart.tooltip.options.enabled ?
+                chart.tooltip?.options.enabled ?
                     chart.tooltip :
                     void 0
             ),
@@ -1627,12 +1629,12 @@ class Pointer {
             );
 
         let hoverPoint = p || chart.hoverPoint,
-            hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries;
+            hoverSeries = hoverPoint?.series || chart.hoverSeries;
 
         const // `onMouseOver` or already hovering a series with directTouch
             isDirectTouch = (!e || e.type !== 'touchmove') && (
                 !!p || (
-                    (hoverSeries && hoverSeries.directTouch) &&
+                    (hoverSeries?.directTouch) &&
                     pointer.isDirectTouch
                 )
             ),
@@ -1650,8 +1652,7 @@ class Pointer {
         hoverSeries = hoverData.hoverSeries;
 
         const points = hoverData.hoverPoints,
-            followPointer = hoverSeries &&
-                hoverSeries.tooltipOptions.followPointer &&
+            followPointer = hoverSeries?.tooltipOptions.followPointer &&
                 !hoverSeries.tooltipOptions.split,
             useSharedTooltip = (
                 shared &&
@@ -1666,7 +1667,7 @@ class Pointer {
             (
                 force ||
                 hoverPoint !== chart.hoverPoint ||
-                (tooltip && tooltip.isHidden)
+                tooltip?.isHidden
             )
         ) {
             (chart.hoverPoints || []).forEach(function (p: Point): void {
@@ -1758,14 +1759,14 @@ class Pointer {
 
         // Issues related to crosshair #4927, #5269 #5066, #5658
         chart.axes.forEach(function drawAxisCrosshair(axis): void {
-            const snap = pick((axis.crosshair || {}).snap, true);
+            const snap = axis.crosshair?.snap ?? true;
 
             let point: Point|undefined;
             if (snap) {
                 point = chart.hoverPoint; // #13002
                 if (!point || (point.series as any)[axis.coll] !== axis) {
                     point = find(points, (p: Point): boolean =>
-                        p.series && (p.series as any)[axis.coll] === axis
+                        p.series?.[axis.coll] === axis
                     );
                 }
             }
@@ -1963,7 +1964,9 @@ class Pointer {
             const relatedTargetObj = { relatedTarget: chart.container };
 
             if (e && !e?.relatedTarget) {
-                e = { ...relatedTargetObj, ...e };
+                // #17192, Non-enumerable properties of "e" are dropped with
+                // spreading (...e). Using Object.assign ensures integrity.
+                Object.assign({}, e, relatedTargetObj);
             }
 
             hoverChart.pointer?.onContainerMouseLeave(
@@ -1971,10 +1974,7 @@ class Pointer {
             );
         }
 
-        if (
-            !hoverChart ||
-            !hoverChart.mouseIsDown
-        ) {
+        if (!hoverChart?.mouseIsDown) {
             Pointer.hoverChartIndex = chart.index;
         }
     }

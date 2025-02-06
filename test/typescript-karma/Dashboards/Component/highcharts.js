@@ -134,6 +134,15 @@ test('Board without data connectors and HighchartsComponent update', async funct
     );
 
     emptyArray(registeredEvents);
+
+    await highchartsComponent.update({
+        chartConstructor: 'stockChart'
+    });
+
+    assert.ok(
+        highchartsComponent.chart.navigator,
+        'HighchartsComponent chart constructor should be updated.'
+    );
 });
 
 test('Board with data connectors and HighchartsComponent update', async function (assert) {
