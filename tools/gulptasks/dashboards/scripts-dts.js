@@ -26,7 +26,8 @@ const DTS_FILES = [
     'Core/Renderer/DOMElementType.d.ts',
     'Core/Renderer/HTML/HTMLAttributes.d.ts',
     'Core/Renderer/SVG/SVGAttributes.d.ts',
-    'Core/Renderer/SVG/SVGPath.d.ts'
+    'Core/Renderer/SVG/SVGPath.d.ts',
+    'Shared/LangOptionsCore.d.ts'
 ].map(fsLib.path);
 
 
@@ -64,6 +65,11 @@ async function scriptsDTS() {
         fsLib.copyFile(
             path.join('ts', dtsFile),
             path.join(esModulesFolder, dtsFile)
+        );
+
+        fsLib.copyFile(
+            path.join('ts', dtsFile),
+            path.join(esModulesFolderDataGrid, dtsFile)
         );
     }
 
