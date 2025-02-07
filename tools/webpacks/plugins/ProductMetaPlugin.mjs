@@ -76,6 +76,20 @@ export class ProductMetaPlugin {
             options.productName ||
             packageJSON.name
         );
+
+        if (
+            !options.productVersion &&
+            FS.existsSync('build-properties.json')
+        ) {
+            const buildPropertiesJSON =
+                JSON.parse(FS.readFileSync('build-properties.json'));
+
+            options.productVersion = (
+                options.productVersion ||
+                buildPropertiesJSON.version
+            );
+        }
+
         options.productVersion = (
             options.productVersion ||
             packageJSON.version
@@ -126,6 +140,10 @@ export class ProductMetaPlugin {
 
         const options = this.options;
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
+
+        if (!FS.existsSync(filepath)) {
+            return;
+        }
 
         let content = FS.readFileSync(filepath, 'utf8');
         let productMatch = content.indexOf('@product.');

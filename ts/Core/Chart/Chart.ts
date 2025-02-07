@@ -516,12 +516,15 @@ class Chart {
              * @name Highcharts.Chart#time
              * @type {Highcharts.Time}
              */
-            this.time = new Time(extend(
-                options.time || {},
-                {
-                    locale: this.locale
-                }
-            ));
+            this.time = new Time(
+                extend(
+                    options.time || {},
+                    {
+                        locale: this.locale
+                    }
+                ),
+                options.lang
+            );
             options.time = this.time.options;
 
             /**
@@ -2085,9 +2088,7 @@ class Chart {
          */
         chart.plotWidth = plotWidth = Math.max(
             0,
-            Math.round(
-                (chartWidth as any) - plotLeft - (chart.marginRight as any)
-            )
+            Math.round(chartWidth - plotLeft - (chart.marginRight ?? 0))
         );
 
         /**
@@ -2098,9 +2099,7 @@ class Chart {
          */
         chart.plotHeight = plotHeight = Math.max(
             0,
-            Math.round(
-                (chartHeight as any) - plotTop - (chart.marginBottom as any)
-            )
+            Math.round(chartHeight - plotTop - (chart.marginBottom ?? 0))
         );
 
         chart.plotSizeX = inverted ? plotHeight : plotWidth;
@@ -2110,8 +2109,8 @@ class Chart {
         chart.spacingBox = renderer.spacingBox = {
             x: spacing[3],
             y: spacing[0],
-            width: (chartWidth as any) - spacing[3] - spacing[1],
-            height: (chartHeight as any) - spacing[0] - spacing[2]
+            width: chartWidth - spacing[3] - spacing[1],
+            height: chartHeight - spacing[0] - spacing[2]
         };
         chart.plotBox = renderer.plotBox = {
             x: plotLeft,
@@ -2159,7 +2158,7 @@ class Chart {
         const chart = this,
             chartOptions = chart.options.chart,
             plotBorderWidth = chartOptions.plotBorderWidth || 0,
-            halfWidth = plotBorderWidth / 2;
+            halfWidth = Math.round(plotBorderWidth) / 2;
 
         // Create margin and spacing array
         ['margin', 'spacing'].forEach(function splashArrays(

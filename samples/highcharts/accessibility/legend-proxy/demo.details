@@ -1,6 +1,7 @@
 ---
  name: Highcharts Demo
  authors:
-   - Grzegorz Blachliński
+   - Kent Wincent Holt
  js_wrap: b
+ requiresManualTesting: true
 ...

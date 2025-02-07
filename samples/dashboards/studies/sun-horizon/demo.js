@@ -628,6 +628,10 @@ const createBoard = async () => {
                         opacity: 0.75,
                         lineWidth: 2,
                         y: -50
+                    },
+                    scatter: {
+                        // Workaround for #22548
+                        findNearestPointBy: 'x'
                     }
                 },
                 series: [{
