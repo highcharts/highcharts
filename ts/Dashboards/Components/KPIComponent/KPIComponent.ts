@@ -32,6 +32,7 @@ import type {
 import type Options from './KPIComponentOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 import type Types from '../../../Shared/Types';
+import type DataTable from '../../../Data/DataTable';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
@@ -41,6 +42,12 @@ import Templating from '../../../Core/Templating.js';
 const {
     format
 } = Templating;
+
+import DashUtils from '../../Utilities.js';
+const {
+    findFirstNaN
+} = DashUtils;
+
 import U from '../../../Core/Utilities.js';
 const {
     createElement,
@@ -50,8 +57,7 @@ const {
     isArray,
     isNumber,
     merge,
-    isFunction,
-    isString
+    isFunction
 } = U;
 
 /* *
@@ -425,15 +431,12 @@ class KPIComponent extends Component {
      *
      * @returns
      * The calculated sum value.
-     *
-     * @internal
      */
-    private static calculateSumValue(column: number[]): number {
+    private static calculateSumValue(column: DataTable.Column): number {
         let calculatedValue = 0;
 
         for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
-            const value = column[i];
-            calculatedValue += value;
+            calculatedValue += Number(column[i]) || 0;
         }
 
         return calculatedValue;
@@ -447,12 +450,20 @@ class KPIComponent extends Component {
      *
      * @returns
      * The calculated average value.
-     *
-     * @internal
      */
-    private static calculateAverageValue(column: number[]): number {
-        const valueSum = KPIComponent.calculateSumValue(column);
-        return valueSum / column.length;
+    private static calculateAverageValue(column: DataTable.Column): number {
+        let sum = 0;
+        let count = 0;
+
+        for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+            const value = Number(column[i]);
+            if (!isNaN(value)) {
+                sum += value;
+                count++;
+            }
+        }
+
+        return count > 0 ? sum / count : 0;
     }
 
     /**
@@ -463,17 +474,28 @@ class KPIComponent extends Component {
      *
      * @returns
      * The calculated median value.
-     *
-     * @internal
      */
-    private static calculateMedianValue(column: number[]): number {
-        const sortedValues = Array.from(column).sort((a, b): number => a - b);
-        const middleValue = Math.floor(sortedValues.length / 2);
-        const middleSortedValue = sortedValues[middleValue];
+    private static calculateMedianValue(column: DataTable.Column): number {
+        const oneIfNaN = (v: number): number => (isNaN(v) ? 1 : v);
+        const sortedValues = Array.from(column)
+            .map((v): number => Number(v))
+            .sort((a, b): number => oneIfNaN(a - b));
+
+        const firstNaNIndex = findFirstNaN(sortedValues);
+        if (firstNaNIndex > -1) {
+            sortedValues.splice(firstNaNIndex);
+        }
+
+        if (sortedValues.length < 1) {
+            return NaN;
+        }
+
+        const middleIndex = Math.floor(sortedValues.length / 2);
+        const middleValue = sortedValues[middleIndex];
 
         return sortedValues.length % 2 === 0 ?
-            (sortedValues[middleValue - 1] + middleSortedValue) / 2 :
-            middleSortedValue;
+            (sortedValues[middleIndex - 1] + middleValue) / 2 :
+            middleValue;
     }
 
     /**
@@ -486,42 +508,20 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    private getCalculatedValue(): string|number {
+    private getCalculatedValue(): string|number|undefined {
         const calculateValueAs = this.options.calculateValueAs;
-
         const connector = this.getFirstConnector();
         const table = connector?.table.modified;
         const column = table?.getColumn(this.options.columnName);
-
-        // Parse into numerical values to perform calculations.
-        const parsedColumnValues =
-            column?.map((value): number => Number(value));
-
-        let calculatedValue: string|number = 0;
-
-        // Provide external calculations without a strict type checking.
-        if (defined(parsedColumnValues) && isFunction(calculateValueAs)) {
-            calculatedValue = calculateValueAs.call(this, parsedColumnValues);
-
-        // The calculateValueAs should be a string to map externally updated
-        // calculationMethods. All column values must be numerical for accuracy.
-        } else if (
-            isString(calculateValueAs) &&
-            parsedColumnValues?.every(isNumber)
-        ) {
-            const calculationMethod =
-                KPIComponent.calculationMethods[calculateValueAs];
-
-            if (calculationMethod) {
-                calculatedValue = calculationMethod(parsedColumnValues);
-            } else {
-                console.warn('Invalid calculate option value provided.'); // eslint-disable-line no-console
-            }
-        } else {
-            console.warn('All column values should be numerical to calculate.'); // eslint-disable-line no-console
+        if (!column || !calculateValueAs) {
+            return;
         }
 
-        return calculatedValue;
+        if (isFunction(calculateValueAs)) {
+            return calculateValueAs.call(this, column);
+        }
+
+        return KPIComponent.calculationMethods[calculateValueAs](column);
     }
 
     /**
