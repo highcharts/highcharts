@@ -5,6 +5,7 @@ authors:
 resources:
   - https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css
 js_wrap: b
+new_until: 2025-06-01
 tags:
   - Highcharts demo
 categories:
