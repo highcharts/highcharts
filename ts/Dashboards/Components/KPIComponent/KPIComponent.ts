@@ -478,7 +478,7 @@ class KPIComponent extends Component {
     private static calculateMedianValue(column: DataTable.Column): number {
         const sortedValues = Array.from(column)
             .map((v): number => Number(v))
-            .sort((a, b): number => a - b);
+            .sort();
 
         const firstNaNIndex = findFirstNaN(sortedValues);
         if (firstNaNIndex > -1) {
