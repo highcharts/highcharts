@@ -874,7 +874,7 @@ class TreemapSeries extends ScatterSeries {
             // padding
             if (point.shapeArgs) {
                 const { height = 0, width = 0 } = point.shapeArgs;
-                if (width && height > 16 && point.shouldDraw()) {
+                if (width > 32 && height > 16 && point.shouldDraw()) {
                     const dataLabelWidth = width -
                         2 * (options.padding || padding || 0);
                     style.width = `${dataLabelWidth}px`;
@@ -889,8 +889,9 @@ class TreemapSeries extends ScatterSeries {
                     }
 
                 // Hide labels for shapes that are too small
-                } else if (point.dataLabel) {
-                    style.display = 'hidden';
+                } else {
+                    style.width = '1px';
+                    style.visibility = 'hidden';
                 }
             }
 
