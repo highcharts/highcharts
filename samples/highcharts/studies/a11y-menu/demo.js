@@ -1,8 +1,14 @@
-// Creating patterns for normal and contrast colors
-const defaultColors = ['#90D2FE', '#ffb8b8'],
-    contrastColors = ['#247eb3', '#dd3636'],
-    borderColors = contrastColors,
-    borderColorsWithContrast = ['#103042', '#561515'];
+// Colors for light theme
+const defaultColorsLight = ['#90D2FE', '#ffb8b8'],
+    contrastColorsLight = ['#247eb3', '#dd3636'],
+    borderColorsLight = contrastColorsLight,
+    borderColorsWithContrastLight = ['#103042', '#561515'];
+
+// Colors for dark theme
+const defaultColorsDark = ['#015288', '#A80000'],
+    contrastColorsDark = ['#16A0FD', '#FE6264'],
+    borderColorsDark = contrastColorsDark,
+    borderColorsWithContrastDark = ['#FFFFFF', '#FFFFFF'];
 
 // Defining description formats for verbosity
 const shortPointDescriptionFormat =
@@ -16,7 +22,10 @@ let shortDesc = '';
 
 
 const lightTheme = {
-    colors: defaultColors,
+    colors: defaultColorsLight,
+    contrastColors: contrastColorsLight,
+    borderColors: borderColorsLight,
+    borderColorsWithContrast: borderColorsWithContrastLight,
     chart: {
         backgroundColor: '#ffffff',
         style: {
@@ -79,7 +88,10 @@ const lightTheme = {
 };
 
 const darkTheme = {
-    colors: defaultColors,
+    colors: defaultColorsDark,
+    contrastColors: contrastColorsDark,
+    borderColors: borderColorsDark,
+    borderColorsWithContrast: borderColorsWithContrastDark,
     chart: {
         backgroundColor: '#333333',
         style: {
@@ -327,7 +339,7 @@ function getChartConfig() {
                 borderWidth: 0
             }
         },
-        colors: defaultColors,
+        colors: defaultColorsLight,
         series: [
             {
                 name: 'Corn',
@@ -753,34 +765,43 @@ function setupEventListeners(prefContent, chart) {
 }
 
 function updateChartColorLogic(chart) {
+    const theme = getThemeConfig();
+
     const seriesOptions = [{
         color: isPatternChecked ? {
             pattern: {
                 path: 'M 0 0 L 5 5 M 5 0 L 0 5', // Diagonal stripes
-                color: isContrastChecked ? contrastColors[0] : defaultColors[0],
-                backgroundColor: isContrastChecked ? contrastColors[0] + '40' :
-                    defaultColors[0] + '40',
+                color: isContrastChecked ?
+                    theme.contrastColors[0] : theme.colors[0],
+                backgroundColor: isContrastChecked ?
+                    theme.contrastColors[0] + '40' :
+                    theme.colors[0] + '40',
                 width: 6,
                 height: 6
             }
-        } :
-            isContrastChecked ? contrastColors[0] : defaultColors[0],
-        borderColor: isBorderChecked ? isContrastChecked ?
-            borderColorsWithContrast[0] : borderColors[0] : null,
+        } : isContrastChecked ? theme.contrastColors[0] : theme.colors[0],
+        borderColor: isBorderChecked ?
+            (isContrastChecked ?
+                theme.borderColorsWithContrast[0] : theme.borderColors[0]) :
+            null,
         borderWidth: isBorderChecked ? 2 : 0
     }, {
         color: isPatternChecked ? {
             pattern: {
                 path: 'M 0 3 L 3 0 M 3 6 L 6 3', // Crosshatch
-                color: isContrastChecked ? contrastColors[1] : defaultColors[1],
-                backgroundColor: isContrastChecked ? contrastColors[1] + '40' :
-                    defaultColors[1] + '40',
+                color: isContrastChecked ?
+                    theme.contrastColors[1] : theme.colors[1],
+                backgroundColor: isContrastChecked ?
+                    theme.contrastColors[1] + '40' :
+                    theme.colors[1] + '40',
                 width: 6,
                 height: 6
             }
-        } : isContrastChecked ? contrastColors[1] : defaultColors[1],
-        borderColor: isBorderChecked ? isContrastChecked ?
-            borderColorsWithContrast[1] : borderColors[1] : null,
+        } : isContrastChecked ? theme.contrastColors[1] : theme.colors[1],
+        borderColor: isBorderChecked ?
+            (isContrastChecked ?
+                theme.borderColorsWithContrast[1] : theme.borderColors[1]) :
+            null,
         borderWidth: isBorderChecked ? 2 : 0
     }];
 
