@@ -11,7 +11,8 @@ module.exports = {
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
             'getting-started/how-to-create-custom-highcharts-packages',
-            'getting-started/optional-dependencies'
+            'getting-started/optional-dependencies',
+            'getting-started/version-12'
         ],
         'Chart concepts': [
             'chart-concepts/understanding-highcharts',
@@ -230,7 +231,12 @@ module.exports = {
                             'morningstar/time-series/price'
                         ],
                         'Screeners': [
+                            'morningstar/screeners/screener',
+                            'morningstar/screeners/esg-screener',
+                            'morningstar/screeners/find-similar-screener',
                             'morningstar/screeners/investment-screener',
+                            'morningstar/screeners/investor-preferences',
+                            'morningstar/screeners/regulatory-screener',
                         ]
                     }
                 ]

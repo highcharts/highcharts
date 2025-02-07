@@ -16,7 +16,7 @@ Consider using [monochrome color palettes](https://www.highcharts.com/demo/pie-m
 
 ### High contrast theme
 Consider using a [high contrast theme](https://www.highcharts.com/docs/chart-design-and-style/themes).
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/accessibility/"accessible-switch-theme-one allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-switch-theme-one" allow="fullscreen"></iframe>
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-switch-theme-one)
 

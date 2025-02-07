@@ -49,6 +49,12 @@ OPTIONS:
  *
  * @todo filter out private members and options
  *
+ * @param {string} _
+ * Gulp callback for non-promise async.
+ *
+ * @param {string} source
+ * Source file/folder as API base.
+ *
  * @return {Promise}
  * Promise to keep.
  */
@@ -56,7 +62,7 @@ async function apiTree(_, source) {
     const FSLib = require('../libs/fs');
     const TreeLib = require('../libs/tree');
     // eslint-disable-next-line node/no-missing-require
-    const TSLib = require('../libs/ts');
+    const TSLib = require('../libs/TS');
     const LogLib = require('../libs/log');
     const argv = require('yargs').argv;
 

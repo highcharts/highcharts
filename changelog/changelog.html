@@ -183,7 +183,7 @@ addAccessibility(Highcharts); // &lt;== This no longer works!
 import * as Highcharts from &#39;highcharts&#39;;
 import &#39;highcharts/modules/accessibility&#39;;
 </code></pre>
-                    <p>See <a href="https://github.com/highcharts/highcharts/issues/22251">issue on GitHub</a>.</p>
+                    <p>See <a href="https://www.highcharts.com/docs/getting-started/version-12">the elaborate article in the docs</a>.</p>
                     <ul>
                       <li>All date and time strings are now by default rendered in the web page&#39;s default language as set in the <code>html.lang</code> attribute, or falls back to the browser default. Setting <a href="https://api.highcharts.com/highcharts/lang.locale">lang.locale</a> to <code>en-GB</code> will restore the labels approximately as they were prior to v12. For exact backwards compatibility, set all the time format options (<code>xAxis.dateTimeLabelFormats</code>, <code>tooltip.dateTimeLabelFormats</code> etc) back to their v11 defaults in addition.</li>
                       <li>The <a href="https://api.highcharts.com/highcharts/time.getTimezoneOffset">time.getTimezoneOffset</a> function callback no longer works. Instead, use the <a href="https://api.highcharts.com/highcharts/time.timezone">timezone</a> option.</li>
