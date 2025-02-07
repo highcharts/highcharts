@@ -49,10 +49,10 @@ types.
 
 ### Available Connectors
 
-* [Goal Analysis](morningstar/goal-analysis.md)
-* [RNANews](morningstar/regulatory-news-announcements.md)
-* [Risk Score](morningstar/risk-score.md)
-* [TimeSeries](morningstar/time-series/time-series.md)
-* [XRay](morningstar/x-ray.md)
-* [Screener](morningstar/screeners/screener.md)
-* [Security Details](morningstar/security-details.md)
+* [Goal Analysis](./goal-analysis.md)
+* [RNANews](./regulatory-news-announcements.md)
+* [Risk Score](./risk-score.md)
+* [TimeSeries](./time-series/time-series.md)
+* [XRay](./x-ray.md)
+* [Screener](./screeners/screener.md)
+* [Security Details](./security-details.md)
