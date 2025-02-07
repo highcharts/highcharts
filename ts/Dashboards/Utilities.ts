@@ -540,6 +540,37 @@ function removeEvent<T>(
     }
 }
 
+
+/**
+ * Find the index of the first NaN in a sorted number array.
+ *
+ * @param arr
+ * The array to investigate.
+ *
+ * @returns
+ * The index of the first NaN in the array, or -1 if not found.
+ *
+ * @internal
+ */
+function findFirstNaN(arr: number[]): number {
+    let low = 0,
+        high = arr.length;
+
+    while (low < high) {
+        const mid = Math.floor((low + high) / 2);
+        Number.isNaN(arr[mid]) ? high = mid : low = mid + 1;
+    }
+
+    return low < arr.length && Number.isNaN(arr[low]) ? low : -1;
+}
+
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
 namespace Utilities {
     export interface EventCallback<T> {
         (this: T, eventArguments: (D.AnyRecord|Event)): (boolean|void);
@@ -564,6 +595,7 @@ const Utilities = {
     addEvent,
     deepClone,
     error,
+    findFirstNaN,
     fireEvent,
     merge,
     removeEvent,
