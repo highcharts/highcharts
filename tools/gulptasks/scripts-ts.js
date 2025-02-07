@@ -19,20 +19,25 @@ const path = require('path');
 
 /**
  * Removes Highcharts files from the `js` folder.
+ *
+ * @param {boolean} removeFromCode
+ * Whether to remove files from the `code` folder (only for Grid).
  */
-function removeHighcharts() {
+function removeHighcharts(removeFromCode = false) {
     const fsLib = require('../libs/fs');
+    const folder = removeFromCode ? 'code/grid/es-modules' : 'js';
 
-    fsLib.deleteDirectory('js/Core/Axis/', true);
-    fsLib.deleteDirectory('js/Core/Legend/', true);
-    fsLib.deleteDirectory('js/Core/Renderer/SVG/', true);
-    fsLib.deleteDirectory('js/Core/Series/', true);
-    fsLib.deleteDirectory('js/Extensions/', true);
-    fsLib.deleteDirectory('js/Gantt/', true);
-    fsLib.deleteDirectory('js/Maps/', true);
-    fsLib.deleteDirectory('js/Series/', true);
-    fsLib.deleteDirectory('js/Stock/', true);
-    fsLib.deleteDirectory('js/masters', true);
+    // replace js with folder variable
+    fsLib.deleteDirectory(folder + '/Core/Axis/', true);
+    fsLib.deleteDirectory(folder + '/Core/Legend/', true);
+    fsLib.deleteDirectory(folder + '/Core/Renderer/SVG/', true);
+    fsLib.deleteDirectory(folder + '/Core/Series/', true);
+    fsLib.deleteDirectory(folder + '/Extensions/', true);
+    fsLib.deleteDirectory(folder + '/Gantt/', true);
+    fsLib.deleteDirectory(folder + '/Maps/', true);
+    fsLib.deleteDirectory(folder + '/Series/', true);
+    fsLib.deleteDirectory(folder + '/Stock/', true);
+    fsLib.deleteDirectory(folder + '/masters', true);
 }
 
 /**
@@ -164,6 +169,7 @@ async function scriptsTS(argv) {
         } else if (product === 'Grid') {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
+            removeHighcharts(true);
         } else if (argv.assembler) {
             await processLib
                 .exec('npx tsc -p ts --outDir js');
