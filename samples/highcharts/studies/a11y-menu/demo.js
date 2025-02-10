@@ -244,6 +244,20 @@ function applyChartTheme(chart) {
         setDialogColors(dialog);
     }
 
+    // Update the altTextDivs whenever the theme is changed
+    chart.altTextDivs.forEach(div => {
+        if (theme === darkTheme) {
+            div.style.backgroundColor = '#444444';
+            div.style.color = '#ffffff';
+            div.style.border = '1px solid #666666';
+        } else {
+            div.style.backgroundColor = '#ffffff';
+            div.style.color = '#000000';
+            div.style.border = '1px solid #000';
+        }
+    });
+
+
 }
 
 function setDialogColors(dialog) {
@@ -714,45 +728,47 @@ function setupEventListeners(prefContent, chart) {
 
         if (isChecked) {
             const paths = document
-                .querySelectorAll('path.highcharts-point[aria-label');
+                .querySelectorAll('path.highcharts-point[aria-label]');
             const chartRect = chart.container.getBoundingClientRect();
+            const theme = getThemeConfig(); // Get the current theme
 
             paths.forEach(path => {
                 const ariaLabel = path.getAttribute('aria-label');
                 const rect = path.getBoundingClientRect();
-
                 // Create and position alt text div
                 const altTextDiv = document.createElement('div');
                 altTextDiv.textContent = ariaLabel;
                 altTextDiv.classList.add('alt-text-div');
                 altTextDiv.setAttribute('aria-hidden', 'true');
+                // Apply theme-specific styles during creation
+                altTextDiv.style.backgroundColor =
+                    theme === darkTheme ? '#444444' : '#ffffff';
+                altTextDiv.style.color =
+                    theme === darkTheme ? '#ffffff' : '#000000';
+                altTextDiv.style.border = theme === darkTheme ?
+                    '1px solid #666666' : '1px solid #ccc';
+                altTextDiv.style.opacity = '1';
+                altTextDiv.style.fontSize = fontSize;
 
-                // Position label on top of column
+                // Position label on top of the column
                 altTextDiv.style.left =
                     `${rect.left + rect.width / 2 - chartRect.left}px`;
                 altTextDiv.style.top = `${rect.top - chartRect.top}px`;
-                altTextDiv.style.fontSize = fontSize;
-
                 // Adjust position if altPointLabel is checked
                 if (isAltPointLabelChecked) {
                     altTextDiv.style.top = `${rect.top - chartRect.top - 20}px`;
                 }
-
                 // Add to chart container
                 chart.container.appendChild(altTextDiv);
-
                 // Add divs to array for setting text size if applicable
                 chart.altTextDivs.push(altTextDiv);
-
             });
-
-            // Turning of tooltip to avoid duplicate information
+            // Disable tooltips to avoid duplicate information
             chart.update({
                 tooltip: {
                     enabled: false
                 }
             });
-
         } else {
             chart.update({
                 tooltip: {
@@ -760,6 +776,7 @@ function setupEventListeners(prefContent, chart) {
                 }
             });
         }
+
         // Append button to screen reader region
         setupScreenReaderSection(selectedVerbosity, chart);
     });
@@ -819,6 +836,22 @@ function updateChartColorLogic(chart) {
 
     chart.update({
         series: seriesOptions
+    });
+
+    // Update altTextDiv styles based on the theme
+    chart.altTextDivs.forEach(div => {
+        if (isDarkMode) {
+            div.style.backgroundColor =
+                'rgb(68, 68, 68)';
+            div.style.color =
+                'rgb(255, 255, 255)';
+            div.style.border = '1px solid rgb(102, 102, 102)';
+        } else {
+            div.style.backgroundColor =
+                'rgb(255, 255, 255)';
+            div.style.color = 'rgb(0, 0, 0)';
+            div.style.border = '1px solid rgb(204, 204, 204)';
+        }
     });
 }
 

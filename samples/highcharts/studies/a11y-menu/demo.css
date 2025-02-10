@@ -53,8 +53,6 @@ h3 {
 
 .alt-text-div {
     position: absolute;
-    background: white;
-    border: 1px solid #ccc;
     padding: 4px;
     font-size: 12px;
     transform: translate(-50%, -100%);
@@ -85,4 +83,6 @@ h3 {
     max-width: 50px;
     border: 1px solid black;
     border-radius: 2px;
+    opacity: 1;
+    background: #fff;
 }
