@@ -6,7 +6,7 @@
 
 
 // eslint-disable-next-line node/no-unpublished-import
-// import BundleDeclarationsWebpackPlugin from 'bundle-declarations-webpack-plugin';
+// import BDWP from 'bundle-declarations-webpack-plugin';
 import * as Path from 'node:path';
 import FSLib from '../libs/fs.js';
 
@@ -117,7 +117,7 @@ const umdWebpacks = FSLib
                 new UMDExtensionPlugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)
                 }),
-                // new BundleDeclarationsWebpackPlugin.BundleDeclarationsWebpackPlugin({
+                // new BDWP.BundleDeclarationsWebpackPlugin({
                 //     entry: {
                 //         filePath: `./${masterFile}`.replace(/\.js$/u, '.d.ts'),
                 //         output: {
@@ -167,10 +167,11 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         mode: 'production',
         optimization: umdWebpack.optimization,
         output: {
-            chunkFormat: 'module',
             filename: masterPath,
             globalObject: 'this',
-            libraryTarget: 'module',
+            library: {
+                type: 'modern-module'
+            },
             module: true,
             path: Path.resolve(esmTargetFolder)
         }
@@ -183,14 +184,14 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
     ];
 
     if (umdWebpack.externals) {
-        esmWebpack.externalsType = 'import';
+        esmWebpack.externalsType = 'module-import';
         esmWebpack.externals = [
             (info) => resolveExternals(
                 info,
                 masterName,
                 sourceFolder,
                 namespace,
-                'import'
+                'module-import'
             )
         ];
     }

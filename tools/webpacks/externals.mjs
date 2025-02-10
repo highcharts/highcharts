@@ -117,6 +117,7 @@ export async function resolveExternals(
                 return void 0;
             }
 
+            let externalModule = (external.included[0] || 'highcharts');
             let namespacePath = [
                 namespace,
                 ...external.namespacePath
@@ -127,7 +128,18 @@ export async function resolveExternals(
 
             switch (externalsType) {
                 case 'import':
-                    return `${externalsType} ${external.included[0]}`;
+                    return `${externalsType} ${externalModule}`;
+                case 'module-import':
+                    externalModule = Path.posix.relative(
+                        Path.posix.dirname(`/${masterName}.src.js`),
+                        `/${externalModule}.src.js`
+                    );
+                    externalModule = (
+                        externalModule.startsWith('../') ?
+                            externalModule :
+                            `./${externalModule}`
+                    );
+                    return `${externalsType} ${externalModule}`;
                 case 'umd':
                     return createUMDConfig(...namespacePath);
                 default:
