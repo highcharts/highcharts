@@ -484,16 +484,7 @@ function createPreferencesDialog(chart) {
         ${isSelectedTheme === 'light' ? 'checked' : ''}>
         <label for="theme-light">Light</label>
     </div>
-    <h3>Text description:</h3>
-    <div class="pref verbosity">
-        <input type="radio" id="short" name="verbosity" value="short"
-        ${selectedVerbosity === 'short' ? 'checked' : ''}>
-        <label for="short">Short</label>
-        <input type="radio" id="ver-full" name="verbosity" value="full"
-        ${selectedVerbosity === 'full' ? 'checked' : ''}>
-        <label for="ver-full">Full</label>
-    </div>
-    <h3>Visible alt text</h3>
+    <h3>Visible alt text:</h3>
     <div class="pref alt-text">
     <input type="checkbox" id="alt-info" name="alt-info"
         ${isInfoChecked ? 'checked' : ''}>
@@ -504,6 +495,15 @@ function createPreferencesDialog(chart) {
     <input type="checkbox" id="alt-points-desc" name="alt-points-desc"
         ${isAltPointDescChecked ? 'checked' : ''}>
         <label for="alt-points-desc">Show point description</label>
+    </div>
+        <h3>Text description:</h3>
+    <div class="pref verbosity">
+        <input type="radio" id="short" name="verbosity" value="short"
+        ${selectedVerbosity === 'short' ? 'checked' : ''}>
+        <label for="short">Short</label>
+        <input type="radio" id="ver-full" name="verbosity" value="full"
+        ${selectedVerbosity === 'full' ? 'checked' : ''}>
+        <label for="ver-full">Full</label>
     </div>
     <h3>Text size:</h3>
     <div class="pref textsize">
