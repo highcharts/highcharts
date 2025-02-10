@@ -71,7 +71,8 @@ h3 {
 }
 
 .hc-pref-button-bg {
-    fill: transparent;
+    fill: white !important;
+    stroke-width: 1px;
     transition: fill 0.2s ease;
     pointer-events: all;
 }

@@ -372,13 +372,15 @@ function addPrefButton(chart) {
         .on('click', () => handlePrefButtonClick(chart))
         .add();
 
-    // Add a background rectangle
-    chart.renderer
-        .rect(710, 3, 32, 32)
+    // White background rectangle behind the icon
+    const bgRect = chart.renderer
+        .rect(705, 0, 40, 40)
         .attr({
             class: 'hc-pref-button-bg',
-            rx: 4,
-            fill: 'transparent'
+            rx: 8,
+            fill: '#ffffff',
+            stroke: 'none',
+            'stroke-width': 0
         })
         .add(buttonGroup);
 
@@ -392,7 +394,7 @@ function addPrefButton(chart) {
         })
         .add(buttonGroup);
 
-    // Add fallback logic
+    // Add fallback logic in case the image fails
     prefButton.element.onerror = () => {
         prefButton.destroy(); // Remove broken image
 
@@ -405,10 +407,14 @@ function addPrefButton(chart) {
             .css({
                 fontSize: '20px',
                 textAnchor: 'middle',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                fill: '#000000' // Ensure the text is visible
             })
             .add(buttonGroup);
     };
+
+    // Ensure the rectangle stays behind everything
+    buttonGroup.element.insertBefore(bgRect.element, prefButton.element);
 
     // Assign button group to chart namespace
     chart.prefMenu.prefButton = buttonGroup;
