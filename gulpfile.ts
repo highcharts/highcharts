@@ -131,4 +131,4 @@ Gulp.registry(new GulpForwardReference());
     'examples': 'dist-examples',
     'start-api-server': 'jsdoc-server',
     'styles': 'scripts-css'
-}));
+} as Record<string, string>));
