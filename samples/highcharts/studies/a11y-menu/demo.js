@@ -221,6 +221,9 @@ function applyChartTheme(chart) {
         colors: theme.colors
     });
 
+    // Ensure colors update when switching themes
+    updateChartColorLogic(chart);
+
     // Set background color for the whole chart and the text color
     const highchartsFigure =
         document.getElementsByClassName('highcharts-figure')[0];
@@ -767,47 +770,44 @@ function setupEventListeners(prefContent, chart) {
 function updateChartColorLogic(chart) {
     const theme = getThemeConfig();
     const isDarkMode = theme === darkTheme;
-    const useDarkerPattern = isDarkMode && isContrastChecked;
+
+    const contrastColors = isDarkMode ?
+        contrastColorsDark : contrastColorsLight;
+    const borderColors = isDarkMode ?
+        borderColorsWithContrastDark : borderColorsWithContrastLight;
 
     const seriesOptions = [{
         color: isPatternChecked ? {
             pattern: {
                 path: 'M 0 0 L 8 8', // Diagonal stripes
-                color: useDarkerPattern ? theme.contrastColorsDark?.[0] :
-                    (isDarkMode ? contrastColorsLight?.[0] :
-                        theme.contrastColors?.[0]),
+                color: isContrastChecked ?
+                    contrastColors[0] : theme.colors[0],
                 backgroundColor: isDarkMode ? '#FFFFFF' :
-                    (isContrastChecked ? theme.contrastColors?.[0] + '40' :
-                        theme.colors?.[0] + '40'),
+                    (isContrastChecked ?
+                        contrastColors[0] + '40' : theme.colors[0] + '40'),
                 width: 8,
                 height: 8
             }
-        } : isContrastChecked ? theme.contrastColors?.[0] : theme.colors?.[0],
-        borderColor: isBorderChecked ?
-            (isPatternChecked ?
-                (isContrastChecked ? '#FFFFFF' : theme.borderColors?.[0]) :
-                (isContrastChecked ? theme.borderColorsWithContrast?.[0] :
-                    theme.borderColors?.[0])) : null,
+        } : (isContrastChecked ? contrastColors[0] : theme.colors[0]),
+        borderColor: isBorderChecked ? (
+            isContrastChecked ? borderColors[0] : theme.borderColors[0]
+        ) : null,
         borderWidth: isBorderChecked ? 2 : 0
     }, {
         color: isPatternChecked ? {
-            pattern: {
+            pattern: { // Dotted pattern
                 path: 'M 3 3 m -2, 0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0',
-                color: useDarkerPattern ? theme.contrastColorsDark?.[1] :
-                    (isDarkMode ? contrastColorsLight?.[1] :
-                        theme.contrastColors?.[1]),
+                color: isContrastChecked ? contrastColors[1] : theme.colors[1],
                 backgroundColor: isDarkMode ? '#FFFFFF' :
-                    (isContrastChecked ? theme.contrastColors?.[1] + '40' :
-                        theme.colors?.[1] + '40'),
+                    (isContrastChecked ?
+                        contrastColors[1] + '40' : theme.colors[1] + '40'),
                 width: 8,
                 height: 8
             }
-        } : isContrastChecked ? theme.contrastColors?.[1] : theme.colors?.[1],
-        borderColor: isBorderChecked ?
-            (isPatternChecked ?
-                (isContrastChecked ? '#FFFFFF' : theme.borderColors?.[1]) :
-                (isContrastChecked ? theme.borderColorsWithContrast?.[1] :
-                    theme.borderColors?.[1])) : null,
+        } : (isContrastChecked ? contrastColors[1] : theme.colors[1]),
+        borderColor: isBorderChecked ? (
+            isContrastChecked ? borderColors[1] : theme.borderColors[1]
+        ) : null,
         borderWidth: isBorderChecked ? 2 : 0
     }];
 
@@ -815,7 +815,6 @@ function updateChartColorLogic(chart) {
         series: seriesOptions
     });
 }
-
 
 function trapFocusInDialog(dialog) {
 
