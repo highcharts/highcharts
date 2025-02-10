@@ -368,32 +368,6 @@ class DataTableCore {
     }
 }
 
-/* *
- *
- *  Class Namespace
- *
- * */
-
-/**
- * Additionally it provides necessary types for events.
- */
-namespace DataTableCore {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * All information objects of DataTable events.
-     */
-    export type Event = (
-        DataTable.ColumnEvent|
-        DataTable.RowEvent
-    );
-}
-
 
 /* *
  *
@@ -416,7 +390,7 @@ export default DataTableCore;
  * @typedef {Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|Int32Array|Uint32Array|Float32Array|Float64Array} Highcharts.TypedArray
  * //**
  * A column of values in a data table.
- * @typedef {Array<boolean|null|number|string|undefined>|TypedArray} Highcharts.DataTableColumn
+ * @typedef {Array<boolean|null|number|string|undefined>|Highcharts.TypedArray} Highcharts.DataTableColumn
  *//**
  * A collection of data table columns defined by a object where the key is the
  * column name and the value is an array of the column values.

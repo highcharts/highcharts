@@ -750,7 +750,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             if (column) {
                 if (asReference) {
                     columns[columnName] = column;
-                } else if (asBasicColumns) {
+                } else if (asBasicColumns && !Array.isArray(column)) {
                     columns[columnName] = Array.from(column);
                 } else {
                     columns[columnName] = column.slice();

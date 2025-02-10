@@ -144,10 +144,7 @@ const syncPair: Sync.SyncPair = {
                     min = table.getCell(extremesColumn, minIndex),
                     max = table.getCell(extremesColumn, maxIndex);
 
-                if (
-                    defined(max) && !Array.isArray(max) &&
-                    defined(min) && !Array.isArray(min)
-                ) {
+                if (defined(max) && defined(min)) {
                     NavigatorSyncUtils.unsetRangeOptions(
                         ranges, extremesColumn
                     );
