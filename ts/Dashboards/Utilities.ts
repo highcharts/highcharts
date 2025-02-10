@@ -540,13 +540,6 @@ function removeEvent<T>(
     }
 }
 
-
-/* *
- *
- *  Namespace
- *
- * */
-
 namespace Utilities {
     export interface EventCallback<T> {
         (this: T, eventArguments: (D.AnyRecord|Event)): (boolean|void);

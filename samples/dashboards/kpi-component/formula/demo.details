@@ -1,5 +1,5 @@
 ---
-name: Highcharts Dashboards KPI calculate value as
+name: Highcharts Dashboards KPI formula
 authors:
   - Kamil Kubik
 js_wrap: b

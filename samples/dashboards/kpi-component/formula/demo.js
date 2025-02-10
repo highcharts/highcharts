@@ -5,11 +5,11 @@ Dashboards.board('container', {
             type: 'CSV',
             options: {
                 csv: `Value
-                300
+                100
                 200
                 300
                 400
-                100`
+                500`
             }
         }]
     },

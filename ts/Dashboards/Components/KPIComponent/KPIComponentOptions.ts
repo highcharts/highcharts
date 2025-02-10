@@ -153,13 +153,10 @@ export interface Options extends Component.Options {
     sync?: SyncOptions;
 
     /**
-     * Sets the calculation method key for the KPI component value. Allows to
+     * Sets the formula method key for the KPI component value. Allows to
      * provide the callback function that updates the value internally.
      */
-    formula?: (
-        KPIComponent.ValueCalculationType |
-        FormulaCallbackFunction
-    );
+    formula?: KPIComponent.FormulaType|FormulaCallbackFunction;
 }
 /**
  * Options for linking KPI value to the chart point.

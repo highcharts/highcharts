@@ -215,9 +215,9 @@ class KPIComponent extends Component {
     };
 
     /**
-     * The formula option's default calculation methods map.
+     * The formula option's default formulas map.
      */
-    public static calculationMethods = { SUM, AVERAGE, MEDIAN } as const;
+    public static formulaMethods = { SUM, AVERAGE, MEDIAN } as const;
 
     /* *
      *
@@ -418,16 +418,15 @@ class KPIComponent extends Component {
     }
 
     /**
-     * Gets a proper calculation value, according to the provided formula
-     * option.
+     * Gets a proper value, according to the provided formula option.
      *
      * @returns
-     * The calculated value. Can be a number internally, or a string from the
+     * The formula value. Can be a number internally, or a string from the
      * callback function.
      *
      * @internal
      */
-    private getCalculatedValue(): string|number|undefined {
+    private getFormulaValue(): string|number|undefined {
         const formula = this.options.formula;
         const connector = this.getFirstConnector();
         const table = connector?.table.modified;
@@ -441,7 +440,7 @@ class KPIComponent extends Component {
             return formula.call(this, column);
         }
 
-        return KPIComponent.calculationMethods[formula](column as Arguments);
+        return KPIComponent.formulaMethods[formula](column as Arguments);
     }
 
     /**
@@ -459,7 +458,7 @@ class KPIComponent extends Component {
 
         if (connector && this.options.columnName) {
             if (defined(this.options.formula)) {
-                return this.getCalculatedValue();
+                return this.getFormulaValue();
             }
 
             const table = connector.table.modified,
@@ -760,8 +759,7 @@ namespace KPIComponent {
     export type ComponentType = KPIComponent;
 
     /** @internal */
-    export type ValueCalculationType =
-        keyof typeof KPIComponent.calculationMethods;
+    export type FormulaType = keyof typeof KPIComponent.formulaMethods;
 
     /** @internal */
     export interface ClassJSON extends Component.JSON {
