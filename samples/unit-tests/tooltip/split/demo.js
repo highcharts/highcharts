@@ -51,6 +51,30 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
         value;
 
     chart.tooltip.refresh([p1, p2]);
+
+    const ttCorrectVals = {
+        x: 51.5,
+        y: 94.5,
+        width: 113,
+        height: 252
+    };
+
+    const { x, y, width, height } = chart
+        .tooltip
+        .label
+        .element
+        .getBoundingClientRect();
+
+    const candidate = { x: x, y: y, width: width, height: height };
+
+    for (const key of ['x', 'y', 'width', 'height']) {
+        assert.strictEqual(
+            ttCorrectVals[key],
+            candidate[key],
+            `The ${key} value of the label should be ${ttCorrectVals[key]}`
+        );
+    }
+
     el = chart.tooltip.tt.text.element;
 
     value = window.getComputedStyle(el).getPropertyValue('color');
