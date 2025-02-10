@@ -32,21 +32,19 @@ import type {
 import type Options from './KPIComponentOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 import type Types from '../../../Shared/Types';
-import type DataTable from '../../../Data/DataTable';
+import type { Arguments } from '../../../Data/Formula/FormulaTypes';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
 import KPISyncs from './KPISyncs/KPISyncs.js';
 import KPIComponentDefaults from './KPIComponentDefaults.js';
+import SUM from '../../../Data/Formula/Functions/SUM.js';
+import AVERAGE from '../../../Data/Formula/Functions/AVERAGE.js';
+import MEDIAN from '../../../Data/Formula/Functions/MEDIAN.js';
 import Templating from '../../../Core/Templating.js';
 const {
     format
 } = Templating;
-
-import DashUtils from '../../Utilities.js';
-const {
-    findFirstNaN
-} = DashUtils;
 
 import U from '../../../Core/Utilities.js';
 const {
@@ -217,13 +215,9 @@ class KPIComponent extends Component {
     };
 
     /**
-     * The calculateValueAs option's default calculation methods map.
+     * The formula option's default calculation methods map.
      */
-    public static calculationMethods = {
-        sum: KPIComponent.calculateSumValue,
-        average: KPIComponent.calculateAverageValue,
-        median: KPIComponent.calculateMedianValue
-    } as const;
+    public static calculationMethods = { SUM, AVERAGE, MEDIAN } as const;
 
     /* *
      *
@@ -424,104 +418,30 @@ class KPIComponent extends Component {
     }
 
     /**
-     * Calculates value sum based on the provided column values.
-     *
-     * @param column
-     * All particular column values.
+     * Gets a proper calculation value, according to the provided formula
+     * option.
      *
      * @returns
-     * The calculated sum value.
-     */
-    private static calculateSumValue(column: DataTable.Column): number {
-        let calculatedValue = 0;
-
-        for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
-            calculatedValue += Number(column[i]) || 0;
-        }
-
-        return calculatedValue;
-    }
-
-    /**
-     * Calculates value average based on the provided column values.
-     *
-     * @param column
-     * All particular column values.
-     *
-     * @returns
-     * The calculated average value.
-     */
-    private static calculateAverageValue(column: DataTable.Column): number {
-        let sum = 0;
-        let count = 0;
-
-        for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
-            const value = Number(column[i]);
-            if (!isNaN(value)) {
-                sum += value;
-                count++;
-            }
-        }
-
-        return count > 0 ? sum / count : 0;
-    }
-
-    /**
-     * Calculates value median based on the provided column values.
-     *
-     * @param column
-     * All particular column values.
-     *
-     * @returns
-     * The calculated median value.
-     */
-    private static calculateMedianValue(column: DataTable.Column): number {
-        const oneIfNaN = (v: number): number => (isNaN(v) ? 1 : v);
-        const sortedValues = Array.from(column)
-            .map((v): number => Number(v))
-            .sort((a, b): number => oneIfNaN(a - b));
-
-        const firstNaNIndex = findFirstNaN(sortedValues);
-        if (firstNaNIndex > -1) {
-            sortedValues.splice(firstNaNIndex);
-        }
-
-        if (sortedValues.length < 1) {
-            return NaN;
-        }
-
-        const middleIndex = Math.floor(sortedValues.length / 2);
-        const middleValue = sortedValues[middleIndex];
-
-        return sortedValues.length % 2 === 0 ?
-            (sortedValues[middleIndex - 1] + middleValue) / 2 :
-            middleValue;
-    }
-
-    /**
-     * Gets the proper calculation value, according to the provided
-     * calculateValueAs option.
-     *
-     * @returns
-     * The calculated value or 0 if can't perform the calculation. Can be a
-     * number internally, or a string from the callback function.
+     * The calculated value. Can be a number internally, or a string from the
+     * callback function.
      *
      * @internal
      */
     private getCalculatedValue(): string|number|undefined {
-        const calculateValueAs = this.options.calculateValueAs;
+        const formula = this.options.formula;
         const connector = this.getFirstConnector();
         const table = connector?.table.modified;
         const column = table?.getColumn(this.options.columnName);
-        if (!column || !calculateValueAs) {
+
+        if (!column || !formula) {
             return;
         }
 
-        if (isFunction(calculateValueAs)) {
-            return calculateValueAs.call(this, column);
+        if (isFunction(formula)) {
+            return formula.call(this, column);
         }
 
-        return KPIComponent.calculationMethods[calculateValueAs](column);
+        return KPIComponent.calculationMethods[formula](column as Arguments);
     }
 
     /**
@@ -538,7 +458,7 @@ class KPIComponent extends Component {
         const connector = this.getFirstConnector();
 
         if (connector && this.options.columnName) {
-            if (defined(this.options.calculateValueAs)) {
+            if (defined(this.options.formula)) {
                 return this.getCalculatedValue();
             }
 

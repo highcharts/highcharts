@@ -153,13 +153,12 @@ export interface Options extends Component.Options {
     sync?: SyncOptions;
 
     /**
-     * The calculated value that is displayed in KPI component, according to the
-     * provided option. Allows to provide the callback function that updates the
-     * internal KPI component value.
+     * Sets the calculation method key for the KPI component value. Allows to
+     * provide the callback function that updates the value internally.
      */
-    calculateValueAs?: (
+    formula?: (
         KPIComponent.ValueCalculationType |
-        CalculateValueAsCallbackFunction
+        FormulaCallbackFunction
     );
 }
 /**
@@ -207,7 +206,7 @@ export interface ValueFormatterCallbackFunction {
 }
 
 /** @internal */
-export interface CalculateValueAsCallbackFunction {
+export interface FormulaCallbackFunction {
     (
         this: KPIComponent,
         values: DataTable.Column

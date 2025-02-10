@@ -18,7 +18,7 @@ Dashboards.board('container', {
         type: 'KPI',
         title: 'KPI sum',
         columnName: 'Value',
-        calculateValueAs: 'sum',
+        formula: 'SUM',
         connector: {
             id: 'values'
         }
@@ -27,7 +27,7 @@ Dashboards.board('container', {
         type: 'KPI',
         title: 'KPI average',
         columnName: 'Value',
-        calculateValueAs: 'average',
+        formula: 'AVERAGE',
         connector: {
             id: 'values'
         }
@@ -36,7 +36,7 @@ Dashboards.board('container', {
         type: 'KPI',
         title: 'KPI median',
         columnName: 'Value',
-        calculateValueAs: 'median',
+        formula: 'MEDIAN',
         connector: {
             id: 'values'
         }
@@ -45,7 +45,7 @@ Dashboards.board('container', {
         type: 'KPI',
         title: 'KPI range (callback)',
         columnName: 'Value',
-        calculateValueAs(column) {
+        formula: function (column) {
             const min = Math.min(...column);
             const max = Math.max(...column);
             return max - min;

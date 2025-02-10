@@ -79,19 +79,19 @@ describe('KPI component value calculations.', () => {
             const kpiComponent = board.mountedComponents[1].component;
 
             // Test the KPI component sum value.
-            cy.wrap(kpiComponent).invoke('update', { calculateValueAs: 'sum' });
+            cy.wrap(kpiComponent).invoke('update', { formula: 'SUM' });
             cy.get('#kpi .highcharts-dashboards-component-kpi-value')
                 .should('have.text', 7800);
 
             // Test the KPI component average value.
             cy.wrap(kpiComponent)
-                .invoke('update', { calculateValueAs: 'average' });
+                .invoke('update', { formula: 'AVERAGE' });
             cy.get('#kpi .highcharts-dashboards-component-kpi-value')
                 .should('have.text', 650);
 
             // Test the KPI component median value.
             cy.wrap(kpiComponent)
-                .invoke('update', { calculateValueAs: 'median' });
+                .invoke('update', { formula: 'MEDIAN' });
             cy.get('#kpi .highcharts-dashboards-component-kpi-value')
                 .should('have.text', 650);
         });
