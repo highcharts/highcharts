@@ -135,7 +135,6 @@ export async function resolveExternals(
                             externalModule :
                             `./${externalModule}`
                     );
-                    console.log(path, `${externalsType} ${externalModule}`);
                     return [
                         `${externalsType} ${externalModule}`,
                         'default',

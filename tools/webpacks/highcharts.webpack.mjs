@@ -156,7 +156,17 @@ const umdWebpacks = FSLib
 /**
  * ES module bundles
  */
-const esmWebpacks = umdWebpacks.map(umdWebpack => {
+const esmWebpacks = umdWebpacks.filter(umdWebpack => {
+    const masterPath = umdWebpack.output.filename;
+    const masterName = getMasterName(masterPath);
+
+    // Only the main product should be bundled for ESM
+    // because of relative imports
+    return (
+        masterName === productMasters[0] ||
+        !productMasters.includes(masterName)
+    );
+}).map(umdWebpack => {
     const masterPath = umdWebpack.output.filename;
     const masterName = getMasterName(masterPath);
     const esmWebpack = {
