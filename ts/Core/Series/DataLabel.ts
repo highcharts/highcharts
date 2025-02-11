@@ -650,8 +650,7 @@ namespace DataLabel {
                                         isString(labelBgColor) &&
                                         labelBgColor
                                     ) ||
-                                    (isString(pointColor) ? pointColor : ''),
-                                    point.graphic
+                                    (isString(pointColor) ? pointColor : '')
                                 );
 
                                 style.color = (

@@ -131,16 +131,6 @@ class Color implements ColorLike {
                     (pInt(result[4], 16) / 255)
             ];
         }
-    }, {
-        // The color function with srgb values, as reported by browsers when
-        // doing getComputedStyle on variables
-        regex: /^color\(srgb ([0-9\.]+) ([0-9\.]+) ([0-9\.]+)\)$/i,
-        parse: (result: RegExpExecArray): Color.RGBA => [
-            Math.floor(parseFloat(result[1]) * 255),
-            Math.floor(parseFloat(result[2]) * 255),
-            Math.floor(parseFloat(result[3]) * 255),
-            1
-        ]
     }];
 
     /**
