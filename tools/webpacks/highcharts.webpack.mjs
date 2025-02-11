@@ -144,7 +144,7 @@ const umdWebpacks = FSLib
                     info,
                     masterName,
                     sourceFolder,
-                    namespace,
+                    productMasters[0],
                     'umd'
                 )
             ];
@@ -191,6 +191,7 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
                 masterName,
                 sourceFolder,
                 namespace,
+                productMasters[0],
                 'module-import'
             )
         ];

@@ -39,6 +39,14 @@
         "namespacePath": ".dataGrouping.approximations"
     },
     {
+        "files": ["Extensions/DownloadURL"],
+        "included": [
+            "modules/export-data",
+            "modules/offline-exporting"
+        ],
+        "namespacePath": ".downloadURL"
+    },
+    {
         "files": ["Gantt/Pathfinder"],
         "included": [
             "modules/gantt",

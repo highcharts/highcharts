@@ -130,6 +130,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
                     masterName,
                     sourceFolder,
                     namespace,
+                    productMasters[0],
                     'umd'
                 )
             ];

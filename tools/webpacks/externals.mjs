@@ -92,6 +92,7 @@ export async function resolveExternals(
     masterName,
     sourceFolder,
     namespace,
+    externalsProduct = 'highcharts',
     externalsType = 'umd'
 ) {
     const path = Path
@@ -100,13 +101,11 @@ export async function resolveExternals(
         .replaceAll(Path.sep, Path.posix.sep);
     const namespaceName = Path.basename(path);
 
-    // Quick exit on entry point
-    if (masterName === namespaceName) {
-        return void 0;
-    }
-
-    // Quick exit on standalone
-    if (masterName.includes('standalone')) {
+    // Quick exit
+    if (
+        masterName === externalsProduct ||
+        masterName.includes('standalone')
+    ) {
         return void 0;
     }
 
@@ -117,9 +116,8 @@ export async function resolveExternals(
                 return void 0;
             }
 
-            let externalModule = (external.included[0] || 'highcharts');
+            let externalModule = (external.included[0] || externalsProduct);
             let namespacePath = [
-                namespace,
                 ...external.namespacePath
                     .replace(/\{name\}/gsu, namespaceName)
                     .split('.')
@@ -127,8 +125,6 @@ export async function resolveExternals(
             ];
 
             switch (externalsType) {
-                case 'import':
-                    return `${externalsType} ${externalModule}`;
                 case 'module-import':
                     externalModule = Path.posix.relative(
                         Path.posix.dirname(`/${masterName}.src.js`),
@@ -139,12 +135,17 @@ export async function resolveExternals(
                             externalModule :
                             `./${externalModule}`
                     );
-                    return `${externalsType} ${externalModule}`;
+                    console.log(path, `${externalsType} ${externalModule}`);
+                    return [
+                        `${externalsType} ${externalModule}`,
+                        'default',
+                        ...namespacePath
+                    ];
                 case 'umd':
-                    return createUMDConfig(...namespacePath);
+                    return createUMDConfig(namespace, ...namespacePath);
                 default:
                     return {
-                        [externalsType]: namespacePath
+                        [externalsType]: [namespace, ...namespacePath]
                     };
             }
         }
