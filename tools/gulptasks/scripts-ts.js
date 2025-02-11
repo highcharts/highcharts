@@ -175,6 +175,18 @@ async function scriptsTS(argv) {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
             removeHighcharts(true);
+
+            [ // Copy dts files from the folders to the grid es-modules:
+                'Data',
+                'Grid'
+            ].forEach(dtsFolder => {
+                fsLib.copyAllFiles(
+                    fsLib.path(['ts', dtsFolder]),
+                    fsLib.path(['code', 'grid', 'es-modules', dtsFolder]),
+                    true,
+                    sourcePath => sourcePath.endsWith('.d.ts')
+                );
+            });
         } else if (argv.assembler) {
             await processLib
                 .exec('npx tsc -p ts --outDir js');

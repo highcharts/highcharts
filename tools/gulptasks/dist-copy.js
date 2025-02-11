@@ -139,12 +139,14 @@ const CODE_FILTER = {
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
     gridlite: [
-
+        // Add here files that should not be distributed with Grid Lite.
+        // However, the main cleanup is done in `scripts-ts` at the `code` level.
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
     gridpro: [
-
+        // Add here files that should not be distributed with Grid Pro.
+        // However, the main cleanup is done in `scripts-ts` at the `code` level.
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     )
@@ -216,23 +218,33 @@ function distCopy() {
 
     return new Promise(resolve => {
 
+        let codeExtensions;
         let directory;
+        let sourceDir;
+
+        if (distProduct === 'Grid') {
+            sourceDir = Path.join(CODE_DIRECTORY, 'grid');
+            codeExtensions = [...CODE_EXTENSIONS, '.ts']; // copy also d.ts files
+        } else {
+            sourceDir = CODE_DIRECTORY;
+            codeExtensions = CODE_EXTENSIONS;
+        }
 
         LogLib.message('Copying files...');
 
-        PRODUCTS[distProduct].forEach(product => {
+        for (const product of PRODUCTS[distProduct]) {
 
             const productFilter = CODE_FILTER[product];
 
             directory = Path.join(TARGET_DIRECTORY, product, 'code');
 
             FsLib.copyAllFiles(
-                CODE_DIRECTORY, directory, true,
+                sourceDir, directory, true,
                 sourcePath => (
                     !productFilter.some(
                         filterPath => sourcePath.startsWith(filterPath)
                     ) &&
-                    CODE_EXTENSIONS.includes(Path.extname(sourcePath))
+                    codeExtensions.includes(Path.extname(sourcePath))
                 )
                 /*
                 if (targetPath.endsWith('.src.js')) {
@@ -248,12 +260,16 @@ function distCopy() {
 
             LogLib.success('Created', directory);
 
-            directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
-            if (distProduct === 'Highcharts') {
-                // Copy root `css` directory only for Highcharts
-                FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid', 'grid']
-                    .some(name => fileName.includes(`${name}.css`)));
+            if (distProduct === 'Grid') {
+                // No need to copy CSS, GFX, and Graphics for Grid from root
+                continue;
             }
+
+            directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
+
+            // Copy all the CSS files to /code
+            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid', 'grid']
+                .some(name => fileName.includes(`${name}.css`)));
 
             FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
             LogLib.success('Created', directory);
@@ -267,14 +283,16 @@ function distCopy() {
             );
             LogLib.success('Created', directory);
 
+            // Copy gfx to /code
             directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
             FsLib.copyAllFiles(GFX_DIRECTORY, directory, true, fileName => !(fileName.includes('dashboards-icons')));
             LogLib.success('Created', directory);
 
+            // Copy graphics to /code
             directory = Path.join(TARGET_DIRECTORY, product, 'graphics');
             FsLib.copyAllFiles(GRAPHICS_DIRECTORY, directory, true);
             LogLib.success('Created', directory);
-        });
+        }
 
         resolve();
     });
