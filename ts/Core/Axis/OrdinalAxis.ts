@@ -149,6 +149,8 @@ namespace OrdinalAxis {
     ): (typeof Composition&T) {
         const axisProto = AxisClass.prototype as Composition;
 
+        // TimeClass.prototype.getTimeTicks = getTimeTicks;
+
         if (!axisProto.ordinal2lin) {
             axisProto.getTimeTicks = getTimeTicks;
             axisProto.index2val = index2val;

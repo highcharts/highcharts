@@ -36,7 +36,7 @@ import Globals from './Globals.js';
 import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
-import TimeCore from '../Shared/TimeCore.js';
+import Time from '../Core/Time.js';
 
 const { makeHTMLElement, setHTMLContent } = DataGridUtils;
 const { win } = Globals;
@@ -252,7 +252,7 @@ class DataGrid {
     /**
      * The time instance.
      */
-    public time: TimeCore;
+    public time: Time;
 
     /**
      * The locale of the data grid.
@@ -306,7 +306,7 @@ class DataGrid {
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
         );
 
-        this.time = new TimeCore(extend<TimeCore.TimeOptions>(
+        this.time = new Time(extend<Time.TimeOptions>(
             this.options?.time,
             { locale: this.locale }
         ), this.options?.lang);
