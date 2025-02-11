@@ -42,7 +42,8 @@
         "files": ["Extensions/DownloadURL"],
         "included": [
             "modules/export-data",
-            "modules/offline-exporting"
+            "modules/offline-exporting",
+            "modules/sonification"
         ],
         "namespacePath": ".downloadURL"
     },
