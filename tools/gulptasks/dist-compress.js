@@ -34,11 +34,11 @@ function getProperties() {
             'Highcharts GridLite': {
                 cdnpath: '/gridlite',
                 distpath: '/gridlite'
-            },
+            }/* ,
             'Highcharts GridPro': {
                 cdnpath: '/gridpro',
                 distpath: '/gridpro'
-            }
+            }*/
         },
         version: argv.release
     };

@@ -3,6 +3,7 @@
  */
 
 const Gulp = require('gulp');
+const { validateProduct } = require('./utils');
 
 /* *
  *
@@ -24,6 +25,10 @@ require('./scripts-webpack');
 function dist() {
     const argv = require('yargs').argv;
     const product = argv.product || 'Highcharts';
+
+    if (!validateProduct(product)) {
+        throw new Error(`The specified product '${product}' is not valid.`);
+    }
 
     const tasks = [
         'lint-ts',

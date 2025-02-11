@@ -22,7 +22,10 @@ const PRODUCT_NAMES = {
         'Highcharts Gantt'
     ],
     Dashboards: ['Highcharts Dashboards'],
-    Grid: ['Highcharts GridLite', 'Highcharts GridPro']
+    Grid: [
+        'Highcharts GridLite'
+        // 'Highcharts GridPro'
+    ]
 };
 
 /* *

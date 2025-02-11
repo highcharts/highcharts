@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": false,
+        "noEmit": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "baseUrl": "../../../",
+        "module": "umd",
+        "moduleResolution": "node",
+        "rootDir": "../../../",
+        "lib": ["es5", "dom"],
+        "paths": {
+            "@highcharts/grid": ["code/grid"],
+            "@highcharts/grid/*": ["code/grid/*"]
+
+        },
+        "types": []
+    },
+    "exclude": [
+        "../../../node_modules"
+    ]
+}

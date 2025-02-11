@@ -307,11 +307,11 @@ function distExamples() {
                 gridlite: {
                     path: ['grid', 'demo'],
                     title: 'Highcharts GridLite'
-                },
+                }/* ,
                 gridpro: {
                     path: ['grid', 'demo'],
                     title: 'Highcharts GridPro'
-                }
+                }*/
             };
         }
 

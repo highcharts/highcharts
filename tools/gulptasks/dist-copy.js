@@ -191,7 +191,7 @@ const VENDOR_FILTER = [
  */
 const PRODUCTS = {
     Highcharts: ['highcharts', 'highstock', 'highmaps', 'gantt'],
-    Grid: ['gridlite', 'gridpro']
+    Grid: ['gridlite'/* , 'gridpro'*/]
 };
 
 /* *
@@ -249,8 +249,11 @@ function distCopy() {
             LogLib.success('Created', directory);
 
             directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
-            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid']
-                .some(name => fileName.includes(`${name}.css`)));
+            if (distProduct === 'Highcharts') {
+                // Copy root `css` directory only for Highcharts
+                FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid', 'grid']
+                    .some(name => fileName.includes(`${name}.css`)));
+            }
 
             FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
             LogLib.success('Created', directory);

@@ -52,8 +52,7 @@ function lintDTS(argv) {
                         folder.includes('grid')
                     );
                 case 'Grid':
-                    // TODO: Implement grid dts linting
-                    return false;
+                    return folder.includes('grid');
                 default:
                     return false;
             }
