@@ -144,6 +144,7 @@ const umdWebpacks = FSLib
                     info,
                     masterName,
                     sourceFolder,
+                    namespace,
                     productMasters[0],
                     'umd'
                 )
