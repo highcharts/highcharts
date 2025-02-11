@@ -42,21 +42,16 @@ function lintDTS(argv) {
 
         let directories = fsLib.getDirectoryPaths(TEST_FOLDER, false);
 
-        directories = directories.filter(folder => {
-            switch (product) {
-                case 'Dashboards':
-                    return folder.includes('dashboards');
-                case 'Highcharts':
-                    return !(
-                        folder.includes('dashboards') ||
-                        folder.includes('grid')
-                    );
-                case 'Grid':
-                    return folder.includes('grid');
-                default:
-                    return false;
-            }
-        });
+        if (product === 'Highcharts') {
+            directories = directories.filter(folder => !(
+                folder.includes('dashboards') ||
+                folder.includes('grid')
+            ));
+        } else if (product === 'Grid') {
+            directories = [path.join(TEST_FOLDER, 'grid')];
+        } else if (product === 'Dashboards') {
+            directories = [path.join(TEST_FOLDER, 'dashboards')];
+        }
 
         let promiseChain = Promise.resolve();
 

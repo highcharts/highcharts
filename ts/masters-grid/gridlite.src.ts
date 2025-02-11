@@ -66,7 +66,6 @@ declare global {
     interface Window {
         Grid: GridNamespace;
     }
-    let Grid: GridNamespace;
 }
 
 

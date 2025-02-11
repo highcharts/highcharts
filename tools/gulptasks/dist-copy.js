@@ -139,14 +139,15 @@ const CODE_FILTER = {
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
     gridlite: [
-        // Add here files that should not be distributed with Grid Lite.
-        // However, the main cleanup is done in `scripts-ts` at the `code` level.
+        // The main cleanup is done in `scripts-ts` at the `code` level.
+        ['grid', 'es-modules', 'Grid', 'Pro'],
+        ['grid', 'es-modules', 'masters', 'gridpro.'],
+        ['grid', 'gridpro.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
     gridpro: [
         // Add here files that should not be distributed with Grid Pro.
-        // However, the main cleanup is done in `scripts-ts` at the `code` level.
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     )

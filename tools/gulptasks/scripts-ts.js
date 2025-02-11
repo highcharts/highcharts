@@ -10,6 +10,7 @@
 
 const gulp = require('gulp');
 const path = require('path');
+const FS = require('node:fs');
 
 /* *
  *
@@ -187,6 +188,11 @@ async function scriptsTS(argv) {
                     sourcePath => sourcePath.endsWith('.d.ts')
                 );
             });
+
+            FS.renameSync(
+                fsLib.path(['code', 'grid', 'es-modules', 'masters-grid']),
+                fsLib.path(['code', 'grid', 'es-modules', 'masters'])
+            );
         } else if (argv.assembler) {
             await processLib
                 .exec('npx tsc -p ts --outDir js');
