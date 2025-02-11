@@ -684,7 +684,7 @@ class SVGRenderer implements SVGRendererLike {
 
         // Not parsable, use CSS functions instead
         return 'color(' +
-            'from ' + color + 'srgb' +
+            'from ' + color + ' srgb' +
             // For each rgb channel, compute the luminosity based on all
             // channels. Subtract this from 0.5 and multiply by a huge number,
             // so that all colors with luminosity < 0.5 result in a negative
