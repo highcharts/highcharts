@@ -5,11 +5,11 @@ Dashboards.board('container', {
             type: 'CSV',
             options: {
                 csv: `Value
-                100
-                200
-                300
-                400
-                500`
+                10
+                20
+                30
+                40
+                50`
             }
         }]
     },
@@ -53,6 +53,42 @@ Dashboards.board('container', {
         connector: {
             id: 'values'
         }
+    }, {
+        renderTo: 'kpi-min',
+        type: 'KPI',
+        title: 'KPI min',
+        columnName: 'Value',
+        formula: 'MIN',
+        connector: {
+            id: 'values'
+        }
+    }, {
+        renderTo: 'kpi-max',
+        type: 'KPI',
+        title: 'KPI max',
+        columnName: 'Value',
+        formula: 'MAX',
+        connector: {
+            id: 'values'
+        }
+    }, {
+        renderTo: 'kpi-count',
+        type: 'KPI',
+        title: 'KPI count',
+        columnName: 'Value',
+        formula: 'COUNT',
+        connector: {
+            id: 'values'
+        }
+    }, {
+        renderTo: 'kpi-product',
+        type: 'KPI',
+        title: 'KPI product',
+        columnName: 'Value',
+        formula: 'PRODUCT',
+        connector: {
+            id: 'values'
+        }
     }],
     gui: {
         layouts: [{
@@ -67,6 +103,18 @@ Dashboards.board('container', {
                     id: 'kpi-median'
                 }, {
                     id: 'kpi-range'
+                }]
+            }, {
+                cells: [{
+                    id: 'kpi-min'
+                }, {
+                    id: 'kpi-max'
+                }]
+            }, {
+                cells: [{
+                    id: 'kpi-count'
+                }, {
+                    id: 'kpi-product'
                 }]
             }]
         }]

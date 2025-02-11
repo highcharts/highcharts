@@ -40,7 +40,13 @@ import KPISyncs from './KPISyncs/KPISyncs.js';
 import KPIComponentDefaults from './KPIComponentDefaults.js';
 import SUM from '../../../Data/Formula/Functions/SUM.js';
 import AVERAGE from '../../../Data/Formula/Functions/AVERAGE.js';
+import AVERAGEA from '../../../Data/Formula/Functions/AVERAGEA.js';
 import MEDIAN from '../../../Data/Formula/Functions/MEDIAN.js';
+import MAX from '../../../Data/Formula/Functions/MAX.js';
+import MIN from '../../../Data/Formula/Functions/MIN.js';
+import COUNT from '../../../Data/Formula/Functions/COUNT.js';
+import COUNTA from '../../../Data/Formula/Functions/COUNTA.js';
+import PRODUCT from '../../../Data/Formula/Functions/PRODUCT.js';
 import Templating from '../../../Core/Templating.js';
 const {
     format
@@ -215,9 +221,19 @@ class KPIComponent extends Component {
     };
 
     /**
-     * The formula option's default formulas map.
+     * The formula option's default formula functions map.
      */
-    public static formulaMethods = { SUM, AVERAGE, MEDIAN } as const;
+    public static formulaFunctions = {
+        SUM,
+        AVERAGE,
+        AVERAGEA,
+        MEDIAN,
+        MAX,
+        MIN,
+        COUNT,
+        COUNTA,
+        PRODUCT
+    } as const;
 
     /* *
      *
@@ -440,7 +456,11 @@ class KPIComponent extends Component {
             return formula.call(this, column);
         }
 
-        return KPIComponent.formulaMethods[formula](column as Arguments);
+        try {
+            return KPIComponent.formulaFunctions[formula](column as Arguments);
+        } catch {
+            console.warn('Invalid formula option provided.'); // eslint-disable-line no-console
+        }
     }
 
     /**
@@ -759,7 +779,7 @@ namespace KPIComponent {
     export type ComponentType = KPIComponent;
 
     /** @internal */
-    export type FormulaType = keyof typeof KPIComponent.formulaMethods;
+    export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
 
     /** @internal */
     export interface ClassJSON extends Component.JSON {
