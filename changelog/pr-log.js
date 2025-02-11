@@ -20,7 +20,8 @@ const log = {
     'Highcharts Stock': {},
     'Highcharts Maps': {},
     'Highcharts Gantt': {},
-    'Highcharts Dashboards': {}
+    'Highcharts Dashboards': {},
+    'Highcharts Grid': {}
 };
 
 // Whenever the string 'Upgrade note' appears, the next paragraph is interpreted
@@ -51,7 +52,8 @@ const parseUpgradeNotes = p => {
 const loadPulls = async (
     since,
     branches = 'master',
-    isDashboards = false
+    isDashboards = false,
+    product = 'Highcharts'
 ) => {
     let page = 1;
     let pulls = [];
@@ -64,6 +66,19 @@ const loadPulls = async (
 
     lastTagSha = tags.data[0].commit.sha;
 
+    if (product === 'Grid') {
+        const gridTags = await octokit.request(
+            'GET /repos/highcharts/highcharts/git/matching-refs/tags/grid',
+            {
+                owner: 'highcharts',
+                repo: 'highcharts'
+            }
+        );
+
+        if (gridTags.data.length > 0) {
+            lastTagSha = gridTags.data[gridTags.data.length - 1].object.sha;
+        }
+    }
     if (isDashboards) {
         const dashboardsTags = await octokit.request(
             'GET /repos/highcharts/highcharts/git/matching-refs/tags/dash',
@@ -136,8 +151,7 @@ const loadPulls = async (
     return pulls;
 };
 
-module.exports = async (since, fromCache, branches, isDashboards) => {
-
+module.exports = async (since, fromCache, branches, isDashboards, productName) => {
     const included = [],
         tmpFileName = path.join(os.tmpdir(), 'pulls.json');
 
@@ -146,7 +160,7 @@ module.exports = async (since, fromCache, branches, isDashboards) => {
         pulls = await fs.readFile(tmpFileName);
         pulls = JSON.parse(pulls);
     } else {
-        pulls = await loadPulls(since, branches, isDashboards);
+        pulls = await loadPulls(since, branches, isDashboards, productName);
         await fs.writeFile(tmpFileName, JSON.stringify(pulls));
     }
 
@@ -178,15 +192,27 @@ module.exports = async (since, fromCache, branches, isDashboards) => {
     });
 
     Object.keys(log).forEach(product => {
-        log[product].features = pulls.filter(
-            p => p.isFeature && p.product === product
-        );
+        if (product === 'Highcharts Grid') {
+            log[product].features = pulls.filter(
+                p => p.isFeature && p.product === 'Highcharts Dashboards' && p.labels.find(l => l.name === 'grid')
+            );
+        } else {
+            log[product].features = pulls.filter(
+                p => p.isFeature && p.product === product
+            );
+        }
     });
 
     Object.keys(log).forEach(product => {
-        log[product].bugfixes = pulls.filter(
-            p => p.isFix && p.product === product
-        );
+        if (product === 'Highcharts Grid') {
+            log[product].bugfixes = pulls.filter(
+                p => p.isFix && p.product === 'Highcharts Dashboards' && p.labels.find(l => l.name === 'grid')
+            );
+        } else {
+            log[product].bugfixes = pulls.filter(
+                p => p.isFix && p.product === product
+            );
+        }
     });
 
     // From objects to text

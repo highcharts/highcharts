@@ -13,6 +13,8 @@ consistent-return: 0 */
  * --review        Create a review page with edit links and a list of all PRs
  *                 that are not used in the changelog.
  * --fromCache     Re-format pulls from cache, do not load new from GitHub.
+ * --product       The product to generate the changelog for (defaults to
+ *                 Highcharts) for example --product Grid.
  */
 const https = require('https');
 const marked = require('marked');
@@ -87,11 +89,14 @@ const getFile = url => new Promise((resolve, reject) => {
      * Get the log from Git
      */
     async function getLog(callback) {
+        const product = params.product || 'Highcharts';
+
         var log = await prLog(
             params.since,
             params.fromCache,
             params.branches,
-            params.highchartsDashboards
+            params.highchartsDashboards, // ToDo: remove this when working on dash and use product
+            product
         ).catch(e => console.error(e));
         callback(log);
     }
@@ -193,7 +198,8 @@ const getFile = url => new Promise((resolve, reject) => {
                 'Highcharts Stock': 'highstock',
                 'Highcharts Maps': 'highmaps',
                 'Highcharts Gantt': 'gantt',
-                'Highcharts Dashboards': 'dashboards'
+                'Highcharts Dashboards': 'dashboards',
+                'Highcharts Grid': 'dashboards'
             }[name];
 
         log = log || [];
@@ -211,7 +217,8 @@ const getFile = url => new Promise((resolve, reject) => {
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
-        if (name !== 'Highcharts Dashboards') {
+        // Only add changes for Highcharts
+        if (!['Highcharts Dashboards', 'Highcharts Grid'].includes(name)) {
             if (name !== 'Highcharts') {
                 outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
             } else if (log.length === 0) {
@@ -220,9 +227,7 @@ const getFile = url => new Promise((resolve, reject) => {
         }
 
         log.forEach((change, i) => {
-
             const desc = addLinks(change.description || change, apiFolder);
-
 
             // Start fixes
             if (i === log.startFixes) {
@@ -301,12 +306,37 @@ const getFile = url => new Promise((resolve, reject) => {
 
     // Get the Git log
     getLog(function (log) {
-
+        const product = params.product || 'Highcharts';
         const pack = require(path.join(__dirname, '/../package.json'));
         const d = new Date();
         const review = [];
 
-        if (params.highchartsDashboards && params.release) {
+        if (product === 'Grid') {
+            const version = params.release;
+
+            if (!version) {
+                throw new Error('No release version provided (e.g. --release 2.x.x)');
+            }
+            if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(version)) {
+                throw new Error('No valid `--release x.x.x` provided.');
+            }
+            const date = d.getFullYear() + '-' +
+                pad(d.getMonth() + 1, 2) + '-' +
+                pad(d.getDate(), 2);
+
+            review.push(buildMarkdown(
+                `Highcharts ${product}`,
+                version,
+                date,
+                log,
+                void 0,
+                optionKeys
+            ));
+
+            if (params.review) {
+                saveReview(review.join('\n\n___\n'));
+            }
+        } else if (params.highchartsDashboards && params.release) {
             const version = params.release;
             if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(version)) {
                 throw new Error('No valid `--release x.x.x` provided.');
