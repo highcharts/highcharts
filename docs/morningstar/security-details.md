@@ -18,6 +18,33 @@ Supported id-types are: `CUSIP`, `FundCode`, `ISIN`, `MSID`, `PerformanceId`, `S
 
 If any securities are invalid, the connector will still yield results. The invalid securities will appear in the connector's `metadata` after load.
 
+#### Security Details Types
+
+You can specify the type of data to retrieve by using the `type` option in the connector. The following types are available:
+
+- **TrailingPerformance** (default)
+- **AssetAllocations**
+- **RegionalExposure**
+- **GlobalStockSectorBreakdown**
+- **CountryExposure**
+
+Example usage:
+
+```js
+const securityDetailsConnector = new HighchartsConnectors.Morningstar.SecurityDetailsConnector({
+    postman: {
+        environmentJSON: postmanJSON
+    },
+    security: {
+        id: 'F0GBR050DD',
+        idType: 'MSID'
+    },
+    converter: {
+        type: 'AssetAllocations' // Specify the type of data to retrieve
+    }
+});
+```
+
 For more details, see [Morningstar’s Security Details API].
 
 ### Security Details with Morningstar standalone for Highcharts:

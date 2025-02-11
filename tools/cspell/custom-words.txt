@@ -196,3 +196,5 @@ CUSIP
 MSID
 OHLCV
 indexmundi
+KIIDs
+SFDR

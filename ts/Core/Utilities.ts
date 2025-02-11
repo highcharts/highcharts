@@ -1894,7 +1894,7 @@ function fireEvent<T>(
     eventArguments = eventArguments || {};
 
     if (
-        doc.createEvent &&
+        doc?.createEvent &&
         (
             (el as any).dispatchEvent ||
             (

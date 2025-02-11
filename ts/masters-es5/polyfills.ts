@@ -86,11 +86,18 @@ if (typeof ElementPrototype.closest !== 'function') {
 }
 
 (function () {
-    if (typeof window.CustomEvent === "function") return false;
+    if (
+        typeof window === 'undefined' ||
+        window.CustomEvent ||
+        !window.document ||
+        !window.Event
+    ) {
+        return false;
+    }
 
     function CustomEvent(type: string, params?: CustomEventInit) {
         params = params || { bubbles: false, cancelable: false, detail: undefined };
-        var evt = document.createEvent('CustomEvent');
+        var evt = window.document.createEvent('CustomEvent');
         evt.initCustomEvent(type, params.bubbles, params.cancelable, params.detail);
         return evt;
     }
