@@ -145,8 +145,7 @@ namespace OrdinalAxis {
     export function compose<T extends typeof Axis>(
         AxisClass: T,
         SeriesClass: typeof Series,
-        ChartClass: typeof Chart,
-        // TimeClass: typeof Time
+        ChartClass: typeof Chart
     ): (typeof Composition&T) {
         const axisProto = AxisClass.prototype as Composition;
 
