@@ -403,13 +403,14 @@ class HTMLElement extends SVGElement {
             // (#7656).
             if (textWidth !== this.oldTextWidth) { // #983, #1254
                 const textPxLength = getTextPxLength(),
-                    textWidthNum = textWidth || 0;
+                    textWidthNum = textWidth || 0,
+                    willOverWrap = element.style.textOverflow === '' &&
+                        element.style.webkitLineClamp;
                 if (
                     (
                         textWidthNum > this.oldTextWidth ||
                         textPxLength > textWidthNum ||
-                        // Set width to prevent over-wrapping (#22609)
-                        element.style.textOverflow === ''
+                        willOverWrap
                     ) && (
                         // Only set the width if the text is able to word-wrap,
                         // or text-overflow is ellipsis (#9537)
@@ -422,7 +423,7 @@ class HTMLElement extends SVGElement {
                     const usePxWidth = rotation || scaleX ||
                         textPxLength > textWidthNum ||
                         // Set width to prevent over-wrapping (#22609)
-                        element.style.textOverflow === '';
+                        willOverWrap;
                     css(element, {
                         width: usePxWidth ? textWidth + 'px' : 'auto', // #16261
                         display,
