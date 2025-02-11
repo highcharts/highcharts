@@ -100,7 +100,7 @@ G.timers = Fx.timers;
 BorderRadius.compose(G.Series, G.SVGElement, G.SVGRenderer);
 ColumnDataLabel.compose(G.Series.types.column);
 DataLabel.compose(G.Series);
-DateTimeAxis.compose(G.Time, G.Axis);
+DateTimeAxis.compose(G.Axis);
 HTMLElement.compose(G.SVGRenderer);
 Legend.compose(G.Chart);
 LogarithmicAxis.compose(G.Axis);
