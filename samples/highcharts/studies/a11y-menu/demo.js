@@ -1,3 +1,6 @@
+// Store settings for each chart instance
+const chartSettingsMap = {};
+
 // Colors for light theme
 const defaultColorsLight = ['#90D2FE', '#ffb8b8'],
     contrastColorsLight = ['#247eb3', '#dd3636'],
@@ -16,9 +19,6 @@ const shortPointDescriptionFormat =
 const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
     '{point.series.points.length} in series {point.category}, ' +
     '{point.series.name}: {(point.y):,.0f} (1000 MT).';
-
-let longDesc = '';
-let shortDesc = '';
 
 
 const lightTheme = {
@@ -159,29 +159,19 @@ const themeMap = {
     light: lightTheme
 };
 
-// Storing preference states globally
-let selectedVerbosity = 'full',
-    selectedTextSize = 'default',
-    isContrastChecked = false,
-    isBorderChecked = false,
-    isAltPointDescChecked = false,
-    isAltPointLabelChecked = false,
-    isInfoChecked = false,
-    isPatternChecked = false,
-    fontSize = '',
-    isSelectedTheme = 'default';
-
-function getThemeConfig() {
+function getThemeConfig(chart) {
+    const settings = chartSettingsMap[chart.index];
     const themeChoice =
-        (!isSelectedTheme || isSelectedTheme === 'default') ?
+        (!settings.isSelectedTheme || settings.isSelectedTheme === 'default') ?
             (window.matchMedia &&
             window.matchMedia('(prefers-color-scheme: dark)').matches ?
-                'dark' : 'light') : isSelectedTheme;
+                'dark' : 'light') : settings.isSelectedTheme;
     return themeMap[themeChoice];
 }
 
 function applyChartTheme(chart) {
-    const theme = getThemeConfig();
+    // const settings = chartSettingsMap[chart.index];
+    const theme = getThemeConfig(chart);
     chart.update({
         chart: {
             backgroundColor: theme.chart.backgroundColor,
@@ -234,14 +224,14 @@ function applyChartTheme(chart) {
 
     // Buttons in dark mode
     const tableButton = document
-        .getElementById('hc-linkto-highcharts-data-table-0');
+        .getElementById(`hc-linkto-highcharts-data-table-${chart.index}`);
     tableButton.style.backgroundColor = theme.button.backgroundColor;
     tableButton.style.color = theme.button.textColor;
 
     // Update the dialog colors if the dialog is open
     const dialog = document.getElementById('pref-menu-dialog');
     if (dialog) {
-        setDialogColors(dialog);
+        setDialogColors(dialog, chart);
     }
 
     // Update the altTextDivs whenever the theme is changed
@@ -260,8 +250,8 @@ function applyChartTheme(chart) {
 
 }
 
-function setDialogColors(dialog) {
-    const theme = getThemeConfig();
+function setDialogColors(dialog, chart) {
+    const theme = getThemeConfig(chart);
     dialog.style.backgroundColor = theme.outsideChart.backgroundColor;
     dialog.style.color = theme.outsideChart.textColor;
 
@@ -277,10 +267,32 @@ function initializeCharts() {
     const chart1 = Highcharts.chart('container', getColumnChartConfig());
     const chart2 = Highcharts.chart('container2', getScatterChartConfig());
 
+    chart1.index = 1;
+    chart2.index = 2;
+
     chart1.prefMenu = {};
     chart1.altTextDivs = [];
     chart2.prefMenu = {};
     chart2.altTextDivs = [];
+
+    // Store settings in global settings map
+    chartSettingsMap[chart1.index] = {
+        selectedVerbosity: 'full',
+        selectedTextSize: 'default',
+        isContrastChecked: false,
+        isBorderChecked: false,
+        isAltPointDescChecked: false,
+        isAltPointLabelChecked: false,
+        isInfoChecked: false,
+        isPatternChecked: false,
+        fontSize: '',
+        isSelectedTheme: 'default'
+    };
+
+    // Copying settings to chart2
+    chartSettingsMap[chart2.index] =
+        JSON.parse(JSON.stringify(chartSettingsMap[chart1.index]));
+
     addPrefButton(chart1, 'container');
     addPrefButton(chart2, 'container2');
     addCustomA11yComponent(chart1);
@@ -288,14 +300,29 @@ function initializeCharts() {
     addPrefButtonScreenReader(chart1);
     addPrefButtonScreenReader(chart2);
 
-    // Storing descriptions
-    const screenReaderDiv = document
-        .getElementById('highcharts-screen-reader-region-before-0');
-    const innerScreenReaderDiv = screenReaderDiv.children[0];
-    longDesc = innerScreenReaderDiv.children[3].textContent;
-    shortDesc = longDesc.split('. ')[0] + '.';
+    // Store descriptions in chart objects
+    chart1.longDesc = getScreenReaderDescription(chart1);
+    chart1.shortDesc = getShortScreenReaderDescription(chart1);
+    chart2.longDesc = getScreenReaderDescription(chart2);
+    chart2.shortDesc = getShortScreenReaderDescription(chart2);
 
     return [chart1, chart2];
+}
+
+function getScreenReaderDescription(chart) {
+    const screenReaderDiv = document.getElementById(
+        `highcharts-screen-reader-region-before-${chart.index}`
+    );
+    if (!screenReaderDiv || screenReaderDiv.children.length === 0) {
+        return '';
+    }
+    const innerDiv = screenReaderDiv.children[0];
+    return innerDiv.children.length > 3 ? innerDiv.children[3].textContent : '';
+}
+
+function getShortScreenReaderDescription(chart) {
+    const longDesc = getScreenReaderDescription(chart);
+    return longDesc ? longDesc.split('.')[0] + '.' : '';
 }
 
 function getColumnChartConfig() {
@@ -643,21 +670,25 @@ function addPrefButton(chart) {
 }
 
 function addPrefButtonScreenReader(chart) {
-    const screenReaderDiv =
-        document.getElementById('highcharts-screen-reader-region-before-0');
+    const settings = chartSettingsMap[chart.index];
+    const screenReaderDiv = document.getElementById(
+        `highcharts-screen-reader-region-before-${chart.index}`
+    );
     const screenReaderDivInnerDiv = screenReaderDiv.children[0];
     const tableButton =
-        document.getElementById('hc-linkto-highcharts-data-table-0');
+        document.getElementById(
+            `hc-linkto-highcharts-data-table-${chart.index}`
+        );
     const existingPrefButton =
         screenReaderDivInnerDiv?.querySelector('#hc-pref-button');
 
-    const theme = getThemeConfig();
+    const theme = getThemeConfig(chart);
 
     if (!existingPrefButton) {
         const prefButton = document.createElement('button');
         prefButton.textContent = 'Preferences';
         prefButton.id = 'hc-pref-button';
-        prefButton.style.fontSize = fontSize;
+        prefButton.style.fontSize = settings.fontSize;
         prefButton.style.backgroundColor = theme.button.backgroundColor;
         prefButton.style.color = theme.button.textColor;
         prefButton.addEventListener('click', () =>
@@ -679,7 +710,7 @@ function handlePrefButtonClick(chart) {
     document.body.appendChild(dialog);
 
     dialog.showModal();
-    setDialogColors(dialog);
+    setDialogColors(dialog, chart);
 
     trapFocusInDialog(dialog);
 
@@ -691,8 +722,12 @@ function handlePrefButtonClick(chart) {
 
 function createPreferencesDialog(chart) {
     const prefContent = document.createElement('dialog');
-    prefContent.setAttribute('id', 'pref-menu-dialog');
-    const closeID = 'hc-dlg-close-btn' + chart.index;
+    prefContent.setAttribute('id', `pref-menu-dialog-${chart.index}`);
+    const closeID = `hc-dlg-close-btn-${chart.index}`;
+
+    // Retrieving settings for the spesific chart instance
+    const settings = chartSettingsMap[chart.index];
+    const i = chart.index;
 
     prefContent.innerHTML = `
     <button id="${closeID}" class="dlg-close" aria-label="Close dialog">
@@ -700,68 +735,88 @@ function createPreferencesDialog(chart) {
     </button>
     <h2>Preferences</h2>
     <p>Customize your chart settings to enhance your experience.</p>
+    
     <h3>Chart theme:</h3>
     <div class="pref theme">
-        <input type="radio" id="theme-default" name="theme" value="default"
-        ${isSelectedTheme === 'default' ? 'checked' : ''}>
-        <label for="theme-default">System default</label>
-        <input type="radio" id="theme-dark" name="theme" value="dark"
-        ${isSelectedTheme === 'dark' ? 'checked' : ''}>
-        <label for="theme-dark">Dark</label>
-        <input type="radio" id="theme-light" name="theme" value="light"
-        ${isSelectedTheme === 'light' ? 'checked' : ''}>
-        <label for="theme-light">Light</label>
+        <input type="radio" id="theme-default-${i}"
+        name="theme-${i}" value="default"
+        ${settings.isSelectedTheme === 'default' ? 'checked' : ''}>
+        <label for="theme-default-${i}">System default</label>
+
+        <input type="radio" id="theme-dark-${i}" name="theme-${i}" value="dark"
+        ${settings.isSelectedTheme === 'dark' ? 'checked' : ''}>
+        <label for="theme-dark-${i}">Dark</label>
+
+        <input type="radio" id="theme-light-${i}"
+        name="theme-${i}" value="light"
+        ${settings.isSelectedTheme === 'light' ? 'checked' : ''}>
+        <label for="theme-light-${i}">Light</label>
     </div>
+
     <h3>Visible alt text:</h3>
     <div class="pref alt-text">
-    <input type="checkbox" id="alt-info" name="alt-info"
-        ${isInfoChecked ? 'checked' : ''}>
-        <label for="alt-info">Show chart overview</label>
-    <input type="checkbox" id="alt-point-label" name="alt-point-label"
-        ${isAltPointLabelChecked ? 'checked' : ''}>
-        <label for="alt-point-label">Show point labels</label>
-    <input type="checkbox" id="alt-points-desc" name="alt-points-desc"
-        ${isAltPointDescChecked ? 'checked' : ''}>
-        <label for="alt-points-desc">Show point description</label>
+        <input type="checkbox" id="alt-info-${i}" name="alt-info-${i}"
+        ${settings.isInfoChecked ? 'checked' : ''}>
+        <label for="alt-info-${i}">Show chart overview</label>
+
+        <input type="checkbox" id="alt-point-label-${i}"
+        name="alt-point-label-${i}"
+        ${settings.isAltPointLabelChecked ? 'checked' : ''}>
+        <label for="alt-point-label-${i}">Show point labels</label>
+
+        <input type="checkbox" id="alt-points-desc-${i}"
+        name="alt-points-desc-${i}"
+        ${settings.isAltPointDescChecked ? 'checked' : ''}>
+        <label for="alt-points-desc-${i}">Show point description</label>
     </div>
-        <h3>Text description:</h3>
+
+    <h3>Text description:</h3>
     <div class="pref verbosity">
-        <input type="radio" id="short" name="verbosity" value="short"
-        ${selectedVerbosity === 'short' ? 'checked' : ''}>
-        <label for="short">Short</label>
-        <input type="radio" id="ver-full" name="verbosity" value="full"
-        ${selectedVerbosity === 'full' ? 'checked' : ''}>
-        <label for="ver-full">Full</label>
+        <input type="radio" id="short-${i}" name="verbosity-${i}" value="short"
+        ${settings.selectedVerbosity === 'short' ? 'checked' : ''}>
+        <label for="short-${i}">Short</label>
+
+        <input type="radio" id="ver-full-${i}"
+        name="verbosity-${i}" value="full"
+        ${settings.selectedVerbosity === 'full' ? 'checked' : ''}>
+        <label for="ver-full-${i}">Full</label>
     </div>
+
     <h3>Text size:</h3>
     <div class="pref textsize">
-        <input type="radio" id="smaller" name="textsize" value="smaller"
-        ${selectedTextSize === 'smaller' ? 'checked' : ''}>
-        <label for="smaller">Smaller</label>
-        <span aria-hidden="true">(<span id="small-font">Aa</span>)</span>
-        <input type="radio" id="t-size-def" name="textsize" value="default"
-        ${selectedTextSize === 'default' ? 'checked' : ''}>
-        <label for="t-size-def">Default </label>
-        <span aria-hidden="true">(<span id="def-font">Aa</span>)</span>
-        <input type="radio" id="larger" name="textsize" value="larger"
-        ${selectedTextSize === 'larger' ? 'checked' : ''}>
-        <label for="larger">Larger </label>
-        <span aria-hidden="true">(<span id="large-font">Aa</span>)</span>
+        <input type="radio" id="smaller-${i}"
+        name="textsize-${i}" value="smaller"
+        ${settings.selectedTextSize === 'smaller' ? 'checked' : ''}>
+        <label for="smaller-${i}">Smaller</label>
+        <span aria-hidden="true">(<span id="small-font-${i}">Aa</span>)</span>
+
+        <input type="radio" id="t-size-def-${i}"
+        name="textsize-${i}" value="default"
+        ${settings.selectedTextSize === 'default' ? 'checked' : ''}>
+        <label for="t-size-def-${i}">Default</label>
+        <span aria-hidden="true">(<span id="def-font-${i}">Aa</span>)</span>
+
+        <input type="radio" id="larger-${i}" name="textsize-${i}" value="larger"
+        ${settings.selectedTextSize === 'larger' ? 'checked' : ''}>
+        <label for="larger-${i}">Larger</label>
+        <span aria-hidden="true">(<span id="large-font-${i}">Aa</span>)</span>
     </div>
+
     <h3>Enhance contrast:</h3>
     <div class="pref contrast">
-        <input type="checkbox" id="contrast" name="contrast"
-        ${isContrastChecked ? 'checked' : ''}>
-        <label for="contrast">Increase contrast</label>
-        <input type="checkbox" id="border" name="border"
-        ${isBorderChecked ? 'checked' : ''}>
-        <label for="border">Add border</label>
-        <input type="checkbox" id="pattern" name="pattern"
-        ${isPatternChecked ? 'checked' : ''}>
-        <label for="pattern">Pattern instead of colors</label>
-    </div>
-    `;
+        <input type="checkbox" id="contrast-${i}" name="contrast-${i}"
+        ${settings.isContrastChecked ? 'checked' : ''}>
+        <label for="contrast-${i}">Increase contrast</label>
 
+        <input type="checkbox" id="border-${i}" name="border-${i}"
+        ${settings.isBorderChecked ? 'checked' : ''}>
+        <label for="border-${i}">Add border</label>
+
+        <input type="checkbox" id="pattern-${i}" name="pattern-${i}"
+        ${settings.isPatternChecked ? 'checked' : ''}>
+        <label for="pattern-${i}">Pattern instead of colors</label>
+    </div>
+`;
 
     setupEventListeners(prefContent, chart);
 
@@ -773,124 +828,127 @@ function createPreferencesDialog(chart) {
 }
 
 function setupEventListeners(prefContent, chart) {
-    const themeRadioButtons = prefContent
-        .querySelectorAll('input[name="theme"]');
-    const textSizeRadioButtons =
-        prefContent.querySelectorAll('input[name="textsize"]');
-    const verbosityRadioButtons =
-        prefContent.querySelectorAll('input[name="verbosity"]');
-    const contrastCheckbox =
-        prefContent.querySelector('input[name="contrast"]');
-    const borderCheckbox = prefContent.querySelector('input[name="border"]');
-    const patternCheckbox = prefContent.querySelector('input[name="pattern"]');
-    const altPointDescCheckbox = prefContent
-        .querySelector('input[name="alt-points-desc"]');
-    const altPointLabelCheckbox = prefContent
-        .querySelector('input[name="alt-point-label"]');
-    const altInfoCheckbox = prefContent.querySelector('input[name="alt-info"]');
+
+    const textSizeRadioButtons = prefContent
+            .querySelectorAll(`input[name="textsize-${chart.index}"]`),
+        verbosityRadioButtons = prefContent
+            .querySelectorAll(`input[name="verbosity-${chart.index}"]`),
+        themeRadioButtons =
+            prefContent.querySelectorAll(`input[name="theme-${chart.index}"]`),
+        contrastCheckbox =
+            prefContent.querySelector(`input[name="contrast-${chart.index}"]`),
+        borderCheckbox =
+            prefContent.querySelector(`input[name="border-${chart.index}"]`),
+        patternCheckbox =
+            prefContent.querySelector(`input[name="pattern-${chart.index}"]`),
+        altPointDescCheckbox = prefContent
+            .querySelector(`input[name="alt-points-desc-${chart.index}"]`),
+        altPointLabelCheckbox = prefContent
+            .querySelector(`input[name="alt-point-label-${chart.index}"]`),
+        altInfoCheckbox =
+            prefContent.querySelector(`input[name="alt-info-${chart.index}"]`);
+
     const infoRegion = document.querySelector(
-        '#highcharts-screen-reader-region-before-0 > div:first-child'
+        `#highcharts-screen-reader-region-before-${chart.index} > ` +
+        'div:first-child'
     );
     const description = document
         .getElementsByClassName('highcharts-description')[0];
 
+    // Retrieve settings for chart instance
+    const settings = chartSettingsMap[chart.index];
+
     themeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
-            isSelectedTheme = event.target.value;
+            settings.selectedTheme = event.target.value;
             applyChartTheme(chart);
-            setupScreenReaderSection(selectedVerbosity, chart);
+            applyInfoRegion(settings.selectedVerbosity, chart);
         });
     });
 
     textSizeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
-            const selectedSize = event.target.value;
-            selectedTextSize = selectedSize;
+            settings.selectedTextSize = event.target.value;
 
-            switch (selectedSize) {
+            switch (settings.selectedTextSize) {
             case 'smaller':
-                fontSize = '10px';
+                settings.fontSize = '10px';
                 break;
             case 'normal':
-                fontSize = '16px';
+                settings.fontSize = '16px';
                 break;
             case 'larger':
-                fontSize = '22px';
+                settings.fontSize = '22px';
                 break;
             default:
-                fontSize = '16px';
+                settings.fontSize = '16px';
             }
 
             // Update chart with font sizes
             chart.update({
                 chart: {
                     style: {
-                        fontSize: fontSize
+                        fontSize: settings.fontSize
                     }
                 }
             });
 
             // Only visible if info region is checked
-            infoRegion.style.fontSize = fontSize;
-            description.style.fontSize = fontSize;
+            infoRegion.style.fontSize = settings.fontSize;
+            description.style.fontSize = settings.fontSize;
 
             // Only visible if alt-text for point is checked
             chart.altTextDivs.forEach(div => {
-                div.style.fontSize = fontSize;
+                div.style.fontSize = settings.fontSize;
             });
 
             // Append the button to the screen reader region
-            setupScreenReaderSection(selectedVerbosity, chart);
+            applyInfoRegion(settings.selectedVerbosity, chart);
         });
     });
     verbosityRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
-            const verbosity = event.target.value;
-            selectedVerbosity = verbosity;
+            settings.selectedVerbosity = event.target.value;
 
             chart.update({
                 accessibility: {
                     point: {
-                        descriptionFormat: selectedVerbosity === 'short' ?
-                            shortPointDescriptionFormat :
-                            fullPointDescriptionFormat
+                        descriptionFormat:
+                            settings.selectedVerbosity === 'short' ?
+                                shortPointDescriptionFormat :
+                                fullPointDescriptionFormat
                     }
                 }
             });
 
-            setupScreenReaderSection(selectedVerbosity, chart);
+            applyInfoRegion(settings.selectedVerbosity, chart);
         });
     });
 
     contrastCheckbox.addEventListener('change', event => {
-        const isChecked = event.target.checked;
-        isContrastChecked = isChecked; // Store state
-
+        settings.isContrastChecked = event.target.checked;
         updateChartColorLogic(chart);
         // Append button to screen reader region
-        setupScreenReaderSection(selectedVerbosity, chart);
+        applyInfoRegion(settings.selectedVerbosity, chart);
     });
 
     patternCheckbox.addEventListener('change', event => {
-        const isChecked = event.target.checked;
-        isPatternChecked = isChecked; // Store state
+        settings.isPatternChecked = event.target.checked;
         updateChartColorLogic(chart);
-        setupScreenReaderSection(selectedVerbosity, chart);
+        applyInfoRegion(settings.selectedVerbosity, chart);
     });
 
     borderCheckbox.addEventListener('change', event => {
-        const isChecked = event.target.checked;
-        isBorderChecked = isChecked; // Store state
+        settings.isBorderChecked = event.target.checked;
         updateChartColorLogic(chart);
         // Append button to screen reader region
-        setupScreenReaderSection(selectedVerbosity, chart);
+        applyInfoRegion(settings.selectedVerbosity, chart);
     });
 
     altPointLabelCheckbox.addEventListener('change', event => {
-        const isChecked = event.target.checked;
-        isAltPointLabelChecked = isChecked;
+        settings.isAltPointLabelChecked = event.target.checked;
 
-        if (isChecked) {
+        if (settings.isAltPointLabelChecked) {
             chart.update({
                 series: [{
                     dataLabels: {
@@ -919,26 +977,26 @@ function setupEventListeners(prefContent, chart) {
         chart.altTextDivs.forEach(div => {
             const currentTop = parseInt(div.style.top, 10);
             div.style.top =
-                isChecked ? `${currentTop - 20}px` : `${currentTop + 20}px`;
+                settings.isAltPointLabelChecked ?
+                    `${currentTop - 20}px` : `${currentTop + 20}px`;
         });
 
-        setupScreenReaderSection(selectedVerbosity, chart);
+        applyInfoRegion(settings.selectedVerbosity, chart);
 
     });
 
     altPointDescCheckbox.addEventListener('change', event => {
-        const isChecked = event.target.checked;
-        isAltPointDescChecked = isChecked;
+        settings.isAltPointDescChecked = event.target.checked;
 
         // Clear existing altTextDivs
         chart.altTextDivs.forEach(div => div.remove());
         chart.altTextDivs = [];
 
-        if (isChecked) {
+        if (settings.isAltPointDescChecked) {
             const paths = document
                 .querySelectorAll('path.highcharts-point[aria-label]');
             const chartRect = chart.container.getBoundingClientRect();
-            const theme = getThemeConfig(); // Get the current theme
+            const theme = getThemeConfig(chart); // Get the current theme
 
             paths.forEach(path => {
                 const ariaLabel = path.getAttribute('aria-label');
@@ -956,14 +1014,14 @@ function setupEventListeners(prefContent, chart) {
                 altTextDiv.style.border = theme === darkTheme ?
                     '1px solid #666666' : '1px solid #ccc';
                 altTextDiv.style.opacity = '1';
-                altTextDiv.style.fontSize = fontSize;
+                altTextDiv.style.fontSize = settings.fontSize;
 
                 // Position label on top of the column
                 altTextDiv.style.left =
                     `${rect.left + rect.width / 2 - chartRect.left}px`;
                 altTextDiv.style.top = `${rect.top - chartRect.top}px`;
                 // Adjust position if altPointLabel is checked
-                if (isAltPointLabelChecked) {
+                if (settings.isAltPointLabelChecked) {
                     altTextDiv.style.top = `${rect.top - chartRect.top - 20}px`;
                 }
                 // Add to chart container
@@ -986,60 +1044,60 @@ function setupEventListeners(prefContent, chart) {
         }
 
         // Append button to screen reader region
-        setupScreenReaderSection(selectedVerbosity, chart);
+        applyInfoRegion(settings.selectedVerbosity, chart);
     });
 
     altInfoCheckbox.addEventListener('change', event => {
-        const isChecked = event.target.checked;
-        isInfoChecked = isChecked;
-
+        settings.isInfoChecked = event.target.checked;
         // Refresh screen reader section
-        setupScreenReaderSection(selectedVerbosity, chart);
+        applyInfoRegion(settings.selectedVerbosity, chart);
     });
 }
 
 function updateChartColorLogic(chart) {
-    const theme = getThemeConfig();
+    const theme = getThemeConfig(chart);
     const isDarkMode = theme === darkTheme;
 
     const contrastColors = isDarkMode ?
         contrastColorsDark : contrastColorsLight;
     const borderColors = isDarkMode ?
         borderColorsWithContrastDark : borderColorsWithContrastLight;
+    const settings = chartSettingsMap[chart.index];
 
     const seriesOptions = [{
-        color: isPatternChecked ? {
+        color: settings.isPatternChecked ? {
             pattern: {
                 path: 'M 0 0 L 8 8', // Diagonal stripes
-                color: isContrastChecked ?
+                color: settings.isContrastChecked ?
                     contrastColors[0] : theme.colors[0],
                 backgroundColor: isDarkMode ? '#FFFFFF' :
-                    (isContrastChecked ?
+                    (settings.isContrastChecked ?
                         contrastColors[0] + '40' : theme.colors[0] + '40'),
                 width: 8,
                 height: 8
             }
-        } : (isContrastChecked ? contrastColors[0] : theme.colors[0]),
-        borderColor: isBorderChecked ? (
-            isContrastChecked ? borderColors[0] : theme.borderColors[0]
+        } : (settings.isContrastChecked ? contrastColors[0] : theme.colors[0]),
+        borderColor: settings.isBorderChecked ? (
+            settings.isContrastChecked ? borderColors[0] : theme.borderColors[0]
         ) : null,
-        borderWidth: isBorderChecked ? 2 : 0
+        borderWidth: settings.isBorderChecked ? 2 : 0
     }, {
-        color: isPatternChecked ? {
+        color: settings.isPatternChecked ? {
             pattern: { // Dotted pattern
                 path: 'M 3 3 m -2, 0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0',
-                color: isContrastChecked ? contrastColors[1] : theme.colors[1],
+                color: settings.isContrastChecked ?
+                    contrastColors[1] : theme.colors[1],
                 backgroundColor: isDarkMode ? '#FFFFFF' :
-                    (isContrastChecked ?
+                    (settings.isContrastChecked ?
                         contrastColors[1] + '40' : theme.colors[1] + '40'),
                 width: 8,
                 height: 8
             }
-        } : (isContrastChecked ? contrastColors[1] : theme.colors[1]),
-        borderColor: isBorderChecked ? (
-            isContrastChecked ? borderColors[1] : theme.borderColors[1]
+        } : (settings.isContrastChecked ? contrastColors[1] : theme.colors[1]),
+        borderColor: settings.isBorderChecked ? (
+            settings.isContrastChecked ? borderColors[1] : theme.borderColors[1]
         ) : null,
-        borderWidth: isBorderChecked ? 2 : 0
+        borderWidth: settings.isBorderChecked ? 2 : 0
     }];
 
     chart.update({
@@ -1138,30 +1196,29 @@ function updateCustomComponent() {
     }
 }
 
-function setupScreenReaderSection(selectedVerbosity, chart) {
-    applyInfoRegion(selectedVerbosity, chart);
-}
-
 
 // TODO: Refactor function to be only about applying info region and rename
 function applyInfoRegion(selectedVerbosity, chart) {
+    const settings = chartSettingsMap[chart.index];
 
     // Add preference button to screen reader section
     addPrefButtonScreenReader(chart);
 
-    const screenReaderDiv = document
-        .getElementById('highcharts-screen-reader-region-before-0');
+    const screenReaderDiv = document.getElementById(
+        `highcharts-screen-reader-region-before-${chart.index}`
+    );
     const innerScreenReaderDiv = screenReaderDiv.children[0];
     const description = innerScreenReaderDiv.children[3];
     const infoRegion = document.querySelector(
-        '#highcharts-screen-reader-region-before-0 > div:first-child'
+        `#highcharts-screen-reader-region-before-${chart.index} > ` +
+        'div:first-child'
     );
     const prefButton = document.getElementById('hc-pref-button');
     const dataTableButton = document.getElementById(
-        'hc-linkto-highcharts-data-table-0'
+        `hc-linkto-highcharts-data-table-${chart.index}`
     );
 
-    dataTableButton.style.fontSize = fontSize;
+    dataTableButton.style.fontSize = settings.fontSize;
     // Hack......needs a fix TODO
     const hideIndex = dataTableButton.getAttribute(
         'aria-expanded'
@@ -1173,9 +1230,9 @@ function applyInfoRegion(selectedVerbosity, chart) {
     }
 
     // Toggle visibility based on isInfoChecked
-    if (isInfoChecked) {
+    if (settings.isInfoChecked) {
         infoRegion.classList.add('hide-section');
-        infoRegion.style.fontSize = fontSize;
+        infoRegion.style.fontSize = settings.fontSize;
     } else {
         infoRegion.classList.remove('hide-section');
     }
@@ -1213,7 +1270,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const chartInfoElements = Array.from(innerScreenReaderDiv.children);
 
     if (selectedVerbosity === 'short') {
-        description.textContent = shortDesc;
+        description.textContent = chart.shortDesc;
 
         // Hide specific elements
         chartInfoElements.forEach((el, index) => {
@@ -1223,7 +1280,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
         });
     } else if (selectedVerbosity === 'full') {
         // Restore full description
-        description.textContent = longDesc;
+        description.textContent = chart.longDesc;
 
         // Show all divs
         chartInfoElements.forEach((el, index) => {
@@ -1235,12 +1292,14 @@ function applyInfoRegion(selectedVerbosity, chart) {
 
     // Re insert data table button if disappeard
     if (
-        !document.getElementById('hc-linkto-highcharts-data-table-0') &&
+        !document.getElementById(
+            `hc-linkto-highcharts-data-table-${chart.index}`
+        ) &&
         dataTableButton
     ) {
         prefButton.insertAdjacentElement('afterend', dataTableButton);
         dataTableButton.style.display = 'block';
-        dataTableButton.style.fontSize = fontSize;
+        dataTableButton.style.fontSize = settings.fontSize;
     }
 }
 
@@ -1301,8 +1360,10 @@ applyChartTheme(chart2);
 if (window.matchMedia) {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     mq.addEventListener('change', () => {
-        if (isSelectedTheme === 'default') {
+        if (chartSettingsMap[chart1.index].isSelectedTheme === 'default') {
             applyChartTheme(chart1);
+        }
+        if (chartSettingsMap[chart2.index].isSelectedTheme === 'default') {
             applyChartTheme(chart2);
         }
     });
