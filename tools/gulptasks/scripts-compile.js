@@ -36,7 +36,7 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
         targetFolder;
 
     if (product === 'highcharts') {
-        esModulesFolders = ['/esm/', '/es-modules/'];
+        esModulesFolders = ['/es-modules/'];
         targetFolder = 'code';
     } else if (product === 'dashboards') {
         esModulesFolders = [config.esModulesFolder];
@@ -51,8 +51,10 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
         typeof argv.files === 'string' ?
             argv.files
                 .split(',')
-                .map(filePath => path.join(targetFolder, filePath)) :
-            fsLib.getFilePaths(targetFolder, true);
+                .map(filePath => fsLib.path([targetFolder, filePath], true)) :
+            fsLib
+                .getFilePaths(targetFolder, true)
+                .map(filePath => fsLib.path(filePath, true));
 
     let promiseChain1 = Promise.resolve(),
         promiseChain2 = Promise.resolve();
@@ -79,23 +81,30 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
 
         // Compile file, https://swc.rs/docs/usage/core
         const code = fs.readFileSync(inputPath, 'utf-8');
-        promise = swc.minify(code, {
-            compress: {
-                // hoist_funs: true
-            },
-            mangle: true,
-            sourceMap: true
-        })
-
+        promise = swc
+            .minify(code, {
+                compress: {
+                    // hoist_funs: true
+                },
+                mangle: true,
+                module: inputPath.includes('/esm/'),
+                sourceMap: true
+            })
             .then(result => {
                 // Write compiled file
                 fs.writeFileSync(
                     outputPath,
-                    result.code.replace('@license ', '')
+                    result.code
+                        .replace('@license ', '')
+                        .replace(/\.src\.js\b/gsu, '.js')
                 );
 
                 // Write source map
-                fs.writeFileSync(outputMapPath, result.map);
+                fs.writeFileSync(
+                    outputMapPath,
+                    result.map
+                        .replace(/\.src\.js\b/gsu, '.js')
+                );
 
                 logLib.success(
                     `Compiled ${inputPath} => ${outputPath}`,
