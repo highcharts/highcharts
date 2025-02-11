@@ -349,22 +349,21 @@ class HTMLElement extends SVGElement {
         }
 
         const {
-                element,
-                renderer,
-                rotation,
-                rotationOriginX,
-                rotationOriginY,
-                scaleX,
-                scaleY,
-                styles,
-                textAlign = 'left',
-                textWidth,
-                translateX = 0,
-                translateY = 0,
-                x = 0,
-                y = 0
-            } = this,
-            { display = 'block', whiteSpace } = styles;
+            element,
+            renderer,
+            rotation,
+            rotationOriginX,
+            rotationOriginY,
+            scaleX,
+            scaleY,
+            styles: { display = 'block', whiteSpace },
+            textAlign = 'left',
+            textWidth,
+            translateX = 0,
+            translateY = 0,
+            x = 0,
+            y = 0
+        } = this;
 
         // Get the pixel length of the text
         const getTextPxLength = (): number => {
@@ -407,25 +406,25 @@ class HTMLElement extends SVGElement {
                     textWidthNum = textWidth || 0;
                 if (
                     (
-                        (textWidthNum > this.oldTextWidth) ||
-                        textPxLength > textWidthNum
+                        textWidthNum > this.oldTextWidth ||
+                        textPxLength > textWidthNum ||
+                        // Set width to prevent over-wrapping (#22609)
+                        element.style.textOverflow === ''
                     ) && (
                         // Only set the width if the text is able to word-wrap,
                         // or text-overflow is ellipsis (#9537)
-                        /[ \-]/.test(
+                        /[\-\s\u00AD]/.test(
                             element.textContent || element.innerText
                         ) ||
                         element.style.textOverflow === 'ellipsis'
                     )
                 ) {
+                    const usePxWidth = rotation || scaleX ||
+                        textPxLength > textWidthNum ||
+                        // Set width to prevent over-wrapping (#22609)
+                        element.style.textOverflow === '';
                     css(element, {
-                        width: (
-                            (textPxLength > textWidthNum) ||
-                            rotation ||
-                            scaleX
-                        ) ?
-                            textWidth + 'px' :
-                            'auto', // #16261
+                        width: usePxWidth ? textWidth + 'px' : 'auto', // #16261
                         display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
