@@ -213,7 +213,7 @@ namespace OrdinalAxis {
             start = 0,
             groupPositions = [] as TickPositionsArray,
             lastGroupPosition = -Number.MAX_VALUE;
-
+console.log(this.chart, this.chart.time);
         // The positions are not always defined, for example for ordinal
         // positions when data has regular interval (#1557, #2090)
         if (
