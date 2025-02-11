@@ -145,9 +145,12 @@ namespace OrdinalAxis {
     export function compose<T extends typeof Axis>(
         AxisClass: T,
         SeriesClass: typeof Series,
-        ChartClass: typeof Chart
+        ChartClass: typeof Chart,
+        // TimeClass: typeof Time
     ): (typeof Composition&T) {
         const axisProto = AxisClass.prototype as Composition;
+
+        // TimeClass.prototype.getTimeTicks = getTimeTicks;
 
         if (!axisProto.ordinal2lin) {
             axisProto.getTimeTicks = getTimeTicks;
@@ -213,7 +216,7 @@ namespace OrdinalAxis {
             start = 0,
             groupPositions = [] as TickPositionsArray,
             lastGroupPosition = -Number.MAX_VALUE;
-console.log(this.chart, this.chart.time);
+
         // The positions are not always defined, for example for ordinal
         // positions when data has regular interval (#1557, #2090)
         if (
