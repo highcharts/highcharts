@@ -93,7 +93,8 @@ const lightTheme = {
     legend: {
         itemStyle: {
             color: '#000000'
-        }
+        },
+        backgroundColor: '#ffffff'
     },
     credits: {
         style: {
@@ -159,7 +160,8 @@ const darkTheme = {
     legend: {
         itemStyle: {
             color: '#ffffff'
-        }
+        },
+        backgroundColor: '#333333'
     },
     credits: {
         style: {
@@ -226,7 +228,8 @@ function applyChartTheme(chart) {
             }
         },
         legend: {
-            itemStyle: theme.legend.itemStyle
+            itemStyle: theme.legend.itemStyle,
+            backgroundColor: theme.legend.backgroundColor
         },
         credits: {
             style: theme.chart.style
@@ -239,6 +242,8 @@ function applyChartTheme(chart) {
         },
         colors: theme.colors
     });
+
+    console.log(theme.legend.itemStyle);
 
     // Ensure colors update when switching themes
     updateChartColorLogic(chart);
@@ -285,7 +290,6 @@ function setDialogColors(dialog, chart) {
         console.warn('Dialog element not found');
         return;
     }
-    console.log('dialog element found');
     dialog.style.backgroundColor = theme.outsideChart.backgroundColor;
     dialog.style.color = theme.outsideChart.textColor;
 
@@ -952,6 +956,8 @@ function setupEventListeners(prefContent, chart) {
 
             // Only visible if info region is checked
             infoRegion.style.fontSize = settings.fontSize;
+
+            //TODO: remove this?
             description.style.fontSize = settings.fontSize;
 
             // Only visible if alt-text for point is checked
