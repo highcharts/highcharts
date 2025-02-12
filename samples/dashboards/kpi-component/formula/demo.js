@@ -5,11 +5,13 @@ Dashboards.board('container', {
             type: 'CSV',
             options: {
                 csv: `Value
-                10
-                20
                 30
+                NaN
+                10
                 40
-                50`
+                NaN
+                50
+                20`
             }
         }]
     },
@@ -46,8 +48,11 @@ Dashboards.board('container', {
         title: 'KPI range (callback)',
         columnName: 'Value',
         formula: function (column) {
-            const min = Math.min(...column);
-            const max = Math.max(...column);
+            const filteredColumn =
+                column.slice().map(Number).filter(v => !isNaN(v));
+            const min = Math.min(...filteredColumn);
+            const max = Math.max(...filteredColumn);
+
             return max - min;
         },
         connector: {

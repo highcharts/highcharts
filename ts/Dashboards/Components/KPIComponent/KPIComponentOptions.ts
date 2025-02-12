@@ -153,8 +153,15 @@ export interface Options extends Component.Options {
     sync?: SyncOptions;
 
     /**
-     * Sets the formula method key for the KPI component value. Allows to
-     * provide the callback function that updates the value internally.
+     * Sets the formula method key for the KPI component value or the callback
+     * function (updates the value internally).
+     *
+     * If not declared, the KPI component displays the last column value.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/formula/ | KPI value formula}
+     *
      */
     formula?: KPIComponent.FormulaType|FormulaCallbackFunction;
 }
