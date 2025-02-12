@@ -1504,7 +1504,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
     );
 
     const innerScreenReaderDiv = screenReaderDiv.children[0];
-    const description = innerScreenReaderDiv.children[3];
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
         'div:first-child'
@@ -1513,8 +1512,12 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const dataTableButton = document.getElementById(
         `hc-linkto-highcharts-data-table-${chart.index}`
     );
+    const sonificationButton = document
+        .getElementById(`highcharts-a11y-sonify-data-btn-${chart.index}`);
 
+    // Only way to set font size since the info region is re-rendered often
     dataTableButton.style.fontSize = settings.fontSize;
+    sonificationButton.style.fontSize = settings.fontSize;
     // Hack......needs a fix TODO
     const hideIndex = dataTableButton.getAttribute(
         'aria-expanded'
@@ -1566,8 +1569,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const chartInfoElements = Array.from(innerScreenReaderDiv.children);
 
     if (selectedVerbosity === 'short') {
-        description.textContent = chart.shortDesc;
-
         // Hide specific elements
         chartInfoElements.forEach((el, index) => {
             if (index >= hideIndex) {
@@ -1575,9 +1576,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
             }
         });
     } else if (selectedVerbosity === 'full') {
-        // Restore full description
-        description.textContent = chart.longDesc;
-
         // Show all divs
         chartInfoElements.forEach((el, index) => {
             if (index >= 4) {
