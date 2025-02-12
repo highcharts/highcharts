@@ -730,11 +730,12 @@ function createPreferencesDialog(chart) {
     const settings = chartSettingsMap[chart.index];
     const i = chart.index;
 
+    console.log(chart);
     prefContent.innerHTML = `
     <button id="${closeID}" class="dlg-close" aria-label="Close dialog">
         Close
     </button>
-    <h2>Preferences</h2>
+    <h2>Preferences for ${chart.title.textStr} chart</h2>
     <p>Customize your chart settings to enhance your experience.</p>
     
     <h3>Chart theme:</h3>
