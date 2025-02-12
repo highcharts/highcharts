@@ -198,3 +198,5 @@ MSID
 OHLCV
 indexmundi
 Dataviz
+KIIDs
+SFDR
