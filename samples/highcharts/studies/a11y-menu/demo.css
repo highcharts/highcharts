@@ -255,3 +255,9 @@ li {
     margin: 10px;
     padding: 10px;
 }
+
+#column-description,
+#scatter-description {
+    width: 800px;
+    margin: 1em auto;
+}
