@@ -1147,7 +1147,14 @@ function updateChartColorLogic(chart) {
         borderColor: settings.isBorderChecked ? (
             settings.isContrastChecked ? borderColors[0] : theme.borderColors[0]
         ) : null,
-        borderWidth: settings.isBorderChecked ? 2 : 0
+        borderWidth: settings.isBorderChecked ? 2 : 0,
+        marker: {
+            lineColor: settings.isBorderChecked ? (
+                settings.isContrastChecked ?
+                    borderColors[0] : theme.borderColors[0]
+            ) : null,
+            lineWidth: settings.isBorderChecked ? 1 : 0
+        }
     }, {
         color: settings.isPatternChecked ? {
             pattern: { // Dotted pattern
@@ -1164,7 +1171,14 @@ function updateChartColorLogic(chart) {
         borderColor: settings.isBorderChecked ? (
             settings.isContrastChecked ? borderColors[1] : theme.borderColors[1]
         ) : null,
-        borderWidth: settings.isBorderChecked ? 2 : 0
+        borderWidth: settings.isBorderChecked ? 2 : 0,
+        marker: {
+            lineColor: settings.isBorderChecked ? (
+                settings.isContrastChecked ?
+                    borderColors[0] : theme.borderColors[0]
+            ) : null,
+            lineWidth: settings.isBorderChecked ? 1 : 0
+        }
     }];
 
     chart.update({
