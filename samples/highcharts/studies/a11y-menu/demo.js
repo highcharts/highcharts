@@ -1509,7 +1509,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
     );
 
     const innerScreenReaderDiv = screenReaderDiv.children[0];
-    // Cannot delete description until I update the logic for verbosity
     const description = innerScreenReaderDiv.children[3];
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -1576,8 +1575,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const chartInfoElements = Array.from(innerScreenReaderDiv.children);
 
     if (selectedVerbosity === 'short') {
-        description.textContent = chart.shortDesc;
-
         // Hide specific elements
         chartInfoElements.forEach((el, index) => {
             if (index >= hideIndex) {
@@ -1585,9 +1582,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
             }
         });
     } else if (selectedVerbosity === 'full') {
-        // Restore full description
-        description.textContent = chart.longDesc;
-
         // Show all divs
         chartInfoElements.forEach((el, index) => {
             if (index >= 4) {
