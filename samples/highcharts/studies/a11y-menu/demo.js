@@ -20,6 +20,23 @@ const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
     '{point.series.points.length} in series {point.category}, ' +
     '{point.series.name}: {(point.y):,.0f} (1000 MT).';
 
+// Adding descriptions to chart
+const columnChartDesc = 'This bar chart compares the estimated production ' +
+                'of corn and wheat for 2023 across six countries: ' +
+                'the USA, China, Brazil, the EU, Argentina, and India. ' +
+                'Corn production significantly exceeds wheat production ' +
+                'in countries like the USA and Brazil, while wheat ' +
+                'production surpasses corn in the EU. The chart uses ' +
+                'metric tons (MT) as the unit and highlights data sourced ' +
+                'from IndexMundi.';
+
+const scatterChartDesc = 'This scatter plot displays the relationship ' +
+            'between height and weight for a sample of 154 individuals, ' +
+            'consisting of 124 males and 30 females. The x-axis represents ' +
+            'height in centimeters, while the y-axis shows weight in ' +
+            'kilograms. The chart provides insights into the distribution ' +
+            'of body measurements across both genders, showcasing trends ' +
+            'and variations within the dataset.';
 
 const lightTheme = {
     colors: defaultColorsLight,
@@ -346,10 +363,10 @@ function getColumnChartConfig() {
         },
         accessibility: {
             screenReaderSection: {
-                beforeChartFormat: '<h1>{chartTitle}</h1>' +
+                beforeChartFormat: '<h2>{chartTitle}</h2>' +
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
-                '<div>{chartLongdesc}</div>' +
+                `<div>${columnChartDesc}</div>` +
                 '<div>{playAsSoundButton}</div>' +
                 '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
@@ -410,6 +427,18 @@ function getScatterChartConfig() {
             type: 'scatter',
             zooming: {
                 type: 'xy'
+            }
+        },
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '<h2>{chartTitle}</h2>' +
+                '<div>{typeDescription}</div>' +
+                '<div>{chartSubtitle}</div>' +
+                `<div>${scatterChartDesc}</div>` +
+                '<div>{playAsSoundButton}</div>' +
+                '<div>{viewTableButton}</div>' +
+                '<div>{xAxisDescription}</div>' +
+                '<div>{yAxisDescription}</div>'
             }
         },
         title: {
@@ -1221,8 +1250,10 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const screenReaderDiv = document.getElementById(
         `highcharts-screen-reader-region-before-${chart.index}`
     );
+
     const innerScreenReaderDiv = screenReaderDiv.children[0];
     const description = innerScreenReaderDiv.children[3];
+    console.log(description);
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
         'div:first-child'
