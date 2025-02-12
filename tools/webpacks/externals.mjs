@@ -66,7 +66,64 @@ function createUMDConfig(namespace, ...pathMembers) {
 
 
 /**
- * Resolves external references of the binded master file to specific UMD paths.
+ * Creates external references for masters. It can make secondary product
+ * bundles a relay to other bundles and the primary product bundle. This helps
+ * to avoid multiple namespace instances in ESM.
+ *
+ * @param {*} info
+ * Webpack reference information.
+ *
+ * @param {string} masterName
+ * Master name that gets bundled.
+ *
+ * @param {string} mastersFolder
+ * Source folder with masters.
+ *
+ * @param {string} namespace
+ * Shared namespace.
+ *
+ * @param {string} [externalsType]
+ * Externals type to consider.
+ *
+ * @return {unknown}
+ * Config for external reference, or `undefined` to include reference in bundle.
+ */
+export async function makeExternals(
+    info,
+    masterName,
+    mastersFolder,
+    namespace,
+    externalsType = 'umd'
+) {
+    const path = Path
+        .relative(mastersFolder, Path.join(info.context, info.request))
+        .replaceAll(Path.sep, Path.posix.sep);
+    const namespaceName = Path
+        .basename(path)
+        .replace(/(?:\.src)?\.js$/su, '');
+
+    if (
+        namespaceName === masterName ||
+        path.startsWith('../') // Include; not a bundle master.
+    ) {
+        return void 0;
+    }
+
+    switch (externalsType) {
+        case 'module-import':
+            return `${externalsType} ${path}`;
+        case 'umd':
+            return createUMDConfig(namespace, namespaceName);
+        default:
+            return {
+                [externalsType]: [namespace, namespaceName]
+            };
+    }
+}
+
+
+/**
+ * Resolves external references.
  *
  * @param {*} info
  * Webpack reference information.
@@ -75,17 +132,19 @@ function createUMDConfig(namespace, ...pathMembers) {
  * Master name that gets bundled.
  *
  * @param {string} sourceFolder
- * Source folder with masters.
+ * Source folder with modules.
  *
  * @param {string} namespace
- * Source folder with masters.
+ * Shared namespace.
+ *
+ * @param {string} [externalsProduct]
+ * Externals product to resolve to.
  *
  * @param {string} [externalsType]
  * Externals type to consider.
  *
  * @return {unknown}
- * UMD config for external reference, or `undefined` to include reference in
- * bundle.
+ * Config for external reference, or `undefined` to include reference in bundle.
  */
 export async function resolveExternals(
     info,

@@ -13,7 +13,7 @@ import FSLib from '../libs/fs.js';
 import Error16Plugin from './plugins/Error16Plugin.mjs';
 import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
-import { resolveExternals } from './externals.mjs';
+import { makeExternals, resolveExternals } from './externals.mjs';
 
 
 /* *
@@ -157,17 +157,7 @@ const umdWebpacks = FSLib
 /**
  * ES module bundles
  */
-const esmWebpacks = umdWebpacks.filter(umdWebpack => {
-    const masterPath = umdWebpack.output.filename;
-    const masterName = getMasterName(masterPath);
-
-    // Only the main product should be bundled for ESM
-    // because of relative imports
-    return (
-        masterName === productMasters[0] ||
-        !productMasters.includes(masterName)
-    );
-}).map(umdWebpack => {
+const esmWebpacks = umdWebpacks.map(umdWebpack => {
     const masterPath = umdWebpack.output.filename;
     const masterName = getMasterName(masterPath);
     const esmWebpack = {
@@ -175,6 +165,7 @@ const esmWebpacks = umdWebpacks.filter(umdWebpack => {
         experiments: {
             outputModule: true
         },
+        externalsType: 'module-import',
         mode: 'production',
         optimization: umdWebpack.optimization,
         output: {
@@ -194,8 +185,21 @@ const esmWebpacks = umdWebpacks.filter(umdWebpack => {
         })
     ];
 
-    if (umdWebpack.externals) {
-        esmWebpack.externalsType = 'module-import';
+    if (
+        masterName !== productMasters[0] &&
+        !masterName.includes('standalone') &&
+        productMasters.includes(masterName)
+    ) {
+        esmWebpack.externals = [
+            (info) => makeExternals(
+                info,
+                masterName,
+                mastersFolder,
+                namespace,
+                'module-import'
+            )
+        ];
+    } else if (umdWebpack.externals) {
         esmWebpack.externals = [
             (info) => resolveExternals(
                 info,
