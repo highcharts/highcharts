@@ -291,6 +291,17 @@ function setDialogColors(dialog, chart) {
     dialog.style.backgroundColor = theme.outsideChart.backgroundColor;
     dialog.style.color = theme.outsideChart.textColor;
 
+
+    const h3Buttons = dialog.querySelectorAll('.card-header h3 button');
+    h3Buttons.forEach(button => {
+        button.style.color = theme.outsideChart.textColor;
+    });
+
+    const icons = dialog.querySelectorAll('.card-header h3 button i');
+    icons.forEach(icon => {
+        icon.style.color = theme.outsideChart.textColor;
+    });
+
     const closeButton = dialog.querySelector('.dlg-close');
     if (closeButton) {
         closeButton.style.backgroundColor = theme.button.backgroundColor;
