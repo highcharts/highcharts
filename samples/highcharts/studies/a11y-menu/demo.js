@@ -336,7 +336,8 @@ function initializeCharts() {
         isPatternChecked: false,
         fontSize: '',
         isSelectedTheme: 'default',
-        isSonificationChecked: false
+        isSonificationChecked: false,
+        isDescribeChartChecked: false
     };
 
     // Copying settings to chart2
@@ -943,12 +944,9 @@ function createPreferencesDialog(chart) {
                 <label for="sonification-${i}">Enable Sonification</label>
             </div>
             <div class="pref tool">
-                <input type="checkbox" id="high-contrast-${i}"
-                name="high-contrast-${i}"
-                    ${settings.isHighContrastChecked ? 'checked' : ''}>
-                <label for="high-contrast-${i}">
-                Enable High Contrast Mode
-                </label>
+                <button id="describe-chart-${i}" name="describe-chart-${i}">
+                Describe the chart
+                </button>
             </div>
         </div>
     </div>
@@ -1001,7 +999,9 @@ function setupEventListeners(prefContent, chart) {
             prefContent.querySelector(`input[name="alt-info-${chart.index}"]`),
         accordionButtons = prefContent.querySelectorAll('.acc-btn'),
         sonificationCheckbox = prefContent
-            .querySelector(`input[name="sonification-${chart.index}"]`);
+            .querySelector(`input[name="sonification-${chart.index}"]`),
+        describeChartButton = prefContent
+            .querySelector(`#describe-chart-${chart.index}`);
 
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -1283,6 +1283,26 @@ function setupEventListeners(prefContent, chart) {
                 playButton.remove();
             }
         }
+    });
+
+    describeChartButton.addEventListener('click', function () {
+        const descriptionDiv = document.createElement('div');
+        console.log(descriptionDiv);
+
+        if (chart.series[0].type === 'scatter') {
+            descriptionDiv.textContent = scatterChartDesc;
+        }
+
+        descriptionDiv.textContent = columnChartDesc;
+        descriptionDiv.classList.add('chart-describe');
+
+        descriptionDiv.style.display = 'block';
+        descriptionDiv.setAttribute('aria-live', 'polite');
+
+        // Insert after the button
+        describeChartButton.insertAdjacentElement('afterend', descriptionDiv);
+
+        console.log(`Chart description shown: ${descriptionDiv.textContent}`);
     });
 
 }

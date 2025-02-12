@@ -223,3 +223,14 @@ li {
 .fa {
     padding-right: 10px;
 }
+
+#describe-chart-1 {
+    margin-top: 20px;
+}
+
+.chart-describe {
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+}
