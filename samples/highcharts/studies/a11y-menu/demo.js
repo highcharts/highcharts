@@ -335,7 +335,8 @@ function initializeCharts() {
         isInfoChecked: false,
         isPatternChecked: false,
         fontSize: '',
-        isSelectedTheme: 'default'
+        isSelectedTheme: 'default',
+        isSonificationChecked: false
     };
 
     // Copying settings to chart2
@@ -936,10 +937,10 @@ function createPreferencesDialog(chart) {
             <h2>Accessibility tools for ${chart.title.textStr} chart</h2>
             <p>Enhance the accessibility of your charts with these tools.</p>
             <div class="pref tool">
-                <input type="checkbox" id="screen-reader-${i}"
-                name="screen-reader-${i}"
-                    ${settings.isScreenReaderChecked ? 'checked' : ''}>
-                <label for="screen-reader-${i}">Enable Screen Reader</label>
+                <input type="checkbox" id="sonification-${i}"
+                name="sonification-${i}"
+                    ${settings.isSonificationChecked ? 'checked' : ''}>
+                <label for="sonification-${i}">Enable Sonification</label>
             </div>
             <div class="pref tool">
                 <input type="checkbox" id="high-contrast-${i}"
@@ -998,7 +999,9 @@ function setupEventListeners(prefContent, chart) {
             .querySelector(`input[name="alt-point-label-${chart.index}"]`),
         altInfoCheckbox =
             prefContent.querySelector(`input[name="alt-info-${chart.index}"]`),
-        accordionButtons = prefContent.querySelectorAll('.acc-btn');
+        accordionButtons = prefContent.querySelectorAll('.acc-btn'),
+        sonificationCheckbox = prefContent
+            .querySelector(`input[name="sonification-${chart.index}"]`);
 
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -1255,6 +1258,33 @@ function setupEventListeners(prefContent, chart) {
         // Refresh screen reader section
         applyInfoRegion(settings.selectedVerbosity, chart);
     });
+
+    sonificationCheckbox.addEventListener('change', event => {
+        settings.isSonificationChecked = event.target.checked;
+
+        const playButtonId = `play-sonification-${chart.index}`;
+        let playButton = document.getElementById(playButtonId);
+
+        if (settings.isSonificationChecked) {
+            if (!playButton) {
+                playButton = document.createElement('button');
+                playButton.id = playButtonId;
+                playButton.textContent = 'Play Sonification';
+                playButton.style.marginTop = '10px';
+                playButton.addEventListener('click', () => {
+                    chart.toggleSonify();
+                });
+
+                chart.container.parentNode
+                    .insertBefore(playButton, chart.container.nextSibling);
+            }
+        } else {
+            if (playButton) {
+                playButton.remove();
+            }
+        }
+    });
+
 }
 
 function updateChartColorLogic(chart) {
