@@ -281,6 +281,11 @@ function applyChartTheme(chart) {
 
 function setDialogColors(dialog, chart) {
     const theme = getThemeConfig(chart);
+    if (!dialog) {
+        console.warn('Dialog element not found');
+        return;
+    }
+    console.log('dialog element found');
     dialog.style.backgroundColor = theme.outsideChart.backgroundColor;
     dialog.style.color = theme.outsideChart.textColor;
 
@@ -289,7 +294,6 @@ function setDialogColors(dialog, chart) {
         closeButton.style.backgroundColor = theme.button.backgroundColor;
         closeButton.style.color = theme.button.textColor;
     }
-
 }
 
 function initializeCharts() {
@@ -769,6 +773,7 @@ function handlePrefButtonClick(chart) {
     if (firstFocusable) {
         firstFocusable.focus();
     }
+
 }
 
 function createPreferencesDialog(chart) {
@@ -776,7 +781,7 @@ function createPreferencesDialog(chart) {
     prefContent.setAttribute('id', `pref-menu-dialog-${chart.index}`);
     const closeID = `hc-dlg-close-btn-${chart.index}`;
 
-    // Retrieving settings for the spesific chart instance
+    // Retrieving settings for the specific chart instance
     const settings = chartSettingsMap[chart.index];
     const i = chart.index;
 
@@ -913,6 +918,7 @@ function setupEventListeners(prefContent, chart) {
         radio.addEventListener('change', event => {
             settings.isSelectedTheme = event.target.value;
             applyChartTheme(chart);
+            setDialogColors(prefContent, chart);
             applyInfoRegion(settings.selectedVerbosity, chart);
         });
     });
@@ -1291,7 +1297,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
 
     const innerScreenReaderDiv = screenReaderDiv.children[0];
     const description = innerScreenReaderDiv.children[3];
-    console.log(description);
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
         'div:first-child'
