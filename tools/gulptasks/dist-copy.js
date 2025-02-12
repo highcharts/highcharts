@@ -141,8 +141,8 @@ const CODE_FILTER = {
     'grid-lite': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
         ['grid', 'es-modules', 'Grid', 'Pro'],
-        ['grid', 'es-modules', 'masters', 'gridpro.'],
-        ['grid', 'gridpro.']
+        ['grid', 'es-modules', 'masters', 'grid-pro.'],
+        ['grid', 'grid-pro.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
