@@ -3,6 +3,27 @@
     margin: 1em auto;
 }
 
+:focus {
+    outline: 2px solid #e22443;
+    outline-offset: 2px;
+    border-radius: 5px;
+}
+
+button:focus {
+    outline: 2px solid #e22443;
+    outline-offset: 2px;
+}
+
+input:focus {
+    outline: 2px solid #e22443;
+    outline-offset: 2px;
+}
+
+a:focus {
+    outline: 2px solid #e22443;
+    outline-offset: 2px;
+}
+
 .sr-only {
     position: absolute;
     width: 1px;

@@ -412,6 +412,18 @@ function getColumnChartConfig() {
             },
             point: {
                 descriptionFormat: fullPointDescriptionFormat
+            },
+            keyboardNavigation: {
+                focusBorder: {
+                    enabled: true,
+                    hideBrowserFocusOutline: true,
+                    margin: 2,
+                    style: {
+                        lineWidth: 2,
+                        borderRadius: 3,
+                        color: '#e22443'
+                    }
+                }
             }
         },
         title: {
@@ -477,6 +489,18 @@ function getScatterChartConfig() {
                 '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>'
+            },
+            keyboardNavigation: {
+                focusBorder: {
+                    enabled: true,
+                    hideBrowserFocusOutline: true,
+                    margin: 2,
+                    style: {
+                        lineWidth: 2,
+                        borderRadius: 3,
+                        color: '#e22443'
+                    }
+                }
             }
         },
         title: {
