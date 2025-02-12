@@ -1286,24 +1286,26 @@ function setupEventListeners(prefContent, chart) {
     });
 
     describeChartButton.addEventListener('click', function () {
-        const descriptionDiv = document.createElement('div');
-        console.log(descriptionDiv);
+        let descriptionDiv = document.querySelector('.chart-describe');
+
+        if (!descriptionDiv) {
+            descriptionDiv = document.createElement('div');
+            descriptionDiv.classList.add('chart-describe');
+            descriptionDiv.style.display = 'block';
+            descriptionDiv.setAttribute('aria-live', 'polite');
+
+            // Insert the descriptionDiv after the describeChartButton
+            describeChartButton
+                .insertAdjacentElement('afterend', descriptionDiv);
+        }
 
         if (chart.series[0].type === 'scatter') {
-            console.log('series are scatter');
             descriptionDiv.textContent = scatterChartDesc;
         } else {
             descriptionDiv.textContent = columnChartDesc;
         }
-
-        descriptionDiv.classList.add('chart-describe');
-
-        descriptionDiv.style.display = 'block';
+        // Update the focus for screen readers
         descriptionDiv.setAttribute('aria-live', 'polite');
-
-        // Insert after the button
-        describeChartButton.insertAdjacentElement('afterend', descriptionDiv);
-
         console.log(`Chart description shown: ${descriptionDiv.textContent}`);
     });
 
