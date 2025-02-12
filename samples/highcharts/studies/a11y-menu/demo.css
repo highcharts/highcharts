@@ -14,13 +14,15 @@
     border: 0;
 }
 
-#pref-menu-dialog {
+#pref-menu-dialog-1,
+#pref-menu-dialog-2 {
     z-index: 9999;
     background-color: white;
     padding: 20px;
     border: 1px solid black;
     border-radius: 5px;
-    min-width: 500px;
+    min-width: 600px;
+    max-width: 800px;
 }
 
 .pref {
