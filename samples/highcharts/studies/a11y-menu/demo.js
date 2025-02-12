@@ -1031,8 +1031,8 @@ function setupEventListeners(prefContent, chart) {
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
         'div:first-child'
     );
-    const description = document
-        .getElementsByClassName('highcharts-description')[0];
+    const scatterDesc = document.getElementById('scatter-description');
+    const columnDesc = document.getElementById('column-description');
 
     // Retrieve settings for chart instance
     const settings = chartSettingsMap[chart.index];
@@ -1107,9 +1107,14 @@ function setupEventListeners(prefContent, chart) {
 
             // Only visible if info region is checked
             infoRegion.style.fontSize = settings.fontSize;
+            console.log(scatterDesc);
+            console.log(columnDesc);
 
-            // TODO: remove this?
-            description.style.fontSize = settings.fontSize;
+            if (chart.series[0].type === 'scatter') {
+                scatterDesc.style.fontSize = settings.fontSize;
+            } else {
+                columnDesc.style.fontSize = settings.fontSize;
+            }
 
             // Only visible if alt-text for point is checked
             chart.altTextDivs.forEach(div => {
