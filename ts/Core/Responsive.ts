@@ -22,6 +22,7 @@ import type GlobalOptions from './Options';
 import U from './Utilities.js';
 const {
     diffObjects,
+    isArrow,
     extend,
     find,
     merge,
@@ -162,7 +163,7 @@ namespace Responsive {
                 );
             };
 
-        if (fn.call(this)) {
+        if ((isArrow(fn) ? (fn as any)(this) : fn.call(this))) {
             matches.push(rule._id as any);
         }
     }
