@@ -20,7 +20,7 @@
     padding: 20px;
     border: 1px solid black;
     border-radius: 5px;
-    min-width: 320px;
+    min-width: 500px;
 }
 
 .pref {
@@ -96,4 +96,128 @@ h3 {
     border-radius: 2px;
     opacity: 1;
     background: #fff;
+}
+
+/* Accordion styles */
+.accordion-container .accordion-section {
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.accordion-container .accordion-header {
+    padding: 10px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.accordion-container .accordion-arrow {
+    font-size: 16px;
+    transition: transform 0.3s;
+}
+
+.accordion-container .accordion-content {
+    padding: 10px;
+    display: none;
+}
+
+.accordion-container .accordion-section.open .accordion-content {
+    display: block;
+}
+
+.accordion-container {
+    width: 500px;
+    min-width: 450px;
+    max-width: 500px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 10px;
+}
+
+.dlg-close {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.accordion-container .accordion-content {
+    transition: max-height 0.3s ease-out;
+}
+
+.collapse {
+    display: none;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    max-height: 0;
+}
+
+.collapse.show {
+    display: block;
+    max-height: 500px;
+}
+
+/* Remove default button styling */
+.acc-btn {
+    all: unset; /* Resets all button styles */
+    display: flex;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Ensure it visually looks like a heading */
+.acc-btn {
+    font-size: 1.25rem; /* Same as h3 */
+    font-weight: bold;
+    color: #333; /* Standard heading color */
+    text-align: left;
+    padding: 10px 0;
+}
+
+/* Ensure caret aligns properly */
+.acc-btn .arrow {
+    transition: transform 0.3s ease;
+    margin-right: 8px; /* Adds space between icon and text */
+}
+
+/* Default state: Caret points RIGHT when collapsed */
+.acc-btn[aria-expanded="false"] .arrow {
+    transform: rotate(0deg); /* Default state - points right */
+}
+
+/* Expanded state: Caret points DOWN when expanded */
+.acc-btn[aria-expanded="true"] .arrow {
+    transform: rotate(90deg); /* Rotates downward */
+}
+
+/* Spacing and style for header */
+.card-header {
+    background: none;
+    padding: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.fa {
+    padding-right: 10px;
 }

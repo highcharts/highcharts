@@ -787,103 +787,182 @@ function createPreferencesDialog(chart) {
     const settings = chartSettingsMap[chart.index];
     const i = chart.index;
 
-    prefContent.innerHTML = `
-    <button id="${closeID}" class="dlg-close" aria-label="Close dialog">
-        Close
-    </button>
-    <h2>Preferences for ${chart.title.textStr} chart</h2>
-    <p>Customize your chart settings to enhance your experience.</p>
-    
-    <h3>Chart theme:</h3>
-    <div class="pref theme">
-        <input type="radio" id="theme-default-${i}"
-        name="theme-${i}" value="default"
-        ${settings.isSelectedTheme === 'default' ? 'checked' : ''}>
-        <label for="theme-default-${i}">System default</label>
+    // Close button container
+    const headerContainer = document.createElement('div');
+    headerContainer.classList.add('dialog-header');
 
-        <input type="radio" id="theme-dark-${i}" name="theme-${i}" value="dark"
-        ${settings.isSelectedTheme === 'dark' ? 'checked' : ''}>
-        <label for="theme-dark-${i}">Dark</label>
+    // Create the close button
+    const closeButton = document.createElement('button');
+    closeButton.setAttribute('id', closeID);
+    closeButton.classList.add('dlg-close');
+    closeButton.setAttribute('aria-label', 'Close dialog');
+    closeButton.innerText = 'Close';
 
-        <input type="radio" id="theme-light-${i}"
-        name="theme-${i}" value="light"
-        ${settings.isSelectedTheme === 'light' ? 'checked' : ''}>
-        <label for="theme-light-${i}">Light</label>
+    // Append the close button to the header container
+    headerContainer.appendChild(closeButton);
+
+    // Create the accordion container
+    const accordionContainer = document.createElement('ul');
+    accordionContainer.classList.add('accordion', 'accordion-parent');
+    accordionContainer.setAttribute('id', `accordion-parent-${i}`);
+
+    const preferencesSection = document.createElement('li');
+    preferencesSection.classList.add('card', 'open'); // Open by default
+    preferencesSection.innerHTML = `
+    <div class="card-header p-0 d-flex align-items-center mx-1"
+    id="heading1-${i}">
+        <h3 class="h3">
+            <button class="acc-btn"
+                type="button" data-target="#collapse1-${i}" 
+                aria-expanded="true" aria-controls="collapse1-${i}">
+                <i class="fa fa-caret-right arrow"></i> Preferences
+            </button>
+        </h3>
     </div>
+    <div id="collapse1-${i}" class="mx-1 pl-2 collapse show"
+        aria-labelledby="heading1-${i}" data-parent="#accordion-parent-${i}">
+        <div class="card-body ml-1 pl-0">
+            <h2>Preferences for ${chart.title.textStr} chart</h2>
+            <p>Customize your chart settings to enhance your experience.</p>
 
-    <h3>Visible alt text:</h3>
-    <div class="pref alt-text">
-        <input type="checkbox" id="alt-info-${i}" name="alt-info-${i}"
-        ${settings.isInfoChecked ? 'checked' : ''}>
-        <label for="alt-info-${i}">Show chart overview</label>
+            <h3>Chart theme:</h3>
+            <div class="pref theme">
+                <input type="radio" id="theme-default-${i}"
+                name="theme-${i}" value="default"
+                    ${settings.isSelectedTheme === 'default' ? 'checked' : ''}>
+                <label for="theme-default-${i}">System default</label>
+                <input type="radio" id="theme-dark-${i}"
+                name="theme-${i}" value="dark"
+                    ${settings.isSelectedTheme === 'dark' ? 'checked' : ''}>
+                <label for="theme-dark-${i}">Dark</label>
+                <input type="radio" id="theme-light-${i}"
+                name="theme-${i}" value="light"
+                    ${settings.isSelectedTheme === 'light' ? 'checked' : ''}>
+                <label for="theme-light-${i}">Light</label>
+            </div>
 
-        <input type="checkbox" id="alt-point-label-${i}"
-        name="alt-point-label-${i}"
-        ${settings.isAltPointLabelChecked ? 'checked' : ''}>
-        <label for="alt-point-label-${i}">Show point labels</label>
+            <h3>Visible alt text:</h3>
+            <div class="pref alt-text">
+                <input type="checkbox" id="alt-info-${i}" name="alt-info-${i}"
+                    ${settings.isInfoChecked ? 'checked' : ''}>
+                <label for="alt-info-${i}">Show chart overview</label>
+                <input type="checkbox" id="alt-point-label-${i}"
+                name="alt-point-label-${i}"
+                    ${settings.isAltPointLabelChecked ? 'checked' : ''}>
+                <label for="alt-point-label-${i}">Show point labels</label>
+                <input type="checkbox" id="alt-points-desc-${i}"
+                name="alt-points-desc-${i}"
+                    ${settings.isAltPointDescChecked ? 'checked' : ''}>
+                <label for="alt-points-desc-${i}">Show point description</label>
+            </div>
 
-        <input type="checkbox" id="alt-points-desc-${i}"
-        name="alt-points-desc-${i}"
-        ${settings.isAltPointDescChecked ? 'checked' : ''}>
-        <label for="alt-points-desc-${i}">Show point description</label>
+            <h3>Text description:</h3>
+            <div class="pref verbosity">
+                <input type="radio" id="short-${i}"
+                name="verbosity-${i}" value="short"
+                    ${settings.selectedVerbosity === 'short' ? 'checked' : ''}>
+                <label for="short-${i}">Short</label>
+                <input type="radio" id="ver-full-${i}"
+                name="verbosity-${i}" value="full"
+                    ${settings.selectedVerbosity === 'full' ? 'checked' : ''}>
+                <label for="ver-full-${i}">Full</label>
+            </div>
+
+            <h3>Text size:</h3>
+            <div class="pref textsize">
+                <input type="radio" id="smaller-${i}"
+                name="textsize-${i}" value="smaller"
+                    ${settings.selectedTextSize === 'smaller' ? 'checked' : ''}>
+                <label for="smaller-${i}">Smaller</label>
+                <input type="radio" id="t-size-def-${i}"
+                name="textsize-${i}" value="default"
+                    ${settings.selectedTextSize === 'default' ? 'checked' : ''}>
+                <label for="t-size-def-${i}">Default</label>
+                <input type="radio" id="larger-${i}"
+                name="textsize-${i}" value="larger"
+                    ${settings.selectedTextSize === 'larger' ? 'checked' : ''}>
+                <label for="larger-${i}">Larger</label>
+            </div>
+
+            <h3>Enhance contrast:</h3>
+            <div class="pref contrast">
+                <input type="checkbox" id="contrast-${i}" name="contrast-${i}"
+                    ${settings.isContrastChecked ? 'checked' : ''}>
+                <label for="contrast-${i}">Increase contrast</label>
+
+                <input type="checkbox" id="border-${i}" name="border-${i}"
+                    ${settings.isBorderChecked ? 'checked' : ''}>
+                <label for="border-${i}">Add border</label>
+
+                <input type="checkbox" id="pattern-${i}" name="pattern-${i}"
+                    ${settings.isPatternChecked ? 'checked' : ''}>
+                <label for="pattern-${i}">Pattern instead of colors</label>
+            </div>
+        </div>
     </div>
+    `;
 
-    <h3>Text description:</h3>
-    <div class="pref verbosity">
-        <input type="radio" id="short-${i}" name="verbosity-${i}" value="short"
-        ${settings.selectedVerbosity === 'short' ? 'checked' : ''}>
-        <label for="short-${i}">Short</label>
-
-        <input type="radio" id="ver-full-${i}"
-        name="verbosity-${i}" value="full"
-        ${settings.selectedVerbosity === 'full' ? 'checked' : ''}>
-        <label for="ver-full-${i}">Full</label>
+    // Accessibility Tools section (default closed)
+    const accessibilitySection = document.createElement('li');
+    accessibilitySection.classList.add('card');
+    accessibilitySection.innerHTML = `
+    <div class="card-header p-0 d-flex align-items-center mx-1"
+    id="heading2-${i}">
+    <h3 class="h3">
+        <button class="acc-btn"
+            type="button" data-target="#collapse2-${i}" 
+            aria-expanded="false" aria-controls="collapse2-${i}">
+            <i class="fa fa-caret-right arrow"></i> Accessibility Tools
+        </button>
+    </h3>
     </div>
-
-    <h3>Text size:</h3>
-    <div class="pref textsize">
-        <input type="radio" id="smaller-${i}"
-        name="textsize-${i}" value="smaller"
-        ${settings.selectedTextSize === 'smaller' ? 'checked' : ''}>
-        <label for="smaller-${i}">Smaller</label>
-        <span aria-hidden="true">(<span id="small-font-${i}">Aa</span>)</span>
-
-        <input type="radio" id="t-size-def-${i}"
-        name="textsize-${i}" value="default"
-        ${settings.selectedTextSize === 'default' ? 'checked' : ''}>
-        <label for="t-size-def-${i}">Default</label>
-        <span aria-hidden="true">(<span id="def-font-${i}">Aa</span>)</span>
-
-        <input type="radio" id="larger-${i}" name="textsize-${i}" value="larger"
-        ${settings.selectedTextSize === 'larger' ? 'checked' : ''}>
-        <label for="larger-${i}">Larger</label>
-        <span aria-hidden="true">(<span id="large-font-${i}">Aa</span>)</span>
+    <div id="collapse2-${i}" class="mx-1 pl-2 collapse"
+        aria-labelledby="heading2-${i}" data-parent="#accordion-parent-${i}">
+        <div class="card-body ml-1 pl-0">
+            <h2>Accessibility tools for ${chart.title.textStr} chart</h2>
+            <p>Enhance the accessibility of your charts with these tools.</p>
+            <div class="pref tool">
+                <input type="checkbox" id="screen-reader-${i}"
+                name="screen-reader-${i}"
+                    ${settings.isScreenReaderChecked ? 'checked' : ''}>
+                <label for="screen-reader-${i}">Enable Screen Reader</label>
+            </div>
+            <div class="pref tool">
+                <input type="checkbox" id="high-contrast-${i}"
+                name="high-contrast-${i}"
+                    ${settings.isHighContrastChecked ? 'checked' : ''}>
+                <label for="high-contrast-${i}">
+                Enable High Contrast Mode
+                </label>
+            </div>
+        </div>
     </div>
+    `;
 
-    <h3>Enhance contrast:</h3>
-    <div class="pref contrast">
-        <input type="checkbox" id="contrast-${i}" name="contrast-${i}"
-        ${settings.isContrastChecked ? 'checked' : ''}>
-        <label for="contrast-${i}">Increase contrast</label>
+    // Append sections to the accordion container
+    accordionContainer.appendChild(preferencesSection);
+    accordionContainer.appendChild(accessibilitySection);
 
-        <input type="checkbox" id="border-${i}" name="border-${i}"
-        ${settings.isBorderChecked ? 'checked' : ''}>
-        <label for="border-${i}">Add border</label>
+    // Add header, close button, and accordion container to the dialog
+    prefContent.appendChild(headerContainer);
+    prefContent.appendChild(accordionContainer);
 
-        <input type="checkbox" id="pattern-${i}" name="pattern-${i}"
-        ${settings.isPatternChecked ? 'checked' : ''}>
-        <label for="pattern-${i}">Pattern instead of colors</label>
-    </div>
-`;
+    // Append the dialog to the document before calling event listeners
+    document.body.appendChild(prefContent);
 
-    setupEventListeners(prefContent, chart);
+    // Setup event listeners after adding to the DOM
+    setTimeout(() => {
+        setupEventListeners(prefContent, chart);
+    }, 0);
 
-    const closeButton = prefContent.querySelector(`#${closeID}`);
-    closeButton.addEventListener('click', () =>
-        closePreferencesDialog(prefContent, chart)
-    );
+    // Close button functionality
+    closeButton.addEventListener('click', () => {
+        closePreferencesDialog(prefContent, chart);
+    });
+
     return prefContent;
 }
+
 
 function setupEventListeners(prefContent, chart) {
 
@@ -904,7 +983,8 @@ function setupEventListeners(prefContent, chart) {
         altPointLabelCheckbox = prefContent
             .querySelector(`input[name="alt-point-label-${chart.index}"]`),
         altInfoCheckbox =
-            prefContent.querySelector(`input[name="alt-info-${chart.index}"]`);
+            prefContent.querySelector(`input[name="alt-info-${chart.index}"]`),
+        accordionButtons = prefContent.querySelectorAll('.acc-btn');
 
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -915,6 +995,38 @@ function setupEventListeners(prefContent, chart) {
 
     // Retrieve settings for chart instance
     const settings = chartSettingsMap[chart.index];
+
+    accordionButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const targetID = this.getAttribute('data-target');
+            if (!targetID) {
+                console.warn('Missing data-target attribute on button:', this);
+                return;
+            }
+
+            const target = prefContent.querySelector(targetID);
+            if (!target) {
+                console.warn(`Accordion target not found: ${targetID}`);
+                return;
+            }
+
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+            // Toggle aria-expanded and collapse state
+            this.setAttribute('aria-expanded', !isExpanded);
+            target.classList.toggle('show', !isExpanded);
+
+            // Update arrow icon based on the expanded state
+            const arrowIcon = this.querySelector('.arrow');
+            if (isExpanded) {
+                arrowIcon.classList.remove('fa-caret-down');
+                arrowIcon.classList.add('fa-caret-right');
+            } else {
+                arrowIcon.classList.remove('fa-caret-right');
+                arrowIcon.classList.add('fa-caret-down');
+            }
+        });
+    });
 
     themeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
@@ -955,7 +1067,7 @@ function setupEventListeners(prefContent, chart) {
             // Only visible if info region is checked
             infoRegion.style.fontSize = settings.fontSize;
 
-            //TODO: remove this?
+            // TODO: remove this?
             description.style.fontSize = settings.fontSize;
 
             // Only visible if alt-text for point is checked
@@ -1073,7 +1185,7 @@ function setupEventListeners(prefContent, chart) {
             const paths = document
                 .querySelectorAll('path.highcharts-point[aria-label]');
             const chartRect = chart.container.getBoundingClientRect();
-            const theme = getThemeConfig(chart); // Get the current theme
+            const theme = getThemeConfig(chart);
 
             paths.forEach(path => {
                 const ariaLabel = path.getAttribute('aria-label');
