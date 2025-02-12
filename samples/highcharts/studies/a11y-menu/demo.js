@@ -243,8 +243,6 @@ function applyChartTheme(chart) {
         colors: theme.colors
     });
 
-    console.log(theme.legend.itemStyle);
-
     // Ensure colors update when switching themes
     updateChartColorLogic(chart);
 
@@ -1406,16 +1404,25 @@ function createKeyboardNavigationHandler() {
 
     return new Highcharts.KeyboardNavigationHandler(chart, {
         keyCodeMap: [
-            // On arrow/tab we just move to the next chart element.
-            // If we had multiple buttons we wanted to group together,
-            // we could move between them here.
+            // Ensure you're catching keydown events
             [[
                 keys.tab, keys.up, keys.down, keys.left, keys.right
             ], function (keyCode, e) {
+                // Check if Shift+Tab is pressed (Shift + Tab == backward tab)
+                const isBackward = keyCode === keys.tab && e.shiftKey;
+
+                // If it's backward navigation and we're leaving customComponent
+                if (isBackward) {
+                    // If we're on customComponent, move focus to series
+                    if (this.response.prev === 'customComponent') {
+                        // Focus on series when tabbing backwards
+                        this.response.prev = 'series';
+                    }
+                }
+
+                // Return next/prev focus based on direction
                 return this.response[
-                    keyCode === this.tab && e.shiftKey ||
-                    keyCode === keys.left || keyCode === keys.up ?
-                        'prev' : 'next'
+                    isBackward ? 'prev' : 'next'
                 ];
             }],
 
