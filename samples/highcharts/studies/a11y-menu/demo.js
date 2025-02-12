@@ -1504,6 +1504,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
     );
 
     const innerScreenReaderDiv = screenReaderDiv.children[0];
+    // Cannot delete description until I update the logic for verbosity
     const description = innerScreenReaderDiv.children[3];
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -1513,12 +1514,16 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const dataTableButton = document.getElementById(
         `hc-linkto-highcharts-data-table-${chart.index}`
     );
+    const sonificationButton = document
+        .getElementById(`highcharts-a11y-sonify-data-btn-${chart.index}`);
 
+    // Only way to set font size since the info region is re-rendered often
     dataTableButton.style.fontSize = settings.fontSize;
+    sonificationButton.style.fontSize = settings.fontSize;
     // Hack......needs a fix TODO
     const hideIndex = dataTableButton.getAttribute(
         'aria-expanded'
-    ) === 'true' ? 5 : 6;
+    ) === 'true' ? 6 : 7;
 
     // Check if info region is already displayed
     if (!infoRegion) {
