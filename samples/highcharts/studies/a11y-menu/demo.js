@@ -468,6 +468,13 @@ function getScatterChartConfig() {
         },
         series: [{
             name: 'Female',
+            accessibility: {
+                description: 'This series contains the heights and weights ' +
+                'of a group of 30 women with heights ranging from 147 cm ' +
+                'to 182.9 cm an  weights between 42.0 kg and 105.2 kg. ' +
+                'The average height for the females are 165.8 cm, the ' +
+                'average weight is 58.2 kg.'
+            },
             data: [
                 [161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0],
                 [155.8, 53.6], [170.0, 59.0], [159.1, 47.6], [166.0, 69.8],
@@ -537,6 +544,13 @@ function getScatterChartConfig() {
             ]
         }, {
             name: 'Male',
+            accessibility: {
+                description: 'This series contains the heights and weights ' +
+                'of a group of 124 men, with heights ranging from 157.2 cm ' +
+                'to 198.1 cm and weights between 53.9 kg and 116.4 kg. The ' +
+                'average height for the males is 174.3 cm, and the average ' +
+                'weight is 80.7 kg.'
+            },
             data: [
                 [174.0, 65.6], [175.3, 71.8], [193.5, 80.7], [186.5, 72.6],
                 [187.2, 78.8], [181.5, 74.8], [184.0, 86.4], [184.5, 78.4],
@@ -729,7 +743,6 @@ function createPreferencesDialog(chart) {
     const settings = chartSettingsMap[chart.index];
     const i = chart.index;
 
-    console.log(chart);
     prefContent.innerHTML = `
     <button id="${closeID}" class="dlg-close" aria-label="Close dialog">
         Close
