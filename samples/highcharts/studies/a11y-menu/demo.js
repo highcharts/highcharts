@@ -170,7 +170,6 @@ function getThemeConfig(chart) {
 }
 
 function applyChartTheme(chart) {
-    const settings = chartSettingsMap[chart.index];
     const theme = getThemeConfig(chart);
 
     chart.update({
@@ -216,12 +215,14 @@ function applyChartTheme(chart) {
     updateChartColorLogic(chart);
 
     // Set background color for the whole chart and the text color
-    const highchartsFigure =
-        document.getElementsByClassName('highcharts-figure')[0];
-    highchartsFigure.style.backgroundColor = theme.outsideChart.backgroundColor;
-    highchartsFigure.style.color = theme.outsideChart.textColor;
-    highchartsFigure.style.margin = '0';
-    highchartsFigure.style.padding = '40px';
+    const highchartsFigure = document.getElementById(`chart-${chart.index}`);
+    if (highchartsFigure) {
+        highchartsFigure.style.backgroundColor =
+            theme.outsideChart.backgroundColor;
+        highchartsFigure.style.color = theme.outsideChart.textColor;
+        highchartsFigure.style.margin = '0';
+        highchartsFigure.style.padding = '40px';
+    }
 
     // Buttons in dark mode
     const tableButton = document
@@ -247,8 +248,6 @@ function applyChartTheme(chart) {
             div.style.border = '1px solid #000';
         }
     });
-
-
 }
 
 function setDialogColors(dialog, chart) {

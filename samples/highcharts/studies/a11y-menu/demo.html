@@ -4,8 +4,9 @@
 <script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <div class="chart-container-wrapper">
+    <h1 class="sr-only">Charts dashboard</h1>
     <div class="chart-container">
-        <figure class="highcharts-figure">
+        <figure class="highcharts-figure" id="chart-1">
             <div id="container" class="containers"></div>
             <p class="highcharts-description">
                 This bar chart compares the estimated production of corn and wheat for 2023 across six countries: 
@@ -13,6 +14,8 @@
                 in countries like the USA and Brazil, while wheat production surpasses corn in the EU. The chart uses metric tons 
                 (MT) as the unit and highlights data sourced from IndexMundi.
             </p>
+        </figure>
+        <figure class="highcharts-figure" id="chart-2">
             <div id="container2" class="containers"></div>
             <p class="highcharts-description">
                 This scatter plot shows the relationship between Norway's Consumer Price Index (CPI) and wage increases across 
