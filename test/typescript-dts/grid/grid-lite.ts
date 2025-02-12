@@ -1,12 +1,12 @@
 /* *
  *
- *  Test cases for gridlite.d.ts
+ *  Test cases for grid-lite.d.ts
  *
  *  (c) 2023 Highsoft AS. All rights reserved.
  *
  * */
 
-import * as Grid from '@highcharts/grid/gridlite';
+import * as Grid from '@highcharts/grid/grid-lite';
 
 test_grid();
 

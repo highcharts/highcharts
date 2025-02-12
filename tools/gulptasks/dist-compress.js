@@ -31,9 +31,9 @@ function getProperties() {
     // Grid
     return {
         products: {
-            'Highcharts GridLite': {
-                cdnpath: '/gridlite',
-                distpath: '/gridlite'
+            'Highcharts Grid Lite': {
+                cdnpath: '/grid-lite',
+                distpath: '/grid-lite'
             }/* ,
             'Highcharts GridPro': {
                 cdnpath: '/gridpro',

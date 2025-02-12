@@ -1,6 +1,6 @@
 /**
  * @license Highcharts Grid v@product.version@ (@product.date@)
- * @module grid/gridlite
+ * @module grid/grid-lite
  *
  * (c) 2009-2024 Highsoft AS
  *
@@ -48,7 +48,7 @@ import '../Data/Modifiers/SortModifier.js';
 declare global {
     interface GridNamespace {
         win: typeof Globals.win;
-        product: 'GridLite',
+        product: 'Grid Lite',
         AST: typeof AST;
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
@@ -90,7 +90,7 @@ G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
-G.product = 'GridLite';
+G.product = 'Grid Lite';
 G.setOptions = Defaults.setOptions;
 
 

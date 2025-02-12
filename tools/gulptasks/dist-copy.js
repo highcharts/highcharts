@@ -138,7 +138,7 @@ const CODE_FILTER = {
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
-    gridlite: [
+    'grid-lite': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
         ['grid', 'es-modules', 'Grid', 'Pro'],
         ['grid', 'es-modules', 'masters', 'gridpro.'],
@@ -146,7 +146,7 @@ const CODE_FILTER = {
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
-    gridpro: [
+    'grid-pro': [
         // Add here files that should not be distributed with Grid Pro.
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
@@ -194,7 +194,7 @@ const VENDOR_FILTER = [
  */
 const PRODUCTS = {
     Highcharts: ['highcharts', 'highstock', 'highmaps', 'gantt'],
-    Grid: ['gridlite'/* , 'gridpro'*/]
+    Grid: ['grid-lite'/* , 'grid-pro'*/]
 };
 
 /* *

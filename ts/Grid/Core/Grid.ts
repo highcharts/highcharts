@@ -54,7 +54,7 @@ const {
  * */
 
 /**
- * Abstract class as a base for GridLite & GridPro classes.
+ * A base class for the Grid.
  */
 class Grid {
 

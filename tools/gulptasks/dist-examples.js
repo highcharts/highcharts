@@ -304,13 +304,13 @@ function distExamples() {
             };
         } else if (distProduct === 'Grid') {
             samplesSubfolder = {
-                gridlite: {
+                'grid-lite': {
                     path: ['grid', 'demo'],
-                    title: 'Highcharts GridLite'
+                    title: 'Highcharts Grid Lite'
                 }/* ,
-                gridpro: {
+                'grid-pro': {
                     path: ['grid', 'demo'],
-                    title: 'Highcharts GridPro'
+                    title: 'Highcharts Grid Pro'
                 }*/
             };
         }
