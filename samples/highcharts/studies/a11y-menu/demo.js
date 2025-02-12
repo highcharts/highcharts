@@ -1290,10 +1290,12 @@ function setupEventListeners(prefContent, chart) {
         console.log(descriptionDiv);
 
         if (chart.series[0].type === 'scatter') {
+            console.log('series are scatter');
             descriptionDiv.textContent = scatterChartDesc;
+        } else {
+            descriptionDiv.textContent = columnChartDesc;
         }
 
-        descriptionDiv.textContent = columnChartDesc;
         descriptionDiv.classList.add('chart-describe');
 
         descriptionDiv.style.display = 'block';
