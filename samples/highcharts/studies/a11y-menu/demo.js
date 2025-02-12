@@ -170,8 +170,9 @@ function getThemeConfig(chart) {
 }
 
 function applyChartTheme(chart) {
-    // const settings = chartSettingsMap[chart.index];
+    const settings = chartSettingsMap[chart.index];
     const theme = getThemeConfig(chart);
+
     chart.update({
         chart: {
             backgroundColor: theme.chart.backgroundColor,
@@ -860,7 +861,7 @@ function setupEventListeners(prefContent, chart) {
 
     themeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
-            settings.selectedTheme = event.target.value;
+            settings.isSelectedTheme = event.target.value;
             applyChartTheme(chart);
             applyInfoRegion(settings.selectedVerbosity, chart);
         });
