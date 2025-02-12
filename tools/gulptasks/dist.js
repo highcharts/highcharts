@@ -50,4 +50,9 @@ function dist() {
     return Gulp.series(tasks);
 }
 
+dist.description = 'Builds distribution files for the specified product.';
+dist.flags = {
+    '--product': 'Product name. Available products: Highcharts, Grid. Defaults to Highcharts.',
+    '--release': 'Version number. Used and required only for products other than Highcharts.'
+};
 Gulp.task('dist', dist());

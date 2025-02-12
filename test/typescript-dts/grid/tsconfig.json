@@ -14,7 +14,6 @@
         "paths": {
             "@highcharts/grid": ["code/grid"],
             "@highcharts/grid/*": ["code/grid/*"]
-
         },
         "types": []
     },
