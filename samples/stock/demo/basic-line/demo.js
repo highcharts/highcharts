@@ -14,11 +14,28 @@
             text: 'AAPL Stock Price'
         },
 
+        xAxis: {
+            overscroll: '10px'
+        },
+
         series: [{
             name: 'AAPL',
             data: data,
             tooltip: {
                 valueDecimals: 2
+            },
+            lastPrice: {
+                enabled: true,
+                color: 'transparent',
+                label: {
+                    enabled: true,
+                    backgroundColor: '#ffffff',
+                    borderColor: '#2caffe',
+                    borderWidth: 1,
+                    style: {
+                        color: '#000000'
+                    }
+                }
             }
         }]
     });

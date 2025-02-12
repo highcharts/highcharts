@@ -11,7 +11,6 @@ const commonOptions = {
 const NVIDIACorpId = '0P000003RE';
 
 const NVIDIAPriceConnector =
-    // eslint-disable-next-line no-undef
     new HighchartsConnectors.Morningstar.TimeSeriesConnector({
         ...commonOptions,
         series: {

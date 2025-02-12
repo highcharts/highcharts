@@ -166,7 +166,7 @@ export interface RenderingSettings {
      * The theme of the DataGrid. It will set the class name on the container.
      * Can be set to the empty string to disable the theme.
      *
-     * @default 'hcdg-theme-default'
+     * @default 'hcg-theme-default'
      */
     theme?: string;
 }

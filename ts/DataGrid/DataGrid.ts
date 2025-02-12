@@ -961,7 +961,7 @@ class DataGrid {
                 className: Globals.classNames.loadingWrapper
             },
             this.contentWrapper
-        )
+        );
 
         // Create spinner element.
         makeHTMLElement(
@@ -985,7 +985,7 @@ class DataGrid {
         setHTMLContent(
             loadingSpan,
             pick(message, this.options?.lang?.loading, '')
-        )
+        );
     }
 
     /**
