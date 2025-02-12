@@ -16,13 +16,15 @@ If needed, boost can be disabled on a chart-by-chart basis by setting [boost.ena
 
 ### With ES modules
 ```js
-import Highcharts from "highcharts";
-import HighchartsBoost from "highcharts/modules/boost";
-// Import order is important !
-HighchartsBoost(Highcharts);
+import Highcharts from 'highcharts';
+import HighchartsBoost from 'highcharts/modules/boost';
+typeof HighchartsBoost === 'function' && HighchartsBoost(Highcharts);
+```
 
-// Then you can use your Highcharts as usual
-
+For Highcharts from [version 12](/docs/getting-started/version-12), the import can be simplified to:
+```js
+import Highcharts from 'highcharts';
+import 'highcharts/modules/boost';
 ```
 
 Configuration Options
