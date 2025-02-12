@@ -292,12 +292,12 @@ function setDialogColors(dialog, chart) {
     dialog.style.color = theme.outsideChart.textColor;
 
 
-    const h3Buttons = dialog.querySelectorAll('.card-header h3 button');
+    const h3Buttons = dialog.querySelectorAll('.card-header h2 button');
     h3Buttons.forEach(button => {
         button.style.color = theme.outsideChart.textColor;
     });
 
-    const icons = dialog.querySelectorAll('.card-header h3 button i');
+    const icons = dialog.querySelectorAll('.card-header h2 button i');
     icons.forEach(icon => {
         icon.style.color = theme.outsideChart.textColor;
     });
@@ -822,13 +822,13 @@ function createPreferencesDialog(chart) {
     preferencesSection.innerHTML = `
     <div class="card-header p-0 d-flex align-items-center mx-1"
     id="heading1-${i}">
-        <h3 class="h3">
+        <h2 class="h2">
             <button class="acc-btn"
                 type="button" data-target="#collapse1-${i}" 
                 aria-expanded="true" aria-controls="collapse1-${i}">
                 <i class="fa fa-caret-right arrow"></i> Preferences
             </button>
-        </h3>
+        </h2>
     </div>
     <div id="collapse1-${i}" class="mx-1 pl-2 collapse show"
         aria-labelledby="heading1-${i}" data-parent="#accordion-parent-${i}">
@@ -919,13 +919,13 @@ function createPreferencesDialog(chart) {
     accessibilitySection.innerHTML = `
     <div class="card-header p-0 d-flex align-items-center mx-1"
     id="heading2-${i}">
-    <h3 class="h3">
+    <h2 class="h2">
         <button class="acc-btn"
             type="button" data-target="#collapse2-${i}" 
             aria-expanded="false" aria-controls="collapse2-${i}">
             <i class="fa fa-caret-right arrow"></i> Accessibility Tools
         </button>
-    </h3>
+    </h2>
     </div>
     <div id="collapse2-${i}" class="mx-1 pl-2 collapse"
         aria-labelledby="heading2-${i}" data-parent="#accordion-parent-${i}">
