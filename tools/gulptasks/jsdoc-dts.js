@@ -45,8 +45,7 @@ function jsDocESMDTS() {
     const dtsFiles = fsLib
         .getFilePaths('code', true)
         .filter(file => (
-            file.endsWith('.src.d.ts') &&
-            !file.endsWith('globals.src.d.ts') &&
+            file.endsWith('.d.ts') &&
             !file.includes('dashboards') &&
             !file.includes('datagrid') &&
             !file.includes('es-modules')
@@ -56,6 +55,14 @@ function jsDocESMDTS() {
 
     for (const folder of ESM_FOLDERS) {
         for (const dtsFile of dtsFiles) {
+
+            if (
+                !dtsFile.endsWith('.src.d.ts') &&
+                folder.includes('masters')
+            ) {
+                continue;
+            }
+
             const target = path.join(
                 'code',
                 folder,
