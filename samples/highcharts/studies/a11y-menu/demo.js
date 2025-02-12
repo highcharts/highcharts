@@ -290,6 +290,9 @@ function setDialogColors(dialog, chart) {
     }
     dialog.style.backgroundColor = theme.outsideChart.backgroundColor;
     dialog.style.color = theme.outsideChart.textColor;
+    dialog.style.border = theme.outsideChart.textColor;
+    dialog.style.borderWidth = '2px';
+    dialog.style.borderStyle = 'solid';
 
 
     const h3Buttons = dialog.querySelectorAll('.card-header h2 button');
