@@ -426,6 +426,20 @@ function getColumnChartConfig() {
                 }
             }
         },
+        sonification: {
+            duration: 10000,
+            afterSeriesWait: 1200,
+            globalTracks: [
+                {
+                    type: 'speech',
+                    mapping: {
+                        text: '{point.category}, {point.series.name}',
+                        rate: 1.5,
+                        volume: 1
+                    }
+                }
+            ]
+        },
         title: {
             text: 'Corn vs wheat estimated production for 2023'
         },
@@ -532,6 +546,30 @@ function getScatterChartConfig() {
             floating: true,
             backgroundColor: '#FFFFFF',
             borderWidth: 1
+        },
+        sonification: {
+            duration: 6000,
+            afterSeriesWait: 1200,
+            pointGrouping: {
+                groupTimespan: 1
+            },
+            defaultInstrumentOptions: {
+                mapping: {
+                    playDelay: 500
+                }
+            },
+            globalTracks: [{
+                type: 'speech',
+                mapping: {
+                    text: '{point.series.name}',
+                    volume: 1,
+                    rate: 2
+                },
+                // Active on first point in series only
+                activeWhen: function (e) {
+                    return e.point && !e.point.index;
+                }
+            }]
         },
         plotOptions: {
             scatter: {
@@ -1300,6 +1338,7 @@ function setupEventListeners(prefContent, chart) {
                 playButton.id = playButtonId;
                 playButton.textContent = 'Play Sonification';
                 playButton.style.marginTop = '10px';
+                console.log(playButton);
                 playButton.addEventListener('click', () => {
                     chart.toggleSonify();
                 });
