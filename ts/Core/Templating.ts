@@ -17,7 +17,8 @@
  * */
 
 import type Chart from './Chart/Chart';
-import type Time from './Time';
+import type TimeBase from '../Shared/TimeBase';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
 import D from './Defaults.js';
 const {
@@ -29,7 +30,6 @@ const {
     pageLang
 } = G;
 import U from './Utilities.js';
-import { LangOptionsCore } from './Options';
 const {
     extend,
     getNestedProperty,
@@ -553,7 +553,7 @@ namespace Templating {
     }
     export interface Owner {
         options?: OwnerOptions;
-        time?: Time;
+        time?: TimeBase;
         numberFormatter?: Function
     }
 }

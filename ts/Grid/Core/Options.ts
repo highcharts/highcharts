@@ -28,7 +28,8 @@ import type {
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
-import type { LangOptionsCore } from '../../Core/Options';
+import type Column from './Table/Column';
+import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 
 
 /* *

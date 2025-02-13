@@ -35,8 +35,8 @@ import DataTable from '../../Data/DataTable.js';
 import Table from './Table/Table.js';
 import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
-import Time from '../../Core/Time.js';
 import Globals from './Globals.js';
+import TimeBase from '../../Shared/TimeBase.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
@@ -251,7 +251,7 @@ class Grid {
     /**
      * The time instance.
      */
-    public time: Time;
+    public time: TimeBase;
 
     /**
      * The locale of the Grid.
@@ -305,7 +305,7 @@ class Grid {
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
         );
 
-        this.time = new Time(extend<Time.TimeOptions>(
+        this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
             { locale: this.locale }
         ), this.options?.lang);
