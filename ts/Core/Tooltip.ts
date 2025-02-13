@@ -1422,11 +1422,17 @@ class Tooltip {
                     const size = bBox.height + 1;
                     const boxPosition = (
                         positioner ?
-                            positioner.call(
+                            (!isArrow(positioner) ? positioner.call(
                                 tooltip,
                                 boxWidth,
                                 size,
                                 point
+                            ) : (positioner as any)(
+                                tooltip,
+                                boxWidth,
+                                size,
+                                point
+                            )
                             ) :
                             defaultPositioner(
                                 anchorX,

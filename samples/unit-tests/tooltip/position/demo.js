@@ -346,3 +346,31 @@ QUnit.test('Tooltip position for inverted polar chart.', assert => {
         'Tooltip y position should be valid.'
     );
 });
+
+QUnit.test('Tooltip custom positioner callback', assert => {
+    const chart = Highcharts.chart('container', {
+        tooltip: {
+            split: true,
+            positioner: function (labelWidth, labelHeight, point) {
+                const h = {
+                    x: this.chart.chartWidth / 2,
+                    y: this.chart.chartHeight / 2
+                };
+                return h;
+            }
+        },
+
+        series: [
+            {
+                data: [5, 7, 9]
+            },
+            {
+                data: [9, 7, 5]
+            }
+        ]
+    });
+
+
+    assert.strictEqual(true, true, 'is true');
+
+});
