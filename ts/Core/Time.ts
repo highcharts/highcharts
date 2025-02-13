@@ -150,7 +150,8 @@ class Time extends TimeBase {
                         timeZone: this.timezone,
                         weekday: 'narrow'
                     }, min, 'es'),
-                    weekdayNo = this.spanishWeekdayIndex(weekday);
+                    // Spanish weekday index
+                    weekdayNo = 'DLMXJVS'.indexOf(weekday);
 
                 dayOfMonth += -weekdayNo + startOfWeek +
                     // We don't want to skip days that are before

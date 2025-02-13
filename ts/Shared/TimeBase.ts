@@ -184,20 +184,6 @@ class TimeBase {
      * */
 
     /**
-     * We use the Spanish locale for internal weekday handling because it uses
-     * unique letters for narrow weekdays
-     *
-     * @private
-     * @param weekday
-     *
-     */
-    public spanishWeekdayIndex(
-        weekday: string
-    ): number {
-        return ['D', 'L', 'M', 'X', 'J', 'V', 'S'].indexOf(weekday);
-    }
-
-    /**
      * Update the Time object with current options. It is called internally on
      * initializing Highcharts, after running `Highcharts.setOptions` and on
      * `Chart.update`.
@@ -325,8 +311,8 @@ class TimeBase {
             seconds,
             // Milliseconds
             Math.floor(Number(timestamp) || 0) % 1000,
-            // Weekday index
-            this.spanishWeekdayIndex(weekday)
+            // Spanish weekday index
+            'DLMXJVS'.indexOf(weekday)
         ].map(Number);
     }
 
