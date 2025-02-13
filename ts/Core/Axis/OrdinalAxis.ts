@@ -51,16 +51,6 @@ declare module './AxisComposition' {
     interface AxisComposition {
         ordinal?: OrdinalAxis.Additions;
         /** @deprecated */
-        getTimeTicks(
-            normalizedInterval: Time.TimeNormalizedObject,
-            min: number,
-            max: number,
-            startOfWeek?: number,
-            positions?: Array<number>|TypedArray,
-            closestDistance?: number,
-            findHigherRanks?: boolean
-        ): TickPositionsArray;
-        /** @deprecated */
         lin2val(val: number): number;
         /** @deprecated */
         val2lin(val: number, toIndex?: boolean): number;
