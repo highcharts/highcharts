@@ -47,7 +47,7 @@ const {
 
 declare module '../Core/Options' {
     interface Options {
-        time?: TimeCore.TimeOptions;
+        time?: TimeBase.TimeOptions;
     }
 }
 
@@ -64,9 +64,9 @@ const hasOldSafariBug =
     !win.Intl.DateTimeFormat.prototype.formatRange;
 
 const isDateTimeFormatOptions = (
-    obj: Intl.DateTimeFormatOptions|TimeCore.DateTimeLabelFormatObject
+    obj: Intl.DateTimeFormatOptions|TimeBase.DateTimeLabelFormatObject
 ): obj is Intl.DateTimeFormatOptions =>
-    (obj as TimeCore.DateTimeLabelFormatObject).main === void 0;
+    (obj as TimeBase.DateTimeLabelFormatObject).main === void 0;
 
 /* *
  *
@@ -132,7 +132,7 @@ const isDateTimeFormatOptions = (
  * @param {Highcharts.TimeOptions} [options] Time options as defined in
  * [chart.options.time](/highcharts/time).
  */
-class TimeCore {
+class TimeBase {
 
     public dTLCache!: Record<string, Intl.DateTimeFormat>;
 
@@ -143,7 +143,7 @@ class TimeCore {
      * */
 
     public constructor(
-        options?: TimeCore.TimeOptions,
+        options?: TimeBase.TimeOptions,
         lang?: LangOptionsCore
     ) {
         this.update(options);
@@ -156,7 +156,7 @@ class TimeCore {
      *
      * */
 
-    public options: TimeCore.TimeOptions = {
+    public options: TimeBase.TimeOptions = {
         timezone: 'UTC'
     };
 
@@ -209,7 +209,7 @@ class TimeCore {
      *
      */
     public update(
-        options: TimeCore.TimeOptions = {}
+        options: TimeBase.TimeOptions = {}
     ): void {
 
         this.dTLCache = {};
@@ -251,7 +251,7 @@ class TimeCore {
             (name): void => {
                 const isMonth = /months/i.test(name),
                     isShort = /short/.test(name),
-                    options: TimeCore.DateTimeFormatOptions = {
+                    options: TimeBase.DateTimeFormatOptions = {
                         timeZone: 'UTC'
                     };
 
@@ -371,9 +371,9 @@ class TimeCore {
      */
     private str2dtf(
         s: string,
-        dtf: TimeCore.DateTimeFormatOptions = {}
-    ): TimeCore.DateTimeFormatOptions {
-        const mapping: Record<string, TimeCore.DateTimeFormatOptions> = {
+        dtf: TimeBase.DateTimeFormatOptions = {}
+    ): TimeBase.DateTimeFormatOptions {
+        const mapping: Record<string, TimeBase.DateTimeFormatOptions> = {
             L: { fractionalSecondDigits: 3 },
             S: { second: '2-digit' },
             M: { minute: 'numeric' },
@@ -670,7 +670,7 @@ class TimeCore {
      *         The formatted date.
      */
     public dateFormat(
-        format?: TimeCore.DateTimeFormat|null,
+        format?: TimeBase.DateTimeFormat|null,
         timestamp?: number,
         upperCaseFirst?: boolean
     ): string {
@@ -821,8 +821,8 @@ class TimeCore {
      * The object definition
      */
     public resolveDTLFormat(
-        f: TimeCore.DateTimeLabelFormatOption
-    ): TimeCore.DateTimeLabelFormatObject {
+        f: TimeBase.DateTimeLabelFormatOption
+    ): TimeBase.DateTimeLabelFormatObject {
         if (!isObject(f, true)) { // Check for string or array
             f = splat(f);
             return {
@@ -866,8 +866,8 @@ class TimeCore {
         range: number | undefined,
         timestamp: number,
         startOfWeek: number,
-        dateTimeLabelFormats: TimeCore.DateTimeLabelFormatsOption
-    ): TimeCore.DateTimeFormat|undefined {
+        dateTimeLabelFormats: TimeBase.DateTimeLabelFormatsOption
+    ): TimeBase.DateTimeFormat|undefined {
         const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
             strpos = {
@@ -876,11 +876,11 @@ class TimeCore {
                 minute: 9,
                 hour: 6,
                 day: 3
-            } as Record<TimeCore.TimeUnit, number>;
+            } as Record<TimeBase.TimeUnit, number>;
 
-        let n: TimeCore.TimeUnit = 'millisecond',
+        let n: TimeBase.TimeUnit = 'millisecond',
             // For sub-millisecond data, #4223
-            lastN: TimeCore.TimeUnit = n;
+            lastN: TimeBase.TimeUnit = n;
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
             // If the range is exactly one week and we're looking at a
@@ -927,7 +927,7 @@ class TimeCore {
  *
  * */
 
-namespace TimeCore {
+namespace TimeBase {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
         dateStyle?: 'full'|'long'|'medium'|'short';
@@ -950,7 +950,7 @@ namespace TimeCore {
     export type DateTimeLabelFormatOption = (
         DateTimeFormat|
         Array<string>|
-        TimeCore.DateTimeLabelFormatObject
+        TimeBase.DateTimeLabelFormatObject
     );
     export type DateTimeLabelFormatsOption = (
         Record<TimeUnit, DateTimeLabelFormatOption>
@@ -963,7 +963,7 @@ namespace TimeCore {
         useUTC?: boolean;
     }
     export interface TimeFormatCallbackFunction {
-        (this: TimeCore, timestamp: number): string;
+        (this: TimeBase, timestamp: number): string;
     }
     export interface TimeNormalizedObject {
         count: number;
@@ -998,7 +998,7 @@ namespace TimeCore {
  *
  * */
 
-export default TimeCore;
+export default TimeBase;
 
 /* *
  *

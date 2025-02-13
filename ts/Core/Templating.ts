@@ -17,7 +17,7 @@
  * */
 
 import type Chart from './Chart/Chart';
-import type TimeCore from '../Shared/TimeCore';
+import type TimeBase from '../Shared/TimeBase';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
 import D from './Defaults.js';
@@ -553,7 +553,7 @@ namespace Templating {
     }
     export interface Owner {
         options?: OwnerOptions;
-        time?: TimeCore;
+        time?: TimeBase;
         numberFormatter?: Function
     }
 }

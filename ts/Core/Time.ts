@@ -19,7 +19,7 @@
 import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
-import TimeCore from '../Shared/TimeCore.js';
+import TimeBase from '../Shared/TimeBase.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -42,7 +42,7 @@ declare module './Axis/TickPositionsArray'{
  *  Constants
  *
  * */
-class Time extends TimeCore {
+class Time extends TimeBase {
 
     /**
      * Return an array with time positions distributed on round time values
