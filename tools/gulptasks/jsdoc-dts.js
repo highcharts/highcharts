@@ -57,6 +57,7 @@ function jsDocESMDTS() {
         for (const dtsFile of dtsFiles) {
 
             if (
+                // Skip compiled DTS for es-modules/masters
                 !dtsFile.endsWith('.src.d.ts') &&
                 folder.includes('masters')
             ) {

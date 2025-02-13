@@ -81,13 +81,15 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
 
         // Compile file, https://swc.rs/docs/usage/core
         const code = fs.readFileSync(inputPath, 'utf-8');
+        const isModule = inputPath.includes('/esm/');
         promise = swc
             .minify(code, {
                 compress: {
+                    // conditionals: false
                     // hoist_funs: true
                 },
-                mangle: true,
-                module: inputPath.includes('/esm/'),
+                mangle: !isModule,
+                module: isModule,
                 sourceMap: true
             })
             .then(result => {
