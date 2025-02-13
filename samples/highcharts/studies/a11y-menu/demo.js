@@ -535,27 +535,9 @@ function getScatterChartConfig() {
         },
         sonification: {
             duration: 6000,
-            afterSeriesWait: 1200,
             pointGrouping: {
                 groupTimespan: 1
-            },
-            defaultInstrumentOptions: {
-                mapping: {
-                    playDelay: 500
-                }
-            },
-            globalTracks: [{
-                type: 'speech',
-                mapping: {
-                    text: '{point.series.name}',
-                    volume: 1,
-                    rate: 2
-                },
-                // Active on first point in series only
-                activeWhen: function (e) {
-                    return e.point && !e.point.index;
-                }
-            }]
+            }
         },
         plotOptions: {
             scatter: {
@@ -1333,7 +1315,28 @@ function setupEventListeners(prefContent, chart) {
         if (settings.isSonificationSpeechChecked) {
             // Apply speech settings to the chart
             if (chart.series[0].type === 'scatter') {
-                console.log('Speech enabled for scatter chart');
+                chart.update({
+                    sonification: {
+                        afterSeriesWait: 1200,
+                        defaultInstrumentOptions: {
+                            mapping: {
+                                playDelay: 500
+                            }
+                        },
+                        globalTracks: [{
+                            type: 'speech',
+                            mapping: {
+                                text: '{point.series.name}',
+                                volume: 1,
+                                rate: 2
+                            },
+                            // Active on first point in series only
+                            activeWhen: function (e) {
+                                return e.point && !e.point.index;
+                            }
+                        }]
+                    }
+                });
             } else {
                 chart.update({
                     sonification: {
