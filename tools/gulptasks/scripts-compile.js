@@ -32,17 +32,17 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
         path = require('path'),
         swc = require('@swc/core'),
         argv = require('yargs').argv;
-    let esModulesFolders,
+    let esModulesFolder,
         targetFolder;
 
     if (product === 'highcharts') {
-        esModulesFolders = ['/es-modules/'];
+        esModulesFolder = '/es-modules/';
         targetFolder = 'code';
     } else if (product === 'dashboards') {
-        esModulesFolders = [config.esModulesFolder];
+        esModulesFolder = config.esModulesFolder;
         targetFolder = config.bundleTargetFolder;
     } else if (product === 'datagrid') {
-        esModulesFolders = [config.esModulesFolderDataGrid];
+        esModulesFolder = config.esModulesFolderDataGrid;
         targetFolder = config.bundleTargetFolderDataGrid;
     }
 
@@ -70,7 +70,7 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
         inputPath = filePaths[i];
 
         if (
-            esModulesFolders.some(folder => inputPath.includes(folder)) ||
+            inputPath.includes(esModulesFolder) ||
             !inputPath.endsWith('.src.js')
         ) {
             continue;
@@ -82,6 +82,7 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
         // Compile file, https://swc.rs/docs/usage/core
         const code = fs.readFileSync(inputPath, 'utf-8');
         const isModule = inputPath.includes('/esm/');
+
         promise = swc
             .minify(code, {
                 compress: {
