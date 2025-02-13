@@ -7,7 +7,7 @@ Highcharts v11.3. The latter allows you to make use of tree shaking to only
 load or bundle what is needed and reduce download and package sizes.
 
 **Note:** If you code with TypeScript, please take a look at our
-[TypeScript article](../advanced-chart-features/highcharts-typescript-declarations)
+[TypeScript article](https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations)
 for details about ESM bundling and type adjustments.
 
 

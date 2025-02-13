@@ -21,7 +21,7 @@ import HighchartsBoost from 'highcharts/modules/boost';
 typeof HighchartsBoost === 'function' && HighchartsBoost(Highcharts);
 ```
 
-For Highcharts from [version 12](/docs/getting-started/version-12), the import can be simplified to:
+For Highcharts from [version 12](https://www.highcharts.com/docs/getting-started/version-12), the import can be simplified to:
 ```js
 import Highcharts from 'highcharts';
 import 'highcharts/modules/boost';

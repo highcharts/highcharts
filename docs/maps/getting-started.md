@@ -1,7 +1,7 @@
 Getting started with Highcharts Maps
 ===
 
-Highcharts Maps is Highcharts for geo maps. Highcharts Maps supports [tiled web maps](https://www.highcharts.com/docs/maps/tiledwebmap) with external tile providers, and [choropleth maps](/docs/chart-concepts/dataviz-glossary#choropleth-map) where the color intensity relates to some value of a geographic area. It also supports different features like lines (roads, rivers etc.) and points (cities, points of interest) and more, and is closely tied up to the standard TopoJSON and GeoJSON formats. Highcharts Maps comes in two flavors, either as a standalone JavaScript file, or as a plugin for Highcharts.
+Highcharts Maps is Highcharts for geo maps. Highcharts Maps supports [tiled web maps](https://www.highcharts.com/docs/maps/tiledwebmap) with external tile providers, and [choropleth maps](https://www.highcharts.com/docs/chart-concepts/dataviz-glossary#choropleth-map) where the color intensity relates to some value of a geographic area. It also supports different features like lines (roads, rivers etc.) and points (cities, points of interest) and more, and is closely tied up to the standard TopoJSON and GeoJSON formats. Highcharts Maps comes in two flavors, either as a standalone JavaScript file, or as a plugin for Highcharts.
 
 Load the required files
 -----------------------
