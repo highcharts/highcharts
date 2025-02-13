@@ -348,72 +348,79 @@ QUnit.test('Tooltip position for inverted polar chart.', assert => {
 });
 
 QUnit.test('Tooltip custom positioner callback', assert => {
-    const checkArgs = (w, h, p, c) => {
-            const { chartWidth = void 0, chartHeight = void 0 } = c;
-            assert.strictEqual(
-                typeof w,
-                'number',
-                'Positioner should get width'
-            );
-            assert.strictEqual(
-                typeof h,
-                'number',
-                'Positioner should get height'
-            );
-            assert.strictEqual(
-                typeof p,
-                'object',
-                'Positioner should get point'
-            );
-            assert.strictEqual(
-                chartWidth > 0,
-                true,
-                'Arrow function reveives chartWidth'
-            );
-            assert.strictEqual(
-                chartHeight > 0,
-                true,
-                'Arrow function reveives chartHeight'
-            );
-            return {
-                x: chartWidth / 2,
-                y: chartHeight / 2
+
+    const fnTest = (ttCfg, arrowFn) => {
+        const chart = Highcharts.chart('container', {
+                tooltip: ttCfg,
+                series: [{ data: [0] }, { data: [1] }]
+            }),
+            tooltip = chart.tooltip,
+            points = chart.series[0].points,
+            refreshPoint = () => {
+                tooltip.refresh(points[0]);
             };
-        },
-        chart = Highcharts.chart('container', {
 
-            tooltip: {
-                split: true,
-                positioner: function (labelWidth, labelHeight, point) {
-                    return checkArgs(
-                        labelWidth,
-                        labelHeight,
-                        point,
-                        this.chart
-                    );
-                }
-            },
-            series: [{ data: [5] }, { data: [9] }]
-        }),
-        tooltip = chart.tooltip,
-        points = chart.series[0].points,
-        refreshPoint = () => {
-            tooltip.refresh(points[0]);
+        refreshPoint();
+
+        tooltip.update({
+            ...ttCfg,
+            positioner: arrowFn
+        });
+
+        refreshPoint();
+    };
+
+    const checkSplitArgs = (type, w, h, p, c) => {
+        const { chartWidth = 0, chartHeight = 0 } = c;
+        assert.strictEqual(
+            typeof w,
+            'number',
+            type + ' should get width'
+        );
+        assert.strictEqual(
+            typeof h,
+            'number',
+            type + ' should get height'
+        );
+        assert.strictEqual(
+            typeof p,
+            'object',
+            ' should get point'
+        );
+        assert.strictEqual(
+            chartWidth > 0,
+            true,
+            type + ' reveives chartWidth'
+        );
+        assert.strictEqual(
+            chartHeight > 0,
+            true,
+            type + ' reveives chartHeight'
+        );
+        return {
+            x: chartWidth / 2,
+            y: chartHeight / 2
         };
+    };
 
-    refreshPoint();
-
-    tooltip.update({
-        positioner: (
-            labelW,
-            labelH,
-            point,
-            ctx
-        ) => checkArgs(labelW, labelH, point, ctx.chart)
-    });
-
-    refreshPoint();
-
-    assert.strictEqual(true, true, 'is true');
-
+    fnTest({
+        hideDelay: 5000,
+        split: true,
+        positioner: function (labelWidth, labelHeight, point) {
+            return checkSplitArgs(
+                'Normal function',
+                labelWidth,
+                labelHeight,
+                point,
+                this.chart
+            );
+        }
+    },
+    (labelW, labelH, point, ctx) => checkSplitArgs(
+        'Arrow function',
+        labelW,
+        labelH,
+        point,
+        ctx.chart
+    ));
 });

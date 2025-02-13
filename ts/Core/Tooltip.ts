@@ -1428,10 +1428,10 @@ class Tooltip {
                                 size,
                                 point
                             ) : (positioner as any)(
-                                tooltip,
                                 boxWidth,
                                 size,
-                                point
+                                point,
+                                tooltip
                             )
                             ) :
                             defaultPositioner(
@@ -1803,7 +1803,7 @@ class Tooltip {
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = isArrow(suppliedFn) ?
-                (suppliedFn as any)(this, width, height, point) :
+                (suppliedFn as any)(width, height, point, this) :
                 (suppliedFn || this.getPosition).call(
                     this,
                     width,
