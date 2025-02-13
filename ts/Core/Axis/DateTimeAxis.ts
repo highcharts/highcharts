@@ -20,6 +20,7 @@ import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import U from '../Utilities.js';
 const {
@@ -38,6 +39,15 @@ const {
 declare module './AxisComposition' {
     interface AxisComposition {
         dateTime?: DateTimeAxis.Composition['dateTime'];
+        getTimeTicks(
+            normalizedInterval: Time.TimeNormalizedObject,
+            min: number,
+            max: number,
+            startOfWeek?: number,
+            positions?: Array<number>|TypedArray,
+            closestDistance?: number,
+            findHigherRanks?: boolean
+        ): TickPositionsArray;
     }
 }
 
