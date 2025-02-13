@@ -337,7 +337,7 @@ function initializeCharts() {
         fontSize: '',
         isSelectedTheme: 'default',
         isSonificationChecked: false,
-        isDescribeChartChecked: false
+        isSonificationSpeechChecked: false
     };
 
     // Copying settings to chart2
@@ -425,20 +425,6 @@ function getColumnChartConfig() {
                     }
                 }
             }
-        },
-        sonification: {
-            duration: 10000,
-            afterSeriesWait: 1200,
-            globalTracks: [
-                {
-                    type: 'speech',
-                    mapping: {
-                        text: '{point.category}, {point.series.name}',
-                        rate: 1.5,
-                        volume: 1
-                    }
-                }
-            ]
         },
         title: {
             text: 'Corn vs wheat estimated production for 2023'
@@ -999,12 +985,18 @@ function createPreferencesDialog(chart) {
         <div class="card-body ml-1 pl-0">
             <h2>Accessibility tools for ${chart.title.textStr} chart</h2>
             <p>Enhance the accessibility of your charts with these tools.</p>
+            <h3>Sonification</h3>
             <div class="pref tool">
                 <input type="checkbox" id="sonification-${i}"
                 name="sonification-${i}"
                     ${settings.isSonificationChecked ? 'checked' : ''}>
                 <label for="sonification-${i}">Enable Sonification</label>
+                <input type="checkbox" id="sonification-speech-${i}"
+                name="sonification-speech-${i}"
+                    ${settings.isSonificationSpeechChecked ? 'checked' : ''}>
+                <label for="sonification-speech-${i}">Enable speech</label>
             </div>
+            <h3>Chart description</h3>
             <div class="pref tool">
                 <button id="describe-chart-${i}" name="describe-chart-${i}">
                 Describe the chart
@@ -1063,7 +1055,9 @@ function setupEventListeners(prefContent, chart) {
         sonificationCheckbox = prefContent
             .querySelector(`input[name="sonification-${chart.index}"]`),
         describeChartButton = prefContent
-            .querySelector(`#describe-chart-${chart.index}`);
+            .querySelector(`#describe-chart-${chart.index}`),
+        sonificationSpeechCheckbox = prefContent
+            .querySelector(`input[name="sonification-speech-${chart.index}"]`);
 
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -1328,29 +1322,49 @@ function setupEventListeners(prefContent, chart) {
 
     sonificationCheckbox.addEventListener('change', event => {
         settings.isSonificationChecked = event.target.checked;
+        updateSonificationPlayButton(chart);
+        applyInfoRegion(settings.selectedVerbosity, chart);
+    });
 
-        const playButtonId = `play-sonification-${chart.index}`;
-        let playButton = document.getElementById(playButtonId);
+    sonificationSpeechCheckbox.addEventListener('change', event => {
+        settings.isSonificationSpeechChecked = event.target.checked;
 
-        if (settings.isSonificationChecked) {
-            if (!playButton) {
-                playButton = document.createElement('button');
-                playButton.id = playButtonId;
-                playButton.textContent = 'Play Sonification';
-                playButton.style.marginTop = '10px';
-                console.log(playButton);
-                playButton.addEventListener('click', () => {
-                    chart.toggleSonify();
+
+        if (settings.isSonificationSpeechChecked) {
+            // Apply speech settings to the chart
+            if (chart.series[0].type === 'scatter') {
+                console.log('Speech enabled for scatter chart');
+            } else {
+                chart.update({
+                    sonification: {
+                        afterSeriesWait: 1200,
+                        globalTracks: [
+                            {
+                                type: 'speech',
+                                mapping: {
+                                    text: '{point.category}, ' +
+                                        '{point.series.name}',
+                                    rate: 1.5,
+                                    volume: 1
+                                }
+                            }
+                        ]
+                    }
                 });
-
-                chart.container.parentNode
-                    .insertBefore(playButton, chart.container.nextSibling);
             }
         } else {
-            if (playButton) {
-                playButton.remove();
-            }
+            // Remove speech settings when unchecked
+            chart.update({
+                sonification: {
+                    afterSeriesWait: 1200,
+                    globalTracks: [] // Remove speech track
+                }
+            });
         }
+
+        updateSonificationPlayButton(chart);
+        applyInfoRegion(settings.selectedVerbosity, chart);
+
     });
 
     describeChartButton.addEventListener('click', function () {
@@ -1378,6 +1392,40 @@ function setupEventListeners(prefContent, chart) {
     });
 
 }
+
+function updateSonificationPlayButton(chart) {
+    const settings = chartSettingsMap[chart.index];
+    const playButtonId = `play-sonification-${chart.index}`;
+    let playButton = document.getElementById(playButtonId);
+
+    // Check if either Sonification or Speech is enabled
+    if (
+        settings.isSonificationChecked || settings.isSonificationSpeechChecked
+    ) {
+        if (!playButton) {
+            playButton = document.createElement('button');
+            playButton.id = playButtonId;
+            playButton.style.marginTop = '10px';
+            playButton.addEventListener('click', () => {
+                chart.toggleSonify();
+            });
+
+            chart.container.parentNode
+                .insertBefore(playButton, chart.container.nextSibling);
+        }
+
+        // Update button label based on speech setting
+        playButton.textContent = settings
+            .isSonificationSpeechChecked ?
+            'Play Chart with Speech' : 'Play Chart';
+    } else {
+        // Remove play button if neither is checked
+        if (playButton) {
+            playButton.remove();
+        }
+    }
+}
+
 
 function updateChartColorLogic(chart) {
     const theme = getThemeConfig(chart);
