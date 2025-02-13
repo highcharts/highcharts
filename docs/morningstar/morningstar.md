@@ -53,6 +53,6 @@ types.
 * [RNANews](./regulatory-news-announcements.md)
 * [Risk Score](./risk-score.md)
 * [TimeSeries](./time-series/time-series.md)
-* [Investment Screener](./screeners/investment-screener.md)
 * [XRay](./x-ray.md)
+* [Screener](./screeners/screener.md)
 * [Security Details](./security-details.md)
