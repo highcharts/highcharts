@@ -10,6 +10,7 @@
 
 const gulp = require('gulp');
 const path = require('path');
+const FS = require('node:fs');
 
 /* *
  *
@@ -150,8 +151,8 @@ async function scriptsTS(argv) {
             );
 
             fsLib.copyFile(
-                codeGridFolder + 'gridlite.src.d.ts',
-                codeGridFolder + 'gridlite.d.ts'
+                codeGridFolder + 'grid-lite.src.d.ts',
+                codeGridFolder + 'grid-lite.d.ts'
             );
 
             logLib.success('Copied stand-alone DTS for Grid');
@@ -175,6 +176,24 @@ async function scriptsTS(argv) {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
             removeHighcharts(true);
+
+            [ // Copy dts files from the folders to the grid es-modules:
+                'Data',
+                'Grid',
+                'Shared'
+            ].forEach(dtsFolder => {
+                fsLib.copyAllFiles(
+                    fsLib.path(['ts', dtsFolder]),
+                    fsLib.path(['code', 'grid', 'es-modules', dtsFolder]),
+                    true,
+                    sourcePath => sourcePath.endsWith('.d.ts')
+                );
+            });
+
+            FS.renameSync(
+                fsLib.path(['code', 'grid', 'es-modules', 'masters-grid']),
+                fsLib.path(['code', 'grid', 'es-modules', 'masters'])
+            );
         } else if (argv.assembler) {
             await processLib
                 .exec('npx tsc -p ts --outDir js');

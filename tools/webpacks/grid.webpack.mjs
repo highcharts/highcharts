@@ -24,12 +24,12 @@ import { resolveExternals } from './externals.mjs';
 
 
 const sourceFolder = Path.join('code', 'grid', 'es-modules');
-const mastersFolder = Path.join(sourceFolder, 'masters-grid');
+const mastersFolder = Path.join(sourceFolder, 'masters');
 const targetFolder = Path.join('code', 'grid');
 
 const namespace = 'Grid';
 const productMasters = [
-    'gridlite'
+    'grid-lite'
 ];
 
 
@@ -44,7 +44,7 @@ const webpacks = FSLib
     .getFilePaths(mastersFolder, true)
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
-        const masterPath = Path.relative(mastersFolder, masterFile)
+        const masterPath = Path.relative(mastersFolder, masterFile);
         const masterName = masterPath
             .replace(/(?:\.src)?\.js$/u, '')
             .replaceAll(Path.sep, Path.posix.sep);
@@ -91,7 +91,7 @@ const webpacks = FSLib
                 }),
                 new ProductMetaPlugin({
                     productName: 'Grid',
-                    productVersion: '1.0.0' // We need to discuss it (DD)
+                    productVersion: '1.0.0' // Update version before releasing
                 }),
                 new UMDExtensionPlugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)
