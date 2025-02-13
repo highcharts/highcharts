@@ -39,12 +39,10 @@ import KPISyncs from './KPISyncs/KPISyncs.js';
 import KPIComponentDefaults from './KPIComponentDefaults.js';
 import SUM from '../../../Data/Formula/Functions/SUM.js';
 import AVERAGE from '../../../Data/Formula/Functions/AVERAGE.js';
-import AVERAGEA from '../../../Data/Formula/Functions/AVERAGEA.js';
 import MEDIAN from '../../../Data/Formula/Functions/MEDIAN.js';
 import MAX from '../../../Data/Formula/Functions/MAX.js';
 import MIN from '../../../Data/Formula/Functions/MIN.js';
 import COUNT from '../../../Data/Formula/Functions/COUNT.js';
-import COUNTA from '../../../Data/Formula/Functions/COUNTA.js';
 import PRODUCT from '../../../Data/Formula/Functions/PRODUCT.js';
 import Templating from '../../../Core/Templating.js';
 const {
@@ -225,12 +223,10 @@ class KPIComponent extends Component {
     public static formulaFunctions = {
         SUM,
         AVERAGE,
-        AVERAGEA,
         MEDIAN,
         MAX,
         MIN,
         COUNT,
-        COUNTA,
         PRODUCT
     } as const;
 
@@ -455,13 +451,19 @@ class KPIComponent extends Component {
             return formula.call(this, column);
         }
 
-        const filteredColumn = column
-            .slice()
-            .map((v): number => Number(v))
-            .filter((v): boolean => !isNaN(v));
+        let filteredColumn = column.slice().filter(defined);
 
+        // Filter NaN values and empty strings since the formula functions don't
+        // handle it internally.
+        if (formula === 'MIN' || formula === 'MAX' || formula === 'MEDIAN') {
+            filteredColumn = filteredColumn.filter(
+                (val): boolean => val !== '' && !isNaN(Number(val))
+            );
+        }
+
+        // Sort values since the formula function don't handle it internally.
         if (formula === 'MEDIAN') {
-            filteredColumn.sort((a, b): number => a - b);
+            filteredColumn.sort((a, b): number => Number(a) - Number(b));
         }
 
         try {
