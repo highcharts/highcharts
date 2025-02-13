@@ -58,7 +58,7 @@ import '../Data/Modifiers/SortModifier.js';
 declare global {
     interface DataGridNamespace {
         win: typeof Globals.win;
-        product: 'GridPro';
+        product: 'Grid Pro';
         AST: typeof AST;
         classNamePrefix: typeof Globals.classNamePrefix;
         DataGrid: typeof _Grid;
@@ -108,7 +108,7 @@ G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.setOptions = Defaults.setOptions;
-G.product = 'GridPro';
+G.product = 'Grid Pro';
 
 G.Table = G.Table || Table;
 G.Column = G.Column || Column;

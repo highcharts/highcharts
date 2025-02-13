@@ -31,13 +31,13 @@ function getProperties() {
     // Grid
     return {
         products: {
-            'Highcharts GridLite': {
-                cdnpath: '/gridlite',
-                distpath: '/gridlite'
+            'Highcharts Grid Lite': {
+                cdnpath: '/grid-lite',
+                distpath: '/grid-lite'
             }/* ,
-            'Highcharts GridPro': {
-                cdnpath: '/gridpro',
-                distpath: '/gridpro'
+            'Highcharts Grid Pro': {
+                cdnpath: '/grid-pro',
+                distpath: '/grid-pro'
             }*/
         },
         version: argv.release

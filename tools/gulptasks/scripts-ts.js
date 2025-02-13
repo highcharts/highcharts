@@ -151,8 +151,8 @@ async function scriptsTS(argv) {
             );
 
             fsLib.copyFile(
-                codeGridFolder + 'gridlite.src.d.ts',
-                codeGridFolder + 'gridlite.d.ts'
+                codeGridFolder + 'grid-lite.src.d.ts',
+                codeGridFolder + 'grid-lite.d.ts'
             );
 
             logLib.success('Copied stand-alone DTS for Grid');

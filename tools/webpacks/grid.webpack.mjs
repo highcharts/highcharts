@@ -29,7 +29,7 @@ const targetFolder = Path.join('code', 'grid');
 
 const namespace = 'Grid';
 const productMasters = [
-    'gridlite'
+    'grid-lite'
 ];
 
 
