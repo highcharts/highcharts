@@ -7,6 +7,7 @@
  * */
 
 import * as Dashboards from "@highcharts/dashboards";
+import * as Grid from '@highcharts/dashboards/datagrid';
 
 test_board();
 

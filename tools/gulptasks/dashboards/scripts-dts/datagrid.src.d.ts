@@ -4,11 +4,12 @@
  *
  *!*/
 
-import DataGrid from "./es-modules/Grid/Pro/GridPro";
-import Globals from "./es-modules/Grid/Pro/GridProGlobals";
+import Grid from "./es-modules/Grid/Core/Grid";
+import Globals from "./es-modules/Grid/Core/Globals";
 import Defaults from "./es-modules/Grid/Core/Defaults";
 
-export { default as DataGrid } from './es-modules/Grid/Pro/GridPro.js';
+export { /** @deprecated Use `Grid` instead. */ default as DataGrid } from './es-modules/Grid/Core/Grid.js';
+export { default as Grid } from './es-modules/Grid/Core/Grid.js';
 export { default as Column } from './es-modules/Grid/Core/Table/Column.js';
 export { default as TableRow } from './es-modules/Grid/Core/Table/Content/TableRow.js';
 export { default as TableCell } from './es-modules/Grid/Core/Table/Content/TableCell.js';
@@ -22,10 +23,17 @@ export { default as DataModifier } from "./es-modules/Data/Modifiers/DataModifie
 export { default as DataPool } from "./es-modules/Data/DataPool";
 export { default as DataTable } from "./es-modules/Data/DataTable";
 
-export const dataGrid: typeof DataGrid.grid;
-export const dataGrids: typeof DataGrid.grids;
+/** @deprecated Use `grid` instead. */
+export const dataGrid: typeof Grid.grid;
+/** @deprecated Use `grids` instead. */
+export const dataGrids: typeof Grid.grids;
+export const grid: typeof Grid.grid;
+export const grids: typeof Grid.grids;
+export const product: 'Grid Pro';
 export const defaultOptions: typeof Defaults.defaultOptions;
 export const setOptions: typeof Defaults.setOptions;
 export const win: typeof Globals.win;
 
+/** @deprecated Use `Grid` instead. */
 export as namespace DataGrid;
+export as namespace Grid;
