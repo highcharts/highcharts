@@ -2,7 +2,7 @@
 
 .content {
     background-color: var(--highcharts-background-color);
-    color: var(--highcharts-neutral-color-100)
+    color: var(--highcharts-neutral-color-100);
 }
 
 #container {
