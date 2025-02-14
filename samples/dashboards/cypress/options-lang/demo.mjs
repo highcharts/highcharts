@@ -30,7 +30,13 @@ const norwegianEditMode = {
     off: 'av',
     settings: 'Alternativer',
     addComponent: 'Legg til komponenter',
-    dataLabels: 'Data merkelapp'
+    dataLabels: 'Data merkelapp',
+    sidebar: {
+        HTML: 'My HTML',
+        Highcharts: 'My Highcharts',
+        row: 'My Row',
+        KPI: 'My KPI'
+    }
 };
 
 Dashboards.board('container', {
