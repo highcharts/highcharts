@@ -110,6 +110,23 @@ QUnit.test('Callback', function (assert) {
     });
 
     assert.strictEqual(chart.chartWidth, 300, 'Width updated');
+
+    chart.update({
+        responsive: {
+            rules: [{
+                condition: {
+                    callback: () => condition
+                },
+                chartOptions: {
+                    chart: {
+                        width: 400
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.strictEqual(chart.chartWidth, 400, 'Arrow function callback works');
 });
 
 QUnit.test('Responsive on chart.update', function (assert) {
