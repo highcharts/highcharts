@@ -134,7 +134,6 @@ function scriptCSS(argv) {
 scriptCSS.description = 'Creates CSS files for given product';
 scriptCSS.flags = {
     '--dashboards': 'Creates CSS files for dashboards',
-    '--datagrid': 'Creates CSS files for datagrid',
     '--product': 'Creates CSS files for product: Highcharts (default), Grid'
 };
 
