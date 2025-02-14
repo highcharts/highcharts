@@ -25,7 +25,7 @@ import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
-import type { LangOptionsCore } from '../Core/Options';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
 
 /* *
@@ -166,7 +166,7 @@ export interface RenderingSettings {
      * The theme of the DataGrid. It will set the class name on the container.
      * Can be set to the empty string to disable the theme.
      *
-     * @default 'hcdg-theme-default'
+     * @default 'hcg-theme-default'
      */
     theme?: string;
 }
