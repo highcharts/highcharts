@@ -111,7 +111,8 @@ export async function makeExternals(
 
     switch (externalsType) {
         case 'module-import':
-            return `${externalsType} ${path}`;
+            const externalModule = decorateImportPath(path);
+            return `${externalsType} ${externalModule}`;
         case 'umd':
             return createUMDConfig(namespace, namespaceName);
         default:
@@ -119,6 +120,41 @@ export async function makeExternals(
                 [externalsType]: [namespace, namespaceName]
             };
     }
+}
+
+
+/**
+ * Decorates an import path to make sure it follows specifications.
+ *
+ * @param {string} path
+ * Import path to decorate.
+ *
+ * @param {boolean} [asCJS]
+ * Flag to indicate that the import path is for a CommonJS module.
+ *
+ * @return {string}
+ * Decorated import path according to specifications.
+ */
+function decorateImportPath(
+    path,
+    asCJS
+) {
+
+    if (asCJS) {
+        const extMatch = path.match(/\.[jt]sx?$/u);
+        if (extMatch) {
+            path = path.substring(0, path.length - extMatch[0].length);
+        }
+    } else {
+        if (!path.match(/^[.]{1,2}\//u)) {
+            path = `./${path}`;
+        }
+        if (!path.match(/\.[jt]sx?$/u)) {
+            path += '.js';
+        }
+    }
+
+    return path;
 }
 
 
@@ -189,11 +225,7 @@ export async function resolveExternals(
                         Path.posix.dirname(`/${masterName}.src.js`),
                         `/${externalModule}.src.js`
                     );
-                    externalModule = (
-                        externalModule.startsWith('../') ?
-                            externalModule :
-                            `./${externalModule}`
-                    );
+                    externalModule = decorateImportPath(externalModule);
                     return [
                         `${externalsType} ${externalModule}`,
                         'default',
