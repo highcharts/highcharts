@@ -29,24 +29,30 @@ import Globals from '../../Core/Globals.js';
 
 const {
     addEvent,
+    fireEvent,
     pushUnique
 } = U;
 
 
 /* *
  *
- *  Declarations
+ *  Constants
  *
  * */
 
-declare module '../Core/Options' {
-    interface Options {
-        /**
-         * Events options triggered by the grid elements.
-         */
-        events?: GridEvents;
+type CustomAction = (this: TableCell) => void;
+const propagate: Record<string, CustomAction> = {
+    'cell_mouseOver': function (this: TableCell): void {
+        fireEvent(this.row.viewport.grid, 'cellMouseOver', {
+            target: this
+        });
+    },
+    'cell_mouseOut': function (this: TableCell): void {
+        fireEvent(this.row.viewport.grid, 'cellMouseOut', {
+            target: this
+        });
     }
-}
+};
 
 
 /* *
@@ -89,6 +95,7 @@ function compose(
         addEvent(TableCellClass, name, (e: GridEvent<TableCell>): void => {
             const cell = e.target;
             cell.row.viewport.grid.options?.events?.cell?.[name]?.call(cell);
+            propagate['cell_' + name]?.call(cell);
         });
     });
 
@@ -204,6 +211,15 @@ export interface GridEvents {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/cell-events/ | Grid events}
      */
     header?: HeaderEvents
+}
+
+declare module '../Core/Options' {
+    interface Options {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        events?: GridEvents;
+    }
 }
 
 
