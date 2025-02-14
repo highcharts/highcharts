@@ -84,8 +84,12 @@ namespace ColumnDataLabel {
         if (dlBox) { // Area range uses this method but not alignTo
             alignTo = merge(dlBox) as any;
 
-            // Check for specific overflow and crop conditions (#13240)
-            if (!(options.overflow === 'allow' && options.crop === false)) {
+            // Check for specific overflow and crop conditions (#13240, #22617)
+            if (
+                options.overflow !== 'allow' ||
+                options.crop !== false ||
+                series.options.clip !== false
+            ) {
                 if (alignTo.y < 0) {
                     alignTo.height += alignTo.y;
                     alignTo.y = 0;
