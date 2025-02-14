@@ -167,7 +167,10 @@ namespace CellEditingComposition {
         const editableLang = this.row.viewport.grid.options
             ?.lang?.accessibility?.cellEditing?.editable;
 
-        if (!editableLang) {
+        if (
+            !this.column.options.cells?.editable ||
+            !editableLang
+        ) {
             return;
         }
 
@@ -286,6 +289,19 @@ declare module '../../Core/Accessibility/A11yOptions' {
          * Language options for the accessibility descriptions in cell editing.
          */
         cellEditing?: CellEditingLangA11yOptions;
+    }
+}
+
+declare module '../../Core/Options' {
+    interface ColumnCellOptions {
+        /**
+         * Whether to make the column cells editable `true`, or read-only `false`.
+         *
+         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/overview | Editable columns disabled}
+         *
+         * @default true
+         */
+        editable?: boolean;
     }
 }
 

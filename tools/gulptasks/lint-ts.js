@@ -43,9 +43,6 @@ function lintTS(argv) {
         if (argv.dashboards) {
             product = 'Dashboards';
             productTSFolder = './ts/Dashboards';
-        } else if (argv.datagrid) {
-            product = 'DataGrid';
-            productTSFolder = './ts/DataGrid';
         } else if (product === 'Grid') {
             productTSFolder = './ts/Grid';
         }

@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v@product.version@
+ * @license Highcharts Grid v@product.version@
  *
  * (c) 2009-2023 Highsoft AS
  *
@@ -82,7 +82,7 @@
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
-/*  ==== Start DataGrid Color Scheme  ==== */
+/*  ==== Start Grid Color Scheme  ==== */
 .hcg-container {
     --idg-default-color: #000000;
     --idg-negative-default-border-color: hsl(0, 100%, 50%);
@@ -105,11 +105,11 @@
     }
 }
 
-/*  ==== End DataGrid Color Scheme  ==== */
+/*  ==== End Grid Color Scheme  ==== */
 
 /* stylelint-disable max-line-length */
 
-/* ==== Start DataGrid Variables ==== */
+/* ==== Start Grid Variables ==== */
 .hcg-container {
     --idg-table-border-radius: var(--hcdg-border-radius, 0);
 
@@ -282,7 +282,7 @@
     box-sizing: border-box;
 }
 
-/* ==== End DataGrid Variables ==== */
+/* ==== End Grid Variables ==== */
 
 .hcg-container * {
     box-sizing: border-box;
@@ -662,7 +662,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     padding: var(--idg-credits-padding);
 }
 
-/* Start DataGrid CSS Helpers Classes */
+/* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcdg-negative,
 .hcg-table tbody tr:has(.hcdg-negative-row) td {
     box-shadow: inset 0 0 0 var(--idg-negative-border-size) var(--idg-negative-border-color) !important;
@@ -737,10 +737,10 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
-/* End DataGrid CSS Helpers Classes */
+/* End Grid CSS Helpers Classes */
 
-/* Start DataGrid Default Theme */
-.hcdg-theme-default {
+/* Start Grid Default Theme */
+.hcg-theme-default {
     --hcdg-border-radius: 5px;
     --hcdg-color: var(--highcharts-neutral-color-100);
     --hcdg-padding: 8px;
@@ -762,4 +762,4 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcdg-header-cell-hovered-background: var(--highcharts-highlight-color-20);
 }
 
-/* End DataGrid Default Theme */
+/* End Grid Default Theme */

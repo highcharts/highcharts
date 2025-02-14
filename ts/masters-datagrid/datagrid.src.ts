@@ -37,6 +37,7 @@ import TableCell from '../Grid/Core/Table/Content/TableCell.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
+import Dash3Compatibility from '../Grid/Pro/Dash3Compatibility.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -61,9 +62,21 @@ declare global {
         product: 'Grid Pro';
         AST: typeof AST;
         classNamePrefix: typeof Globals.classNamePrefix;
+        /**
+         * @deprecated Use `Grid` instead.
+         */
         DataGrid: typeof _Grid;
+        /**
+         * @deprecated Use `grid` instead.
+         */
         dataGrid: typeof _Grid.grid;
+        /**
+         * @deprecated Use `grids` instead.
+         */
         dataGrids: Array<(_Grid|undefined)>;
+        Grid: typeof _Grid;
+        grid: typeof _Grid.grid;
+        grids: Array<(_Grid|undefined)>;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -79,9 +92,12 @@ declare global {
         TableCell: typeof TableCell;
     }
     interface Window {
+        /**
+         * @deprecated Use `Grid` instead.
+         */
         DataGrid: DataGridNamespace;
+        Grid: DataGridNamespace;
     }
-    let DataGrid: DataGridNamespace;
 }
 
 
@@ -102,6 +118,9 @@ G.DataConverter = DataConverter;
 G.DataGrid = _Grid;
 G.dataGrid = _Grid.grid;
 G.dataGrids = _Grid.grids;
+G.Grid = _Grid;
+G.grid = _Grid.grid;
+G.grids = _Grid.grids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
@@ -117,6 +136,7 @@ G.TableCell = G.TableCell || TableCell;
 
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell);
+Dash3Compatibility.compose(G.Table);
 
 
 /* *
@@ -128,6 +148,10 @@ CellEditingComposition.compose(G.Table, G.TableCell);
 
 if (!G.win.DataGrid) {
     G.win.DataGrid = G;
+}
+
+if (!G.win.Grid) {
+    G.win.Grid = G;
 }
 
 

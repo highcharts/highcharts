@@ -307,15 +307,6 @@ export interface ColumnCellOptions {
     className?: string;
 
     /**
-     * Whether to make the column cells editable `true`, or read-only `false`.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/overview | Editable columns disabled}
-     *
-     * @default true
-     */
-    editable?: boolean;
-
-    /**
      * The format of the cell content within the given column of the grid.
      * Applied only to cell that are in the table, not in the column header.
      *
