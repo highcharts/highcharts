@@ -167,7 +167,10 @@ namespace CellEditingComposition {
         const editableLang = this.row.viewport.grid.options
             ?.lang?.accessibility?.cellEditing?.editable;
 
-        if (!editableLang) {
+        if (
+            !this.column.options.cells?.editable ||
+            !editableLang
+        ) {
             return;
         }
 
