@@ -55,7 +55,7 @@ function withZipURL(products) {
     const newProducts = global.structuredClone(products);
 
     Object.entries(newProducts).forEach(([productName, productObj]) => {
-        productObj.zipURL = getZipLocation(productName, productObj.nr);
+        productObj.zipURL = getZipLocation(productName.split(' ').join('-'), productObj.nr);
     });
 
     return newProducts;
