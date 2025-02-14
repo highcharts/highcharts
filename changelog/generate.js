@@ -186,7 +186,7 @@ const getFile = url => new Promise((resolve, reject) => {
     /**
      * Build the output
      */
-    function buildMarkdown(name, version, date, log, products) {
+    function buildMarkdown(name, version, date, log, products, productName) {
         var outputString,
             filename = path.join(
                 __dirname,
@@ -199,7 +199,7 @@ const getFile = url => new Promise((resolve, reject) => {
                 'Highcharts Maps': 'highmaps',
                 'Highcharts Gantt': 'gantt',
                 'Highcharts Dashboards': 'dashboards',
-                'Highcharts Grid': 'dashboards'
+                'Highcharts Grid': 'grid'
             }[name];
 
         log = log || [];
@@ -227,7 +227,15 @@ const getFile = url => new Promise((resolve, reject) => {
         }
 
         log.forEach((change, i) => {
-            const desc = addLinks(change.description || change, apiFolder);
+            let desc = addLinks(change.description || change, apiFolder);
+
+            if (productName === 'Grid') {
+                if (change.labels.find(l => l.name === 'Grid Pro')) {
+                    desc = '**Grid Pro:** ' + desc;
+                } else {
+                    desc = '**Grid:** ' + desc;
+                }
+            }
 
             // Start fixes
             if (i === log.startFixes) {
@@ -330,7 +338,7 @@ const getFile = url => new Promise((resolve, reject) => {
                 date,
                 log,
                 void 0,
-                optionKeys
+                product
             ));
 
             if (params.review) {
@@ -357,8 +365,7 @@ const getFile = url => new Promise((resolve, reject) => {
                 version,
                 dashboardsProduct[dashboardsName].date,
                 log,
-                void 0,
-                optionKeys
+                void 0
             ));
             if (params.review) {
                 saveReview(review.join('\n\n___\n'));
@@ -391,8 +398,7 @@ const getFile = url => new Promise((resolve, reject) => {
                                     products[name].nr || version,
                                     products[name].date,
                                     log,
-                                    products,
-                                    optionKeys
+                                    products
                                 ));
                             }
                         }

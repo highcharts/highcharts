@@ -192,27 +192,15 @@ module.exports = async (since, fromCache, branches, isDashboards, productName) =
     });
 
     Object.keys(log).forEach(product => {
-        if (product === 'Highcharts Grid') {
-            log[product].features = pulls.filter(
-                p => p.isFeature && p.product === 'Highcharts Dashboards' && p.labels.find(l => l.name === 'grid')
-            );
-        } else {
-            log[product].features = pulls.filter(
-                p => p.isFeature && p.product === product
-            );
-        }
+        log[product].features = pulls.filter(
+            p => p.isFeature && p.product === product
+        );
     });
 
     Object.keys(log).forEach(product => {
-        if (product === 'Highcharts Grid') {
-            log[product].bugfixes = pulls.filter(
-                p => p.isFix && p.product === 'Highcharts Dashboards' && p.labels.find(l => l.name === 'grid')
-            );
-        } else {
-            log[product].bugfixes = pulls.filter(
-                p => p.isFix && p.product === product
-            );
-        }
+        log[product].bugfixes = pulls.filter(
+            p => p.isFix && p.product === product
+        );
     });
 
     // From objects to text
