@@ -134,6 +134,7 @@ class Grid {
 
     /**
      * An array containing the current Grid objects in the page.
+     * @internal
      */
     public static readonly grids: Array<(Grid|undefined)> = [];
 

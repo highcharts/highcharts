@@ -19,8 +19,8 @@
  *
  * */
 
-import Column from '../Core/Table/Column';
-import TableCell from '../Core/Table/Content/TableCell';
+import type Column from '../Core/Table/Column';
+import type TableCell from '../Core/Table/Content/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 
@@ -67,7 +67,7 @@ declare module '../Core/Options' {
  * @param TableCellClass
  * The class to extend.
  *
- * @private
+ * @internal
  */
 function compose(
     ColumnClass: typeof Column,

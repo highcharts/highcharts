@@ -49,17 +49,17 @@ class Credits {
     /**
      * The Grid instance which the credits belong to.
      */
-    public grid: Grid;
+    public readonly grid: Grid;
 
     /**
      * The credits container HTML element.
      */
-    public containerElement: HTMLElement;
+    public readonly containerElement: HTMLElement;
 
     /**
      * The credits content HTML element.
      */
-    public textElement: HTMLElement;
+    public readonly textElement: HTMLElement;
 
     /**
      * The options for the credits.
