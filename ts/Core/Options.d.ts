@@ -19,6 +19,7 @@ import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
 /* *
  *
@@ -31,24 +32,15 @@ export interface LabelsItemsOptions {
     style?: CSSObject;
 }
 
-export interface LangOptions {
-    decimalPoint?: string;
-    invalidDate?: string;
+export interface LangOptions extends LangOptionsCore {
     loading: string;
-    locale?: string|Array<string>;
-    months?: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
     resetZoom: string;
     resetZoomTitle: string;
-    shortMonths?: Array<string>;
-    shortWeekdays?: Array<string>;
-    thousandsSep?: string;
-    weekdays?: Array<string>;
     zoomIn?: string;
     zoomOut?: string;
 }
-
 export interface LoadingOptions {
     hideDuration?: number;
     labelStyle?: CSSObject;

@@ -31,7 +31,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
+import type Types from '../../Shared/Types';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import BoostableMap from './BoostableMap.js';
@@ -201,6 +201,7 @@ function boostEnabled(chart: Chart): boolean {
 function compose<T extends typeof Series>(
     SeriesClass: T,
     seriesTypes: typeof SeriesRegistry.seriesTypes,
+    PointClass: typeof Point,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
     if (pushUnique(composed, 'Boost.Series')) {
@@ -235,6 +236,28 @@ function compose<T extends typeof Series>(
         ).forEach((method): void =>
             wrapSeriesFunctions(seriesProto, seriesTypes, method)
         );
+        wrap(
+            PointClass.prototype,
+            'firePointEvent',
+            function (
+                this: typeof PointClass.prototype,
+                proceed,
+                type,
+                e
+            ): boolean | undefined {
+                if (type === 'click' && this.series.boosted) {
+                    const point = e.point;
+
+                    if (
+                        (point.dist || point.distX) >= (
+                            point.series.options.marker?.radius ?? 10
+                        )
+                    ) {
+                        return;
+                    }
+                }
+                return proceed.apply(this, [].slice.call(arguments, 1));
+            });
 
         // Set default options
         Boostables.forEach((type: string): void => {
@@ -588,7 +611,7 @@ function destroyGraphics(
  * Set to true to skip timeouts.
  */
 function eachAsync(
-    arr: Array<unknown>|TypedArray,
+    arr: Array<unknown>|Types.TypedArray,
     fn: Function,
     finalFunc: Function,
     chunkSize?: number,
@@ -769,7 +792,7 @@ function hasExtremes(
  */
 const getSeriesBoosting = (
     series: BoostSeriesComposition,
-    data?: Array<(PointOptions|PointShortOptions)>|TypedArray
+    data?: Array<(PointOptions|PointShortOptions)>|Types.TypedArray
 ): boolean => {
     // Check if will be grouped.
     if (series.forceCrop) {
@@ -1093,8 +1116,8 @@ function seriesRenderCanvas(this: Series): void {
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
             (
-                this.getColumn('x', true).length ?
-                    this.getColumn('x', true) :
+                this.getColumn('x').length ?
+                    this.getColumn('x') :
                     void 0
             ) ||
             this.options.xData ||
@@ -1533,8 +1556,9 @@ function wrapSeriesProcessData(
     this: Series,
     proceed: Function
 ): void {
-    let dataToMeasure: (PointOptions|PointShortOptions)[]|TypedArray|undefined =
-        this.options.data;
+    let dataToMeasure: (
+        PointOptions|PointShortOptions
+    )[]|Types.TypedArray|undefined = this.options.data;
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,

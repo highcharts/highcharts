@@ -16,8 +16,8 @@ This is an overview of the most critical parameters of a component:
 The most basic and generic component type allows you to add everything that could be defined as HTML, as well as some custom events.
 
 The HTML component can be defined in two ways:  
-### Abstract Syntax Tree (AST) style  
-Defines the HTML code as a nested tree structure.
+### 1. Abstract Syntax Tree (AST) style  
+Defines the HTML code as a nested [tree structure](https://www.highcharts.com/docs/chart-concepts/dataviz-glossary#tree-data-structure).
 
 Code snippet:
 ```js
@@ -32,7 +32,7 @@ Code snippet:
     }]
 }
 ```
-### HTML string
+### 2. HTML string
 Defines the HTML code as a standard HTML string.
 
 Code snippet:
@@ -161,7 +161,7 @@ Code snippet with data embedded in the `DataGrid` data table; no data connector 
     }
 }
 ```
-The above code snippet is part of a [DataGrid example](http://utils.highcharts.local/samples/#view/data-grid/demo/your-first-datagrid) that uses embedded data.
+The above code snippet is part of a [DataGrid example](https://www.highcharts.com/samples/embed/data-grid/demo/your-first-datagrid) that uses embedded data.
 
 Code snippet using a data connector.
 ```js

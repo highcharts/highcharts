@@ -124,6 +124,8 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * ```
+     *
+     * @optionparent lang
      */
     lang: {
 
@@ -297,9 +299,8 @@ const defaultOptions: DefaultOptions = {
     },
 
     /**
-     * Global options that don't apply to each chart. These options, like
-     * the `lang` options, must be set using the `Highcharts.setOptions`
-     * method.
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
      *
      * ```js
      * Highcharts.setOptions({
@@ -2824,7 +2825,7 @@ const defaultOptions: DefaultOptions = {
     }
 };
 
-const defaultTime = new Time(defaultOptions.time);
+const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions

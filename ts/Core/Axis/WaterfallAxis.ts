@@ -131,7 +131,7 @@ namespace WaterfallAxis {
             stackLabelOptions = axis.options.stackLabels;
 
         if (
-            stackLabelOptions && stackLabelOptions.enabled &&
+            stackLabelOptions?.enabled &&
             axis.waterfall.stacks
         ) {
             axis.waterfall.renderStackTotals();
@@ -215,9 +215,7 @@ namespace WaterfallAxis {
         public renderStackTotals(): void {
             const yAxis = this.axis,
                 waterfallStacks = yAxis.waterfall.stacks,
-                stackTotalGroup = (
-                    yAxis.stacking && yAxis.stacking.stackTotalGroup
-                ),
+                stackTotalGroup = yAxis.stacking?.stackTotalGroup,
                 dummyStackItem = new StackItem(
                     yAxis,
                     yAxis.options.stackLabels || {},

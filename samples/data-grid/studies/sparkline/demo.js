@@ -6,8 +6,8 @@ DataGrid.dataGrid('container', {
             a: Array.from({ length: numberOfRows }, (_, i) => `A${i}`),
             b: Array.from({ length: numberOfRows }, (_, i) => `B${i}`),
             c: Array.from({ length: numberOfRows }, (_, i) => `C${i}`),
-            d: Array.from({ length: numberOfRows }, (_, i) =>
-                Array.from({ length: 10 }, (_, j) =>  Math.random() * 100)
+            d: Array.from({ length: numberOfRows }, () =>
+                Array.from({ length: 10 }, () =>  Math.random() * 100)
             )
         }
     },
