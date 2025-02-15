@@ -260,6 +260,8 @@ QUnit.test('Zooming in Variwide should not occlude column (#14182)', assert => {
 });
 
 QUnit.test('Zoom to empty region should not render points (#21696)', assert => {
+    Highcharts.seriesTypes.variwide.prototype.cropShoulder = 0;
+
     const chart = Highcharts.chart('container', {
         chart: {
             panning: {
