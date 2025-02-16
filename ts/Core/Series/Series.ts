@@ -2003,7 +2003,11 @@ class Series {
             activeYData: number[] = [],
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
-            shoulder = this.requireSorting ? this.cropShoulder : 0,
+            shoulder = this.requireSorting ?
+                this.type === 'column' ?
+                    0 :
+                    this.cropShoulder :
+                0,
             // #2117, need to compensate for log X axis
             positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
             doAll = getExtremesFromAll ||
