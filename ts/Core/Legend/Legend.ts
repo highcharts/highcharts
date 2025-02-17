@@ -1682,7 +1682,9 @@ class Legend {
                             {
                                 // Pass over the click/touch event. #4.
                                 browserEvent: event,
-                                legendItem: item
+                                legendItem: item,
+                                // Provide context in case user arrow function
+                                context: legend
                             },
                             defaultItemClick
                         );
