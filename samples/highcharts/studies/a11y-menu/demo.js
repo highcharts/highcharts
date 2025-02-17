@@ -1118,8 +1118,6 @@ function setupEventListeners(prefContent, chart) {
 
             // Only visible if info region is checked
             infoRegion.style.fontSize = settings.fontSize;
-            console.log(scatterDesc);
-            console.log(columnDesc);
 
             if (chart.series[0].type === 'scatter') {
                 scatterDesc.style.fontSize = settings.fontSize;
@@ -1238,11 +1236,14 @@ function setupEventListeners(prefContent, chart) {
         chart.altTextDivs.forEach(div => div.remove());
         chart.altTextDivs = [];
 
-        if (settings.isAltPointDescChecked) {
+        const theme = getThemeConfig(chart);
+
+        if (
+            settings.isAltPointDescChecked && chart.series[0].type === 'column'
+        ) {
             const paths = document
                 .querySelectorAll('path.highcharts-point[aria-label]');
             const chartRect = chart.container.getBoundingClientRect();
-            const theme = getThemeConfig(chart);
 
             paths.forEach(path => {
                 const ariaLabel = path.getAttribute('aria-label');
@@ -1276,6 +1277,55 @@ function setupEventListeners(prefContent, chart) {
                 chart.altTextDivs.push(altTextDiv);
             });
             // Disable tooltips to avoid duplicate information
+            chart.update({
+                tooltip: {
+                    enabled: false
+                }
+            });
+        } else if (
+            settings.isAltPointDescChecked && chart.series[0].type === 'scatter'
+        ) {
+            const chartRect = chart.container.getBoundingClientRect();
+            chart.series.forEach(series => {
+                series.points.forEach((point, index) => {
+                    if (index % 20 === 0) {
+                        const ariaLabel =
+                        `${series.name}: ${point.x} cm, ${point.y} kg`;
+                        console.log(ariaLabel);
+                        const rect =
+                        point.graphic.element.getBoundingClientRect();
+                        // Create and position alt text div
+                        const altTextDiv = document.createElement('div');
+                        altTextDiv.textContent = ariaLabel;
+                        altTextDiv.classList.add('alt-text-div');
+                        altTextDiv.setAttribute('aria-hidden', 'true');
+                        // Apply theme-specific styles during creation
+                        altTextDiv.style.backgroundColor =
+                            theme === darkTheme ? '#444444' : '#ffffff';
+                        altTextDiv.style.color =
+                            theme === darkTheme ? '#ffffff' : '#000000';
+                        altTextDiv.style.border =
+                            theme === darkTheme ? '1px solid #666666' :
+                                '1px solid #ccc';
+                        altTextDiv.style.opacity = '1';
+                        altTextDiv.style.fontSize = settings.fontSize;
+
+                        // Position label on top of the point
+                        altTextDiv.style.left =
+                        `${rect.left + rect.width / 2 - chartRect.left}px`;
+                        altTextDiv.style.top = `${rect.top - chartRect.top}px`;
+                        // Adjust position if altPointLabel is checked
+                        if (settings.isAltPointLabelChecked) {
+                            altTextDiv.style.top =
+                            `${rect.top - chartRect.top - 20}px`;
+                        }
+                        // Add to chart container
+                        chart.container.appendChild(altTextDiv);
+                        // Add divs to array for setting text size if applicable
+                        chart.altTextDivs.push(altTextDiv);
+                    }
+                });
+            });
             chart.update({
                 tooltip: {
                     enabled: false
@@ -1388,7 +1438,6 @@ function setupEventListeners(prefContent, chart) {
         }
         // Update the focus for screen readers
         descriptionDiv.setAttribute('aria-live', 'polite');
-        console.log(`Chart description shown: ${descriptionDiv.textContent}`);
     });
 
 }
@@ -1641,12 +1690,24 @@ function applyInfoRegion(selectedVerbosity, chart) {
 
             const formattedVal = point.y.toLocaleString('en-US');
 
+            let altText = '';
+
             // Generate alt text based on verbosity
-            const altText = selectedVerbosity === 'short' ?
-                `${point.category}, ${formattedVal} (1000 MT).` :
-                `Bar ${point.index + 1} of ${point.series.points.length}
-                   in series ${point.category}, ${point.series.name}: 
-                   ${point.category}, ${formattedVal} (1000 MT).`;
+            if (chart.series[0].type === 'column') {
+                altText = selectedVerbosity === 'short' ?
+                    `${point.category}, ${formattedVal} (1000 MT).` :
+                    `Bar ${point.index + 1} of ${point.series.points.length}
+                    in series ${point.category}, ${point.series.name}: 
+                    ${point.category}, ${formattedVal} (1000 MT).`;
+            } else {
+                altText = selectedVerbosity === 'short' ?
+                    `${point.series.name}, ${point.x} cm, ` +
+                `${point.y} kg.` :
+                    `Point ${point.index + 1} of ` +
+                `${point.series.points.length} in series ` +
+                `${((point.series.name).toLowerCase())}, ` +
+                `${point.x} cm, ${point.y} kg.`;
+            }
 
             // Update corresponding alt text div
             const altTextDiv = chart.altTextDivs[globalIndex];
