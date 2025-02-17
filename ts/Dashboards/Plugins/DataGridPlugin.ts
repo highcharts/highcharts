@@ -24,7 +24,6 @@ import type { DataGridNamespace } from './DataGridTypes';
 import type PluginHandler from '../PluginHandler';
 
 import DataGridComponent from '../Components/DataGridComponent/DataGridComponent.js';
-
 /* *
  *
  *  Declarations
@@ -34,6 +33,7 @@ import DataGridComponent from '../Components/DataGridComponent/DataGridComponent
 declare module '../Components/ComponentType' {
     interface ComponentTypeRegistry {
         DataGrid: typeof DataGridComponent;
+        Grid: typeof DataGridComponent;
     }
 }
 
@@ -65,6 +65,7 @@ function onRegister(
 ): void {
     const { ComponentRegistry } = e;
     ComponentRegistry.registerComponent('DataGrid', DataGridComponent);
+    ComponentRegistry.registerComponent('Grid', DataGridComponent);
 }
 
 
