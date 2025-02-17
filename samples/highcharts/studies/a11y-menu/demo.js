@@ -316,9 +316,6 @@ function initializeCharts() {
     const chart1 = Highcharts.chart('container', getColumnChartConfig());
     const chart2 = Highcharts.chart('container2', getScatterChartConfig());
 
-    chart1.index = 1;
-    chart2.index = 2;
-
     chart1.prefMenu = {};
     chart1.altTextDivs = [];
     chart2.prefMenu = {};
