@@ -91,7 +91,7 @@ If you like to have declarations in addition to the new package file
 Use your custom package file
 ----------------------------
 
-According to our [installation](./installation.md) guide you can reference your
+According to our [installation](https://www.highcharts.com/docs/getting-started/installation.md) guide you can reference your
 custom package file either as an ES6 module...
 
 ```html
