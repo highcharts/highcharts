@@ -311,7 +311,6 @@ class AccordionMenu {
         parentNode: HTMLElement,
         component: Component
     ): void {
-        debugger;
 
         if (options.type === 'nested') {
             return this.renderNested(parentNode, options, component);
