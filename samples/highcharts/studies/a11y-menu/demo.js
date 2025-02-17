@@ -262,6 +262,11 @@ function applyChartTheme(chart) {
     tableButton.style.backgroundColor = theme.button.backgroundColor;
     tableButton.style.color = theme.button.textColor;
 
+    const playButton = document
+        .getElementById(`highcharts-a11y-sonify-data-btn-${chart.index}`);
+    playButton.style.backgroundColor = theme.button.backgroundColor;
+    playButton.style.color = theme.button.textColor;
+
     // Update the dialog colors if the dialog is open
     const dialog = document.getElementById('pref-menu-dialog');
     if (dialog) {
@@ -309,6 +314,26 @@ function setDialogColors(dialog, chart) {
     if (closeButton) {
         closeButton.style.backgroundColor = theme.button.backgroundColor;
         closeButton.style.color = theme.button.textColor;
+    }
+
+    const playButton = dialog.querySelector(`#sonify-${chart.index}`);
+    if (playButton) {
+        playButton.style.backgroundColor = theme.button.backgroundColor;
+        playButton.style.color = theme.button.textColor;
+    }
+
+    const playButtonSpeech = dialog
+        .querySelector(`#sonify-speech-${chart.index}`);
+    if (playButtonSpeech) {
+        playButtonSpeech.style.backgroundColor = theme.button.backgroundColor;
+        playButtonSpeech.style.color = theme.button.textColor;
+    }
+
+    const describeButton = dialog
+        .querySelector(`#describe-chart-${chart.index}`);
+    if (describeButton) {
+        describeButton.style.backgroundColor = theme.button.backgroundColor;
+        describeButton.style.color = theme.button.textColor;
     }
 }
 
