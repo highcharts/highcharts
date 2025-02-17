@@ -966,14 +966,10 @@ function createPreferencesDialog(chart) {
             <p>Enhance the accessibility of your charts with these tools.</p>
             <h3>Sonification</h3>
             <div class="pref tool">
-                <input type="checkbox" id="sonification-${i}"
-                name="sonification-${i}"
-                    ${settings.isSonificationChecked ? 'checked' : ''}>
-                <label for="sonification-${i}">Enable Sonification</label>
-                <input type="checkbox" id="sonification-speech-${i}"
-                name="sonification-speech-${i}"
-                    ${settings.isSonificationSpeechChecked ? 'checked' : ''}>
-                <label for="sonification-speech-${i}">Enable speech</label>
+                <button id="sonify-${i}" name="sonify-${i}">Play chart</button>
+                <button id="sonify-speech-${i}" name="sonify-speech-${i}">
+                Play chart with speech
+                </button>
             </div>
             <h3>Chart description</h3>
             <div class="pref tool">
@@ -1031,12 +1027,13 @@ function setupEventListeners(prefContent, chart) {
         altInfoCheckbox =
             prefContent.querySelector(`input[name="alt-info-${chart.index}"]`),
         accordionButtons = prefContent.querySelectorAll('.acc-btn'),
-        sonificationCheckbox = prefContent
-            .querySelector(`input[name="sonification-${chart.index}"]`),
         describeChartButton = prefContent
             .querySelector(`#describe-chart-${chart.index}`),
-        sonificationSpeechCheckbox = prefContent
-            .querySelector(`input[name="sonification-speech-${chart.index}"]`);
+        sonificationButton =
+            prefContent.querySelector(`#sonify-${chart.index}`),
+        sonificationSpeechButton =
+            prefContent.querySelector(`#sonify-speech-${chart.index}`),
+        dialog = document.getElementById(`pref-menu-dialog-${chart.index}`);
 
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -1349,72 +1346,86 @@ function setupEventListeners(prefContent, chart) {
         applyInfoRegion(settings.selectedVerbosity, chart);
     });
 
-    sonificationCheckbox.addEventListener('change', event => {
-        settings.isSonificationChecked = event.target.checked;
-        updateSonificationPlayButton(chart);
-        applyInfoRegion(settings.selectedVerbosity, chart);
+    sonificationButton.addEventListener('click', () => {
+        chart.update({
+            sonification: {
+                events: {
+                    onPlay: function () {
+                        dialog.style.opacity = 0; // Hide dialog
+                    },
+                    onStop: function () {
+                        dialog.style.opacity = 1; // Show dialog
+                    }
+                }
+            }
+        });
+
+        setTimeout(() => {
+            chart.toggleSonify();
+        }, 1000);
     });
 
-    sonificationSpeechCheckbox.addEventListener('change', event => {
-        settings.isSonificationSpeechChecked = event.target.checked;
-
-
-        if (settings.isSonificationSpeechChecked) {
-            // Apply speech settings to the chart
-            if (chart.series[0].type === 'scatter') {
-                chart.update({
-                    sonification: {
-                        afterSeriesWait: 1200,
-                        defaultInstrumentOptions: {
-                            mapping: {
-                                playDelay: 500
-                            }
-                        },
-                        globalTracks: [{
-                            type: 'speech',
-                            mapping: {
-                                text: '{point.series.name}',
-                                volume: 1,
-                                rate: 2
-                            },
-                            // Active on first point in series only
-                            activeWhen: function (e) {
-                                return e.point && !e.point.index;
-                            }
-                        }]
-                    }
-                });
-            } else {
-                chart.update({
-                    sonification: {
-                        afterSeriesWait: 1200,
-                        globalTracks: [
-                            {
-                                type: 'speech',
-                                mapping: {
-                                    text: '{point.category}, ' +
-                                        '{point.series.name}',
-                                    rate: 1.5,
-                                    volume: 1
-                                }
-                            }
-                        ]
-                    }
-                });
-            }
-        } else {
-            // Remove speech settings when unchecked
+    sonificationSpeechButton.addEventListener('click', () => {
+        if (chart.series[0].type === 'scatter') {
             chart.update({
                 sonification: {
                     afterSeriesWait: 1200,
-                    globalTracks: [] // Remove speech track
+                    defaultInstrumentOptions: {
+                        mapping: {
+                            playDelay: 500
+                        }
+                    },
+                    globalTracks: [{
+                        type: 'speech',
+                        mapping: {
+                            text: '{point.series.name}',
+                            volume: 1,
+                            rate: 2
+                        },
+                        activeWhen: function (e) {
+                            return e.point && !e.point.index;
+                        }
+                    }],
+                    events: {
+                        onPlay: function () {
+                            dialog.style.opacity = 0;
+                        },
+                        onSeriesEnd: function () {
+                            dialog.style.opacity = 1;
+                        }
+                    }
+                }
+            });
+        } else {
+            chart.update({
+                sonification: {
+                    afterSeriesWait: 1200,
+                    globalTracks: [
+                        {
+                            type: 'speech',
+                            mapping: {
+                                text: '{point.category}, ' +
+                                    '{point.series.name}',
+                                rate: 1.5,
+                                volume: 1
+                            },
+                            playDelay: 500 // Add delay
+                        }
+                    ],
+                    events: {
+                        onPlay: function () {
+                            dialog.style.opacity = 0; // Hide dialog
+                        },
+                        onStop: function () {
+                            dialog.style.opacity = 1; // Show dialog
+                        }
+                    }
                 }
             });
         }
-
-        updateSonificationPlayButton(chart);
-        applyInfoRegion(settings.selectedVerbosity, chart);
-
+        setTimeout(() => {
+            chart.toggleSonify();
+        }, 1000);
     });
 
     describeChartButton.addEventListener('click', function () {
@@ -1441,40 +1452,6 @@ function setupEventListeners(prefContent, chart) {
     });
 
 }
-
-function updateSonificationPlayButton(chart) {
-    const settings = chartSettingsMap[chart.index];
-    const playButtonId = `play-sonification-${chart.index}`;
-    let playButton = document.getElementById(playButtonId);
-
-    // Check if either Sonification or Speech is enabled
-    if (
-        settings.isSonificationChecked || settings.isSonificationSpeechChecked
-    ) {
-        if (!playButton) {
-            playButton = document.createElement('button');
-            playButton.id = playButtonId;
-            playButton.style.marginTop = '10px';
-            playButton.addEventListener('click', () => {
-                chart.toggleSonify();
-            });
-
-            chart.container.parentNode
-                .insertBefore(playButton, chart.container.nextSibling);
-        }
-
-        // Update button label based on speech setting
-        playButton.textContent = settings
-            .isSonificationSpeechChecked ?
-            'Play Chart with Speech' : 'Play Chart';
-    } else {
-        // Remove play button if neither is checked
-        if (playButton) {
-            playButton.remove();
-        }
-    }
-}
-
 
 function updateChartColorLogic(chart) {
     const theme = getThemeConfig(chart);
