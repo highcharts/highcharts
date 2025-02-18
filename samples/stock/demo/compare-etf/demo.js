@@ -1,6 +1,6 @@
 (async () => {
 
-    const PERIOD_CAP = 31.97,
+    const PERIOD_CAP = 22.1,
         PERIOD_BUFFER = 6.5;
 
     const data = await fetch(
