@@ -28,6 +28,8 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
+import Table from '../Grid/Core/Table/Table.js';
+import Credits from '../Grid/Core/Credits.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -59,6 +61,7 @@ declare global {
         DataConnector: typeof DataConnector;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
+        Table: typeof Table;
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
@@ -93,7 +96,9 @@ G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.product = 'Grid Lite';
 G.setOptions = Defaults.setOptions;
 
+G.Table = G.Table || Table;
 
+Credits.compose(G.Table);
 /* *
  *
  *  Classic Export

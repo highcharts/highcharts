@@ -525,6 +525,11 @@ export interface CreditsOptions {
     text?: string;
 
     /**
+     * The icon reference for the credits label.
+     */
+    iconURL?: string;
+
+    /**
      * The position of the credits label.
      *
      * @default 'bottom'

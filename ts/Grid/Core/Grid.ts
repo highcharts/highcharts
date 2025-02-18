@@ -40,6 +40,7 @@ import TimeBase from '../../Shared/TimeBase.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
+    fireEvent,
     extend,
     getStyle,
     merge,
@@ -800,15 +801,13 @@ class Grid {
 
         this.renderDescription();
 
-        if (this.options?.credits?.enabled) {
-            this.credits = new Credits(this);
-        }
-
         this.accessibility?.setA11yOptions();
 
         if (this.viewport?.virtualRows) {
             this.viewport.reflow();
         }
+
+        fireEvent(this.viewport, 'afterRenderViewport');
     }
 
     /**

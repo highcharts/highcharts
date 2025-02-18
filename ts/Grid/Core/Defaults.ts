@@ -80,8 +80,8 @@ namespace Defaults {
         },
         credits: {
             enabled: true,
-            text: 'Highcharts.com',
-            href: 'https://www.highcharts.com?credits',
+            text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
+            href: 'https://www.highcharts.com',
             position: 'bottom'
         },
         columnDefaults: {
