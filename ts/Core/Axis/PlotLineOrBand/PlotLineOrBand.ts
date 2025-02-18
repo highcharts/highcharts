@@ -261,9 +261,9 @@ class PlotLineOrBand {
         if (!this.eventsAdded && events) {
             objectEach(events, (event, eventType): void => {
                 svgElem?.on(
-                    eventType,
+                    eventType as any,
                     (e: any): void => {
-                        events[eventType].apply(this, [e]);
+                        events[eventType].apply(this, [e, this]);
                     }
                 );
             });
