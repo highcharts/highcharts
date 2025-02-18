@@ -16,6 +16,10 @@
             enabled: false
         },
 
+        scrollbar: {
+            enabled: false
+        },
+
         legend: {
             enabled: true,
             verticalAlign: 'top',
