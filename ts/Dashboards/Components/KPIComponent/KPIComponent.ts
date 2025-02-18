@@ -32,6 +32,7 @@ import type {
 import type Options from './KPIComponentOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 import type Types from '../../../Shared/Types';
+import type { Value } from '../../../Data/Formula/FormulaTypes';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
@@ -467,7 +468,9 @@ class KPIComponent extends Component {
         }
 
         try {
-            return KPIComponent.formulaFunctions[formula](filteredColumn);
+            return KPIComponent.formulaFunctions[formula](
+                filteredColumn as Value[]
+            );
         } catch {
             console.warn('Invalid formula option provided.'); // eslint-disable-line no-console
         }
