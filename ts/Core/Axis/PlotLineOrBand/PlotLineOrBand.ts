@@ -16,7 +16,7 @@
  *
  * */
 import type Chart from '../../Chart/Chart';
-import type Templating from '../../Templating';
+// Import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -422,8 +422,9 @@ class PlotLineOrBand {
     ): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
-              Templating.FormatterCallback<PlotLineOrBand>)
-                .call(this) :
+             any)
+            // Templating.FormatterCallback<PlotLineOrBand>)
+                .call(this, this) :
             optionsLabel.text;
     }
 
