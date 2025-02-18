@@ -452,7 +452,7 @@ class KPIComponent extends Component {
             return formula.call(this, column);
         }
 
-        let filteredColumn = column.slice().filter(defined);
+        let filteredColumn = column.slice().filter(defined) as Value[];
 
         // Filter NaN values and empty strings since the formula functions don't
         // handle it internally.
@@ -468,9 +468,7 @@ class KPIComponent extends Component {
         }
 
         try {
-            return KPIComponent.formulaFunctions[formula](
-                filteredColumn as Value[]
-            );
+            return KPIComponent.formulaFunctions[formula](filteredColumn);
         } catch {
             console.warn('Invalid formula option provided.'); // eslint-disable-line no-console
         }
