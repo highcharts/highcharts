@@ -7,11 +7,6 @@
 
     // create the chart
     Highcharts.stockChart('container', {
-
-        chart: {
-            spacingRight: 25
-        },
-
         title: {
             text: 'AAPL stock price by minute'
         },
@@ -20,10 +15,8 @@
             text: 'Using ordinal X axis'
         },
 
-        yAxis: {
-            labels: {
-                align: 'left'
-            }
+        xAxis: {
+            overscroll: 60000 * 30
         },
 
         rangeSelector: {
