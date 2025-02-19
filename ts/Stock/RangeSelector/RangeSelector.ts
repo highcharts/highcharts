@@ -188,8 +188,7 @@ class RangeSelector {
     public buttons!: Array<SVGElement>;
     public isCollapsed?: boolean;
     public buttonGroup?: SVGElement;
-    public buttonOptions: Array<RangeSelectorButtonOptions> =
-        RangeSelector.prototype.defaultButtons;
+    public buttonOptions: Array<RangeSelectorButtonOptions> = [];
     public chart!: Chart;
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
@@ -445,12 +444,7 @@ class RangeSelector {
                 chart.options.rangeSelector as RangeSelectorOptions
             ),
             langOptions = chart.options.lang,
-            buttonOptions = (
-                options.buttons || this.defaultButtons.map(
-                    // Deep copy to avoid modifying the class property
-                    (opt): RangeSelectorButtonOptions => ({ ...opt })
-                )
-            ),
+            buttonOptions = options.buttons,
             selectedOption = options.selected,
             blurInputs = function (): void {
                 const minInput = rangeSelector.minInput,
@@ -1473,17 +1467,10 @@ class RangeSelector {
         delete buttonTheme.width;
         delete buttonTheme.states;
 
-        const langOptions = this.chart.options.lang;
-
         this.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
-            if (rangeOptions.type && langOptions.rangeSelector) {
-                rangeOptions.text ??= langOptions.rangeSelector[`${rangeOptions.type}Text`];
-                rangeOptions.title ??= langOptions.rangeSelector[`${rangeOptions.type}Title`];
-            }
-
             rangeOptions.text = format(rangeOptions.text, {
                 count: rangeOptions.count || 1
             });
@@ -2308,7 +2295,6 @@ class RangeSelector {
  * */
 
 interface RangeSelector {
-    defaultButtons: Array<RangeSelectorButtonOptions>;
     inputTypeFormats: Record<string, string>;
 }
 
