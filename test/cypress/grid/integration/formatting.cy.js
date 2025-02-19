@@ -76,4 +76,9 @@ describe('Formatting cells.', () => {
             });
         });
     });
+
+    it('Default formatter is not applied when column has own format or formatter', () => {
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(0).should('not.contain', 'Default');
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(4).should('not.contain', 'Default');
+    });
 });

@@ -121,21 +121,21 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-label-text').contains('Editable Grid').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Editable Grid')
-            .next()
+            .prev()
             .find('input[type="checkbox"]')
             .should('be.checked');
 
         cy.get('.highcharts-dashboards-edit-label-text').contains('Resizable columns').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Resizable columns')
-            .next()
+            .prev()
             .find('input[type="checkbox"]')
             .should('be.checked');
 
         cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Sortable columns')
-            .next()
+            .prev()
             .find('input[type="checkbox"]')
             .should('be.checked');
 
@@ -148,7 +148,7 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-label-text').contains('Cell text truncation').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Cell text truncation')
-            .next()
+            .prev()
             .find('input[type="checkbox"]')
             .should('not.be.checked');
     });
@@ -164,7 +164,7 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-datagrid-column-sortable').should('exist');
 
         // Act
-        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').click();
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').prev().click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(0).click();
 
         // Assert
@@ -180,7 +180,7 @@ describe('layout resize on window changes', () => {
         cy.openCellEditSidebar('#dashboard-col-1');
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('Grid options').click();
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
-        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').click();
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').prev().click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(1).click();
 
