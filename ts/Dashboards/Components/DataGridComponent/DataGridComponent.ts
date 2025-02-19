@@ -34,8 +34,7 @@ import SidebarPopup from '../../EditMode/SidebarPopup';
 const {
     merge,
     diffObjects,
-    getStyle,
-    pick
+    getStyle
 } = U;
 const { deepClone } = DU;
 
@@ -164,7 +163,11 @@ class DataGridComponent extends Component {
 
         if (this.dataGrid) {
             this.dataGrid.update(
-                (options.gridOptions || options.dataGridOptions) ?? {},
+                merge(
+                    {},
+                    options.gridOptions,
+                    options.dataGridOptions
+                ),
                 false
             );
 
@@ -326,9 +329,12 @@ class DataGridComponent extends Component {
 
         const dataTable = this.getFirstConnector()?.table,
             options = this.options,
-            gridOptions =
-                (options.gridOptions || options.dataGridOptions) ?? {};
-    
+            gridOptions = merge(
+                {},
+                options.gridOptions,
+                options.dataGridOptions
+            );
+
         if (dataTable) {
             gridOptions.dataTable = dataTable.modified;
         }
