@@ -20,7 +20,7 @@
  *
  * */
 
-import type { DataGridOptions } from '../../Plugins/DataGridTypes';
+import type { GridOptions } from '../../Plugins/DataGridTypes';
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
 
@@ -41,13 +41,28 @@ export interface Options extends Component.Options {
 
     /**
      * The style class to add to the rendered data grid container.
+     *
+     * @deprecated
      */
     dataGridClassName?: string;
 
     /**
+     * The style class to add to the rendered data grid container.
+     *
+     */
+    gridClassName?: string;
+
+    /**
      * The identifier for the rendered data grid container.
+     *
+     * @deprecated
      */
     dataGridID?: string;
+
+    /**
+     * The identifier for the rendered data grid container.
+     */
+    gridID?: string;
 
     /**
      * Callback to use when a change in the data grid occurs.
@@ -67,7 +82,15 @@ export interface Options extends Component.Options {
      * Generic options to adjust behavior and styling of the rendered data
      * grid.
      */
-    dataGridOptions?: DataGridOptions;
+    gridOptions?: GridOptions;
+
+    /**
+     * Generic options to adjust behavior and styling of the rendered data
+     * grid.
+     *
+     * @deprecated
+     */
+    dataGridOptions?: GridOptions;
 
     /** @private */
     tableAxisMap?: Record<string, string | null>;
