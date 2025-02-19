@@ -34,7 +34,8 @@ import SidebarPopup from '../../EditMode/SidebarPopup';
 const {
     merge,
     diffObjects,
-    getStyle
+    getStyle,
+    pick
 } = U;
 const { deepClone } = DU;
 
@@ -97,11 +98,13 @@ class DataGridComponent extends Component {
         cell: Cell
     ): DataGridComponent {
         const options = json.options;
-        const dataGridOptions = JSON.parse(json.options.dataGridOptions || '');
+        const gridOptions = JSON.parse(
+            (options.gridOptions || options.dataGridOptions) ?? ''
+        );
 
         const component = new DataGridComponent(
             cell,
-            merge<Options>(options as any, { dataGridOptions })
+            merge<Options>(options as any, { gridOptions })
         );
 
         component.emit({
@@ -160,7 +163,10 @@ class DataGridComponent extends Component {
         this.setOptions();
 
         if (this.dataGrid) {
-            this.dataGrid.update(this.options.dataGridOptions ?? {}, false);
+            this.dataGrid.update(
+                (options.gridOptions || options.dataGridOptions) ?? {},
+                false
+            );
 
             if (
                 this.dataGrid?.viewport?.dataTable?.id !==
@@ -220,12 +226,12 @@ class DataGridComponent extends Component {
 
     public getEditableOptions(): Options {
         const componentOptions = this.options;
-        const dataGridOptions = this.dataGrid?.options;
+        const gridOptions = this.dataGrid?.options;
 
         return deepClone(
             merge(
                 {
-                    dataGridOptions: dataGridOptions
+                    gridOptions: gridOptions
                 },
                 componentOptions
             ),
@@ -265,10 +271,10 @@ class DataGridComponent extends Component {
         // Remove the table from the options copy if the connector is set.
         const optionsCopy = merge(this.options);
         if (optionsCopy.connector?.id) {
-            delete optionsCopy.dataGridOptions?.dataTable;
-        } else if (optionsCopy.dataGridOptions?.dataTable?.id) {
-            optionsCopy.dataGridOptions.dataTable = {
-                columns: optionsCopy.dataGridOptions.dataTable.columns
+            delete optionsCopy.gridOptions?.dataTable;
+        } else if (optionsCopy.gridOptions?.dataTable?.id) {
+            optionsCopy.gridOptions.dataTable = {
+                columns: optionsCopy.gridOptions.dataTable.columns
             };
         }
 
@@ -292,14 +298,18 @@ class DataGridComponent extends Component {
      * Sets the options for the data grid component content container.
      */
     private setOptions(): void {
-        if (this.options.dataGridClassName) {
+        const options = this.options,
+            gridClassName = options.gridClassName || options.dataGridClassName,
+            gridID = options.gridID || options.dataGridID;
+
+        if (gridClassName) {
             this.contentElement.classList.value =
                 DataGridComponentDefaults.className + ' ' +
-                this.options.dataGridClassName;
+                gridClassName;
         }
 
-        if (this.options.dataGridID) {
-            this.contentElement.id = this.options.dataGridID;
+        if (gridID) {
+            this.contentElement.id = gridID;
         }
     }
 
@@ -311,19 +321,22 @@ class DataGridComponent extends Component {
     private constructDataGrid(): DataGrid {
         const DGN = DataGridComponent.DataGridNamespace;
         if (!DGN) {
-            throw new Error('DataGrid not connected.');
+            throw new Error('Grid not connected.');
         }
 
-        const dataTable = this.getFirstConnector()?.table;
-        const dataGridOptions = this.options.dataGridOptions ?? {};
+        const dataTable = this.getFirstConnector()?.table,
+            options = this.options,
+            gridOptions =
+                (options.gridOptions || options.dataGridOptions) ?? {};
+    
         if (dataTable) {
-            dataGridOptions.dataTable = dataTable.modified;
+            gridOptions.dataTable = dataTable.modified;
         }
 
         const dataGridInstance =
-            new DGN.DataGrid(this.contentElement, dataGridOptions);
+            new DGN.DataGrid(this.contentElement, gridOptions);
 
-        this.options.dataGridOptions = dataGridInstance.options;
+        this.options.gridOptions = dataGridInstance.options;
 
         return dataGridInstance;
     }
@@ -362,9 +375,21 @@ namespace DataGridComponent {
         extends Component.ComponentOptionsJSON {
 
         /** @private */
-        dataGridOptions?: string;
+        gridOptions?: string;
 
         /** @private */
+        gridClassName?: string;
+
+        /**
+         * @private
+         * @deprecated
+         **/
+        dataGridOptions?: string;
+
+        /**
+         * @private
+         * @deprecated
+         **/
         dataGridClassName?: string;
 
         /** @private */
