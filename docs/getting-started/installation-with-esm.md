@@ -7,7 +7,7 @@ Highcharts v11.3. The latter allows you to make use of tree shaking to only
 load or bundle what is needed and reduce download and package sizes.
 
 **Note:** If you code with TypeScript, please take a look at our
-[TypeScript article](../advanced-chart-features/highcharts-typescript-declarations)
+[TypeScript article](https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations)
 for details about ESM bundling and type adjustments.
 
 
@@ -156,7 +156,7 @@ code of our product packages in `highcharts/es-modules/masters` for details.
 
 ## Dynamic imports from CDN
 
-Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules directly in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/)
+Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules directly in modern browsers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
 without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/simple/)):
 ```html
 <script type="module">
