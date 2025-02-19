@@ -115,12 +115,12 @@ describe('layout resize on window changes', () => {
     it('The editableOptions should be visible in the sidebar and should show the correct values.', () => {
         cy.toggleEditMode();
         cy.openCellEditSidebar('#dashboard-col-1');
-        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('DataGrid options').click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('Grid options').click();
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
 
-        cy.get('.highcharts-dashboards-edit-label-text').contains('Editable DataGrid').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Editable Grid').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
-            .contains('Editable DataGrid')
+            .contains('Editable Grid')
             .next()
             .find('input[type="checkbox"]')
             .should('be.checked');
@@ -157,7 +157,7 @@ describe('layout resize on window changes', () => {
         // Arrange
         cy.toggleEditMode();
         cy.openCellEditSidebar('#dashboard-col-1');
-        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('DataGrid options').click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('Grid options').click();
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
 
         //Assert
@@ -178,7 +178,7 @@ describe('layout resize on window changes', () => {
         // Act
         cy.toggleEditMode();
         cy.openCellEditSidebar('#dashboard-col-1');
-        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('DataGrid options').click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('Grid options').click();
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
         cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
@@ -196,8 +196,8 @@ describe('layout resize on window changes', () => {
         cy.openCellEditSidebar('#dashboard-col-1');
 
         // Act
-        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('DataGrid class name').click();
-        cy.get('input[name="DataGrid class name"]').type('-lama');
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('Grid class name').click();
+        cy.get('input[name="Grid class name"]').type('-lama');
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(0).click();
 
         // Assert
