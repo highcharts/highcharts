@@ -41,8 +41,7 @@ import type {
     SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
-    SeriesZonesOptions,
-    TypedArray
+    SeriesZonesOptions
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
@@ -54,6 +53,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
+import type Types from '../../Shared/Types';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -781,7 +781,7 @@ class Series {
         );
 
         // The tooltip options are merged between global and series specific
-        // options. Importance order asscendingly:
+        // options. Importance order ascendingly:
         // globals: (1)tooltip, (2)plotOptions.series,
         // (3)plotOptions[this.type]
         // init userOptions with possible later updates: 4-6 like 1-3 and
@@ -1146,7 +1146,7 @@ class Series {
                     oldData[pointIndex].touched = true;
 
                     // Speed optimize by only searching after last known
-                    // index. Performs ~20% bettor on large data sets.
+                    // index. Performs ~20% better on large data sets.
                     if (requireSorting) {
                         lastIndex = pointIndex + 1;
                     }
@@ -1611,7 +1611,7 @@ class Series {
             xExtremes,
             min,
             max,
-            xData: Array<number>|TypedArray = series.getColumn('x'),
+            xData: Array<number>|Types.TypedArray = series.getColumn('x'),
             modified = table,
             updatingNames = false;
 
@@ -1953,7 +1953,7 @@ class Series {
      * The data to inspect. Defaults to the current data within the visible
      * range.
      */
-    public getXExtremes(xData: Array<number>|TypedArray): RangeSelector.RangeObject {
+    public getXExtremes(xData: Array<number>|Types.TypedArray): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -1976,7 +1976,7 @@ class Series {
         yData?: (
             Array<(number|null)>|
             Array<Array<(number|null)>>|
-            TypedArray
+            Types.TypedArray
         ),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
@@ -3994,13 +3994,12 @@ class Series {
             } else {
                 [
                     data,
-                    dataOptions,
-                    ...Object.values(table.getColumns())
+                    dataOptions
                 ].filter(defined).forEach((coll): void => {
                     coll.shift();
                 });
-                table.rowCount -= 1;
-                fireEvent(table, 'afterDeleteRows');
+
+                table.deleteRows(0);
             }
         }
 
@@ -4060,16 +4059,12 @@ class Series {
                     // #4935
                     points?.length === data.length ? points : void 0,
                     data,
-                    series.options.data,
-                    ...Object.values(table.getColumns())
+                    series.options.data
                 ].filter(defined).forEach((coll): void => {
                     coll.splice(i, 1);
                 });
 
-                // Shorthand row deletion in order to avoid including the whole
-                // `deleteRows` function in the DataTableCore module.
-                table.rowCount -= 1;
-                fireEvent(table, 'afterDeleteRows');
+                table.deleteRows(i);
 
                 point?.destroy();
 

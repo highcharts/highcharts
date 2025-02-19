@@ -19,6 +19,7 @@ import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
 /* *
  *
@@ -43,18 +44,6 @@ export interface LangOptions extends LangOptionsCore {
     yAxisTitle: string;
     zoomIn?: string;
     zoomOut?: string;
-}
-
-export interface LangOptionsCore {
-    decimalPoint?: string;
-    invalidDate?: string;
-    locale?: string|Array<string>;
-    months?: Array<string>;
-    shortMonths?: Array<string>;
-    shortWeekdays?: Array<string>;
-    thousandsSep?: string;
-    weekdays?: Array<string>;
-    weekFrom: string;
 }
 
 export interface LoadingOptions {
