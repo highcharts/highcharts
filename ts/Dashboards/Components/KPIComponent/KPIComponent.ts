@@ -468,7 +468,9 @@ class KPIComponent extends Component {
         }
 
         try {
-            return KPIComponent.formulaFunctions[formula](filteredColumn);
+            return KPIComponent.formulaFunctions[formula](
+                filteredColumn as any
+            );
         } catch {
             console.warn('Invalid formula option provided.'); // eslint-disable-line no-console
         }
