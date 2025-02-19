@@ -467,13 +467,7 @@ class KPIComponent extends Component {
             filteredColumn.sort((a, b): number => Number(a) - Number(b));
         }
 
-        try {
-            return KPIComponent.formulaFunctions[formula](
-                filteredColumn as any
-            );
-        } catch {
-            console.warn('Invalid formula option provided.'); // eslint-disable-line no-console
-        }
+        return KPIComponent.formulaFunctions[formula](filteredColumn);
     }
 
     /**
