@@ -1970,7 +1970,7 @@ function fireEvent<T>(
         events.forEach((obj): void => {
             // If the event handler returns false, prevent the default handler
             // from executing
-            if (obj.fn.call(el, eventArguments as any) === false) {
+            if ((obj.fn as any).call(el, eventArguments as any, el) === false) {
                 (eventArguments as any).preventDefault();
             }
         });
