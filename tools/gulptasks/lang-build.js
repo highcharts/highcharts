@@ -24,6 +24,7 @@ async function langBuild() {
     const langBase = require(resolve(LANG_DIR, 'lang.json'));
     const baseKeys = Object.keys(langBase);
 
+
     function getNestedKeys(obj, path = '') {
         return Object.entries(obj)
             .flatMap(([key, value]) => {
@@ -34,6 +35,8 @@ async function langBuild() {
                 return `${path}${key}`;
             });
     }
+
+    const nestedBaseKeys = getNestedKeys(langBase).sort();
 
     const langFiles = (
         await readdir(LANG_DIR, {
@@ -87,9 +90,29 @@ export default D;
             `Keys in ${langFile} should match keys in lang.json`
         );
 
+        const translationKeys = getNestedKeys(jsonContent).sort();
+
+        let mismatches = 0;
+        for (let i = 0; i < nestedBaseKeys.length; i++) {
+            if (nestedBaseKeys[i] !== translationKeys[i]) {
+                // eslint-disable-next-line no-console
+                assert.equal(
+                    nestedBaseKeys[i],
+                    translationKeys[i],
+                    `Keys should match in ${langFile}: ${nestedBaseKeys[i]} !== ${translationKeys[i]}`
+                );
+
+                if (mismatches > 10) {
+                    break;
+                }
+
+                mismatches++;
+            }
+        }
+
         assert.deepEqual(
-            getNestedKeys(langBase).sort(),
-            getNestedKeys(jsonContent).sort(),
+            nestedBaseKeys,
+            translationKeys,
             `Keys in ${langFile} should match keys in lang.json`
         );
 
