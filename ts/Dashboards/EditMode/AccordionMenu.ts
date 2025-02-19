@@ -326,6 +326,7 @@ class AccordionMenu {
             ...options,
             iconsURLPrefix: this.iconsURLPrefix,
             value: component.getEditableOptionValue(options.propertyPath),
+            enabledOnOffLabels: options.type === 'toggle',
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)
@@ -361,6 +362,7 @@ class AccordionMenu {
             const accordionOptions = nestedOptions[i].options;
             const showToggle = !!nestedOptions[i].showToggle;
             const propertyPath = nestedOptions[i].propertyPath || [];
+            const lang = (component.board?.editMode || EditGlobals).lang;
 
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
@@ -372,13 +374,16 @@ class AccordionMenu {
                         this.updateOptions(propertyPath, value),
                     isNested: !!accordionOptions,
                     isStandalone: !accordionOptions,
-                    lang: (component.board?.editMode || EditGlobals).lang
+                    lang
                 }
             );
 
             for (let j = 0, jEnd = accordionOptions?.length; j < jEnd; ++j) {
                 this.renderAccordion(
-                    accordionOptions[j] as EditableOptions.Options,
+                    merge(
+                        accordionOptions[j] as EditableOptions.Options,
+                        { lang, isNested: true }
+                    ),
                     collapsedHeader.content,
                     component
                 );

@@ -451,7 +451,8 @@ class KPIComponent extends Component {
             return formula.call(this, column);
         }
 
-        let filteredColumn = column.slice().filter(defined);
+        let filteredColumn = Array.isArray(column) ?
+            column.slice().filter(defined) : Array.from(column);
 
         // Filter NaN values and empty strings since the formula functions don't
         // handle it internally.
