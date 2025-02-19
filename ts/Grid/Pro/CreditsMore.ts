@@ -54,7 +54,7 @@ class CreditsMore extends Credits {
     private setContent(): void {
         const { text, href } = this.options;
 
-        this.textElement.innerText = text || '';
+        this.textElement.innerHTML = text || '';
         this.textElement.setAttribute('href', href || '');
     }
 
