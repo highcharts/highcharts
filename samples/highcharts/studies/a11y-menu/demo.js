@@ -1387,6 +1387,7 @@ function setupEventListeners(prefContent, chart) {
     sonificationButton.addEventListener('click', () => {
         chart.update({
             sonification: {
+                globalTracks: [],
                 events: {
                     onPlay: function () {
                         dialog.style.opacity = 0; // Hide dialog
