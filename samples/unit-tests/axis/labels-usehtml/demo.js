@@ -1,4 +1,4 @@
-QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
+QUnit.test('Auto rotation and wrapping', function (assert) {
     $('#container').highcharts({
         chart: {
             width: 1000,
@@ -11,8 +11,8 @@ QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
                 autoRotation: [-25]
             },
             categories: [
-                'Jan sad asd asd asd sa',
-                'Feb asd asd sad as as',
+                'Jan&shy;sad&shy;asd&shy;asd&shy;asd&shy;sa',
+                'Feb-as-as-as-as-as',
                 'Mar sad asd asd asd as'
             ]
         },
@@ -46,6 +46,40 @@ QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
         0,
         'Not rotated in the end'
     );
+
+    // Test wrapping
+    chart.xAxis[0].update({
+        labels: {
+            autoRotation: undefined,
+            style: {
+                textOverflow: 'none'
+            }
+        }
+    });
+
+    // Notice: height is just a rough estimation but enough for the tests
+    const h = xAxis.ticks[xAxis.tickPositions[3]].label.getBBox().height;
+    [0, 1, 2].forEach(i => {
+        const labelHeight = xAxis.ticks[xAxis.tickPositions[i]].label.getBBox()
+            .height;
+        assert.ok(
+            labelHeight < h * 2,
+            `${i} label should not be wrapped when enough space`
+        );
+    });
+
+    chart.setSize(400, 300);
+    [0, 1, 2].forEach(i => {
+        const labelHeight = xAxis.ticks[xAxis.tickPositions[i]].label.getBBox()
+            .height;
+        assert.ok(
+            // wrapped
+            (labelHeight > h * 2) ||
+            // but not at every possible whitespace
+            (labelHeight < h * 6),
+            `${i} label should be wrapped when not enough space`
+        );
+    });
 });
 
 QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
