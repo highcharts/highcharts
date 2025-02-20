@@ -501,6 +501,20 @@ function getScatterChartConfig() {
                 type: 'xy'
             }
         },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    menuItems: [
+                        'printChart',
+                        'viewData',
+                        'downloadPNG',
+                        'downloadJPEG',
+                        'downloadPDF',
+                        'downloadSVG'
+                    ]
+                }
+            }
+        },
         accessibility: {
             screenReaderSection: {
                 beforeChartFormat: '<h2>{chartTitle}</h2>' +
@@ -1313,7 +1327,6 @@ function setupEventListeners(prefContent, chart) {
                     if (index % 20 === 0) {
                         const ariaLabel =
                         `${series.name}: ${point.x} cm, ${point.y} kg`;
-                        console.log(ariaLabel);
                         const rect =
                         point.graphic.element.getBoundingClientRect();
                         // Create and position alt text div
