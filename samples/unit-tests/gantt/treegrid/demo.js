@@ -228,7 +228,7 @@ QUnit.test('Axis.update', assert => {
         'Should have tickPositions equal [0] after render.'
     );
     assert.strictEqual(
-        getStyle(element, 'color', false),
+        getStyle(element, 'fill', false),
         'rgb(0, 0, 0)',
         'Should have color equal rgb(0, 0, 0) after render.'
     );
@@ -257,7 +257,7 @@ QUnit.test('Axis.update', assert => {
         'Should still have tickPositions equal [0] after update.'
     );
     assert.strictEqual(
-        getStyle(element, 'color', false),
+        getStyle(element, 'fill', false),
         'rgb(255, 0, 0)',
         'Should have color equal rgb(255, 0, 0) after update.'
     );

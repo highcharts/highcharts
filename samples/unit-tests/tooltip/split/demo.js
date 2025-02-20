@@ -75,7 +75,7 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
 
     el = chart.tooltip.tt.text.element;
 
-    value = window.getComputedStyle(el).getPropertyValue('color');
+    value = window.getComputedStyle(el).getPropertyValue('fill');
     assert.strictEqual(value, 'rgb(51, 51, 51)', 'tooltip default color.');
 
     el = chart.tooltip.tt.element;
@@ -95,7 +95,7 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     ]);
 
     el = chart.tooltip.tt.text.element;
-    value = window.getComputedStyle(el).getPropertyValue('color');
+    value = window.getComputedStyle(el).getPropertyValue('fill');
     assert.strictEqual(value, 'rgb(255, 0, 0)', 'tooltip color from style.');
 });
 
