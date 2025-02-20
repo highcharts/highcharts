@@ -46,6 +46,7 @@ async function scriptsWebpack() {
         log += await ProcessLib.exec(
             `npx webpack -c ${config}`,
             {
+                maxBuffer: 1024 * 1024,
                 silent: argv.verbose ? 1 : 2,
                 timeout: 60000
             }
