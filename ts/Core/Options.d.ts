@@ -33,14 +33,19 @@ export interface LabelsItemsOptions {
 }
 
 export interface LangOptions extends LangOptionsCore {
+    chartTitle: string;
     loading: string;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
+    pieSliceName: string;
     resetZoom: string;
     resetZoomTitle: string;
+    seriesName: string;
+    yAxisTitle: string;
     zoomIn?: string;
     zoomOut?: string;
 }
+
 export interface LoadingOptions {
     hideDuration?: number;
     labelStyle?: CSSObject;

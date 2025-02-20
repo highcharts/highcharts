@@ -23,4 +23,5 @@ export interface LangOptionsCore {
     shortWeekdays?: Array<string>;
     thousandsSep?: string;
     weekdays?: Array<string>;
+    weekFrom?: string;
 }

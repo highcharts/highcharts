@@ -43,6 +43,7 @@ OPTIONS:
  * */
 
 
+// eslint-disable-next-line jsdoc/require-param
 /**
  * Creates an API tree.
  *
