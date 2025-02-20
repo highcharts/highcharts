@@ -704,7 +704,7 @@ circle.highcharts-legend-nav-inactive { /* tracker */
 }
 
 /* Plot bands and polar pane backgrounds */
-.highcharts-plot-band,
+.highcharts-styled-mode .highcharts-plot-band,
 .highcharts-pane {
     fill: var(--highcharts-neutral-color-100);
     fill-opacity: 0.05;
