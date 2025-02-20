@@ -248,7 +248,7 @@
     font-size: 0.8em;
 }
 
-.highcharts-axis-labels {
+.highcharts-styled-mode .highcharts-axis-labels {
     fill: var(--highcharts-neutral-color-80);
     cursor: default;
     font-size: 0.8em;
