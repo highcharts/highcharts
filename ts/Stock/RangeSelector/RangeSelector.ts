@@ -1471,14 +1471,6 @@ class RangeSelector {
             rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
-            rangeOptions.text = format(rangeOptions.text, {
-                count: rangeOptions.count || 1
-            });
-
-            rangeOptions.title = format(rangeOptions.title, {
-                count: rangeOptions.count || 1
-            });
-
             this.createButton(rangeOptions, i, width, states);
         });
     }
