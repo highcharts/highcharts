@@ -365,8 +365,8 @@ class GeoHeatmapSeries extends MapSeries {
                         pixelData = new Uint8ClampedArray(canvasArea * 4),
                         // Guess if we have to round lon/lat with this data
                         { lat = 0, lon = 0 } = points[0].options,
-                        unEvenLon = lon - rowsize !== 0,
-                        unEvenLat = lat - colsize !== 0,
+                        unEvenLon = lon % rowsize !== 0,
+                        unEvenLat = lat % colsize !== 0,
                         getAdjustedLon = (
                             unEvenLon ?
                                 (lon: number): number => (
