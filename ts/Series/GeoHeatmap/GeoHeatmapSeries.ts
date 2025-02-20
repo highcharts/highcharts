@@ -51,6 +51,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    error,
     extend,
     isNumber,
     isObject,
@@ -364,22 +365,30 @@ class GeoHeatmapSeries extends MapSeries {
                         pixelData = new Uint8ClampedArray(canvasArea * 4),
                         // Guess if we have to round lon/lat with this data
                         { lat = 0, lon = 0 } = points[0].options,
+                        unEvenLon = lon - rowsize !== 0,
+                        unEvenLat = lat - colsize !== 0,
                         getAdjustedLon = (
-                            lon - rowsize !== 0 ?
+                            unEvenLon ?
                                 (lon: number): number => (
                                     Math.round(lon / rowsize) * rowsize
                                 ) :
                                 (lon: number): number => lon
                         ),
                         getAdjustedLat = (
-                            lat - colsize !== 0 ?
+                            unEvenLat ?
                                 (lat: number): number => (
                                     Math.round(lat / colsize) * colsize
                                 ) :
                                 (lat: number): number => lat
                         ),
                         pointsLen = points.length;
-                        // SourceArr = new Uint8ClampedArray(4);
+
+                    if (unEvenLon || unEvenLat) {
+                        error(
+                            'For best performance, lon/lat datapoints should ' +
+                            'be spaced by a single colsize/rowsize'
+                        );
+                    }
 
                     // Needed for tooltip
                     series.directTouch = false;
