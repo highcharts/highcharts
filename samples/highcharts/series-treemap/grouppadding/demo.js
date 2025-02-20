@@ -1,4 +1,8 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
+    chart: {
+        width: 600,
+        animation: false
+    },
     series: [{
         type: 'treemap',
         name: 'Norge',
@@ -12,20 +16,20 @@ Highcharts.chart('container', {
         },
         borderColor: '#ffffff',
         borderRadius: 3,
-        nodeSizeBy: 'leaf',
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
             groupPadding: 3,
             dataLabels: {
-                headers: true,
                 enabled: true,
+                headers: true,
                 style: {
                     fontSize: '0.6em',
                     fontWeight: 'normal',
                     textTransform: 'uppercase'
                 }
             },
+            borderColor: '#333',
             borderRadius: 3,
             borderWidth: 1,
             colorByPoint: true
@@ -120,4 +124,16 @@ Highcharts.chart('container', {
         pointFormat: 'The area of <b>{point.name}</b> is \
             <b>{point.value} km<sup>2</sup></b>'
     }
+});
+
+// Enable the range input for the groupPadding option
+document.getElementById('groupPadding').addEventListener('input', function () {
+    chart.series[0].update({
+        levels: [Highcharts.merge(
+            chart.series[0].options.levels[0],
+            {
+                groupPadding: this.value
+            }
+        )]
+    });
 });
