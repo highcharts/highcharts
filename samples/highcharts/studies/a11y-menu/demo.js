@@ -20,6 +20,23 @@ const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
     '{point.series.points.length} in series {point.category}, ' +
     '{point.series.name}: {(point.y):,.0f} (1000 MT).';
 
+
+// Default settings
+const defaultSettings = {
+    selectedVerbosity: 'full',
+    selectedTextSize: 'default',
+    isContrastChecked: false,
+    isBorderChecked: false,
+    isAltPointDescChecked: false,
+    isAltPointLabelChecked: false,
+    isInfoChecked: false,
+    isPatternChecked: false,
+    fontSize: '',
+    isSelectedTheme: 'default',
+    isSonificationChecked: false,
+    isSonificationSpeechChecked: false
+};
+
 // Adding descriptions to chart
 const columnChartDesc = 'This bar chart compares the estimated production ' +
                 'of corn and wheat for 2023 across six countries: ' +
@@ -347,20 +364,7 @@ function initializeCharts() {
     chart2.altTextDivs = [];
 
     // Store settings in global settings map
-    chartSettingsMap[chart1.index] = {
-        selectedVerbosity: 'full',
-        selectedTextSize: 'default',
-        isContrastChecked: false,
-        isBorderChecked: false,
-        isAltPointDescChecked: false,
-        isAltPointLabelChecked: false,
-        isInfoChecked: false,
-        isPatternChecked: false,
-        fontSize: '',
-        isSelectedTheme: 'default',
-        isSonificationChecked: false,
-        isSonificationSpeechChecked: false
-    };
+    chartSettingsMap[chart1.index] = defaultSettings;
 
     // Copying settings to chart2
     chartSettingsMap[chart2.index] =
