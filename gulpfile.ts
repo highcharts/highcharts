@@ -97,6 +97,7 @@ Gulp.registry(new GulpForwardReference());
     'test-karma',
     'test-tree',
     'test-ts',
+    'test-cypress',
     'update',
     'unsorted/build-modules',
     'unsorted/compare-filesizes',

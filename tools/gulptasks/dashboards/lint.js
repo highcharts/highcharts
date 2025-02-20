@@ -14,7 +14,7 @@ const { lintDTS } = require('../lint-dts');
 const { lintTS } = require('../lint-ts');
 
 gulp.task('dashboards/lint', gulp.series(
-    () => lintTS({ datagrid: true }),
+    () => lintTS({ product: 'Grid' }),
     () => lintTS({ dashboards: true }),
     () => lintDTS({ dashboards: true })
 ));
