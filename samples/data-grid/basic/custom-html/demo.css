@@ -5,6 +5,6 @@
     margin: 8px;
 }
 
-.highcharts-datagrid-container tbody tr {
-    height: 68px;
+.highcharts-datagrid-container tbody td {
+    height: 90px;
 }

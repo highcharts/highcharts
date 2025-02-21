@@ -165,8 +165,8 @@ class MapPoint extends ScatterPoint {
 
             // Cache point bounding box for use to position data labels, bubbles
             // etc
-            const propMiddleLon = properties && properties['hc-middle-lon'],
-                propMiddleLat = properties && properties['hc-middle-lat'];
+            const propMiddleLon = properties?.['hc-middle-lon'],
+                propMiddleLat = properties?.['hc-middle-lat'];
 
             if (mapView && isNumber(propMiddleLon) && isNumber(propMiddleLat)) {
                 const projectedPoint = projection.forward(
@@ -175,8 +175,8 @@ class MapPoint extends ScatterPoint {
                 bounds.midX = projectedPoint[0];
                 bounds.midY = projectedPoint[1];
             } else {
-                const propMiddleX = properties && properties['hc-middle-x'],
-                    propMiddleY = properties && properties['hc-middle-y'];
+                const propMiddleX = properties?.['hc-middle-x'],
+                    propMiddleY = properties?.['hc-middle-y'];
 
                 bounds.midX = (
                     bounds.x1 + (bounds.x2 - bounds.x1) * pick(

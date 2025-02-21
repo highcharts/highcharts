@@ -5,7 +5,7 @@ Highcharts 3D is a Highcharts module providing limited 3D support to charts. It 
 
 ### Load the required files.
 
-To be able to use Highcharts 3D you first have to load Highcharts as usual and load the additional [3D plugin module](https:/code.highcharts.com/highcharts-3d.js):
+To be able to use Highcharts 3D you first have to load Highcharts as usual and load the additional [3D plugin module](https://code.highcharts.com/highcharts-3d.js):
 
 ```html
 <script src="https://code.highcharts.com/highcharts-3d.js"><script>
