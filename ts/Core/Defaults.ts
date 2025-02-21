@@ -724,6 +724,25 @@ const defaultOptions: DefaultOptions = {
     subtitle: {
 
         /**
+         * The horizontal alignment of the subtitle. Can be one of "left",
+         * "center" and "right". Since v12, it defaults to `undefined`, meaning
+         * the actual alignment is inherited from the alignment of the main
+         * title.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title and subtitle alignment, dynamic
+         * @sample {highcharts} highcharts/subtitle/align/
+         *         Footnote at right of plot area
+         * @sample {highstock} stock/chart/subtitle-footnote
+         *         Footnote at bottom right of plot area
+         *
+         * @type  {Highcharts.AlignValue}
+         * @default undefined
+         * @since 2.0
+         * @apioption subtitle.align
+         */
+
+        /**
          * When the subtitle is floating, the plot area will not move to make
          * space for it.
          *
@@ -852,25 +871,6 @@ const defaultOptions: DefaultOptions = {
          *         Formatted and linked text.
          */
         text: ''
-
-        /**
-         * The horizontal alignment of the subtitle. Can be one of "left",
-         * "center" and "right". Since v12, it defaults to `undefined`, meaning
-         * the actual alignment is inherited from the alignment of the main
-         * title.
-         *
-         * @sample {highcharts} highcharts/title/align-auto/
-         *         Default title and subtitle alignment, dynamic
-         * @sample {highcharts} highcharts/subtitle/align/
-         *         Footnote at right of plot area
-         * @sample {highstock} stock/chart/subtitle-footnote
-         *         Footnote at bottom right of plot area
-         *
-         * @type  {Highcharts.AlignValue}
-         * @default undefined
-         * @since 2.0
-         * @apioption subtitle.align
-         */
     },
 
     /**
