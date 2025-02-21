@@ -296,19 +296,6 @@ function applyChartTheme(chart) {
     if (dialog) {
         setDialogTheme(dialog, chart);
     }
-
-    // Update the altTextDivs whenever the theme is changed
-    chart.altTextDivs.forEach(div => {
-        if (theme === darkTheme) {
-            div.style.backgroundColor = '#444444';
-            div.style.color = '#ffffff';
-            div.style.border = '1px solid #666666';
-        } else {
-            div.style.backgroundColor = '#ffffff';
-            div.style.color = '#000000';
-            div.style.border = '1px solid #000';
-        }
-    });
 }
 
 function setDialogTheme(dialog, chart) {
@@ -424,22 +411,6 @@ function updateChartColorLogic(chart) {
     chart.update({
         series: seriesOptions
     });
-
-    // Update altTextDiv styles based on the theme
-    chart.altTextDivs.forEach(div => {
-        if (isDarkMode) {
-            div.style.backgroundColor =
-                'rgb(68, 68, 68)';
-            div.style.color =
-                'rgb(255, 255, 255)';
-            div.style.border = '1px solid rgb(102, 102, 102)';
-        } else {
-            div.style.backgroundColor =
-                'rgb(255, 255, 255)';
-            div.style.color = 'rgb(0, 0, 0)';
-            div.style.border = '1px solid rgb(204, 204, 204)';
-        }
-    });
 }
 
 /* -------------------- INITIALIZATION --------------------- */
@@ -448,9 +419,7 @@ function initializeCharts() {
     const chart2 = Highcharts.chart('container2', getScatterChartConfig());
 
     chart1.prefMenu = {};
-    chart1.altTextDivs = [];
     chart2.prefMenu = {};
-    chart2.altTextDivs = [];
 
     // Store settings in global settings map
     chartSettingsMap[chart1.index] = defaultSettings;
@@ -952,13 +921,8 @@ function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
                 `${point.x} cm, ${point.y} kg.`;
             }
 
-            // Update corresponding alt text div
-            const altTextDiv = chart.altTextDivs[globalIndex];
-            if (altTextDiv) {
-                altTextDiv.textContent = altText;
-            }
-
             globalIndex++;
+            console.log(globalIndex);
 
         });
     });
