@@ -83,12 +83,8 @@ QUnit.test('Navigator in Highcharts.setOptions', function (assert) {
     );
 });
 
-// Enabled navigator again for further tests
-Highcharts.setOptions({
-    navigator: {
-        enabled: true
-    }
-});
+// Reset Navigator default enabled option
+delete Highcharts.defaultOptions.navigator.enabled;
 
 QUnit.test('Navigator (#4053)', function (assert) {
     var chart = new Highcharts.StockChart({
