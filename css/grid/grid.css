@@ -6,52 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-:root,
-.highcharts-light {
-    --idg-background-color: #ffffff;
-
-    /* Neutral colors */
-    --idg-neutral-color-100: #000000;
-    --idg-neutral-color-60: #666666;
-    --idg-neutral-color-20: #cccccc;
-    --idg-neutral-color-5: #f2f2f2;
-    --idg-neutral-color-3: #f7f7f7;
-
-    /* Highlight colors */
-    --idg-highlight-color-20: #ccd3ff;
-    --idg-highlight-color-10: #e6e9ff;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        /* UI colors */
-        --idg-background-color: #333333;
-        --idg-neutral-color-100: rgb(255, 255, 255);
-        --idg-neutral-color-60: rgb(173, 173, 173);
-        --idg-neutral-color-20: rgb(92, 92, 92);
-        --idg-neutral-color-5: rgb(61, 61, 61);
-        --idg-neutral-color-3: rgb(57, 57, 57);
-
-        /* Highlight color variations */
-        --idg-highlight-color-20: rgb(65, 74, 92);
-        --idg-highlight-color-10: rgb(58, 63, 71);
-    }
-}
-
-.highcharts-dark {
-    /* UI colors */
-    --idg-background-color: #333333;
-    --idg-neutral-color-100: rgb(255, 255, 255);
-    --idg-neutral-color-60: rgb(173, 173, 173);
-    --idg-neutral-color-20: rgb(92, 92, 92);
-    --idg-neutral-color-5: rgb(61, 61, 61);
-    --idg-neutral-color-3: rgb(57, 57, 57);
-
-    /* Highlight color variations */
-    --idg-highlight-color-20: rgb(65, 74, 92);
-    --idg-highlight-color-10: rgb(58, 63, 71);
-}
-
 /*  ==== Start Grid Color Scheme  ==== */
 .hcg-container {
     --idg-default-color: #000000;
@@ -366,8 +320,8 @@
 
 /* !!!!!!!!!!!!!!! */
 .hcg-table thead th .hcg-column-resizer:hover::after {
-    border-left: 2px solid var(--idg-neutral-color-20);
-    border-right: 2px solid var(--idg-neutral-color-20);
+    border-left: 2px solid var(--hcdg-border-color);
+    border-right: 2px solid var(--hcdg-border-color);
 }
 
 /* Sorting */
@@ -611,7 +565,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-header-cell-content::after {
-    color: var(--idg-neutral-color-60); /* !!!!!!! */
+    color: var(--hcdg-loader-color); /* !!!!!!! */
 }
 
 .hcg-table td:first-child, /* !!!!!!!!!! */
@@ -680,7 +634,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-loading-wrapper .hcg-loading-message {
-    color: var(--idg-neutral-color-100);
+    color: var(--hcdg-color);
 }
 
 .hcg-container:has(.hcg-loading-wrapper) .hcg-no-data,
@@ -689,8 +643,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-loading-wrapper .hcg-spinner {
-    border: var(--idg-loading-wrapper-border-size) solid var(--idg-neutral-color-60);
-    border-top: var(--idg-loading-wrapper-border-size) solid var(--idg-neutral-color-100);
+    border: var(--idg-loading-wrapper-border-size) solid var(--hcdg-loader-color);
+    border-top: var(--idg-loading-wrapper-border-size) solid var(--hcdg-color);
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -712,24 +666,27 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 /* Start Grid Default Theme */
 .hcg-theme-default {
     --hcdg-border-radius: 5px;
-    --hcdg-color: var(--idg-neutral-color-100);
+    --hcdg-color: #000000;
     --hcdg-padding: 8px;
     --hcdg-border-width: 1px;
-    --hcdg-border-color: var(--idg-neutral-color-20);
-    --hcdg-background: var(--idg-background-color);
+    --hcdg-border-color: #cccccc;
+    --hcdg-background: #ffffff;
 
     /* Header row background color */
-    --hcdg-header-row-background: var(--idg-neutral-color-5);
+    --hcdg-header-row-background: #f2f2f2;
 
     /* Row colors */
-    --hcdg-row-even-background: var(--idg-neutral-color-3);
+    --hcdg-row-even-background: #f7f7f7;
 
     /* Hovered colors */
-    --hcdg-cell-hovered-background: var(--idg-highlight-color-20);
-    --hcdg-row-hovered-background: var(--idg-highlight-color-10);
-    --hcdg-column-hovered-background: var(--idg-highlight-color-10);
-    --hcdg-header-column-hovered-background: var(--idg-highlight-color-20);
-    --hcdg-header-cell-hovered-background: var(--idg-highlight-color-20);
+    --hcdg-cell-hovered-background: #ccd3ff;
+    --hcdg-row-hovered-background: #e6e9ff;
+    --hcdg-column-hovered-background: #e6e9ff;
+    --hcdg-header-column-hovered-background: #ccd3ff;
+    --hcdg-header-cell-hovered-background: #ccd3ff;
+
+    /* Loader */
+    --hcdg-loader-color: #666666;
 }
 
 /* End Grid Default Theme */
