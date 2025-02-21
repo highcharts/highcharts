@@ -6,6 +6,8 @@
  * License: www.highcharts.com/license
  */
 
+/* stylelint-disable max-line-length */
+
 /*  ==== Start Grid Color Scheme  ==== */
 .hcg-container {
     --idg-default-color: #000000;
@@ -28,10 +30,7 @@
         --idg-positive-default-background: hsl(120, 41%, 25%);
     }
 }
-
 /*  ==== End Grid Color Scheme  ==== */
-
-/* stylelint-disable max-line-length */
 
 /* ==== Start Grid Variables ==== */
 .hcg-container {
@@ -664,7 +663,9 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 /* End Grid CSS Helpers Classes */
 
 /* Start Grid Default Theme */
-.hcg-theme-default {
+:root,
+.hcg-theme-default,
+.highcharts-light {
     --hcdg-border-radius: 5px;
     --hcdg-color: #000000;
     --hcdg-padding: 8px;
@@ -687,6 +688,53 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
     /* Loader */
     --hcdg-loader-color: #666666;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root,
+    .hcg-theme-default {
+        --hcdg-color: rgb(255, 255, 255);;
+        --hcdg-border-color: rgb(92, 92, 92);;
+        --hcdg-background: #333333;
+    
+        /* Header row background color */
+        --hcdg-header-row-background: rgb(61, 61, 61);
+    
+        /* Row colors */
+        --hcdg-row-even-background: rgb(57, 57, 57);
+    
+        /* Hovered colors */
+        --hcdg-cell-hovered-background: rgb(65, 74, 92);
+        --hcdg-row-hovered-background: rgb(58, 63, 71);
+        --hcdg-column-hovered-background: rgb(58, 63, 71);
+        --hcdg-header-column-hovered-background: rgb(65, 74, 92);
+        --hcdg-header-cell-hovered-background: rgb(65, 74, 92);
+    
+        /* Loader */
+        --hcdg-loader-color: rgb(173, 173, 173);
+    }
+}
+
+.highcharts-dark {
+    --hcdg-color: rgb(255, 255, 255);;
+    --hcdg-border-color: rgb(92, 92, 92);;
+    --hcdg-background: #333333;
+
+    /* Header row background color */
+    --hcdg-header-row-background: rgb(61, 61, 61);
+
+    /* Row colors */
+    --hcdg-row-even-background: rgb(57, 57, 57);
+
+    /* Hovered colors */
+    --hcdg-cell-hovered-background: rgb(65, 74, 92);
+    --hcdg-row-hovered-background: rgb(58, 63, 71);
+    --hcdg-column-hovered-background: rgb(58, 63, 71);
+    --hcdg-header-column-hovered-background: rgb(65, 74, 92);
+    --hcdg-header-cell-hovered-background: rgb(65, 74, 92);
+
+    /* Loader */
+    --hcdg-loader-color: rgb(173, 173, 173);
 }
 
 /* End Grid Default Theme */
