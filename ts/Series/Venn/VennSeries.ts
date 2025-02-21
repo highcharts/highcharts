@@ -442,11 +442,9 @@ class VennSeries extends ScatterSeries {
                     // animation
                     if (args.d) {
                         setTimeout((): void => {
-                            if (point && point.graphic) {
-                                point.graphic.animate({
-                                    opacity: 1
-                                });
-                            }
+                            point?.graphic?.animate({
+                                opacity: 1
+                            });
                         }, animOptions.duration);
                     }
                 }
@@ -485,7 +483,7 @@ class VennSeries extends ScatterSeries {
                 attribs: attribs,
                 group: group,
                 renderer: renderer,
-                shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
+                shapeType: shapeArgs?.d ? 'path' : 'circle'
             });
         }
 
@@ -515,12 +513,12 @@ class VennSeries extends ScatterSeries {
     ): SVGAttributes {
         const series = this,
             seriesOptions = series.options || {},
-            pointOptions = point && point.options || {},
+            pointOptions = point?.options || {},
             stateOptions =
                 (state && (seriesOptions.states as any)[state as any]) || {},
             options = merge(
                 seriesOptions,
-                { color: point && point.color },
+                { color: point?.color },
                 pointOptions,
                 stateOptions
             );
@@ -542,7 +540,7 @@ class VennSeries extends ScatterSeries {
 
         const chart = this.chart;
 
-        this.processedXData = this.xData as any;
+        this.dataTable.modified = this.dataTable;
         this.generatePoints();
 
         // Process the data before passing it into the layout function.
@@ -591,7 +589,7 @@ class VennSeries extends ScatterSeries {
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
                 dataLabelValues = mapOfIdToLabelValues[id] || {},
-                dlOptions = point.options && point.options.dataLabels;
+                dlOptions = point.options?.dataLabels;
 
             let shapeArgs: (SVGAttributes|undefined),
                 dataLabelWidth = dataLabelValues.width,

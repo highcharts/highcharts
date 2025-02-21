@@ -5,7 +5,6 @@
     ).then(response => response.json());
 
     // Load the data from a Google Spreadsheet
-    // https://docs.google.com/spreadsheets/d/1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs
     Highcharts.data({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: '1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs',
@@ -14,24 +13,45 @@
         parsed: function (columns) {
 
             /**
-             * Event handler for clicking points. Use jQuery UI to pop up
-             * a pie chart showing the details for each state.
+             * Event handler for clicking points.
              */
             function pointClick() {
                 const row = this.options.row,
-                    $div = $('<div></div>')
-                        .dialog({
-                            title: this.name,
-                            width: 320,
-                            height: 300
-                        });
+                    chart = this.series.chart;
 
-                window.chart = new Highcharts.Chart({
+                // Remove existing annotation if present
+                chart.removeAnnotation('election-popup');
+
+                // Add new annotation with a pie chart
+                chart.addAnnotation({
+                    id: 'election-popup',
+                    labelOptions: {
+                        useHTML: true,
+                        backgroundColor: '#fff'
+                    },
+                    labels: [{
+                        point: {
+                            x: chart.plotWidth / 2,
+                            y: chart.plotHeight / 10
+                        },
+                        text: `
+                            <div id="annotation-header">
+                                <span>${this.name}</span>
+                                <button id="annotation-close-btn">
+                                X
+                                </button>
+                            </div>
+                            <div id="popup-pie"></div>
+                        `,
+                        shape: 'rect'
+                    }],
+                    zIndex: 10
+                });
+
+                // Create the pie chart inside the annotation
+                const pieChart = Highcharts.chart('popup-pie', {
                     chart: {
-                        renderTo: $div[0],
-                        type: 'pie',
-                        width: 290,
-                        height: 240
+                        type: 'pie'
                     },
                     title: {
                         text: null
@@ -39,6 +59,11 @@
                     legend: {
                         enabled: true,
                         reversed: true
+                    },
+                    navigation: {
+                        buttonOptions: {
+                            enabled: false
+                        }
                     },
                     series: [{
                         name: 'Votes',
@@ -57,10 +82,18 @@
                         showInLegend: true
                     }]
                 });
+
+                document.getElementById('annotation-close-btn')
+                    .addEventListener('click', function () {
+                        pieChart?.destroy();
+                        setTimeout(function () {
+                            chart.removeAnnotation('election-popup');
+                        }, 0);
+                    });
+
             }
 
             // Make the columns easier to read
-
             let keys = columns[0];
             const names = columns[1],
                 percent = columns[7],
@@ -70,7 +103,8 @@
                         type: 'map',
                         map: mapData,
                         renderTo: 'container',
-                        borderWidth: 1
+                        borderWidth: 1,
+                        spacingBottom: 1
                     },
 
                     title: {
@@ -154,7 +188,7 @@
             mapData.objects.default.geometries.forEach(function (geometry) {
                 if (geometry.properties['postal-code']) {
                     const postalCode = geometry.properties['postal-code'],
-                        i = $.inArray(postalCode, keys);
+                        i = keys.indexOf(postalCode);
                     options.series[0].data.push(Highcharts.extend({
                         value: parseFloat(percent[i]),
                         name: names[i],
@@ -165,16 +199,15 @@
             });
 
             // Initialize the chart
-            window.chart = new Highcharts.Map(options);
+            Highcharts.mapChart('container', options);
         },
 
         error: function () {
-            $('#container').html(
-                '<div class="loading">' +
-                '<i class="icon-frown icon-large"></i> ' +
-                '<p>Error loading data from Google Spreadsheets</p>' +
-                '</div>'
-            );
+            document.getElementById('container').innerHTML = `
+                <div class="loading">
+                    <p>Error loading data from Google Spreadsheets</p>
+                </div>
+            `;
         }
     });
 

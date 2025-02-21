@@ -80,7 +80,7 @@ export interface RangeSelectorOptions {
     inputBoxBorderColor: ColorString;
     inputBoxHeight: number;
     inputBoxWidth?: number;
-    inputDateFormat: string;
+    inputDateFormat: Time.DateTimeFormat;
     inputDateParser?: RangeSelectorParseCallbackFunction;
     inputEditDateFormat: string;
     inputEnabled: boolean;

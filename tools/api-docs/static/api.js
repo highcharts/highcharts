@@ -324,6 +324,10 @@ hapi.ajax = function(p) {
 
     node.className += def.isLeaf ? ' leaf' : ' parent';
 
+    if (def.deprecated) {
+      node.className += ' deprecated';
+    }
+
     if (!def.isLeaf) {
       arrow = cr('i', 'fa fa-caret-right');
       children = cr('div', 'children');
@@ -345,7 +349,7 @@ hapi.ajax = function(p) {
         endBracket1.innerHTML = ' }';
       }
 
-    } else if(asFunction) {
+    } else if (asFunction) {
       // Open parameters
       functionBracketOpen = cr('span', 'bracket', '(');
       // Parameters

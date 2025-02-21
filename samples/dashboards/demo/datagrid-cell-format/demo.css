@@ -1,0 +1,52 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+:root {
+    --highlight-cell: #f0f2ca;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highlight-cell: #4d4f42;
+    }
+}
+
+#container {
+    height: 235px;
+    margin: 8px;
+}
+
+.highcharts-description {
+    padding-left: 10px;
+}
+
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-row:has(td.highlight-cell),
+.highcharts-datagrid-table tbody .highcharts-datagrid-row-odd:has(td.highlight-cell) {
+    background-color: var(--highlight-cell);
+}
+
+/* stylelint-disable max-line-length */
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row:has(td.highlight-cell),
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-row.highcharts-datagrid-row-odd.highcharts-datagrid-hovered-row:has(td.highlight-cell) {
+    background-color: var(--highcharts-highlight-color-10);
+}
+/* stylelint-enable max-line-length */
+
+.bold-column {
+    font-weight: bold;
+    text-align: center;
+}
+
+.high-color {
+    color: #3ea100;
+    font-weight: bold;
+}
+
+.low-color {
+    color: #c11a1a;
+    font-weight: bold;
+}
+
+.over-30 {
+    color: #8c00ff;
+    font-weight: bold;
+}

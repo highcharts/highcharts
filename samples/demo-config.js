@@ -50,8 +50,8 @@ module.exports = {
         path: '/gantt/'
     },
     'Highcharts Dashboards': {
-        categories: ['General'],
-        filter: { tags: ['Highcharts dashboards demo'] },
+        categories: ['Basic', 'Advanced'],
+        filter: { tags: ['Highcharts Dashboards demo'] },
         path: '/dashboards/'
     }
 };

@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 /* eslint-disable jsdoc/require-description */
 const MathModifier = Dashboards.DataModifier.types.Math;
 
@@ -27,7 +32,6 @@ const KPIChartOptions = {
         height: 166,
         margin: [8, 8, 16, 8],
         spacing: [8, 8, 8, 8],
-        styledMode: true,
         type: 'solidgauge'
     },
     pane: {
@@ -46,8 +50,6 @@ const KPIChartOptions = {
             format: '{y:.0f}',
             y: -34
         },
-        animation: false,
-        animationLimit: 0,
         enableMouseTracking: false,
         innerRadius: '90%',
         radius: '120%'
@@ -242,8 +244,7 @@ async function setupBoard() {
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
-                    ).then(response => response.json()),
-                    styledMode: true
+                    ).then(response => response.json())
                 },
                 colorAxis: {
                     startOnTick: false,
@@ -375,8 +376,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Average Temperature',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {
@@ -405,8 +405,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Maximum Temperature',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {
@@ -435,8 +434,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Days with Rain',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {
@@ -464,46 +462,68 @@ async function setupBoard() {
                 highlight: true
             },
             dataGridOptions: {
-                cellHeight: 38,
-                editable: false,
-                columns: {
-                    time: {
-                        show: false
-                    },
-                    FD: {
-                        headerFormat: 'Days with frost'
-                    },
-                    ID: {
-                        headerFormat: 'Days with ice'
-                    },
-                    RR1: {
-                        headerFormat: 'Days with rain'
-                    },
-                    TN: {
-                        show: false
-                    },
-                    TX: {
-                        show: false
-                    },
-                    TNC: {
-                        headerFormat: 'Average temperature °C',
-                        cellFormat: '{value:.1f}'
-                    },
-                    TNF: {
-                        headerFormat: 'Average temperature °F',
-                        cellFormat: '{value:.1f}',
-                        show: false
-                    },
-                    TXC: {
-                        headerFormat: 'Maximum temperature °C',
-                        cellFormat: '{value:.1f}'
-                    },
-                    TXF: {
-                        headerFormat: 'Maximum temperature °F',
-                        cellFormat: '{value:.1f}',
-                        show: false
+                credits: {
+                    enabled: false
+                },
+                columns: [{
+                    id: 'time',
+                    enabled: false
+                }, {
+                    id: 'FD',
+                    header: {
+                        format: 'Days with frost'
                     }
-                }
+                }, {
+                    id: 'ID',
+                    header: {
+                        format: 'Days with ice'
+                    }
+                }, {
+                    id: 'RR1',
+                    header: {
+                        format: 'Days with rain'
+                    }
+                }, {
+                    id: 'TN',
+                    enabled: false
+                }, {
+                    id: 'TX',
+                    enabled: false
+                }, {
+                    id: 'TNC',
+                    header: {
+                        format: 'Average temperature °C'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    }
+                }, {
+                    id: 'TNF',
+                    header: {
+                        format: 'Average temperature °F'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    },
+                    enabled: false
+                }, {
+                    id: 'TXC',
+                    header: {
+                        format: 'Maximum temperature °C'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    }
+                }, {
+                    id: 'TXF',
+                    header: {
+                        format: 'Maximum temperature °F'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    },
+                    enabled: false
+                }]
             },
             editable: true
         }, {
@@ -519,7 +539,6 @@ async function setupBoard() {
             chartOptions: {
                 chart: {
                     spacing: [40, 40, 40, 10],
-                    styledMode: true,
                     type: 'spline',
                     animation: false,
                     animationLimit: 0
@@ -830,23 +849,20 @@ async function updateBoard(board, city, column, scale, newData) {
         const showCelsius = scale === 'C';
 
         // Update city grid selection
-        await selectionGrid.update({
-            dataGridOptions: {
-                columns: {
-                    TNC: {
-                        show: showCelsius
-                    },
-                    TNF: {
-                        show: !showCelsius
-                    },
-                    TXC: {
-                        show: showCelsius
-                    },
-                    TXF: {
-                        show: !showCelsius
-                    }
-                }
-            }
+        await selectionGrid.dataGrid.update({
+            columns: [{
+                id: 'TNC',
+                enabled: showCelsius
+            }, {
+                id: 'TNF',
+                enabled: !showCelsius
+            }, {
+                id: 'TXC',
+                enabled: showCelsius
+            }, {
+                id: 'TXF',
+                enabled: !showCelsius
+            }]
         });
 
         // Update city chart

@@ -19,6 +19,7 @@ import type {
     DPOParamsOptions
 } from './DPOOptions';
 import type DPOPoint from './DPOPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -135,14 +136,14 @@ class DPOIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: DPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         const period: number = (params.period as any),
             index: number = (params.index as any),
             offset: number = Math.floor(period / 2 + 1),
             range: number = period + offset,
-            xVal: Array<number> = series.xData || [],
+            xVal = series.xData || [],
             yVal: (Array<number> | Array<Array<number>>) =
                 (series.yData as any) || [],
             yValLen: number = yVal.length,

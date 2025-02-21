@@ -28,6 +28,7 @@ const {
 import StreamgraphSeriesDefaults from './StreamgraphSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     merge,
     extend
 } = U;
@@ -84,12 +85,19 @@ class StreamgraphSeries extends AreaSplineSeries {
         // Y value
         pointExtremes[1] -= stack.total / 2;
 
-        // Record the Y data for use when getting axis extremes
-        (this.stackedYData as any)[i] = pointExtremes;
+        // Record the Y data for use when getting axis extremes. Register only
+        // the max. This is picked up in the `afterGetExtremes` event, and the
+        // dataMin property is reflected.
+        if (this.stackedYData) {
+            this.stackedYData[i] = Math.max.apply(0, pointExtremes);
+        }
     }
-
 }
 
+// Reflect the dataMin property, as only dataMax is registered above
+addEvent(StreamgraphSeries, 'afterGetExtremes', (e): void => {
+    (e as any).dataExtremes.dataMin = -(e as any).dataExtremes.dataMax;
+});
 /* *
  *
  *  Class Prototype

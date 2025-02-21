@@ -24,6 +24,7 @@ import type SankeyPoint from './SankeyPoint';
 import U from '../../Core/Utilities.js';
 const {
     defined,
+    getAlignFactor,
     relativeLength
 } = U;
 
@@ -207,11 +208,7 @@ namespace SankeyColumnComposition {
                 }, 0);
 
             // Node alignment option handling #19096
-            return {
-                top: 0,
-                center: 0.5,
-                bottom: 1
-            }[series.options.nodeAlignment || 'center'] * (
+            return getAlignFactor(series.options.nodeAlignment || 'center') * (
                 (series.chart.plotSizeY || 0) - height
             );
         }

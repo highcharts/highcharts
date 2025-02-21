@@ -664,3 +664,49 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Crosshairs label should be correctly justified.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            xAxis: {
+                crosshair: true
+            },
+
+            tooltip: {
+                enabled: false
+            },
+            yAxis: {
+                title: '',
+                opposite: false,
+                crosshair: {
+                    label: {
+                        enabled: true,
+                        format: '{value:.2f}'
+                    }
+                },
+                labels: {
+                    align: 'left',
+                    format: '{value:.2f}',
+                    y: 6,
+                    x: 2
+                }
+            },
+
+            series: [
+                {
+                    data: [1, 2, 34, 23, 43, 3]
+                }
+            ]
+        });
+
+        chart.series[0].points[3].onMouseOver();
+
+        const yAxis = chart.yAxis[0];
+        assert.equal(
+            yAxis.crossLabel.x >= 0,
+            true,
+            'Crosshair label is justified'
+        );
+    }
+);

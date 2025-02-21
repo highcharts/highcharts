@@ -1,3 +1,17 @@
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 pre {
     display: none;
 }
@@ -88,4 +102,8 @@ pre {
 .col-display-footer {
     width: 80%;
     text-align: center;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

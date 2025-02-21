@@ -1,4 +1,3 @@
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
@@ -13,4 +12,10 @@
 #output {
     width: 600px;
     height: 300px;
+}
+
+@media screen and (max-width: 576px) {
+    .highcharts-dashboards-cell {
+        flex: 1 1 100%;
+    }
 }

@@ -311,6 +311,10 @@ hapi.ajax = function (p) {
 
         node.className += def.isLeaf ? ' leaf' : ' parent';
 
+        if (def.deprecated) {
+            node.className += ' deprecated';
+        }
+
         if (def.isLeaf) {
             console.log(def);
             postfix = cr(

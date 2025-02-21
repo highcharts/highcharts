@@ -1,13 +1,16 @@
 Themes
 ======
 
-A Highcharts theme is a set of pre-defined options that are applied as default Highcharts options before each chart is instantiated. The highcharts.zip package comes with some themes that can easily be applied to your chart by including the following script tag:
+A Highcharts theme is a set of pre-defined options that are applied as default Highcharts options before each chart is instantiated.
+The highcharts.zip package comes with several themes that can be easily applied to your chart by including the following script tag:
 
 ```html
 <script src="/js/themes/gray.js"></script>
 ```
 
 The Typescript sources for the themes can be found on the [Highcharts repository](https://github.com/highcharts/highcharts/tree/master/ts/masters/themes).
+
+When using [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css), themes can be applied by loading [additional CSS files](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode#featured-themes).
 
 Creating your own theme
 -----------------------

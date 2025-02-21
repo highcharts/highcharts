@@ -1,3 +1,17 @@
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 .highcharts-figure {
     min-width: 360px;
     max-width: 800px;
@@ -13,12 +27,11 @@ small {
     font-size: 0.6em;
 }
 
-.innerTable {
-    font-size: 0.9em;
-}
-
-table.innerTable td {
+.center-label p {
     padding: 0;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .symbol {
@@ -42,4 +55,8 @@ table.innerTable td {
 
 #csv {
     display: none;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

@@ -17,7 +17,7 @@
 
 import FS from 'node:fs/promises';
 import FSLib from '../libs/fs.js';
-import TSLib from '../libs/ts.js';
+import TSLib from '../libs/TS';
 import TreeLib from '../libs/tree.js';
 const { toJSONString } = TreeLib;
 import Yargs from 'yargs';

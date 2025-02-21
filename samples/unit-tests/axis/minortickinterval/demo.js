@@ -84,7 +84,10 @@ QUnit.test('Legacy - auto, log', function (assert) {
             width: 600,
             height: 250,
             marginTop: 40,
-            marginBottom: 60
+            marginBottom: 60,
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             minorTickInterval: 'auto',
@@ -216,7 +219,10 @@ QUnit.test('Typed - auto, linear', function (assert) {
     chart = Highcharts.chart('container', {
         chart: {
             width: 600,
-            height: 400
+            height: 400,
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             minorTicks: true
@@ -283,7 +289,10 @@ QUnit.test('Typed - auto, log', function (assert) {
             width: 600,
             height: 250,
             marginTop: 40,
-            marginBottom: 60
+            marginBottom: 60,
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             minorTicks: true,

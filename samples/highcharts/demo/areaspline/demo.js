@@ -4,12 +4,10 @@ Highcharts.chart('container', {
         type: 'areaspline'
     },
     title: {
-        text: 'Moose and deer hunting in Norway, 2000 - 2024',
-        align: 'left'
+        text: 'Moose and deer hunting in Norway, 2000 - 2024'
     },
     subtitle: {
-        text: 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>',
-        align: 'left'
+        text: 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>'
     },
     legend: {
         layout: 'vertical',

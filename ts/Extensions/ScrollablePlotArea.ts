@@ -42,6 +42,7 @@ const {
     createElement,
     css,
     defined,
+    erase,
     merge,
     pushUnique
 } = U;
@@ -177,7 +178,11 @@ class ScrollablePlotArea {
                 for (const axis of chart.axes) {
                     // Apply the corrected plot size to the axes of the other
                     // orientation than the scrolling direction
-                    if (axis.horiz === recalculateHoriz) {
+                    if (
+                        axis.horiz === recalculateHoriz ||
+                        // Or parallel axes
+                        (chart.hasParallelCoordinates && axis.coll === 'yAxis')
+                    ) {
                         axis.setAxisSize();
                         axis.setAxisTranslation();
                     }
@@ -458,11 +463,32 @@ class ScrollablePlotArea {
             axisClass = '.highcharts-yaxis';
         }
 
-        if (axisClass) {
-            fixedSelectors.push(
+        if (
+            axisClass && !(
+                this.chart.hasParallelCoordinates &&
+                axisClass === '.highcharts-yaxis'
+            )
+        ) {
+            // Add if not added yet
+            for (const className of [
                 `${axisClass}:not(.highcharts-radial-axis)`,
                 `${axisClass}-labels:not(.highcharts-radial-axis-labels)`
-            );
+            ]) {
+                pushUnique(fixedSelectors, className);
+            }
+        } else {
+            // Clear all axis related selectors
+            for (const classBase of [
+                '.highcharts-xaxis',
+                '.highcharts-yaxis'
+            ]) {
+                for (const className of [
+                    `${classBase}:not(.highcharts-radial-axis)`,
+                    `${classBase}-labels:not(.highcharts-radial-axis-labels)`
+                ]) {
+                    erase(fixedSelectors, className);
+                }
+            }
         }
 
         for (const className of fixedSelectors) {

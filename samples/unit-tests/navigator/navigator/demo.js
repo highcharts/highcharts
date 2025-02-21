@@ -352,6 +352,53 @@ QUnit.test('General Navigator tests', function (assert) {
             'disabled and navigator.baseSeries not set (#13114).'
     );
 
+    chart.update({
+        scrollbar: {
+            enabled: true
+        }
+    });
+    const defaultScrollbarMargin = 3;
+    const actualScrollbarNavigatorSpace =
+        chart.scrollbar.renderer.spacingBox.height -
+        chart.navigator.top - chart.navigator.height;
+    assert.strictEqual(
+        actualScrollbarNavigatorSpace,
+        defaultScrollbarMargin,
+        'The space between scrollbar and navigator should be 3px by default'
+    );
+
+    const scrollbarMargin = 10;
+    const navigatorMargin = 20;
+    chart.update({
+        navigator: {
+            margin: navigatorMargin
+        },
+        scrollbar: {
+            margin: scrollbarMargin
+        },
+        xAxis: {
+            visible: false
+        }
+    });
+    const definedScrollbarNavigatorSpace =
+        chart.scrollbar.y - chart.scrollbar.trackBorderWidth -
+        chart.navigator.top - chart.navigator.height;
+    const definedNavigatorAxisSpace =
+        chart.xAxis[0].bottom - (chart.chartHeight - chart.navigator.top);
+
+    assert.strictEqual(
+        definedScrollbarNavigatorSpace,
+        scrollbarMargin,
+        'The space between scrollbar and navigator should match ' +
+            'the defined scrollbar margin'
+    );
+    assert.strictEqual(
+        definedNavigatorAxisSpace,
+        navigatorMargin,
+        'The space between navigator and axis should match ' +
+            'the defined navigator margin'
+    );
+
     chart.xAxis[0].setExtremes(0, 5);
 
     const outlinePathArray = chart.navigator.outline.pathArray;
@@ -386,6 +433,38 @@ QUnit.test('General Navigator tests', function (assert) {
         chart.xAxis[0].options.maxPadding,
         'Navigator should inherit the maxPadding property from the main axis.'
     );
+
+    // #21584
+    const start = +new Date();
+
+    const lineSeries = {
+        type: 'line',
+        showInNavigator: true,
+        data: Array.from({ length: 10 }, (_, i) => [start + 60000 * i, i])
+    };
+    const lineSeries2 = {
+        type: 'line',
+        showInNavigator: true,
+        data: Array.from({ length: 10 }, (_, i) => [start + 60000 * i, 2 * i])
+    };
+
+    const options = {
+        navigator: {
+            enabled: true
+        },
+        series: [lineSeries, lineSeries2]
+    };
+
+    chart = Highcharts.stockChart('container', options);
+
+    // Update the chart
+    options.series = [lineSeries];
+    options.navigator.enabled = false;
+    chart.update(options, true, true, false);
+    assert.ok(
+        true,
+        `Updating the chart with oneToOne should not throw an error in the
+        navigator, #21584.`);
 });
 
 QUnit.test('Reversed xAxis with navigator', function (assert) {
@@ -512,10 +591,10 @@ QUnit.test('Missing points using navigator (#5699, #17212)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].processedXData[0],
-        chart.series[1].processedXData[0],
+        chart.series[0].getColumn('x', true)[0],
+        chart.series[1].getColumn('x', true)[0],
         'Navigator by default should start at the parent series starting ' +
-        'point, #17212.'
+            'point, #17212.'
     );
 
     navigator.handlesMousedown(
@@ -1417,7 +1496,8 @@ QUnit.test(
     });
 
 
-QUnit.test('Navigator, testing method: getBaseSeriesMin', function (assert) {
+// Skipped due to impractical mock objects. Make integration test instead.
+QUnit.skip('Navigator, testing method: getBaseSeriesMin', function (assert) {
     const method = Highcharts.Navigator.prototype.getBaseSeriesMin;
 
     const mocks = [

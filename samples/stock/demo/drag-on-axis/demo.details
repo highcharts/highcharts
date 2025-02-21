@@ -1,0 +1,12 @@
+---
+name: Drag on axis to zoom
+authors:
+  - Kamil Musialowski
+js_wrap: b
+new_until: 2025-05-01
+requiresManualTesting: true
+tags:
+  - Highcharts Stock demo
+categories:
+  - Various features
+...

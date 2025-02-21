@@ -93,7 +93,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install Dependencies
@@ -164,7 +164,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
           cache-dependency-path: ./highcharts/package-lock.json
 

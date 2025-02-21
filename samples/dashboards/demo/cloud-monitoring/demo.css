@@ -70,42 +70,21 @@ body {
     }
 }
 
-@media (prefers-color-scheme: light) {
-    #instances-table .highcharts-datagrid-column-header,
-    #instances-table .highcharts-datagrid-row {
-        background-color: var(--highcharts-neutral-color-0);
-    }
+#instance-details .highcharts-dashboards-component-html-content img {
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 10px;
+    border-radius: 3px;
 }
 
-/* https://awsicons.dev/ */
-
-#instance-details #instance .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/instance-ico.svg") 0 50% no-repeat;
-}
-
-#instance-details #zone .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/zone-ico.svg") 0 50% no-repeat;
-}
-
-#instance-details #ami .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ami-ico.svg") 0 50% no-repeat;
-}
-
-#instance-details #os .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/os-ico.svg") 0 50% no-repeat;
-}
-
-#instances-table .highcharts-datagrid-container {
-    border: none;
-    font-weight: 100;
+#instance-details .highcharts-dashboards-component-html-content p {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 #instances-table .highcharts-datagrid-row {
     cursor: pointer;
-}
-
-#instances-table .highcharts-datagrid-row .highcharts-datagrid-cell:first-child {
-    white-space: nowrap;
 }
 
 #instances-table .highcharts-datagrid-row.current {
@@ -113,8 +92,50 @@ body {
     pointer-events: none;
 }
 
-#instances-table .highcharts-datagrid-row:hover {
+#instances-table .highcharts-datagrid-hovered-row {
     background-color: var(--highcharts-neutral-color-10);
+}
+
+#instances-table .highcharts-datagrid-row td[data-column-id="HealthIndicator"] {
+    text-align: center;
+}
+
+#instances-table .highcharts-datagrid-row {
+    height: 50px;
+}
+
+#instances-table .highcharts-datagrid-row img {
+    margin-top: 5px;
+    width: 30px;
+    height: 30px;
+}
+
+#instances-table .highcharts-datagrid-table th {
+    height: 35px;
+}
+
+#instances-table .highcharts-datagrid-hovered-column {
+    background: none;
+}
+
+#instances-table .highcharts-datagrid-table {
+    border-width: 1px 0 0;
+}
+
+#instances-table .highcharts-datagrid-column[data-column-id="InstanceId"] {
+    width: 31%;
+}
+
+#instances-table .highcharts-datagrid-column[data-column-id="InstanceType"] {
+    width: 19%;
+}
+
+#instances-table .highcharts-datagrid-column[data-column-id="PublicIpAddress"] {
+    width: 24%;
+}
+
+#instances-table .highcharts-datagrid-column[data-column-id="State"] {
+    width: 16%;
 }
 
 .health-title {
@@ -131,29 +152,19 @@ body {
     margin-top: 15px;
 }
 
-.highcharts-Warning-icon,
-.highcharts-datagrid-cell[data-original-data="Warning"] {
+.highcharts-Warning-icon {
     background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/warning-ico.svg") 50% 50% no-repeat;
     background-size: 64px 64px;
 }
 
-.highcharts-Critical-icon,
-.highcharts-datagrid-cell[data-original-data="Critical"] {
+.highcharts-Critical-icon {
     background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/critical-ico.png") 50% 50% no-repeat;
     background-size: 64px 64px;
 }
 
-.highcharts-OK-icon,
-.highcharts-datagrid-cell[data-original-data="OK"] {
+.highcharts-OK-icon {
     background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ok-ico.svg") 50% 50% no-repeat;
     background-size: 64px 64px;
-}
-
-.highcharts-datagrid-cell[data-original-data="Critical"],
-.highcharts-datagrid-cell[data-original-data="Warning"],
-.highcharts-datagrid-cell[data-original-data="OK"] {
-    background-size: 24px 24px;
-    text-indent: -9999px;
 }
 
 .highcharts-dashboards-component-kpi-value {

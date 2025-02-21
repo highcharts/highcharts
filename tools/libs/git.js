@@ -84,7 +84,7 @@ function getLatestCommitShaSync(useShortVersion = false) {
 /**
  * Returns the files changed compared with master branch
  *
- * @return {Promise<String>}
+ * @return {String}
  *         Promise to keep with results
  */
 function getFilesChanged() {

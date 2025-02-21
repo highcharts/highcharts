@@ -68,6 +68,11 @@ const board = Dashboards.board('container', {
         },
         sync: {
             highlight: true
+        },
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            }
         }
     }]
 });

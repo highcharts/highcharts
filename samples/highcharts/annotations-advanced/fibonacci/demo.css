@@ -1,4 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+
 #container {
     max-width: 800px;
     margin: 0 auto;
+}
+
+#button-box {
+    padding: 10px;
+}
+
+button {
+    height: 36px;
+    padding: 8px 17px;
+    border: 1px solid rgba(227, 227, 232, 1);
+    border-radius: 4px;
+    background-color: white;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+button:hover {
+    opacity: 0.8;
+    cursor: pointer;
+    border-color: #000;
 }

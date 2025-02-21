@@ -1,3 +1,7 @@
+.highcharts-figure {
+    margin: 0;
+}
+
 #container {
     max-width: 800px;
     height: 400px;
@@ -34,28 +38,22 @@ th {
     padding: 10px;
 }
 
-#toggle-announce {
-    background: #00766f;
-    display: inline-block;
-    color: #fff;
+.highcharts-demo-button {
+    background: #f2f2f2;
     border: none;
     border-radius: 4px;
-    outline: none;
-    text-decoration: none;
-    text-align: center;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-    font-size: 1rem;
-    line-height: 140%;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    padding: 8px 16px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
+    transition: background 250ms;
 }
 
-#toggle-announce:hover {
-    background: #00766f;
-    opacity: 0.8;
-    text-decoration: underline;
-    cursor: pointer;
+.highcharts-demo-button:hover {
+    background: #e6e6e6;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

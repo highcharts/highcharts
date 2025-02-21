@@ -27,7 +27,7 @@ Highcharts.chart('container', {
 
     series: [{
         data: [5, 6, 4, 7, 6, 2, 1],
-        pointStart: Date.UTC(2016, 3, 11),
+        pointStart: '2016-04-11',
         pointIntervalUnit: 'day'
     }]
 });

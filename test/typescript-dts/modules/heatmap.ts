@@ -9,13 +9,13 @@ function test() {
     const colors = Highcharts.getOptions().colors;
     const maxSafeInteger = 9007199254740991;
     const tooltipFormatter = function(
-        this: Highcharts.TooltipFormatterContextObject
+        this: Highcharts.Point
     ) {
-        const series = this.series as any; // @todo make Axis.categories public
+        const series = this.series;
         return (
-            `<b>${series.xAxis.categories[this.point.x]}</b> sold <br>
-            <b>${this.point.value}</b> items on <br>
-            <b>${series.yAxis.categories[this.point.y || maxSafeInteger]}</b>`
+            `<b>${series.xAxis.categories[this.x]}</b> sold <br>
+            <b>${this.value}</b> items on <br>
+            <b>${series.yAxis.categories[this.y || maxSafeInteger]}</b>`
         );
     };
     Highcharts.chart('container', {

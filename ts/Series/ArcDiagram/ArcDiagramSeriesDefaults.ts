@@ -46,11 +46,10 @@ import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
  * @product      highcharts
  * @requires     modules/arc-diagram
  * @exclude      curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
- *               dataSorting, dragDrop, getExtremesFromAll, nodeAlignment,
- *               nodePadding, centerInCategory, pointInterval,
- *               pointIntervalUnit, pointPlacement, pointStart,
- *               relativeXValue, softThreshold, stack, stacking, step,
- *               xAxis, yAxis
+ *               dataSorting, dragDrop, getExtremesFromAll, legendSymbolColor,
+ *               nodeAlignment, nodePadding, centerInCategory, pointInterval,
+ *               pointIntervalUnit, pointPlacement, pointStart, relativeXValue,
+ *               softThreshold, stack, stacking, step, xAxis, yAxis
  * @optionparent plotOptions.arcdiagram
  */
 const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {

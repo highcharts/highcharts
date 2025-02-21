@@ -46,9 +46,6 @@ const HighchartsComponentDefaults: Globals.DeepPartial<Options> = {
     chartClassName: 'chart-container',
     chartID: 'chart-' + uniqueKey(),
     chartOptions: {
-        chart: {
-            styledMode: true
-        },
         series: []
     },
     chartConstructor: 'chart',

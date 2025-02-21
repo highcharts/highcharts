@@ -5,6 +5,10 @@
     margin: 1em auto;
 }
 
+.highcharts-figure {
+    padding: 10px;
+}
+
 .chart {
     height: 220px;
 }

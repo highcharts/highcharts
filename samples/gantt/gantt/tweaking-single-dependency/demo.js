@@ -18,14 +18,14 @@ Highcharts.ganttChart('container', {
         }, {
             id: '1A',
             name: 'task A',
-            start: Date.UTC(2014, 10, 18),
-            end: Date.UTC(2014, 10, 20),
+            start: '2014-11-18',
+            end: '2014-11-20',
             parent: 'p1'
         }, {
             id: '1B',
             name: 'task B',
-            start: Date.UTC(2014, 10, 20),
-            end: Date.UTC(2014, 10, 25),
+            start: '2014-11-20',
+            end: '2014-11-25',
             dependency: '1A',
             parent: 'p1'
         }]
@@ -44,8 +44,8 @@ Highcharts.ganttChart('container', {
         }, {
             id: '2A',
             name: 'task A',
-            start: Date.UTC(2014, 10, 23),
-            end: Date.UTC(2014, 10, 26),
+            start: '2014-11-23',
+            end: '2014-11-26',
             parent: 'p2',
             dependency: { // set options  for a single dependency
                 to: '1B',
@@ -59,8 +59,8 @@ Highcharts.ganttChart('container', {
         }, {
             id: '2B',
             name: 'task B',
-            start: Date.UTC(2014, 10, 27),
-            end: Date.UTC(2014, 10, 29),
+            start: '2014-11-27',
+            end: '2014-11-29',
             dependency: ['1B', '2A'],
             parent: 'p2'
         }]

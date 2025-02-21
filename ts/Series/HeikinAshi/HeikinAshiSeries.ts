@@ -73,9 +73,6 @@ function onHeikinAshiSeriesAfterTranslate(
         heikiashiData = series.heikiashiData,
         cropStart = series.cropStart || 0;
 
-    // Reset the processed data.
-    series.processedYData.length = 0;
-
     // Modify points.
     for (let i = 0; i < points.length; i++) {
         const point = points[i],
@@ -85,11 +82,8 @@ function onHeikinAshiSeriesAfterTranslate(
         point.high = heikiashiDataPoint[1];
         point.low = heikiashiDataPoint[2];
         point.close = heikiashiDataPoint[3];
-
-        series.processedYData.push(
-            [point.open, point.high, point.low, point.close]
-        );
     }
+
 }
 
 /**
@@ -190,23 +184,23 @@ class HeikinAshiSeries extends CandlestickSeries {
      */
     public getHeikinashiData(): void {
         const series = this,
-            processedYData = series.allGroupedData || series.yData,
+            table = series.allGroupedTable || series.dataTable,
+            dataLength = table.rowCount,
             heikiashiData = series.heikiashiData;
 
-        if (!heikiashiData.length && processedYData && processedYData.length) {
-            // Cast to `any` in order to avoid checks before calculation.
-            // Adding null doesn't change anything.
-            const firstPoint: any = processedYData[0];
+        if (!heikiashiData.length && dataLength) {
 
             // Modify the first point.
-            this.modifyFirstPointValue(firstPoint);
+            this.modifyFirstPointValue(
+                table.getRow(0, this.pointArrayMap) as Array<number>
+            );
 
             // Modify other points.
-            for (let i = 1; i < processedYData.length; i++) {
-                const dataPoint: any = processedYData[i],
-                    previousDataPoint: any = heikiashiData[i - 1];
-
-                this.modifyDataPoint(dataPoint, previousDataPoint);
+            for (let i = 1; i < dataLength; i++) {
+                this.modifyDataPoint(
+                    table.getRow(i, this.pointArrayMap) as Array<number>,
+                    heikiashiData[i - 1]
+                );
             }
         }
         series.heikiashiData = heikiashiData;

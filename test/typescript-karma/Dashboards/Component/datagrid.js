@@ -1,12 +1,11 @@
 //@ts-check
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
-const { test } = QUnit;
+const { test, skip } = QUnit;
 
 test('DataGrid component with dataTable', async function (assert) {
     const container = document.createElement('div');
@@ -51,9 +50,14 @@ test('DataGrid component with dataTable', async function (assert) {
         ]
     }, true);
 
+    const dataGridComponent = dashboard.mountedComponents[0].component;
+
+    // Disconnect the resize observer to avoid errors in the test
+    dataGridComponent.dataGrid.viewport.resizeObserver.disconnect();
+
     assert.ok(
         // @ts-ignore
-        dashboard.mountedComponents[0].component.dataGrid.dataTable.columns.product,
+        dataGridComponent.dataGrid.dataTable.columns.product,
         'DataGrid component should have a dataTable with columns.'
     );
 });

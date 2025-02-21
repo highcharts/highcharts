@@ -1,8 +1,7 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'This is a long title that should not overlap the export button',
-        widthAdjust: -200
+        text: 'This is a long title that should not overlap the export button'
     },
 
     xAxis: {
@@ -23,7 +22,8 @@ Highcharts.chart('container', {
     exporting: {
         buttons: {
             contextButton: {
-                text: 'Export'
+                text: 'Export',
+                buttonSpacing: 50
             }
         }
     }

@@ -1,16 +1,7 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         zooming: {
             type: 'xy'
-        },
-        // inverted: true,
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
         }
     },
 
@@ -35,3 +26,23 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        labelOptions: {
+            style: {
+                color: 'rgb(255, 69, 69)',
+                fontSize: '1.3em'
+            }
+        },
+        typeOptions: {
+            connector: {
+                fill: 'rgb(255, 69, 69)',
+                stroke: 'rgba(255, 69, 69, 0.4)',
+                strokeWidth: 2
+            }
+        }
+    });
+};

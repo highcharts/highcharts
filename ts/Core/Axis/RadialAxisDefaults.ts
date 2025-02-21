@@ -29,10 +29,7 @@ const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
     labels: {
         align: void 0, // Auto
         x: 0,
-        y: void 0, // Auto
-        style: {
-            textOverflow: 'none' // Wrap lines by default (#7248)
-        }
+        y: void 0 // Auto
     },
     maxPadding: 0,
     minPadding: 0,

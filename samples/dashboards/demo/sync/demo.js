@@ -2,7 +2,8 @@ Highcharts.setOptions({
     chart: {
         type: 'area',
         spacingTop: 20,
-        spacingBottom: 20
+        spacingBottom: 20,
+        styledMode: true
     },
     title: {
         align: 'left',

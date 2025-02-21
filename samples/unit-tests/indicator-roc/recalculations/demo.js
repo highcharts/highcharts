@@ -66,13 +66,13 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.strictEqual(
-        Highcharts.correctFloat(chart.series[1].yData[3]),
+        Highcharts.correctFloat(chart.series[1].getColumn('y')[3]),
         Highcharts.correctFloat(((80 - 77) / 77) * 100),
         'Correct values'
     );
 
     assert.strictEqual(
-        chart.series[1].yData.length,
+        chart.series[1].getColumn('y').length,
         4,
         'Correct number of points'
     );
@@ -86,7 +86,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[5].remove();
 
     assert.strictEqual(
-        chart.series[1].yData[2],
+        chart.series[1].getColumn('y')[2],
         null,
         'Correct values after point.remove()'
     );

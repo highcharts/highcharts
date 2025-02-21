@@ -41,8 +41,9 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @extends      plotOptions.arearange
  * @product      highcharts highstock
- * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
- *               stickyTracking, trackByArea, boostThreshold, boostBlending
+ * @excluding    boostThreshold, boostBlendingfillColor, fillOpacity,
+ *               legendSymbolColor, lineWidth, stack, stacking, stickyTracking,
+ *               trackByArea
  * @since 8.0.0
  * @optionparent plotOptions.dumbbell
  */

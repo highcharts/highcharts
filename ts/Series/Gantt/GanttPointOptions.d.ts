@@ -105,7 +105,7 @@ export interface GanttPointOptions extends XRangePointOptions {
     dependency?: GanttDependencyOptions;
 
     /**
-     * The end time of a task.
+     * The end time of a task. May be a timestamp or a date string.
      *
      * @product gantt
      */
@@ -137,7 +137,7 @@ export interface GanttPointOptions extends XRangePointOptions {
     parent?: string;
 
     /**
-     * The start time of a task.
+     * The start time of a task. May be a timestamp or a date string.
      *
      * @product gantt
      */

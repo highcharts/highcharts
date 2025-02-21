@@ -28,15 +28,13 @@ const data = [
 Highcharts.chart('container', {
 
     title: {
-        text: 'Observed wind in Vik, 10. July 2024',
-        align: 'left'
+        text: 'Observed wind in Vik, 10. July 2024'
     },
 
     subtitle: {
         text: 'Source: ' +
             '<a href="https://seklima.met.no/"' +
-            'target="_blank">seklima</a>',
-        align: 'left'
+            'target="_blank">seklima</a>'
     },
 
     xAxis: {
@@ -53,7 +51,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2024, 6, 11),
+            pointStart: '2024-07-11',
             pointInterval: 36e5
         }
     },

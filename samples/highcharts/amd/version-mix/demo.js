@@ -34,6 +34,7 @@ require(
 
     function (Highcharts, ExportingModule, AccessibilityModule) {
 
+        // Legacy factories
         ExportingModule(Highcharts);
         AccessibilityModule(Highcharts);
 
@@ -60,6 +61,7 @@ require(
 
     function (Highcharts, ExportingModule, AccessibilityModule) {
 
+        // Legacy factories
         ExportingModule(Highcharts);
         AccessibilityModule(Highcharts);
 
@@ -84,14 +86,11 @@ require(
         'highcharts/modules/accessibility'
     ],
 
-    function (Highcharts, ExportingModule, AccessibilityModule) {
-
-        ExportingModule(Highcharts);
-        AccessibilityModule(Highcharts);
+    function (Highcharts) {
 
         Highcharts.chart('container3', {
             title: {
-                text: 'My chart in the latest version'
+                text: 'My chart in v' + Highcharts.version
             },
             series: [{
                 data: [1, 2, 3, 4, 5]

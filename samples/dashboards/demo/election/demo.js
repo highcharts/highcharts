@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 /* eslint-disable max-len */
 /* eslint-disable jsdoc/require-description */
 
@@ -173,7 +178,7 @@ async function setupDashboard() {
                 }
             }
         }, {
-            renderTo: 'election-chart-national',
+            renderTo: 'election-chart-year',
             type: 'Highcharts',
             title: {
                 text: 'Historical ' + commonTitle + 's'
@@ -244,7 +249,7 @@ async function setupDashboard() {
                 }
             }
         }, {
-            renderTo: 'election-chart',
+            renderTo: 'election-chart-historical',
             type: 'Highcharts',
             chartOptions: {
                 title: {
@@ -318,40 +323,45 @@ async function setupDashboard() {
                 text: 'Updating...' // Populated later
             },
             dataGridOptions: {
-                cellHeight: 38,
-                editable: false,
-                columns: {
-                    state: {
-                        headerFormat: 'State'
+                rendering: {
+                    columns: {
+                        included: [
+                            'state', 'demColVotes', 'repColVotes',
+                            'demVoteSummary', 'repVoteSummary', 'totalVotes'
+                        ]
+                    }
+                },
+                columnDefaults: {
+                    sorting: {
+                        sortable: false
+                    }
+                },
+                columns: [{
+                    id: 'state',
+                    header: {
+                        format: 'State'
+                    }
+                }, {
+                    id: 'demVoteSummary',
+                    header: {
+                        format: 'Dem. votes'
+                    }
+                }, {
+                    id: 'repVoteSummary',
+                    header: {
+                        format: 'Rep. votes'
+                    }
+                }, {
+                    id: 'totalVotes',
+                    header: {
+                        format: 'Total votes'
                     },
-                    'postal-code': {
-                        show: false
-                    },
-                    demPercent: {
-                        show: false
-                    },
-                    repPercent: {
-                        show: false
-                    },
-                    demVotes: {
-                        show: false
-                    },
-                    repVotes: {
-                        show: false
-                    },
-                    demVoteSummary: {
-                        headerFormat: 'Dem. votes'
-                    },
-                    repVoteSummary: {
-                        headerFormat: 'Rep. votes'
-                    },
-                    totalVotes: {
-                        headerFormat: 'Total votes',
-                        cellFormatter: function () {
+                    cells: {
+                        formatter: function () {
                             return Number(this.value).toLocaleString('en-US');
                         }
                     }
-                }
+                }]
             }
         }]
     }, true);
@@ -789,14 +799,20 @@ async function updateGridComponent(component, year) {
             id: 'votes' + year
         },
         dataGridOptions: {
-            columns: {
-                repColVotes: {
-                    headerFormat: candRep + ' (Republican)'
-                },
-                demColVotes: {
-                    headerFormat: candDem + ' (Democrat)'
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'repColVotes',
+                header: {
+                    format: candRep + ' (Republican)'
                 }
-            }
+            }, {
+                id: 'demColVotes',
+                header: {
+                    format: candDem + ' (Democrat)'
+                }
+            }]
         }
     });
 }
@@ -826,17 +842,17 @@ async function onStateClicked(board, state) {
     const stateTitle = state === 'US' ? 'National' : stateName;
     const yearSelector = document.getElementById('election-year');
 
-    // Update chart title
-    const comp = board.getComponentByCellId('election-chart');
-    const barComponent = board.getComponentByCellId('election-chart-national');
+    // Update chart titles
+    const histComp = board.getComponentByCellId('election-chart-historical');
+    const elYearComp = board.getComponentByCellId('election-chart-year');
 
-    // Election data for current state
+    // Election data for currently selected state
     const stateSeries = getHistoricalElectionSeries(state);
     const yearStateSeries = getHistoricalElectionSeries(
         state, yearSelector.value
     );
 
-    await comp.update({
+    await histComp.update({
         chartOptions: {
             title: {
                 text: '<span class="title-bck-wrapper">Historic</span>' +
@@ -846,7 +862,7 @@ async function onStateClicked(board, state) {
         }
     });
 
-    await barComponent.update({
+    await elYearComp.update({
         chartOptions: {
             title: {
                 text: '<span class="title-bck-wrapper">' + yearSelector.value +
@@ -863,7 +879,7 @@ async function onYearClicked(board, year) {
     // Dashboards components
     const mapComponent = board.getComponentByCellId('election-map');
     const gridComponent = board.getComponentByCellId('election-grid');
-    const barComponent = board.getComponentByCellId('election-chart-national');
+    const elYearComp = board.getComponentByCellId('election-chart-year');
 
     // Get election data
     const electionTable = await getElectionTable(board, year);
@@ -882,7 +898,7 @@ async function onYearClicked(board, year) {
     updateGridComponent(gridComponent, year);
 
     // Update national bar chart
-    updateBarComponent(barComponent, year);
+    updateBarComponent(elYearComp, year);
 }
 
 

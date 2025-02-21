@@ -19,7 +19,7 @@
 
 import Database from './database';
 import FSLib from '../libs/fs';
-import TSLib from '../libs/ts';
+import TSLib from '../libs/TS';
 
 
 /* *
@@ -47,7 +47,8 @@ const REFERENCES: Record<string, true> = {};
 
 async function addOption(
     parentItem: (Database.Item|undefined),
-    codeInfo: TSLib.CodeInfo
+    codeInfo: TSLib.CodeInfo,
+    reference: string
 ): Promise<(Database.Item|undefined)> {
     const doclet = codeInfo.kind === 'Doclet' ? codeInfo : codeInfo.doclet;
 
@@ -62,11 +63,14 @@ async function addOption(
 
     // Skip recursive traps
 
-    const reference = (
-        codeInfo.meta.scope ?
-            `${codeInfo.meta.file}:${codeInfo.meta.scope}.${name}` :
-            `${codeInfo.meta.file}:${name}`
-    );
+    const trailingReference =
+        `:${codeInfo.meta.file}:${codeInfo.meta.scope}:${name}`;
+
+    if (reference.includes(trailingReference)) {
+        return void 0;
+    }
+
+    reference += trailingReference;
 
     if (REFERENCES[reference]) {
         return void 0;
@@ -126,7 +130,7 @@ async function addOption(
                         .extractTypes(member.type || [])
                         .some(type => type.endsWith('Options'))
                 ) {
-                    return addOption(void 0, member);
+                    return addOption(void 0, member, reference);
                 }
             }
             break;
@@ -138,7 +142,7 @@ async function addOption(
             value = codeInfo.value;
             return (
                 typeof value === 'object' ?
-                    addOption(parentItem, value) :
+                    addOption(parentItem, value, reference) :
                     void 0
             );
 
@@ -160,19 +164,15 @@ async function addOption(
             item = void 0;
             if (codeInfo.name.endsWith('Options')) {
                 TSLib.autoExtendInfo(codeInfo);
-                if (doclet) {
-                    if (parentItem) {
-                        item = void 0;
-                        value =
-                            TSLib.extractTagText(doclet, 'description', true);
-                        if (typeof value === 'string') {
-                            parentItem.description = (
-                                parentItem.description ?
-                                    `${parentItem.description}\n\n${value}` :
-                                    value
-                            );
-                            DATABASE.setItem(parentItem);
-                        }
+                if (doclet && parentItem) {
+                    value = TSLib.extractTagText(doclet, 'description', true);
+                    if (typeof value === 'string') {
+                        parentItem.description = (
+                            parentItem.description ?
+                                `${parentItem.description}\n\n${value}` :
+                                value
+                        );
+                        DATABASE.setItem(parentItem);
                     }
                 }
                 moreInfos.push(...codeInfo.members);
@@ -244,7 +244,7 @@ async function addOption(
             );
             return (
                 resolved ?
-                    addOption(parentItem, resolved) :
+                    addOption(parentItem, resolved, reference) :
                     void 0
             );
 
@@ -294,7 +294,7 @@ async function addOption(
 
     if (moreInfos.length) {
         for (const moreInfo of moreInfos) {
-            await addOption(item || parentItem, moreInfo);
+            await addOption(item || parentItem, moreInfo, reference);
         }
     }
 
@@ -344,7 +344,8 @@ async function main() {
         TSLib.resolveReference(
             TSLib.getSourceInfo(FSLib.path('ts/Dashboards/Board.ts')),
             'Board.defaultOptions'
-        )
+        ),
+        ''
     );
 
     // Done

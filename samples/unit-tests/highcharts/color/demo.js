@@ -28,4 +28,16 @@ QUnit.test('Color object', function (assert) {
         'rgba(255,0,0,0.2)',
         'Set opacity'
     );
+
+    assert.strictEqual(
+        color('#f003').get('rgba'),
+        'rgba(255,0,0,0.2)',
+        '4-digit hex color'
+    );
+
+    assert.strictEqual(
+        color('#ff000033').get('rgba'),
+        'rgba(255,0,0,0.2)',
+        '8-digit hex color'
+    );
 });

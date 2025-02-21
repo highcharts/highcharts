@@ -9,14 +9,12 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'External trade in goods by country, Norway 2023',
-        align: 'left'
+        text: 'External trade in goods by country, Norway 2023'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.ssb.no/en/statbank/table/08804/"' +
-            'target="_blank">SSB</a>',
-        align: 'left'
+            'target="_blank">SSB</a>'
     },
     plotOptions: {
         column: {

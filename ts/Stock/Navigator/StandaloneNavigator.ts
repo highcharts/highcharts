@@ -117,6 +117,10 @@ class StandaloneNavigator {
             { navigator: userOptions }
         );
 
+        if (this.chartOptions.chart && userOptions.height) {
+            this.chartOptions.chart.height = userOptions.height;
+        }
+
         const chart = new Chart(element, this.chartOptions);
 
         chart.options = merge(
@@ -305,7 +309,11 @@ class StandaloneNavigator {
         newOptions: StandaloneNavigatorOptions,
         redraw?: boolean
     ): void {
-        this.chartOptions = merge(this.chartOptions, { navigator: newOptions });
+        this.chartOptions = merge(
+            this.chartOptions,
+            newOptions.height && { chart: { height: newOptions.height } },
+            { navigator: newOptions }
+        );
 
         this.navigator.chart.update(this.chartOptions, redraw);
     }

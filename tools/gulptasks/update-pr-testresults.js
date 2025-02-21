@@ -9,11 +9,11 @@ const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
 const { getFilesChanged, getLatestCommitShaSync } = require('../libs/git');
 const { uploadFiles, putS3Object } = require('./lib/uploadS3');
-const { doRequest, createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
+const { doRequest } = require('./lib/github');
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
 const S3_REVIEWS_PATH = 'visualtests/reviews';
-const DEFAULT_COMMENT_TITLE = '## Visual test results';
+const DEFAULT_COMMENT_TITLE = 'Visual test results';
 const DEFAULT_OPTIONS = {
     method: 'GET',
     json: true,
@@ -142,13 +142,18 @@ function createMarkdownLink(link, message = 'link') {
  * @return {string} markdown template with the changed files.
  */
 function createTemplateForChangedSamples() {
-    let gitChangedFiles = getFilesChanged();
+    const gitChangedFiles = getFilesChanged();
     logLib.message(`Changed files:\n${gitChangedFiles}`);
-    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/u.test(line));
+
+    const changedPaths = new Set(
+        gitChangedFiles.split('\n')
+            .filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/u.test(line))
+    );
+
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
         samplesChangedTemplate = '---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
-            gitChangedFiles.map(line => {
+            Array.from(changedPaths).map(line => {
                 const parts = line.split('\t');
                 return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
             }).join('\n');
@@ -331,15 +336,17 @@ async function createPRReviewFile(testResults, pr) {
  * @param {Array} diffingSamples list
  * @param {number} pr number to upload for
  * @param {boolean} includeReview file
+ * @param {boolean} includeDiffFiles upload image files
  * @return {object|undefined} result of upload or undefined
  */
 async function uploadVisualTestFiles(
     diffingSamples,
     pr,
-    includeReview = true
+    includeReview = true,
+    includeDiffFiles = false
 ) {
     let result;
-    const files = diffingSamples.reduce((resultingFiles, sample) => {
+    const files = includeDiffFiles ? diffingSamples.reduce((resultingFiles, sample) => {
         resultingFiles.push({
             from: `samples/${sample[0]}/reference.svg`,
             to: buildImgS3Path('reference.svg', sample[0], pr)
@@ -353,7 +360,7 @@ async function uploadVisualTestFiles(
             to: buildImgS3Path('diff.gif', sample[0], pr)
         });
         return resultingFiles;
-    }, []);
+    }, []) : [];
 
     files.push({
         from: 'test/visual-test-results.json',
@@ -391,6 +398,25 @@ async function uploadVisualTestFiles(
     return result;
 }
 
+
+async function writeCommentFile(content) {
+    const { writeFile, mkdir } = require('node:fs/promises');
+    const { join } = require('node:path');
+
+    await mkdir('tmp', { recursive: true });
+
+    const JSONFilePath = join('tmp', 'pr-visual-test-comment.json');
+
+    const [title, ...body] = content.split('\n');
+
+    await writeFile(JSONFilePath, JSON.stringify({
+        title,
+        body: body.join('\n')
+    }));
+
+    logLib.message('Wrote file to', JSONFilePath);
+}
+
 /**
  * Task for adding a visual test result as a comment to a PR.
  * It also updates the status for the commit with github.
@@ -400,18 +426,10 @@ async function uploadVisualTestFiles(
 async function commentOnPR() {
     const {
         pr,
-        user,
-        alwaysAdd = false,
-        resultsPath = 'test/visual-test-results.json',
-        token
+        resultsPath = 'test/visual-test-results.json'
     } = argv;
-
-    if (!token && !process.env.GITHUB_TOKEN) {
-        return completeTask('No --token or GITHUB_TOKEN env var specified for github access.');
-    }
-
-    if (!pr || !user) {
-        return completeTask('No --pr (pull request number) specified, or missing --user (github username)');
+    if (!pr) {
+        return completeTask('No --pr (pull request number) specified');
     }
     const prNumber = parseInt(pr, 10);
     const testResults = readTestResultsFile(resultsPath);
@@ -443,17 +461,9 @@ async function commentOnPR() {
     await checkAndUpdateApprovedReviews(diffingSamples, prNumber);
     await postGitCommitStatusUpdate(pr, newReview);
 
-    const commentTemplate = createPRCommentBody(newReview, prNumber);
-    const { containsText = DEFAULT_COMMENT_TITLE } = argv;
-    const existingComments = await fetchPRComments(pr, user, containsText);
-
     try {
-        if (!alwaysAdd && existingComments.length > 0) {
-            logLib.message(`Updating existing comment for #${pr}`);
-            return await updatePRComment(existingComments[0].id, commentTemplate);
-        }
-        logLib.message(`Creating new comment for #${pr}`);
-        return await createPRComment(pr, commentTemplate);
+        const commentTemplate = createPRCommentBody(newReview, prNumber);
+        return writeCommentFile(commentTemplate);
     } catch (err) {
         return completeTask(err || err.message);
     }
@@ -477,5 +487,6 @@ gulp.task('update-pr-testresults', commentOnPR);
 module.exports = {
     default: commentOnPR,
     fetchExistingReview,
-    fetchAllReviewsForVersion
+    fetchAllReviewsForVersion,
+    writeCommentFile
 };

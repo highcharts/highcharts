@@ -1,13 +1,11 @@
 const chart = Highcharts.chart('container', {
     title: {
-        text: 'Unemployment rates in engineering and ICT subjects, 2023',
-        align: 'left'
+        text: 'Unemployment rates in engineering and ICT subjects, 2023'
     },
     subtitle: {
         text: 'Chart option: Plain | Source: ' +
             '<a href="https://www.nav.no/no/nav-og-samfunn/statistikk/arbeidssokere-og-stillinger-statistikk/helt-ledige"' +
-            'target="_blank">NAV</a>',
-        align: 'left'
+            'target="_blank">NAV</a>'
     },
     colors: [
         '#4caefe',

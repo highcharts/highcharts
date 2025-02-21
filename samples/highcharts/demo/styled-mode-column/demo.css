@@ -73,3 +73,7 @@
 .highcharts-axis.highcharts-color-1 text {
     fill: #90ed7d;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

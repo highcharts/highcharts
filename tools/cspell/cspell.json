@@ -1,0 +1,29 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "dictionaryDefinitions": [
+    {
+      "name": "custom-words",
+      "path": "./custom-words.txt",
+      "addWords": true
+    }
+  ],
+  "ignorePaths": ["**/node_modules/**", "**/dist/**"],
+  "ignoreWords": [],
+  "dictionaries": ["custom-words"],
+  "flagWords": [
+    "highcarts",
+    "higcharts"
+  ],
+  "languageSettings": [
+    {
+        "languageId": "markdown",
+        "locale": "*",
+        "ignoreRegExpList": [
+            "/^(\\s*`{3,}).*[\\s\\S]*? ^\\1/gmx",
+            "/\\[.*?\\]\\(.*?\\)/g"
+        ],
+        "dictionaries": ["custom-words"]
+    }
+  ]
+}

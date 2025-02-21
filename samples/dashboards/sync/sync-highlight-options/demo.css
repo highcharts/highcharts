@@ -1,5 +1,4 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 #csv {
@@ -16,4 +15,10 @@
 
 .inputs label {
     color: var(--highcharts-neutral-color-100);
+}
+
+@media screen and (max-width: 576px) {
+    .highcharts-dashboards-cell {
+        flex: 1 1 100%;
+    }
 }

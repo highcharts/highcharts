@@ -23,6 +23,7 @@
         "../masters-es5/**/*.ts"
     ],
     "include": [
-        "../**/*.ts"
+        "../**/*.ts",
+        "../masters/modules/accessibility.src.ts",
     ]
 }

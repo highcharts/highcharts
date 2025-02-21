@@ -13,3 +13,7 @@
     text-align: left;
     width: 100%;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

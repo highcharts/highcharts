@@ -39,39 +39,39 @@ const common = {
     // dealing with a range
     dateTimeLabelFormats: {
         millisecond: [
-            '%A, %e %b, %H:%M:%S.%L',
-            '%A, %e %b, %H:%M:%S.%L',
-            '-%H:%M:%S.%L'
+            '%[AebHMSL]',
+            '%[AebHMSL]',
+            '-%[HMSL]'
         ],
         second: [
-            '%A, %e %b, %H:%M:%S',
-            '%A, %e %b, %H:%M:%S',
-            '-%H:%M:%S'
+            '%[AebHMS]',
+            '%[AebHMS]',
+            '-%[HMS]'
         ],
         minute: [
-            '%A, %e %b, %H:%M',
-            '%A, %e %b, %H:%M',
-            '-%H:%M'
+            '%[AebHM]',
+            '%[AebHM]',
+            '-%[HM]'
         ],
         hour: [
-            '%A, %e %b, %H:%M',
-            '%A, %e %b, %H:%M',
-            '-%H:%M'
+            '%[AebHM]',
+            '%[AebHM]',
+            '-%[HM]'
         ],
         day: [
-            '%A, %e %b %Y',
-            '%A, %e %b',
-            '-%A, %e %b %Y'
+            '%[AebY]',
+            '%[Aeb]',
+            '-%[AebY]'
         ],
         week: [
-            'Week from %A, %e %b %Y',
-            '%A, %e %b',
-            '-%A, %e %b %Y'
+            'week from %[AebY]',
+            '%[Aeb]',
+            '-%[AebY]'
         ],
         month: [
-            '%B %Y',
-            '%B',
-            '-%B %Y'
+            '%[BY]',
+            '%[B]',
+            '-%[BY]'
         ],
         year: [
             '%Y',

@@ -1,126 +1,52 @@
-# Highcharts Dashboards #
-A JavaScript library for interactive dashboards.
+# Highcharts Dashboards
+
+Highcharts Dashboards is a JavaScript library for interactive dashboards from the creators of the [Highcharts](https://github.com/highcharts/highcharts) charting library.
+
+With built-in data synchronization, ready-made components and completely customizable options, Highcharts Dashboards does all the heavy lifting out of the box, saving you valuable time on your dashboard projects.
+
+Note that this library also includes [Highcharts DataGrid](https://www.highcharts.com/docs/datagrid/general), that can be used as a standalone component outside of Dashboards if needed.
+
+- Official website: [www.highcharts.com](http://www.highcharts.com)
+- Product page: [www.highcharts.com/products/dashboards](https://www.highcharts.com/products/dashboards/)
+- Documentation: [www.highcharts.com/docs/dashboards/installation](https://www.highcharts.com/docs/dashboards/installation)
+- Demos: [https://www.highcharts.com/demo](https://www.highcharts.com/demo#highcharts-dashboards-demo-basic)
+- Download page: [www.highcharts.com/download](http://www.highcharts.com/download)
+
+- Licensing: [shop.highcharts.com](https://shop.highcharts.com/)
+- Support: [www.highcharts.com/support](http://www.highcharts.com/support)
+- Issues: [Repo guidelines](/repo-guidelines.md)
+
+Highcharts Dashboards is a [source available](https://en.wikipedia.org/wiki/Source-available_software) product. Please refer to [shop.highcharts.com](https://shop.highcharts.com/) for details on licensing.
 
 ## Installation
-There are multiple ways to import this package.
-Among the most popular are:
-* Using npm, run the following command in your terminal:
-``` Shell
+
+If you simply want to include Highcharts Dashboards into a project, use the [distribution package](https://www.npmjs.com/package/@highcharts/dashboards), or read the [download page](http://www.highcharts.com/download).
+
+Please note that there are several ways to use Highcharts Dashboards. For general installation instructions, see [installation documentation](https://highcharts.com/docs/dashboards/installation)
+
+### Use our CDN
+
+Instead of downloading, you can use our CDN to access files directly. See [code.highcharts.com](https://code.highcharts.com) for details.
+
+```HTML
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+    <link rel="stylesheet" src="https://code.highcharts.com/dashboards/css/dashboards.css">
+```
+
+### Install from npm
+
+See [npm documentation](https://docs.npmjs.com/) on how to get started with npm.
+
+Using npm by running the following command in your terminal:
+
+```Shell
     npm install @highcharts/dashboards
 ```
+
 Then import the package in your project:
-``` JS
+
+```JS
     import Dashboards from '@highcharts/dashboards';
 ```
-* Importing as a script
-``` HTML
-    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-```
 
-To fully utilize the Dashboards potential, there might be a need to load additional modules.
-In the [installation documentation](https://highcharts.com/docs/dashboards/installation), you can find more information on how to do that and other ways of importing the Dashboards.
-
-## Components
-Each dashboard is built with different components. You can add the most basic `HTMLComponent` where you can add some text, image etc.
-To create a chart you can add a `HighchartsComponent`. If you would like to show your data in a tabular way use the `DataGridComponent`. Or use the `KPIComponent` to highlight some individual numbers/indications.
-
-To properly show the component you have to declare the `id` of a cell, where it should be placed and the `type` of that component.
-Below is an example of what a component configuration might look like:
-``` JS
-    {
-        type: 'Highcharts',
-        cell: 'cell-id-2',
-        chartOptions: {
-            series: [{
-                type: 'pie',
-                data: [1, 2, 3, 2, 3]
-            }]
-        }
-    }
-```
-In the [component documentation](https://highcharts.com/docs/dashboards/types-of-components), you can find more information on how each one of them works and what can be configured.
-
-## Working with Data
-
-You can import your data from multiple sources, for example CSV and Google Spreadsheet. They are going to be handled by the Connectors and distributed as DataTables.
-
-More about this concept in the [Data Handling section](https://www.highcharts.com/docs/dashboards/data-handling).
-
-## GUI
-The GUI is a part of the dashboard that allows you to create a layout of the dashboard. You can add rows and cells to the layout. The layout is a grid where you can place your components.
-Below is an example of what a GUI configuration might look like:
-``` JS
-    gui: {
-        layouts: [{
-            id: 'layout-1',
-            rows: [{
-                cells: [{
-                    id: 'dashboard-col-0'
-                }, {
-                    id: 'dashboard-col-1'
-                }]
-            }]
-        }]
-    }
-```
-More about the GUI in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
-
-
-## Edit Mode
-Edit Mode allows the user to edit the dashboard by adding, removing and editing components.
-
-Find more information in the [Edit Mode documentation](https://highcharts.com/docs/dashboards/edit-mode).
-
-## Your first dashboard
-To create your dashboard, you first have to import the Dashboards package.
-You also need a placeholder for your dashboard. In this example we will use a div with the id `container`.
-``` HTML
-    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-
-    <div id="container"></div>
-```
-
-Your dashboard can now be created:
-``` JS
-    Dashboards.board('container', {
-        gui: {
-            layouts: [{
-                id: 'layout-1',
-                rows: [{
-                    cells: [{
-                        id: 'dashboard-col-0'
-                    }, {
-                        id: 'dashboard-col-1'
-                    }]
-                }]
-            }]
-        },
-        components: [{
-            type: 'html',
-            cell: 'dashboard-col-0',
-            elements: [
-                {
-                    tagName: 'h1',
-                    style: {
-                        height: '400px',
-                        'text-align': 'center'
-                    },
-                    textContent: 'Your first dashboard'
-                }
-            ]
-        }, {
-            cell: 'dashboard-col-1',
-            type: 'Highcharts',
-            chartOptions: {
-                series: [{
-                    data: [1, 2, 3, 4]
-                }]
-            }
-        }]
-    });
-```
-
-See it in action: [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/basic/your-first-dashboard).
-
-## FAQ
-Answers to common questions can be found on our [FAQ page](https://highcharts.com/docs/dashboards/frequently-asked-questions).
+For other ways to use Highcharts Dashboards in your projects, please refer to our [installation documentation](https://highcharts.com/docs/dashboards/installation).

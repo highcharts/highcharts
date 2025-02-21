@@ -1,4 +1,4 @@
-const origChartWidth = 400,
+const origChartWidth = 360,
     origChartHeight = 300;
 
 let chartWidth = origChartWidth,
@@ -8,6 +8,9 @@ const chart = Highcharts.chart('container', {
     chart: {
         width: origChartWidth,
         height: origChartHeight
+    },
+    title: {
+        text: 'Click buttons to resize'
     },
     xAxis: {
         categories: [
@@ -28,6 +31,7 @@ const container = document.getElementById('container');
 // create some buttons to test the resize logic
 const up = document.createElement('button');
 up.innerText = '+';
+up.className = 'highcharts-demo-button';
 up.addEventListener('click', () => {
     chartWidth *= 1.1;
     chartHeight *= 1.1;
@@ -37,6 +41,7 @@ container.before(up);
 
 const down = document.createElement('button');
 down.innerText = '-';
+down.className = 'highcharts-demo-button';
 down.addEventListener('click', () => {
     chartWidth *= 0.9;
     chartHeight *= 0.9;
@@ -46,6 +51,7 @@ container.before(down);
 
 const orig = document.createElement('button');
 orig.innerText = '1:1';
+orig.className = 'highcharts-demo-button';
 orig.addEventListener('click', () => {
     chartWidth = origChartWidth;
     chartHeight = origChartHeight;

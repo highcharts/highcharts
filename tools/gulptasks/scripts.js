@@ -135,6 +135,7 @@ function shouldRun() {
 function task() {
 
     const argv = require('yargs').argv;
+    const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
 
@@ -155,19 +156,31 @@ function task() {
     return new Promise((resolve, reject) => {
 
         if (
+            argv.assembler ||
             argv.force ||
-            argv.webpack ||
             shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
-
             processLib.isRunning('scripts_incomplete', true, true);
 
-            gulp.series(
-                'scripts-ts',
-                'scripts-css',
-                argv.webpack ? 'scripts-webpack' : 'scripts-js'
-            )(
+            fsLib.deleteDirectory('code', true);
+
+            gulp.series(...(
+                argv.assembler ?
+                    [
+                        'scripts-css',
+                        'scripts-ts',
+                        'scripts-es5',
+                        'scripts-js',
+                        'scripts-code'
+                    ] :
+                    [
+                        'scripts-css',
+                        'scripts-ts',
+                        'scripts-webpack',
+                        'scripts-code'
+                    ]
+            ))(
                 function (error) {
 
                     processLib.isRunning('scripts_incomplete', false, true);

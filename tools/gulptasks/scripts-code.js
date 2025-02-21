@@ -55,10 +55,8 @@ function scriptsCode() {
     const fs = require('fs');
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
+    const assembler = process.argv.includes('--assembler');
     const verbose = process.argv.includes('--verbose');
-
-    const buildTool = require('../build');
-
 
     return new Promise((resolve, reject) => {
 
@@ -90,16 +88,20 @@ function scriptsCode() {
 
             logLib.success('Processed code sources');
 
-            fsLib.getFilePaths('code/es-modules', true).forEach(filePath => {
-                const content = fs.readFileSync(filePath).toString();
+            if (assembler) {
+                fsLib.getFilePaths('code/es-modules', true).forEach(filePath => {
+                    const content = fs.readFileSync(filePath).toString();
 
-                if (content) {
-                    fs.writeFileSync(
-                        filePath,
-                        buildTool.replaceMeta(content)
-                    );
-                }
-            });
+                    if (content) {
+                        const buildTool = require('../build');
+
+                        fs.writeFileSync(
+                            filePath,
+                            buildTool.replaceMeta(content)
+                        );
+                    }
+                });
+            }
 
             resolve();
 

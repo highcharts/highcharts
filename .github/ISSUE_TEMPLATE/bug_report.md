@@ -17,6 +17,6 @@ assignees: ''
 <!-- template: https://jsfiddle.net/highcharts/LLExL/ -->
 
 #### Product version
-<!--- Highcharts, Highstock or Highmaps plus version number -->
+<!-- Highcharts Core, Stock, Maps, Gantt, or Dashboards, plus version number -->
 
 #### Affected browser(s)

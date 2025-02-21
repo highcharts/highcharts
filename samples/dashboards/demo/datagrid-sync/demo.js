@@ -123,6 +123,17 @@ Dashboards.board('container', {
         type: 'DataGrid',
         sync: {
             highlight: true
+        },
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Vitamin A',
+                cells: {
+                    editable: true
+                }
+            }]
         }
     }]
 });

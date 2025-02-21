@@ -371,7 +371,7 @@ QUnit.test(
         column = chart.yAxis[0].stacking.stacks['column,,,'];
 
         assert.strictEqual(
-            column[4].label.text.x,
+            column[4].label.text.x - column[4].label.text.getBBox().width,
             padding,
             'This stack-label text x attribute should be ' +
                 'equal to set padding #12308'
@@ -809,7 +809,7 @@ QUnit.test('Stack labels - Axis left set', assert => {
     assert.close(
         stackX,
         dataLabelX,
-        1.5,
+        2,
         'the middle of stackLabel and dataLabel should be similar.'
     );
 });

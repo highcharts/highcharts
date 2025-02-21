@@ -7,20 +7,21 @@
     let minMax = {};
 
     function getMinMax(chart) {
-        const yMin = Math.min.apply(
+        const processedYData = chart.series[0].getColumn('y', true),
+            yMin = Math.min.apply(
                 null,
-                chart.series[0].processedYData.slice(1, -1)
+                processedYData.slice(1, -1)
             ),
             yMax = Math.max.apply(
                 null,
-                chart.series[0].processedYData.slice(1, -1)
+                processedYData.slice(1, -1)
             ),
-            maxIndex = chart.series[0].processedYData.indexOf(yMax),
-            minIndex = chart.series[0].processedYData.indexOf(yMin);
+            maxIndex = processedYData.indexOf(yMax),
+            minIndex = processedYData.indexOf(yMin);
 
         minMax = {
-            xMin: chart.series[0].processedXData[minIndex],
-            xMax: chart.series[0].processedXData[maxIndex],
+            xMin: chart.series[0].getColumn('x', true)[minIndex],
+            xMax: chart.series[0].getColumn('x', true)[maxIndex],
             yMin,
             yMax
         };

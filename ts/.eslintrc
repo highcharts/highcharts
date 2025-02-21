@@ -57,6 +57,7 @@
         "no-inner-declarations": 0, // deprecated with ES6
         "no-invalid-this": 0, // covered by TypeScript
         "no-shadow": 0, // @todo
+        "no-sequences": 0,
         "no-undef": 0,
         "no-underscore-dangle": 0, // @todo
         "no-unused-expressions": 0,
@@ -112,6 +113,7 @@
         "@typescript-eslint/no-useless-constructor": 2,
         "@typescript-eslint/prefer-as-const": 1, // @todo
         "@typescript-eslint/prefer-includes": 0, // @todo
+        "@typescript-eslint/prefer-optional-chain": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/restrict-plus-operands": 0,

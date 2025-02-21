@@ -27,7 +27,7 @@ import LogLib from '../libs/log.js';
 
 import TreeLib from '../libs/tree.js';
 
-import TSLib from '../libs/ts.js';
+import TSLib from '../libs/TS';
 
 import Utilities from './utilities';
 
@@ -244,7 +244,7 @@ function addTreeNode(
 
                         case 'Array':
                             _infoDoclet.tags.default
-                                .push(`[${_value.values.join(',')}]`);
+                                .push(`[${_value.value.join(',')}]`);
                             break;
 
                         case 'Object':
@@ -531,7 +531,7 @@ async function main() {
         TSLib.PRODUCTS.push(...products.split(','));
     }
 
-    TSLib.sourceRoot = source;
+    // TSLib.sourceRoot = source;
 
     let timer: number;
 

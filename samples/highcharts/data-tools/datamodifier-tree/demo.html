@@ -6,10 +6,10 @@
         <dt>ChainModifier</dt>
         <dd>
             <p>A ChainModifier executes multiple modifiers in order.</p>
-            <input type="checkbox" id="chainmodifier-options" hidden />
+            <input type="checkbox" id="chainmodifier-options" hidden >
             <div>
                 <h4><label for="chainmodifier-options">ChainModifier.options</label></h4>
-<!-- options -->
+
 <pre>new ChainModifier({
 
     <span>/* Whether to revert the order before execution. */</span>
@@ -18,20 +18,20 @@
         <option>true</option>
     </select>
 });</pre>
-<!-- /options -->
+
             </div>
             <dl>
                 <dt>SortModifier</dt>
                 <dd>
                     <p>Sort table rows according to values of a column.</p>
                     <p>
-                        <input type="checkbox" id="sortmodifier-activate" />
+                        <input type="checkbox" id="sortmodifier-activate" >
                         <label for="sortmodifier-activate">activate</label>
                     </p>
-                    <input type="checkbox" id="sortmodifier-options" hidden />
+                    <input type="checkbox" id="sortmodifier-options" hidden >
                     <div>
                         <h4><label for="sortmodifier-options">SortModifier.options</label></h4>
-<!-- options -->
+
 <pre>new SortModifier({
 
     <span>/* Direction of sorting. (Default: desc) */</span>
@@ -55,20 +55,20 @@
         <option>y</option>
     </select>
 });</pre>
-<!-- /options -->
+
                     </div>
                 </dd>
                 <dt>RangeModifier</dt>
                 <dd>
                     <p>Limits the number of rows in a DataTable.</p>
                     <p>
-                        <input type="checkbox" id="rangemodifier-activate" />
+                        <input type="checkbox" id="rangemodifier-activate" >
                         <label for="rangemodifier-activate">activate</label>
                     </p>
-                    <input type="checkbox" id="rangemodifier-options" hidden />
+                    <input type="checkbox" id="rangemodifier-options" hidden >
                     <div>
                         <h4><label for="rangemodifier-options">RangeModifier.options</label></h4>
-<!-- options -->
+
 <pre>new RangeModifier({
 
     <span>/* Value ranges to include in the result. */</span>
@@ -98,20 +98,20 @@
         <option>true</option>
     </select>
 });</pre>
-<!-- /options -->
+
                     </div>
                 </dd>
                 <dt>MathModifier</dt>
                 <dd>
                     <p>Replaces formula in a DataTable with calculated values.</p>
                     <p>
-                        <input type="checkbox" id="mathmodifier-activate" />
+                        <input type="checkbox" id="mathmodifier-activate" >
                         <label for="mathmodifier-activate">activate</label>
                     </p>
-                    <input type="checkbox" id="mathmodifier-options" hidden />
+                    <input type="checkbox" id="mathmodifier-options" hidden >
                     <div>
                         <h4><label for="mathmodifier-options">MathModifier.options</label></h4>
-<!-- options -->
+
 <pre>new MathModifier({
 
     <span>/* Column formulas that add or replace column values. */</span>
@@ -129,30 +129,30 @@
         }
     ]
 });</pre>
-<!-- /options -->
+
                     </div>
                 </dd>
                 <dt>InvertModifier</dt>
                 <dd>
                     <p>Inverts columns and rows in a table.</p>
                     <p>
-                        <input type="checkbox" id="invertmodifier-activate" />
+                        <input type="checkbox" id="invertmodifier-activate" >
                         <label for="invertmodifier-activate">activate</label>
                     </p>
-                    <input type="checkbox" id="invertmodifier-options" hidden />
+                    <input type="checkbox" id="invertmodifier-options" hidden >
                     <div>
                         <h4><label for="invertmodifier-options">InvertModifier.options</label></h4>
-<!-- options -->
+
 <pre>new InvertModifier({
     <span>/* InvertModifier works without additional options. */</span>
 });</pre>
-<!-- /options -->
+
                     </div>
                 </dd>
             </dl>
         </dd>
     </dl>
-    <button type="button" id="modify">Run Modifiers</button>
+    <button type="button" id="modify" class="highcharts-demo-button">Run Modifiers</button>
 </form>
 
 <h3>Result:</h3>
