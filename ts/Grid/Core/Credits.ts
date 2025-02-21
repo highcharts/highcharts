@@ -124,7 +124,7 @@ class Credits {
      * from the container. If also reflows the viewport dimensions.
      */
     public render(): void {
-        const { text, href } = this.options;// Credits.defaultOptions;
+        const { text, href } = this.options;
 
         this.containerElement.remove();
 
