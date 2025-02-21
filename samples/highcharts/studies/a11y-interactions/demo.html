@@ -1,0 +1,1397 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+<script src="https://code.highcharts.com/modules/wordcloud.js"></script>
+
+<main>
+    <h1>
+        <svg version="1.1" role="presentation" aria-hidden="true" id="logo-highcharts" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 205 205" xml:space="preserve">
+            <g id="symbol" transform="translate(0,3.41400146484375) scale(3)">
+                <polygon fill="#8087E8" points="41.53900146484375,0 30.315000534057617,26.209999084472656 15.566999435424805,60.650997161865234 49.85900115966797,46.16499710083008 68.02299499511719,38.49300003051758 " id="svg_2" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#30426B" points="47.25799560546875,31.729999542236328 49.86000061035156,46.16499710083008 68.02400207519531,38.49300003051758 " id="svg_3" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#6699A1" points="41.53900146484375,0 47.25799560546875,31.730998992919922 68.02299499511719,38.49300003051758 " id="svg_4" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#78758C" points="47.25799560546875,31.729999542236328 68.02400207519531,38.49300003051758 30.31599998474121,26.208999633789062 15.566999435424805,60.650997161865234 49.86000061035156,46.16499710083008 " id="svg_5" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#A3EDBA" points="15.566999435424805,60.650997161865234 30.315000534057617,26.209999084472656 0,16.334999084472656 " id="svg_6" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#6699A1" points="49.86000061035156,46.16499710083008 53.185997009277344,64.6099967956543 68.02400207519531,38.49300003051758 " id="svg_7" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#8087E8" points="41.53900146484375,0 30.315000534057617,26.209999084472656 47.25799560546875,31.730998992919922 " id="svg_8" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+            </g>
+        </svg>
+        Flying in numbers
+    </h1>
+    <div class="card large intro">
+        <p>This data dashboard built with Highcharts gives some insights into the world of flying, travel, and tourism.</p>
+        <p>With these charts we are trying out some concepts in data visualization accessibility, and we would love to get your feedback on the experience.</p>
+        <p>Please explore the information, and let us know your thought process as you go through. We hope you get something out of it!</p>
+        <p>Cheers,</p>
+        <p class="signature"><b>The Highcharts Team</b> in collaboration with <b>Elsevier</b></p>
+    </div>
+
+    <figure class="card small">
+        <div id="delays" class="chart"></div>
+    </figure>
+
+    <figure class="card small">
+        <div id="accidents" class="chart"></div>
+    </figure>
+
+    <figure class="card large">
+        <div id="historical" class="chart"></div>
+    </figure>
+
+    <figure class="card">
+        <div id="network" class="chart"></div>
+    </figure>
+
+    <figure class="card">
+        <div id="wordcloud" class="chart"></div>
+    </figure>
+</main>
+
+<pre class="hidden" id="historical-data">Airport,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023
+New York (JFK),401.34,366.67,366.6,365.06,375.94,418.05,408.99,455.23,382.92,334.84,302.72,278.68,291.51,326.87,341.67,363.43,321.94,355.8,390.96,398.11,416.81,432.28,430.52,396.12,393.56,390.2,402.31,344.35,338.82,416.17,420.56
+Houston (Intercontinental),392.44,349.21,354.44,341.83,355.09,355.73,381.52,410.16,384.61,376.5,372.64,371.85,352.66,364.59,379.14,422.51,382.98,429.15,477.47,506.86,499.82,492.58,445.14,431.39,409.08,413.66,406.9,324.51,324.59,400.73,409.34
+Phoenix,204.13,207.63,198.87,184.78,202.54,230.05,253.32,267.64,250.89,248.33,251.06,250.33,269.04,284.35,283.19,305.19,279.15,310.75,322.22,331.83,348.4,359.32,349.17,327.14,327.12,338.57,348.77,280.89,292.23,372.62,373.61
+Las Vegas,146.75,144.16,137.44,131.43,131.75,162.72,205.4,222.77,217.57,221.29,228.63,222.73,233.68,247.01,244.14,257.75,235.07,257.98,273.5,269.62,262.2,266.04,248.48,227.52,239.01,240.35,243.05,210.13,230.91,264.24,272.15</pre>
+
+<pre class="hidden" id="wordcloud-data">city,34
+island,34
+travel,28
+family,24
+century,18
+night,17
+hotel,17
+church,17
+people,16
+life,16
+souvenir,16
+home,16
+train,16
+restaurant,16
+airport,15
+local,15
+tourism,15
+rome,15
+crash,14
+canada,14
+year,14
+experience,14
+place,14
+love,14
+beach,14
+temple,14
+italy,14
+boat,14
+passenger,13
+walk,13
+room,13
+water,13
+wine,13
+land,12
+class,12
+mountain,12
+coast,12
+tour,12
+plane,11
+country,11
+trip,11
+adventure,11
+food,11
+italian,11
+puffin,11
+shrine,11
+window,10
+delta,10
+traveler,10
+japan,10
+artist,10
+dinner,10
+explore,10
+culture,10
+holiday,10
+museum,10
+flight,9
+world,9
+house,9
+park,9
+village,9
+grand,9
+photograph,9
+view,9
+hiking,9
+florence,9
+lighthouse,9
+time,9
+national,8
+market,8
+spot,8
+station,8
+miami,8
+lake,8
+track,8
+town,8
+lunch,8
+atlantic,8
+glass,8
+farm,8
+visit,8
+drive,8
+cook,8
+fountain,8
+keeper,8
+matchmaking,8
+roman,8
+seat,7
+snow,7
+industry,7
+fire,7
+community,7
+authentic,7
+site,7
+design,7
+destination,7
+dining,7
+classic,7
+valley,7
+forest,7</pre>
+
+<pre class="hidden" id="airline-routes">Chicago,Austin
+Chicago,Boston
+Chicago,Charlotte
+Chicago,Washington
+Chicago,Denver
+Chicago,Dallas-Fort Worth
+Chicago,Fort Lauderdale
+Chicago,New York
+Chicago,Las Vegas
+Chicago,Los Angeles
+Chicago,Orlando
+Chicago,Miami
+Chicago,Portland
+Chicago,Philadelphia
+Chicago,Phoenix
+Chicago,Raleigh-durham
+Chicago,Fort Myers
+Chicago,San Diego
+Chicago,Seattle
+Chicago,San Francisco
+Chicago,St. Louis
+Chicago,Tampa
+Chicago,Anchorage
+Chicago,Atlanta
+Chicago,Cincinnati
+Chicago,Detroit
+Chicago,Minneapolis
+Chicago,Cleveland
+Chicago,Houston
+Chicago,Oakland
+Chicago,Baltimore
+Chicago,Newark
+Chicago,Honolulu
+Chicago,Kansas City
+Chicago,New Orleans
+Chicago,Pittsburgh
+Chicago,Nashville
+Chicago,San Antonio
+Chicago,Salt Lake City
+St. Louis,Charlotte
+St. Louis,Dallas-Fort Worth
+St. Louis,Los Angeles
+St. Louis,Miami
+St. Louis,Chicago
+St. Louis,Phoenix
+St. Louis,Seattle
+St. Louis,Atlanta
+St. Louis,Cincinnati
+St. Louis,Detroit
+St. Louis,New York
+St. Louis,Minneapolis
+St. Louis,Salt Lake City
+St. Louis,Denver
+St. Louis,San Francisco
+St. Louis,Philadelphia
+St. Louis,Nashville
+St. Louis,Boston
+St. Louis,Baltimore
+St. Louis,Washington
+St. Louis,Newark
+St. Louis,Fort Lauderdale
+St. Louis,Houston
+St. Louis,Las Vegas
+St. Louis,Kansas City
+St. Louis,Orlando
+St. Louis,New Orleans
+St. Louis,Raleigh-durham
+St. Louis,Fort Myers
+St. Louis,San Diego
+St. Louis,San Antonio
+St. Louis,Tampa
+Atlanta,Cincinnati
+Atlanta,Minneapolis
+Atlanta,Dallas-Fort Worth
+Atlanta,Miami
+Atlanta,Portland
+Atlanta,Seattle
+Atlanta,Austin
+Atlanta,Nashville
+Atlanta,Boston
+Atlanta,Baltimore
+Atlanta,Cleveland
+Atlanta,Charlotte
+Atlanta,Washington
+Atlanta,Denver
+Atlanta,Detroit
+Atlanta,Newark
+Atlanta,Fort Lauderdale
+Atlanta,Honolulu
+Atlanta,Houston
+Atlanta,Indianapolis
+Atlanta,New York
+Atlanta,Las Vegas
+Atlanta,Los Angeles
+Atlanta,Kansas City
+Atlanta,Orlando
+Atlanta,Chicago
+Atlanta,New Orleans
+Atlanta,Philadelphia
+Atlanta,Phoenix
+Atlanta,Pittsburgh
+Atlanta,Raleigh-durham
+Atlanta,Fort Myers
+Atlanta,San Diego
+Atlanta,San Antonio
+Atlanta,San Francisco
+Atlanta,Salt Lake City
+Atlanta,St. Louis
+Atlanta,Tampa
+Fort Lauderdale,Orlando
+Fort Lauderdale,Tampa
+Fort Lauderdale,Charlotte
+Fort Lauderdale,Washington
+Fort Lauderdale,Dallas-Fort Worth
+Fort Lauderdale,Chicago
+Fort Lauderdale,Philadelphia
+Fort Lauderdale,Phoenix
+Fort Lauderdale,Seattle
+Fort Lauderdale,Austin
+Fort Lauderdale,Boston
+Fort Lauderdale,Newark
+Fort Lauderdale,New York
+Fort Lauderdale,Los Angeles
+Fort Lauderdale,Raleigh-durham
+Fort Lauderdale,San Francisco
+Fort Lauderdale,Atlanta
+Fort Lauderdale,Cincinnati
+Fort Lauderdale,Detroit
+Fort Lauderdale,Minneapolis
+Fort Lauderdale,Denver
+Fort Lauderdale,Baltimore
+Fort Lauderdale,Las Vegas
+Fort Lauderdale,Cleveland
+Fort Lauderdale,Houston
+Fort Lauderdale,Nashville
+Fort Lauderdale,Indianapolis
+Fort Lauderdale,Kansas City
+Fort Lauderdale,New Orleans
+Fort Lauderdale,Pittsburgh
+Fort Lauderdale,St. Louis
+Orlando,Fort Lauderdale
+Orlando,Fort Myers
+Orlando,Charlotte
+Orlando,Washington
+Orlando,Dallas-Fort Worth
+Orlando,New York
+Orlando,Los Angeles
+Orlando,Miami
+Orlando,Chicago
+Orlando,Philadelphia
+Orlando,Phoenix
+Orlando,San Diego
+Orlando,Seattle
+Orlando,Austin
+Orlando,Boston
+Orlando,Newark
+Orlando,Atlanta
+Orlando,Cincinnati
+Orlando,Detroit
+Orlando,Las Vegas
+Orlando,Minneapolis
+Orlando,Salt Lake City
+Orlando,Denver
+Orlando,Baltimore
+Orlando,Indianapolis
+Orlando,Pittsburgh
+Orlando,Houston
+Orlando,Cleveland
+Orlando,San Francisco
+Orlando,Nashville
+Orlando,Kansas City
+Orlando,New Orleans
+Orlando,Raleigh-durham
+Orlando,San Antonio
+Orlando,St. Louis
+Fort Myers,Orlando
+Fort Myers,Charlotte
+Fort Myers,Dallas-Fort Worth
+Fort Myers,Chicago
+Fort Myers,Philadelphia
+Fort Myers,Boston
+Fort Myers,Newark
+Fort Myers,New York
+Fort Myers,Atlanta
+Fort Myers,Cincinnati
+Fort Myers,Detroit
+Fort Myers,Indianapolis
+Fort Myers,Minneapolis
+Fort Myers,Denver
+Fort Myers,Baltimore
+Fort Myers,Washington
+Fort Myers,Cleveland
+Fort Myers,Houston
+Fort Myers,Pittsburgh
+Fort Myers,St. Louis
+Tampa,Fort Lauderdale
+Tampa,Charlotte
+Tampa,Washington
+Tampa,Dallas-Fort Worth
+Tampa,Miami
+Tampa,Chicago
+Tampa,Philadelphia
+Tampa,Phoenix
+Tampa,Boston
+Tampa,Newark
+Tampa,New York
+Tampa,Atlanta
+Tampa,Cincinnati
+Tampa,Detroit
+Tampa,Los Angeles
+Tampa,Minneapolis
+Tampa,Denver
+Tampa,Baltimore
+Tampa,Indianapolis
+Tampa,Pittsburgh
+Tampa,Cleveland
+Tampa,Houston
+Tampa,Austin
+Tampa,Nashville
+Tampa,Las Vegas
+Tampa,Kansas City
+Tampa,New Orleans
+Tampa,Raleigh-durham
+Tampa,San Antonio
+Tampa,St. Louis
+Las Vegas,Los Angeles
+Las Vegas,Charlotte
+Las Vegas,Washington
+Las Vegas,Dallas-Fort Worth
+Las Vegas,New York
+Las Vegas,Miami
+Las Vegas,Chicago
+Las Vegas,Philadelphia
+Las Vegas,Phoenix
+Las Vegas,Anchorage
+Las Vegas,Portland
+Las Vegas,Seattle
+Las Vegas,Boston
+Las Vegas,Atlanta
+Las Vegas,Cincinnati
+Las Vegas,Detroit
+Las Vegas,Orlando
+Las Vegas,Minneapolis
+Las Vegas,Raleigh-durham
+Las Vegas,Salt Lake City
+Las Vegas,Denver
+Las Vegas,Baltimore
+Las Vegas,Austin
+Las Vegas,Honolulu
+Las Vegas,Fort Lauderdale
+Las Vegas,Houston
+Las Vegas,Oakland
+Las Vegas,San Diego
+Las Vegas,Cleveland
+Las Vegas,Newark
+Las Vegas,San Francisco
+Las Vegas,Nashville
+Las Vegas,Indianapolis
+Las Vegas,Kansas City
+Las Vegas,New Orleans
+Las Vegas,Pittsburgh
+Las Vegas,San Antonio
+Las Vegas,St. Louis
+Las Vegas,Tampa
+Los Angeles,Las Vegas
+Los Angeles,Austin
+Los Angeles,Nashville
+Los Angeles,Boston
+Los Angeles,Charlotte
+Los Angeles,Washington
+Los Angeles,Dallas-Fort Worth
+Los Angeles,Honolulu
+Los Angeles,Indianapolis
+Los Angeles,New York
+Los Angeles,Orlando
+Los Angeles,Miami
+Los Angeles,Chicago
+Los Angeles,Philadelphia
+Los Angeles,Phoenix
+Los Angeles,Pittsburgh
+Los Angeles,Raleigh-durham
+Los Angeles,San Francisco
+Los Angeles,St. Louis
+Los Angeles,Anchorage
+Los Angeles,Portland
+Los Angeles,Seattle
+Los Angeles,Fort Lauderdale
+Los Angeles,Atlanta
+Los Angeles,Cincinnati
+Los Angeles,Detroit
+Los Angeles,Minneapolis
+Los Angeles,New Orleans
+Los Angeles,Salt Lake City
+Los Angeles,Tampa
+Los Angeles,Denver
+Los Angeles,Oakland
+Los Angeles,Houston
+Los Angeles,Baltimore
+Los Angeles,Cleveland
+Los Angeles,Newark
+Los Angeles,Kansas City
+Los Angeles,San Antonio
+Anchorage,Phoenix
+Anchorage,Honolulu
+Anchorage,Las Vegas
+Anchorage,Los Angeles
+Anchorage,Chicago
+Anchorage,Portland
+Anchorage,Seattle
+Anchorage,Minneapolis
+Anchorage,Salt Lake City
+Anchorage,Denver
+Cincinnati,Atlanta
+Cincinnati,Charlotte
+Cincinnati,Boston
+Cincinnati,Fort Lauderdale
+Cincinnati,Las Vegas
+Cincinnati,Los Angeles
+Cincinnati,New York
+Cincinnati,Kansas City
+Cincinnati,Orlando
+Cincinnati,Philadelphia
+Cincinnati,Pittsburgh
+Cincinnati,Raleigh-durham
+Cincinnati,Fort Myers
+Cincinnati,San Francisco
+Cincinnati,Salt Lake City
+Cincinnati,Tampa
+Cincinnati,Denver
+Cincinnati,Washington
+Cincinnati,Dallas-Fort Worth
+Cincinnati,Miami
+Cincinnati,Chicago
+Detroit,New Orleans
+Detroit,Charlotte
+Detroit,Dallas-Fort Worth
+Detroit,Miami
+Detroit,Philadelphia
+Detroit,Phoenix
+Detroit,Boston
+Detroit,Atlanta
+Detroit,Austin
+Detroit,Nashville
+Detroit,Baltimore
+Detroit,Cincinnati
+Detroit,Washington
+Detroit,Denver
+Detroit,Newark
+Detroit,Fort Lauderdale
+Detroit,Houston
+Detroit,Indianapolis
+Detroit,New York
+Detroit,Las Vegas
+Detroit,Los Angeles
+Detroit,Kansas City
+Detroit,Orlando
+Detroit,Minneapolis
+Detroit,Chicago
+Detroit,Portland
+Detroit,Pittsburgh
+Detroit,Raleigh-durham
+Detroit,Fort Myers
+Detroit,San Diego
+Detroit,San Antonio
+Detroit,Seattle
+Detroit,San Francisco
+Detroit,Salt Lake City
+Detroit,St. Louis
+Detroit,Tampa
+New York,New Orleans
+New York,Austin
+New York,Boston
+New York,Charlotte
+New York,Washington
+New York,Dallas-Fort Worth
+New York,Las Vegas
+New York,Los Angeles
+New York,Orlando
+New York,Miami
+New York,Chicago
+New York,Phoenix
+New York,San Diego
+New York,Seattle
+New York,San Francisco
+New York,Philadelphia
+New York,Denver
+New York,Fort Lauderdale
+New York,Houston
+New York,Oakland
+New York,Portland
+New York,Raleigh-durham
+New York,Fort Myers
+New York,Salt Lake City
+New York,Tampa
+New York,Atlanta
+New York,Nashville
+New York,Baltimore
+New York,Cleveland
+New York,Cincinnati
+New York,Detroit
+New York,Indianapolis
+New York,Minneapolis
+New York,Pittsburgh
+New York,San Antonio
+New York,St. Louis
+New York,Honolulu
+Minneapolis,Atlanta
+Minneapolis,New Orleans
+Minneapolis,Charlotte
+Minneapolis,Dallas-Fort Worth
+Minneapolis,Miami
+Minneapolis,Philadelphia
+Minneapolis,Phoenix
+Minneapolis,Seattle
+Minneapolis,Anchorage
+Minneapolis,Boston
+Minneapolis,Baltimore
+Minneapolis,Washington
+Minneapolis,Denver
+Minneapolis,Detroit
+Minneapolis,Newark
+Minneapolis,Fort Lauderdale
+Minneapolis,Houston
+Minneapolis,Indianapolis
+Minneapolis,New York
+Minneapolis,Las Vegas
+Minneapolis,Los Angeles
+Minneapolis,Kansas City
+Minneapolis,Orlando
+Minneapolis,Chicago
+Minneapolis,Portland
+Minneapolis,Pittsburgh
+Minneapolis,Raleigh-durham
+Minneapolis,Fort Myers
+Minneapolis,San Diego
+Minneapolis,San Francisco
+Minneapolis,Salt Lake City
+Minneapolis,St. Louis
+Minneapolis,Tampa
+New Orleans,Detroit
+New Orleans,New York
+New Orleans,Minneapolis
+New Orleans,Austin
+New Orleans,Dallas-Fort Worth
+New Orleans,Miami
+New Orleans,Boston
+New Orleans,Atlanta
+New Orleans,Los Angeles
+New Orleans,Salt Lake City
+New Orleans,Denver
+New Orleans,Newark
+New Orleans,Washington
+New Orleans,Houston
+New Orleans,Chicago
+New Orleans,San Francisco
+New Orleans,Charlotte
+New Orleans,Philadelphia
+New Orleans,Nashville
+New Orleans,Baltimore
+New Orleans,Fort Lauderdale
+New Orleans,Las Vegas
+New Orleans,Kansas City
+New Orleans,Orlando
+New Orleans,Phoenix
+New Orleans,San Diego
+New Orleans,St. Louis
+New Orleans,Tampa
+Boston,Charlotte
+Boston,Washington
+Boston,Dallas-Fort Worth
+Boston,New York
+Boston,Los Angeles
+Boston,Miami
+Boston,Chicago
+Boston,Philadelphia
+Boston,Phoenix
+Boston,Portland
+Boston,San Diego
+Boston,Seattle
+Boston,Austin
+Boston,Baltimore
+Boston,Denver
+Boston,Detroit
+Boston,Newark
+Boston,Fort Lauderdale
+Boston,Houston
+Boston,Las Vegas
+Boston,Orlando
+Boston,New Orleans
+Boston,Pittsburgh
+Boston,Raleigh-durham
+Boston,Fort Myers
+Boston,San Francisco
+Boston,Tampa
+Boston,Atlanta
+Boston,Cincinnati
+Boston,Minneapolis
+Boston,Salt Lake City
+Boston,Cleveland
+Boston,Nashville
+Boston,Kansas City
+Boston,St. Louis
+Austin,Dallas-Fort Worth
+Austin,New York
+Austin,Los Angeles
+Austin,New Orleans
+Austin,Chicago
+Austin,Philadelphia
+Austin,Phoenix
+Austin,Seattle
+Austin,Boston
+Austin,Fort Lauderdale
+Austin,Orlando
+Austin,San Francisco
+Austin,Atlanta
+Austin,Detroit
+Austin,Minneapolis
+Austin,Salt Lake City
+Austin,Denver
+Austin,Las Vegas
+Austin,Newark
+Austin,Houston
+Austin,Nashville
+Austin,Baltimore
+Austin,Washington
+Austin,Oakland
+Austin,San Diego
+Austin,Tampa
+Nashville,Charlotte
+Nashville,Washington
+Nashville,Dallas-Fort Worth
+Nashville,Los Angeles
+Nashville,Miami
+Nashville,Philadelphia
+Nashville,Atlanta
+Nashville,Detroit
+Nashville,Denver
+Nashville,New York
+Nashville,Chicago
+Nashville,Austin
+Nashville,Boston
+Nashville,Baltimore
+Nashville,Cleveland
+Nashville,Newark
+Nashville,Fort Lauderdale
+Nashville,Houston
+Nashville,Las Vegas
+Nashville,Kansas City
+Nashville,Orlando
+Nashville,New Orleans
+Nashville,Phoenix
+Nashville,Pittsburgh
+Nashville,Raleigh-durham
+Nashville,San Diego
+Nashville,San Antonio
+Nashville,St. Louis
+Nashville,Tampa
+Baltimore,Charlotte
+Baltimore,Dallas-Fort Worth
+Baltimore,Miami
+Baltimore,Philadelphia
+Baltimore,Phoenix
+Baltimore,Boston
+Baltimore,Atlanta
+Baltimore,Cincinnati
+Baltimore,Detroit
+Baltimore,Minneapolis
+Baltimore,Raleigh-durham
+Baltimore,Salt Lake City
+Baltimore,Fort Lauderdale
+Baltimore,Las Vegas
+Baltimore,Orlando
+Baltimore,Fort Myers
+Baltimore,Tampa
+Baltimore,Denver
+Baltimore,Houston
+Baltimore,Los Angeles
+Baltimore,Chicago
+Baltimore,San Francisco
+Baltimore,Austin
+Baltimore,Nashville
+Baltimore,Cleveland
+Baltimore,Indianapolis
+Baltimore,Kansas City
+Baltimore,New Orleans
+Baltimore,Pittsburgh
+Baltimore,Portland
+Baltimore,San Diego
+Baltimore,San Antonio
+Baltimore,Seattle
+Baltimore,St. Louis
+Cleveland,Charlotte
+Cleveland,Dallas-Fort Worth
+Cleveland,Atlanta
+Cleveland,Detroit
+Cleveland,New York
+Cleveland,Minneapolis
+Cleveland,Denver
+Cleveland,Boston
+Cleveland,Baltimore
+Cleveland,Newark
+Cleveland,Fort Lauderdale
+Cleveland,Washington
+Cleveland,Houston
+Cleveland,Las Vegas
+Cleveland,Los Angeles
+Cleveland,Orlando
+Cleveland,Chicago
+Cleveland,Phoenix
+Cleveland,Fort Myers
+Cleveland,San Francisco
+Cleveland,Tampa
+Cleveland,Miami
+Cleveland,Nashville
+Charlotte,Austin
+Charlotte,Nashville
+Charlotte,Boston
+Charlotte,Baltimore
+Charlotte,Cleveland
+Charlotte,Cincinnati
+Charlotte,Washington
+Charlotte,Denver
+Charlotte,Dallas-Fort Worth
+Charlotte,Detroit
+Charlotte,Newark
+Charlotte,Fort Lauderdale
+Charlotte,Houston
+Charlotte,Indianapolis
+Charlotte,New York
+Charlotte,Las Vegas
+Charlotte,Los Angeles
+Charlotte,Kansas City
+Charlotte,Orlando
+Charlotte,Miami
+Charlotte,Minneapolis
+Charlotte,Chicago
+Charlotte,Portland
+Charlotte,Philadelphia
+Charlotte,Phoenix
+Charlotte,Pittsburgh
+Charlotte,Raleigh-durham
+Charlotte,Fort Myers
+Charlotte,San Diego
+Charlotte,San Antonio
+Charlotte,Seattle
+Charlotte,San Francisco
+Charlotte,Salt Lake City
+Charlotte,St. Louis
+Charlotte,Tampa
+Charlotte,Atlanta
+Charlotte,New Orleans
+Washington,Boston
+Washington,Charlotte
+Washington,Dallas-Fort Worth
+Washington,Fort Lauderdale
+Washington,New York
+Washington,Las Vegas
+Washington,Los Angeles
+Washington,Orlando
+Washington,Miami
+Washington,Chicago
+Washington,Philadelphia
+Washington,Phoenix
+Washington,San Diego
+Washington,Tampa
+Washington,Portland
+Washington,Seattle
+Washington,Atlanta
+Washington,Detroit
+Washington,Minneapolis
+Washington,Salt Lake City
+Washington,Denver
+Washington,Fort Myers
+Washington,Houston
+Washington,San Francisco
+Washington,Austin
+Washington,Cleveland
+Washington,Honolulu
+Washington,New Orleans
+Washington,Raleigh-durham
+Washington,Nashville
+Washington,Cincinnati
+Washington,Indianapolis
+Washington,Kansas City
+Washington,St. Louis
+Denver,Charlotte
+Denver,Dallas-Fort Worth
+Denver,Miami
+Denver,Chicago
+Denver,Philadelphia
+Denver,Phoenix
+Denver,Seattle
+Denver,Boston
+Denver,New York
+Denver,Atlanta
+Denver,Detroit
+Denver,Minneapolis
+Denver,Salt Lake City
+Denver,Austin
+Denver,Nashville
+Denver,Cleveland
+Denver,Cincinnati
+Denver,Washington
+Denver,Fort Lauderdale
+Denver,Houston
+Denver,Indianapolis
+Denver,Las Vegas
+Denver,Los Angeles
+Denver,Kansas City
+Denver,Orlando
+Denver,New Orleans
+Denver,Portland
+Denver,Fort Myers
+Denver,San Diego
+Denver,San Francisco
+Denver,St. Louis
+Denver,Tampa
+Denver,Anchorage
+Denver,Baltimore
+Denver,Newark
+Denver,Honolulu
+Denver,Pittsburgh
+Denver,San Antonio
+Denver,Oakland
+Denver,Raleigh-durham
+Dallas-Fort Worth,Atlanta
+Dallas-Fort Worth,Austin
+Dallas-Fort Worth,Nashville
+Dallas-Fort Worth,Boston
+Dallas-Fort Worth,Baltimore
+Dallas-Fort Worth,Cleveland
+Dallas-Fort Worth,Charlotte
+Dallas-Fort Worth,Washington
+Dallas-Fort Worth,Denver
+Dallas-Fort Worth,Detroit
+Dallas-Fort Worth,Newark
+Dallas-Fort Worth,Fort Lauderdale
+Dallas-Fort Worth,Honolulu
+Dallas-Fort Worth,Houston
+Dallas-Fort Worth,Indianapolis
+Dallas-Fort Worth,New York
+Dallas-Fort Worth,Las Vegas
+Dallas-Fort Worth,Los Angeles
+Dallas-Fort Worth,Kansas City
+Dallas-Fort Worth,Orlando
+Dallas-Fort Worth,Miami
+Dallas-Fort Worth,Minneapolis
+Dallas-Fort Worth,New Orleans
+Dallas-Fort Worth,Chicago
+Dallas-Fort Worth,Portland
+Dallas-Fort Worth,Philadelphia
+Dallas-Fort Worth,Phoenix
+Dallas-Fort Worth,Pittsburgh
+Dallas-Fort Worth,Raleigh-durham
+Dallas-Fort Worth,Fort Myers
+Dallas-Fort Worth,San Diego
+Dallas-Fort Worth,San Antonio
+Dallas-Fort Worth,Seattle
+Dallas-Fort Worth,San Francisco
+Dallas-Fort Worth,Salt Lake City
+Dallas-Fort Worth,St. Louis
+Dallas-Fort Worth,Tampa
+Dallas-Fort Worth,Oakland
+Dallas-Fort Worth,Alexandria
+Dallas-Fort Worth,Cincinnati
+Dallas-Fort Worth,Garden City
+Dallas-Fort Worth,Montgomery
+Newark,Charlotte
+Newark,Dallas-Fort Worth
+Newark,Miami
+Newark,Philadelphia
+Newark,Phoenix
+Newark,Seattle
+Newark,Boston
+Newark,Fort Lauderdale
+Newark,Orlando
+Newark,Fort Myers
+Newark,Tampa
+Newark,Atlanta
+Newark,Detroit
+Newark,Minneapolis
+Newark,Salt Lake City
+Newark,Austin
+Newark,Cleveland
+Newark,Washington
+Newark,Denver
+Newark,Honolulu
+Newark,Houston
+Newark,Las Vegas
+Newark,Los Angeles
+Newark,New Orleans
+Newark,Chicago
+Newark,Portland
+Newark,San Diego
+Newark,San Antonio
+Newark,San Francisco
+Newark,Nashville
+Newark,St. Louis
+Honolulu,Dallas-Fort Worth
+Honolulu,Los Angeles
+Honolulu,Phoenix
+Honolulu,Anchorage
+Honolulu,Oakland
+Honolulu,Portland
+Honolulu,San Diego
+Honolulu,Seattle
+Honolulu,Atlanta
+Honolulu,San Francisco
+Honolulu,Salt Lake City
+Honolulu,Las Vegas
+Honolulu,New York
+Honolulu,Denver
+Honolulu,Newark
+Honolulu,Washington
+Honolulu,Houston
+Honolulu,Chicago
+Houston,Dallas-Fort Worth
+Houston,Charlotte
+Houston,Miami
+Houston,Philadelphia
+Houston,Phoenix
+Houston,Seattle
+Houston,Boston
+Houston,New York
+Houston,Atlanta
+Houston,Detroit
+Houston,Salt Lake City
+Houston,Denver
+Houston,Los Angeles
+Houston,Las Vegas
+Houston,Orlando
+Houston,Minneapolis
+Houston,Chicago
+Houston,Austin
+Houston,Baltimore
+Houston,Cleveland
+Houston,Washington
+Houston,Newark
+Houston,Fort Lauderdale
+Houston,Honolulu
+Houston,Indianapolis
+Houston,New Orleans
+Houston,Portland
+Houston,Pittsburgh
+Houston,Raleigh-durham
+Houston,Fort Myers
+Houston,San Diego
+Houston,San Antonio
+Houston,San Francisco
+Houston,Tampa
+Houston,Nashville
+Houston,Kansas City
+Houston,Oakland
+Houston,St. Louis
+Indianapolis,Charlotte
+Indianapolis,Dallas-Fort Worth
+Indianapolis,Los Angeles
+Indianapolis,Philadelphia
+Indianapolis,Phoenix
+Indianapolis,Atlanta
+Indianapolis,Detroit
+Indianapolis,New York
+Indianapolis,Minneapolis
+Indianapolis,Fort Myers
+Indianapolis,Salt Lake City
+Indianapolis,Denver
+Indianapolis,Orlando
+Indianapolis,Tampa
+Indianapolis,Houston
+Indianapolis,San Francisco
+Indianapolis,Washington
+Indianapolis,Miami
+Indianapolis,Baltimore
+Indianapolis,Fort Lauderdale
+Indianapolis,Las Vegas
+Indianapolis,Kansas City
+Kansas City,Charlotte
+Kansas City,Dallas-Fort Worth
+Kansas City,Phoenix
+Kansas City,Seattle
+Kansas City,Atlanta
+Kansas City,Cincinnati
+Kansas City,Detroit
+Kansas City,Minneapolis
+Kansas City,Salt Lake City
+Kansas City,Denver
+Kansas City,Chicago
+Kansas City,Nashville
+Kansas City,Boston
+Kansas City,Baltimore
+Kansas City,Washington
+Kansas City,Fort Lauderdale
+Kansas City,Houston
+Kansas City,Indianapolis
+Kansas City,Las Vegas
+Kansas City,Los Angeles
+Kansas City,Orlando
+Kansas City,New Orleans
+Kansas City,Oakland
+Kansas City,Portland
+Kansas City,San Diego
+Kansas City,St. Louis
+Kansas City,Tampa
+Miami,Atlanta
+Miami,Nashville
+Miami,Boston
+Miami,Baltimore
+Miami,Charlotte
+Miami,Washington
+Miami,Denver
+Miami,Dallas-Fort Worth
+Miami,Detroit
+Miami,Newark
+Miami,Houston
+Miami,New York
+Miami,Las Vegas
+Miami,Los Angeles
+Miami,Orlando
+Miami,Minneapolis
+Miami,New Orleans
+Miami,Chicago
+Miami,Philadelphia
+Miami,Phoenix
+Miami,Raleigh-durham
+Miami,San Diego
+Miami,Seattle
+Miami,San Francisco
+Miami,St. Louis
+Miami,Tampa
+Miami,Cleveland
+Miami,Cincinnati
+Miami,Indianapolis
+Miami,Pittsburgh
+Oakland,Phoenix
+Oakland,Honolulu
+Oakland,Seattle
+Oakland,New York
+Oakland,Salt Lake City
+Oakland,Denver
+Oakland,Dallas-Fort Worth
+Oakland,Las Vegas
+Oakland,Chicago
+Oakland,Austin
+Oakland,Houston
+Oakland,Los Angeles
+Oakland,Kansas City
+Oakland,Portland
+Oakland,San Diego
+Portland,Charlotte
+Portland,Dallas-Fort Worth
+Portland,Chicago
+Portland,Philadelphia
+Portland,Phoenix
+Portland,Anchorage
+Portland,Atlanta
+Portland,Boston
+Portland,Washington
+Portland,Honolulu
+Portland,Las Vegas
+Portland,Los Angeles
+Portland,San Diego
+Portland,San Francisco
+Portland,New York
+Portland,Detroit
+Portland,Minneapolis
+Portland,Salt Lake City
+Portland,Denver
+Portland,Newark
+Portland,Houston
+Portland,Kansas City
+Portland,Oakland
+Philadelphia,Austin
+Philadelphia,Boston
+Philadelphia,Baltimore
+Philadelphia,Charlotte
+Philadelphia,Cincinnati
+Philadelphia,Washington
+Philadelphia,Denver
+Philadelphia,Dallas-Fort Worth
+Philadelphia,Detroit
+Philadelphia,Newark
+Philadelphia,Fort Lauderdale
+Philadelphia,Houston
+Philadelphia,Indianapolis
+Philadelphia,Las Vegas
+Philadelphia,Los Angeles
+Philadelphia,New York
+Philadelphia,Orlando
+Philadelphia,Miami
+Philadelphia,Minneapolis
+Philadelphia,Chicago
+Philadelphia,Portland
+Philadelphia,Phoenix
+Philadelphia,Pittsburgh
+Philadelphia,Raleigh-durham
+Philadelphia,Fort Myers
+Philadelphia,San Diego
+Philadelphia,San Antonio
+Philadelphia,Seattle
+Philadelphia,San Francisco
+Philadelphia,Salt Lake City
+Philadelphia,St. Louis
+Philadelphia,Tampa
+Philadelphia,Atlanta
+Philadelphia,Nashville
+Philadelphia,New Orleans
+Phoenix,Anchorage
+Phoenix,Austin
+Phoenix,Boston
+Phoenix,Baltimore
+Phoenix,Charlotte
+Phoenix,Washington
+Phoenix,Denver
+Phoenix,Dallas-Fort Worth
+Phoenix,Detroit
+Phoenix,Newark
+Phoenix,Fort Lauderdale
+Phoenix,Honolulu
+Phoenix,Houston
+Phoenix,Indianapolis
+Phoenix,New York
+Phoenix,Las Vegas
+Phoenix,Los Angeles
+Phoenix,Kansas City
+Phoenix,Orlando
+Phoenix,Miami
+Phoenix,Minneapolis
+Phoenix,Oakland
+Phoenix,Chicago
+Phoenix,Portland
+Phoenix,Philadelphia
+Phoenix,Pittsburgh
+Phoenix,San Diego
+Phoenix,Seattle
+Phoenix,San Francisco
+Phoenix,Salt Lake City
+Phoenix,St. Louis
+Phoenix,Tampa
+Phoenix,Atlanta
+Phoenix,Cleveland
+Phoenix,Nashville
+Phoenix,New Orleans
+Phoenix,Raleigh-durham
+Phoenix,San Antonio
+Pittsburgh,Charlotte
+Pittsburgh,Dallas-Fort Worth
+Pittsburgh,Los Angeles
+Pittsburgh,Philadelphia
+Pittsburgh,Phoenix
+Pittsburgh,Boston
+Pittsburgh,Atlanta
+Pittsburgh,Cincinnati
+Pittsburgh,Detroit
+Pittsburgh,New York
+Pittsburgh,Minneapolis
+Pittsburgh,Orlando
+Pittsburgh,Tampa
+Pittsburgh,Denver
+Pittsburgh,Newark
+Pittsburgh,Houston
+Pittsburgh,Chicago
+Pittsburgh,San Francisco
+Pittsburgh,Miami
+Pittsburgh,Nashville
+Pittsburgh,Baltimore
+Pittsburgh,Fort Lauderdale
+Pittsburgh,Las Vegas
+Pittsburgh,Fort Myers
+Raleigh-durham,Charlotte
+Raleigh-durham,Dallas-Fort Worth
+Raleigh-durham,Los Angeles
+Raleigh-durham,Miami
+Raleigh-durham,Chicago
+Raleigh-durham,Philadelphia
+Raleigh-durham,Boston
+Raleigh-durham,Fort Lauderdale
+Raleigh-durham,New York
+Raleigh-durham,Atlanta
+Raleigh-durham,Baltimore
+Raleigh-durham,Cincinnati
+Raleigh-durham,Detroit
+Raleigh-durham,Las Vegas
+Raleigh-durham,Minneapolis
+Raleigh-durham,Salt Lake City
+Raleigh-durham,Nashville
+Raleigh-durham,Newark
+Raleigh-durham,Washington
+Raleigh-durham,Houston
+Raleigh-durham,San Francisco
+Raleigh-durham,Denver
+Raleigh-durham,Orlando
+Raleigh-durham,Phoenix
+Raleigh-durham,St. Louis
+Raleigh-durham,Tampa
+San Diego,Charlotte
+San Diego,Washington
+San Diego,Dallas-Fort Worth
+San Diego,New York
+San Diego,Miami
+San Diego,Chicago
+San Diego,Philadelphia
+San Diego,Phoenix
+San Diego,Boston
+San Diego,Honolulu
+San Diego,Orlando
+San Diego,Portland
+San Diego,Seattle
+San Diego,Atlanta
+San Diego,Detroit
+San Diego,Minneapolis
+San Diego,Salt Lake City
+San Diego,Denver
+San Diego,Las Vegas
+San Diego,Newark
+San Diego,Houston
+San Diego,San Francisco
+San Diego,Austin
+San Diego,Nashville
+San Diego,Baltimore
+San Diego,Kansas City
+San Diego,New Orleans
+San Diego,Oakland
+San Diego,San Antonio
+San Diego,St. Louis
+San Antonio,Charlotte
+San Antonio,Dallas-Fort Worth
+San Antonio,Philadelphia
+San Antonio,Seattle
+San Antonio,Atlanta
+San Antonio,Detroit
+San Antonio,New York
+San Antonio,Salt Lake City
+San Antonio,Denver
+San Antonio,Newark
+San Antonio,Houston
+San Antonio,Chicago
+San Antonio,Nashville
+San Antonio,Baltimore
+San Antonio,Las Vegas
+San Antonio,Los Angeles
+San Antonio,Orlando
+San Antonio,Phoenix
+San Antonio,San Diego
+San Antonio,St. Louis
+San Antonio,Tampa
+Seattle,Charlotte
+Seattle,Dallas-Fort Worth
+Seattle,New York
+Seattle,Miami
+Seattle,Chicago
+Seattle,Philadelphia
+Seattle,Phoenix
+Seattle,Anchorage
+Seattle,Atlanta
+Seattle,Austin
+Seattle,Boston
+Seattle,Washington
+Seattle,Denver
+Seattle,Newark
+Seattle,Fort Lauderdale
+Seattle,Honolulu
+Seattle,Houston
+Seattle,Las Vegas
+Seattle,Los Angeles
+Seattle,Kansas City
+Seattle,Orlando
+Seattle,Minneapolis
+Seattle,Oakland
+Seattle,San Diego
+Seattle,San Antonio
+Seattle,San Francisco
+Seattle,Salt Lake City
+Seattle,St. Louis
+Seattle,Detroit
+Seattle,Baltimore
+San Francisco,Charlotte
+San Francisco,Dallas-Fort Worth
+San Francisco,New York
+San Francisco,Los Angeles
+San Francisco,Miami
+San Francisco,Chicago
+San Francisco,Philadelphia
+San Francisco,Phoenix
+San Francisco,Portland
+San Francisco,Seattle
+San Francisco,Austin
+San Francisco,Boston
+San Francisco,Fort Lauderdale
+San Francisco,Atlanta
+San Francisco,Cincinnati
+San Francisco,Detroit
+San Francisco,Honolulu
+San Francisco,Minneapolis
+San Francisco,Salt Lake City
+San Francisco,Denver
+San Francisco,Baltimore
+San Francisco,Cleveland
+San Francisco,Washington
+San Francisco,Newark
+San Francisco,Houston
+San Francisco,Indianapolis
+San Francisco,Las Vegas
+San Francisco,Orlando
+San Francisco,New Orleans
+San Francisco,Pittsburgh
+San Francisco,Raleigh-durham
+San Francisco,San Diego
+San Francisco,St. Louis
+Salt Lake City,Charlotte
+Salt Lake City,Dallas-Fort Worth
+Salt Lake City,Philadelphia
+Salt Lake City,Phoenix
+Salt Lake City,Seattle
+Salt Lake City,New York
+Salt Lake City,Anchorage
+Salt Lake City,Atlanta
+Salt Lake City,Austin
+Salt Lake City,Boston
+Salt Lake City,Baltimore
+Salt Lake City,Cincinnati
+Salt Lake City,Washington
+Salt Lake City,Denver
+Salt Lake City,Detroit
+Salt Lake City,Newark
+Salt Lake City,Honolulu
+Salt Lake City,Houston
+Salt Lake City,Indianapolis
+Salt Lake City,Las Vegas
+Salt Lake City,Los Angeles
+Salt Lake City,Kansas City
+Salt Lake City,Orlando
+Salt Lake City,Minneapolis
+Salt Lake City,New Orleans
+Salt Lake City,Oakland
+Salt Lake City,Portland
+Salt Lake City,Raleigh-durham
+Salt Lake City,San Diego
+Salt Lake City,San Antonio
+Salt Lake City,San Francisco
+Salt Lake City,St. Louis
+Salt Lake City,Chicago</pre>

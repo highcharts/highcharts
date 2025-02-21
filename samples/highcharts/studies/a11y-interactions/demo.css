@@ -1,0 +1,118 @@
+.chart {
+    height: 400px;
+}
+
+.hidden {
+    display: none;
+}
+
+.intro {
+    font-size: 0.9em;
+    padding: 30px;
+}
+
+#delays {
+    height: 180px;
+}
+
+#network {
+    height: 600px;
+    min-width: 400px;
+}
+
+#wordcloud {
+    height: 100%;
+}
+
+#demo-content {
+    background-color: #f8f8f8;
+}
+
+main {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(8, 1fr);
+    background-color: #f8f8f8;
+    padding: 20px;
+    max-width: 1800px;
+    min-width: 450px;
+    margin: 0 auto;
+}
+
+h1 {
+    grid-column-end: span 8;
+    text-align: center;
+}
+
+#logo-highcharts {
+    width: 1.3em;
+    margin-right: 10px;
+    vertical-align: middle;
+    margin-top: -3px;
+}
+
+.intro p:has(+ .signature) {
+    margin-bottom: 5px;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+
+.signature {
+    margin-top: 0;
+    margin-left: 10px;
+}
+
+.signature::before {
+    content: "— ";
+}
+
+.card {
+    margin: 0;
+    grid-column-end: span 4;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 5px #ccc;
+}
+
+.card.small {
+    grid-column-end: span 3;
+}
+
+.card.large {
+    grid-column-end: span 5;
+}
+
+@media only screen and (max-width: 1000px) {
+    main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    h1 {
+        grid-column-end: span 1;
+    }
+
+    .card {
+        grid-column-end: span 1;
+    }
+
+    .card.small {
+        grid-column-end: span 1;
+    }
+
+    .card.large {
+        grid-column-end: span 1;
+    }
+}

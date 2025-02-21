@@ -1,0 +1,7 @@
+---
+ name: Highcharts Interaction Models
+ authors:
+   - Øystein Moseng
+   - Marita Vindedal
+ js_wrap: b
+...
