@@ -25,6 +25,7 @@ const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
 const defaultSettings = {
     selectedVerbosity: 'full',
     selectedTextSize: 'default',
+    selectedLabels: 'default',
     isContrastChecked: false,
     isBorderChecked: false,
     isAltPointDescChecked: false,
@@ -927,20 +928,30 @@ function createPreferencesDialog(chart) {
                 <label for="theme-light-${i}">Light</label>
             </div>
 
-            <h3>Visible alt text:</h3>
+            <h3>Visible chart summaries</h3>
             <div class="pref alt-text">
                 <input type="checkbox" id="alt-info-${i}" name="alt-info-${i}"
                     ${settings.isInfoChecked ? 'checked' : ''}>
                 <label for="alt-info-${i}">Show chart overview</label>
-                <input type="checkbox" id="alt-point-label-${i}"
-                name="alt-point-label-${i}"
-                    ${settings.isAltPointLabelChecked ? 'checked' : ''}>
-                <label for="alt-point-label-${i}">Show point labels</label>
-                <input type="checkbox" id="alt-points-desc-${i}"
-                name="alt-points-desc-${i}"
-                    ${settings.isAltPointDescChecked ? 'checked' : ''}>
-                <label for="alt-points-desc-${i}">Show point description</label>
             </div>
+
+            <h3>Visible point descriptions</h3>
+            <div class="pref alt-text">
+                <input type="radio" id="datalabels-default-${i}"
+                name="datalabels-${i}" value="default"
+                ${settings.selectedLabels === 'default' ? 'checked' : ''}>
+                <label for="datalabels-default-${i}">No description</label>
+
+                <input type="radio" id="datalabels-${i}"
+                name="datalabels-${i}" value="datalabels"
+                ${settings.selectedLabels === 'short' ? 'checked' : ''}>
+                <label for="datalabels-${i}">Show data labels</label>
+
+                <input type="radio" id="point-desc-${i}"
+                name="datalabels-${i}" value="point-desc"
+                ${settings.selectedLabels === 'full' ? 'checked' : ''}>
+                <label for="point-desc-${i}">Show point descriptions</label>
+            </div> 
 
             <h3>Text description:</h3>
             <div class="pref verbosity">
@@ -1063,10 +1074,8 @@ function setupEventListeners(prefContent, chart) {
             prefContent.querySelector(`input[name="border-${chart.index}"]`),
         patternCheckbox =
             prefContent.querySelector(`input[name="pattern-${chart.index}"]`),
-        altPointDescCheckbox = prefContent
-            .querySelector(`input[name="alt-points-desc-${chart.index}"]`),
-        altPointLabelCheckbox = prefContent
-            .querySelector(`input[name="alt-point-label-${chart.index}"]`),
+        labelsRadioButtons = prefContent
+            .querySelectorAll(`input[name="datalabels-${chart.index}"]`),
         altInfoCheckbox =
             prefContent.querySelector(`input[name="alt-info-${chart.index}"]`),
         accordionButtons = prefContent.querySelectorAll('.acc-btn'),
@@ -1165,11 +1174,6 @@ function setupEventListeners(prefContent, chart) {
                 columnDesc.style.fontSize = settings.fontSize;
             }
 
-            // Only visible if alt-text for point is checked
-            chart.altTextDivs.forEach(div => {
-                div.style.fontSize = settings.fontSize;
-            });
-
             // Append the button to the screen reader region
             applyInfoRegion(settings.selectedVerbosity, chart);
         });
@@ -1205,6 +1209,27 @@ function setupEventListeners(prefContent, chart) {
                 });
             }
 
+            // If point desc is enabled, update dataLabels format
+            if (settings.selectedLabels === 'point-desc') {
+                const altText = formatAltTextVerbosityForPoints(
+                    chart, settings.selectedVerbosity
+                );
+
+                chart.update({
+                    series: [{
+                        dataLabels: {
+                            enabled: true,
+                            format: altText
+                        }
+                    }, {
+                        dataLabels: {
+                            enabled: true,
+                            format: altText
+                        }
+                    }]
+                });
+            }
+
             applyInfoRegion(settings.selectedVerbosity, chart);
         });
     });
@@ -1229,157 +1254,37 @@ function setupEventListeners(prefContent, chart) {
         applyInfoRegion(settings.selectedVerbosity, chart);
     });
 
-    altPointLabelCheckbox.addEventListener('change', event => {
-        settings.isAltPointLabelChecked = event.target.checked;
+    labelsRadioButtons.forEach(radio => {
+        radio.addEventListener('change', event => {
+            settings.selectedLabels = event.target.value;
 
-        if (settings.isAltPointLabelChecked) {
+            let dataLabelsConfig = {
+                enabled: false
+            };
+
+            if (settings.selectedLabels === 'datalabels') {
+                dataLabelsConfig = {
+                    enabled: true,
+                    format: undefined // Clearing the format if point-desc
+                };
+            } else if (settings.selectedLabels === 'point-desc') {
+                const altText = formatAltTextVerbosityForPoints(
+                    chart, settings.selectedVerbosity
+                );
+                dataLabelsConfig = {
+                    enabled: true,
+                    format: altText
+                };
+            }
             chart.update({
                 series: [{
-                    dataLabels: {
-                        enabled: true
-                    }
+                    dataLabels: { ...dataLabelsConfig }
                 }, {
-                    dataLabels: {
-                        enabled: true
-                    }
+                    dataLabels: { ...dataLabelsConfig }
                 }]
             });
-        } else {
-            chart.update({
-                series: [{
-                    dataLabels: {
-                        enabled: false
-                    }
-                }, {
-                    dataLabels: {
-                        enabled: false
-                    }
-                }]
-            });
-        }
-
-        chart.altTextDivs.forEach(div => {
-            const currentTop = parseInt(div.style.top, 10);
-            div.style.top =
-                settings.isAltPointLabelChecked ?
-                    `${currentTop - 20}px` : `${currentTop + 20}px`;
+            applyInfoRegion(settings.selectedVerbosity, chart);
         });
-
-        applyInfoRegion(settings.selectedVerbosity, chart);
-
-    });
-
-    altPointDescCheckbox.addEventListener('change', event => {
-        settings.isAltPointDescChecked = event.target.checked;
-
-        // Clear existing altTextDivs
-        chart.altTextDivs.forEach(div => div.remove());
-        chart.altTextDivs = [];
-
-        const theme = getThemeConfig(chart);
-
-        if (
-            settings.isAltPointDescChecked && chart.series[0].type === 'column'
-        ) {
-            const paths = document
-                .querySelectorAll('path.highcharts-point[aria-label]');
-            const chartRect = chart.container.getBoundingClientRect();
-
-            paths.forEach(path => {
-                const ariaLabel = path.getAttribute('aria-label');
-                const rect = path.getBoundingClientRect();
-                // Create and position alt text div
-                const altTextDiv = document.createElement('div');
-                altTextDiv.textContent = ariaLabel;
-                altTextDiv.classList.add('alt-text-div');
-                altTextDiv.setAttribute('aria-hidden', 'true');
-                // Apply theme-specific styles during creation
-                altTextDiv.style.backgroundColor =
-                    theme === darkTheme ? '#444444' : '#ffffff';
-                altTextDiv.style.color =
-                    theme === darkTheme ? '#ffffff' : '#000000';
-                altTextDiv.style.border = theme === darkTheme ?
-                    '1px solid #666666' : '1px solid #ccc';
-                altTextDiv.style.opacity = '1';
-                altTextDiv.style.fontSize = settings.fontSize;
-
-                // Position label on top of the column
-                altTextDiv.style.left =
-                    `${rect.left + rect.width / 2 - chartRect.left}px`;
-                altTextDiv.style.top = `${rect.top - chartRect.top}px`;
-                // Adjust position if altPointLabel is checked
-                if (settings.isAltPointLabelChecked) {
-                    altTextDiv.style.top = `${rect.top - chartRect.top - 20}px`;
-                }
-                // Add to chart container
-                chart.container.appendChild(altTextDiv);
-                // Add divs to array for setting text size if applicable
-                chart.altTextDivs.push(altTextDiv);
-            });
-            // Disable tooltips to avoid duplicate information
-            chart.update({
-                tooltip: {
-                    enabled: false
-                }
-            });
-        } else if (
-            settings.isAltPointDescChecked && chart.series[0].type === 'scatter'
-        ) {
-            const chartRect = chart.container.getBoundingClientRect();
-            chart.series.forEach(series => {
-                series.points.forEach((point, index) => {
-                    if (index % 20 === 0) {
-                        const ariaLabel =
-                        `${series.name}: ${point.x} cm, ${point.y} kg`;
-                        const rect =
-                        point.graphic.element.getBoundingClientRect();
-                        // Create and position alt text div
-                        const altTextDiv = document.createElement('div');
-                        altTextDiv.textContent = ariaLabel;
-                        altTextDiv.classList.add('alt-text-div');
-                        altTextDiv.setAttribute('aria-hidden', 'true');
-                        // Apply theme-specific styles during creation
-                        altTextDiv.style.backgroundColor =
-                            theme === darkTheme ? '#444444' : '#ffffff';
-                        altTextDiv.style.color =
-                            theme === darkTheme ? '#ffffff' : '#000000';
-                        altTextDiv.style.border =
-                            theme === darkTheme ? '1px solid #666666' :
-                                '1px solid #ccc';
-                        altTextDiv.style.opacity = '1';
-                        altTextDiv.style.fontSize = settings.fontSize;
-
-                        // Position label on top of the point
-                        altTextDiv.style.left =
-                        `${rect.left + rect.width / 2 - chartRect.left}px`;
-                        altTextDiv.style.top = `${rect.top - chartRect.top}px`;
-                        // Adjust position if altPointLabel is checked
-                        if (settings.isAltPointLabelChecked) {
-                            altTextDiv.style.top =
-                            `${rect.top - chartRect.top - 20}px`;
-                        }
-                        // Add to chart container
-                        chart.container.appendChild(altTextDiv);
-                        // Add divs to array for setting text size if applicable
-                        chart.altTextDivs.push(altTextDiv);
-                    }
-                });
-            });
-            chart.update({
-                tooltip: {
-                    enabled: false
-                }
-            });
-        } else {
-            chart.update({
-                tooltip: {
-                    enabled: true
-                }
-            });
-        }
-
-        // Append button to screen reader region
-        applyInfoRegion(settings.selectedVerbosity, chart);
     });
 
     altInfoCheckbox.addEventListener('change', event => {
@@ -1656,7 +1561,6 @@ function updateCustomComponent() {
 // TODO: Refactor function to be only about applying info region and rename
 function applyInfoRegion(selectedVerbosity, chart) {
     const settings = chartSettingsMap[chart.index];
-
     // Add preference button to screen reader section
     addPrefButtonScreenReader(chart);
 
@@ -1698,47 +1602,8 @@ function applyInfoRegion(selectedVerbosity, chart) {
         infoRegion.classList.remove('hide-section');
     }
 
-    let globalIndex = 0;
 
-    chart.series.forEach(series => {
-        series.points.forEach(point => {
-            const pointElement = point.graphic?.element;
-
-            if (!pointElement) {
-                return;
-            }
-
-            const formattedVal = point.y.toLocaleString('en-US');
-
-            let altText = '';
-
-            // Generate alt text based on verbosity
-            if (chart.series[0].type === 'column') {
-                altText = selectedVerbosity === 'short' ?
-                    `${point.category}, ${formattedVal} (1000 MT).` :
-                    `Bar ${point.index + 1} of ${point.series.points.length}
-                    in series ${point.category}, ${point.series.name}: 
-                    ${point.category}, ${formattedVal} (1000 MT).`;
-            } else {
-                altText = selectedVerbosity === 'short' ?
-                    `${point.series.name}, ${point.x} cm, ` +
-                `${point.y} kg.` :
-                    `Point ${point.index + 1} of ` +
-                `${point.series.points.length} in series ` +
-                `${((point.series.name).toLowerCase())}, ` +
-                `${point.x} cm, ${point.y} kg.`;
-            }
-
-            // Update corresponding alt text div
-            const altTextDiv = chart.altTextDivs[globalIndex];
-            if (altTextDiv) {
-                altTextDiv.textContent = altText;
-            }
-
-            globalIndex++;
-
-        });
-    });
+    formatAltTextVerbosityForPoints(chart, selectedVerbosity);
 
     const chartInfoElements = Array.from(innerScreenReaderDiv.children);
 
@@ -1773,6 +1638,49 @@ function applyInfoRegion(selectedVerbosity, chart) {
         dataTableButton.style.display = 'block';
         dataTableButton.style.fontSize = settings.fontSize;
     }
+}
+
+function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
+    let globalIndex = 0;
+    let altText = '';
+    chart.series.forEach(series => {
+        series.points.forEach(point => {
+            const pointElement = point.graphic?.element;
+
+            if (!pointElement) {
+                return;
+            }
+
+            const formattedVal = point.y.toLocaleString('en-US');
+
+            // Generate alt text based on verbosity
+            if (chart.series[0].type === 'column') {
+                altText = selectedVerbosity === 'short' ?
+                    `${point.category}, ${formattedVal} (1000 MT).` :
+                    `Bar ${point.index + 1} of ${point.series.points.length}
+                    in series ${point.category}, ${point.series.name}: 
+                    ${point.category}, ${formattedVal} (1000 MT).`;
+            } else {
+                altText = selectedVerbosity === 'short' ?
+                    `${point.series.name}, ${point.x} cm, ` +
+                `${point.y} kg.` :
+                    `Point ${point.index + 1} of ` +
+                `${point.series.points.length} in series ` +
+                `${((point.series.name).toLowerCase())}, ` +
+                `${point.x} cm, ${point.y} kg.`;
+            }
+
+            // Update corresponding alt text div
+            const altTextDiv = chart.altTextDivs[globalIndex];
+            if (altTextDiv) {
+                altTextDiv.textContent = altText;
+            }
+
+            globalIndex++;
+
+        });
+    });
+    return altText;
 }
 
 // Define keyboard navigation for this component

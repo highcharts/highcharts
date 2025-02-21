@@ -43,7 +43,10 @@ a:focus {
     border: 1px solid black;
     border-radius: 5px;
     min-width: 600px;
-    max-width: 800px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .pref {
@@ -192,6 +195,13 @@ h2 {
 .collapse.show {
     display: block;
     max-height: 500px;
+    overflow-y: auto;
+}
+
+.dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
 }
 
 /* Remove default button styling */
@@ -205,9 +215,9 @@ h2 {
 
 /* Ensure it visually looks like a heading */
 .acc-btn {
-    font-size: 1.25rem; /* Same as h3 */
+    font-size: 1.25rem;
     font-weight: bold;
-    color: #333; /* Standard heading color */
+    color: #333;
     text-align: left;
     padding: 10px 0;
 }
