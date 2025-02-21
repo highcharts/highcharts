@@ -300,8 +300,12 @@ class TimeBase {
             minute: 'numeric',
             second: 'numeric'
         }, timestamp, 'es')
-            .split(/(?:, |\/|:)/g);
-
+            // The ', ' splitter is for all modern browsers:
+            //      L, 6/3/2023, 14:30:00
+            // The ' ' splitter is for legacy Safari with no comma between date
+            // and time (#22445):
+            //      L, 6/3/2023 14:30:00
+            .split(/(?:, | |\/|:)/g);
         return [
             year,
             +month - 1,
