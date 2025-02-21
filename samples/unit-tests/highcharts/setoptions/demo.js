@@ -16,11 +16,13 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         })
         .highcharts();
 
-    assert.strictEqual(
-        chart.navigator.enabled &&
-            chart.scrollbar.enabled &&
-            chart.rangeSelector.enabled,
-        undefined,
+    assert.deepEqual(
+        [
+            chart.navigator.enabled,
+            chart.scrollbar.enabled,
+            chart.rangeSelector.enabled
+        ],
+        [undefined, undefined, undefined],
         'navigator, scrollbar, rangeSelector enabled'
     );
 
@@ -52,9 +54,9 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         })
         .highcharts();
 
-    assert.strictEqual(
-        chart.navigator && chart.scrollbar && chart.rangeSelector,
-        undefined,
+    assert.deepEqual(
+        [chart.navigator, chart.scrollbar, chart.rangeSelector],
+        [undefined, undefined, undefined],
         'navigator, scrollbar, rangeSelector disabled'
     );
     chart.series[0].points[0].onMouseOver();
@@ -62,7 +64,7 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     assert.strictEqual(
         chart.tooltip.split,
         false,
-        'The instanciated tooltip should not be split (#7307)'
+        'The instantiated tooltip should not be split (#7307)'
     );
 
     assert.strictEqual(
@@ -101,9 +103,9 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         })
         .highcharts();
 
-    assert.strictEqual(
-        chart.navigator && chart.scrollbar && chart.rangeSelector,
-        undefined,
+    assert.deepEqual(
+        [chart.navigator, chart.scrollbar, chart.rangeSelector],
+        [undefined, undefined, undefined],
         'navigator, scrollbar, rangeSelector disabled'
     );
 
