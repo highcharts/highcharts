@@ -908,9 +908,9 @@ function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
             if (chart.series[0].type === 'column') {
                 altText = selectedVerbosity === 'short' ?
                     `${point.category}, ${formattedVal} (1000 MT).` :
-                    `Bar ${point.index + 1} of ${point.series.points.length}
-                    in series ${point.category}, ${point.series.name}: 
-                    ${point.category}, ${formattedVal} (1000 MT).`;
+                    `Bar ${point.index + 1} of ${point.series.points.length} ` +
+                    `in series ${point.category}. ${point.series.name}, ` +
+                    `${point.category}, ${formattedVal} (1000 MT).`;
             } else {
                 altText = selectedVerbosity === 'short' ?
                     `${point.series.name}, ${point.x} cm, ` +
@@ -922,7 +922,7 @@ function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
             }
 
             globalIndex++;
-            console.log(globalIndex);
+            console.log(altText);
 
         });
     });
