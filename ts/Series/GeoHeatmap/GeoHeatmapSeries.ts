@@ -385,8 +385,15 @@ class GeoHeatmapSeries extends MapSeries {
 
                     if (unEvenLon || unEvenLat) {
                         error(
-                            'For best performance, lon/lat datapoints should ' +
-                            'be spaced by a single colsize/rowsize'
+                            'Highcharts Warning: For best performance,' +
+                            ' lon/lat datapoints should spaced by a single ' +
+                            'colsize/rowsize',
+                            false,
+                            series.chart,
+                            {
+                                colsize: String(colsize),
+                                rowsize: String(rowsize)
+                            }
                         );
                     }
 
