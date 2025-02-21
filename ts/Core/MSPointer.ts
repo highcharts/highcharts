@@ -306,7 +306,7 @@ class MSPointer extends Pointer {
 
         if (
             this.hasZoom ||
-            pick((tooltip && tooltip.options.followTouchMove), true)
+            pick((tooltip?.options.followTouchMove), true)
         ) {
             this.batchMSEvents(addEvent);
         }

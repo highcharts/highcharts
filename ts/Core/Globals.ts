@@ -197,18 +197,14 @@ namespace Globals {
                 window :
                 {}
         ) as (Window&typeof globalThis), // eslint-disable-line node/no-unsupported-features/es-builtins
-        doc = win.document,
-        svg = (
-            doc &&
-            doc.createElementNS &&
-            !!(
-                doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
-            ).createSVGRect
-        ),
+        doc = win.document as (Document|undefined),
+        svg = !!(
+            doc?.createElementNS?.(SVG_NS, 'svg') as SVGSVGElement|undefined
+        )?.createSVGRect,
         pageLang = (
             doc?.documentElement?.closest('[lang]') as HTMLDOMElement|null
         )?.lang,
-        userAgent = (win.navigator && win.navigator.userAgent) || '',
+        userAgent = win.navigator?.userAgent || '',
         isChrome = win.chrome,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
         isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,

@@ -208,7 +208,7 @@ class Tick {
             names = axis.names,
             pos = tick.pos,
             labelOptions: AxisLabelOptions = pick(
-                tick.options && tick.options.labels,
+                tick.options?.labels,
                 options.labels
             ) as any,
             tickPositions = axis.tickPositions,
@@ -309,7 +309,7 @@ class Tick {
         const str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list;
+        const list = dateTimeLabelFormats?.list;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
@@ -706,7 +706,7 @@ class Tick {
             // limited by the box (#3938).
             if (
                 labelWidth > modifiedSlotWidth ||
-                (axis.autoRotation && ((label as any).styles || {}).width)
+                (axis.autoRotation && label?.styles?.width)
             ) {
                 textWidth = modifiedSlotWidth;
             }
@@ -822,23 +822,23 @@ class Tick {
             axisEnd = axisStart + axis.len,
             pxPos = horiz ? x : y;
 
+        const labelOpacity = pick(
+            opacity,
+            tick.label?.newOpacity, // #15528
+            1
+        );
+
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`
         // should not be visible (#20166). The `correctFloat` is for reversed
         // axes in Safari.
         if (
             !axis.chart.polar &&
-            tick.isNew &&
             (correctFloat(pxPos) < axisStart || pxPos > axisEnd)
         ) {
             opacity = 0;
         }
 
-        const labelOpacity = pick(
-            opacity,
-            tick.label && tick.label.newOpacity, // #15528
-            1
-        );
-        opacity = pick(opacity, 1);
+        opacity ??= 1;
         this.isActive = true;
 
         // Create the grid line

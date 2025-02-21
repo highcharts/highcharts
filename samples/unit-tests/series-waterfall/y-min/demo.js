@@ -69,7 +69,9 @@ QUnit.test('Sum height not exceeding plot area(#4256)', function (assert) {
                     }
                 ],
                 dataLabels: {
-                    enabled: true
+                    enabled: true,
+                    crop: false,
+                    overflow: 'allow'
                 },
                 pointPadding: 0
             }
@@ -91,5 +93,11 @@ QUnit.test('Sum height not exceeding plot area(#4256)', function (assert) {
             chart.yAxis[0].len + 2,
         true,
         'Sum inside plot area'
+    );
+
+    assert.ok(
+        chart.series[0].points[0].dataLabel.getBBox().y <
+            chart.yAxis[0].len,
+        'The data label should be rendered within plot area (#22617)'
     );
 });
