@@ -1,25 +1,7 @@
+/* -------------------- DEFAULT SETTINGS --------------------- */
+
 // Store settings for each chart instance
 const chartSettingsMap = {};
-
-// Colors for light theme
-const defaultColorsLight = ['#90D2FE', '#ffb8b8'],
-    contrastColorsLight = ['#247eb3', '#dd3636'],
-    borderColorsLight = contrastColorsLight,
-    borderColorsWithContrastLight = ['#103042', '#561515'];
-
-// Colors for dark theme
-const defaultColorsDark = ['#015288', '#A80000'],
-    contrastColorsDark = ['#16A0FD', '#FE6264'],
-    borderColorsDark = contrastColorsDark,
-    borderColorsWithContrastDark = ['#FFFFFF', '#FFFFFF'];
-
-// Defining description formats for verbosity
-const shortPointDescriptionFormat =
-    '{point.category}, {(point.y):,.0f} (1000 MT).';
-const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
-    '{point.series.points.length} in series {point.category}, ' +
-    '{point.series.name}: {(point.y):,.0f} (1000 MT).';
-
 
 // Default settings
 const defaultSettings = {
@@ -37,6 +19,14 @@ const defaultSettings = {
     isSonificationChecked: false,
     isSonificationSpeechChecked: false
 };
+
+/* -------------------- HARDCODED DESCRIPTIONS --------------------- */
+// Defining description formats for verbosity
+const shortPointDescriptionFormat =
+    '{point.category}, {(point.y):,.0f} (1000 MT).';
+const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
+    '{point.series.points.length} in series {point.category}, ' +
+    '{point.series.name}: {(point.y):,.0f} (1000 MT).';
 
 // Adding descriptions to chart
 const columnChartDesc = 'This bar chart compares the estimated production ' +
@@ -67,6 +57,22 @@ const descMale = 'This series contains the heights and weights ' +
                 'to 198 cm and weights between 54 kg and 116 kg. The ' +
                 'average height for the males is 174.3 cm, and the average ' +
                 'weight is 80.7 kg.';
+
+/* -------------------- COLORS --------------------- */
+
+// Colors for light theme
+const defaultColorsLight = ['#90D2FE', '#ffb8b8'],
+    contrastColorsLight = ['#247eb3', '#dd3636'],
+    borderColorsLight = contrastColorsLight,
+    borderColorsWithContrastLight = ['#103042', '#561515'];
+
+// Colors for dark theme
+const defaultColorsDark = ['#015288', '#A80000'],
+    contrastColorsDark = ['#16A0FD', '#FE6264'],
+    borderColorsDark = contrastColorsDark,
+    borderColorsWithContrastDark = ['#FFFFFF', '#FFFFFF'];
+
+/* -------------------- THEMES --------------------- */
 
 const lightTheme = {
     colors: defaultColorsLight,
@@ -288,7 +294,7 @@ function applyChartTheme(chart) {
     // Update the dialog colors if the dialog is open
     const dialog = document.getElementById('pref-menu-dialog');
     if (dialog) {
-        setDialogColors(dialog, chart);
+        setDialogTheme(dialog, chart);
     }
 
     // Update the altTextDivs whenever the theme is changed
@@ -305,7 +311,7 @@ function applyChartTheme(chart) {
     });
 }
 
-function setDialogColors(dialog, chart) {
+function setDialogTheme(dialog, chart) {
     const theme = getThemeConfig(chart);
     if (!dialog) {
         console.warn('Dialog element not found');
@@ -355,6 +361,88 @@ function setDialogColors(dialog, chart) {
     }
 }
 
+function updateChartColorLogic(chart) {
+    const theme = getThemeConfig(chart);
+    const isDarkMode = theme === darkTheme;
+
+    const contrastColors = isDarkMode ?
+        contrastColorsDark : contrastColorsLight;
+    const borderColors = isDarkMode ?
+        borderColorsWithContrastDark : borderColorsWithContrastLight;
+    const settings = chartSettingsMap[chart.index];
+
+    const seriesOptions = [{
+        color: settings.isPatternChecked ? {
+            pattern: {
+                path: 'M 0 0 L 8 8', // Diagonal stripes
+                color: settings.isContrastChecked ?
+                    contrastColors[0] : theme.colors[0],
+                backgroundColor: isDarkMode ? '#FFFFFF' :
+                    (settings.isContrastChecked ?
+                        contrastColors[0] + '40' : theme.colors[0] + '40'),
+                width: 8,
+                height: 8
+            }
+        } : (settings.isContrastChecked ? contrastColors[0] : theme.colors[0]),
+        borderColor: settings.isBorderChecked ? (
+            settings.isContrastChecked ? borderColors[0] : theme.borderColors[0]
+        ) : null,
+        borderWidth: settings.isBorderChecked ? 2 : 0,
+        marker: {
+            lineColor: settings.isBorderChecked ? (
+                settings.isContrastChecked ?
+                    borderColors[0] : theme.borderColors[0]
+            ) : null,
+            lineWidth: settings.isBorderChecked ? 1 : 0
+        }
+    }, {
+        color: settings.isPatternChecked ? {
+            pattern: { // Dotted pattern
+                path: 'M 3 3 m -2, 0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0',
+                color: settings.isContrastChecked ?
+                    contrastColors[1] : theme.colors[1],
+                backgroundColor: isDarkMode ? '#FFFFFF' :
+                    (settings.isContrastChecked ?
+                        contrastColors[1] + '40' : theme.colors[1] + '40'),
+                width: 8,
+                height: 8
+            }
+        } : (settings.isContrastChecked ? contrastColors[1] : theme.colors[1]),
+        borderColor: settings.isBorderChecked ? (
+            settings.isContrastChecked ? borderColors[1] : theme.borderColors[1]
+        ) : null,
+        borderWidth: settings.isBorderChecked ? 2 : 0,
+        marker: {
+            lineColor: settings.isBorderChecked ? (
+                settings.isContrastChecked ?
+                    borderColors[0] : theme.borderColors[0]
+            ) : null,
+            lineWidth: settings.isBorderChecked ? 1 : 0
+        }
+    }];
+
+    chart.update({
+        series: seriesOptions
+    });
+
+    // Update altTextDiv styles based on the theme
+    chart.altTextDivs.forEach(div => {
+        if (isDarkMode) {
+            div.style.backgroundColor =
+                'rgb(68, 68, 68)';
+            div.style.color =
+                'rgb(255, 255, 255)';
+            div.style.border = '1px solid rgb(102, 102, 102)';
+        } else {
+            div.style.backgroundColor =
+                'rgb(255, 255, 255)';
+            div.style.color = 'rgb(0, 0, 0)';
+            div.style.border = '1px solid rgb(204, 204, 204)';
+        }
+    });
+}
+
+/* -------------------- INITIALIZATION --------------------- */
 function initializeCharts() {
     const chart1 = Highcharts.chart('container', getColumnChartConfig());
     const chart2 = Highcharts.chart('container2', getScatterChartConfig());
@@ -391,21 +479,7 @@ function initializeCharts() {
     return [chart1, chart2];
 }
 
-function getScreenReaderDescription(chart) {
-    const screenReaderDiv = document.getElementById(
-        `highcharts-screen-reader-region-before-${chart.index}`
-    );
-    if (!screenReaderDiv || screenReaderDiv.children.length === 0) {
-        return '';
-    }
-    const innerDiv = screenReaderDiv.children[0];
-    return innerDiv.children.length > 3 ? innerDiv.children[3].textContent : '';
-}
-
-function getShortScreenReaderDescription(chart) {
-    const longDesc = getScreenReaderDescription(chart);
-    return longDesc ? longDesc.split('.')[0] + '.' : '';
-}
+/* -------------------- CONFIGS --------------------- */
 
 function getColumnChartConfig() {
     return {
@@ -749,6 +823,149 @@ function getScatterChartConfig() {
     };
 }
 
+/* -------------------- SCREEN READER --------------------- */
+function getScreenReaderDescription(chart) {
+    const screenReaderDiv = document.getElementById(
+        `highcharts-screen-reader-region-before-${chart.index}`
+    );
+    if (!screenReaderDiv || screenReaderDiv.children.length === 0) {
+        return '';
+    }
+    const innerDiv = screenReaderDiv.children[0];
+    return innerDiv.children.length > 3 ? innerDiv.children[3].textContent : '';
+}
+
+function getShortScreenReaderDescription(chart) {
+    const longDesc = getScreenReaderDescription(chart);
+    return longDesc ? longDesc.split('.')[0] + '.' : '';
+}
+
+// TODO: Refactor function to be only about applying info region and rename
+function applyInfoRegion(selectedVerbosity, chart) {
+    const settings = chartSettingsMap[chart.index];
+    // Add preference button to screen reader section
+    addPrefButtonScreenReader(chart);
+
+    const screenReaderDiv = document.getElementById(
+        `highcharts-screen-reader-region-before-${chart.index}`
+    );
+
+    const innerScreenReaderDiv = screenReaderDiv.children[0];
+    const description = innerScreenReaderDiv.children[3];
+    const infoRegion = document.querySelector(
+        `#highcharts-screen-reader-region-before-${chart.index} > ` +
+        'div:first-child'
+    );
+    const prefButton = document.getElementById('hc-pref-button');
+    const dataTableButton = document.getElementById(
+        `hc-linkto-highcharts-data-table-${chart.index}`
+    );
+    const sonificationButton = document
+        .getElementById(`highcharts-a11y-sonify-data-btn-${chart.index}`);
+
+    // Only way to set font size since the info region is re-rendered often
+    dataTableButton.style.fontSize = settings.fontSize;
+    sonificationButton.style.fontSize = settings.fontSize;
+    // Hack......needs a fix TODO
+    const hideIndex = dataTableButton.getAttribute(
+        'aria-expanded'
+    ) === 'true' ? 6 : 7;
+
+    // Check if info region is already displayed
+    if (!infoRegion) {
+        return;
+    }
+
+    // Toggle visibility based on isInfoChecked
+    if (settings.isInfoChecked) {
+        infoRegion.classList.add('hide-section');
+        infoRegion.style.fontSize = settings.fontSize;
+    } else {
+        infoRegion.classList.remove('hide-section');
+    }
+
+
+    formatAltTextVerbosityForPoints(chart, selectedVerbosity);
+
+    const chartInfoElements = Array.from(innerScreenReaderDiv.children);
+
+    if (selectedVerbosity === 'short') {
+        description.textContent = chart.shortDesc;
+
+        // Hide specific elements
+        chartInfoElements.forEach((el, index) => {
+            if (index >= hideIndex) {
+                el.style.display = 'none';
+            }
+        });
+    } else if (selectedVerbosity === 'full') {
+        // Restore full description
+        description.textContent = chart.longDesc;
+        // Show all divs
+        chartInfoElements.forEach((el, index) => {
+            if (index >= 4) {
+                el.style.display = 'block';
+            }
+        });
+    }
+
+    // Re insert data table button if disappeard
+    if (
+        !document.getElementById(
+            `hc-linkto-highcharts-data-table-${chart.index}`
+        ) &&
+        dataTableButton
+    ) {
+        prefButton.insertAdjacentElement('afterend', dataTableButton);
+        dataTableButton.style.display = 'block';
+        dataTableButton.style.fontSize = settings.fontSize;
+    }
+}
+
+function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
+    let globalIndex = 0;
+    let altText = '';
+    chart.series.forEach(series => {
+        series.points.forEach(point => {
+            const pointElement = point.graphic?.element;
+
+            if (!pointElement) {
+                return;
+            }
+
+            const formattedVal = point.y.toLocaleString('en-US');
+
+            // Generate alt text based on verbosity
+            if (chart.series[0].type === 'column') {
+                altText = selectedVerbosity === 'short' ?
+                    `${point.category}, ${formattedVal} (1000 MT).` :
+                    `Bar ${point.index + 1} of ${point.series.points.length}
+                    in series ${point.category}, ${point.series.name}: 
+                    ${point.category}, ${formattedVal} (1000 MT).`;
+            } else {
+                altText = selectedVerbosity === 'short' ?
+                    `${point.series.name}, ${point.x} cm, ` +
+                `${point.y} kg.` :
+                    `Point ${point.index + 1} of ` +
+                `${point.series.points.length} in series ` +
+                `${((point.series.name).toLowerCase())}, ` +
+                `${point.x} cm, ${point.y} kg.`;
+            }
+
+            // Update corresponding alt text div
+            const altTextDiv = chart.altTextDivs[globalIndex];
+            if (altTextDiv) {
+                altTextDiv.textContent = altText;
+            }
+
+            globalIndex++;
+
+        });
+    });
+    return altText;
+}
+
+/* -------------------- PREFERENCES BUTTON --------------------- */
 function addPrefButton(chart) {
     const settingImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Cog_wheel_icon.svg/1024px-Cog_wheel_icon.svg.png';
     const fallbackText = '⚙️';
@@ -854,7 +1071,7 @@ function handlePrefButtonClick(chart) {
     document.body.appendChild(dialog);
 
     dialog.showModal();
-    setDialogColors(dialog, chart);
+    setDialogTheme(dialog, chart);
 
     trapFocusInDialog(dialog);
 
@@ -865,6 +1082,7 @@ function handlePrefButtonClick(chart) {
 
 }
 
+/* -------------------- DIALOG --------------------- */
 function createPreferencesDialog(chart) {
     const prefContent = document.createElement('dialog');
     prefContent.setAttribute('id', `pref-menu-dialog-${chart.index}`);
@@ -1058,7 +1276,6 @@ function createPreferencesDialog(chart) {
     return prefContent;
 }
 
-
 function setupEventListeners(prefContent, chart) {
 
     const textSizeRadioButtons = prefContent
@@ -1132,7 +1349,7 @@ function setupEventListeners(prefContent, chart) {
         radio.addEventListener('change', event => {
             settings.isSelectedTheme = event.target.value;
             applyChartTheme(chart);
-            setDialogColors(prefContent, chart);
+            setDialogTheme(prefContent, chart);
             applyInfoRegion(settings.selectedVerbosity, chart);
         });
     });
@@ -1400,87 +1617,6 @@ function setupEventListeners(prefContent, chart) {
 
 }
 
-function updateChartColorLogic(chart) {
-    const theme = getThemeConfig(chart);
-    const isDarkMode = theme === darkTheme;
-
-    const contrastColors = isDarkMode ?
-        contrastColorsDark : contrastColorsLight;
-    const borderColors = isDarkMode ?
-        borderColorsWithContrastDark : borderColorsWithContrastLight;
-    const settings = chartSettingsMap[chart.index];
-
-    const seriesOptions = [{
-        color: settings.isPatternChecked ? {
-            pattern: {
-                path: 'M 0 0 L 8 8', // Diagonal stripes
-                color: settings.isContrastChecked ?
-                    contrastColors[0] : theme.colors[0],
-                backgroundColor: isDarkMode ? '#FFFFFF' :
-                    (settings.isContrastChecked ?
-                        contrastColors[0] + '40' : theme.colors[0] + '40'),
-                width: 8,
-                height: 8
-            }
-        } : (settings.isContrastChecked ? contrastColors[0] : theme.colors[0]),
-        borderColor: settings.isBorderChecked ? (
-            settings.isContrastChecked ? borderColors[0] : theme.borderColors[0]
-        ) : null,
-        borderWidth: settings.isBorderChecked ? 2 : 0,
-        marker: {
-            lineColor: settings.isBorderChecked ? (
-                settings.isContrastChecked ?
-                    borderColors[0] : theme.borderColors[0]
-            ) : null,
-            lineWidth: settings.isBorderChecked ? 1 : 0
-        }
-    }, {
-        color: settings.isPatternChecked ? {
-            pattern: { // Dotted pattern
-                path: 'M 3 3 m -2, 0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0',
-                color: settings.isContrastChecked ?
-                    contrastColors[1] : theme.colors[1],
-                backgroundColor: isDarkMode ? '#FFFFFF' :
-                    (settings.isContrastChecked ?
-                        contrastColors[1] + '40' : theme.colors[1] + '40'),
-                width: 8,
-                height: 8
-            }
-        } : (settings.isContrastChecked ? contrastColors[1] : theme.colors[1]),
-        borderColor: settings.isBorderChecked ? (
-            settings.isContrastChecked ? borderColors[1] : theme.borderColors[1]
-        ) : null,
-        borderWidth: settings.isBorderChecked ? 2 : 0,
-        marker: {
-            lineColor: settings.isBorderChecked ? (
-                settings.isContrastChecked ?
-                    borderColors[0] : theme.borderColors[0]
-            ) : null,
-            lineWidth: settings.isBorderChecked ? 1 : 0
-        }
-    }];
-
-    chart.update({
-        series: seriesOptions
-    });
-
-    // Update altTextDiv styles based on the theme
-    chart.altTextDivs.forEach(div => {
-        if (isDarkMode) {
-            div.style.backgroundColor =
-                'rgb(68, 68, 68)';
-            div.style.color =
-                'rgb(255, 255, 255)';
-            div.style.border = '1px solid rgb(102, 102, 102)';
-        } else {
-            div.style.backgroundColor =
-                'rgb(255, 255, 255)';
-            div.style.color = 'rgb(0, 0, 0)';
-            div.style.border = '1px solid rgb(204, 204, 204)';
-        }
-    });
-}
-
 function trapFocusInDialog(dialog) {
 
     // Trap focus within the dialog
@@ -1556,132 +1692,6 @@ function updateCustomComponent() {
     }
 }
 
-
-// TODO: Refactor function to be only about applying info region and rename
-function applyInfoRegion(selectedVerbosity, chart) {
-    const settings = chartSettingsMap[chart.index];
-    // Add preference button to screen reader section
-    addPrefButtonScreenReader(chart);
-
-    const screenReaderDiv = document.getElementById(
-        `highcharts-screen-reader-region-before-${chart.index}`
-    );
-
-    const innerScreenReaderDiv = screenReaderDiv.children[0];
-    const description = innerScreenReaderDiv.children[3];
-    const infoRegion = document.querySelector(
-        `#highcharts-screen-reader-region-before-${chart.index} > ` +
-        'div:first-child'
-    );
-    const prefButton = document.getElementById('hc-pref-button');
-    const dataTableButton = document.getElementById(
-        `hc-linkto-highcharts-data-table-${chart.index}`
-    );
-    const sonificationButton = document
-        .getElementById(`highcharts-a11y-sonify-data-btn-${chart.index}`);
-
-    // Only way to set font size since the info region is re-rendered often
-    dataTableButton.style.fontSize = settings.fontSize;
-    sonificationButton.style.fontSize = settings.fontSize;
-    // Hack......needs a fix TODO
-    const hideIndex = dataTableButton.getAttribute(
-        'aria-expanded'
-    ) === 'true' ? 6 : 7;
-
-    // Check if info region is already displayed
-    if (!infoRegion) {
-        return;
-    }
-
-    // Toggle visibility based on isInfoChecked
-    if (settings.isInfoChecked) {
-        infoRegion.classList.add('hide-section');
-        infoRegion.style.fontSize = settings.fontSize;
-    } else {
-        infoRegion.classList.remove('hide-section');
-    }
-
-
-    formatAltTextVerbosityForPoints(chart, selectedVerbosity);
-
-    const chartInfoElements = Array.from(innerScreenReaderDiv.children);
-
-    if (selectedVerbosity === 'short') {
-        description.textContent = chart.shortDesc;
-
-        // Hide specific elements
-        chartInfoElements.forEach((el, index) => {
-            if (index >= hideIndex) {
-                el.style.display = 'none';
-            }
-        });
-    } else if (selectedVerbosity === 'full') {
-        // Restore full description
-        description.textContent = chart.longDesc;
-        // Show all divs
-        chartInfoElements.forEach((el, index) => {
-            if (index >= 4) {
-                el.style.display = 'block';
-            }
-        });
-    }
-
-    // Re insert data table button if disappeard
-    if (
-        !document.getElementById(
-            `hc-linkto-highcharts-data-table-${chart.index}`
-        ) &&
-        dataTableButton
-    ) {
-        prefButton.insertAdjacentElement('afterend', dataTableButton);
-        dataTableButton.style.display = 'block';
-        dataTableButton.style.fontSize = settings.fontSize;
-    }
-}
-
-function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
-    let globalIndex = 0;
-    let altText = '';
-    chart.series.forEach(series => {
-        series.points.forEach(point => {
-            const pointElement = point.graphic?.element;
-
-            if (!pointElement) {
-                return;
-            }
-
-            const formattedVal = point.y.toLocaleString('en-US');
-
-            // Generate alt text based on verbosity
-            if (chart.series[0].type === 'column') {
-                altText = selectedVerbosity === 'short' ?
-                    `${point.category}, ${formattedVal} (1000 MT).` :
-                    `Bar ${point.index + 1} of ${point.series.points.length}
-                    in series ${point.category}, ${point.series.name}: 
-                    ${point.category}, ${formattedVal} (1000 MT).`;
-            } else {
-                altText = selectedVerbosity === 'short' ?
-                    `${point.series.name}, ${point.x} cm, ` +
-                `${point.y} kg.` :
-                    `Point ${point.index + 1} of ` +
-                `${point.series.points.length} in series ` +
-                `${((point.series.name).toLowerCase())}, ` +
-                `${point.x} cm, ${point.y} kg.`;
-            }
-
-            // Update corresponding alt text div
-            const altTextDiv = chart.altTextDivs[globalIndex];
-            if (altTextDiv) {
-                altTextDiv.textContent = altText;
-            }
-
-            globalIndex++;
-
-        });
-    });
-    return altText;
-}
-
 // Define keyboard navigation for this component
 function createKeyboardNavigationHandler() {
     const keys = this.keyCodes,
@@ -1737,6 +1747,8 @@ function createKeyboardNavigationHandler() {
         }
     });
 }
+
+/* --------------------------------------------------- */
 
 // Initialize charts
 const [chart1, chart2] = initializeCharts();
