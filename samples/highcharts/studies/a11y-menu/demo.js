@@ -892,7 +892,6 @@ function createPreferencesDialog(chart) {
     const accordionContainer = document.createElement('ul');
     accordionContainer.classList.add('accordion', 'accordion-parent');
     accordionContainer.setAttribute('id', `accordion-parent-${i}`);
-
     const preferencesSection = document.createElement('li');
     preferencesSection.classList.add('card', 'open'); // Open by default
     preferencesSection.innerHTML = `
@@ -928,7 +927,7 @@ function createPreferencesDialog(chart) {
                 <label for="theme-light-${i}">Light</label>
             </div>
 
-            <h3>Visible chart summaries</h3>
+            <h3>Visible chart summary</h3>
             <div class="pref alt-text">
                 <input type="checkbox" id="alt-info-${i}" name="alt-info-${i}"
                     ${settings.isInfoChecked ? 'checked' : ''}>
