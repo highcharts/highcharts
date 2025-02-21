@@ -28,7 +28,6 @@ import type Table from '../Core/Table/Table';
 
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
-import Defaults from './Defaults.js';
 import U from '../../Core/Utilities.js';
 
 const {
@@ -52,6 +51,16 @@ class Credits {
     *  Properties
     *
     * */
+
+    /**
+     * Default options of the component.
+     */
+    public static defaultOptions: CreditsOptions = {
+        enabled: true,
+        text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
+        href: 'https://www.highcharts.com',
+        position: 'bottom'
+    };
 
     /**
      * The Grid instance which the credits belong to.
@@ -86,9 +95,8 @@ class Credits {
      * @param grid
      * The Grid instance which the credits belong to.
      */
-    constructor(grid: Grid) {
+    constructor(grid: Grid, options: CreditsOptions) {
         this.grid = grid;
-        this.options = Defaults.defaultOptions.credits as CreditsOptions;
 
         this.containerElement = makeHTMLElement('div', {
             className: Globals.getClassName('creditsContainer')
@@ -97,8 +105,10 @@ class Credits {
         this.textElement = makeHTMLElement<HTMLAnchorElement>('a', {
             className: Globals.getClassName('creditsText')
         }, this.containerElement);
+
         this.textElement.setAttribute('target', '_top');
 
+        this.options = options;
         this.render();
     }
 
@@ -114,7 +124,7 @@ class Credits {
      * from the container. If also reflows the viewport dimensions.
      */
     public render(): void {
-        const { text, href } = this.options;
+        const { text, href } = this.options;// Credits.defaultOptions;
 
         this.containerElement.remove();
 
@@ -170,7 +180,7 @@ namespace Credits {
      * Callback function called before table initialization.
      */
     function initCredits(this: Table): void {
-        this.grid.credits = new Credits(this.grid);
+        new Credits(this.grid, Credits.defaultOptions);
     }
 }
 

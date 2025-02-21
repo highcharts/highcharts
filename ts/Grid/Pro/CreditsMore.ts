@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -28,7 +29,8 @@ import Credits from '../Core/Credits.js';
 import U from '../../Core/Utilities.js';
 
 const {
-    addEvent
+    addEvent,
+    merge
 } = U;
 
 /* *
@@ -41,7 +43,6 @@ const {
  * Represents a credits in the data grid.
  */
 class CreditsMore extends Credits {
-
     /* *
     *
     *  Methods
@@ -146,7 +147,10 @@ namespace CreditsMore {
      * Callback function called before table initialization.
      */
     function initCreditsMore(this: Table): void {
-        this.grid.credits = new CreditsMore(this.grid);
+        this.grid.credits = new CreditsMore(
+            this.grid,
+            merge(Credits.defaultOptions, this.grid.options?.credits)
+        );
     }
 }
 

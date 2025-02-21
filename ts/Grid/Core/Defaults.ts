@@ -78,12 +78,6 @@ namespace Defaults {
             },
             theme: 'hcg-theme-default'
         },
-        credits: {
-            enabled: true,
-            text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
-            href: 'https://www.highcharts.com',
-            position: 'bottom'
-        },
         columnDefaults: {
             sorting: {
                 sortable: true
