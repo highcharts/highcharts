@@ -1,12 +1,12 @@
 /**
- * @license Highcharts Grid v@product.version@
+ * @license Highcharts Dashboards v@product.version@
  *
  * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
 
-/*  ==== Start Grid Color Scheme  ==== */
+/*  ==== Start DataGrid Color Scheme  ==== */
 .highcharts-datagrid-container {
     --idg-default-color: #000000;
     --idg-negative-default-border-color: hsl(0, 100%, 50%);
@@ -28,11 +28,11 @@
         --idg-positive-default-background: hsl(120, 41%, 25%);
     }
 }
-/*  ==== End Grid Color Scheme  ==== */
+/*  ==== End DataGrid Color Scheme  ==== */
 
 /* stylelint-disable max-line-length */
 
-/* ==== Start Grid Variables ==== */
+/* ==== Start DataGrid Variables ==== */
 .highcharts-datagrid-container {
     --idg-table-border-radius: var(--hcdg-border-radius, 0);
 
@@ -205,7 +205,7 @@
     box-sizing: border-box;
 }
 
-/* ==== End Grid Variables ==== */
+/* ==== End DataGrid Variables ==== */
 
 .highcharts-datagrid-container * {
     box-sizing: border-box;
@@ -585,7 +585,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     padding: var(--idg-credits-padding);
 }
 
-/* Start Grid CSS Helpers Classes */
+/* Start DataGrid CSS Helpers Classes */
 .highcharts-datagrid-table tbody tr td.hcdg-negative,
 .highcharts-datagrid-table tbody tr:has(.hcdg-negative-row) td {
     box-shadow: inset 0 0 0 var(--idg-negative-border-size) var(--idg-negative-border-color) !important;
@@ -660,9 +660,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 }
 
-/* End Grid CSS Helpers Classes */
+/* End DataGrid CSS Helpers Classes */
 
-/* Start Grid Default Theme */
+/* Start DataGrid Default Theme */
 :root,
 .highcharts-datagrid-theme-default,
 .highcharts-light {
@@ -737,4 +737,4 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     --hcdg-loader-color: rgb(173, 173, 173);
 }
 
-/* End Grid Default Theme */
+/* End DataGrid Default Theme */
