@@ -849,6 +849,7 @@ class ColumnSeries extends Series {
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
                 pointer?.normalize(e);
+
                 const point = pointer?.getPointFromEvent(e),
                     // Run point events only for points inside plot area, #21136
                     isInsidePlot = (
