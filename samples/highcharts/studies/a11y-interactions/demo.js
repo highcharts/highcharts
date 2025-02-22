@@ -127,19 +127,64 @@ function (svgEl, elType, content, parent) {
     return el;
 };
 
-const addApplication = (parent, title, desc) => {
-    // Add application container with label
-    //     Total fruit consumption. Press Enter to interact with chart.
-    // On Enter, focus the chart, init app
 
-    // Add hidden button inside app container with desc
-    //     Bar chart with 3 bars. Click to interact. Total fruit consumption.
-    // On button click, or on keydown, focus the chart, init app
+// ============================================================================
+// Application utils
 
-    // Define keydown event listener for application
-    // Let TAB key through?
-    // ESC handling?
+// Add application with keyboard handlers
+Highcharts.Chart.prototype.addA11yApplication =
+function (desc, onInit, kbdHandlers) {
+    const chart = this,
+        chartTitle = chart.options.title.text,
+        app = chart.addSROnly('div'),
+        fallbackBtn = chart.addSROnly(
+            'button',
+            `${desc}. Click to interact. ${chartTitle}.`,
+            app
+        );
+
+    fallbackBtn.setAttribute('tabindex', '-1');
+    app.setAttribute('role', 'application');
+    app.setAttribute(
+        'aria-label', `${chartTitle}. Press Enter to interact with chart.`
+    );
+    app.setAttribute('tabindex', 0);
+    app.onfocus = () => {
+        showFocusOnEl(chart.renderTo);
+        app.focus();
+    };
+    app.onblur = hideFocus;
+
+    // Keyboard state handling
+    let entered = false;
+    app.onkeydown = e => {
+        // Let user tab through
+        if (e.key === 'Tab') {
+            entered = false;
+            return;
+        }
+
+        // Handle init
+        if (!entered && e.key === 'Enter') {
+            entered = true;
+            onInit(chart);
+        } else if (entered && kbdHandlers[e.key]) {
+            kbdHandlers[e.key](chart, e);
+        }
+
+        // Stop bubbling & default actions
+        e.stopPropagation();
+        e.preventDefault();
+    };
+
+    // Fallback button
+    fallbackBtn.onclick = () => {
+        app.focus();
+        entered = true;
+        onInit(chart);
+    };
 };
+
 
 // ============================================================================
 // Announcer
@@ -164,7 +209,49 @@ document.body.appendChild(announcer);
 
 
 // ============================================================================
-// A11y models for each chart
+// Historical chart model
+
+const historicalInit = chart => {
+    chart.sonification.playNote('piano', { note: 'c4' });
+};
+
+const historicalKbdHandlers = {
+    Enter: chart => {
+        console.log('Enter');
+        chart.sonification.playNote('saxophone', { note: 'e4' });
+    },
+    ' ': () => {},
+    ArrowLeft: chart => {
+        console.log('ArrowLeft');
+        chart.sonification.playNote('trumpet', { note: 'g4' });
+    },
+    ArrowRight: () => {},
+    ArrowUp: () => {},
+    ArrowDown: () => {},
+    Home: () => {},
+    End: () => {},
+    PageUp: () => {},
+    PageDown: () => {},
+    Backspace: () => {},
+    Escape: chart => {
+        console.log('Escape');
+        chart.sonification.playNote('vibraphone', { note: 'b4' });
+    },
+    '+': () => {},
+    '-': () => {}
+};
+
+
+// ============================================================================
+// Network graph model
+
+const networkInit = chart => {
+    chart.sonification.playNote('lead', { note: 'c4' });
+};
+
+
+// ============================================================================
+// Add a11y models for each chart
 const a11yModels = {
 
     // Simple infographic
@@ -217,8 +304,20 @@ const a11yModels = {
     },
 
     // Medium complexity line chart
-    historical: chart => {},
-    network: chart => {},
+    historical: chart => {
+        chart.addA11yApplication(
+            'Line chart with 4 lines and 124 data points',
+            historicalInit,
+            historicalKbdHandlers
+        );
+    },
+    network: chart => {
+        chart.addA11yApplication(
+            'Network graph',
+            networkInit,
+            {}
+        );
+    },
     wordcloud: chart => {}
 };
 
@@ -259,6 +358,7 @@ Highcharts.addEvent(Highcharts.Chart, 'load', function () {
 });
 
 
+// ============================================================================
 // ============================================================================
 // Dashboard setup ------------------------------------------------------------
 // This is straightforward Highcharts config.
