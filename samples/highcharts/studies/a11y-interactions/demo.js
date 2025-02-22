@@ -1,3 +1,268 @@
+// ============================================================================
+// ============================================================================
+// A11y PoC for this dashboard
+//
+//    +-------------------------------------------------+
+// 12 |                     *                           |
+// 11 |                    * *                          |
+// 10 |                   *   *                         |
+//  9 |                  *     *              *         |
+//  8 |                 *       *            * *        |
+//  7 |                *         *          *   *       |
+//  6 |               *           *        *     *      |
+//  5 |              *             *      *       *     |
+//  4 |             *               *    *         *    |
+//  3 |            *                 *  *           *   |
+//  2 |           *                   **            *   |
+//  1 |          *                                   *  |
+//  0 +---------*-------------------------------------*-+
+//       0    1    2    3    4    5    6    7    8    9
+//
+// ============================================================================
+// Focus border utils
+
+const focusBorder = document.createElement('div');
+Object.assign(focusBorder.style, {
+    position: 'absolute',
+    display: 'none',
+    zIndex: 1,
+    pointerEvents: 'none',
+    border: '2px solid #000',
+    borderRadius: '3px',
+    outline: '2px solid #fff'
+});
+document.body.appendChild(focusBorder);
+
+const showFocusOnEl = el => {
+    const bbox = el.getBoundingClientRect(),
+        bodyOffset = document.body.getBoundingClientRect();
+    Object.assign(focusBorder.style, {
+        display: 'block',
+        left: bbox.x - bodyOffset.x + 'px',
+        top: bbox.y - bodyOffset.y + 'px',
+        width: bbox.width + 'px',
+        height: bbox.height + 'px'
+    });
+};
+const hideFocus = () => {
+    focusBorder.style.display = 'none';
+};
+
+
+// ============================================================================
+// Utilities for proxy elements
+
+// Plain element, basic. Used by other proxy functions.
+Highcharts.Chart.prototype.addPlainA11yEl =
+function (elType, content, parent) {
+    const el = document.createElement(elType),
+        container = parent || this.proxyContainer;
+    Object.assign(el.style, {
+        position: 'absolute',
+        margin: 0,
+        padding: 0
+    });
+    if (content) {
+        el.innerHTML = content;
+    }
+    container.appendChild(el);
+    return el;
+};
+
+// SR only element, not touchable, not proxying
+Highcharts.Chart.prototype.addSROnly =
+function (elType, content, parent) {
+    const el = this.addPlainA11yEl(elType, content, parent);
+    Object.assign(el.style, {
+        width: '1px',
+        height: '1px',
+        margin: '-1px',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)'
+    });
+    return el;
+};
+
+// Container for touchable proxy elements. Will overflow.
+Highcharts.Chart.prototype.addProxyContainerEl =
+function (elType, parent) {
+    const el = this.addPlainA11yEl(elType, null, parent);
+    Object.assign(el.style, {
+        width: '1px',
+        height: '1px',
+        top: 0,
+        left: 0,
+        whiteSpace: 'nowrap'
+    });
+    return el;
+};
+
+// Add touchable proxy element
+Highcharts.Chart.prototype.addProxyEl =
+function (svgEl, elType, content, parent) {
+    const container = parent || this.proxyContainer,
+        el = this.addPlainA11yEl(elType, content, container),
+        bbox = svgEl.getBoundingClientRect(),
+        containerBBox = container.getBoundingClientRect();
+
+    Object.assign(el.style, {
+        left: bbox.x - containerBBox.x + 'px',
+        top: bbox.y - containerBBox.y + 'px',
+        width: bbox.width + 'px',
+        height: bbox.height + 'px',
+        overflow: 'hidden'
+    });
+
+    [
+        'mousedown', 'mouseup', 'mouseover', 'mouseout', 'click',
+        'touchstart', 'touchend', 'touchmove', 'touchcancel'
+    ].forEach(
+        type => el.addEventListener(
+            type, e => svgEl.dispatchEvent(new e.constructor(e.type, e))
+        )
+    );
+
+    return el;
+};
+
+const addApplication = (parent, title, desc) => {
+    // Add application container with label
+    //     Total fruit consumption. Press Enter to interact with chart.
+    // On Enter, focus the chart, init app
+
+    // Add hidden button inside app container with desc
+    //     Bar chart with 3 bars. Click to interact. Total fruit consumption.
+    // On button click, or on keydown, focus the chart, init app
+
+    // Define keydown event listener for application
+    // Let TAB key through?
+    // ESC handling?
+};
+
+// ============================================================================
+// Announcer
+const announcer = document.createElement('div');
+announcer.className = 'visually-hidden';
+announcer.setAttribute('aria-live', 'assertive');
+announcer.setAttribute('aria-hidden', 'false');
+let clearAnnounceTimeout, nextAnnounceTimeout;
+const announce = (str, delay) => {
+    clearTimeout(nextAnnounceTimeout);
+    announcer.innerText = '';
+    nextAnnounceTimeout = setTimeout(() => {
+        clearTimeout(clearAnnounceTimeout);
+        announcer.innerText = str;
+        clearAnnounceTimeout = setTimeout(
+            () => (announcer.innerText = ''),
+            3000
+        );
+    }, delay || 0);
+};
+document.body.appendChild(announcer);
+
+
+// ============================================================================
+// A11y models for each chart
+const a11yModels = {
+
+    // Simple infographic
+    delays: chart => {
+        const container = chart.addProxyContainerEl('div');
+        Highcharts.addEvent(
+            chart.series[0], 'afterAnimate',
+            () => setTimeout(() => {
+                container.innerHTML = '';
+                chart.addProxyEl(
+                    chart.seriesGroup.element,
+                    'p', '77.89% On time. 22.11% Delayed (>15 min).',
+                    container
+                );
+                chart.addSROnly(
+                    'p', 'Bar chart with 2 bars.',
+                    container
+                );
+            }, 0)
+        );
+    },
+
+    // Simple pie chart with HTML overlay
+    accidents: chart => {
+        chart.addSROnly('p', 'Pie chart with 6 slices.');
+
+        const ol = chart.addProxyContainerEl('ol');
+        ol.setAttribute('role', 'list');
+
+        Highcharts.addEvent(
+            chart.series[0], 'afterAnimate',
+            () => setTimeout(() => {
+                ol.innerHTML = '';
+                chart.series[0].points.forEach(point => {
+                    const li = chart.addProxyEl(
+                        point.graphic.element,
+                        'li',
+                        `${point.name}: ${point.percentage.toFixed(1)}%`,
+                        ol
+                    );
+                    li.setAttribute('tabindex', 0);
+                    li.onfocus = () => {
+                        point.onMouseOver();
+                        showFocusOnEl(li);
+                        li.focus();
+                    };
+                    li.onblur = hideFocus;
+                });
+            }, 0));
+    },
+
+    // Medium complexity line chart
+    historical: chart => {},
+    network: chart => {},
+    wordcloud: chart => {}
+};
+
+
+// ============================================================================
+// Load models
+Highcharts.addEvent(Highcharts.Chart, 'load', function () {
+    const chart = this,
+        container = chart.container,
+        svgBox = chart.renderer.box,
+        renderTo = chart.renderTo;
+
+    // Hide chart
+    container.setAttribute('role', 'presentation');
+    container.setAttribute('aria-hidden', true);
+    svgBox.setAttribute('role', 'presentation');
+
+    // Create HTML container & run relevant model
+    const proxyContainer = document.createElement('div');
+    Object.assign(proxyContainer.style, {
+        position: 'relative',
+        zIndex: 9999,
+        padding: 0,
+        margin: '-1px',
+        width: '1px',
+        height: '1px',
+        whiteSpace: 'nowrap',
+        opacity: 0,
+        border: 0
+    });
+    chart.proxyContainer = proxyContainer;
+    renderTo.insertBefore(proxyContainer, renderTo.firstChild);
+
+    chart.addProxyEl(chart.title.element, 'h2', chart.options.title.text);
+    chart.addProxyEl(chart.subtitle.element, 'p', chart.options.subtitle.text);
+
+    a11yModels[renderTo.id](chart);
+});
+
+
+// ============================================================================
+// Dashboard setup ------------------------------------------------------------
+// This is straightforward Highcharts config.
+
 Highcharts.patterns[0].color = '#ccc';
 Highcharts.setOptions({
     chart: {
@@ -166,7 +431,20 @@ Highcharts.chart('historical', {
     legend: {
         layout: 'proximate',
         align: 'right',
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        width: '20%'
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    width: '25%'
+                }
+            }
+        }]
     },
     series: historicalData.slice(1).map(s => ({ name: s[0], data: s.slice(1) }))
 });

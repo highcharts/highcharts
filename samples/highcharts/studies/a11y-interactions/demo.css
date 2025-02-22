@@ -1,3 +1,9 @@
+ol,
+ul,
+li {
+    list-style-type: none;
+}
+
 .chart {
     height: 400px;
 }
@@ -17,7 +23,6 @@
 
 #network {
     height: 600px;
-    min-width: 400px;
 }
 
 #wordcloud {
@@ -26,6 +31,7 @@
 
 #demo-content {
     background-color: #f8f8f8;
+    min-width: 450px;
 }
 
 main {
@@ -46,7 +52,6 @@ main {
     background-color: #f8f8f8;
     padding: 20px;
     max-width: 1800px;
-    min-width: 450px;
     margin: 0 auto;
 }
 
