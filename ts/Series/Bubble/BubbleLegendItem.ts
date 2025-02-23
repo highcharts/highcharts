@@ -45,6 +45,7 @@ import U from '../../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    isArrow,
     isNumber,
     merge,
     pick,
@@ -533,7 +534,11 @@ class BubbleLegendItem {
         const { numberFormatter } = this.chart;
 
         return format ? F.format(format, range, this.chart) :
-            formatter ? formatter.call(range) :
+            formatter ? (
+                isArrow(formatter) ?
+                    formatter(range) :
+                    formatter.call(range)
+            ) :
                 numberFormatter(range.value, 1);
     }
 

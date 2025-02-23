@@ -2122,9 +2122,10 @@ class Axis {
             if (tickPositioner) {
                 // Make it available to the positioner
                 this.tickPositions = tickPositions;
-                tickPositionerResult = tickPositioner.apply(
+                tickPositionerResult = (tickPositioner as any).apply(
                     axis,
-                    [this.min, this.max]
+                    [this.min, this.max],
+                    axis
                 );
                 if (tickPositionerResult) {
                     tickPositions = tickPositionerResult;

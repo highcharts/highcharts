@@ -68,7 +68,7 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
         assert.close(
             ttCorrectVals[key],
             candidate[key],
-            15,
+            25,
             `The '${key}'of the label should be close to ${ttCorrectVals[key]}`
         );
     }

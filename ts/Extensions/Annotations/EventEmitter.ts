@@ -109,7 +109,9 @@ abstract class EventEmitter {
                     (event as any).call(
                         emitter,
                         emitter.chart.pointer?.normalize(e),
-                        emitter.target
+                        emitter.target,
+                        // So that arrow functions can access emitter context
+                        emitter
                     );
                 }
             };

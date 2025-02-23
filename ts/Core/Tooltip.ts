@@ -52,6 +52,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isArrow,
     isNumber,
     isObject,
     isString,
@@ -991,7 +992,7 @@ class Tooltip {
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             formatString = options.format,
-            formatter = options.formatter || tooltip.defaultFormatter,
+            suppliedFn = options.formatter,
             styledMode = chart.styledMode;
         let wasShared = tooltip.allowShared;
 
@@ -1033,7 +1034,15 @@ class Tooltip {
         this.len = points.length; // #6128
         const text = isString(formatString) ?
             format(formatString, point, chart) :
-            formatter.call(point, tooltip);
+            (
+                suppliedFn && (point as any)?.value !== null ? (
+                    isArrow(suppliedFn) ?
+                        (suppliedFn as any)(point, tooltip) :
+                        suppliedFn.call(point, tooltip)
+                ) :
+                    tooltip.defaultFormatter.call(point, tooltip)
+            );
+
 
         // Reset the preliminary circular references
         point.points = void 0;
@@ -1413,11 +1422,17 @@ class Tooltip {
                     const size = bBox.height + 1;
                     const boxPosition = (
                         positioner ?
-                            positioner.call(
+                            (!isArrow(positioner) ? positioner.call(
                                 tooltip,
                                 boxWidth,
                                 size,
                                 point
+                            ) : (positioner as any)(
+                                boxWidth,
+                                size,
+                                point,
+                                tooltip
+                            )
                             ) :
                             defaultPositioner(
                                 anchorX,
@@ -1784,15 +1799,19 @@ class Tooltip {
                 height = 0,
                 width = 0
             } = this.getLabel(),
+            suppliedFn = options.positioner,
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
-            pos = (options.positioner || this.getPosition).call(
-                this,
-                width,
-                height,
-                point
-            ),
+            pos = isArrow(suppliedFn) ?
+                (suppliedFn as any)(width, height, point, this) :
+                (suppliedFn || this.getPosition).call(
+                    this,
+                    width,
+                    height,
+                    point
+                ),
             doc = H.doc;
+
 
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
