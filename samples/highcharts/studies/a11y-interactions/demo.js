@@ -461,9 +461,12 @@ function (onInit, kbdHandlers, kbdDescriptions) {
         e.stopPropagation();
         e.preventDefault();
     };
-    app.onclick = () => {
-        app.focus();
-        init();
+    app.onclick = e => {
+        // Only accept direct clicks, not through-clicks from elements within
+        if (e.target === app) {
+            app.focus();
+            init();
+        }
     };
     document.addEventListener('mousedown', () => (entered = false));
 
@@ -722,6 +725,12 @@ const historicalKbdDescriptions = {
     }
 };
 
+const historicalExplanation = chart => {
+    chart.addSROnly(
+        'p', 'The chart is showing price over time, from 1993 to 2023.'
+    );
+};
+
 const historicalOverlay = (chart, parent) => {
     const container = chart.addProxyContainerEl('div', parent),
         seriesDescs = chart.series.map(seriesDesc),
@@ -947,12 +956,104 @@ const wordcloudInit = chart => {
     chart.sonification.cancel();
     chart.sonification.playNote('vibraphone', { note: 'c4', tremoloDepth: 0 });
     chart.highlightCurPoint();
+    kbdState.point = -1;
 };
 
 const wordcloudKbdHandlers = (() => {
-    const a = '';
+    let sonificationSchedule = [];
+    const clearSonification = () => {
+        sonificationSchedule.forEach(clearTimeout);
+        sonificationSchedule = [];
+    };
+
+    const sonifyWord = (chart, point) => {
+        const maxWeight = chart.series[0].points[0].weight,
+            value = point.weight / maxWeight;
+        chart.sonification.playNote(
+            'vibraphone',
+            {
+                volume: value,
+                note: 70 - Math.round(value * 40),
+                noteDuration: 400 * value,
+                tremoloDepth: 0,
+                pan: Math.random() * 2 - 1
+            }
+        );
+        chart.sonification.speak(
+            point.name,
+            {
+                language: 'en-US',
+                name: 'Samantha',
+                volume: value,
+                rate: 2.8 - value * 2,
+                pitch: 1.4 - value * 0.8
+            },
+            50
+        );
+        point.onMouseOver();
+    };
+
+    const announceWord = (point, delay) => announce(
+        `${point.name}, ${point.weight} occurrences.`, delay
+    );
+
+    const navigate = (chart, direction) => {
+        clearSonification();
+        const p = chart.series[0].points[kbdState.point + direction];
+        if (!p) {
+            chart.sonification.playNote('chop', { volume: 0.2 });
+            announce('End.', 200);
+        } else {
+            sonifyWord(chart, p);
+            announceWord(p, 500);
+            kbdState.point += direction;
+        }
+    };
+
+    const startEnd = (chart, end) => {
+        clearSonification();
+        kbdState.point = end ? chart.series[0].points.length - 1 : 0;
+        const p = chart.series[0].points[kbdState.point];
+        sonifyWord(chart, p);
+        announceWord(p, 500);
+    };
+
     return {
-        ArrowLeft: chart => {}
+        ArrowLeft: chart => navigate(chart, -1),
+        ArrowRight: chart => navigate(chart, 1),
+        ArrowUp: chart => navigate(chart, -1),
+        ArrowDown: chart => navigate(chart, 1),
+        Home: chart => startEnd(chart),
+        End: chart => startEnd(chart, true),
+        a: chart => {
+            const maxWeight = chart.series[0].points[0].weight;
+            clearSonification();
+            let time = 100;
+            const sonify = () => chart.series[0].points.forEach(p => {
+                const value = p.weight / maxWeight;
+                sonificationSchedule.push(
+                    setTimeout(() => sonifyWord(chart, p), time)
+                );
+                time += 100 + value * 530;
+            });
+            chart.sonification.speak(
+                'Word cloud, largest to smallest', {
+                    rate: 1.5
+                }, 0, sonify
+            );
+        },
+        Escape: clearSonification,
+        c: chart => {
+            clearSonification();
+            announce(
+                `Word cloud with 100 words. Top words are: ${
+                    chart.series[0].points
+                        .slice(0, 5)
+                        .map(n => n.name)
+                        .join(', ')
+                }.`
+            );
+        }
     };
 })();
 
@@ -965,12 +1066,12 @@ const wordcloudKbdDescriptions = {
         name: 'A',
         desc: 'Play word cloud as audio, large words first'
     },
-    PageUp: {
-        name: 'PageUp',
+    Home: {
+        name: 'Home',
         desc: 'Go to largest word'
     },
-    PageDown: {
-        name: 'PageDown',
+    End: {
+        name: 'End',
         desc: 'Go to smallest word'
     },
     c: {
@@ -1031,6 +1132,7 @@ const a11yModels = {
     delays: delaysModel,
     accidents: accidentsModel,
     historical: chart => {
+        historicalExplanation(chart);
         const app = chart.addA11yApplication(
             historicalInit,
             historicalKbdHandlers,
