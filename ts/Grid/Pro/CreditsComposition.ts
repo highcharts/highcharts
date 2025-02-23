@@ -43,7 +43,7 @@ const {
 /**
  * Represents a credits in the data grid.
  */
-class CreditsMore extends Credits {
+class CreditsComposition extends Credits {
     /* *
     *
     *  Methods
@@ -130,7 +130,7 @@ class CreditsMore extends Credits {
  *
  * */
 
-namespace CreditsMore {
+namespace CreditsComposition {
     /**
      * Extends the grid classes with customizable credits.
      *
@@ -141,14 +141,14 @@ namespace CreditsMore {
     export function compose(
         GridClass: typeof Grid
     ): void {
-        addEvent(GridClass, 'afterRenderViewport', initCreditsMore);
+        addEvent(GridClass, 'afterRenderViewport', initCreditsComposition);
     }
 
     /**
      * Callback function called before table initialization.
      */
-    function initCreditsMore(this: Grid): void {
-        this.credits = new CreditsMore(
+    function initCreditsComposition(this: Grid): void {
+        this.credits = new CreditsComposition(
             this,
             merge(Credits.defaultOptions, this.options?.credits)
         );
@@ -162,4 +162,4 @@ namespace CreditsMore {
  *
  * */
 
-export default CreditsMore;
+export default CreditsComposition;
