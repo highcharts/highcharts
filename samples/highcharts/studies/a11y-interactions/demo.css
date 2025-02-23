@@ -1,7 +1,15 @@
-ol,
-ul,
-li {
-    list-style-type: none;
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
 }
 
 .top-bar {
@@ -39,17 +47,6 @@ li {
 }
 
 main {
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        "Apple Color Emoji",
-        "Segoe UI Emoji",
-        "Segoe UI Symbol",
-        sans-serif;
     display: grid;
     gap: 20px;
     grid-template-columns: repeat(8, 1fr);

@@ -19,21 +19,149 @@
 //       0    1    2    3    4    5    6    7    8    9
 //
 // ============================================================================
+// Dynamic CSS styles used by generated elements
+
+const hcCSS = new CSSStyleSheet();
+hcCSS.replaceSync(`
+    .hc-a11y-proxy-container {
+        position: relative;
+        z-index: 20;
+        padding: 0;
+        margin: -1px;
+        width: 1px;
+        height: 1px;
+        white-space: nowrap;
+        opacity: 0;
+        border: 0;
+
+        ol, ul, li {
+            list-style-type: none;
+        }
+    }
+
+    .hc-a11y-sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        white-space: nowrap;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+    }
+
+    .hc-a11y-focus-indicator {
+        position: absolute;
+        display: none;
+        z-index: 1;
+        pointer-events: none;
+        border: 2px solid #000;
+        border-radius: 3px;
+        outline: 2px solid #fff;
+    }
+
+    .hc-a11y-kbd-hint {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        z-index: 2;
+        transition: opacity 0.3s;
+        font-size: 0.7em;
+        padding: 8px 12px;
+        overflow: hidden;
+        pointer-events: none;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .hc-a11y-kbd-key {
+        border: 1px solid #aaa;
+        color: #333;
+        padding: 2px 5px;
+        border-radius: 4px;
+        background-color: #f5f5f8;
+        font-size: 0.8em;
+        margin: 0 5px;
+        font-weight: bold;
+    }
+
+    .hc-a11y-kbd-hints-dialog {
+        position: absolute;
+        padding: 20px;
+        margin: 0;
+        box-sizing: border-box;
+        background-color: #fff;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        border: none;
+        font-size: 0.9em;
+        overflow-y: auto;
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        .hc-a11y-kbd-hints-header {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            h3 {
+                margin: 0;
+            }
+            button {
+                font-size: 1.2em;
+                background: none;
+                border: none;
+                cursor: pointer;
+            }
+        }
+    }
+`);
+document.adoptedStyleSheets.push(hcCSS);
+
+
+// ============================================================================
+// Announcer
+
+const announcer = document.createElement('div');
+announcer.className = 'hc-a11y-sr-only';
+announcer.setAttribute('aria-live', 'assertive');
+announcer.setAttribute('aria-hidden', 'false');
+document.body.appendChild(announcer);
+let clearAnnounceTimeout, nextAnnounceTimeout;
+
+// Announce some text
+const announce = (str, delay) => {
+    clearTimeout(nextAnnounceTimeout);
+    announcer.innerText = '';
+    nextAnnounceTimeout = setTimeout(() => {
+        clearTimeout(clearAnnounceTimeout);
+        announcer.innerText = str;
+        clearAnnounceTimeout = setTimeout(
+            () => (announcer.innerText = ''),
+            3000
+        );
+    }, delay || 0);
+};
+
+
+// ============================================================================
 // Focus border utils
 
 const focusBorder = document.createElement('div');
-Object.assign(focusBorder.style, {
-    position: 'absolute',
-    display: 'none',
-    zIndex: 1,
-    pointerEvents: 'none',
-    border: '2px solid #000',
-    borderRadius: '3px',
-    outline: '2px solid #fff'
-});
+focusBorder.className = 'hc-a11y-focus-indicator';
 document.body.appendChild(focusBorder);
-
 let focusVisible = false;
+
+// Show a focus border on an element
 const showFocusOnEl = el => {
     const bbox = el.getBoundingClientRect(),
         bodyOffset = document.body.getBoundingClientRect();
@@ -45,6 +173,8 @@ const showFocusOnEl = el => {
         height: bbox.height + 'px'
     });
 };
+
+// Hide current focus border
 const hideFocus = () => {
     focusBorder.style.display = 'none';
 };
@@ -52,6 +182,120 @@ const hideFocus = () => {
 // Show focus only when keyboard navigating
 document.addEventListener('keydown', () => (focusVisible = true));
 document.addEventListener('mousedown', () => (focusVisible = false));
+
+
+// ============================================================================
+// Keyboard hint tooltip
+
+const kbdHint = (() => {
+    const kbdHint = document.createElement('div'),
+        keySpan = document.createElement('span'),
+        preSpan = document.createElement('span'),
+        postSpan = document.createElement('span');
+    kbdHint.className = 'hc-a11y-kbd-hint';
+    keySpan.className = 'hc-a11y-kbd-key';
+    preSpan.textContent = 'Press ';
+    keySpan.textContent = 'T';
+    postSpan.textContent = ' for tools';
+    kbdHint.appendChild(preSpan);
+    kbdHint.appendChild(keySpan);
+    kbdHint.appendChild(postSpan);
+    document.body.appendChild(kbdHint);
+    return kbdHint;
+})();
+
+let hideKbdHintTimeout,
+    kbdHintOwner;
+
+// Show kbd hint on a container
+const showKbdHint = el => {
+    (kbdHintOwner = el).style.opacity = 0.5; // Dim owner
+    clearTimeout(hideKbdHintTimeout);
+    const bbox = el.getBoundingClientRect(),
+        bodyOffset = document.body.getBoundingClientRect();
+    Object.assign(kbdHint.style, {
+        opacity: 1,
+        width: 'auto',
+        height: 'auto',
+        left: bbox.x - bodyOffset.x + 5 + 'px',
+        top: bbox.y - bodyOffset.y + 5 + 'px'
+    });
+};
+
+// Hide current kbd hint
+const hideKbdHint = () => {
+    clearTimeout(hideKbdHintTimeout);
+    kbdHint.style.opacity = 0;
+    if (kbdHintOwner) {
+        kbdHintOwner.style.opacity = 1; // Undim owner
+    }
+    hideKbdHintTimeout = setTimeout(() => {
+        kbdHint.style.width = '1px';
+        kbdHint.style.height = '1px';
+    }, 300);
+};
+
+hideKbdHint();
+document.addEventListener('mousedown', hideKbdHint);
+
+
+// ============================================================================
+// Keyboard hints dialog
+
+const kbdHintsDialog = (function buildKbdHintsDialog() {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'hc-a11y-kbd-hints-dialog';
+    document.body.appendChild(dialog);
+    return dialog;
+}());
+
+const hideKbdHintsDialog = () => {
+    kbdHintsDialog.close();
+};
+
+// Show keyboard hints dialog for a container, with list of hints
+const showKbdDialog = (parent, hints) => {
+    kbdHintsDialog.innerHTML = '';
+    const header = document.createElement('div'),
+        heading = document.createElement('h3'),
+        closeBtn = document.createElement('button'),
+        ul = document.createElement('ul');
+
+    header.className = 'hc-a11y-kbd-hints-header';
+    heading.textContent = 'Keyboard shortcuts and tools';
+    closeBtn.textContent = 'X';
+    closeBtn.onclick = hideKbdHintsDialog;
+    closeBtn.setAttribute('aria-label', 'Close keyboard shortcuts');
+    header.appendChild(heading);
+    header.appendChild(closeBtn);
+    kbdHintsDialog.appendChild(header);
+
+    ul.setAttribute('role', 'list');
+    kbdHintsDialog.appendChild(ul);
+
+    Object.values(hints).forEach(hint => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="hc-a11y-kbd-key">${hint.name}</span>
+            <span class="hc-a11y-sr-only">.</span>
+            <span>${hint.desc}</span>`;
+        if (hint.srOnly) {
+            li.className = 'hc-a11y-sr-only';
+        }
+        ul.appendChild(li);
+    });
+
+    const bbox = parent.getBoundingClientRect(),
+        bodyOffset = document.body.getBoundingClientRect();
+
+    Object.assign(kbdHintsDialog.style, {
+        left: bbox.x - bodyOffset.x + 'px',
+        top: bbox.y - bodyOffset.y + 'px',
+        height: bbox.height + 'px',
+        width: bbox.width + 'px'
+    });
+
+    kbdHintsDialog.showModal();
+};
 
 
 // ============================================================================
@@ -65,7 +309,8 @@ function (elType, content, parent) {
     Object.assign(el.style, {
         position: 'absolute',
         margin: 0,
-        padding: 0
+        padding: 0,
+        border: 0
     });
     if (content) {
         el.innerHTML = content;
@@ -78,15 +323,7 @@ function (elType, content, parent) {
 Highcharts.Chart.prototype.addSROnly =
 function (elType, content, parent) {
     const el = this.addPlainA11yEl(elType, content, parent);
-    Object.assign(el.style, {
-        width: '1px',
-        height: '1px',
-        margin: '-1px',
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)'
-    });
+    el.className = 'hc-a11y-sr-only';
     return el;
 };
 
@@ -121,8 +358,9 @@ function (svgEl, elType, content, parent) {
     });
 
     [
-        'mousedown', 'mouseup', 'mouseover', 'mouseout', 'click',
-        'touchstart', 'touchend', 'touchmove', 'touchcancel'
+        'mousedown', 'mouseup', 'mouseenter', 'mouseover', 'mouseout',
+        'mouseleave', 'click', 'touchstart', 'touchend', 'touchmove',
+        'touchcancel'
     ].forEach(
         type => el.addEventListener(
             type, e => svgEl.dispatchEvent(new e.constructor(e.type, e))
@@ -143,9 +381,21 @@ const onViewportResize = handler => {
 // ============================================================================
 // Application utils
 
+// Constantly updated kbd state
+const kbdState = {
+    series: 0,
+    point: 0
+};
+
+// Shortcut to highlight current point
+Highcharts.Chart.prototype.highlightCurPoint = function () {
+    this.series[kbdState.series].points[kbdState.point].onMouseOver();
+};
+
+
 // Add application with keyboard handlers
 Highcharts.Chart.prototype.addA11yApplication =
-function (onInit, kbdHandlers) {
+function (onInit, kbdHandlers, kbdDescriptions) {
     const chart = this,
         chartTitle = chart.options.title.text,
         app = chart.addProxyContainerEl('div');
@@ -163,17 +413,38 @@ function (onInit, kbdHandlers) {
 
     // Keyboard state handling
     let entered = false;
+    const init = () => {
+        entered = true;
+        showKbdHint(chart.renderTo);
+        announce('Chart. Press T for tools. Use arrow keys to explore.');
+        kbdState.series = 0;
+        kbdState.point = 0;
+        onInit(chart);
+    };
     app.onkeydown = e => {
+        hideKbdHint();
+        hideFocus();
+        const key = (e.key || '').toLowerCase();
+
         // Let user tab through
-        if (e.key === 'Tab') {
+        if (key === 'tab') {
             entered = false;
             return;
         }
 
         // Handle init
-        if (!entered && (e.key === 'Enter' || e.key === ' ')) {
-            entered = true;
-            onInit(chart);
+        if (!entered && (key === 'enter' || key === ' ')) {
+            init();
+        } else if (entered && key === 't') {
+            showKbdDialog(
+                chart.renderTo,
+                Object.assign({
+                    t: {
+                        name: 'T',
+                        desc: 'Show keyboard shortcuts'
+                    }
+                }, kbdDescriptions)
+            );
         } else if (entered && kbdHandlers[e.key]) {
             kbdHandlers[e.key](chart, e);
         }
@@ -182,87 +453,276 @@ function (onInit, kbdHandlers) {
         e.stopPropagation();
         e.preventDefault();
     };
-
     app.onclick = () => {
         app.focus();
-        entered = true;
-        onInit(chart);
+        init();
     };
+    document.addEventListener('mousedown', () => (entered = false));
 
     return app;
 };
 
 
 // ============================================================================
-// Announcer
-const announcer = document.createElement('div');
-announcer.className = 'visually-hidden';
-announcer.setAttribute('aria-live', 'assertive');
-announcer.setAttribute('aria-hidden', 'false');
-let clearAnnounceTimeout, nextAnnounceTimeout;
-const announce = (str, delay) => {
-    clearTimeout(nextAnnounceTimeout);
-    announcer.innerText = '';
-    nextAnnounceTimeout = setTimeout(() => {
-        clearTimeout(clearAnnounceTimeout);
-        announcer.innerText = str;
-        clearAnnounceTimeout = setTimeout(
-            () => (announcer.innerText = ''),
-            3000
-        );
-    }, delay || 0);
+// Infographic bar chart model
+
+const delaysModel = chart => {
+    const container = chart.addProxyContainerEl('div'),
+        overlay = () => {
+            container.innerHTML = '';
+            chart.addProxyEl(
+                chart.seriesGroup.element,
+                'p', '77.89% On time. 22.11% Delayed (>15 min).',
+                container
+            );
+            chart.addSROnly(
+                'p', 'Bar chart with 2 bars.',
+                container
+            );
+        };
+
+    Highcharts.addEvent(
+        chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
+    );
+    onViewportResize(overlay);
 };
-document.body.appendChild(announcer);
+
+
+// ============================================================================
+// Pie chart model
+
+const accidentsModel = chart => {
+    chart.addSROnly('p', 'Pie chart with 6 slices.');
+
+    const ol = chart.addProxyContainerEl('ol');
+    ol.setAttribute('role', 'list');
+
+    const overlay = () => {
+        ol.innerHTML = '';
+        chart.series[0].points.forEach(point => {
+            const li = chart.addProxyEl(
+                point.graphic.element,
+                'li',
+                `${point.name}: ${point.percentage.toFixed(1)}%`,
+                ol
+            );
+            li.setAttribute('tabindex', 0);
+            li.onfocus = () => {
+                point.onMouseOver();
+                showFocusOnEl(li);
+                li.focus();
+            };
+            li.onblur = hideFocus;
+        });
+    };
+
+    Highcharts.addEvent(
+        chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
+    );
+    onViewportResize(overlay);
+};
 
 
 // ============================================================================
 // Historical chart model
 
 const historicalInit = chart => {
-    chart.sonification.playNote('piano', { note: 'c4', tremoloDepth: 0 });
+    chart.sonification.cancel();
+    chart.sonification.playNote('vibraphone', { note: 'c4', tremoloDepth: 0 });
+    chart.highlightCurPoint();
 };
 
-const historicalKbdHandlers = {
-    Enter: chart => {
-        console.log('Enter');
-        chart.sonification.playNote('saxophone', { note: 'e4' });
+// Utils
+const lineTrend = series => {
+    const startY = series.data[0].y,
+        endY = series.data[series.data.length - 1].y,
+        normalized = (endY - startY) / (series.dataMax - series.dataMin);
+
+    if (Math.abs(normalized) < 0.1) {
+        return 'roughly flat';
+    }
+    if (normalized >= 0.1 && normalized < 0.3) {
+        return 'up';
+    }
+    if (normalized >= 0.3) {
+        return 'significantly up';
+    }
+    if (normalized <= -0.1 && normalized > -0.3) {
+        return 'down';
+    }
+    if (normalized <= -0.3) {
+        return 'significantly down';
+    }
+};
+const seriesDesc = s => {
+    const maxVal = Math.max(...s.data.map(p => p.y)),
+        minVal = Math.min(...s.data.map(p => p.y));
+    return `${s.name}. ${s.data.length
+    } data points. Overall trending ${
+        lineTrend(s)
+    }. Highest value is $${
+        maxVal}, occuring at ${
+        s.points.find(p => p.y === maxVal).x
+    }. Lowest value is $${minVal}, occuring at ${
+        s.points.find(p => p.y === minVal).x
+    }.`;
+};
+
+// The handlers
+const historicalKbdHandlers = (() => {
+    const getCurPoint = chart => chart.sonification.getLastPlayedPoint() ||
+        chart.series[0].points[0];
+
+    let prevActionWasLR = false;
+    const leftRight = (chart, next) => {
+        const prevPoint = getCurPoint(chart);
+        chart.sonification.playAdjacent(
+            next, e => {
+                const p = e.pointsPlayed[0] || prevPoint;
+                announce(
+                    // Sometimes announce series as well
+                    `${prevPoint.series !== p.series || !prevActionWasLR ?
+                        p.series.name + ', ' : ''
+                    }$${p.y}. ${p.category}`, 600
+                );
+                prevActionWasLR = true;
+            }
+        );
+    };
+    const upDown = (chart, next) => {
+        const { series: prevSeries, index } = getCurPoint(chart),
+            sortedSeries = chart.series.sort(
+                (a, b) => b.points[index].y - a.points[index].y
+            ),
+            ix = sortedSeries.findIndex(s => s === prevSeries),
+            nextSeries = sortedSeries[next ? ix + 1 : ix - 1],
+            np = nextSeries && nextSeries.points[index];
+        if (np) {
+            np.sonify(
+                () => announce(
+                    `${nextSeries.name}, $${np.y}. ${np.category}`,
+                    200
+                ));
+        } else {
+            chart.options.sonification.events.onBoundaryHit({ chart });
+        }
+    };
+    const homeEnd = (chart, end) => {
+        const prevPoint = getCurPoint(chart),
+            p = prevPoint.series.points[
+                end ? prevPoint.series.points.length - 1 : 0];
+        p.sonify(() => announce(`$${p.y}. ${p.category}`, 200));
+    };
+    const pageUpDown = (chart, max) => {
+        const series = getCurPoint(chart).series,
+            poi = series.points.reduce((acc, p) => {
+                if (max) {
+                    return p.y > acc.y ? p : acc;
+                }
+                return p.y < acc.y ? p : acc;
+            }, series.points[0]);
+        poi.sonify(() => announce(
+            `${max ? 'Maximum' : 'Minimum'}, $${poi.y}. ${poi.category}`, 200
+        ));
+    };
+
+    return {
+        ArrowLeft: chart => leftRight(chart, false),
+        ArrowRight: chart => leftRight(chart, true),
+        ArrowUp: chart => upDown(chart, false),
+        ArrowDown: chart => upDown(chart, true),
+        Home: chart => homeEnd(chart),
+        End: chart => homeEnd(chart, true),
+        PageUp: chart => pageUpDown(chart, true),
+        PageDown: chart => pageUpDown(chart, false),
+        Escape: chart => {
+            chart.sonification.cancel();
+            chart.highlightCurPoint();
+            prevActionWasLR = false;
+        },
+
+        // Play current line
+        a: chart => {
+            const p = getCurPoint(chart);
+            p.onMouseOver();
+            chart.sonification.speak(
+                p.series.name, {
+                    rate: 1.5
+                }, 0,
+                () => p.series.sonify()
+            );
+            prevActionWasLR = false;
+        },
+
+        // Read chart summary
+        c: chart => {
+            announce(
+                `${chart.options.title.text}. Line chart with 4 lines, ${
+                    chart.series.map(s => s.name).join(', ')
+                }.`
+            );
+            prevActionWasLR = false;
+        },
+
+        // Read line summary
+        l: chart => {
+            const s = getCurPoint(chart).series;
+            announce(seriesDesc(s));
+            prevActionWasLR = false;
+        }
+    };
+})();
+
+const historicalKbdDescriptions = {
+    arrows: {
+        name: 'Arrows ←↓↑→',
+        desc: 'Navigate data'
     },
-    ' ': () => {},
-    ArrowLeft: chart => {
-        console.log('ArrowLeft');
-        chart.sonification.playNote('trumpet', { note: 'g4' });
+    a: {
+        name: 'A',
+        desc: 'Play line as audio'
     },
-    ArrowRight: () => {},
-    ArrowUp: () => {},
-    ArrowDown: () => {},
-    Home: () => {},
-    End: () => {},
-    PageUp: () => {},
-    PageDown: () => {},
-    Backspace: () => {},
-    Escape: chart => {
-        console.log('Escape');
-        chart.sonification.playNote('vibraphone', { note: 'b4' });
+    PageUp: {
+        name: 'PageUp',
+        desc: 'Go to highest value for line'
     },
-    '+': () => {},
-    '-': () => {}
+    PageDown: {
+        name: 'PageDown',
+        desc: 'Go to lowest value for line'
+    },
+    Home: {
+        name: 'Home',
+        desc: 'Go to start of line'
+    },
+    End: {
+        name: 'End',
+        desc: 'Go to end of line'
+    },
+    Escape: {
+        name: 'Esc',
+        desc: 'Reset chart'
+    },
+    c: {
+        name: 'C',
+        desc: 'Read summary of chart',
+        srOnly: true
+    },
+    l: {
+        name: 'L',
+        desc: 'Read summary of line',
+        srOnly: true
+    }
 };
 
 const historicalOverlay = (chart, parent) => {
     const container = chart.addProxyContainerEl('div', parent),
-        highestPoint = series => Math.max(...series.data.map(p => p.y)),
-        lowestPoint = series => Math.min(...series.data.map(p => p.y)),
-        seriesDescs = chart.series.map(
-            s => `${s.name}. Highest value is $${highestPoint(s)},
-            lowest value is $${lowestPoint(s)}.`),
+        seriesDescs = chart.series.map(seriesDesc),
         overlay = () => {
             container.innerHTML = '';
-            const innerContainer = chart.addProxyEl(
-                chart.plotBackground.element, 'div', '', container
-            );
-
-            chart.addSROnly('p', 'Line chart with 4 lines.', innerContainer);
-            const ol = chart.addSROnly('ol', '', innerContainer);
+            // Short chart desc
+            chart.addSROnly('p', 'Line chart with 4 lines.', container);
+            // Series descriptions
+            const ol = chart.addSROnly('ol', '', container);
             ol.setAttribute('role', 'list');
             seriesDescs.forEach(
                 desc => chart.addSROnly('li', desc, ol)
@@ -339,73 +799,19 @@ const wordcloudOverlay = (chart, parent) => {
 
 
 // ============================================================================
-// Add a11y models for each chart
+// Load models
+
 const a11yModels = {
-
-    // Simple infographic
-    delays: chart => {
-        const container = chart.addProxyContainerEl('div'),
-            overlay = () => {
-                container.innerHTML = '';
-                chart.addProxyEl(
-                    chart.seriesGroup.element,
-                    'p', '77.89% On time. 22.11% Delayed (>15 min).',
-                    container
-                );
-                chart.addSROnly(
-                    'p', 'Bar chart with 2 bars.',
-                    container
-                );
-            };
-
-        Highcharts.addEvent(
-            chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
-        );
-        onViewportResize(overlay);
-    },
-
-    // Simple pie chart with HTML overlay
-    accidents: chart => {
-        chart.addSROnly('p', 'Pie chart with 6 slices.');
-
-        const ol = chart.addProxyContainerEl('ol');
-        ol.setAttribute('role', 'list');
-
-        const overlay = () => {
-            ol.innerHTML = '';
-            chart.series[0].points.forEach(point => {
-                const li = chart.addProxyEl(
-                    point.graphic.element,
-                    'li',
-                    `${point.name}: ${point.percentage.toFixed(1)}%`,
-                    ol
-                );
-                li.setAttribute('tabindex', 0);
-                li.onfocus = () => {
-                    point.onMouseOver();
-                    showFocusOnEl(li);
-                    li.focus();
-                };
-                li.onblur = hideFocus;
-            });
-        };
-
-        Highcharts.addEvent(
-            chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
-        );
-        onViewportResize(overlay);
-    },
-
-    // Medium complexity line chart
+    delays: delaysModel,
+    accidents: accidentsModel,
     historical: chart => {
         const app = chart.addA11yApplication(
             historicalInit,
-            historicalKbdHandlers
+            historicalKbdHandlers,
+            historicalKbdDescriptions
         );
         historicalOverlay(chart, app);
     },
-
-    // High complexity network graph
     network: chart => {
         const app = chart.addA11yApplication(
             networkInit,
@@ -413,8 +819,6 @@ const a11yModels = {
         );
         networkOverlay(chart, app);
     },
-
-    // High complexity word cloud
     wordcloud: chart => {
         const app = chart.addA11yApplication(
             wordcloudInit,
@@ -424,9 +828,6 @@ const a11yModels = {
     }
 };
 
-
-// ============================================================================
-// Load models
 Highcharts.addEvent(Highcharts.Chart, 'load', function () {
     const chart = this,
         container = chart.container,
@@ -440,17 +841,7 @@ Highcharts.addEvent(Highcharts.Chart, 'load', function () {
 
     // Create HTML container & run relevant model
     const proxyContainer = document.createElement('div');
-    Object.assign(proxyContainer.style, {
-        position: 'relative',
-        zIndex: 9999,
-        padding: 0,
-        margin: '-1px',
-        width: '1px',
-        height: '1px',
-        whiteSpace: 'nowrap',
-        opacity: 0,
-        border: 0
-    });
+    proxyContainer.className = 'hc-a11y-proxy-container';
     chart.proxyContainer = proxyContainer;
     renderTo.insertBefore(proxyContainer, renderTo.firstChild);
 
@@ -473,6 +864,23 @@ Highcharts.setOptions({
     },
     accessibility: {
         enabled: false
+    },
+    sonification: {
+        defaultInstrumentOptions: {
+            instrument: 'basic2',
+            mapping: {
+                pitch: {
+                    min: 'g3',
+                    max: 'c6'
+                }
+            }
+        },
+        events: {
+            onBoundaryHit: e => {
+                e.chart.sonification.playNote('chop', { volume: 0.2 });
+                announce('End.', 200);
+            }
+        }
     },
     title: {
         align: 'left'
@@ -612,6 +1020,9 @@ Highcharts.chart('historical', {
     },
     subtitle: {
         text: 'Source: Bureau of Transportation Statistics'
+    },
+    sonification: {
+        duration: 16000
     },
     yAxis: {
         title: {
