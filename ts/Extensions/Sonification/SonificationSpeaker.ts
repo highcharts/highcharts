@@ -67,13 +67,23 @@ class SonificationSpeaker {
      * @param {string} message The message to speak.
      * @param {SonificationSpeakerOptionsObject} [options]
      * Optionally override speaker configuration.
+     * @param {EventListener} [onEnd]
+     * Optionally provide a callback to call when the message has been spoken.
      */
-    say(message: string, options?: SonificationSpeaker.SpeakerOptions): void {
+    say(
+        message: string,
+        options?: SonificationSpeaker.SpeakerOptions,
+        onEnd?: EventListener
+    ): void {
         if (this.synthesis) {
             this.synthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(message);
             if (this.voice) {
                 utterance.voice = this.voice;
+            }
+
+            if (onEnd) {
+                utterance.onend = onEnd as EventListener;
             }
 
             utterance.rate = options && options.rate || this.options.rate || 1;
@@ -98,14 +108,17 @@ class SonificationSpeaker {
      * The message to speak.
      * @param {SonificationSpeakerOptionsObject} [options]
      * Optionally override speaker configuration.
+     * @param {EventListener} [onEnd]
+     * Optionally provide a callback to call when the message has been spoken.
      */
     sayAtTime(
         time: number,
         message: string,
-        options?: SonificationSpeaker.SpeakerOptions
+        options?: SonificationSpeaker.SpeakerOptions,
+        onEnd?: EventListener
     ): void {
         this.scheduled.push(
-            setTimeout(this.say.bind(this, message, options), time)
+            setTimeout(this.say.bind(this, message, options, onEnd), time)
         );
     }
 

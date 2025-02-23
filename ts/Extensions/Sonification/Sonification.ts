@@ -142,6 +142,9 @@ class Sonification {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.audioContext.suspend();
             this.audioDestination = this.audioContext.destination;
+            if (window.speechSynthesis) {
+                window.speechSynthesis.getVoices();
+            }
         } catch (e) { /* Ignore */ }
     }
 
@@ -375,11 +378,14 @@ class Sonification {
      * Options for the announcement
      * @param {number} [delayMs]
      * Time offset from now, in milliseconds. Defaults to 0.
+     * @param {EventListener} [onEnd]
+     * Callback to call when the message has been spoken
      */
     speak(
         text: string,
         speakerOptions?: SonificationSpeaker.SpeakerOptions,
-        delayMs = 0
+        delayMs = 0,
+        onEnd?: EventListener
     ): void {
         const speaker = new SonificationSpeaker(
             merge({
@@ -388,7 +394,7 @@ class Sonification {
                 volume: 0.4
             }, speakerOptions || {})
         );
-        speaker.sayAtTime(delayMs, text);
+        speaker.sayAtTime(delayMs, text, {}, onEnd);
     }
 
 
