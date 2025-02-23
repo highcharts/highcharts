@@ -346,16 +346,22 @@ Highcharts.Chart.prototype.addProxyEl =
 function (svgEl, elType, content, parent) {
     const container = parent || this.proxyContainer,
         el = this.addPlainA11yEl(elType, content, container),
-        bbox = svgEl.getBoundingClientRect(),
-        containerBBox = container.getBoundingClientRect();
+        setSize = () => {
+            const bbox = svgEl.getBoundingClientRect(),
+                containerBBox = container.getBoundingClientRect();
 
-    Object.assign(el.style, {
-        left: bbox.x - containerBBox.x + 'px',
-        top: bbox.y - containerBBox.y + 'px',
-        width: bbox.width + 'px',
-        height: bbox.height + 'px',
-        overflow: 'hidden'
-    });
+            Object.assign(el.style, {
+                left: bbox.x - containerBBox.x + 'px',
+                top: bbox.y - containerBBox.y + 'px',
+                width: bbox.width + 'px',
+                height: bbox.height + 'px',
+                overflow: 'hidden'
+            });
+        },
+        resizeObserver = new ResizeObserver(setSize);
+
+    resizeObserver.observe(svgEl);
+    setSize();
 
     [
         'mousedown', 'mouseup', 'mouseenter', 'mouseover', 'mouseout',
@@ -387,6 +393,7 @@ const kbdState = {
     point: 0
 };
 
+
 // Shortcut to highlight current point
 Highcharts.Chart.prototype.highlightCurPoint = function () {
     this.series[kbdState.series].points[kbdState.point].onMouseOver();
@@ -400,6 +407,7 @@ function (onInit, kbdHandlers, kbdDescriptions) {
         chartTitle = chart.options.title.text,
         app = chart.addProxyContainerEl('div');
 
+    app.style.height = chart.container.clientHeight + 'px';
     app.setAttribute('role', 'application');
     app.setAttribute(
         'aria-label', `Interactive chart. ${chartTitle}. Click to interact.`
@@ -740,17 +748,181 @@ const historicalOverlay = (chart, parent) => {
 // Network graph model
 
 const networkInit = chart => {
-    chart.sonification.playNote('lead', { note: 'c4' });
+    chart.sonification.cancel();
+    chart.sonification.playNote('vibraphone', { note: 'c4', tremoloDepth: 0 });
+    chart.precomputedNetwork[0].onMouseOver();
+    kbdState.point = -1;
+};
+
+const networkKbdHandlers = (() => {
+
+    let sonificationSchedule = [];
+    const clearSonification = () => {
+        sonificationSchedule.forEach(clearTimeout);
+        sonificationSchedule = [];
+    };
+
+    const sonifyNode = (chart, node, tooltip = true) => {
+        const maxLinks = chart.precomputedNetwork[0].linksFrom.length +
+            chart.precomputedNetwork[0].linksTo.length,
+            value = (node.linksFrom.length + node.linksTo.length) / maxLinks;
+        chart.sonification.playNote(
+            'lead',
+            {
+                volume: value,
+                note: 70 - Math.round(value * 40),
+                noteDuration: 400 * value,
+                tremoloDepth: 0
+            }
+        );
+        if (tooltip) {
+            node.onMouseOver();
+        } else {
+            chart.precomputedNetwork.forEach(
+                n => n.setState(
+                    n === node ? 'hover' : 'inactive'
+                )
+            );
+        }
+    };
+
+    const announceNode = (node, delay) => announce(
+        `${node.name}, ${
+            node.linksFrom.length + node.linksTo.length
+        } connections to other nodes.`, delay);
+
+    const navigate = (chart, direction) => {
+        clearSonification();
+        const p = chart.precomputedNetwork[kbdState.point + direction];
+        if (!p) {
+            chart.sonification.playNote('chop', { volume: 0.2 });
+            announce('End.', 200);
+        } else {
+            sonifyNode(chart, p);
+            announceNode(p, 300);
+            kbdState.point += direction;
+        }
+    };
+
+    const startEnd = (chart, end) => {
+        clearSonification();
+        kbdState.point = end ? chart.precomputedNetwork.length - 1 : 0;
+        const p = chart.precomputedNetwork[kbdState.point];
+        sonifyNode(chart, p);
+        announceNode(p, 300);
+    };
+
+    return {
+        ArrowLeft: chart => navigate(chart, -1),
+        ArrowRight: chart => navigate(chart, 1),
+        ArrowUp: chart => navigate(chart, -1),
+        ArrowDown: chart => navigate(chart, 1),
+        Home: chart => startEnd(chart),
+        End: chart => startEnd(chart, true),
+        a: chart => {
+            clearSonification();
+            chart.tooltip.hide(0);
+            const sonify = () => chart.precomputedNetwork.forEach(
+                (node, i) => sonificationSchedule.push(
+                    setTimeout(
+                        () => sonifyNode(chart, node, false),
+                        i * 100 + 200
+                    )
+                ));
+            chart.sonification.speak(
+                'Network graph, largest to smallest', {
+                    rate: 1.5
+                }, 0, sonify
+            );
+        },
+        Escape: clearSonification,
+        c: chart => {
+            clearSonification();
+            announce(
+                `Network graph with 44 nodes. Top nodes are: ${
+                    chart.precomputedNetwork
+                        .slice(0, 5)
+                        .map(n => n.name)
+                        .join(', ')
+                }.`
+            );
+        },
+        n: chart => {
+            const node = chart.precomputedNetwork[kbdState.point],
+                top = nodes => nodes.slice(0).sort(
+                    (a, b) => b.mass - a.mass
+                ).slice(0, 5).map(n => n.name).join(', '),
+                topConnectionsFrom = top(node.linksFrom.map(l => l.toNode)),
+                topConnectionsTo = top(node.linksTo.map(l => l.fromNode));
+            announce(`Top connections from ${node.name} include: ${
+                topConnectionsFrom}. Top connections to ${
+                node.name} include: ${topConnectionsTo}.`
+            );
+        }
+    };
+})();
+
+const networkKbdDescriptions = {
+    arrows: {
+        name: 'Arrows ←↓↑→',
+        desc: 'Navigate data'
+    },
+    a: {
+        name: 'A',
+        desc: 'Play network as audio, large nodes first'
+    },
+    Home: {
+        name: 'Home',
+        desc: 'Go to largest node'
+    },
+    End: {
+        name: 'End',
+        desc: 'Go to smallest node'
+    },
+    c: {
+        name: 'C',
+        desc: 'Read summary of chart',
+        srOnly: true
+    },
+    n: {
+        name: 'N',
+        desc: 'Read top connections from and to node',
+        srOnly: true
+    }
+};
+
+const networkExplanation = chart => {
+    chart.addSROnly('p', 'Network graph with 44 nodes.');
+    const ds = chart.addSROnly('details', `
+        <summary>What is a network graph?</summary>
+        <p>
+        A network graph shows connections. It does this by drawing
+        dots and lines, where dots are called "nodes", and the lines
+        represent connections between the nodes. The nodes are placed
+        around the chart area based on their connections. There are
+        no axes, but the size of the nodes and the number of
+        connections can be used to understand the data. Nodes closely
+        related are also generally placed closer to each other.
+        </p>
+        <p>
+        Network graphs are often used to show relationships 
+        between data. One example might be a social network, where
+        the nodes are people, and the connections are friendships.
+        Such a chart would let us see clusters of friends who know each
+        other.
+        </p>
+    `);
+    ds.setAttribute('tabindex', -1);
 };
 
 const networkOverlay = (chart, parent) => {
     const container = chart.addProxyContainerEl('div', parent),
         overlay = () => {
             container.innerHTML = '';
-            chart.addSROnly('p', 'Network graph with 44 nodes.', container);
             const ol = chart.addProxyContainerEl('ol', container);
             ol.setAttribute('role', 'list');
-            chart.series[0].nodes.forEach(node =>
+            // Making use of presorted node list
+            chart.precomputedNetwork.forEach(node =>
                 chart.addProxyEl(
                     node.graphic.element,
                     'li',
@@ -772,14 +944,68 @@ const networkOverlay = (chart, parent) => {
 // Word cloud model
 
 const wordcloudInit = chart => {
-    chart.sonification.playNote('vibraphone', { note: 'c4' });
+    chart.sonification.cancel();
+    chart.sonification.playNote('vibraphone', { note: 'c4', tremoloDepth: 0 });
+    chart.highlightCurPoint();
 };
 
+const wordcloudKbdHandlers = (() => {
+    const a = '';
+    return {
+        ArrowLeft: chart => {}
+    };
+})();
+
+const wordcloudKbdDescriptions = {
+    arrows: {
+        name: 'Arrows ←↓↑→',
+        desc: 'Navigate data'
+    },
+    a: {
+        name: 'A',
+        desc: 'Play word cloud as audio, large words first'
+    },
+    PageUp: {
+        name: 'PageUp',
+        desc: 'Go to largest word'
+    },
+    PageDown: {
+        name: 'PageDown',
+        desc: 'Go to smallest word'
+    },
+    c: {
+        name: 'C',
+        desc: 'Read summary of chart',
+        srOnly: true
+    }
+};
+
+const wordcloudExplanation = chart => {
+    chart.addSROnly('p', 'Word cloud with 100 words.');
+    const ds = chart.addSROnly('details', `
+        <summary>What is a word cloud?</summary>
+        <p>
+        A word cloud looks like a cloud of words. The words are scattered around
+        the chart area - or laid out in a shape. Words are of varying sizes,
+        with the most important words being the largest, and easiest to spot.
+        </p>
+        <p>
+        Word clouds are used to represent text data, for example a news article
+        or a book. The size of the words often represent the frequency of the
+        word in the text - how often it occurs. The most common words are then
+        drawn the largest.
+        </p>
+        <p>
+        By looking at a word cloud, you can quickly get an idea of what the text
+        is about, and which words are most important.
+        </p>
+    `);
+    ds.setAttribute('tabindex', -1);
+};
 const wordcloudOverlay = (chart, parent) => {
     const container = chart.addProxyContainerEl('div', parent),
         overlay = () => {
             container.innerHTML = '';
-            chart.addSROnly('p', 'Word cloud with 100 words.', container);
             const ol = chart.addProxyContainerEl('ol', container);
             ol.setAttribute('role', 'list');
             chart.series[0].points.forEach(point =>
@@ -813,16 +1039,27 @@ const a11yModels = {
         historicalOverlay(chart, app);
     },
     network: chart => {
+        networkExplanation(chart);
+
+        // Precompute network order
+        chart.precomputedNetwork = chart.series[0].nodes.slice(0).sort(
+            (a, b) => b.linksFrom.length + b.linksTo.length -
+                a.linksFrom.length - a.linksTo.length
+        );
+
         const app = chart.addA11yApplication(
             networkInit,
-            {}
+            networkKbdHandlers,
+            networkKbdDescriptions
         );
         networkOverlay(chart, app);
     },
     wordcloud: chart => {
+        wordcloudExplanation(chart);
         const app = chart.addA11yApplication(
             wordcloudInit,
-            {}
+            wordcloudKbdHandlers,
+            wordcloudKbdDescriptions
         );
         wordcloudOverlay(chart, app);
     }
@@ -1095,6 +1332,10 @@ Highcharts.chart('network', {
     },
     subtitle: {
         text: 'Selected airports and routes<br>Source: OpenFlight'
+    },
+    tooltip: {
+        format: '<b>{point.id}</b><br>Connections: ' +
+            '{add point.linksTo.length point.linksFrom.length}'
     },
     series: [{
         type: 'networkgraph',
