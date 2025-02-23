@@ -53,7 +53,7 @@ class Credits {
     * */
 
     /**
-     * Default options of the component.
+     * Default options of the credits.
      */
     public static defaultOptions: CreditsOptions = {
         enabled: true,
@@ -164,7 +164,7 @@ class Credits {
 
 namespace Credits {
     /**
-     * Extends the grid classes with cell editing functionality.
+     * Extends the grid classes with credits.
      *
      * @param TableClass
      * The class to extend.

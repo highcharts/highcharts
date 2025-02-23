@@ -519,15 +519,11 @@ export interface CreditsOptions {
 
     /**
      * The text for the credits label.
+     * 
+     * Reference to Highcharts icon, that is enabled in Grid Lite, by default.
      *
-     * @default 'Highcharts.com'
      */
     text?: string;
-
-    /**
-     * The icon reference for the credits label.
-     */
-    iconURL?: string;
 
     /**
      * The position of the credits label.

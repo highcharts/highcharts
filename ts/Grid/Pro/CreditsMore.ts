@@ -131,7 +131,7 @@ class CreditsMore extends Credits {
 
 namespace CreditsMore {
     /**
-     * Extends the grid classes with cell editing functionality.
+     * Extends the grid classes with customizable credits.
      *
      * @param TableClass
      * The class to extend.
