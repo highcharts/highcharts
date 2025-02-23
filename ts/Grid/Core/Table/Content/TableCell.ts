@@ -297,7 +297,7 @@ class TableCell extends Cell {
      */
     private formatCell(): string {
         const cellsDefaults =
-            this.row.viewport.dataGrid.options?.columnDefaults?.cells || {};
+            this.row.viewport.grid.options?.columnDefaults?.cells || {};
         const options = this.column.options.cells || {};
         const { format, formatter } = options;
         const isDefaultFormat = cellsDefaults.format === format;

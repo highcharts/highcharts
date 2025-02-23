@@ -78,12 +78,6 @@ namespace Defaults {
             },
             theme: 'hcg-theme-default'
         },
-        credits: {
-            enabled: true,
-            text: 'Highcharts.com',
-            href: 'https://www.highcharts.com?credits',
-            position: 'bottom'
-        },
         columnDefaults: {
             sorting: {
                 sortable: true

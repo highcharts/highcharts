@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -23,10 +24,15 @@
 
 import type { CreditsOptions } from './Options';
 import type Grid from './Grid';
+import type Table from '../Core/Table/Table';
 
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
+import U from '../../Core/Utilities.js';
 
+const {
+    addEvent
+} = U;
 const { makeHTMLElement } = GridUtils;
 
 /* *
@@ -45,6 +51,16 @@ class Credits {
     *  Properties
     *
     * */
+
+    /**
+     * Default options of the credits.
+     */
+    public static defaultOptions: CreditsOptions = {
+        enabled: true,
+        text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
+        href: 'https://www.highcharts.com',
+        position: 'bottom'
+    };
 
     /**
      * The Grid instance which the credits belong to.
@@ -79,9 +95,8 @@ class Credits {
      * @param grid
      * The Grid instance which the credits belong to.
      */
-    constructor(grid: Grid) {
+    constructor(grid: Grid, options: CreditsOptions) {
         this.grid = grid;
-        this.options = grid.options?.credits ?? {};
 
         this.containerElement = makeHTMLElement('div', {
             className: Globals.getClassName('creditsContainer')
@@ -90,8 +105,10 @@ class Credits {
         this.textElement = makeHTMLElement<HTMLAnchorElement>('a', {
             className: Globals.getClassName('creditsText')
         }, this.containerElement);
+
         this.textElement.setAttribute('target', '_top');
 
+        this.options = options;
         this.render();
     }
 
@@ -103,74 +120,20 @@ class Credits {
     * */
 
     /**
-     * Set the content of the credits.
-     */
-    private setContent(): void {
-        const { text, href } = this.options;
-
-        this.textElement.innerText = text || '';
-        this.textElement.setAttribute('href', href || '');
-    }
-
-    /**
-     * Append the credits to the container. The position of the credits is
-     * determined by the `position` option.
-     */
-    private appendToContainer(): void {
-        const { position } = this.options;
-
-        if (position === 'top') {
-            // Append the credits to the top of the table.
-            this.grid.contentWrapper?.prepend(this.containerElement);
-            return;
-        }
-
-        // Append the credits to the bottom of the table.
-        this.grid.contentWrapper?.appendChild(this.containerElement);
-    }
-
-    /**
-     * Update the credits with new options.
-     *
-     * @param options
-     * The new options for the credits.
-     *
-     * @param render
-     * Whether to render the credits after the update.
-     */
-    public update(
-        options: Partial<CreditsOptions> | undefined,
-        render = true
-    ): void {
-        if (options) {
-            this.grid.update({
-                credits: options
-            }, false);
-
-            this.options = this.grid.options?.credits ?? {};
-        }
-
-        if (render) {
-            this.render();
-        }
-    }
-
-    /**
      * Render the credits. If the credits are disabled, they will be removed
      * from the container. If also reflows the viewport dimensions.
      */
     public render(): void {
-        const enabled = this.options.enabled ?? false;
+        const { text, href } = this.options;
 
         this.containerElement.remove();
 
-        if (enabled) {
-            this.setContent();
-            this.appendToContainer();
-        } else {
-            this.destroy();
+        if (text && href) {
+            this.textElement.innerHTML = text;
+            this.textElement.setAttribute('href', href || '');
         }
 
+        this.grid.contentWrapper?.appendChild(this.containerElement);
         this.grid.viewport?.reflow();
     }
 
@@ -200,7 +163,25 @@ class Credits {
  * */
 
 namespace Credits {
+    /**
+     * Extends the grid classes with credits.
+     *
+     * @param GridClass
+     * The class to extend.
+     *
+     */
+    export function compose(
+        GridClass: typeof Grid
+    ): void {
+        addEvent(GridClass, 'afterRenderViewport', initCredits);
+    }
 
+    /**
+     * Callback function called before table initialization.
+     */
+    function initCredits(this: Grid): void {
+        new Credits(this, Credits.defaultOptions);
+    }
 }
 
 
