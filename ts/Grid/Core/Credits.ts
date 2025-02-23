@@ -166,21 +166,21 @@ namespace Credits {
     /**
      * Extends the grid classes with credits.
      *
-     * @param TableClass
+     * @param GridClass
      * The class to extend.
      *
      */
     export function compose(
-        TableClass: typeof Table
+        GridClass: typeof Grid
     ): void {
-        addEvent(TableClass, 'afterRenderViewport', initCredits);
+        addEvent(GridClass, 'afterRenderViewport', initCredits);
     }
 
     /**
      * Callback function called before table initialization.
      */
-    function initCredits(this: Table): void {
-        new Credits(this.grid, Credits.defaultOptions);
+    function initCredits(this: Grid): void {
+        new Credits(this, Credits.defaultOptions);
     }
 }
 

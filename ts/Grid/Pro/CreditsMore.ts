@@ -24,6 +24,7 @@
 
 import type { CreditsOptions } from '../Core/Options';
 import type Table from '../Core/Table/Table';
+import type Grid from '../Core/Grid';
 
 import Credits from '../Core/Credits.js';
 import U from '../../Core/Utilities.js';
@@ -133,23 +134,23 @@ namespace CreditsMore {
     /**
      * Extends the grid classes with customizable credits.
      *
-     * @param TableClass
+     * @param GridClass
      * The class to extend.
      *
      */
     export function compose(
-        TableClass: typeof Table
+        GridClass: typeof Grid
     ): void {
-        addEvent(TableClass, 'afterRenderViewport', initCreditsMore);
+        addEvent(GridClass, 'afterRenderViewport', initCreditsMore);
     }
 
     /**
      * Callback function called before table initialization.
      */
-    function initCreditsMore(this: Table): void {
-        this.grid.credits = new CreditsMore(
-            this.grid,
-            merge(Credits.defaultOptions, this.grid.options?.credits)
+    function initCreditsMore(this: Grid): void {
+        this.credits = new CreditsMore(
+            this,
+            merge(Credits.defaultOptions, this.options?.credits)
         );
     }
 }

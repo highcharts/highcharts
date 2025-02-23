@@ -98,7 +98,7 @@ G.setOptions = Defaults.setOptions;
 
 G.Table = G.Table || Table;
 
-Credits.compose(G.Table);
+Credits.compose(G.Grid);
 /* *
  *
  *  Classic Export

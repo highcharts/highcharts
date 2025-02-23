@@ -137,7 +137,7 @@ G.TableCell = G.TableCell || TableCell;
 
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell);
-CreditsMore.compose(G.Table);
+CreditsMore.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 
 

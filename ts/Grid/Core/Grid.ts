@@ -807,7 +807,7 @@ class Grid {
             this.viewport.reflow();
         }
 
-        fireEvent(this.viewport, 'afterRenderViewport');
+        fireEvent(this, 'afterRenderViewport');
     }
 
     /**
