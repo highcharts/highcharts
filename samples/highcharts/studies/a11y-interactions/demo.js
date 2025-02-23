@@ -33,11 +33,12 @@ Object.assign(focusBorder.style, {
 });
 document.body.appendChild(focusBorder);
 
+let focusVisible = false;
 const showFocusOnEl = el => {
     const bbox = el.getBoundingClientRect(),
         bodyOffset = document.body.getBoundingClientRect();
     Object.assign(focusBorder.style, {
-        display: 'block',
+        display: focusVisible ? 'block' : 'none',
         left: bbox.x - bodyOffset.x + 'px',
         top: bbox.y - bodyOffset.y + 'px',
         width: bbox.width + 'px',
@@ -47,6 +48,10 @@ const showFocusOnEl = el => {
 const hideFocus = () => {
     focusBorder.style.display = 'none';
 };
+
+// Show focus only when keyboard navigating
+document.addEventListener('keydown', () => (focusVisible = true));
+document.addEventListener('mousedown', () => (focusVisible = false));
 
 
 // ============================================================================
@@ -127,26 +132,27 @@ function (svgEl, elType, content, parent) {
     return el;
 };
 
+// Handy utility to do something on viewport resize
+const onViewportResize = handler => {
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', handler);
+    }
+};
+
 
 // ============================================================================
 // Application utils
 
 // Add application with keyboard handlers
 Highcharts.Chart.prototype.addA11yApplication =
-function (desc, onInit, kbdHandlers) {
+function (onInit, kbdHandlers) {
     const chart = this,
         chartTitle = chart.options.title.text,
-        app = chart.addSROnly('div'),
-        fallbackBtn = chart.addSROnly(
-            'button',
-            `${desc}. Click to interact. ${chartTitle}.`,
-            app
-        );
+        app = chart.addProxyContainerEl('div');
 
-    fallbackBtn.setAttribute('tabindex', '-1');
     app.setAttribute('role', 'application');
     app.setAttribute(
-        'aria-label', `${chartTitle}. Press Enter to interact with chart.`
+        'aria-label', `Interactive chart. ${chartTitle}. Click to interact.`
     );
     app.setAttribute('tabindex', 0);
     app.onfocus = () => {
@@ -165,7 +171,7 @@ function (desc, onInit, kbdHandlers) {
         }
 
         // Handle init
-        if (!entered && e.key === 'Enter') {
+        if (!entered && (e.key === 'Enter' || e.key === ' ')) {
             entered = true;
             onInit(chart);
         } else if (entered && kbdHandlers[e.key]) {
@@ -177,12 +183,13 @@ function (desc, onInit, kbdHandlers) {
         e.preventDefault();
     };
 
-    // Fallback button
-    fallbackBtn.onclick = () => {
+    app.onclick = () => {
         app.focus();
         entered = true;
         onInit(chart);
     };
+
+    return app;
 };
 
 
@@ -212,7 +219,7 @@ document.body.appendChild(announcer);
 // Historical chart model
 
 const historicalInit = chart => {
-    chart.sonification.playNote('piano', { note: 'c4' });
+    chart.sonification.playNote('piano', { note: 'c4', tremoloDepth: 0 });
 };
 
 const historicalKbdHandlers = {
@@ -241,12 +248,93 @@ const historicalKbdHandlers = {
     '-': () => {}
 };
 
+const historicalOverlay = (chart, parent) => {
+    const container = chart.addProxyContainerEl('div', parent),
+        highestPoint = series => Math.max(...series.data.map(p => p.y)),
+        lowestPoint = series => Math.min(...series.data.map(p => p.y)),
+        seriesDescs = chart.series.map(
+            s => `${s.name}. Highest value is $${highestPoint(s)},
+            lowest value is $${lowestPoint(s)}.`),
+        overlay = () => {
+            container.innerHTML = '';
+            const innerContainer = chart.addProxyEl(
+                chart.plotBackground.element, 'div', '', container
+            );
+
+            chart.addSROnly('p', 'Line chart with 4 lines.', innerContainer);
+            const ol = chart.addSROnly('ol', '', innerContainer);
+            ol.setAttribute('role', 'list');
+            seriesDescs.forEach(
+                desc => chart.addSROnly('li', desc, ol)
+            );
+        };
+
+    Highcharts.addEvent(
+        chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
+    );
+    onViewportResize(overlay);
+};
+
 
 // ============================================================================
 // Network graph model
 
 const networkInit = chart => {
     chart.sonification.playNote('lead', { note: 'c4' });
+};
+
+const networkOverlay = (chart, parent) => {
+    const container = chart.addProxyContainerEl('div', parent),
+        overlay = () => {
+            container.innerHTML = '';
+            chart.addSROnly('p', 'Network graph with 44 nodes.', container);
+            const ol = chart.addProxyContainerEl('ol', container);
+            ol.setAttribute('role', 'list');
+            chart.series[0].nodes.forEach(node =>
+                chart.addProxyEl(
+                    node.graphic.element,
+                    'li',
+                    `${node.name},
+                        ${node.linksFrom.length + node.linksTo.length}
+                        connections to other nodes.`,
+                    ol
+                ));
+        };
+
+    Highcharts.addEvent(
+        chart.series[0], 'afterSimulation', () => setTimeout(overlay, 0)
+    );
+    onViewportResize(overlay);
+};
+
+
+// ============================================================================
+// Word cloud model
+
+const wordcloudInit = chart => {
+    chart.sonification.playNote('vibraphone', { note: 'c4' });
+};
+
+const wordcloudOverlay = (chart, parent) => {
+    const container = chart.addProxyContainerEl('div', parent),
+        overlay = () => {
+            container.innerHTML = '';
+            chart.addSROnly('p', 'Word cloud with 100 words.', container);
+            const ol = chart.addProxyContainerEl('ol', container);
+            ol.setAttribute('role', 'list');
+            chart.series[0].points.forEach(point =>
+                chart.addProxyEl(
+                    point.graphic.element,
+                    'li',
+                    `${point.name}, size ${point.weight}.`,
+                    ol
+                ));
+        };
+
+    Highcharts.addEvent(
+        chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
+    );
+    onViewportResize(overlay);
 };
 
 
@@ -256,10 +344,8 @@ const a11yModels = {
 
     // Simple infographic
     delays: chart => {
-        const container = chart.addProxyContainerEl('div');
-        Highcharts.addEvent(
-            chart.series[0], 'afterAnimate',
-            () => setTimeout(() => {
+        const container = chart.addProxyContainerEl('div'),
+            overlay = () => {
                 container.innerHTML = '';
                 chart.addProxyEl(
                     chart.seriesGroup.element,
@@ -270,8 +356,12 @@ const a11yModels = {
                     'p', 'Bar chart with 2 bars.',
                     container
                 );
-            }, 0)
+            };
+
+        Highcharts.addEvent(
+            chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
         );
+        onViewportResize(overlay);
     },
 
     // Simple pie chart with HTML overlay
@@ -281,44 +371,57 @@ const a11yModels = {
         const ol = chart.addProxyContainerEl('ol');
         ol.setAttribute('role', 'list');
 
+        const overlay = () => {
+            ol.innerHTML = '';
+            chart.series[0].points.forEach(point => {
+                const li = chart.addProxyEl(
+                    point.graphic.element,
+                    'li',
+                    `${point.name}: ${point.percentage.toFixed(1)}%`,
+                    ol
+                );
+                li.setAttribute('tabindex', 0);
+                li.onfocus = () => {
+                    point.onMouseOver();
+                    showFocusOnEl(li);
+                    li.focus();
+                };
+                li.onblur = hideFocus;
+            });
+        };
+
         Highcharts.addEvent(
-            chart.series[0], 'afterAnimate',
-            () => setTimeout(() => {
-                ol.innerHTML = '';
-                chart.series[0].points.forEach(point => {
-                    const li = chart.addProxyEl(
-                        point.graphic.element,
-                        'li',
-                        `${point.name}: ${point.percentage.toFixed(1)}%`,
-                        ol
-                    );
-                    li.setAttribute('tabindex', 0);
-                    li.onfocus = () => {
-                        point.onMouseOver();
-                        showFocusOnEl(li);
-                        li.focus();
-                    };
-                    li.onblur = hideFocus;
-                });
-            }, 0));
+            chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
+        );
+        onViewportResize(overlay);
     },
 
     // Medium complexity line chart
     historical: chart => {
-        chart.addA11yApplication(
-            'Line chart with 4 lines and 124 data points',
+        const app = chart.addA11yApplication(
             historicalInit,
             historicalKbdHandlers
         );
+        historicalOverlay(chart, app);
     },
+
+    // High complexity network graph
     network: chart => {
-        chart.addA11yApplication(
-            'Network graph',
+        const app = chart.addA11yApplication(
             networkInit,
             {}
         );
+        networkOverlay(chart, app);
     },
-    wordcloud: chart => {}
+
+    // High complexity word cloud
+    wordcloud: chart => {
+        const app = chart.addA11yApplication(
+            wordcloudInit,
+            {}
+        );
+        wordcloudOverlay(chart, app);
+    }
 };
 
 

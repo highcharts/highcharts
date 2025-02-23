@@ -4,6 +4,10 @@ li {
     list-style-type: none;
 }
 
+.top-bar {
+    display: none;
+}
+
 .chart {
     height: 400px;
 }
