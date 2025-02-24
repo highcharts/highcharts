@@ -22,11 +22,16 @@ const defaultSettings = {
 
 /* -------------------- HARDCODED DESCRIPTIONS --------------------- */
 // Defining description formats for verbosity
-const shortPointDescriptionFormat =
+const shortPointDescriptionFormatColumn =
     '{point.category}, {(point.y):,.0f} (1000 MT).';
-const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
+const fullPointDescriptionFormatColumn =  'Bar {add index 1} of ' +
     '{point.series.points.length} in series {point.category}, ' +
     '{point.series.name}: {(point.y):,.0f} (1000 MT).';
+
+const shortPointDescriptionFormatScatter = '{point.x} cm, {point.y} kg.';
+const fullPointDescriptionFormatScatter = 'Point {add index 1} of ' +
+    '{point.series.points.length} in series {point.series.name}, ' +
+    '{point.x} cm, {point.y} kg.';
 
 // Adding descriptions to chart
 const columnChartDesc = 'This bar chart compares the estimated production ' +
@@ -438,12 +443,20 @@ function initializeCharts() {
     // Store descriptions in chart objects
     chart1.longDesc = getScreenReaderDescription(chart1);
     chart1.shortDesc = getShortScreenReaderDescription(chart1);
+    chart1.pointDesc = {
+        short: shortPointDescriptionFormatColumn,
+        full: fullPointDescriptionFormatColumn
+    };
     chart2.longDesc = getScreenReaderDescription(chart2);
     chart2.shortDesc = getShortScreenReaderDescription(chart2);
     chart2.femaleDesc = descFemale;
     chart2.maleDesc = descMale;
     chart2.femaleDescShort = descFemale.split('.')[0] + '.';
     chart2.maleDescShort = descMale.split('.')[0] + '.';
+    chart2.pointDesc = {
+        short: shortPointDescriptionFormatScatter,
+        full: fullPointDescriptionFormatScatter
+    };
 
     return [chart1, chart2];
 }
@@ -481,7 +494,7 @@ function getColumnChartConfig() {
                 '<div>{yAxisDescription}</div>'
             },
             point: {
-                descriptionFormat: fullPointDescriptionFormat
+                descriptionFormat: fullPointDescriptionFormatColumn
             },
             keyboardNavigation: {
                 focusBorder: {
@@ -892,7 +905,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
 }
 
 function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
-    let altText = '';
+    const altTexts = [];
     chart.series.forEach(series => {
         series.points.forEach(point => {
             const pointElement = point.graphic?.element;
@@ -902,6 +915,7 @@ function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
             }
 
             const formattedVal = point.y.toLocaleString('en-US');
+            let altText = '';
 
             // Generate alt text based on verbosity
             if (chart.series[0].type === 'column') {
@@ -919,9 +933,11 @@ function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
                     `${((point.series.name).toLowerCase())}, ` +
                     `${point.x} cm, ${point.y} kg.`;
             }
+
+            altTexts.push(altText);
         });
     });
-    return altText;
+    return altTexts;
 }
 
 /* -------------------- PREFERENCES BUTTON --------------------- */
@@ -1163,51 +1179,27 @@ function setupEventListeners(prefContent, chart) {
     verbosityRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
             settings.selectedVerbosity = event.target.value;
+            const descriptionFormat = settings.selectedVerbosity === 'short' ?
+                chart.pointDesc.short : chart.pointDesc.full;
 
             chart.update({
                 accessibility: {
                     point: {
-                        descriptionFormat:
-                            settings.selectedVerbosity === 'short' ?
-                                shortPointDescriptionFormat :
-                                fullPointDescriptionFormat
+                        descriptionFormat: descriptionFormat
                     }
                 }
             });
 
-            if (chart.series[0].type === 'scatter') {
-                chart.update({
-                    series: [{
-                        accessibility: {
-                            description: settings.selectedVerbosity ===
-                            'short' ? chart.femaleDescShort : chart.femaleDesc
-                        }
-                    }, {
-                        accessibility: {
-                            description: settings.selectedVerbosity ===
-                            'short' ? chart.maleDescShort : chart.maleDesc
-                        }
-                    }]
-                });
-            }
-
-            // If point desc is enabled, update dataLabels format
             if (settings.selectedLabels === 'point-desc') {
-                const altText = formatAltTextVerbosityForPoints(
-                    chart, settings.selectedVerbosity
-                );
-
                 chart.update({
                     series: [{
                         dataLabels: {
                             enabled: true,
-                            format: altText
+                            format: descriptionFormat
                         }
                     }, {
-                        dataLabels: {
-                            enabled: true,
-                            format: altText
-                        }
+                        enabled: true,
+                        format: descriptionFormat
                     }]
                 });
             }
@@ -1240,22 +1232,20 @@ function setupEventListeners(prefContent, chart) {
         radio.addEventListener('change', event => {
             settings.selectedLabels = event.target.value;
 
-            let dataLabelsConfig = {
-                enabled: false
-            };
+            let dataLabelsConfig = { enabled: false };
 
             if (settings.selectedLabels === 'datalabels') {
                 dataLabelsConfig = {
                     enabled: true,
-                    format: undefined // Clearing the format if point-desc
+                    format: undefined // Clears previous format
                 };
             } else if (settings.selectedLabels === 'point-desc') {
-                const altText = formatAltTextVerbosityForPoints(
-                    chart, settings.selectedVerbosity
-                );
                 dataLabelsConfig = {
                     enabled: true,
-                    format: altText
+                    style: { textOverflow: 'clip' },
+                    format: settings.selectedVerbosity === 'short' ?
+                        chart.pointDesc.short :
+                        chart.pointDesc.full
                 };
             }
             chart.update({
@@ -1462,12 +1452,12 @@ function createPreferencesDialog(chart) {
 
                 <input type="radio" id="datalabels-${i}"
                 name="datalabels-${i}" value="datalabels"
-                ${settings.selectedLabels === 'short' ? 'checked' : ''}>
+                ${settings.selectedLabels === 'datalabels' ? 'checked' : ''}>
                 <label for="datalabels-${i}">Show data labels</label>
 
                 <input type="radio" id="point-desc-${i}"
                 name="datalabels-${i}" value="point-desc"
-                ${settings.selectedLabels === 'full' ? 'checked' : ''}>
+                ${settings.selectedLabels === 'point-desc' ? 'checked' : ''}>
                 <label for="point-desc-${i}">Show point descriptions</label>
             </div> 
 
