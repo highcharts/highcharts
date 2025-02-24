@@ -51,29 +51,6 @@ const {
 } = U;
 import RegexLimits from '../RegexLimits.js';
 
-AST.allowedAttributes.push(
-    'data-z-index',
-    'fill-opacity',
-    'filter',
-    'rx',
-    'ry',
-    'stroke-dasharray',
-    'stroke-linejoin',
-    'stroke-opacity',
-    'text-anchor',
-    'transform',
-    'version',
-    'viewBox',
-    'visibility',
-    'xmlns',
-    'xmlns:xlink'
-);
-AST.allowedTags.push(
-    'desc',
-    'clippath',
-    'g'
-);
-
 /* *
  *
  *  Declarations
@@ -157,13 +134,12 @@ namespace OfflineExporting {
     ): (typeof Composition&T) {
         const chartProto = ChartClass.prototype as Composition;
 
-        if (!chartProto.exportChartLocal) {
-            chartProto.getSVGForLocalExport = getSVGForLocalExport;
-            chartProto.exportChartLocal = exportChartLocal;
+        /// For now to overwrite the functions from the main module
+        chartProto.getSVGForLocalExport = getSVGForLocalExport;
+        chartProto.exportChartLocal = exportChartLocal;
 
-            // Extend the default options to use the local exporter logic
-            merge(true, defaultOptions.exporting, OfflineExportingDefaults);
-        }
+        // Extend the default options to use the local exporter logic
+        merge(true, defaultOptions.exporting, OfflineExportingDefaults);
 
         return ChartClass as (typeof Composition&T);
     }
