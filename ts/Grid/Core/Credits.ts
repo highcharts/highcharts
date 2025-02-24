@@ -94,6 +94,10 @@ class Credits {
      *
      * @param grid
      * The Grid instance which the credits belong to.
+     * 
+     * @param options
+     * Options for the credits label.  
+     *
      */
     constructor(grid: Grid, options: CreditsOptions) {
         this.grid = grid;
