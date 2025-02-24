@@ -38,40 +38,6 @@ const {
  *
  * */
 
-/**
- * Options for the credits label.
- */
-export interface CreditsOptions {
-    /**
-     * Whether to show the credits.
-     *
-     * @default true
-     */
-    enabled?: boolean;
-
-    /**
-     * The URL that will be opened when the credits label is clicked.
-     *
-     * @default 'https://www.highcharts.com?credits'
-     */
-    href?: string;
-
-    /**
-     * The text for the credits label.
-     *
-     * Reference to Highcharts icon, that is enabled in Grid Lite, by default.
-     *
-     */
-    text?: string;
-
-    /**
-     * The position of the credits label.
-     *
-     * @default 'bottom'
-     */
-    position?: 'bottom' | 'top';
-}
-
 namespace CreditsProComposition {
     /**
      * Extends the grid classes with customizable credits.
