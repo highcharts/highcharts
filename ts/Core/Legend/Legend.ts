@@ -1072,6 +1072,7 @@ class Legend {
     public render(): void {
         const legend = this,
             chart = legend.chart,
+            chartSpacingBoxWidth = chart.spacingBox.width,
             renderer = chart.renderer,
             options = legend.options,
             padding = legend.padding,
@@ -1090,25 +1091,22 @@ class Legend {
         legend.lastItemY = 0;
         legend.widthOption = relativeLength(
             options.width as any,
-            chart.spacingBox.width - padding
+            chartSpacingBoxWidth - padding
         );
 
         // Compute how wide the legend is allowed to be
-        allowedWidth = chart.spacingBox.width - 2 * padding - options.x;
+        allowedWidth = chartSpacingBoxWidth - 2 * padding - options.x;
         if (['rm', 'lm'].indexOf(legend.getAlignment().substring(0, 2)) > -1) {
             allowedWidth /= 2;
         }
-        legend.maxLegendWidth = legend.widthOption ||
-            allowedWidth;
 
         if (options.maxWidth) {
             const maxWPixels = relativeLength(
                 options.maxWidth as any,
-                chart.spacingBox.width - padding
+                chartSpacingBoxWidth - padding
             );
-
-            legend.maxLegendWidth = Math.min(
-                legend.maxLegendWidth,
+            allowedWidth = Math.min(
+                allowedWidth,
                 maxWPixels
             );
             legend.widthOption = Math.min(
@@ -1116,6 +1114,8 @@ class Legend {
                 maxWPixels
             );
         }
+
+        legend.maxLegendWidth = legend.widthOption || allowedWidth;
 
         if (!legendGroup) {
             /**
