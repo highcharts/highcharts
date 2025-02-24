@@ -208,6 +208,10 @@ hcCSS.replaceSync(`
             cursor: pointer;
             font-size: 1em;
         }
+
+        .hc-a11y-query-result:focus {
+            outline: none;
+        }
     }
 
 `);
@@ -233,6 +237,7 @@ const announcer = document.createElement('div');
 announcer.className = 'hc-a11y-sr-only';
 announcer.setAttribute('aria-live', 'assertive');
 announcer.setAttribute('aria-hidden', 'false');
+announcer.setAttribute('lang', 'en-US');
 document.body.appendChild(announcer);
 let clearAnnounceTimeout, nextAnnounceTimeout;
 
