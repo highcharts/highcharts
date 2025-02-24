@@ -254,14 +254,7 @@ function copyGridFiles() {
             to
         } = folder;
         getFilesInFolder(from, true)
-            .filter(path => (
-                (
-                    path.startsWith('es-modules/masters') ||
-                    !path.startsWith('es-modules') ||
-                    !path.endsWith('.d.ts')
-                ) &&
-                !filesToIgnore.some(pattern => path.endsWith(pattern))
-            ))
+            .filter(path => !filesToIgnore.some(pattern => path.endsWith(pattern)))
             .forEach(filename => {
                 mapFromTo[join(from, filename)] = join(to, filename);
             });
