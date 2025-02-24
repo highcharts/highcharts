@@ -14,7 +14,9 @@
         "namespacePath": ".{name}"
     },
     {
-        "files": ["Core/HttpUtilities"],
+        "files": [
+            "Core/HttpUtilities"
+        ],
         "included": [
             "modules/data",
             "modules/exporting"
@@ -22,7 +24,9 @@
         "namespacePath": ".{name}"
     },
     {
-        "files": ["Extensions/Annotations/NavigationBindings"],
+        "files": [
+            "Extensions/Annotations/NavigationBindings"
+        ],
         "included": [
             "modules/annotations",
             "modules/annotations-advanced",
@@ -31,7 +35,9 @@
         "namespacePath": ".{name}"
     },
     {
-        "files": ["Extensions/DataGrouping/ApproximationRegistry"],
+        "files": [
+            "Extensions/DataGrouping/ApproximationRegistry"
+        ],
         "included": [
             "modules/datagrouping",
             "modules/stock"
@@ -39,7 +45,9 @@
         "namespacePath": ".dataGrouping.approximations"
     },
     {
-        "files": ["Extensions/DownloadURL"],
+        "files": [
+            "Extensions/DownloadURL"
+        ],
         "included": [
             "modules/export-data",
             "modules/offline-exporting",
@@ -48,7 +56,9 @@
         "namespacePath": ".downloadURL"
     },
     {
-        "files": ["Gantt/Pathfinder"],
+        "files": [
+            "Gantt/Pathfinder"
+        ],
         "included": [
             "modules/gantt",
             "modules/pathfinder"
@@ -69,7 +79,9 @@
         "namespacePath": ".{name}"
     },
     {
-        "files": ["Stock/RangeSelector/RangeSelector"],
+        "files": [
+            "Stock/RangeSelector/RangeSelector"
+        ],
         "included": [
             "modules/accessibility",
             "modules/gantt",
@@ -85,7 +97,9 @@
             "Core/Renderer/RendererUtilities",
             "Core/Utilities"
         ],
-        "included": [],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ""
     },
     {
@@ -112,102 +126,378 @@
             "Core/Time",
             "Core/Tooltip"
         ],
-        "included": [],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".{name}"
     },
     {
-        "files": ["Series/AreaRange/AreaRangeSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.arearange"
-    },
-    {
-        "files": ["Series/AreaSplineRange/AreaSplineRangeSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.areasplinerange"
-    },
-    {
-        "files": ["Series/BoxPlot/BoxPlotSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.boxplot"
-    },
-    {
-        "files": ["Series/Bubble/BubbleSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.bubble"
-    },
-    {
-        "files": ["Series/ColumnPyramid/ColumnPyramidSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.columnpyramid"
-    },
-    {
-        "files": ["Series/ColumnRange/ColumnRangeSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.columnrange"
-    },
-    {
-        "files": ["Series/ErrorBar/ErrorBarSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.errorbar"
-    },
-    {
-        "files": ["Series/Gauge/GaugeSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.gauge"
-    },
-    {
-        "files": ["Series/PackedBubble/PackedBubbleSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.packedbubble"
-    },
-    {
-        "files": ["Series/Polygon/PolygonSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.polygon"
-    },
-    {
-        "files": ["Series/Waterfall/WaterfallSeries"],
-        "included": ["highcharts-more"],
-        "namespacePath": ".Series.types.waterfall"
-    },
-    {
-        "files": ["Series/Area/AreaSeries"],
-        "included": [],
+        "files": [
+            "Series/Area/AreaSeries"
+        ],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".Series.types.area"
     },
     {
-        "files": ["Series/Area/AreaSplineSeries"],
-        "included": [],
+        "files": [
+            "Series/Area3D/Area3DSeries"
+        ],
+        "included": [
+            "highcharts-3d"
+        ],
+        "namespacePath": ".Series.types.area3d"
+    },
+    {
+        "files": [
+            "Series/AreaRange/AreaRangeSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.arearange"
+    },
+    {
+        "files": [
+            "Series/AreaSpline/AreaSplineSeries"
+        ],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".Series.types.areaspline"
     },
     {
-        "files": ["Series/Area/BarSeries"],
-        "included": [],
+        "files": [
+            "Series/AreaSplineRange/AreaSplineRangeSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.areasplinerange"
+    },
+    {
+        "files": [
+            "Series/Bar/BarSeries"
+        ],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".Series.types.bar"
     },
     {
-        "files": ["Series/Area/ColumnSeries"],
-        "included": [],
+        "files": [
+            "Series/BoxPlot/BoxPlotSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.boxplot"
+    },
+    {
+        "files": [
+            "Series/Bubble/BubbleSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.bubble"
+    },
+    {
+        "files": [
+            "Series/Column/ColumnSeries"
+        ],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".Series.types.column"
     },
     {
-        "files": ["Series/Area/LineSeries"],
-        "included": [],
+        "files": [
+            "Series/Column3D/Column3DSeries"
+        ],
+        "included": [
+            "highcharts-3d"
+        ],
+        "namespacePath": ".Series.types.column3d"
+    },
+    {
+        "files": [
+            "Series/ColumnPyramid/ColumnPyramidSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.columnpyramid"
+    },
+    {
+        "files": [
+            "Series/ColumnRange/ColumnRangeSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.columnrange"
+    },
+    {
+        "files": [
+            "Series/DotPlot/DotPlotSeries"
+        ],
+        "included": [
+            "modules/dotplot"
+        ],
+        "namespacePath": ".Series.types.dotplot"
+    },
+    {
+        "files": [
+            "Series/Drilldown/DrilldownSeries"
+        ],
+        "included": [
+            "modules/drilldown"
+        ],
+        "namespacePath": ".Series.types.drilldown"
+    },
+    {
+        "files": [
+            "Series/Dumbbell/DumbbellSeries"
+        ],
+        "included": [
+            "modules/dumbbell"
+        ],
+        "namespacePath": ".Series.types.dumbbell"
+    },
+    {
+        "files": [
+            "Series/ErrorBar/ErrorBarSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.errorbar"
+    },
+    {
+        "files": [
+            "Series/Funnel/FunnelSeries"
+        ],
+        "included": [
+            "modules/funnel"
+        ],
+        "namespacePath": ".Series.types.funnel"
+    },
+    {
+        "files": [
+            "Series/Funnel3D/Funnel3DSeries"
+        ],
+        "included": [
+            "modules/funnel3d"
+        ],
+        "namespacePath": ".Series.types.funnel3d"
+    },
+    {
+        "files": [
+            "Series/Gauge/GaugeSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.gauge"
+    },
+    {
+        "files": [
+            "Series/GeoHeatmap/GeoHeatmapSeries"
+        ],
+        "included": [
+            "modules/geoheatmap"
+        ],
+        "namespacePath": ".Series.types.geoheatmap"
+    },
+    {
+        "files": [
+            "Series/Heatmap/HeatmapSeries"
+        ],
+        "included": [
+            "modules/heatmap"
+        ],
+        "namespacePath": ".Series.types.heatmap"
+    },
+    {
+        "files": [
+            "Series/Item/ItemSeries"
+        ],
+        "included": [
+            "modules/item"
+        ],
+        "namespacePath": ".Series.types.item"
+    },
+    {
+        "files": [
+            "Series/Line/LineSeries"
+        ],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".Series.types.line"
     },
     {
-        "files": ["Series/Area/PieSeries"],
-        "included": [],
+        "files": [
+            "Series/Lollipop/LollipopSeries"
+        ],
+        "included": [
+            "modules/lollipop"
+        ],
+        "namespacePath": ".Series.types.lollipop"
+    },
+    {
+        "files": [
+            "Series/PackedBubble/PackedBubbleSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.packedbubble"
+    },
+    {
+        "files": [
+            "Series/Pie/PieSeries"
+        ],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".Series.types.pie"
     },
     {
-        "files": ["Series/Area/ScatterSeries"],
-        "included": [],
+        "files": [
+            "Series/Pie3D/Pie3DSeries"
+        ],
+        "included": [
+            "highcharts-3d"
+        ],
+        "namespacePath": ".Series.types.pie3d"
+    },
+    {
+        "files": [
+            "Series/Polygon/PolygonSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.polygon"
+    },
+    {
+        "files": [
+            "Series/Pyramid3D/Pyramid3DSeries"
+        ],
+        "included": [
+            "modules/pyramid3d"
+        ],
+        "namespacePath": ".Series.types.pyramid3d"
+    },
+    {
+        "files": [
+            "Series/Scatter/ScatterSeries"
+        ],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".Series.types.scatter"
     },
     {
-        "files": ["Series/Area/SplineSeries"],
-        "included": [],
+        "files": [
+            "Series/Scatter3D/Scatter3DSeries"
+        ],
+        "included": [
+            "highcharts-3d"
+        ],
+        "namespacePath": ".Series.types.scatter3d"
+    },
+    {
+        "files": [
+            "Series/Spline/SplineSeries"
+        ],
+        "included": [
+            "highcharts"
+        ],
         "namespacePath": ".Series.types.spline"
+    },
+    {
+        "files": [
+            "Series/Treegraph/TreegraphSeries"
+        ],
+        "included": [
+            "modules/treegraph"
+        ],
+        "namespacePath": ".Series.types.treegraph"
+    },
+    {
+        "files": [
+            "Series/Treemap/TreemapSeries"
+        ],
+        "included": [
+            "modules/treemap"
+        ],
+        "namespacePath": ".Series.types.treemap"
+    },
+    {
+        "files": [
+            "Series/Variwide/VariwideSeries"
+        ],
+        "included": [
+            "modules/variwide"
+        ],
+        "namespacePath": ".Series.types.variwide"
+    },
+    {
+        "files": [
+            "Series/Vector/VectorSeries"
+        ],
+        "included": [
+            "modules/vector"
+        ],
+        "namespacePath": ".Series.types.vector"
+    },
+    {
+        "files": [
+            "Series/Venn/VennSeries"
+        ],
+        "included": [
+            "modules/venn"
+        ],
+        "namespacePath": ".Series.types.venn"
+    },
+    {
+        "files": [
+            "Series/Waterfall/WaterfallSeries"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.waterfall"
+    },
+    {
+        "files": [
+            "Series/Windbarb/WindbarbSeries"
+        ],
+        "included": [
+            "modules/windbarb"
+        ],
+        "namespacePath": ".Series.types.windbarb"
+    },
+    {
+        "files": [
+            "Series/Wordcloud/WordcloudSeries"
+        ],
+        "included": [
+            "modules/wordcloud"
+        ],
+        "namespacePath": ".Series.types.wordcloud"
+    },
+    {
+        "files": [
+            "Series/XRange/XRangeSeries"
+        ],
+        "included": [
+            "modules/xrange"
+        ],
+        "namespacePath": ".Series.types.xrange"
     }
 ]

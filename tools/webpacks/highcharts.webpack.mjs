@@ -23,6 +23,8 @@ import { makeExternals, resolveExternals } from './externals.mjs';
  * */
 
 
+const __dirname = import.meta.dirname;
+
 const sourceFolder = Path.join('code', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
 
@@ -37,6 +39,8 @@ const productMasters = [
     'highstock',
     'standalone-navigator'
 ];
+const mastersImports =
+    FSLib.getFile(Path.join(__dirname, 'masters-imports.json'), true);
 
 
 /* *
@@ -166,6 +170,22 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
             outputModule: true
         },
         externalsType: 'module-import',
+        module: {
+            rules: [
+                {
+                    test: /\.src\.js$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader:
+                            Path.join(__dirname, 'plugins/MastersLoader.mjs'),
+                        options: {
+                            mastersFolder,
+                            mastersImports,
+                        }
+                    }
+                }
+            ]
+        },
         mode: 'production',
         optimization: umdWebpack.optimization,
         output: {
@@ -201,13 +221,23 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         ];
     } else if (umdWebpack.externals) {
         esmWebpack.externals = [
-            (info) => resolveExternals(
-                info,
-                masterName,
-                sourceFolder,
-                namespace,
-                productMasters[0],
-                'module-import'
+            (info) => (
+                info.context.includes('masters') ?
+                    makeExternals(
+                        info,
+                        masterName,
+                        mastersFolder,
+                        namespace,
+                        'module-import'
+                    ) :
+                    resolveExternals(
+                        info,
+                        masterName,
+                        sourceFolder,
+                        namespace,
+                        productMasters[0],
+                        'module-import'
+                    )
             )
         ];
     }

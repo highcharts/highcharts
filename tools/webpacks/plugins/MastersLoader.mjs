@@ -98,13 +98,13 @@ function extractMasterImports(mastersFolder, masterFile, mastersImports) {
 
     masterFile = PPath.normalize(masterFile.split(mastersFolder).pop() || '');
 
-    const filenameMatch = masterFile.match(/[^\/.]+(\..+)$/su);
+    const fileExtensionMatch = masterFile.match(/\.[^\/]+$/su);
 
-    if (!filenameMatch) {
+    if (!fileExtensionMatch) {
         return;
     }
 
-    const fileExtension = filenameMatch[1];
+    const fileExtension = fileExtensionMatch[0];
 
     masterFile =
         masterFile.substring(0, masterFile.length - fileExtension.length);

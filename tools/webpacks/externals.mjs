@@ -18,7 +18,7 @@
  * */
 
 
-import Path from 'node:path';
+import PPath from 'node:path/posix';
 import FSLib from '../libs/fs.js';
 
 
@@ -95,23 +95,30 @@ export async function makeExternals(
     namespace,
     externalsType = 'umd'
 ) {
-    const path = Path
-        .relative(mastersFolder, Path.join(info.context, info.request))
-        .replaceAll(Path.sep, Path.posix.sep);
-    const namespaceName = Path
-        .basename(path)
-        .replace(/(?:\.src)?\.js$/su, '');
+    let path = FSLib.path([info.context, info.request], true);
 
-    if (
-        namespaceName === masterName ||
-        path.startsWith('../') // Include; not a bundle master.
-    ) {
+    mastersFolder = FSLib.path([process.cwd(), mastersFolder], true);
+
+    if (!path.startsWith(mastersFolder)) {
         return void 0;
     }
 
+    path = PPath.relative(mastersFolder, path);
+    path = path;
+
+    if (path === masterName) {
+        return void 0;
+    }
+
+    const namespaceName = PPath.basename(
+        path.replace(/([^\/.]+)\.[^\/]+$/su, '$1')
+    );
+
     switch (externalsType) {
         case 'module-import':
-            const externalModule = decorateImportPath(path);
+            const externalModule = decorateImportPath(
+                PPath.relative(PPath.dirname(masterName), path)
+            );
             return `${externalsType} ${externalModule}`;
         case 'umd':
             return createUMDConfig(namespace, namespaceName);
@@ -190,11 +197,13 @@ export async function resolveExternals(
     externalsProduct = 'highcharts',
     externalsType = 'umd'
 ) {
-    const path = Path
-        .relative(sourceFolder, Path.join(info.context, info.request))
-        .replace(/(?:\.src)?\.js$/u, '')
-        .replaceAll(Path.sep, Path.posix.sep);
-    const namespaceName = Path.basename(path);
+    const path = PPath
+        .relative(
+            FSLib.path(sourceFolder, true),
+            FSLib.path([info.context, info.request], true)
+        )
+        .replace(/\.[^\/]+$/u, '')
+    const namespaceName = PPath.basename(path);
 
     // Quick exit
     if (
@@ -221,8 +230,8 @@ export async function resolveExternals(
 
             switch (externalsType) {
                 case 'module-import':
-                    externalModule = Path.posix.relative(
-                        Path.posix.dirname(`/${masterName}.src.js`),
+                    externalModule = PPath.relative(
+                        PPath.dirname(`/${masterName}.src.js`),
                         `/${externalModule}.src.js`
                     );
                     externalModule = decorateImportPath(externalModule);
