@@ -50,8 +50,8 @@ namespace CreditsLiteComposition {
     /**
      * Callback function called before table initialization.
      */
-    function initCredits(this: Grid): void {
-        new Credits(this, defaultOptions);
+    function initCredits(this: Grid): Credits {
+        return new Credits(this, defaultOptions);
     }
 }
 
