@@ -1102,19 +1102,18 @@ class Legend {
             allowedWidth;
 
         if (options.maxWidth) {
+            const maxWPixels = relativeLength(
+                options.maxWidth as any,
+                chart.spacingBox.width - padding
+            );
+
             legend.maxLegendWidth = Math.min(
                 legend.maxLegendWidth,
-                relativeLength(
-                    options.maxWidth as any,
-                    chart.spacingBox.width - padding
-                )
+                maxWPixels
             );
             legend.widthOption = Math.min(
                 legend.widthOption,
-                relativeLength(
-                    options.maxWidth as any,
-                    chart.spacingBox.width - padding
-                )
+                maxWPixels
             );
         }
 
