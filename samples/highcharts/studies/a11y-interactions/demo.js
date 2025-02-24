@@ -19,7 +19,7 @@
 //       0    1    2    3    4    5    6    7    8    9
 //
 // ============================================================================
-// Dynamic CSS styles used by generated elements
+// Dynamic CSS styles used by generated elements (avoids CSP issues)
 
 const hcCSS = new CSSStyleSheet();
 hcCSS.replaceSync(`
@@ -65,6 +65,7 @@ hcCSS.replaceSync(`
         display: flex;
         align-items: center;
         z-index: 2;
+        margin: 5px;
         transition: opacity 0.3s;
         font-size: 0.7em;
         padding: 8px 12px;
@@ -108,7 +109,6 @@ hcCSS.replaceSync(`
             align-items: center;
         }
         .hc-a11y-kbd-hints-header {
-            position: relative;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -124,12 +124,110 @@ hcCSS.replaceSync(`
             }
         }
     }
+
+    .hc-a11y-toast {
+        position: absolute;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        overflow: hidden;
+        transition: opacity 0.3s;
+        background-color: rgba(255, 255, 255, 0.6);
+
+        p {
+            margin: 0;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            font-size: 0.8em;
+            border: 1px solid #ccc;
+            max-width: 300px;
+        }
+    }
+
+    .hc-a11y-query-dialog {
+        position: absolute;
+        align-items: center;
+        padding: 20px;
+        margin: 0;
+        box-sizing: border-box;
+        background-color: #fff;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        border: none;
+        font-size: 0.9em;
+        overflow-y: auto;
+
+        .hc-a11y-query-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            h3 {
+                margin: 0;
+            }
+            button {
+                font-size: 1.2em;
+                background: none;
+                border: none;
+                cursor: pointer;
+            }
+        }
+
+        p {
+            max-width: 500px;
+            margin: 40px auto 0;
+        }
+
+        .hc-a11y-query-inputs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+
+            input {
+                padding: 5px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+                font-size: 0.9em;
+            }
+        }
+
+        .hc-a11y-query-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1em;
+        }
+    }
+
 `);
 document.adoptedStyleSheets.push(hcCSS);
 
+// Helper function to handle CSS positioning
+const setCSSPosToOverlay = (targetEl, sourceEl) => {
+    const bbox = sourceEl.getBoundingClientRect(),
+        bodyOffset = document.body.getBoundingClientRect();
+    Object.assign(targetEl.style, {
+        left: bbox.x - bodyOffset.x + 'px',
+        top: bbox.y - bodyOffset.y + 'px',
+        width: bbox.width + 'px',
+        height: bbox.height + 'px'
+    });
+};
+
 
 // ============================================================================
-// Announcer
+// Minimal announcer
 
 const announcer = document.createElement('div');
 announcer.className = 'hc-a11y-sr-only';
@@ -154,6 +252,34 @@ const announce = (str, delay) => {
 
 
 // ============================================================================
+// Visual toast message
+
+const toastContainer = document.createElement('div'),
+    toastMessage = document.createElement('p');
+toastContainer.className = 'hc-a11y-toast';
+toastContainer.setAttribute('aria-hidden', true);
+toastContainer.appendChild(toastMessage);
+document.body.appendChild(toastContainer);
+
+// Show a toast message for a chart
+const showToast = (chart, message) => {
+    setCSSPosToOverlay(toastContainer, chart.renderTo);
+    toastMessage.textContent = message;
+    toastContainer.style.opacity = 1;
+};
+
+const hideToast = () => {
+    Object.assign(toastContainer.style, {
+        width: '1px',
+        height: '1px',
+        opacity: 0,
+        left: 0
+    });
+};
+document.addEventListener('mousedown', hideToast);
+
+
+// ============================================================================
 // Focus border utils
 
 const focusBorder = document.createElement('div');
@@ -163,15 +289,8 @@ let focusVisible = false;
 
 // Show a focus border on an element
 const showFocusOnEl = el => {
-    const bbox = el.getBoundingClientRect(),
-        bodyOffset = document.body.getBoundingClientRect();
-    Object.assign(focusBorder.style, {
-        display: focusVisible ? 'block' : 'none',
-        left: bbox.x - bodyOffset.x + 'px',
-        top: bbox.y - bodyOffset.y + 'px',
-        width: bbox.width + 'px',
-        height: bbox.height + 'px'
-    });
+    setCSSPosToOverlay(focusBorder, el);
+    focusBorder.style.display = focusVisible ? 'block' : 'none';
 };
 
 // Hide current focus border
@@ -211,14 +330,11 @@ let hideKbdHintTimeout,
 const showKbdHint = el => {
     (kbdHintOwner = el).style.opacity = 0.5; // Dim owner
     clearTimeout(hideKbdHintTimeout);
-    const bbox = el.getBoundingClientRect(),
-        bodyOffset = document.body.getBoundingClientRect();
+    setCSSPosToOverlay(kbdHint, el);
     Object.assign(kbdHint.style, {
         opacity: 1,
         width: 'auto',
-        height: 'auto',
-        left: bbox.x - bodyOffset.x + 5 + 'px',
-        top: bbox.y - bodyOffset.y + 5 + 'px'
+        height: 'auto'
     });
 };
 
@@ -249,9 +365,7 @@ const kbdHintsDialog = (function buildKbdHintsDialog() {
     return dialog;
 }());
 
-const hideKbdHintsDialog = () => {
-    kbdHintsDialog.close();
-};
+const hideKbdHintsDialog = () => kbdHintsDialog.close();
 
 // Show keyboard hints dialog for a container, with list of hints
 const showKbdDialog = (parent, hints) => {
@@ -432,12 +546,17 @@ function (onInit, kbdHandlers, kbdDescriptions) {
     app.onkeydown = e => {
         hideKbdHint();
         hideFocus();
+        hideToast();
         const key = (e.key || '').toLowerCase();
 
         // Let user tab through
         if (key === 'tab') {
             entered = false;
             return;
+        }
+
+        if (key === 'escape') {
+            chart.sonification.cancel();
         }
 
         // Handle init
@@ -548,7 +667,6 @@ const lineTrend = series => {
     const startY = series.data[0].y,
         endY = series.data[series.data.length - 1].y,
         normalized = (endY - startY) / (series.dataMax - series.dataMin);
-
     if (Math.abs(normalized) < 0.1) {
         return 'roughly flat';
     }
@@ -647,7 +765,6 @@ const historicalKbdHandlers = (() => {
         PageUp: chart => pageUpDown(chart, true),
         PageDown: chart => pageUpDown(chart, false),
         Escape: chart => {
-            chart.sonification.cancel();
             chart.highlightCurPoint();
             prevActionWasLR = false;
         },
@@ -667,18 +784,20 @@ const historicalKbdHandlers = (() => {
 
         // Read chart summary
         c: chart => {
-            announce(
-                `${chart.options.title.text}. Line chart with 4 lines, ${
-                    chart.series.map(s => s.name).join(', ')
-                }.`
-            );
+            const msg = `${chart.options.title.text
+            }. Line chart with 4 lines, ${
+                chart.series.map(s => s.name).join(', ')
+            }.`;
+            announce(msg);
+            showToast(chart, msg);
             prevActionWasLR = false;
         },
 
         // Read line summary
         l: chart => {
-            const s = getCurPoint(chart).series;
-            announce(seriesDesc(s));
+            const msg = seriesDesc(getCurPoint(chart).series);
+            announce(msg);
+            showToast(chart, msg);
             prevActionWasLR = false;
         }
     };
@@ -715,13 +834,11 @@ const historicalKbdDescriptions = {
     },
     c: {
         name: 'C',
-        desc: 'Read summary of chart',
-        srOnly: true
+        desc: 'Read summary of chart'
     },
     l: {
         name: 'L',
-        desc: 'Read summary of line',
-        srOnly: true
+        desc: 'Read summary of line'
     }
 };
 
@@ -755,6 +872,125 @@ const historicalOverlay = (chart, parent) => {
 
 // ============================================================================
 // Network graph model
+
+// Search stuff ---------------------------------------------------------------
+
+const levenshteinDistance = (a, b) => {
+    const clean = s => s.toLowerCase().replace(/[^a-z]+/g, ''),
+        s = clean(a),
+        t = clean(b);
+    if (!s.length) {
+        return t.length;
+    }
+    if (!t.length) {
+        return s.length;
+    }
+    const arr = [];
+    for (let i = 0; i <= t.length; ++i) {
+        arr[i] = [i];
+        for (let j = 1; j <= s.length; ++j) {
+            arr[i][j] =
+          i === 0 ?
+              j :
+              Math.min(
+                  arr[i - 1][j] + 1,
+                  arr[i][j - 1] + 1,
+                  arr[i - 1][j - 1] + (s[j - 1] === t[i - 1] ? 0 : 1)
+              );
+        }
+    }
+    return arr[t.length][s.length];
+};
+
+const nodeFromUserInput = (input, chart) => {
+    const bestMatch = chart.precomputedNetwork.reduce(
+            (acc, node) => {
+                const dist = levenshteinDistance(input, node.name);
+                return dist < acc.dist ? { node, dist } : acc;
+            }, { node: null, dist: Infinity }
+        ),
+        pctDistance = bestMatch.dist / input.trim().length;
+    return pctDistance < 0.3 ? bestMatch.node : null;
+};
+
+const nodesHaveLink = (fromNode, toNode) =>
+    fromNode.linksTo.some(l => l.fromNode === toNode) ||
+    toNode.linksTo.some(l => l.fromNode === fromNode);
+
+// Query dialog
+const queryDialog = document.createElement('dialog');
+queryDialog.className = 'hc-a11y-query-dialog';
+queryDialog.innerHTML = `
+    <div class="hc-a11y-query-header">
+        <h3>Search in network</h3>
+        <button aria-label="Close search dialog">X</button>
+    </div>
+    <p>
+    Find connections between nodes. You can search for a single node to see if
+    it exists, or for two nodes to see if they are connected. Enter node names
+    in the input fields below.
+    </p>
+    <div class="hc-a11y-query-inputs">
+        <label for="hc-a11y-query-firstnode">First node</label>
+        <input id="hc-a11y-query-firstnode" type="text">
+        <label for="hc-a11y-query-secondnode">Second node</label>
+        <input id="hc-a11y-query-secondnode" type="text">
+    </div>
+    <button class="hc-a11y-query-btn">Search</button>
+    <p class="hc-a11y-query-result" tabindex="-1"></p>
+`;
+document.body.appendChild(queryDialog);
+const dialogClose = queryDialog.querySelector('.hc-a11y-query-header button'),
+    queryButton = queryDialog.querySelector('.hc-a11y-query-btn'),
+    queryResult = queryDialog.querySelector('.hc-a11y-query-result'),
+    fromInput = queryDialog.querySelector('#hc-a11y-query-firstnode'),
+    toInput = queryDialog.querySelector('#hc-a11y-query-secondnode');
+
+const showQueryDialog = chart => {
+    queryResult.textContent = fromInput.value = toInput.value = '';
+    setCSSPosToOverlay(queryDialog, chart.renderTo);
+    queryButton.onclick = () => {
+        const fromNode = nodeFromUserInput(fromInput.value, chart),
+            toNode = nodeFromUserInput(toInput.value, chart),
+            play = (note, delay) => chart.sonification.playNote(
+                'plucked', { note, volume: 0.5, tremoloDepth: 0 }, delay
+            ),
+            sad = () => chart.sonification.playNote(
+                'chop', { volume: 0.4 }, 200
+            );
+
+        if (!fromNode ^ !toNode) {
+            const n = fromNode || toNode;
+            queryResult.textContent = `Node "${
+                n.name}" found, with connections to ${
+                n.linksFrom.length + n.linksTo.length} other nodes.`;
+            play('g4', 200);
+        } else if (fromNode && toNode) {
+            if (nodesHaveLink(fromNode, toNode)) {
+                queryResult.textContent =
+                    `Found nodes "${fromNode.name}" and "${toNode.name
+                    }" that are directly connected.`;
+                play('e4', 200);
+                play('b4', 400);
+            } else {
+                queryResult.textContent =
+                    `Found no direct connection between nodes "${
+                        fromNode.name}" and "${toNode.name}".`;
+                sad();
+            }
+        } else {
+            queryResult.textContent = 'Nothing found.';
+            sad();
+        }
+        setTimeout(() => queryResult.focus(), 200);
+    };
+
+    queryDialog.showModal();
+};
+const hideQueryDialog = () => queryDialog.close();
+dialogClose.onclick = hideQueryDialog;
+
+// Model stuff ----------------------------------------------------------------
 
 const networkInit = chart => {
     chart.sonification.cancel();
@@ -847,27 +1083,29 @@ const networkKbdHandlers = (() => {
         Escape: clearSonification,
         c: chart => {
             clearSonification();
-            announce(
-                `Network graph with 44 nodes. Top nodes are: ${
-                    chart.precomputedNetwork
-                        .slice(0, 5)
-                        .map(n => n.name)
-                        .join(', ')
-                }.`
-            );
+            const msg = `Network graph with 44 nodes. Top nodes are: ${
+                chart.precomputedNetwork
+                    .slice(0, 5)
+                    .map(n => n.name)
+                    .join(', ')
+            }.`;
+            announce(msg);
+            showToast(chart, msg);
         },
         n: chart => {
-            const node = chart.precomputedNetwork[kbdState.point],
+            const node = chart.precomputedNetwork[Math.max(0, kbdState.point)],
                 top = nodes => nodes.slice(0).sort(
                     (a, b) => b.mass - a.mass
                 ).slice(0, 5).map(n => n.name).join(', '),
                 topConnectionsFrom = top(node.linksFrom.map(l => l.toNode)),
-                topConnectionsTo = top(node.linksTo.map(l => l.fromNode));
-            announce(`Top connections from ${node.name} include: ${
-                topConnectionsFrom}. Top connections to ${
-                node.name} include: ${topConnectionsTo}.`
-            );
-        }
+                topConnectionsTo = top(node.linksTo.map(l => l.fromNode)),
+                msg = `Top connections from ${node.name} include: ${
+                    topConnectionsFrom}. Top connections to ${
+                    node.name} include: ${topConnectionsTo}.`;
+            announce(msg);
+            showToast(chart, msg);
+        },
+        s: chart => showQueryDialog(chart)
     };
 })();
 
@@ -880,6 +1118,10 @@ const networkKbdDescriptions = {
         name: 'A',
         desc: 'Play network as audio, large nodes first'
     },
+    s: {
+        name: 'S',
+        desc: 'Search in network'
+    },
     Home: {
         name: 'Home',
         desc: 'Go to largest node'
@@ -890,13 +1132,11 @@ const networkKbdDescriptions = {
     },
     c: {
         name: 'C',
-        desc: 'Read summary of chart',
-        srOnly: true
+        desc: 'Read summary of chart'
     },
     n: {
         name: 'N',
-        desc: 'Read top connections from and to node',
-        srOnly: true
+        desc: 'Read top connections from and to node'
     }
 };
 
@@ -1045,14 +1285,14 @@ const wordcloudKbdHandlers = (() => {
         Escape: clearSonification,
         c: chart => {
             clearSonification();
-            announce(
-                `Word cloud with 100 words. Top words are: ${
-                    chart.series[0].points
-                        .slice(0, 5)
-                        .map(n => n.name)
-                        .join(', ')
-                }.`
-            );
+            const msg = `Word cloud with 100 words. Top words are: ${
+                chart.series[0].points
+                    .slice(0, 5)
+                    .map(n => n.name)
+                    .join(', ')
+            }.`;
+            announce(msg);
+            showToast(chart, msg);
         }
     };
 })();
@@ -1076,8 +1316,7 @@ const wordcloudKbdDescriptions = {
     },
     c: {
         name: 'C',
-        desc: 'Read summary of chart',
-        srOnly: true
+        desc: 'Read summary of chart'
     }
 };
 
@@ -1385,7 +1624,10 @@ Highcharts.chart('historical', {
         layout: 'proximate',
         align: 'right',
         verticalAlign: 'middle',
-        width: '20%'
+        width: '20%',
+        events: {
+            itemClick: () => false
+        }
     },
     responsive: {
         rules: [{
