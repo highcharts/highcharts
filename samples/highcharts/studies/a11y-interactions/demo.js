@@ -524,18 +524,19 @@ Highcharts.Chart.prototype.addA11yApplication =
 function (onInit, kbdHandlers, kbdDescriptions) {
     const chart = this,
         chartTitle = chart.options.title.text,
-        app = chart.addProxyContainerEl('div');
+        app = chart.addProxyContainerEl('div'),
+        label = `Interactive chart. ${chartTitle}. Click to interact.`,
+        fallbackButton = chart.addSROnly('button', label, app);
 
     app.style.height = chart.container.clientHeight + 'px';
     app.setAttribute('role', 'application');
-    app.setAttribute(
-        'aria-label', `Interactive chart. ${chartTitle}. Click to interact.`
-    );
+    app.setAttribute('aria-label', label);
     app.setAttribute('tabindex', 0);
     app.onfocus = () => {
         showToast(chart, 'Press Enter to start exploring.');
         showFocusOnEl(chart.renderTo);
         app.focus();
+        announce(label, 10);
     };
     app.onblur = () => {
         hideToast();
@@ -604,6 +605,13 @@ function (onInit, kbdHandlers, kbdDescriptions) {
             init();
         }
     };
+    // Fallback button for screen readers who don't announce the application
+    // or won't accept clicks on it.
+    fallbackButton.setAttribute('tabindex', -1);
+    fallbackButton.onclick = () => {
+        app.focus();
+        init();
+    };
     document.addEventListener('mousedown', () => (entered = false));
 
     return app;
@@ -623,7 +631,7 @@ const delaysModel = chart => {
                 container
             );
             chart.addSROnly(
-                'p', 'Bar chart with 2 bars.',
+                'p', 'Bar chart with 2 bars: On time, Delayed.',
                 container
             );
         };
@@ -746,10 +754,13 @@ const historicalKbdHandlers = (() => {
             np = nextSeries && nextSeries.points[index];
         if (np) {
             np.sonify(
-                () => announce(
-                    `${nextSeries.name}, $${np.y}. ${np.category}`,
-                    200
-                ));
+                () => {
+                    announce(
+                        `${nextSeries.name}, $${np.y}. ${np.category}`,
+                        200
+                    );
+                    setTimeout(() => np.onMouseOver(), 0);
+                });
         } else {
             chart.options.sonification.events.onBoundaryHit({ chart });
         }
@@ -975,21 +986,25 @@ const showQueryDialog = chart => {
             ),
             sad = () => chart.sonification.playNote(
                 'chop', { volume: 0.4 }, 200
-            );
+            ),
+            numConn = n => n.linksFrom.length + n.linksTo.length;
 
         if (!fromNode ^ !toNode) {
             const n = fromNode || toNode,
                 bothInputs = fromInput.value.trim() && toInput.value.trim();
             queryResult.textContent = `Node "${
                 n.name}" found, with connections to ${
-                n.linksFrom.length + n.linksTo.length} other nodes.${
+                numConn(n)} other nodes.${
                 bothInputs ? ' Could not find other node.' : ''}`;
             play('g4', 200);
         } else if (fromNode && toNode) {
             if (nodesHaveLink(fromNode, toNode)) {
                 queryResult.textContent =
                     `Found nodes "${fromNode.name}" and "${toNode.name
-                    }" that are directly connected.`;
+                    }" that are directly connected. ${fromNode.name} has ${
+                        numConn(fromNode)} connections, and ${
+                        toNode.name} has ${numConn(toNode)
+                    } connections.`;
                 play('e4', 200);
                 play('b4', 400);
             } else {
@@ -1034,7 +1049,7 @@ const networkKbdHandlers = (() => {
         chart.sonification.playNote(
             'lead',
             {
-                volume: value,
+                volume: value * value,
                 note: 70 - Math.round(value * 40),
                 noteDuration: 400 * value,
                 tremoloDepth: 0
