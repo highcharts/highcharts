@@ -28,7 +28,7 @@ import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
-import type { TypedArray } from './Series/SeriesOptions';
+import type Types from '../Shared/Types';
 
 import H from './Globals.js';
 const {
@@ -477,12 +477,12 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  *         True if the argument is a class.
  */
 function isClass<T>(obj: (object|undefined)): obj is Class<T> {
-    const c: (Function|undefined) = obj && obj.constructor;
+    const c: (Function|undefined) = obj?.constructor;
 
     return !!(
         isObject(obj, true) &&
         !isDOMElement(obj) &&
-        (c && (c as any).name && (c as any).name !== 'Object')
+        ((c as any)?.name && (c as any).name !== 'Object')
     );
 }
 
@@ -1225,7 +1225,7 @@ function stableSort<T>(
  * @return {number}
  *         The lowest number.
  */
-function arrayMin(data: Array<any>|TypedArray): number {
+function arrayMin(data: Array<any>|Types.TypedArray): number {
     let i = data.length,
         min = data[0];
 
@@ -1250,7 +1250,7 @@ function arrayMin(data: Array<any>|TypedArray): number {
  * @return {number}
  *         The highest number.
  */
-function arrayMax(data: Array<any>|TypedArray): number {
+function arrayMax(data: Array<any>|Types.TypedArray): number {
     let i = data.length,
         max = data[0];
 
@@ -1304,9 +1304,7 @@ function destroyObjectProperties(
  *        The HTML node to discard.
  */
 function discardElement(element?: HTMLDOMElement): void {
-    if (element && element.parentElement) {
-        element.parentElement.removeChild(element);
-    }
+    element?.parentElement?.removeChild(element);
 }
 
 
@@ -1389,7 +1387,7 @@ const getAlignFactor = (align: string = ''): number => ({
  *          The closest distance between values
  */
 function getClosestDistance(
-    arrays: (number[]|TypedArray)[],
+    arrays: (number[]|Types.TypedArray)[],
     onError?: Function
 ): (number|undefined) {
     const allowNegative = !onError;
@@ -1520,8 +1518,7 @@ function getStyle(
 
         // In flex boxes, we need to use getBoundingClientRect and floor it,
         // because scrollWidth doesn't support subpixel precision (#6427) ...
-        const boundingClientRectWidth = el.getBoundingClientRect &&
-            el.getBoundingClientRect().width;
+        const boundingClientRectWidth = el.getBoundingClientRect?.().width;
         // ...unless if the containing div or its parents are transform-scaled
         // down, in which case the boundingClientRect can't be used as it is
         // also scaled down (#9871, #10498).
@@ -1886,7 +1883,7 @@ function fireEvent<T>(
     eventArguments = eventArguments || {};
 
     if (
-        doc.createEvent &&
+        doc?.createEvent &&
         (
             (el as any).dispatchEvent ||
             (

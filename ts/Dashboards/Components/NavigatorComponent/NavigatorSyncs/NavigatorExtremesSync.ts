@@ -31,7 +31,7 @@ import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import U from '../../../../Core/Utilities.js';
 
 const { Range: RangeModifier } = DataModifier.types;
-const { addEvent, pick } = U;
+const { addEvent, pick, defined } = U;
 
 
 /* *
@@ -144,10 +144,7 @@ const syncPair: Sync.SyncPair = {
                     min = table.getCell(extremesColumn, minIndex),
                     max = table.getCell(extremesColumn, maxIndex);
 
-                if (
-                    max !== null && typeof max !== 'undefined' &&
-                    min !== null && typeof min !== 'undefined'
-                ) {
+                if (defined(max) && defined(min)) {
                     NavigatorSyncUtils.unsetRangeOptions(
                         ranges, extremesColumn
                     );

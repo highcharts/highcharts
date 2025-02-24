@@ -138,15 +138,15 @@ const syncPair: Sync.SyncPair = {
                 viewport.scrollToRow(rowIndex);
             }
 
-            dataGrid.hoverRow(rowIndex);
-            dataGrid.hoverColumn(column);
+            dataGrid.syncRow(rowIndex);
+            dataGrid.syncColumn(column);
         };
 
         const handleCursorOut = (): void => {
             const { dataGrid } = component;
             if (dataGrid) {
-                dataGrid.hoverColumn();
-                dataGrid.hoverRow();
+                dataGrid.syncColumn();
+                dataGrid.syncRow();
             }
         };
 

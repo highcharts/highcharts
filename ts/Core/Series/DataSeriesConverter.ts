@@ -209,7 +209,7 @@ class DataSeriesConverter {
             yValueId,
             id;
 
-        if (allSeries && allSeries.length) {
+        if (allSeries?.length) {
             this.options.seriesOptions = [];
             this.seriesMeta = [];
             this.seriesIdMap = {};

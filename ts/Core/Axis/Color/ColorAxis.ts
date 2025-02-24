@@ -559,8 +559,8 @@ class ColorAxis extends Axis implements AxisLike {
     ): void {
         const axis = this,
             legendItem = axis.legendItem || {},
-            plotX = point && point.plotX,
-            plotY = point && point.plotY,
+            plotX = point?.plotX,
+            plotY = point?.plotY,
             axisPos = axis.pos,
             axisLen = axis.len;
 
@@ -674,7 +674,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.update(newOptions, redraw);
 
-        if (axis.legendItem && axis.legendItem.label) {
+        if (axis.legendItem?.label) {
             axis.setLegendColor();
             legend.colorizeItem(this as any, true);
         }

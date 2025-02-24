@@ -310,7 +310,7 @@ const NATIVE_TYPES = [
 /**
  * Array of product IDs to extract. If empty, everything is included.
  */
-const PRODUCTS: Array<string> = [];
+export const PRODUCTS: Array<string> = [];
 
 
 const SANITIZE_TEXT = /^(['"`]?)(.*)\1$/gsu;
@@ -324,7 +324,7 @@ const SANITIZE_TYPE = /\(\s*(.*)\s*\)/gsu;
  * Separated with a colon character (`:`) follows a boolean value indicating the
  * inclusion of native TypeScript nodes.
  */
-const SOURCE_CACHE: Record<string,SourceInfo> = {};
+export const SOURCE_CACHE: Record<string,SourceInfo> = {};
 
 
 const SOURCE_EXTENSION = /(?:\.d)?\.[jt]sx?$/gsu;
@@ -1102,7 +1102,7 @@ function extractInfoScopePath (
  * @return
  * Inset from curly bracket or `undefined`.
  */
-function extractTagInset (
+export function extractTagInset (
     text: string
 ): string {
     return (text.match(DOCLET_TAG_INSET) || [])[1];
@@ -2602,7 +2602,7 @@ function isCapitalCase (
  * @return
  * `true`, if type is integrated into TypeScript.
  */
-function isNativeType (
+export function isNativeType (
     typeString: string
 ): boolean {
     return (
@@ -2948,7 +2948,7 @@ function newCodeInfo<T> (
  * @return
  * The new doclet information.
  */
-function newDocletInfo (
+export function newDocletInfo (
     template: Partial<DocletInfo> = {}
 ): DocletInfo {
     const clone: DocletInfo = {
@@ -3500,17 +3500,17 @@ function resolveReferenceInImportInfo (
 
         if (
             _from.match(SOURCE_EXTENSION) &&
-            FS.lstatSync(Path.join(_from.replace(JSX, '\.t$1'))).isFile()
+            FS.existsSync(Path.join(_from.replace(JSX, '\.t$1')))
         ) {
             _sourceInfo = getSourceInfo(
                 _from.replace(JSX, '\.t$1'),
                 void 0,
                 !!importInfo.node
             );
-        } else if (FS.lstatSync(Path.join(`${_from}.ts`)).isFile()) {
+        } else if (FS.existsSync(Path.join(`${_from}.ts`))) {
             _sourceInfo =
                 getSourceInfo(`${_from}.ts`, void 0, !!importInfo.node);
-        } else if (FS.lstatSync(Path.join(`${_from}.d.ts`)).isFile()) {
+        } else if (FS.existsSync(Path.join(`${_from}.d.ts`))) {
             _sourceInfo =
                 getSourceInfo(`${_from}.d.ts`, void 0, !!importInfo.node);
         } else {

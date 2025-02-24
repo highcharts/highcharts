@@ -6,12 +6,12 @@ period.
 
 ## Capabilities
 
-- [Cumulative Return](cumulative-return.md)
-- [Dividend](dividend.md)
-- [Growth](growth.md)
-- [OHLCV](ohlcv.md)
-- [Price](price.md)
-- [Regulatory News Announcements](../regulatory-news-announcements.md)
+- [Cumulative Return](https://www.highcharts.com/docs/morningstar/time-series/cumulative-return.md)
+- [Dividend](https://www.highcharts.com/docs/morningstar/time-series/dividend.md)
+- [Growth](https://www.highcharts.com/docs/morningstar/time-series/growth.md)
+- [OHLCV](https://www.highcharts.com/docs/morningstar/time-series/ohlcv.md)
+- [Price](https://www.highcharts.com/docs/morningstar/time-series/price.md)
+- [Regulatory News Announcements](https://www.highcharts.com/docs/morningstar/regulatory-news-announcements.md)
 
 
 For more details, see [Morningstar’s Time Series API].

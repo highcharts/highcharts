@@ -1,7 +1,6 @@
-Style by CSS
-===
+# Style by CSS
 
-Each **Dashboard** and most child elements are styled using CSS by default. This method offers
+Each dashboard and most child elements are styled using CSS by default. This method offers
 the possibility to change the dashboard's look and feel without changing its configuration 
 or the underlying application's code. Most of the HTML elements are provided with CSS classes, and it is also 
 possible to use custom classes or element identifiers.
@@ -30,7 +29,7 @@ The CSS must be explicitly imported, as shown here:
 
 The file `datagrid.css` is needed only if the DataGrid component is used in the dashboard.
 
-## General classes
+## General CSS classes
 Each class name contains the prefix `highcharts-dashboards` and a suffix that
 describes the element. For example, the class name for the dashboard's row is `highcharts-dashboards-row`.
 
@@ -90,7 +89,7 @@ To style the dashboard's component subtitle:
 }
 ```
 
-### KPI Component
+### KPI component
 
 To style the dashboard's KPI component div and its content:
 ```css
@@ -121,14 +120,14 @@ To properly style the chart element of the KPI, you need to set the `styledMode`
 }
 ```
 
-### Highcharts Component
-To style the dashboard's Highcharts component `div` and its content:
+### Highcharts component
+To style the dashboard's **Highcharts** component `div` and its content:
 ```css
 .highcharts-dashboards-component-highcharts {
     background-color: gray;
 }
 ```
-To style the chart element of the Highcharts component, you need to set the `styledMode` option to `true` in the component's configuration.
+To style the chart element of the **Highcharts** component, you need to set the `styledMode` option to `true` in the component's configuration.
 ```js
 {
     type: 'Highcharts',
@@ -145,7 +144,7 @@ To style the chart element of the Highcharts component, you need to set the `sty
 
 For information on how to individually style the dashboard's `Highcharts chart` see the article [style Highcharts Chart.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
 
-### DataGrid Component
+### DataGrid component
 To style the dashboard's `DataGrid` component `div` and its content:
 ```css
 .highcharts-datagrid-container {
@@ -174,7 +173,7 @@ Note that you can use the `child selector` to style even and odd rows:
 }
 ```
 
-### HTML Component
+### HTML component
 Since the user defines the whole structure of the HTML component, it differs between use cases.
 In effect, HTML can be styled the same way as any HTML `div` with its child elements, and it is recommended that you use custom classes and IDs to style it.
 
@@ -269,7 +268,7 @@ To style the dashboard's sidebar header in the accordion menu:
 ```
 ### Toolbars
 
-To style the dashboard's toolbar in the Edit Mode:
+To style the dashboard's toolbar in Edit Mode:
 ```css
 .highcharts-dashboards-toolbar {
     background-color: gray;
@@ -278,14 +277,14 @@ To style the dashboard's toolbar in the Edit Mode:
 
 ### Highlights
 
-To style the highlights of edited cell:
+To style the highlights of an edited cell:
 ```css
 .highcharts-dashboards-toolbar-cell-outline {
     border-color: red;
 }
 ```
 
-To style the highlights of edited row:
+To style the highlights of an edited row:
 ```css
 .highcharts-dashboards-toolbar-row-outline {
     border-color: blue;
