@@ -24,15 +24,10 @@
 
 import type { CreditsOptions } from './Options';
 import type Grid from './Grid';
-import type Table from '../Core/Table/Table';
 
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
-import U from '../../Core/Utilities.js';
 
-const {
-    addEvent
-} = U;
 const { makeHTMLElement } = GridUtils;
 
 /* *
@@ -94,9 +89,9 @@ class Credits {
      *
      * @param grid
      * The Grid instance which the credits belong to.
-     * 
+     *
      * @param options
-     * Options for the credits label.  
+     * Options for the credits label.
      *
      */
     constructor(grid: Grid, options: CreditsOptions) {
@@ -167,25 +162,7 @@ class Credits {
  * */
 
 namespace Credits {
-    /**
-     * Extends the grid classes with credits.
-     *
-     * @param GridClass
-     * The class to extend.
-     *
-     */
-    export function compose(
-        GridClass: typeof Grid
-    ): void {
-        addEvent(GridClass, 'afterRenderViewport', initCredits);
-    }
 
-    /**
-     * Callback function called before table initialization.
-     */
-    function initCredits(this: Grid): void {
-        new Credits(this, Credits.defaultOptions);
-    }
 }
 
 

@@ -22,16 +22,9 @@
  *
  * */
 
-import type { CreditsOptions } from '../Core/Options';
-import type Grid from '../Core/Grid';
+import type { CreditsOptions } from '../../Core/Options';
 
-import Credits from '../Core/Credits.js';
-import U from '../../Core/Utilities.js';
-
-const {
-    addEvent,
-    merge
-} = U;
+import Credits from '../../Core/Credits.js';
 
 /* *
  *
@@ -42,7 +35,7 @@ const {
 /**
  * Represents a credits in the data grid.
  */
-class CreditsComposition extends Credits {
+class CreditsPro extends Credits {
     /* *
     *
     *  Methods
@@ -129,39 +122,7 @@ class CreditsComposition extends Credits {
  *
  * */
 
-namespace CreditsComposition {
-    /**
-     * Extends the grid classes with customizable credits.
-     *
-     * @param GridClass
-     * The class to extend.
-     *
-     */
-    export function compose(
-        GridClass: typeof Grid
-    ): void {
-        addEvent(GridClass, 'afterRenderViewport', initCreditsComposition);
-    }
-
-    /**
-     * Callback function called before table initialization.
-     */
-    function initCreditsComposition(this: Grid): void {
-        const creditsOptions =
-            merge(Credits.defaultOptions, this.options?.credits);
-
-        this.options = merge(
-            this.options,
-            {
-                credits: creditsOptions  
-            }  
-        );
-
-        this.credits = new CreditsComposition(
-            this,
-            creditsOptions
-        );
-    }
+namespace CreditsPro {
 }
 
 
@@ -171,4 +132,4 @@ namespace CreditsComposition {
  *
  * */
 
-export default CreditsComposition;
+export default CreditsPro;
