@@ -2,5 +2,6 @@
 
 #container {
     height: 250px;
-    margin: 8px;
+    padding: 8px;
+    background-color: var(--highcharts-background-color);
 }
