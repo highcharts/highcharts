@@ -164,7 +164,10 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
     public setCircularPositions(): void {
         const layout = this,
             box = layout.box,
-            nodes = layout.nodes as Array<PackedBubblePoint>,
+            nodes = [
+                ...layout.nodes as Array<PackedBubblePoint>,
+                ...layout?.chart?.allParentNodes || []
+            ],
             nodesLength = nodes.length + 1,
             angle = 2 * Math.PI / nodesLength,
             radius = layout.options.initialPositionRadius;
