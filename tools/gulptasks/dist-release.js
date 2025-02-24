@@ -53,7 +53,7 @@ async function runGit(version, push = false) {
     const commands = [
         'git add --all',
         'git commit -m "v' + version + '"',
-        'git tag -a "v' + version + '" -m "Tagged ' + productName + ' version ' + version + '"',
+        'git tag -a "v' + version + '" -m "Tagged ' + productName.toLowerCase() + ' version ' + version + '"',
         'git push',
         'git push origin v' + version
     ];
@@ -231,7 +231,7 @@ function copyFiles() {
 }
 
 /**
- * Copy the Grid JavaScript files over.
+ * Copy the Grid JavaScript and CSS files over.
  */
 function copyGridFiles() {
     const mapFromTo = {};
@@ -391,7 +391,8 @@ async function release() {
 
     // Release
     const products = await getProductsJs();
-    const version = argv.release || products[productName].nr;
+    const key = Object.keys(products).find(k => k.includes(productName));
+    const version = products[key].nr;
 
     await checkIfCodeExists();
 
@@ -432,8 +433,7 @@ release.flags = {
                 'Note that credentials for git/npm must be configured. The user will be asked for input both before the ' +
                 'git commands and npm publish is run.',
     '--force-yes': 'Automatically answers yes to all questions.',
-    '--product': 'Product name. Available products: Highcharts, Grid. Defaults to Highcharts.',
-    '--release': 'Version number. Used and required only for products other than Highcharts.'
+    '--product': 'Product name. Available products: Highcharts, Grid. Defaults to Highcharts.'
 };
 
 gulp.task('dist-release', release);
