@@ -23,7 +23,6 @@
  * */
 
 import type { CreditsOptions } from '../Core/Options';
-import type Table from '../Core/Table/Table';
 import type Grid from '../Core/Grid';
 
 import Credits from '../Core/Credits.js';
@@ -148,9 +147,19 @@ namespace CreditsComposition {
      * Callback function called before table initialization.
      */
     function initCreditsComposition(this: Grid): void {
+        const creditsOptions =
+            merge(Credits.defaultOptions, this.options?.credits);
+
+        this.options = merge(
+            this.options,
+            {
+                credits: creditsOptions  
+            }  
+        );
+
         this.credits = new CreditsComposition(
             this,
-            merge(Credits.defaultOptions, this.options?.credits)
+            creditsOptions
         );
     }
 }
