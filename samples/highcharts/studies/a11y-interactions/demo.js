@@ -566,8 +566,12 @@ function (onInit, kbdHandlers, kbdDescriptions) {
             return;
         }
 
+        // Let user exit
         if (key === 'escape') {
+            entered = false;
             chart.sonification.cancel();
+            app.onfocus();
+            return;
         }
 
         // Handle init
@@ -585,6 +589,8 @@ function (onInit, kbdHandlers, kbdDescriptions) {
             );
         } else if (entered && kbdHandlers[e.key]) {
             kbdHandlers[e.key](chart, e);
+        } else if (!entered) {
+            return; // Let default actions happen if not entered
         }
 
         // Stop bubbling & default actions
@@ -842,7 +848,7 @@ const historicalKbdDescriptions = {
     },
     Escape: {
         name: 'Esc',
-        desc: 'Reset chart / stop sound'
+        desc: 'Exit and stop sound'
     },
     c: {
         name: 'C',
@@ -934,7 +940,7 @@ const queryDialog = document.createElement('dialog');
 queryDialog.className = 'hc-a11y-query-dialog';
 queryDialog.innerHTML = `
     <div class="hc-a11y-query-header">
-        <h3>Search in network</h3>
+        <h3>Search connections in network</h3>
         <button aria-label="Close search dialog">X</button>
     </div>
     <p>
@@ -1131,7 +1137,7 @@ const networkKbdHandlers = (() => {
 const networkKbdDescriptions = {
     arrows: {
         name: 'Arrows ←↓↑→',
-        desc: 'Navigate data'
+        desc: 'Navigate data, largest to smallest'
     },
     a: {
         name: 'A',
@@ -1139,7 +1145,7 @@ const networkKbdDescriptions = {
     },
     s: {
         name: 'S',
-        desc: 'Search in network'
+        desc: 'Search connections'
     },
     Home: {
         name: 'Home',
@@ -1151,7 +1157,7 @@ const networkKbdDescriptions = {
     },
     Escape: {
         name: 'Esc',
-        desc: 'Stop sound'
+        desc: 'Exit and stop sound'
     },
     c: {
         name: 'C',
@@ -1247,7 +1253,7 @@ const wordcloudKbdHandlers = (() => {
             {
                 language: 'en-US',
                 name: 'Samantha',
-                volume: value,
+                volume: value * 0.8 + 0.2,
                 rate: 2.8 - value * 2,
                 pitch: 1.4 - value * 0.8
             },
@@ -1328,7 +1334,7 @@ const wordcloudKbdHandlers = (() => {
 const wordcloudKbdDescriptions = {
     arrows: {
         name: 'Arrows ←↓↑→',
-        desc: 'Navigate data'
+        desc: 'Navigate data, largest to smallest'
     },
     a: {
         name: 'A',
@@ -1344,7 +1350,7 @@ const wordcloudKbdDescriptions = {
     },
     Escape: {
         name: 'Esc',
-        desc: 'Stop sound'
+        desc: 'Exit and stop sound'
     },
     c: {
         name: 'C',
