@@ -49,6 +49,10 @@ import '../Data/Modifiers/ChainModifier.js';
 import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
+import '../Grid/Pro/GridEvents.js';
+import '../Grid/Pro/CellEditing/CellEditingComposition.js';
+import '../Grid/Pro/Dash3Compatibility.js';
+import '../Grid/Pro/Credits/CreditsProComposition.js';
 
 /* *
  *

@@ -11,6 +11,7 @@ import Defaults from './es-modules/Grid/Core/Defaults';
 import './es-modules/Grid/Pro/GridEvents';
 import './es-modules/Grid/Pro/CellEditing/CellEditingComposition';
 import './es-modules/Grid/Pro/Dash3Compatibility';
+import './es-modules/Grid/Pro/Credits/CreditsProComposition';
 
 export { /** @deprecated Use `Grid` instead. */ default as DataGrid } from './es-modules/Grid/Core/Grid.js';
 export { default as Grid } from './es-modules/Grid/Core/Grid.js';

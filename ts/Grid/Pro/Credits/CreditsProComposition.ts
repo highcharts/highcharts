@@ -23,13 +23,16 @@
  * */
 
 import type Grid from '../../Core/Grid';
-import CreditsLiteComposition from '../../Lite/Credits/CreditsLiteComposition.js';
+
 import CreditsPro from './CreditsPro.js';
+import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
+import Defaults from '../../Core/Defaults.js';
 
 const {
     addEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 /* *
@@ -49,6 +52,14 @@ namespace CreditsProComposition {
     export function compose(
         GridClass: typeof Grid
     ): void {
+        if (!pushUnique(Globals.composed, 'CreditsPro')) {
+            return;
+        }
+
+        merge(true, Defaults.defaultOptions, {
+            credits: CreditsPro.defaultOptions
+        });
+
         addEvent(GridClass, 'afterRenderViewport', initCreditsComposition);
     }
 
@@ -56,20 +67,30 @@ namespace CreditsProComposition {
      * Callback function called before table initialization.
      */
     function initCreditsComposition(this: Grid): void {
-        const creditsOptions =
-            merge(CreditsLiteComposition.defaultOptions, this.options?.credits);
+        this.credits = new CreditsPro(this, this.options?.credits);
+    }
+}
 
-        this.options = merge(
-            this.options,
-            {
-                credits: creditsOptions
-            }
-        );
+/* *
+ *
+ * Declarations
+ *
+ * */
 
-        this.credits = new CreditsPro(
-            this,
-            creditsOptions
-        );
+declare module '../../Core/Options' {
+    interface Options {
+        /**
+         * Options for the credits label.
+         *
+         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/pro/credits | Credits options}
+         */
+        credits?: CreditsOptions;
+    }
+}
+
+declare module '../../Core/Grid' {
+    export default interface Grid {
+        credits?: CreditsPro;
     }
 }
 

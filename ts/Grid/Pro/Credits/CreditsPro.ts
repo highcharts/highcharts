@@ -113,6 +113,11 @@ class CreditsPro extends Credits {
 
         this.grid.viewport?.reflow();
     }
+
+    public override destroy(): void {
+        super.destroy();
+        delete this.grid.credits;
+    }
 }
 
 

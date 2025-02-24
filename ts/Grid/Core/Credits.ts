@@ -43,6 +43,23 @@ class Credits {
 
     /* *
     *
+    *  Static Properties
+    *
+    * */
+
+    /**
+     * Default options of the credits.
+     */
+    public static defaultOptions: CreditsOptions = {
+        enabled: true,
+        text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
+        href: 'https://www.highcharts.com',
+        position: 'bottom'
+    };
+
+
+    /* *
+    *
     *  Properties
     *
     * */
@@ -81,10 +98,10 @@ class Credits {
      * The Grid instance which the credits belong to.
      *
      * @param options
-     * Options for the credits label.
+     * Options for the credits label. Predefined if not provided.
      *
      */
-    constructor(grid: Grid, options: CreditsOptions) {
+    constructor(grid: Grid, options?: CreditsOptions) {
         this.grid = grid;
 
         this.containerElement = makeHTMLElement('div', {
@@ -97,7 +114,7 @@ class Credits {
 
         this.textElement.setAttribute('target', '_top');
 
-        this.options = options;
+        this.options = options ?? Credits.defaultOptions;
         this.render();
     }
 
@@ -140,7 +157,6 @@ class Credits {
      */
     public destroy(): void {
         this.containerElement.remove();
-        delete this.grid.credits;
     }
 }
 

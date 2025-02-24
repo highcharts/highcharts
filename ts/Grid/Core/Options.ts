@@ -81,13 +81,6 @@ export interface Options {
     columns?: Array<IndividualColumnOptions>;
 
     /**
-     * Options for the credits label.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/credits | Credits options}
-     */
-    credits?: CreditsOptions;
-
-    /**
      * Data table with the data to display in the grid structure.
      */
     dataTable?: DataTable | DataTableOptions;

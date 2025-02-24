@@ -14,25 +14,17 @@
  * */
 
 import type Grid from '../../Core/Grid';
-import { CreditsOptions } from '../../Core/Options.js';
+
+import Globals from '../../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';
 
 import U from '../../../Core/Utilities.js';
 const {
-    addEvent
+    addEvent,
+    pushUnique
 } = U;
 
 namespace CreditsLiteComposition {
-
-    /**
-     * Default options of the credits.
-     */
-    export const defaultOptions: CreditsOptions = {
-        enabled: true,
-        text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
-        href: 'https://www.highcharts.com',
-        position: 'bottom'
-    };
 
     /**
      * Extends the grid classes with credits.
@@ -44,6 +36,10 @@ namespace CreditsLiteComposition {
     export function compose(
         GridClass: typeof Grid
     ): void {
+        if (!pushUnique(Globals.composed, 'CreditsLite')) {
+            return;
+        }
+
         addEvent(GridClass, 'afterRenderViewport', initCredits);
     }
 
@@ -51,7 +47,7 @@ namespace CreditsLiteComposition {
      * Callback function called before table initialization.
      */
     function initCredits(this: Grid): Credits {
-        return new Credits(this, defaultOptions);
+        return new Credits(this);
     }
 }
 
