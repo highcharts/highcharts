@@ -1098,15 +1098,26 @@ class Legend {
         if (['rm', 'lm'].indexOf(legend.getAlignment().substring(0, 2)) > -1) {
             allowedWidth /= 2;
         }
-        legend.maxLegendWidth = (
-            options.maxWidth &&
+        legend.maxLegendWidth = legend.widthOption ||
+            allowedWidth;
+
+        if (options.maxWidth) {
+            legend.maxLegendWidth = Math.min(
+                legend.maxLegendWidth,
                 relativeLength(
-                    options.maxWidth,
+                    options.maxWidth as any,
                     chart.spacingBox.width - padding
                 )
-        ) ||
-            legend.widthOption ||
-            allowedWidth;
+            );
+            legend.widthOption = Math.min(
+                legend.widthOption,
+                relativeLength(
+                    options.maxWidth as any,
+                    chart.spacingBox.width - padding
+                )
+            );
+        }
+
         if (!legendGroup) {
             /**
              * SVG group of the legend.
