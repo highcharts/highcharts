@@ -1284,6 +1284,14 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Maximum width for the legend. Can be a percentage of the chart width,
+         * or an integer representing how many pixels wide the legend can be.
+         *
+         * @type      {number|string}
+         * @apioption legend.maxHeight
+         */
+
+        /**
          * Maximum pixel height for the legend. When the maximum height is
          * extended, navigation will show.
          *

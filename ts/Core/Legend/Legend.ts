@@ -1098,8 +1098,15 @@ class Legend {
         if (['rm', 'lm'].indexOf(legend.getAlignment().substring(0, 2)) > -1) {
             allowedWidth /= 2;
         }
-        legend.maxLegendWidth = legend.widthOption || allowedWidth;
-
+        legend.maxLegendWidth = (
+            options.maxWidth &&
+                relativeLength(
+                    options.maxWidth,
+                    chart.spacingBox.width - padding
+                )
+        ) ||
+            legend.widthOption ||
+            allowedWidth;
         if (!legendGroup) {
             /**
              * SVG group of the legend.
