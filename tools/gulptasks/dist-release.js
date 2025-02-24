@@ -143,13 +143,13 @@ async function removeFilesInFolder(folder, exceptions) {
  * Add the current version to the Bower and package.json files
  * @param {string} version
  * To replace with
- * @param {string} name
- * Which is only used for logging purposes.
+ * @param {Array<string>} files
+ * Files which should be updated.
  */
-function updateJSONFiles(version, name) {
-    log.message('Updating bower.json and package.json for ' + name + '...');
+function updateJSONFiles(version, files) {
+    log.message('Updating bower.json and package.json for ' + productName + '...');
 
-    ['bower', 'package'].forEach(function (file) {
+    files.forEach(function (file) {
         const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
         const json = JSON.parse(fileData);
         json.types = (
@@ -407,9 +407,10 @@ async function release() {
 
     if (productName === 'Highcharts') {
         copyFiles();
-        updateJSONFiles(version, productName);
+        updateJSONFiles(version, ['bower', 'package']);
     } else if (productName === 'Grid') {
         copyGridFiles();
+        updateJSONFiles(version, ['package']);
     }
 
     await runGit(version, argv.push);
