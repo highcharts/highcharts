@@ -25,7 +25,7 @@ import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
-import type { LangOptionsCore } from '../Core/Options';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
 
 /* *
@@ -166,7 +166,7 @@ export interface RenderingSettings {
      * The theme of the DataGrid. It will set the class name on the container.
      * Can be set to the empty string to disable the theme.
      *
-     * @default 'hcdg-theme-default'
+     * @default 'hcg-theme-default'
      */
     theme?: string;
 }
@@ -647,6 +647,13 @@ export interface LangOptions extends LangOptionsCore {
      * Configure the accessibility strings in the chart.
      */
     accessibility?: A11yOptions.LangAccessibilityOptions;
+
+    /**
+     * The text to display when the loading indicator is shown.
+     *
+     * @default 'Loading...'
+     */
+    loading?: string;
 
     /**
      * The text to display when there is no data to show.

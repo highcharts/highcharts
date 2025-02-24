@@ -66,6 +66,7 @@ namespace Defaults {
                     }
                 }
             },
+            loading: 'Loading...',
             noData: 'No data to display'
         },
         time: {
@@ -84,7 +85,7 @@ namespace Defaults {
             header: {
                 enabled: true
             },
-            theme: 'hcdg-theme-default'
+            theme: 'hcg-theme-default'
         },
         credits: {
             enabled: true,

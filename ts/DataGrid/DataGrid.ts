@@ -36,14 +36,15 @@ import Globals from './Globals.js';
 import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
-import Time from '../Core/Time.js';
+import TimeBase from '../Shared/TimeBase.js';
 
 const { makeHTMLElement, setHTMLContent } = DataGridUtils;
 const { win } = Globals;
 const {
-    merge,
+    extend,
     getStyle,
-    extend
+    merge,
+    pick
 } = U;
 
 
@@ -180,6 +181,11 @@ class DataGrid {
     public descriptionElement?: HTMLElement;
 
     /**
+     * The container element of the loading indicator overlaying the data grid.
+     */
+    public loadingWrapper?: HTMLElement;
+
+    /**
      * The presentation table of the data grid. It contains a modified version
      * of the data table that is used for rendering the data grid content. If
      * not modified, just a reference to the original data table.
@@ -246,7 +252,7 @@ class DataGrid {
     /**
      * The time instance.
      */
-    public time: Time;
+    public time: TimeBase;
 
     /**
      * The locale of the data grid.
@@ -300,7 +306,7 @@ class DataGrid {
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
         );
 
-        this.time = new Time(extend<Time.TimeOptions>(
+        this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
             { locale: this.locale }
         ), this.options?.lang);
@@ -935,6 +941,59 @@ class DataGrid {
         });
 
         DataGrid.dataGrids.splice(dgIndex, 1);
+    }
+
+    /**
+     * Grey out the data grid and show a loading indicator.
+     *
+     * @param message
+     * The message to display in the loading indicator.
+     */
+    public showLoading(message?: string): void {
+        if (this.loadingWrapper) {
+            return;
+        }
+
+        // Create loading wrapper.
+        this.loadingWrapper = makeHTMLElement(
+            'div',
+            {
+                className: Globals.classNames.loadingWrapper
+            },
+            this.contentWrapper
+        );
+
+        // Create spinner element.
+        makeHTMLElement(
+            'div',
+            {
+                className: Globals.classNames.loadingSpinner
+            },
+            this.loadingWrapper
+        );
+
+
+        // Create loading message span element.
+        const loadingSpan = makeHTMLElement(
+            'span',
+            {
+                className: Globals.classNames.loadingMessage
+            },
+            this.loadingWrapper
+        );
+
+        setHTMLContent(
+            loadingSpan,
+            pick(message, this.options?.lang?.loading, '')
+        );
+    }
+
+    /**
+     * Removes the loading indicator.
+     */
+    public hideLoading(): void {
+        this.loadingWrapper?.remove();
+        delete this.loadingWrapper;
     }
 
     /**

@@ -101,7 +101,10 @@ namespace Globals {
         creditsContainer: classNamePrefix + 'credits-container',
         creditsText: classNamePrefix + 'credits',
         visuallyHidden: classNamePrefix + 'visually-hidden',
-        lastHeaderCellInRow: classNamePrefix + 'last-header-cell-in-row'
+        lastHeaderCellInRow: classNamePrefix + 'last-header-cell-in-row',
+        loadingWrapper: classNamePrefix + 'loading-wrapper',
+        loadingSpinner: classNamePrefix + 'spinner',
+        loadingMessage: classNamePrefix + 'loading-message'
     };
 
     export const win = window;
