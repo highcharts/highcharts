@@ -1080,6 +1080,11 @@ const networkKbdHandlers = (() => {
         End: chart => startEnd(chart, true),
         a: chart => {
             clearSonification();
+            const old = chart.sonification.cancel;
+            chart.sonification.cancel = () => {
+                clearSonification();
+                return old.call(chart.sonification);
+            };
             chart.tooltip.hide(0);
             const sonify = () => chart.precomputedNetwork.forEach(
                 (node, i) => sonificationSchedule.push(
@@ -1286,6 +1291,11 @@ const wordcloudKbdHandlers = (() => {
         a: chart => {
             const maxWeight = chart.series[0].points[0].weight;
             clearSonification();
+            const old = chart.sonification.cancel;
+            chart.sonification.cancel = () => {
+                clearSonification();
+                return old.call(chart.sonification);
+            };
             let time = 100;
             const sonify = () => chart.series[0].points.forEach(p => {
                 const value = p.weight / maxWeight;
