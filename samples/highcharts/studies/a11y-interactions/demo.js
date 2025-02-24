@@ -533,15 +533,21 @@ function (onInit, kbdHandlers, kbdDescriptions) {
     );
     app.setAttribute('tabindex', 0);
     app.onfocus = () => {
+        showToast(chart, 'Press Enter to start exploring.');
         showFocusOnEl(chart.renderTo);
         app.focus();
     };
-    app.onblur = hideFocus;
+    app.onblur = () => {
+        hideToast();
+        hideFocus();
+        chart.sonification.cancel();
+    };
 
     // Keyboard state handling
     let entered = false;
     const init = () => {
         entered = true;
+        hideToast();
         showKbdHint(chart.renderTo);
         announce('Chart. Press T for tools. Use arrow keys to explore.');
         kbdState.series = 0;
@@ -719,6 +725,7 @@ const historicalKbdHandlers = (() => {
                         p.series.name + ', ' : ''
                     }$${p.y}. ${p.category}`, 600
                 );
+                setTimeout(() => p.onMouseOver(), 0);
                 prevActionWasLR = true;
             }
         );
@@ -835,7 +842,7 @@ const historicalKbdDescriptions = {
     },
     Escape: {
         name: 'Esc',
-        desc: 'Reset chart'
+        desc: 'Reset chart / stop sound'
     },
     c: {
         name: 'C',
@@ -965,10 +972,12 @@ const showQueryDialog = chart => {
             );
 
         if (!fromNode ^ !toNode) {
-            const n = fromNode || toNode;
+            const n = fromNode || toNode,
+                bothInputs = fromInput.value.trim() && toInput.value.trim();
             queryResult.textContent = `Node "${
                 n.name}" found, with connections to ${
-                n.linksFrom.length + n.linksTo.length} other nodes.`;
+                n.linksFrom.length + n.linksTo.length} other nodes.${
+                bothInputs ? ' Could not find other node.' : ''}`;
             play('g4', 200);
         } else if (fromNode && toNode) {
             if (nodesHaveLink(fromNode, toNode)) {
@@ -1134,6 +1143,10 @@ const networkKbdDescriptions = {
     End: {
         name: 'End',
         desc: 'Go to smallest node'
+    },
+    Escape: {
+        name: 'Esc',
+        desc: 'Stop sound'
     },
     c: {
         name: 'C',
@@ -1318,6 +1331,10 @@ const wordcloudKbdDescriptions = {
     End: {
         name: 'End',
         desc: 'Go to smallest word'
+    },
+    Escape: {
+        name: 'Esc',
+        desc: 'Stop sound'
     },
     c: {
         name: 'C',
