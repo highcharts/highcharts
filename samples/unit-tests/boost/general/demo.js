@@ -1,17 +1,29 @@
-QUnit.test('Clipping rectangle after set extremes (#6895)', function (assert) {
-    var chart = Highcharts.chart('container', {
+QUnit.test('Set extremes when boosted', function (assert) {
+    const chart = Highcharts.chart('container', {
         chart: {
-            type: 'column'
+            type: 'column',
+            zooming: {
+                type: 'xy'
+            }
+        },
+        xAxis: {
+            minRange: 0.1
         },
         series: [
             {
                 boostThreshold: 1,
+                cropThreshold: 1,
                 data: [
                     [0, 0],
                     [0, 1],
                     [0, 2],
                     [0, 3],
-                    [0, 4]
+                    [0, 4],
+                    [1, 1.5],
+                    [2, 1.5],
+                    [3, 1.5],
+                    [4, 1.25],
+                    [5, 1.2]
                 ]
             }
         ]
@@ -22,7 +34,42 @@ QUnit.test('Clipping rectangle after set extremes (#6895)', function (assert) {
     assert.strictEqual(
         chart.series[0].boost.clipRect.attr('height'),
         chart.plotHeight,
-        'Correct height of the clipping box.'
+        'Correct height of the clipping box after set extremes (#6895).'
+    );
+
+    chart.series[0].update({
+        type: 'scatter'
+    });
+
+    // Reset
+    chart.yAxis[0].setExtremes(0, 4);
+
+    const initialRange = chart.xAxis[0].getExtremes(),
+        initialPointsLength = chart.series[0].points.length;
+
+    // Zoom in
+    chart.xAxis[0].setExtremes(2, 3);
+
+    assert.ok(
+        chart.series[0].cropped,
+        'After zoom series should be cropped.'
+    );
+    assert.ok(
+        chart.series[0].points.length < initialPointsLength,
+        'After zoom series should have less points.'
+    );
+
+    // Reset
+    chart.xAxis[0].setExtremes();
+
+    assert.deepEqual(
+        chart.xAxis[0].getExtremes(),
+        initialRange,
+        'Resetting extremes after zoom should go back to the initial range.'
+    );
+    assert.ok(
+        chart.series[0].points.length === initialPointsLength,
+        'After resetting zoom series should show all points.'
     );
 });
 
@@ -61,7 +108,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Dynamically removing and adding series (#7499)',
     function (assert) {
 
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 width: 400,
                 height: 300
@@ -155,7 +202,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Combination with non-boostable series types and null values (#7634)',
     function (assert) {
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             boost: {
                 seriesThreshold: 1
             },
@@ -234,9 +281,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Series update with shared tooltip (#9572)',
     function (assert) {
-        var i = 0,
-            chart,
-            controller;
+        let i = 0;
 
         assert.expect(0);
 
@@ -249,7 +294,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             ];
         }
 
-        chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             data: {
                 columns: getData()
             },
@@ -267,7 +312,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             }
         });
 
-        controller = new TestController(chart);
+        const controller = new TestController(chart);
         controller.moveTo(300, 200);
         chart.update({
             data: {
@@ -283,7 +328,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     `Error handler while the series is not declared as an array of numbers and
     turbo threshold enabled, #13957.`,
     function (assert) {
-        var done = assert.async(),
+        const done = assert.async(),
             remove = Highcharts.addEvent(
                 Highcharts,
                 'displayError',
