@@ -23,8 +23,7 @@
  * */
 
 import type Grid from '../../Core/Grid';
-
-import Credits from '../../Core/Credits.js';
+import CreditsLiteComposition from '../../Lite/Credits/CreditsLiteComposition.js';
 import CreditsPro from './CreditsPro.js';
 import U from '../../../Core/Utilities.js';
 
@@ -38,6 +37,40 @@ const {
  *  Class Namespace
  *
  * */
+
+/**
+ * Options for the credits label.
+ */
+export interface CreditsOptions {
+    /**
+     * Whether to show the credits.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * The URL that will be opened when the credits label is clicked.
+     *
+     * @default 'https://www.highcharts.com?credits'
+     */
+    href?: string;
+
+    /**
+     * The text for the credits label.
+     *
+     * Reference to Highcharts icon, that is enabled in Grid Lite, by default.
+     *
+     */
+    text?: string;
+
+    /**
+     * The position of the credits label.
+     *
+     * @default 'bottom'
+     */
+    position?: 'bottom' | 'top';
+}
 
 namespace CreditsProComposition {
     /**
@@ -58,7 +91,7 @@ namespace CreditsProComposition {
      */
     function initCreditsComposition(this: Grid): void {
         const creditsOptions =
-            merge(Credits.defaultOptions, this.options?.credits);
+            merge(CreditsLiteComposition.defaultOptions, this.options?.credits);
 
         this.options = merge(
             this.options,

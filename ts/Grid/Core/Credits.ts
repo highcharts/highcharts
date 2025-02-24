@@ -48,16 +48,6 @@ class Credits {
     * */
 
     /**
-     * Default options of the credits.
-     */
-    public static defaultOptions: CreditsOptions = {
-        enabled: true,
-        text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
-        href: 'https://www.highcharts.com',
-        position: 'bottom'
-    };
-
-    /**
      * The Grid instance which the credits belong to.
      */
     public readonly grid: Grid;
