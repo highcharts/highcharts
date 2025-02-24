@@ -1461,11 +1461,18 @@ Highcharts.addEvent(Highcharts.Chart, 'load', function () {
     a11yModels[renderTo.id](chart);
 });
 
+// Avoid jsfiddle/codepen link in demo
+setTimeout(() => ['jsfiddle', 'codepen'].forEach(id => {
+    const el = document.getElementById(id);
+    return el && (el.style.display = 'none');
+}), 10);
+
 
 // ============================================================================
 // ============================================================================
 // Dashboard setup ------------------------------------------------------------
 // This is straightforward Highcharts config.
+
 
 Highcharts.patterns[0].color = '#ccc';
 Highcharts.setOptions({
