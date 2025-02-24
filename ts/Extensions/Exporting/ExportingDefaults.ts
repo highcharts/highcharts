@@ -205,6 +205,7 @@ const exporting: ExportingOptions = {
      * @since     5.0.0
      * @apioption exporting.libURL
      */
+    libURL: 'https://code.highcharts.com/@product.version@/lib/',
 
     /**
      * Analogous to [sourceWidth](#exporting.sourceWidth).
@@ -537,7 +538,7 @@ const exporting: ExportingOptions = {
         downloadPNG: {
             textKey: 'downloadPNG',
             onclick: function (): void {
-                this.exportChart();
+                this.exportChartLocal();
             }
         },
 
@@ -547,7 +548,7 @@ const exporting: ExportingOptions = {
         downloadJPEG: {
             textKey: 'downloadJPEG',
             onclick: function (): void {
-                this.exportChart({
+                this.exportChartLocal({
                     type: 'image/jpeg'
                 });
             }
@@ -571,7 +572,7 @@ const exporting: ExportingOptions = {
         downloadSVG: {
             textKey: 'downloadSVG',
             onclick: function (): void {
-                this.exportChart({
+                this.exportChartLocal({
                     type: 'image/svg+xml'
                 });
             }
