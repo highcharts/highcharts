@@ -205,14 +205,15 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
 
     public repulsiveForces(): void {
         const layout = this,
-            layoutOptions = layout.options,
-            bubblePadding = layoutOptions.bubblePadding || 0,
-            seriesInteraction = layoutOptions.seriesInteraction,
+            { options, k } = layout,
+            {
+                bubblePadding = 0,
+                seriesInteraction
+            } = options,
             nodes = [
                 ...layout.nodes as Array<PackedBubblePoint>,
                 ...layout?.chart?.allParentNodes || []
-            ],
-            k = layout.k;
+            ];
 
         for (const node of nodes) {
             const nodeSeries = node.series,
@@ -226,22 +227,19 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
             node.neighbours = 0;
 
             for (const repNode of nodes) {
+                const repNodeSeries = repNode.series;
                 if (
                     // Node cannot repulse itself:
                     node !== repNode &&
-                    // Only close nodes affect each other:
-
                     // Not dragged:
                     !fixedPosition &&
                     (
-                        seriesInteraction || nodeSeries === repNode.series
+                        seriesInteraction || nodeSeries === repNodeSeries
                     ) &&
-
                     // Avoiding collision of parentNodes and parented points
                     !(
-                        nodeSeries === repNode.series &&
-                        // HasSplitSeries &&
-                        repNode.isParentNode
+                        nodeSeries === repNodeSeries &&
+                        (repNode.isParentNode || node.isParentNode)
                     )
                 ) {
                     const distanceXY = layout.getDistXY(node, repNode),
