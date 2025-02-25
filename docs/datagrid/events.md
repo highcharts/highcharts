@@ -71,4 +71,4 @@ events: {
 ```
 
 Live example:
-<iframe src="https://www.highcharts.com/samples/embed/data-grid/basic/cell-events" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/cell-events" allow="fullscreen"></iframe>
