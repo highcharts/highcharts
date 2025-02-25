@@ -30,8 +30,8 @@ QUnit.module('defaultOptions', function () {
          */
         assert.strictEqual(
             dataLabels.defer,
-            false,
-            'should have dataLabels.defer default to false.'
+            true,
+            'should have dataLabels.defer default to true.'
         );
 
         /**
