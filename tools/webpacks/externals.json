@@ -39,6 +39,15 @@
         "namespacePath": ".dataGrouping.approximations"
     },
     {
+        "files": ["Extensions/DownloadURL"],
+        "included": [
+            "modules/export-data",
+            "modules/offline-exporting",
+            "modules/sonification"
+        ],
+        "namespacePath": ".downloadURL"
+    },
+    {
         "files": ["Gantt/Pathfinder"],
         "included": [
             "modules/gantt",
@@ -105,6 +114,61 @@
         ],
         "included": [],
         "namespacePath": ".{name}"
+    },
+    {
+        "files": ["Series/AreaRange/AreaRangeSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.arearange"
+    },
+    {
+        "files": ["Series/AreaSplineRange/AreaSplineRangeSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.areasplinerange"
+    },
+    {
+        "files": ["Series/BoxPlot/BoxPlotSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.boxplot"
+    },
+    {
+        "files": ["Series/Bubble/BubbleSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.bubble"
+    },
+    {
+        "files": ["Series/ColumnPyramid/ColumnPyramidSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.columnpyramid"
+    },
+    {
+        "files": ["Series/ColumnRange/ColumnRangeSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.columnrange"
+    },
+    {
+        "files": ["Series/ErrorBar/ErrorBarSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.errorbar"
+    },
+    {
+        "files": ["Series/Gauge/GaugeSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.gauge"
+    },
+    {
+        "files": ["Series/PackedBubble/PackedBubbleSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.packedbubble"
+    },
+    {
+        "files": ["Series/Polygon/PolygonSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.polygon"
+    },
+    {
+        "files": ["Series/Waterfall/WaterfallSeries"],
+        "included": ["highcharts-more"],
+        "namespacePath": ".Series.types.waterfall"
     },
     {
         "files": ["Series/Area/AreaSeries"],

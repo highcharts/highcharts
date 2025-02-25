@@ -6,14 +6,14 @@
 
 
 // eslint-disable-next-line node/no-unpublished-import
-// import BundleDeclarationsWebpackPlugin from 'bundle-declarations-webpack-plugin';
+// import BDWP from 'bundle-declarations-webpack-plugin';
 import * as Path from 'node:path';
 import FSLib from '../libs/fs.js';
 
 import Error16Plugin from './plugins/Error16Plugin.mjs';
 import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
-import { resolveExternals } from './externals.mjs';
+import { makeExternals, resolveExternals } from './externals.mjs';
 
 
 /* *
@@ -23,9 +23,13 @@ import { resolveExternals } from './externals.mjs';
  * */
 
 
+const __dirname = import.meta.dirname;
+
 const sourceFolder = Path.join('code', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
-const targetFolder = Path.join('code');
+
+const esmTargetFolder = Path.join('code', 'esm');
+const umdTargetFolder = Path.join('code');
 
 const namespace = 'Highcharts';
 const productMasters = [
@@ -35,6 +39,22 @@ const productMasters = [
     'highstock',
     'standalone-navigator'
 ];
+const mastersImports =
+    FSLib.getFile(Path.join(__dirname, 'masters-imports.json'), true);
+
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+
+function getMasterName(masterPath) {
+    return masterPath
+        .replace(/(?:\.src)?\.js$/u, '')
+        .replaceAll(Path.sep, Path.posix.sep);
+}
 
 
 /* *
@@ -44,20 +64,22 @@ const productMasters = [
  * */
 
 
-const webpacks = FSLib
+/**
+ * UMD bundles
+ */
+const umdWebpacks = FSLib
     .getFilePaths(mastersFolder, true)
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
         const masterPath = Path.relative(mastersFolder, masterFile)
-        const masterName = masterPath
-            .replace(/(?:\.src)?\.js$/u, '')
-            .replaceAll(Path.sep, Path.posix.sep);
-        const webpackConfig = {
+        const masterName = getMasterName(masterPath);
+        const umdWebpack = {
             // path to the main file
             entry: './' + masterFile.replaceAll(Path.sep, Path.posix.sep),
             mode: 'production',
             optimization: {
                 concatenateModules: true,
+                mangleExports: false,
                 minimize: false,
                 moduleIds: 'deterministic'
             },
@@ -82,7 +104,7 @@ const webpacks = FSLib
                     type: 'umd',
                     umdNamedDefine: true
                 },
-                path: Path.resolve(targetFolder)
+                path: Path.resolve(umdTargetFolder)
             },
             performance: {
                 hints: 'error',
@@ -99,7 +121,7 @@ const webpacks = FSLib
                 new UMDExtensionPlugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)
                 }),
-                // new BundleDeclarationsWebpackPlugin.BundleDeclarationsWebpackPlugin({
+                // new BDWP.BundleDeclarationsWebpackPlugin({
                 //     entry: {
                 //         filePath: `./${masterFile}`.replace(/\.js$/u, '.d.ts'),
                 //         output: {
@@ -120,18 +142,108 @@ const webpacks = FSLib
             }
         };
         if (!productMasters.includes(masterName)) {
-            webpackConfig.externalsType = 'umd';
-            webpackConfig.externals = [
+            umdWebpack.externalsType = 'umd';
+            umdWebpack.externals = [
                 (info) => resolveExternals(
                     info,
                     masterName,
                     sourceFolder,
-                    namespace
+                    namespace,
+                    productMasters[0],
+                    'umd'
                 )
             ];
         }
-        return webpackConfig;
+        return umdWebpack;
     });
+
+
+/**
+ * ES module bundles
+ */
+const esmWebpacks = umdWebpacks.map(umdWebpack => {
+    const masterPath = umdWebpack.output.filename;
+    const masterName = getMasterName(masterPath);
+    const esmWebpack = {
+        entry: umdWebpack.entry,
+        experiments: {
+            outputModule: true
+        },
+        externalsType: 'module-import',
+        module: {
+            rules: [
+                {
+                    test: /\.src\.js$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader:
+                            Path.join(__dirname, 'plugins/MastersLoader.mjs'),
+                        options: {
+                            mastersFolder,
+                            mastersImports,
+                        }
+                    }
+                }
+            ]
+        },
+        mode: 'production',
+        optimization: umdWebpack.optimization,
+        output: {
+            filename: masterPath,
+            globalObject: 'this',
+            library: {
+                type: 'modern-module'
+            },
+            module: true,
+            path: Path.resolve(esmTargetFolder)
+        }
+    };
+
+    esmWebpack.plugins = [
+        new ProductMetaPlugin({
+            productName: 'Highcharts'
+        })
+    ];
+
+    if (
+        masterName !== productMasters[0] &&
+        !masterName.includes('standalone') &&
+        productMasters.includes(masterName)
+    ) {
+        esmWebpack.externals = [
+            (info) => makeExternals(
+                info,
+                masterName,
+                mastersFolder,
+                namespace,
+                'module-import'
+            )
+        ];
+    } else if (umdWebpack.externals) {
+        esmWebpack.externals = [
+            (info) => (
+                info.context.includes('masters') ?
+                    makeExternals(
+                        info,
+                        masterName,
+                        mastersFolder,
+                        namespace,
+                        'module-import'
+                    ) :
+                    resolveExternals(
+                        info,
+                        masterName,
+                        sourceFolder,
+                        namespace,
+                        productMasters[0],
+                        'module-import'
+                    )
+            )
+        ];
+    }
+
+    return esmWebpack;
+});
 
 
 /* *
@@ -141,4 +253,7 @@ const webpacks = FSLib
  * */
 
 
-export default webpacks;
+export default [
+    ...umdWebpacks,
+    ...esmWebpacks
+];

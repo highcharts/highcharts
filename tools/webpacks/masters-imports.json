@@ -1,0 +1,11 @@
+{
+    "highcharts-3d": [
+        "highcharts"
+    ],
+    "modules/funnel3d": [
+        "highcharts-3d"
+    ],
+    "modules/pyramid3d": [
+        "modules/funnel3d"
+    ]
+}
