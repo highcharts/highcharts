@@ -34,11 +34,62 @@
     margin-bottom: 10px;
 }
 
+/* Themes */
+.highcharts-light {
+    --hcdg-border-radius: 5px;
+    --hcdg-color: #000000;
+    --hcdg-padding: 8px;
+    --hcdg-border-width: 1px;
+    --hcdg-border-color: #cccccc;
+    --hcdg-background: #ffffff;
+
+    /* Header row background color */
+    --hcdg-header-row-background: #f2f2f2;
+
+    /* Row colors */
+    --hcdg-row-even-background: #f7f7f7;
+
+    /* Hovered colors */
+    --hcdg-cell-hovered-background: #ccd3ff;
+    --hcdg-row-hovered-background: #e6e9ff;
+    --hcdg-column-hovered-background: #e6e9ff;
+    --hcdg-header-column-hovered-background: #ccd3ff;
+    --hcdg-header-cell-hovered-background: #ccd3ff;
+
+    /* Loader */
+    --hcdg-loader-color: #666666;
+}
+
+.highcharts-dark {
+    --hcdg-color: rgb(255, 255, 255);;
+    --hcdg-border-color: rgb(92, 92, 92);;
+    --hcdg-background: #333333;
+
+    /* Header row background color */
+    --hcdg-header-row-background: rgb(61, 61, 61);
+
+    /* Row colors */
+    --hcdg-row-even-background: rgb(57, 57, 57);
+
+    /* Hovered colors */
+    --hcdg-cell-hovered-background: rgb(65, 74, 92);
+    --hcdg-row-hovered-background: rgb(58, 63, 71);
+    --hcdg-column-hovered-background: rgb(58, 63, 71);
+    --hcdg-header-column-hovered-background: rgb(65, 74, 92);
+    --hcdg-header-cell-hovered-background: rgb(65, 74, 92);
+
+    /* Loader */
+    --hcdg-loader-color: rgb(173, 173, 173);
+}
+
 @media (prefers-color-scheme: dark) {
     .highcharts-point {
         fill-opacity: 0.9;
     }
 }
+
+
+/* Responsive */
 
 /* LARGE */
 @media (max-width: 1200px) {
