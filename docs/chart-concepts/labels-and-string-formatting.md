@@ -37,7 +37,7 @@ Format strings are templates for labels. Since v11.1 the format strings support 
 
 Examples of format strings are [xAxis.labels.format](https://api.highcharts.com/highcharts/xAxis.labels.format), [tooltip.pointFormat](https://api.highcharts.com/highcharts/tooltip.pointFormat) and [legend.labelFormat](https://api.highcharts.com/highcharts/legend.labelFormat). 
 
-For a full overview over templating in format strings, read the [Templating](/docs/chart-concepts/templating) article.
+For a full overview over templating in format strings, read the [Templating](https://www.highcharts.com/docs/chart-concepts/templating) article.
 
 ### Formatter callbacks
 

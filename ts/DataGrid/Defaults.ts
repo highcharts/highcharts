@@ -66,7 +66,11 @@ namespace Defaults {
                     }
                 }
             },
+            loading: 'Loading...',
             noData: 'No data to display'
+        },
+        time: {
+            timezone: 'UTC'
         },
         rendering: {
             columns: {
@@ -81,7 +85,7 @@ namespace Defaults {
             header: {
                 enabled: true
             },
-            theme: 'hcdg-theme-default'
+            theme: 'hcg-theme-default'
         },
         credits: {
             enabled: true,
