@@ -155,8 +155,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public drawPoints(): void {
-
-        if ((this as any).zoomBox) {
+        if (this.zooming) {
             return;
         }
         const series = this,
@@ -373,7 +372,7 @@ class WordcloudSeries extends ColumnSeries {
 
     public getPlotBox(name?: string): Series.PlotBoxTransform {
         const series = this,
-            { chart, group, zoomBox } = this,
+            { chart, group, zooming } = this,
             { plotSizeX = 0, plotSizeY = 0, inverted } = chart,
             // Swap axes for inverted (#2339)
             xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
@@ -405,8 +404,34 @@ class WordcloudSeries extends ColumnSeries {
             [seriesWidth, seriesHeight] = [seriesHeight, seriesWidth];
         }
 
-        if (group && zoomBox) {
-            scale += zoomBox.scale - 1;
+        if (group && zooming) {
+            // Uncomment this block to visualize the zooming
+            // bounding box and the point, which is normalized
+            // position to zoom-in
+            // chart.renderer.rect(
+            //    (plotSizeX - seriesWidth) / 2 + zooming.x * plotSizeX +
+            //        chart.plotLeft,
+            //    (plotSizeY - seriesHeight) / 2 + zooming.y * plotSizeY +
+            //        chart.plotTop,
+            //    zooming.width * plotSizeX,
+            //    zooming.height * plotSizeY,
+            //    0,
+            //    2
+            // ).attr({
+            //    stroke: 'red'
+            // }).add();
+
+            // chart.renderer.circle(
+            //    (plotSizeX - seriesWidth) / 2 + zooming.zoomX * plotSizeX +
+            //        chart.plotLeft,
+            //    (plotSizeY - seriesHeight) / 2 + zooming.zoomY * plotSizeY +
+            //        chart.plotTop,
+            //    2
+            // ).attr({
+            //    stroke: 'blue'
+            // }).add();
+
+            scale = Math.max(zooming.scale, series.defaultScale || 1);
 
             const newWidth = Math.max(seriesWidth * scale, width),
                 newHeight = Math.max(seriesHeight * scale, height),
@@ -414,25 +439,34 @@ class WordcloudSeries extends ColumnSeries {
                 newMiddleY = y + newHeight / 2,
                 scaleDiff = scale - (group.scaleX || 1);
 
-            // Do not apply translation when zooming out
-            if (scaleDiff > 0) {
-                left += scaleDiff *
-                    (plotSizeX * zoomBox.x - (x + (width / 2)));
-                top += scaleDiff *
-                    (plotSizeY * zoomBox.y - (y + (height / 2)));
-            }
-
-            left -= (name === 'series' ? zoomBox.panX : 0);
-            top -= (name === 'series' ? zoomBox.panY : 0);
-
+            left = scaleDiff * (
+                (plotSizeX - seriesWidth) / 2 +
+                    zooming.zoomX * plotSizeX - width / 2
+            );
+            top = scaleDiff * (
+                (plotSizeY - seriesHeight) / 2 +
+                    zooming.zoomY * plotSizeY - height / 2
+            );
 
             if (name === 'series') {
-                zoomBox.x += zoomBox.panX;
-                left += zoomBox.panX * plotSizeX;
-                zoomBox.panX = 0;
-                zoomBox.y += zoomBox.panY;
-                top += zoomBox.panY * plotSizeY;
-                zoomBox.panY = 0;
+                zooming.x = Math.max(
+                    0,
+                    Math.min(
+                        1 - zooming.width,
+                        zooming.x + (zooming.panX / zooming.scale)
+                    )
+                );
+                left += zooming.panX * plotSizeX;
+                zooming.panX = 0;
+                zooming.y = Math.max(
+                    0,
+                    Math.min(
+                        1 - zooming.height,
+                        zooming.y + (zooming.panY / zooming.scale)
+                    )
+                );
+                top += zooming.panY * plotSizeY;
+                zooming.panY = 0;
             }
 
             if (isNumber(group.translateX) && isNumber(group.translateY)) {

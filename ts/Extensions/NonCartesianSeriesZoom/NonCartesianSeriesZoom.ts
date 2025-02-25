@@ -37,11 +37,13 @@ const {
  *  Declarations
  *
  * */
-interface ZoomBox {
-    height: number;
-    width: number;
+interface Zooming {
     x: number;
     y: number;
+    height: number;
+    width: number;
+    zoomX: number;
+    zoomY: number;
     scale: number,
     panX: number;
     panY: number;
@@ -49,7 +51,7 @@ interface ZoomBox {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        zoomBox?: ZoomBox
+        zooming?: Zooming
     }
 }
 
@@ -71,6 +73,7 @@ function onTransform(
         {
             trigger,
             selection,
+            reset,
             from = {},
             to = {}
         } = params,
@@ -82,9 +85,9 @@ function onTransform(
 
     if (
         trigger === 'mousewheel' ||
-        trigger === 'zoom' ||
         trigger === 'pan' ||
-        selection
+        selection ||
+        reset
     ) {
         chart.series.forEach((series): void => {
             if (!series.isCartesian && series.options.zoomEnabled !== false) {
@@ -97,64 +100,140 @@ function onTransform(
                     plotSizeY = 0
                 } = chart;
 
-                if (trigger === 'pan' && series.zoomBox) {
-                    series.zoomBox.panX -= (to.x || 0) / plotSizeX;
-                    series.zoomBox.panY -= (to.y || 0) / plotSizeY;
+                if (trigger === 'pan' && series.zooming) {
+                    series.zooming.panX -= (to.x || 0) / plotSizeX;
+                    series.zooming.panY -= (to.y || 0) / plotSizeY;
                 } else {
                     if (Object.keys(from).length) {
                         const {
-                            width: toWidth = 1,
-                            height: toHeight = 1
-                        } = to;
+                                width: toWidth = 1,
+                                height: toHeight = 1
+                            } = to,
+                            currentScale =
+                                Math.abs(series.group?.scaleX || 1);
+
 
                         let {
-                                x = 0,
-                                y = 0,
+                                x: zoomX = 0,
+                                y: zoomY = 0,
                                 width: fromWidth = 1,
                                 height: fromHeight = 1
                             } = from,
-                            scale = series.zoomBox?.scale ||
+                            x = zoomX,
+                            y = zoomY,
+                            scale = series.zooming?.scale ||
                                 series.group?.scaleX ||
                                 1,
                             width = (
-                                series.zoomBox?.width || 1
+                                series.zooming?.width || 1
                             ) * plotSizeX,
                             height = (
-                                series.zoomBox?.height || 1
+                                series.zooming?.height || 1
                             ) * plotSizeY;
 
                         if (Object.keys(to).length) {
                             width = width * (fromWidth / toWidth);
                             height = height * (fromWidth / toHeight);
-                            y -= chart.plotTop;
+
+                            zoomX -= chart.plotLeft;
+                            zoomY -= chart.plotTop;
+
+                            x = zoomX - width / 2;
+                            y = zoomY - height / 2;
 
                             scale =
                                 Math.min(
-                                    (chart.plotSizeX || 0) / width,
-                                    (chart.plotSizeY || 0) / height
+                                    plotSizeX / width,
+                                    plotSizeY / height
                                 );
+
+                            // Uncomment this block to visualize the zooming
+                            // bounding box and the point, which is normalized
+                            // position to zoom-in
+                            // chart.renderer.circle(
+                            //    zoomX + chart.plotLeft,
+                            //    zoomY + chart.plotTop,
+                            //    2
+                            // ).attr({ stroke: 'blue' }).add();
+                            // chart.renderer.rect(
+                            //    x + chart.plotLeft,
+                            //    y + chart.plotTop,
+                            //    width,
+                            //    height,
+                            //    0,
+                            //    2
+                            // ).attr({ stroke: 'red' }).add();
+                            // chart.renderer.circle(
+                            //    chart.plotLeft + x + width / 2,
+                            //    chart.plotTop + y + height / 2,
+                            //    2
+                            // ).attr({ stroke: 'blue' }).add();
                         } else {
-                            fromWidth /= Math.abs(series.group?.scaleX || 1);
-                            fromHeight /= Math.abs(series.group?.scaleY || 1);
+                            fromWidth /= currentScale;
+                            fromHeight /= currentScale;
+
                             scale = Math.min(
-                                (chart.plotSizeX || 0) / fromWidth,
-                                (chart.plotSizeY || 0) / fromHeight
+                                plotSizeX / fromWidth,
+                                plotSizeY / fromHeight
                             );
+
+                            let prevX = 0,
+                                prevY = 0;
+
+                            if (series.zooming) {
+                                prevX = series.zooming.x * plotSizeX;
+                                prevY = series.zooming.y * plotSizeY;
+                            }
+
+                            // Calculate the normalized coefficients of the
+                            // rectangle center position
+                            const factorX = (zoomX - chart.plotLeft) /
+                                    ((plotSizeX - fromWidth * currentScale) ||
+                                        1),
+                                factorY = (zoomY - chart.plotTop) /
+                                    ((plotSizeY - fromHeight * currentScale) ||
+                                        1);
+
                             width = fromWidth;
                             height = fromHeight;
 
-                            const factorX = ((x - chart.plotLeft) /
-                                    (chart.plotSizeX || 1)),
-                                factorY = ((y - chart.plotTop) /
-                                    (chart.plotSizeY || 1));
+                            zoomX -= chart.plotLeft;
+                            zoomY -= chart.plotTop;
+                            zoomX /= currentScale;
+                            zoomY /= currentScale;
+                            zoomX += prevX + (fromWidth) * factorX;
+                            zoomY += prevY + (fromHeight) * factorY;
 
-                            x += (fromWidth * 2) * factorX;
-                            y += (fromHeight / 2) * factorY;
+                            x -= chart.plotLeft;
+                            y -= chart.plotTop;
+                            x /= currentScale;
+                            y /= currentScale;
+                            x += prevX;
+                            y += prevY;
+
+                            // Uncomment this block to visualize the zooming
+                            // bounding box and the point, which is normalized
+                            // position to zoom-in
+                            // chart.renderer.rect(
+                            //    x + chart.plotLeft,
+                            //    y + chart.plotTop,
+                            //    fromWidth,
+                            //    fromHeight,
+                            //    0,
+                            //    2
+                            // ).attr({ stroke: 'red' }).add();
+                            // chart.renderer.circle(
+                            //    zoomX + chart.plotLeft,
+                            //    zoomY + chart.plotTop,
+                            //    2
+                            // ).attr({ stroke: 'blue' }).add();
                         }
 
-                        series.zoomBox = {
+                        series.zooming = {
                             x: x / plotSizeX,
                             y: y / plotSizeY,
+                            zoomX: zoomX / plotSizeX,
+                            zoomY: zoomY / plotSizeY,
                             width: width / plotSizeX,
                             height: height / plotSizeY,
                             scale,
@@ -163,10 +242,10 @@ function onTransform(
                         };
 
                         if (scale < 1) {
-                            delete series.zoomBox;
+                            delete series.zooming;
                         }
                     } else {
-                        delete series.zoomBox;
+                        delete series.zooming;
                     }
                 }
             }
@@ -187,7 +266,7 @@ function onGetPlotBox(
         name?: string
     }
 ): void {
-    const { chart, group, zoomBox } = this;
+    const { chart, group, zooming } = this;
 
     let {
             plotSizeX = 0,
@@ -204,19 +283,27 @@ function onGetPlotBox(
         [plotSizeX, plotSizeY] = [plotSizeY, plotSizeX];
     }
 
-    if (group && zoomBox) {
-        scale = zoomBox.scale;
+    if (group && zooming) {
+        scale = zooming.scale;
 
-        left = zoomBox.x * plotSizeX * (scale - (Math.abs(group.scaleX || 1)));
-        top = zoomBox.y * plotSizeY * (scale - (Math.abs(group.scaleY || 1)));
+        left = zooming.zoomX * plotSizeX *
+            (scale - (Math.abs(group.scaleX || 1)));
+        top = zooming.zoomY * plotSizeY *
+            (scale - (Math.abs(group.scaleY || 1)));
 
         if (name === 'series') {
-            zoomBox.x += zoomBox.panX;
-            left += zoomBox.panX * plotSizeX;
-            zoomBox.panX = 0;
-            zoomBox.y += zoomBox.panY;
-            top += zoomBox.panY * plotSizeY;
-            zoomBox.panY = 0;
+            zooming.x = Math.max(
+                0,
+                Math.min(1 - zooming.width, zooming.x + (zooming.panX / scale))
+            );
+            left += zooming.panX * plotSizeX;
+            zooming.panX = 0;
+            zooming.y = Math.max(
+                0,
+                Math.min(1 - zooming.height, zooming.y + (zooming.panY / scale))
+            );
+            top += zooming.panY * plotSizeY;
+            zooming.panY = 0;
         }
 
         translateX = (group.translateX || initLeft) - left;
@@ -254,7 +341,7 @@ function onGetPlotBox(
 function onAfterDrawChartBox(this: Chart): void {
     const chart = this;
 
-    if (chart.series.find((series): boolean => !!series.zoomBox)) {
+    if (chart.series.find((series): boolean => !!series.zooming)) {
         if (!chart.zoomClipRect) {
             chart.zoomClipRect = chart.renderer.clipRect({
                 x: chart.plotLeft,
@@ -283,10 +370,10 @@ function onGetAnchor(params: {
         params.point.series &&
         !params.point.series.isCartesian &&
         params.point.series.group &&
-        params.point.series.zoomBox
+        params.point.series.zooming
     ) {
         const chart = params.point.series.chart,
-            scale = params.point.series.zoomBox.scale,
+            scale = params.point.series.zooming.scale,
             left = (params.point.series.group.translateX || 0),
             top = (params.point.series.group.translateY || 0);
         params.ret[0] = (params.ret[0] * scale) + left - chart.plotLeft;
@@ -371,7 +458,7 @@ function onAfterSetChartSize(
 ): void {
     if (params.skipAxes) {
         this.series.forEach((series): void => {
-            if (series.group && series.zoomBox) {
+            if (series.group && series.zooming) {
                 series.group.attr({
                     translateX: 0,
                     translateY: 0,
