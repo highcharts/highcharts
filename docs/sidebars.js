@@ -125,7 +125,7 @@ module.exports = {
             'datagrid/datagrid-with-angular',
             'datagrid/datagrid-with-react',
             'datagrid/datagrid-with-vue'
-            
+
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
@@ -274,6 +274,12 @@ module.exports = {
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
+        ],
+        'React integration (beta)': [
+            'react/getting-started',
+            'react/series-and-chart-types',
+            'react/options',
+            'react/component-children',
         ]
     }
 };
