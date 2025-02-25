@@ -836,7 +836,8 @@ class TreemapSeries extends ScatterSeries {
             ): boolean {
                 return n.node.visible || defined(n.dataLabel);
             }),
-            padding = splat(series.options.dataLabels || {})[0]?.padding;
+            padding = splat(series.options.dataLabels || {})[0]?.padding,
+            positionsAreSet = points.some((p): Boolean => isNumber(p.plotY));
 
         for (const point of points) {
             const style: CSSObject = {},
@@ -872,7 +873,7 @@ class TreemapSeries extends ScatterSeries {
 
             // Set dataLabel width to the width of the point shape minus the
             // padding
-            if (point.shapeArgs) {
+            if (point.shapeArgs && positionsAreSet) {
                 const { height = 0, width = 0 } = point.shapeArgs;
                 if (width > 32 && height > 16 && point.shouldDraw()) {
                     const dataLabelWidth = width -
