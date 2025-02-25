@@ -183,14 +183,14 @@ async function apiUpload() {
             fsLib.getDirectoryPaths(SOURCE_ROOT)
     );
 
-    try {
-        const session = await uploadS3.startS3Session(
-            bucket,
-            profile,
-            region,
-            dryrun
-        );
+    const session = await uploadS3.startS3Session(
+        bucket,
+        profile,
+        region,
+        dryrun
+    );
 
+    try {
         for (const sourceItem of sourceItems) {
             if (fsLib.isFile(sourceItem)) {
                 await uploadS3.uploadFile(
@@ -231,6 +231,9 @@ async function apiUpload() {
         if (speak) {
             log.say(`${sync ? 'Synchronization' : 'Upload'} failed!`);
         }
+
+    } finally {
+        session.region.destroy();
     }
 
     return void 0;
