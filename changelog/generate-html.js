@@ -41,6 +41,11 @@ function generateHTML() {
             name: 'highcharts-dashboards',
             changelogId: 'hd-changelog',
             offset: 'hd-'
+        }, {
+            header: 'Highcharts Grid',
+            name: 'highcharts-grid',
+            changelogId: 'hGrid-changelog',
+            offset: 'hGrid-'
         }];
 
         var changelog = {
@@ -113,8 +118,9 @@ function generateHTML() {
                 <a href="#highcharts-stock">Highcharts Stock</a>,
                 <a href="#highcharts-maps">Highcharts Maps</a>,
                 <a href="#highcharts-gantt">Highcharts Gantt</a>,
-                <a href="#highcharts-dashboards">Highcharts Dashboards</a>. Go to the
-                <a href="download">Download</a> page to get the latest version.</p>`
+                <a href="#highcharts-dashboards">Highcharts Dashboards</a>.
+                <a href="#highcharts-grid">Highcharts Grid</a>.
+                Go to the <a href="download">Download</a> page to get the latest version.</p>`
             );
         }
         function productHeaderHTMLStructure(product) {
@@ -129,6 +135,9 @@ function generateHTML() {
             if (name === 'highcharts-dashboards') {
                 return 'https://code.highcharts.com/dashboards/zips/';
             }
+            if (name === 'highcharts-grid') {
+                return 'https://code.highcharts.com/grid/zips/';
+            }
 
             return 'https://code.highcharts.com/zips/';
         }
@@ -136,7 +145,8 @@ function generateHTML() {
             var filePrefixMap = {
                 'highcharts-stock': 'Highstock',
                 'highcharts-maps': 'Highmaps',
-                'highcharts-dashboards': 'Highcharts-Dashboards'
+                'highcharts-dashboards': 'Highcharts-Dashboards',
+                'highcharts-grid': 'Highcharts-Grid'
             };
             if (semver.satisfies(version, '>=8.1.0') || (name === 'highcharts' || name === 'highcharts-gantt')) {
                 return name
