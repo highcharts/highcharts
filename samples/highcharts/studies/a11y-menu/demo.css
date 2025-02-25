@@ -273,6 +273,7 @@ li {
     margin: 1em auto;
 }
 
-.reset {
-    margin-top: 5px;
+.reset-btn {
+    margin-top: 20px;
+    margin-bottom: 10px;
 }

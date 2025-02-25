@@ -469,7 +469,6 @@ function initializeCharts() {
     return [chart1, chart2];
 }
 
-
 /* -------------------- CONFIGS --------------------- */
 
 function getColumnChartConfig() {
@@ -852,6 +851,22 @@ function applyStoredSettings(chart) {
     // Apply contrast, border, and pattern settings
     updateChartColorLogic(chart);
     applyInfoRegion(settings.selectedVerbosity, chart);
+}
+
+function resetChartSettings(chart) {
+    chartSettingsMap[chart.index] = JSON.parse(JSON.stringify(defaultSettings));
+
+    // Remove saved settings
+    const storedSettings =
+    JSON.parse(localStorage.getItem('chartSettingsMap')) || {};
+    delete storedSettings[chart.index];
+    localStorage.setItem('chartSettingsMap', JSON.stringify(storedSettings));
+
+    // Reapply default settings
+    applyStoredSettings(chart);
+
+    // Refresh preferences UI
+    createPreferencesDialog(chart);
 }
 
 /* -------------------- SCREEN READER --------------------- */
@@ -1311,7 +1326,7 @@ function setupEventListeners(prefContent, chart) {
                 }]
             });
             applyInfoRegion(settings.selectedVerbosity, chart);
-            saveSettings();
+            saveSettings(chart);
         });
     });
 
@@ -1559,6 +1574,11 @@ function createPreferencesDialog(chart) {
                     ${settings.isPatternChecked ? 'checked' : ''}>
                 <label for="pattern-${i}">Pattern instead of colors</label>
             </div>
+            <div class="pref reset-settings">
+                <button id="reset-settings-${i}" class="reset-btn">
+                    Reset to default
+                </button>
+            </div>
         </div>
     </div>
     `;
@@ -1619,6 +1639,9 @@ function createPreferencesDialog(chart) {
     closeButton.addEventListener('click', () => {
         closePreferencesDialog(prefContent, chart);
     });
+
+    const resetButton = prefContent.querySelector(`#reset-settings-${i}`);
+    resetButton.addEventListener('click', () => resetChartSettings(chart));
 
     return prefContent;
 }
