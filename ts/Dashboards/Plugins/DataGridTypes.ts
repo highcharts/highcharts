@@ -45,7 +45,7 @@ export namespace TableCell {
 
 export type TableCell = D.TableCell;
 
-export type DataGridOptions = D.Options;
+export type GridOptions = D.Options;
 
 
 /* *
