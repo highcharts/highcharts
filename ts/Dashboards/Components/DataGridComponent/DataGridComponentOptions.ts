@@ -40,7 +40,8 @@ export interface Options extends Component.Options {
     connector?: Component.ConnectorOptions;
 
     /**
-     * The style class to add to the rendered data grid container.
+     * The style class to add to the rendered data grid container. This option
+     * is now deprecated, and moved to [gridClassName](#gridClassName).
      *
      * @deprecated
      */
@@ -53,7 +54,8 @@ export interface Options extends Component.Options {
     gridClassName?: string;
 
     /**
-     * The identifier for the rendered data grid container.
+     * The identifier for the rendered data grid container. This option is now
+     * deprecated, and moved to [gridID](#gridID).
      *
      * @deprecated
      */
@@ -86,7 +88,8 @@ export interface Options extends Component.Options {
 
     /**
      * Generic options to adjust behavior and styling of the rendered data
-     * grid.
+     * grid. This option is now deprecated, and moved to
+     * [gridOptions](#gridOptions).
      *
      * @deprecated
      */
