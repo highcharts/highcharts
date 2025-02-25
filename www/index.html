@@ -52,6 +52,21 @@
             .replace(/'/g, "&#039;");
     }
 
+    function updateLinks(productKey, selector, minorPlaceholder, patchPlaceholder) {
+        const release = window.products[productKey];
+        if (!release) return;
+
+        const links = document.querySelectorAll(selector);
+        const [major, minor] = release.nr.split('.');
+
+        links.forEach(link => {
+            link.href = link.href.replace(minorPlaceholder, `${major}.${minor}`)
+                                .replace(patchPlaceholder, release.nr);
+            link.text = link.text.replace(minorPlaceholder, `${major}.${minor}`)
+                                .replace(patchPlaceholder, release.nr);
+        });
+    };
+
     loadScript("https://code.highcharts.com/products.js", function() {
         // Products is added as a global.
         var patch = window.products.Highcharts.nr,
@@ -92,31 +107,9 @@
             });
         });
 
-        // Handle Dashboards version
-        const dashboardsRelease = window.products['Highcharts Dashboards'];
-
-        if (dashboardsRelease) {
-            const links = document.querySelectorAll('#dashboards a');
-            const [major, minor] = dashboardsRelease.nr.split('.');
-
-            links.forEach(link => {
-                link.href = link.href.replace(
-                    '@dashboards-minor',
-                    [major, minor].join('.')
-                ).replace(
-                    '@dashboards-patch',
-                    dashboardsRelease.nr
-                );
-
-                link.text = link.text.replace(
-                    '@dashboards-minor',
-                    [major, minor].join('.')
-                ).replace(
-                    '@dashboards-patch',
-                    dashboardsRelease.nr
-                );
-            });
-        }
+        // Handle other products
+        updateLinks('Highcharts Dashboards', '#dashboards a', '@dashboards-minor', '@dashboards-patch');
+        updateLinks('Highcharts Grid Lite', '#grid a', '@grid-lite-minor', '@grid-lite-patch');
     });
 </script>
 </head>
@@ -152,6 +145,7 @@ If you're uncertain about the specific Highcharts version covered by your licens
         <tr><td><a href="#highcharts-maps">Highcharts Maps</a></td></tr>
         <tr><td><a href="#highcharts-gantt">Highcharts Gantt</a></td></tr>
         <tr><td><a href="#highcharts-dashboards">Highcharts Dashboards</a></td></tr>
+        <tr><td><a href="#highcharts-grid">Highcharts Grid</a></td></tr>
         <tr><td><a href="#stylecss">Styled mode</a></td></tr>
         <tr><td><a href="#esmodules">ECMAScript modules</a></td></tr>
     </tbody>
@@ -355,6 +349,29 @@ and Highcharts plugin form.</p>
 </ul>
 </section>
 
+<section id="grid">
+<h2 id="highcharts-grid">Highcharts Grid</h2>
+<p>Highcharts Grid files are available under the <strong>/grid</strong> subfolder.</p>
+
+<h4>Specific version</h4>
+<p>You'll find a specific Highcharts Grid version by appending the version number to the <strong>/grid</strong> folder:</p>
+<ul>
+<li><a href="grid/@grid-lite-patch/grid-lite.js">https://code.highcharts.com/grid/@grid-lite-patch/grid-lite.js</a></li>
+<li><a href="grid/@grid-lite-patch/css/grid.css">https://code.highcharts.com/grid/@grid-lite-patch/css/grid.css</a></li>
+</ul>
+
+<h4>Truncated versions</h4>
+<ul>
+<li><a href="grid/@grid-lite-minor/grid-lite.js">https://code.highcharts.com/grid/@grid-lite-minor/grid-lite.js</a></li>
+<li><a href="grid/@grid-lite-minor/css/grid.css">https://code.highcharts.com/grid/@grid-lite-minor/css/grid.css</a></li>
+</ul>
+
+<h4>Latest stable</h4>
+<ul>
+<li><a href="grid/grid-lite.js">https://code.highcharts.com/grid/grid-lite.js</a></li>
+<li><a href="grid/css/grid.css">https://code.highcharts.com/grid/css/grid.css</a></li>
+</ul>
+</section>
 
 <h2 id="stylecss">Styled mode</h2>
 <p>You can read more about styled mode at <a href="https://www.highcharts.com/docs/chart-design-and-style/style-by-css">Styled mode - styling by CSS</a>.</p>
