@@ -38,7 +38,7 @@ import Fullscreen from '../../Dashboards/EditMode/Fullscreen.js';
 declare global {
     interface Dashboards {
         EditMode: typeof EditMode;
-        FullScreen: typeof Fullscreen
+        Fullscreen: typeof Fullscreen
     }
 }
 
@@ -53,7 +53,7 @@ declare global {
 const G = Globals as unknown as Dashboards;
 
 G.EditMode = EditMode;
-G.FullScreen = Fullscreen;
+G.Fullscreen = Fullscreen;
 
 
 /* *

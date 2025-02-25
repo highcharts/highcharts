@@ -147,7 +147,10 @@ const CODE_FILTER = {
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
     'grid-pro': [
-        // Add here files that should not be distributed with Grid Pro.
+        // The main cleanup is done in `scripts-ts` at the `code` level.
+        ['grid', 'es-modules', 'Grid', 'Lite'],
+        ['grid', 'es-modules', 'masters', 'grid-lite.'],
+        ['grid', 'grid-lite.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     )
@@ -262,7 +265,7 @@ function distCopy() {
             LogLib.success('Created', directory);
 
             if (distProduct === 'Grid') {
-                // No need to copy CSS, GFX, and Graphics for Grid from root
+                // No need to copy CSS, GFX, i18n, and Graphics for Grid from root
                 continue;
             }
 
@@ -282,6 +285,11 @@ function distCopy() {
                     filterPath => filePath.startsWith(filterPath)
                 )
             );
+            LogLib.success('Created', directory);
+
+            // Copy i18n to /code
+            directory = Path.join(TARGET_DIRECTORY, product, 'code', 'i18n');
+            FsLib.copyAllFiles('i18n', directory, true, filePath => filePath.endsWith('.json'));
             LogLib.success('Created', directory);
 
             // Copy gfx to /code
