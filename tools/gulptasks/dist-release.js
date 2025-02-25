@@ -15,9 +15,9 @@ const childProcess = require('child_process');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
 
-const PRODUCT_NAME = 'Highcharts';
-const releaseRepo = 'highcharts-dist';
-const pathToDistRepo = '../' + releaseRepo + '/';
+let productName = 'Highcharts';
+let releaseRepo = 'highcharts-dist';
+let pathToDistRepo = '../' + releaseRepo + '/';
 
 /**
  * Asks user a question, and waits for input.
@@ -43,19 +43,17 @@ async function askUser(question) {
 
 /**
  * Commit, tag and push
- * @param {string|number} version
- * To commit, tag and push.
- * @param {boolean} [push]
- * If true will commit, tag and push. If false it will only print the commands
- * to be run.
- * @return {Promise<*>}
- * Result
+ *
+ * @param {string|number} version To commit, tag and push.
+ * @param {boolean} [push] If true will commit, tag and push.
+ * If false it will only print the commands to be run.
+ * @return {Promise<*>} Result
  */
 async function runGit(version, push = false) {
     const commands = [
         'git add --all',
         'git commit -m "v' + version + '"',
-        'git tag -a "v' + version + '" -m "Tagged ' + PRODUCT_NAME.toLowerCase() + ' version ' + version + '"',
+        'git tag -a "v' + version + '" -m "Tagged ' + productName.toLowerCase() + ' version ' + version + '"',
         'git push',
         'git push origin v' + version
     ];
@@ -64,7 +62,7 @@ async function runGit(version, push = false) {
         const answer = await askUser(
             '\nAbout to run the following commands in ' + pathToDistRepo + ': \n\n' +
             commands.join('\n') +
-            '\n\nVerify the file changes in highcharts-dist. Look specifically \n' +
+            `\n\nVerify the file changes in ${releaseRepo}. Look specifically \n` +
             'for removed files. Check updated version numbers in some headers. \n' +
             'To approve or disapprove, press [Y/n]'
         );
@@ -145,13 +143,13 @@ async function removeFilesInFolder(folder, exceptions) {
  * Add the current version to the Bower and package.json files
  * @param {string} version
  * To replace with
- * @param {string} name
- * Which is only used for logging purposes.
+ * @param {Array<string>} files
+ * Files which should be updated.
  */
-function updateJSONFiles(version, name) {
-    log.message('Updating bower.json and package.json for ' + name + '...');
+function updateJSONFiles(version, files) {
+    log.message('Updating bower.json and package.json for ' + productName + '...');
 
-    ['bower', 'package'].forEach(function (file) {
+    files.forEach(function (file) {
         const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
         const json = JSON.parse(fileData);
         json.types = (
@@ -233,6 +231,45 @@ function copyFiles() {
 }
 
 /**
+ * Copy the Grid JavaScript and CSS files over.
+ */
+function copyGridFiles() {
+    const mapFromTo = {};
+    const folders = [{
+        from: 'code/grid',
+        to: pathToDistRepo
+    }, {
+        from: 'code/grid/css',
+        to: join(pathToDistRepo, 'css')
+    }];
+
+    const filesToIgnore = [
+        'package.json'
+    ];
+
+    // Copy all the files in the code folder
+    folders.forEach(folder => {
+        const {
+            from,
+            to
+        } = folder;
+        getFilesInFolder(from, true)
+            .filter(path => !filesToIgnore.some(pattern => path.endsWith(pattern)))
+            .forEach(filename => {
+                mapFromTo[join(from, filename)] = join(to, filename);
+            });
+    });
+
+    // Copy all the files to release repository
+    Object.keys(mapFromTo).forEach(from => {
+        const to = mapFromTo[from];
+        // libFS.copyAllFiles(from, to);
+        fs.copySync(from, to);
+    });
+    log.message('Files copied successfully!');
+}
+
+/**
  * Reads the products from file build/dist/products.js folder.
  * @return {Promise<*>}
  * Result
@@ -256,7 +293,7 @@ async function getProductsJs() {
 /**
  * Checks for any untracked or unstaged git changes in the workingDir
  * @param {string} workingDir
- * Dicrectory to use
+ * Directory to use
  */
 function checkForCleanWorkingDirectory(workingDir) {
     log.message(`Checking that ${workingDir} does not contain any uncommitted changes..`);
@@ -312,36 +349,70 @@ function checkIfLoggedInOnNpm() {
 }
 
 /**
+ * Based on the product, checks if the code folder exists if it is not, compiles it.
+ */
+async function checkIfCodeExists() {
+    const codePaths = {
+        Highcharts: 'code/highcharts.js',
+        Grid: 'code/grid/grid-lite.js'
+    };
+
+    const filePath = codePaths[productName];
+    if (filePath && !fs.existsSync(filePath)) {
+        throw new Error(`${productName} code not found. Please run 'npm run dist' first.`);
+    }
+}
+/**
+ * Gets the dist repo path based on the product.
+ *
+ * @return {string} The dist repo path.
+ */
+function getDistRepo() {
+    return `../${productName.toLowerCase()}-dist/`;
+}
+
+/**
  * Performs all tasks for copying distribution contents, tagging (highcharts-dist) and releasing on npm.
  *
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 async function release() {
+    // Set some variables
+    productName = argv.product || 'Highcharts';
+    releaseRepo = `${productName.toLowerCase()}-dist`;
+    pathToDistRepo = getDistRepo();
+
+    // Release
     const products = await getProductsJs();
-    const version = products[PRODUCT_NAME].nr;
+    const key = Object.keys(products).find(k => k.includes(productName));
+    const version = products[key].nr;
 
-    if (!fs.existsSync('code/highcharts.js')) {
-        log.starting('Compiling one more time.');
-        await gulp.series('scripts', 'scripts-compile');
-    }
+    await checkIfCodeExists();
 
-    log.starting(`Initiating release of ${PRODUCT_NAME} version ${version}.`);
+    log.starting(`Initiating release of ${productName} version ${version}.`);
 
     if (argv.push) {
         checkIfLoggedInOnNpm();
     }
+
     checkForCleanWorkingDirectory(pathToDistRepo);
     await checkIfNotMasterBranch(releaseRepo, pathToDistRepo);
 
     log.message('Pulling latest changes from origin and rebasing against master branch.');
-    childProcess.execSync('git pull --rebase origin master', { cwd: pathToDistRepo });
+    childProcess.execSync(`git pull --rebase origin ${productName === 'Highcharts' ? 'master' : 'main'}`, { cwd: pathToDistRepo });
 
     const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md'];
     await removeFilesInFolder(pathToDistRepo, keepFiles);
     log.message('Successfully removed content of ' + pathToDistRepo);
 
-    copyFiles();
-    updateJSONFiles(version, PRODUCT_NAME);
+    if (productName === 'Highcharts') {
+        copyFiles();
+        updateJSONFiles(version, ['bower', 'package']);
+    } else if (productName === 'Grid') {
+        copyGridFiles();
+        updateJSONFiles(version, ['package']);
+    }
+
     await runGit(version, argv.push);
     await npmPublish(argv.push);
 
@@ -355,7 +426,8 @@ release.flags = {
     '--push': '(USE WITH CARE!) Will git commit, push and tag to the highcharts-dist repo, as well as publish to npm. ' +
                 'Note that credentials for git/npm must be configured. The user will be asked for input both before the ' +
                 'git commands and npm publish is run.',
-    '--force-yes': 'Automatically answers yes to all questions.'
+    '--force-yes': 'Automatically answers yes to all questions.',
+    '--product': 'Product name. Available products: Highcharts, Grid. Defaults to Highcharts.'
 };
 
 gulp.task('dist-release', release);
