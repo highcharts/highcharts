@@ -1,5 +1,4 @@
 /* -------------------- DEFAULT SETTINGS --------------------- */
-
 // Store settings for each chart instance
 const chartSettingsMap = {};
 
@@ -420,18 +419,22 @@ function updateChartColorLogic(chart) {
 
 /* -------------------- INITIALIZATION --------------------- */
 function initializeCharts() {
+    const storedSettings =
+        JSON.parse(localStorage.getItem('chartSettingsMap')) || {};
+
     const chart1 = Highcharts.chart('container', getColumnChartConfig());
     const chart2 = Highcharts.chart('container2', getScatterChartConfig());
 
     chart1.prefMenu = {};
     chart2.prefMenu = {};
 
-    // Store settings in global settings map
-    chartSettingsMap[chart1.index] = defaultSettings;
+    chartSettingsMap[chart1.index] = storedSettings[chart1.index] ?
+        JSON.parse(JSON.stringify(storedSettings[chart1.index])) :
+        JSON.parse(JSON.stringify(defaultSettings));
 
-    // Copying settings to chart2
-    chartSettingsMap[chart2.index] =
-        JSON.parse(JSON.stringify(chartSettingsMap[chart1.index]));
+    chartSettingsMap[chart2.index] = storedSettings[chart2.index] ?
+        JSON.parse(JSON.stringify(storedSettings[chart2.index])) :
+        JSON.parse(JSON.stringify(defaultSettings));
 
     addPrefButton(chart1, 'container');
     addPrefButton(chart2, 'container2');
@@ -447,6 +450,7 @@ function initializeCharts() {
         short: shortPointDescriptionFormatColumn,
         full: fullPointDescriptionFormatColumn
     };
+
     chart2.longDesc = getScreenReaderDescription(chart2);
     chart2.shortDesc = getShortScreenReaderDescription(chart2);
     chart2.femaleDesc = descFemale;
@@ -458,8 +462,13 @@ function initializeCharts() {
         full: fullPointDescriptionFormatScatter
     };
 
+    // Apply stored settings separately to each chart
+    applyStoredSettings(chart1);
+    applyStoredSettings(chart2);
+
     return [chart1, chart2];
 }
+
 
 /* -------------------- CONFIGS --------------------- */
 
@@ -805,6 +814,46 @@ function getScatterChartConfig() {
     };
 }
 
+/* -------------------- LOCAL STORAGE ---------------------- */
+function saveSettings(chart) {
+    const storedSettings =
+        JSON.parse(localStorage.getItem('chartSettingsMap')) || {};
+    storedSettings[chart.index] = chartSettingsMap[chart.index];
+    localStorage.setItem('chartSettingsMap', JSON.stringify(storedSettings));
+}
+
+function applyStoredSettings(chart) {
+    const storedSettings =
+        JSON.parse(localStorage.getItem('chartSettingsMap')) || {};
+    const settings =
+        storedSettings[chart.index] || chartSettingsMap[chart.index];
+
+    if (!settings) {
+        return;
+    }
+
+    // Apply theme and font size
+    applyChartTheme(chart);
+    chart.update({ chart: { style: { fontSize: settings.fontSize } } });
+
+    // Apply verbosity
+    const descriptionFormat = settings.verbosity === 'short' ?
+        chart.pointDesc.short : chart.pointDesc.full;
+
+    chart.update({
+        accessibility: { point: { descriptionFormat } },
+        series: chart.series.map(series => ({
+            dataLabels: settings.selectedLabels === 'point-desc' ? {
+                enabled: true, format: descriptionFormat
+            } : { enabled: false }
+        }))
+    });
+
+    // Apply contrast, border, and pattern settings
+    updateChartColorLogic(chart);
+    applyInfoRegion(settings.selectedVerbosity, chart);
+}
+
 /* -------------------- SCREEN READER --------------------- */
 function getScreenReaderDescription(chart) {
     const screenReaderDiv = document.getElementById(
@@ -1133,6 +1182,7 @@ function setupEventListeners(prefContent, chart) {
             applyChartTheme(chart);
             setDialogTheme(prefContent, chart);
             applyInfoRegion(settings.selectedVerbosity, chart);
+            saveSettings(chart);
         });
     });
 
@@ -1174,6 +1224,7 @@ function setupEventListeners(prefContent, chart) {
 
             // Append the button to the screen reader region
             applyInfoRegion(settings.selectedVerbosity, chart);
+            saveSettings(chart);
         });
     });
     verbosityRadioButtons.forEach(radio => {
@@ -1205,6 +1256,7 @@ function setupEventListeners(prefContent, chart) {
             }
 
             applyInfoRegion(settings.selectedVerbosity, chart);
+            saveSettings(chart);
         });
     });
 
@@ -1213,12 +1265,14 @@ function setupEventListeners(prefContent, chart) {
         updateChartColorLogic(chart);
         // Append button to screen reader region
         applyInfoRegion(settings.selectedVerbosity, chart);
+        saveSettings(chart);
     });
 
     patternCheckbox.addEventListener('change', event => {
         settings.isPatternChecked = event.target.checked;
         updateChartColorLogic(chart);
         applyInfoRegion(settings.selectedVerbosity, chart);
+        saveSettings(chart);
     });
 
     borderCheckbox.addEventListener('change', event => {
@@ -1226,6 +1280,7 @@ function setupEventListeners(prefContent, chart) {
         updateChartColorLogic(chart);
         // Append button to screen reader region
         applyInfoRegion(settings.selectedVerbosity, chart);
+        saveSettings(chart);
     });
 
     labelsRadioButtons.forEach(radio => {
@@ -1256,12 +1311,13 @@ function setupEventListeners(prefContent, chart) {
                 }]
             });
             applyInfoRegion(settings.selectedVerbosity, chart);
+            saveSettings();
         });
     });
 
     altInfoCheckbox.addEventListener('change', event => {
         settings.isInfoChecked = event.target.checked;
-        // Refresh screen reader section
+        saveSettings(chart);
         applyInfoRegion(settings.selectedVerbosity, chart);
     });
 
