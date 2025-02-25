@@ -166,11 +166,6 @@ class Grid {
     public contentWrapper?: HTMLElement;
 
     /**
-     * The credits of the Grid.
-     */
-    public credits?: Credits;
-
-    /**
      * The data source of the Grid. It contains the original data table
      * that was passed to the Grid.
      */

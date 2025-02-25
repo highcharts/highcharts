@@ -29,7 +29,7 @@ import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
-import Credits from '../Grid/Core/Credits.js';
+import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -98,7 +98,7 @@ G.setOptions = Defaults.setOptions;
 
 G.Table = G.Table || Table;
 
-Credits.compose(G.Grid);
+CreditsLiteComposition.compose(G.Grid);
 /* *
  *
  *  Classic Export

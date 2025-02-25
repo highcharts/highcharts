@@ -38,7 +38,7 @@ import TableCell from '../Grid/Core/Table/Content/TableCell.js';
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import Dash3Compatibility from '../Grid/Pro/Dash3Compatibility.js';
-import CreditsComposition from '../Grid/Pro/CreditsComposition.js';
+import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -49,6 +49,10 @@ import '../Data/Modifiers/ChainModifier.js';
 import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
+import '../Grid/Pro/GridEvents.js';
+import '../Grid/Pro/CellEditing/CellEditingComposition.js';
+import '../Grid/Pro/Dash3Compatibility.js';
+import '../Grid/Pro/Credits/CreditsProComposition.js';
 
 /* *
  *
@@ -137,7 +141,7 @@ G.TableCell = G.TableCell || TableCell;
 
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell);
-CreditsComposition.compose(G.Grid);
+CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 
 
