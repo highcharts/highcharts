@@ -3698,12 +3698,20 @@ class Series {
                 p1: Point,
                 p2: Point,
                 comparisonProp: 'distX' | 'dist'
-            ): [Point, boolean] => [
-                (p1[comparisonProp] || 0) < (p2[comparisonProp] || 0) ?
-                    p1 :
-                    p2,
-                false
-            ]),
+            ): [Point, boolean] => {
+                const p1Val = p1[comparisonProp] || 0,
+                    p2Val = p2[comparisonProp] || 0;
+
+                return [
+                    (
+                        (p1Val === p2Val && p1.index > p2.index) ||
+                        p1Val < p2Val
+                    ) ?
+                        p1 :
+                        p2,
+                    false
+                ];
+            }),
             bSideCheckEvaluator = suppliedBSideCheckEvaluator || ((
                 a: number,
                 b: number
