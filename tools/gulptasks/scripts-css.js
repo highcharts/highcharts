@@ -102,6 +102,9 @@ function copyCSS(config) {
  * Folder to replace the version in.
  */
 function replaceVersionInFile(version, folder) {
+    if (!version) {
+        return;
+    }
     const fs = require('fs');
     const files = fs.readdirSync(folder);
     const path = require('path');
