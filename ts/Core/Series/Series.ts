@@ -2193,7 +2193,11 @@ class Series {
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
-            stackThreshold = options.startFromThreshold ? threshold : 0;
+            stackThreshold = options.startFromThreshold ? threshold : 0,
+            nullYSubstitute = (
+                options?.nullInteraction &&
+                yAxis.len
+            );
         let i,
             plotX,
             lastPlotX,
@@ -2328,6 +2332,8 @@ class Series {
             if (isNumber(yValue) && point.plotX !== void 0) {
                 plotY = yAxis.translate(yValue, false, true, false, true);
                 plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
+            } else if (!isNumber(yValue) && nullYSubstitute) {
+                plotY = nullYSubstitute;
             }
             /**
              * The translated Y value for the point in terms of pixels. Relative
@@ -2660,6 +2666,7 @@ class Series {
             styledMode = chart.styledMode,
             { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
+            nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
             globallyEnabled = pick(
@@ -2690,12 +2697,15 @@ class Series {
                 verb = graphic ? 'animate' : 'attr';
                 pointMarkerOptions = point.marker || {};
                 hasPointMarker = !!point.marker;
-                const shouldDrawMarker = (
-                    (
-                        globallyEnabled &&
-                        typeof pointMarkerOptions.enabled === 'undefined'
-                    ) || pointMarkerOptions.enabled
-                ) && !point.isNull && point.visible !== false;
+                const isNull = point.isNull,
+                    shouldDrawMarker = (
+                        (
+                            globallyEnabled &&
+                            !defined(pointMarkerOptions.enabled)
+                        ) || pointMarkerOptions.enabled
+                    ) &&
+                    (!isNull || nullInteraction) &&
+                    point.visible !== false;
 
                 // Only draw the point if y is defined
                 if (shouldDrawMarker) {
@@ -2913,7 +2923,8 @@ class Series {
         point?: Point,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        const seriesMarkerOptions = this.options.marker,
+        const options = this.options,
+            seriesMarkerOptions = options.marker,
             pointOptions = point?.options,
             pointMarkerOptions = pointOptions?.marker || {},
             pointColorOption = pointOptions?.color,
@@ -2928,7 +2939,7 @@ class Series {
                 pointMarkerOptions.lineWidth,
                 (seriesMarkerOptions as any).lineWidth
             ),
-            opacity = 1;
+            opacity = (point?.isNull && options.nullInteraction) ? 0 : 1;
 
         color = (
             pointColorOption ||
@@ -3607,7 +3618,8 @@ class Series {
         this.buildingKdTree = true;
 
         const series = this,
-            dimensions = (series.options.findNearestPointBy as any)
+            seriesOptions = series.options,
+            dimensions = (seriesOptions.findNearestPointBy as any)
                 .indexOf('y') > -1 ? 2 : 1;
 
         /**
@@ -3660,7 +3672,8 @@ class Series {
                     void 0,
                     // For line-type series restrict to plot area, but
                     // column-type series not (#3916, #4511)
-                    !series.directTouch
+                    !series.directTouch,
+                    seriesOptions?.nullInteraction
                 ),
                 dimensions,
                 dimensions
@@ -3673,7 +3686,7 @@ class Series {
         // be dealing with click events on mobile, so don't delay (#6817).
         syncTimeout(
             startRecursive,
-            series.options.kdNow || e?.type === 'touchstart' ? 0 : 1
+            seriesOptions.kdNow || e?.type === 'touchstart' ? 0 : 1
         );
     }
 
