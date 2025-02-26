@@ -37,11 +37,11 @@
 /* Themes */
 .highcharts-light .hcg-theme-default {
     --hcg-border-radius: 5px;
-    --hcg-color: #000000;
+    --hcg-color: #000;
     --hcg-padding: 8px;
     --hcg-border-width: 1px;
-    --hcg-border-color: #cccccc;
-    --hcg-background: #ffffff;
+    --hcg-border-color: #ccc;
+    --hcg-background: #fff;
 
     /* Header row background color */
     --hcg-header-row-background: #f2f2f2;
@@ -57,13 +57,13 @@
     --hcg-header-cell-hovered-background: #ccd3ff;
 
     /* Loader */
-    --hcg-loader-color: #666666;
+    --hcg-loader-color: #666;
 }
 
 .highcharts-dark .hcg-theme-default {
     --hcg-color: rgb(255, 255, 255);
     --hcg-border-color: rgb(92, 92, 92);
-    --hcg-background: #333333;
+    --hcg-background: #333;
 
     /* Header row background color */
     --hcg-header-row-background: rgb(61, 61, 61);
