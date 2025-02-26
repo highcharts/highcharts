@@ -530,18 +530,19 @@ Highcharts.Chart.prototype.addA11yApplication =
 function (onInit, kbdHandlers, kbdDescriptions) {
     const chart = this,
         chartTitle = chart.options.title.text,
+        appLabel = `Interactive audio chart. ${chartTitle}. Click to interact.`,
+        initNotify = 'Chart. Press T for tools. Use arrow keys to explore.',
+        app = chart.addProxyContainerEl('div'),
         fallbackButton = chart.addSROnly(
-            'button', `Interact with chart, ${chartTitle}.`
-        ),
-        appLabel = `Interactive chart. ${chartTitle}. Click to interact.`,
-        app = chart.addProxyContainerEl('div');
+            'button', `Interact with chart, ${chartTitle}.`, app
+        );
 
     app.style.height = chart.container.clientHeight + 'px';
     app.setAttribute('role', 'application');
     app.setAttribute('aria-label', appLabel);
     app.setAttribute('tabindex', 0);
     app.onfocus = () => {
-        showToast(chart, 'Press Enter to start exploring.');
+        showToast(chart, 'Press Enter to explore audio chart.');
         showFocusOnEl(chart.renderTo);
         app.focus();
         announce(appLabel, 10);
@@ -559,7 +560,7 @@ function (onInit, kbdHandlers, kbdDescriptions) {
         entered = true;
         hideToast();
         showKbdHint(chart.renderTo);
-        announce('Chart. Press T for tools. Use arrow keys to explore.', 100);
+        announce(initNotify, 100);
         kbdState.series = 0;
         kbdState.point = 0;
         onInit(chart);
@@ -620,6 +621,7 @@ function (onInit, kbdHandlers, kbdDescriptions) {
     fallbackButton.onclick = () => {
         app.focus();
         init();
+        announce(initNotify, 2000);
     };
     document.addEventListener('mousedown', () => (entered = false));
 
@@ -848,7 +850,7 @@ const historicalKbdDescriptions = {
     },
     a: {
         name: 'A',
-        desc: 'Play line as audio'
+        desc: 'Play line as audio (autopilot)'
     },
     PageUp: {
         name: 'PageUp',
@@ -1165,7 +1167,7 @@ const networkKbdDescriptions = {
     },
     a: {
         name: 'A',
-        desc: 'Play network as audio, large nodes first'
+        desc: 'Play network as audio (autopilot), large nodes first'
     },
     s: {
         name: 'S',
@@ -1283,7 +1285,6 @@ const wordcloudKbdHandlers = (() => {
             },
             50
         );
-        point.onMouseOver();
     };
 
     const announceWord = (point, delay) => announce(
@@ -1299,6 +1300,7 @@ const wordcloudKbdHandlers = (() => {
         } else {
             sonifyWord(chart, p);
             announceWord(p, 500);
+            p.onMouseOver();
             kbdState.point += direction;
         }
     };
@@ -1308,7 +1310,14 @@ const wordcloudKbdHandlers = (() => {
         kbdState.point = end ? chart.series[0].points.length - 1 : 0;
         const p = chart.series[0].points[kbdState.point];
         sonifyWord(chart, p);
+        p.onMouseOver();
         announceWord(p, 500);
+    };
+
+    // Highlight without showing tooltip
+    const highlight = point => {
+        point.setState('hover');
+        setTimeout(() => point.setState('inactive'), 500);
     };
 
     return {
@@ -1327,10 +1336,18 @@ const wordcloudKbdHandlers = (() => {
                 return old.call(chart.sonification);
             };
             let time = 100;
+            chart.tooltip.hide(0);
             const sonify = () => chart.series[0].points.forEach(p => {
                 const value = p.weight / maxWeight;
                 sonificationSchedule.push(
-                    setTimeout(() => sonifyWord(chart, p), time)
+                    setTimeout(() => sonifyWord(chart, p), time),
+                    setTimeout(() => {
+                        if (p === p.series.points[p.series.points.length - 1]) {
+                            p.onMouseOver();
+                        } else {
+                            highlight(p);
+                        }
+                    }, time)
                 );
                 time += 100 + value * 530;
             });
@@ -1362,7 +1379,7 @@ const wordcloudKbdDescriptions = {
     },
     a: {
         name: 'A',
-        desc: 'Play word cloud as audio, large words first'
+        desc: 'Play word cloud as audio (autopilot), large words first'
     },
     Home: {
         name: 'Home',
@@ -1811,7 +1828,19 @@ Highcharts.chart('wordcloud', {
         text: 'From a collection of news articles across the web'
     },
     tooltip: {
-        enabled: false
+        followPointer: false,
+        positioner: function (lW) {
+            const chart = this.chart;
+            return {
+                x: chart.plotWidth - lW,
+                y: 10
+            };
+        },
+        shape: 'rect',
+        shadow: false,
+        style: {
+            fontSize: '1em'
+        }
     },
     series: [{
         type: 'wordcloud',
