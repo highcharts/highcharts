@@ -15,6 +15,13 @@ async function checkDocsConsistency() {
     const glob = require('glob');
     const LogLib = require('../libs/log');
 
+    function checkSample(sample, file, error404s) {
+        const files = glob.globSync(`samples/${sample}/demo.{js,mjs}`);
+        if (files.length < 1) {
+            error404s.push({ file, sample });
+        }
+    }
+
     // Check links and references to samples
     LogLib.message('Checking links to samples in *.ts files...');
     const tsFiles = glob.sync('./ts/**/*.ts');
@@ -34,11 +41,8 @@ async function checkDocsConsistency() {
         let match;
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
-            try {
-                FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
-            }
+
+            checkSample(sample, file, error404s);
         }
 
         while ((match = requiresPattern.exec(md))) {
@@ -71,11 +75,7 @@ async function checkDocsConsistency() {
 
         while ((match = samplePattern.exec(md))) {
             const sample = match[3].replace(/\/$/u, '');
-            try {
-                FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
-            }
+            checkSample(sample, file, error404s);
         }
         if (error404s.length) {
             throw new Error(
@@ -103,11 +103,7 @@ async function checkDocsConsistency() {
         let match;
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
-            try {
-                FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
-            }
+            checkSample(sample, file, error404s);
         }
 
         while ((match = docsPattern.exec(md))) {
