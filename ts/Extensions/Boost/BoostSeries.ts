@@ -65,6 +65,7 @@ const {
     defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
+import DataTableCore from '../../Data/DataTableCore';
 
 /* *
  *
@@ -1068,6 +1069,11 @@ function scatterProcessData(
     series.cropped = cropped;
     series.cropStart = 0;
     // For boosted points rendering
+    if (cropped && series.dataTable.modified === series.dataTable) {
+        // Calling setColumns with cropped data must be done on a new instance
+        // to avoid modification of the original (complete) data
+        series.dataTable.modified = new DataTableCore();
+    }
     series.dataTable.modified.setColumns({
         x: processedXData,
         y: processedYData
