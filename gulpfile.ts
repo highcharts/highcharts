@@ -60,6 +60,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-upload-studies',
     'dist-upload-more',
     'dist-verify',
+    'grid/api-docs',
     'jsdoc',
     'jsdoc-classes',
     'jsdoc-clean',

@@ -1,0 +1,28 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "categorizeByGroup": false,
+    "customCss": "../dashboards/api-docs/typedoc/assets/custom.css",
+    "basePath": "../../../ts/",
+    "disableSources": true,
+    "entryPoints": [
+        "../../../ts/Data/DataTable.ts",
+        "../../../ts/Data/DataTableOptions.ts",
+        "../../../ts/Grid/Core/Grid.ts",
+        "../../../ts/Grid/Core/Options.ts",
+        "../../../ts/Grid/Core/Defaults.ts",
+        "../../../ts/Grid/Core/Globals.ts"
+    ],
+    "entryPointStrategy": "expand",
+    "excludeInternal": true,
+    "excludePrivate": true,
+    "hideGenerator": true,
+    "htmlLang": "en",
+    "name": "Highcharts Grid",
+    "out": "../../../build/api/grid/typedoc/",
+    "plugin": [
+        "typedoc-plugin-rename-defaults"
+    ],
+    "readme": "../../../docs/datagrid/general.md",
+    "titleLink": "https://api.highcharts.com/grid/typedoc/index.html",
+    "visibilityFilters": {}
+}
