@@ -3,6 +3,7 @@
  */
 
 const Gulp = require('gulp');
+const { validateProduct } = require('./utils');
 
 /* *
  *
@@ -21,37 +22,37 @@ require('./scripts-css');
 require('./scripts-js');
 require('./scripts-webpack');
 
-Gulp.task(
-    'dist',
-    (
-        process.argv.includes('--assembler') ?
-            // < v12
-            Gulp.series(
-                'lint-ts',
-                'scripts-clean',
-                'scripts',
-                'scripts-compile',
-                'dist-clean',
-                'dist-copy',
-                'dist-examples',
-                'dist-productsjs',
-                'jsdoc-dts',
-                'lint-dts',
-                'dist-compress'
-            ) :
-            // >= v12
-            Gulp.series(
-                'lint-ts',
-                'scripts-clean',
-                'scripts',
-                'scripts-compile',
-                'dist-clean',
-                'dist-copy',
-                'dist-examples',
-                'dist-productsjs',
-                'jsdoc-dts',
-                'lint-dts',
-                'dist-compress'
-            )
-    )
-);
+function dist() {
+    const argv = require('yargs').argv;
+    const product = argv.product || 'Highcharts';
+
+    if (!validateProduct(product)) {
+        throw new Error(`The specified product '${product}' is not valid.`);
+    }
+
+    const tasks = [
+        'lint-ts',
+        'scripts-clean',
+        'scripts',
+        'scripts-compile',
+        'dist-clean',
+        'dist-copy',
+        'dist-examples',
+        'dist-productsjs'
+    ];
+
+    if (product === 'Highcharts') {
+        tasks.push('jsdoc-dts');
+    }
+
+    tasks.push('lint-dts', 'dist-compress');
+
+    return Gulp.series(tasks);
+}
+
+dist.description = 'Builds distribution files for the specified product.';
+dist.flags = {
+    '--product': 'Product name. Available products: Highcharts, Grid. Defaults to Highcharts.',
+    '--release': 'Version number. Used and required only for products other than Highcharts.'
+};
+Gulp.task('dist', dist());
