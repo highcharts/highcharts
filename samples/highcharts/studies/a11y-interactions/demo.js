@@ -1520,11 +1520,15 @@ setTimeout(() => ['jsfiddle', 'codepen'].forEach(id => {
 // Dashboard setup ------------------------------------------------------------
 // This is straightforward Highcharts config.
 
+const hasForcedColors = matchMedia('(forced-colors: active)').matches;
+const hasDarkMode = matchMedia('(prefers-color-scheme: dark)').matches;
+const c = (c1, c2, c3) => (hasForcedColors ? c3 : hasDarkMode ? c2 : c1);
 
-Highcharts.patterns[0].color = '#ccc';
+Highcharts.patterns[0].color = c('#ccc', '#666', '#666');
 Highcharts.setOptions({
     chart: {
-        marginTop: 80
+        marginTop: 80,
+        backgroundColor: c('#fff', '#222', 'Canvas')
     },
     accessibility: {
         enabled: false
@@ -1546,13 +1550,73 @@ Highcharts.setOptions({
             }
         }
     },
+    plotOptions: {
+        series: {
+            dataLabels: {
+                style: {
+                    color: c('#222', '#eee', 'CanvasText')
+                }
+            },
+            borderColor: c('#fff', '#222', 'Canvas')
+        }
+    },
+    legend: {
+        itemStyle: {
+            color: c('#333', '#ccc', 'CanvasText')
+        }
+    },
+    tooltip: {
+        backgroundColor: c('#fff', '#444', 'Canvas'),
+        style: {
+            color: c('#333', '#eee', 'CanvasText')
+        }
+    },
     title: {
-        align: 'left'
+        align: 'left',
+        style: {
+            color: c('#222', '#eee', 'CanvasText')
+        }
+    },
+    subtitle: {
+        style: {
+            color: c('#222', '#eee', 'CanvasText')
+        }
+    },
+    xAxis: {
+        labels: {
+            style: {
+                color: c('#333', '#ccc', 'CanvasText')
+            }
+        },
+        lineColor: c('#333', '#ccc', 'CanvasText'),
+        tickColor: c('#333', '#ccc', 'CanvasText')
+    },
+    yAxis: {
+        labels: {
+            style: {
+                color: c('#333', '#ccc', 'CanvasText')
+            }
+        },
+        lineColor: c('#333', '#ccc', 'CanvasText'),
+        tickColor: c('#333', '#ccc', 'CanvasText'),
+        gridLineColor: c('#e6e6e6', '#333', 'Canvas')
     },
     credits: {
         enabled: false
     }
 });
+if (hasForcedColors) {
+    Highcharts.setOptions({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    backgroundColor: 'Canvas',
+                    style: { textOutline: 'none' }
+                }
+            }
+        }
+    });
+}
 
 
 // Bar chart
@@ -1589,7 +1653,6 @@ Highcharts.chart('delays', {
                 y: 80,
                 format: '{series.name}<br><b>{point.y:.2f}%</b>',
                 style: {
-                    color: '#222',
                     textOutline: 'none',
                     fontWeight: 'normal'
                 }
@@ -1598,11 +1661,11 @@ Highcharts.chart('delays', {
     },
     series: [{
         name: 'On time',
-        color: '#16A27F',
+        color: c('#16A27F', '#16A27F', 'CanvasText'),
         data: [77.89]
     }, {
         name: 'Delayed (>15 min)',
-        color: '#DB3D6D',
+        color: c('#DB3D6D', '#DB3D6D', 'CanvasText'),
         data: [22.11]
     }]
 });
@@ -1621,7 +1684,11 @@ Highcharts.chart('accidents', {
         text: '2023 numbers. Source: National Transportation Safety Board'
     },
     colors: [
-        '#393B3C', '#258AE9', '#E23689', '#B78D1A', '#6D9C82',
+        c('#393B3C', '#797F81', 'CanvasText'),
+        c('#258AE9', '#258AE9', 'CanvasText'),
+        c('#E23689', '#E23689', 'CanvasText'),
+        c('#B78D1A', '#B78D1A', 'CanvasText'),
+        c('#6D9C82', '#6D9C82', 'CanvasText'),
         { patternIndex: 0 }
     ],
     tooltip: {
@@ -1646,11 +1713,14 @@ Highcharts.chart('accidents', {
                 y: 16,
                 dataLabels: {
                     distance: -25,
-                    backgroundColor: 'rgba(250, 250, 250, 0.75)',
+                    backgroundColor: c(
+                        'rgba(250, 250, 250, 0.75)',
+                        'rgba(0, 0, 0, 0.75)',
+                        'Canvas'
+                    ),
                     borderRadius: 8,
                     style: {
                         textOutline: 'none',
-                        color: '#222',
                         padding: 8
                     }
                 }
@@ -1678,7 +1748,12 @@ Highcharts.chart('historical', {
         type: 'spline',
         marginTop: 60
     },
-    colors: ['#3B73ED', '#16a34a', '#d97706', '#dc2626'],
+    colors: [
+        c('#3B73ED', '#5787EF', '#3B73ED'),
+        '#16a34a',
+        '#d97706',
+        c('#dc2626', '#E25050', '#dc2626')
+    ],
     title: {
         text: 'Average airfare prices in the US'
     },
@@ -1743,7 +1818,13 @@ const links = document.getElementById('airline-routes')
         return acc;
     }, {}),
     maxLen = Math.max(...Object.values(nodesObj).map(val => val.length)),
-    colors = ['#0D47A1', '#2D4791', '#1976D2', '#0097A7', '#00796B'],
+    colors = [
+        c('#0D47A1', '#347FEF', 'CanvasText'),
+        c('#2D4791', '#5B79CD', 'CanvasText'),
+        c('#1976D2', '#2D8AE6', 'CanvasText'),
+        c('#0097A7', '#00BCD1', 'CanvasText'),
+        c('#00796B', '#00CCB4', 'CanvasText')
+    ],
     nodes = Object.entries(nodesObj).map(([key, val]) => ({
         id: key,
         marker: {
@@ -1820,7 +1901,14 @@ const wordcloudData = document.getElementById('wordcloud-data')
     });
 
 Highcharts.chart('wordcloud', {
-    colors: ['#4a5a6a', '#8b6a58', '#3b5c5c', '#7a6b42', '#5e4630', '#2a3b4e'],
+    colors: [
+        c('#4a5a6a', '#788FA1', 'CanvasText'),
+        c('#8b6a58', '#A48470', 'CanvasText'),
+        c('#3b5c5c', '#5F9595', 'CanvasText'),
+        c('#7a6b42', '#A99860', 'CanvasText'),
+        c('#5e4630', '#B08763', 'CanvasText'),
+        c('#2a3b4e', '#708DB2', 'CanvasText')
+    ],
     title: {
         text: 'Word cloud of recent travel news'
     },
@@ -1851,7 +1939,7 @@ Highcharts.chart('wordcloud', {
                 opacity: 0.4
             },
             hover: {
-                color: '#222'
+                color: c('#222', '#eee', 'CanvasText')
             }
         },
         name: 'Occurrences',

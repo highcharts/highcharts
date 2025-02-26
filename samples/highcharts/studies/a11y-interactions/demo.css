@@ -10,6 +10,7 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background-color: #f8f8f8;
 }
 
 .top-bar {
@@ -120,5 +121,23 @@ h1 {
 
     .card.large {
         grid-column-end: span 1;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    main,
+    body {
+        background-color: #333;
+    }
+
+    #demo-content {
+        background-color: #333;
+        color: #fff;
+    }
+
+    .card {
+        background-color: #222;
+        color: #fff;
+        box-shadow: 0 0 5px #000;
     }
 }
