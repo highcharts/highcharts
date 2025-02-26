@@ -255,6 +255,12 @@ const announce = (str, delay) => {
     }, delay || 0);
 };
 
+// Cancel next announcement
+const cancelNextAnnouncement = () => {
+    clearTimeout(nextAnnounceTimeout);
+    announcer.innerText = '';
+};
+
 
 // ============================================================================
 // Visual toast message
@@ -524,19 +530,21 @@ Highcharts.Chart.prototype.addA11yApplication =
 function (onInit, kbdHandlers, kbdDescriptions) {
     const chart = this,
         chartTitle = chart.options.title.text,
-        app = chart.addProxyContainerEl('div'),
-        label = `Interactive chart. ${chartTitle}. Click to interact.`,
-        fallbackButton = chart.addSROnly('button', label, app);
+        fallbackButton = chart.addSROnly(
+            'button', `Interact with chart, ${chartTitle}.`
+        ),
+        appLabel = `Interactive chart. ${chartTitle}. Click to interact.`,
+        app = chart.addProxyContainerEl('div');
 
     app.style.height = chart.container.clientHeight + 'px';
     app.setAttribute('role', 'application');
-    app.setAttribute('aria-label', label);
+    app.setAttribute('aria-label', appLabel);
     app.setAttribute('tabindex', 0);
     app.onfocus = () => {
         showToast(chart, 'Press Enter to start exploring.');
         showFocusOnEl(chart.renderTo);
         app.focus();
-        announce(label, 10);
+        announce(appLabel, 10);
     };
     app.onblur = () => {
         hideToast();
@@ -547,10 +555,11 @@ function (onInit, kbdHandlers, kbdDescriptions) {
     // Keyboard state handling
     let entered = false;
     const init = () => {
+        cancelNextAnnouncement();
         entered = true;
         hideToast();
         showKbdHint(chart.renderTo);
-        announce('Chart. Press T for tools. Use arrow keys to explore.');
+        announce('Chart. Press T for tools. Use arrow keys to explore.', 100);
         kbdState.series = 0;
         kbdState.point = 0;
         onInit(chart);
