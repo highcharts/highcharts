@@ -2224,6 +2224,12 @@ class Navigator {
         ): void => {
             destroyObjectProperties(coll);
         });
+
+        // Clean up linked series
+        this.baseSeries.forEach((s):void => {
+            s.navigatorSeries = void 0;
+        });
+
         this.navigatorEnabled = false;
     }
 }
