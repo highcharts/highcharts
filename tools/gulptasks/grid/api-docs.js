@@ -14,7 +14,7 @@ async function apiDocs() {
     const fsLib = require('../../libs/fs');
     const processLib = require('../../libs/process');
 
-    await fsLib.deleteDirectory('build/api/dashboards', true);
+    await fsLib.deleteDirectory('build/api/grid', true);
     await processLib.exec(
         'npx typedoc' +
         ' --options tools/gulptasks/grid/api-docs.json' +
@@ -27,7 +27,11 @@ async function apiDocs() {
         true
     );
 
-    // TODO: Replace /api/grid/... contents from Dashboards to Grid
+    fsLib.copyAllFiles(
+        'tools/gulptasks/grid/api-docs/',
+        'build/api/grid/',
+        true
+    );
 }
 
 gulp.task('grid/api-docs', gulp.series('scripts', apiDocs));
