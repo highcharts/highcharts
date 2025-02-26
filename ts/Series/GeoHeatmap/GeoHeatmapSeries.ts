@@ -343,7 +343,8 @@ class GeoHeatmapSeries extends MapSeries {
             if (canvas && ctx && colorAxis && topLeft && bottomRight) {
                 const
                     { x, y } = topLeft,
-                    [width, height] = [bottomRight.x - x, bottomRight.y - y],
+                    width = bottomRight.x - x,
+                    height = bottomRight.y - y,
                     dimensions = {
                         x,
                         y,
@@ -404,9 +405,6 @@ class GeoHeatmapSeries extends MapSeries {
                     // First pixelData represents the geo coordinates
                     for (let i = 0; i < pointsLen; i++) {
                         const p = points[i],
-                            /* SourceArr = new Uint8ClampedArray(
-                                colorFromPoint(p.value, p)
-                            ),*/
                             { lon, lat } = p.options;
                         if (isNumber(lon) && isNumber(lat)) {
                             pixelData.set(
