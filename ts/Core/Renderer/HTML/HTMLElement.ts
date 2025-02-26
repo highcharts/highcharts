@@ -35,6 +35,7 @@ const {
     createElement,
     defined,
     extend,
+    getAlignFactor,
     isNumber,
     pInt,
     pushUnique
@@ -251,7 +252,6 @@ class HTMLElement extends SVGElement {
             })
         });
 
-        // Keep the whiteSpace style outside the `HTMLElement.styles` collection
         this.element.style.whiteSpace = 'nowrap';
     }
 
@@ -291,8 +291,15 @@ class HTMLElement extends SVGElement {
             doTransform = true;
         }
 
+        // Some properties require other properties to be set
         if (styles?.textOverflow === 'ellipsis') {
+            styles.overflow = 'hidden';
             styles.whiteSpace = 'nowrap';
+        }
+        if (styles?.lineClamp) {
+            styles.display = '-webkit-box';
+            styles.WebkitLineClamp = styles.lineClamp;
+            styles.WebkitBoxOrient = 'vertical';
             styles.overflow = 'hidden';
         }
 
@@ -344,23 +351,21 @@ class HTMLElement extends SVGElement {
         }
 
         const {
-                element,
-                renderer,
-                rotation,
-                rotationOriginX,
-                rotationOriginY,
-                styles,
-                textAlign = 'left',
-                textWidth,
-                translateX = 0,
-                translateY = 0,
-                x = 0,
-                y = 0
-            } = this,
-            alignCorrection = ({
-                left: 0, center: 0.5, right: 1
-            } as Record<string, number>)[textAlign],
-            whiteSpace = styles.whiteSpace;
+            element,
+            renderer,
+            rotation,
+            rotationOriginX,
+            rotationOriginY,
+            scaleX,
+            scaleY,
+            styles: { display = 'block', whiteSpace },
+            textAlign = 'left',
+            textWidth,
+            translateX = 0,
+            translateY = 0,
+            x = 0,
+            y = 0
+        } = this;
 
         // Get the pixel length of the text
         const getTextPxLength = (): number => {
@@ -392,8 +397,7 @@ class HTMLElement extends SVGElement {
                 ].join(','),
                 parentPadding = (this.parentGroup?.padding * -1) || 0;
 
-            let baseline,
-                hasBoxWidthChanged = false;
+            let baseline;
 
             // Update textWidth. Use the memoized textPxLength if possible, to
             // avoid the getTextPxLength function using elem.offsetWidth.
@@ -401,32 +405,35 @@ class HTMLElement extends SVGElement {
             // (#7656).
             if (textWidth !== this.oldTextWidth) { // #983, #1254
                 const textPxLength = getTextPxLength(),
-                    textWidthNum = textWidth || 0;
+                    textWidthNum = textWidth || 0,
+                    willOverWrap = element.style.textOverflow === '' &&
+                        element.style.webkitLineClamp;
                 if (
                     (
-                        (textWidthNum > this.oldTextWidth) ||
-                        textPxLength > textWidthNum
+                        textWidthNum > this.oldTextWidth ||
+                        textPxLength > textWidthNum ||
+                        willOverWrap
                     ) && (
                         // Only set the width if the text is able to word-wrap,
                         // or text-overflow is ellipsis (#9537)
-                        /[ \-]/.test(
+                        /[\-\s\u00AD]/.test(
                             element.textContent || element.innerText
                         ) ||
                         element.style.textOverflow === 'ellipsis'
                     )
                 ) {
+                    const usePxWidth = rotation || scaleX ||
+                        textPxLength > textWidthNum ||
+                        // Set width to prevent over-wrapping (#22609)
+                        willOverWrap;
                     css(element, {
-                        width: (textPxLength > textWidthNum) || rotation ?
-                            textWidth + 'px' :
-                            'auto', // #16261
-                        display: 'block',
+                        width: usePxWidth ? textWidth + 'px' : 'auto', // #16261
+                        display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
                     this.oldTextWidth = textWidth;
-                    hasBoxWidthChanged = true; // #8159
                 }
             }
-            this.hasBoxWidthChanged = hasBoxWidthChanged; // #8159
 
 
             // Do the calculations and DOM access only if properties changed
@@ -453,11 +460,15 @@ class HTMLElement extends SVGElement {
                     // Avoid elem.offsetWidth if we can, it affects rendering
                     // time heavily (#7656)
                     (
-                        (!defined(rotation) && this.textPxLength) || // #7920
+                        (
+                            !defined(rotation) &&
+                            !this.textWidth &&
+                            this.textPxLength
+                        ) || // #7920
                         element.offsetWidth
                     ),
                     baseline,
-                    alignCorrection
+                    getAlignFactor(textAlign)
                 );
             }
 
@@ -468,8 +479,14 @@ class HTMLElement extends SVGElement {
                 styles: CSSObject = {
                     left: `${x + xCorr}px`,
                     top: `${y + yCorr}px`,
+                    textAlign,
                     transformOrigin: `${rotOriginX}px ${rotOriginY}px`
                 };
+
+            if (scaleX || scaleY) {
+                styles.transform = `scale(${scaleX ?? 1},${scaleY ?? 1})`;
+            }
+
             css(element, styles);
 
 

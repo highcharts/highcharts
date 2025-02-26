@@ -179,17 +179,17 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  */
 
 /**
- * The start time of a task.
+ * The start time of a task. May be a timestamp or a date string.
  *
- * @type      {number}
+ * @type      {number|string}
  * @product   gantt
  * @apioption series.gantt.data.start
  */
 
 /**
- * The end time of a task.
+ * The end time of a task. May be a timestamp or a date string.
  *
- * @type      {number}
+ * @type      {number|string}
  * @product   gantt
  * @apioption series.gantt.data.end
  */

@@ -176,9 +176,19 @@ function checkDocsConsistency() {
     const { unlisted } = require('../../docs/doc-config.js');
     const sidebarDocs = [];
 
-    Object
-        .keys(sidebar.docs)
-        .forEach(key => sidebarDocs.push(...Object.values(sidebar.docs[key])));
+    // Recursive function to collect doc paths from sidebar
+    function collectDocs(item) {
+        if (Array.isArray(item)) {
+            item.forEach(collectDocs);
+        } else if (typeof item === 'string') {
+            sidebarDocs.push(item);
+        } else if (typeof item === 'object') {
+            Object.values(item).forEach(collectDocs);
+        }
+    }
+
+    // Start collecting docs from sidebar.docs
+    collectDocs(sidebar.docs);
 
     const dirs = FS.readdirSync('docs/');
     const foundDocs = [];
@@ -196,6 +206,7 @@ function checkDocsConsistency() {
     } catch (error) {
         throw new Error(error);
     }
+
     const docsNotAdded = foundDocs.filter(file => {
         if (unlisted.includes(file)) {
             return false;

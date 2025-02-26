@@ -16,17 +16,18 @@
 
 'use strict';
 
+
 /* *
  *
  *  Imports
  *
  * */
+
 import type { GroupedHeaderOptions } from '../../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
-import Utils from '../../../Core/Utilities.js';
-const { getStyle } = Utils;
+
 
 /* *
  *
@@ -127,14 +128,7 @@ class TableHeader {
         const { clientWidth, offsetWidth } = vp.tbodyElement;
         const header = vp.header;
         const rows = this.rows;
-        const tableEl = header?.viewport.dataGrid.tableElement;
-        const theadEL = header?.viewport.theadElement;
-        const theadBorder =
-            theadEL && getStyle(theadEL, 'border-right-width', true) || 0;
-        const tableBorder = (
-            tableEl && getStyle(tableEl, 'border-right-width', true)) || 0;
-        const bordersWidth =
-            offsetWidth - clientWidth - theadBorder - tableBorder;
+        const bordersWidth = offsetWidth - clientWidth;
 
         for (const row of rows) {
             row.reflow();
@@ -145,13 +139,18 @@ class TableHeader {
                 Math.max(vp.rowsWidth, clientWidth) + bordersWidth + 'px';
         }
 
-        // Adjust cell's width when scrollbar is enabled.
-        if (header && bordersWidth > 0) {
-            const cells = header.rows[header.rows.length - 1].cells;
-            const cellHtmlElement = cells[cells.length - 1].htmlElement;
+        if (
+            header &&
+            bordersWidth > 0 &&
+            this.viewport.columnDistribution === 'full'
+        ) {
+            const row = this.columns[this.columns.length - 1].header?.row;
+            const lastCellEl = row?.cells[row.cells.length - 1]?.htmlElement;
 
-            cellHtmlElement.style.width = cellHtmlElement.style.maxWidth =
-                cellHtmlElement.offsetWidth + bordersWidth + 'px';
+            if (lastCellEl) {
+                lastCellEl.style.width = lastCellEl.style.maxWidth =
+                lastCellEl.offsetWidth + bordersWidth + 'px';
+            }
         }
     }
 
@@ -181,7 +180,8 @@ class TableHeader {
     }
 
     /**
-     * Scrolls the table head horizontally.
+     * Scrolls the table head horizontally, only when the virtualization
+     * is enabled.
      *
      * @param scrollLeft
      * The left scroll position.

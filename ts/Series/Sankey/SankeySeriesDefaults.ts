@@ -20,7 +20,7 @@
 
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
-import type { SankeyDataLabelFormatterContext } from './SankeyDataLabelOptions';
+import type SankeyPoint from './SankeyPoint';
 import type SankeySeries from './SankeySeries';
 
 /* *
@@ -112,10 +112,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          * @since 6.0.2
          */
         nodeFormatter: function (
-            this: (
-                SankeyDataLabelFormatterContext|
-                Point.PointLabelObject
-            )
+            this: (SankeyPoint|Point)
         ): (string|undefined) {
             return this.point.name;
         },

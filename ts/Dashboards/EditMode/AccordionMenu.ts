@@ -103,7 +103,8 @@ class AccordionMenu {
         let content: HTMLElement;
 
         this.component = component;
-        this.oldOptionsBuffer = merge({}, component.options);
+
+        this.oldOptionsBuffer = component.getEditableOptions();
 
         if (editMode) {
             this.confirmationPopup = new ConfirmationPopup(
@@ -135,7 +136,6 @@ class AccordionMenu {
                     options
                 )
             ).content;
-
             this.renderAccordion(options, content, component);
         }
 
@@ -156,6 +156,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: async (): Promise<void> => {
                     await this.confirmChanges();
+                    fireEvent(editMode, 'confirmEditing');
                 }
             }
         );
@@ -168,6 +169,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.popupCancelBtn,
                 callback: (): void => {
                     this.cancelChanges();
+                    fireEvent(editMode, 'cancelEditing');
                 }
             }
         );
@@ -324,6 +326,7 @@ class AccordionMenu {
             ...options,
             iconsURLPrefix: this.iconsURLPrefix,
             value: component.getEditableOptionValue(options.propertyPath),
+            enabledOnOffLabels: options.type === 'toggle',
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)
@@ -359,6 +362,8 @@ class AccordionMenu {
             const accordionOptions = nestedOptions[i].options;
             const showToggle = !!nestedOptions[i].showToggle;
             const propertyPath = nestedOptions[i].propertyPath || [];
+            const lang = (component.board?.editMode || EditGlobals).lang;
+
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
                     name,
@@ -367,14 +372,18 @@ class AccordionMenu {
                     showToggle: showToggle,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
-                    isNested: true,
-                    lang: (component.board?.editMode || EditGlobals).lang
+                    isNested: !!accordionOptions,
+                    isStandalone: !accordionOptions,
+                    lang
                 }
             );
 
-            for (let j = 0, jEnd = accordionOptions.length; j < jEnd; ++j) {
+            for (let j = 0, jEnd = accordionOptions?.length; j < jEnd; ++j) {
                 this.renderAccordion(
-                    accordionOptions[j] as EditableOptions.Options,
+                    merge(
+                        accordionOptions[j] as EditableOptions.Options,
+                        { lang, isNested: true }
+                    ),
                     collapsedHeader.content,
                     component
                 );

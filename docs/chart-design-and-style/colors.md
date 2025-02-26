@@ -19,7 +19,7 @@ Linear gradients
 
 Linear gradients in Highcharts have a similar syntax to that of SVG:
 
-    
+
     color: {
         linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
         stops: [
@@ -41,14 +41,14 @@ Note that linear gradients can be differently defined (as an array or an object)
 *   **`userSpaceOnUse`** Default when gradient declared as an array. Start and end positions have to be declared as pixels on the chart.
 *   **`objectBoundingBox`** Default when gradient declared as an object. Start and end positions are in the range of 0 to 1 as described above. Using this might sometimes result in the disappearance of the coloured element.
 
-See the online example of a [linear gradient chart background](https://jsfiddle.net/highcharts/4rTBY/).
+See the online example of a [linear gradient chart background](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/backgroundcolor-gradient).
 
 Radial gradients
 ----------------
 
 Since Highcharts 2.3 radial gradients have been supported. They have a similar syntax to that of SVG:
 
-    
+
     color: {
         radialGradient: { cx: 0.5, cy: 0.5, r: 0.5 },
         stops: [
@@ -72,7 +72,7 @@ Pattern fills
 Since Highcharts v6.1, pattern fills are supported natively.
 
 To enable this new functionality, load the pattern-fill.js module. Example loading the latest version from our CDN:
-    
+
     <script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
 
 Then, to define a color as a pattern, we can do as follows with any color option:

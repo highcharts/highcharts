@@ -20,9 +20,8 @@
  *
  * */
 
-import type { TimelineDataLabelContextObject } from
-    './TimelineDataLabelOptions';
 import type Point from '../../Core/Series/Point';
+import type TimelinePoint from './TimelinePoint';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -148,7 +147,6 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
 
         // eslint-disable-next-line jsdoc/require-description
         /**
-         * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
          * @default function () {
          *   let format;
          *
@@ -165,7 +163,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          * }
          */
         formatter: function (
-            this: (Point.PointLabelObject|TimelineDataLabelContextObject)
+            this: (Point|TimelinePoint)
         ): string {
             let format;
 
@@ -177,8 +175,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
                     this.point.colorIndex + '">● </span>';
             }
             format += '<span class="highcharts-strong">' +
-                ((this as any).key || '') + '</span><br/>' +
-                ((this.point as any).label || '');
+                (this.key || '') + '</span><br/>' +
+                ((this as TimelinePoint).label || '');
             return format;
         },
 
@@ -188,7 +186,9 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '0.8em'
+            fontSize: '0.8em',
+            /** @internal */
+            textAlign: 'left'
         },
 
         /**

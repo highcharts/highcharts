@@ -82,7 +82,7 @@ export interface TooltipOptions {
     valueDecimals?: number;
     valuePrefix?: string;
     valueSuffix?: string;
-    xDateFormat?: string;
+    xDateFormat?: Time.DateTimeFormat;
 }
 
 /* *

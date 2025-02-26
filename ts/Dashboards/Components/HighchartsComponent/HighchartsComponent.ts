@@ -50,6 +50,7 @@ import DataTable from '../../../Data/DataTable.js';
 import Globals from '../../Globals.js';
 import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
+import DU from '../../Utilities.js';
 import U from '../../../Core/Utilities.js';
 import ConnectorHandler from '../../Components/ConnectorHandler';
 const {
@@ -59,6 +60,7 @@ const {
     merge,
     splat
 } = U;
+const { deepClone } = DU;
 
 /* *
  *
@@ -419,9 +421,15 @@ class HighchartsComponent extends Component {
         await super.update(options, false);
         this.setOptions();
 
-        if (this.chart) {
-            this.chart.update(merge(this.options.chartOptions) || {});
+        if (this.options.chartConstructor !== this.chartConstructor) {
+            this.chartConstructor = this.options.chartConstructor || 'chart';
+            this.chartOptions = this.options.chartOptions || {};
+            this.chart?.destroy();
+            delete this.chart;
+        } else {
+            this.chart?.update(merge(this.options.chartOptions) || {});
         }
+
         this.emit({ type: 'afterUpdate' });
 
         shouldRerender && this.render();
@@ -840,7 +848,7 @@ class HighchartsComponent extends Component {
         const chartOptions = chart && chart.options;
         const chartType = chartOptions?.chart?.type || 'line';
 
-        return merge(
+        return deepClone(merge(
             {
                 chartOptions
             },
@@ -855,9 +863,8 @@ class HighchartsComponent extends Component {
                 }
             },
             componentOptions
-        );
+        ), ['dataTable', 'points', 'series', 'data', 'editableOptions']);
     }
-
 
     public getEditableOptionValue(
         propertyPath?: string[]

@@ -5,7 +5,7 @@ Note: The following content is only relevant to legacy versions of Highcharts. S
 
 <iframe style="width: 100%; height: 550px; border: 0;" src="https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced" allow="fullscreen"></iframe>
 
-Highcharts Maps from version 1.1.0 comes with support for latitude/longitude. This feature requires that the [proj4js](http://proj4js.org) library has been loaded before Highcharts Maps. The latest version of the _proj4js_ library can be loaded from [cdnjs](https://cdnjs.com/libraries/proj4js).
+Highcharts Maps from version 1.1.0 comes with support for latitude/longitude. This feature requires that the [proj4js](https://github.com/proj4js/proj4js) library has been loaded before Highcharts Maps. The latest version of the _proj4js_ library can be loaded from [cdnjs](https://cdnjs.com/libraries/proj4js).
 
     <!-- Example of loading from CDNJS: -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"></script>

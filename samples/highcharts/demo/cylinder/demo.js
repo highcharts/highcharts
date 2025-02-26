@@ -39,7 +39,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        headerFormat: '<b>Age: {point.x}</b><br>'
+        headerFormat: '<b>Age: {category}</b><br>'
     },
     plotOptions: {
         series: {

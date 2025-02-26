@@ -177,18 +177,18 @@ $ mvn clean package
 
 After compiling and the message BUILD SUCCESS, you will find a file: highcharts-export-web.war in the `highcharts-export/highcharts-export-web/target` folder.
 
-
-    [INFO] ------------------------------------------------------------------------
-     [INFO] BUILD SUCCESS
-     [INFO] ------------------------------------------------------------------------
-     [INFO] Total time: 2.476s
-     [INFO] Finished at: Wed Jun 26 14:52:07 CEST 2013
-     [INFO] Final Memory: 15M/215M
-     [INFO] ------------------------------------------------------------------------
-     highcharts-export-web $> ls target/
-     classes                highcharts-export-web        maven-archiver
-     generated-sources        **highcharts-export-web.war**    surefire
-     Gerts-MacBook-Pro:highcharts-export-web gert$
+```
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.476s
+[INFO] Finished at: Wed Jun 26 14:52:07 CEST 2013
+[INFO] Final Memory: 15M/215M
+[INFO] ------------------------------------------------------------------------
+highcharts-export-web $> ls target/
+classes                highcharts-export-web        maven-archiver
+generated-sources        **highcharts-export-web.war**    surefire
+```
 
 Upload/copy this to the application server. You're done with setting up the highcharts-export server!
 

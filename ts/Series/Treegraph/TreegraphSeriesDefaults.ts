@@ -45,7 +45,7 @@ import { Palette } from '../../Core/Color/Palettes';
  *               alternateStartingDirection, borderRadius, breadcrumbs,
  *               interactByLeaf, layoutStartingDirection, levelIsConstant,
  *               lineWidth, negativeColor, nodes, sortIndex, zoneAxis,
- *               zones
+ *               zones, cluster
  *
  * @product      highcharts
  * @since 10.3.0
@@ -188,6 +188,7 @@ const TreegraphSeriesDefaults = {
     fillSpace: false,
     /**
      * @extends plotOptions.series.tooltip
+     * @excluding clusterFormat
      */
     tooltip: {
         /**
@@ -248,6 +249,7 @@ const TreegraphSeriesDefaults = {
         },
         enabled: true,
         linkFormatter: (): string => '',
+        padding: 5,
         style: {
             textOverflow: 'none'
         }

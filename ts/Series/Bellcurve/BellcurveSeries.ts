@@ -161,7 +161,7 @@ class BellcurveSeries extends AreaSplineSeries {
     public setDerivedData(): Array<(PointOptions|PointShortOptions)> {
         const series = this;
 
-        if (series.baseSeries?.yData?.length || 0 > 1) {
+        if (series.baseSeries?.getColumn('y').length || 0 > 1) {
             series.setMean();
             series.setStandardDeviation();
             series.setData(
@@ -182,7 +182,7 @@ class BellcurveSeries extends AreaSplineSeries {
 
         series.mean = correctFloat(
             BellcurveSeries.mean(
-                (series.baseSeries as any).yData
+                series.baseSeries?.getColumn('y') || []
             ) as any
         );
     }
@@ -192,7 +192,7 @@ class BellcurveSeries extends AreaSplineSeries {
 
         series.standardDeviation = correctFloat(
             BellcurveSeries.standardDeviation(
-                (series.baseSeries as any).yData,
+                series.baseSeries?.getColumn('y') || [],
                 series.mean as any
             ) as any
         );

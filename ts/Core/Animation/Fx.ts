@@ -123,8 +123,8 @@ class Fx {
      */
     public dSetter(): void {
         const paths = this.paths,
-            start = paths && paths[0],
-            end = paths && paths[1],
+            start = paths?.[0],
+            end = paths?.[1],
             now = this.now || 0;
         let path: SVGPath = [];
 
@@ -360,7 +360,7 @@ class Fx {
             fullLength: number,
             i: number,
             reverse,
-            start = fromD && fromD.slice(); // Copy
+            start = fromD?.slice(); // Copy
 
         if (!start || disableAnimation) {
             return [end, end];

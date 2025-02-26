@@ -100,7 +100,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2024, 4, 1),
+            pointStart: '2024-05-01',
             pointIntervalUnit: 'day'
         }
     },

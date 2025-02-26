@@ -8,8 +8,6 @@ let today = new Date(),
     isAddingTask = false;
 
 const day = 1000 * 60 * 60 * 24,
-    each = Highcharts.each,
-    reduce = Highcharts.reduce,
     btnShowDialog = document.getElementById('btnShowDialog'),
     btnRemoveTask = document.getElementById('btnRemoveSelected'),
     btnAddTask = document.getElementById('btnAddTask'),
@@ -170,15 +168,13 @@ const chart = Highcharts.ganttChart('container', {
 
 btnRemoveTask.onclick = function () {
     const points = chart.getSelectedPoints();
-    each(points, function (point) {
-        point.remove();
-    });
+    points.forEach(point => point.remove());
 };
 
 btnShowDialog.onclick = function () {
     // Update dependency list
     let depInnerHTML = '<option value=""></option>';
-    each(chart.series[0].points, function (point) {
+    chart.series[0].points.forEach(function (point) {
         depInnerHTML += '<option value="' + point.id + '">' + point.name +
             ' </option>';
     });
@@ -205,7 +201,7 @@ btnAddTask.onclick = function () {
             10
         );
     let undef,
-        maxEnd = reduce(series.points, function (acc, point) {
+        maxEnd = series.points.reduce(function (acc, point) {
             return point.y === y && point.end ? Math.max(acc, point.end) : acc;
         }, 0);
 

@@ -29,11 +29,14 @@ import Component from '../Component.js';
 import DataGridSyncs from './DataGridSyncs/DataGridSyncs.js';
 import DataGridComponentDefaults from './DataGridComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
+import DU from '../../Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';
 const {
     merge,
-    diffObjects
+    diffObjects,
+    getStyle
 } = U;
+const { deepClone } = DU;
 
 /* *
  *
@@ -182,6 +185,13 @@ class DataGridComponent extends Component {
             this.dataGrid.renderViewport();
         }
 
+        this.dataGrid.initialContainerHeight =
+            getStyle(
+                this.parentElement,
+                'height',
+                true
+            ) || 0;
+
         this.sync.start();
         this.emit({ type: 'afterRender' });
 
@@ -212,11 +222,14 @@ class DataGridComponent extends Component {
         const componentOptions = this.options;
         const dataGridOptions = this.dataGrid?.options;
 
-        return merge(
-            {
-                dataGridOptions: dataGridOptions
-            },
-            componentOptions
+        return deepClone(
+            merge(
+                {
+                    dataGridOptions: dataGridOptions
+                },
+                componentOptions
+            ),
+            ['editableOptions', 'dataTable']
         );
     }
 

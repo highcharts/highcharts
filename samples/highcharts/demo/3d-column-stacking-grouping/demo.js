@@ -12,8 +12,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: ' Electricity production in countries, grouped by continent',
-        align: 'left'
+        text: ' Electricity production in countries, grouped by continent'
     },
 
     xAxis: {

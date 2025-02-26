@@ -12,7 +12,7 @@ Highcharts.stockChart('container', {
     },
 
     xAxis: {
-        min: Date.UTC(2004, 0, 11, 12)
+        min: '2004-01-11 12:00'
     },
     series: [{
         data: [

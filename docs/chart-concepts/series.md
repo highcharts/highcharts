@@ -29,7 +29,7 @@ data: [0, 5, 3, 5]
 
 [Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/reflow-true/)
 
-2.  A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, [like arearange](https://api.highcharts.com/highcharts/series.arearange.data), accept more than two values. See API documentation for each series type. Example:
+2.  A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a date string and the x-axis is of type `datetime`, the string is parsed into a date. Otherwise if the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, [like arearange](https://api.highcharts.com/highcharts/series.arearange.data), accept more than two values. See API documentation for each series type. Example:
 
 ```js
 data: [[5, 2], [6, 3], [8, 2]]
@@ -57,7 +57,7 @@ data: [{
 Point and marker
 ----------------
 
-For cartesian charts, a point represents a (x, y) pair on the chart. Points can be given separate options inside the series data. For other chart types, the point represents other values than (x, y). For instance, in a range chart, the point represents (x, low, high). In an OHLC chart, the point represents (x, open, high, low, close). In a pie chart or gauge, the point represents a single value.
+For [cartesian](https://www.highcharts.com/docs/chart-concepts/dataviz-glossary#cartesian-coordinate-system) charts, a point represents a (x, y) pair on the chart. Points can be given separate options inside the series data. For other chart types, the point represents other values than (x, y). For instance, in a range chart, the point represents (x, low, high). In an OHLC chart, the point represents (x, open, high, low, close). In a pie chart or gauge, the point represents a single value.
 
 The point option can be applied to all charts. Here is an example showing how to edit the color of a specific point:
 

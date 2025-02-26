@@ -1,114 +1,112 @@
 # Data Table
 
-A Data Table is a structured representation of data, consisting of columns and rows.
-It offers methods for adding, removing, and manipulating columns and rows, as well as for accessing data from specific cells.  
+A data table (class `DataTable`) is a structured representation of data consisting of columns and rows.
+It offers methods for adding, removing, and manipulating columns and rows and for accessing data from specific cells.  
 Think of a Data Table as a grid where each row represents a record or entry, and each column represents a specific attribute or piece of information.
 
+`DataTable` is an integral part of the **Dashboards** and the **DataGrid** bundle. Hence it can be accessed from both so there is no need to load any additional modules.
 
-`DataTable` is an integral part of the `Dashboards` and the `DataGrid` bundle, which means it can be accessed from these two places. There is no need to load any additional modules.
+## Creating a data table
+There are several ways to create a `DataTable`:
 
-## Creating a DataTable
-There are a few ways to create a DataTable:
+### 1. From a data pool
+The `DataPool` is the main entry point for data handling in **Highcharts Dashboards**. It handles incoming data and creates a `DataTable` to store the imported data.
 
-1. **From a DataPool**  
-    The `DataPool` is the main entry point for data handling in Highcharts Dashboards. It handles incoming data and creates a `DataTable` to store the imported data.
+It can be created automatically when you create a **Dashboard**:
+```javascript
+Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            type: 'CSV',
+            id: 'my-connector',
+            options: {
+                csvURL: 'https://example.com/data.csv'
+            }
+        }]
+        ...
+```
 
-    It can be created automatically when you create a Dashboard:
-    ```javascript
-    Dashboards.board('container', {
-        dataPool: {
-            connectors: [{
-                type: 'CSV',
-                id: 'my-connector',
-                options: {
-                    csvURL: 'https://example.com/data.csv'c
-                }
-            }]
-            ...
-    ```
+Or you can create it manually with connector options:
 
-    Or you can create it manually with connector options:
+```javascript
+const dataPool = new DataPool();
 
-    ```javascript
-    const dataPool = new DataPool();
-
-    dataPool.setConnectorOptions({
-        type: 'CSV',
-        id: 'my-connector',
-        options: {
-            csvURL: 'https://example.com/data.csv'
-        }
-    });
-
-    const dataTable = await dataPool.getConnectorTable('my-connector');
-    ```
-
-
-2. **From a `DataConnector`**  
-   A `DataConnector` is a service that retrieves data from an external source and creates a `DataTable` to store the imported data.  
-   The DataTable is accessible via the `DataConnector.table`
-
-   ```javascript
-    async function loadData() {
-         const connector = new DataConnector.types.CSV({
-              csvURL: 'https://example.com/data.csv'
-         });
-
-         await connector.load();
-
-         const dataTable = connector.table;
+dataPool.setConnectorOptions({
+    type: 'CSV',
+    id: 'my-connector',
+    options: {
+        csvURL: 'https://example.com/data.csv'
     }
-    ```
+});
 
-3. **Manually**  
-   You can create a DataTable manually by providing the columns and rows.
+const dataTable = await dataPool.getConnectorTable('my-connector');
+```
 
-   ```javascript
-    const dataTable = new Dashboards.DataTable({
-        columns: {
-            x: [1, 2, 3, 4, 5, 6],
-            y: ['a', 'a', 'b', 'b', 'c', 'c']
-        }
-    });
-    ```
+### 2. From a data connector
+A `DataConnector` is a service that retrieves data from an external source and creates a `DataTable` to store the imported data.
 
-4. **From a `DataModifier`**  
-   A `DataModifier` is a service that modifies data in a `DataTable`. It can create a new `DataTable` with the modified data.
+The `DataTable` is accessible via the `DataConnector.table`
 
-   ```javascript
-    const sortModifier = new DataModifier.types.Sort({
-        direction: 'asc',
-        orderByColumn: 'City'
+```javascript
+async function loadData() {
+    const connector = new DataConnector.types.CSV({
+        csvURL: 'https://example.com/data.csv'
     });
 
-    const table = new Dashboards.DataTable({
-        columns: {
-            Rank: [1, 2, 3, 4, 5, 6],
-            City: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],
-            State: ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'ACT'],
-            Population: [5259764, 4976157, 2568927, 2192229, 1402393, 453558]
-        }
-    });
+    await connector.load();
 
-    const tableModified = sortModifier.modifyTable(table.clone());
-    ```
+    const dataTable = connector.table;
+}
+```
 
+### 3. Manually
+You can create a DataTable manually by providing the columns and rows.
+
+```javascript
+const dataTable = new Dashboards.DataTable({
+    columns: {
+        x: [1, 2, 3, 4, 5, 6],
+        y: ['a', 'a', 'b', 'b', 'c', 'c']
+    }
+});
+```
+
+### 4. From a data modifier
+A `DataModifier` is a service that modifies data in a `DataTable`. It can create a new `DataTable` with the modified data.
+
+```javascript
+const sortModifier = new DataModifier.types.Sort({
+    direction: 'asc',
+    orderByColumn: 'City'
+});
+
+const table = new Dashboards.DataTable({
+    columns: {
+        Rank: [1, 2, 3, 4, 5, 6],
+        City: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],
+        State: ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'ACT'],
+        Population: [5259764, 4976157, 2568927, 2192229, 1402393, 453558]
+    }
+});
+
+const tableModified = sortModifier.modifyTable(table.clone());
+```
 
 ## Get operations
-A DataTable offers several methods to access data, among some of the most common are:
+The `DataTable` class offers several methods for accessing data. Some of the most common are:
 
-- `getRow`- Returns a row with the specified index from the DataTable.
-- `getRows`- Returns all or a number of rows.
+- `getRow`- Returns a row with the specified index from the data table.
+- `getRows`- Returns all or several rows.
 - `getRowIndexBy`- Returns the index of the first row that matches the specified condition.
-- `getColumn`- Returns a column with the specified name or alias from the DataTable.
-- `getColumns`- Returns all or a number of columns.
+- `getColumn`- Returns a column with the specified name or alias from the data table.
+- `getColumns`- Returns all or several columns.
 - `getModifier`- Returns the modifier for the table.
 
 And many more. For a full list of methods, see the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1).
 
 
 ## Set operations
-A DataTable offers several methods to modify data, among some of the most common are:
+The `DataTable` class offers several methods for modifying data. Some of the most common are:
 
 - `setRow`- Sets cell values of a row.
 - `setRows`- Sets cell values of multiple rows.

@@ -1,32 +1,28 @@
 QUnit.test('Test BB-algorithm on data updates.', function (assert) {
     var chart = Highcharts.stockChart('container', {
-            series: [
-                {
-                    id: 'main',
-                    type: 'candlestick',
-                    data: [
-                        [0, 5, 6, 3, 4],
-                        [1, 15, 16, 13, 14],
-                        [2, 25, 26, 23, 24],
-                        [3, 35, 36, 33, 34],
-                        [4, 45, 46, 43, 44]
-                    ]
-                },
-                {
-                    type: 'bb',
-                    linkedTo: 'main',
-                    params: {
-                        period: 3,
-                        standardDeviation: 3
-                    }
-                }
+        series: [{
+            id: 'main',
+            type: 'candlestick',
+            data: [
+                [0, 5, 6, 3, 4],
+                [1, 15, 16, 13, 14],
+                [2, 25, 26, 23, 24],
+                [3, 35, 36, 33, 34],
+                [4, 45, 46, 43, 44]
             ]
-        }),
-        map = Highcharts.map;
+        }, {
+            type: 'bb',
+            linkedTo: 'main',
+            params: {
+                period: 3,
+                standardDeviation: 3
+            }
+        }]
+    });
 
     function arrToPrecision(arr) {
-        return map(arr, function (point) {
-            return map(point, Math.round);
+        return arr.map(function (point) {
+            return point.map(Math.round);
         });
     }
 
@@ -98,8 +94,16 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
         }
     });
 
+    const getValues = series => (
+        series.getColumn('x').map((x, i) => [
+            series.getColumn('top')[i],
+            series.getColumn('middle')[i],
+            series.getColumn('bottom')[i]
+        ])
+    );
+
     assert.deepEqual(
-        arrToPrecision(chart.series[1].yData),
+        arrToPrecision(getValues(chart.series[1])),
         [
             [15302, 15057, 14813],
             [15302, 15058, 14815],
@@ -129,7 +133,7 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
     chart.series[0].points[27].remove();
 
     assert.deepEqual(
-        arrToPrecision(chart.series[1].yData),
+        arrToPrecision(getValues(chart.series[1])),
         [
             [15302, 15057, 14813],
             [15302, 15058, 14815],

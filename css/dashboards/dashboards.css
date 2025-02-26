@@ -186,7 +186,17 @@
     min-height: 300px;
     transition: 0.5s;
     overflow-x: hidden;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
     font-size: 1rem;
 }
 
@@ -479,7 +489,19 @@
     margin-left: 10px;
 }
 
+.highcharts-dashboards-edit-labeled-toggle-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.highcharts-dashboards-edit-labeled-toggle-wrapper .highcharts-dashboards-edit-label-text {
+    font-size: 12px;
+}
+
 .highcharts-dashboards-edit-toggle-container {
+    flex-basis: 45%;
     align-items: center;
     background-color: transparent;
     border: none;
@@ -488,7 +510,6 @@
     justify-content: space-around;
     display: flex;
     min-width: 100px;
-    width: 100%;
 }
 
 .highcharts-dashboards-edit-toggle-wrapper,
@@ -1132,7 +1153,8 @@
     border-radius: 5px;
 }
 
-.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header,
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header {
     min-height: 30px;
     display: flex;
     flex-direction: row;
@@ -1140,19 +1162,29 @@
     align-self: stretch;
 }
 
-.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn {
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header {
+    min-height: unset;
+}
+
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn,
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-wrapper {
+    flex-basis: 55%;
     flex-direction: row-reverse;
     justify-content: left;
     align-items: center;
     border: none;
     background: none;
     margin: 0;
-    width: 100%;
     padding: 0;
     display: flex;
     cursor: pointer;
     text-transform: capitalize;
     font-size: 0.75rem;
+}
+
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-wrapper {
+    cursor: unset;
+    padding-left: 8px;
 }
 
 .highcharts-dashboards-edit-accordion-header-icon.highcharts-dashboards-edit-collapsed-element {
@@ -1170,7 +1202,7 @@
     border: solid black;
     border-width: 2px 0 0;
     display: inline-block;
-    width: 6.5px;
+    width: 7px;
     height: 1px;
     cursor: pointer;
 }
@@ -1233,6 +1265,16 @@
     padding: 0 16px 16px;
     display: flex;
     flex-direction: column;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-header:has(> .highcharts-dashboards-edit-toggle-container) ~ .highcharts-dashboards-edit-accordion-content:has(> .highcharts-dashboards-edit-labeled-toggle-wrapper) {
+    padding: 0 0 12px;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-header:has(> .highcharts-dashboards-edit-toggle-container) ~ .highcharts-dashboards-edit-accordion-content .highcharts-dashboards-edit-labeled-toggle-wrapper > .highcharts-dashboards-edit-label-text {
+    margin-left: 24px;
 }
 
 .highcharts-dashboards-edit-accordion-content > .highcharts-dashboards-edit-label-text {

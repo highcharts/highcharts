@@ -2,7 +2,6 @@
     const {
         addEvent,
         Chart,
-        each,
         seriesTypes
     } = H;
 
@@ -33,7 +32,7 @@
 
     Chart.prototype.callbacks.push(function (chart) {
         let total = 0;
-        each(chart.series, function (series) {
+        chart.series.forEach(function (series) {
             if (series.initPuzzle) {
                 total += series.initPuzzle();
             }
@@ -171,7 +170,7 @@
 
             const seriesScale = this.transformGroups[0].scaleX;
 
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 const bBox = point.graphic.getBBox(),
                     scale = Math.min(100 / bBox.width, 100 / bBox.height) /
                         seriesScale;

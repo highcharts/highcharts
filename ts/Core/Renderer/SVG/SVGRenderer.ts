@@ -425,9 +425,7 @@ class SVGRenderer implements SVGRendererLike {
                 });
 
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (
-                    hitElement && hitElement.id
-                ) === 'hitme';
+                hasInternalReferenceBug = hitElement?.id === 'hitme';
                 doc.body.removeChild(svg);
             }
 
@@ -458,8 +456,9 @@ class SVGRenderer implements SVGRendererLike {
      */
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
-
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", ' +
+                'Roboto, Helvetica, Arial, "Apple Color Emoji", ' +
+                '"Segoe UI Emoji", "Segoe UI Symbol", sans-serif',
             fontSize: '1rem'
 
         }, style);
@@ -849,7 +848,7 @@ class SVGRenderer implements SVGRendererLike {
             .on('touchstart', (e: Event): void => e.stopPropagation())
             .on('click', function (e: Event): void {
                 if (curState !== 3) {
-                    callback.call(label, e);
+                    callback?.call(label, e);
                 }
             });
     }
@@ -1420,12 +1419,12 @@ class SVGRenderer implements SVGRendererLike {
             // image may be centered within the symbol, as is the case when
             // image shapes are used as label backgrounds, for example in flags.
             img.imgwidth = pick(
-                options && options.width,
-                symbolSizes[imageSrc] && symbolSizes[imageSrc].width
+                options?.width,
+                symbolSizes[imageSrc]?.width
             );
             img.imgheight = pick(
-                options && options.height,
-                symbolSizes[imageSrc] && symbolSizes[imageSrc].height
+                options?.height,
+                symbolSizes[imageSrc]?.height
             );
             /**
              * Set the size and position

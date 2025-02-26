@@ -101,8 +101,6 @@ class TimelineSeries extends LineSeries {
 
     public visiblePointsCount?: number;
 
-    public yData?: Array<number>;
-
     /* *
      *
      *  Functions
@@ -229,21 +227,20 @@ class TimelineSeries extends LineSeries {
         super.generatePoints();
 
         const series = this,
-            points = series.points;
+            points = series.points,
+            xData = series.getColumn('x');
 
         for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
             points[i].applyOptions({
-                x: (series.xData as any)[i]
-            }, (series.xData as any)[i]);
+                x: xData[i]
+            }, xData[i]);
         }
     }
 
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
         const series = this,
             map = (
-                series.data.length ?
-                    series.data :
-                    series.userOptions.data || []
+                (series.data.length ? series.data : series.options.data) || []
             ).map((
                 point: (TimelinePoint|TimelinePointOptions)
             ): (boolean|TimelinePoint|TimelinePointOptions) => (
@@ -441,10 +438,10 @@ class TimelineSeries extends LineSeries {
 
 // Add series-specific properties after data is already processed, #17890
 addEvent(TimelineSeries, 'afterProcessData', function (): void {
-    const series = this;
+    const series = this,
+        xData = series.getColumn('x');
 
-    let visiblePoints = 0,
-        i: (number|undefined);
+    let visiblePoints = 0;
 
     series.visibilityMap = series.getVisibilityMap();
 
@@ -457,9 +454,8 @@ addEvent(TimelineSeries, 'afterProcessData', function (): void {
 
     series.visiblePointsCount = visiblePoints;
 
-    for (i = 0; i < (series.xData as any).length; i++) {
-        (series.yData as any)[i] = 1;
-    }
+    this.dataTable.setColumn('y', new Array(xData.length).fill(1));
+
 });
 
 /* *
@@ -499,39 +495,3 @@ SeriesRegistry.registerSeriesType('timeline', TimelineSeries);
  * */
 
 export default TimelineSeries;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * Callback JavaScript function to format the data label as a string. Note that
- * if a `format` is defined, the format takes precedence and the formatter is
- * ignored.
- *
- * @callback Highcharts.TimelineDataLabelsFormatterCallbackFunction
- *
- * @param {Highcharts.PointLabelObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
- *        Data label context to format
- *
- * @return {number|string|null|undefined}
- *         Formatted data label text
- */
-
-/**
- * @interface Highcharts.TimelineDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- *//**
- * @name Highcharts.TimelineDataLabelsFormatterContextObject#key
- * @type {string|undefined}
- *//**
- * @name Highcharts.TimelineDataLabelsFormatterContextObject#point
- * @type {Highcharts.Point}
- *//**
- * @name Highcharts.TimelineDataLabelsFormatterContextObject#series
- * @type {Highcharts.Series}
- */
-
-''; // Dettach doclets above

@@ -5,8 +5,7 @@ Highcharts.chart('container', {
         inverted: true
     },
     title: {
-        text: 'Alibaba and Meta (Facebook) revenue',
-        align: 'left'
+        text: 'Alibaba and Meta (Facebook) revenue'
     },
     accessibility: {
         keyboardNavigation: {
@@ -16,7 +15,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '&#8226; {series.name}: <b>${point.y} B</b>'
+        pointFormat: '• {series.name}: <b>${point.y} B</b>'
     },
     legend: {
         layout: 'vertical',

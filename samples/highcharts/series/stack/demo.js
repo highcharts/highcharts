@@ -3,6 +3,10 @@ Highcharts.chart('container', {
         type: 'column'
     },
 
+    title: {
+        text: 'Stacked and grouped columns'
+    },
+
     xAxis: {
         categories: ['One', 'Two', 'Three', 'Four', 'Five']
     },
@@ -14,7 +18,7 @@ Highcharts.chart('container', {
     },
 
     series: [
-    // first stack
+        // first stack
         {
             data: [29.9, 71.5, 106.4, 129.2, 144.0],
             stack: 0

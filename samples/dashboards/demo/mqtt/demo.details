@@ -1,0 +1,12 @@
+---
+name: MQTT advanced dashboard
+authors:
+  - Jomar Hønsi
+js_wrap: b
+tags:
+- Highcharts Dashboards demo
+categories:
+  - General:
+        priority: 2
+use_png_thumbnail: true
+...

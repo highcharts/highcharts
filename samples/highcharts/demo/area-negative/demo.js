@@ -3,14 +3,12 @@ Highcharts.chart('container', {
         type: 'area'
     },
     title: {
-        text: 'Production, consumption and trade surplus of electrical power',
-        align: 'left'
+        text: 'Production, consumption and trade surplus of electrical power'
     },
     subtitle: {
         text: 'Source: <a ' +
             'href="https://www.ssb.no/energi-og-industri/energi/statistikk/elektrisitet/artikler/lavere-kraftproduksjon"' +
-            ' target="_blank">SSB</a>',
-        align: 'left'
+            ' target="_blank">SSB</a>'
     },
     xAxis: {
         categories: [

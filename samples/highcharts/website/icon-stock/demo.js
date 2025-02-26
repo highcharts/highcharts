@@ -174,8 +174,8 @@
         xAxis: [
             // 0
             {
-                min: Date.UTC(2021, 5, 2),
-                max: Date.UTC(2021, 8, 4),
+                min: '2021-06-02',
+                max: '2021-09-04',
                 visible: true
 
             }
@@ -674,6 +674,15 @@
                             });
                             greenArrow.classList.add('hide');
                             purpleArrow.classList.add('hide');
+                            document.querySelector(
+                                '#stock .purple-line' +
+                                ' .highcharts-point:nth-of-type(3)'
+                            ).style.transition = '0s';
+                            document.querySelector(
+                                '#stock .green-line' +
+                                ' .highcharts-point:nth-of-type(3)'
+                            ).style.transition =
+                                '0s';
                             // /set the x extremes to slide to the right
                             chart.xAxis[1].setExtremes(0, 7);
                         }, 5200);
@@ -759,8 +768,8 @@
         xAxis: [
             // 0
             {
-                min: Date.UTC(2021, 5, 2),
-                max: Date.UTC(2021, 8, 4),
+                min: '2021-06-02',
+                max: '2021-09-04',
                 visible: false
 
             },

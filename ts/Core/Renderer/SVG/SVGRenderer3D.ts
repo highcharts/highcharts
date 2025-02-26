@@ -439,7 +439,7 @@ namespace SVGRenderer3D {
             duration?: (boolean|Partial<AnimationOptions>),
             complete?: Function
         ): SVGElement {
-            if (params && params.faces) {
+            if (params?.faces) {
                 while (result.faces.length > params.faces.length) {
                     result.faces.pop().destroy();
                 }

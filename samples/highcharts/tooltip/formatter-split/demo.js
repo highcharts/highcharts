@@ -16,7 +16,7 @@ Highcharts.chart('container', {
         formatter: function () {
             // The first returned item is the header, subsequent items are the
             // points
-            return ['<b>' + this.x + '</b>'].concat(
+            return ['<b>' + this.key + '</b>'].concat(
                 this.points ?
                     this.points.map(function (point) {
                         return point.series.name + ': ' + point.y + 'm';
