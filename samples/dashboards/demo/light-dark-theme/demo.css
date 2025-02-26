@@ -61,8 +61,8 @@
 }
 
 .highcharts-dark .hcg-theme-default {
-    --hcg-color: rgb(255, 255, 255);;
-    --hcg-border-color: rgb(92, 92, 92);;
+    --hcg-color: rgb(255, 255, 255);
+    --hcg-border-color: rgb(92, 92, 92);
     --hcg-background: #333333;
 
     /* Header row background color */
@@ -87,7 +87,6 @@
         fill-opacity: 0.9;
     }
 }
-
 
 /* Responsive */
 
