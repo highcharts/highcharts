@@ -41,8 +41,14 @@ function dist() {
         'dist-productsjs'
     ];
 
-    if (product === 'Highcharts') {
-        tasks.push('jsdoc-dts');
+    switch (product) {
+        case 'Highcharts':
+            tasks.push('jsdoc-dts');
+            break;
+        case 'Grid':
+            tasks.push('grid/api-docs');
+            break;
+        default:
     }
 
     tasks.push('lint-dts', 'dist-compress');

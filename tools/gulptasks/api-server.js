@@ -160,6 +160,10 @@ async function apiServer() {
                 response302(response, '/dashboards/');
                 return;
             }
+            if (path === '/grid') {
+                response302(response, '/grid/');
+                return;
+            }
             if (request.method !== 'GET') {
                 response404(response, path);
                 return;
