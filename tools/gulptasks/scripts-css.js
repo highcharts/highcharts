@@ -92,6 +92,32 @@ function copyCSS(config) {
     );
 }
 
+/**
+ * Changes the product version in the CSS files.
+ *
+ * @param  {string} version
+ * Version to replace.
+ *
+ * @param  {string} folder
+ * Folder to replace the version in.
+ */
+function replaceVersionInFile(version, folder) {
+    if (!version) {
+        return;
+    }
+    const fs = require('fs');
+    const files = fs.readdirSync(folder);
+    const path = require('path');
+
+    files.forEach(file => {
+        const filePath = path.join(folder, file);
+        const content = fs.readFileSync(filePath, 'utf8');
+        const updatedContent = content.replace(/@product\.version@/gu, version);
+
+        fs.writeFileSync(filePath, updatedContent);
+    });
+}
+
 /* *
  *
  *  Tasks
@@ -109,7 +135,6 @@ function copyCSS(config) {
  */
 function scriptCSS(argv) {
     const log = require('../libs/log');
-    const fsLib = require('../libs/fs');
 
     return new Promise(resolve => {
         if (argv.dashboards) {
@@ -120,6 +145,7 @@ function scriptCSS(argv) {
         } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
+            replaceVersionInFile(argv.release, gridConfig.target + '/css/');
             log.success('Copied grid CSS');
         } else {
             log.message('Generating css for Highcharts...');
@@ -134,7 +160,8 @@ function scriptCSS(argv) {
 scriptCSS.description = 'Creates CSS files for given product';
 scriptCSS.flags = {
     '--dashboards': 'Creates CSS files for dashboards',
-    '--product': 'Creates CSS files for product: Highcharts (default), Grid'
+    '--product': 'Creates CSS files for product: Highcharts (default), Grid',
+    '--release': 'Creates CSS files for given release version'
 };
 
 gulp.task('scripts-css', () => scriptCSS(require('yargs').argv));
