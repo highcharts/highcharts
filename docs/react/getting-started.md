@@ -18,14 +18,15 @@ Install the Highcharts package along with our [React wrapper](https://www.npmjs.
 npm install highcharts @highcharts/react
 ```
 
-## 2. Add Chart and Series components
+## 2. Add Chart, Series and Title components
 
 In your JSX file, import the necessary components:
 
 ```jsx
 import {
     Chart,
-    Series
+    Series,
+    Title
 } from 'highcharts-react-official';
 ```
 
@@ -37,7 +38,8 @@ Now, you can create a simple chart like this:
 function ChartComponent () {
   return (
     <Chart>
-      <Series type="column" data={[1, 2, 3]} />
+      <Title>Line chart</Title>
+      <Series type="line" data={[1, 2, 3]} />
     </Chart>
   )
 }
@@ -46,3 +48,8 @@ function ChartComponent () {
 For more in-depth information on configuring your chart, see the documentation
 for the [Chart and Series](https://www.highcharts.com/docs/react/series-and-chart-types) components,
 and [how to set options](https://www.highcharts.com/docs/react/options).
+
+
+The result should look like this:
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/basic" style="width: 100%; height: 800px; border: 0;" > </iframe>
