@@ -2225,7 +2225,7 @@ class Navigator {
             destroyObjectProperties(coll);
         });
 
-        // Clear up linked series
+        // Clean up linked series
         this.baseSeries.forEach((s):void => {
             s.navigatorSeries = void 0;
         });
