@@ -32,6 +32,10 @@ import DataGridComponent from '../Components/DataGridComponent/DataGridComponent
 
 declare module '../Components/ComponentType' {
     interface ComponentTypeRegistry {
+        /**
+         * @deprecated
+         * DataGrid will be removed in behalf of Grid in the next major version.
+         */
         DataGrid: typeof DataGridComponent;
         Grid: typeof DataGridComponent;
     }
