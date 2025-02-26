@@ -561,6 +561,7 @@ function (onInit, kbdHandlers, kbdDescriptions) {
         hideToast();
         showKbdHint(chart.renderTo);
         announce(initNotify, 100);
+        announce(initNotify, 1500);
         kbdState.series = 0;
         kbdState.point = 0;
         onInit(chart);
@@ -621,7 +622,6 @@ function (onInit, kbdHandlers, kbdDescriptions) {
     fallbackButton.onclick = () => {
         app.focus();
         init();
-        announce(initNotify, 2000);
     };
     document.addEventListener('mousedown', () => (entered = false));
 
