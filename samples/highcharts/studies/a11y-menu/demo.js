@@ -1454,6 +1454,18 @@ function createPreferencesDialog(chart) {
     const settings = chartSettingsMap[chart.index];
     const i = chart.index;
 
+    // Position dialogue
+    const settingsButton = document.querySelector('#hc-pref-button');
+
+    if (settingsButton) {
+        const rect = settingsButton.getBoundingClientRect();
+        prefContent.style.position = 'absolute';
+        prefContent.style.top = `${rect.bottom + 5}px`;
+        prefContent.style.left = `${rect.left}px`;
+        prefContent.style.minWidth = '280px';
+        prefContent.style.maxWidth = '320px';
+    }
+
     // Close button container
     const headerContainer = document.createElement('div');
     headerContainer.classList.add('dialog-header');
