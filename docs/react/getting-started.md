@@ -27,7 +27,7 @@ import {
     Chart,
     Series,
     Title
-} from 'highcharts-react-official';
+} from '@highcharts/react';
 ```
 
 ## 3. Create your chart

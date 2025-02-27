@@ -1,6 +1,6 @@
 # Setting options
 
-## Configure with Option Components
+## Configure with option components
 
 The Highcharts React integration includes customizable components such as
 Title, Subtitle, Credits, Tooltip, Legend, XAxis, YAxis, and PlotOptions,
@@ -18,7 +18,7 @@ import {
     PlotOptions,
     Tooltip,
     Legend
-} from 'highcharts-react-official';
+} from '@highcharts/react';
 ```
 
 Here's an example of adding a custom title:
@@ -94,7 +94,7 @@ This method allows you to define chart types, data, and specific Highcharts conf
 If you need to set global Highcharts options or use global methods, access the `Highcharts` export:
 
 ```jsx
-import { Highcharts } from 'highcharts-react-official';
+import { Highcharts } from '@highcharts/react';
 
 Highcharts.setOptions({
     chart: {
@@ -114,7 +114,7 @@ If you need to load additional modules or use a specific Highcharts version, you
 custom Highcharts instance. This can be accomplished via the `setHighcharts` function:
 
 ```jsx
-import { Chart, setHighcharts } from 'highcharts-react-official';
+import { Chart, setHighcharts } from '@highcharts/react';
 
 import Highcharts from 'highcharts/highcharts';
 import 'highcharts/modules/exporting';

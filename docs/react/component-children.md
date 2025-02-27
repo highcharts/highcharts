@@ -19,7 +19,7 @@ It is possible to change this binding by setting the `_HCReact.childOption`
 property of the component.
 
 ```ts
-import { Tooltip } from 'highcharts-react-official';
+import { Tooltip } from '@highcharts/react';
 
 Tooltip._HCReact.childOption = 'footerFormat';
 ```

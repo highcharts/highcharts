@@ -8,7 +8,7 @@ The main module provides a `Series` component that can be used this way:
 import {
     Chart,
     Series
-} from 'highcharts-react-official';
+} from '@highcharts/react';
 
 function ChartComponent () {
   return (
@@ -35,7 +35,7 @@ specific components. This helps manage required imports seamlessly.
 For example, to use a Venn diagram series:
 
 ```jsx
-import { VennSeries } from 'highcharts-react-official/series/Venn';
+import { VennSeries } from '@highcharts/react/series/Venn';
 ```
 
 Use the Venn series component just like the generic `Series`, but omit the `type` prop:
@@ -56,7 +56,7 @@ avoiding additional setup.
 
 Import the Stock chart component:
 ```jsx
-import { StockChart } from 'highcharts-react-official/Stock';
+import { StockChart } from '@highcharts/react/Stock';
 
 export function StockChart() {
   return (
@@ -78,7 +78,7 @@ export function StockChart() {
 
 Import the Gantt chart component:
 ```jsx
-import { GanttChart } from 'highcharts-react-official/Gantt';
+import { GanttChart } from '@highcharts/react/Gantt';
 
 export function GanttChart() {
   return (
@@ -107,8 +107,8 @@ export function GanttChart() {
 
 Import the Map chart and its map series component:
 ```jsx
-import { MapsChart } from 'highcharts-react-official/Maps';
-import { MapSeries } from 'highcharts-react-official/series/Map';
+import { MapsChart } from '@highcharts/react/Maps';
+import { MapSeries } from '@highcharts/react/series/Map';
 
 // Fetch map data
 const mapData = await fetch('https://code.highcharts.com/mapdata/custom/world.topo.json').then(res => res.ok ? res.json() : null);
