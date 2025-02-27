@@ -10,11 +10,9 @@ QUnit.test('Chart options in Standalone Navigator', function (assert) {
         }]
     });
 
-    const creditsElement = document.querySelector('.highcharts-credits');
-
     assert.notOk(
-        creditsElement,
-        'Credits element should not exist.'
+        navigator.navigator.chart.credits,
+        'Credits should not exist.'
     );
 
     navigator.navigator.chart.update({
