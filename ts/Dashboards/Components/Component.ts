@@ -499,22 +499,23 @@ abstract class Component {
      *
      * @internal
      */
-    public addConnectorAssignment(
-        connector: Component.ConnectorTypes | undefined
-    ): void {
-        const component = this;
-        if (connector && !connector.elements.includes(component.element)) {
+    public addConnectorAssignment(connector?: Component.ConnectorTypes): void {
+        const element = this.element;
+        if (connector && !connector.elements.includes(element)) {
+            const elements = connector.elements;
+            const options = connector.options;
+
             // Add the component assignment.
-            connector.elements.push(component.element);
+            elements.push(element);
 
             // Start the connector polling.
             if (
                 !connector.polling &&
-                connector.elements.length === 1 &&
-                'dataRefreshRate' in connector.options
+                elements.length === 1 &&
+                'dataRefreshRate' in options
             ) {
                 connector.startPolling(
-                    Math.max(connector.options.dataRefreshRate || 0, 1) * 1000
+                    Math.max(options.dataRefreshRate || 0, 1) * 1000
                 );
             }
         }
@@ -880,13 +881,13 @@ abstract class Component {
      * @internal
      */
     public removeConnectorAssignment(
-        connector: Component.ConnectorTypes | undefined
+        connector?: Component.ConnectorTypes
     ): void {
-        const component = this;
-        if (connector && connector.elements.includes(component.element)) {
+        const element = this.element;
+        if (connector?.elements.includes(element)) {
             // Remove the component assignment.
             connector.elements = connector.elements.filter(
-                (element): boolean => !element.isEqualNode(component.element)
+                (innerElement): boolean => !innerElement.isEqualNode(element)
             );
 
             // Stop the connector polling.
