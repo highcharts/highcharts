@@ -45,21 +45,38 @@ function decorateImports(content, masterImports) {
 
         if (importsMatchs) {
             const matchs = Array.from(importsMatchs);
-            const insertIndex = matchs[0].index;
-            const newImports = [];
+            const insertFirstIndex = matchs[0].index;
+            const insertLastIndex = (
+                matchs[matchs.length - 1].index +
+                matchs[matchs.length - 1][0].length
+            );
+            const newFirstImports = [];
+            const newLastImports = [];
 
             for (const path of masterImports) {
-                if (!matchs.some(m => m[2] === path)) {
-                    newImports.push(`import '${path}';`);
+                if (matchs.some(m => m[2] === path)) {
+                    newLastImports.push(`/*! ${path} */`);
+                } else if (path.endsWith('highcharts.src.js')){
+                    newFirstImports.push(`import '${path}';`);
                 } else {
-                    newImports.push(`/*! ${path} */`);
+                    newLastImports.push(`import '${path}';`);
                 }
             }
 
-            if (newImports.length) {
+            // Reverted insert order for stable index
+
+            if (newLastImports.length) {
                 content = insert(
-                    newImports.join('\n') + '\n',
-                    insertIndex,
+                    newLastImports.join('\n') + '\n',
+                    insertLastIndex,
+                    content
+                );
+            }
+
+            if (newFirstImports.length) {
+                content = insert(
+                    newFirstImports.join('\n') + '\n',
+                    insertFirstIndex,
                     content
                 );
             }

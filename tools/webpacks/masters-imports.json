@@ -2,6 +2,10 @@
     "highcharts-3d": [
         "highcharts"
     ],
+    "highcharts-gantt": [
+        "highcharts",
+        "modules/xrange"
+    ],
     "modules/funnel3d": [
         "highcharts-3d"
     ],
