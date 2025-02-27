@@ -151,6 +151,7 @@ class Grid {
     /**
      * The user options declared for the columns as an object of column ID to
      * column options.
+     * @internal
      */
     public columnOptionsMap: Record<string, Column.Options> = {};
 
@@ -241,6 +242,7 @@ class Grid {
 
     /**
      * The querying controller.
+     * @internal
      */
     public querying: QueryingController;
 
@@ -256,6 +258,7 @@ class Grid {
 
     /**
      * The initial height of the container. Can be 0 also if not set.
+     * @internal
      */
     public initialContainerHeight: number = 0;
 
@@ -695,7 +698,6 @@ class Grid {
 
     /**
      * Render caption above the grid.
-     *
      * @internal
      */
     public renderCaption(): void {
@@ -754,6 +756,7 @@ class Grid {
     /**
      * Resets the content wrapper of the Grid. It clears the content and
      * resets the class names.
+     * @internal
      */
     public resetContentWrapper(): void {
         if (!this.contentWrapper) {
@@ -1044,6 +1047,9 @@ class Grid {
  *
  * */
 namespace Grid {
+    /**
+     * @internal
+     */
     export type AfterLoadCallback = (grid: Grid) => void;
 }
 

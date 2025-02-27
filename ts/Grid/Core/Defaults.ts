@@ -37,6 +37,7 @@ namespace Defaults {
 
     /**
      * Default options for the Grid.
+     * @internal
      */
     export const defaultOptions: Globals.DeepPartial<Options> = {
         accessibility: {
