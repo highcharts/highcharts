@@ -110,7 +110,7 @@
                     hash = iframeWindow.location.href
                         .split('/typedoc/')[1]
                         .replace('.html', '')
-                        .replace('%23', '#');
+                        .replace(/%23/g, '#');
 
                 if (hash !== 'index') {
                     history.replaceState(null, null, '#' + hash);
