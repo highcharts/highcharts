@@ -33,12 +33,12 @@ import type Serializable from '../Serializable';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 
 import Cell from '../Layout/Cell.js';
 import CellHTML from '../Layout/CellHTML.js';
 import CallbackRegistry from '../CallbackRegistry.js';
 import ConnectorHandler from './ConnectorHandler.js';
-import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
 import Sync from './Sync/Sync.js';
@@ -56,7 +56,8 @@ const {
     objectEach,
     isFunction,
     getStyle,
-    diffObjects
+    diffObjects,
+    removeEvent
 } = U;
 
 import CU from './ComponentUtilities.js';
@@ -490,6 +491,36 @@ abstract class Component {
     }
 
     /**
+     * Adds the component to the provided connector.
+     * Starts the connector polling if inactive and one component is provided.
+     *
+     * @param connector
+     * Instance of a connector.
+     *
+     * @internal
+     */
+    public addConnectorAssignment(
+        connector: Component.ConnectorTypes | undefined
+    ): void {
+        const component = this;
+        if (connector && !connector.elements.includes(component.element)) {
+            // Add the component assignment.
+            connector.elements.push(component.element);
+
+            // Start the connector polling.
+            if (
+                !connector.polling &&
+                connector.elements.length === 1 &&
+                'dataRefreshRate' in connector.options
+            ) {
+                connector.startPolling(
+                    Math.max(connector.options.dataRefreshRate || 0, 1) * 1000
+                );
+            }
+        }
+    }
+
+    /**
      * Initializes connector handlers for the component.
      */
     public async initConnectors(): Promise<this> {
@@ -499,6 +530,7 @@ abstract class Component {
 
         for (const connectorHandler of this.connectorHandlers) {
             await connectorHandler.initConnector();
+            this.addConnectorAssignment(connectorHandler.connector);
         }
 
         fireEvent(this, 'afterSetConnectors', {
@@ -839,6 +871,32 @@ abstract class Component {
     }
 
     /**
+     * Removes the component instance from the provided connector.
+     * Stops the connector polling if the last element is removed.
+     *
+     * @param connector
+     * Instance of a connector.
+     *
+     * @internal
+     */
+    public removeConnectorAssignment(
+        connector: Component.ConnectorTypes | undefined
+    ): void {
+        const component = this;
+        if (connector && connector.elements.includes(component.element)) {
+            // Remove the component assignment.
+            connector.elements = connector.elements.filter(
+                (element): boolean => !element.isEqualNode(component.element)
+            );
+
+            // Stop the connector polling.
+            if (connector.elements.length === 0) {
+                connector.stopPolling();
+            }
+        }
+    }
+
+    /**
      * Destroys the component.
      */
     public destroy(): void {
@@ -858,8 +916,13 @@ abstract class Component {
         fireEvent(this, 'unmount');
 
         for (const connectorHandler of this.connectorHandlers) {
+            this.removeConnectorAssignment(connectorHandler.connector);
             connectorHandler.destroy();
         }
+
+        // Used to removed the onTableChanged event.
+        removeEvent(this);
+
         this.element.remove();
     }
 
@@ -1198,7 +1261,7 @@ namespace Component {
     }
 
     /** @internal */
-    export type ConnectorTypes = DataConnector;
+    export type ConnectorTypes = DataConnectorType;
 
     /**
      * Allowed types for the text.
