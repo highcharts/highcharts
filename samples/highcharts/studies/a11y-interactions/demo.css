@@ -93,12 +93,20 @@ h1 {
     box-shadow: 0 0 5px #ccc;
 }
 
-.card.small {
+.card.small,
+.card.medium {
     grid-column-end: span 3;
 }
 
 .card.large {
     grid-column-end: span 5;
+}
+
+@media only screen and (max-width: 1400px) {
+    .card.medium,
+    .card.large {
+        grid-column-end: span 4;
+    }
 }
 
 @media only screen and (max-width: 1000px) {
@@ -116,6 +124,10 @@ h1 {
     }
 
     .card.small {
+        grid-column-end: span 1;
+    }
+
+    .card.medium {
         grid-column-end: span 1;
     }
 
@@ -139,5 +151,9 @@ h1 {
         background-color: #222;
         color: #fff;
         box-shadow: 0 0 5px #000;
+    }
+
+    h1 {
+        color: #fff;
     }
 }

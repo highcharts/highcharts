@@ -87,7 +87,7 @@ hcCSS.replaceSync(`
         font-weight: bold;
     }
 
-    .hc-a11y-kbd-hints-dialog {
+    .hc-dialog {
         position: absolute;
         padding: 20px;
         margin: 0;
@@ -103,25 +103,45 @@ hcCSS.replaceSync(`
             list-style-type: none;
             padding: 0;
         }
+        h3 {
+            margin: 0;
+            &:focus {
+                outline: none;
+            }
+        }
+        button.close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 1.2em;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .content {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .hc-a11y-kbd-hints-dialog {
+        ul {
+            display: flex;
+            flex: 1;
+            flex-flow: column wrap;
+            gap: 5px;
+        }
         li {
             padding: 5px 0;
             display: flex;
             align-items: center;
         }
-        .hc-a11y-kbd-hints-header {
+        .inner-content {
+            flex: 1;
+            min-height: 0;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            h3 {
-                margin: 0;
-            }
-            button {
-                font-size: 1.2em;
-                background: none;
-                border: none;
-                cursor: pointer;
-            }
         }
     }
 
@@ -149,51 +169,29 @@ hcCSS.replaceSync(`
     }
 
     .hc-a11y-query-dialog {
-        position: absolute;
-        align-items: center;
-        padding: 20px;
-        margin: 0;
-        box-sizing: border-box;
-        background-color: #fff;
-        box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        border: none;
-        font-size: 0.9em;
-        overflow-y: auto;
-
-        .hc-a11y-query-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            h3 {
-                margin: 0;
-            }
-            button {
-                font-size: 1.2em;
-                background: none;
-                border: none;
-                cursor: pointer;
-            }
-        }
-
-        p {
+        p,
+        .inner-content {
             max-width: 500px;
             margin: 40px auto 0;
         }
 
         .hc-a11y-query-inputs {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            margin: 20px 0;
             gap: 10px;
+            margin-top: 20px;
 
-            input {
+            select {
                 padding: 5px;
                 border-radius: 4px;
                 border: 1px solid #ccc;
+                background-color: transparent;
                 font-size: 0.9em;
+            }
+
+            .grow {
+                flex: 1;
             }
         }
 
@@ -214,19 +212,48 @@ hcCSS.replaceSync(`
         }
     }
 
+    @media (prefers-color-scheme: dark) {
+        .hc-dialog,
+        .hc-a11y-kbd-hint {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        .hc-a11y-toast {
+            background-color: rgba(0, 0, 0, 0.6);
+
+            p {
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+                border: 1px solid #888;
+            }
+        }
+
+        .hc-dialog button.close {
+            color: #fff;
+        }
+    }
+
 `);
 document.adoptedStyleSheets.push(hcCSS);
 
 // Helper function to handle CSS positioning
-const setCSSPosToOverlay = (targetEl, sourceEl) => {
-    const bbox = sourceEl.getBoundingClientRect(),
-        bodyOffset = document.body.getBoundingClientRect();
-    Object.assign(targetEl.style, {
-        left: bbox.x - bodyOffset.x + 'px',
-        top: bbox.y - bodyOffset.y + 'px',
-        width: bbox.width + 'px',
-        height: bbox.height + 'px'
-    });
+const setCSSPosToOverlay = (targetEl, sourceEl, attrs) => {
+    const setSize = () => {
+            const bbox = sourceEl.getBoundingClientRect(),
+                bodyOffset = document.body.getBoundingClientRect(),
+                attributes = Object.assign({
+                    left: bbox.x - bodyOffset.x + 'px',
+                    top: bbox.y - bodyOffset.y + 'px',
+                    width: bbox.width + 'px',
+                    height: bbox.height + 'px'
+                }, attrs || {});
+            Object.assign(targetEl.style, attributes);
+        },
+        resizeObserver = new ResizeObserver(setSize);
+
+    resizeObserver.observe(sourceEl);
+    setSize();
 };
 
 
@@ -260,6 +287,46 @@ const cancelNextAnnouncement = () => {
     clearTimeout(nextAnnounceTimeout);
     announcer.innerText = '';
 };
+
+
+// ============================================================================
+// Dialog features
+
+const createDialog = (heading, content, className) => {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'hc-dialog ' + className;
+    dialog.innerHTML = `
+        <div class="content" role="document">
+            <h3 tabindex="-1" autofocus>${heading}</h3>
+            <div class="inner-content">${content}</div>
+            <button class="close" aria-label="Close dialog">X</button>
+        </div>`;
+    document.body.appendChild(dialog);
+    dialog.querySelector('button.close').onclick = () => dialog.close();
+    return dialog;
+};
+
+
+// ============================================================================
+// Kbd hints dialog
+
+const kbdHintsDialog = createDialog(
+        'Keyboard shortcuts and tools', '', 'hc-a11y-kbd-hints-dialog'
+    ),
+    showKbdDialog = (parent, hints) => {
+        kbdHintsDialog.querySelector('.inner-content').innerHTML = `
+            <ul role="list">
+                ${Object.values(hints).map(hint => `
+                    <li${hint.srOnly ? ' class="hc-a11y-sr-only"' : ''}>
+                        <span class="hc-a11y-kbd-key">${hint.name}</span>
+                        <span class="hc-a11y-sr-only">.</span>
+                        <span>${hint.desc}</span>
+                    </li>
+                `).join('')}
+            </ul>`;
+        setCSSPosToOverlay(kbdHintsDialog, parent);
+        kbdHintsDialog.showModal();
+    };
 
 
 // ============================================================================
@@ -317,22 +384,11 @@ document.addEventListener('mousedown', () => (focusVisible = false));
 // ============================================================================
 // Keyboard hint tooltip
 
-const kbdHint = (() => {
-    const kbdHint = document.createElement('div'),
-        keySpan = document.createElement('span'),
-        preSpan = document.createElement('span'),
-        postSpan = document.createElement('span');
-    kbdHint.className = 'hc-a11y-kbd-hint';
-    keySpan.className = 'hc-a11y-kbd-key';
-    preSpan.textContent = 'Press ';
-    keySpan.textContent = 'T';
-    postSpan.textContent = ' for tools';
-    kbdHint.appendChild(preSpan);
-    kbdHint.appendChild(keySpan);
-    kbdHint.appendChild(postSpan);
-    document.body.appendChild(kbdHint);
-    return kbdHint;
-})();
+const kbdHint = document.createElement('div');
+kbdHint.className = 'hc-a11y-kbd-hint';
+kbdHint.innerHTML = `<span>Press <span
+    class="hc-a11y-kbd-key">T</span> for tools</span>`;
+document.body.appendChild(kbdHint);
 
 let hideKbdHintTimeout,
     kbdHintOwner;
@@ -341,8 +397,7 @@ let hideKbdHintTimeout,
 const showKbdHint = el => {
     (kbdHintOwner = el).style.opacity = 0.5; // Dim owner
     clearTimeout(hideKbdHintTimeout);
-    setCSSPosToOverlay(kbdHint, el);
-    Object.assign(kbdHint.style, {
+    setCSSPosToOverlay(kbdHint, el, {
         opacity: 1,
         width: 'auto',
         height: 'auto'
@@ -364,63 +419,6 @@ const hideKbdHint = () => {
 
 hideKbdHint();
 document.addEventListener('mousedown', hideKbdHint);
-
-
-// ============================================================================
-// Keyboard hints dialog
-
-const kbdHintsDialog = (function buildKbdHintsDialog() {
-    const dialog = document.createElement('dialog');
-    dialog.className = 'hc-a11y-kbd-hints-dialog';
-    document.body.appendChild(dialog);
-    return dialog;
-}());
-
-const hideKbdHintsDialog = () => kbdHintsDialog.close();
-
-// Show keyboard hints dialog for a container, with list of hints
-const showKbdDialog = (parent, hints) => {
-    kbdHintsDialog.innerHTML = '';
-    const header = document.createElement('div'),
-        heading = document.createElement('h3'),
-        closeBtn = document.createElement('button'),
-        ul = document.createElement('ul');
-
-    header.className = 'hc-a11y-kbd-hints-header';
-    heading.textContent = 'Keyboard shortcuts and tools';
-    closeBtn.textContent = 'X';
-    closeBtn.onclick = hideKbdHintsDialog;
-    closeBtn.setAttribute('aria-label', 'Close keyboard shortcuts');
-    header.appendChild(heading);
-    header.appendChild(closeBtn);
-    kbdHintsDialog.appendChild(header);
-
-    ul.setAttribute('role', 'list');
-    kbdHintsDialog.appendChild(ul);
-
-    Object.values(hints).forEach(hint => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span class="hc-a11y-kbd-key">${hint.name}</span>
-            <span class="hc-a11y-sr-only">.</span>
-            <span>${hint.desc}</span>`;
-        if (hint.srOnly) {
-            li.className = 'hc-a11y-sr-only';
-        }
-        ul.appendChild(li);
-    });
-
-    const bbox = parent.getBoundingClientRect(),
-        bodyOffset = document.body.getBoundingClientRect();
-
-    Object.assign(kbdHintsDialog.style, {
-        left: bbox.x - bodyOffset.x + 'px',
-        top: bbox.y - bodyOffset.y + 'px',
-        height: bbox.height + 'px',
-        width: bbox.width + 'px'
-    });
-
-    kbdHintsDialog.showModal();
-};
 
 
 // ============================================================================
@@ -499,13 +497,6 @@ function (svgEl, elType, content, parent) {
     );
 
     return el;
-};
-
-// Handy utility to do something on viewport resize
-const onViewportResize = handler => {
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', handler);
-    }
 };
 
 
@@ -650,7 +641,6 @@ const delaysModel = chart => {
     Highcharts.addEvent(
         chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
     );
-    onViewportResize(overlay);
 };
 
 
@@ -685,7 +675,6 @@ const accidentsModel = chart => {
     Highcharts.addEvent(
         chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
     );
-    onViewportResize(overlay);
 };
 
 
@@ -738,6 +727,11 @@ const historicalKbdHandlers = (() => {
     const getCurPoint = chart => chart.sonification.getLastPlayedPoint() ||
         chart.series[0].points[0];
 
+    const singlePointInfo = (point, announcemsg) => point.sonify(() => {
+        announce(announcemsg, 200);
+        setTimeout(() => point.onMouseOver(), 0);
+    });
+
     let prevActionWasLR = false;
     const leftRight = (chart, next) => {
         const prevPoint = getCurPoint(chart);
@@ -764,14 +758,7 @@ const historicalKbdHandlers = (() => {
             nextSeries = sortedSeries[next ? ix + 1 : ix - 1],
             np = nextSeries && nextSeries.points[index];
         if (np) {
-            np.sonify(
-                () => {
-                    announce(
-                        `${nextSeries.name}, $${np.y}. ${np.category}`,
-                        200
-                    );
-                    setTimeout(() => np.onMouseOver(), 0);
-                });
+            singlePointInfo(np, `${nextSeries.name}, $${np.y}. ${np.category}`);
         } else {
             chart.options.sonification.events.onBoundaryHit({ chart });
         }
@@ -780,7 +767,7 @@ const historicalKbdHandlers = (() => {
         const prevPoint = getCurPoint(chart),
             p = prevPoint.series.points[
                 end ? prevPoint.series.points.length - 1 : 0];
-        p.sonify(() => announce(`$${p.y}. ${p.category}`, 200));
+        singlePointInfo(p, `$${p.y}. ${p.category}`);
     };
     const pageUpDown = (chart, max) => {
         const series = getCurPoint(chart).series,
@@ -790,9 +777,10 @@ const historicalKbdHandlers = (() => {
                 }
                 return p.y < acc.y ? p : acc;
             }, series.points[0]);
-        poi.sonify(() => announce(
-            `${max ? 'Maximum' : 'Minimum'}, $${poi.y}. ${poi.category}`, 200
-        ));
+        singlePointInfo(
+            poi,
+            `${max ? 'Maximum' : 'Minimum'}, $${poi.y}. ${poi.category}`
+        );
     };
 
     return {
@@ -839,6 +827,18 @@ const historicalKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
             prevActionWasLR = false;
+        },
+
+        // Sound guide
+        g: chart => {
+            const msg = 'The chart will play sounds as you navigate. ' +
+                'Lower tones means lower price, higher tones means higher ' +
+                'price. Sounds are played from left to right, where left ' +
+                'is on the left side of the chart, and right is on the right ' +
+                'side of the chart.';
+            announce(msg);
+            showToast(chart, msg);
+            prevActionWasLR = false;
         }
     };
 })();
@@ -847,6 +847,10 @@ const historicalKbdDescriptions = {
     arrows: {
         name: 'Arrows ←↓↑→',
         desc: 'Navigate data'
+    },
+    g: {
+        name: 'G',
+        desc: 'Read guide for sounds'
     },
     a: {
         name: 'A',
@@ -886,6 +890,9 @@ const historicalExplanation = chart => {
     chart.addSROnly(
         'p', 'The chart is showing price over time, from 1993 to 2023.'
     );
+    chart.addSROnly(
+        'p', 'Chart has audio features and additional interactive tools.'
+    );
 };
 
 const historicalOverlay = (chart, parent) => {
@@ -906,92 +913,55 @@ const historicalOverlay = (chart, parent) => {
     Highcharts.addEvent(
         chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
     );
-    onViewportResize(overlay);
 };
 
 
 // ============================================================================
 // Network graph model
 
-// Search stuff ---------------------------------------------------------------
-
-const levenshteinDistance = (a, b) => {
-    const clean = s => s.toLowerCase().replace(/[^a-z]+/g, ''),
-        s = clean(a),
-        t = clean(b);
-    if (!s.length) {
-        return t.length;
-    }
-    if (!t.length) {
-        return s.length;
-    }
-    const arr = [];
-    for (let i = 0; i <= t.length; ++i) {
-        arr[i] = [i];
-        for (let j = 1; j <= s.length; ++j) {
-            arr[i][j] =
-          i === 0 ?
-              j :
-              Math.min(
-                  arr[i - 1][j] + 1,
-                  arr[i][j - 1] + 1,
-                  arr[i - 1][j - 1] + (s[j - 1] === t[i - 1] ? 0 : 1)
-              );
-        }
-    }
-    return arr[t.length][s.length];
-};
-
-const nodeFromUserInput = (input, chart) => {
-    const bestMatch = chart.precomputedNetwork.reduce(
-            (acc, node) => {
-                const dist = levenshteinDistance(input, node.name);
-                return dist < acc.dist ? { node, dist } : acc;
-            }, { node: null, dist: Infinity }
-        ),
-        pctDistance = bestMatch.dist / input.trim().length;
-    return pctDistance < 0.3 ? bestMatch.node : null;
-};
-
 const nodesHaveLink = (fromNode, toNode) =>
     fromNode.linksTo.some(l => l.fromNode === toNode) ||
     toNode.linksTo.some(l => l.fromNode === fromNode);
 
 // Query dialog
-const queryDialog = document.createElement('dialog');
-queryDialog.className = 'hc-a11y-query-dialog';
-queryDialog.innerHTML = `
-    <div class="hc-a11y-query-header">
-        <h3>Search connections in network</h3>
-        <button aria-label="Close search dialog">X</button>
-    </div>
+const queryDialog = createDialog(
+    'Search connections in network', `
     <p>
-    Find connections between nodes. You can search for a single node to see if
-    it exists, or for two nodes to see if they are connected. Enter node names
-    in the input fields below.
+    Find connections between nodes. Select two node names below to see if they
+    have a direct connection.
     </p>
     <div class="hc-a11y-query-inputs">
         <label for="hc-a11y-query-firstnode">First node</label>
-        <input id="hc-a11y-query-firstnode" type="text">
+        <select id="hc-a11y-query-firstnode"></select>
+        <div class="grow"></div>
         <label for="hc-a11y-query-secondnode">Second node</label>
-        <input id="hc-a11y-query-secondnode" type="text">
+        <select id="hc-a11y-query-secondnode"></select>
     </div>
     <button class="hc-a11y-query-btn">Search</button>
     <p class="hc-a11y-query-result" tabindex="-1"></p>
-`;
-document.body.appendChild(queryDialog);
-const dialogClose = queryDialog.querySelector('.hc-a11y-query-header button'),
-    queryButton = queryDialog.querySelector('.hc-a11y-query-btn'),
+    `, 'hc-a11y-query-dialog'
+);
+const queryButton = queryDialog.querySelector('.hc-a11y-query-btn'),
     queryResult = queryDialog.querySelector('.hc-a11y-query-result'),
     fromInput = queryDialog.querySelector('#hc-a11y-query-firstnode'),
     toInput = queryDialog.querySelector('#hc-a11y-query-secondnode');
 
 const showQueryDialog = chart => {
     queryResult.textContent = fromInput.value = toInput.value = '';
+
+    // Populate with nodes
+    fromInput.innerHTML = toInput.innerHTML = chart.precomputedNetwork.slice(0)
+        .sort((a, b) => a.name.localeCompare(b.name)).reduce(
+            (acc, cur) => (acc +=
+            `<option value="${
+                chart.precomputedNetwork.indexOf(cur)
+            }">${cur.name}</option>`), ''
+        );
+
     setCSSPosToOverlay(queryDialog, chart.renderTo);
     queryButton.onclick = () => {
-        const fromNode = nodeFromUserInput(fromInput.value, chart),
-            toNode = nodeFromUserInput(toInput.value, chart),
+        const fromNode = chart.precomputedNetwork[fromInput.value],
+            toNode = chart.precomputedNetwork[toInput.value],
             play = (note, delay) => chart.sonification.playNote(
                 'plucked', { note, volume: 0.5, tremoloDepth: 0 }, delay
             ),
@@ -1000,43 +970,27 @@ const showQueryDialog = chart => {
             ),
             numConn = n => n.linksFrom.length + n.linksTo.length;
 
-        if (!fromNode ^ !toNode) {
-            const n = fromNode || toNode,
-                bothInputs = fromInput.value.trim() && toInput.value.trim();
-            queryResult.textContent = `Node "${
-                n.name}" found, with connections to ${
-                numConn(n)} other nodes.${
-                bothInputs ? ' Could not find other node.' : ''}`;
-            play('g4', 200);
-        } else if (fromNode && toNode) {
-            if (nodesHaveLink(fromNode, toNode)) {
-                queryResult.textContent =
-                    `Found nodes "${fromNode.name}" and "${toNode.name
-                    }" that are directly connected. ${fromNode.name} has ${
-                        numConn(fromNode)} connections, and ${
-                        toNode.name} has ${numConn(toNode)
-                    } connections.`;
-                play('e4', 200);
-                play('b4', 400);
-            } else {
-                queryResult.textContent =
-                    `Found no direct connection between nodes "${
-                        fromNode.name}" and "${toNode.name}".`;
-                sad();
-            }
+        if (nodesHaveLink(fromNode, toNode)) {
+            queryResult.textContent =
+                `Found nodes "${fromNode.name}" and "${toNode.name
+                }" that are directly connected. ${fromNode.name} has ${
+                    numConn(fromNode)} connections, and ${
+                    toNode.name} has ${numConn(toNode)
+                } connections.`;
+            play('e4', 200);
+            play('b4', 400);
         } else {
-            queryResult.textContent = 'Nothing found.';
+            queryResult.textContent =
+                `Found no direct connection between nodes "${
+                    fromNode.name}" and "${toNode.name}".`;
             sad();
         }
+
         setTimeout(() => queryResult.focus(), 200);
     };
 
     queryDialog.showModal();
 };
-const hideQueryDialog = () => queryDialog.close();
-dialogClose.onclick = hideQueryDialog;
-
-// Model stuff ----------------------------------------------------------------
 
 const networkInit = chart => {
     chart.sonification.cancel();
@@ -1126,7 +1080,7 @@ const networkKbdHandlers = (() => {
                     )
                 ));
             chart.sonification.speak(
-                'Network graph, largest to smallest', {
+                'Network graph, all nodes, largest to smallest', {
                     rate: 1.5
                 }, 0, sonify
             );
@@ -1156,18 +1110,30 @@ const networkKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
         },
-        s: chart => showQueryDialog(chart)
+        s: chart => showQueryDialog(chart),
+        g: chart => {
+            const msg = 'The chart will play sounds as you navigate. ' +
+            'Lower and stronger tones means a bigger node with more ' +
+            'connections. Higher and weaker tones means a smaller node ' +
+            'with fewer connections.';
+            announce(msg);
+            showToast(chart, msg);
+        }
     };
 })();
 
 const networkKbdDescriptions = {
     arrows: {
         name: 'Arrows ←↓↑→',
-        desc: 'Navigate data, largest to smallest'
+        desc: 'Navigate data, sorted largest to smallest'
+    },
+    g: {
+        name: 'G',
+        desc: 'Read guide for sounds'
     },
     a: {
         name: 'A',
-        desc: 'Play network as audio (autopilot), large nodes first'
+        desc: 'Play whole network as audio (autopilot), large nodes first'
     },
     s: {
         name: 'S',
@@ -1217,6 +1183,9 @@ const networkExplanation = chart => {
         </p>
     `);
     ds.setAttribute('tabindex', -1);
+    chart.addSROnly(
+        'p', 'Chart has audio features and additional interactive tools.'
+    );
 };
 
 const networkOverlay = (chart, parent) => {
@@ -1240,7 +1209,6 @@ const networkOverlay = (chart, parent) => {
     Highcharts.addEvent(
         chart.series[0], 'afterSimulation', () => setTimeout(overlay, 0)
     );
-    onViewportResize(overlay);
 };
 
 
@@ -1263,7 +1231,8 @@ const wordcloudKbdHandlers = (() => {
 
     const sonifyWord = (chart, point) => {
         const maxWeight = chart.series[0].points[0].weight,
-            value = point.weight / maxWeight;
+            value = point.weight / maxWeight,
+            speechFactor = [0.8, 1, 1.2][chart.speechRateModifier ?? 1];
         chart.sonification.playNote(
             'vibraphone',
             {
@@ -1280,7 +1249,7 @@ const wordcloudKbdHandlers = (() => {
                 language: 'en-US',
                 name: 'Samantha',
                 volume: value * 0.8 + 0.2,
-                rate: 2.8 - value * 2,
+                rate: speechFactor * 2.8 - value * 2,
                 pitch: 1.4 - value * 0.8
             },
             50
@@ -1328,7 +1297,8 @@ const wordcloudKbdHandlers = (() => {
         Home: chart => startEnd(chart),
         End: chart => startEnd(chart, true),
         a: chart => {
-            const maxWeight = chart.series[0].points[0].weight;
+            const maxWeight = chart.series[0].points[0].weight,
+                speechFactor = [1.5, 1, 0.8][chart.speechRateModifier ?? 1];
             clearSonification();
             const old = chart.sonification.cancel;
             chart.sonification.cancel = () => {
@@ -1349,10 +1319,10 @@ const wordcloudKbdHandlers = (() => {
                         }
                     }, time)
                 );
-                time += 100 + value * 530;
+                time += speechFactor * 100 + speechFactor * value * 530;
             });
             chart.sonification.speak(
-                'Word cloud, largest to smallest', {
+                'Word cloud, all words, largest to smallest', {
                     rate: 1.5
                 }, 0, sonify
             );
@@ -1368,6 +1338,25 @@ const wordcloudKbdHandlers = (() => {
             }.`;
             announce(msg);
             showToast(chart, msg);
+        },
+        g: chart => {
+            const msg = 'The chart will play sounds and speak the words ' +
+            'as you navigate. Lower tones, stronger, and slower words ' +
+            'means a bigger word with more occurrences. Higher tones, ' +
+            'weaker and faster words means a smaller word with fewer ' +
+            'occurrences.';
+            announce(msg);
+            showToast(chart, msg);
+        },
+        s: chart => {
+            chart.speechRateModifier = (chart.speechRateModifier || 0) + 1;
+            if (chart.speechRateModifier > 2) {
+                chart.speechRateModifier = 0;
+            }
+            const msg = 'Speech: ' +
+                ['Slow', 'Normal', 'Fast'][chart.speechRateModifier];
+            announce(msg);
+            showToast(chart, msg);
         }
     };
 })();
@@ -1375,11 +1364,19 @@ const wordcloudKbdHandlers = (() => {
 const wordcloudKbdDescriptions = {
     arrows: {
         name: 'Arrows ←↓↑→',
-        desc: 'Navigate data, largest to smallest'
+        desc: 'Navigate data, sorted largest to smallest'
+    },
+    g: {
+        name: 'G',
+        desc: 'Read guide for sounds'
     },
     a: {
         name: 'A',
-        desc: 'Play word cloud as audio (autopilot), large words first'
+        desc: 'Play whole word cloud as audio (autopilot), large words first'
+    },
+    s: {
+        name: 'S',
+        desc: 'Set play speed for spoken words'
     },
     Home: {
         name: 'Home',
@@ -1420,6 +1417,9 @@ const wordcloudExplanation = chart => {
         </p>
     `);
     ds.setAttribute('tabindex', -1);
+    chart.addSROnly(
+        'p', 'Chart has audio features and additional interactive tools.'
+    );
 };
 const wordcloudOverlay = (chart, parent) => {
     const container = chart.addProxyContainerEl('div', parent),
@@ -1439,7 +1439,6 @@ const wordcloudOverlay = (chart, parent) => {
     Highcharts.addEvent(
         chart.series[0], 'afterAnimate', () => setTimeout(overlay, 0)
     );
-    onViewportResize(overlay);
 };
 
 
@@ -1563,6 +1562,11 @@ Highcharts.setOptions({
     legend: {
         itemStyle: {
             color: c('#333', '#ccc', 'CanvasText')
+        },
+        itemHoverStyle: {
+            color: c('#000', '#fff', 'CanvasText'),
+            textDecoration: 'underline',
+            cursor: 'unset'
         }
     },
     tooltip: {
@@ -1599,7 +1603,7 @@ Highcharts.setOptions({
         },
         lineColor: c('#333', '#ccc', 'CanvasText'),
         tickColor: c('#333', '#ccc', 'CanvasText'),
-        gridLineColor: c('#e6e6e6', '#333', 'Canvas')
+        gridLineColor: c('#e6e6e6', '#444', 'Canvas')
     },
     credits: {
         enabled: false
@@ -1692,6 +1696,7 @@ Highcharts.chart('accidents', {
         { patternIndex: 0 }
     ],
     tooltip: {
+        followPointer: false,
         headerFormat: '',
         pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
     },
