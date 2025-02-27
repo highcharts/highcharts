@@ -30,7 +30,8 @@ module.exports = {
             'chart-concepts/drilldown',
             'chart-concepts/3d-charts',
             'chart-concepts/responsive',
-            'chart-concepts/security'
+            'chart-concepts/security',
+            'chart-concepts/dataviz-glossary'
         ],
         'Stock': [
             'stock/getting-started-stock',
@@ -231,7 +232,12 @@ module.exports = {
                             'morningstar/time-series/price'
                         ],
                         'Screeners': [
+                            'morningstar/screeners/screener',
+                            'morningstar/screeners/esg-screener',
+                            'morningstar/screeners/find-similar-screener',
                             'morningstar/screeners/investment-screener',
+                            'morningstar/screeners/investor-preferences',
+                            'morningstar/screeners/regulatory-screener',
                         ]
                     }
                 ]

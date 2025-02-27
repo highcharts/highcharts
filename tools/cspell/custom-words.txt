@@ -76,6 +76,7 @@ Squarified
 treemaps
 variablepie
 Marimekko
+Mekko
 Archimedian
 behaviour
 tickmarks
@@ -196,3 +197,6 @@ CUSIP
 MSID
 OHLCV
 indexmundi
+Dataviz
+KIIDs
+SFDR

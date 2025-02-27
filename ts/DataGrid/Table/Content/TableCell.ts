@@ -300,8 +300,12 @@ class TableCell extends Cell {
      * Handle the formatting content of the cell.
      */
     private formatCell(): string {
+        const cellsDefaults =
+            this.row.viewport.dataGrid.options?.columnDefaults?.cells || {};
         const options = this.column.options.cells || {};
         const { format, formatter } = options;
+        const isDefaultFormat = cellsDefaults.format === format;
+        const isDefaultFormatter = cellsDefaults.formatter === formatter;
 
         let value = this.value;
         if (!defined(value)) {
@@ -310,12 +314,16 @@ class TableCell extends Cell {
 
         let cellContent = '';
 
-        if (formatter) {
-            cellContent = formatter.call(this).toString();
-        } else {
-            cellContent = (
-                format ? this.format(format) : value + ''
-            );
+        if (isDefaultFormat && isDefaultFormatter) {
+            cellContent = formatter ?
+                formatter.call(this).toString() :
+                (
+                    format ? this.format(format) : value + ''
+                );
+        } else if (isDefaultFormat) {
+            cellContent = formatter?.call(this).toString() || value + '';
+        } else if (isDefaultFormatter) {
+            cellContent = format ? this.format(format) : value + '';
         }
 
         return cellContent;
