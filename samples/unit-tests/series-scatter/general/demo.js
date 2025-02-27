@@ -1,5 +1,5 @@
 QUnit.test('Scatter series general tests.', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
             chart: {
                 type: 'scatter'
             },
@@ -11,9 +11,15 @@ QUnit.test('Scatter series general tests.', function (assert) {
                         [167.5, 59.0]
                     ]
                 }
-            ]
+            ],
+            tooltip: {
+                formatter: function () {
+                    return `${this.index}`;
+                }
+            }
         }),
-        series = chart.series[0];
+        series = chart.series[0],
+        tc = new TestController(chart);
 
     series.update({
         lineWidth: 0
@@ -29,5 +35,21 @@ QUnit.test('Scatter series general tests.', function (assert) {
         series.graph,
         'Scatter line should not be visible when mouse over a point (#13816, ' +
         '#15667).'
+    );
+
+    series.setData([
+        [0, 0, 5],
+        [0, 0, 5]
+    ]);
+
+    tc.mouseOver(
+        chart.plotLeft + series.points[0].plotX,
+        chart.plotTop + series.points[0].plotY
+    );
+
+    assert.deepEqual(
+        chart.tooltip.text.textStr,
+        '1',
+        'The point with the last index should be highlighted'
     );
 });
