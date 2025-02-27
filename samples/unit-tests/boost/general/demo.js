@@ -1,77 +1,80 @@
-QUnit.test('Set extremes when boosted', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'column',
-            zooming: {
-                type: 'xy'
-            }
-        },
-        xAxis: {
-            minRange: 0.1
-        },
-        series: [
-            {
-                boostThreshold: 1,
-                cropThreshold: 1,
-                data: [
-                    [0, 0],
-                    [0, 1],
-                    [0, 2],
-                    [0, 3],
-                    [0, 4],
-                    [1, 1.5],
-                    [2, 1.5],
-                    [3, 1.5],
-                    [4, 1.25],
-                    [5, 1.2]
-                ]
-            }
-        ]
-    });
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Set extremes when boosted',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                zooming: {
+                    type: 'xy'
+                }
+            },
+            xAxis: {
+                minRange: 0.1
+            },
+            series: [
+                {
+                    boostThreshold: 1,
+                    cropThreshold: 1,
+                    data: [
+                        [0, 0],
+                        [0, 1],
+                        [0, 2],
+                        [0, 3],
+                        [0, 4],
+                        [1, 1.5],
+                        [2, 1.5],
+                        [3, 1.5],
+                        [4, 1.25],
+                        [5, 1.2]
+                    ]
+                }
+            ]
+        });
 
-    chart.yAxis[0].setExtremes(1, 2);
+        chart.yAxis[0].setExtremes(1, 2);
 
-    assert.strictEqual(
-        chart.series[0].boost.clipRect.attr('height'),
-        chart.plotHeight,
-        'Correct height of the clipping box after set extremes (#6895).'
-    );
+        assert.strictEqual(
+            chart.series[0].boost.clipRect.attr('height'),
+            chart.plotHeight,
+            'Correct height of the clipping box after set extremes (#6895).'
+        );
 
-    chart.series[0].update({
-        type: 'scatter'
-    });
+        chart.series[0].update({
+            type: 'scatter'
+        });
 
-    // Reset
-    chart.yAxis[0].setExtremes(0, 4);
+        // Reset
+        chart.yAxis[0].setExtremes(0, 4);
 
-    const initialRange = chart.xAxis[0].getExtremes(),
-        initialPointsLength = chart.series[0].points.length;
+        const initialRange = chart.xAxis[0].getExtremes(),
+            initialPointsLength = chart.series[0].points.length;
 
-    // Zoom in
-    chart.xAxis[0].setExtremes(2, 3);
+        // Zoom in
+        chart.xAxis[0].setExtremes(2, 3);
 
-    assert.ok(
-        chart.series[0].cropped,
-        'After zoom series should be cropped.'
-    );
-    assert.ok(
-        chart.series[0].points.length < initialPointsLength,
-        'After zoom series should have less points.'
-    );
+        assert.ok(
+            chart.series[0].cropped,
+            'After zoom series should be cropped.'
+        );
+        assert.ok(
+            chart.series[0].points.length < initialPointsLength,
+            'After zoom series should have less points.'
+        );
 
-    // Reset
-    chart.xAxis[0].setExtremes();
+        // Reset
+        chart.xAxis[0].setExtremes();
 
-    assert.deepEqual(
-        chart.xAxis[0].getExtremes(),
-        initialRange,
-        'Resetting extremes after zoom should go back to the initial range.'
-    );
-    assert.ok(
-        chart.series[0].points.length === initialPointsLength,
-        'After resetting zoom series should show all points.'
-    );
-});
+        assert.deepEqual(
+            chart.xAxis[0].getExtremes(),
+            initialRange,
+            'Resetting extremes after zoom should go back to the initial range.'
+        );
+        assert.ok(
+            chart.series[0].points.length === initialPointsLength,
+            'After resetting zoom series should show all points.'
+        );
+    }
+);
 
 QUnit.test(
     'Boost enabled false and boostThreshold conflict (#9052)',
