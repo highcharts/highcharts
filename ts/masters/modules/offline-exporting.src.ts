@@ -20,7 +20,7 @@ const G: AnyRecord = Highcharts;
 
 // Compatibility
 G.dataURLtoBlob = G.dataURLtoBlob || DownloadURL.dataURLtoBlob;
-G.downloadSVGLocal = OfflineExporting.downloadSVGLocal;
+/// G.downloadSVGLocal = OfflineExporting.downloadSVGLocal;
 G.downloadURL = G.downloadURL || DownloadURL.downloadURL;
 
 // Compose
