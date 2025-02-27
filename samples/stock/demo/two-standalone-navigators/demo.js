@@ -60,6 +60,9 @@ const AMDPriceConnector =
         title: {
             text: 'AMD Stock Price'
         },
+        xAxis: {
+            overscroll: 7776000000 // 90 days
+        },
         series: [{
             name: 'AMD',
             data: price
