@@ -18,6 +18,7 @@
  * */
 
 import AST from '../Core/Renderer/HTML/AST.js';
+import Templating from '../Core/Templating.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
@@ -65,6 +66,7 @@ declare global {
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
+        Templating: typeof Templating;
     }
     interface Window {
         Grid: GridNamespace;
@@ -93,6 +95,7 @@ G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
+G.Templating = Templating;
 G.product = 'Grid Lite';
 G.setOptions = Defaults.setOptions;
 

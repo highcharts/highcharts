@@ -19,6 +19,7 @@
 
 
 import AST from '../Core/Renderer/HTML/AST.js';
+import Templating from '../Core/Templating.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
@@ -95,6 +96,7 @@ declare global {
         Column: typeof Column;
         HeaderCell: typeof HeaderCell;
         TableCell: typeof TableCell;
+        Templating: typeof Templating;
     }
     interface Window {
         /**
@@ -132,6 +134,7 @@ G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.setOptions = Defaults.setOptions;
+G.Templating = Templating;
 G.product = 'Grid Pro';
 
 G.Table = G.Table || Table;
