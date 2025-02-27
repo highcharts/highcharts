@@ -229,4 +229,7 @@ declare module '../Core/Options' {
  *
  * */
 
+/**
+ * @internal
+ */
 export default { compose };

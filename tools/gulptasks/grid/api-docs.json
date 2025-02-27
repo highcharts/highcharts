@@ -10,8 +10,6 @@
 
         "../../../ts/Grid/Core/Accessibility/A11yOptions.ts",
         "../../../ts/Grid/Core/Accessibility/Accessibility.ts",
-        "../../../ts/Grid/Core/Querying/QueryingController.ts",
-        "../../../ts/Grid/Core/Querying/SortingController.ts",
         "../../../ts/Grid/Core/Table/Actions/ColumnSorting.ts",
         "../../../ts/Grid/Core/Table/Actions/ColumnsResizer.ts",
         "../../../ts/Grid/Core/Table/Actions/RowsVirtualizer.ts",
@@ -25,7 +23,6 @@
         "../../../ts/Grid/Core/Table/Row.ts",
         "../../../ts/Grid/Core/Table/Table.ts",
         "../../../ts/Grid/Core/Defaults.ts",
-        "../../../ts/Grid/Core/Globals.ts",
         "../../../ts/Grid/Core/Grid.ts",
         "../../../ts/Grid/Core/GridUtils.ts",
         "../../../ts/Grid/Core/Options.ts",
