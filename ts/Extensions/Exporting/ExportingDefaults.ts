@@ -538,7 +538,7 @@ const exporting: ExportingOptions = {
         downloadPNG: {
             textKey: 'downloadPNG',
             onclick: function (): void {
-                this.exportChartLocal();
+                this.exportChart();
             }
         },
 
@@ -548,7 +548,7 @@ const exporting: ExportingOptions = {
         downloadJPEG: {
             textKey: 'downloadJPEG',
             onclick: function (): void {
-                this.exportChartLocal({
+                this.exportChart({
                     type: 'image/jpeg'
                 });
             }
@@ -572,7 +572,7 @@ const exporting: ExportingOptions = {
         downloadSVG: {
             textKey: 'downloadSVG',
             onclick: function (): void {
-                this.exportChartLocal({
+                this.exportChart({
                     type: 'image/svg+xml'
                 });
             }
