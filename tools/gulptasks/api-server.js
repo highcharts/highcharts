@@ -222,7 +222,3 @@ async function apiServer() {
 }
 
 Gulp.task('api-server', apiServer);
-
-module.exports = {
-    apiServer
-};
