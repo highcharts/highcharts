@@ -129,18 +129,33 @@ function sanitizePath(path) {
  * Start a server serving up the API documentation
  *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
 async function apiServer() {
 
     const log = require('../libs/log');
+    const argv = require('yargs').argv;
+
+    let mainRoute;
+    switch (argv.product) {
+        case 'Grid':
+            mainRoute = '/grid/';
+            break;
+        default:
+            mainRoute = '/highcharts/';
+    }
 
     HTTP
         .createServer((request, response) => {
 
             let path = sanitizePath(request.url);
 
-            if (path === '/highcharts' || path === '/' || path === '') {
+            if (path === '/' || path === '') {
+                response302(response, mainRoute);
+                return;
+            }
+
+            if (path === '/highcharts') {
                 response302(response, '/highcharts/');
                 return;
             }
@@ -207,3 +222,7 @@ async function apiServer() {
 }
 
 Gulp.task('api-server', apiServer);
+
+module.exports = {
+    apiServer
+};
