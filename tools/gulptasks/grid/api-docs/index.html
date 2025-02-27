@@ -97,7 +97,7 @@
                 location.hash.length > 1 ?
                     'typedoc/' + location.hash
                         .substring(1)
-                        .replace('%23', '#')
+                        .replace(/%23/g, '#')
                         .replace(/(#)|$/, '.html$1') :
                     'typedoc/index.html'
             ));
