@@ -1007,7 +1007,7 @@ function formatAltTextVerbosityForPoints(chart, selectedVerbosity) {
 /* -------------------- PREFERENCES BUTTON --------------------- */
 function addPrefButton(chart) {
     const settingImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Cog_wheel_icon.svg/1024px-Cog_wheel_icon.svg.png';
-    const fallbackText = '⚙️';
+    // const fallbackText = '⚙️';
 
     const buttonGroup = chart.renderer.g()
         .attr({
@@ -1021,9 +1021,8 @@ function addPrefButton(chart) {
         .on('click', () => handlePrefButtonClick(chart))
         .add();
 
-    // White background rectangle behind the icon
-    const bgRect = chart.renderer
-        .rect(705, 0, 40, 40)
+    // Create background rectangle
+    const bgRect = chart.renderer.rect(0, 0, 27, 27)
         .attr({
             class: 'hc-pref-button-bg',
             rx: 8,
@@ -1033,40 +1032,63 @@ function addPrefButton(chart) {
         })
         .add(buttonGroup);
 
-    // Add the image on top
-    const prefButton = chart.renderer.image(
-        settingImgSrc, 715, 7, 24, 24
-    )
+    // Add icon image
+    const prefButton = chart.renderer.image(settingImgSrc, 0, 0, 20, 20)
         .attr({
             id: 'hc-pref-button',
             'aria-hidden': 'false'
         })
         .add(buttonGroup);
 
-    // Add fallback logic in case the image fails
-    prefButton.element.onerror = () => {
-        prefButton.destroy(); // Remove broken image
+    // Add fallback text if image fails
+    // prefButton.element.onerror = () => {
+    //     prefButton.destroy(); // Remove broken image
+    //     chart.renderer
+    //         .text(fallbackText, 0, 0)
+    //         .attr({
+    //             class: 'hc-pref-button-text',
+    //             'aria-hidden': 'false'
+    //         })
+    //         .css({
+    //             fontSize: '16px',
+    //             textAnchor: 'middle',
+    //             cursor: 'pointer',
+    //             fill: '#000000'
+    //         })
+    //         .add(buttonGroup);
+    // };
 
-        chart.renderer
-            .text(fallbackText, 720, 25) // x, y for the text
-            .attr({
-                class: 'hc-pref-button-text',
-                'aria-hidden': 'false'
-            })
-            .css({
-                fontSize: '20px',
-                textAnchor: 'middle',
-                cursor: 'pointer',
-                fill: '#000000' // Ensure the text is visible
-            })
-            .add(buttonGroup);
-    };
+    // Initial positioning
+    updatePrefButtonPosition(chart, bgRect, prefButton);
 
-    // Ensure the rectangle stays behind everything
-    buttonGroup.element.insertBefore(bgRect.element, prefButton.element);
+    // Update position on chart resize
+    Highcharts.addEvent(
+        chart,
+        'redraw',
+        () => updatePrefButtonPosition(chart, bgRect, prefButton)
+    );
 
-    // Assign button group to chart namespace
+    // Assign button to chart namespace
     chart.prefMenu.prefButton = buttonGroup;
+}
+
+// Making the button responsive
+function updatePrefButtonPosition(chart, bgRect, prefButton) {
+    const chartWidth = chart.chartWidth;
+    let xPos;
+
+    if (chartWidth < 900) {
+        xPos = chartWidth - 70;
+    } else {
+        xPos = 750;
+    }
+
+    const yPos = 5;
+    const iconXPos = xPos + 2.5;
+    const iconYPos = yPos + 4;
+
+    bgRect.attr({ x: xPos, y: yPos });
+    prefButton.attr({ x: iconXPos, y: iconYPos });
 }
 
 function addPrefButtonScreenReader(chart) {
@@ -1097,9 +1119,8 @@ function addPrefButtonScreenReader(chart) {
 
         // Ensure screenReaderDiv and tableButton exist
         if (screenReaderDiv && tableButton) {
-            screenReaderDivInnerDiv.insertBefore(
-                prefButton, screenReaderDivInnerDiv.children[4]
-            );
+            screenReaderDivInnerDiv.children[3]
+                .insertAdjacentElement('afterend', prefButton);
         }
     }
 }
