@@ -17,11 +17,12 @@ import G from '../../Core/Globals.js';
 import mapping from './DependencyMapping.js';
 import U from '../../Core/Utilities.js';
 const {
+    pushUnique,
     splat
 } = U;
 
 const H: AnyRecord = G;
-const loaded = new Set<string>();
+const loaded: string[] = [];
 
 // Default to root and extension that supports ESM imports.
 // @todo When we get ESM bundle builds, we should change this.
@@ -30,17 +31,17 @@ let root = '../../masters',
 
 const addStyleSheets = (
     options: Partial<Options>,
-    modules: Set<string>
+    modules: Array<string>
 ): void => {
     // Styled mode
     if (options.chart?.styledMode) {
-        modules.add('css/highcharts.css');
+        pushUnique(modules, 'css/highcharts.css');
     }
 
     // Stock Tools
     if (options.stockTools) {
-        modules.add('css/stocktools/gui.css');
-        modules.add('css/annotations/popup.css');
+        pushUnique(modules, 'css/stocktools/gui.css');
+        pushUnique(modules, 'css/annotations/popup.css');
     }
 
 };
@@ -49,7 +50,7 @@ const addStyleSheets = (
 // of the required modules.
 const getModules = (options: Partial<Options>): Array<string> => {
 
-    const modules = new Set<string>();
+    const modules: string[] = [];
 
     const recurse = (
         options: AnyRecord,
@@ -59,7 +60,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
             const fullKey = path.concat(key).join('.');
             if (fullKey in mapping) {
                 mapping[fullKey].forEach(
-                    (module): Set<string> => modules.add(module)
+                    (module): boolean => pushUnique(modules, module)
                 );
             }
             if (value && typeof value === 'object') {
@@ -80,7 +81,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
     itemsWithType.forEach((item): void => {
         if (item.type && mapping[`series.${item.type}`]) {
             mapping[`series.${item.type}`].forEach(
-                (module): Set<string> => modules.add(module)
+                (module): boolean => pushUnique(modules, module)
             );
         }
     });
@@ -90,7 +91,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
         splat(options.annotations).forEach((annotation): void => {
             if (annotation.type && mapping[`annotations.${annotation.type}`]) {
                 mapping[`annotations.${annotation.type}`].forEach(
-                    (module): Set<string> => modules.add(module)
+                    (module): boolean => pushUnique(modules, module)
                 );
             }
         });
@@ -129,7 +130,7 @@ const setRoot = (userRoot: string, userExtension = 'js'): void => {
 
 
 const loadScript = async (module: string): Promise<undefined> => {
-    if (loaded.has(module)) {
+    if (loaded.includes(module)) {
         return;
     }
 
@@ -142,7 +143,7 @@ const loadScript = async (module: string): Promise<undefined> => {
 
     return new Promise((resolve, reject): void => {
         const onload = (): void => {
-            loaded.add(module);
+            pushUnique(loaded, module);
             resolve(void 0);
         };
 
@@ -170,7 +171,8 @@ const loadScript = async (module: string): Promise<undefined> => {
 ).forEach((factory): void => {
     H[factory] = async function (
         container: string|globalThis.HTMLElement,
-        options: Partial<Options>
+        options: Partial<Options>,
+        callback?: Function
     ): Promise<Chart> {
 
         guessRoot();
@@ -196,7 +198,7 @@ const loadScript = async (module: string): Promise<undefined> => {
             mapChart: 'MapChart',
             stockChart: 'StockChart'
         }[factory];
-        return new H[constructorName](container, options);
+        return new H[constructorName](container, options, callback);
     };
 });
 
