@@ -103,16 +103,19 @@ export async function makeExternals(
         return void 0;
     }
 
-    path = PPath.relative(mastersFolder, path);
-    path = path;
+    const nameInfo = path.match(/([^\/.]+)(\.[^\/]+)$/su);
 
-    if (path === masterName) {
+    if (!nameInfo) {
         return void 0;
     }
 
-    const namespaceName = PPath.basename(
-        path.replace(/([^\/.]+)\.[^\/]+$/su, '$1')
-    );
+    path = PPath.relative(mastersFolder, path);
+
+    if (path === masterName + nameInfo[2]) {
+        return void 0;
+    }
+
+    const namespaceName = PPath.basename(nameInfo[1]);
 
     switch (externalsType) {
         case 'module-import':
@@ -197,13 +200,6 @@ export async function resolveExternals(
     externalsProduct = 'highcharts',
     externalsType = 'umd'
 ) {
-    const path = PPath
-        .relative(
-            FSLib.path(sourceFolder, true),
-            FSLib.path([info.context, info.request], true)
-        )
-        .replace(/\.[^\/]+$/u, '')
-    const namespaceName = PPath.basename(path);
 
     // Quick exit
     if (
@@ -213,7 +209,30 @@ export async function resolveExternals(
         return void 0;
     }
 
-    for (const external of externals) {
+    const myExternals = externals.slice();
+    const path = PPath
+        .relative(
+            FSLib.path(sourceFolder, true),
+            FSLib.path([info.context, info.request], true)
+        )
+        .replace(/\.[^\/]+$/u, '')
+    const namespaceName = PPath.basename(path);
+
+    if (
+        path.startsWith('masters/') &&
+        !path.endsWith(masterName)
+    ) {
+        myExternals.push({
+            files: [path],
+            included: [
+                masterName,
+                path.substring(8)
+            ],
+            namespacePath: ''
+        });
+    }
+
+    for (const external of myExternals) {
         if (external.files.includes(path)) {
 
             if (external.included.includes(masterName)) {

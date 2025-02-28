@@ -116,14 +116,29 @@
         "namespacePath": ".{name}"
     },
     {
+        "files": ["Series/Area/AreaSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.area"
+    },
+    {
         "files": ["Series/AreaRange/AreaRangeSeries"],
         "included": ["highcharts-more"],
         "namespacePath": ".Series.types.arearange"
     },
     {
+        "files": ["Series/AreaSpline/AreaSplineSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.areaspline"
+    },
+    {
         "files": ["Series/AreaSplineRange/AreaSplineRangeSeries"],
         "included": ["highcharts-more"],
         "namespacePath": ".Series.types.areasplinerange"
+    },
+    {
+        "files": ["Series/Bar/BarSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.bar"
     },
     {
         "files": ["Series/BoxPlot/BoxPlotSeries"],
@@ -134,6 +149,11 @@
         "files": ["Series/Bubble/BubbleSeries"],
         "included": ["highcharts-more"],
         "namespacePath": ".Series.types.bubble"
+    },
+    {
+        "files": ["Series/Column/ColumnSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.column"
     },
     {
         "files": ["Series/ColumnPyramid/ColumnPyramidSeries"],
@@ -156,9 +176,19 @@
         "namespacePath": ".Series.types.gauge"
     },
     {
+        "files": ["Series/Line/LineSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.line"
+    },
+    {
         "files": ["Series/PackedBubble/PackedBubbleSeries"],
         "included": ["highcharts-more"],
         "namespacePath": ".Series.types.packedbubble"
+    },
+    {
+        "files": ["Series/Pie/PieSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.pie"
     },
     {
         "files": ["Series/Polygon/PolygonSeries"],
@@ -166,48 +196,26 @@
         "namespacePath": ".Series.types.polygon"
     },
     {
+        "files": ["Series/Scatter/ScatterSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.scatter"
+    },
+    {
+        "files": ["Series/Spline/SplineSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.spline"
+    },
+    {
         "files": ["Series/Waterfall/WaterfallSeries"],
         "included": ["highcharts-more"],
         "namespacePath": ".Series.types.waterfall"
     },
     {
-        "files": ["Series/Area/AreaSeries"],
-        "included": [],
-        "namespacePath": ".Series.types.area"
-    },
-    {
-        "files": ["Series/Area/AreaSplineSeries"],
-        "included": [],
-        "namespacePath": ".Series.types.areaspline"
-    },
-    {
-        "files": ["Series/Area/BarSeries"],
-        "included": [],
-        "namespacePath": ".Series.types.bar"
-    },
-    {
-        "files": ["Series/Area/ColumnSeries"],
-        "included": [],
-        "namespacePath": ".Series.types.column"
-    },
-    {
-        "files": ["Series/Area/LineSeries"],
-        "included": [],
-        "namespacePath": ".Series.types.line"
-    },
-    {
-        "files": ["Series/Area/PieSeries"],
-        "included": [],
-        "namespacePath": ".Series.types.pie"
-    },
-    {
-        "files": ["Series/Area/ScatterSeries"],
-        "included": [],
-        "namespacePath": ".Series.types.scatter"
-    },
-    {
-        "files": ["Series/Area/SplineSeries"],
-        "included": [],
-        "namespacePath": ".Series.types.spline"
+        "files": ["Series/XRange/XRangeSeries"],
+        "included": [
+            "modules/gantt",
+            "modules/xrange"
+        ],
+        "namespacePath": ".Series.types.waterfall"
     }
 ]

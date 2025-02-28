@@ -207,38 +207,32 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
 
     if (
         masterName !== productMasters[0] &&
-        !masterName.includes('standalone') &&
-        productMasters.includes(masterName)
+        !masterName.includes('standalone')
     ) {
         esmWebpack.externals = [
-            (info) => makeExternals(
-                info,
-                masterName,
-                mastersFolder,
-                namespace,
-                'module-import'
-            )
-        ];
-    } else if (umdWebpack.externals) {
-        esmWebpack.externals = [
-            (info) => (
-                info.context.includes('masters') ?
-                    makeExternals(
+            (info) => {
+                const contextPath =
+                    FSLib.path([info.context, info.request], true);
+
+                if (contextPath.includes(mastersFolder)) {
+                    return makeExternals(
                         info,
                         masterName,
                         mastersFolder,
                         namespace,
                         'module-import'
-                    ) :
-                    resolveExternals(
+                    );
+                } else {
+                    return resolveExternals(
                         info,
                         masterName,
                         sourceFolder,
                         namespace,
                         productMasters[0],
                         'module-import'
-                    )
-            )
+                    );
+                }
+            }
         ];
     }
 
