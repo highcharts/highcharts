@@ -22,6 +22,10 @@ import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
+import H from '../../../Core/Globals.js';
+const {
+    isFirefox
+} = H;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -64,6 +68,13 @@ class CellEditToolbar extends EditToolbar {
                 icon: iconURLPrefix + 'drag.svg',
                 events: {
                     onmousedown: function (this: MenuItem, e: any): void {
+                        // #22546, workaround for Firefox, where mouseenter
+                        // event is not fired when triggering it while dragging
+                        // another element.
+                        if (isFirefox) {
+                            e.preventDefault();
+                        }
+
                         const cellEditToolbar = this.menu
                             .parent as CellEditToolbar;
                         const dragDrop = cellEditToolbar.editMode.dragDrop;

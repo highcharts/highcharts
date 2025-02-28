@@ -639,7 +639,11 @@ class SidebarPopup extends BaseForm {
                     }
                 });
             } else if (componentName === 'row') {
-                componentList.push(SidebarPopup.addRow);
+                componentList.push({
+                    ...SidebarPopup.addRow,
+                    text: editMode.lang?.sidebar[componentName] ||
+                        SidebarPopup.addRow.text
+                });
             }
         });
 
