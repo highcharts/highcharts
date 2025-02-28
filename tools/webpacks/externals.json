@@ -31,6 +31,14 @@
         "namespacePath": ".{name}"
     },
     {
+        "files": ["Extensions/DataGrouping/ApproximationDefaults"],
+        "included": [
+            "modules/datagrouping",
+            "modules/stock"
+        ],
+        "namespacePath": ".dataGrouping.approximationDefaults"
+    },
+    {
         "files": ["Extensions/DataGrouping/ApproximationRegistry"],
         "included": [
             "modules/datagrouping",

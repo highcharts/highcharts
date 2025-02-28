@@ -6,10 +6,26 @@
         "highcharts",
         "modules/xrange"
     ],
+    "highcharts-more": [
+        "highcharts"
+    ],
+    "modules/dumbbell": [
+        "highcharts-more"
+    ],
     "modules/funnel3d": [
         "highcharts-3d"
     ],
+    "modules/lollipop": [
+        "modules/dumbbell"
+    ],
     "modules/pyramid3d": [
         "modules/funnel3d"
+    ],
+    "modules/solid-gauge": [
+        "highcharts",
+        "highcharts-more"
+    ],
+    "modules/xrange": [
+        "highcharts"
     ]
 }
