@@ -49,7 +49,6 @@ declare module '../Core/Chart/ChartLike' {
 
 declare module '../Core/Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
-        /** @requires modules/overlapping-datalabels */
         absoluteBox?: BBoxObject;
     }
 }
@@ -63,8 +62,6 @@ declare module '../Core/Renderer/SVG/SVGElementLike' {
 /**
  * Hide overlapping labels. Labels are moved and faded in and out on zoom to
  * provide a smooth visual impression.
- *
- * @requires modules/overlapping-datalabels
  *
  * @private
  * @function Highcharts.Chart#hideOverlappingLabels
