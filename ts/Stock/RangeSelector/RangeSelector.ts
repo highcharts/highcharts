@@ -38,6 +38,8 @@ import H from '../../Core/Globals.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import T from '../../Core/Templating.js';
+const { format } = T;
 import U from '../../Core/Utilities.js';
 import OrdinalAxis from '../../Core/Axis/OrdinalAxis.js';
 const {
@@ -186,8 +188,7 @@ class RangeSelector {
     public buttons!: Array<SVGElement>;
     public isCollapsed?: boolean;
     public buttonGroup?: SVGElement;
-    public buttonOptions: Array<RangeSelectorButtonOptions> =
-        RangeSelector.prototype.defaultButtons;
+    public buttonOptions: Array<RangeSelectorButtonOptions> = [];
     public chart!: Chart;
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
@@ -442,6 +443,7 @@ class RangeSelector {
             options = (
                 chart.options.rangeSelector as RangeSelectorOptions
             ),
+            langOptions = chart.options.lang,
             buttonOptions = options.buttons,
             selectedOption = options.selected,
             blurInputs = function (): void {
@@ -460,7 +462,22 @@ class RangeSelector {
         rangeSelector.options = options;
         rangeSelector.buttons = [];
 
-        rangeSelector.buttonOptions = buttonOptions;
+        rangeSelector.buttonOptions = buttonOptions
+            .map((opt): RangeSelectorButtonOptions => {
+                if (opt.type && langOptions.rangeSelector) {
+                    opt.text ??= langOptions.rangeSelector[`${opt.type}Text`];
+                    opt.title ??= langOptions.rangeSelector[`${opt.type}Title`];
+                }
+
+                opt.text = format(opt.text, {
+                    count: opt.count || 1
+                });
+                opt.title = format(opt.title, {
+                    count: opt.count || 1
+                });
+
+                return opt;
+            });
 
         this.eventsToUnbind = [];
         this.eventsToUnbind.push(addEvent(
@@ -1450,7 +1467,6 @@ class RangeSelector {
         delete buttonTheme.width;
         delete buttonTheme.states;
 
-
         this.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
@@ -1477,7 +1493,7 @@ class RangeSelector {
 
         buttons[i] = renderer
             .button(
-                rangeOptions.text,
+                rangeOptions.text ?? '',
                 0,
                 0,
                 (e: (Event | AnyRecord)): void => {
@@ -1957,7 +1973,8 @@ class RangeSelector {
         const {
             chart,
             buttonGroup,
-            inputGroup
+            inputGroup,
+            initialButtonGroupWidth
         } = this;
 
         const {
@@ -1986,7 +2003,7 @@ class RangeSelector {
                 moveInputsDown();
 
                 if (
-                    this.initialButtonGroupWidth >
+                    initialButtonGroupWidth >
                     chart.plotWidth + xOffsetForExportButton - 20
                 ) {
                     this.collapseButtons();
@@ -1994,7 +2011,7 @@ class RangeSelector {
                     this.expandButtons();
                 }
             } else if (
-                this.initialButtonGroupWidth -
+                initialButtonGroupWidth -
                 xOffsetForExportButton +
                 inputGroup.getBBox().width >
                 chart.plotWidth
@@ -2007,7 +2024,14 @@ class RangeSelector {
             } else {
                 this.expandButtons();
             }
+        } else if (buttonGroup && dropdown === 'responsive') {
+            if (initialButtonGroupWidth > chart.plotWidth) {
+                this.collapseButtons();
+            } else {
+                this.expandButtons();
+            }
         }
+
         // Forced states
         if (buttonGroup) {
             if (dropdown === 'always') {
@@ -2263,7 +2287,6 @@ class RangeSelector {
  * */
 
 interface RangeSelector {
-    defaultButtons: Array<RangeSelectorButtonOptions>;
     inputTypeFormats: Record<string, string>;
 }
 

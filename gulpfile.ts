@@ -71,12 +71,14 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-websearch',
     'jsdoc-wrappers',
     'jsdoc-zips',
+    'lang-build',
     'lint',
     'lint-dts',
     'lint-samples',
     'lint-ts',
     'palette',
     'prep-release',
+    'prepare-react-samples',
     'reset-clone',
     'reset-visual-references',
     'scripts',
@@ -130,4 +132,4 @@ Gulp.registry(new GulpForwardReference());
     'examples': 'dist-examples',
     'start-api-server': 'jsdoc-server',
     'styles': 'scripts-css'
-}));
+} as Record<string, string>));

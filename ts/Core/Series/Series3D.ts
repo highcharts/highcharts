@@ -127,7 +127,7 @@ class Series3D extends Series {
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
         series.data.forEach((rawPoint): void => {
-            if (zAxis && zAxis.translate) {
+            if (zAxis?.translate) {
                 zValue = zAxis.logarithmic && zAxis.val2lin ?
                     zAxis.val2lin(rawPoint.z as any) :
                     rawPoint.z; // #4562

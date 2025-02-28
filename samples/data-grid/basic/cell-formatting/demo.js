@@ -1,3 +1,9 @@
+DataGrid.setOptions({
+    lang: {
+        locale: 'en-US'
+    }
+});
+
 DataGrid.dataGrid('container', {
     dataTable: {
         columns: {
@@ -11,7 +17,10 @@ DataGrid.dataGrid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true
+            editable: true,
+            formatter: function () {
+                return `Default value: ${this.value}`;
+            }
         },
         useHTML: true
     },
@@ -21,11 +30,7 @@ DataGrid.dataGrid('container', {
             format: 'Date of purchase'
         },
         cells: {
-            formatter: function () {
-                return new Date(this.value)
-                    .toISOString()
-                    .substring(0, 10);
-            }
+            format: '{value:%[dbY]}'
         }
     }, {
         id: 'product',
@@ -36,9 +41,7 @@ DataGrid.dataGrid('container', {
         id: 'weight',
         className: 'custom-column-class-name',
         cells: {
-            formatter: function () {
-                return `${this.value} kg`;
-            }
+            format: '{value:,.1f} kg'
         }
     }, {
         id: 'price',

@@ -124,8 +124,18 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * ```
+     *
+     * @optionparent lang
      */
     lang: {
+        weekFrom: 'week from',
+
+        /**
+         * The default chart title.
+         *
+         * @since next
+         */
+        chartTitle: 'Chart title',
 
         /**
          * The browser locale to use for date and number formatting. The actual
@@ -165,6 +175,13 @@ const defaultOptions: DefaultOptions = {
          * @type    {Array<string>}
          */
         months: void 0,
+
+        /**
+         * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
+         *
+         * @since next
+         */
+        seriesName: 'Series {add index 1}',
 
         /**
          * An array containing the months names in abbreviated form. Corresponds
@@ -257,6 +274,13 @@ const defaultOptions: DefaultOptions = {
         numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
 
         /**
+         * The default name for a pie slice (point).
+         * @since next
+         */
+
+        pieSliceName: 'Slice',
+
+        /**
          * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
          * Use 10000 for Japanese, Korean and various Chinese locales, which
          * use symbols for 10^4, 10^8 and 10^12.
@@ -293,13 +317,18 @@ const defaultOptions: DefaultOptions = {
          *
          * @since 1.2.4
          */
+        /**
+         * The default title of the Y axis
+         *
+         * @since next
+         */
+        yAxisTitle: 'Values',
         resetZoomTitle: 'Reset zoom level 1:1'
     },
 
     /**
-     * Global options that don't apply to each chart. These options, like
-     * the `lang` options, must be set using the `Highcharts.setOptions`
-     * method.
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
      *
      * ```js
      * Highcharts.setOptions({
@@ -649,7 +678,6 @@ const defaultOptions: DefaultOptions = {
          * @default {highstock} undefined
          */
         text: 'Chart title',
-
         /**
          * The horizontal alignment of the title. Can be one of "left", "center"
          * and "right".
@@ -721,6 +749,25 @@ const defaultOptions: DefaultOptions = {
      *         Subtitle options demonstrated
      */
     subtitle: {
+
+        /**
+         * The horizontal alignment of the subtitle. Can be one of "left",
+         * "center" and "right". Since v12, it defaults to `undefined`, meaning
+         * the actual alignment is inherited from the alignment of the main
+         * title.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title and subtitle alignment, dynamic
+         * @sample {highcharts} highcharts/subtitle/align/
+         *         Footnote at right of plot area
+         * @sample {highstock} stock/chart/subtitle-footnote
+         *         Footnote at bottom right of plot area
+         *
+         * @type  {Highcharts.AlignValue}
+         * @default undefined
+         * @since 2.0
+         * @apioption subtitle.align
+         */
 
         /**
          * When the subtitle is floating, the plot area will not move to make
@@ -851,25 +898,6 @@ const defaultOptions: DefaultOptions = {
          *         Formatted and linked text.
          */
         text: ''
-
-        /**
-         * The horizontal alignment of the subtitle. Can be one of "left",
-         * "center" and "right". Since v12, it defaults to `undefined`, meaning
-         * the actual alignment is inherited from the alignment of the main
-         * title.
-         *
-         * @sample {highcharts} highcharts/title/align-auto/
-         *         Default title and subtitle alignment, dynamic
-         * @sample {highcharts} highcharts/subtitle/align/
-         *         Footnote at right of plot area
-         * @sample {highstock} stock/chart/subtitle-footnote
-         *         Footnote at bottom right of plot area
-         *
-         * @type  {Highcharts.AlignValue}
-         * @default undefined
-         * @since 2.0
-         * @apioption subtitle.align
-         */
     },
 
     /**
@@ -2407,7 +2435,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             day: '%[AebY]',
             /** @internal */
-            week: 'Week from %[AebY]',
+            week: '%v %[AebY]',
             /** @internal */
             month: '%[BY]',
             /** @internal */
@@ -2824,16 +2852,7 @@ const defaultOptions: DefaultOptions = {
     }
 };
 
-/* eslint-disable spaced-comment */
-/*= if (!build.classic) { =*/
-// Legacy build for styled mode, set the styledMode option to true by default.
-(defaultOptions.chart as any).styledMode = true;
-/*= } else { =*/
-(defaultOptions.chart as any).styledMode = false;
-/*= } =*/
-'';
-
-const defaultTime = new Time(defaultOptions.time);
+const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
@@ -2879,6 +2898,13 @@ function setOptions(
         defaultTime.update({
             locale: options.lang.locale as string|Array<string>
         });
+    }
+
+    if (options.lang?.chartTitle) {
+        defaultOptions.title = {
+            ...defaultOptions.title,
+            text: options.lang.chartTitle
+        } as DefaultOptions['title'];
     }
 
     return defaultOptions;

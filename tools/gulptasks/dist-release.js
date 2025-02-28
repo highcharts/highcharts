@@ -61,8 +61,13 @@ async function runGit(version, push = false) {
     ];
 
     if (push) {
-        const answer = await askUser('\nAbout to run the following commands in ' + pathToDistRepo + ': \n' +
-            commands.join('\n') + '\n\n Is this ok? [Y/n]');
+        const answer = await askUser(
+            '\nAbout to run the following commands in ' + pathToDistRepo + ': \n\n' +
+            commands.join('\n') +
+            '\n\nVerify the file changes in highcharts-dist. Look specifically \n' +
+            'for removed files. Check updated version numbers in some headers. \n' +
+            'To approve or disapprove, press [Y/n]'
+        );
         if (answer !== 'Y') {
             const message = 'Aborted before running running git commands!';
             throw new Error(message);
@@ -87,9 +92,9 @@ async function runGit(version, push = false) {
 async function npmPublish(push = false) {
     if (push) {
         const answer = await askUser(
-            '\nAbout to publish to npm using \'latest\' tag. To approve, ' +
-            'enter the one time password from your 2FA authentication setup. ' +
-            'To abort, enter \'n\''
+            '\nAbout to publish to npm using \'latest\' tag. To approve, \n' +
+            'enter the one time password from your 2FA authentication setup. \n' +
+            'To abort, enter \'n\': '
         );
         if (answer === 'n') {
             const message = 'Aborted before invoking \'npm publish\'! Command must be run manually to complete the release.';

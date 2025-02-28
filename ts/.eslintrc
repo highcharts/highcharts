@@ -113,6 +113,7 @@
         "@typescript-eslint/no-useless-constructor": 2,
         "@typescript-eslint/prefer-as-const": 1, // @todo
         "@typescript-eslint/prefer-includes": 0, // @todo
+        "@typescript-eslint/prefer-optional-chain": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/restrict-plus-operands": 0,

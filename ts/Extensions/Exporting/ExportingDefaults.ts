@@ -264,7 +264,7 @@ const exporting: ExportingOptions = {
      *
      * @since 2.0
      */
-    url: 'https://export-svg.highcharts.com/',
+    url: `https://export-svg.highcharts.com?v=${H.version}`,
 
     /**
      * Settings for a custom font for the exported PDF, when using the
@@ -468,10 +468,7 @@ const exporting: ExportingOptions = {
                 'downloadPNG',
                 'downloadJPEG',
                 'downloadSVG'
-            ],
-
-            y: -5
-
+            ]
         }
 
     },
@@ -782,16 +779,15 @@ const navigation: NavigationOptions = {
 
         /**
          * The vertical offset of the button's position relative to its
-         * `verticalAlign`.
+         * `verticalAlign`. By default adjusted for the chart title alignment.
          *
          * @sample highcharts/navigation/buttonoptions-verticalalign/
          *         Buttons at lower right
          *
-         * @type      {number}
-         * @default   0
          * @since     2.0
          * @apioption navigation.buttonOptions.y
          */
+        y: -5,
 
         /**
          * The vertical alignment of the buttons. Can be one of `"top"`,

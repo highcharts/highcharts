@@ -89,7 +89,7 @@ class XRangePoint extends ColumnPoint {
                 colors.length :
                 series.chart.options.chart.colorCount as any,
             colorIndex = (point.y as any) % colorCount,
-            color = colors && colors[colorIndex];
+            color = colors?.[colorIndex];
 
         return {
             colorIndex: colorIndex,
