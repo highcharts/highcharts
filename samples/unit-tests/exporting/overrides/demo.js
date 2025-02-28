@@ -67,13 +67,15 @@ QUnit.test('Exported SVG characteristics', function (assert) {
         };
 
         // Run export width override options
-        chart.exportChart(null, {
+        chart.exportChart({
+            type: 'application/pdf'
+        }, {
             chart: {
                 backgroundColor: '#ffeeff'
             }
         });
 
-        assert.strictEqual(postData.type, 'image/png', 'Posting for PNG');
+        assert.strictEqual(postData.type, 'application/pdf', 'Posting for PDF');
 
         assert.strictEqual(typeof postData.svg, 'string', 'SVG is there');
 
@@ -92,7 +94,9 @@ QUnit.test('Exported SVG characteristics', function (assert) {
 
         // Test overrides for min and max (#7873)
         chart.xAxis[0].setExtremes(1, 5);
-        chart.exportChart();
+        chart.exportChart({
+            type: 'application/pdf'
+        });
         assert.notEqual(
             postData.svg.indexOf('Jul'),
             -1,
@@ -104,7 +108,9 @@ QUnit.test('Exported SVG characteristics', function (assert) {
             'No overrides, August should be outside bounds'
         );
 
-        chart.exportChart(void 0, {
+        chart.exportChart({
+            type: 'application/pdf'
+        }, {
             xAxis: {
                 min: undefined,
                 max: undefined
@@ -118,7 +124,7 @@ QUnit.test('Exported SVG characteristics', function (assert) {
         assert.notEqual(
             postData.svg.indexOf('Aug'),
             -1,
-            'No overrides, Dec should be within bounds'
+            'No overrides, August should be within bounds'
         );
 
     } finally {
