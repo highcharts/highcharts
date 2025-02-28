@@ -2,8 +2,13 @@ Highcharts.chart('container', {
     chart: {
         type: 'spline'
     },
+
     title: {
         text: 'Live Data (CSV)'
+    },
+
+    xAxis: {
+        tickPixelInterval: 150
     },
 
     subtitle: {

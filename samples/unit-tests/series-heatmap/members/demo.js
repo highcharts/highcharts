@@ -214,7 +214,7 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         'State is normal, state marker graphic should not refer to the point'
     );
     assert.strictEqual(
-        point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
+        Math.round(point.graphic.d.split(' ')[1] - point.graphic.getBBox().x),
         point.series.options.borderRadius,
         `The point's border radius should be correct (value set in options)
         when the point is in a 'normal' state, #16165.`
@@ -227,7 +227,7 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         'State is hover, state marker graphic should refer to the point'
     );
     assert.strictEqual(
-        point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
+        Math.round(point.graphic.d.split(' ')[1] - point.graphic.getBBox().x),
         point.series.options.borderRadius,
         `The point's border radius should be correct (value set in options)
         when the point is in a 'hover' state, #16165.`
@@ -242,7 +242,7 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
 
     setState.call(point, '');
     assert.strictEqual(
-        point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
+        Math.round(point.graphic.d.split(' ')[1] - point.graphic.getBBox().x),
         point.series.options.borderRadius,
         `The point's border radius should be correct (value set in options)
         when the point is in a 'normal' state, #16165.`

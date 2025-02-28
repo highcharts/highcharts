@@ -54,24 +54,26 @@ export interface XRangePointOptions extends ColumnPointOptions {
     partialFill?: XRangePointPartialFillOptions;
 
     /**
-     * The starting X value of the range point.
+     * The starting X value of the range point. May be a timestamp or a date
+     * string.
      *
      * @sample {highcharts} highcharts/demo/x-range
      *         X-range
      *
      * @product highcharts highstock gantt
      */
-    x?: number;
+    x?: number|string;
 
     /**
-     * The ending X value of the range point.
+     * The ending X value of the range point. May be a timestamp or a date
+     * string.
      *
      * @sample {highcharts} highcharts/demo/x-range
      *         X-range
      *
      * @product highcharts highstock gantt
      */
-    x2?: number;
+    x2?: number|string;
 
     /**
      * The Y value of the range point.

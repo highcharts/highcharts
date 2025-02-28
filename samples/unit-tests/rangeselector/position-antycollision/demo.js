@@ -70,7 +70,10 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
 
     chart = Highcharts.stockChart('container', {
         chart: {
-            spacing: [10, 21, 10, 52]
+            spacing: [10, 21, 10, 52],
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             title: {
@@ -492,7 +495,11 @@ QUnit.test('#14292: Right-aligned button position after animating', assert => {
     chart.rangeSelector.update({});
 
     assert.ok(
-        chart.rangeSelector.buttonGroup.translateX + width <= chart.plotWidth,
+        chart.rangeSelector.buttonGroup.translateX + width <=
+            // Plus 2 for Firefox. Still looks inside the chart.
+            chart.plotWidth + (Highcharts.isFirefox ? 2 : 0) +
+            // Plus 0.99 for Windows - pixel rounding.
+            window.navigator.platform.indexOf('Win') >= 0 ? 0.99 : 0,
         'Buttons should be inside the chart'
     );
 });

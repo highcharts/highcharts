@@ -26,7 +26,6 @@ const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    isArray,
     merge,
     pushUnique
 } = U;
@@ -103,12 +102,13 @@ function onSeriesAfterRender(
             origGraphic = yAxis.cross,
             origLabel = yAxis.crossLabel,
             points = series.points,
-            yLength = (series.yData as any).length,
             pLength = points.length,
-            x = (series.xData as any)[(series.xData as any).length - 1],
-            y = (series.yData as any)[yLength - 1];
+            dataLength = series.dataTable.rowCount,
+            x = series.getColumn('x')[dataLength - 1],
+            y = series.getColumn('y')[dataLength - 1] ??
+                series.getColumn('close')[dataLength - 1];
 
-        let yValue;
+        let yValue: number;
 
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
@@ -125,7 +125,7 @@ function onSeriesAfterRender(
             }
 
             yAxis.cross = series.lastPrice;
-            yValue = isArray(y) ? y[3] : y;
+            yValue = y;
 
             if (series.lastPriceLabel) {
                 series.lastPriceLabel.destroy();
@@ -217,6 +217,39 @@ export default PriceIndication;
  * @product   highstock
  * @requires  modules/price-indicator
  * @apioption plotOptions.series.lastVisiblePrice
+ */
+
+/**
+ * The color of the line of last visible price.
+ * By default, color is not applied and the line is not visible.
+ *
+ * @type      {string}
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.color
+ *
+ */
+
+/**
+ * Name of the dash style to use for the line of last visible price.
+ *
+ * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/
+ *         Possible values demonstrated
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @product   highstock
+ * @default   Solid
+ * @apioption plotOptions.series.lastVisiblePrice.dashStyle
+ *
+ */
+
+/**
+ * Width of the last visible price line.
+ *
+ * @type      {number}
+ * @product   highstock
+ * @default   1
+ * @apioption plotOptions.series.lastVisiblePrice.width
+ *
  */
 
 /**
@@ -454,6 +487,29 @@ export default PriceIndication;
  * @type      {string}
  * @product   highstock
  * @apioption plotOptions.series.lastPrice.color
+ *
+ */
+
+/**
+ * Name of the dash style to use for the line of last price.
+ *
+ * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/
+ *         Possible values demonstrated
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @product   highstock
+ * @default   Solid
+ * @apioption plotOptions.series.lastPrice.dashStyle
+ *
+ */
+
+/**
+ * Width of the last price line.
+ *
+ * @type      {number}
+ * @product   highstock
+ * @default   1
+ * @apioption plotOptions.series.lastPrice.width
  *
  */
 

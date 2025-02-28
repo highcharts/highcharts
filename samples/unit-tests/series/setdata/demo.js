@@ -437,7 +437,7 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
     chart.series[0].setData([4, 5, 5]);
 
     assert.deepEqual(
-        chart.series[0].yData,
+        chart.series[0].getColumn('y'),
         [4, 5, 5],
         'Data is set correctly when oldData has null values and the same ' +
         'length (#10187)'
@@ -522,7 +522,7 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             ]
         }
     });
-    const correctSet = chart.series[0].processedXData.slice();
+    const correctSet = chart.series[0].getColumn('x', true).slice();
 
     chart.series[0].update(
         {
@@ -544,7 +544,7 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
     chart.redraw();
 
     assert.deepEqual(
-        chart.series[0].processedXData,
+        chart.series[0].getColumn('x', true),
         correctSet,
         'Setting data on a updated series with cropped dataset should keep ' +
         'correct x-values (#12696).'

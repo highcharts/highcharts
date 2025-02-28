@@ -28,6 +28,7 @@ import U from '../../Utilities.js';
 const {
     defined,
     extend,
+    getAlignFactor,
     isNumber,
     merge,
     pick,
@@ -71,7 +72,7 @@ class SVGLabel extends SVGElement {
      */
     public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
-        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
+        'fontWeight', 'lineClamp', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'whiteSpace', 'width'
     ];
 
@@ -163,11 +164,8 @@ class SVGLabel extends SVGElement {
      * */
 
     public alignSetter(value: AlignValue): void {
-        const alignFactor = ({
-            left: 0,
-            center: 0.5,
-            right: 1
-        })[value];
+        const alignFactor = getAlignFactor(value);
+        this.textAlign = value;
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -396,7 +394,10 @@ class SVGLabel extends SVGElement {
     }
 
     public 'text-alignSetter'(value: string): void {
-        this.textAlign = value;
+        // The text-align variety is for the pre-animation getter. The code
+        // should be unified to either textAlign or text-align.
+        this.textAlign = this['text-align'] = value;
+        this.updateTextPadding();
     }
 
     public textSetter(text?: string): void {
@@ -496,35 +497,28 @@ class SVGLabel extends SVGElement {
      * is changed.
      */
     public updateTextPadding(): void {
-        const text = this.text;
+        const text = this.text,
+            textAlign = text.styles.textAlign || this.textAlign;
+
         if (!text.textPath) {
 
             this.updateBoxSize();
 
             // Determine y based on the baseline
-            const textY = this.baseline ? 0 : this.baselineOffset;
-
-            let textX = pick(this.paddingLeft, this.padding);
-
-            // Compensate for alignment
-            if (
-                defined(this.widthSetting) &&
-                this.bBox &&
-                (this.textAlign === 'center' || this.textAlign === 'right')
-            ) {
-                textX += { center: 0.5, right: 1 }[
-                    this.textAlign as ('center'|'right')
-                ] * (this.widthSetting - this.bBox.width);
-            }
+            const textY = this.baseline ? 0 : this.baselineOffset,
+                textX = (this.paddingLeft ?? this.padding) +
+                    // Compensate for alignment
+                    getAlignFactor(textAlign) * (
+                        this.widthSetting ?? this.bBox.width
+                    );
 
             // Update if anything changed
             if (textX !== text.x || textY !== text.y) {
-                text.attr('x', textX);
-                // #8159 - prevent misplaced data labels in treemap
-                // (useHTML: true)
-                if (text.hasBoxWidthChanged) {
-                    this.bBox = text.getBBox(true);
-                }
+                text.attr({
+                    align: textAlign,
+                    x: textX
+                });
+
                 if (typeof textY !== 'undefined') {
                     text.attr('y', textY);
                 }

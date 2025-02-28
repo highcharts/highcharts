@@ -373,15 +373,6 @@ Highcharts.chart('container', {
                     layout: 'horizontal'
                 }
             }
-        }, {
-            condition: {
-                maxWidth: 400
-            },
-            chartOptions: {
-                legend: {
-                    layout: 'vertical'
-                }
-            }
         }]
     }
 });

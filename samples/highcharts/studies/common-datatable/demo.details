@@ -1,0 +1,7 @@
+---
+ name: Common data table study
+ authors:
+   - Torstein Hønsi
+ skipTest: true
+ js_wrap: b
+...

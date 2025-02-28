@@ -14,6 +14,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -152,7 +153,7 @@ class StochasticIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const periodK: number = (params.periods as any)[0],

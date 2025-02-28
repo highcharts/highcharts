@@ -399,13 +399,13 @@
         assertEquals(
             assert,
             'Rounding negative (#4573)',
-            '-342 000.00',
+            '-342,000.00',
             numberFormat(-342000, 2)
         );
         assertEquals(
             assert,
             'String decimal count',
-            '2 016',
+            '2,016',
             numberFormat(2016, '0')
         );
         assertEquals(assert, 'Rounding', '2.0', numberFormat(1.96, 1));
@@ -473,6 +473,12 @@
             Highcharts.numberFormat(4.9e-7, 0),
             'For small numbers and when decimals argument declared as zero, ' +
             'the formatter should return zero, #14023.'
+        );
+
+        assert.strictEqual(
+            Highcharts.numberFormat(-0.4999999, 0, '.', ''),
+            '0',
+            'numberFormat should return zero without singed minus, #20564.'
         );
     });
 
@@ -759,97 +765,6 @@
         );
     });
 
-    QUnit.test('objectEach', function (assert) {
-        var objectEach = Highcharts.objectEach,
-            obj1 = {
-                1: 1,
-                2: '2',
-                3: '3'
-            },
-            obj1Expected = {
-                1: 1,
-                2: '2',
-                3: '3'
-            },
-            obj1Actual = {},
-            testFunction = function () {
-                return 2;
-            },
-            TestObj = function () {
-                this.one = 1;
-                this.two = testFunction;
-            },
-            obj2,
-            obj2Expected = {
-                one: 1,
-                two: testFunction
-            },
-            obj2Actual = {},
-            arr1 = ['1', '2', '3'],
-            arr1Expected = {
-                0: '1',
-                1: '2',
-                2: '3'
-            },
-            arr1Actual = {},
-            obj3 = {
-                one: 'one'
-            },
-            obj3This = {
-                ctx: 'ctx'
-            };
-
-        TestObj.prototype.three = 3;
-        TestObj.prototype.four = function () {
-            return 4;
-        };
-        obj2 = new TestObj();
-
-        objectEach(obj1, function (val, key) {
-            obj1Actual[key] = val;
-        });
-
-        assert.deepEqual(
-            obj1Actual,
-            obj1Expected,
-            'Order of callback params is [val, key]'
-        );
-
-        objectEach(obj2, function (val, key) {
-            obj2Actual[key] = val;
-        });
-
-        assert.deepEqual(
-            obj2Actual,
-            obj2Expected,
-            'Prototype properties are not included'
-        );
-
-        objectEach(arr1, function (val, key) {
-            arr1Actual[key] = val;
-        });
-
-        assert.deepEqual(arr1Actual, arr1Expected, 'Supports arrays');
-
-        objectEach(
-            obj3,
-            function (val, key, ctx) {
-                assert.equal(
-                    this,
-                    obj3This,
-                    '3rd param injects context to use with `this`'
-                );
-
-                assert.equal(
-                    ctx,
-                    obj3,
-                    '3rd param in callback is the object being iterated over'
-                );
-            },
-            obj3This
-        );
-    });
-
     QUnit.test('pad', function (assert) {
         assert.strictEqual(
             Highcharts.pad(-1000, 3),
@@ -871,80 +786,6 @@
         );
 
         document.body.removeChild(div);
-    });
-
-    QUnit.test('reduce', function (assert) {
-        var reduce = Highcharts.reduce,
-            arr = [0, 1, 2, 3],
-            accumulations = [],
-            values = [],
-            result;
-
-        // Call reduce without an initialValue.
-        result = reduce(arr, function (accumulation, value) {
-            accumulations.push(accumulation);
-            values.push(value);
-            return accumulation + value;
-        });
-
-        assert.strictEqual(
-            result,
-            6,
-            'No initialValue - should return sum of values in array.'
-        );
-
-        assert.deepEqual(
-            accumulations,
-            [0, 1, 3],
-            'No initialValue - should use first value as initialValue.'
-        );
-
-        assert.deepEqual(
-            values,
-            [1, 2, 3],
-            'No initialValue - should iterate from second value in array.'
-        );
-
-        // Empty arrays before next test.
-        accumulations = [];
-        values = [];
-
-        // Call reduce with an initialValue.
-        result = reduce(
-            arr,
-            function (accumulation, value) {
-                accumulations.push(accumulation);
-                values.push(value);
-                return accumulation + value;
-            },
-            1
-        );
-
-        assert.strictEqual(
-            result,
-            7,
-            'initialValue = 1 - should return sum of values in array plus ' +
-            'intialValue.'
-        );
-
-        assert.deepEqual(
-            accumulations,
-            [1, 1, 2, 4],
-            'initialValue = 1 - should use initialValue.'
-        );
-
-        assert.deepEqual(
-            values,
-            [0, 1, 2, 3],
-            'initialValue = 1 - should iterate from first value in array.'
-        );
-    });
-
-    QUnit.test('keys', assert => {
-        assert.deepEqual(
-            Highcharts.keys({ foo: 'bar' }),
-            Object.keys({ foo: 'bar' })
-        );
     });
 
     console.timeEnd('Utils test time');

@@ -4,7 +4,7 @@ import { opendir, readFile, appendFile, writeFile } from 'node:fs/promises';
 import type { Dir } from 'fs';
 import { join, resolve } from 'node:path';
 
-const TMP_FILE_PATH = '../../tmp/benchmarks';
+const TMP_FILE_PATH = resolve(__dirname, '../../tmp/benchmarks');
 
 function regression (yValues: number[], xValues: number[]){
     const yMean = yValues.reduce((a, b) => a + b) / yValues.length;

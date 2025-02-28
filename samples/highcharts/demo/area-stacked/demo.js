@@ -3,14 +3,12 @@ Highcharts.chart('container', {
         type: 'area'
     },
     title: {
-        text: 'Greenhouse gases from Norwegian economic activity',
-        align: 'left'
+        text: 'Greenhouse gases from Norwegian economic activity'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.ssb.no/en/statbank/table/09288/"' +
-            'target="_blank">SSB</a>',
-        align: 'left'
+            'target="_blank">SSB</a>'
     },
     yAxis: {
         title: {

@@ -1,13 +1,15 @@
+import type { BenchResults, BenchmarkResult, BenchmarkDetails } from './benchmark.d.ts';
+
 import { readdirSync, existsSync } from 'node:fs';
 import { readdir, mkdir, writeFile, rm, lstat } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
-import { starting, finished, success, warn } from '../../tools/libs/log.js';
-
 import { Worker } from 'node:worker_threads';
-import { argv } from 'node:process';
-import yargs from 'yargs';
+import { argv, exit } from 'node:process';
 
-import type { BenchResults, BenchmarkResult, BenchmarkDetails } from './benchmark.d.ts';
+import yargs from 'yargs';
+import * as swc from '@swc/core';
+
+import { starting, finished, success, warn } from '../../tools/libs/log.js';
 
 function getStandardDeviation (array: number[]) {
   const n = array.length;
@@ -25,7 +27,20 @@ const TEST_TIMEOUT_SECONDS = 100;
 const errors = [];
 let testCounter: number = 0;
 
-type walkResult = Array<string | walkResult>
+async function transpileFile(path: string) {
+    try {
+        const output = await swc.transformFile(path);
+        const outputPath = path.replace('.ts', '.tmp.mjs');
+
+        await writeFile(outputPath, output.code);
+        return outputPath;
+    } catch (error) {
+        const err = new Error('Failed to transpile file: ' + path);
+        (err as any).cause = error; // Error type does not have the new neat thing :/
+        throw err;
+    }
+}
+
 
 /**
  * Grab file extensions
@@ -50,12 +65,12 @@ const getDirRecursive = async (dir: string): Promise<Array<string>> => {
 };
 
 async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult | undefined> {
-    const worker = new Worker(join(__dirname, './bench-worker.ts'), {
+    const worker = new Worker( await transpileFile(join(__dirname, 'bench-worker.ts')), {
         resourceLimits: {
             stackSizeMb: 20
         },
         stdout: false // pipe to main,
-        
+
         },
     );
 
@@ -114,7 +129,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
 
     for (const size of config.sizes) {
         const details: BenchmarkDetails = {
-            test: relative(__dirname, testFile),
+            test: testFile,
             sampleSize: size,
             min: Number.MAX_SAFE_INTEGER,
             max: 0,
@@ -131,7 +146,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
         while (i < ITERATIONS) {
             i++;
 
-            const result = await runTestInWorker(testFile, size);
+            const result = await runTestInWorker(testFile, size) ?? 0;
             details.results.push(result);
 
             if (result > details.max) {
@@ -184,7 +199,7 @@ async function benchmark(){
         });
 
         for (const testFile of testFiles) {
-            const testdir =testFile.replace(/[^/]*$/, '').replace(BENCH_PATH, '');
+            const testdir = testFile.replace(/[^/]*$/, '').replace(BENCH_PATH, '');
             const dirPath = reportDir + testdir;
             const data = await runRest(testFile);
 
@@ -207,7 +222,7 @@ async function benchmark(){
 
     success(`Ran ${testCounter} successful benches`);
     finished('Benchmarks');
-
+    exit(0);
 }
 
 benchmark().catch(console.error);

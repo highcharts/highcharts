@@ -417,7 +417,7 @@ Highcharts.stockChart('container', {
         },
         tickLength: 0,
         lineWidth: 0,
-        min: Date.UTC(1900, 0, 1),
+        min: '1900-01-01',
         reversed: false
     },
     yAxis: {
@@ -459,7 +459,7 @@ Highcharts.stockChart('container', {
     },
     series: [{
         // pointStart: -10950249600000,
-        pointStart: Date.UTC(1625, 0, 1),
+        pointStart: '1625-01-01',
         pointInterval: 5,
         pointIntervalUnit: 'year',
         data: [

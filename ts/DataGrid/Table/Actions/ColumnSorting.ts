@@ -26,6 +26,9 @@ import type { ColumnSortingOrder } from '../../Options.js';
 
 import Column from '../Column.js';
 import Globals from '../../Globals.js';
+import DGUtils from '../../Utils.js';
+
+const { makeHTMLElement } = DGUtils;
 
 /* *
  *
@@ -75,6 +78,19 @@ class ColumnSorting {
         this.headerCellElement = headerCellElement;
 
         this.addHeaderElementAttributes();
+
+        if (column.options.sorting?.sortable) {
+            makeHTMLElement(
+                'span',
+                {
+                    className: Globals.classNames.columnSortableIcon,
+                    innerText: '▲'
+                },
+                headerCellElement
+            ).setAttribute('aria-hidden', true);
+
+            headerCellElement.classList.add(Globals.classNames.columnSortable);
+        }
     }
 
 
@@ -89,18 +105,20 @@ class ColumnSorting {
      */
     private addHeaderElementAttributes(): void {
         const col = this.column;
+        const a11y = col.viewport.dataGrid.accessibility;
         const sortingOptions = col.options.sorting;
         const { currentSorting } = col.viewport.dataGrid.querying.sorting;
 
         const el = this.headerCellElement;
 
-        if (sortingOptions?.sortable) {
-            el.classList.add(Globals.classNames.columnSortable);
-        }
-
         if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
             el.classList.remove(Globals.classNames.columnSortedAsc);
             el.classList.remove(Globals.classNames.columnSortedDesc);
+
+            if (sortingOptions?.sortable) {
+                a11y?.setColumnSortState(el, 'none');
+            }
+
             return;
         }
 
@@ -108,10 +126,12 @@ class ColumnSorting {
             case 'asc':
                 el.classList.add(Globals.classNames.columnSortedAsc);
                 el.classList.remove(Globals.classNames.columnSortedDesc);
+                a11y?.setColumnSortState(el, 'ascending');
                 break;
             case 'desc':
                 el.classList.remove(Globals.classNames.columnSortedAsc);
                 el.classList.add(Globals.classNames.columnSortedDesc);
+                a11y?.setColumnSortState(el, 'descending');
                 break;
         }
     }
@@ -128,6 +148,7 @@ class ColumnSorting {
         const viewport = this.column.viewport;
         const querying = viewport.dataGrid.querying;
         const sortingController = querying.sorting;
+        const a11y = viewport.dataGrid.accessibility;
 
         sortingController.setSorting(order, this.column.id);
         await querying.proceed();
@@ -137,6 +158,8 @@ class ColumnSorting {
         for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();
         }
+
+        a11y?.userSortedColumn(order);
 
         viewport.dataGrid.options?.events?.column?.afterSorting?.call(
             this.column

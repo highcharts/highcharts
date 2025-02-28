@@ -30,19 +30,19 @@ Highcharts.ganttChart('container', {
             groupBy: 'groupId'
         },
         data: [{
-            start: Date.UTC(2014, 11, 1),
-            end: Date.UTC(2014, 11, 2),
+            start: '2014-12-01',
+            end: '2014-12-02',
             completed: 0.95,
             groupId: 'group1',
             y: 0
         }, {
-            start: Date.UTC(2014, 11, 3),
-            end: Date.UTC(2014, 11, 5),
+            start: '2014-12-03',
+            end: '2014-12-05',
             groupId: 'group1',
             y: 0
         }, {
-            start: Date.UTC(2014, 11, 2),
-            end: Date.UTC(2014, 11, 5),
+            start: '2014-12-02',
+            end: '2014-12-05',
             y: 1
         }]
     }]

@@ -15,7 +15,7 @@ On touch devices, zooming and panning may be performed by pinch and touch-drag g
 
 ### Mousewheel
 
-Mousewheeling zooms in and out the map around the point under the mouse.
+The mouse wheel zooms in and out the map around the point under the mouse.
 
 ### Doubleclick
 

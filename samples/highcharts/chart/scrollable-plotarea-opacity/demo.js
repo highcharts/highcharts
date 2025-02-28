@@ -44,11 +44,11 @@ Highcharts.chart('container', {
                 enabled: false
             },
             pointInterval: 3600000, // one hour
-            pointStart: Date.UTC(2015, 4, 31, 0, 0, 0)
+            pointStart: '2015-05-31'
         }
     },
     series: [{
-        name: 'Hestavollane',
+        name: 'Hestavollen',
         data: [
             0.2, 0.8, 0.8, 0.8, 1, 1.3, 1.5, 2.9, 1.9, 2.6, 1.6, 3, 4, 3.6,
             5.5, 6.2, 5.5, 4.5, 4, 3.1, 2.7, 4, 2.7, 2.3, 2.3, 4.1, 7.7, 7.1,

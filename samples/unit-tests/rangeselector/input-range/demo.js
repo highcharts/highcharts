@@ -557,7 +557,13 @@ QUnit.test('#13205, #14544: Timezone issues', assert => {
         'The input value should not change'
     );
 
-    assert.ok(chart.xAxis[0].min > min, 'Extremes should have been updated');
+    assert.ok(
+        chart.xAxis[0].min > min,
+        `New min should be less than the old min.
+        Old: ${new Date(min)},
+        New: ${new Date(chart.xAxis[0].min)},
+        Time zone offset: ${new Date().getTimezoneOffset()}`
+    );
 });
 
 QUnit.test(
@@ -660,6 +666,45 @@ QUnit.test('Input types', assert => {
                 max >= axis.min + axis.minRange && max <= axis.max,
                 'Max should be within extremes'
             );
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%[ebY]'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'date',
+                'Default format should result in date input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%e %b %Y'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'date',
+                'Legacy format should result in date input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: {
+                        year: 'full',
+                        month: 'short',
+                        day: '2-digit'
+                    }
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'date',
+                'Object format should result in date input'
+            );
         } else {
             assert.strictEqual(
                 input().type,
@@ -680,6 +725,45 @@ QUnit.test('Input types', assert => {
                 'datetime-local',
                 'Format with date + time should result in datetime-local input'
             );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%[YH]'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'datetime-local',
+                'Locale year and hour should result in datetime-local input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%Y %H'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'datetime-local',
+                'Legacy year and hour should result in datetime-local input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: {
+                        year: 'full',
+                        hour: '2-digit'
+                    }
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'datetime-local',
+                'Object year and hour should result in datetime-local input'
+            );
         }
 
         if (supports('time')) {
@@ -697,6 +781,18 @@ QUnit.test('Input types', assert => {
 
             chart.update({
                 rangeSelector: {
+                    inputDateFormat: '%[HMS]'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'time',
+                'Locale format with time should result in time input'
+            );
+
+            chart.update({
+                rangeSelector: {
                     inputDateFormat: '%H:%M:%S.%L'
                 }
             });
@@ -706,6 +802,8 @@ QUnit.test('Input types', assert => {
                 'text',
                 'Format with milliseconds should result in text input'
             );
+
         }
+
     });
 });

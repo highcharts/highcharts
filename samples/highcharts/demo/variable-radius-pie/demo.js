@@ -4,8 +4,7 @@ Highcharts.chart('container', {
         type: 'variablepie'
     },
     title: {
-        text: 'Countries compared by population density and total area, 2024.',
-        align: 'left'
+        text: 'Countries compared by population density and total area, 2024'
     },
     tooltip: {
         headerFormat: '',

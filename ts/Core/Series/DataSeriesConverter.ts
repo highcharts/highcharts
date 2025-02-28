@@ -209,7 +209,7 @@ class DataSeriesConverter {
             yValueId,
             id;
 
-        if (allSeries && allSeries.length) {
+        if (allSeries?.length) {
             this.options.seriesOptions = [];
             this.seriesMeta = [];
             this.seriesIdMap = {};
@@ -293,7 +293,7 @@ class DataSeriesConverter {
 
                     if (!rowIndex) {
                         columns.id = id;
-                        table.setRows([columns], void 0, eventDetail);
+                        table.setRows([columns], void 0, void 0, eventDetail);
                     } else if (columns[y]) {
                         table.setCell(y, rowIndex, columns[y], eventDetail);
                     }

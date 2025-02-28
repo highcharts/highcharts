@@ -15,16 +15,26 @@ let dataset, chart;
 
     // Add animated textSetter, just like fill/strokeSetters
     H.Fx.prototype.textSetter = function () {
-        let startValue = this.start.replace(/ /g, ''),
-            endValue = this.end.replace(/ /g, ''),
-            currentValue = this.end.replace(/ /g, '');
+        const chart = H.charts[this.elem.renderer.chartIndex];
+
+        let thousandsSep = chart.numberFormatter('1000.0')[1];
+
+        if (/[0-9]/.test(thousandsSep)) {
+            thousandsSep = ' ';
+        }
+
+        const replaceRegEx = new RegExp(thousandsSep, 'g');
+
+        let startValue = this.start.replace(replaceRegEx, ''),
+            endValue = this.end.replace(replaceRegEx, ''),
+            currentValue = this.end.replace(replaceRegEx, '');
 
         if ((startValue || '').match(FLOAT)) {
             startValue = parseInt(startValue, 10);
             endValue = parseInt(endValue, 10);
 
             // No support for float
-            currentValue = Highcharts.numberFormat(
+            currentValue = chart.numberFormatter(
                 Math.round(startValue + (endValue - startValue) * this.pos),
                 0
             );

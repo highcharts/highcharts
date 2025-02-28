@@ -1,8 +1,7 @@
 (async () => {
 
     // Override a member of a module, which in turn will be imported into
-    // subsequent modules. This is the ESM equivalent of the
-    // HighchartsModuleLoaded approach.
+    // subsequent modules.
     const Templating = await import(
         'https://code.highcharts.com/es-modules/Core/Templating.js'
     );
@@ -34,7 +33,7 @@
             dataLabels: {
                 enabled: true
             },
-            pointStart: Date.UTC(2022, 0, 1),
+            pointStart: '2022-01-01',
             pointIntervalUnit: 'day'
         }]
     });

@@ -4,8 +4,8 @@ Highcharts.chart('container', {
     xAxis: {
         plotBands: [{ // mark the weekend
             color: '#FCFFC5',
-            from: Date.UTC(2010, 0, 2),
-            to: Date.UTC(2010, 0, 4),
+            from: '2010-01-02',
+            to: '2010-01-04',
             events: {
                 click: e => {
                     report.innerHTML = e.type;
@@ -24,7 +24,7 @@ Highcharts.chart('container', {
     },
     series: [{
         data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4],
-        pointStart: Date.UTC(2010, 0, 1),
+        pointStart: '2010-01-01',
         pointInterval: 24 * 3600 * 1000
     }]
 });

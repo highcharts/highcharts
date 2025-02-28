@@ -28,43 +28,44 @@ In the above example, the series data for Packed Bubble takes a one-dimensional 
 
 Here is an example of how to set the data for a packed bubble with 3 series and different data formats:
 
-
-    Highcharts.chart('container', {
-        chart: {
-            type: 'packedbubble',
-        },
-        series: [{
-            name: 'Coffee', // Coffee series
-            data: [{
-                // name property is used for the datalabel
-                // value property is used for the volume of the bubble
-                value: 12,
-                name: 'Bert'
-            }, {
-                value: 5,
-                name: 'John'
-            }, {
-                value: 10,
-                name: 'Sandra'
-            }, {
-                value: 7,
-                name: 'Cecile'
-            }]
+```js
+Highcharts.chart('container', {
+    chart: {
+        type: 'packedbubble',
+    },
+    series: [{
+        name: 'Coffee', // Coffee series
+        data: [{
+            // name property is used for the datalabel
+            // value property is used for the volume of the bubble
+            value: 12,
+            name: 'Bert'
         }, {
-            name: 'Energy drinks', // Energy drinks series
-            data: [{
-                value: 10,
-                name: 'Tristan'
-            }]
+            value: 5,
+            name: 'John'
         }, {
-            name: 'Tea', // Tea series
-            data: [5, 6, 8, {
-                value: 10,
-                name: 'Mustapha',
-                color: 'pink'
-            }]
+            value: 10,
+            name: 'Sandra'
+        }, {
+            value: 7,
+            name: 'Cecile'
         }]
-    });
+    }, {
+        name: 'Energy drinks', // Energy drinks series
+        data: [{
+            value: 10,
+            name: 'Tristan'
+        }]
+    }, {
+        name: 'Tea', // Tea series
+        data: [5, 6, 8, {
+            value: 10,
+            name: 'Mustapha',
+            color: 'pink'
+        }]
+    }]
+});
+```
 
 Notice in the code above, that the Tea data series is set with one dimensional array, except for the last point, which is set with values for volume, name and a color.
 

@@ -8,14 +8,12 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Global smartphone shipments market share, Q1 2022',
-        align: 'left'
+        text: 'Global smartphone shipments market share, Q1 2022'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.counterpointresearch.com/global-smartphone-share/"' +
-            'target="_blank">Counterpoint Research</a>',
-        align: 'left'
+            'target="_blank">Counterpoint Research</a>'
     },
     accessibility: {
         point: {

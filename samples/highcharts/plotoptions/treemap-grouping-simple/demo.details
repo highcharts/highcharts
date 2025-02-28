@@ -1,0 +1,6 @@
+---
+ name: Treemap Demo
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+...

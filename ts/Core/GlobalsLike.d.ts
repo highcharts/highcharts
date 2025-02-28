@@ -41,7 +41,6 @@ export interface GlobalsLike {
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
     readonly doc: Document;
-    readonly hasBidiBug: boolean;
     readonly isChrome: boolean;
     readonly isFirefox: boolean;
     readonly isMS: boolean;
@@ -51,6 +50,7 @@ export interface GlobalsLike {
     readonly marginNames: ReadonlyArray<string>;
     readonly nav: Navigator;
     readonly noop: (this: any, ...args: Array<any>) => any;
+    readonly pageLang?: string,
     readonly product: string;
     readonly seriesTypes: SeriesTypeRegistry;
     readonly supportsPassiveEvents: boolean;

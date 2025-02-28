@@ -4,3 +4,7 @@
     height: 380px;
     margin: 8px;
 }
+
+.highcharts-description {
+    padding: 0 20px;
+}

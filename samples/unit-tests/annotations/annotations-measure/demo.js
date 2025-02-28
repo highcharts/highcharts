@@ -1,4 +1,59 @@
-// 1
+QUnit.test('General tests for measure annotation', function (assert) {
+    const chart = Highcharts.chart('container', {
+        annotations: [{
+            type: 'measure',
+            controlPointOptions: {
+                visible: true
+            },
+            typeOptions: {
+                point: {
+                    x: 0.5,
+                    y: 6
+                },
+                background: {
+                    width: 200 + 'px',
+                    height: 150 + 'px'
+                }
+            }
+        }],
+
+        series: [{
+            data: [
+                5, 2, 1.5, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.annotations[0].controlPoints[0].graphic.visibility,
+        'inherit',
+        `Control point should be visible and setting it should not throw any
+        errors (#21879).`
+    );
+
+    assert.strictEqual(
+        chart.annotations[0].average,
+        3.625,
+        'Average should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].min,
+        1.5,
+        'Min should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].max,
+        6,
+        'Max should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].bins,
+        4,
+        'Bins should be calculated correctly.'
+    );
+});
+
+
 QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
     var chart = Highcharts.chart('container', {
         xAxis: {
@@ -128,5 +183,43 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         bbox.x,
         chart.annotations[0].shapesGroup.getBBox().x,
         'The annotation should stay in the same place after update, #19121.'
+    );
+});
+
+QUnit.test('Measure annotation border', function (assert) {
+    const WIDTH = 400;
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        annotations: [
+            {
+                type: 'measure',
+                typeOptions: {
+                    point: {
+                        x: 0
+                    },
+                    selectType: 'x',
+                    background: {
+                        width: `${WIDTH}px`,
+                        fill: 'lightblue',
+                        stroke: 'red',
+                        strokeWidth: 20
+                    }
+                }
+            }
+        ],
+        series: [
+            {
+                data: [1, 2, 3, 4, 5, 6, 7, 8]
+            }
+        ]
+    });
+    const measure = chart.annotations[0];
+    const { width } = measure.shapes[2].graphic.getBBox();
+    assert.equal(
+        width + measure.shapes[2].options.strokeWidth,
+        WIDTH,
+        'StrokeWidth should be taken into account when drawing annotation'
     );
 });

@@ -30,7 +30,7 @@ _The button below is now bound to the `circleAnnotation` events, after it's foun
 
 _See this demo for binding a button to the [`circleAnnotation`](https://api.highcharts.com/highcharts/navigation.bindings.circleAnnotation)._
 
-<iframe style="width: 100%; height: 469px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/annotations/basic-gui allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 469px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/annotations/basic-gui" allow="fullscreen"></iframe>
 
 ### Dialog windows
 
@@ -46,7 +46,7 @@ How to implement a custom dialog window, is best explained with an example where
   <div class="highcharts-popup highcharts-popup-annotations">
       <div class="highcharts-popup-wrapper">
           <label for="stroke">Color</label>
-          <input type="color" name="stroke" value="rgba(0, 0, 0, 0.75)"/>
+          <input type="color" name="stroke" value="#000000"/>
       </div>
       <button class="button">Save</button>
   </div>
@@ -137,4 +137,4 @@ How to implement a custom dialog window, is best explained with an example where
   ```
 
   _The above code is put together in the below demo_
-  <iframe style="width: 100%; height: 502px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/annotations/custom-popup allow="fullscreen"></iframe>
+  <iframe style="width: 100%; height: 502px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/annotations/custom-popup" allow="fullscreen"></iframe>

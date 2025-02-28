@@ -71,6 +71,11 @@ async function distRelease() {
     );
 
     fsLib.deleteDirectory(
+        path.join(distRepository, 'es-modules', 'DataGrid'),
+        true
+    );
+
+    fsLib.deleteDirectory(
         path.join(distRepository, 'css', 'dashboards'),
         true
     );

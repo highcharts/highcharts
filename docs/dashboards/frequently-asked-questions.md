@@ -1,29 +1,25 @@
-Frequently asked questions
-===
+# Frequently asked questions
 
-* * *
-How to connect dataPool to the other components?
----------------------------------------------
+## How do you connect `DataPool` to the other components?
 
-First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-handling)
+First, you must create the `DataPool` object, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-handling)
 
 After that, you need to pass the connector to the component config, and that’s it.
 [Here is the demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
-* * *
 
-How to connect component to a cell?
-----------------------------------
-1. Enabled layout creator (GUI)
-To be able to use Dashboards with layout system and edit mode you first have to load the `layout` module.
-The order of the imports is important, so make sure that the `layout` module is imported after the Dashboards module.
+## How do you connect a component to a cell?
+
+### 1. Enabled layout creator (GUI)
+To use **Dashboards** with a layout system and edit mode, you first have to load the `layout` module.
+The order of the imports is essential, so make sure that the `layout` module is imported after the Dashboards module.
 
 ```html
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
-Each cell must have an `id` field. The same id must be passed in the component config to the `renderTo` field. Example configuration of component and cell:
+Each cell must have an `id` field. The same `id` must be passed to the `renderTo` field in the component config. Example configuration of component and cell:
 
 ```js
 gui: {
@@ -52,15 +48,15 @@ components: [{
 [Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
 
 
-2. Disabled default layout creator
-You can create your own HTML structure of a layout, styled by CSS or other CSS framework (i.e Tailwind, Bootstrap).
-Please remember that each container should have an unique `id` for rendered component.
+### 2. Disabled default layout creator
+You can create your HTML structure for a layout styled by CSS or another CSS framework (e.g., **Tailwind**, **Bootstrap**).
+Please remember that each container should have a unique `id` for the rendered component.
 
 ```html
 <div id="container">
-<div>
-    <div id="dashboard-col-0"></div>
-</div>
+    <div>
+        <div id="dashboard-col-0"></div>
+    </div>
 </div>
 ```
 
@@ -80,16 +76,15 @@ components: [{
 }]
 ```
 
-[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
-[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+Here is the [standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout) and the
+[tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
 
-*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
+NB! The disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
 
-* * *
 
-How to synchronize the components?
------------------------------
-To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same connector.
+## How do we synchronize the components?
+
+To synchronize components, you have to specify which event you want to synchronize between each component, and they must use the same connector.
 
 Example of synchronized components
 
@@ -133,25 +128,22 @@ components: [{
 }]
 ```
 
-
-
-You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
+Check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 See the next question for possible synchronization events.
 
-* * *
-What are the synchronization events available in Highcharts Dashboards?
------------------------------------------------------------------------
-You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
-The events, that can be synchronized between components are:
+## What are the synchronization events available in Highcharts Dashboards?
+
+Check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
+
+The events that can be synchronized between components are:
 * 'visibility’
 * 'extremes'
 * 'highlight'
 
-* * *
-What browsers are supported?
----------------
-Highcharts Dashboards supports the following browsers:
+## What browsers are supported?
+
+**Highcharts Dashboards** supports the following browsers:
 
 |  Browser |    Version    |
 |----------|:-------------:|
@@ -161,16 +153,13 @@ Highcharts Dashboards supports the following browsers:
 | Opera    | 42.0+ (2016+) |
 | Edge     | 16.0+ (2017+) |
 
-* * *
-What versions of Highcharts are supported?
----------------
+## What versions of Highcharts are supported?
+
 The Highcharts Dashboards is compatible with all Highcharts modules in v10 or higher.
 
-* * *
+## I modified series names in a chart, and now the sync is not working. What can I do?
 
-## I modified series names in a chart, and now sync is not working? What can I do?
-
-Sync to other components may not work if you modify certain series properties. For instance modifying series names in the chart `afterRender` event callback:
+Sync to other components may not work if you modify specific series properties. For instance, modifying series names in the chart `afterRender` event callback:
 
 ```js
 afterRender(e) {
@@ -180,20 +169,18 @@ afterRender(e) {
 }
 ```
 
-* * *
-How to style the Dashboard?
------------------------------------------------------------------------
-1. Enabled layout creator (GUI)
-Dashboards has a default theme, which is applied to all of its components.
-You need to import the default CSS stylesheet to your project, so that the dashboard displays correctly. You can do it by importing the following CSS files:
+## How to style the Dashboard?
+
+### 1. Enabled layout creator (GUI)
+**Dashboards** has a default theme applied to all its components.
+You need to import the default CSS stylesheet to your project so that the dashboard displays correctly. You can do it by importing the following CSS files:
 
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
-
-But you can also customize the style of the dashboard by adding your own CSS stylesheet.
+However, you can customize the dashboard style by adding your custom CSS stylesheet.
 More about this topic [in the Styling section](https://www.highcharts.com/docs/dashboards/style-by-css).
 
 Use regular CSS media queries to adjust your layout to different screens.
@@ -222,14 +209,13 @@ Example:
 }
 ```
 
-Note that each component which includes chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
-To customize your chart styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
+Note that each component that includes a chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported so that the Highcharts display correctly.
+To customize your chart styles, you can create your own themes or add your own individual CSS variables or rules found in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-2. Disabled default layout creator (GUI)
-You can create your own HTML structure of a layout, styled by CSS or Tailwind.
-Please remember that each container should have an unique `id` for rendered component.
+### 2. Disabled default layout creator (GUI)
+You can create your own HTML structure of a layout styled by CSS or Tailwind.
+Please remember that each container should have a unique `id` for the rendered component.
 
-[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
-[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+Here is the [standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout) and the [tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
 
-*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
+NB! The disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.

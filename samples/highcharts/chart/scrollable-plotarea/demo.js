@@ -43,7 +43,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             pointInterval: 3600000, // one hour
-            pointStart: Date.UTC(2015, 4, 31, 0, 0, 0)
+            pointStart: '2015-05-31'
         }
     },
     series: [{

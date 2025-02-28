@@ -26,7 +26,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2021, 0, 1),
+            pointStart: '2021-01-01',
             pointIntervalUnit: 'month'
         }
     },

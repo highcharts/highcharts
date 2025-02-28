@@ -15,7 +15,7 @@ Highcharts.stockChart('container', {
     plotOptions: {
         series: {
             cumulative: true,
-            pointStart: Date.UTC(2023, 0, 1),
+            pointStart: '2023-01-01',
             pointIntervalUnit: 'day'
         }
     },
@@ -35,7 +35,7 @@ Highcharts.stockChart('container', {
 
     xAxis: {
         minRange: 3 * 24 * 36e5,
-        max: Date.UTC(2023, 0, 6)
+        max: '2023-01-06'
     },
 
     series: [{

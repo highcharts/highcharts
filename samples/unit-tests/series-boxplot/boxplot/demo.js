@@ -85,7 +85,7 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
 });
 
 QUnit.test('Individual options and Point.update', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'boxplot'
         },
@@ -97,7 +97,10 @@ QUnit.test('Individual options and Point.update', function (assert) {
         ]
     });
 
-    var point = chart.series[0].points[0];
+    const point = chart.series[0].points[0],
+        upperWhiskerLength = 32,
+        lowerWhiskerLength = 48;
+
     point.update(
         {
             color: 'red',
@@ -108,7 +111,9 @@ QUnit.test('Individual options and Point.update', function (assert) {
             stemDashStyle: 'dot',
             stemWidth: 1,
             whiskerColor: '#3D9200',
-            whiskerWidth: 3
+            whiskerWidth: 3,
+            upperWhiskerLength: 32,
+            lowerWhiskerLength: 48
         },
         true,
         false
@@ -145,6 +150,25 @@ QUnit.test('Individual options and Point.update', function (assert) {
         'whiskerColor'
     );
     assert.strictEqual(point.whiskers.attr('stroke-width'), 3, 'whiskerWidth');
+
+    const [
+        upperMoveTo,
+        upperLineTo,
+        lowerMoveTo,
+        lowerLineTo
+    ] = point.whiskers.pathArray;
+
+    assert.strictEqual(
+        upperLineTo[1] - upperMoveTo[1],
+        upperWhiskerLength,
+        'Upper whisker\'s length should be configured appropriately'
+    );
+
+    assert.strictEqual(
+        lowerLineTo[1] - lowerMoveTo[1],
+        lowerWhiskerLength,
+        'Lower whisker\'s length should be configured appropriately'
+    );
 });
 
 QUnit.test(

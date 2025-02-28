@@ -4,7 +4,8 @@ QUnit.test('Ellipsis should be reset after zoom (#4678)', function (assert) {
             chart: {
                 type: 'bar',
                 zoomType: 'x',
-                animation: false
+                animation: false,
+                width: 600
             },
 
             xAxis: {

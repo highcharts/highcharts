@@ -9,8 +9,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts bubbles with radial gradient fill',
-        align: 'left'
+        text: 'Highcharts bubbles with radial gradient fill'
     },
 
     xAxis: {

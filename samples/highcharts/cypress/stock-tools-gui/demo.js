@@ -141,6 +141,9 @@ Highcharts.stockChart('container', {
             return position;
         }
     },
+    rangeSelector: {
+        inputDateFormat: '%[YH]'
+    },
     series: [
         {
             type: 'ohlc',

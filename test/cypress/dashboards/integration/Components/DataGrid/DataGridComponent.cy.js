@@ -25,15 +25,16 @@ describe('layout resize on window changes', () => {
         cy.chart().then((chart) => {
             assert.notOk(chart.tooltip.isHidden, 'When hovering over DataGrid, chart should have tooltip.');
         });
+        cy.get('@firstDataGridRow').children().eq(0).trigger('mouseout');
 
         // Act - hover over the chart.
         cy.get('.highcharts-point').eq(1).trigger('mouseover');
 
-        // Assert - hover over the chart.
-        cy.get('@firstDataGridRow').should('not.have.class', 'highcharts-datagrid-hovered-row');
-        cy.get('@secondDataGridRow').should('have.class', 'highcharts-datagrid-hovered-row');
-        cy.get('@secondDataGridRow').children().eq(0).should('not.have.class', 'highcharts-datagrid-hovered-column');
-        cy.get('@secondDataGridRow').children().eq(1).should('have.class', 'highcharts-datagrid-hovered-column');
+        // Assert - synced over the chart.
+        cy.get('@firstDataGridRow').should('not.have.class', 'highcharts-datagrid-synced-row');
+        cy.get('@secondDataGridRow').should('have.class', 'highcharts-datagrid-synced-row');
+        cy.get('@secondDataGridRow').children().eq(0).should('not.have.class', 'highcharts-datagrid-synced-column');
+        cy.get('@secondDataGridRow').children().eq(1).should('have.class', 'highcharts-datagrid-synced-column');
     });
 
     it('Updating of the store should work by changing chart and datagrid', () => {
@@ -108,7 +109,7 @@ describe('layout resize on window changes', () => {
     });
 
     it('The dataGridOptions should be applied to the component.', () => {
-        cy.get('th').eq(1).should('have.text', 'Vitamin A (IU)');
+        cy.get('th').eq(1).should('contain', 'Vitamin A (IU)');
     });
 
     it('The editableOptions should be visible in the sidebar and should show the correct values.', () => {
@@ -120,21 +121,21 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-label-text').contains('Editable DataGrid').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Editable DataGrid')
-            .next()
+            .prev()
             .find('input[type="checkbox"]')
             .should('be.checked');
 
         cy.get('.highcharts-dashboards-edit-label-text').contains('Resizable columns').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Resizable columns')
-            .next()
+            .prev()
             .find('input[type="checkbox"]')
             .should('be.checked');
 
         cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Sortable columns')
-            .next()
+            .prev()
             .find('input[type="checkbox"]')
             .should('be.checked');
 
@@ -147,7 +148,7 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-label-text').contains('Cell text truncation').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Cell text truncation')
-            .next()
+            .prev()
             .find('input[type="checkbox"]')
             .should('not.be.checked');
     });
@@ -163,7 +164,7 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-datagrid-column-sortable').should('exist');
 
         // Act
-        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').click();
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').prev().click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(0).click();
 
         // Assert
@@ -179,7 +180,7 @@ describe('layout resize on window changes', () => {
         cy.openCellEditSidebar('#dashboard-col-1');
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('DataGrid options').click();
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
-        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').click();
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').prev().click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(1).click();
 

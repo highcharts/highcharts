@@ -23,6 +23,7 @@
  * */
 
 import type DataTable from '../../../Data/DataTable';
+
 import Cell from '../Cell.js';
 import Column from '../Column';
 import TableRow from './TableRow';
@@ -30,7 +31,7 @@ import Utils from '../../../Core/Utilities.js';
 import DGUtils from '../../Utils.js';
 
 const { defined, fireEvent } = Utils;
-const { isHTML } = DGUtils;
+const { setHTMLContent } = DGUtils;
 
 
 /* *
@@ -55,6 +56,8 @@ class TableCell extends Cell {
      */
     public row: TableRow;
 
+    public override column: Column;
+
 
     /* *
     *
@@ -65,14 +68,16 @@ class TableCell extends Cell {
     /**
      * Constructs a cell in the data grid.
      *
-     * @param column
-     * The column of the cell.
-     *
      * @param row
      * The row of the cell.
+     *
+     * @param column
+     * The column of the cell.
      */
-    constructor(column: Column, row: TableRow) {
-        super(column, row);
+    constructor(row: TableRow, column: Column) {
+        super(row, column);
+
+        this.column = column;
         this.row = row;
 
         this.column.registerCell(this);
@@ -232,17 +237,16 @@ class TableCell extends Cell {
         const element = this.htmlElement;
         const cellContent = this.formatCell();
 
-        if (isHTML(cellContent)) {
-            this.renderHTMLCellContent(
-                cellContent,
-                element
-            );
-        } else {
-            element.innerText = cellContent;
-        }
+        // Render the table cell element content.
+        setHTMLContent(element, cellContent);
 
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
+
+        if (this.column.options.cells?.editable) {
+            vp.dataGrid.accessibility?.addEditableCellHint(this.htmlElement);
+        }
+
         vp.dataGrid.options?.events?.cell?.afterSetValue?.call(this);
 
         if (!updateTable) {
@@ -296,8 +300,12 @@ class TableCell extends Cell {
      * Handle the formatting content of the cell.
      */
     private formatCell(): string {
+        const cellsDefaults =
+            this.row.viewport.dataGrid.options?.columnDefaults?.cells || {};
         const options = this.column.options.cells || {};
         const { format, formatter } = options;
+        const isDefaultFormat = cellsDefaults.format === format;
+        const isDefaultFormatter = cellsDefaults.formatter === formatter;
 
         let value = this.value;
         if (!defined(value)) {
@@ -306,12 +314,16 @@ class TableCell extends Cell {
 
         let cellContent = '';
 
-        if (formatter) {
-            cellContent = formatter.call(this).toString();
-        } else {
-            cellContent = (
-                format ? this.format(format) : value + ''
-            );
+        if (isDefaultFormat && isDefaultFormatter) {
+            cellContent = formatter ?
+                formatter.call(this).toString() :
+                (
+                    format ? this.format(format) : value + ''
+                );
+        } else if (isDefaultFormat) {
+            cellContent = formatter?.call(this).toString() || value + '';
+        } else if (isDefaultFormatter) {
+            cellContent = format ? this.format(format) : value + '';
         }
 
         return cellContent;

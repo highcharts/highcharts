@@ -11,7 +11,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2012, 0, 1),
+            pointStart: '2012-01-01',
             pointInterval: 24 * 3600 * 1000
         }
     },
