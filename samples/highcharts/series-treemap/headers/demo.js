@@ -1,4 +1,7 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
+    chart: {
+        width: 600
+    },
     series: [{
         type: 'treemap',
         name: 'Norge',
@@ -12,7 +15,6 @@ Highcharts.chart('container', {
         },
         borderColor: '#ffffff',
         borderRadius: 3,
-        nodeSizeBy: 'leaf',
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
@@ -26,6 +28,7 @@ Highcharts.chart('container', {
                     textTransform: 'uppercase'
                 }
             },
+            borderColor: '#333',
             borderRadius: 3,
             borderWidth: 1,
             colorByPoint: true
@@ -121,3 +124,18 @@ Highcharts.chart('container', {
             <b>{point.value} km<sup>2</sup></b>'
     }
 });
+
+// Enable the checkbox
+document.querySelector('input[name=dataLabels\\.headers]')
+    .addEventListener('change', e => {
+        chart.series[0].update({
+            levels: [Highcharts.merge(
+                chart.series[0].options.levels[0],
+                {
+                    dataLabels: {
+                        headers: e.target.checked
+                    }
+                }
+            )]
+        });
+    });
