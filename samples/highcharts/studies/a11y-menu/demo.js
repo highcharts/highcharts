@@ -482,18 +482,7 @@ function getColumnChartConfig() {
             type: 'column'
         },
         exporting: {
-            buttons: {
-                contextButton: {
-                    menuItems: [
-                        'printChart',
-                        'viewData',
-                        'downloadPNG',
-                        'downloadJPEG',
-                        'downloadPDF',
-                        'downloadSVG'
-                    ]
-                }
-            }
+            enabled: false
         },
         accessibility: {
             screenReaderSection: {
@@ -576,18 +565,7 @@ function getScatterChartConfig() {
             }
         },
         exporting: {
-            buttons: {
-                contextButton: {
-                    menuItems: [
-                        'printChart',
-                        'viewData',
-                        'downloadPNG',
-                        'downloadJPEG',
-                        'downloadPDF',
-                        'downloadSVG'
-                    ]
-                }
-            }
+            enabled: false
         },
         accessibility: {
             screenReaderSection: {
