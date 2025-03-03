@@ -31,7 +31,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
+import type Types from '../../Shared/Types';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import BoostableMap from './BoostableMap.js';
@@ -65,6 +65,7 @@ const {
     defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
+import DataTableCore from '../../Data/DataTableCore';
 
 /* *
  *
@@ -611,7 +612,7 @@ function destroyGraphics(
  * Set to true to skip timeouts.
  */
 function eachAsync(
-    arr: Array<unknown>|TypedArray,
+    arr: Array<unknown>|Types.TypedArray,
     fn: Function,
     finalFunc: Function,
     chunkSize?: number,
@@ -792,7 +793,7 @@ function hasExtremes(
  */
 const getSeriesBoosting = (
     series: BoostSeriesComposition,
-    data?: Array<(PointOptions|PointShortOptions)>|TypedArray
+    data?: Array<(PointOptions|PointShortOptions)>|Types.TypedArray
 ): boolean => {
     // Check if will be grouped.
     if (series.forceCrop) {
@@ -1068,6 +1069,11 @@ function scatterProcessData(
     series.cropped = cropped;
     series.cropStart = 0;
     // For boosted points rendering
+    if (cropped && series.dataTable.modified === series.dataTable) {
+        // Calling setColumns with cropped data must be done on a new instance
+        // to avoid modification of the original (complete) data
+        series.dataTable.modified = new DataTableCore();
+    }
     series.dataTable.modified.setColumns({
         x: processedXData,
         y: processedYData
@@ -1556,8 +1562,9 @@ function wrapSeriesProcessData(
     this: Series,
     proceed: Function
 ): void {
-    let dataToMeasure: (PointOptions|PointShortOptions)[]|TypedArray|undefined =
-        this.options.data;
+    let dataToMeasure: (
+        PointOptions|PointShortOptions
+    )[]|Types.TypedArray|undefined = this.options.data;
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
@@ -1589,7 +1596,7 @@ function wrapSeriesProcessData(
             }
 
             // Extra check for zoomed scatter data
-            if (isScatter && !series.yAxis.treeGrid) {
+            if (isScatter && series.yAxis.type !== 'treegrid') {
                 scatterProcessData.call(series, arguments[1]);
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));
