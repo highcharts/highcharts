@@ -609,7 +609,8 @@ function (onInit, kbdHandlers, kbdDescriptions) {
     const chart = this,
         chartTitle = chart.options.title.text,
         appLabel = `Interactive audio chart. ${chartTitle}. Click to interact.`,
-        initNotify = 'Chart. Press T for tools. Use arrow keys to explore.',
+        initNotify = 'Chart. Press T for tools and help. ' +
+            'Use arrow keys to explore.',
         app = chart.addProxyContainerEl('div'),
         fallbackButton = chart.addSROnly(
             'button', `Interact with chart, ${chartTitle}.`, app
@@ -1665,7 +1666,7 @@ const networkKbdDescriptions = {
     },
     n: {
         name: 'N',
-        desc: 'Read top connections from and to node'
+        desc: 'Read top connections to and from node'
     }
 };
 
