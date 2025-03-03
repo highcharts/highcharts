@@ -1016,7 +1016,7 @@ function addPrefButton(chart) {
             cursor: 'pointer',
             role: 'button',
             tabindex: 0,
-            'aria-label': 'Preferences'
+            'aria-label': 'Chart settings and tools'
         })
         .on('click', () => handlePrefButtonClick(chart))
         .add();
@@ -1565,7 +1565,7 @@ function createPreferencesDialog(chart) {
                 <label for="point-desc-${i}">Show point descriptions</label>
             </div> 
 
-            <h3>Text description:</h3>
+            <h3>Chart summary:</h3>
             <div class="pref verbosity">
                 <input type="radio" id="short-${i}"
                 name="verbosity-${i}" value="short"
