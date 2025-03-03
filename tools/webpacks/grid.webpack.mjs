@@ -22,16 +22,19 @@ import { resolveExternals } from './externals.mjs';
  *
  * */
 
-
 const sourceFolder = Path.join('code', 'grid', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
 const targetFolder = Path.join('code', 'grid');
+
+const buildProps = FSLib.getFile(
+    Path.join('tools', 'gulptasks', 'grid', 'build-properties.json'),
+    true
+);
 
 const namespace = 'Grid';
 const productMasters = [
     'grid-lite'
 ];
-
 
 /* *
  *
@@ -91,7 +94,7 @@ const webpacks = FSLib
                 }),
                 new ProductMetaPlugin({
                     productName: 'Grid',
-                    productVersion: '1.0.0' // Update version before releasing
+                    productVersion: buildProps.version
                 }),
                 new UMDExtensionPlugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)

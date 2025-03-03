@@ -20,28 +20,12 @@ function getProperties() {
     const argv = require('yargs').argv;
     const distProduct = argv.product || 'Highcharts';
 
-    if (distProduct === 'Highcharts') {
-        return require('../../build-properties.json');
+    switch (distProduct) {
+        case 'Grid':
+            return require('./grid/build-properties.json');
+        default:
+            return require('../../build-properties.json');
     }
-
-    if (!argv.release) {
-        throw new Error('No valid `--release x.x.x` provided.');
-    }
-
-    // Grid
-    return {
-        products: {
-            'Highcharts Grid Lite': {
-                cdnpath: '/grid-lite',
-                distpath: '/grid-lite'
-            }/* ,
-            'Highcharts Grid Pro': {
-                cdnpath: '/grid-pro',
-                distpath: '/grid-pro'
-            }*/
-        },
-        version: argv.release
-    };
 }
 
 
