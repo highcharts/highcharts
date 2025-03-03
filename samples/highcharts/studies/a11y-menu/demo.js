@@ -45,23 +45,19 @@ const columnChartDesc = 'This bar chart compares the estimated production ' +
 
 const scatterChartDesc = 'This scatter plot displays the relationship ' +
             'between height and weight for a sample of 154 individuals, ' +
-            'consisting of 124 males and 30 females. The x-axis represents ' +
+            'consisting of 244 males and 256 females. The x-axis represents ' +
             'height in centimeters, while the y-axis shows weight in ' +
-            'kilograms. The chart provides insights into the distribution ' +
-            'of body measurements across both genders, showcasing trends ' +
-            'and variations within the dataset.';
+            'kilograms. The average height of a female are 165.8 cm, ' +
+            'the average weight is 58.2 kg. The average height of a male ' +
+            'is 174.3 cm and weight is 80.7 kg.';
 
 const descFemale = 'This series contains the heights and weights ' +
-                'of a group of 30 women with heights ranging from 147 cm ' +
-                'to 183 cm and weights between 42 kg and 105 kg. ' +
-                'The average height for the females are 165.8 cm, the ' +
-                'average weight is 58.2 kg.';
+                'of a group of 260 women with heights ranging from 147 cm ' +
+                'to 183 cm and weights between 42 kg and 105 kg.';
 
 const descMale = 'This series contains the heights and weights ' +
-                'of a group of 124 men, with heights ranging from 157 cm ' +
-                'to 198 cm and weights between 54 kg and 116 kg. The ' +
-                'average height for the males is 174.3 cm, and the average ' +
-                'weight is 80.7 kg.';
+                'of a group of 247 men, with heights ranging from 157 cm ' +
+                'to 198 cm and weights between 54 kg and 116 kg.';
 
 /* -------------------- COLORS --------------------- */
 
@@ -623,9 +619,9 @@ function getScatterChartConfig() {
             borderWidth: 1
         },
         sonification: {
-            duration: 6000,
+            duration: 20000,
             pointGrouping: {
-                groupTimespan: 1
+                enabled: false
             }
         },
         plotOptions: {
@@ -1476,7 +1472,7 @@ function setupEventListeners(prefContent, chart) {
                         onPlay: function () {
                             dialog.style.opacity = 0;
                         },
-                        onSeriesEnd: function () {
+                        onStop: function () {
                             dialog.style.opacity = 1;
                         }
                     }
@@ -1821,7 +1817,7 @@ function createPreferencesDialog(chart) {
                 Play chart with speech
                 </button>
             </div>
-            
+
             <h3>Chart description</h3>
             <div class="pref tool">
                 <button id="describe-chart-${i}" name="describe-chart-${i}">
