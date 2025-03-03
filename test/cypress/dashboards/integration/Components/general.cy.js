@@ -41,7 +41,7 @@ describe('Caption', () => {
 
 describe('Data polling restarting', () => {
   before(() => {
-    cy.visit('dashboards/data/connector-polling');
+    cy.visit('dashboards/cypress/connector-polling');
     cy.toggleEditMode();
   });
 
