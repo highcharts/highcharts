@@ -305,7 +305,6 @@ class ConnectorHandler {
                 connector.components.length === 1 &&
                 'dataRefreshRate' in options
             ) {
-                console.log('Connector polling started', connector);
                 connector.startPolling(
                     Math.max(options.dataRefreshRate || 0, 1) * 1000
                 );
