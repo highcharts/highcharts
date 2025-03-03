@@ -226,7 +226,7 @@ class Accessibility {
             )
         ) {
             this.grid.contentWrapper?.classList.add(
-                'hcdg-highcontrast-theme'
+                'hcg-theme-highcontrast'
             );
         }
     }
