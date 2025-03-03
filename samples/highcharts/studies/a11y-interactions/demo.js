@@ -124,6 +124,10 @@ hcCSS.replaceSync(`
             display: flex;
             flex-direction: column;
         }
+        .inner-content {
+            flex: 1;
+            min-height: 0;
+        }
     }
 
     .hc-a11y-kbd-hints-dialog {
@@ -138,9 +142,7 @@ hcCSS.replaceSync(`
             display: flex;
             align-items: center;
         }
-        .inner-content {
-            flex: 1;
-            min-height: 0;
+        .innerContent {
             display: flex;
         }
     }
@@ -212,6 +214,49 @@ hcCSS.replaceSync(`
         }
     }
 
+    .hc-a11y-table {
+        --bg-color: #ffffff;
+        --text-color: #333;
+        --border-color: #ddd;
+        --header-bg: #f8f9fa;
+        --row-alt-bg: #f1f3f5;
+        --hover-bg: #e9ecef;
+        
+        .inner-content {
+            overflow-y: scroll;
+        }
+        table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        thead {
+            background: var(--header-bg);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        tbody tr:nth-child(even) {
+            background: var(--row-alt-bg);
+        }
+        tbody tr:hover {
+            background: var(--hover-bg);
+        }
+        th {
+            font-weight: 600;
+        }
+        th[scope="col"] {
+            text-align: left;
+        }
+    }
+
     @media (prefers-color-scheme: dark) {
         .hc-dialog,
         .hc-a11y-kbd-hint {
@@ -231,6 +276,15 @@ hcCSS.replaceSync(`
 
         .hc-dialog button.close {
             color: #fff;
+        }
+
+        .hc-a11y-table {
+            --bg-color: #1e1e1e;
+            --text-color: #f1f1f1;
+            --border-color: #444;
+            --header-bg: #2a2a2a;
+            --row-alt-bg: #242424;
+            --hover-bg: #333;
         }
     }
 
@@ -358,6 +412,34 @@ document.addEventListener('mousedown', hideToast);
 
 
 // ============================================================================
+// Data table dialog
+
+const dataTableDialog = createDialog('Data table', '', 'hc-a11y-table'),
+    showTableDialog = chart => {
+        dataTableDialog.querySelector('h3').textContent =
+            'Data table for ' + chart.options.title.text;
+        dataTableDialog.querySelector('.inner-content').innerHTML = `
+    <table>
+        <thead>
+        <tr>
+            <th scope="col">Year</th>
+            ${chart.series.map(s => `<th scope="col">${s.name}</th>`).join('')}
+        </tr>
+        </thead>
+        <tbody>
+        ${chart.series[0].points.map((point, i) => `
+        <tr>
+            <th scope="row">${point.x}</th>
+            ${chart.series.map(s => `<td>$${s.data[i].y}</td>`).join('')}
+        </tr>
+        `).join('')}
+        </table>`;
+        setCSSPosToOverlay(dataTableDialog, chart.renderTo);
+        dataTableDialog.showModal();
+    };
+
+
+// ============================================================================
 // Focus border utils
 
 const focusBorder = document.createElement('div');
@@ -478,7 +560,8 @@ function (svgEl, elType, content, parent) {
                 top: bbox.y - containerBBox.y + 'px',
                 width: bbox.width + 'px',
                 height: bbox.height + 'px',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                tabindex: '-1'
             });
         },
         resizeObserver = new ResizeObserver(setSize);
@@ -492,7 +575,11 @@ function (svgEl, elType, content, parent) {
         'touchcancel'
     ].forEach(
         type => el.addEventListener(
-            type, e => svgEl.dispatchEvent(new e.constructor(e.type, e))
+            type, e => {
+                svgEl.dispatchEvent(new e.constructor(e.type, e));
+                e.stopPropagation();
+                e.preventDefault();
+            }
         )
     );
 
@@ -618,6 +705,351 @@ function (onInit, kbdHandlers, kbdDescriptions) {
 
     return app;
 };
+
+
+// ============================================================================
+// Line simplification (from 2023 CSUN work)
+
+const defined = n => typeof n !== 'undefined' && n !== null;
+
+// Minimal binary min heap implementation for points that compare by a function.
+// The function takes a pointA and a pointB, and should return true if pointA is
+// smaller than pointB.
+class BinaryMinHeap {
+    constructor(compareIsSmallerThan) {
+        this.heap = [];
+        this.compareIsSmallerThan = compareIsSmallerThan;
+    }
+
+    // Add point to heap, inserted in the right place based on comparison fn
+    push(point) {
+        this.heap.push(point);
+        this.sortUpFromIndex(this.heap.length - 1);
+    }
+
+    // Remove minimum point from heap, updating the rest of the heap
+    popMin() {
+        if (!this.heap.length) {
+            return null;
+        }
+        const min = this.heap[0],
+            last = this.heap.pop();
+        if (last) {
+            if (!this.heap.length) {
+                return last;
+            }
+            this.heap[0] = last;
+            this.sortDownFromIndex(0);
+        }
+        return min;
+    }
+
+    length() {
+        return this.heap.length;
+    }
+
+    updateNode(point) {
+        const index = this.heap.indexOf(point);
+        if (index > -1) {
+            this.sortUpFromIndex(index);
+            this.sortDownFromIndex(index);
+        }
+    }
+
+    sortUpFromIndex(index) {
+        const point = this.heap[index];
+        while (index > 0) {
+            const parentIndex = Math.floor((index - 1) / 2),
+                parentPoint = this.heap[parentIndex];
+            if (this.compareIsSmallerThan(point, parentPoint)) {
+                // Swap nodes
+                this.heap[parentIndex] = point;
+                this.heap[index] = parentPoint;
+                index = parentIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    sortDownFromIndex(index) {
+        const length = this.heap.length,
+            point = this.heap[index];
+        let ix = index;
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            const leftNodeIx = 2 * ix + 1,
+                rightNodeIx = 2 * ix + 2;
+            let leftPoint,
+                righPoint,
+                swapIndex = null;
+            if (leftNodeIx < length) {
+                leftPoint = this.heap[leftNodeIx];
+                if (this.compareIsSmallerThan(leftPoint, point)) {
+                    swapIndex = leftNodeIx;
+                }
+            }
+            if (rightNodeIx < length) {
+                righPoint = this.heap[rightNodeIx];
+                const shouldSwapRight =
+                    swapIndex !== null && leftPoint ?
+                        this.compareIsSmallerThan(righPoint, leftPoint) :
+                        this.compareIsSmallerThan(righPoint, point);
+                if (shouldSwapRight) {
+                    swapIndex = rightNodeIx;
+                }
+            }
+            if (swapIndex === null) {
+                break;
+            }
+            this.heap[ix] = this.heap[swapIndex];
+            this.heap[swapIndex] = point;
+            ix = swapIndex;
+        }
+    }
+}
+
+// Get the area of a triangle of points
+function getAreaForPoint(point, prev, next) {
+    if (!prev || !next) {
+        return Infinity;
+    }
+    const { plotX: x1, plotY: y1 } = point,
+        { plotX: x2, plotY: y2 } = prev,
+        { plotX: x3, plotY: y3 } = next;
+
+    if (![x1, x2, x3, y1, y2, y3].every(defined)) {
+        return Infinity;
+    }
+    return Math.abs(
+        0.5 * (
+            (x1 * (y2 - y3)) +
+            (x2 * (y3 - y1)) +
+            (x3 * (y1 - y2))
+        )
+    );
+}
+
+// Simplify large XY data sets before further processing, by keeping
+// the min and max point for each pixel only.
+function preprocessSimplify(points) {
+    if (points.length < 2000) {
+        return points;
+    }
+    const simplified = [],
+        len = points.length,
+        groupMin = [Infinity, null],
+        groupMax = [-Infinity, null],
+        addGroup = () => {
+            const min = groupMin[1],
+                max = groupMax[1];
+            if (min && max) {
+                if (min === max) {
+                    simplified.push(min);
+                } else {
+                    const minFirst = min.x < max.x;
+                    simplified.push(
+                        minFirst ? min : max, minFirst ? max : min
+                    );
+                }
+            }
+        };
+    let groupX = Infinity;
+    for (let i = 0, p, y; i < len; ++i) {
+        p = points[i];
+        y = p.y;
+        if (p.plotX !== void 0 && y !== void 0 && y !== null) {
+            const x = Math.round(p.plotX);
+            if (x !== groupX) {
+                // New group
+                addGroup();
+                groupX = x;
+                groupMin[0] = groupMax[0] = y;
+                groupMin[1] = groupMax[1] = p;
+            } else {
+                // Within group
+                if (y > groupMax[0]) {
+                    groupMax[0] = y;
+                    groupMax[1] = p;
+                }
+                if (y < groupMin[0]) {
+                    groupMin[0] = y;
+                    groupMin[1] = p;
+                }
+            }
+        }
+    }
+    addGroup();
+    return simplified;
+}
+
+/* eslint-disable no-underscore-dangle */
+
+// Get simplified array of points, supplying the target number of points in
+// the resulting simplified array.
+// Based on the Visvalingam-Whyatt algorithm.
+function subtractiveVisvalingam(points, numPoints) {
+    const heap = new BinaryMinHeap((pointA, pointB) => (
+        defined(pointA._visvalingamArea) &&
+        defined(pointB._visvalingamArea) ?
+            pointA._visvalingamArea < pointB._visvalingamArea :
+            false
+    ));
+
+    // First compute area for all points, and add them to the heap.
+    // Also link them so we can keep the order updated as we remove.
+    points.forEach((p, ix) => {
+        p._prevPoint = points[ix - 1] || undefined;
+        p._nextPoint = points[ix + 1] || undefined;
+        p._visvalingamArea = getAreaForPoint(p, p._prevPoint, p._nextPoint);
+        if (p._visvalingamArea < Infinity) {
+            heap.push(p);
+        }
+    });
+
+    // Then remove points until we reach the target
+    while (heap.length() > numPoints) {
+        const removed = heap.popMin(),
+            next = removed._nextPoint,
+            prev = removed._prevPoint;
+
+        // Recalc linked list references & area around removed point
+        if (next) {
+            next._prevPoint = removed._prevPoint;
+            next._visvalingamArea = getAreaForPoint(
+                next, next._prevPoint, next._nextPoint
+            );
+            if (next._visvalingamArea < Infinity) {
+                heap.updateNode(next);
+            }
+        }
+        if (prev) {
+            prev._nextPoint = removed._nextPoint;
+            prev._visvalingamArea = getAreaForPoint(
+                prev, prev._prevPoint, prev._nextPoint
+            );
+            if (prev._visvalingamArea < Infinity) {
+                heap.updateNode(prev);
+            }
+        }
+        removed._nextPoint = removed._prevPoint =
+            removed._visvalingamArea = undefined;
+    }
+
+    const simplified = [];
+    let simplifiedPoint = points[0];
+    while (simplifiedPoint) {
+        if (defined(simplifiedPoint.y)) {
+            simplified.push(simplifiedPoint);
+        }
+        delete simplifiedPoint._visvalingamArea;
+        simplifiedPoint = simplifiedPoint._nextPoint;
+    }
+
+    return simplified;
+}
+
+// Get simplified array of points, supplying the target number of points in
+// the resulting simplified array.
+// Based on a modified Visvalingam-Whyatt algorithm, where we are adding the
+// most impactful points rather than subtracting the least impactful ones.
+function additiveVisvalingam(points, numPoints) {
+    const findInsertionIx = (points, candidateX) => {
+        let start = 0,
+            end = points.length - 1;
+        while (start <= end) {
+            const mid = Math.floor((start + end) / 2),
+                midX = points[mid].x;
+            if (midX === candidateX) {
+                return mid;
+            }
+            if (midX < candidateX) {
+                start = mid + 1;
+            } else {
+                end = mid - 1;
+            }
+        }
+        return start;
+    };
+
+    const candidatePoints = points.filter(p => defined(p.y));
+
+    if (candidatePoints.length < 3) {
+        return candidatePoints;
+    }
+
+    // Always include end points
+    const simplified = [
+        candidatePoints[0],
+        candidatePoints[candidatePoints.length - 1]
+    ];
+    candidatePoints.shift();
+    candidatePoints.pop();
+
+    // Calculate the area for each candidate point as if it was
+    // added to the simplified line
+    candidatePoints.forEach(cp => {
+        cp._avArea = getAreaForPoint(
+            cp,
+            simplified[0],
+            simplified[1]
+        );
+    });
+
+    // Build up the simplified line by adding points
+    while (simplified.length < numPoints && candidatePoints.length) {
+        let i = candidatePoints.length,
+            maxArea = 0,
+            maxAreaIx = -1;
+        while (i--) {
+            const candidatePoint = candidatePoints[i],
+                area = candidatePoint._avArea || 0;
+            if (area > maxArea && area < Infinity) {
+                maxArea = area;
+                maxAreaIx = i;
+            }
+        }
+
+        if (maxAreaIx > -1) {
+            const addedPoint = candidatePoints[maxAreaIx],
+                insertionIx = findInsertionIx(simplified, addedPoint.x);
+            candidatePoints.splice(maxAreaIx, 1);
+            simplified.splice(insertionIx, 0, addedPoint);
+
+            // Recalculate area of candidate points between the newly added
+            // point’s neighbors.
+            const prevSimplified = simplified[insertionIx - 1],
+                nextSimplified = simplified[insertionIx + 1],
+                startX = prevSimplified && prevSimplified.x,
+                endX = nextSimplified && nextSimplified.x;
+            let candidateIx = findInsertionIx(candidatePoints, startX),
+                candidatePoint = candidatePoints[candidateIx];
+            while (candidatePoint && candidatePoint.x < endX) {
+                const isBeforeInserted = candidatePoint.x < addedPoint.x;
+                candidatePoint._avArea = getAreaForPoint(
+                    candidatePoint,
+                    isBeforeInserted ? prevSimplified : addedPoint,
+                    isBeforeInserted ? addedPoint : nextSimplified
+                );
+                candidatePoint = candidatePoints[++candidateIx];
+            }
+        } else {
+            break;
+        }
+    }
+
+    return simplified;
+}
+
+// Simplify points in a line/XY series using cascading algorithms.
+// Points are first preprocessed for speed, then simplified via a subtractive
+// and an additive Visvalingam-Whyatt algorithm.
+function simplifyLine(points, numPoints) {
+    const preprocessed = preprocessSimplify(points),
+        stage1Threshold = Math.max(numPoints * 1.1, numPoints + 10),
+        subtracted = subtractiveVisvalingam(preprocessed, stage1Threshold);
+    return additiveVisvalingam(subtracted, numPoints);
+}
 
 
 // ============================================================================
@@ -750,13 +1182,18 @@ const historicalKbdHandlers = (() => {
         );
     };
     const upDown = (chart, next) => {
-        const { series: prevSeries, index } = getCurPoint(chart),
-            sortedSeries = chart.series.sort(
-                (a, b) => b.points[index].y - a.points[index].y
+        const { series: prevSeries, x } = getCurPoint(chart),
+            closestPointToX = series => series.points.reduce(
+                (acc, p) => (Math.abs(p.x - x) < Math.abs(acc.x - x) ? p : acc)
+            ),
+            sortedSeries = chart.series.filter(
+                s => s.visible
+            ).sort(
+                (a, b) => closestPointToX(b).y - closestPointToX(a).y
             ),
             ix = sortedSeries.findIndex(s => s === prevSeries),
             nextSeries = sortedSeries[next ? ix + 1 : ix - 1],
-            np = nextSeries && nextSeries.points[index];
+            np = nextSeries && closestPointToX(nextSeries);
         if (np) {
             singlePointInfo(np, `${nextSeries.name}, $${np.y}. ${np.category}`);
         } else {
@@ -782,6 +1219,43 @@ const historicalKbdHandlers = (() => {
             `${max ? 'Maximum' : 'Minimum'}, $${poi.y}. ${poi.category}`
         );
     };
+    const setSimplifyLevel = (chart, numPoints = null) => {
+        chart.sonification.cancel();
+
+        if (!numPoints) {
+            let i = chart.series.length;
+            while (i--) {
+                const s = chart.series[i];
+                if (s._isSimplifiedSeries) {
+                    s.remove();
+                } else {
+                    s.update({ visible: true, showInLegend: true }, false);
+                }
+            }
+            chart.redraw();
+            return;
+        }
+
+        const newSeries = chart.series.map(
+            s => simplifyLine(s.points, numPoints)
+        );
+        chart.series.forEach(
+            s => s.update({ visible: false, showInLegend: false }, false)
+        );
+        newSeries.forEach((points, ix) => {
+            const origSeries = chart.series[ix],
+                s = chart.addSeries({
+                    name: origSeries.name,
+                    color: origSeries.color,
+                    data: points.map(p => [p.x, p.y]),
+                    animation: false,
+                    type: 'line'
+                }, false);
+            s._isSimplifiedSeries = true;
+        });
+        chart.redraw();
+        chart.series[0].points[0].onMouseOver();
+    };
 
     return {
         ArrowLeft: chart => leftRight(chart, false),
@@ -799,9 +1273,14 @@ const historicalKbdHandlers = (() => {
 
         // Play current line
         a: chart => {
-            const p = getCurPoint(chart);
+            const son = chart.sonification,
+                p = getCurPoint(chart);
+            if (son.isPlaying()) {
+                son.cancel();
+                return;
+            }
             p.onMouseOver();
-            chart.sonification.speak(
+            son.speak(
                 p.series.name, {
                     rate: 1.5
                 }, 0,
@@ -839,7 +1318,28 @@ const historicalKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
             prevActionWasLR = false;
-        }
+        },
+
+        // Simplify chart
+        s: chart => {
+            chart.simplified = !chart.simplified;
+            setSimplifyLevel(chart, chart.simplified ? 8 : null);
+            const totalPoints = chart.series.reduce((acc, cur) =>
+                    acc + (cur.visible ? cur.points.length : 0), 0
+                ),
+                msg = `Smoothing ${chart.simplified ? 'on' : 'off'
+                }. Showing ${
+                    chart.simplified ?
+                        'only major data changes, hiding fluctuations' :
+                        'all data'
+                }. Chart now has ${totalPoints} data points in total.`;
+            announce(msg);
+            showToast(chart, msg);
+            prevActionWasLR = false;
+        },
+
+        // Show table
+        b: showTableDialog
     };
 })();
 
@@ -883,6 +1383,14 @@ const historicalKbdDescriptions = {
     l: {
         name: 'L',
         desc: 'Read summary of line'
+    },
+    s: {
+        name: 'S',
+        desc: 'Toggle smoothing, simplify chart'
+    },
+    b: {
+        name: 'B',
+        desc: 'View data table'
     }
 };
 
@@ -1110,7 +1618,7 @@ const networkKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
         },
-        s: chart => showQueryDialog(chart),
+        s: showQueryDialog,
         g: chart => {
             const msg = 'The chart will play sounds as you navigate. ' +
             'Lower and stronger tones means a bigger node with more ' +
