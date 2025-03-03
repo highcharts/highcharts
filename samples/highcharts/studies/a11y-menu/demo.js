@@ -441,8 +441,6 @@ function initializeCharts() {
     addPrefButton(chart2, 'container2');
     addCustomA11yComponent(chart1);
     addCustomA11yComponent(chart2);
-    addPrefButtonScreenReader(chart1);
-    addPrefButtonScreenReader(chart2);
 
     // Store descriptions in chart objects
     chart1.longDesc = getScreenReaderDescription(chart1);
@@ -467,12 +465,15 @@ function initializeCharts() {
     applyStoredSettings(chart1);
     applyStoredSettings(chart2);
 
-    // Ensure preferences button is appended without checking the box
-    applyInfoRegion(chartSettingsMap[chart1.index].selectedVerbosity, chart1);
-    applyInfoRegion(chartSettingsMap[chart2.index].selectedVerbosity, chart2);
+    // Ensure preferences button is appended
+    setTimeout(() => {
+        addPrefButtonScreenReader(chart1);
+        addPrefButtonScreenReader(chart2);
+    }, 50);
 
     return [chart1, chart2];
 }
+
 
 /* -------------------- CONFIGS --------------------- */
 
@@ -1138,7 +1139,7 @@ function addPrefButtonScreenReader(chart) {
 
     if (!existingPrefButton) {
         const prefButton = document.createElement('button');
-        prefButton.textContent = 'Preferences';
+        prefButton.textContent = 'Chart settings and tools';
         prefButton.id = 'hc-pref-button';
         prefButton.style.fontSize = settings.fontSize;
         prefButton.style.backgroundColor = theme.button.backgroundColor;
