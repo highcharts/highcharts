@@ -16,7 +16,8 @@ const defaultSettings = {
     fontSize: '',
     isSelectedTheme: 'default',
     isSonificationChecked: false,
-    isSonificationSpeechChecked: false
+    isSonificationSpeechChecked: false,
+    selectedView: 'chart'
 };
 
 /* -------------------- HARDCODED DESCRIPTIONS --------------------- */
@@ -465,6 +466,10 @@ function initializeCharts() {
     // Apply stored settings separately to each chart
     applyStoredSettings(chart1);
     applyStoredSettings(chart2);
+
+    // Ensure preferences button is appended without checking the box
+    applyInfoRegion(chartSettingsMap[chart1.index].selectedVerbosity, chart1);
+    applyInfoRegion(chartSettingsMap[chart2.index].selectedVerbosity, chart2);
 
     return [chart1, chart2];
 }
@@ -1172,6 +1177,47 @@ function addPrefButtonScreenReader(chart) {
     }
 }
 
+function addGenericPrefButton(chart, container) {
+    const settingImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Cog_wheel_icon.svg/1024px-Cog_wheel_icon.svg.png';
+
+    const buttonGroup = document.createElement('div');
+    buttonGroup.id = `hc-pref-button-group-${chart.index}`;
+    buttonGroup.className = 'hc-pref-button';
+    buttonGroup.style.cursor = 'pointer';
+    buttonGroup.setAttribute('role', 'button');
+    buttonGroup.setAttribute('tabindex', 0);
+    buttonGroup.setAttribute('aria-label', 'Chart settings and tools');
+    buttonGroup.onclick = () => handlePrefButtonClick(chart);
+    buttonGroup.onkeydown = event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handlePrefButtonClick(chart);
+        }
+    };
+
+    const bgRect = document.createElement('div');
+    bgRect.className = 'hc-pref-button-bg';
+    bgRect.style.width = '27px';
+    bgRect.style.height = '27px';
+    bgRect.style.backgroundColor = '#ffffff';
+    bgRect.style.borderRadius = '8px';
+    bgRect.style.display = 'inline-block';
+    bgRect.style.verticalAlign = 'middle';
+
+    const prefButton = document.createElement('img');
+    prefButton.src = settingImgSrc;
+    prefButton.alt = 'Preferences';
+    prefButton.style.width = '20px';
+    prefButton.style.height = '20px';
+    prefButton.style.display = 'inline-block';
+    prefButton.style.verticalAlign = 'middle';
+
+    bgRect.appendChild(prefButton);
+    buttonGroup.appendChild(bgRect);
+
+    container.insertAdjacentElement('beforebegin', buttonGroup);
+}
+
 function handlePrefButtonClick(chart) {
     chart.accessibility.keyboardNavigation.blocked = true;
     const dialog = createPreferencesDialog(chart);
@@ -1215,14 +1261,16 @@ function setupEventListeners(prefContent, chart) {
             prefContent.querySelector(`#sonify-${chart.index}`),
         sonificationSpeechButton =
             prefContent.querySelector(`#sonify-speech-${chart.index}`),
+        selectedViewButtons =
+            prefContent.querySelectorAll(`input[name="view-${chart.index}"]`),
         dialog = document.getElementById(`pref-menu-dialog-${chart.index}`);
 
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
         'div:first-child'
     );
-    const scatterDesc = document.getElementById('scatter-description');
-    const columnDesc = document.getElementById('column-description');
+    const scatterDesc = document.getElementById('description-1');
+    const columnDesc = document.getElementById('description-0');
 
     // Retrieve settings for chart instance
     const settings = chartSettingsMap[chart.index];
@@ -1510,6 +1558,95 @@ function setupEventListeners(prefContent, chart) {
         descriptionDiv.setAttribute('aria-live', 'polite');
     });
 
+    selectedViewButtons.forEach(radio => {
+        radio.addEventListener('change', event => {
+            settings.selectedView = event.target.value;
+            const descriptionId = `description-${chart.index}`;
+            const descriptionDiv = document.getElementById(descriptionId);
+            const table = document
+                .querySelector(`#highcharts-data-table-${chart.index}`);
+            const descDiv = document.querySelector('.chart-describe');
+            const chartContainer = document
+                .getElementById(`chart-${chart.index}`);
+
+            if (settings.selectedView === 'chart') {
+                console.log('chart selected');
+                chart.container.style.display = 'block';
+                descriptionDiv.style.display = 'none';
+                chart.update({
+                    exporting: {
+                        showTable: false
+                    }
+                });
+                // Hide the table if it is being displayed
+                if (table) {
+                    table.style.display = 'none';
+                }
+                // Hide the description if it is being displayed
+                if (descDiv) {
+                    descDiv.style.display = 'none';
+                }
+                // Remove the generic preferences button if it exists
+                const genericPrefButton = document
+                    .getElementById(`hc-pref-button-group-${chart.index}`);
+                if (genericPrefButton) {
+                    genericPrefButton.remove();
+                }
+                // Ensure the preferences button is in the correct position
+                addPrefButton(chart);
+            } else if (settings.selectedView === 'table') {
+                console.log('table selected');
+                chart.container.style.display = 'none';
+                descriptionDiv.style.display = 'none';
+                chart.update({
+                    exporting: {
+                        showTable: true
+                    }
+                });
+                // Add preferences button adjacent to the chart container
+                if (chartContainer) {
+                    const prefButton = document
+                        .getElementById(`hc-pref-button-group-${chart.index}`);
+                    if (prefButton) {
+                        chartContainer
+                            .insertAdjacentElement('beforebegin', prefButton);
+                    } else {
+                        addGenericPrefButton(chart, chartContainer);
+                    }
+                }
+            } else if (settings.selectedView === 'desc') {
+                console.log('desc selected');
+                chart.container.style.display = 'none';
+                chart.update({
+                    exporting: {
+                        showTable: false
+                    }
+                });
+                // Hide the table if it is being displayed
+                if (table) {
+                    table.style.display = 'none';
+                }
+                // Show the description
+                if (chart.series[0].type === 'scatter') {
+                    descriptionDiv.textContent = scatterChartDesc;
+                } else {
+                    descriptionDiv.textContent = columnChartDesc;
+                }
+                descriptionDiv.style.display = 'block';
+                // Add preferences button adjacent to the chart container
+                if (chartContainer) {
+                    const prefButton = document
+                        .getElementById(`hc-pref-button-group-${chart.index}`);
+                    if (prefButton) {
+                        chartContainer
+                            .insertAdjacentElement('beforebegin', prefButton);
+                    } else {
+                        addGenericPrefButton(chart, chartContainer);
+                    }
+                }
+            }
+        });
+    });
 }
 
 /* -------------------- DIALOG --------------------- */
@@ -1682,6 +1819,19 @@ function createPreferencesDialog(chart) {
         <div class="card-body ml-1 pl-0">
             <h2>Accessibility tools for ${chart.title.textStr} chart</h2>
             <p>Enhance the accessibility of your charts with these tools.</p>
+            <h3>View as</h3>
+            <input type="radio" id="chart-${i}"
+            name="view-${i}" value="chart"
+                ${settings.selectedView === 'chart' ? 'checked' : ''}>
+            <label for="view-${i}">Chart</label>
+            <input type="radio" id="table-${i}"
+            name="view-${i}" value="table"
+                ${settings.selectedView === 'table' ? 'checked' : ''}>
+            <label for="table-${i}">Table</label>
+            <input type="radio" id="desc-${i}"
+            name="view-${i}" value="desc"
+                ${settings.selectedView === 'desc' ? 'checked' : ''}>
+            <label for="view-${i}">Description</label>
             <h3>Sonification</h3>
             <div class="pref tool">
                 <button id="sonify-${i}" name="sonify-${i}">Play chart</button>
@@ -1877,3 +2027,9 @@ if (window.matchMedia) {
         }
     });
 }
+
+// Avoid jsfiddle/codepen link in demo
+setTimeout(() => ['jsfiddle', 'codepen'].forEach(id => {
+    const el = document.getElementById(id);
+    return el && (el.style.display = 'none');
+}), 10);
