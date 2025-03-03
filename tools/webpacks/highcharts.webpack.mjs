@@ -173,8 +173,8 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         module: {
             rules: [
                 {
-                    test: /\.src\.js$/,
-                    exclude: /node_modules/,
+                    test: /\.src\.js$/u,
+                    exclude: /node_modules/u,
                     use: {
                         loader:
                             Path.join(__dirname, 'plugins/MastersLoader.mjs'),

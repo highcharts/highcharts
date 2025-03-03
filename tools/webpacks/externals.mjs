@@ -212,7 +212,7 @@ export async function resolveExternals(
     const myExternals = externals.slice();
     const path = PPath
         .relative(
-            FSLib.path(sourceFolder, true),
+            FSLib.path([process.cwd(), sourceFolder], true),
             FSLib.path([info.context, info.request], true)
         )
         .replace(/\.[^\/]+$/u, '')
