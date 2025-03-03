@@ -1114,6 +1114,7 @@ namespace Exporting {
      * Exporting and offline-exporting modules required. Export a chart to
      * an image locally in the user's browser.
      *
+     * @private
      * @function Highcharts.Chart#exportChartLocalCore
      *
      * @param {Exporting.DownloadSVGLocalFunction} downloadSVGLocal
