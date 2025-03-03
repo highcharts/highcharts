@@ -46,18 +46,24 @@ async function askUser(question) {
 }
 
 /**
+ * Get the handled repos based on the product name.
+ * @param {string} productName The product name.
+ */
+function getHandledRepos(productName) {
+    return productName === 'Grid' ?
+        Object.values(releaseRepos.Grid) : [releaseRepos.Highcharts];
+}
+
+/**
  * Commit, tag and push
  *
  * @param {string|number} version To commit, tag and push.
  * @param {boolean} [push] If true will commit, tag and push.
  * If false it will only print the commands to be run.
- * @param {string} [productName] The product name.
  * @return {Promise<*>} Result
  */
-async function runGit(version, push, productName) {
-    const handledRepos = productName === 'Grid' ?
-        Object.values(releaseRepos.Grid) : [releaseRepos.Highcharts];
-
+async function runGit(version, push) {
+    const handledRepos = getHandledRepos();
     for (const releaseRepo of handledRepos) {
 
         const commands = [
@@ -166,9 +172,7 @@ async function removeFilesInFolder(folder, exceptions) {
 function updateJSONFiles(version, files, productName) {
     log.message('Updating bower.json and package.json for ' + productName + '...');
 
-    const handledRepos = productName === 'Grid' ?
-        Object.values(releaseRepos[productName]) : releaseRepos[productName];
-
+    const handledRepos = getHandledRepos();
     for (const releaseRepo of handledRepos) {
         files.forEach(function (file) {
             const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
@@ -355,7 +359,7 @@ function checkForCleanWorkingDirectory(workingDir) {
 }
 
 /**
- * Checks if the branch is something else than master branch and asks the user if it is ok.
+ * Checks if the branch is something else than expected branch and asks the user if it is ok.
  * @param {string} repoName
  * Name of repo
  * @param {string} workingDir
@@ -363,7 +367,7 @@ function checkForCleanWorkingDirectory(workingDir) {
  * @return {Promise<void>}
  * Result
  */
-async function checkIfNotMasterBranch(repoName, workingDir) {
+async function checkIfNotExpectedBranch(repoName, workingDir) {
     const branch = childProcess.execSync('git rev-parse --abbrev-ref HEAD', { cwd: workingDir });
     if (branch.toString().trim() !== getBranchName()) {
         const answer = await askUser(`\nThe current ${repoName} branch is ${branch}. Is this correct [Y/n]?`);
@@ -441,7 +445,7 @@ async function release() {
         }
 
         checkForCleanWorkingDirectory(pathToDistRepo);
-        await checkIfNotMasterBranch(releaseRepo, pathToDistRepo);
+        await checkIfNotExpectedBranch(releaseRepo, pathToDistRepo);
 
         log.message(`Pulling latest changes from origin and rebasing against ${branchName} branch.`);
 
