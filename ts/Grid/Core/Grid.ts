@@ -1000,7 +1000,7 @@ class Grid {
      * @return
      * JSON representation of the data
      */
-    public getJSON(): string {
+    public getData(): string {
         const json = this.viewport?.dataTable.modified.columns;
 
         if (!this.enabledColumns || !json) {
@@ -1017,26 +1017,26 @@ class Grid {
     }
 
     /**
-     * Returns the current Grid options as a JSON string.
+     * Returns the current Grid options.
      *
      * @param onlyUserOptions
      * Whether to return only the user options or all options (user options
      * merged with the default ones). Default is `true`.
      *
      * @returns
-     * Options as a JSON string.
+     * Grid options.
      */
-    public getOptionsJSON(onlyUserOptions = true): string {
-        const optionsCopy =
+    public getOptions(onlyUserOptions = true): DeepPartial<Options> {
+        const options =
             onlyUserOptions ? merge(this.userOptions) : merge(this.options);
 
-        if (optionsCopy.dataTable?.id) {
-            optionsCopy.dataTable = {
-                columns: optionsCopy.dataTable.columns
+        if (options.dataTable?.id) {
+            options.dataTable = {
+                columns: options.dataTable.columns
             };
         }
 
-        return JSON.stringify(optionsCopy);
+        return options;
     }
 }
 
