@@ -853,12 +853,52 @@ function applyStoredSettings(chart) {
     applyInfoRegion(settings.selectedVerbosity, chart);
 }
 
+
+function updateUIElements(chart) {
+    const settings = chartSettingsMap[chart.index];
+
+    // Radio
+    document.getElementById(`theme-default-${chart.index}`)
+        .checked = settings.isSelectedTheme === 'default';
+    document.getElementById(`theme-dark-${chart.index}`)
+        .checked = settings.isSelectedTheme === 'dark';
+    document.getElementById(`theme-light-${chart.index}`)
+        .checked = settings.isSelectedTheme === 'light';
+    document.getElementById(`datalabels-default-${chart.index}`)
+        .checked = settings.selectedLabels === 'default';
+    document.getElementById(`datalabels-${chart.index}`)
+        .checked = settings.selectedLabels === 'datalabels';
+    document.getElementById(`point-desc-${chart.index}`)
+        .checked = settings.selectedLabels === 'point-desc';
+    document.getElementById(`short-${chart.index}`)
+        .checked = settings.selectedVerbosity === 'short';
+    document.getElementById(`ver-full-${chart.index}`)
+        .checked = settings.selectedVerbosity === 'full';
+    document.getElementById(`smaller-${chart.index}`)
+        .checked = settings.selectedTextSize === 'smaller';
+    document.getElementById(`t-size-def-${chart.index}`)
+        .checked = settings.selectedTextSize === 'default';
+    document.getElementById(`larger-${chart.index}`)
+        .checked = settings.selectedTextSize === 'larger';
+
+
+    // Checkboxes
+    document.getElementById(`alt-info-${chart.index}`)
+        .checked = settings.isInfoChecked;
+    document.getElementById(`contrast-${chart.index}`)
+        .checked = settings.isContrastChecked;
+    document.getElementById(`border-${chart.index}`)
+        .checked = settings.isBorderChecked;
+    document.getElementById(`pattern-${chart.index}`)
+        .checked = settings.isPatternChecked;
+}
+
 function resetChartSettings(chart) {
     chartSettingsMap[chart.index] = JSON.parse(JSON.stringify(defaultSettings));
 
     // Remove saved settings
     const storedSettings =
-    JSON.parse(localStorage.getItem('chartSettingsMap')) || {};
+        JSON.parse(localStorage.getItem('chartSettingsMap')) || {};
     delete storedSettings[chart.index];
     localStorage.setItem('chartSettingsMap', JSON.stringify(storedSettings));
 
@@ -866,7 +906,14 @@ function resetChartSettings(chart) {
     applyStoredSettings(chart);
 
     // Refresh preferences UI
-    createPreferencesDialog(chart);
+    updateUIElements(chart);
+
+    // Reattach event listeners
+    const prefContent =
+    document.getElementById(`pref-menu-dialog-${chart.index}`);
+    if (prefContent) {
+        setupEventListeners(prefContent, chart);
+    }
 }
 
 /* -------------------- SCREEN READER --------------------- */
