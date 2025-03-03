@@ -1799,18 +1799,21 @@ function createPreferencesDialog(chart) {
             <h2>Accessibility tools for ${chart.title.textStr} chart</h2>
             <p>Enhance the accessibility of your charts with these tools.</p>
             <h3>View as</h3>
-            <input type="radio" id="chart-${i}"
-            name="view-${i}" value="chart"
-                ${settings.selectedView === 'chart' ? 'checked' : ''}>
-            <label for="view-${i}">Chart</label>
-            <input type="radio" id="table-${i}"
-            name="view-${i}" value="table"
-                ${settings.selectedView === 'table' ? 'checked' : ''}>
-            <label for="table-${i}">Table</label>
-            <input type="radio" id="desc-${i}"
-            name="view-${i}" value="desc"
-                ${settings.selectedView === 'desc' ? 'checked' : ''}>
+            <div class="pref view-mode">
+            <input type="radio" id="chart-view-${i}"
+            name="view-mode-${i}" value="chart"
+            ${settings.selectedView === 'chart' ? 'checked' : ''}>
+            <label for="chart-view-${i}">Chart</label>
+            <input type="radio" id="table-view-${i}"
+            name="view-mode-${i}" value="table"
+            ${settings.selectedView === 'table' ? 'checked' : ''}>
+            <label for="table-view-${i}">Table</label>
+            <input type="radio" id="desc-view-${i}"
+            name="view-mode-${i}" value="desc"
+            ${settings.selectedView === 'desc' ? 'checked' : ''}>
             <label for="view-${i}">Description</label>
+            </div>
+
             <h3>Sonification</h3>
             <div class="pref tool">
                 <button id="sonify-${i}" name="sonify-${i}">Play chart</button>
@@ -1818,6 +1821,7 @@ function createPreferencesDialog(chart) {
                 Play chart with speech
                 </button>
             </div>
+            
             <h3>Chart description</h3>
             <div class="pref tool">
                 <button id="describe-chart-${i}" name="describe-chart-${i}">
