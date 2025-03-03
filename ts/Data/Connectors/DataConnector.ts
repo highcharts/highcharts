@@ -100,10 +100,6 @@ abstract class DataConnector implements DataEvent.Emitter {
      */
     public readonly table: DataTable;
 
-    /**
-     * Elements references to determine where the connector is used.
-     */
-    public elements: Element[] = [];
 
     /* *
      *
