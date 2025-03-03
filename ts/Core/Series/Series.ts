@@ -77,6 +77,8 @@ import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
+import T from '../Templating.js';
+const { format } = T;
 import U from '../Utilities.js';
 const {
     arrayMax,
@@ -247,6 +249,54 @@ class Series {
      * prototype.
      */
     public static readonly registerType = SeriesRegistry.registerSeriesType;
+
+    /**
+     * Properties to keep after update
+     */
+    public static keepProps = [
+        'colorIndex',
+        'eventOptions',
+        'navigatorSeries',
+        'symbolIndex',
+        'baseSeries'
+    ];
+
+    /**
+     * Properties to keep after update if the point instances should be
+     * preserved
+     */
+    public static keepPropsForPoints = [
+        'data',
+        'isDirtyData',
+        // GeoHeatMap interpolation
+        'isDirtyCanvas',
+        'points',
+        'dataTable',
+
+        'processedData', // #17057
+
+        'xIncrement',
+        'cropped',
+        '_hasPointMarkers',
+        'hasDataLabels',
+
+        // Networkgraph (#14397)
+        'nodes',
+        'layout',
+
+        // Treemap
+        'level',
+
+        // Map specific, consider moving it to series-specific preserve-
+        // properties (#10617)
+        'mapMap',
+        'mapData',
+        'minY',
+        'maxY',
+        'minX',
+        'maxX',
+        'transformGroups' // #18857
+    ];
 
     /* *
      *
@@ -858,10 +908,12 @@ class Series {
      */
     public getName(): string {
         // #4119
-        return pick(
-            this.options.name,
-            'Series ' + ((this.index as any) + 1)
-        );
+        return this.options.name ??
+            format(
+                this.chart.options.lang.seriesName,
+                this,
+                this.chart
+            );
     }
 
     /**
@@ -4202,13 +4254,7 @@ class Series {
             kinds = {} as Record<string, number>;
         let seriesOptions: SeriesOptions,
             n,
-            preserve = [
-                'colorIndex',
-                'eventOptions',
-                'navigatorSeries',
-                'symbolIndex',
-                'baseSeries'
-            ],
+            keepProps = Series.keepProps.slice(),
             newType = (
                 options.type ||
                 oldOptions.type ||
@@ -4237,43 +4283,12 @@ class Series {
         newType = newType || initialType;
 
         if (keepPoints) {
-            preserve.push(
-                'data',
-                'isDirtyData',
-                // GeoHeatMap interpolation
-                'isDirtyCanvas',
-                'points',
-                'dataTable',
-
-                'processedData', // #17057
-
-                'xIncrement',
-                'cropped',
-                '_hasPointMarkers',
-                'hasDataLabels',
-
-                // Networkgraph (#14397)
-                'nodes',
-                'layout',
-
-                // Treemap
-                'level',
-
-                // Map specific, consider moving it to series-specific preserve-
-                // properties (#10617)
-                'mapMap',
-                'mapData',
-                'minY',
-                'maxY',
-                'minX',
-                'maxX',
-                'transformGroups' // #18857
-            );
+            keepProps.push.apply(keepProps, Series.keepPropsForPoints);
             if (options.visible !== false) {
-                preserve.push('area', 'graph');
+                keepProps.push('area', 'graph');
             }
             series.parallelArrays.forEach(function (key: string): void {
-                preserve.push(key + 'Data');
+                keepProps.push(key + 'Data');
             });
 
             if (options.data) {
@@ -4315,9 +4330,9 @@ class Series {
         }
 
         // Make sure preserved properties are not destroyed (#3094)
-        preserve = groups.concat(preserve);
-        preserve.forEach(function (prop: string): void {
-            (preserve as any)[prop] = (series as any)[prop];
+        keepProps = groups.concat(keepProps);
+        keepProps.forEach(function (prop: string): void {
+            (keepProps as any)[prop] = (series as any)[prop];
             delete (series as any)[prop];
         });
 
@@ -4379,8 +4394,8 @@ class Series {
         }
 
         // Re-register groups (#3094) and other preserved properties
-        preserve.forEach(function (prop: string): void {
-            (series as any)[prop] = (preserve as any)[prop];
+        keepProps.forEach(function (prop: string): void {
+            (series as any)[prop] = (keepProps as any)[prop];
         });
 
         series.init(chart, options);

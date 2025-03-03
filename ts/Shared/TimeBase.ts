@@ -300,8 +300,12 @@ class TimeBase {
             minute: 'numeric',
             second: 'numeric'
         }, timestamp, 'es')
-            .split(/(?:, |\/|:)/g);
-
+            // The ', ' splitter is for all modern browsers:
+            //      L, 6/3/2023, 14:30:00
+            // The ' ' splitter is for legacy Safari with no comma between date
+            // and time (#22445):
+            //      L, 6/3/2023 14:30:00
+            .split(/(?:, | |\/|:)/g);
         return [
             year,
             +month - 1,
@@ -575,6 +579,7 @@ class TimeBase {
      * | `%d` | Two digit day of the month, 01 to 31         |       |
      * | `%e` | Day of the month, 1 through 31               |       |
      * | `%w` | Day of the week, 0 through 6                 | N/A   |
+     * | `%v` | The prefix "week from", read from `lang.weekFrom` | N/A |
      * | `%b` | Short month, like 'Jan'                      |       |
      * | `%B` | Long month, like 'January'                   |       |
      * | `%m` | Two digit month number, 01 through 12        |       |
@@ -720,6 +725,7 @@ class TimeBase {
 
                         // Week (none implemented)
                         // 'W': weekNumber(),
+                        v: lang?.weekFrom ?? '',
 
                         // Month
                         // Short month, like 'Jan'
