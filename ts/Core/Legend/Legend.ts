@@ -774,11 +774,14 @@ class Legend {
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
             label.css({
-                width: ((
-                    options.itemWidth ||
-                    legend.widthOption ||
-                    chart.spacingBox.width
-                ) - itemExtraWidth) + 'px'
+                width: Math.min(
+                    (
+                        options.itemWidth ||
+                        legend.widthOption ||
+                        chart.spacingBox.width
+                    ) - itemExtraWidth,
+                    legend.maxLegendWidth
+                ) + 'px'
             });
         }
 
@@ -1100,22 +1103,15 @@ class Legend {
             allowedWidth /= 2;
         }
 
-        if (options.maxWidth) {
-            const maxWPixels = relativeLength(
+        legend.maxLegendWidth = Math.min(
+            legend.widthOption ||
+            allowedWidth,
+            relativeLength(
                 options.maxWidth as any,
                 chartSpacingBoxWidth - padding
-            );
-            allowedWidth = Math.min(
-                allowedWidth,
-                maxWPixels
-            );
-            legend.widthOption = Math.min(
-                legend.widthOption,
-                maxWPixels
-            );
-        }
-
-        legend.maxLegendWidth = legend.widthOption || allowedWidth;
+            ) ||
+            Infinity
+        );
 
         if (!legendGroup) {
             /**
