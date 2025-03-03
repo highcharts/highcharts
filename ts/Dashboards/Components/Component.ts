@@ -491,37 +491,6 @@ abstract class Component {
     }
 
     /**
-     * Adds the component to the provided connector.
-     * Starts the connector polling if inactive and one component is provided.
-     *
-     * @param connector
-     * Instance of a connector.
-     *
-     * @internal
-     */
-    public addConnectorAssignment(connector?: Component.ConnectorTypes): void {
-        const element = this.element;
-        if (connector && !connector.elements.includes(element)) {
-            const elements = connector.elements;
-            const options = connector.options;
-
-            // Add the component assignment.
-            elements.push(element);
-
-            // Start the connector polling.
-            if (
-                !connector.polling &&
-                elements.length === 1 &&
-                'dataRefreshRate' in options
-            ) {
-                connector.startPolling(
-                    Math.max(options.dataRefreshRate || 0, 1) * 1000
-                );
-            }
-        }
-    }
-
-    /**
      * Initializes connector handlers for the component.
      */
     public async initConnectors(): Promise<this> {
@@ -531,7 +500,6 @@ abstract class Component {
 
         for (const connectorHandler of this.connectorHandlers) {
             await connectorHandler.initConnector();
-            this.addConnectorAssignment(connectorHandler.connector);
         }
 
         fireEvent(this, 'afterSetConnectors', {
@@ -872,32 +840,6 @@ abstract class Component {
     }
 
     /**
-     * Removes the component instance from the provided connector.
-     * Stops the connector polling if the last element is removed.
-     *
-     * @param connector
-     * Instance of a connector.
-     *
-     * @internal
-     */
-    public removeConnectorAssignment(
-        connector?: Component.ConnectorTypes
-    ): void {
-        const element = this.element;
-        if (connector?.elements.includes(element)) {
-            // Remove the component assignment.
-            connector.elements = connector.elements.filter(
-                (innerElement): boolean => !innerElement.isEqualNode(element)
-            );
-
-            // Stop the connector polling.
-            if (connector.elements.length === 0) {
-                connector.stopPolling();
-            }
-        }
-    }
-
-    /**
      * Destroys the component.
      */
     public destroy(): void {
@@ -917,7 +859,6 @@ abstract class Component {
         fireEvent(this, 'unmount');
 
         for (const connectorHandler of this.connectorHandlers) {
-            this.removeConnectorAssignment(connectorHandler.connector);
             connectorHandler.destroy();
         }
 

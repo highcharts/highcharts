@@ -7,14 +7,12 @@ Dashboards.board('container', {
     },
     dataPool: {
         connectors: [{
-            type: 'JSON',
+            type: 'CSV',
             id: 'fetched-data',
             options: {
-                firstRowAsNames: false,
                 enablePolling: true,
-                dataRefreshRate: 10,
-                columnNames: ['time', 'open', 'high', 'low', 'close', 'volume'],
-                dataUrl: 'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+                dataRefreshRate: 1,
+                csvURL: 'https://demo-live-data.highcharts.com/time-data.csv'
             }
         }]
     },
@@ -43,8 +41,7 @@ Dashboards.board('container', {
             columnAssignment: [{
                 seriesId: 'series',
                 data: {
-                    x: 'time',
-                    y: 'high'
+                    y: 'Value'
                 }
             }]
         }
