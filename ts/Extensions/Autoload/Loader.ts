@@ -135,11 +135,14 @@ const loadScript = async (module: string): Promise<undefined> => {
     }
 
     // ES modules
+    /*
+    @todo Currently fails on es5-compile. Not needed in es5.
     if (root.charAt(0) === '.') {
         await import(`${root}/${module}.${extension}`);
-        loaded.add(module);
+        pushUnique(loaded, module);
         return;
     }
+    */
 
     return new Promise((resolve, reject): void => {
         const onload = (): void => {
