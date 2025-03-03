@@ -142,7 +142,7 @@ hcCSS.replaceSync(`
             display: flex;
             align-items: center;
         }
-        .innerContent {
+        .inner-content {
             display: flex;
         }
     }
