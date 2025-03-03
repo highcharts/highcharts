@@ -1116,7 +1116,8 @@ namespace Exporting {
      *
      * @function Highcharts.Chart#exportChartLocalCore
      *
-     * @param {DownloadSVGLocalFunction} downloadSVGLocal downloadSVGLocal
+     * @param {Exporting.DownloadSVGLocalFunction} downloadSVGLocal
+     * downloadSVGLocal
      *
      * @param {Exporting.ChartComposition} chart chart
      *
@@ -1131,7 +1132,7 @@ namespace Exporting {
      * @requires modules/offline-exporting
      */
     export function exportChartLocalCore(
-        downloadSVGLocal: DownloadSVGLocalFunction,
+        downloadSVGLocal: Exporting.DownloadSVGLocalFunction,
         chart: Exporting.ChartComposition,
         exportingOptions?: ExportingOptions,
         chartOptions?: Partial<Options>
