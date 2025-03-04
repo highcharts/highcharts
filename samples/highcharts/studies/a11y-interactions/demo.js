@@ -629,7 +629,7 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
         chartTitle = chart.options.title.text,
         initNotify = 'Chart. Press T for tools and help. ' +
             'Use arrow keys to explore.',
-        appLabel = `Interactive audio chart. ${chartTitle}.`,
+        appLabel = `Interactive audio chart. ${chartTitle}. Click to interact.`,
         app = chart.addProxyContainerEl('div'),
         fallbackButton = chart.addSROnly(
             'button', `Interact with chart, ${chartTitle}.`, app
@@ -1489,7 +1489,8 @@ const historicalKbdHandlers = (() => {
                 'Lower tones means lower price, higher tones means higher ' +
                 'price. Sounds are played from left to right, where left ' +
                 'is on the left side of the chart, and right is on the right ' +
-                'side of the chart.';
+                'side of the chart. When at the end of one line, the ' +
+                'navigation will continue at the start of the next line.';
             announce(msg);
             showToast(chart, msg);
             prevActionWasLR = false;
@@ -2636,15 +2637,22 @@ Highcharts.chart('wordcloud', {
     },
     tooltip: {
         followPointer: false,
-        positioner: function (lW) {
-            const chart = this.chart;
+        positioner: function (lW, lH) {
+            const chart = this.chart,
+                pos = chart.hoverPoint?.graphic.element.getBoundingClientRect(),
+                offsetPos = chart.renderTo.getBoundingClientRect();
+            if (!pos) {
+                return {
+                    x: 10,
+                    y: 10
+                };
+            }
             return {
-                x: chart.plotWidth - lW,
-                y: 10
+                x: Math.min(pos.x - offsetPos.x, chart.plotWidth - lW),
+                y: Math.max(0, pos.y - offsetPos.y - lH)
             };
         },
         shape: 'rect',
-        shadow: false,
         style: {
             fontSize: '1em'
         }
