@@ -683,6 +683,9 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
         if (key === 'escape') {
             entered = false;
             chart.sonification.cancel();
+            if (kbdHandlers.Escape) {
+                kbdHandlers.Escape(chart, e);
+            }
             exitEl.focus();
             return;
         }
@@ -693,12 +696,17 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
         } else if (entered && key === 't') {
             showKbdDialog(
                 chart.renderTo,
-                Object.assign({
+                {
                     t: {
                         name: 'T',
                         desc: 'Show keyboard shortcuts'
+                    },
+                    ...kbdDescriptions,
+                    esc: {
+                        name: 'Escape',
+                        desc: 'Exit and stop sound'
                     }
-                }, kbdDescriptions)
+                }
             );
         } else if (entered && kbdHandlers[e.key]) {
             kbdHandlers[e.key](chart, e);
@@ -1441,10 +1449,6 @@ const historicalKbdHandlers = (() => {
         End: chart => homeEnd(chart, true),
         PageUp: chart => pageUpDown(chart, true),
         PageDown: chart => pageUpDown(chart, false),
-        Escape: chart => {
-            chart.highlightCurPoint();
-            prevActionWasLR = false;
-        },
 
         // Play current line
         a: chart => {
@@ -1570,10 +1574,6 @@ const historicalKbdDescriptions = {
     End: {
         name: 'End',
         desc: 'Go to end of line'
-    },
-    Escape: {
-        name: 'Esc',
-        desc: 'Exit and stop sound'
     }
 };
 
@@ -1759,11 +1759,6 @@ const networkKbdHandlers = (() => {
         End: chart => startEnd(chart, true),
         a: chart => {
             clearSonification();
-            const old = chart.sonification.cancel;
-            chart.sonification.cancel = () => {
-                clearSonification();
-                return old.call(chart.sonification);
-            };
             chart.tooltip.hide(0);
             const sonify = () => chart.precomputedNetwork.forEach(
                 (node, i) => sonificationSchedule.push(
@@ -1791,6 +1786,7 @@ const networkKbdHandlers = (() => {
             showToast(chart, msg);
         },
         n: chart => {
+            clearSonification();
             const node = chart.precomputedNetwork[Math.max(0, kbdState.point)],
                 top = nodes => nodes.slice(0).sort(
                     (a, b) => b.mass - a.mass
@@ -1805,6 +1801,7 @@ const networkKbdHandlers = (() => {
         },
         s: showQueryDialog,
         g: chart => {
+            clearSonification();
             const msg = 'The chart will play sounds as you navigate. ' +
             'Lower and stronger tones means a bigger node with more ' +
             'connections. Higher and weaker tones means a smaller node ' +
@@ -1852,10 +1849,6 @@ const networkKbdDescriptions = {
     End: {
         name: 'End',
         desc: 'Go to smallest node'
-    },
-    Escape: {
-        name: 'Esc',
-        desc: 'Exit and stop sound'
     }
 };
 
@@ -1925,16 +1918,15 @@ const wordcloudInit = chart => {
 };
 
 const wordcloudKbdHandlers = (() => {
-    let sonificationSchedule = [];
+    let pointIndex = 0;
     const clearSonification = () => {
-        sonificationSchedule.forEach(clearTimeout);
-        sonificationSchedule = [];
+        pointIndex = -1;
     };
 
-    const sonifyWord = (chart, point) => {
+    const sonifyWord = (chart, point, onEnd) => {
         const maxWeight = chart.series[0].points[0].weight,
             value = point.weight / maxWeight,
-            speechFactor = [0.8, 1, 1.2][chart.speechRateModifier ?? 1];
+            speechFactor = [0.7, 1, 1.25][chart.speechRateModifier ?? 1];
         chart.sonification.playNote(
             'vibraphone',
             {
@@ -1951,10 +1943,11 @@ const wordcloudKbdHandlers = (() => {
                 language: 'en-US',
                 name: 'Samantha',
                 volume: value * 0.8 + 0.2,
-                rate: speechFactor * 2.8 - value * 2,
+                rate: speechFactor * 3.5 - value * 2,
                 pitch: 1.4 - value * 0.8
             },
-            50
+            50,
+            onEnd
         );
     };
 
@@ -1999,37 +1992,33 @@ const wordcloudKbdHandlers = (() => {
         Home: chart => startEnd(chart),
         End: chart => startEnd(chart, true),
         a: chart => {
-            const maxWeight = chart.series[0].points[0].weight,
-                speechFactor = [1.5, 1, 0.8][chart.speechRateModifier ?? 1];
-            clearSonification();
-            const old = chart.sonification.cancel;
-            chart.sonification.cancel = () => {
+            if (pointIndex > 0) {
                 clearSonification();
-                return old.call(chart.sonification);
-            };
-            let time = 100;
+                return;
+            }
+            pointIndex = 0;
+
             chart.tooltip.hide(0);
-            const sonify = () => chart.series[0].points.forEach(p => {
-                const value = p.weight / maxWeight;
-                sonificationSchedule.push(
-                    setTimeout(() => sonifyWord(chart, p), time),
-                    setTimeout(() => {
-                        if (p === p.series.points[p.series.points.length - 1]) {
-                            p.onMouseOver();
-                        } else {
-                            highlight(p);
-                        }
-                    }, time)
-                );
-                time += speechFactor * 100 + speechFactor * value * 530;
-            });
+            const sonify = () => {
+                const p = chart.series[0].points[pointIndex];
+                if (!p) {
+                    clearSonification();
+                    return;
+                }
+                if (p === p.series.points[p.series.points.length - 1]) {
+                    p.onMouseOver();
+                } else {
+                    highlight(p);
+                }
+                sonifyWord(chart, p, sonify);
+                pointIndex++;
+            };
             chart.sonification.speak(
                 'Word cloud, all words, largest to smallest', {
                     rate: 1.5
                 }, 0, sonify
             );
         },
-        Escape: clearSonification,
         c: chart => {
             clearSonification();
             const msg = `Word cloud with 100 words. Top words are: ${
@@ -2042,6 +2031,7 @@ const wordcloudKbdHandlers = (() => {
             showToast(chart, msg);
         },
         g: chart => {
+            clearSonification();
             const msg = 'The chart will play sounds and speak the words ' +
             'as you navigate. Lower tones, stronger, and slower words ' +
             'means a bigger word with more occurrences. Higher tones, ' +
@@ -2051,6 +2041,7 @@ const wordcloudKbdHandlers = (() => {
             showToast(chart, msg);
         },
         s: chart => {
+            clearSonification();
             chart.speechRateModifier = (chart.speechRateModifier || 0) + 1;
             if (chart.speechRateModifier > 2) {
                 chart.speechRateModifier = 0;
@@ -2060,7 +2051,8 @@ const wordcloudKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
         },
-        d: showLLMDialog
+        d: showLLMDialog,
+        Escape: clearSonification
     };
 })();
 
@@ -2096,10 +2088,6 @@ const wordcloudKbdDescriptions = {
     End: {
         name: 'End',
         desc: 'Go to smallest word'
-    },
-    Escape: {
-        name: 'Esc',
-        desc: 'Exit and stop sound'
     }
 };
 
