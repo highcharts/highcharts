@@ -104,6 +104,11 @@ async function distProductsJS(options) {
         const packageJson = require('../../package.json');
         date = buildProperties.date || '';
         nr = (buildProperties.version || packageJson.version || '').split('-')[0];
+    } else if (distProduct === 'Grid') {
+        const buildProperties = require('./grid/build-properties.json');
+
+        date = new Date().toISOString().split('T')[0];
+        nr = buildProperties.version;
     } else {
         if (!release) {
             throw new Error('No `--release x.x.x` provided.');
