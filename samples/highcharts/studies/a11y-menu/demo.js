@@ -1197,44 +1197,59 @@ function handlePrefButtonClick(chart) {
     chart.accessibility.keyboardNavigation.blocked = true;
     let menu = document.getElementById(`pref-menu-${chart.index}`);
 
-    if (!menu) {
+    // Toggle behavior: Hide if already open
+    if (menu) {
+        const isVisible = menu.style.display === 'block';
+        if (isVisible) {
+            menu.style.display = 'none';
+            chart.prefMenu.prefButton.element
+                .setAttribute('aria-expanded', 'false');
+            return;
+        }
+    } else {
+        // Remove any stale menu before creating a new one
+        menu?.remove();
         menu = createPreferencesMenu(chart);
-
-        console.log(menu);
         document.body.appendChild(menu);
     }
 
-    // Get the cog wheel button position
-    const cogButton = document.getElementById('hc-pref-button');
-    if (cogButton) {
-        const rect = cogButton.getBoundingClientRect();
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const scrollLeft = window.scrollX ||
-            document.documentElement.scrollLeft;
+    // Get button position
+    const cogButton = chart.prefMenu.prefButton.element;
+    if (!cogButton) {
+        console.error('Error: Preferences button not found');
+        return;
+    }
 
-        // Position the menu below the cog wheel icon
+    const rect = cogButton.getBoundingClientRect();
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+    // Hide menu first to avoid incorrect initial positioning
+    menu.style.display = 'none';
+
+    // Use requestAnimationFrame to ensure layout updates before measuring
+    requestAnimationFrame(() => {
+        const menuWidth = menu.offsetWidth || 320;
+
         menu.style.position = 'absolute';
-        menu.style.top = `${rect.bottom + scrollTop + 5}px`; // 5px spacing
-        menu.style.left = `${rect.left + scrollLeft}px`;
+        menu.style.top = `${rect.bottom + scrollTop + 5}px`;
+        menu.style.left =
+        `${rect.right + scrollLeft - menuWidth}px`;
 
-        // Ensure it doesn't go off-screen
+        // Ensure it does not overflow the viewport
         const menuRect = menu.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
+
         if (menuRect.right > viewportWidth) {
             menu.style.left =
-            `${viewportWidth - menuRect.width - 10}px`; // Adjust if overflowing
+            `${viewportWidth - menuRect.width - 10}px`;
         }
-    }
 
-    menu.style.display = 'block';
-    setMenuTheme(menu, chart);
-
-    const firstFocusable = menu.querySelector('button, select');
-    if (firstFocusable) {
-        firstFocusable.focus();
-    }
+        // Show the menu only after positioning is finalized
+        menu.style.display = 'block';
+        chart.prefMenu.prefButton.element.setAttribute('aria-expanded', 'true');
+    });
 }
-
 
 /* -------------------- EVENT LISTENERS --------------------- */
 function setupEventListeners(prefContent, chart) {
@@ -1658,9 +1673,7 @@ function createPreferencesMenu(chart) {
     // Remove existing menu if it exists (toggle behavior)
     const existingMenu = document.getElementById(`pref-menu-${chart.index}`);
     if (existingMenu) {
-        existingMenu.style.display = 'none'; // Hide for accessibility
-        chart.prefMenu.prefButton.element
-            .setAttribute('aria-expanded', 'false');
+        existingMenu.style.display = 'none';
         return;
     }
 
@@ -1717,9 +1730,6 @@ function createPreferencesMenu(chart) {
 
     requestAnimationFrame(positionMenu);
     window.addEventListener('resize', positionMenu);
-
-    // Mark menu as open
-    chart.prefMenu.prefButton.element.setAttribute('aria-expanded', 'true');
 
     // Create the accordion container
     const accordionContainer = document.createElement('ul');
