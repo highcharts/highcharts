@@ -724,6 +724,11 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
         app.focus();
         init();
     };
+    fallbackButton.onkeydown = function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            this.onclick();
+        }
+    };
     document.addEventListener('mousedown', () => (entered = false));
 
     return app;
@@ -1586,7 +1591,9 @@ const historicalOverlay = (chart, parent) => {
         overlay = () => {
             container.innerHTML = '';
             // Short chart desc
-            chart.addSROnly('p', 'Line chart with 4 lines.', container);
+            chart.addSROnly(
+                'p', 'Line chart with 4 lines. Text summary.', container
+            );
             // Series descriptions
             const ol = chart.addSROnly('ol', '', container);
             ol.setAttribute('role', 'list');
@@ -1883,6 +1890,9 @@ const networkOverlay = (chart, parent) => {
     const container = chart.addProxyContainerEl('div', parent),
         overlay = () => {
             container.innerHTML = '';
+            chart.addSROnly(
+                'p', 'Network graph with 44 nodes. Text summary.', container
+            );
             const ol = chart.addProxyContainerEl('ol', container);
             ol.setAttribute('role', 'list');
             // Making use of presorted node list
@@ -2121,6 +2131,9 @@ const wordcloudOverlay = (chart, parent) => {
     const container = chart.addProxyContainerEl('div', parent),
         overlay = () => {
             container.innerHTML = '';
+            chart.addSROnly(
+                'p', 'Word cloud with 100 words. Text summary.', container
+            );
             const ol = chart.addProxyContainerEl('ol', container);
             ol.setAttribute('role', 'list');
             chart.series[0].points.forEach(point =>
