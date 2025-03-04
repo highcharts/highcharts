@@ -369,7 +369,7 @@ const createDialog = (heading, content, className) => {
     const dialog = document.createElement('dialog');
     dialog.className = 'hc-dialog ' + className;
     dialog.innerHTML = `
-        <div class="content" role="document">
+        <div class="content" role="document" lang="en">
             <h3 tabindex="-1" autofocus>${heading}</h3>
             <div class="inner-content">${content}</div>
             <button class="close" aria-label="Close dialog">X</button>
