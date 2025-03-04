@@ -19,14 +19,14 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type Point from '../Core/Series/Point';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type BBoxObject from '../Renderer/BBoxObject';
+import type Point from '../Series/Point';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 
-import Chart from '../Core/Chart/Chart.js';
-import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
+import Chart from '../Chart/Chart.js';
+import GeometryUtilities from '../Geometry/GeometryUtilities.js';
 const { pointInPolygon } = GeometryUtilities;
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 
 const {
     addEvent,
@@ -41,13 +41,13 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
+declare module '../Chart/ChartLike' {
     interface ChartLike {
         hideOverlappingLabels(labels: Array<SVGElement>): void;
     }
 }
 
-declare module '../Core/Renderer/SVG/SVGElementLike' {
+declare module '../Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
         absoluteBox?: BBoxObject;
     }
