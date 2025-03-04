@@ -2,7 +2,7 @@
   "version": "1.0.0-rc",
   "products": {
     "Highcharts Grid Lite": {
-      "cdnpath": "/grid-lite",
+      "cdnpath": "/grid",
       "distpath": "/grid-lite"
     }
   }
