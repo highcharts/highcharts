@@ -1197,7 +1197,7 @@ function handlePrefButtonClick(chart) {
     chart.accessibility.keyboardNavigation.blocked = true;
     let menu = document.getElementById(`pref-menu-${chart.index}`);
 
-    // Toggle behavior: Hide if already open
+    // If menu exists and is open, close it
     if (menu) {
         const isVisible = menu.style.display === 'block';
         if (isVisible) {
@@ -1233,23 +1233,35 @@ function handlePrefButtonClick(chart) {
 
         menu.style.position = 'absolute';
         menu.style.top = `${rect.bottom + scrollTop + 5}px`;
-        menu.style.left =
-        `${rect.right + scrollLeft - menuWidth}px`;
+        menu.style.left = `${rect.right + scrollLeft - menuWidth}px`;
 
         // Ensure it does not overflow the viewport
         const menuRect = menu.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
 
         if (menuRect.right > viewportWidth) {
-            menu.style.left =
-            `${viewportWidth - menuRect.width - 10}px`;
+            menu.style.left = `${viewportWidth - menuRect.width - 10}px`;
         }
 
         // Show the menu only after positioning is finalized
         menu.style.display = 'block';
+        menu.style.opacity = '1';
+        menu.style.visibility = 'visible';
         chart.prefMenu.prefButton.element.setAttribute('aria-expanded', 'true');
+
+        // **Set focus explicitly on the first focusable element in the menu**
+        setTimeout(() => {
+            const firstFocusableElement = menu.querySelector(
+                'button, [href], input, select, textarea, ' +
+                '[tabindex]:not([tabindex="-1"])'
+            );
+            if (firstFocusableElement) {
+                firstFocusableElement.focus();
+            }
+        }, 50); // Delay ensures menu rendering before focus attempt
     });
 }
+
 
 /* -------------------- EVENT LISTENERS --------------------- */
 function setupEventListeners(prefContent, chart) {
@@ -1387,6 +1399,8 @@ function setupEventListeners(prefContent, chart) {
                     }
                 }
             });
+
+            console.log(descriptionFormat);
 
             if (settings.selectedLabels === 'point-desc') {
                 chart.update({
