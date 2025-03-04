@@ -1392,29 +1392,21 @@ function setupEventListeners(prefContent, chart) {
             const descriptionFormat = settings.selectedVerbosity === 'short' ?
                 chart.pointDesc.short : chart.pointDesc.full;
 
+            console.log(descriptionFormat);
+
             chart.update({
                 accessibility: {
                     point: {
                         descriptionFormat: descriptionFormat
                     }
-                }
-            });
-
-            console.log(descriptionFormat);
-
-            if (settings.selectedLabels === 'point-desc') {
-                chart.update({
-                    series: [{
-                        dataLabels: {
-                            enabled: true,
-                            format: descriptionFormat
-                        }
-                    }, {
+                },
+                series: chart.series.map(series => ({
+                    dataLabels: settings.selectedLabels === 'point-desc' ? {
                         enabled: true,
                         format: descriptionFormat
-                    }]
-                });
-            }
+                    } : { enabled: false }
+                }))
+            });
 
             applyInfoRegion(settings.selectedVerbosity, chart);
             saveSettings(chart);
