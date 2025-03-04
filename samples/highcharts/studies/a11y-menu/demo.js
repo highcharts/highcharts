@@ -1863,17 +1863,21 @@ function createPreferencesMenu(chart) {
 
             <h3>Enhance contrast:</h3>
             <div class="pref contrast">
+            <div>
                 <input type="checkbox" id="contrast-${i}" name="contrast-${i}"
                     ${settings.isContrastChecked ? 'checked' : ''}>
                 <label for="contrast-${i}">Increase contrast</label>
-
+            </div>
+            <div>
                 <input type="checkbox" id="border-${i}" name="border-${i}"
                     ${settings.isBorderChecked ? 'checked' : ''}>
                 <label for="border-${i}">Add border</label>
-
+            </div>
+            <div>
                 <input type="checkbox" id="pattern-${i}" name="pattern-${i}"
                     ${settings.isPatternChecked ? 'checked' : ''}>
                 <label for="pattern-${i}">Pattern instead of colors</label>
+            </div>
             </div>
             <div class="pref reset-settings">
                 <button id="reset-settings-${i}" class="reset-btn">

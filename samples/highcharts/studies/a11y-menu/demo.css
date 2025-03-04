@@ -66,17 +66,20 @@ a:focus {
     }
 }
 
-.radio-group div {
+.radio-group div,
+.checkbox-group div {
     display: block;
     margin-bottom: 5px;
 }
 
-.radio-group input[type="radio"] {
+.radio-group input[type="radio"],
+.checkbox-group input[type="checkbox"] {
     display: inline-block;
     margin-right: 5px;
 }
 
-.radio-group label {
+.radio-group label,
+.checkbox-group label {
     display: inline-block;
     margin-bottom: 5px;
 }
