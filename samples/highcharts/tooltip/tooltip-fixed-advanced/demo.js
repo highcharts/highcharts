@@ -105,62 +105,26 @@
         }]
     });
 
-    document.querySelector('#fixed').addEventListener('change', e => {
-        chart.update({
-            tooltip: {
-                position: {
-                    fixed: e.target.checked
-                }
-            }
-        });
-    });
+    document.querySelectorAll('#options-table input, #options-table select')
+        .forEach(input => {
+            input.addEventListener('change', () => {
+                const key = input.id,
+                    value = input.type === 'checkbox' ?
+                        input.checked :
+                        input.type === 'number' ?
+                            parseFloat(input.value) :
+                            input.value;
 
-    document.querySelectorAll('input[name="split-shared"]').forEach(input => {
-        input.addEventListener('change', () => {
-            chart.update({
-                tooltip: {
-                    split: document.getElementById('split').checked,
-                    shared: document.getElementById('shared').checked
-                }
+                // Convert the dot-notation string to a deep object
+                const optionsObject = key.split('.').reverse().reduce(
+                    (acc, key, i) => (
+                        i === 0 ? { [key]: value } : { [key]: acc }
+                    ),
+                    {}
+                );
+
+                chart.update(optionsObject);
             });
         });
-    });
 
-    document.querySelector('#relative-to').addEventListener('change', e => {
-        chart.update({
-            tooltip: {
-                position: {
-                    relativeTo: e.target.value
-                }
-            }
-        });
-    });
-
-    document.querySelector('#x').addEventListener('change', e => {
-        chart.update({
-            tooltip: {
-                position: {
-                    x: Number(e.target.value)
-                }
-            }
-        });
-    });
-
-    document.querySelector('#y').addEventListener('change', e => {
-        chart.update({
-            tooltip: {
-                position: {
-                    y: Number(e.target.value)
-                }
-            }
-        });
-    });
-
-    document.querySelector('#outside').addEventListener('change', e => {
-        chart.update({
-            tooltip: {
-                outside: e.target.checked
-            }
-        });
-    });
 })();

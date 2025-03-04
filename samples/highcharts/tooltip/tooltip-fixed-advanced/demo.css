@@ -17,6 +17,26 @@
     min-width: 310px;
 }
 
+#options-table {
+    border-collapse: collapse;
+}
+
+#options-table label {
+    font-family: monospace;
+    margin-right: 1em;
+}
+
+#options-table td {
+    border-top: 1px solid #ddd;
+    padding: 0.5em 0;
+}
+
+#options-table input,
+#options-table select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
 .demo-controls {
     padding: 10px;
 }
