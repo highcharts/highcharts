@@ -823,7 +823,7 @@ class HighchartsComponent extends Component {
     /**
      * Get the HighchartsComponent component's options.
      * @returns
-     * The JSON of HighchartsComponent component's options.
+     * HighchartsComponent component's options.
      *
      * @internal
      *
