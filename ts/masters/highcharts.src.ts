@@ -47,7 +47,7 @@ import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
-import OverlappingDataLabels from '../Extensions/OverlappingDataLabels.js';
+import OverlappingDataLabels from '../Core/Series/OverlappingDataLabels.js';
 import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';

@@ -302,7 +302,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         this.options.shapes = labelsAndShapes.shapes;
 
         /**
-         * The callback that reports to the overlapping-labels module which
+         * The callback that reports to the overlapping labels logic which
          * labels it should account for.
          * @private
          * @name Highcharts.Annotation#labelCollector
