@@ -66,10 +66,19 @@ a:focus {
     }
 }
 
-.pref {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.radio-group div {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.radio-group input[type="radio"] {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.radio-group label {
+    display: inline-block;
+    margin-bottom: 5px;
 }
 
 h2 {

@@ -1773,19 +1773,25 @@ function createPreferencesMenu(chart) {
             <p>Customize your chart settings to enhance your experience.</p>
 
             <h3>Chart theme:</h3>
-            <div class="pref theme">
+            <div class="pref theme radio-group">
+            <div>
                 <input type="radio" id="theme-default-${i}"
                 name="theme-${i}" value="default"
                     ${settings.isSelectedTheme === 'default' ? 'checked' : ''}>
                 <label for="theme-default-${i}">System default</label>
+            </div>
+            <div>
                 <input type="radio" id="theme-dark-${i}"
                 name="theme-${i}" value="dark"
                     ${settings.isSelectedTheme === 'dark' ? 'checked' : ''}>
                 <label for="theme-dark-${i}">Dark</label>
+            </div>
+            <div>
                 <input type="radio" id="theme-light-${i}"
                 name="theme-${i}" value="light"
                     ${settings.isSelectedTheme === 'light' ? 'checked' : ''}>
                 <label for="theme-light-${i}">Light</label>
+            </div>
             </div>
 
             <h3>Visible chart summary</h3>
@@ -1796,49 +1802,63 @@ function createPreferencesMenu(chart) {
             </div>
 
             <h3>Visible point descriptions</h3>
-            <div class="pref alt-text">
+            <div class="pref alt-text radio-group">
+            <div>
                 <input type="radio" id="datalabels-default-${i}"
                 name="datalabels-${i}" value="default"
                 ${settings.selectedLabels === 'default' ? 'checked' : ''}>
                 <label for="datalabels-default-${i}">No description</label>
-
+            </div>
+            <div>
                 <input type="radio" id="datalabels-${i}"
                 name="datalabels-${i}" value="datalabels"
                 ${settings.selectedLabels === 'datalabels' ? 'checked' : ''}>
                 <label for="datalabels-${i}">Show data labels</label>
-
+            </div>
+            <div>
                 <input type="radio" id="point-desc-${i}"
                 name="datalabels-${i}" value="point-desc"
                 ${settings.selectedLabels === 'point-desc' ? 'checked' : ''}>
                 <label for="point-desc-${i}">Show point descriptions</label>
+            </div>
             </div> 
 
             <h3>Chart summary:</h3>
-            <div class="pref verbosity">
+            <div class="pref verbosity radio-group">
+            <div>
                 <input type="radio" id="short-${i}"
                 name="verbosity-${i}" value="short"
                     ${settings.selectedVerbosity === 'short' ? 'checked' : ''}>
                 <label for="short-${i}">Short</label>
+            </div>
+            <div>
                 <input type="radio" id="ver-full-${i}"
                 name="verbosity-${i}" value="full"
                     ${settings.selectedVerbosity === 'full' ? 'checked' : ''}>
                 <label for="ver-full-${i}">Full</label>
             </div>
+            </div>
 
             <h3>Text size:</h3>
-            <div class="pref textsize">
+            <div class="pref textsize radio-group">
+            <div>
                 <input type="radio" id="smaller-${i}"
                 name="textsize-${i}" value="smaller"
                     ${settings.selectedTextSize === 'smaller' ? 'checked' : ''}>
                 <label for="smaller-${i}">Smaller</label>
+            </div>
+            <div>
                 <input type="radio" id="t-size-def-${i}"
                 name="textsize-${i}" value="default"
                     ${settings.selectedTextSize === 'default' ? 'checked' : ''}>
                 <label for="t-size-def-${i}">Default</label>
+            </div>
+            <div>
                 <input type="radio" id="larger-${i}"
                 name="textsize-${i}" value="larger"
                     ${settings.selectedTextSize === 'larger' ? 'checked' : ''}>
                 <label for="larger-${i}">Larger</label>
+            </div>
             </div>
 
             <h3>Enhance contrast:</h3>
@@ -1884,19 +1904,25 @@ function createPreferencesMenu(chart) {
             <h2>Accessibility tools for ${chart.title.textStr} chart</h2>
             <p>Enhance the accessibility of your charts with these tools.</p>
             <h3>View as</h3>
-            <div class="pref view-mode">
+            <div class="pref view-mode radio-group">
+            <div>
             <input type="radio" id="chart-view-${i}"
             name="view-mode-${i}" value="chart"
             ${settings.selectedView === 'chart' ? 'checked' : ''}>
             <label for="chart-view-${i}">Chart</label>
+            </div>
+            <div>
             <input type="radio" id="table-view-${i}"
             name="view-mode-${i}" value="table"
             ${settings.selectedView === 'table' ? 'checked' : ''}>
             <label for="table-view-${i}">Table</label>
+            </div>
+            <div>
             <input type="radio" id="desc-view-${i}"
             name="view-mode-${i}" value="desc"
             ${settings.selectedView === 'desc' ? 'checked' : ''}>
             <label for="view-${i}">Description</label>
+            </div>
             </div>
 
             <h3>Sonification</h3>
