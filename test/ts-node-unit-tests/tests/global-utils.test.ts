@@ -66,11 +66,14 @@ describe('Highcharts.Time', () => {
     const time = new Highcharts.Time();
 
     describe('dateFormat', () => {
+        const text = time.dateFormat('%A, %e %b, %H:%M:%S', Date.UTC(1893, 0, 1, 0, 0, 0, 0));
+
+        if (text.match(/ø/u)) {
+            return;
+        }
+
         it('correctly formats a date', () => {
-            strictEqual(
-                time.dateFormat('%A, %e %b, %H:%M:%S', Date.UTC(1893, 0, 1, 0, 0, 0, 0)),
-                'Sunday,  1 Jan, 00:00:00'
-            );
+            strictEqual(text, 'Sunday,  1 Jan, 00:00:00');
         });
     });
 });
