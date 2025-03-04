@@ -1063,7 +1063,7 @@ class Grid {
      *
      * @deprecated
      */
-    public getOptionsJSON(onlyUserOptions = true): string {    
+    public getOptionsJSON(onlyUserOptions = true): string {
         return JSON.stringify(this.getOptions(onlyUserOptions));
     }
 }
