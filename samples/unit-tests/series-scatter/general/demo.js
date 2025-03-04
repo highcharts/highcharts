@@ -19,6 +19,7 @@ QUnit.test('Scatter series general tests.', function (assert) {
             }
         }),
         series = chart.series[0],
+        tooltip = chart.tooltip,
         tc = new TestController(chart);
 
     series.update({
@@ -48,7 +49,7 @@ QUnit.test('Scatter series general tests.', function (assert) {
     );
 
     assert.deepEqual(
-        chart.tooltip.text.textStr,
+        tooltip.label.text.textStr,
         '1',
         'The point with the last index should be highlighted'
     );
