@@ -573,6 +573,26 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     background: #b7d4ff;
 }
 
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error input,
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error input input:focus,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:focus {
+    box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
+    background-color: var(--ig-negative-background) !important;
+}
+
+/* Errors container */
+.hcg-errors-container,
+.highcharts-datagrid-errors-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    background: var(--ig-negative-background);
+    color: var(--ig-negative-border-color);
+    padding: var(--hcg-padding);
+}
+
 /* Accessibility */
 .hcg-visually-hidden,
 .highcharts-datagrid-visually-hidden {
