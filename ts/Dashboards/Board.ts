@@ -545,7 +545,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * not support converting functions or events into JSON object.
      *
      * @returns
-     * The JSON of boards's options.
+     * Dashboards options.
      */
     public getOptions(): Globals.DeepPartial<Board.Options> {
         const board = this,

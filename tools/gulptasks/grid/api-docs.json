@@ -1,0 +1,47 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "categorizeByGroup": false,
+    "customCss": "../dashboards/api-docs/typedoc/assets/custom.css",
+    "basePath": "../../../ts/",
+    "disableSources": true,
+    "entryPoints": [
+        "../../../ts/Data/DataTable.ts",
+        "../../../ts/Data/DataTableOptions.ts",
+
+        "../../../ts/Grid/Core/Accessibility/A11yOptions.ts",
+        "../../../ts/Grid/Core/Accessibility/Accessibility.ts",
+        "../../../ts/Grid/Core/Table/Actions/ColumnSorting.ts",
+        "../../../ts/Grid/Core/Table/Actions/ColumnsResizer.ts",
+        "../../../ts/Grid/Core/Table/Actions/RowsVirtualizer.ts",
+        "../../../ts/Grid/Core/Table/Content/TableCell.ts",
+        "../../../ts/Grid/Core/Table/Content/TableRow.ts",
+        "../../../ts/Grid/Core/Table/Header/HeaderCell.ts",
+        "../../../ts/Grid/Core/Table/Header/HeaderRow.ts",
+        "../../../ts/Grid/Core/Table/Header/TableHeader.ts",
+        "../../../ts/Grid/Core/Table/Cell.ts",
+        "../../../ts/Grid/Core/Table/Column.ts",
+        "../../../ts/Grid/Core/Table/Row.ts",
+        "../../../ts/Grid/Core/Table/Table.ts",
+        "../../../ts/Grid/Core/Defaults.ts",
+        "../../../ts/Grid/Core/Grid.ts",
+        "../../../ts/Grid/Core/GridUtils.ts",
+        "../../../ts/Grid/Core/Options.ts",
+
+        "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
+        "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
+        "../../../ts/Grid/Pro/GridEvents.ts",
+    ],
+    "entryPointStrategy": "expand",
+    "excludeInternal": true,
+    "excludePrivate": true,
+    "hideGenerator": true,
+    "htmlLang": "en",
+    "name": "Highcharts Grid",
+    "out": "../../../build/api/grid/typedoc/",
+    "plugin": [
+        "typedoc-plugin-rename-defaults"
+    ],
+    "readme": "../../../docs/datagrid/general.md",
+    "titleLink": "https://api.highcharts.com/grid/typedoc/index.html",
+    "visibilityFilters": {}
+}

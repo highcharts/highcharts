@@ -427,7 +427,7 @@ class Layout extends GUIElement {
     /**
      * Get the layout's options.
      * @returns
-     * The JSON of layout's options.
+     * Layout's options.
      *
      * @internal
      *

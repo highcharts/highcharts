@@ -351,7 +351,7 @@ class HTMLComponent extends Component {
     /**
      * Get the HTML component's options.
      * @returns
-     * The JSON of HTML component's options.
+     * HTML component's options.
      *
      * @internal
      *
