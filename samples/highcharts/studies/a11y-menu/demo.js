@@ -1728,8 +1728,10 @@ function createPreferencesMenu(chart) {
         });
     }
 
+    const resizeListener = positionMenu;
     requestAnimationFrame(positionMenu);
-    window.addEventListener('resize', positionMenu);
+    window.addEventListener('resize', resizeListener);
+    chart.prefMenu.resizeListener = resizeListener;
 
     // Create the accordion container
     const accordionContainer = document.createElement('ul');
@@ -1942,6 +1944,12 @@ function closePreferencesMenu(chart) {
         menuDiv.remove();
     }
     chart.prefMenu.prefButton.element.setAttribute('aria-expanded', 'false');
+
+    // Remove resize event listsner
+    if (chart.prefMenu.resizeListener) {
+        window.removeEventListener('resize', chart.prefMenu.resizeListener);
+        delete chart.prefMenu.resizeListener;
+    }
 }
 
 function addCustomA11yComponent(chart) {
