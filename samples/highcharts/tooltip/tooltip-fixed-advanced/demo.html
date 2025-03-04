@@ -1,0 +1,73 @@
+
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
+
+<div id="container"></div>
+
+<div class="demo-controls">
+    <h4>Tooltip options</h4>
+    <table id="options-table">
+        <tr>
+            <td>
+                <label for="tooltip.position.fixed">tooltip.position.fixed</label>
+            </td>
+            <td>
+                <input type="checkbox" id="tooltip.position.fixed" checked>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="tooltip.position.relativeTo">tooltip.position.relativeTo</label>
+            </td>
+            <td>
+                <select id="tooltip.position.relativeTo">
+                    <option value="pane">pane</option>
+                    <option value="chart">chart</option>
+                    <option value="plotBox">plotBox</option>
+                    <option value="spacingBox">spacingBox</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="tooltip.position.x">tooltip.position.x</label>
+            </td>
+            <td>
+                <input type="number" id="tooltip.position.x" value="0">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="tooltip.position.y">tooltip.position.y</label>
+            </td>
+            <td>
+                <input type="number" id="tooltip.position.y" value="0">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="tooltip.split">tooltip.split</label>
+            </td>
+            <td>
+                <input type="checkbox" id="tooltip.split" checked>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="tooltip.shared">tooltip.shared</label>
+            </td>
+            <td>
+                <input type="checkbox" id="tooltip.shared">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="tooltip.outside">tooltip.outside</label>
+            </td>
+            <td>
+                <input type="checkbox" id="tooltip.outside">
+            </td>
+        </tr>
+
+    </table>
+</div>
