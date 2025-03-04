@@ -1224,8 +1224,10 @@ function handlePrefButtonClick(chart) {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
 
-    // Hide menu first to avoid incorrect initial positioning
-    menu.style.display = 'none';
+    // Temporarily show the menu to measure it
+    menu.style.display = 'block';
+    menu.style.visibility = 'hidden';
+    menu.style.opacity = '0';
 
     // Use requestAnimationFrame to ensure layout updates before measuring
     requestAnimationFrame(() => {
@@ -1243,10 +1245,13 @@ function handlePrefButtonClick(chart) {
             menu.style.left = `${viewportWidth - menuRect.width - 10}px`;
         }
 
+        if (menuRect.left < 0) {
+            menu.style.left = '10px';
+        }
+
         // Show the menu only after positioning is finalized
-        menu.style.display = 'block';
-        menu.style.opacity = '1';
         menu.style.visibility = 'visible';
+        menu.style.opacity = '1';
         chart.prefMenu.prefButton.element.setAttribute('aria-expanded', 'true');
 
         // **Set focus explicitly on the first focusable element in the menu**
@@ -1290,8 +1295,12 @@ function setupEventListeners(prefContent, chart) {
         sonificationSpeechButton =
             prefContent.querySelector(`#sonify-speech-${chart.index}`),
         selectedViewButtons =
-            prefContent.querySelectorAll(`input[name="view-${chart.index}"]`),
+            prefContent.querySelectorAll(
+                `input[name="view-mode-${chart.index}"]`
+            ),
         menu = document.getElementById(`pref-menu-${chart.index}`);
+
+    console.log(selectedViewButtons);
 
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -1582,6 +1591,7 @@ function setupEventListeners(prefContent, chart) {
 
     selectedViewButtons.forEach(radio => {
         radio.addEventListener('change', event => {
+            console.log('selected view');
             settings.selectedView = event.target.value;
             const descriptionId = `description-${chart.index}`;
             const descriptionDiv = document.getElementById(descriptionId);
