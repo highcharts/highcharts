@@ -1038,7 +1038,7 @@ class Grid {
      * @returns
      * Grid options.
      */
-    public getOptions(onlyUserOptions = true): DeepPartial<Options> {
+    public getOptions(onlyUserOptions = true): Globals.DeepPartial<Options> {
         const options =
             onlyUserOptions ? merge(this.userOptions) : merge(this.options);
 
