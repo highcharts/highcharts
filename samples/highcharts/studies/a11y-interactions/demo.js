@@ -128,6 +128,37 @@ hcCSS.replaceSync(`
             flex: 1;
             min-height: 0;
         }
+
+        button.hc-action {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .hc-warn {
+            background-color:#fdf7f8;
+            color:rgb(71, 13, 19);
+            border-color: #f5c6cb;
+            padding: 10px;
+            margin: 10px auto;
+            max-width: 550px;
+        }
+    }
+
+    .hc-a11y-ai-dialog {
+        .hc-ai-result {
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .inner-content {
+            overflow-y: scroll;
+        }
     }
 
     .hc-a11y-kbd-hints-dialog {
@@ -195,18 +226,6 @@ hcCSS.replaceSync(`
             .grow {
                 flex: 1;
             }
-        }
-
-        .hc-a11y-query-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            background-color: #007bff;
-            color: #fff;
-            cursor: pointer;
-            font-size: 1em;
         }
 
         .hc-a11y-query-result:focus {
@@ -1054,6 +1073,153 @@ function simplifyLine(points, numPoints) {
 
 
 // ============================================================================
+// LLM - fake generator, for testing purposes
+// Generated with 4o-mini, in json_schema using the following system prompt:
+/*
+    You are an expert in data visualization and analytics. You excel at
+    describing complex data in a way that is easy to understand. You are asked
+    to describe a chart to someone who is visually impaired, and may not be
+    able to see the chart. The user does not care much about the appearance of
+    the chart, but they do want to gain insights from the data.
+
+    ## Description format:
+
+    Your descriptions are structured as follows:
+        - You start with a very brief summary of the purpose of the chart,
+        what the chart is showing.
+        - You give a brief overview of the structure of the chart, for
+        example the chart type, axes, the number of data points and the
+        range of values.
+        - If the data supports it, you then give in a single sentence,
+        the single most important insight someone will gain from the chart.
+        - If the data supports it, you follow this up with more detailed
+        insights, explaining the main learnings one can take away from the
+        chart. You make connections to current and past events to explain
+        the data, but make a clear distinction between the data and your
+        interpretation. You never make up insights.
+
+    ## Further rules:
+
+    If you do not have sufficient data to provide insights, leave them
+    out entirely. Instead focus on the data description without speculation.
+
+    Use clear, accessible language that avoids reliance on visual metaphors.
+
+    ## Important background:
+
+    You know that the charts are built with Highcharts, which may affect
+    how you interpret series types and terminology. You do not disclose
+    this to the user unless asked. You translate Highcharts terminology to
+    something understandable by the general public. For example, a "spline"
+    or "area" chart would be considered a line chart for most people.
+
+    ## Output format:
+
+    You reply with only the description. The reply is formatted as valid
+    JSON, with a single "description" child, so that it may be picked up for
+    further processing. Example:
+    {
+        "description": "This line chart shows..."
+    }
+    Return only the JSON object, with no additional text, explanations, or
+    formatting
+*/
+// Line charts with >100 data points are simplified before sending in. In this
+// case, we added the following to the prompt:
+/*
+    The data has been simplified to make it easier to process. Small
+    fluctuations in the data have been removed, while keeping the main
+    trends. This may cause gaps in the data that are not present in what
+    the user sees. You do not disclose this simplification to the user
+    unless asked, but use the simplified data to the best of your ability.
+*/
+// Data sent in was in JSON form as well, containing data points, axis info,
+// type info, and titles.
+
+const descriptions = {
+    spline: `This line chart shows the average airfare prices in the US from
+    1993 to 2023 for four different cities: New York (JFK), Houston
+    (Intercontinental), Phoenix, and Las Vegas. The x-axis represents the years,
+    ranging from 1993 to 2023, while the y-axis indicates the average airfare
+    prices, with values ranging from 100 to 550 dollars. There are 31 data
+    points for each city over the specified period. The most important
+    insight is that airfare prices have generally increased over time, with
+    significant variations among the cities. Detailed insights reveal that New
+    York consistently has the highest average airfare, peaking in 2000 at around
+    455 dollars and showing moderate fluctuations afterwards. Houston's prices
+    have varied with a peak in 2012 at approximately 507 dollars. Phoenix has
+    seen a lower range of fares compared to the other cities, with its highest
+    in 2023 at about 374 dollars, while Las Vegas has maintained the lowest
+    prices throughout, starting from under 150 dollars in 1993 and peaking
+    around 272 dollars in 2023.`,
+
+    networkgraph: `This network graph illustrates the connections between
+    selected airports in the United States, showing how many direct routes each
+    airport has. The chart contains a total of 1241 data points representing
+    various airports and the number of direct connections each has. The airports
+    listed include major hubs like Chicago, Dallas-Fort Worth, and Atlanta, as
+    well as smaller airports like Alexandria and Garden City.\nThe most
+    important insight from this chart is that Dallas-Fort Worth has the highest
+    number of direct connections at 81, indicating its significant role in the
+    airline network in the US. Additionally, airports like Denver and Houston
+    also have a high number of routes, with 80 and 76 connections respectively,
+    showcasing them as key locations in air travel across the country. In
+    contrast, some smaller airports, such as Alexandria, Garden City, and
+    Montgomery, have only one direct route, highlighting the disparity in
+    airline connectivity across different regions.`,
+
+    wordcloud: `This word cloud chart summarizes key terms found in recent
+    travel news articles from various sources. It features a total of 100 unique
+    words, with the frequency of each word indicating its prominence in the news
+    articles. The word 'city' and 'island' are tied for the highest occurrences
+    at 34 each, while other noteworthy terms include 'travel' at 28, and various
+    other related words such as 'family', 'hotel', and 'people' which also
+    appear frequently. The most significant insight from this chart is that
+    'city' and 'island' are currently the most discussed topics in travel news.
+    Additional insights include a strong focus on themes related to destinations
+    (such as 'hotel', 'airport', and 'tourism'), activities (exemplified by
+    words like 'adventure' and 'explore'), and types of experiences (as shown by
+    terms like 'food' and 'culture'), suggesting a diverse landscape of travel
+    interests at this time.`
+};
+
+const describeChartWithLLM = async chart => new Promise(resolve =>
+    setTimeout(() => resolve(descriptions[chart.series[0].type]), 3000)
+);
+
+const llmDialog = createDialog('AI description', '', 'hc-a11y-ai-dialog'),
+    showLLMDialog = chart => {
+        const desc = chart.llmDescription;
+
+        llmDialog.querySelector('.inner-content').innerHTML = `
+            <p class="hc-warn">
+            Note: Automatic AI descriptions may convincingly lie about data.
+            Always verify important information by going through the data
+            yourself.
+            </p>
+            <p tabindex="-1" aria-live="polite" class="hc-ai-result">
+            ${desc ? desc :
+        'Describing this chart will send its data to OpenAI. Proceed?'}</p>
+            ${desc ? '' : '<button class="hc-action">Describe</button>'}
+        `;
+        const btn = llmDialog.querySelector('button.hc-action');
+        if (btn) {
+            btn.onclick = async () => {
+                const resEl = llmDialog.querySelector('.hc-ai-result');
+                resEl.textContent = 'Describing...';
+                resEl.focus();
+                btn.style.display = 'none';
+                chart.llmDescription = resEl.textContent =
+                    await describeChartWithLLM(chart);
+                resEl.focus();
+            };
+        }
+        setCSSPosToOverlay(llmDialog, chart.renderTo);
+        llmDialog.showModal();
+    };
+
+
+// ============================================================================
 // Infographic bar chart model
 
 const delaysModel = chart => {
@@ -1340,7 +1506,10 @@ const historicalKbdHandlers = (() => {
         },
 
         // Show table
-        b: showTableDialog
+        b: showTableDialog,
+
+        // Describe chart with AI
+        d: showLLMDialog
     };
 })();
 
@@ -1356,6 +1525,26 @@ const historicalKbdDescriptions = {
     a: {
         name: 'A',
         desc: 'Play line as audio (autopilot)'
+    },
+    c: {
+        name: 'C',
+        desc: 'Read summary of chart'
+    },
+    l: {
+        name: 'L',
+        desc: 'Read summary of line'
+    },
+    d: {
+        name: 'D',
+        desc: 'Describe chart with AI'
+    },
+    s: {
+        name: 'S',
+        desc: 'Toggle smoothing, simplify chart'
+    },
+    b: {
+        name: 'B',
+        desc: 'View data table'
     },
     PageUp: {
         name: 'PageUp',
@@ -1376,22 +1565,6 @@ const historicalKbdDescriptions = {
     Escape: {
         name: 'Esc',
         desc: 'Exit and stop sound'
-    },
-    c: {
-        name: 'C',
-        desc: 'Read summary of chart'
-    },
-    l: {
-        name: 'L',
-        desc: 'Read summary of line'
-    },
-    s: {
-        name: 'S',
-        desc: 'Toggle smoothing, simplify chart'
-    },
-    b: {
-        name: 'B',
-        desc: 'View data table'
     }
 };
 
@@ -1446,11 +1619,11 @@ const queryDialog = createDialog(
         <label for="hc-a11y-query-secondnode">Second node</label>
         <select id="hc-a11y-query-secondnode"></select>
     </div>
-    <button class="hc-a11y-query-btn">Search</button>
+    <button class="hc-action">Search</button>
     <p class="hc-a11y-query-result" tabindex="-1"></p>
     `, 'hc-a11y-query-dialog'
 );
-const queryButton = queryDialog.querySelector('.hc-a11y-query-btn'),
+const queryButton = queryDialog.querySelector('.hc-action'),
     queryResult = queryDialog.querySelector('.hc-a11y-query-result'),
     fromInput = queryDialog.querySelector('#hc-a11y-query-firstnode'),
     toInput = queryDialog.querySelector('#hc-a11y-query-secondnode');
@@ -1627,7 +1800,8 @@ const networkKbdHandlers = (() => {
             'with fewer connections.';
             announce(msg);
             showToast(chart, msg);
-        }
+        },
+        d: showLLMDialog
     };
 })();
 
@@ -1648,6 +1822,18 @@ const networkKbdDescriptions = {
         name: 'S',
         desc: 'Search connections'
     },
+    c: {
+        name: 'C',
+        desc: 'Read summary of chart'
+    },
+    n: {
+        name: 'N',
+        desc: 'Read top connections to and from node'
+    },
+    d: {
+        name: 'D',
+        desc: 'Describe chart with AI'
+    },
     Home: {
         name: 'Home',
         desc: 'Go to largest node'
@@ -1659,14 +1845,6 @@ const networkKbdDescriptions = {
     Escape: {
         name: 'Esc',
         desc: 'Exit and stop sound'
-    },
-    c: {
-        name: 'C',
-        desc: 'Read summary of chart'
-    },
-    n: {
-        name: 'N',
-        desc: 'Read top connections to and from node'
     }
 };
 
@@ -1693,7 +1871,8 @@ const networkExplanation = chart => {
     `);
     ds.setAttribute('tabindex', -1);
     chart.addSROnly(
-        'p', 'Chart has audio features and additional interactive tools.'
+        'p',
+        'Chart has audio features, search, and additional interactive tools.'
     );
 };
 
@@ -1866,7 +2045,8 @@ const wordcloudKbdHandlers = (() => {
                 ['Slow', 'Normal', 'Fast'][chart.speechRateModifier];
             announce(msg);
             showToast(chart, msg);
-        }
+        },
+        d: showLLMDialog
     };
 })();
 
@@ -1887,6 +2067,14 @@ const wordcloudKbdDescriptions = {
         name: 'S',
         desc: 'Set play speed for spoken words'
     },
+    c: {
+        name: 'C',
+        desc: 'Read summary of chart'
+    },
+    d: {
+        name: 'D',
+        desc: 'Describe chart with AI'
+    },
     Home: {
         name: 'Home',
         desc: 'Go to largest word'
@@ -1898,10 +2086,6 @@ const wordcloudKbdDescriptions = {
     Escape: {
         name: 'Esc',
         desc: 'Exit and stop sound'
-    },
-    c: {
-        name: 'C',
-        desc: 'Read summary of chart'
     }
 };
 
