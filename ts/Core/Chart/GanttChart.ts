@@ -90,7 +90,7 @@ class GanttChart extends Chart {
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
         const xAxisOptions = userOptions.xAxis,
             yAxisOptions = userOptions.yAxis;
@@ -247,8 +247,9 @@ namespace GanttChart {
         a: (string|HTMLDOMElement|Options),
         b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
-    ): GanttChart {
-        return new GanttChart(a as any, b as any, c);
+    ): GanttChart|Promise<GanttChart> {
+        const chart = new GanttChart(a as any, b as any, c);
+        return chart.promise || chart;
     }
 
     /* eslint-enable jsdoc/check-param-names */
