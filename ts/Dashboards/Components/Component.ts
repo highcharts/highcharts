@@ -33,12 +33,12 @@ import type Serializable from '../Serializable';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 
 import Cell from '../Layout/Cell.js';
 import CellHTML from '../Layout/CellHTML.js';
 import CallbackRegistry from '../CallbackRegistry.js';
 import ConnectorHandler from './ConnectorHandler.js';
-import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
 import Sync from './Sync/Sync.js';
@@ -56,7 +56,8 @@ const {
     objectEach,
     isFunction,
     getStyle,
-    diffObjects
+    diffObjects,
+    removeEvent
 } = U;
 
 import CU from './ComponentUtilities.js';
@@ -860,6 +861,10 @@ abstract class Component {
         for (const connectorHandler of this.connectorHandlers) {
             connectorHandler.destroy();
         }
+
+        // Used to removed the onTableChanged event.
+        removeEvent(this);
+
         this.element.remove();
     }
 
@@ -1198,7 +1203,7 @@ namespace Component {
     }
 
     /** @internal */
-    export type ConnectorTypes = DataConnector;
+    export type ConnectorTypes = DataConnectorType;
 
     /**
      * Allowed types for the text.

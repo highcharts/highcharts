@@ -92,13 +92,14 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Poll timer ID, if active.
      */
     public get polling(): boolean {
-        return !!this.polling;
+        return !!this._polling;
     }
 
     /**
      * Table managed by this DataConnector instance.
      */
     public readonly table: DataTable;
+
 
     /* *
      *
