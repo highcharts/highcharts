@@ -35,18 +35,35 @@ a:focus {
     border: 0;
 }
 
-#pref-menu-dialog-1,
-#pref-menu-dialog-2 {
+/* General dropdown menu styles */
+#pref-menu-0,
+#pref-menu-1 {
+    position: absolute;
     z-index: 9999;
     background-color: white;
-    padding: 20px;
+    padding: 10px;
     border: 1px solid black;
     border-radius: 5px;
-    min-width: 600px;
-    max-width: 90vw;
+    min-width: 250px;
+    max-width: 320px;
     max-height: 80vh;
     overflow-y: auto;
-    overflow-x: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.pref-menu {
+    text-align: left;
+}
+
+@media (max-width: 600px) {
+    #pref-menu-0,
+    #pref-menu-1 {
+        max-width: 90vw;
+        min-width: 200px;
+    }
 }
 
 .pref {

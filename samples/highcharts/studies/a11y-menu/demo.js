@@ -292,56 +292,56 @@ function applyChartTheme(chart) {
     playButton.style.backgroundColor = theme.button.backgroundColor;
     playButton.style.color = theme.button.textColor;
 
-    // Update the dialog colors if the dialog is open
-    const dialog = document.getElementById('pref-menu-dialog');
-    if (dialog) {
-        setDialogTheme(dialog, chart);
+    // Update the menu colors if the menu is open
+    const menu = document.getElementById(`pref-menu-${chart.index}`);
+    if (menu) {
+        setMenuTheme(menu, chart);
     }
 }
 
-function setDialogTheme(dialog, chart) {
+function setMenuTheme(menu, chart) {
     const theme = getThemeConfig(chart);
-    if (!dialog) {
-        console.warn('Dialog element not found');
+    if (!menu) {
+        console.warn('Menu element not found');
         return;
     }
-    dialog.style.backgroundColor = theme.outsideChart.backgroundColor;
-    dialog.style.color = theme.outsideChart.textColor;
-    dialog.style.border = theme.outsideChart.textColor;
-    dialog.style.borderWidth = '2px';
-    dialog.style.borderStyle = 'solid';
+    menu.style.backgroundColor = theme.outsideChart.backgroundColor;
+    menu.style.color = theme.outsideChart.textColor;
+    menu.style.border = theme.outsideChart.textColor;
+    menu.style.borderWidth = '2px';
+    menu.style.borderStyle = 'solid';
 
 
-    const h3Buttons = dialog.querySelectorAll('.card-header h2 button');
+    const h3Buttons = menu.querySelectorAll('.card-header h2 button');
     h3Buttons.forEach(button => {
         button.style.color = theme.outsideChart.textColor;
     });
 
-    const icons = dialog.querySelectorAll('.card-header h2 button i');
+    const icons = menu.querySelectorAll('.card-header h2 button i');
     icons.forEach(icon => {
         icon.style.color = theme.outsideChart.textColor;
     });
 
-    const closeButton = dialog.querySelector('.dlg-close');
+    const closeButton = menu.querySelector('.dlg-close');
     if (closeButton) {
         closeButton.style.backgroundColor = theme.button.backgroundColor;
         closeButton.style.color = theme.button.textColor;
     }
 
-    const playButton = dialog.querySelector(`#sonify-${chart.index}`);
+    const playButton = menu.querySelector(`#sonify-${chart.index}`);
     if (playButton) {
         playButton.style.backgroundColor = theme.button.backgroundColor;
         playButton.style.color = theme.button.textColor;
     }
 
-    const playButtonSpeech = dialog
+    const playButtonSpeech = menu
         .querySelector(`#sonify-speech-${chart.index}`);
     if (playButtonSpeech) {
         playButtonSpeech.style.backgroundColor = theme.button.backgroundColor;
         playButtonSpeech.style.color = theme.button.textColor;
     }
 
-    const describeButton = dialog
+    const describeButton = menu
         .querySelector(`#describe-chart-${chart.index}`);
     if (describeButton) {
         describeButton.style.backgroundColor = theme.button.backgroundColor;
@@ -890,7 +890,7 @@ function resetChartSettings(chart) {
 
     // Reattach event listeners
     const prefContent =
-    document.getElementById(`pref-menu-dialog-${chart.index}`);
+    document.getElementById(`pref-menu-${chart.index}`);
     if (prefContent) {
         setupEventListeners(prefContent, chart);
     }
@@ -1195,20 +1195,46 @@ function addGenericPrefButton(chart, container) {
 
 function handlePrefButtonClick(chart) {
     chart.accessibility.keyboardNavigation.blocked = true;
-    const dialog = createPreferencesDialog(chart);
-    document.body.appendChild(dialog);
+    let menu = document.getElementById(`pref-menu-${chart.index}`);
 
-    dialog.showModal();
-    setDialogTheme(dialog, chart);
+    if (!menu) {
+        menu = createPreferencesMenu(chart);
 
-    trapFocusInDialog(dialog);
+        console.log(menu);
+        document.body.appendChild(menu);
+    }
 
-    const firstFocusable = dialog.querySelector('button, select');
+    // Get the cog wheel button position
+    const cogButton = document.getElementById('hc-pref-button');
+    if (cogButton) {
+        const rect = cogButton.getBoundingClientRect();
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollLeft = window.scrollX ||
+            document.documentElement.scrollLeft;
+
+        // Position the menu below the cog wheel icon
+        menu.style.position = 'absolute';
+        menu.style.top = `${rect.bottom + scrollTop + 5}px`; // 5px spacing
+        menu.style.left = `${rect.left + scrollLeft}px`;
+
+        // Ensure it doesn't go off-screen
+        const menuRect = menu.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        if (menuRect.right > viewportWidth) {
+            menu.style.left =
+            `${viewportWidth - menuRect.width - 10}px`; // Adjust if overflowing
+        }
+    }
+
+    menu.style.display = 'block';
+    setMenuTheme(menu, chart);
+
+    const firstFocusable = menu.querySelector('button, select');
     if (firstFocusable) {
         firstFocusable.focus();
     }
-
 }
+
 
 /* -------------------- EVENT LISTENERS --------------------- */
 function setupEventListeners(prefContent, chart) {
@@ -1238,7 +1264,7 @@ function setupEventListeners(prefContent, chart) {
             prefContent.querySelector(`#sonify-speech-${chart.index}`),
         selectedViewButtons =
             prefContent.querySelectorAll(`input[name="view-${chart.index}"]`),
-        dialog = document.getElementById(`pref-menu-dialog-${chart.index}`);
+        menu = document.getElementById(`pref-menu-${chart.index}`);
 
     const infoRegion = document.querySelector(
         `#highcharts-screen-reader-region-before-${chart.index} > ` +
@@ -1286,7 +1312,7 @@ function setupEventListeners(prefContent, chart) {
         radio.addEventListener('change', event => {
             settings.isSelectedTheme = event.target.value;
             applyChartTheme(chart);
-            setDialogTheme(prefContent, chart);
+            setMenuTheme(prefContent, chart);
             applyInfoRegion(settings.selectedVerbosity, chart);
             saveSettings(chart);
         });
@@ -1433,10 +1459,10 @@ function setupEventListeners(prefContent, chart) {
                 globalTracks: [],
                 events: {
                     onPlay: function () {
-                        dialog.style.opacity = 0; // Hide dialog
+                        menu.style.opacity = 0; // Hide menu
                     },
                     onStop: function () {
-                        dialog.style.opacity = 1; // Show dialog
+                        menu.style.opacity = 1; // Show menu
                     }
                 }
             }
@@ -1470,10 +1496,10 @@ function setupEventListeners(prefContent, chart) {
                     }],
                     events: {
                         onPlay: function () {
-                            dialog.style.opacity = 0;
+                            menu.style.opacity = 0;
                         },
                         onStop: function () {
-                            dialog.style.opacity = 1;
+                            menu.style.opacity = 1;
                         }
                     }
                 }
@@ -1496,10 +1522,10 @@ function setupEventListeners(prefContent, chart) {
                     ],
                     events: {
                         onPlay: function () {
-                            dialog.style.opacity = 0; // Hide dialog
+                            menu.style.opacity = 0; // Hide menu
                         },
                         onStop: function () {
-                            dialog.style.opacity = 1; // Show dialog
+                            menu.style.opacity = 1; // Show menu
                         }
                     }
                 }
@@ -1624,41 +1650,76 @@ function setupEventListeners(prefContent, chart) {
     });
 }
 
-/* -------------------- DIALOG --------------------- */
-function createPreferencesDialog(chart) {
-    const prefContent = document.createElement('dialog');
-    prefContent.setAttribute('id', `pref-menu-dialog-${chart.index}`);
-    const closeID = `hc-dlg-close-btn-${chart.index}`;
-
-    // Retrieving settings for the specific chart instance
+/* -------------------- MENU --------------------- */
+function createPreferencesMenu(chart) {
     const settings = chartSettingsMap[chart.index];
     const i = chart.index;
 
-    // Position dialogue
-    const settingsButton = document.querySelector('#hc-pref-button');
-
-    if (settingsButton) {
-        const rect = settingsButton.getBoundingClientRect();
-        prefContent.style.position = 'absolute';
-        prefContent.style.top = `${rect.bottom + 5}px`;
-        prefContent.style.left = `${rect.left}px`;
-        prefContent.style.minWidth = '280px';
-        prefContent.style.maxWidth = '320px';
+    // Remove existing menu if it exists (toggle behavior)
+    const existingMenu = document.getElementById(`pref-menu-${chart.index}`);
+    if (existingMenu) {
+        existingMenu.style.display = 'none'; // Hide for accessibility
+        chart.prefMenu.prefButton.element
+            .setAttribute('aria-expanded', 'false');
+        return;
     }
 
-    // Close button container
-    const headerContainer = document.createElement('div');
-    headerContainer.classList.add('dialog-header');
+    // Create dropdown container
+    const menuDiv = document.createElement('div');
+    menuDiv.setAttribute('id', `pref-menu-${chart.index}`);
+    menuDiv.setAttribute('role', 'menu');
+    menuDiv.setAttribute('aria-labelledby', 'hc-pref-button');
+    menuDiv.classList.add('pref-menu');
 
-    // Create the close button
-    const closeButton = document.createElement('button');
-    closeButton.setAttribute('id', closeID);
-    closeButton.classList.add('dlg-close');
-    closeButton.setAttribute('aria-label', 'Close dialog');
-    closeButton.innerText = 'Close';
+    menuDiv.style.position = 'absolute';
+    menuDiv.style.visibility = 'hidden';
+    menuDiv.style.display = 'block';
+    menuDiv.style.opacity = '0';
+    menuDiv.style.transition = 'opacity 0.2s ease-in-out';
 
-    // Append the close button to the header container
-    headerContainer.appendChild(closeButton);
+    // Append to body before measuring
+    document.body.appendChild(menuDiv);
+
+    // Function to position menu correctly
+    function positionMenu() {
+        const settingsButton = chart.prefMenu.prefButton.element;
+        if (!settingsButton) {
+            console.error('Error: Settings button not found');
+            return;
+        }
+
+        const rect = settingsButton.getBoundingClientRect();
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollLeft = window.scrollX ||
+            document.documentElement.scrollLeft;
+
+        requestAnimationFrame(() => {
+            const menuWidth =
+                menuDiv.offsetWidth || 320;
+
+            // Position the menu below the button, aligning to the right
+            menuDiv.style.top = `${rect.bottom + scrollTop + 5}px`;
+            menuDiv.style.left = `${rect.right - menuWidth + scrollLeft}px`;
+
+            // Ensure it doesn't go off-screen
+            const menuRect = menuDiv.getBoundingClientRect();
+            if (menuRect.right > window.innerWidth) {
+                menuDiv.style.left =
+                `${window.innerWidth - menuRect.width - 10}px`;
+            }
+
+            // Now show the menu properly
+            menuDiv.style.visibility = 'visible';
+            menuDiv.style.opacity = '1';
+            menuDiv.style.display = 'block';
+        });
+    }
+
+    requestAnimationFrame(positionMenu);
+    window.addEventListener('resize', positionMenu);
+
+    // Mark menu as open
+    chart.prefMenu.prefButton.element.setAttribute('aria-expanded', 'true');
 
     // Create the accordion container
     const accordionContainer = document.createElement('ul');
@@ -1828,64 +1889,49 @@ function createPreferencesDialog(chart) {
     </div>
     `;
 
-    // Append sections to the accordion container
+    // Append preferences section to the accordion container
     accordionContainer.appendChild(preferencesSection);
     accordionContainer.appendChild(accessibilitySection);
 
-    // Add header, close button, and accordion container to the dialog
-    prefContent.appendChild(headerContainer);
-    prefContent.appendChild(accordionContainer);
+    // Append everything to the menu div
+    menuDiv.appendChild(accordionContainer);
 
-    // Append the dialog to the document before calling event listeners
-    document.body.appendChild(prefContent);
-
-    // Setup event listeners after adding to the DOM
-    setTimeout(() => {
-        setupEventListeners(prefContent, chart);
-    }, 0);
-
-    // Close button functionality
-    closeButton.addEventListener('click', () => {
-        closePreferencesDialog(prefContent, chart);
-    });
-
-    const resetButton = prefContent.querySelector(`#reset-settings-${i}`);
+    // Handle Reset Button Click
+    const resetButton = menuDiv.querySelector(`#reset-settings-${chart.index}`);
     resetButton.addEventListener('click', () => resetChartSettings(chart));
 
-    return prefContent;
-}
-
-function trapFocusInDialog(dialog) {
-
-    // Trap focus within the dialog
-    const focusableElements = dialog.querySelectorAll(
-        'button, select, input, [tabindex]:not([tabindex="-1"])'
-    );
-    const firstFocusable = focusableElements[0];
-    const lastFocusable = focusableElements[focusableElements.length - 1];
-
-    dialog.addEventListener('keydown', e => {
-        if (e.key === 'Tab') {
-            if (e.shiftKey && document.activeElement === firstFocusable) {
-                e.preventDefault();
-                lastFocusable.focus();
-            } else if (
-                !e.shiftKey && document.activeElement === lastFocusable
+    // Close menu when clicking outside
+    setTimeout(() => {
+        document.addEventListener('click', event => {
+            if (
+                !menuDiv.contains(event.target) &&
+                !chart.prefMenu.prefButton.element.contains(event.target)
             ) {
-                e.preventDefault();
-                firstFocusable.focus();
+                closePreferencesMenu(chart);
             }
-        } else if (e.key === 'Escape') {
-            dialog.close();
+        }, { once: true });
+    }, 0);
+
+    // Close menu when pressing Escape
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+            closePreferencesMenu(chart);
         }
     });
+
+    setTimeout(() => {
+        setupEventListeners(menuDiv, chart);
+    }, 0);
+
+    return menuDiv;
 }
 
-function closePreferencesDialog(dialog, chart) {
-    dialog.close();
-    chart.accessibility.keyboardNavigation.blocked = false;
-    dialog.remove();
-    chart.container.focus();
+function closePreferencesMenu(chart) {
+    const menuDiv = document.getElementById(`pref-menu-${chart.index}`);
+    if (menuDiv) {
+        menuDiv.remove();
+    }
+    chart.prefMenu.prefButton.element.setAttribute('aria-expanded', 'false');
 }
 
 function addCustomA11yComponent(chart) {
