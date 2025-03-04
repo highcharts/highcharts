@@ -274,6 +274,9 @@ module.exports = {
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
+        ],
+        'Flutter': [
+            'flutter/getting-started'
         ]
     }
 };
