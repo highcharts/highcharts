@@ -136,6 +136,26 @@
         });
     });
 
+    document.querySelector('#x').addEventListener('change', e => {
+        chart.update({
+            tooltip: {
+                position: {
+                    x: Number(e.target.value)
+                }
+            }
+        });
+    });
+
+    document.querySelector('#y').addEventListener('change', e => {
+        chart.update({
+            tooltip: {
+                position: {
+                    y: Number(e.target.value)
+                }
+            }
+        });
+    });
+
     document.querySelector('#outside').addEventListener('change', e => {
         chart.update({
             tooltip: {
