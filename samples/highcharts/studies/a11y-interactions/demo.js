@@ -624,32 +624,25 @@ Highcharts.Chart.prototype.highlightCurPoint = function () {
 
 // Add application with keyboard handlers
 Highcharts.Chart.prototype.addA11yApplication =
-function (onInit, kbdHandlers, kbdDescriptions) {
+function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
     const chart = this,
         chartTitle = chart.options.title.text,
-        appLabel = `Interactive audio chart. ${chartTitle}. Click to interact.`,
         initNotify = 'Chart. Press T for tools and help. ' +
             'Use arrow keys to explore.',
+        appLabel = `Interactive audio chart. ${chartTitle}.`,
         app = chart.addProxyContainerEl('div'),
         fallbackButton = chart.addSROnly(
             'button', `Interact with chart, ${chartTitle}.`, app
         );
 
+    if (exitEl.getAttribute('tabindex') === null) {
+        exitEl.setAttribute('tabindex', -1);
+    }
+
     app.style.height = chart.container.clientHeight + 'px';
     app.setAttribute('role', 'application');
     app.setAttribute('aria-label', appLabel);
     app.setAttribute('tabindex', 0);
-    app.onfocus = () => {
-        showToast(chart, 'Press Enter to explore audio chart.');
-        showFocusOnEl(chart.renderTo);
-        app.focus();
-        announce(appLabel, 10);
-    };
-    app.onblur = () => {
-        hideToast();
-        hideFocus();
-        chart.sonification.cancel();
-    };
 
     // Keyboard state handling
     let entered = false;
@@ -663,6 +656,16 @@ function (onInit, kbdHandlers, kbdDescriptions) {
         kbdState.series = 0;
         kbdState.point = 0;
         onInit(chart);
+    };
+    app.onfocus = () => {
+        showFocusOnEl(chart.renderTo);
+        app.focus();
+        init();
+    };
+    app.onblur = () => {
+        hideToast();
+        hideFocus();
+        chart.sonification.cancel();
     };
     app.onkeydown = e => {
         hideKbdHint();
@@ -680,7 +683,7 @@ function (onInit, kbdHandlers, kbdDescriptions) {
         if (key === 'escape') {
             entered = false;
             chart.sonification.cancel();
-            app.onfocus();
+            exitEl.focus();
             return;
         }
 
@@ -2141,16 +2144,17 @@ const wordcloudOverlay = (chart, parent) => {
 const a11yModels = {
     delays: delaysModel,
     accidents: accidentsModel,
-    historical: chart => {
+    historical: (chart, titleEl) => {
         historicalExplanation(chart);
         const app = chart.addA11yApplication(
             historicalInit,
             historicalKbdHandlers,
-            historicalKbdDescriptions
+            historicalKbdDescriptions,
+            titleEl
         );
         historicalOverlay(chart, app);
     },
-    network: chart => {
+    network: (chart, titleEl) => {
         networkExplanation(chart);
 
         // Precompute network order
@@ -2162,16 +2166,18 @@ const a11yModels = {
         const app = chart.addA11yApplication(
             networkInit,
             networkKbdHandlers,
-            networkKbdDescriptions
+            networkKbdDescriptions,
+            titleEl
         );
         networkOverlay(chart, app);
     },
-    wordcloud: chart => {
+    wordcloud: (chart, titleEl) => {
         wordcloudExplanation(chart);
         const app = chart.addA11yApplication(
             wordcloudInit,
             wordcloudKbdHandlers,
-            wordcloudKbdDescriptions
+            wordcloudKbdDescriptions,
+            titleEl
         );
         wordcloudOverlay(chart, app);
     }
@@ -2194,10 +2200,12 @@ Highcharts.addEvent(Highcharts.Chart, 'load', function () {
     chart.proxyContainer = proxyContainer;
     renderTo.insertBefore(proxyContainer, renderTo.firstChild);
 
-    chart.addProxyEl(chart.title.element, 'h2', chart.options.title.text);
+    const titleEl = chart.addProxyEl(
+        chart.title.element, 'h2', chart.options.title.text
+    );
     chart.addProxyEl(chart.subtitle.element, 'p', chart.options.subtitle.text);
 
-    a11yModels[renderTo.id](chart);
+    a11yModels[renderTo.id](chart, titleEl);
 });
 
 // Avoid jsfiddle/codepen link in demo
