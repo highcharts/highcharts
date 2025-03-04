@@ -93,7 +93,7 @@ function copyCSS(config) {
 }
 
 /**
- * Changes the product version in the CSS files.
+ * Changes the HC Grid product version in the CSS files.
  *
  * @param  {string} version
  * Version to replace.
@@ -101,10 +101,8 @@ function copyCSS(config) {
  * @param  {string} folder
  * Folder to replace the version in.
  */
-function replaceVersionInFile(version, folder) {
-    if (!version) {
-        return;
-    }
+function replaceGridVersionInFile(folder) {
+    const { version } = require('./grid/build-properties.json');
     const fs = require('fs');
     const files = fs.readdirSync(folder);
     const path = require('path');
@@ -145,7 +143,7 @@ function scriptCSS(argv) {
         } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
-            replaceVersionInFile(argv.release, gridConfig.target + '/css/');
+            replaceGridVersionInFile(gridConfig.target + '/css/');
             log.success('Copied grid CSS');
         } else {
             log.message('Generating css for Highcharts...');
@@ -160,8 +158,7 @@ function scriptCSS(argv) {
 scriptCSS.description = 'Creates CSS files for given product';
 scriptCSS.flags = {
     '--dashboards': 'Creates CSS files for dashboards',
-    '--product': 'Creates CSS files for product: Highcharts (default), Grid',
-    '--release': 'Creates CSS files for given release version'
+    '--product': 'Creates CSS files for product: Highcharts (default), Grid'
 };
 
 gulp.task('scripts-css', () => scriptCSS(require('yargs').argv));

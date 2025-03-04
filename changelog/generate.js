@@ -320,7 +320,7 @@ const getFile = url => new Promise((resolve, reject) => {
         const review = [];
 
         if (product === 'Grid') {
-            const version = params.release;
+            const { version } = require('../tools/gulptasks/grid/build-properties.json');
 
             if (!version) {
                 throw new Error('No release version provided (e.g. --release 2.x.x)');
