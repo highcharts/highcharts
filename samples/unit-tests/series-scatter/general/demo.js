@@ -38,15 +38,16 @@ QUnit.test('Scatter series general tests.', function (assert) {
         '#15667).'
     );
 
-    tooltip.update({ animation: null });
     series.setData([
         [0, 0, 5],
         [0, 0, 5]
     ]);
+
     tc.mouseOver(
         chart.plotLeft + series.points[0].plotX,
         chart.plotTop + series.points[0].plotY
     );
+
     assert.deepEqual(
         tooltip.label.text.textStr,
         '1',
