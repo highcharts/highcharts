@@ -605,7 +605,9 @@ namespace KeyboardNavigation {
         if (!chartProto.dismissPopupContent) {
             chartProto.dismissPopupContent = chartDismissPopupContent;
 
-            addEvent(doc, 'keydown', documentOnKeydown);
+            if (doc) {
+                addEvent(doc, 'keydown', documentOnKeydown);
+            }
         }
 
         return ChartClass as (T&typeof ChartComposition);
