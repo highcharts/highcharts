@@ -1,34 +1,34 @@
-# DataGrid with Vue
-To create a DataGrid with Vue, please follow the steps below:
+# Grid with Vue
+To create a Grid with Vue, please follow the steps below:
 
-## 1. Install the Dashboards package
-The Dashboards package contains the DataGrid
+## 1. Install the Grid package
+Install Grid Lite package with:
 ```bash
-npm install @highcharts/dashboards
+npm install @highcharts/grid-lite/grid-lite
 ```
 
-## 2. Create a DataGrid Vue component:
+## 2. Create a Grid Vue component:
 
 ```html
-// DataGrid.vue
+// Grid.vue
 
 <script setup lang="ts">
 import { watch, ref } from 'vue';
-import DataGrid from '@highcharts/dashboards/datagrid';
-import "@highcharts/dashboards/css/datagrid.css";
+import Grid from '@highcharts/grid-lite/grid-lite';
+import '@highcharts/grid-lite/css/grid-lite.css';
 
 const props = defineProps(['config']);
-const datagridContainer = ref(null);
+const gridContainer = ref(null);
 
-watch(datagridContainer, () => {
-    if (datagridContainer.value) {
-        DataGrid.dataGrid(datagridContainer.value, props.config);
+watch(gridContainer, () => {
+    if (gridContainer.value) {
+        Grid.grid(gridContainer.value, props.config);
     }
 });
 </script>
 
 <template>
-    <div ref="datagridContainer"></div>
+    <div ref="gridContainer"></div>
 </template>
 ```
 
@@ -37,9 +37,9 @@ watch(datagridContainer, () => {
 // App.vue
 
 <script setup lang="ts">    
-import DataGrid from './components/DataGrid.vue';
+import Grid from './components/Grid.vue';
 
-const config: DataGrid.Options = {
+const config: Grid.Options = {
     dataTable: {
         columns: {
             name: ['Alice', 'Bob', 'Charlie', 'David'],
@@ -52,9 +52,9 @@ const config: DataGrid.Options = {
 
 <template>
     <div id="app">
-        <DataGrid :config="config" />
+        <Grid :config="config" />
     </div>
 </template>
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-datagrid-vue-ts?file=src%2FApp.vue,src%2Fcomponents%2FDataGrid.vue).
+See the live example [here](https://stackblitz.com/edit/highcharts-grid-vue-ts?file=src%2FApp.vue,src%2Fcomponents%2FGrid.vue).

@@ -1,29 +1,28 @@
-# DataGrid with React
+# Grid with React
+To create a Grid with React, please follow the steps below:
 
-To create a DataGrid with React, please follow the steps below:
-
-## 1. Install the Dashboards package
-The Dashboards package contains the DataGrid.
+## 1. Install the Grid package
+Install Grid Lite package with:
 ```bash
-npm install @highcharts/dashboards
+npm install @highcharts/grid-lite/grid-lite
 ````
 
-## 2. Create a DataGrid React component:
+## 2. Create a Grid React component:
 
 ```tsx
-// DataGrid.tsx
+// Grid.tsx
 
 import { useEffect, useRef } from 'react';
-import DG from '@highcharts/dashboards/datagrid';
-import '@highcharts/dashboards/css/datagrid.css';
+import Grid from '@highcharts/grid-lite/grid-lite';
+import '@highcharts/grid-lite/css/grid-lite.css';
 
-export default function DataGrid(props: { config: DG.Options }) {
+export default function Grid(props: { config: Grid.Options }) {
     const { config } = props;
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (containerRef.current) {
-            DG.dataGrid(containerRef.current, config);
+            Grid.grid(containerRef.current, config);
         }
     }, [config]);
 
@@ -37,11 +36,11 @@ export default function DataGrid(props: { config: DG.Options }) {
 ```tsx
 // App.tsx
 
-import DataGrid from "./components/DataGrid";
+import Grid from "./components/Grid";
 
 function App() {
 
-    const config: DataGrid.Options = {
+    const config: Grid.Options = {
         dataTable: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
@@ -53,7 +52,7 @@ function App() {
 
     return (
         <div className="App">
-            <DataGrid config={config} />
+            <Grid config={config} />
         </div>
     );
 }
@@ -61,4 +60,4 @@ function App() {
 export default App;
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-datagrid-react-ts?file=src%2FApp.tsx,src%2Fcomponents%2FDataGrid.tsx).
+See the live example [here](https://stackblitz.com/edit/highcharts-grid-react-ts?file=src%2FApp.tsx,src%2Fcomponents%2FGrid.tsx).

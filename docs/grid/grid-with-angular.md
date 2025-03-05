@@ -1,36 +1,37 @@
-# DataGrid with Angular
-To create a DataGrid with Angular, please follow the steps below:
+# Grid with Angular
+To create a Grid with Angular, please follow the steps below:
 
-## 1. Install the Dashboards package
-The Dashboards package contains the DataGrid.
+## 1. Install the Grid package
+Install Grid Lite package with:
 ```bash
-npm install @highcharts/dashboards
+npm install @highcharts/grid-lite/grid-lite
 ```
 
-## 2. Import the Dashboards package
+## 2. Import the Grid package
+
 ```ts
-import DataGrid from '@highcharts/dashboards/datagrid';
+import Grid from '@highcharts/grid-lite/grid-lite';
 ```
 
 ## 3. Create an HTML container  
-Add a div where you want to render the DataGrid.
+Add a div where you want to render the Grid.
 ```html
 <div id="container"></div>
 ```
 
-## 4. Create a DataGrid
-Create a DataGrid using the factory function `DataGrid.dataGrid`. The function takes two arguments:
-- `container` - the element where the DataGrid will be rendered, can be the id of the element or the direct reference to the element
-- `options` - the object options for the DataGrid
+## 4. Create a Grid
+Create a Grid using the factory function `Grid.grid`. The function takes two arguments:
+- `container` - the element where the Grid will be rendered, can be the id of the element or the direct reference to the element
+- `options` - the object options for the Grid
 ```ts
-DataGrid.dataGrid('container', this.options);
+Grid.grid('container', this.options);
 ```
 
 ## Final example
 ```ts
 import { Component, OnInit } from '@angular/core';
-import DataGrid from '@highcharts/dashboards/datagrid';
-import '@highcharts/dashboards/css/datagrid.css';
+import Grid from '@highcharts/grid-lite/grid-lite';
+import '@highcharts/grid-lite/css/grid-lite.css';
 
 @Component({
     selector: 'app-root',
@@ -38,7 +39,7 @@ import '@highcharts/dashboards/css/datagrid.css';
     template: '<div id="container"></div>',
 })
 export class AppComponent implements OnInit {
-    private options: DataGrid.Options = {
+    private options: Grid.Options = {
         dataTable: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
@@ -49,10 +50,10 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        DataGrid.dataGrid('container', this.options);
+        Grid.grid('container', this.options);
     }
 }
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-datagrid-angular?file=src%2Fmain.ts).
+See the live example [here](https://stackblitz.com/edit/highcharts-grid-angular?file=src%2Fmain.ts).
 
