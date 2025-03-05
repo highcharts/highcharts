@@ -552,7 +552,7 @@ class Tooltip {
 
             this.label
                 .attr({ zIndex: 8 })
-                .shadow(options.shadow ?? !options.position?.fixed)
+                .shadow(options.shadow ?? !options.fixed)
                 .add();
         }
 
@@ -991,7 +991,7 @@ class Tooltip {
             options = this.options,
             animation = animObject(
                 !tooltip.isHidden &&
-                !options.position?.fixed &&
+                !options.fixed &&
                 options.animation
             ),
             skipAnchor = tooltip.followPointer || (tooltip.len || 0) > 1,
@@ -1212,6 +1212,7 @@ class Tooltip {
             distance,
             options,
             options: {
+                fixed,
                 position,
                 positioner
             },
@@ -1241,7 +1242,6 @@ class Tooltip {
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0]?.opposite);
         const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
-        const fixed = position?.fixed;
         const hasFixedPosition = positioner || fixed;
 
         let distributionBoxTop = plotTop + scrollTop;
@@ -1583,8 +1583,7 @@ class Tooltip {
                  * to avoid breaking change. Remove distributionBoxTop to make
                  * it consistent.
                  */
-                y: (pos || 0) + distributionBoxTop +
-                    (fixed && position.y || 0),
+                y: (pos || 0) + distributionBoxTop + (fixed && position.y || 0),
                 anchorX,
                 anchorY
             };
@@ -1844,12 +1843,12 @@ class Tooltip {
                 height = 0,
                 width = 0
             } = label,
-            { position, positioner } = options,
+            { positioner } = options,
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (
                 positioner ||
-                (position?.fixed && this.getFixedPosition) ||
+                (options.fixed && this.getFixedPosition) ||
                 this.getPosition
             ).call(
                 this,

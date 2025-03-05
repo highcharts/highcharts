@@ -55,6 +55,7 @@ export interface TooltipOptions {
     dateTimeLabelFormats: Time.DateTimeLabelFormatsOption;
     distance?: number;
     enabled: boolean;
+    fixed?: boolean;
     followPointer?: boolean;
     followTouchMove?: boolean;
     footerFormat: string;
@@ -69,7 +70,7 @@ export interface TooltipOptions {
     padding: number;
     pointFormat: string;
     pointFormatter?: F.FormatterCallback<Point>;
-    position?: TooltipPositionOptions;
+    position: TooltipPositionOptions;
     positioner?: Tooltip.PositionerCallbackFunction;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
     shape?: Tooltip.ShapeValue;
@@ -89,7 +90,6 @@ export interface TooltipOptions {
 
 interface TooltipPositionOptions {
     align?: AlignValue;
-    fixed?: boolean;
     relativeTo?: 'chart'|'pane'|'plotBox'|'spacingBox'
     verticalAlign?: VerticalAlignValue;
     x: number;

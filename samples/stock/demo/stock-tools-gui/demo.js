@@ -81,9 +81,9 @@ const NVIDIAPriceConnector =
             headerShape: 'callout',
             borderWidth: 0,
             shadow: false,
+            fixed: true,
             position: {
-                fixed: true,
-                relativeTo: 'pane'
+                y: 3
             }
         },
         series: [{

@@ -72,10 +72,8 @@
         }],
 
         tooltip: {
-            split: true,
-            position: {
-                fixed: true
-            }
+            fixed: true,
+            split: true
         },
 
         series: [{

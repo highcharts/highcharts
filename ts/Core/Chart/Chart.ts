@@ -716,9 +716,8 @@ class Chart {
     }
 
     /**
-     * Get the clipping for the series. Could be called for a series to
-     * initiate animating the clip or to set the final clip (only width
-     * and x).
+     * Get the clipping for a series. Could be called for a series to initialate
+     * animating the clip or to set the final clip (only width and x).
      *
      * @private
      * @function Highcharts.Chart#getClipBox
