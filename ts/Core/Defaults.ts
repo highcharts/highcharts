@@ -2046,6 +2046,23 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Whether the tooltip should be fixed to one position in the chart, or
+         * located next to the point or mouse. When the tooltip is fixed, the
+         * position can be further specified with the
+         * [tooltip.position](#tooltip.position) options set.
+         *
+         * @sample    highcharts/tooltip/fixed/
+         *            Fixed tooltip position
+         * @sample    {highstock} stock/tooltip/fixed/
+         *            Stock chart with fixed tooltip
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     next
+         * @apioption tooltip.fixed
+         */
+
+        /**
          * Whether the tooltip should follow the mouse as it moves across
          * columns, pie slices and other point types with an extent.
          * By default it behaves this way for pie, polygon, map, sankey
@@ -2243,6 +2260,8 @@ const defaultOptions: DefaultOptions = {
          *         Split tooltip with fixed positions
          * @sample {highstock} stock/tooltip/positioner-scrollable-plotarea/
          *         Scrollable plot area combined with tooltip positioner
+         *
+         * @see [position](#tooltip.position)
          *
          * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
@@ -2489,8 +2508,81 @@ const defaultOptions: DefaultOptions = {
          */
         padding: 8,
 
+        /**
+         * Positioning options for fixed tooltip, taking effect only when
+         * [tooltip.fixed](#tooltip.fixed) is `true`.
+         *
+         * @sample {highcharts} highcharts/tooltip/fixed/
+         *         Fixed tooltip
+         * @sample {highstock} stock/tooltip/fixed/
+         *         Stock chart with fixed tooltip
+         *
+         * @since next
+         */
         position: {
+            /**
+             * The horizontal alignment of the fixed tooltip.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             *
+             * @type {Highcharts.AlignValue}
+             * @default left
+             * @apioption tooltip.position.align
+             */
+            /**
+             * The vertical alignment of the fixed tooltip.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             *
+             * @type {Highcharts.VerticalAlignValue}
+             * @default top
+             * @apioption tooltip.position.verticalAlign
+             */
+            /**
+             * What the fixed tooltip alignment should be relative to.
+             *
+             * The default, `pane`, means that it is aligned within the plot
+             * area for that given series. If the tooltip is split (as default
+             * in Stock charts), each partial tooltip is aligned within the
+             * series' pane.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             *
+             * @type {string}
+             * @default pane
+             * @validvalue ["pane", "chart", "plotBox", "spacingBox"]
+             * @apioption tooltip.position.relativeTo
+             */
+            /**
+             * X pixel offset from the given position. Can be used to shy away
+             * from axis lines, grid lines etc to avoid the tooltip overlapping
+             * other elements.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             */
             x: 0,
+            /**
+             * Y pixel offset from the given position. Can be used to shy away
+             * from axis lines, grid lines etc to avoid the tooltip overlapping
+             * other elements.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             */
             y: 1
         },
 
