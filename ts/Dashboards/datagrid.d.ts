@@ -1,4 +1,5 @@
-export { default as DataGrid } from '../Grid/Core/Grid.js';
+export { /** @deprecated Use `Grid` instead */ default as DataGrid } from '../Grid/Core/Grid.js';
+export { default as Grid } from '../Grid/Core/Grid.js';
 export { default as Column } from '../Grid/Core/Table/Column.js';
 export { default as TableRow } from '../Grid/Core/Table/Content/TableRow.js';
 export { default as TableCell } from '../Grid/Core/Table/Content/TableCell.js';

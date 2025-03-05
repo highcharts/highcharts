@@ -1,6 +1,6 @@
 # Types of Dashboards components
 
-Components are the building blocks of **Dashboards** layout. Several types of components are provided and can be used out of the box. The KPI, Highcharts, and DataGrid components come pre-configured with default configurations, whereas the HTML component can be customized to fit specific needs. It is also possible to create and register Custom components. 
+Components are the building blocks of **Dashboards** layout. Several types of components are provided and can be used out of the box. The KPI, Highcharts, and Grid components come pre-configured with default configurations, whereas the HTML component can be customized to fit specific needs. It is also possible to create and register Custom components. 
 
 ## Overview
 This is an overview of the most critical parameters of a component:
@@ -8,7 +8,7 @@ This is an overview of the most critical parameters of a component:
 * `renderTo` - id of the cell to which the component should be rendered
 * `className` - CSS class that is applied to the component's container
 * `type` - the type of the component. It can be [`HTML`](#html-component), [`KPI`](#kpi-component), [`Highcharts`](#highcharts-component),
-[`DataGrid`](#datagrid-component) or [custom defined](https://www.highcharts.com/docs/dashboards/custom-component).
+[`Grid`](#grid-component) or [custom defined](https://www.highcharts.com/docs/dashboards/custom-component).
 * `events` - an object containing a pair of names for the event and a callback function that should be called on a given event. The list of events can be found in the API Reference, but the most common is `mount`.
 * `sync` - list of events that should be synchronized between components.
 
@@ -130,28 +130,28 @@ chart editing is disabled. See the `dataPool` section for more details.
 
 See the [HighchartsComponent](https://www.highcharts.com/docs/dashboards/highcharts-component) page for detailed information.
 
-### DataGrid Component
-To visualize data in a row-column layout, you can use the DataGrid component. The `DataGrid` module *must* be imported before the **Dashboards** module as shown here:
+### Grid Component
+To visualize data in a row-column layout, you can use the Grid component. The `Grid` module *must* be imported before the **Dashboards** module as shown here:
 ```html
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
-The `DataGrid` module has its own style set, so the CSS file must be imported for correct rendering.
+The `Grid` module has its own style set, so the CSS file must be imported for correct rendering.
 ```css
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-For a chart to be displayed, the type `DataGrid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `dataGridOptions` object allows you to configure `DataGrid` specific parameters like cell formatting, column assignment, etc.
+For a chart to be displayed, the type `Grid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `dataGridOptions` object allows you to configure `Grid` specific parameters like cell formatting, column assignment, etc.
 
-The **DataGrid** may have the series data directly embedded as part of the `dataGridOptions`. However, a more common usage is the **Dashboards**' data pool mechanism, which shares data between the dashboard components. In this case, the `id` of the `DataConnector` must be included in the data grid's configuration.
+The **Grid** may have the series data directly embedded as part of the `dataGridOptions`. However, a more common usage is the **Dashboards**' data pool mechanism, which shares data between the dashboard components. In this case, the `id` of the `DataConnector` must be included in the data grid's configuration.
 
-Code snippet with data embedded in the `DataGrid` data table; no data connector used.
+Code snippet with data embedded in the `Grid` data table; no data connector used.
 ```js
 {
     renderTo: 'dashboard-1',
-    type: 'DataGrid',
+    type: 'Grid',
     dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -161,7 +161,7 @@ Code snippet with data embedded in the `DataGrid` data table; no data connector 
     }
 }
 ```
-The above code snippet is part of a [DataGrid example](https://www.highcharts.com/samples/embed/grid/demo/your-first-grid) that uses embedded data.
+The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/grid/demo/your-first-grid) that uses embedded data.
 
 Code snippet using a data connector.
 ```js
@@ -184,20 +184,20 @@ dataPool: {
     }]
 },
 {
-    type: 'DataGrid',
+    type: 'Grid',
     renderTo: 'cell-id-2',
     connector: {
         id: 'data'
     }
 }
 ```
-The above code snippet is part of a [DataGrid example](https://www.highcharts.com/samples/embed/dashboards/components/component-datagrid) that uses data shared via a `DataConnector`.
+The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/dashboards/components/component-grid) that uses data shared via a `DataConnector`.
 
-When using the data connector, the `DataGrid` is automatically populated. If other components are using the same data connector, they will be automatically updated when the user edits a data grid cell. [Here is the example](https://www.highcharts.com/demo/dashboards/datagrid-sync).
+When using the data connector, the `Grid` is automatically populated. If other components are using the same data connector, they will be automatically updated when the user edits a data grid cell. [Here is the example](https://www.highcharts.com/demo/dashboards/grid-sync).
 
 NB! If the data was created by the [mathModifier](https://www.highcharts.com/docs/dashboards/data-handling#datamodifier), cell editing is disabled by default.
 
-See the [DataGrid Component](https://www.highcharts.com/docs/dashboards/datagrid-component) page for more information.
+See the [Grid Component](https://www.highcharts.com/docs/dashboards/grid-component) page for more information.
 
 ### KPI Component
 The `KPI component` (Key Performance Indicator) facilitates the visualization of one single value in a data set. It is a simple component that displays a title and a value but can also include a Highcharts component to visualize the value, typically a gauge. Additionally, the component can be configured with threshold values, which can adapt its style according to its current value.

@@ -1,10 +1,10 @@
 describe('Loading indicator', () => {
     before(() => {
-        cy.visit('/grid/cypress/datagrid-custom-class');
+        cy.visit('/grid/cypress/grid-custom-class');
     });
 
     it('Loading indicator should be visible.', () => {
-        cy.window().its('dataGrid').then((grid) => {
+        cy.window().its('grid').then((grid) => {
             grid.showLoading('Loading test...');
 
             cy.get('.highcharts-datagrid-loading-wrapper').should('be.visible');
@@ -13,7 +13,7 @@ describe('Loading indicator', () => {
     });
 
     it('Loading indicator should be hidden.', () => {
-        cy.window().its('dataGrid').then((grid) => {
+        cy.window().its('grid').then((grid) => {
             grid.hideLoading();
 
             cy.get('.highcharts-datagrid-loading-wrapper').should('not.exist');
@@ -21,7 +21,7 @@ describe('Loading indicator', () => {
     });
 
     it('Only one indicator should be visible at a time.', () => {
-        cy.window().its('dataGrid').then((grid) => {
+        cy.window().its('grid').then((grid) => {
             grid.showLoading('Loading 1');
             grid.showLoading('Loading 2');
 
