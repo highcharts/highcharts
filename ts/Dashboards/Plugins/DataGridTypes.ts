@@ -31,7 +31,17 @@ import type * as D from '@highcharts/dashboards/datagrid';
  *
  * */
 
+/**
+ * 
+ */
+
+/**
+ * @deprecated
+ * DataGrid will be removed in behalf of Grid in the next major version.
+ */
 export type DataGrid = D.DataGrid;
+
+export type Grid = D.Grid;
 
 /**
  * @deprecated
