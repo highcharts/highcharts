@@ -2247,6 +2247,10 @@ const defaultOptions: DefaultOptions = {
          * xAxis header. xAxis header is not a point, instead `point` argument
          * contains info: `{ plotX: Number, plotY: Number, isHeader: Boolean }`
          *
+         * Since v12.2, the [tooltip.fixed](#tooltip.fixed) option combined with
+         * [tooltip.position](#tooltip.position) covers most of the use cases
+         * for custom tooltip positioning.
+         *
          * The return should be an object containing x and y values, for example
          * `{ x: 100, y: 100 }`.
          *

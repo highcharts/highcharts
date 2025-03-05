@@ -805,24 +805,24 @@ class Tooltip {
     ): PositionObject {
         const position = this.options.position,
             series = point.series,
-            { chart, split } = this;
+            { chart, split } = this,
+            relativeToOption = position.relativeTo,
+            noPane = series?.yAxis?.isRadial &&
+                (relativeToOption === 'pane' || !relativeToOption),
+            relativeTo = noPane ? 'plotBox' : relativeToOption,
+            bounds = relativeTo === 'chart' ?
+                chart.renderer :
+                chart[relativeTo as 'plotBox'|'spacingBox'] ||
+                    chart.getClipBox(series, true);
 
-        if (position) {
-            const relativeTo = position.relativeTo,
-                bounds = relativeTo === 'chart' ?
-                    chart.renderer :
-                    chart[relativeTo as 'plotBox'|'spacingBox'] ||
-                        chart.getClipBox(series, true);
-            return {
-                x: bounds.x + (bounds.width - boxWidth) *
-                    getAlignFactor(position.align) +
-                    position.x,
-                y: bounds.y + (bounds.height - boxHeight) *
-                    getAlignFactor(position.verticalAlign) +
-                    (!split && position.y || 0)
-            };
-        }
-        return { x: 0, y: 0 };
+        return {
+            x: bounds.x + (bounds.width - boxWidth) *
+                getAlignFactor(position.align) +
+                position.x,
+            y: bounds.y + (bounds.height - boxHeight) *
+                getAlignFactor(position.verticalAlign) +
+                (!split && position.y || 0)
+        };
     }
 
     /**
