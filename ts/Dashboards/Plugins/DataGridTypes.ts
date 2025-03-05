@@ -33,7 +33,13 @@ import type * as D from '@highcharts/dashboards/datagrid';
 
 export type DataGrid = D.DataGrid;
 
+/**
+ * @deprecated
+ * DataGrid will be removed in behalf of Grid in the next major version.
+ */
 export type DataGridNamespace = typeof D;
+
+export type GridNamespace = typeof D;
 
 export type Column = D.Column;
 
