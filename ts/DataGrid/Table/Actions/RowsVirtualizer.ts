@@ -155,6 +155,7 @@ class RowsVirtualizer {
         const tbody = this.viewport.tbodyElement;
         let rows = this.viewport.rows;
 
+        const oldScrollLeft = tbody.scrollLeft;
         let oldScrollTop: number | undefined;
 
         if (rows.length) {
@@ -182,6 +183,8 @@ class RowsVirtualizer {
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             rows[i].reflow();
         }
+
+        tbody.scrollLeft = oldScrollLeft;
     }
 
     /**

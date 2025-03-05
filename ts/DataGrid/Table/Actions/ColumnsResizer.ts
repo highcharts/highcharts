@@ -107,53 +107,6 @@ class ColumnsResizer {
      * */
 
     /**
-     * Resizes the columns in the full distribution mode.
-     *
-     * @param diff
-     * The X position difference in pixels.
-     */
-    private fullDistributionResize(diff: number): void {
-        const vp = this.viewport;
-
-        const column = this.draggedColumn;
-        if (!column) {
-            return;
-        }
-
-        const nextColumn = vp.columns[column.index + 1];
-        if (!nextColumn) {
-            return;
-        }
-
-        const leftColW = this.columnStartWidth ?? 0;
-        const rightColW = this.nextColumnStartWidth ?? 0;
-        const colHtmlElement = column.cells[1].htmlElement;
-        const MIN_WIDTH = Math.max(
-            (
-                (getStyle(colHtmlElement, 'padding-left', true) || 0) +
-                (getStyle(colHtmlElement, 'padding-right', true) || 0) +
-                (getStyle(colHtmlElement, 'border-left', true) || 0)
-            ), Column.MIN_COLUMN_WIDTH
-        );
-
-        let newLeftW = leftColW + diff;
-        let newRightW = rightColW - diff;
-
-        if (newLeftW < MIN_WIDTH) {
-            newLeftW = MIN_WIDTH;
-            newRightW = leftColW + rightColW - MIN_WIDTH;
-        }
-
-        if (newRightW < MIN_WIDTH) {
-            newRightW = MIN_WIDTH;
-            newLeftW = leftColW + rightColW - MIN_WIDTH;
-        }
-
-        column.width = vp.getRatioFromWidth(newLeftW);
-        nextColumn.width = vp.getRatioFromWidth(newRightW);
-    }
-
-    /**
      * Render the drag handle for resizing columns.
      *
      * @param column
@@ -187,6 +140,46 @@ class ColumnsResizer {
     }
 
     /**
+     * Resizes the columns in the full distribution mode.
+     *
+     * @param diff
+     * The X position difference in pixels.
+     */
+    private fullDistributionResize(diff: number): void {
+        const vp = this.viewport;
+
+        const column = this.draggedColumn;
+        if (!column) {
+            return;
+        }
+
+        const nextColumn = vp.columns[column.index + 1];
+        if (!nextColumn) {
+            return;
+        }
+
+        const leftColW = this.columnStartWidth ?? 0;
+        const rightColW = this.nextColumnStartWidth ?? 0;
+        const minWidth = ColumnsResizer.getMinWidth(column);
+
+        let newLeftW = leftColW + diff;
+        let newRightW = rightColW - diff;
+
+        if (newLeftW < minWidth) {
+            newLeftW = minWidth;
+            newRightW = leftColW + rightColW - minWidth;
+        }
+
+        if (newRightW < minWidth) {
+            newRightW = minWidth;
+            newLeftW = leftColW + rightColW - minWidth;
+        }
+
+        column.width = vp.getRatioFromWidth(newLeftW);
+        nextColumn.width = vp.getRatioFromWidth(newRightW);
+    }
+
+    /**
      * Resizes the columns in the fixed distribution mode.
      *
      * @param diff
@@ -199,11 +192,11 @@ class ColumnsResizer {
         }
 
         const colW = this.columnStartWidth ?? 0;
-        const MIN_WIDTH = Column.MIN_COLUMN_WIDTH;
+        const minWidth = ColumnsResizer.getMinWidth(column);
 
         let newW = colW + diff;
-        if (newW < MIN_WIDTH) {
-            newW = MIN_WIDTH;
+        if (newW < minWidth) {
+            newW = minWidth;
         }
 
         column.width = newW;
@@ -307,6 +300,36 @@ class ColumnsResizer {
             const [handle, listener] = this.handles[i];
             handle.removeEventListener('mousedown', listener);
         }
+    }
+
+    /**
+     * Returns the minimum width of the column.
+     *
+     * @param column
+     * The column to get the minimum width for.
+     *
+     * @returns
+     * The minimum width in pixels.
+     */
+    private static getMinWidth(column: Column): number {
+        const tableColumnEl = column.cells[1].htmlElement;
+        const headerColumnEl = column.header?.htmlElement;
+
+        const getElPaddings = (el: HTMLElement): number => (
+            (getStyle(el, 'padding-left', true) || 0) +
+            (getStyle(el, 'padding-right', true) || 0) +
+            (getStyle(el, 'border-left', true) || 0) +
+            (getStyle(el, 'border-right', true) || 0)
+        );
+
+        let result = Column.MIN_COLUMN_WIDTH;
+        if (tableColumnEl) {
+            result = Math.max(result, getElPaddings(tableColumnEl));
+        }
+        if (headerColumnEl) {
+            result = Math.max(result, getElPaddings(headerColumnEl));
+        }
+        return result;
     }
 }
 

@@ -287,7 +287,7 @@ class SidebarPopup extends BaseForm {
 
         // Remove highlight from the row.
         if (
-            editMode.editCellContext instanceof Cell &&
+            Cell.isCell(editMode.editCellContext) &&
             editMode.editCellContext.row
         ) {
             editMode.editCellContext.row.setHighlight();
@@ -431,12 +431,40 @@ class SidebarPopup extends BaseForm {
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
-                            if (newCell) {
-                                dropContext.setHighlight();
-                                sidebar.editMode.setEditCellContext(newCell);
-                                sidebar.show(newCell);
-                                newCell.setHighlight();
-                            }
+                            const unbindLayoutChanged = addEvent(
+                                this.editMode,
+                                'layoutChanged',
+                                (e): void => {
+                                    if (newCell && e.type === 'newComponent') {
+
+                                        if (newCell.mountedComponent.chart) {
+                                            const unbind = addEvent(
+                                                newCell.mountedComponent.chart,
+                                                'render',
+                                                (): void => {
+                                                    sidebar.editMode
+                                                        .setEditCellContext(
+                                                            newCell
+                                                        );
+                                                    sidebar.show(newCell);
+                                                    newCell.setHighlight();
+
+                                                    unbind();
+                                                    unbindLayoutChanged();
+                                                }
+                                            );
+                                        } else {
+                                            sidebar.editMode.setEditCellContext(
+                                                newCell
+                                            );
+                                            sidebar.show(newCell);
+                                            newCell.setHighlight();
+                                        }
+
+                                    }
+                                }
+                            );
+
                             // Clean up event listener after drop is complete
                             document.removeEventListener(
                                 'mousemove',
@@ -513,12 +541,12 @@ class SidebarPopup extends BaseForm {
             editMode.setEditOverlay(true);
         }
 
-        if (editCellContext instanceof Cell && editCellContext.row) {
+        if (Cell.isCell(editCellContext) && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
             editCellContext.setHighlight(true);
         } else if (
-            editCellContext instanceof CellHTML && editMode.cellToolbar
+            CellHTML.isCellHTML(editCellContext) && editMode.cellToolbar
         ) {
             editMode.cellToolbar.showToolbar(editCellContext);
             editCellContext.setHighlight();
@@ -611,7 +639,11 @@ class SidebarPopup extends BaseForm {
                     }
                 });
             } else if (componentName === 'row') {
-                componentList.push(SidebarPopup.addRow);
+                componentList.push({
+                    ...SidebarPopup.addRow,
+                    text: editMode.lang?.sidebar[componentName] ||
+                        SidebarPopup.addRow.text
+                });
             }
         });
 

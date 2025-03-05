@@ -51,7 +51,7 @@ class TableRow extends Row {
     /**
      * The row values from the data table in the original column order.
      */
-    public data: DataTable.Row = [];
+    public data: DataTable.RowObject = {};
 
     /**
      * The local index of the row in the presentation data table.
@@ -100,14 +100,14 @@ class TableRow extends Row {
     * */
 
     public override createCell(column: Column): Cell {
-        return new TableCell(column, this);
+        return new TableCell(this, column);
     }
 
     /**
      * Loads the row data from the data table.
      */
     private loadData(): void {
-        const data = this.viewport.dataTable.getRow(this.index);
+        const data = this.viewport.dataTable.getRowObject(this.index);
         if (!data) {
             return;
         }

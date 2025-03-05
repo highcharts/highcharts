@@ -425,6 +425,7 @@ class PackedBubbleSeries extends BubbleSeries {
                         seriesIndex: this.index
                     } as any
                 );
+                this.chart.allParentNodes.push(parentNode);
             }
             if (this.parentNode) {
                 (parentNode as any).plotX = this.parentNode.plotX;
@@ -708,7 +709,11 @@ class PackedBubbleSeries extends BubbleSeries {
             let distanceXY,
                 distanceR;
 
-            if (parentNodeLayout && layout.options.dragBetweenSeries) {
+            if (
+                !point.isParentNode &&
+                parentNodeLayout &&
+                layout.options.dragBetweenSeries
+            ) {
                 parentNodeLayout.nodes.forEach((node): void => {
                     if (
                         point && point.marker &&

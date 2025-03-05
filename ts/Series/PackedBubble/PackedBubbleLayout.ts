@@ -29,6 +29,7 @@ import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     pick
 } = U;
 
@@ -41,6 +42,7 @@ const {
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
+        allParentNodes: Array<PackedBubblePoint>;
         getSelectedParentNodes(): Array<PackedBubblePoint>;
     }
 }
@@ -110,6 +112,10 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
 
             chartProto.getSelectedParentNodes = chartGetSelectedParentNodes;
         }
+
+        if (!chartProto.allParentNodes) {
+            chartProto.allParentNodes = [];
+        }
     }
 
     /* *
@@ -158,7 +164,10 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
     public setCircularPositions(): void {
         const layout = this,
             box = layout.box,
-            nodes = layout.nodes as Array<PackedBubblePoint>,
+            nodes = [
+                ...layout.nodes as Array<PackedBubblePoint>,
+                ...layout?.chart?.allParentNodes || []
+            ],
             nodesLength = nodes.length + 1,
             angle = 2 * Math.PI / nodesLength,
             radius = layout.options.initialPositionRadius;
@@ -169,7 +178,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
 
         for (const node of nodes) {
             if (
-                layout.options.splitSeries &&
+                this.resolveSplitSeries(node) &&
                 !node.isParentNode
             ) {
                 centerX = (node.series.parentNode as any).plotX;
@@ -199,62 +208,100 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
 
     public repulsiveForces(): void {
         const layout = this,
-            bubblePadding = layout.options.bubblePadding,
-            nodes = layout.nodes as Array<PackedBubblePoint>;
+            { options, k } = layout,
+            {
+                bubblePadding = 0,
+                seriesInteraction
+            } = options,
+            nodes = [
+                ...layout.nodes as Array<PackedBubblePoint>,
+                ...layout?.chart?.allParentNodes || []
+            ];
 
-        let force: number,
-            distanceR: number,
-            distanceXY: Record<string, number>;
+        for (const node of nodes) {
+            const nodeSeries = node.series,
+                fixedPosition = node.fixedPosition,
+                paddedNodeRadius = (
+                    (node.marker?.radius || 0) +
+                    bubblePadding
+                );
 
-        nodes.forEach((node): void => {
             node.degree = node.mass;
             node.neighbours = 0;
-            nodes.forEach((repNode): void => {
-                force = 0;
+
+            for (const repNode of nodes) {
+                const repNodeSeries = repNode.series;
                 if (
                     // Node cannot repulse itself:
                     node !== repNode &&
-                    // Only close nodes affect each other:
-
                     // Not dragged:
-                    !node.fixedPosition &&
+                    !fixedPosition &&
                     (
-                        layout.options.seriesInteraction ||
-                        node.series === repNode.series
+                        seriesInteraction || nodeSeries === repNodeSeries
+                    ) &&
+                    // Avoiding collision of parentNodes and parented points
+                    !(
+                        nodeSeries === repNodeSeries &&
+                        (repNode.isParentNode || node.isParentNode)
                     )
                 ) {
-                    distanceXY = layout.getDistXY(node, repNode);
-                    distanceR = (
-                        layout.vectorLength(distanceXY) -
-                        (
-                            (node.marker as any).radius +
-                            (repNode.marker as any).radius +
-                            bubblePadding
-                        )
-                    );
+                    const distanceXY = layout.getDistXY(node, repNode),
+                        distanceR = (
+                            layout.vectorLength(distanceXY) -
+                            (
+                                paddedNodeRadius + (repNode.marker?.radius || 0)
+                            )
+                        );
+
+                    let forceTimesMass: number | undefined;
+
                     // TODO padding configurable
                     if (distanceR < 0) {
                         (node.degree as any) += 0.01;
-                        (node.neighbours as any)++;
-                        force = layout.repulsiveForce(
-                            -distanceR / Math.sqrt(node.neighbours as any),
-                            layout.k,
-                            node,
-                            repNode
+                        forceTimesMass = (
+                            layout.repulsiveForce(
+                                -distanceR / Math.sqrt(++(node.neighbours)),
+                                k,
+                                node,
+                                repNode
+                            ) *
+                            repNode.mass
                         );
                     }
 
                     layout.force(
                         'repulsive',
                         node,
-                        force * repNode.mass,
+                        forceTimesMass || 0,
                         distanceXY,
                         repNode,
                         distanceR
                     );
                 }
-            });
-        });
+            }
+        }
+    }
+
+    public resolveSplitSeries(
+        node: PackedBubblePoint
+    ): boolean {
+        const specificSeriesOpt = node
+            .series
+            ?.options
+            ?.layoutAlgorithm
+            ?.splitSeries;
+
+        return (
+            !defined(specificSeriesOpt) &&
+            node.series.chart
+                ?.options
+                ?.plotOptions
+                ?.packedbubble
+                ?.layoutAlgorithm
+                ?.splitSeries
+        ) ||
+        specificSeriesOpt ||
+        false;
     }
 
     public applyLimitBox(
@@ -270,7 +317,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         // `parentNodeLimit` should be used together with seriesInteraction:
         // false
         if (
-            layout.options.splitSeries &&
+            this.resolveSplitSeries(node) &&
             !node.isParentNode &&
             layout.options.parentNodeLimit
         ) {
@@ -327,7 +374,7 @@ namespace PackedBubbleLayout {
          * In case of split series, this option allows user to drag and
          * drop points between series, for changing point related series.
          *
-         * @sample highcharts/series-packedbubble/packed-dashboard/
+         * @sample highcharts/demo/packed-bubble-project-status/
          *         Example of drag'n drop bubbles for bubble kanban
          */
         dragBetweenSeries?: boolean;

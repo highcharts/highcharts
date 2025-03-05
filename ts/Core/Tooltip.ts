@@ -1000,6 +1000,9 @@ class Tooltip {
         if (!skipAnchor) {
             attr.anchorX = anchorX;
             attr.anchorY = anchorY;
+        } else {
+            // Clear anchor with NaN to prevent animation (#22295)
+            attr.anchorX = attr.anchorY = NaN;
         }
 
         animation.step = (): void => tooltip.drawTracker();
@@ -1786,7 +1789,7 @@ class Tooltip {
                 (point.tooltipDateKeys || ['key']).forEach(
                     (key: string): void => {
                         formatString = formatString.replace(
-                            new RegExp('point\\.' + key + '([ \\)}])', ''),
+                            new RegExp('point\\.' + key + '([ \\)}])'),
                             `(point.${key}:${xDateFormat as string})$1`
                         );
                     }
