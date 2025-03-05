@@ -66,7 +66,7 @@ You can group headers however deep you want by nesting the `columns[]` option ar
 
 This example shows deeper nesting of `columns[]`:
 
-<iframe src="https://www.highcharts.com/samples/embed/data-grid/basic/grouped-headers" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/grouped-headers" allow="fullscreen"></iframe>
 
 ## Summary
 

@@ -1,0 +1,20 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+.content {
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+    padding: 8px;
+}
+
+#container {
+    height: 200px;
+}
+
+button {
+    margin-top: 20px;
+}
+
+textarea {
+    width: 500px;
+    height: 300px;
+}
