@@ -1,34 +1,54 @@
-# DataGrid installation
+# DataGrid Installation
 
-## Install via NPM
-One way to add Highcharts DataGrid to your web page is via npm script.
-You can get all of the functionality of the datagrid through Highcharts Dashboards packages, which can be installed using the following script:
+Highcharts Grid comes in two versions: **Grid Lite** and **Grid Pro**.
+- **Grid Lite** is a free version of Grid Pro with a limited feature set.
+- **Grid Pro** will be available after the release of Highcharts Dashboards v4. Currently, its functionality is part of the **Dashboards** package.
+
+## Installing Grid
+
+### Install via NPM
+One way to add Grid to your web page is by installing it via npm:
+
 ```bash
-npm install @highcharts/dashboards
-```
-Then import the package into your project:
-``` js
-import DataGrid from '@highcharts/dashboards/datagrid';
+npm install @highcharts/grid-lite
 ```
 
-## Include Highcharts DataGrid by script tag
-Include the JavaScript files in your web page's `<head>` section, as shown below.
+Then, import the package into your project:
+
+```js
+import Grid from '@highcharts/grid-lite/grid-lite';
+```
+
+### Include Grid via `<script>` tag
+You can also load Grid Lite by adding the appropriate JavaScript file to your page's `<head>` section:
 
 ```html
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
- ```
-
-In the example above, the Javascript files are loaded from [code.highcharts.com](https://code.highcharts.com), but you can download the files from [highcharts.com](https://www.highcharts.com/download/) and include them on your web page. Here is an example with Highcharts DataGrid loaded from your server:
-
-```html
-<script src="../code/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/grid/grid-lite.js"></script>
 ```
 
-## Importing the CSS
-The CSS is not included in the library by default, but you can import it as below:
+Alternatively, you can download the file from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
+
+```html
+<script src="../code/grid/grid-lite.js"></script>
+```
+
+### Importing CSS
+The library does not include styles by default, so you need to import them manually:
+
 ```css
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/grid/css/grid.css");
 ```
 
-### Get started
-Now you are ready to use DataGrid. Check out [Your first DataGrid](https://www.highcharts.com/docs/datagrid/general) to get started.
+Or if you are using the NPM package:
+
+
+```js
+import '@highcharts/grid-lite/css/grid.css';
+```
+
+### Get Started
+Once installed, you are ready to use Grid Lite. Check out [Your First Grid](https://www.highcharts.com/docs/grid/general) to learn more.
+
+## Installing Grid Pro
+Currently, Grid Pro is part of Highcharts Dashboards and will be available as a standalone library after the release of Dashboards v4.
+
