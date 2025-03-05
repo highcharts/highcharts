@@ -34,11 +34,6 @@
         scrollbar: {
             height: 0
         },
-        tooltip: {
-            shadow: false,
-            borderWidth: 0,
-            backgroundColor: 'transparent'
-        },
         xAxis: {
             gridLineWidth: 1,
             gridLineColor: '#c0c0c0',
@@ -177,12 +172,7 @@
             }
         }],
         tooltip: {
-            positioner: function () {
-                return {
-                    x: 10,
-                    y: 0
-                };
-            },
+            fixed: true,
             format: '{series.name} {point.open:.2f} {point.high:.2f} ' +
                 '{point.low:.2f} {point.close:.2f}'
         },

@@ -150,16 +150,15 @@ function resetZoom(e) {
                 }
             },
             tooltip: {
-                positioner: function () {
-                    return {
-                        // right aligned
-                        x: this.chart.chartWidth - this.label.width,
-                        y: 10 // align to title
-                    };
+                fixed: true,
+                position: {
+                    align: 'right',
+                    relativeTo: 'spacingBox',
+                    y: -2
                 },
-                borderWidth: 0,
-                backgroundColor: 'none',
+                padding: 0,
                 pointFormat: '{point.y}',
+                backgroundColor: 'none',
                 headerFormat: '',
                 shadow: false,
                 style: {
