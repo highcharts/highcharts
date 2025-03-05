@@ -1864,7 +1864,7 @@ namespace Tooltip {
         (
             this: Point,
             tooltip: Tooltip
-        ): (false|string|Array<string>);
+        ): (false|string|Array<(boolean | string)>);
     }
 
     export interface HeaderFormatterEventObject {
