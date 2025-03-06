@@ -38,7 +38,10 @@ const defaultOptions: Sync.OptionsEntry = {};
 const syncPair: Sync.SyncPair = {
     emitter: void 0,
     handler: function (this: Component): (() => void) | void {
-        if (this.type !== 'DataGrid') {
+        if (
+            this.type !== 'DataGrid' && // to be removed in v4
+            this.type !== 'Grid'
+        ) {
             return;
         }
         const component = this as DataGridComponent;

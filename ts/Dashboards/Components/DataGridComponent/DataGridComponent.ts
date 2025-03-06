@@ -164,7 +164,7 @@ class DataGridComponent extends Component {
         super(cell, options, board);
 
         this.options = options as Options;
-        this.type = 'Grid';
+        this.type = 'DataGrid';
 
         this.setOptions();
     }
@@ -179,8 +179,8 @@ class DataGridComponent extends Component {
         await super.update(options);
         this.setOptions();
 
-        if (this.dataGrid) {
-            this.dataGrid.update(
+        if (this.grid) {
+            this.grid.update(
                 merge(
                     {},
                     options.gridOptions,
@@ -190,15 +190,15 @@ class DataGridComponent extends Component {
             );
 
             if (
-                this.dataGrid?.viewport?.dataTable?.id !==
+                this.grid?.viewport?.dataTable?.id !==
                 this.getFirstConnector()?.table?.id
             ) {
-                this.dataGrid.update({
+                this.grid.update({
                     dataTable: this.getFirstConnector()?.table?.modified
                 }, false);
             }
 
-            this.dataGrid.renderViewport();
+            this.grid.renderViewport();
         }
 
         this.emit({ type: 'afterUpdate' });
@@ -264,7 +264,7 @@ class DataGridComponent extends Component {
         const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
             cell: '',
-            type: 'Grid'
+            type: 'DataGrid'
         };
 
         if (connectorsIds.length) {
@@ -301,7 +301,7 @@ class DataGridComponent extends Component {
 
         return {
             ...diffObjects(optionsCopy, DataGridComponent.defaultOptions),
-            type: 'Grid'
+            type: 'DataGrid'
         };
     }
 
