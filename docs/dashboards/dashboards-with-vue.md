@@ -16,7 +16,7 @@ import * as Dashboards from '@highcharts/dashboards';
 
 ## 3. Additional packages
 
-Consider additional packages like **Highcharts** or **DataGrid** to fully utilize the **Dashboards** potential.
+Consider additional packages like **Highcharts** or **Grid** to fully utilize the **Dashboards** potential.
 
 First, install the package.
 ```bash
@@ -28,13 +28,13 @@ Then, import the package and the dedicated plug to connect it to the Dashboards.
 ```typescript
 import Highcharts from 'highcharts';
 import Dashboards from '@highcharts/dashboards';
-import DataGrid from '@highcharts/dashboards/datagrid';
+import Grid from '@highcharts/dashboards/datagrid';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.GridPlugin.custom.connectGrid(Grid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 ```
 
 __Please Note:__ If you are using the **Visual Studio Code** editor with the
