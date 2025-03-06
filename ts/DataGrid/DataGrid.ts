@@ -301,6 +301,7 @@ class DataGrid {
         this.initContainers(renderTo);
         this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
+        this.initVirtualization();
 
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
@@ -541,6 +542,8 @@ class DataGrid {
 
             this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
+
+            this.initVirtualization();
         }
 
         this.querying.loadOptions();
@@ -1039,6 +1042,27 @@ class DataGrid {
         }
 
         return JSON.stringify(optionsCopy);
+    }
+
+    /**
+     * Enables virtualization if the row count is greater than or equal to the
+     * threshold or virtualization is enabled externally. Should be fired after
+     * the data table is loaded.
+     */
+    private initVirtualization(): void {
+        const rows = this.userOptions.rendering?.rows;
+        const threshold = Number(
+            rows?.threshold ||
+            Defaults.defaultOptions.rendering?.rows?.threshold
+        );
+
+        if (
+            rows?.virtualization ||
+            Number(this.dataTable?.rowCount) >= threshold
+        ) {
+            ((this.options ??= {}).rendering ??= {}).rows ??= {};
+            this.options.rendering.rows.virtualization = true;
+        }
     }
 }
 
