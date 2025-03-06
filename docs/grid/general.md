@@ -88,6 +88,6 @@ Add an HTML element to the `body` with the ID you specified as the first argumen
 
 With the configuration above, your DataGrid should look like this:
 
-<iframe src="https://www.highcharts.com/samples/embed/grid/demo/your-first-grid" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid-lite/demo/your-first-grid" allow="fullscreen"></iframe>
 
 Go to [Understanding DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid) to read more about DataGrid structure and configuration options.

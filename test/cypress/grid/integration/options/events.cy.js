@@ -1,6 +1,6 @@
 describe('DataGrid events.', () => {
     before(() => {
-        cy.visit('grid/cypress/column-cell-events');
+        cy.visit('grid-pro/cypress/column-cell-events');
     });
 
     it('Cell mouseOver / mouseOut event.', () => {

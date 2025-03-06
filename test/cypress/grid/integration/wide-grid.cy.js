@@ -1,6 +1,6 @@
 describe('Sorting and resizing wide grid', () => {
     before(() => {
-        cy.visit('/grid/cypress/wide-grid');
+        cy.visit('/grid-lite/cypress/wide-grid');
     });
 
     it('scroll position should stay the same after sorting', () => {

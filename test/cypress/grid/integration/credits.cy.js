@@ -1,6 +1,6 @@
 describe('Credits.', () => {
     it('Grid Lite - credits are default and not configurable.', () => {
-        cy.visit('/grid/cypress/credits/');
+        cy.visit('/grid-lite/cypress/credits/');
         cy.get('.hcg-credits')
             .should('not.contain', 'overwriteText')
             .find('img').should('exist'); // Default Highcharts icon
@@ -18,7 +18,7 @@ describe('Credits.', () => {
     });
 
     it('Grid Pro - credits can be configurable.', () => {
-        cy.visit('/grid/cypress/credits-pro/');
+        cy.visit('/grid-pro/cypress/credits-pro/');
         cy.get('.highcharts-datagrid-credits')
             .should('contain', 'overwriteText')
             .find('img').should('not.exist'); // Default Highcharts icon

@@ -297,7 +297,7 @@ declare module '../../Core/Options' {
         /**
          * Whether to make the column cells editable `true`, or read-only `false`.
          *
-         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/overview | Editable columns disabled}
+         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Editable columns disabled}
          *
          * @default true
          */

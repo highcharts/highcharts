@@ -158,4 +158,4 @@ DataGrid.dataGrid('container', {
 
 The final result might look like:
 
-<iframe src="https://www.highcharts.com/samples/embed/grid/demo/datagrid-custom-class" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/custom-class" allow="fullscreen"></iframe>
