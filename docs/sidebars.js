@@ -109,6 +109,7 @@ module.exports = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
+            'dashboards/grid-v3-migration',
             'dashboards/frequently-asked-questions',
         ],
         'Grid': [
@@ -121,7 +122,6 @@ module.exports = {
             'grid/performance',
             'grid/style-by-css',
             'grid/accessibility',
-            'grid/datagrid-v2-migration',
             'grid/datagrid-with-angular',
             'grid/datagrid-with-react',
             'grid/datagrid-with-vue'
