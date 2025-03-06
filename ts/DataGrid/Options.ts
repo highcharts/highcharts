@@ -241,9 +241,17 @@ export interface RowsSettings {
      * only. In case of large data set, the enabled option improve performance
      * and saves memory.
      *
-     * @default true
+     * @default false
      */
     virtualization?: boolean;
+
+    /**
+     * The rows virtualization threshold option. Based on the row count,
+     * determines the boundary when the virtualization option is enabled.
+     *
+     * @default 50
+     */
+    threshold?: number;
 }
 
 /**
