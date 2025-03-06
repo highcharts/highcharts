@@ -94,7 +94,7 @@ module.exports = {
             'dashboards/style-by-css',
             'dashboards/edit-mode',
             'dashboards/types-of-components',
-            'dashboards/datagrid-component',
+            'dashboards/grid-component',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',

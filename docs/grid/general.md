@@ -2,9 +2,9 @@
 
 DataGrid is a versatile tool for displaying and managing tabular data. It offers developers a customizable and interactive table format for data visualization.
 
-Integrated with the Highcharts Dashboards package, DataGrid can be used either as a standalone component or within a dashboard as a [Dashboards DataGrid Component](https://www.highcharts.com/docs/dashboards/datagrid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate DataGrid into various web applications for seamless data interaction and management.
+Integrated with the Highcharts Dashboards package, Grid can be used either as a standalone component or within a dashboard as a [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate Grid into various web applications for seamless data interaction and management.
 
-This section of the documentation focuses on DataGrid as a whole. For specific information on DataGrid in a Dashboards context, see the article on [Dashboards DataGrid Component](https://www.highcharts.com/docs/dashboards/datagrid-component).
+This section of the documentation focuses on Grid as a whole. For specific information on DataGrid in a Dashboards context, see the article on [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component).
 
 ## My First DataGrid
 
