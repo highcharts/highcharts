@@ -43,7 +43,7 @@ const defaultOptions: DataGridHighlightSyncOptions = {
 const syncPair: Sync.SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (
-            this.type !== 'DataGrid' && // to be removed in v4
+            this.type !== 'DataGrid' && // To be removed in v4
             this.type !== 'Grid'
         ) {
             return;
@@ -104,7 +104,7 @@ const syncPair: Sync.SyncPair = {
     },
     handler: function (this: Component): (() => void) | void {
         if (
-            this.type !== 'DataGrid' && // to be removed in v4
+            this.type !== 'DataGrid' && // To be removed in v4
             this.type !== 'Grid'
         ) {
             return;
