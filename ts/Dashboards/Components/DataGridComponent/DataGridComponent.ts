@@ -164,7 +164,7 @@ class DataGridComponent extends Component {
         super(cell, options, board);
 
         this.options = options as Options;
-        this.type = 'DataGrid';
+        this.type = 'Grid';
 
         this.setOptions();
     }
@@ -264,7 +264,7 @@ class DataGridComponent extends Component {
         const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
             cell: '',
-            type: 'DataGrid'
+            type: 'Grid'
         };
 
         if (connectorsIds.length) {
@@ -301,7 +301,7 @@ class DataGridComponent extends Component {
 
         return {
             ...diffObjects(optionsCopy, DataGridComponent.defaultOptions),
-            type: 'DataGrid'
+            type: 'Grid'
         };
     }
 
