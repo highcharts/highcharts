@@ -1,4 +1,4 @@
-# Upgrade DataGrid from 3.x.x to a Grid Pro
+# Upgrade DataGrid from 3.x.x to Grid Pro
 The core of DataGrid has been changed in version 3.2. We have improved the performance and flexibility while adding accessibility support. This means API options and the definition of styles or data sources differ from the previous version. We outline all of the changes below.
 
 ## Initialize
