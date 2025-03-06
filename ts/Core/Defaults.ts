@@ -2052,9 +2052,11 @@ const defaultOptions: DefaultOptions = {
          * [tooltip.position](#tooltip.position) options set.
          *
          * @sample    highcharts/tooltip/fixed/
-         *            Fixed tooltip position
+         *            Fixed tooltip and position options
          * @sample    {highstock} stock/tooltip/fixed/
          *            Stock chart with fixed tooltip
+         * @sample    {highmaps} maps/tooltip/fixed/
+         *            Map with fixed tooltip
          *
          * @type      {boolean}
          * @default   false
@@ -2517,9 +2519,11 @@ const defaultOptions: DefaultOptions = {
          * [tooltip.fixed](#tooltip.fixed) is `true`.
          *
          * @sample {highcharts} highcharts/tooltip/fixed/
-         *         Fixed tooltip
+         *         Fixed tooltip and position options
          * @sample {highstock} stock/tooltip/fixed/
          *         Stock chart with fixed tooltip
+         * @sample {highmaps} maps/tooltip/fixed/
+         *         Map with fixed tooltip
          *
          * @since next
          */
