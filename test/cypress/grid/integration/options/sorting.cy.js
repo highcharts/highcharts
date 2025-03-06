@@ -1,6 +1,6 @@
 describe('DataGrid events.', () => {
     before(() => {
-        cy.visit('grid/cypress/sorting-options');
+        cy.visit('grid-pro/cypress/sorting-options');
     });
 
     it('DataGrid should be sorted initially by price in ascending order.', () => {

@@ -1,6 +1,6 @@
 describe('Loading indicator', () => {
     before(() => {
-        cy.visit('/grid/cypress/datagrid-custom-class');
+        cy.visit('/grid-pro/cypress/datagrid-custom-class');
     });
 
     it('Loading indicator should be visible.', () => {
