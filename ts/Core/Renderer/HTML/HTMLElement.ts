@@ -26,7 +26,7 @@ import type SVGRenderer from '../SVG/SVGRenderer.js';
 
 import AST from './AST.js';
 import H from '../../Globals.js';
-const { composed } = H;
+const { composed, isFirefox } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
@@ -361,6 +361,7 @@ class HTMLElement extends SVGElement {
 
         const {
             element,
+            foreignObject,
             renderer,
             rotation,
             rotationOriginX,
@@ -444,6 +445,14 @@ class HTMLElement extends SVGElement {
                 }
             }
 
+            // Firefox needs the foreign object to have a larger width and
+            // height than its content, in order to read its content's size.
+            if (isFirefox) {
+                foreignObject?.attr({
+                    width: renderer.width,
+                    height: renderer.height
+                });
+            }
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== this.cTT) {
@@ -505,15 +514,23 @@ class HTMLElement extends SVGElement {
             this.oldAlign = textAlign;
 
             // Move the foreign object
-            if (this.foreignObject && isNumber(x) && isNumber(y)) {
-                const { width, height } = this.getBBox();
-                this.foreignObject.attr({
-                    x: x + xCorr,
-                    y: y + yCorr,
-                    width,
-                    height
-                });
-                css(this.element, { left: 0, top: 0 });
+            if (foreignObject) {
+                if (isNumber(x) && isNumber(y)) {
+                    const { width, height } = this.getBBox();
+                    foreignObject.attr({
+                        x: x + xCorr,
+                        y: y + yCorr,
+                        width,
+                        height
+                    });
+                    css(this.element, { left: 0, top: 0 });
+
+                } else if (isFirefox) {
+                    foreignObject?.attr({
+                        width: 0,
+                        height: 0
+                    });
+                }
             }
         }
     }

@@ -34,6 +34,11 @@ Highcharts.chart('container', {
         useHTML: true
     },
 
+    subtitle: {
+        text: 'HTML subtitle <i class="fa fa-check"></i>',
+        useHTML: true
+    },
+
     yAxis: {
         title: {
             text: 'HTML y-axis <i class="fa fa-check"></i>',
