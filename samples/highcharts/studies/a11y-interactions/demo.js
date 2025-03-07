@@ -820,7 +820,7 @@ Highcharts.Chart.prototype.addA11yApplication =
 function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
     const chart = this,
         chartTitle = chart.options.title.text,
-        initNotify = 'Chart. Press T for tools and help. ' +
+        initNotify = 'In chart. Press T for tools and help. ' +
             'Use arrow keys to explore.',
         appLabel = `Interactive audio chart. ${chartTitle}. Click to interact.`,
         app = chart.addProxyContainerEl('div'),
@@ -838,10 +838,9 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
     app.setAttribute('tabindex', 0);
 
     // Keyboard state handling
-    let entered = false;
+    let oneShotAnnouncement;
     const init = () => {
         cancelNextAnnouncement();
-        entered = true;
         hideToast();
         showKbdHint(chart.renderTo);
         announce(initNotify, 100);
@@ -865,6 +864,15 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
         chart.sonification.cancel();
     };
     app.onkeydown = e => {
+        if (oneShotAnnouncement !== null) {
+            clearTimeout(oneShotAnnouncement);
+            oneShotAnnouncement = setTimeout(() => {
+                if (oneShotAnnouncement !== null) {
+                    announce(initNotify);
+                }
+                oneShotAnnouncement = null;
+            }, 6000);
+        }
         hideKbdHint();
         hideFocus();
         hideToast();
@@ -872,13 +880,11 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
 
         // Let user tab through
         if (key === 'tab') {
-            entered = false;
             return;
         }
 
         // Let user exit
         if (key === 'escape') {
-            entered = false;
             chart.sonification.cancel();
             if (kbdHandlers.Escape) {
                 kbdHandlers.Escape(chart, e);
@@ -887,10 +893,8 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
             return;
         }
 
-        // Handle init
-        if (!entered && (key === 'enter' || key === ' ')) {
-            init();
-        } else if (entered && key === 't') {
+        if (key === 't') {
+            oneShotAnnouncement = null;
             showKbdDialog(
                 chart.renderTo,
                 {
@@ -905,10 +909,11 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
                     }
                 }
             );
-        } else if (entered && kbdHandlers[e.key]) {
+        } else if (kbdHandlers[e.key]) {
+            if (e.key.indexOf('Arrow') < 0) {
+                oneShotAnnouncement = null;
+            }
             kbdHandlers[e.key](chart, e);
-        } else if (!entered) {
-            return; // Let default actions happen if not entered
         }
 
         // Stop bubbling & default actions
@@ -934,7 +939,6 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
             this.onclick();
         }
     };
-    document.addEventListener('mousedown', () => (entered = false));
 
     return app;
 };
@@ -1637,6 +1641,76 @@ const historicalKbdHandlers = (() => {
         chart.series[0].points[0].onMouseOver();
     };
 
+    const playMinMax = (chart, onEnd) => {
+        const { minPoint, maxPoint } = chart.series.reduce(
+            (extremes, series) => series.points.reduce(
+                (e, point) => ({
+                    minPoint: !e.minPoint ? point :
+                        point.y < e.minPoint.y ?
+                            point : e.minPoint,
+                    maxPoint: !e.maxPoint ? point :
+                        point.y > e.maxPoint.y ?
+                            point : e.maxPoint
+                }), extremes
+            ),
+            { minPoint: null, maxPoint: null }
+        );
+        chart.sonification.cancel();
+        chart.sonification.speak(
+            'Minimum', { rate: 1.2 }, 0, () => {
+                minPoint.sonify();
+                chart.sonification.speak(
+                    'Maximum', { rate: 1.2 }, 1000, () => maxPoint.sonify(onEnd)
+                );
+            }
+        );
+    };
+
+    // Gets a summary of:
+    // - Number of lines, what they represent
+    // - Which lines had the overall chart min and max value
+    // - If all lines consistently trend up or down from start
+    // - If any of the lines have more significant variance/change than others
+    const getLineChartSummary = chart => {
+        const series = chart.series,
+            seriesNames = series.map(s => s.name),
+            chartMaxSeries = series.reduce(
+                (acc, cur) => (cur.dataMax > acc.dataMax ? cur : acc)
+            ),
+            chartMinSeries = series.reduce(
+                (acc, cur) => (cur.dataMin < acc.dataMin ? cur : acc)
+            ),
+            allUp = series.every(s => lineTrend(s).indexOf('up') > -1),
+            allDown = series.every(s => lineTrend(s).indexOf('down') > -1),
+            avgVariance = series.map(s => s.dataMax - s.dataMin).reduce(
+                (a, b) => a + b
+            ) / series.length,
+            outlierHighVariance = series.find(
+                v => v.dataMax - v.dataMin > avgVariance * 1.5
+            ),
+            outlierLowVariance = series.find(
+                v => v.dataMax - v.dataMin < avgVariance * 0.5
+            ),
+            summary = `Chart has ${series.length} lines: ${
+                seriesNames.join(', ')
+            }. The highest value is $${
+                chartMaxSeries.dataMax
+            } in ${chartMaxSeries.name}, and the lowest value is $${
+                chartMinSeries.dataMin
+            } in ${chartMinSeries.name}. ${
+                allUp ? 'All lines trend up' :
+                    allDown ? 'All lines trend down' :
+                        'Lines have mixed trends'
+            }.${outlierHighVariance ? ` ${outlierHighVariance.name}
+                has the most drastic change in values.` : ''}${
+                outlierLowVariance ? ` ${outlierLowVariance.name}
+                has the most consistent values.` : ''}${
+                !outlierHighVariance && !outlierLowVariance ?
+                    ' All lines had similar amounts of variation in values.' :
+                    ''}`;
+        return summary;
+    };
+
     return {
         ArrowLeft: chart => leftRight(chart, false),
         ArrowRight: chart => leftRight(chart, true),
@@ -1667,10 +1741,7 @@ const historicalKbdHandlers = (() => {
 
         // Read chart summary
         c: chart => {
-            const msg = `${chart.options.title.text
-            }. Line chart with 4 lines, ${
-                chart.series.map(s => s.name).join(', ')
-            }.`;
+            const msg = getLineChartSummary(chart);
             announce(msg);
             showToast(chart, msg);
             prevActionWasLR = false;
@@ -1692,8 +1763,11 @@ const historicalKbdHandlers = (() => {
                 'is on the left side of the chart, and right is on the right ' +
                 'side of the chart. When at the end of one line, the ' +
                 'navigation will continue at the start of the next line.';
-            announce(msg);
-            showToast(chart, msg);
+
+            playMinMax(chart, () => {
+                announce(msg);
+                showToast(chart, msg);
+            });
             prevActionWasLR = false;
         },
 
@@ -1735,7 +1809,7 @@ const historicalKbdDescriptions = {
     },
     g: {
         name: 'G',
-        desc: 'Read guide for sounds'
+        desc: 'Guide for sounds'
     },
     a: {
         name: 'A',
@@ -1898,12 +1972,12 @@ const allConnectionsDialog = createDialog('', '', 'hc-all-connections'),
             'All connections for ' + node.name;
         allConnectionsDialog.querySelector('.inner-content').innerHTML = `
         <div><h4>Connections to ${node.name}</h4>
-        <ul>
+        <ul role="list">
         ${node.linksTo.map(l => l.from).sort()
         .map(l => `<li>${l}</li>`).join('')}
         </ul></div><div>
         <h4>Connections from ${node.name}</h4>
-        <ul>
+        <ul role="list">
         ${node.linksFrom.map(l => l.to).sort()
         .map(l => `<li>${l}</li>`).join('')}
         </ul></div>
@@ -1978,6 +2052,25 @@ const networkKbdHandlers = (() => {
         announceNode(p, 300);
     };
 
+    const playMinMax = (chart, onEnd) => {
+        clearSonification();
+        const maxNode = chart.precomputedNetwork[0],
+            minNode = chart.precomputedNetwork[
+                chart.precomputedNetwork.length - 1
+            ];
+        chart.sonification.speak(
+            'Largest', { rate: 1.2 }, 0, () => {
+                sonifyNode(chart, maxNode, false);
+                chart.sonification.speak(
+                    'Smallest', { rate: 1.2 }, 1000, () => {
+                        sonifyNode(chart, minNode, false);
+                        onEnd();
+                    }
+                );
+            }
+        );
+    };
+
     return {
         ArrowLeft: chart => navigate(chart, -1),
         ArrowRight: chart => navigate(chart, 1),
@@ -2004,7 +2097,11 @@ const networkKbdHandlers = (() => {
         Escape: clearSonification,
         c: chart => {
             clearSonification();
-            const msg = `Network graph with 44 nodes. Top nodes are: ${
+            const msg = `Network graph with 44 nodes and ${
+                chart.precomputedNetwork.reduce(
+                    (acc, n) => acc + n.linksFrom.length + n.linksTo.length, 0
+                )
+            } connections. Top nodes are: ${
                 chart.precomputedNetwork
                     .slice(0, 5)
                     .map(n => n.name)
@@ -2038,8 +2135,11 @@ const networkKbdHandlers = (() => {
             'Lower and stronger tones means a bigger node with more ' +
             'connections. Higher and weaker tones means a smaller node ' +
             'with fewer connections.';
-            announce(msg);
-            showToast(chart, msg);
+
+            playMinMax(chart, () => {
+                announce(msg);
+                showToast(chart, msg);
+            });
         },
         d: showLLMDialog,
         f: chart => showFindDialog(chart, p => {
@@ -2230,6 +2330,24 @@ const wordcloudKbdHandlers = (() => {
         setTimeout(() => point.setState('inactive'), 500);
     };
 
+    const playMinMax = (chart, onEnd) => {
+        clearSonification();
+        const series = chart.series[0],
+            maxP = series.points[0],
+            minP = series.points[
+                series.points.length - 1
+            ];
+        chart.sonification.speak(
+            'Largest', { rate: 1.2 }, 0, () => sonifyWord(
+                chart, maxP,
+                () => chart.sonification.speak(
+                    'Smallest', { rate: 1.2 }, 1000,
+                    () => sonifyWord(chart, minP, onEnd)
+                )
+            )
+        );
+    };
+
     return {
         ArrowLeft: chart => navigate(chart, -1),
         ArrowRight: chart => navigate(chart, 1),
@@ -2283,8 +2401,11 @@ const wordcloudKbdHandlers = (() => {
             'means a bigger word with more occurrences. Higher tones, ' +
             'weaker and faster words means a smaller word with fewer ' +
             'occurrences.';
-            announce(msg);
-            showToast(chart, msg);
+
+            playMinMax(chart, () => {
+                announce(msg);
+                showToast(chart, msg);
+            });
         },
         s: chart => {
             clearSonification();
