@@ -28,6 +28,7 @@
     "dlintcss": "npx stylelint --config ./css/.stylelintrc.json 'css/datagrid/*.css' && npx stylelint --config ./css/.stylelintrc.json 'css/dashboards/*.css'",
     "dtest": "gulp dashboards/test",
     "dlint": "gulp dashboards/lint",
+    "gapi": "gulp grid/api-docs && gulp api-server --product Grid",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",

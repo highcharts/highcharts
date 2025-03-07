@@ -18,8 +18,5 @@
             "@highcharts/dashboards/*": ["code/dashboards/dashboards/*"]
         },
         "types": []
-    },
-    "exclude": [
-        "../../node_modules"
-    ]
+    }
 }
