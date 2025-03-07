@@ -115,16 +115,16 @@ module.exports = {
         'Grid': [
             'grid/general',
             'grid/installation',
-            'grid/understanding-datagrid',
+            'grid/understanding-grid',
             'grid/columns',
             'grid/header',
             'grid/events',
             'grid/performance',
             'grid/style-by-css',
             'grid/accessibility',
-            'grid/datagrid-with-angular',
-            'grid/datagrid-with-react',
-            'grid/datagrid-with-vue'
+            'grid/grid-with-angular',
+            'grid/grid-with-react',
+            'grid/grid-with-vue'
             
         ],
         'Chart and series types': [

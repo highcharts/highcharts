@@ -51,9 +51,9 @@ Let's dive right in with a bare minimum example of a fully functional DataGrid:
 />
 ```
 
-Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/datagrid/installation) provides more information and other installation options.
+Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/grid/installation) provides more information and other installation options.
 
-The CSS includes the necessary styles for the DataGrid to function correctly and the default style theme. For information on custom styling, see [Style by CSS](https://www.highcharts.com/docs/datagrid/style-by-css).
+The CSS includes the necessary styles for the DataGrid to function correctly and the default style theme. For information on custom styling, see [Style by CSS](https://www.highcharts.com/docs/grid/style-by-css).
 
 ### 2. Configure the DataGrid
 
@@ -74,7 +74,7 @@ Inside the `<script>` tag, create a new instance of the DataGrid by utilizing th
 1. The ID of the HTML element where the DataGrid should be rendered.
 2. The DataGrid configuration object.
 
-Only the `dataTable` option is required for a DataGrid to be rendered. For more information on the configuration object, read the [Understanding DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid) article.
+Only the `dataTable` option is required for a DataGrid to be rendered. For more information on the configuration object, read the [Understanding DataGrid](https://www.highcharts.com/docs/grid/understanding-grid) article.
 
 ### 3. Add the HTML Element
 
@@ -90,4 +90,4 @@ With the configuration above, your DataGrid should look like this:
 
 <iframe src="https://www.highcharts.com/samples/embed/grid-lite/demo/your-first-grid" allow="fullscreen"></iframe>
 
-Go to [Understanding DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid) to read more about DataGrid structure and configuration options.
+Go to [Understanding DataGrid](https://www.highcharts.com/docs/grid/understanding-grid) to read more about DataGrid structure and configuration options.

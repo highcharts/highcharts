@@ -52,7 +52,7 @@ Note that `className` and `format` support templating as described in [Templatin
 
 Suppose you need more advanced formatting that is not supported through templating. Use the `formatted` callback function instead. As in Highcharts Core, we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)
 
-You can exclude the column, including its header, from the DataGrid by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/datagrid/header).
+You can exclude the column, including its header, from the DataGrid by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/grid/header).
 
 ## Cells
 
