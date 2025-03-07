@@ -1496,7 +1496,7 @@ const delaysModel = chart => {
             container.innerHTML = '';
             chart.addProxyEl(
                 chart.seriesGroup.element,
-                'p', '77.89% On time. 22.11% Delayed (>15 min).',
+                'p', 'Chart. 77.89% On time. 22.11% Delayed (>15 min).',
                 container
             );
             chart.addSROnly(
@@ -2107,13 +2107,21 @@ const networkKbdHandlers = (() => {
 
     const navigate = (chart, direction) => {
         clearSonification();
-        const p = chart.precomputedNetwork[kbdState.point + direction];
+        const p = chart.precomputedNetwork[kbdState.point + direction],
+            playSounds = !getSettingValue('muteSounds');
         if (!p) {
-            chart.sonification.playNote('chop', { volume: 0.2 });
-            announce('End.', 200);
+            if (playSounds) {
+                chart.sonification.playNote('chop', { volume: 0.2 });
+            }
+            announce('No more data.', 200);
         } else {
-            sonifyNode(chart, p);
-            announceNode(p, 300);
+            if (playSounds) {
+                sonifyNode(chart, p);
+                announceNode(p, 300);
+            } else {
+                p.onMouseOver();
+                announceNode(p);
+            }
             kbdState.point += direction;
         }
     };
@@ -2121,9 +2129,16 @@ const networkKbdHandlers = (() => {
     const startEnd = (chart, end) => {
         clearSonification();
         kbdState.point = end ? chart.precomputedNetwork.length - 1 : 0;
-        const p = chart.precomputedNetwork[kbdState.point];
-        sonifyNode(chart, p);
-        announceNode(p, 300);
+        const p = chart.precomputedNetwork[kbdState.point],
+            playSounds = !getSettingValue('muteSounds');
+
+        if (playSounds) {
+            sonifyNode(chart, p);
+            announceNode(p, 300);
+        } else {
+            p.onMouseOver();
+            announceNode(p);
+        }
     };
 
     const playMinMax = (chart, onEnd) => {
@@ -2242,7 +2257,15 @@ const networkKbdHandlers = (() => {
             if (pIndex > -1) {
                 navigate(chart, pIndex - kbdState.point);
             }
-        })
+        }),
+
+        m: chart => {
+            clearSonification();
+            const msg = 'Navigation sounds ' +
+                (toggleSetting('muteSounds') ? 'off' : 'on');
+            announce(msg);
+            showToast(chart, msg);
+        }
     };
 })();
 
@@ -2262,6 +2285,10 @@ const networkKbdDescriptions = {
     s: {
         name: 'S',
         desc: 'Toggle play speed for autopilot'
+    },
+    m: {
+        name: 'M',
+        desc: 'Toggle mute navigation sounds'
     },
     c: {
         name: 'C',
@@ -2368,9 +2395,16 @@ const wordcloudKbdHandlers = (() => {
         pointIndex = -1;
     };
 
+    const getPointXPos = point => {
+        const pos = point.graphic.element.getBoundingClientRect(),
+            offsetPos = point.series.chart.renderTo.getBoundingClientRect();
+        return (pos.left - offsetPos.left) / offsetPos.width;
+    };
+
     const sonifyWord = (chart, point, onEnd) => {
         const maxWeight = chart.series[0].points[0].weight,
             value = point.weight / maxWeight,
+            xPos = getPointXPos(point),
             speechFactor = {
                 Slow: 0.7,
                 Normal: 1,
@@ -2383,7 +2417,7 @@ const wordcloudKbdHandlers = (() => {
                 note: 70 - Math.round(value * 40),
                 noteDuration: 400 * value,
                 tremoloDepth: 0,
-                pan: Math.random() * 2 - 1
+                pan: xPos * 2 - 1
             }
         );
         chart.sonification.speak(
@@ -2406,12 +2440,17 @@ const wordcloudKbdHandlers = (() => {
 
     const navigate = (chart, direction) => {
         clearSonification();
-        const p = chart.series[0].points[kbdState.point + direction];
+        const p = chart.series[0].points[kbdState.point + direction],
+            playSounds = !getSettingValue('muteSounds');
         if (!p) {
-            chart.sonification.playNote('chop', { volume: 0.2 });
-            announce('End.', 200);
+            if (playSounds) {
+                chart.sonification.playNote('chop', { volume: 0.2 });
+            }
+            announce('No more data.', 200);
         } else {
-            sonifyWord(chart, p);
+            if (playSounds) {
+                sonifyWord(chart, p);
+            }
             announceWord(p, 500);
             p.onMouseOver();
             kbdState.point += direction;
@@ -2421,10 +2460,15 @@ const wordcloudKbdHandlers = (() => {
     const startEnd = (chart, end) => {
         clearSonification();
         kbdState.point = end ? chart.series[0].points.length - 1 : 0;
-        const p = chart.series[0].points[kbdState.point];
-        sonifyWord(chart, p);
+        const p = chart.series[0].points[kbdState.point],
+            playSounds = !getSettingValue('muteSounds');
         p.onMouseOver();
-        announceWord(p, 500);
+        if (playSounds) {
+            sonifyWord(chart, p);
+            announceWord(p, 500);
+        } else {
+            announceWord(p);
+        }
     };
 
     // Highlight without showing tooltip
@@ -2516,6 +2560,13 @@ const wordcloudKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
         },
+        m: chart => {
+            clearSonification();
+            const msg = 'Navigation sounds ' +
+                (toggleSetting('muteSounds') ? 'off' : 'on');
+            announce(msg);
+            showToast(chart, msg);
+        },
         d: showLLMDialog,
         f: chart => showFindDialog(chart, p => {
             const pIndex = chart.series[0].points.indexOf(p);
@@ -2543,6 +2594,10 @@ const wordcloudKbdDescriptions = {
     s: {
         name: 'S',
         desc: 'Toggle speaking speed for words'
+    },
+    m: {
+        name: 'M',
+        desc: 'Toggle mute navigation sounds'
     },
     f: {
         name: 'F',
@@ -2723,7 +2778,7 @@ Highcharts.setOptions({
         events: {
             onBoundaryHit: e => {
                 e.chart.sonification.playNote('chop', { volume: 0.2 });
-                announce('End.', 200);
+                announce('No more data.', 200);
             }
         }
     },
