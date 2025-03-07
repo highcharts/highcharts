@@ -1850,7 +1850,7 @@ const historicalKbdHandlers = (() => {
         // Describe chart with AI
         d: showLLMDialog,
 
-        // Play speed
+        // Play speed/duration
         s: chart => {
             chart.sonification.cancel();
             const msg = 'Play speed: ' + toggleSetting('playSpeed'),
