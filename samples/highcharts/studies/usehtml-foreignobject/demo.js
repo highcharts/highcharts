@@ -1,48 +1,5 @@
-// Experimental support `foreignObject`. This will resolve all z-index issues,
-// and we can remove the `foreignObject` regex in Exporting.
-(H => {
-    const { addEvent, css, HTMLElement, isNumber, SVGElement } = H;
-
-    addEvent(HTMLElement, 'afterInit', function () {
-
-        const renderer = this.renderer;
-
-        this.fo = renderer.createElement('foreignObject')
-            .attr({
-                zIndex: 2
-            });
-        this.foBody = renderer.createElement('body')
-            .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
-            .add(this.fo);
-    });
-
-    HTMLElement.prototype.add = function (parentGroup) {
-
-        this.fo?.add(parentGroup);
-
-        // Like super.add
-        SVGElement.prototype.add.call(this, this.foBody);
-
-        this.updateTransform();
-
-        return this;
-    };
-
-    const updateTransform = HTMLElement.prototype.updateTransform;
-    HTMLElement.prototype.updateTransform = function () {
-        updateTransform.call(this);
-        const { width, height } = this.getBBox();
-        if (isNumber(this.x) && isNumber(this.y)) {
-            this.fo?.attr({
-                x: this.x + (this.xCorr || 0),
-                y: this.y + (this.yCorr || 0),
-                width,
-                height
-            });
-            css(this.element, { left: 0, top: 0 });
-        }
-    };
-})(Highcharts);
+// Experimental support `foreignObject`. This will resolve all z-index issues.
+Highcharts.HTMLElement.useForeignObject = true;
 
 /*
 const ren = new Highcharts.Renderer(
@@ -113,7 +70,11 @@ Highcharts.chart('container', {
             format: '{y} <i class="fa fa-check"></i>'
         },
         name: 'HTML Series <i class="fa fa-check"></i>'
-    }]
+    }],
+
+    exporting: {
+        allowHTML: true
+    }
 
 });
 // */

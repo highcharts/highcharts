@@ -189,6 +189,7 @@ class HTMLElement extends SVGElement {
      *  Static Functions
      *
      * */
+    public static useForeignObject: boolean|undefined;
 
     /**
      * Compose
@@ -228,6 +229,7 @@ class HTMLElement extends SVGElement {
      * */
 
     public div?: HTMLDOMElement;
+    public foreignObject?: SVGElement;
     public parentGroup?: SVGElement;
     public xCorr?: number;
     public yCorr?: number;
@@ -243,6 +245,13 @@ class HTMLElement extends SVGElement {
         nodeName: 'span'
     ) {
         super(renderer, nodeName);
+
+        if (HTMLElement.useForeignObject) {
+            this.foreignObject = renderer.createElement('foreignObject')
+                .attr({
+                    zIndex: 2
+                });
+        }
 
         this.css({
             position: 'absolute',
@@ -494,6 +503,18 @@ class HTMLElement extends SVGElement {
             this.cTT = currentTextTransform;
             this.oldRotation = rotation;
             this.oldAlign = textAlign;
+
+            // Move the foreign object
+            if (this.foreignObject && isNumber(x) && isNumber(y)) {
+                const { width, height } = this.getBBox();
+                this.foreignObject.attr({
+                    x: x + xCorr,
+                    y: y + yCorr,
+                    width,
+                    height
+                });
+                css(this.element, { left: 0, top: 0 });
+            }
         }
     }
 
@@ -522,40 +543,52 @@ class HTMLElement extends SVGElement {
      * @private
      */
     public add(parentGroup?: SVGElement): this {
-
-        const container = this.renderer.box
-                .parentNode as unknown as HTMLDOMElement,
+        const { foreignObject, renderer } = this,
+            container = renderer.box.parentNode as unknown as HTMLDOMElement,
             parents = [] as Array<SVGElement>;
 
-        let div: HTMLDOMElement|undefined;
+        // Foreign object
+        if (foreignObject) {
+            foreignObject.add(parentGroup);
+            super.add(
+                // Create a body inside the foreignObject
+                renderer.createElement('body')
+                    .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
+                    .add(foreignObject)
+            );
 
-        this.parentGroup = parentGroup;
+        // Add span next to the SVG
+        } else {
+            let div: HTMLDOMElement|undefined;
 
-        // Create a parallel divs to hold the HTML elements
-        if (parentGroup) {
-            div = parentGroup.div;
-            if (!div) {
+            this.parentGroup = parentGroup;
 
-                // Read the parent chain into an array and read from top
-                // down
-                let svgGroup: SVGElement|undefined = parentGroup;
-                while (svgGroup) {
+            // Create a parallel divs to hold the HTML elements
+            if (parentGroup) {
+                div = parentGroup.div;
+                if (!div) {
 
-                    parents.push(svgGroup);
+                    // Read the parent chain into an array and read from top
+                    // down
+                    let svgGroup: SVGElement|undefined = parentGroup;
+                    while (svgGroup) {
 
-                    // Move up to the next parent group
-                    svgGroup = svgGroup.parentGroup;
-                }
+                        parents.push(svgGroup);
 
-                // Decorate each of the ancestor group elements with a parallel
-                // div that reflects translation and styling
-                for (const parentGroup of parents.reverse()) {
-                    div = decorateSVGGroup(parentGroup, container);
+                        // Move up to the next parent group
+                        svgGroup = svgGroup.parentGroup;
+                    }
+
+                    // Decorate each of the ancestor group elements with a
+                    // parallel div that reflects translation and styling
+                    for (const parentGroup of parents.reverse()) {
+                        div = decorateSVGGroup(parentGroup, container);
+                    }
                 }
             }
-        }
 
-        (div || container).appendChild(this.element);
+            (div || container).appendChild(this.element);
+        }
 
         this.added = true;
         if (this.alignOnAdd) {
