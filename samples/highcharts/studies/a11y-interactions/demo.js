@@ -234,6 +234,14 @@ hcCSS.replaceSync(`
         }
     }
 
+    .hc-all-connections {
+        .inner-content {
+            display: flex;
+            justify-content: space-around;
+            overflow-y: scroll;
+        }
+    }
+
     .hc-a11y-toast {
         position: absolute;
         z-index: 20;
@@ -1883,6 +1891,28 @@ const showQueryDialog = chart => {
     queryDialog.showModal();
 };
 
+// All connections dialog
+const allConnectionsDialog = createDialog('', '', 'hc-all-connections'),
+    showAllConns = node => {
+        allConnectionsDialog.querySelector('h3').textContent =
+            'All connections for ' + node.name;
+        allConnectionsDialog.querySelector('.inner-content').innerHTML = `
+        <div><h4>Connections to ${node.name}</h4>
+        <ul>
+        ${node.linksTo.map(l => l.from).sort()
+        .map(l => `<li>${l}</li>`).join('')}
+        </ul></div><div>
+        <h4>Connections from ${node.name}</h4>
+        <ul>
+        ${node.linksFrom.map(l => l.to).sort()
+        .map(l => `<li>${l}</li>`).join('')}
+        </ul></div>
+        `;
+
+        setCSSPosToOverlay(allConnectionsDialog, node.series.chart.renderTo);
+        allConnectionsDialog.showModal();
+    };
+
 const networkInit = chart => {
     chart.sonification.cancel();
     chart.sonification.playNote('vibraphone', { note: 'c4', tremoloDepth: 0 });
@@ -1997,6 +2027,10 @@ const networkKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
         },
+        l: chart => showAllConns(
+            chart.precomputedNetwork[kbdState.point] ||
+            chart.precomputedNetwork[0]
+        ),
         s: showQueryDialog,
         g: chart => {
             clearSonification();
@@ -2045,6 +2079,10 @@ const networkKbdDescriptions = {
     n: {
         name: 'N',
         desc: 'Read top connections to and from node'
+    },
+    i: {
+        name: 'L',
+        desc: 'List all connections for node'
     },
     d: {
         name: 'D',
