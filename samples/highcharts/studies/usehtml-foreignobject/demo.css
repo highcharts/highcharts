@@ -4,3 +4,8 @@
     position: relative;
     margin: 1em auto;
 }
+
+.fa {
+    /* Safari doesn't support transform inside foreignObject */
+    transform: none;
+}

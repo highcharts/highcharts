@@ -523,10 +523,13 @@ class HTMLElement extends SVGElement {
                         width,
                         height
                     });
-                    css(this.element, { left: 0, top: 0 });
+                    css(
+                        this.element,
+                        { position: 'static', verticalAlign: 'top' }
+                    );
 
                 } else if (isFirefox) {
-                    foreignObject?.attr({
+                    foreignObject.attr({
                         width: 0,
                         height: 0
                     });
@@ -571,6 +574,9 @@ class HTMLElement extends SVGElement {
                 // Create a body inside the foreignObject
                 renderer.createElement('body')
                     .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
+                    .css({
+                        background: 'transparent'
+                    })
                     .add(foreignObject)
             );
 
