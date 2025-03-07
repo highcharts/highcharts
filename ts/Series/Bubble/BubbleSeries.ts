@@ -879,8 +879,9 @@ class BubbleSeries extends ScatterSeries {
 
             let ret,
                 flip = false;
-
-            if (p1Dist < 0 && p2Dist < 0) {
+            if (p1Dist === p2Dist) {
+                ret = p1.index > p2.index ? p1 : p2;
+            } else if (p1Dist < 0 && p2Dist < 0) {
                 ret = (
                     p1Dist - (p1.marker?.radius || 0) >=
                     p2Dist - (p2.marker?.radius || 0)
