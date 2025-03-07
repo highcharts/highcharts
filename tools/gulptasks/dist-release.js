@@ -60,12 +60,13 @@ function getHandledRepos(productName) {
  * @param {string|number} version To commit, tag and push.
  * @param {boolean} [push] If true will commit, tag and push.
  * If false it will only print the commands to be run.
+ * @param {string} productName The product name.
  * @return {Promise<*>} Result
  */
-async function runGit(version, push) {
-    const handledRepos = getHandledRepos();
-    for (const releaseRepo of handledRepos) {
+async function runGit(version, push, productName) {
+    const handledRepos = getHandledRepos(productName);
 
+    for (const releaseRepo of handledRepos) {
         const commands = [
             'git add --all',
             'git commit -m "v' + version + '"',
@@ -172,7 +173,7 @@ async function removeFilesInFolder(folder, exceptions) {
 function updateJSONFiles(version, files, productName) {
     log.message('Updating bower.json and package.json for ' + productName + '...');
 
-    const handledRepos = getHandledRepos();
+    const handledRepos = getHandledRepos(productName);
     for (const releaseRepo of handledRepos) {
         files.forEach(function (file) {
             const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
