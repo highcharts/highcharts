@@ -181,6 +181,7 @@ hcCSS.replaceSync(`
                 padding: 5px;
                 width: 11em;
                 padding-right: 3em;
+                border: none;
             }
             label {
                 position: absolute;
@@ -362,6 +363,24 @@ hcCSS.replaceSync(`
             color: #fff;
         }
 
+        .hc-a11y-find-dialog {
+            background-color: rgba(0, 0, 0, 0.7);
+            input {
+                color: #fff;
+                background-color: #333;
+            }
+            button {
+                color: #fff;
+            }
+            .hc-action {
+                filter: invert(1);
+            }
+        }
+
+        .hc-a11y-query-dialog select {
+            color: #fff;
+        }
+
         .hc-a11y-table {
             --bg-color: #1e1e1e;
             --text-color: #f1f1f1;
@@ -392,6 +411,37 @@ const setCSSPosToOverlay = (targetEl, sourceEl, attrs) => {
 
     resizeObserver.observe(sourceEl);
     setSize();
+};
+
+
+// ============================================================================
+// Toggleable settings
+
+const settings = {
+    muteSounds: false,
+    playSpeed: {
+        states: ['Slow', 'Normal', 'Fast'],
+        current: 1
+    }
+};
+
+const toggleSetting = settingName => {
+    const setting = settings[settingName];
+    if (typeof setting === 'boolean') {
+        return (settings[settingName] = !setting);
+    }
+    // Tristate (or multi-state) toggle
+    return setting.states[(
+        setting.current = (setting.current + 1) % setting.states.length
+    )];
+};
+
+const getSettingValue = settingName => {
+    const setting = settings[settingName];
+    if (typeof setting === 'object' && setting.states) {
+        return setting.states[setting.current];
+    }
+    return setting;
 };
 
 
@@ -1531,6 +1581,10 @@ const seriesDesc = s => {
     return `${s.name}. ${s.data.length
     } data points. Overall trending ${
         lineTrend(s)
+    }. Starts at $${
+        s.data[0].y
+    }, and ends at ${
+        s.data[s.data.length - 1].y
     }. Highest value is $${
         maxVal}, occuring at ${
         s.points.find(p => p.y === maxVal).x
@@ -1643,8 +1697,8 @@ const historicalKbdHandlers = (() => {
     };
 
     const playMinMax = (chart, onEnd) => {
-        const { minPoint, maxPoint } = chart.series.reduce(
-            (extremes, series) => series.points.reduce(
+        const { minPoint, maxPoint } = chart.series.filter(s => s.visible)
+            .reduce((extremes, series) => series.points.reduce(
                 (e, point) => ({
                     minPoint: !e.minPoint ? point :
                         point.y < e.minPoint.y ?
@@ -1655,7 +1709,7 @@ const historicalKbdHandlers = (() => {
                 }), extremes
             ),
             { minPoint: null, maxPoint: null }
-        );
+            );
         chart.sonification.cancel();
         chart.sonification.speak(
             'Minimum', { rate: 1.2 }, 0, () => {
@@ -1741,7 +1795,7 @@ const historicalKbdHandlers = (() => {
         },
 
         // Read chart summary
-        c: chart => {
+        i: chart => {
             const msg = getLineChartSummary(chart);
             announce(msg);
             showToast(chart, msg);
@@ -1773,7 +1827,7 @@ const historicalKbdHandlers = (() => {
         },
 
         // Simplify chart
-        s: chart => {
+        e: chart => {
             chart.simplified = !chart.simplified;
             setSimplifyLevel(chart, chart.simplified ? 8 : null);
             const totalPoints = chart.series.reduce((acc, cur) =>
@@ -1796,6 +1850,21 @@ const historicalKbdHandlers = (() => {
         // Describe chart with AI
         d: showLLMDialog,
 
+        // Play speed
+        s: chart => {
+            chart.sonification.cancel();
+            const msg = 'Play speed: ' + toggleSetting('playSpeed'),
+                duration = {
+                    Slow: 22000,
+                    Normal: 16000,
+                    Fast: 10000
+                }[getSettingValue('playSpeed')];
+            chart.update({ sonification: { duration } });
+            chart.redraw();
+            announce(msg);
+            showToast(chart, msg);
+        },
+
         // Find in chart
         f: chart => showFindDialog(chart, p =>
             singlePointInfo(p, `${p.series.name}, $${p.y}. ${p.category}`)
@@ -1816,9 +1885,13 @@ const historicalKbdDescriptions = {
         name: 'A',
         desc: 'Play line as audio (autopilot)'
     },
-    c: {
-        name: 'C',
-        desc: 'Read summary of chart'
+    s: {
+        name: 'S',
+        desc: 'Toggle play speed for autopilot'
+    },
+    i: {
+        name: 'I',
+        desc: 'Chart information summary'
     },
     l: {
         name: 'L',
@@ -1828,9 +1901,9 @@ const historicalKbdDescriptions = {
         name: 'D',
         desc: 'Describe chart with AI'
     },
-    s: {
-        name: 'S',
-        desc: 'Toggle smoothing, simplify chart'
+    e: {
+        name: 'E',
+        desc: 'Toggle easy mode - simplify chart'
     },
     b: {
         name: 'B',
@@ -2079,14 +2152,20 @@ const networkKbdHandlers = (() => {
         ArrowDown: chart => navigate(chart, 1),
         Home: chart => startEnd(chart),
         End: chart => startEnd(chart, true),
+
         a: chart => {
             clearSonification();
             chart.tooltip.hide(0);
+            const speed = {
+                Slow: 1.5,
+                Normal: 1,
+                Fast: 0.7
+            }[getSettingValue('playSpeed')];
             const sonify = () => chart.precomputedNetwork.forEach(
                 (node, i) => sonificationSchedule.push(
                     setTimeout(
                         () => sonifyNode(chart, node, false),
-                        i * 100 + 200
+                        speed * i * 100 + 200
                     )
                 ));
             chart.sonification.speak(
@@ -2095,8 +2174,10 @@ const networkKbdHandlers = (() => {
                 }, 0, sonify
             );
         },
+
         Escape: clearSonification,
-        c: chart => {
+
+        i: chart => {
             clearSonification();
             const msg = `Network graph with 44 nodes and ${
                 chart.precomputedNetwork.reduce(
@@ -2111,6 +2192,7 @@ const networkKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
         },
+
         n: chart => {
             clearSonification();
             const node = chart.precomputedNetwork[Math.max(0, kbdState.point)],
@@ -2125,11 +2207,14 @@ const networkKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
         },
+
         l: chart => showAllConns(
             chart.precomputedNetwork[kbdState.point] ||
             chart.precomputedNetwork[0]
         ),
-        s: showQueryDialog,
+
+        c: showQueryDialog,
+
         g: chart => {
             clearSonification();
             const msg = 'The chart will play sounds as you navigate. ' +
@@ -2142,7 +2227,16 @@ const networkKbdHandlers = (() => {
                 showToast(chart, msg);
             });
         },
+
         d: showLLMDialog,
+
+        s: chart => {
+            clearSonification();
+            const msg = 'Play speed: ' + toggleSetting('playSpeed');
+            announce(msg);
+            showToast(chart, msg);
+        },
+
         f: chart => showFindDialog(chart, p => {
             const pIndex = chart.precomputedNetwork.indexOf(p);
             if (pIndex > -1) {
@@ -2167,21 +2261,25 @@ const networkKbdDescriptions = {
     },
     s: {
         name: 'S',
+        desc: 'Toggle play speed for autopilot'
+    },
+    c: {
+        name: 'C',
         desc: 'Search connections'
     },
     f: {
         name: 'F',
         desc: 'Find in chart'
     },
-    c: {
-        name: 'C',
-        desc: 'Read summary of chart'
+    i: {
+        name: 'I',
+        desc: 'Chart information summary'
     },
     n: {
         name: 'N',
         desc: 'Read top connections to and from node'
     },
-    i: {
+    l: {
         name: 'L',
         desc: 'List all connections for node'
     },
@@ -2273,7 +2371,11 @@ const wordcloudKbdHandlers = (() => {
     const sonifyWord = (chart, point, onEnd) => {
         const maxWeight = chart.series[0].points[0].weight,
             value = point.weight / maxWeight,
-            speechFactor = [0.7, 1, 1.25][chart.speechRateModifier ?? 1];
+            speechFactor = {
+                Slow: 0.7,
+                Normal: 1,
+                Fast: 1.25
+            }[getSettingValue('playSpeed')];
         chart.sonification.playNote(
             'vibraphone',
             {
@@ -2384,7 +2486,7 @@ const wordcloudKbdHandlers = (() => {
                 }, 0, sonify
             );
         },
-        c: chart => {
+        i: chart => {
             clearSonification();
             const msg = `Word cloud with 100 words. Top words are: ${
                 chart.series[0].points
@@ -2410,12 +2512,7 @@ const wordcloudKbdHandlers = (() => {
         },
         s: chart => {
             clearSonification();
-            chart.speechRateModifier = (chart.speechRateModifier || 0) + 1;
-            if (chart.speechRateModifier > 2) {
-                chart.speechRateModifier = 0;
-            }
-            const msg = 'Speech: ' +
-                ['Slow', 'Normal', 'Fast'][chart.speechRateModifier];
+            const msg = 'Speech: ' + toggleSetting('playSpeed');
             announce(msg);
             showToast(chart, msg);
         },
@@ -2445,15 +2542,15 @@ const wordcloudKbdDescriptions = {
     },
     s: {
         name: 'S',
-        desc: 'Toggle play speed for autopilot'
+        desc: 'Toggle speaking speed for words'
     },
     f: {
         name: 'F',
         desc: 'Find in chart'
     },
-    c: {
-        name: 'C',
-        desc: 'Read summary of chart'
+    i: {
+        name: 'I',
+        desc: 'Chart information summary'
     },
     d: {
         name: 'D',
