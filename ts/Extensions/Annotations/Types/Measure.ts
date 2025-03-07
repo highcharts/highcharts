@@ -939,6 +939,7 @@ Measure.prototype.defaultOptions = merge(
      * @sample highcharts/annotations-advanced/measure/
      *         Measure
      * @product highstock
+     * @requires     modules/annotations-advanced
      * @optionparent annotations.measure
      */
     {
