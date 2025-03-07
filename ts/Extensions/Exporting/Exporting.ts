@@ -1792,19 +1792,21 @@ namespace Exporting {
         svg = svg.substr(0, split);
 
         // Move HTML into a foreignObject
-        if (options && options.exporting && options.exporting.allowHTML) {
-            if (html) {
-                html = '<foreignObject x="0" y="0" ' +
-                            'width="' + options.chart.width + '" ' +
-                            'height="' + options.chart.height + '">' +
-                    '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    // Some tags needs to be closed in xhtml (#13726)
-                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
-                    '</body>' +
-                    '</foreignObject>';
-                svg = svg.replace('</svg>', html + '</svg>');
-            }
-
+        if (
+            html &&
+            options?.exporting?.allowHTML &&
+            // HTMLElement already using foreignObject
+            html.indexOf('<foreignObject ') === -1
+        ) {
+            html = '<foreignObject x="0" y="0" ' +
+                    'width="' + options.chart.width + '" ' +
+                    'height="' + options.chart.height + '">' +
+                '<body xmlns="http://www.w3.org/1999/xhtml">' +
+                // Some tags needs to be closed in xhtml (#13726)
+                html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                '</body>' +
+                '</foreignObject>';
+            svg = svg.replace('</svg>', html + '</svg>');
         }
 
         svg = svg
