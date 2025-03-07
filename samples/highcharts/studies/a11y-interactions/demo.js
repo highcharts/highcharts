@@ -177,7 +177,8 @@ hcCSS.replaceSync(`
                 position: relative;
             }
             input {
-                height: 1.5em;
+                font-size: 0.8em;
+                padding: 5px;
                 width: 11em;
                 padding-right: 3em;
             }
