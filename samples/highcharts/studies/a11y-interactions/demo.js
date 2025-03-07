@@ -39,6 +39,10 @@ hcCSS.replaceSync(`
         }
     }
 
+    .hc-hidden {
+        display: none;
+    }
+
     .hc-a11y-sr-only {
         position: absolute;
         width: 1px;
@@ -151,6 +155,58 @@ hcCSS.replaceSync(`
         }
     }
 
+    .hc-a11y-find-dialog {
+        background-color: rgba(255, 255, 255, 0.7);
+        box-shadow: none;
+        h3 {
+            opacity: 0;
+            position: absolute;
+        }
+        
+        .content {
+            right: 0;
+            top: 0;
+            height: auto;
+            flex-direction: row;
+            justify-content: flex-end;
+        }
+        
+        .inner-content {
+            flex: none;
+            search {
+                position: relative;
+            }
+            input {
+                height: 1.5em;
+                width: 11em;
+                padding-right: 3em;
+            }
+            label {
+                position: absolute;
+                left: 3px;
+                top: 2.5em;
+                font-size: 0.8em;
+            }
+            button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 3px;
+                margin: 0;
+                position: absolute;
+                right: 1.25em;
+                top: 1px;
+                width: 1.7em;
+            }
+        }
+
+        button.close {
+            font-size: 1em;
+            right: 3px;
+            top: 4px;
+        }
+    }
+
     .hc-a11y-ai-dialog {
         .hc-ai-result {
             max-width: 500px;
@@ -240,7 +296,7 @@ hcCSS.replaceSync(`
         --header-bg: #f8f9fa;
         --row-alt-bg: #f1f3f5;
         --hover-bg: #e9ecef;
-        
+
         .inner-content {
             overflow-y: scroll;
         }
@@ -378,6 +434,9 @@ const createDialog = (heading, content, className) => {
     dialog.querySelector('button.close').onclick = () => dialog.close();
     return dialog;
 };
+
+// Set to true if app focus should avoid announcements on dialog close
+let fromCloseDialog = false;
 
 
 // ============================================================================
@@ -607,6 +666,132 @@ function (svgEl, elType, content, parent) {
 
 
 // ============================================================================
+// Find in chart
+
+const levenshteinDistance = (a, b) => {
+    const s = a.toLowerCase(),
+        t = b.toLowerCase();
+    if (!s.length) {
+        return t.length;
+    }
+    if (!t.length) {
+        return s.length;
+    }
+    const arr = [];
+    for (let i = 0; i <= t.length; ++i) {
+        arr[i] = [i];
+        for (let j = 1; j <= s.length; ++j) {
+            arr[i][j] =
+          i === 0 ?
+              j :
+              Math.min(
+                  arr[i - 1][j] + 1,
+                  arr[i][j - 1] + 1,
+                  arr[i - 1][j - 1] + (s[j - 1] === t[i - 1] ? 0 : 1)
+              );
+        }
+    }
+    return arr[t.length][s.length];
+};
+
+
+// Find a point in the chart by text search
+Highcharts.Chart.prototype.findPointByText = function (text) {
+    const input = text.trim().toLowerCase(),
+        pointDesc = point => ((
+            (point.name || point.x) ?? point.series.name
+        ) + '').trim().toLowerCase();
+
+    // Find the best matching point
+    const bestPointMatch = this.series.flatMap(s => s.nodes || s.points)
+        .reduce((best, point) => {
+            const pDesc = pointDesc(point);
+            if (pDesc.indexOf(input) > -1) {
+                return best.distance > 0 ? { distance: 0, point } : best;
+            }
+            const d = levenshteinDistance(input, pDesc);
+            return d < best.distance ? { distance: d, point } : best;
+        }, { distance: Infinity, point: null });
+
+    const pctDistance = bestPointMatch.distance / input.length;
+    if (pctDistance < 0.2) {
+        return bestPointMatch.point;
+    }
+
+    // Check if we may be searching for a series name
+    const bestSeriesMatch = this.series.reduce((best, series) => {
+        const sDesc = series.name.trim().toLowerCase();
+        if (sDesc.indexOf(input) > -1) {
+            return { distance: 0, series };
+        }
+        const d = levenshteinDistance(input, sDesc);
+        return d < best.distance ? { distance: d, series } : best;
+    }, { distance: Infinity, series: null });
+
+    const pctSeriesDistance = bestSeriesMatch.distance / input.length;
+    return pctSeriesDistance < 0.3 ?
+        bestSeriesMatch.series.nodes?.[0] ||
+        bestSeriesMatch.series.points?.[0] :
+        null;
+};
+
+
+// ============================================================================
+// Find dialog
+
+const findDialog = createDialog(
+        /* eslint-disable max-len */
+        'Find in chart', `
+        <search title="Chart">
+            <label for="hc-a11y-find">Find in chart</label>
+            <input autofocus type="text" id="hc-a11y-find">
+            <button class="hc-action" aria-label="search">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%">
+                    <path d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </button>
+        </search>
+        `, 'hc-a11y-find-dialog'
+        /* eslint-enable max-len */
+    ),
+    findBtn = findDialog.querySelector('button.hc-action'),
+    findInput = findDialog.querySelector('input');
+
+findInput.onkeydown = e => {
+    if (e.key === 'Enter' && findInput.value) {
+        findBtn.click();
+    }
+};
+
+const showFindDialog = (chart, onHit) => {
+    const closeDlg = () => {
+        findDialog.close();
+        setTimeout(() => {
+            hideKbdHint();
+            hideFocus();
+        }, 100);
+    };
+    fromCloseDialog = true; // Avoid onfocus announcement on dialog close
+    findInput.value = '';
+    findBtn.onclick = () => {
+        const point = chart.findPointByText(findInput.value);
+        if (point) {
+            closeDlg();
+            setTimeout(() => onHit(point), 200);
+        } else {
+            closeDlg();
+            setTimeout(() => announce('No match found'), 150);
+            showToast(chart, 'No match found');
+        }
+    };
+    setCSSPosToOverlay(findDialog, chart.renderTo);
+    findDialog.showModal();
+    findInput.focus();
+};
+
+
+// ============================================================================
 // Application utils
 
 // Constantly updated kbd state
@@ -658,6 +843,10 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
         onInit(chart);
     };
     app.onfocus = () => {
+        if (fromCloseDialog) {
+            fromCloseDialog = false;
+            return;
+        }
         showFocusOnEl(chart.renderTo);
         app.focus();
         init();
@@ -1522,7 +1711,12 @@ const historicalKbdHandlers = (() => {
         b: showTableDialog,
 
         // Describe chart with AI
-        d: showLLMDialog
+        d: showLLMDialog,
+
+        // Find in chart
+        f: chart => showFindDialog(chart, p =>
+            singlePointInfo(p, `${p.series.name}, $${p.y}. ${p.category}`)
+        )
     };
 })();
 
@@ -1558,6 +1752,10 @@ const historicalKbdDescriptions = {
     b: {
         name: 'B',
         desc: 'View data table'
+    },
+    f: {
+        name: 'F',
+        desc: 'Find in chart'
     },
     PageUp: {
         name: 'PageUp',
@@ -1809,7 +2007,13 @@ const networkKbdHandlers = (() => {
             announce(msg);
             showToast(chart, msg);
         },
-        d: showLLMDialog
+        d: showLLMDialog,
+        f: chart => showFindDialog(chart, p => {
+            const pIndex = chart.precomputedNetwork.indexOf(p);
+            if (pIndex > -1) {
+                navigate(chart, pIndex - kbdState.point);
+            }
+        })
     };
 })();
 
@@ -1829,6 +2033,10 @@ const networkKbdDescriptions = {
     s: {
         name: 'S',
         desc: 'Search connections'
+    },
+    f: {
+        name: 'F',
+        desc: 'Find in chart'
     },
     c: {
         name: 'C',
@@ -2052,6 +2260,12 @@ const wordcloudKbdHandlers = (() => {
             showToast(chart, msg);
         },
         d: showLLMDialog,
+        f: chart => showFindDialog(chart, p => {
+            const pIndex = chart.series[0].points.indexOf(p);
+            if (pIndex > -1) {
+                navigate(chart, pIndex - kbdState.point);
+            }
+        }),
         Escape: clearSonification
     };
 })();
@@ -2071,7 +2285,11 @@ const wordcloudKbdDescriptions = {
     },
     s: {
         name: 'S',
-        desc: 'Set play speed for spoken words'
+        desc: 'Toggle play speed for autopilot'
+    },
+    f: {
+        name: 'F',
+        desc: 'Find in chart'
     },
     c: {
         name: 'C',
