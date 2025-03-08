@@ -17,7 +17,7 @@ ren.circle(100, 100, 3)
 ren.text('Hello there', 100, 100, true)
     .attr({
         align: 'center',
-        // rotation: -45
+        rotation: -85
     })
     .add();
 // */
@@ -50,7 +50,10 @@ Highcharts.chart('container', {
         type: 'category',
         labels: {
             useHTML: true,
-            format: '{value} <i class="fa fa-check"></i>'
+            format: '{value} <i class="fa fa-check"></i>',
+            style: {
+                whiteSpace: 'nowrap'
+            }
         }
     },
 
@@ -59,7 +62,11 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        useHTML: true
+        useHTML: true,
+        footerFormat: `<table>
+            <tr><th>This</th><td>is</td></tr>
+            <tr><th>a</th><td>table</td></tr>
+        </table>`
     },
 
     series: [{

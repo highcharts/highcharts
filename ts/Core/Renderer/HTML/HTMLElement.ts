@@ -516,17 +516,24 @@ class HTMLElement extends SVGElement {
             // Move the foreign object
             if (foreignObject) {
                 if (isNumber(x) && isNumber(y)) {
-                    const { width, height } = this.getBBox();
+                    css(
+                        element,
+                        {
+                            display: 'inline',
+                            position: 'static',
+                            rotation: 0,
+                            verticalAlign: 'top'
+                        }
+                    );
+
                     foreignObject.attr({
                         x: x + xCorr,
                         y: y + yCorr,
-                        width,
-                        height
+                        width: element.offsetWidth,
+                        height: element.offsetHeight,
+                        rotation,
+                        'transform-origin': `${rotOriginX}px ${rotOriginY}px`
                     });
-                    css(
-                        this.element,
-                        { position: 'static', verticalAlign: 'top' }
-                    );
 
                 } else if (isFirefox) {
                     foreignObject.attr({

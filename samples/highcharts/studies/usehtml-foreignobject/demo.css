@@ -5,6 +5,18 @@
     margin: 1em auto;
 }
 
+/*
+foreignObject body {
+    border: 1px dotted green;
+}
+*/
+
+table th,
+table td {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+}
+
 .fa {
     /* Safari doesn't support transform inside foreignObject */
     transform: none;
