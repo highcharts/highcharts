@@ -393,10 +393,12 @@ class HTMLElement extends SVGElement {
         };
 
         // Apply translate
-        css(element, {
-            marginLeft: `${translateX}px`,
-            marginTop: `${translateY}px`
-        });
+        if (!foreignObject) {
+            css(element, {
+                marginLeft: `${translateX}px`,
+                marginTop: `${translateY}px`
+            });
+        }
 
         if (element.tagName === 'SPAN') {
             const currentTextTransform = [
@@ -513,6 +515,7 @@ class HTMLElement extends SVGElement {
 
             // Move the foreign object
             if (foreignObject) {
+                super.updateTransform();
                 if (isNumber(x) && isNumber(y)) {
                     css(
                         element,
@@ -528,8 +531,7 @@ class HTMLElement extends SVGElement {
                         y: y + yCorr,
                         width: element.offsetWidth,
                         height: element.offsetHeight,
-                        rotation,
-                        'transform-origin': `${rotOriginX}px ${rotOriginY}px`
+                        transform: this.attr('transform') as string
                     });
 
                 } else if (isFirefox) {

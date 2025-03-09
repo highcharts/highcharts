@@ -2212,9 +2212,10 @@ class SVGElement implements SVGElementLike {
         if (rotation) {
             transform.push(
                 'rotate(' + rotation + ' ' +
-                pick(rotationOriginX, element.getAttribute('x'), 0) +
+                (rotationOriginX ?? element.getAttribute('x') ?? this.x ?? 0) +
                 ' ' +
-                pick(rotationOriginY, element.getAttribute('y') || 0) + ')'
+                (rotationOriginY ?? element.getAttribute('y') ?? this.y ?? 0) +
+                ')'
             );
 
             // HTML labels rotation (#20685)

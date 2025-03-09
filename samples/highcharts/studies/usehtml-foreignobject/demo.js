@@ -14,10 +14,9 @@ ren.circle(100, 100, 3)
     })
     .add();
 
-ren.text('Hello there', 100, 100, true)
+ren.label('Hello there', 100, 100, void 0, void 0, void 0, true)
     .attr({
-        align: 'center',
-        rotation: -22.5
+        rotation: -45
     })
     .add();
 // */
