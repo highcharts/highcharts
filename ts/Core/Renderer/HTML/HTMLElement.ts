@@ -505,9 +505,6 @@ class HTMLElement extends SVGElement {
                 styles.transform = `scale(${scaleX ?? 1},${scaleY ?? 1})`;
             }
 
-            css(element, styles);
-
-
             // Record current text transform
             this.cTT = currentTextTransform;
             this.oldRotation = rotation;
@@ -519,9 +516,9 @@ class HTMLElement extends SVGElement {
                     css(
                         element,
                         {
-                            display: 'inline',
+                            display: 'inline-block',
                             position: 'static',
-                            rotation: 0,
+                            transform: 'none',
                             verticalAlign: 'top'
                         }
                     );
@@ -541,6 +538,8 @@ class HTMLElement extends SVGElement {
                         height: 0
                     });
                 }
+            } else {
+                css(element, styles);
             }
         }
     }

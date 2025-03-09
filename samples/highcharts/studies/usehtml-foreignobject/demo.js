@@ -17,7 +17,7 @@ ren.circle(100, 100, 3)
 ren.text('Hello there', 100, 100, true)
     .attr({
         align: 'center',
-        rotation: -85
+        rotation: -22.5
     })
     .add();
 // */
@@ -35,7 +35,11 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'HTML subtitle <i class="fa fa-check"></i>',
+        // text: 'HTML subtitle <i class="fa fa-check"></i>',
+        text: `<table>
+            <tr><th>This</th><td>is</td></tr>
+            <tr><th>a</th><td>table</td></tr>
+        </table>`,
         useHTML: true
     },
 
@@ -72,9 +76,9 @@ Highcharts.chart('container', {
     series: [{
         data: [
             ['Ein', 1234],
-            ['To', 3456],
+            ['To', 4567],
             ['Tre', 2345],
-            ['Fire', 4567]
+            ['Fire', 3456]
         ],
         dataLabels: {
             enabled: true,
