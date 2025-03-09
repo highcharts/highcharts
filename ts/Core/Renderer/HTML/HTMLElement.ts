@@ -251,15 +251,16 @@ class HTMLElement extends SVGElement {
                 .attr({
                     zIndex: 2
                 });
-        }
 
-        this.css({
-            position: 'absolute',
-            ...(renderer.styledMode ? {} : {
-                fontFamily: renderer.style.fontFamily,
-                fontSize: renderer.style.fontSize
-            })
-        });
+        } else {
+            this.css({
+                position: 'absolute',
+                ...(renderer.styledMode ? {} : {
+                    fontFamily: renderer.style.fontFamily,
+                    fontSize: renderer.style.fontSize
+                })
+            });
+        }
 
         this.element.style.whiteSpace = 'nowrap';
     }
@@ -517,7 +518,6 @@ class HTMLElement extends SVGElement {
                         element,
                         {
                             display: 'inline-block',
-                            position: 'static',
                             transform: 'none',
                             verticalAlign: 'top'
                         }
@@ -581,7 +581,8 @@ class HTMLElement extends SVGElement {
                 renderer.createElement('body')
                     .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
                     .css({
-                        background: 'transparent'
+                        background: 'transparent',
+                        margin: 0 // For export
                     })
                     .add(foreignObject)
             );
