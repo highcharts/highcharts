@@ -44,6 +44,9 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
+        labels: {
+            useHTML: true
+        },
         title: {
             text: 'HTML y-axis <i class="fa fa-check"></i>',
             useHTML: true

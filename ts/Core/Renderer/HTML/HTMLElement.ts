@@ -262,13 +262,7 @@ class HTMLElement extends SVGElement {
             });
         }
 
-        css(this.element, {
-            whiteSpace: 'nowrap',
-
-            // For foreignObject
-            display: 'inline-block',
-            verticalAlign: 'top'
-        });
+        this.element.style.whiteSpace = 'nowrap';
     }
 
     /**
@@ -322,7 +316,7 @@ class HTMLElement extends SVGElement {
         // SVG natively supports setting font size as numbers. With HTML, the
         // font size should behave in the same way (#21624).
         if (isNumber(Number(styles?.fontSize))) {
-            styles.fontSize = styles.fontSize + 'px';
+            styles.fontSize += 'px';
         }
 
         extend(this.styles, styles);
@@ -454,13 +448,21 @@ class HTMLElement extends SVGElement {
                 }
             }
 
-            // Firefox needs the foreign object to have a larger width and
-            // height than its content, in order to read its content's size.
-            if (isFirefox) {
-                foreignObject?.attr({
-                    width: renderer.width,
-                    height: renderer.height
+            if (foreignObject) {
+                css(element, {
+                    // Inline block must be set before we can read the offset
+                    // width
+                    display: 'inline-block',
+                    verticalAlign: 'top'
                 });
+                // Firefox needs the foreign object to have a larger width and
+                // height than its content, in order to read its content's size.
+                if (isFirefox) {
+                    foreignObject.attr({
+                        width: renderer.width,
+                        height: renderer.height
+                    });
+                }
             }
 
             // Do the calculations and DOM access only if properties changed
@@ -527,6 +529,9 @@ class HTMLElement extends SVGElement {
                         width: element.offsetWidth,
                         height: element.offsetHeight
                     });
+
+                    // Reset, otherwise lineClamp will not work
+                    css(element, { display });
 
                 } else if (isFirefox) {
                     foreignObject.attr({
