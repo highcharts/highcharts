@@ -508,11 +508,6 @@ class HTMLElement extends SVGElement {
                 styles.transform = `scale(${scaleX ?? 1},${scaleY ?? 1})`;
             }
 
-            // Record current text transform
-            this.cTT = currentTextTransform;
-            this.oldRotation = rotation;
-            this.oldAlign = textAlign;
-
             // Move the foreign object
             if (foreignObject) {
                 super.updateTransform();
@@ -521,7 +516,7 @@ class HTMLElement extends SVGElement {
                         element,
                         {
                             display: 'inline-block',
-                            transform: 'none',
+                            transform: void 0,
                             verticalAlign: 'top'
                         }
                     );
@@ -530,8 +525,7 @@ class HTMLElement extends SVGElement {
                         x: x + xCorr,
                         y: y + yCorr,
                         width: element.offsetWidth,
-                        height: element.offsetHeight,
-                        transform: this.attr('transform') as string
+                        height: element.offsetHeight
                     });
 
                 } else if (isFirefox) {
@@ -543,6 +537,11 @@ class HTMLElement extends SVGElement {
             } else {
                 css(element, styles);
             }
+
+            // Record current text transform
+            this.cTT = currentTextTransform;
+            this.oldRotation = rotation;
+            this.oldAlign = textAlign;
         }
     }
 

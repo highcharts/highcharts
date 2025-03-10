@@ -82,7 +82,8 @@ Highcharts.chart('container', {
         dataLabels: {
             enabled: true,
             useHTML: true,
-            format: '{y} <i class="fa fa-check"></i>'
+            format: '{y} <i class="fa fa-check"></i>',
+            rotation: -45
         },
         name: 'HTML Series <i class="fa fa-check"></i>'
     }],

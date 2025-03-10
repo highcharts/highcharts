@@ -2186,12 +2186,15 @@ class SVGElement implements SVGElementLike {
     ): void {
         const {
             element,
+            foreignObject,
             matrix,
+            padding,
             rotation = 0,
             rotationOriginX,
             rotationOriginY,
             scaleX,
             scaleY,
+            text,
             translateX = 0,
             translateY = 0
         } = this;
@@ -2219,11 +2222,14 @@ class SVGElement implements SVGElementLike {
             );
 
             // HTML labels rotation (#20685)
-            if (this.text?.element.tagName === 'SPAN') {
-                this.text.attr({
+            if (
+                text?.element.tagName === 'SPAN' &&
+                !text?.foreignObject
+            ) {
+                text.attr({
                     rotation,
-                    rotationOriginX: (rotationOriginX || 0) - this.padding,
-                    rotationOriginY: (rotationOriginY || 0) - this.padding
+                    rotationOriginX: (rotationOriginX || 0) - padding,
+                    rotationOriginY: (rotationOriginY || 0) - padding
                 });
             }
         }
@@ -2235,8 +2241,9 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length && !(this.text || this).textPath) {
-            element.setAttribute(attrib, transform.join(' '));
+        if (transform.length && !(text || this).textPath) {
+            (foreignObject?.element || element)
+                .setAttribute(attrib, transform.join(' '));
         }
     }
 
