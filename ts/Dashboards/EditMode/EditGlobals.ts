@@ -65,6 +65,7 @@ const EditGlobals: EditGlobals = {
         toggleSlider: PREFIX + 'toggle-slider',
         toggleWrapperColored: PREFIX + 'toggle-wrapper-colored',
         toggleLabels: PREFIX + 'toggle-labels',
+        labeledToggleWrapper: PREFIX + 'labeled-toggle-wrapper',
         button: PREFIX + 'button',
         sidebarNavButton: PREFIX + 'sidebar-button-nav',
         labelText: PREFIX + 'label-text',
@@ -252,6 +253,7 @@ namespace EditGlobals {
         toggleSlider: string;
         toggleWrapper: string;
         toggleWrapperColored: string;
+        labeledToggleWrapper: string;
         viewFullscreen: string;
     }
 

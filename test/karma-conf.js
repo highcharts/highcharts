@@ -201,7 +201,7 @@ if (!fs.existsSync(path.join(__dirname, '../tmp'))) {
     fs.mkdirSync(path.join(__dirname, '../tmp'));
 }
 aliases.forEach(alias => {
-    JSONSources[alias.url] = JSON.parse(fs.readFileSync(
+    const data = fs.readFileSync(
         path.join(
             __dirname,
             '..',
@@ -209,7 +209,10 @@ aliases.forEach(alias => {
             alias.filename
         ),
         'utf8'
-    ));
+    );
+    JSONSources[alias.url] = alias.filename.endsWith('csv') ?
+        data :
+        JSON.parse(data);
 });
 fs.writeFileSync(
     path.join(__dirname, '../tmp/json-sources.js'),
@@ -250,7 +253,7 @@ module.exports = function (config) {
         argv.browsers.split(',') :
         // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
         // Chrome 109
-        [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
+        [getProperties()['karma.defaultbrowser'] || 'FirefoxHeadless'];
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
