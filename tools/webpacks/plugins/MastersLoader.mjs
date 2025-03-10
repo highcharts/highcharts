@@ -1,6 +1,6 @@
 /* *
  *
- *  Patchs missing imports as listed in options.
+ *  Patchs missing imports as listed with require tags in master header.
  *
  *  (c) Highsoft AS
  *
@@ -17,9 +17,7 @@
  * */
 
 
-import * as Path from 'node:path';
 import * as PPath from 'node:path/posix';
-import Webpack from 'webpack';
 
 import FSLib from '../../libs/fs.js';
 
@@ -32,29 +30,39 @@ import FSLib from '../../libs/fs.js';
 
 
 /**
+ * Adds required master imports to the list of imports.
+ *
  * @param {string} content
+ * Master content to add to.
+ *
  * @param {Array<string>} masterImports
+ * Master imports to add.
+ *
  * @return {string}
+ * Decorated master content.
  */
 function decorateImports(content, masterImports) {
+    if (typeof content !== 'string') {
+        return `\n// @OOPS ${typeof content}\nexport const oops = 343;`;
+    }
     try {
-        const importsMatchs = content
-            .matchAll(/(?:\n|\r\n)import.*?from.*?(['"])(.*?)\1.*?(?:\n|\r\n)/gsu);
-        const useScriptMatch = content
-            .match(/[\n\r](['"])use script\1/u);
+        const importsMatches = content.matchAll(
+            /(?:\n|\r\n)import.*?from.*?(['"])(.*?)\1.*?(?:\n|\r\n)/gsu
+        );
+        const useScriptMatch = content.match(/[\n\r](['"])use script\1/u);
 
-        if (importsMatchs) {
-            const matchs = Array.from(importsMatchs);
-            const insertFirstIndex = matchs[0].index;
+        if (importsMatches) {
+            const matches = Array.from(importsMatches);
+            const insertFirstIndex = matches[0].index;
             const insertLastIndex = (
-                matchs[matchs.length - 1].index +
-                matchs[matchs.length - 1][0].length
+                matches[matches.length - 1].index +
+                matches[matches.length - 1][0].length
             );
             const newFirstImports = [];
             const newLastImports = [];
 
             for (const path of masterImports) {
-                if (matchs.some(m => m[2] === path)) {
+                if (matches.some(m => m[2] === path)) {
                     newLastImports.push(`/*! ${path} */`);
                 } else if (path.endsWith('highcharts.src.js')){
                     newFirstImports.push(`import '${path}';`);
@@ -99,62 +107,79 @@ function decorateImports(content, masterImports) {
 
 
 /**
- * @param {string} mastersFolder
- * @param {string} masterFile
- * @param {Record<string,Array<string>>} mastersImports
+ * Extracts require tags from master content.
+ *
+ * @param {string} content
+ * Master content to extract from.
+ *
+ * @param {string} contentFolder
+ * Master folder as relative context.
+ *
+ * @param {string} [requirePrefix]
+ * Require prefix in require tags to ignore.
+ *
  * @return {Array<string>|undefined}
+ * Extracted requirements.
  */
-function extractMasterImports(mastersFolder, masterFile, mastersImports) {
+function extractMasterImports(content, contentFolder, requirePrefix='') {
+    const masterDoclet = content.match(/^\/\*.*?\*\//su)?.[0] || '';
+    const requireMatches =
+        masterDoclet.matchAll(/@requires?[ \t]+([\w\/]+)/gsu);
 
-    mastersFolder = FSLib.path(mastersFolder, true);
-    masterFile = FSLib.path(masterFile, true);
-
-    if (!mastersFolder.endsWith('/')) {
-        mastersFolder += '/';
-    }
-
-    masterFile = PPath.normalize(masterFile.split(mastersFolder).pop() || '');
-
-    const fileExtensionMatch = masterFile.match(/\.[^\/]+$/su);
-
-    if (!fileExtensionMatch) {
+    if (!requireMatches) {
         return;
     }
 
-    const fileExtension = fileExtensionMatch[0];
+    const masterImports = [];
+    let masterImport;
 
-    masterFile =
-        masterFile.substring(0, masterFile.length - fileExtension.length);
+    for (const requireMatch of requireMatches) {
+        masterImport = requireMatch[1];
 
-    if (!mastersImports[masterFile]) {
-        return;
+        if (masterImport.startsWith(requirePrefix)) {
+            masterImport = masterImport.substring(requirePrefix.length);
+        }
+
+        while (masterImport.startsWith('/')) {
+            masterImport = masterImport.substring(1);
+        }
+
+        if (masterImport) {
+            masterImport = PPath.join(contentFolder, masterImport) + '.src.js';
+
+            if (
+                !masterImport.startsWith('./') &&
+                !masterImport.startsWith('../')
+            ) {
+                masterImport = `./${masterImport}`;
+            }
+
+            masterImports.push(masterImport);
+        }
+
     }
 
-    return mastersImports[masterFile].map(p => {
-
-        if (!p.startsWith('./') && !p.startsWith('../')) {
-            p = PPath.relative('/' + PPath.dirname(masterFile), '/' + p);
-        }
-
-        p += fileExtension;
-
-        if (!p.startsWith('./') && !p.startsWith('../')) {
-            p = `./${p}`;
-        }
-
-        return p;
-    });
+    return masterImports;
 }
 
 
 /**
+ * Inserts a string of new content at the given position of the content.
+ *
  * @param {string} newContent
- * @param {number} index
- * @param {string} [content]
+ * String of new content to insert.
+ *
+ * @param {number} pos
+ * Position in content to insert into.
+ *
+ * @param {string} content
+ * Content itself to insert into.
+ *
  * @return {string}
+ * Content with insert new string.
  */
-function insert(newContent, index, content = '') {
-    return content.substring(0, index) + newContent + content.substring(index);
+function insert(newContent, pos, content) {
+    return content.substring(0, pos) + newContent + content.substring(pos);
 }
 
 
@@ -164,20 +189,30 @@ function insert(newContent, index, content = '') {
  * @param {{webpackAST:*}} meta
  */
 function mastersLoader(content, map, meta) {
-    const context = this;
-    const callback = this.async();
-    const options = this.getOptions();
-    const mastersImports = (options.mastersImports || {});
-    const mastersFolder = Path.normalize(options.mastersFolder || '/masters/');
-
     try {
-        const masterImports = extractMasterImports(
-            mastersFolder,
-            context.resourcePath,
-            mastersImports
+        const context = this;
+        const callback = context.async();
+        const options = context.getOptions();
+
+        // The es-modules folder with all masters.
+        const mastersFolder = FSLib.path(
+            [process.cwd(), (options.mastersFolder || '/masters/')],
+            true
         );
 
-        if (masterImports) {
+        // The content path relative to the mastersFolder.
+        const contentFolder = PPath.relative(
+            PPath.dirname(FSLib.path(context.resourcePath, true)),
+            mastersFolder
+        );
+
+        // The product path as found on code.highcharts.com.
+        const requirePrefix = options.requirePrefix
+
+        const masterImports =
+            extractMasterImports(content, contentFolder, requirePrefix);
+
+        if (masterImports?.length) {
             content = decorateImports(content, masterImports);
         }
 
@@ -185,7 +220,6 @@ function mastersLoader(content, map, meta) {
     } catch (error) {
         callback(error);
     }
-
 }
 
 

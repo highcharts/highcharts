@@ -39,8 +39,6 @@ const productMasters = [
     'highstock',
     'standalone-navigator'
 ];
-const mastersImports =
-    FSLib.getFile(Path.join(__dirname, 'masters-imports.json'), true);
 
 
 /* *
@@ -180,7 +178,7 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
                             Path.join(__dirname, 'plugins/MastersLoader.mjs'),
                         options: {
                             mastersFolder,
-                            mastersImports,
+                            requirePrefix: 'highcharts'
                         }
                     }
                 }
