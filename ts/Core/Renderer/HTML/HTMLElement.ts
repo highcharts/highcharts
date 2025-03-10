@@ -465,16 +465,19 @@ class HTMLElement extends SVGElement {
                 // have something to update.
                 if (
                     defined(rotation) &&
+                    !foreignObject &&
                     (
                         (rotation !== (this.oldRotation || 0)) ||
                         (textAlign !== this.oldAlign)
                     )
                 ) {
-                    this.setSpanRotation(
-                        rotation,
-                        parentPadding,
-                        parentPadding
-                    );
+                    // CSS transform and transform-origin both supported without
+                    // prefix since Firefox 16 (2012), IE 10 (2012), Chrome 36
+                    // (2014), Safari 9 (2015).;
+                    css(element, {
+                        transform: `rotate(${rotation}deg)`,
+                        transformOrigin: `${parentPadding}% ${parentPadding}px`
+                    });
                 }
 
                 this.getSpanCorrection(
@@ -516,7 +519,6 @@ class HTMLElement extends SVGElement {
                         element,
                         {
                             display: 'inline-block',
-                            transform: void 0,
                             verticalAlign: 'top'
                         }
                     );
@@ -543,24 +545,6 @@ class HTMLElement extends SVGElement {
             this.oldRotation = rotation;
             this.oldAlign = textAlign;
         }
-    }
-
-    /**
-     * Set the rotation of an individual HTML span.
-     * @private
-     */
-    private setSpanRotation(
-        rotation: number,
-        originX: number,
-        originY: number
-    ): void {
-        // CSS transform and transform-origin both supported without prefix
-        // since Firefox 16 (2012), IE 10 (2012), Chrome 36 (2014), Safari 9
-        // (2015).;
-        css(this.element, {
-            transform: `rotate(${rotation}deg)`,
-            transformOrigin: `${originX}% ${originY}px`
-        });
     }
 
     /**
