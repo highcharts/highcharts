@@ -4,12 +4,15 @@ Highcharts Grid comes in two versions: **Grid Lite** and **Grid Pro**.
 - **Grid Lite** is a free version of Grid with a basic feature set.
 - **Grid Pro** is a more advanced, commercial version with additional features. It is currently part of the **Dashboards** package and will be available as a standalone package in parallel with the next major **Dashboards** version (v4.0).
 
+## Installing Grid Pro
+
+Currently, **Grid Pro** is part of Highcharts Dashboards and will be available as a standalone library after the release of Dashboards v4. See the [Dashboards Grid Standalone](https://www.highcharts.com/docs/dashboards/grid-standalone) documentation article for more info.
+
 ## Installing Grid Lite
 
 ### Install via NPM
-You can install Grid Lite  via NPM:
 
-#### Install Grid Lite
+You can install **Grid Lite** via NPM:
 
 ```bash
 npm install @highcharts/grid-lite
@@ -22,11 +25,8 @@ import Grid from '@highcharts/grid-lite/grid-lite';
 import '@highcharts/grid-lite/css/grid.css';
 ```
 
-#### Install Grid Pro
+### Include Grid Lite via `<script>` tag
 
-Currently, Grid Pro is part of Highcharts Dashboards and will be available as a standalone library after the release of Dashboards v4. See the [Dashboards Grid Standalone](https://www.highcharts.com/docs/dashboards/grid-standalone) documentation article for more info.
-
-### Include Grid via `<script>` tag
 You can also load **Grid** by adding the appropriate JavaScript file to your page's `<head>` section:
 
 ```html
@@ -54,6 +54,6 @@ import '@highcharts/grid-lite/css/grid.css';
 ```
 
 ### Get Started
-Once installed, you are ready to use Grid Lite. Check out [Your First Grid](https://www.highcharts.com/docs/grid/general) to learn more.
+Once installed, you are ready to use **Grid Lite**. Check out [Your First Grid](https://www.highcharts.com/docs/grid/general) to learn more.
 
 
