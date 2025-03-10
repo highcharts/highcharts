@@ -31,26 +31,14 @@ You can also load **Grid** by adding the appropriate JavaScript file to your pag
 
 ```html
 <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
+<link rel="stylesheet" href="https://code.highcharts.com/grid/css/grid.css" />
 ```
 
 Alternatively, you can download the file from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
 
 ```html
 <script src="../code/grid/grid-lite.js"></script>
-```
-
-### Importing CSS
-The library does not include styles by default, so you need to import them manually:
-
-```css
-@import url("https://code.highcharts.com/grid/css/grid.css");
-```
-
-Or if you are using the NPM package:
-
-
-```js
-import '@highcharts/grid-lite/css/grid.css';
+<link rel="stylesheet" href="../code/grid/css/grid.css" />
 ```
 
 ### Get Started
