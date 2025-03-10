@@ -262,7 +262,13 @@ class HTMLElement extends SVGElement {
             });
         }
 
-        this.element.style.whiteSpace = 'nowrap';
+        css(this.element, {
+            whiteSpace: 'nowrap',
+
+            // For foreignObject
+            display: 'inline-block',
+            verticalAlign: 'top'
+        });
     }
 
     /**
@@ -515,14 +521,6 @@ class HTMLElement extends SVGElement {
             if (foreignObject) {
                 super.updateTransform();
                 if (isNumber(x) && isNumber(y)) {
-                    css(
-                        element,
-                        {
-                            display: 'inline-block',
-                            verticalAlign: 'top'
-                        }
-                    );
-
                     foreignObject.attr({
                         x: x + xCorr,
                         y: y + yCorr,
