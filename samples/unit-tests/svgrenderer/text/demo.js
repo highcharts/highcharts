@@ -47,9 +47,11 @@ QUnit.test('Legend rtl and useHTML(#4449)', function (assert) {
     });
 
     assert.strictEqual(
-        text.element.offsetLeft + text.element.offsetWidth,
+        text.foreignObject ?
+            text.foreignObject.attr('x') + text.foreignObject.attr('width') :
+            text.element.offsetLeft + text.element.offsetWidth,
         100,
-        'Text is right aligned'
+        'Text should be right aligned'
     );
 });
 // Highcharts 4.0.1, Issue #3158
@@ -569,15 +571,21 @@ QUnit.test('HTML', function (assert) {
             'Tags don\'t start with spaces (#7126)'
         );
 
-        var html = renderer.text('useHTML', 100, 100, true).add();
+        text = renderer.text('useHTML', 100, 100, true).add();
+
         assert.close(
-            html.element.offsetLeft,
+            text.foreignObject ?
+                text.foreignObject.attr('x') :
+                text.element.offsetLeft,
             100,
             1,
             'Left offset should reflect initial position'
         );
         assert.close(
-            html.element.offsetHeight + html.element.offsetTop,
+            text.foreignObject ?
+                text.foreignObject.attr('height') +
+                    text.foreignObject.attr('y') :
+                text.element.offsetHeight + text.element.offsetTop,
             100,
             10,
             'Top offset should reflect initial position'
@@ -596,6 +604,7 @@ QUnit.test('HTML', function (assert) {
             '100px',
             'The style width should should now 100px'
         );
+
         text.css({
             fontWeight: 'bold'
         });

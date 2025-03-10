@@ -1785,19 +1785,19 @@ namespace Exporting {
         options: Options
     ): string {
 
-        const split = svg.indexOf('</svg>') + 6;
+        const split = svg.indexOf('</svg>') + 6,
+            useForeignObject = svg.indexOf('<foreignObject') > -1;
         let html = svg.substr(split);
 
         // Remove any HTML added to the container after the SVG (#894, #9087)
         svg = svg.substr(0, split);
 
+        if (useForeignObject) {
+            // Some tags needs to be closed in xhtml (#13726)
+            svg = svg.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />');
+
         // Move HTML into a foreignObject
-        if (
-            html &&
-            options?.exporting?.allowHTML &&
-            // HTMLElement already using foreignObject
-            html.indexOf('<foreignObject ') === -1
-        ) {
+        } else if (html && options?.exporting?.allowHTML) {
             html = '<foreignObject x="0" y="0" ' +
                     'width="' + options.chart.width + '" ' +
                     'height="' + options.chart.height + '">' +
