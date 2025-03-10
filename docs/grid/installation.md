@@ -7,7 +7,7 @@ Highcharts Grid comes in two versions: **Grid Lite** and **Grid Pro**.
 ## Installing Grid Lite
 
 ### Install via NPM
-You can install either Grid Lite or Grid Pro via NPM:
+You can install Grid Lite  via NPM:
 
 #### Install Grid Lite
 
