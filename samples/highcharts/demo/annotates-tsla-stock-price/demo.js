@@ -10,7 +10,6 @@ const commonOptions = {
 
 const TeslaISIN = 'US88160R1014';
 
-// eslint-disable-next-line no-undef
 const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: {
@@ -44,7 +43,8 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
             panning: true,
             panKey: 'shift',
             scrollablePlotArea: {
-                minWidth: 600
+                minWidth: 600,
+                scrollPositionX: 1
             }
         },
 
@@ -79,7 +79,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2020, 7, 20),
+                            x: '2020-08-20',
                             y: 111.55
                         },
                         x: -100,
@@ -90,7 +90,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2020, 11, 21),
+                            x: '2020-12-21',
                             y: 179.13
                         },
                         text: 'Inclusion to S&P 500 Index',
@@ -101,7 +101,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2021, 3, 1),
+                            x: '2021-04-01',
                             y: 192
                         },
                         text: 'Record earnings in Q1 2021',
@@ -112,7 +112,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2021, 10, 1),
+                            x: '2021-11-01',
                             y: 336
                         },
                         x: -100,
@@ -122,18 +122,18 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2022, 2, 0),
-                            y: 258.47
+                            x: '2022-03-22',
+                            y: 300.61
                         },
                         text: 'Berlin\'s giga factory opening',
                         x: -5,
-                        y: 100
+                        y: 130
                     },
                     {
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2022, 3, 12),
+                            x: '2022-04-12',
                             y: 306.37
                         },
                         text: 'Musk\'s Twitter aquisition',
@@ -148,7 +148,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2019, 2, 14),
+                            x: '2019-03-14',
                             y: 17.07
                         },
                         x: -60,
@@ -158,7 +158,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2019, 10, 21),
+                            x: '2019-11-21',
                             y: 21.57
                         },
                         text: 'Tesla CyberTruck announced',
@@ -169,7 +169,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: Date.UTC(2020, 8, 22),
+                            x: '2020-09-22',
                             y: 120.02
                         },
                         x: 100,
