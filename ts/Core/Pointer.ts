@@ -395,7 +395,6 @@ class Pointer {
 
             // Make a selection
             if (
-                (chart.hasCartesianSeries || chart.mapView) &&
                 this.hasZoom &&
                 clickedInside &&
                 !panKeyPressed
