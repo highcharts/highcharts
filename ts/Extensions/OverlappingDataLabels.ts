@@ -117,7 +117,10 @@ function chartHideOverlappingLabels(
             return {
                 x: pos.x + (
                     label.parentGroup?.translateX || 0
-                ) + padding,
+                ) + padding - (
+                    label.alignValue === 'right' && label.width ||
+                    0
+                ),
                 y: pos.y + (
                     label.parentGroup?.translateY || 0
                 ) + padding,
