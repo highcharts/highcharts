@@ -22,7 +22,7 @@ require('./scripts-css');
 require('./scripts-js');
 require('./scripts-webpack');
 
-function dist() {
+function dist(callback) {
     const argv = require('yargs').argv;
     const product = argv.product || 'Highcharts';
 
@@ -53,11 +53,11 @@ function dist() {
 
     tasks.push('lint-dts', 'dist-compress');
 
-    return Gulp.series(tasks);
+    return Gulp.series(tasks)(callback);
 }
 
 dist.description = 'Builds distribution files for the specified product.';
 dist.flags = {
     '--product': 'Product name. Available products: Highcharts, Grid. Defaults to Highcharts.'
 };
-Gulp.task('dist', dist());
+Gulp.task('dist', dist);
