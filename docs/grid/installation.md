@@ -4,7 +4,7 @@ Highcharts Grid comes in two versions: **Grid Lite** and **Grid Pro**.
 - **Grid Lite** is a free version of Grid with a basic feature set.
 - **Grid Pro** is a more advanced, commercial version with additional features. It is currently part of the **Dashboards** package and will be available as a standalone package in parallel with the next major **Dashboards** version (v4.0).
 
-## Installing Grid
+## Installing Grid Lite
 
 ### Install via NPM
 You can install either Grid Lite or Grid Pro via NPM:
