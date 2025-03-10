@@ -1245,8 +1245,6 @@ class SVGElement implements SVGElementLike {
             wrapper.clipPath = clipPath.destroy();
         }
 
-        wrapper.connector = wrapper.connector?.destroy();
-
         // Destroy stops in case this is a gradient object @todo old code?
         if (wrapper.stops) {
             for (i = 0; i < wrapper.stops.length; i++) {
@@ -1276,19 +1274,19 @@ class SVGElement implements SVGElementLike {
             erase(renderer.alignedObjects, wrapper);
         }
 
-        objectEach(wrapper, function (val: unknown, key: string): void {
+        objectEach(wrapper as AnyRecord, (val: unknown, key): void => {
 
-            // Destroy child elements of a group
             if (
-                (wrapper as AnyRecord)[key] &&
-                (wrapper as AnyRecord)[key].parentGroup === wrapper &&
-                (wrapper as AnyRecord)[key].destroy
+                // Destroy child elements of a group
+                wrapper[key]?.parentGroup === wrapper ||
+                // Destroy own elements
+                ['connector', 'foreignObject'].indexOf(key) !== -1
             ) {
-                (wrapper as AnyRecord)[key].destroy();
+                wrapper[key].destroy?.();
             }
 
             // Delete all properties
-            delete (wrapper as AnyRecord)[key];
+            delete wrapper[key];
         });
 
         return;
