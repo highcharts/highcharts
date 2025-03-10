@@ -34,7 +34,7 @@ module.exports = {
         { from: 'datagrid/performance', to: 'grid/performance' },
         { from: 'datagrid/style-by-css', to: 'grid/style-by-css' },
         { from: 'datagrid/accessibility', to: 'grid/accessibility' },
-        { from: 'datagrid/datagrid-v2-migration', to: 'grid/grid-v2-migration' },
+        { from: 'datagrid/datagrid-v2-migration', to: 'dashboards/grid-migration' },
         { from: 'datagrid/datagrid-with-angular', to: 'grid/grid-with-angular' },
         { from: 'datagrid/datagrid-with-react', to: 'grid/grid-with-react' },
         { from: 'datagrid/datagrid-with-vue', to: 'grid/grid-with-vue' }

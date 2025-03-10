@@ -1,5 +1,5 @@
-# Upgrade DataGrid from 3.x.x to Grid Pro
-The core of DataGrid has been changed in version 3.2. We have improved the performance and flexibility while adding accessibility support. This means API options and the definition of styles or data sources differ from the previous version. We outline all of the changes below.
+# Upgrade DataGrid to Grid Pro
+The core of **Grid Pro** (formerly: **DataGrid**) has been changed in version 3.2. Currently, **Grid Pro** is part of Highcharts Dashboards and will be available as a standalone library after the release of **Dashboards** v4.
 
 ## Initialize
 To initialize, you can use the factory function `Grid.grid`:
@@ -11,8 +11,6 @@ const grid = Grid.grid('container', {
     }
 });
 ```
-
-Currently, Grid Pro is part of Highcharts Dashboards and will be available as a standalone library after the release of Dashboards v4.
 
 ## API changes
 Some API options have been renamed or removed. For the full list, make sure to check the [API reference](https://api.highcharts.com/dashboards/).

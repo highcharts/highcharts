@@ -109,7 +109,7 @@ module.exports = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
-            'dashboards/grid-v3-migration',
+            'dashboards/grid-migration',
             'dashboards/frequently-asked-questions',
         ],
         'Grid': [
