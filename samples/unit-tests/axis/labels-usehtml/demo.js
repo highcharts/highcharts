@@ -33,6 +33,11 @@ QUnit.test('Auto rotation and wrapping', function (assert) {
         'Initially not rotated'
     );
 
+    assert.ok(
+        xAxis.ticks[xAxis.tickPositions[2]].label.getBBox().height < 20,
+        'The label should not be wrapped (#22764)'
+    );
+
     chart.setSize(400, 300);
     assert.strictEqual(
         xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
