@@ -60,8 +60,8 @@ var Highcharts = require('highcharts');
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
 // var Highcharts = require('highcharts/highstock');
 
-// Load the exporting module, and initialize it.
-require('highcharts/modules/exporting')(Highcharts);
+// Load the exporting module
+require('highcharts/modules/exporting');
 
 // Generate the chart
 Highcharts.chart('container', {

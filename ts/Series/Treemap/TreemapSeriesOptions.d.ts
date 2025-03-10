@@ -52,6 +52,20 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
+export interface TreemapDataLabelOptions extends DataLabelOptions {
+    /**
+     * Whether the data label should act as a group-level header. For leaf
+     * nodes, headers are not supported and the data label will be rendered
+     * inside.
+     *
+     * @sample {highcharts} highcharts/series-treemap/headers
+     *         Headers for parent nodes
+     *
+     * @since next
+     */
+    headers?: boolean
+}
+
 export type TreemapSeriesLayoutAlgorithmValue = (
     'sliceAndDice'|'stripes'|'squarified'|'strip'
 );
@@ -284,7 +298,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      *
      * @product highcharts
      */
-    dataLabels?: Partial<DataLabelOptions>;
+    dataLabels?: Partial<TreemapDataLabelOptions>;
 
     /**
      * Can set the layoutAlgorithm option on a specific level.
@@ -520,7 +534,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     /**
      * @since 4.1.0
      */
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    dataLabels?: (TreemapDataLabelOptions|Array<TreemapDataLabelOptions>);
 
     drillUpButton?: TreemapSeriesUpButtonOptions;
 
@@ -546,6 +560,17 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @product highcharts
      */
     cluster?: TreemapSeriesClusterOptions;
+
+    /**
+     * Group padding for parent elements in terms of pixels. See also the
+     * `nodeSizeBy` option that controls how the leaf nodes' size is affected by
+     * the padding.
+     *
+     * @sample {highcharts} highcharts/series-treemap/grouppadding/
+     *         Group padding
+     * @since  next
+     */
+    groupPadding?: number;
 
     /**
      * Whether to ignore hidden points when the layout algorithm runs.
@@ -635,6 +660,20 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     levels?: Array<TreemapSeriesLevelOptions>;
 
     marker?: PointMarkerOptions;
+
+    /**
+     * Experimental. How to set the size of child nodes when a header or padding
+     * is present. When `leaf`, the group is expanded to make room for headers
+     * and padding in order to preserve the relative sizes between leaves. When
+     * `group`, the leaves are naïvely fit into the remaining area after the
+     * header and padding are subtracted.
+     *
+     * @sample  {highcharts} highcharts/series-treemap/nodesizeby/
+     *          Node sizing
+     * @since   next
+     * @default parent
+     */
+    nodeSizeBy?: 'group'|'leaf';
 
     /**
      * The opacity of a point in treemap. When a point has children, the

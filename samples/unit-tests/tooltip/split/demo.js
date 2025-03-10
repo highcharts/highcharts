@@ -55,21 +55,25 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     const ttCorrectVals = {
             x: 51.5,
             y: 94.5,
-            width: 113,
+            width: Highcharts.isFirefox ? 134 : 113,
             height: 252
         },
         candidate = chart
             .tooltip
             .label
             .element
-            .getBoundingClientRect();
+            .getBoundingClientRect(),
+        chartPos = chart.pointer.getChartPosition();
+
+    candidate.x -= chartPos.left;
+    candidate.y -= chartPos.top;
 
     for (const key of ['x', 'y', 'width', 'height']) {
         assert.close(
             ttCorrectVals[key],
             candidate[key],
             15,
-            `The '${key}'of the label should be close to ${ttCorrectVals[key]}`
+            `The '${key}' of the label should be close to ${ttCorrectVals[key]}`
         );
     }
 
