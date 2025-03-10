@@ -15,6 +15,8 @@ DataGrid.dataGrid('container', {
         id: 'weight'
     }, {
         id: 'product',
-        enabled: false
+        cells: {
+            editable: false
+        }
     }]
 });
