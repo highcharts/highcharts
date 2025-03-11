@@ -21,7 +21,6 @@ import type GaugeSeries from './GaugeSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -65,6 +64,11 @@ class GaugePoint extends Point {
      */
     public setState(state?: StatesOptionsKey): void {
         this.state = state;
+    }
+
+
+    public resolveColor(): void {
+        super.resolveColor(false);
     }
 
     /* eslint-enable valid-jsdoc */
