@@ -1,0 +1,66 @@
+@import url("https://code.highcharts.com/grid/css/grid.css");
+
+:root {
+    --highlight-cell: #f0f2ca;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highlight-cell: #4d4f42;
+    }
+}
+
+#container {
+    height: 335px;
+    margin: 8px;
+}
+
+.highcharts-description {
+    padding-left: 10px;
+}
+
+.hcg-table tbody tr.hcg-row-even:has(td.highlight-cell),
+.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) {
+    background-color: var(--highlight-cell);
+}
+
+/* stylelint-disable max-line-length */
+.hcg-table tbody tr.highcharts-datagrid-hovered-row:has(td.highlight-cell),
+.hcg-table tbody tr.hcg-row.hcg-row-odd.highcharts-datagrid-hovered-row:has(td.highlight-cell) {
+    background-color: var(--highcharts-highlight-color-10);
+}
+/* stylelint-enable max-line-length */
+
+.custom-theme .bold-column {
+    font-weight: bold;
+    text-align: center;
+}
+
+.custom-theme .high-color {
+    font-weight: bold;
+    --ig-property-color: #3ea100;
+}
+
+.custom-theme .low-color {
+    font-weight: bold;
+    --ig-property-color: #c11a1a;
+}
+
+.custom-theme .over-30 {
+    font-weight: bold;
+    --ig-property-color: #8c00ff;
+}
+
+.custom-theme .high-color,
+.custom-theme .low-color,
+.custom-theme .over-30 {
+    --ig-color: var(--ig-property-color);
+    --ig-cell-hovered-color: var(--ig-property-color);
+    --ig-cell-even-hovered-color: var(--ig-property-color);
+    --ig-row-color: var(--ig-property-color);
+    --ig-row-even-color: var(--ig-property-color);
+    --ig-row-hovered-color: var(--ig-property-color);
+    --ig-row-even-hovered-color: var(--ig-property-color);
+    --ig-column-hovered-color: var(--ig-property-color);
+    --ig-column-even-hovered-color: var(--ig-property-color);
+}

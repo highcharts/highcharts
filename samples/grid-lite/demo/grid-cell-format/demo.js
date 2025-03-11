@@ -14,6 +14,9 @@ Grid.grid('container', {
             className: '{#if (gt value 30)}over-30{/if}'
         }
     },
+    rendering: {
+        theme: 'hcg-theme-default custom-theme'
+    },
     columns: [{
         id: 'ID',
         cells: {
