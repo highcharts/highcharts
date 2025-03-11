@@ -570,8 +570,20 @@ Highcharts.prepareShot = function (chart) {
         [].forEach.call(
 			chart.container.querySelectorAll('foreignObject br'),
 			function (br) {
-				br.parentNode.insertBefore(document.createElement('div'), br);
-				br.remove();
+				br.parentNode.replaceChild(document.createElement('div'), br);
+			}
+		);
+
+        // Replace images in foreign objects
+        [].forEach.call(
+			chart.container.querySelectorAll('foreignObject img'),
+			function (img) {
+				const div = document.createElement('div');
+                div.style.width = '16px';
+                div.style.height = '16px';
+                div.style.position = 'inline-block';
+                div.style.backgroundColor = '#ddd';
+                img.parentNode.replaceChild(div, img);
 			}
 		);
     }
