@@ -724,8 +724,27 @@ function svgToPixels(svg, canvas) {
     var DOMURL = (window.URL || window.webkitURL || window);
     var ctx = canvas.getContext && canvas.getContext('2d');
 
-    // Invalidate images, loading external images will throw an error
-    // svg = svg.replace(/xlink:href/g, 'data-href');
+    // Replace foreignObject with a rectangle of the same width and height to
+    // avoid tainted canvas issues. Remove the children of the foreign object.
+    svg = svg.replace(
+        /<foreignObject[^>]*>[\s\S]*?<\/foreignObject>/g, function (match) {
+            var x = match.match(/x="([^"]+)"/)[1];
+            var y = match.match(/y="([^"]+)"/)[1];
+            var width = match.match(/width="([^"]+)"/)[1];
+            var height = match.match(/height="([^"]+)"/)[1];
+            var transform = match.match(/transform="([^"]+)"/);
+            if (transform) {
+                transform = ' ' + transform[1];
+            } else {
+                transform = '';
+            }
+
+            return '<rect x="' + x + '" y="' + y + '" width="' + width + '" ' +
+                'height="' + height + '" transform="' + transform +
+                '" fill="#eee"></rect>';
+        }
+    );
+
     var blob = new Blob([svg], { type: 'image/svg+xml' });
 
     var img = new Image(CANVAS_WIDTH, CANVAS_HEIGHT);
