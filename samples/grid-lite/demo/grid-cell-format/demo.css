@@ -1,11 +1,11 @@
 @import url("https://code.highcharts.com/grid/css/grid.css");
 
-:root {
+.custom-theme {
     --highlight-cell: #f0f2ca;
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
+    .custom-theme {
         --highlight-cell: #4d4f42;
     }
 }
@@ -25,10 +25,7 @@
 }
 
 .hcg-table tbody tr.hcg-row-even:has(td.highlight-cell) td.hcg-hovered-column,
-.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td.hcg-hovered-column {
-    background-color: var(--ig-cell-hovered-column-background);
-}
-
+.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td.hcg-hovered-column,
 .hcg-table tbody tr.hcg-hovered-row:has(td.highlight-cell) td {
     background-color: var(--ig-cell-hovered-column-background);
 }
