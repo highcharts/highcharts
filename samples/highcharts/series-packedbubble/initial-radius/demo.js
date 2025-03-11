@@ -7,7 +7,6 @@ Highcharts.chart('container', {
         text: 'Carbon emissions around the world (2014)'
     },
     tooltip: {
-        useHTML: true,
         pointFormat: '<b>{point.name}:</b> {point.y}m CO<sub>2</sub>'
     },
     plotOptions: {

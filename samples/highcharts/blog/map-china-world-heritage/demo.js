@@ -44,7 +44,6 @@
         },
 
         tooltip: {
-            useHTML: true,
             headerFormat: '{point.point.name}',
             pointFormat: '<br/><img src="{point.image}"/>'
         },

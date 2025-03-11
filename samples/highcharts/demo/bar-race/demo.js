@@ -134,7 +134,6 @@ function getSubtitle() {
             align: 'left'
         },
         subtitle: {
-            useHTML: true,
             text: getSubtitle(),
             floating: true,
             align: 'right',

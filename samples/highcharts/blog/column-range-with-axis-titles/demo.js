@@ -138,7 +138,6 @@ Highcharts.chart('container', {
     tooltip: {
         delayForDisplay: 10,
         shared: true,
-        useHTML: true,
         headerFormat: '<small>\n  {point.x: %b %d}\n  <br/>\n</small>'
     },
     xAxis: {

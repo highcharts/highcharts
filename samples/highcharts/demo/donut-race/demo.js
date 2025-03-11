@@ -35,7 +35,6 @@ function getSubtitle() {
             align: 'center'
         },
         subtitle: {
-            useHTML: true,
             text: getSubtitle(),
             floating: true,
             verticalAlign: 'middle',
