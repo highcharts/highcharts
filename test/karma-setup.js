@@ -567,7 +567,7 @@ Highcharts.prepareShot = function (chart) {
 
         // Breaks inside foreign objects are considered tainted canvas
 		// ¯\_(ツ)_/¯
-		[].forEach.call(
+        [].forEach.call(
 			chart.container.querySelectorAll('foreignObject br'),
 			function (br) {
 				br.parentNode.insertBefore(document.createElement('div'), br);
@@ -807,10 +807,14 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
         loadReferenceSVG(path)
             .then(function (referenceSVG) {
-                return Promise.all([
-                    svgToPixels(referenceSVG, referenceCanvas),
-                    candidatePixels
-                ]);
+                return Promise
+                    .all([
+                        svgToPixels(referenceSVG, referenceCanvas),
+                        candidatePixels
+                    ])
+                    .catch(function (err) {
+                        reject(err);
+                    });
             })
             .then(function (pixelsInFile) {
                 var referencePixels = pixelsInFile[0];
