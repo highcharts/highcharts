@@ -1276,6 +1276,7 @@ class RangeSelector {
 
         if (inputEnabled) {
             if (!this.inputGroup) {
+
                 this.createInputs();
             }
             // Set or reset the input values
