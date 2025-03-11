@@ -719,36 +719,39 @@ function saveSVGSnapshot(svg, path) {
     }
 }
 
+// Ported from the offline-exporting module
+function svgToDataUrl(svg) {
+    var DOMURL = (window.URL || window.webkitURL || window);
+
+    // Webkit and not chrome
+    var userAgent = window.navigator.userAgent;
+    var webKit = (
+        userAgent.indexOf('WebKit') > -1 &&
+        userAgent.indexOf('Chrome') < 0
+    );
+
+    try {
+        // Safari requires data URI since it doesn't allow navigation to
+        // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
+        // (#14780).
+        if (!webKit && svg.indexOf('<foreignObject') === -1) {
+            return DOMURL.createObjectURL(new window.Blob([svg], {
+                type: 'image/svg+xml;charset-utf-16'
+            }));
+        }
+    } catch (e) {
+        // Ignore
+    }
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
 
 function svgToPixels(svg, canvas) {
     var DOMURL = (window.URL || window.webkitURL || window);
     var ctx = canvas.getContext && canvas.getContext('2d');
 
-    // Replace foreignObject with a rectangle of the same width and height to
-    // avoid tainted canvas issues. Remove the children of the foreign object.
-    svg = svg.replace(
-        /<foreignObject[^>]*>[\s\S]*?<\/foreignObject>/g, function (match) {
-            var x = match.match(/x="([^"]+)"/)[1];
-            var y = match.match(/y="([^"]+)"/)[1];
-            var width = match.match(/width="([^"]+)"/)[1];
-            var height = match.match(/height="([^"]+)"/)[1];
-            var transform = match.match(/transform="([^"]+)"/);
-            if (transform) {
-                transform = ' ' + transform[1];
-            } else {
-                transform = '';
-            }
-
-            return '<rect x="' + x + '" y="' + y + '" width="' + width + '" ' +
-                'height="' + height + '" transform="' + transform +
-                '" fill="#eee"></rect>';
-        }
-    );
-
-    var blob = new Blob([svg], { type: 'image/svg+xml' });
-
     var img = new Image(CANVAS_WIDTH, CANVAS_HEIGHT);
-    img.src = DOMURL.createObjectURL(blob);
+    img.src = svgToDataUrl(svg);
 
     return new Promise(function (resolve, reject) {
         img.onload = function () {
