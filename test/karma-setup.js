@@ -564,6 +564,16 @@ Highcharts.prepareShot = function (chart) {
                 break;
             }
         }
+
+        // Breaks inside foreign objects are considered tainted canvas
+		// ¯\_(ツ)_/¯
+		[].forEach.call(
+			chart.container.querySelectorAll('foreignObject br'),
+			function (br) {
+				br.parentNode.insertBefore(document.createElement('div'), br);
+				br.remove();
+			}
+		);
     }
 };
 
