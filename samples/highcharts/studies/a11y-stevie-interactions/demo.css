@@ -1,0 +1,90 @@
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    color-scheme: light dark;
+    color: light-dark(#000, #fff);
+    background-color: light-dark(#f8f8f8, #000);
+}
+
+h1 {
+    text-align: center;
+    margin: 15px 0 30px;
+}
+
+#logo-highcharts {
+    width: 1.3em;
+    margin-right: 10px;
+    vertical-align: middle;
+    margin-top: -3px;
+}
+
+.top-bar,
+.hidden {
+    display: none;
+}
+
+#demo-content {
+    color: light-dark(#000, #fff);
+    background-color: light-dark(#f8f8f8, #000);
+    box-shadow: none;
+}
+
+main {
+    max-width: 1000px;
+    min-width: 250px;
+    margin: 10px auto;
+    padding: 15px;
+    background-color: light-dark(#fbfbfb, #111);
+    box-shadow: 0 0 5px light-dark(#ccc, #444);
+    border-radius: 8px;
+}
+
+.intro {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.intro p:has(+ .signature) {
+    margin-bottom: 5px;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+
+.signature {
+    margin-top: 0;
+    margin-left: 10px;
+}
+
+.signature::before {
+    content: "— ";
+}
+
+figure {
+    margin: 5px;
+    margin-top: 40px;
+    padding: 20px;
+    box-shadow: 0 0 5px #999;
+    background-color: light-dark(#fff, #222);
+    border-radius: 8px;
+}
+
+@media only screen and (max-width: 600px) {
+    figure {
+        padding: 5px;
+        box-shadow: none;
+    }
+
+    main {
+        padding: 10px;
+        margin: 0 auto;
+    }
+}

@@ -1,0 +1,122 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+
+<main lang="en-US">
+    <h1>
+        <svg version="1.1" role="presentation" aria-hidden="true" id="logo-highcharts" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 205 205" xml:space="preserve">
+            <g id="symbol" transform="translate(0,3.41400146484375) scale(3)">
+                <polygon fill="#8087E8" points="41.53900146484375,0 30.315000534057617,26.209999084472656 15.566999435424805,60.650997161865234 49.85900115966797,46.16499710083008 68.02299499511719,38.49300003051758 " id="svg_2" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#30426B" points="47.25799560546875,31.729999542236328 49.86000061035156,46.16499710083008 68.02400207519531,38.49300003051758 " id="svg_3" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#6699A1" points="41.53900146484375,0 47.25799560546875,31.730998992919922 68.02299499511719,38.49300003051758 " id="svg_4" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#78758C" points="47.25799560546875,31.729999542236328 68.02400207519531,38.49300003051758 30.31599998474121,26.208999633789062 15.566999435424805,60.650997161865234 49.86000061035156,46.16499710083008 " id="svg_5" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#A3EDBA" points="15.566999435424805,60.650997161865234 30.315000534057617,26.209999084472656 0,16.334999084472656 " id="svg_6" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#6699A1" points="49.86000061035156,46.16499710083008 53.185997009277344,64.6099967956543 68.02400207519531,38.49300003051758 " id="svg_7" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+                <polygon fill="#8087E8" points="41.53900146484375,0 30.315000534057617,26.209999084472656 47.25799560546875,31.730998992919922 " id="svg_8" stroke-width="0" stroke="#383836" fill-opacity="1" stroke-linejoin="round"></polygon>
+            </g>
+        </svg>
+        Stevie Wonder Grammys
+    </h1>
+    <div class="intro">
+        <p>This interactive chart built with Highcharts gives some insights into the Stevie Wonder's Grammy nominations and wins over the years.</p>
+        <p>Wonder, one of the most influential musicians of the 20th century, is one of only four artists in Grammy history to win Album Of The Year three times in his career.</p>
+        <p>Please explore the chart, and let us know your thought process as you go through. We hope you get something out of it!</p>
+        <p>Cheers,</p>
+        <p class="signature"><b>The Highcharts Team</b> in collaboration with <b>Elsevier</b></p>
+    </div>
+
+    <figure>
+        <div id="grammys"></div>
+    </figure>
+</main>
+
+<pre class="hidden" id="grammy-data">Year,Work,Award,Result
+1967;Uptight;Best Rhythm & Blues Recording;Nominated
+1967;Uptight;Best Rhythm & Blues Solo Vocal Performance, Male or Female;Nominated
+1968;;;
+1969;For Once in My Life;Best Rhythm & Blues Vocal Performance, Male;Nominated
+1970;;;
+1971;Signed, Sealed, Delivered I'm Yours;Best Rhythm & Blues Song;Nominated
+1971;Signed, Sealed, Delivered I'm Yours;Best R&B Vocal Performance, Male;Nominated
+1972;We Can Work It Out;Best R&B Vocal Performance, Male;Nominated
+1973;;;
+1974;Superstition;Best R&B Vocal Performance, Male;Won
+1974;Superstition;Best Rhythm & Blues Song;Won
+1974;You Are the Sunshine of My Life;Best Pop Vocal Performance, Male;Won
+1974;You Are the Sunshine of My Life;Record of the Year;Nominated
+1974;You Are the Sunshine of My Life;Song of the Year;Nominated
+1974;Innervisions;Album of the Year;Won
+1975;Fulfillingness' First Finale;Album of the Year;Won
+1975;Fulfillingness' First Finale;Best Pop Vocal Performance, Male;Won
+1975;Boogie On Reggae Woman;Best R&B Vocal Performance, Male;Won
+1975;Living for the City;Best Rhythm & Blues Song;Won
+1975;Tell Me Something Good;Best Rhythm & Blues Song;Nominated
+1975;Stevie Wonder;Best Producer of the Year;Nominated
+1976;;;
+1977;Stevie Wonder;Best Producer of the Year;Won
+1977;Contusion;Best Pop Instrumental Performance;Nominated
+1977;Contusion;Best Instrumental Composition;Nominated
+1977;Have a Talk with God;Best Inspirational Performance;Nominated
+1977;Songs in the Key of Life;Album of the Year;Won
+1977;Songs in the Key of Life;Best Pop Vocal Performance, Male;Won
+1977;I Wish;Best R&B Vocal Performance, Male;Won
+1978;;;
+1979;;;
+1980;;;
+1981;Master Blaster (Jammin');Best R&B Vocal Performance, Male;Nominated
+1981;Stevie Wonder's Journey Through "The Secret Life of Plants";Best Album of Original Score Written for a Motion Picture or a Television Special;Nominated
+1981;Stevie Wonder;Producer of the Year (Non-Classical);Nominated
+1981;Let's Get Serious;Best Rhythm & Blues Song;Nominated
+1982;;;
+1983;That Girl;Best Rhythm & Blues Song;Nominated
+1983;Do I Do;Best Rhythm & Blues Song;Nominated
+1983;Do I Do;Best R&B Vocal Performance, Male;Nominated
+1983;Do I Do;Best Instrumental Arrangement Accompanying Vocal(s);Nominated
+1983;Ebony and Ivory;Record of the Year;Nominated
+1983;Ebony and Ivory;Best Pop Performance by a Duo or Group with Vocal;Nominated
+1983;What's That You're Doing;Best R&B Performance by a Duo or Group with Vocal;Nominated
+1984;;;
+1985;I Just Called to Say I Love You;Song of the Year;Nominated
+1985;I Just Called to Say I Love You;Best Pop Vocal Performance, Male;Nominated
+1985;I Just Called to Say I Love You (Instrumental);Best Pop Instrumental Performance;Nominated
+1985;The Woman in Red;Best R&B Vocal Performance, Male;Nominated
+1986;In Square Circle;Best R&B Vocal Performance, Male;Won
+1986;Part-Time Lover;Best Pop Vocal Performance, Male;Nominated
+1987;That's What Friends Are For;Best Pop Performance by a Duo or Group with Vocal;Won
+1987;That's What Friends Are For;Record of the Year;Nominated
+1988;Skeletons;Best Rhythm & Blues Song;Nominated
+1988;Skeletons;Best R&B Vocal Performance, Male;Nominated
+1989;Characters;Best R&B Vocal Performance, Male;Nominated
+1990;;;
+1991;;;
+1992;Gotta Have You;Best R&B Vocal Performance, Male;Nominated
+1992;Gotta Have You;Best Song Written Specifically for a Motion Picture or for Television;Nominated
+1992;Jungle Fever;Best Song Written Specifically for a Motion Picture or for Television;Nominated
+1993;;;
+1994;;;
+1995;;;
+1996;For Your Love;Best Male R&B Vocal Performance;Won
+1996;For Your Love;Best Rhythm & Blues Song;Won
+1997;Kiss Lonely Goodbye (Harmonica with Orchestra);Best Pop Instrumental Performance;Nominated
+1998;How Come, How Long;Best Short Form Music Video;Nominated
+1998;How Come, How Long;Best Pop Collaboration with Vocals;Nominated
+1999;How Come, How Long (Live);Best Pop Collaboration with Vocals;Nominated
+1999;St. Louis Blues;Best Male R&B Vocal Performance;Won
+1999;St. Louis Blues;Best Instrumental Arrangement Accompanying Vocal(s);Won
+2000;;;
+2001;;;
+2002;;;
+2003;Love's in Need of Love Today;Best R&B Performance by a Duo or Group with Vocal;Won
+2003;Christmas Song;Best Pop Collaboration with Vocals;Nominated
+2004;;;
+2005;Moon River;Best Pop Collaboration with Vocals;Nominated
+2006;A Time to Love;Best Pop Collaboration with Vocals;Nominated
+2006;A Time to Love;Best R&B Album;Nominated
+2006;So What the Fuss;Best Male R&B Vocal Performance;Nominated
+2006;How Will I Know;Best R&B Performance by a Duo or Group with Vocals;Nominated
+2006;So Amazing;Best R&B Performance by a Duo or Group with Vocals;Won
+2006;From the Bottom of My Heart;Best Male Pop Vocal Performance;Won
+2007;For Once in My Life;Best Pop Collaboration with Vocals;Won
+2008;;;
+2009;Never Give You Up;Best R&B Performance by a Duo or Group with Vocals;Nominated
+2010;All About the Love Again;Best Male Pop Vocal Performance;Nominated</pre>

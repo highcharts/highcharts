@@ -395,15 +395,15 @@ hcCSS.replaceSync(`
 document.adoptedStyleSheets.push(hcCSS);
 
 // Helper function to handle CSS positioning
-const setCSSPosToOverlay = (targetEl, sourceEl, attrs) => {
+const setCSSPosToOverlay = (targetEl, sourceEl, attrs, margin = 0) => {
     const setSize = () => {
             const bbox = sourceEl.getBoundingClientRect(),
                 bodyOffset = document.body.getBoundingClientRect(),
                 attributes = Object.assign({
-                    left: bbox.x - bodyOffset.x + 'px',
-                    top: bbox.y - bodyOffset.y + 'px',
-                    width: bbox.width + 'px',
-                    height: bbox.height + 'px'
+                    left: bbox.x - bodyOffset.x - margin + 'px',
+                    top: bbox.y - bodyOffset.y - margin + 'px',
+                    width: bbox.width + 2 * margin + 'px',
+                    height: bbox.height + 2 * margin + 'px'
                 }, attrs || {});
             Object.assign(targetEl.style, attributes);
         },
@@ -509,8 +509,11 @@ const kbdHintsDialog = createDialog(
             <ul role="list">
                 ${Object.values(hints).map(hint => `
                     <li${hint.srOnly ? ' class="hc-a11y-sr-only"' : ''}>
-                        <span class="hc-a11y-kbd-key">${hint.name}</span>
-                        <span class="hc-a11y-sr-only">.</span>
+                        <span class="hc-a11y-kbd-key"
+                            ${hint.srName ? 'aria-hidden="true"' : ''}
+                            >${hint.name}</span>
+                        <span class="hc-a11y-sr-only"
+                            >${hint.srName || ''}.</span>
                         <span>${hint.desc}</span>
                     </li>
                 `).join('')}
@@ -586,7 +589,7 @@ let focusVisible = false;
 
 // Show a focus border on an element
 const showFocusOnEl = el => {
-    setCSSPosToOverlay(focusBorder, el);
+    setCSSPosToOverlay(focusBorder, el, {}, 8);
     focusBorder.style.display = focusVisible ? 'block' : 'none';
 };
 
@@ -698,6 +701,7 @@ function (svgEl, elType, content, parent) {
                 width: bbox.width + 'px',
                 height: bbox.height + 'px',
                 overflow: 'hidden',
+                pointerEvents: 'none',
                 tabindex: '-1'
             });
         },
@@ -705,21 +709,6 @@ function (svgEl, elType, content, parent) {
 
     resizeObserver.observe(svgEl);
     setSize();
-
-    [
-        'mousedown', 'mouseup', 'mouseenter', 'mouseover', 'mouseout',
-        'mouseleave', 'click', 'touchstart', 'touchend', 'touchmove',
-        'touchcancel'
-    ].forEach(
-        type => el.addEventListener(
-            type, e => {
-                svgEl.dispatchEvent(new e.constructor(e.type, e));
-                e.stopPropagation();
-                e.preventDefault();
-            }
-        )
-    );
-
     return el;
 };
 
@@ -873,7 +862,8 @@ function (onInit, kbdHandlers, kbdDescriptions, exitEl) {
         chartTitle = chart.options.title.text,
         initNotify = 'In chart. Press T for tools and help. ' +
             'Use arrow keys to explore.',
-        appLabel = `Interactive audio chart. ${chartTitle}. Click to interact.`,
+        appLabel = `Interactive audio chart. ${
+            chartTitle}. Press Enter to interact.`,
         app = chart.addProxyContainerEl('div'),
         fallbackButton = chart.addSROnly(
             'button', `Interact with chart, ${chartTitle}.`, app
@@ -1875,6 +1865,7 @@ const historicalKbdHandlers = (() => {
 const historicalKbdDescriptions = {
     arrows: {
         name: 'Arrows ←↓↑→',
+        srName: 'Arrows left, down, up, right',
         desc: 'Navigate data'
     },
     g: {
@@ -2272,6 +2263,7 @@ const networkKbdHandlers = (() => {
 const networkKbdDescriptions = {
     arrows: {
         name: 'Arrows ←↓↑→',
+        srName: 'Arrows left, down, up, right',
         desc: 'Navigate data, sorted largest to smallest'
     },
     g: {
@@ -2581,6 +2573,7 @@ const wordcloudKbdHandlers = (() => {
 const wordcloudKbdDescriptions = {
     arrows: {
         name: 'Arrows ←↓↑→',
+        srName: 'Arrows left, down, up, right',
         desc: 'Navigate data, sorted largest to smallest'
     },
     g: {
