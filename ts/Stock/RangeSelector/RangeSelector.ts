@@ -1275,7 +1275,6 @@ class RangeSelector {
             inputEnabled = options.inputEnabled;
 
         if (inputEnabled) {
-
             if (!this.inputGroup) {
                 this.createInputs();
             }
