@@ -1269,14 +1269,25 @@ class RangeSelector {
         }
 
         const chart = this.chart,
+            {
+                label: ttLabel,
+                hideTimer
+            } = chart.tooltip || {},
             chartOptions = chart.options,
             options = chartOptions.rangeSelector as RangeSelectorOptions,
             // Place inputs above the container
             inputEnabled = options.inputEnabled;
 
         if (inputEnabled) {
-            if (!this.inputGroup) {
 
+            // When useHMTL-tooltips are animating and sliders are changed,
+            // it is necessary to ensure correct opacity
+            if (ttLabel && ttLabel.visibility !== 'hidden') {
+                U.clearTimeout(hideTimer as any);
+                ttLabel.attr({ opacity: 1 });
+            }
+
+            if (!this.inputGroup) {
                 this.createInputs();
             }
             // Set or reset the input values
