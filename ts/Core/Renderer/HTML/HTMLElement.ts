@@ -526,8 +526,8 @@ class HTMLElement extends SVGElement {
                     foreignObject.attr({
                         x: x + xCorr,
                         y: y + yCorr,
-                        width: element.offsetWidth,
-                        height: element.offsetHeight
+                        width: element.offsetWidth + 1,
+                        height: element.offsetHeight + 1
                     });
 
                     // Reset, otherwise lineClamp will not work
