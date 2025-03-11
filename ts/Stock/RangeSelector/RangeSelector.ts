@@ -1281,8 +1281,8 @@ class RangeSelector {
         if (inputEnabled) {
 
             // When useHMTL-tooltips are animating and sliders are changed,
-            // it is necessary to ensure correct opacity
-            if (ttLabel && ttLabel.visibility !== 'hidden') {
+            // it is necessary to ensure correct opacity (#22679)
+            if (ttLabel && hideTimer) {
                 U.clearTimeout(hideTimer as any);
                 ttLabel.attr({ opacity: 1 });
             }
