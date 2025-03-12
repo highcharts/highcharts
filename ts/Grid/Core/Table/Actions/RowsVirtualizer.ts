@@ -29,6 +29,8 @@ import Table from '../Table.js';
 import GridUtils from '../../GridUtils.js';
 import TableRow from '../Content/TableRow.js';
 import Globals from '../../Globals.js';
+import TableCell from '../Content/TableCell';
+import Column from '../Column';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -469,21 +471,32 @@ class RowsVirtualizer {
      * once on initialization.
      */
     private getDefaultRowHeight(): number {
-        const mockRow = makeHTMLElement('tr', {
+        const vp = this.viewport;
+        const columns = vp.columns || {};
+        const mockHTMLRow = makeHTMLElement('tr', {
             className: Globals.getClassName('rowElement'),
             style: {
                 position: 'absolute'
             }
-        }, this.viewport.tbodyElement);
+        }, vp.tbodyElement);
+        const mockRow = new TableRow(vp, 0);
+        const mockCells = [];
 
-        const mockCell = makeHTMLElement('td', {
-            innerText: 'mock',
-            className: Globals.getClassName('mockedCell')
-        }, mockRow);
+        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+            mockCells.push(new TableCell(mockRow, columns[i]));
+            mockCells[i].value = columns[i].data?.[0] || 'mock';
+            makeHTMLElement('td', {
+                innerHTML: mockCells[i].formatCell(),
+                className: Globals.getClassName('mockedCell')
+            }, mockHTMLRow);
+        }
 
-        const defaultRowHeight = mockRow.offsetHeight;
-        mockRow.remove();
-        mockCell.remove();
+        const defaultRowHeight = mockHTMLRow.offsetHeight;
+
+        // Clear all mocked elements
+        mockCells.forEach(cell => cell.destroy());
+        mockRow.destroy();
+        mockHTMLRow.remove();
 
         return defaultRowHeight;
     }

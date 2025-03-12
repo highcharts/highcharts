@@ -467,6 +467,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     font: var(--ig-font);
     line-height: 1em;
     overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .hcg-table .hcg-last-header-cell-in-row,

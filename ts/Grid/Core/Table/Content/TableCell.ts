@@ -294,8 +294,10 @@ class TableCell extends Cell {
 
     /**
      * Handle the formatting content of the cell.
+     *
+     * @internal
      */
-    private formatCell(): string {
+    public formatCell(): string {
         const cellsDefaults =
             this.row.viewport.grid.options?.columnDefaults?.cells || {};
         const options = this.column.options.cells || {};
