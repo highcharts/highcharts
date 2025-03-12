@@ -34,6 +34,7 @@ import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
+import Defaults from '../Defaults.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -284,6 +285,24 @@ class Table {
     }
 
     /**
+     * Fires an empty update to properly load the virtualization, only if
+     * there's a row count compared to the threshold change detected (due to
+     * performance reasons).
+     */
+    private updateVirtualization(): void {
+        const rows = this.grid.options?.rendering?.rows;
+        const threshold = Number(
+            rows?.threshold ||
+            Defaults.defaultOptions.rendering?.rows?.threshold
+        );
+        const rowCount = Number(this.dataTable?.rowCount);
+
+        if (rows?.virtualization !== (rowCount >= threshold)) {
+            this.grid.update();
+        }
+    }
+
+    /**
      * Loads the modified data from the data table and renders the rows.
      */
     public loadPresentationData(): void {
@@ -293,6 +312,7 @@ class Table {
             column.loadData();
         }
 
+        this.updateVirtualization();
         this.rowsVirtualizer.rerender();
     }
 

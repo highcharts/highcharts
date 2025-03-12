@@ -1081,14 +1081,12 @@ class Grid {
             rows?.threshold ||
             Defaults.defaultOptions.rendering?.rows?.threshold
         );
+        const rowCount = Number(this.dataTable?.rowCount);
 
-        if (
-            rows?.virtualization ||
-            Number(this.dataTable?.rowCount) >= threshold
-        ) {
-            ((this.options ??= {}).rendering ??= {}).rows ??= {};
-            this.options.rendering.rows.virtualization = true;
-        }
+        // Makes sure all nested options are defined.
+        ((this.options ??= {}).rendering ??= {}).rows ??= {};
+        this.options.rendering.rows.virtualization =
+            rows?.virtualization || rowCount >= threshold;
     }
 }
 
