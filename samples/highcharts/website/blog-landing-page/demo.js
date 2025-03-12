@@ -968,7 +968,7 @@ const bubble = Highcharts.chart('soloBubble', {
     tooltip: {
         outside: true,
         enabled: true,
-        pointFormat: '<b>{point.name}:</b> {point.y}</sub>'
+        pointFormat: '<b>{point.name}:</b> {point.y}'
     },
     legend: {
         enabled: false

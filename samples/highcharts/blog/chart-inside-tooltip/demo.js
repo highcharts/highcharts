@@ -28,6 +28,7 @@ Highcharts.chart('container', {
         text: 'Chart inside tooltip demo'
     },
     tooltip: {
+        useHTML: true,
         headerFormat: '',
         pointFormat: '<div id="hc-tooltip"></div>'
     },

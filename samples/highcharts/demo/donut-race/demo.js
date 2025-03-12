@@ -37,6 +37,7 @@ function getSubtitle() {
         subtitle: {
             text: getSubtitle(),
             floating: true,
+            useHTML: true,
             verticalAlign: 'middle',
             y: 30
         },
