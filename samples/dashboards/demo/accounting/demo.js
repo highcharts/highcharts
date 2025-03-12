@@ -49,7 +49,6 @@ const commonGaugeOptions = {
                 radius: 5
             },
             dataLabels: {
-                useHTML: true,
                 format: '${y}M'
             }
         }
