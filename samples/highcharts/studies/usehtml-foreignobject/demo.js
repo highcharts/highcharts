@@ -26,7 +26,8 @@ ren.text('Hello text', 100, 100, true)
 Highcharts.chart('container', {
 
     chart: {
-        type: 'column'
+        type: 'column',
+        styledMode: true
     },
 
     title: {
