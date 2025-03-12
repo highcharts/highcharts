@@ -241,11 +241,11 @@ function onChartRender(
             this.navigationBindings.utils
                 ?.isPriceIndicatorEnabled?.(this.series)
         ) {
-            button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+            button.firstChild.style['background-image'] = stockTools
+                .getIcon('current-price-hide.svg');
         } else {
-            button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+            button.firstChild.style['background-image'] = stockTools
+                .getIcon('current-price-show.svg');
         }
     }
 }
