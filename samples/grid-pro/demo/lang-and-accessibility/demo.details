@@ -1,0 +1,11 @@
+---
+ name: Highcharts Grid Demo
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+ tags:
+  - Highcharts Grid demo
+ categories:
+  - General:
+        priority: 20
+...

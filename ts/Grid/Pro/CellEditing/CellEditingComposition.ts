@@ -253,7 +253,7 @@ export interface CellEditingLangA11yOptions {
         /**
          * The message when the cell editing was cancelled.
          *
-         * @default 'Editing canceled.'
+         * @default 'Editing cancelled.'
          */
         cancelled?: string;
     }
