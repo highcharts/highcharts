@@ -167,7 +167,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
     );
 });
 
-QUnit.module('whiteSpace: "nowrap"', hooks => {
+QUnit.test('Skip tspans', assert => {
     const { Renderer } = Highcharts;
     const renderer = new Renderer(
         document.getElementById('container'),
@@ -182,29 +182,21 @@ QUnit.module('whiteSpace: "nowrap"', hooks => {
             })
             .add();
 
-        // Cleanup
-        hooks.after(() => {
-            renderer.destroy();
-            text.destroy();
-        });
+        text.attr({ text: 'single_word' });
+        assert.strictEqual(
+            text.element.innerHTML,
+            'single_word',
+            'should not use tspan when whiteSpace equals "nowrap", and ' +
+            'text equals "single_word".'
+        );
 
-        QUnit.test('Skip tspans', assert => {
-            text.attr({ text: 'single_word' });
-            assert.strictEqual(
-                text.element.innerHTML,
-                'single_word',
-                'should not use tspan when whiteSpace equals "nowrap", and ' +
-                'text equals "single_word".'
-            );
-
-            text.attr({ text: 'two words' });
-            assert.strictEqual(
-                text.element.innerHTML,
-                'two words',
-                'should not use tspan when whiteSpace equals "nowrap", and ' +
-                'text equals "two words".'
-            );
-        });
+        text.attr({ text: 'two words' });
+        assert.strictEqual(
+            text.element.innerHTML,
+            'two words',
+            'should not use tspan when whiteSpace equals "nowrap", and ' +
+            'text equals "two words".'
+        );
     } finally {
         renderer.destroy();
     }
