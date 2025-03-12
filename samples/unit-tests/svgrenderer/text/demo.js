@@ -174,38 +174,40 @@ QUnit.module('whiteSpace: "nowrap"', hooks => {
         400,
         300
     );
-    const text = renderer
-        .text('test', 100, 40)
-        .css({
-            whiteSpace: 'nowrap'
-        })
-        .add();
+    try {
+        const text = renderer
+            .text('test', 100, 40)
+            .css({
+                whiteSpace: 'nowrap'
+            })
+            .add();
 
-    // Cleanup
-    hooks.after(() => {
+        // Cleanup
+        hooks.after(() => {
+            renderer.destroy();
+            text.destroy();
+        });
+
+        QUnit.test('Skip tspans', assert => {
+            text.attr({ text: 'single_word' });
+            assert.strictEqual(
+                text.element.innerHTML,
+                'single_word',
+                'should not use tspan when whiteSpace equals "nowrap", and ' +
+                'text equals "single_word".'
+            );
+
+            text.attr({ text: 'two words' });
+            assert.strictEqual(
+                text.element.innerHTML,
+                'two words',
+                'should not use tspan when whiteSpace equals "nowrap", and ' +
+                'text equals "two words".'
+            );
+        });
+    } finally {
         renderer.destroy();
-        text.destroy();
-    });
-
-    QUnit.test('Skip tspans', assert => {
-        text.attr({ text: 'single_word' });
-        assert.strictEqual(
-            text.element.innerHTML,
-            'single_word',
-            'should not use tspan when whiteSpace equals "nowrap", and text ' +
-            'equals "single_word".'
-        );
-
-        text.attr({ text: 'two words' });
-        assert.strictEqual(
-            text.element.innerHTML,
-            'two words',
-            'should not use tspan when whiteSpace equals "nowrap", and text ' +
-            'equals "two words".'
-        );
-    });
-
-    // TODO: move rest of nowrap tests into this module.
+    }
 });
 
 QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {
@@ -477,19 +479,47 @@ QUnit.test('lineClamp', function (assert) {
         400
     );
 
-    const text = ren.text('The quick brown fox jumps over the lazy dog', 30, 30)
-        .css({
-            lineClamp: 2,
-            width: '100px'
-        })
-        .add();
+    try {
+        const textSVG = ren.text(
+            'The quick brown fox jumps over the lazy dog',
+            30,
+            30
+        )
+            .css({
+                lineClamp: 2,
+                width: '100px'
+            })
+            .add();
 
-    assert.strictEqual(
-        text.element.querySelectorAll('tspan[dy]').length,
-        1,
-        'Exactly one line break should be applied'
-    );
+        assert.strictEqual(
+            textSVG.element.querySelectorAll('tspan[dy]').length,
+            1,
+            'Exactly one line break should be applied'
+        );
 
+        const height = textSVG.getBBox().height;
+
+        const textHTML = ren.text(
+            'The quick brown fox jumps over the lazy dog',
+            130,
+            30,
+            true
+        )
+            .css({
+                lineClamp: 2,
+                width: '100px'
+            })
+            .add();
+
+        assert.close(
+            textHTML.getBBox().height,
+            height,
+            1,
+            'The HTML bounding box should be approximately the same as the SVG'
+        );
+    } finally {
+        ren.destroy();
+    }
 });
 
 QUnit.test('BBox for mulitiple lines', function (assert) {

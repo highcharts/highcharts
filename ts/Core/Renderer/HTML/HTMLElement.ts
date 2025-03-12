@@ -369,7 +369,7 @@ class HTMLElement extends SVGElement {
             rotationOriginY,
             scaleX,
             scaleY,
-            styles: { display = 'block', whiteSpace },
+            styles: { display = 'inline-block', whiteSpace },
             textAlign = 'left',
             textWidth,
             translateX = 0,
@@ -526,8 +526,8 @@ class HTMLElement extends SVGElement {
                     foreignObject.attr({
                         x: x + xCorr,
                         y: y + yCorr,
-                        width: element.offsetWidth + 1,
-                        height: element.offsetHeight + 1
+                        width: element.offsetWidth,
+                        height: element.offsetHeight
                     });
 
                     // Reset, otherwise lineClamp will not work
