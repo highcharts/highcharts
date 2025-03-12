@@ -1,12 +1,25 @@
 @import url("https://code.highcharts.com/grid/css/grid.css");
 
-:root {
+.custom-theme {
+    --hcg-padding: 10px;
+    --hcg-header-background: #dfdfdf;
+    --hcg-header-font-weight: 500;
+    --hcg-row-border-width: 1px;
+    --hcg-row-border-color: #d9d9d9;
+    --hcg-row-even-background: #f9f9f9;
     --highlight-cell: #f0f2ca;
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        --highlight-cell: #4d4f42;
+    .custom-theme {
+        --hcg-padding: 10px;
+        --hcg-header-background: #1e1e1e;
+        --hcg-header-font-weight: 500;
+        --hcg-row-border-width: 1px;
+        --hcg-row-border-color: #3c3c3c;
+        --hcg-row-even-background: #515151;
+        --hcg-row-background: #515151;
+        --highlight-cell: #b4d77e;
     }
 }
 
@@ -19,40 +32,43 @@
     padding-left: 10px;
 }
 
-.hcg-table tbody tr.hcg-row-even:has(td.highlight-cell) td,
-.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td {
-    background-color: var(--highlight-cell);
-}
-
-.hcg-table tbody tr.hcg-row-even:has(td.highlight-cell) td.hcg-hovered-column,
-.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td.hcg-hovered-column,
-.hcg-table tbody tr.hcg-hovered-row:has(td.highlight-cell) td {
-    background-color: var(--ig-cell-hovered-column-background);
-}
-
-.hcg-table tbody tr.hcg-hovered-row:has(td.highlight-cell) td:hover {
-    background-color: var(--ig-cell-hovered-background);
-}
-
 .bold-column {
     font-weight: bold;
     text-align: center;
 }
 
+.hcg-table tbody tr.hcg-row-even:has(td.highlight-cell) td,
+.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td,
+.hcg-table tbody tr.hcg-row-even:has(td.highlight-cell) td.hcg-hovered-column,
+.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td.hcg-hovered-column,
+.hcg-table tbody tr.hcg-hovered-row:has(td.highlight-cell) td,
+.hcg-table tbody tr.hcg-hovered-row:has(td.highlight-cell) td:hover {
+    background-color: var(--highlight-cell);
+}
+
 .hcg-table tbody tr.hcg-row-even td.high-color,
+.hcg-table tbody tr:hover td.high-color:hover,
+.hcg-table tbody tr:hover td.high-color,
+.hcg-table tbody td.high-color.hcg-hovered-column,
 .hcg-table tbody td.high-color {
     font-weight: bold;
     color: #3ea100;
 }
 
 .hcg-table tbody tr.hcg-row-even td.low-color,
+.hcg-table tbody tr:hover td.low-color:hover,
+.hcg-table tbody tr:hover td.low-color,
+.hcg-table tbody td.low-color.hcg-hovered-column,
 .hcg-table tbody td.low-color {
     font-weight: bold;
     color: #c11a1a;
 }
 
 .hcg-table tbody tr.hcg-row-even td.over-30,
+.hcg-table tbody tr:hover td.over-30:hover,
+.hcg-table tbody tr:hover td.over-30,
+.hcg-table tbody td.over-30.hcg-hovered-column,
 .hcg-table tbody td.over-30 {
     font-weight: bold;
-    color: #8c00ff;
+    color: #504b1b;
 }
