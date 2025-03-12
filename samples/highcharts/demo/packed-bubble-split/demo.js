@@ -12,7 +12,6 @@ Highcharts.chart('container', {
         align: 'left'
     },
     tooltip: {
-        useHTML: true,
         pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
     },
     plotOptions: {
