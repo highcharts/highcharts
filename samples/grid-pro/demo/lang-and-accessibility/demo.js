@@ -2,14 +2,10 @@ const grid = Grid.grid('container', {
     dataTable: {
         columns: {
             id: ['1', '2', '3', '4'],
-            product: ['Apples', 'Pears', 'Plums', 'Bananas'],
+            productEN: ['Apple', 'Pear', 'Plum', 'Banana'],
+            productPL: ['Jabłko', 'Gruszka', 'Śliwka', 'Banan'],
             weight: [100, 60, 30, 200],
             price: [1.5, 2.53, 5, 4.5]
-        }
-    },
-    columnDefaults: {
-        cells: {
-            editable: true
         }
     },
     rendering: {
@@ -17,11 +13,13 @@ const grid = Grid.grid('container', {
             minVisibleRows: 4
         }
     },
-    caption: {
-        text: 'Fruits Store'
+    columnDefaults: {
+        cells: {
+            editable: true
+        }
     },
     credits: {
-        text: 'Highcharts Grid Pro'
+        text: 'Highcharts Grid'
     },
     columns: [{
         id: 'id',
@@ -32,23 +30,12 @@ const grid = Grid.grid('container', {
             editable: false
         }
     }, {
-        id: 'product',
-        header: {
-            format: 'Product Name'
-        }
-    }, {
         id: 'weight',
-        header: {
-            format: 'Weight'
-        },
         cells: {
             format: '{value} g'
         }
     }, {
         id: 'price',
-        header: {
-            format: 'Price'
-        },
         cells: {
             format: '{value:.2f} €'
         }
@@ -75,7 +62,28 @@ const languages = {
                         cancelled: 'Editing cancelled.'
                     }
                 }
+            },
+            decimalPoint: '.'
+        },
+        header: ['id', 'productEN', 'weight', 'price'],
+        columns: [{
+            id: 'productEN',
+            header: {
+                format: 'Product'
             }
+        }, {
+            id: 'weight',
+            header: {
+                format: 'Weight'
+            }
+        }, {
+            id: 'price',
+            header: {
+                format: 'Price'
+            }
+        }],
+        caption: {
+            text: 'Fruits Table'
         }
     },
     pl: {
@@ -97,7 +105,28 @@ const languages = {
                         cancelled: 'Anulowano edycję.'
                     }
                 }
+            },
+            decimalPoint: ','
+        },
+        header: ['id', 'productPL', 'weight', 'price'],
+        columns: [{
+            id: 'productPL',
+            header: {
+                format: 'Produkt'
             }
+        }, {
+            id: 'weight',
+            header: {
+                format: 'Waga'
+            }
+        }, {
+            id: 'price',
+            header: {
+                format: 'Cena'
+            }
+        }],
+        caption: {
+            text: 'Tabela Owoców'
         }
     }
 };
@@ -136,6 +165,8 @@ function setInputValue(input) {
 
 function setLanguage(lang) {
     grid.update(languages[lang]);
+    grid.container.setAttribute('lang', lang);
+    grid.container.setAttribute('aria-lang', lang);
     for (const input of editorInputs) {
         setInputValue(input);
     }
