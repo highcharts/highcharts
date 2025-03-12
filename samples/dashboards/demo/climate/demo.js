@@ -340,7 +340,6 @@ async function setupBoard() {
                 tooltip: {
                     shape: 'rect',
                     distance: -60,
-                    useHTML: true,
                     stickOnContact: true
                 },
                 lang: {
