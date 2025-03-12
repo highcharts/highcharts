@@ -150,7 +150,10 @@ function setOption(input) {
     for (let i = 0, iEnd = path.length - 1; i < iEnd; i++) {
         cursor[path[i]] = cursor = {};
     }
-    cursor[path[path.length - 1]] = input.checked ?? input.value;
+
+    cursor[path[path.length - 1]] =
+        input.type === 'checkbox' ? input.checked : input.value;
+
     grid.update(result);
 }
 
