@@ -4,7 +4,7 @@ A data table (class `DataTable`) is a structured representation of data consisti
 It offers methods for adding, removing, and manipulating columns and rows and for accessing data from specific cells.  
 Think of a Data Table as a grid where each row represents a record or entry, and each column represents a specific attribute or piece of information.
 
-`DataTable` is an integral part of the **Dashboards** and the **DataGrid** bundle. Hence it can be accessed from both so there is no need to load any additional modules.
+`DataTable` is an integral part of the **Dashboards** and the **Grid** bundles. Hence it can be accessed from both so there is no need to load any additional modules.
 
 ## Creating a data table
 There are several ways to create a `DataTable`:

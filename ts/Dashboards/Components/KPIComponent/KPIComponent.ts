@@ -759,7 +759,7 @@ class KPIComponent extends Component {
     /**
      * Get the KPI component's options.
      * @returns
-     * The JSON of KPI component's options.
+     * KPI component's options.
      *
      * @internal
      *
