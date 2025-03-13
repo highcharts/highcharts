@@ -1,5 +1,5 @@
 ---
- name: Highcharts Grid Accessibility Demo
+ name: Grid Accessibility Demo
  authors:
    - Dawid Dragula
  js_wrap: b

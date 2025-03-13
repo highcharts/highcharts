@@ -1,5 +1,5 @@
 ---
- name: Highcharts Grid Internationalization Demo
+ name: Grid Internationalization Demo
  authors:
    - Dawid Dragula
  js_wrap: b
