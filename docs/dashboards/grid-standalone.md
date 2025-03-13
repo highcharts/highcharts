@@ -1,4 +1,4 @@
-# Using Grid as a Standalone
+# Using Grid as a standalone component
 
 The **Grid** (formerly **DataGrid**) was originally developed as the core of the [**Grid Component**](https://www.highcharts.com/docs/dashboards/grid-component) in **Highcharts Dashboards**, providing a high-performance, interactive, and editable data table solution. With the release of **Dashboards v4.0**, Grid will become a standalone product - **Grid Pro**. Its basic version, **Grid Lite**, is already available *([learn more about it here](https://www.highcharts.com/docs/grid/general)).*
 
