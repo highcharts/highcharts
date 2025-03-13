@@ -199,7 +199,7 @@ class Table {
         // Load columns
         this.loadColumns();
 
-        // Virtualization 
+        // Virtualization
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
         // Init Table

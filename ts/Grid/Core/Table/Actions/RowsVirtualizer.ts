@@ -26,13 +26,8 @@ import type { RowsSettings } from '../../Options';
 import type Cell from '../Cell';
 
 import Table from '../Table.js';
-import GridUtils from '../../GridUtils.js';
 import TableRow from '../Content/TableRow.js';
 import Globals from '../../Globals.js';
-import TableCell from '../Content/TableCell';
-import Column from '../Column';
-
-const { makeHTMLElement } = GridUtils;
 
 
 /* *
