@@ -15,7 +15,10 @@ Grid.grid('container', {
         }
     },
     rendering: {
-        theme: 'custom-theme'
+        theme: 'custom-theme',
+        rows: {
+            minVisibleRows: 5
+        }
     },
     columns: [{
         id: 'ID',

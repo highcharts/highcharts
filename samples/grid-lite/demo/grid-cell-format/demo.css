@@ -8,23 +8,28 @@
     --hcg-row-border-color: #d9d9d9;
     --hcg-row-even-background: #f9f9f9;
     --highlight-cell: #f0f2ca;
+    --high-color: #348700;
+    --low-color: #d8003a;
+    --over-30: #152fc2;
 }
 
 @media (prefers-color-scheme: dark) {
     .custom-theme {
         --hcg-padding: 10px;
-        --hcg-header-background: #1e1e1e;
+        --hcg-header-background: #525252;
         --hcg-header-font-weight: 500;
         --hcg-row-border-width: 1px;
         --hcg-row-border-color: #3c3c3c;
-        --hcg-row-even-background: #515151;
-        --hcg-row-background: #515151;
-        --highlight-cell: #b4d77e;
+        --hcg-row-even-background: #666;
+        --hcg-row-background: #666;
+        --highlight-cell: #909a82;
+        --high-color: #133706;
+        --low-color: #60061e;
+        --over-30: #001475;
     }
 }
 
 #container {
-    height: 270px;
     margin: 8px;
 }
 
@@ -44,15 +49,15 @@
 
 .hcg-table tbody td.high-color {
     font-weight: bold;
-    color: #3ea100 !important;
+    color: var(--high-color) !important;
 }
 
 .hcg-table tbody td.low-color {
     font-weight: bold;
-    color: #c11a1a !important;
+    color: var(--low-color) !important;
 }
 
 .hcg-table tbody td.over-30 {
     font-weight: bold;
-    color: #504b1b !important;
+    color: var(--over-30) !important;
 }
