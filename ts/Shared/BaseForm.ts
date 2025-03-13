@@ -101,8 +101,9 @@ abstract class BaseForm {
     protected addCloseButton(
         className: string = 'highcharts-popup-close'
     ): HTMLElement {
-        const popup = this,
-            iconsURL = this.iconsURL;
+        const popup = this;
+
+        let iconsURL = this.iconsURL;
 
         // Create close popup button.
         const closeButton = createElement(
@@ -111,6 +112,10 @@ abstract class BaseForm {
             void 0,
             this.container
         );
+
+        if (iconsURL === 'renderer') {
+            iconsURL = 'https://code.highcharts.com/@product.version@/gfx/stock-icons/';
+        }
 
         closeButton.style['background-image' as any] = 'url(' +
                 (
