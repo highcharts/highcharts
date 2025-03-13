@@ -56,6 +56,7 @@ namespace GridUtils {
         className?: string;
         id?: string;
         innerText?: string;
+        innerHTML?: string;
         style?: Partial<CSSStyleDeclaration>;
     }
 
