@@ -1,8 +1,7 @@
 // Data retrieved from https://fas.org/issues/nuclear-weapons/status-world-nuclear-forces/
-Highcharts.chart({
+Highcharts.chart('container', {
     chart: {
-        type: 'area',
-        renderTo: 'container'
+        type: 'area'
     },
     accessibility: {
         description: 'Image description: An area chart compares the nuclear ' +
