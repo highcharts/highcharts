@@ -472,31 +472,18 @@ class RowsVirtualizer {
      */
     private getDefaultRowHeight(): number {
         const vp = this.viewport;
-        const columns = vp.columns || {};
-        const mockHTMLRow = makeHTMLElement('tr', {
-            className: Globals.getClassName('rowElement'),
-            style: {
-                position: 'absolute'
-            }
-        }, vp.tbodyElement);
-        const mockRow = new TableRow(vp, 0);
-        const mockCells = [];
+        const mockRow = new TableRow(vp, 1);
 
-        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
-            mockCells.push(new TableCell(mockRow, columns[i]));
-            mockCells[i].value = columns[i].data?.[0] || 'mock';
-            makeHTMLElement('td', {
-                innerHTML: mockCells[i].formatCell(),
-                className: Globals.getClassName('mockedCell')
-            }, mockHTMLRow);
-        }
+        mockRow.render();
+        mockRow.htmlElement.classList.add(
+            Globals.getClassName('mockedRow')
+        );
+        vp.tbodyElement.appendChild(mockRow.htmlElement);
 
-        const defaultRowHeight = mockHTMLRow.offsetHeight;
+        const defaultRowHeight = mockRow.htmlElement.offsetHeight;
 
         // Clear all mocked elements
-        mockCells.forEach(cell => cell.destroy());
         mockRow.destroy();
-        mockHTMLRow.remove();
 
         return defaultRowHeight;
     }

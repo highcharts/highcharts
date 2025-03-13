@@ -69,7 +69,7 @@ namespace Globals {
         syncedCell: 'synced-cell',
         syncedColumn: 'synced-column',
         editedCell: 'edited-cell',
-        mockedCell: 'mocked-cell',
+        mockedRow: 'mocked-row',
         rowsContentNowrap: 'rows-content-nowrap',
         virtualization: 'virtualization',
         scrollableContent: 'scrollable-content',

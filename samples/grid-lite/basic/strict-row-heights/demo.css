@@ -5,6 +5,6 @@
     padding: 8px;
 }
 
-.hcg-table tbody tr td[data-column-id="b"] {
+.hcg-table tbody tr td[data-column-id="b"]:hover {
     text-decoration: underline;
 }
