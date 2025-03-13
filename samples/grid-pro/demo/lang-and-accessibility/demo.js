@@ -3,7 +3,9 @@ const grid = Grid.grid('container', {
         columns: {
             id: ['1', '2', '3', '4'],
             productEN: ['Apple', 'Pear', 'Plum', 'Banana'],
+            productNO: ['Eple', 'Pære', 'Plomme', 'Banan'],
             productPL: ['Jabłko', 'Gruszka', 'Śliwka', 'Banan'],
+            productZH: ['苹果', '梨', '李子', '香蕉'],
             weight: [100, 60, 30, 200],
             price: [1.5, 2.53, 5, 4.5]
         }
@@ -86,6 +88,49 @@ const languages = {
             text: 'Fruits Table'
         }
     },
+    no: {
+        lang: {
+            accessibility: {
+                sorting: {
+                    sortable: 'Sorterbar.',
+                    announcements: {
+                        ascending: 'Sortert stigende.',
+                        descending: 'Sortert synkende.',
+                        none: 'Ikke sortert.'
+                    }
+                },
+                cellEditing: {
+                    editable: 'Redigerbar.',
+                    announcements: {
+                        started: 'Gått inn i redigeringsmodus for celle.',
+                        edited: 'Celleverdi redigert.',
+                        cancelled: 'Redigering avbrutt.'
+                    }
+                }
+            },
+            decimalPoint: ','
+        },
+        header: ['id', 'productNO', 'weight', 'price'],
+        columns: [{
+            id: 'productNO',
+            header: {
+                format: 'Produkt'
+            }
+        }, {
+            id: 'weight',
+            header: {
+                format: 'Vekt'
+            }
+        }, {
+            id: 'price',
+            header: {
+                format: 'Pris'
+            }
+        }],
+        caption: {
+            text: 'Frukttabell'
+        }
+    },
     pl: {
         lang: {
             accessibility: {
@@ -127,6 +172,49 @@ const languages = {
         }],
         caption: {
             text: 'Tabela Owoców'
+        }
+    },
+    zh: {
+        lang: {
+            accessibility: {
+                sorting: {
+                    sortable: '可排序。',
+                    announcements: {
+                        ascending: '已按升序排序。',
+                        descending: '已按降序排序。',
+                        none: '未排序。'
+                    }
+                },
+                cellEditing: {
+                    editable: '可编辑。',
+                    announcements: {
+                        started: '进入单元格编辑模式。',
+                        edited: '已编辑单元格值。',
+                        cancelled: '编辑已取消。'
+                    }
+                }
+            },
+            decimalPoint: '.'
+        },
+        header: ['id', 'productZH', 'weight', 'price'],
+        columns: [{
+            id: 'productZH',
+            header: {
+                format: '产品'
+            }
+        }, {
+            id: 'weight',
+            header: {
+                format: '重量'
+            }
+        }, {
+            id: 'price',
+            header: {
+                format: '价格'
+            }
+        }],
+        caption: {
+            text: '水果表'
         }
     }
 };
