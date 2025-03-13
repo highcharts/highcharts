@@ -71,5 +71,5 @@ The dashboard is created using the factory function `Dashboards.board`. The func
 
 ## Demos
 See how it works in the following demos:
-- [Basic live example](https://stackblitz.com/edit/dashboards-vue3-fcutdg)
-- [Custom layout live example](https://stackblitz.com/edit/dashboards-vue3-4qzk97)
+- [Basic live example](https://stackblitz.com/edit/dashboards-vue3-rvlfu5f6)
+- [Custom layout live example](https://stackblitz.com/edit/dashboards-vue3-j7wsgkjr)

@@ -66,5 +66,5 @@ The dashboard is created using the factory function `Dashboards.board`. The func
 
 ## Demos
 See how it works in the following demos:
-- [Basic live example](https://stackblitz.com/edit/angular-pc4xsk)
-- [Custom layout live example](https://stackblitz.com/edit/dashboards-angular-custom-layout)
+- [Basic live example](https://stackblitz.com/edit/angular-kv7m5vtb)
+- [Custom layout live example](https://stackblitz.com/edit/dashboards-angular-custom-layout-eu9kekif)

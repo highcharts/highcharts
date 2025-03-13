@@ -67,7 +67,7 @@ The dashboard is created using the factory function `Dashboards.board`. The func
 
 ## Demos
 See how it works in the following demos:
-- [Basic live example](https://stackblitz.com/edit/stackblitz-starters-xn8e17)
-- [Custom layout live example](https://stackblitz.com/edit/stackblitz-starters-g6quez)
-- [Component live example](https://stackblitz.com/edit/stackblitz-starters-sx8crk)
+- [Basic live example](https://stackblitz.com/edit/stackblitz-starters-3aaelrn5)
+- [Custom layout live example](https://stackblitz.com/edit/stackblitz-starters-ljqhy6cw)
+- [Component live example](https://stackblitz.com/edit/stackblitz-starters-xjeut4dq)
 

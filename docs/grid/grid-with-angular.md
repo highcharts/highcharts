@@ -55,5 +55,5 @@ export class AppComponent implements OnInit {
 }
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-grid-angular?file=src%2Fmain.ts).
+See the live example [here](https://stackblitz.com/edit/highcharts-grid-angular-nfxuhkpv).
 

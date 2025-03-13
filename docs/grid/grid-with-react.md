@@ -60,4 +60,4 @@ function App() {
 export default App;
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-grid-react-ts?file=src%2FApp.tsx,src%2Fcomponents%2FGrid.tsx).
+See the live example [here](https://stackblitz.com/edit/highcharts-grid-react-ts-mbvpgi2q).

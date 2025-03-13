@@ -57,4 +57,4 @@ const config: Grid.Options = {
 </template>
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-grid-vue-ts?file=src%2FApp.vue,src%2Fcomponents%2FGrid.vue).
+See the live example [here](https://stackblitz.com/edit/highcharts-grid-vue-ts-fbnz62i9).
