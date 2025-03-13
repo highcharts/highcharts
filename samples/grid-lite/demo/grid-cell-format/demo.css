@@ -15,10 +15,7 @@
 
 @media (prefers-color-scheme: dark) {
     .custom-theme {
-        --hcg-padding: 10px;
         --hcg-header-background: #525252;
-        --hcg-header-font-weight: 500;
-        --hcg-row-border-width: 1px;
         --hcg-row-border-color: #3c3c3c;
         --hcg-row-even-background: #666;
         --hcg-row-background: #666;
@@ -42,8 +39,7 @@
     text-align: center;
 }
 
-.hcg-table tbody tr.hcg-row-even:has(td.highlight-cell) td,
-.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td {
+.hcg-table tbody tr:has(.highlight-cell) td {
     background-color: var(--highlight-cell) !important;
 }
 
