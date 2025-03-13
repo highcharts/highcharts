@@ -1,0 +1,42 @@
+@import url("https://code.highcharts.com/grid/css/grid.css");
+
+:root {
+    --anchor-color: #007bff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --anchor-color: #8ec3fc;
+    }
+}
+
+#container {
+    padding: 8px;
+    height: 345px;
+}
+
+.column-description {
+    font-size: 12px;
+}
+
+.hcg-container h2 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+td {
+    align-items: center;
+    text-align: center;
+}
+
+td a {
+    color: var(--anchor-color);
+}
+
+td button {
+    background: #007bff;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+}
