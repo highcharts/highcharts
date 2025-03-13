@@ -27,7 +27,7 @@ import '@highcharts/grid-lite/css/grid.css';
 
 ### Include Grid Lite via `<script>` tag
 
-You can also load **Grid** by adding the appropriate JavaScript file to your page's `<head>` section:
+Load **Grid Lite** from our public CDN by adding the appropriate JavaScript and CSS files to your page's `<head>` section:
 
 ```html
 <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
