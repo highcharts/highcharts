@@ -185,22 +185,23 @@ QUnit.test('Hide label with useHTML', function (assert) {
     );
 
     // Replace with exported SVG
-    document.getElementById('output').innerHTML = chart.getSVGForExport(
-        {},
-        {
-            plotOptions: {
-                series: {
-                    dataLabels: {
-                        backgroundColor: '#bebebe',
-                        style: {
-                            fontSize: '30px',
-                            color: 'red'
+    document.getElementById('output').innerHTML =
+        chart.exporting.getSVGForExport(
+            {},
+            {
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            backgroundColor: '#bebebe',
+                            style: {
+                                fontSize: '30px',
+                                color: 'red'
+                            }
                         }
                     }
                 }
             }
-        }
-    );
+        );
     assert.ok(
         document
             .querySelector('#output .highcharts-data-labels g text')
@@ -242,7 +243,7 @@ QUnit.test('getSVGForExport XHTML', function (assert) {
         ]
     });
 
-    const svg = chart.getSVGForExport();
+    const svg = chart.exporting.getSVGForExport();
 
     assert.strictEqual(
         (svg.match(/<img.*?(?=\/>)/gm) || []).length,

@@ -55,7 +55,8 @@ const {
  * @private
  */
 function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
-    return chart.exportSVGElements && chart.exportSVGElements[0];
+    return chart.exporting?.exportSVGElements &&
+        chart.exporting?.exportSVGElements[0];
 }
 
 
@@ -137,7 +138,7 @@ class MenuComponent extends AccessibilityComponent {
      */
     public onMenuHidden(): void {
         const menu: Exporting.DivElement =
-            (this.chart as any).exportContextMenu;
+            (this.chart.exporting as any).exportContextMenu;
         if (menu) {
             menu.setAttribute('aria-hidden', 'true');
         }
@@ -151,7 +152,7 @@ class MenuComponent extends AccessibilityComponent {
      */
     public onMenuShown(): void {
         const chart = this.chart,
-            menu = chart.exportContextMenu;
+            menu = chart.exporting?.exportContextMenu;
 
         if (menu) {
             this.addAccessibleContextMenuAttribs();
@@ -192,7 +193,7 @@ class MenuComponent extends AccessibilityComponent {
         if (
             this.exportButtonProxy &&
             focusEl &&
-            focusEl === chart.exportingGroup
+            focusEl === chart.exporting?.exportingGroup
         ) {
             if (focusEl.focusBorder) {
                 chart.setFocusToElement(
@@ -250,7 +251,7 @@ class MenuComponent extends AccessibilityComponent {
      */
     public addAccessibleContextMenuAttribs(): void {
         const chart = this.chart,
-            exportList = chart.exportDivElements;
+            exportList = chart.exporting?.exportDivElements;
 
         if (exportList && exportList.length) {
             // Set tabindex on the menu items to allow focusing by script
@@ -343,7 +344,7 @@ class MenuComponent extends AccessibilityComponent {
             // Focus export menu button
             init: function (): void {
                 const proxy = component.exportButtonProxy;
-                const svgEl = component.chart.exportingGroup;
+                const svgEl = component.chart.exporting?.exportingGroup;
                 if (proxy && svgEl) {
                     chart.setFocusToElement(svgEl, proxy.innerElement);
                 }
@@ -403,7 +404,7 @@ class MenuComponent extends AccessibilityComponent {
         // separators will fail.
         for (
             let i = (chart.highlightedExportItemIx || 0) + 1;
-            i < (chart.exportDivElements as any).length;
+            i < (chart.exporting?.exportDivElements as any).length;
             ++i
         ) {
             if (chart.highlightExportItem(i)) {
@@ -429,14 +430,14 @@ class MenuComponent extends AccessibilityComponent {
         keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const chart = this.chart;
-        const curHighlightedItem = (chart.exportDivElements as any)[
+        const curHighlightedItem = (chart.exporting?.exportDivElements as any)[
             chart.highlightedExportItemIx as any
         ];
         const exportButtonElement: SVGDOMElement = (
             getExportMenuButtonElement(chart) as any
         ).element;
 
-        if (chart.openMenu) {
+        if (chart.exporting?.openMenu) {
             this.fakeClickEvent(curHighlightedItem);
         } else {
             this.fakeClickEvent(exportButtonElement);
@@ -542,9 +543,13 @@ namespace MenuComponent {
         this: ChartComposition
     ): void {
         const chart = this,
-            exportList = chart.exportDivElements;
+            exportList = chart.exporting?.exportDivElements;
 
-        if (exportList && chart.exportContextMenu && chart.openMenu) {
+        if (
+            exportList &&
+            chart.exporting?.exportContextMenu &&
+            chart.exporting?.openMenu
+        ) {
             // Reset hover states etc.
             exportList.forEach((el): void => {
                 if (
@@ -557,7 +562,7 @@ namespace MenuComponent {
             });
             chart.highlightedExportItemIx = 0;
             // Hide the menu div
-            chart.exportContextMenu.hideMenu();
+            chart.exporting.exportContextMenu.hideMenu();
             // Make sure the chart has focus and can capture keyboard events
             chart.container.focus();
         }
@@ -574,10 +579,14 @@ namespace MenuComponent {
         this: ChartComposition,
         ix: number
     ): boolean {
-        const listItem = this.exportDivElements && this.exportDivElements[ix];
+        const listItem =
+            this.exporting?.exportDivElements &&
+            this.exporting?.exportDivElements[ix];
         const curHighlighted =
-                this.exportDivElements &&
-                this.exportDivElements[this.highlightedExportItemIx as any];
+                this.exporting?.exportDivElements &&
+                this.exporting?.exportDivElements[
+                    this.highlightedExportItemIx as any
+                ];
 
         if (
             listItem &&
@@ -618,8 +627,8 @@ namespace MenuComponent {
         this: ChartComposition
     ): boolean {
         const chart = this;
-        if (chart.exportDivElements) {
-            let i = chart.exportDivElements.length;
+        if (chart.exporting?.exportDivElements) {
+            let i = chart.exporting?.exportDivElements.length;
             while (i--) {
                 if (chart.highlightExportItem(i)) {
                     return true;

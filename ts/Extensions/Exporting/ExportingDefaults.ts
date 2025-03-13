@@ -521,7 +521,9 @@ const exporting: ExportingOptions = {
         printChart: {
             textKey: 'printChart',
             onclick: function (): void {
-                this.print();
+                if (this.exporting) {
+                    this.exporting.print();
+                }
             }
         },
 
@@ -538,7 +540,9 @@ const exporting: ExportingOptions = {
         downloadPNG: {
             textKey: 'downloadPNG',
             onclick: function (): void {
-                this.exportChart();
+                if (this.exporting) {
+                    this.exporting.exportChart();
+                }
             }
         },
 
@@ -548,9 +552,11 @@ const exporting: ExportingOptions = {
         downloadJPEG: {
             textKey: 'downloadJPEG',
             onclick: function (): void {
-                this.exportChart({
-                    type: 'image/jpeg'
-                });
+                if (this.exporting) {
+                    this.exporting.exportChart({
+                        type: 'image/jpeg'
+                    });
+                }
             }
         },
 
@@ -560,9 +566,11 @@ const exporting: ExportingOptions = {
         downloadPDF: {
             textKey: 'downloadPDF',
             onclick: function (): void {
-                this.exportChart({
-                    type: 'application/pdf'
-                });
+                if (this.exporting) {
+                    this.exporting.exportChart({
+                        type: 'application/pdf'
+                    });
+                }
             }
         },
 
@@ -572,9 +580,11 @@ const exporting: ExportingOptions = {
         downloadSVG: {
             textKey: 'downloadSVG',
             onclick: function (): void {
-                this.exportChart({
-                    type: 'image/svg+xml'
-                });
+                if (this.exporting) {
+                    this.exporting.exportChart({
+                        type: 'image/svg+xml'
+                    });
+                }
             }
         }
 
