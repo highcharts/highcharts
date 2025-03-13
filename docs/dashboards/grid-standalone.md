@@ -4,8 +4,6 @@ The **Grid** (formerly **DataGrid**) was originally developed as the core of the
 
 ## Installation
 
-You can use **Grid Pro** as part of **Highcharts Dashboards** right now, as described below.
-
 ### Install via NPM
 
 ```bash
