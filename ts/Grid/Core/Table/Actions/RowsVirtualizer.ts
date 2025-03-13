@@ -472,7 +472,7 @@ class RowsVirtualizer {
      */
     private getDefaultRowHeight(): number {
         const vp = this.viewport;
-        const mockRow = new TableRow(vp, 1);
+        const mockRow = new TableRow(vp, 0);
 
         mockRow.render();
         mockRow.htmlElement.classList.add(
