@@ -1,5 +1,5 @@
 ---
- name: Highcharts Grid Demo
+ name: Highcharts Grid Language and Accessibility Demo
  authors:
    - Dawid Dragula
  js_wrap: b
