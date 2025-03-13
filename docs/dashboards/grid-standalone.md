@@ -4,9 +4,11 @@ Highcharts **Grid** (formerly **DataGrid**) was originally a basic [component](h
 
 For now **Grid Pro** is a part of **Highcharts Dashboards**, but can also be used as a standalone component outside of Dashboards, as described below.
 
-## Installation
+## Installing Grid Pro
 
 ### Install via NPM
+
+You can install **Grid Pro** via NPM:
 
 ```bash
 npm install @highcharts/dashboards
@@ -19,9 +21,9 @@ import Grid from '@highcharts/dashboards/datagrid';
 import '@highcharts/dashboards/css/datagrid.css';
 ```
 
-### Include Grid via `<script>` tag
+### Include Grid Pro via `<script>` tag
 
-You can also load **Grid** by adding the appropriate JavaScript file to your page's `<head>` section:
+Load **Grid Pro** from our public CDN by adding the appropriate JavaScript and CSS files to your page's `<head>` section:
 
 ```html
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
@@ -36,5 +38,4 @@ Alternatively, you can download the file from [highcharts.com](https://www.highc
 ```
 
 ## Usage
-
 Usage is identical to standalone Grid packages, see [this article](https://www.highcharts.com/docs/grid/general) to learn more.
