@@ -1,10 +1,5 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
-.lang-options {
-    display: flex;
-    justify-content: end;
-}
-
 .demo {
     background-color: var(--hcg-background);
     padding: 8px;

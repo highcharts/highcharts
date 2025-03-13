@@ -1,22 +1,11 @@
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 
 <div class="demo hcg-theme-default">
-    <div class="lang-options">
-        <label>
-            <span>Language:</span>
-            <select id="lang-select">
-                <option value="en" selected>English</option>
-                <option value="no">Norsk</option>
-                <option value="pl">Polski</option>
-                <option value="zh">中文</option>
-            </select>
-        </label>
-    </div>
     <div id="container"></div>
     <div class="editor">
         <h2>Options Editor</h2>
         <form>
-            <details open>
+            <details>
                 <summary>accessibility</summary>
                 <div class="option-group">
                     <div class="option">
@@ -24,7 +13,7 @@
                         <input type="checkbox" id="a11y-enabled" name="accessibility.enabled" />
                         <span class="description">[ Enable accessibility features for the Grid ]</span>
                     </div>
-                    <details open>
+                    <details>
                         <summary>announcements</summary>
                         <div class="option-group">
                             <div class="option">
@@ -41,9 +30,9 @@
                     </details>
                 </div>
             </details>
-            <details open>
+            <details>
                 <summary>lang.accessibility</summary>
-                <details open>
+                <details>
                     <summary>sorting</summary>
                     <div class="option-group">
                         <div class="option">
@@ -52,7 +41,7 @@
                             <span class="description">[ An additional hint read by the voice over after a sortable column name ]</span>
                         </div>
                     </div>
-                    <details open>
+                    <details>
                         <summary>announcements</summary>
                         <div class="option-group">
                             <div class="option">
@@ -73,7 +62,7 @@
                         </div>
                     </details>
                 </details>
-                <details open>
+                <details>
                     <summary>cellEditing</summary>
                     <div class="option-group">
                         <div class="option">
@@ -82,7 +71,7 @@
                             <span class="description">[ An additional hint read by the voice over after an editable cell value ]</span>
                         </div>
                     </div>
-                    <details open>
+                    <details>
                         <summary>announcements</summary>
                         <div class="option-group">
                             <div class="option">
