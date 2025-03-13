@@ -219,10 +219,19 @@ class Chart {
         callback?: Chart.CallbackFunction
     ): Chart;
     public static chart(
+        options: Partial<Options>,
+        callback: true
+    ): Promise<Chart>;
+    public static chart(
         renderTo: (string|globalThis.HTMLElement),
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): Chart;
+    public static chart(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Partial<Options>,
+        callback: true
+    ): Promise<Chart>;
     /**
      * Factory function for basic charts.
      *
@@ -255,11 +264,12 @@ class Chart {
      * Returns the Chart object.
      */
     public static chart(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
-    ): Chart {
-        return new Chart(a as any, b as any, c);
+        a: string|globalThis.HTMLElement|Partial<Options>,
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
+    ): Chart|Promise<Chart> {
+        const chart = new Chart(a as any, b as any, c);
+        return chart.promise || chart;
     }
 
     /* *
@@ -271,20 +281,20 @@ class Chart {
     // Definitions
     public constructor(
         options: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     );
     public constructor(
         renderTo: (string|globalThis.HTMLElement),
         options: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     );
 
     // Implementation
     public constructor(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
+        a: string|globalThis.HTMLElement|Partial<Options>,
         /* eslint-disable @typescript-eslint/no-unused-vars */
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
         const args = [
@@ -353,6 +363,7 @@ class Chart {
     public plotWidth!: number;
     public pointCount!: number;
     public pointer?: Pointer;
+    public promise?: Promise<Chart>;
     public reflowTimeout?: number;
     public renderer!: Chart.Renderer;
     public renderTo!: globalThis.HTMLElement;
@@ -426,7 +437,7 @@ class Chart {
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
 
         // Fire the event with a default function
@@ -472,7 +483,15 @@ class Chart {
             // considered for anti-collision
             this.labelCollectors = [];
 
-            this.callback = callback;
+            // Create a promise to be resolved later
+            if (callback === true) {
+                this.promise = new Promise<Chart>((resolve): void => {
+                    this.callback = resolve;
+                });
+            } else {
+                this.callback = callback;
+            }
+
             this.isResizing = 0;
 
             /**

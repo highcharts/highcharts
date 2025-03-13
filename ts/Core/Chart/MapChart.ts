@@ -65,6 +65,8 @@ declare module './ChartLike'{
  */
 class MapChart extends Chart {
 
+    public promise?: Promise<MapChart>;
+
     /* *
      *
      *  Functions
@@ -90,7 +92,7 @@ class MapChart extends Chart {
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
 
         const defaultCreditsOptions = getOptions().credits;
@@ -273,11 +275,12 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
-    ): MapChart {
-        return new MapChart(a as any, b as any, c);
+        a: string|HTMLDOMElement|Partial<Options>,
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
+    ): MapChart|Promise<MapChart> {
+        const chart = new MapChart(a as any, b as any, c);
+        return chart.promise || chart;
     }
 
     /**
