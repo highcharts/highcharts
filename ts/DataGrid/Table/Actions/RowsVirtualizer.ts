@@ -443,6 +443,25 @@ class RowsVirtualizer {
                 preLastRow.htmlElement.offsetHeight + translateBuffer
             );
         }
+
+        // Reset elements if the last row exceeds the table body height.
+        if (
+            lastRow.translateY + lastRow.htmlElement.offsetHeight <
+            tbodyElement.offsetHeight
+        ) {
+            // Set the first row's element height to the cell content.
+            const firstRow = rows[0];
+            firstRow.htmlElement.style.height =
+                firstRow.cells[0].htmlElement.offsetHeight + 'px';
+
+            // Place rows below each other.
+            for (let i = 1; i < rowsLn; i++) {
+                const prevRow = rows[i - 1];
+                rows[i].setTranslateY(
+                    prevRow.translateY + prevRow.htmlElement.offsetHeight
+                );
+            }
+        }
     }
 
     /**
