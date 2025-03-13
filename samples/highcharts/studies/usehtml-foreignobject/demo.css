@@ -1,6 +1,25 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
 #container {
     max-width: 800px;
     height: 400px;
     position: relative;
     margin: 1em auto;
+}
+
+/*
+foreignObject body {
+    border: 1px dotted green;
+}
+*/
+
+table th,
+table td {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+}
+
+.fa {
+    /* Safari doesn't support transform inside foreignObject */
+    transform: none;
 }

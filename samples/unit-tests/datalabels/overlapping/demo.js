@@ -86,7 +86,12 @@ QUnit.test('Overlapping dataLabels should be hidden', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[1].points[0].dataLabel.div.style['pointer-events'],
+        (
+            // Parallel HTML
+            chart.series[1].points[0].dataLabel.div ||
+            // Foreign object
+            chart.series[1].points[0].dataLabel.element
+        ).style['pointer-events'],
         'none',
         'Pointer events for overlapped labels should be disabled (#18821)'
     );

@@ -699,7 +699,11 @@ namespace DataLabel {
                         dataLabel && (
                             !labelEnabled ||
                             !defined(labelText) ||
-                            !!dataLabel.div !== !!labelOptions.useHTML ||
+                            // Changed useHTML value
+                            !!(
+                                dataLabel.div ||
+                                dataLabel.text?.foreignObject
+                            ) !== !!labelOptions.useHTML ||
                             (
                                 // Change from no rotation to rotation and
                                 // vice versa. Don't use defined() because
@@ -720,7 +724,6 @@ namespace DataLabel {
                     // disabled in the point options, or if they fall outside
                     // the plot area.
                     if (labelEnabled && defined(labelText)) {
-
                         if (!dataLabel) {
                             // Create new label element
                             dataLabel = renderer.label(
