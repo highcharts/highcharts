@@ -33,7 +33,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                point.dataLabel.element.childNodes[0].style.color
+                point.dataLabel.element.childNodes[0].style.fill
             ).get(),
             Highcharts.color(chart.renderer.getContrast(point.color)).get(),
             'Contrast color should be used for a justified label on a column.'
@@ -46,7 +46,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                point.dataLabel.element.childNodes[0].style.color
+                point.dataLabel.element.childNodes[0].style.fill
             ).get(),
             'rgb(0,0,0)',
             `Contrast color should not be used when dataLabel does not collide  
@@ -61,7 +61,7 @@ QUnit.test(
         });
         assert.strictEqual(
             chart.series[1].points[11].dataLabel.element.childNodes[0].style
-                .color,
+                .fill,
             'red',
             `After updating from contrast color,
             label should have new color (#12500)`
@@ -87,7 +87,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.color
+                points[0].dataLabel.element.childNodes[0].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(255,255,255)'
@@ -104,7 +104,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.color
+                points[0].dataLabel.element.childNodes[0].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(0,0,0)'
@@ -123,7 +123,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.color
+                points[0].dataLabel.element.childNodes[0].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(255,255,255)'
@@ -141,7 +141,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[1].style.color
+                points[0].dataLabel.element.childNodes[1].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(0, 0, 0)'
@@ -159,7 +159,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[1].style.color
+                points[0].dataLabel.element.childNodes[1].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(0, 0, 0)'
