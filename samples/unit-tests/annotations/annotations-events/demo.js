@@ -249,7 +249,7 @@ QUnit.test('Annotations events - general', function (assert) {
         '#15730: Popup should close when hiding annotation'
     );
 
-    const customButton = chart.exportSVGElements[3].element;
+    const customButton = chart.exporting.exportSVGElements[3].element;
     Highcharts.fireEvent(customButton, 'click');
     controller.click(150, 150);
     assert.ok(

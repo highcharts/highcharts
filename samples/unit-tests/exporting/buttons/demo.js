@@ -86,7 +86,7 @@ QUnit.test('Export buttons', function (assert) {
 
     // Click it
     var controller = new TestController(chart),
-        alignAttr = chart.exportSVGElements[0].alignAttr;
+        alignAttr = chart.exporting.exportSVGElements[0].alignAttr;
     controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
     assert.strictEqual(
@@ -176,14 +176,14 @@ QUnit.test('View/hide data table button, #14338.', function (assert) {
 
     // Test menu items
     const controller = new TestController(chart),
-        alignAttr = chart.exportSVGElements[0].alignAttr;
+        alignAttr = chart.exporting.exportSVGElements[0].alignAttr;
 
     // Click on the export menu to trigger list creation.
     controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
     chart.toggleDataTable();
     assert.strictEqual(
-        chart.exportDivElements[0].innerText,
+        chart.exporting.exportDivElements[0].innerText,
         'Hide data table',
         'There should be text indicating that the table is visible and can ' +
         'be hidden.'
@@ -191,7 +191,7 @@ QUnit.test('View/hide data table button, #14338.', function (assert) {
 
     chart.toggleDataTable();
     assert.strictEqual(
-        chart.exportDivElements[0].innerText,
+        chart.exporting.exportDivElements[0].innerText,
         'View data table',
         'There should be text indicating that the table is hidden and can be ' +
         'visible again.'
@@ -220,13 +220,13 @@ QUnit.test(
 
         // Test menu items
         const controller = new TestController(chart),
-            alignAttr = chart.exportSVGElements[0].alignAttr;
+            alignAttr = chart.exporting.exportSVGElements[0].alignAttr;
 
         // Click on the export menu to trigger list creation.
         controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
         assert.strictEqual(
-            chart.exportDivElements[0].innerText,
+            chart.exporting.exportDivElements[0].innerText,
             'Hide data table',
             'There should be text indicating that the table is visible and ' +
             'can be hidden.'
@@ -234,7 +234,7 @@ QUnit.test(
 
         chart.toggleDataTable();
         assert.strictEqual(
-            chart.exportDivElements[0].innerText,
+            chart.exporting.exportDivElements[0].innerText,
             'View data table',
             'There should be text indicating that the table is hidden and ' +
             'can be visible again.'

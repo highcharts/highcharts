@@ -1002,8 +1002,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     // #15782 Right side
     let mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
         chart.mapNavigation.navButtonsGroup.translateY;
-    let expBtnEdge = chart.exportingGroup.getBBox().y +
-        chart.exportingGroup.getBBox().height;
+    let expBtnEdge = chart.exporting.exportingGroup.getBBox().y +
+        chart.exporting.exportingGroup.getBBox().height;
 
     assert.ok(
         mapNavY > expBtnEdge,
@@ -1029,8 +1029,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     // #15782 Left side
     mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
         chart.mapNavigation.navButtonsGroup.translateY;
-    expBtnEdge = chart.exportingGroup.getBBox().y +
-        chart.exportingGroup.getBBox().height;
+    expBtnEdge = chart.exporting.exportingGroup.getBBox().y +
+        chart.exporting.exportingGroup.getBBox().height;
 
     assert.ok(
         mapNavY > expBtnEdge,
@@ -1056,7 +1056,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
         chart.mapNavigation.navButtonsGroup.getBBox().height;
-    expBtnEdge = chart.exportingGroup.getBBox().y;
+    expBtnEdge = chart.exporting.exportingGroup.getBBox().y;
 
     assert.ok(
         mapNavY < expBtnEdge,
@@ -1083,7 +1083,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
         chart.mapNavigation.navButtonsGroup.getBBox().height;
-    expBtnEdge = chart.exportingGroup.getBBox().y;
+    expBtnEdge = chart.exporting.exportingGroup.getBBox().y;
 
     assert.ok(
         mapNavY < expBtnEdge,
