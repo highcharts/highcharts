@@ -20,7 +20,6 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type EventCallback from '../../Core/EventCallback';
 import type {
@@ -36,6 +35,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
+import Chart from '../../Core/Chart/Chart';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -46,6 +46,7 @@ import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
 import G from '../../Core/Globals.js';
 const {
+    composed,
     doc,
     isMS,
     SVG_NS,
@@ -56,8 +57,8 @@ import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    css,
     createElement,
+    css,
     discardElement,
     error,
     extend,
@@ -67,6 +68,7 @@ const {
     merge,
     objectEach,
     pick,
+    pushUnique,
     removeEvent,
     splat,
     uniqueKey
@@ -109,27 +111,20 @@ declare module '../../Core/Axis/AxisOptions' {
 
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
-        exportContextMenu?: Exporting.ChartComposition['exportContextMenu'];
-        exportDivElements?: Exporting.ChartComposition['exportDivElements'];
-        exporting?: Exporting.ChartAdditions;
-        exportingGroup?: Exporting.ChartComposition['exportingGroup'];
-        exportSVGElements?: Exporting.ChartComposition['exportSVGElements'];
-        isPrinting?: Exporting.ChartComposition['isPrinting'];
-        openMenu?: Exporting.ChartComposition['openMenu'];
+        exporting: Exporting;
         /** @requires modules/exporting */
         exportChart(
             exportingOptions?: ExportingOptions,
             chartOptions?: Options
         ): void;
         /** @requires modules/exporting */
-        getSVGForLocalExport(
-            options: ExportingOptions,
-            chartOptions: Partial<Options>,
-            failCallback: Function,
-            successCallback: Function
-        ): void;
+        getChartHTML(applyStyleSheets?: boolean): string;
         /** @requires modules/exporting */
-        print(): void;
+        getFilename(): string
+        /** @requires modules/exporting */
+        getSVG(chartOptions?: Partial<Options>): string;
+        /** @requires modules/exporting */
+        print(): void
     }
 }
 
@@ -140,170 +135,58 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/Options' {
-    interface LangOptions {
-        contextButtonTitle?: string;
-        exitFullscreen?: string;
-        downloadJPEG?: string;
-        downloadPDF?: string;
-        downloadPNG?: string;
-        downloadSVG?: string;
-        printChart?: string;
-        viewFullscreen?: string;
-    }
-    interface Options {
-        exporting?: ExportingOptions;
-        navigation?: NavigationOptions;
-    }
-}
-
 /* *
  *
- *  Composition
+ *  Constants
  *
  * */
 
-namespace Exporting {
+// Dummy object so we can reuse our canvas-tools.js without errors
+export const CanVGRenderer: AnyRecord = {},
+    domurl = win.URL || win.webkitURL || win;
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * Exporting of a chart.
+ *
+ * @class
+ * @name Highcharts.Exporting
+ *
+ * @param {Highcharts.Chart} chart
+ * The chart instance.
+ *
+ */
+class Exporting {
 
     /* *
      *
-     *  Declarations
+     *  Constructor
      *
      * */
 
-    export interface AfterPrintCallbackFunction {
-        (chart: Chart, event: Event): void;
-    }
-
-    export interface BeforePrintCallbackFunction {
-        (chart: Chart, event: Event): void;
-    }
-
-    export declare interface ChartAdditions {
-        update(options: ExportingOptions, redraw?: boolean): void;
-    }
-
-    export declare class ChartComposition extends Chart {
-        btnCount?: number;
-        buttonOffset?: number;
-        exportContextMenu?: Exporting.DivElement;
-        exportDivElements?: Array<(Exporting.DivElement|null)>;
-        exportEvents?: Array<Function>;
-        exporting: ChartAdditions;
-        exportingGroup?: SVGElement;
-        exportMenuHeight?: number;
-        exportMenuWidth?: number;
-        exportSVGElements?: Array<(SVGElement|undefined)>;
-        forExport?: boolean;
-        isDirtyExporting?: boolean;
-        isPrinting?: boolean;
-        openMenu?: boolean;
-        printReverseInfo?: PrintReverseInfoObject;
-        /** @requires modules/exporting */
-        addButton(options: ExportingButtonOptions): void;
-        /** @requires modules/exporting */
-        afterPrint(): void;
-        /** @requires modules/exporting */
-        beforePrint(): void;
-        /** @requires modules/exporting */
-        contextMenu(
-            className: string,
-            items: Array<(string|Exporting.MenuObject)>,
-            x: number,
-            y: number,
-            width: number,
-            height: number,
-            button: SVGElement
-        ): void;
-        /** @requires modules/exporting */
-        destroyExport(e?: Event): void;
-        /** @requires modules/exporting */
-        exportChart(
-            exportingOptions?: ExportingOptions,
-            chartOptions?: Options
-        ): void;
-        /** @requires modules/exporting */
-        getChartHTML(applyStyleSheets?: boolean): string;
-        /** @requires modules/exporting */
-        getFilename(): string;
-        /** @requires modules/exporting */
-        getSVG(chartOptions?: Options): string;
-        /** @requires modules/exporting */
-        getSVGForExport(
-            options: ExportingOptions,
-            chartOptions: Partial<Options>
-        ): string;
-        /** @requires modules/exporting */
-        getSVGForLocalExport(
-            options: ExportingOptions,
-            chartOptions: Partial<Options>,
-            failCallback: Function,
-            successCallback: Function
-        ): void;
-        /** @requires modules/exporting */
-        inlineStyles(): void;
-        /** @requires modules/exporting */
-        moveContainers(moveTo: HTMLDOMElement): void;
-        /** @requires modules/exporting */
-        renderExporting(): void;
-        /** @requires modules/exporting */
-        /** @requires modules/exporting */
-        print(): void;
-        /** @requires modules/exporting */
-        sanitizeSVG(svg: string, options: Options): string;
-    }
-
-    export interface DivElement extends HTMLDOMElement {
-        hideTimer?: number;
-        hideMenu(): void;
-    }
-
-    export interface DownloadSVGLocalFunction {
-        (
-            svg: string,
-            options: ExportingOptions,
-            failCallback: Function,
-            successCallback?: Function
-        ): void
-    }
-
-    export interface ErrorCallbackFunction {
-        (options: ExportingOptions, err: Error): void;
-    }
-
-    export interface MenuObject {
-        onclick?: EventCallback<Chart>;
-        separator?: boolean;
-        text?: string;
-        textKey?: string;
-    }
-
-    export interface PrintReverseInfoObject {
-        childNodes: NodeListOf<ChildNode>;
-        origDisplay: Array<(string|null)> ;
-        resetParams?: [
-            (number|null)?,
-            (number|null)?,
-            (boolean|Partial<AnimationOptions>)?
-        ];
-    }
-
-    export interface ScriptOnLoadCallbackFunction {
-        (this: GlobalEventHandlers, ev: Event): void;
+    public constructor(
+        chart: Exporting.ChartComposition,
+        options: ExportingOptions
+    ) {
+        this.chart = chart;
+        this.options = options;
     }
 
     /* *
      *
-     *  Constants
+     *  Static Properties
      *
      * */
 
-    // Dummy object so we can reuse our canvas-tools.js without errors
-    export const CanVGRenderer: AnyRecord = {},
-        domurl = win.URL || win.webkitURL || win;
+    public static inlineAllowlist: Array<RegExp> = [];
 
     // These CSS properties are not inlined. Remember camelCase.
-    const inlineDenylist: Array<RegExp> = [
+    public static inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
         /^(clipPath|cssText|d|height|width)$/, // Full words
         /^font$/, // More specific props are set
@@ -318,7 +201,7 @@ namespace Exporting {
     ];
 
     // These ones are translated to attributes rather than styles
-    const inlineToAttributes: Array<string> = [
+    public static inlineToAttributes: Array<string> = [
         'fill',
         'stroke',
         'strokeLinecap',
@@ -329,12 +212,12 @@ namespace Exporting {
         'y'
     ];
 
-    export const inlineAllowlist: Array<RegExp> = [];
-
     // Milliseconds to defer image load event handlers to offset IE bug
-    export const loadEventDeferDelay = isMS ? 150 : 0;
+    public static loadEventDeferDelay = isMS ? 150 : 0;
 
-    const unstyledElements: Array<string> = [
+    public static printingChart?: Exporting.ChartComposition;
+
+    public static unstyledElements: Array<string> = [
         'clipPath',
         'defs',
         'desc'
@@ -342,11 +225,752 @@ namespace Exporting {
 
     /* *
      *
-     *  Variables
+     *  Static Functions
      *
      * */
 
-    let printingChart: (ChartComposition|undefined);
+    /**
+     * Get data URL to an image of an SVG and call download on it options
+     * object:
+     *
+     * - **filename:** Name of resulting downloaded file without extension.
+     * Default is `chart`.
+     * - **type:** File type of resulting download. Default is `image/png`.
+     * - **scale:** Scaling factor of downloaded image compared to source.
+     * Default is `1`.
+     * - **libURL:** URL pointing to location of dependency scripts to download
+     * on demand. Default is the exporting.libURL option of the global
+     * Highcharts options pointing to our server.
+     *
+     * @function Highcharts.downloadSVGLocal
+     *
+     * @param {string} svg
+     * The generated SVG.
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     * The exporting options.
+     * @param {Function} failCallback
+     * The callback function in case of errors.
+     * @param {Function} [successCallback]
+     * The callback function in case of success.
+     *
+     * @emits Highcharts.Chart#event:exportChartLocalCore
+     *
+     * @requires modules/exporting
+     */
+    public static downloadSVGLocal(
+        svg: string,
+        exportingOptions: ExportingOptions,
+        failCallback: Function,
+        successCallback?: Function
+    ): void {
+        const imageType = exportingOptions.type || 'image/png',
+            filename = (
+                (exportingOptions.filename || 'chart') +
+                '.' +
+                (
+                    imageType === 'image/svg+xml' ?
+                        'svg' : imageType.split('/')[1]
+                )
+            ),
+            scale = exportingOptions.scale || 1;
+        let svgurl: string,
+            blob,
+            finallyHandler: Function,
+            libURL = (
+                exportingOptions.libURL ||
+                (defaultOptions.exporting as any).libURL
+            ),
+            objectURLRevoke = true;
+
+        // Allow libURL to end with or without fordward slash
+        libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
+
+        // Initiate download depending on file type
+        if (imageType === 'image/svg+xml') {
+            // SVG download. In this case, we want to use Microsoft specific
+            // Blob if available
+            try {
+                if (typeof win.MSBlobBuilder !== 'undefined') {
+                    blob = new win.MSBlobBuilder();
+                    blob.append(svg);
+                    svgurl = blob.getBlob('image/svg+xml') as any;
+                } else {
+                    svgurl = Exporting.svgToDataUrl(svg);
+                }
+                downloadURL(svgurl, filename);
+                if (successCallback) {
+                    successCallback();
+                }
+            } catch (e) {
+                failCallback(e);
+            }
+        } else if (imageType !== 'application/pdf') {
+            // PNG/JPEG download - create bitmap from SVG
+            svgurl = Exporting.svgToDataUrl(svg);
+            finallyHandler = function (): void {
+                try {
+                    domurl.revokeObjectURL(svgurl);
+                } catch (e) {
+                    // Ignore
+                }
+            };
+            // First, try to get PNG by rendering on canvas
+            Exporting.imageToDataUrl(
+                svgurl,
+                imageType,
+                {},
+                scale,
+                function (imageURL: string): void {
+                    // Success
+                    try {
+                        downloadURL(imageURL, filename);
+                        if (successCallback) {
+                            successCallback();
+                        }
+                    } catch (e) {
+                        failCallback(e);
+                    }
+                }, function (): void {
+                    if (svg.length > RegexLimits.svgLimit) {
+                        throw new Error('Input too long');
+                    }
+                    // Failed due to tainted canvas
+                    // Create new and untainted canvas
+                    const canvas = doc.createElement('canvas'),
+                        ctx = canvas.getContext('2d'),
+                        matchedImageWidth = svg.match(
+                            // eslint-disable-next-line max-len
+                            /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                        ),
+                        matchedImageHeight = svg.match(
+                            // eslint-disable-next-line max-len
+                            /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                        );
+
+                    if (ctx && matchedImageWidth && matchedImageHeight) {
+                        const imageWidth = +matchedImageWidth[1] * scale,
+                            imageHeight = +matchedImageHeight[1] * scale,
+                            downloadWithCanVG = (): void => {
+                                const v = win.canvg.Canvg.fromString(ctx, svg);
+                                v.start();
+                                try {
+                                    downloadURL(
+                                        win.navigator.msSaveOrOpenBlob ?
+                                            canvas.msToBlob() :
+                                            canvas.toDataURL(imageType),
+                                        filename
+                                    );
+                                    if (successCallback) {
+                                        successCallback();
+                                    }
+                                } catch (e) {
+                                    failCallback(e);
+                                } finally {
+                                    finallyHandler();
+                                }
+                            };
+
+                        canvas.width = imageWidth;
+                        canvas.height = imageHeight;
+                        if (win.canvg) {
+                            // Use preloaded canvg
+                            downloadWithCanVG();
+                        } else {
+                            // Must load canVG first.
+                            // Don't destroy the object URL yet since we are
+                            // doing things asynchronously. A cleaner solution
+                            // would be nice, but this will do for now.
+                            objectURLRevoke = true;
+                            Exporting.getScript(
+                                libURL + 'canvg.js',
+                                downloadWithCanVG
+                            );
+                        }
+                    }
+                },
+                // No canvas support
+                failCallback,
+                // Failed to load image
+                failCallback,
+                // Finally
+                function (): void {
+                    if (objectURLRevoke) {
+                        finallyHandler();
+                    }
+                }
+            );
+        }
+    }
+
+    /**
+     * Return the unfiltered innerHTML of the chart container. Used as hook for
+     * plugins. In styled mode, it also takes care of inlining CSS style rules.
+     *
+     * @see Chart#getSVG
+     *
+     * @function Highcharts.Exporting#getChartHTML
+     *
+     * @param {Highcharts.Chart} chart
+     * The chart instance.
+     * @param {boolean} [applyStyleSheets]
+     * whether or not to apply the style sheets.
+     *
+     * @return {string}
+     * The unfiltered SVG of the chart.
+     *
+     * @requires modules/exporting
+     */
+    public static getChartHTML(
+        chart: Chart,
+        applyStyleSheets?: boolean
+    ): string {
+        if (applyStyleSheets) {
+            Exporting.inlineStyles(chart);
+        }
+
+        return chart.container.innerHTML;
+    }
+
+    /**
+     * Downloads a script and executes a callback when done.
+     *
+     * @private
+     * @function Highcharts.Exporting#getScript
+     *
+     * @param {string} scriptLocation
+     * The location for the script to fetch.
+     * @param {Exporting.ScriptOnLoadCallbackFunction} callback
+     * The callback to run on the script load.
+     *
+     * @requires modules/exporting
+     */
+    public static getScript(
+        scriptLocation: string,
+        callback: Exporting.ScriptOnLoadCallbackFunction
+    ): void {
+        const head = doc.getElementsByTagName('head')[0],
+            script = doc.createElement('script');
+
+        script.type = 'text/javascript';
+        script.src = scriptLocation;
+        script.onload = callback;
+        script.onerror = function (): void {
+            error('Error loading script ' + scriptLocation);
+        };
+
+        head.appendChild(script);
+    }
+
+    /**
+     * Make hyphenated property names out of camelCase.
+     *
+     * @private
+     * @function Highcharts.Exporting#hyphenate
+     *
+     * @param {string} prop
+     * Property name in camelCase.
+     *
+     * @return {string}
+     * Hyphenated property name.
+     *
+     * @requires modules/exporting
+     */
+    public static hyphenate(prop: string): string {
+        return prop.replace(
+            /[A-Z]/g,
+            function (match: string): string {
+                return '-' + match.toLowerCase();
+            }
+        );
+    }
+
+    /**
+     * Get data:URL from image URL. Pass in callbacks to handle results.
+     *
+     * @private
+     * @function Highcharts.Exporting#imageToDataUrl
+     *
+     * @param {string} imageURL
+     * The address or URL of the image.
+     * @param {string} imageType
+     * The type of the image.
+     * @param {*} callbackArgs
+     * The callbackArgs is used only by callbacks.
+     * @param {number} scale
+     * The scale for the exported image.
+     * @param {Function} successCallback
+     * Receives four arguments: imageURL, imageType, callbackArgs, and scale.
+     * @param {Function} taintedCallback
+     * Receives four arguments: imageURL, imageType, callbackArgs, and scale.
+     * @param {Function} noCanvasSupportCallback
+     * Receives four arguments: imageURL, imageType, callbackArgs, and scale.
+     * @param {Function} failedLoadCallback
+     * Receives four arguments: imageURL, imageType, callbackArgs, and scale.
+     * @param {Function} [finallyCallback]
+     * The finallyCallback is always called at the end of the process. All
+     * callbacks receive four arguments: imageURL, imageType, callbackArgs, and
+     * scale.
+     *
+     * @requires modules/exporting
+     */
+    public static imageToDataUrl(
+        imageURL: string,
+        imageType: string,
+        callbackArgs: unknown,
+        scale: number,
+        successCallback: Function,
+        taintedCallback: Function,
+        noCanvasSupportCallback: Function,
+        failedLoadCallback: Function,
+        finallyCallback?: Function
+    ): void {
+        let img = new win.Image(),
+            taintedHandler: Function;
+        const loadHandler = (): void => {
+                setTimeout(function (): void {
+                    const canvas = doc.createElement('canvas'),
+                        ctx = canvas.getContext && canvas.getContext('2d');
+                    let dataURL;
+
+                    try {
+                        if (!ctx) {
+                            noCanvasSupportCallback(
+                                imageURL,
+                                imageType,
+                                callbackArgs,
+                                scale
+                            );
+                        } else {
+                            canvas.height = img.height * scale;
+                            canvas.width = img.width * scale;
+                            ctx.drawImage(
+                                img, 0, 0, canvas.width, canvas.height
+                            );
+
+                            // Now we try to get the contents of the canvas.
+                            try {
+                                dataURL = canvas.toDataURL(imageType);
+                                successCallback(
+                                    dataURL,
+                                    imageType,
+                                    callbackArgs,
+                                    scale
+                                );
+                            } catch (e) {
+                                taintedHandler(
+                                    imageURL,
+                                    imageType,
+                                    callbackArgs,
+                                    scale
+                                );
+                            }
+                        }
+                    } finally {
+                        if (finallyCallback) {
+                            finallyCallback(
+                                imageURL,
+                                imageType,
+                                callbackArgs,
+                                scale
+                            );
+                        }
+                    }
+                // IE bug where image is not always ready despite calling load
+                // event.
+                }, Exporting.loadEventDeferDelay);
+            },
+            // Image load failed (e.g. invalid URL)
+            errorHandler = (): void => {
+                failedLoadCallback(imageURL, imageType, callbackArgs, scale);
+                if (finallyCallback) {
+                    finallyCallback(imageURL, imageType, callbackArgs, scale);
+                }
+            };
+
+        // This is called on load if the image drawing to canvas failed with a
+        // security error. We retry the drawing with crossOrigin set to
+        // Anonymous.
+        taintedHandler = (): void => {
+            img = new win.Image();
+            taintedHandler = taintedCallback;
+            // Must be set prior to loading image source
+            img.crossOrigin = 'Anonymous';
+            img.onload = loadHandler;
+            img.onerror = errorHandler;
+            img.src = imageURL;
+        };
+
+        img.onload = loadHandler;
+        img.onerror = errorHandler;
+        img.src = imageURL;
+    }
+
+    /**
+     * Analyze inherited styles from stylesheets and add them inline.
+     *
+     * @private
+     * @function Highcharts.Exporting#inlineStyles
+     *
+     * @param {Highcharts.Chart} chart
+     * The chart instance.
+     *
+     * @todo What are the border styles for text about? In general, text has a
+     * lot of properties.
+     *
+     * @todo Make it work with IE9 and IE10.
+     *
+     * @requires modules/exporting
+     */
+    public static inlineStyles(
+        chart: Chart
+    ): void {
+        const denylist = Exporting.inlineDenylist,
+            allowlist = Exporting.inlineAllowlist, // For IE
+            defaultStyles: Record<string, CSSObject> = {};
+        let dummySVG: SVGElement;
+
+        // Create an iframe where we read default styles without pollution from
+        // this body
+        const iframe: HTMLIFrameElement = doc.createElement('iframe');
+        css(iframe, {
+            width: '1px',
+            height: '1px',
+            visibility: 'hidden'
+        });
+        doc.body.appendChild(iframe);
+        const iframeDoc = (
+            iframe.contentWindow && iframe.contentWindow.document
+        );
+        if (iframeDoc) {
+            iframeDoc.body.appendChild(
+                iframeDoc.createElementNS(SVG_NS, 'svg')
+            );
+        }
+
+        /**
+         * Call this on all elements and recurse to children.
+         *
+         * @private
+         * @function recurse
+         *
+         * @param {Highcharts.HTMLDOMElement} node
+         * Element child.
+         */
+        function recurse(node: HTMLDOMElement): void {
+            const filteredStyles: CSSObject = {};
+
+            let styles: CSSObject,
+                parentStyles: (CSSObject|SVGAttributes),
+                dummy: Element,
+                denylisted: (boolean|undefined),
+                allowlisted: (boolean|undefined),
+                i: number;
+
+            /**
+             * Check computed styles and whether they are in the allow/denylist
+             * for styles or attributes.
+             *
+             * @private
+             * @function filterStyles
+             *
+             * @param {string|number|boolean|undefined} val
+             * Style value.
+             * @param {string} prop
+             * Style property name.
+             */
+            function filterStyles(
+                val: (string|number|boolean|undefined),
+                prop: string
+            ): void {
+
+                // Check against allowlist & denylist
+                denylisted = allowlisted = false;
+                if (allowlist.length) {
+                    // Styled mode in IE has a allowlist instead. Exclude all
+                    // props not in this list.
+                    i = allowlist.length;
+                    while (i-- && !allowlisted) {
+                        allowlisted = allowlist[i].test(prop);
+                    }
+                    denylisted = !allowlisted;
+                }
+
+                // Explicitly remove empty transforms
+                if (prop === 'transform' && val === 'none') {
+                    denylisted = true;
+                }
+
+                i = denylist.length;
+                while (i-- && !denylisted) {
+                    if (prop.length > RegexLimits.shortLimit) {
+                        throw new Error('Input too long');
+                    }
+                    denylisted = (
+                        denylist[i].test(prop) ||
+                        typeof val === 'function'
+                    );
+                }
+
+                if (!denylisted) {
+                    // If parent node has the same style, it gets inherited, no
+                    // need to inline it. Top-level props should be diffed
+                    // against parent (#7687).
+                    if (
+                        (
+                            (parentStyles as any)[prop] !== val ||
+                            node.nodeName === 'svg'
+                        ) &&
+                        (defaultStyles[node.nodeName] as any)[prop] !== val
+                    ) {
+                        // Attributes
+                        if (
+                            !Exporting.inlineToAttributes ||
+                            Exporting.inlineToAttributes.indexOf(prop) !== -1
+                        ) {
+                            if (val) {
+                                node.setAttribute(
+                                    Exporting.hyphenate(prop), val
+                                );
+                            }
+                        // Styles
+                        } else {
+                            (filteredStyles as any)[prop] = val;
+                        }
+                    }
+                }
+            }
+
+            if (
+                iframeDoc &&
+                node.nodeType === 1 &&
+                Exporting.unstyledElements.indexOf(node.nodeName) === -1
+            ) {
+                styles = win.getComputedStyle(node, null) as any;
+                parentStyles = node.nodeName === 'svg' ?
+                    {} :
+                    win.getComputedStyle(node.parentNode, null) as any;
+
+                // Get default styles from the browser so that we don't have to
+                // add these
+                if (!defaultStyles[node.nodeName]) {
+                    /*
+                    If (!dummySVG) {
+                        dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
+                        dummySVG.setAttribute('version', '1.1');
+                        doc.body.appendChild(dummySVG);
+                    }
+                    */
+                    dummySVG = iframeDoc.getElementsByTagName('svg')[0] as any;
+                    dummy = iframeDoc.createElementNS(
+                        node.namespaceURI,
+                        node.nodeName
+                    );
+                    dummySVG.appendChild(dummy);
+
+                    // Get the defaults into a standard object (simple merge
+                    // won't do)
+                    const s = win.getComputedStyle(dummy, null),
+                        defaults: Record<string, string> = {};
+                    for (const key in s) {
+                        if (
+                            key.length < RegexLimits.shortLimit &&
+                            typeof s[key] === 'string' &&
+                            !/^\d+$/.test(key)
+                        ) {
+                            defaults[key] = s[key];
+                        }
+                    }
+                    defaultStyles[node.nodeName] = defaults;
+
+                    // Remove default fill, otherwise text disappears when
+                    // exported
+                    if (node.nodeName === 'text') {
+                        delete defaultStyles.text.fill;
+                    }
+                    dummySVG.removeChild(dummy);
+                }
+
+                // Loop through all styles and add them inline if they are ok
+                for (const p in styles) {
+                    if (
+                        // Some browsers put lots of styles on the prototype...
+                        G.isFirefox ||
+                        isMS ||
+                        G.isSafari || // #16902
+                        // ... Chrome puts them on the instance
+                        Object.hasOwnProperty.call(styles, p)
+                    ) {
+                        filterStyles((styles as any)[p], p);
+                    }
+                }
+
+                // Apply styles
+                css(node, filteredStyles);
+
+                // Set default stroke width (needed at least for IE)
+                if (node.nodeName === 'svg') {
+                    node.setAttribute('stroke-width', '1px');
+                }
+
+                if (node.nodeName === 'text') {
+                    return;
+                }
+
+                // Recurse
+                [].forEach.call(node.children || node.childNodes, recurse);
+            }
+        }
+
+        /**
+         * Remove the dummy objects used to get defaults.
+         *
+         * @private
+         * @function tearDown
+         */
+        function tearDown(): void {
+            dummySVG.parentNode.removeChild(dummySVG);
+            // Remove trash from DOM that stayed after each exporting
+            iframe.parentNode.removeChild(iframe);
+        }
+
+        recurse(chart.container.querySelector('svg') as any);
+        tearDown();
+    }
+
+    /**
+     * Exporting module only. A collection of fixes on the produced SVG to
+     * account for expand properties, browser bugs. Returns a cleaned SVG.
+     *
+     * @private
+     * @function Highcharts.Exporting#sanitizeSVG
+     *
+     * @param {string} svg
+     * SVG code to sanitize.
+     * @param {Highcharts.Options} options
+     * Chart options to apply.
+     *
+     * @return {string}
+     * Sanitized SVG code.
+     *
+     * @requires modules/exporting
+     */
+    public static sanitizeSVG(
+        svg: string,
+        options: Options
+    ): string {
+        const split = svg.indexOf('</svg>') + 6;
+        let html = svg.substr(split);
+
+        // Remove any HTML added to the container after the SVG (#894, #9087)
+        svg = svg.substr(0, split);
+
+        // Move HTML into a foreignObject
+        if (options && options.exporting && options.exporting.allowHTML) {
+            if (html) {
+                html = '<foreignObject x="0" y="0" ' +
+                            'width="' + options.chart.width + '" ' +
+                            'height="' + options.chart.height + '">' +
+                    '<body xmlns="http://www.w3.org/1999/xhtml">' +
+                    // Some tags needs to be closed in xhtml (#13726)
+                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                    '</body>' +
+                    '</foreignObject>';
+                svg = svg.replace('</svg>', html + '</svg>');
+            }
+        }
+
+        svg = svg
+            .replace(/zIndex="[^"]+"/g, '')
+            .replace(/symbolName="[^"]+"/g, '')
+            .replace(/jQuery\d+="[^"]+"/g, '')
+            .replace(/url\(("|&quot;)(.*?)("|&quot;)\;?\)/g, 'url($2)')
+            .replace(/url\([^#]+#/g, 'url(#')
+            .replace(
+                /<svg /,
+                '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
+            )
+            .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
+            .replace(/\n+/g, ' ')
+
+            // Replace HTML entities, issue #347
+            .replace(/&nbsp;/g, '\u00A0') // No-break space
+            .replace(/&shy;/g, '\u00AD'); // Soft hyphen
+
+        return svg;
+    }
+
+    /**
+     * Get blob URL from SVG code. Falls back to normal data URI.
+     *
+     * @private
+     * @function Highcharts.Exporting#svgToDataURL
+     *
+     * @param {string} svg
+     * SVG to get the URL from.
+     *
+     * @return {string}
+     * The data URL.
+     *
+     * @requires modules/exporting
+     */
+    public static svgToDataUrl(svg: string): string {
+        // Webkit and not chrome
+        const userAgent = win.navigator.userAgent;
+        const webKit = (
+            userAgent.indexOf('WebKit') > -1 &&
+            userAgent.indexOf('Chrome') < 0
+        );
+
+        try {
+            // Safari requires data URI since it doesn't allow navigation to
+            // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
+            // (#14780).
+            if (!webKit && svg.indexOf('<foreignObject') === -1) {
+                return domurl.createObjectURL(new win.Blob([svg], {
+                    type: 'image/svg+xml;charset-utf-16'
+                }));
+            }
+        } catch (e) {
+            // Ignore
+        }
+        return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public btnCount?: number;
+
+    public buttonOffset?: number;
+
+    public chart: Exporting.ChartComposition;
+
+    public exportEvents?: Array<Function>;
+
+    public exportMenuHeight?: number;
+
+    public exportMenuWidth?: number;
+
+    public isDirtyExporting?: boolean;
+
+    public isPrinting?: boolean;
+
+    public openMenu?: boolean;
+
+    public options: ExportingOptions = {};
+
+    public printReverseInfo?: Exporting.PrintReverseInfoObject;
+
+    public exportingGroup?: SVGElement;
+
+    public exportContextMenu?: Exporting.DivElement;
+
+    public exportDivElements?: Array<(Exporting.DivElement|null)>;
+
+    public exportSVGElements?: Array<(SVGElement|undefined)>;
 
     /* *
      *
@@ -358,15 +982,19 @@ namespace Exporting {
      * Add the export button to the chart, with options.
      *
      * @private
-     * @function Highcharts.Chart#addButton
-     * @param {Highcharts.NavigationButtonOptions} options
+     * @function Highcharts.Exporting#addButton
+     *
+     * @param {Highcharts.ExportingButtonOptions} options
+     * The exporting button options object.
+     *
      * @requires modules/exporting
      */
-    function addButton(
-        this: ChartComposition,
+    public addButton(
+        this: Exporting,
         options: ExportingButtonOptions
     ): void {
-        const chart = this,
+        const exporting = this,
+            chart = exporting.chart,
             renderer = chart.renderer,
             btnOptions = merge<ExportingButtonOptions>(
                 (chart.options.navigation as any).buttonOptions,
@@ -377,20 +1005,19 @@ namespace Exporting {
             symbolSize = btnOptions.symbolSize || 12;
         let symbol;
 
-        if (!chart.btnCount) {
-            chart.btnCount = 0;
+        if (exporting && !exporting.btnCount) {
+            exporting.btnCount = 0;
         }
 
         // Keeps references to the button elements
-        if (!chart.exportDivElements) {
-            chart.exportDivElements = [];
-            chart.exportSVGElements = [];
+        if (!exporting.exportDivElements) {
+            exporting.exportDivElements = [];
+            exporting.exportSVGElements = [];
         }
 
         if (btnOptions.enabled === false || !btnOptions.theme) {
             return;
         }
-
 
         const theme = chart.styledMode ? {} : btnOptions.theme;
         let callback: (
@@ -418,7 +1045,7 @@ namespace Exporting {
                 if (e) {
                     e.stopPropagation();
                 }
-                chart.contextMenu(
+                exporting.contextMenu(
                     button.menuClassName,
                     menuItems,
                     button.translateX || 0,
@@ -431,10 +1058,8 @@ namespace Exporting {
             };
         }
 
-
         if (btnOptions.text && btnOptions.symbol) {
             theme.paddingLeft = pick(theme.paddingLeft, 30);
-
         } else if (!btnOptions.text) {
             extend(theme, {
                 width: btnOptions.width,
@@ -463,10 +1088,12 @@ namespace Exporting {
                 ], '')
             });
 
-        button.menuClassName = (
-            options.menuClassName ||
-            'highcharts-menu-' + chart.btnCount++
-        );
+        if (exporting.btnCount !== void 0) {
+            button.menuClassName = (
+                options.menuClassName ||
+                'highcharts-menu-' + exporting.btnCount++
+            );
+        }
 
         if (btnOptions.symbol) {
             symbol = renderer
@@ -502,278 +1129,48 @@ namespace Exporting {
         }
 
         button
-            .add(chart.exportingGroup)
+            .add(exporting.exportingGroup)
             .align(extend(btnOptions, {
                 width: button.width,
-                x: pick(btnOptions.x, chart.buttonOffset) // #1654
+                x: pick(btnOptions.x, exporting.buttonOffset) // #1654
             }), true, 'spacingBox');
 
-        (chart.buttonOffset as any) += (
+        (exporting.buttonOffset as any) += (
             ((button.width || 0) + (btnOptions as any).buttonSpacing) *
             (btnOptions.align === 'right' ? -1 : 1)
         );
 
-        (chart.exportSVGElements as any).push(button, symbol as any);
-
-    }
-
-    /**
-     * Clean up after printing a chart.
-     *
-     * @function Highcharts#afterPrint
-     *
-     * @private
-     *
-     * @emits Highcharts.Chart#event:afterPrint
-     */
-    function afterPrint(
-        this: ChartComposition
-    ): void {
-        const chart = this;
-
-        if (!chart.printReverseInfo) {
-            return void 0;
-        }
-
-        const {
-            childNodes,
-            origDisplay,
-            resetParams
-        } = chart.printReverseInfo;
-
-        // Put the chart back in
-        chart.moveContainers(chart.renderTo);
-
-        // Restore all body content
-        [].forEach.call(childNodes, function (
-            node: HTMLDOMElement,
-            i: number
-        ): void {
-            if (node.nodeType === 1) {
-                node.style.display = (origDisplay[i] || '');
-            }
-        });
-
-        chart.isPrinting = false;
-
-        // Reset printMaxWidth
-        if (resetParams) {
-            chart.setSize.apply(chart, resetParams);
-        }
-
-        delete chart.printReverseInfo;
-        printingChart = void 0;
-
-        fireEvent(chart, 'afterPrint');
-    }
-
-    /**
-     * Prepare chart and document before printing a chart.
-     *
-     * @function Highcharts#beforePrint
-     *
-     * @private
-     *
-     *
-     * @emits Highcharts.Chart#event:beforePrint
-     */
-    function beforePrint(
-        this: ChartComposition
-    ): void {
-        const chart = this,
-            body = doc.body,
-            printMaxWidth: number =
-                (chart.options.exporting as any).printMaxWidth,
-            printReverseInfo: PrintReverseInfoObject = {
-                childNodes: body.childNodes,
-                origDisplay: [],
-                resetParams: void 0
-            };
-
-        chart.isPrinting = true;
-        chart.pointer?.reset(void 0, 0);
-
-        fireEvent(chart, 'beforePrint');
-
-        // Handle printMaxWidth
-        const handleMaxWidth: (boolean|number) = printMaxWidth &&
-            chart.chartWidth > printMaxWidth;
-        if (handleMaxWidth) {
-            printReverseInfo.resetParams = [
-                chart.options.chart.width,
-                void 0,
-                false
-            ];
-            chart.setSize(printMaxWidth, void 0, false);
-        }
-
-        // Hide all body content
-        [].forEach.call(printReverseInfo.childNodes, function (
-            node: HTMLDOMElement,
-            i: number
-        ): void {
-            if (node.nodeType === 1) {
-                printReverseInfo.origDisplay[i] = node.style.display;
-                node.style.display = 'none';
-            }
-        });
-
-        // Pull out the chart
-        chart.moveContainers(body);
-        // Storage details for undo action after printing
-        chart.printReverseInfo = printReverseInfo;
-    }
-
-    /**
-     * @private
-     */
-    function chartCallback(chart: Chart): void {
-        const composition = chart as ChartComposition;
-
-        composition.renderExporting();
-
-        addEvent(chart, 'redraw', composition.renderExporting);
-        // Destroy the export elements at chart destroy
-        addEvent(chart, 'destroy', composition.destroyExport);
-
-        // Uncomment this to see a button directly below the chart, for quick
-        // testing of export
-        /*
-        let button, viewImage, viewSource;
-        if (!chart.renderer.forExport) {
-            viewImage = function () {
-                let div = doc.createElement('div');
-                div.innerHTML = chart.getSVGForExport();
-                chart.renderTo.parentNode.appendChild(div);
-            };
-
-            viewSource = function () {
-                let pre = doc.createElement('pre');
-                pre.innerHTML = chart.getSVGForExport()
-                    .replace(/</g, '\n&lt;')
-                    .replace(/>/g, '&gt;');
-                chart.renderTo.parentNode.appendChild(pre);
-            };
-
-            viewImage();
-
-            // View SVG Image
-            button = doc.createElement('button');
-            button.innerHTML = 'View SVG Image';
-            chart.renderTo.parentNode.appendChild(button);
-            button.onclick = viewImage;
-
-            // View SVG Source
-            button = doc.createElement('button');
-            button.innerHTML = 'View SVG Source';
-            chart.renderTo.parentNode.appendChild(button);
-            button.onclick = viewSource;
-        }
-        //*/
-    }
-
-    /**
-     * @private
-     */
-    export function compose(
-        ChartClass: typeof Chart,
-        SVGRendererClass: typeof SVGRenderer
-    ): void {
-        ExportingSymbols.compose(SVGRendererClass);
-        Fullscreen.compose(ChartClass);
-
-        const chartProto = ChartClass.prototype as ChartComposition;
-
-        if (!chartProto.exportChart) {
-            chartProto.afterPrint = afterPrint;
-            chartProto.exportChart = exportChart;
-            chartProto.inlineStyles = inlineStyles;
-            chartProto.print = print;
-            chartProto.sanitizeSVG = sanitizeSVG;
-            chartProto.getChartHTML = getChartHTML;
-            chartProto.getSVG = getSVG;
-            chartProto.getSVGForExport = getSVGForExport;
-            chartProto.getSVGForLocalExport = getSVGForLocalExport;
-            chartProto.getFilename = getFilename;
-            chartProto.moveContainers = moveContainers;
-            chartProto.beforePrint = beforePrint;
-            chartProto.contextMenu = contextMenu;
-            chartProto.addButton = addButton;
-            chartProto.destroyExport = destroyExport;
-            chartProto.renderExporting = renderExporting;
-
-            chartProto.callbacks.push(chartCallback);
-            addEvent(
-                ChartClass as typeof ChartComposition,
-                'init',
-                onChartInit
-            );
-            addEvent(
-                ChartClass as typeof ChartComposition,
-                'layOutTitle',
-                onChartLayOutTitle
-            );
-
-            if (G.isSafari) {
-                win.matchMedia('print').addListener(
-                    function (
-                        this: MediaQueryList,
-                        mqlEvent: MediaQueryListEvent
-                    ): void {
-                        if (!printingChart) {
-                            return void 0;
-                        }
-                        if (mqlEvent.matches) {
-                            printingChart.beforePrint();
-                        } else {
-                            printingChart.afterPrint();
-                        }
-                    }
-                );
-            }
-
-            defaultOptions.exporting = merge(
-                ExportingDefaults.exporting,
-                defaultOptions.exporting
-            );
-
-            defaultOptions.lang = merge(
-                ExportingDefaults.lang,
-                defaultOptions.lang
-            );
-
-            // Buttons and menus are collected in a separate config option set
-            // called 'navigation'. This can be extended later to add control
-            // buttons like zoom and pan right click menus.
-            defaultOptions.navigation = merge(
-                ExportingDefaults.navigation,
-                defaultOptions.navigation
-            );
-        }
-
+        (exporting.exportSVGElements as any).push(button, symbol as any);
     }
 
     /**
      * Display a popup menu for choosing the export type.
      *
      * @private
-     * @function Highcharts.Chart#contextMenu
+     * @function Highcharts.Exporting#contextMenu
+     *
      * @param {string} className
-     *        An identifier for the menu.
+     * An identifier for the menu.
      * @param {Array<string|Highcharts.ExportingMenuObject>} items
-     *        A collection with text and onclicks for the items.
+     * A collection with text and onclicks for the items.
      * @param {number} x
-     *        The x position of the opener button
+     * The x position of the opener button.
      * @param {number} y
-     *        The y position of the opener button
+     * The y position of the opener button.
      * @param {number} width
-     *        The width of the opener button
+     * The width of the opener button.
      * @param {number} height
-     *        The height of the opener button
+     * The height of the opener button.
+     * @param {SVGElement} button
+     * The SVG button element.
+     *
+     * @emits Highcharts.Chart#event:exportMenuHidden
+     * @emits Highcharts.Chart#event:exportMenuShown
+     *
      * @requires modules/exporting
      */
-    function contextMenu(
-        this: ChartComposition,
+    public contextMenu(
+        this: Exporting,
         className: string,
         items: Array<(string|Exporting.MenuObject)>,
         x: number,
@@ -782,7 +1179,8 @@ namespace Exporting {
         height: number,
         button: SVGElement
     ): void {
-        const chart = this,
+        const exporting = this,
+            chart = exporting.chart,
             navOptions: NavigationOptions =
                 chart.options.navigation as any,
             chartWidth = chart.chartWidth,
@@ -795,9 +1193,8 @@ namespace Exporting {
 
         // Create the menu only the first time
         if (!menu) {
-
             // Create a HTML element above the SVG
-            chart.exportContextMenu = (chart as any)[cacheName] = menu =
+            exporting.exportContextMenu = (chart as any)[cacheName] = menu =
                 createElement(
                     'div', {
                         className: className
@@ -838,7 +1235,9 @@ namespace Exporting {
                 if (button) {
                     button.setState(0);
                 }
-                chart.openMenu = false;
+                if (chart.exporting) {
+                    chart.exporting.openMenu = false;
+                }
                 // #10361, #9998
                 css(chart.renderTo, { overflow: 'hidden' });
                 css(chart.container, { overflow: 'hidden' });
@@ -847,7 +1246,7 @@ namespace Exporting {
             };
 
             // Hide the menu some time after mouse leave (#1357)
-            (chart.exportEvents as any).push(
+            (exporting.exportEvents as any).push(
                 addEvent(menu, 'mouseleave', function (): void {
                     menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
                 }),
@@ -858,13 +1257,15 @@ namespace Exporting {
                 // Hide it on clicking or touching outside the menu (#2258,
                 // #2335, #2407)
                 addEvent(doc, 'mouseup', function (e: PointerEvent): void {
-                    if (!chart.pointer?.inClass(e.target as any, className)) {
+                    if (
+                        !chart.pointer?.inClass(e.target as any, className)
+                    ) {
                         menu.hideMenu();
                     }
                 }),
 
                 addEvent(menu, 'click', function (): void {
-                    if (chart.openMenu) {
+                    if (chart.exporting?.openMenu) {
                         menu.hideMenu();
                     }
                 })
@@ -876,7 +1277,7 @@ namespace Exporting {
             ): void {
 
                 if (typeof item === 'string') {
-                    item = (chart.options.exporting as any)
+                    item = (exporting.options as any)
                         .menuItemDefinitions[item];
                 }
 
@@ -890,7 +1291,6 @@ namespace Exporting {
                             void 0,
                             innerMenu
                         );
-
                     } else {
                         // When chart initialized with the table, wrong button
                         // text displayed, #14352.
@@ -937,29 +1337,30 @@ namespace Exporting {
                     }
 
                     // Keep references to menu divs to be able to destroy them
-                    (chart.exportDivElements as any).push(element);
+                    (exporting.exportDivElements as any).push(element);
                 }
             });
 
             // Keep references to menu and innerMenu div to be able to destroy
             // them
-            (chart.exportDivElements as any).push(innerMenu, menu);
+            (exporting.exportDivElements as any).push(innerMenu, menu);
 
-            chart.exportMenuWidth = menu.offsetWidth;
-            chart.exportMenuHeight = menu.offsetHeight;
+            exporting.exportMenuWidth = menu.offsetWidth;
+            exporting.exportMenuHeight = menu.offsetHeight;
         }
 
         const menuStyle: CSSObject = { display: 'block' };
 
         // If outside right, right align it
-        if (x + (chart.exportMenuWidth || 0) > chartWidth) {
+        if (x + (exporting.exportMenuWidth || 0) > chartWidth) {
             menuStyle.right = (chartWidth - x - width - menuPadding) + 'px';
         } else {
             menuStyle.left = (x - menuPadding) + 'px';
         }
         // If outside bottom, bottom align it
         if (
-            y + height + (chart.exportMenuHeight || 0) > chartHeight &&
+            y + height + (exporting.exportMenuHeight || 0) >
+            chartHeight &&
             button.alignOptions?.verticalAlign !== 'top'
         ) {
             menuStyle.bottom = (chartHeight - y - menuPadding) + 'px';
@@ -971,84 +1372,12 @@ namespace Exporting {
         // #10361, #9998
         css(chart.renderTo, { overflow: '' });
         css(chart.container, { overflow: '' });
-        chart.openMenu = true;
+
+        if (chart.exporting) {
+            chart.exporting.openMenu = true;
+        }
+
         fireEvent(chart, 'exportMenuShown');
-    }
-
-    /**
-     * Destroy the export buttons.
-     * @private
-     * @function Highcharts.Chart#destroyExport
-     * @param {global.Event} [e]
-     * @requires modules/exporting
-     */
-    function destroyExport(
-        this: ChartComposition,
-        e?: Event
-    ): void {
-        const chart = e ? (e.target as unknown as ChartComposition) : this,
-            exportSVGElements = chart.exportSVGElements,
-            exportDivElements = chart.exportDivElements,
-            exportEvents = chart.exportEvents;
-        let cacheName;
-
-        // Destroy the extra buttons added
-        if (exportSVGElements) {
-            exportSVGElements.forEach((elem, i): void => {
-
-                // Destroy and null the svg elements
-                if (elem) { // #1822
-                    elem.onclick = elem.ontouchstart = null;
-                    cacheName = 'cache-' + elem.menuClassName;
-
-                    if ((chart as any)[cacheName]) {
-                        delete (chart as any)[cacheName];
-                    }
-
-                    exportSVGElements[i] = elem.destroy();
-                }
-            });
-            exportSVGElements.length = 0;
-        }
-
-        // Destroy the exporting group
-        if (chart.exportingGroup) {
-            chart.exportingGroup.destroy();
-            delete chart.exportingGroup;
-        }
-
-        // Destroy the divs for the menu
-        if (exportDivElements) {
-            exportDivElements.forEach(function (
-                elem: (Exporting.DivElement|null),
-                i: number
-            ): void {
-                if (elem) {
-                    // Remove the event handler
-                    U.clearTimeout(elem.hideTimer as any); // #5427
-                    removeEvent(elem, 'mouseleave');
-
-                    // Remove inline events
-                    // (chart.exportDivElements as any)[i] =
-                    exportDivElements[i] =
-                        elem.onmouseout =
-                        elem.onmouseover =
-                        elem.ontouchstart =
-                        elem.onclick = null;
-
-                    // Destroy the div by moving to garbage bin
-                    discardElement(elem);
-                }
-            });
-            exportDivElements.length = 0;
-        }
-
-        if (exportEvents) {
-            exportEvents.forEach(function (unbind: Function): void {
-                unbind();
-            });
-            exportEvents.length = 0;
-        }
     }
 
     /**
@@ -1056,40 +1385,43 @@ namespace Exporting {
      * along with some parameters for conversion.
      *
      * @sample highcharts/members/chart-exportchart/
-     *         Export with no options
+     * Export with no options
      * @sample highcharts/members/chart-exportchart-filename/
-     *         PDF type and custom filename
+     * PDF type and custom filename
      * @sample highcharts/members/chart-exportchart-custom-background/
-     *         Different chart background in export
+     * Different chart background in export
      * @sample stock/members/chart-exportchart/
-     *         Export with Highcharts Stock
+     * Export with Highcharts Stock
      *
-     * @function Highcharts.Chart#exportChart
+     * @function Highcharts.Exporting#exportChart
      *
      * @param {Highcharts.ExportingOptions} exportingOptions
-     *        Exporting options in addition to those defined in
-     *        [exporting](https://api.highcharts.com/highcharts/exporting).
-     *
+     * Exporting options in addition to those defined in
+     * [exporting](https://api.highcharts.com/highcharts/exporting).
      * @param {Highcharts.Options} chartOptions
-     *        Additional chart options for the exported chart. For example a
-     *        different background color can be added here, or `dataLabels` for
-     *        export only.
+     * Additional chart options for the exported chart. For example a
+     * different background color can be added here, or `dataLabels` for
+     * export only.
      *
      * @requires modules/exporting
      */
-    function exportChart(
-        this: ChartComposition,
-        exportingOptions: ExportingOptions,
-        chartOptions: Options
+    public exportChart(
+        this: Exporting,
+        exportingOptions?: ExportingOptions,
+        chartOptions?: Options
     ): void {
         // Send the request to the server if it is PDF
         if (exportingOptions?.type === 'application/pdf') {
-            const svg = this.getSVGForExport(exportingOptions, chartOptions);
+            const svg = this.getSVGForExport(
+                exportingOptions,
+                chartOptions || {}
+            );
 
             // Merge the options
-            exportingOptions = merge(this.options.exporting, exportingOptions);
+            exportingOptions = merge(this.options, exportingOptions);
 
             // Do the post
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             HU.post(exportingOptions.url as any, {
                 filename: exportingOptions.filename ?
                     exportingOptions.filename.replace(/\//g, '-') :
@@ -1100,10 +1432,10 @@ namespace Exporting {
                 svg: svg
             }, exportingOptions.fetchOptions);
         } else {
+            /// TO DO: Correct usage for the offline module
             // Otherwise (PNG, JPEG, or SVG) export locally
-            Exporting.exportChartLocalCore(
-                Exporting.downloadSVGLocal,
-                this,
+            this.exportChartLocalCore(
+                /// this.downloadSVGLocal,
                 exportingOptions,
                 chartOptions
             );
@@ -1115,30 +1447,25 @@ namespace Exporting {
      * an image locally in the user's browser.
      *
      * @private
-     * @function Highcharts.Chart#exportChartLocalCore
-     *
-     * @param {Exporting.DownloadSVGLocalFunction} downloadSVGLocal
-     * downloadSVGLocal
-     *
-     * @param {Exporting.ChartComposition} chart chart
+     * @function Highcharts.Exporting#exportChartLocalCore
      *
      * @param {Highcharts.ExportingOptions} [exportingOptions]
      * Exporting options, the same as in {@link Highcharts.Chart#exportChart}.
-     *
      * @param {Highcharts.Options} [chartOptions]
      * Additional chart options for the exported chart. For example a different
      * background color can be added here, or `dataLabels` for export only.
      *
      * @requires modules/exporting
-     * @requires modules/offline-exporting
      */
-    export function exportChartLocalCore(
-        downloadSVGLocal: Exporting.DownloadSVGLocalFunction,
-        chart: Exporting.ChartComposition,
+    public exportChartLocalCore(
+        this: Exporting,
+        /// downloadSVGLocal: Exporting.DownloadSVGLocalFunction,
         exportingOptions?: ExportingOptions,
         chartOptions?: Partial<Options>
     ): void {
-        const options = merge(chart.options.exporting, exportingOptions),
+        const exporting = this,
+            chart = exporting.chart,
+            options = merge(exporting.options, exportingOptions),
             fallbackToExportServer = function (err: Error): void {
                 if (options.fallbackToExportServer === false) {
                     if (options.error) {
@@ -1147,7 +1474,7 @@ namespace Exporting {
                         error(28, true); // Fallback disabled
                     }
                 } else {
-                    chart.exportChart(options);
+                    exporting.exportChart(options);
                 }
             },
             svgSuccess = function (svg: string): void {
@@ -1165,10 +1492,10 @@ namespace Exporting {
                         'Image type not supported for charts with embedded HTML'
                     ));
                 } else {
-                    downloadSVGLocal(
+                    Exporting.downloadSVGLocal(
                         svg,
                         extend(
-                            { filename: chart.getFilename() },
+                            { filename: exporting.getFilename() },
                             options
                         ),
                         fallbackToExportServer,
@@ -1252,7 +1579,7 @@ namespace Exporting {
             return;
         }
 
-        chart.getSVGForLocalExport(
+        this.getSVGForLocalExport(
             options,
             chartOptions || {},
             fallbackToExportServer,
@@ -1261,522 +1588,22 @@ namespace Exporting {
     }
 
     /**
-     * Get data URL to an image of an SVG and call download on it options
-     * object:
-     *
-     * - **filename:** Name of resulting downloaded file without extension.
-     * Default is `chart`.
-     * - **type:** File type of resulting download. Default is `image/png`.
-     * - **scale:** Scaling factor of downloaded image compared to source.
-     * Default is `1`.
-     * - **libURL:** URL pointing to location of dependency scripts to download
-     * on demand. Default is the exporting.libURL option of the global
-     * Highcharts options pointing to our server.
-     *
-     * @function Highcharts.downloadSVGLocal
-     *
-     * @param {string} svg
-     * The generated SVG
-     *
-     * @param {Highcharts.ExportingOptions} options
-     * The exporting options
-     *
-     * @param {Function} failCallback
-     * The callback function in case of errors
-     *
-     * @param {Function} [successCallback]
-     * The callback function in case of success
-     *
-     */
-    export function downloadSVGLocal(
-        svg: string,
-        options: ExportingOptions,
-        failCallback: Function,
-        successCallback?: Function
-    ): void {
-        const imageType = options.type || 'image/png',
-            filename = (
-                (options.filename || 'chart') +
-                '.' +
-                (
-                    imageType === 'image/svg+xml' ?
-                        'svg' : imageType.split('/')[1]
-                )
-            ),
-            scale = options.scale || 1;
-        let svgurl: string,
-            blob,
-            finallyHandler: Function,
-            libURL = (
-                options.libURL || (defaultOptions.exporting as any).libURL
-            ),
-            objectURLRevoke = true;
-
-        // Allow libURL to end with or without fordward slash
-        libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
-
-        // Initiate download depending on file type
-        if (imageType === 'image/svg+xml') {
-            // SVG download. In this case, we want to use Microsoft specific
-            // Blob if available
-            try {
-                if (typeof win.MSBlobBuilder !== 'undefined') {
-                    blob = new win.MSBlobBuilder();
-                    blob.append(svg);
-                    svgurl = blob.getBlob('image/svg+xml') as any;
-                } else {
-                    svgurl = svgToDataUrl(svg);
-                }
-                downloadURL(svgurl, filename);
-                if (successCallback) {
-                    successCallback();
-                }
-            } catch (e) {
-                failCallback(e);
-            }
-        } else if (imageType !== 'application/pdf') {
-            // PNG/JPEG download - create bitmap from SVG
-
-            svgurl = svgToDataUrl(svg);
-            finallyHandler = function (): void {
-                try {
-                    domurl.revokeObjectURL(svgurl);
-                } catch (e) {
-                    // Ignore
-                }
-            };
-            // First, try to get PNG by rendering on canvas
-            Exporting.imageToDataUrl(
-                svgurl,
-                imageType,
-                {},
-                scale,
-                function (imageURL: string): void {
-                    // Success
-                    try {
-                        downloadURL(imageURL, filename);
-                        if (successCallback) {
-                            successCallback();
-                        }
-                    } catch (e) {
-                        failCallback(e);
-                    }
-                }, function (): void {
-                    if (svg.length > RegexLimits.svgLimit) {
-                        throw new Error('Input too long');
-                    }
-                    // Failed due to tainted canvas
-                    // Create new and untainted canvas
-                    const canvas = doc.createElement('canvas'),
-                        ctx = canvas.getContext('2d'),
-                        matchedImageWidth = svg.match(
-                            // eslint-disable-next-line max-len
-                            /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
-                        ),
-                        matchedImageHeight = svg.match(
-                            // eslint-disable-next-line max-len
-                            /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
-                        );
-
-                    if (ctx && matchedImageWidth && matchedImageHeight) {
-                        const imageWidth = +matchedImageWidth[1] * scale,
-                            imageHeight = +matchedImageHeight[1] * scale,
-                            downloadWithCanVG = (): void => {
-                                const v = win.canvg.Canvg.fromString(ctx, svg);
-                                v.start();
-                                try {
-                                    downloadURL(
-                                        win.navigator.msSaveOrOpenBlob ?
-                                            canvas.msToBlob() :
-                                            canvas.toDataURL(imageType),
-                                        filename
-                                    );
-                                    if (successCallback) {
-                                        successCallback();
-                                    }
-                                } catch (e) {
-                                    failCallback(e);
-                                } finally {
-                                    finallyHandler();
-                                }
-                            };
-
-                        canvas.width = imageWidth;
-                        canvas.height = imageHeight;
-                        if (win.canvg) {
-                            // Use preloaded canvg
-                            downloadWithCanVG();
-                        } else {
-                            // Must load canVG first.
-                            // Don't destroy the object URL yet since we are
-                            // doing things asynchronously. A cleaner solution
-                            // would be nice, but this will do for now.
-                            objectURLRevoke = true;
-                            getScript(libURL + 'canvg.js', downloadWithCanVG);
-                        }
-                    }
-                },
-                // No canvas support
-                failCallback,
-                // Failed to load image
-                failCallback,
-                // Finally
-                function (): void {
-                    if (objectURLRevoke) {
-                        finallyHandler();
-                    }
-                }
-            );
-        }
-    }
-
-    /**
-     * Get blob URL from SVG code. Falls back to normal data URI.
-     *
-     * @private
-     * @function Highcharts.svgToDataURL
-     */
-    export function svgToDataUrl(svg: string): string {
-        // Webkit and not chrome
-        const userAgent = win.navigator.userAgent;
-        const webKit = (
-            userAgent.indexOf('WebKit') > -1 &&
-            userAgent.indexOf('Chrome') < 0
-        );
-
-        try {
-            // Safari requires data URI since it doesn't allow navigation to
-            // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
-            // (#14780).
-            if (!webKit && svg.indexOf('<foreignObject') === -1) {
-                return domurl.createObjectURL(new win.Blob([svg], {
-                    type: 'image/svg+xml;charset-utf-16'
-                }));
-            }
-        } catch (e) {
-            // Ignore
-        }
-        return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-    }
-
-    /**
-     * Get SVG of chart prepared for client side export. This converts
-     * embedded images in the SVG to data URIs. It requires the regular
-     * exporting module. The options and chartOptions arguments are passed
-     * to the getSVGForExport function.
-     *
-     * @private
-     * @function Highcharts.Chart#getSVGForLocalExport
-     * @param {Highcharts.ExportingOptions} options
-     * @param {Highcharts.Options} chartOptions
-     * @param {Function} failCallback
-     * @param {Function} successCallback
-     */
-    function getSVGForLocalExport(
-        this: Chart,
-        options: ExportingOptions,
-        chartOptions: Partial<Options>,
-        failCallback: Function,
-        successCallback: Function
-    ): void {
-        const chart = this as Exporting.ChartComposition,
-            // After grabbing the SVG of the chart's copy container we need
-            // to do sanitation on the SVG
-            sanitize = (svg: string): string => chart.sanitizeSVG(
-                svg,
-                chartCopyOptions as any
-            ),
-            // When done with last image we have our SVG
-            checkDone = (): void => {
-                if (images && imagesEmbedded === imagesLength) {
-                    successCallback(sanitize(
-                        (chartCopyContainer as any).innerHTML
-                    ));
-                }
-            },
-            // Success handler, we converted image to base64!
-            embeddedSuccess = (
-                imageURL: string,
-                imageType: string,
-                callbackArgs: {
-                    imageElement: HTMLDOMElement;
-                }
-            ): void => {
-                ++imagesEmbedded;
-
-                // Change image href in chart copy
-                callbackArgs.imageElement.setAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href',
-                    imageURL
-                );
-
-                checkDone();
-            };
-
-        let el: SVGImageElement,
-            chartCopyContainer: (HTMLDOMElement|undefined),
-            chartCopyOptions: (Options|undefined),
-            href: (string|null) = null,
-            images: (Array<SVGImageElement>|HTMLCollectionOf<SVGImageElement>|undefined),
-            imagesLength = 0,
-            imagesEmbedded = 0;
-
-        // Hook into getSVG to get a copy of the chart copy's
-        // container (#8273)
-        const unbindGetSVG = addEvent(chart, 'getSVG', (
-            e: { chartCopy: Chart }
-        ): void => {
-            chartCopyOptions = e.chartCopy.options;
-            chartCopyContainer = e.chartCopy.container.cloneNode(true) as any;
-            images = chartCopyContainer && chartCopyContainer
-                .getElementsByTagName('image') || [];
-            imagesLength = images.length;
-        });
-
-        // Trigger hook to get chart copy
-        chart.getSVGForExport(options, chartOptions);
-
-        try {
-            // If there are no images to embed, the SVG is okay now.
-            if (!images || !images.length) {
-                // Use SVG of chart copy
-                successCallback(
-                    sanitize((chartCopyContainer as any).innerHTML)
-                );
-                return;
-            }
-
-            // Go through the images we want to embed
-            for (let i = 0; i < images.length; i++) {
-                el = images[i];
-                href = el.getAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href'
-                );
-                if (href) {
-                    Exporting.imageToDataUrl(
-                        href,
-                        'image/png',
-                        { imageElement: el },
-                        options.scale as any,
-                        embeddedSuccess,
-                        // Tainted canvas
-                        failCallback,
-                        // No canvas support
-                        failCallback,
-                        // Failed to load source
-                        failCallback
-                    );
-
-                // Hidden, boosted series have blank href (#10243)
-                } else {
-                    imagesEmbedded++;
-                    el.parentNode.removeChild(el);
-                    i--;
-                    checkDone();
-                }
-            }
-        } catch (e) {
-            failCallback(e);
-        }
-
-        // Clean up
-        unbindGetSVG();
-    }
-
-    /**
-     * Get data:URL from image URL. Pass in callbacks to handle results.
-     *
-     * @private
-     * @function Highcharts.imageToDataUrl
-     *
-     * @param {string} imageURL
-     *
-     * @param {string} imageType
-     *
-     * @param {*} callbackArgs
-     *        callbackArgs is used only by callbacks.
-     *
-     * @param {number} scale
-     *
-     * @param {Function} successCallback
-     *        Receives four arguments: imageURL, imageType, callbackArgs,
-     *        and scale.
-     *
-     * @param {Function} taintedCallback
-     *        Receives four arguments: imageURL, imageType, callbackArgs,
-     *        and scale.
-     *
-     * @param {Function} noCanvasSupportCallback
-     *        Receives four arguments: imageURL, imageType, callbackArgs,
-     *        and scale.
-     *
-     * @param {Function} failedLoadCallback
-     *        Receives four arguments: imageURL, imageType, callbackArgs,
-     *        and scale.
-     *
-     * @param {Function} [finallyCallback]
-     *        finallyCallback is always called at the end of the process. All
-     *        callbacks receive four arguments: imageURL, imageType,
-     *        callbackArgs, and scale.
-     */
-    export function imageToDataUrl(
-        imageURL: string,
-        imageType: string,
-        callbackArgs: unknown,
-        scale: number,
-        successCallback: Function,
-        taintedCallback: Function,
-        noCanvasSupportCallback: Function,
-        failedLoadCallback: Function,
-        finallyCallback?: Function
-    ): void {
-        let img = new win.Image(),
-            taintedHandler: Function;
-        const loadHandler = (): void => {
-                setTimeout(function (): void {
-                    const canvas = doc.createElement('canvas'),
-                        ctx = canvas.getContext && canvas.getContext('2d');
-                    let dataURL;
-
-                    try {
-                        if (!ctx) {
-                            noCanvasSupportCallback(
-                                imageURL,
-                                imageType,
-                                callbackArgs,
-                                scale
-                            );
-                        } else {
-                            canvas.height = img.height * scale;
-                            canvas.width = img.width * scale;
-                            ctx.drawImage(
-                                img, 0, 0, canvas.width, canvas.height
-                            );
-
-                            // Now we try to get the contents of the canvas.
-                            try {
-                                dataURL = canvas.toDataURL(imageType);
-                                successCallback(
-                                    dataURL,
-                                    imageType,
-                                    callbackArgs,
-                                    scale
-                                );
-                            } catch (e) {
-                                taintedHandler(
-                                    imageURL,
-                                    imageType,
-                                    callbackArgs,
-                                    scale
-                                );
-                            }
-                        }
-                    } finally {
-                        if (finallyCallback) {
-                            finallyCallback(
-                                imageURL,
-                                imageType,
-                                callbackArgs,
-                                scale
-                            );
-                        }
-                    }
-                // IE bug where image is not always ready despite calling load
-                // event.
-                }, loadEventDeferDelay);
-            },
-            // Image load failed (e.g. invalid URL)
-            errorHandler = (): void => {
-                failedLoadCallback(imageURL, imageType, callbackArgs, scale);
-                if (finallyCallback) {
-                    finallyCallback(imageURL, imageType, callbackArgs, scale);
-                }
-            };
-
-        // This is called on load if the image drawing to canvas failed with a
-        // security error. We retry the drawing with crossOrigin set to
-        // Anonymous.
-        taintedHandler = (): void => {
-            img = new win.Image();
-            taintedHandler = taintedCallback;
-            // Must be set prior to loading image source
-            img.crossOrigin = 'Anonymous';
-            img.onload = loadHandler;
-            img.onerror = errorHandler;
-            img.src = imageURL;
-        };
-
-        img.onload = loadHandler;
-        img.onerror = errorHandler;
-        img.src = imageURL;
-    }
-
-    /**
-     * Downloads a script and executes a callback when done.
-     *
-     * @private
-     * @function getScript
-     * @param {string} scriptLocation
-     * @param {Function} callback
-     */
-    export function getScript(
-        scriptLocation: string,
-        callback: Exporting.ScriptOnLoadCallbackFunction
-    ): void {
-        const head = doc.getElementsByTagName('head')[0],
-            script = doc.createElement('script');
-
-        script.type = 'text/javascript';
-        script.src = scriptLocation;
-        script.onload = callback;
-        script.onerror = function (): void {
-            error('Error loading script ' + scriptLocation);
-        };
-
-        head.appendChild(script);
-    }
-
-    /**
-     * Return the unfiltered innerHTML of the chart container. Used as hook for
-     * plugins. In styled mode, it also takes care of inlining CSS style rules.
-     *
-     * @see Chart#getSVG
-     *
-     * @function Highcharts.Chart#getChartHTML
-     *
-     * @return {string}
-     * The unfiltered SVG of the chart.
-     *
-     * @requires modules/exporting
-     */
-    function getChartHTML(
-        this: ChartComposition,
-        applyStyleSheets?: boolean
-    ): string {
-        if (applyStyleSheets) {
-            this.inlineStyles();
-        }
-
-        return this.container.innerHTML;
-    }
-
-    /**
      * Get the default file name used for exported charts. By default it creates
      * a file name based on the chart title.
      *
-     * @function Highcharts.Chart#getFilename
+     * @function Highcharts.Exporting#getFilename
      *
-     * @return {string} A file name without extension.
+     * @return {string}
+     * A file name without extension.
      *
      * @requires modules/exporting
      */
-    function getFilename(
-        this: ChartComposition
+    public getFilename(
+        this: Exporting
     ): string {
-        const s = this.userOptions.title && this.userOptions.title.text;
-        let filename: string = (this.options.exporting as any).filename;
+        const s =
+            this.chart.userOptions.title && this.chart.userOptions.title.text;
+        let filename: string = (this.options as any).filename;
 
         if (filename) {
             return filename.replace(/\//g, '-');
@@ -1805,28 +1632,28 @@ namespace Exporting {
      * Return an SVG representation of the chart.
      *
      * @sample highcharts/members/chart-getsvg/
-     *         View the SVG from a button
+     * View the SVG from a button
      *
      * @function Highcharts.Chart#getSVG
      *
      * @param {Highcharts.Options} [chartOptions]
-     *        Additional chart options for the generated SVG representation. For
-     *        collections like `xAxis`, `yAxis` or `series`, the additional
-     *        options is either merged in to the original item of the same
-     *        `id`, or to the first item if a common id is not found.
+     * Additional chart options for the generated SVG representation. For
+     * collections like `xAxis`, `yAxis` or `series`, the additional options is
+     * either merged in to the original item of the same `id`, or to the first
+     * item if a common id is not found.
      *
      * @return {string}
-     *         The SVG representation of the rendered chart.
+     * The SVG representation of the rendered chart.
      *
      * @emits Highcharts.Chart#event:getSVG
      *
      * @requires modules/exporting
      */
-    function getSVG(
-        this: ChartComposition,
+    public getSVG(
+        this: Exporting,
         chartOptions?: Partial<Options>
     ): string {
-        const chart = this;
+        const chart = this.chart;
         let svg,
             seriesOptions: DeepPartial<SeriesTypeOptions>,
             // Copy the options and add extra options
@@ -1837,6 +1664,7 @@ namespace Exporting {
             chart.userOptions.plotOptions,
             chartOptions && chartOptions.plotOptions
         );
+
         // ... and likewise with time, avoid that undefined time properties are
         // merged over legacy global time options
         options.time = merge(
@@ -1876,7 +1704,7 @@ namespace Exporting {
         (options.exporting as any).enabled = false; // Hide buttons in print
         delete options.data; // #3004
 
-        // prepare for replicating the chart
+        // Prepare for replicating the chart
         options.series = [];
         chart.series.forEach(function (serie): void {
             seriesOptions = merge(serie.userOptions, { // #4912
@@ -1925,7 +1753,7 @@ namespace Exporting {
         const chartCopy = new (chart.constructor as typeof Chart)(
             options,
             chart.callback
-        ) as ChartComposition;
+        );
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
@@ -1979,14 +1807,15 @@ namespace Exporting {
         });
 
         // Get the SVG from the container's innerHTML
-        svg = chartCopy.getChartHTML(
+        svg = Exporting.getChartHTML(
+            chartCopy,
             chart.styledMode ||
             options.exporting?.applyStyleSheets
         );
 
-        fireEvent(this, 'getSVG', { chartCopy: chartCopy });
+        fireEvent(this.chart, 'getSVG', { chartCopy: chartCopy });
 
-        svg = chart.sanitizeSVG(svg, options);
+        svg = Exporting.sanitizeSVG(svg, options);
 
         // Free up memory
         options = null as any;
@@ -1997,16 +1826,160 @@ namespace Exporting {
     }
 
     /**
+     * Get SVG of chart prepared for client side export. This converts
+     * embedded images in the SVG to data URIs. It requires the regular
+     * exporting module. The options and chartOptions arguments are passed
+     * to the getSVGForExport function.
+     *
      * @private
-     * @function Highcharts.Chart#getSVGForExport
+     * @function Highcharts.Chart#getSVGForLocalExport
+     *
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     * The exporting options.
+     * @param {Highcharts.Options} chartOptions
+     * Additional chart options for the exported chart.
+     * @param {Function} failCallback
+     * The callback to trigger in case of a success.
+     * @param {Function} successCallback
+     * The callback to trigger in case of a fail.
+     *
+     * @requires modules/exporting
      */
-    function getSVGForExport(
-        this: ChartComposition,
-        options: ExportingOptions,
+    public getSVGForLocalExport(
+        this: Exporting,
+        exportingOptions: ExportingOptions,
+        chartOptions: Partial<Options>,
+        failCallback: Function,
+        successCallback: Function
+    ): void {
+        const chart = this.chart,
+            // After grabbing the SVG of the chart's copy container we need
+            // to do sanitation on the SVG
+            sanitize = (svg: string): string => Exporting.sanitizeSVG(
+                svg,
+                chartCopyOptions as any
+            ),
+            // When done with last image we have our SVG
+            checkDone = (): void => {
+                if (images && imagesEmbedded === imagesLength) {
+                    successCallback(sanitize(
+                        (chartCopyContainer as any).innerHTML
+                    ));
+                }
+            },
+            // Success handler, we converted image to base64!
+            embeddedSuccess = (
+                imageURL: string,
+                imageType: string,
+                callbackArgs: {
+                    imageElement: HTMLDOMElement;
+                }
+            ): void => {
+                ++imagesEmbedded;
+
+                // Change image href in chart copy
+                callbackArgs.imageElement.setAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'href',
+                    imageURL
+                );
+
+                checkDone();
+            };
+
+        let el: SVGImageElement,
+            chartCopyContainer: (HTMLDOMElement|undefined),
+            chartCopyOptions: (Options|undefined),
+            href: (string|null) = null,
+            images: (Array<SVGImageElement>|HTMLCollectionOf<SVGImageElement>|undefined),
+            imagesLength = 0,
+            imagesEmbedded = 0;
+
+        // Hook into getSVG to get a copy of the chart copy's
+        // container (#8273)
+        const unbindGetSVG = addEvent(chart, 'getSVG', (
+            e: { chartCopy: Chart }
+        ): void => {
+            chartCopyOptions = e.chartCopy.options;
+            chartCopyContainer = e.chartCopy.container.cloneNode(true) as any;
+            images = chartCopyContainer && chartCopyContainer
+                .getElementsByTagName('image') || [];
+            imagesLength = images.length;
+        });
+
+        // Trigger hook to get chart copy
+        this.getSVGForExport(exportingOptions, chartOptions);
+
+        try {
+            // If there are no images to embed, the SVG is okay now.
+            if (!images || !images.length) {
+                // Use SVG of chart copy
+                successCallback(
+                    sanitize((chartCopyContainer as any).innerHTML)
+                );
+                return;
+            }
+
+            // Go through the images we want to embed
+            for (let i = 0; i < images.length; i++) {
+                el = images[i];
+                href = el.getAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'href'
+                );
+                if (href) {
+                    Exporting.imageToDataUrl(
+                        href,
+                        'image/png',
+                        { imageElement: el },
+                        exportingOptions.scale as any,
+                        embeddedSuccess,
+                        // Tainted canvas
+                        failCallback,
+                        // No canvas support
+                        failCallback,
+                        // Failed to load source
+                        failCallback
+                    );
+
+                // Hidden, boosted series have blank href (#10243)
+                } else {
+                    imagesEmbedded++;
+                    el.parentNode.removeChild(el);
+                    i--;
+                    checkDone();
+                }
+            }
+        } catch (e) {
+            failCallback(e);
+        }
+
+        // Clean up
+        unbindGetSVG();
+    }
+
+    /**
+     * Desc
+     *
+     * @private
+     * @function Highcharts.Exporting#getSVGForExport
+     *
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     * The exporting options.
+     * @param {Highcharts.Options} chartOptions
+     * Additional chart options for the exported chart.
+     *
+     * @return {string}
+     * The SVG representation of the rendered chart.
+     *
+     * @requires modules/exporting
+     */
+    public getSVGForExport(
+        this: Exporting,
+        exportingOptions: ExportingOptions,
         chartOptions: Partial<Options>
     ): string {
-        const chartExportingOptions: ExportingOptions =
-            this.options.exporting as any;
+        const chartExportingOptions: ExportingOptions = this.options as any;
 
         return this.getSVG(merge(
             { chart: { borderRadius: 0 } },
@@ -2015,11 +1988,11 @@ namespace Exporting {
             {
                 exporting: {
                     sourceWidth: (
-                        (options && options.sourceWidth) ||
+                        (exportingOptions && exportingOptions.sourceWidth) ||
                         chartExportingOptions.sourceWidth
                     ),
                     sourceHeight: (
-                        (options && options.sourceHeight) ||
+                        (exportingOptions && exportingOptions.sourceHeight) ||
                         chartExportingOptions.sourceHeight
                     )
                 }
@@ -2028,251 +2001,528 @@ namespace Exporting {
     }
 
     /**
-     * Make hyphenated property names out of camelCase
-     * @private
-     * @param {string} prop
-     * Property name in camelCase
-     * @return {string}
-     * Hyphenated property name
+     * Exporting module required. Clears away other elements in the page and
+     * prints the chart as it is displayed. By default, when the exporting
+     * module is enabled, a context button with a drop down menu in the upper
+     * right corner accesses this function.
+     *
+     * @sample highcharts/members/chart-print/
+     * Print from a HTML button
+     *
+     * @function Highcharts.Exporting#print
+     *
+     * @emits Highcharts.Chart#event:beforePrint
+     * @emits Highcharts.Chart#event:afterPrint
+     *
+     * @requires modules/exporting
      */
-    function hyphenate(prop: string): string {
-        return prop.replace(
-            /[A-Z]/g,
-            function (match: string): string {
-                return '-' + match.toLowerCase();
+    public print(
+        this: Exporting
+    ): void {
+        const chart = this.chart;
+
+        // Block the button while in printing mode
+        if (this.isPrinting) {
+            return;
+        }
+
+        Exporting.printingChart = chart;
+        if (!G.isSafari) {
+            chart.beforePrint();
+        }
+
+        // Give the browser time to draw WebGL content, an issue that randomly
+        // appears (at least) in Chrome ~67 on the Mac (#8708).
+        setTimeout((): void => {
+            win.focus(); // #1510
+            win.print();
+
+            // Allow the browser to prepare before reverting
+            if (!G.isSafari) {
+                setTimeout((): void => {
+                    chart.afterPrint();
+                }, 1000);
             }
+        }, 1);
+    }
+
+    /**
+     * Updates the exporting object with the provided exporting options.
+     *
+     * @private
+     * @function Highcharts.Exporting#update
+     *
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     * The exporting options to update with.
+     * @param {boolean} [redraw=true]
+     * Whether to redraw or not.
+     */
+    public update(
+        exportingOptions: ExportingOptions,
+        redraw?: boolean
+    ): void {
+        this.isDirtyExporting = true;
+        merge(true, this.options, exportingOptions);
+        if (pick(redraw, true)) {
+            this.chart.redraw();
+        }
+    }
+}
+
+/* *
+ *
+ *  Class namespace
+ *
+ * */
+
+namespace Exporting {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface AfterPrintCallbackFunction {
+        (chart: Chart, event: Event): void;
+    }
+
+    export interface BeforePrintCallbackFunction {
+        (chart: Chart, event: Event): void;
+    }
+
+    export declare class ChartComposition extends Chart {
+        /** @requires modules/exporting */
+        afterPrint(): void;
+        /** @requires modules/exporting */
+        beforePrint(): void;
+        /** @requires modules/exporting */
+        destroyExport(e?: Event): void;
+        /** @requires modules/exporting */
+        moveContainers(moveTo: HTMLDOMElement): void;
+        /** @requires modules/exporting */
+        renderExporting(): void;
+    }
+
+    export interface DivElement extends HTMLDOMElement {
+        hideTimer?: number;
+        hideMenu(): void;
+    }
+
+    export interface DownloadSVGLocalFunction {
+        (
+            svg: string,
+            options: ExportingOptions,
+            failCallback: Function,
+            successCallback?: Function
+        ): void
+    }
+
+    export interface ErrorCallbackFunction {
+        (options: ExportingOptions, err: Error): void;
+    }
+
+    export interface MenuObject {
+        onclick?: EventCallback<Chart>;
+        separator?: boolean;
+        text?: string;
+        textKey?: string;
+    }
+
+    export interface PrintReverseInfoObject {
+        childNodes: NodeListOf<ChildNode>;
+        origDisplay: Array<(string|null)> ;
+        resetParams?: [
+            (number|null)?,
+            (number|null)?,
+            (boolean|Partial<AnimationOptions>)?
+        ];
+    }
+
+    export interface ScriptOnLoadCallbackFunction {
+        (this: GlobalEventHandlers, ev: Event): void;
+    }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Composition function.
+     *
+     * @private
+     * @function Highcharts.Exporting#compose
+     *
+     * @param {ChartClass} ChartClass
+     * Chart class.
+     * @param {SVGRendererClass} SVGRendererClass
+     * SVGRendererClass class.
+     *
+     * @requires modules/exporting
+     */
+    export function compose(
+        ChartClass: typeof Chart,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        ExportingSymbols.compose(SVGRendererClass);
+        Fullscreen.compose(ChartClass);
+
+        // Check the composition registry for the Exporting class
+        if (!pushUnique(composed, 'Exporting')) {
+            return;
+        }
+
+        const chartProto = ChartClass.prototype as ChartComposition;
+
+        if (!chartProto.afterPrint) {
+            chartProto.afterPrint = afterPrint;
+            chartProto.beforePrint = beforePrint;
+            chartProto.destroyExport = destroyExport;
+            chartProto.moveContainers = moveContainers;
+            chartProto.renderExporting = renderExporting;
+        }
+
+        // Adding wrappers for the deprecated functions
+        extend(Chart.prototype, {
+            exportChart: function (
+                exportingOptions?: ExportingOptions,
+                chartOptions?: Options
+            ): void {
+                return (this as Chart).exporting.exportChart(
+                    exportingOptions,
+                    chartOptions
+                );
+            },
+            getChartHTML: function (
+                applyStyleSheets?: boolean
+            ): string {
+                return Exporting.getChartHTML(this as Chart, applyStyleSheets);
+            },
+            getFilename: function (): string {
+                return (this as Chart).exporting.getFilename();
+            },
+            getSVG: function (
+                chartOptions?: Partial<Options>
+            ): string {
+                return (this as Chart).exporting.getSVG(chartOptions);
+            },
+            print: function (): void {
+                return (this as Chart).exporting.print();
+            }
+        });
+
+        chartProto.callbacks.push(chartCallback);
+        addEvent(
+            ChartClass as typeof ChartComposition,
+            'afterInit',
+            onChartAfterInit
+        );
+        addEvent(
+            ChartClass as typeof ChartComposition,
+            'layOutTitle',
+            onChartLayOutTitle
+        );
+
+        if (G.isSafari) {
+            win.matchMedia('print').addListener(
+                function (
+                    this: MediaQueryList,
+                    mqlEvent: MediaQueryListEvent
+                ): void {
+                    if (!Exporting.printingChart) {
+                        return void 0;
+                    }
+                    if (mqlEvent.matches) {
+                        Exporting.printingChart.beforePrint();
+                    } else {
+                        Exporting.printingChart.afterPrint();
+                    }
+                }
+            );
+        }
+
+        defaultOptions.exporting = merge(
+            ExportingDefaults.exporting,
+            defaultOptions.exporting
+        );
+
+        defaultOptions.lang = merge(
+            ExportingDefaults.lang,
+            defaultOptions.lang
+        );
+
+        // Buttons and menus are collected in a separate config option set
+        // called 'navigation'. This can be extended later to add control
+        // buttons like zoom and pan right click menus.
+        defaultOptions.navigation = merge(
+            ExportingDefaults.navigation,
+            defaultOptions.navigation
         );
     }
 
     /**
-     * Analyze inherited styles from stylesheets and add them inline
+     * Clean up after printing a chart.
      *
      * @private
-     * @function Highcharts.Chart#inlineStyles
+     * @function Highcharts#afterPrint
      *
-     * @todo What are the border styles for text about? In general, text has a
-     *       lot of properties.
-     *
-     * @todo Make it work with IE9 and IE10.
+     * @emits Highcharts.Chart#event:afterPrint
      *
      * @requires modules/exporting
      */
-    function inlineStyles(
+    function afterPrint(
         this: ChartComposition
     ): void {
-        const denylist = inlineDenylist,
-            allowlist = inlineAllowlist, // For IE
-            defaultStyles: Record<string, CSSObject> = {};
-        let dummySVG: SVGElement;
+        const chart = this;
 
-        // Create an iframe where we read default styles without pollution from
-        // this body
-        const iframe: HTMLIFrameElement = doc.createElement('iframe');
-        css(iframe, {
-            width: '1px',
-            height: '1px',
-            visibility: 'hidden'
-        });
-        doc.body.appendChild(iframe);
-        const iframeDoc = (
-            iframe.contentWindow && iframe.contentWindow.document
-        );
-        if (iframeDoc) {
-            iframeDoc.body.appendChild(
-                iframeDoc.createElementNS(SVG_NS, 'svg')
-            );
+        if (chart.exporting && !chart.exporting.printReverseInfo) {
+            return void 0;
         }
 
-        /**
-         * Call this on all elements and recurse to children
-         * @private
-         * @param {Highcharts.HTMLDOMElement} node
-         *        Element child
-             */
-        function recurse(node: HTMLDOMElement): void {
-            const filteredStyles: CSSObject = {};
+        if (chart.exporting) {
+            const {
+                childNodes,
+                origDisplay,
+                resetParams
+            } = chart.exporting.printReverseInfo as PrintReverseInfoObject;
 
-            let styles: CSSObject,
-                parentStyles: (CSSObject|SVGAttributes),
-                dummy: Element,
-                denylisted: (boolean|undefined),
-                allowlisted: (boolean|undefined),
-                i: number;
+            // Put the chart back in
+            chart.moveContainers(chart.renderTo);
 
-            /**
-             * Check computed styles and whether they are in the allow/denylist
-             * for styles or attributes.
-             * @private
-             * @param {string} val
-             *        Style value
-             * @param {string} prop
-             *        Style property name
-                     */
-            function filterStyles(
-                val: (string|number|boolean|undefined),
-                prop: string
+            // Restore all body content
+            [].forEach.call(childNodes, function (
+                node: HTMLDOMElement,
+                i: number
             ): void {
-
-                // Check against allowlist & denylist
-                denylisted = allowlisted = false;
-                if (allowlist.length) {
-                    // Styled mode in IE has a allowlist instead. Exclude all
-                    // props not in this list.
-                    i = allowlist.length;
-                    while (i-- && !allowlisted) {
-                        allowlisted = allowlist[i].test(prop);
-                    }
-                    denylisted = !allowlisted;
+                if (node.nodeType === 1) {
+                    node.style.display = (origDisplay[i] || '');
                 }
+            });
 
-                // Explicitly remove empty transforms
-                if (prop === 'transform' && val === 'none') {
-                    denylisted = true;
-                }
+            chart.exporting.isPrinting = false;
 
-                i = denylist.length;
-                while (i-- && !denylisted) {
-                    if (prop.length > RegexLimits.shortLimit) {
-                        throw new Error('Input too long');
-                    }
-                    denylisted = (
-                        denylist[i].test(prop) ||
-                        typeof val === 'function'
-                    );
-                }
-
-                if (!denylisted) {
-                    // If parent node has the same style, it gets inherited, no
-                    // need to inline it. Top-level props should be diffed
-                    // against parent (#7687).
-                    if (
-                        (
-                            (parentStyles as any)[prop] !== val ||
-                            node.nodeName === 'svg'
-                        ) &&
-                        (defaultStyles[node.nodeName] as any)[prop] !== val
-                    ) {
-                        // Attributes
-                        if (
-                            !inlineToAttributes ||
-                            inlineToAttributes.indexOf(prop) !== -1
-                        ) {
-                            if (val) {
-                                node.setAttribute(hyphenate(prop), val);
-                            }
-                        // Styles
-                        } else {
-                            (filteredStyles as any)[prop] = val;
-                        }
-                    }
-                }
+            // Reset printMaxWidth
+            if (resetParams) {
+                chart.setSize.apply(chart, resetParams);
             }
 
-            if (
-                iframeDoc &&
-                node.nodeType === 1 &&
-                unstyledElements.indexOf(node.nodeName) === -1
-            ) {
-                styles = win.getComputedStyle(node, null) as any;
-                parentStyles = node.nodeName === 'svg' ?
-                    {} :
-                    win.getComputedStyle(node.parentNode, null) as any;
+            delete chart.exporting.printReverseInfo;
+            Exporting.printingChart = void 0;
 
-                // Get default styles from the browser so that we don't have to
-                // add these
-                if (!defaultStyles[node.nodeName]) {
-                    /*
-                    If (!dummySVG) {
-                        dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
-                        dummySVG.setAttribute('version', '1.1');
-                        doc.body.appendChild(dummySVG);
-                    }
-                    */
-                    dummySVG = iframeDoc.getElementsByTagName('svg')[0] as any;
-                    dummy = iframeDoc.createElementNS(
-                        node.namespaceURI,
-                        node.nodeName
-                    );
-                    dummySVG.appendChild(dummy);
+            fireEvent(chart, 'afterPrint');
+        }
+    }
 
-                    // Get the defaults into a standard object (simple merge
-                    // won't do)
-                    const s = win.getComputedStyle(dummy, null),
-                        defaults: Record<string, string> = {};
-                    for (const key in s) {
-                        if (
-                            key.length < RegexLimits.shortLimit &&
-                            typeof s[key] === 'string' &&
-                            !/^\d+$/.test(key)
-                        ) {
-                            defaults[key] = s[key];
-                        }
-                    }
-                    defaultStyles[node.nodeName] = defaults;
+    /**
+     * Prepare chart and document before printing a chart.
+     *
+     * @private
+     * @function Highcharts#beforePrint
+     *
+     * @emits Highcharts.Chart#event:beforePrint
+     *
+     * @requires modules/exporting
+     */
+    function beforePrint(
+        this: ChartComposition
+    ): void {
+        const chart = this,
+            body = doc.body,
+            printMaxWidth: number =
+                (chart.options.exporting as any).printMaxWidth,
+            printReverseInfo: PrintReverseInfoObject = {
+                childNodes: body.childNodes,
+                origDisplay: [],
+                resetParams: void 0
+            };
 
-                    // Remove default fill, otherwise text disappears when
-                    // exported
-                    if (node.nodeName === 'text') {
-                        delete defaultStyles.text.fill;
-                    }
-                    dummySVG.removeChild(dummy);
-                }
+        if (chart.exporting) {
+            chart.exporting.isPrinting = true;
+        }
+        chart.pointer?.reset(void 0, 0);
 
-                // Loop through all styles and add them inline if they are ok
-                for (const p in styles) {
-                    if (
-                        // Some browsers put lots of styles on the prototype...
-                        G.isFirefox ||
-                        isMS ||
-                        G.isSafari || // #16902
-                        // ... Chrome puts them on the instance
-                        Object.hasOwnProperty.call(styles, p)
-                    ) {
-                        filterStyles((styles as any)[p], p);
-                    }
-                }
+        fireEvent(chart, 'beforePrint');
 
-                // Apply styles
-                css(node, filteredStyles);
+        // Handle printMaxWidth
+        const handleMaxWidth: (boolean|number) = printMaxWidth &&
+            chart.chartWidth > printMaxWidth;
+        if (handleMaxWidth) {
+            printReverseInfo.resetParams = [
+                chart.options.chart.width,
+                void 0,
+                false
+            ];
+            chart.setSize(printMaxWidth, void 0, false);
+        }
 
-                // Set default stroke width (needed at least for IE)
-                if (node.nodeName === 'svg') {
-                    node.setAttribute('stroke-width', '1px');
-                }
-
-                if (node.nodeName === 'text') {
-                    return;
-                }
-
-                // Recurse
-                [].forEach.call(node.children || node.childNodes, recurse);
+        // Hide all body content
+        [].forEach.call(printReverseInfo.childNodes, function (
+            node: HTMLDOMElement,
+            i: number
+        ): void {
+            if (node.nodeType === 1) {
+                printReverseInfo.origDisplay[i] = node.style.display;
+                node.style.display = 'none';
             }
+        });
+
+        // Pull out the chart
+        chart.moveContainers(body);
+
+        // Storage details for undo action after printing
+        if (chart.exporting) {
+            chart.exporting.printReverseInfo = printReverseInfo;
+        }
+    }
+
+    /**
+     * Function that is added to the callbacks array that runs on chart load.
+     *
+     * @private
+     * @function Highcharts#chartCallback
+     *
+     * @param {Highcharts.Chart} chart
+     * The chart instance.
+     *
+     * @requires modules/exporting
+     */
+    function chartCallback(chart: Chart): void {
+        const chartComposition = chart as ChartComposition;
+
+        chartComposition.renderExporting();
+
+        // Add the exporting buttons on each chart redraw
+        addEvent(chart, 'redraw', chartComposition.renderExporting);
+
+        // Destroy the export elements at chart destroy
+        addEvent(chart, 'destroy', chartComposition.destroyExport);
+
+        // Uncomment this to see a button directly below the chart, for quick
+        // testing of export
+        // let button, viewImage, viewSource;
+        // if (!chart.renderer.forExport) {
+        //     viewImage = function () {
+        //         let div = doc.createElement('div');
+        //         div.innerHTML = chart.getSVGForExport();
+        //         chart.renderTo.parentNode.appendChild(div);
+        //     };
+
+        //     viewSource = function () {
+        //         let pre = doc.createElement('pre');
+        //         pre.innerHTML = chart.getSVGForExport()
+        //             .replace(/</g, '\n&lt;')
+        //             .replace(/>/g, '&gt;');
+        //         chart.renderTo.parentNode.appendChild(pre);
+        //     };
+
+        //     viewImage();
+
+        //     // View SVG Image
+        //     button = doc.createElement('button');
+        //     button.innerHTML = 'View SVG Image';
+        //     chart.renderTo.parentNode.appendChild(button);
+        //     button.onclick = viewImage;
+
+        //     // View SVG Source
+        //     button = doc.createElement('button');
+        //     button.innerHTML = 'View SVG Source';
+        //     chart.renderTo.parentNode.appendChild(button);
+        //     button.onclick = viewSource;
+        // }
+    }
+
+    /**
+     * Destroy the export buttons.
+     *
+     * @private
+     * @function Highcharts.Chart#destroyExport
+     *
+     * @param {global.Event} [e]
+     * Event object.
+     *
+     * @requires modules/exporting
+     */
+    function destroyExport(
+        this: ChartComposition,
+        e?: Event
+    ): void {
+        const chart = e ? (e.target as unknown as ChartComposition) : this,
+            exporting = chart.exporting,
+            exportSVGElements = exporting?.exportSVGElements,
+            exportDivElements = exporting?.exportDivElements,
+            exportEvents = chart.exporting?.exportEvents;
+        let cacheName;
+
+        // Destroy the extra buttons added
+        if (exportSVGElements) {
+            exportSVGElements.forEach((elem, i): void => {
+
+                // Destroy and null the svg elements
+                if (elem) { // #1822
+                    elem.onclick = elem.ontouchstart = null;
+                    cacheName = 'cache-' + elem.menuClassName;
+
+                    if ((chart as any)[cacheName]) {
+                        delete (chart as any)[cacheName];
+                    }
+
+                    exportSVGElements[i] = elem.destroy();
+                }
+            });
+            exportSVGElements.length = 0;
         }
 
-        /**
-         * Remove the dummy objects used to get defaults
-         * @private
-         */
-        function tearDown(): void {
-            dummySVG.parentNode.removeChild(dummySVG);
-            // Remove trash from DOM that stayed after each exporting
-            iframe.parentNode.removeChild(iframe);
+        // Destroy the exporting group
+        if (exporting?.exportingGroup) {
+            exporting.exportingGroup.destroy();
+            delete exporting.exportingGroup;
         }
 
-        recurse(this.container.querySelector('svg') as any);
-        tearDown();
+        // Destroy the divs for the menu
+        if (exportDivElements) {
+            exportDivElements.forEach(function (
+                elem: (Exporting.DivElement|null),
+                i: number
+            ): void {
+                if (elem) {
+                    // Remove the event handler
+                    U.clearTimeout(elem.hideTimer as any); // #5427
+                    removeEvent(elem, 'mouseleave');
 
+                    // Remove inline events
+                    exportDivElements[i] =
+                        elem.onmouseout =
+                        elem.onmouseover =
+                        elem.ontouchstart =
+                        elem.onclick = null;
+
+                    // Destroy the div by moving to garbage bin
+                    discardElement(elem);
+                }
+            });
+            exportDivElements.length = 0;
+        }
+
+        if (exportEvents) {
+            exportEvents.forEach(function (unbind: Function): void {
+                unbind();
+            });
+            exportEvents.length = 0;
+        }
     }
 
     /**
      * Move the chart container(s) to another div.
      *
+     * @private
      * @function Highcharts#moveContainers
      *
-     * @private
-     *
      * @param {Highcharts.HTMLDOMElement} moveTo
-     *        Move target
+     * Move target.
+     *
+     * @requires modules/exporting
      */
     function moveContainers(this: Chart, moveTo: HTMLDOMElement): void {
         const { scrollablePlotArea } = this;
@@ -2295,59 +2545,58 @@ namespace Exporting {
      * chart.navigation.update. These must be added to the chart instance rather
      * than the Chart prototype in order to use the chart instance inside the
      * update function.
+     *
      * @private
+     * @function Highcharts#onChartAfterInit
+     *
+     * @requires modules/exporting
      */
-    function onChartInit(
+    function onChartAfterInit(
         this: ChartComposition
     ): void {
-        const chart = this,
+        const chart = this;
+
+        // Create the exporting instance
+        if (chart.options.exporting) {
             /**
-             * @private
-             * @param {"exporting"|"navigation"} prop
-             *        Property name in option root
-             * @param {Highcharts.ExportingOptions|Highcharts.NavigationOptions} options
-             *        Options to update
-             * @param {boolean} [redraw=true]
-             *        Whether to redraw
-                     */
-            update = (
-                prop: ('exporting'|'navigation'),
-                options: (ExportingOptions|NavigationOptions),
-                redraw?: boolean
-            ): void => {
-                chart.isDirtyExporting = true;
-                merge(true, chart.options[prop], options);
-                if (pick(redraw, true)) {
-                    chart.redraw();
-                }
-            };
+             * Exporting object.
+             *
+             * @name Highcharts.Chart#exporting
+             * @type {Highcharts.Exporting}
+             */
+            chart.exporting = new Exporting(
+                chart as Exporting.ChartComposition,
+                chart.options.exporting
+            );
 
-        chart.exporting = {
-            update: function (
-                options: ExportingOptions,
-                redraw?: boolean
-            ): void {
-                update('exporting', options, redraw);
-            }
-        };
-
-        // Register update() method for navigation. Cannot be set the same way
-        // as for exporting, because navigation options are shared with bindings
-        // which has separate update() logic.
-        ChartNavigationComposition
-            .compose(chart).navigation
-            .addUpdate((
-                options: NavigationOptions,
-                redraw?: boolean
-            ): void => {
-                update('navigation', options, redraw);
-            });
+            // Register update() method for navigation. Cannot be set the same
+            // way as for exporting, because navigation options are shared with
+            // bindings which has separate update() logic.
+            ChartNavigationComposition
+                .compose(chart).navigation
+                .addUpdate((
+                    options: NavigationOptions,
+                    redraw?: boolean
+                ): void => {
+                    if (chart.exporting) {
+                        chart.exporting.isDirtyExporting = true;
+                    }
+                    merge(true, chart.options.navigation, options);
+                    if (pick(redraw, true)) {
+                        chart.redraw();
+                    }
+                });
+        }
     }
 
     /**
-     * On layout of titles (title, subtitle and caption), adjust the `alignTo``
+     * On layout of titles (title, subtitle and caption), adjust the `alignTo`
      * box to avoid the context menu button.
+     *
      * @private
+     * @function Highcharts#onChartLayOutTitle
+     *
+     * @requires modules/exporting
      */
     function onChartLayOutTitle(
         this: ChartComposition,
@@ -2378,153 +2627,50 @@ namespace Exporting {
     }
 
     /**
-     * Exporting module required. Clears away other elements in the page and
-     * prints the chart as it is displayed. By default, when the exporting
-     * module is enabled, a context button with a drop down menu in the upper
-     * right corner accesses this function.
+     * Add the buttons on chart load.
      *
-     * @sample highcharts/members/chart-print/
-     *         Print from a HTML button
-     *
-     * @function Highcharts.Chart#print
-     *
-     *
-     * @emits Highcharts.Chart#event:beforePrint
-     * @emits Highcharts.Chart#event:afterPrint
-     *
-     * @requires modules/exporting
-     */
-    function print(
-        this: ChartComposition
-    ): void {
-        const chart = this;
-
-        if (chart.isPrinting) { // Block the button while in printing mode
-            return;
-        }
-
-        printingChart = chart;
-
-        if (!G.isSafari) {
-            chart.beforePrint();
-        }
-
-        // Give the browser time to draw WebGL content, an issue that randomly
-        // appears (at least) in Chrome ~67 on the Mac (#8708).
-        setTimeout((): void => {
-
-            win.focus(); // #1510
-            win.print();
-
-            // Allow the browser to prepare before reverting
-            if (!G.isSafari) {
-                setTimeout((): void => {
-                    chart.afterPrint();
-                }, 1000);
-            }
-        }, 1);
-
-    }
-
-    /**
-     * Add the buttons on chart load
      * @private
      * @function Highcharts.Chart#renderExporting
+     *
      * @requires modules/exporting
      */
     function renderExporting(this: ChartComposition): void {
-        const chart = this as Exporting.ChartComposition,
+        const chart = this,
+            exporting = chart.exporting,
             exportingOptions: ExportingOptions =
                 chart.options.exporting as any,
-            buttons = exportingOptions.buttons,
-            isDirty = chart.isDirtyExporting || !chart.exportSVGElements;
+            isDirty =
+                chart.exporting?.isDirtyExporting ||
+                !exporting?.exportSVGElements;
 
-        chart.buttonOffset = 0;
-        if (chart.isDirtyExporting) {
-            chart.destroyExport();
-        }
-
-        if (isDirty && (exportingOptions as any).enabled !== false) {
-            chart.exportEvents = [];
-
-            chart.exportingGroup = chart.exportingGroup ||
-                chart.renderer.g('exporting-group').attr({
-                    zIndex: 3 // #4955, // #8392
-                }).add();
-
-            objectEach(buttons, function (
-                button: ExportingButtonOptions
-            ): void {
-                chart.addButton(button);
-            });
-
-            chart.isDirtyExporting = false;
-        }
-    }
-
-    /**
-     * Exporting module only. A collection of fixes on the produced SVG to
-     * account for expand properties, browser bugs.
-     * Returns a cleaned SVG.
-     *
-     * @private
-     * @function Highcharts.Chart#sanitizeSVG
-     * @param {string} svg
-     *        SVG code to sanitize
-     * @param {Highcharts.Options} options
-     *        Chart options to apply
-     * @return {string}
-     *         Sanitized SVG code
-     * @requires modules/exporting
-     */
-    function sanitizeSVG(
-        this: Chart,
-        svg: string,
-        options: Options
-    ): string {
-
-        const split = svg.indexOf('</svg>') + 6;
-        let html = svg.substr(split);
-
-        // Remove any HTML added to the container after the SVG (#894, #9087)
-        svg = svg.substr(0, split);
-
-        // Move HTML into a foreignObject
-        if (options && options.exporting && options.exporting.allowHTML) {
-            if (html) {
-                html = '<foreignObject x="0" y="0" ' +
-                            'width="' + options.chart.width + '" ' +
-                            'height="' + options.chart.height + '">' +
-                    '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    // Some tags needs to be closed in xhtml (#13726)
-                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
-                    '</body>' +
-                    '</foreignObject>';
-                svg = svg.replace('</svg>', html + '</svg>');
+        if (exporting) {
+            exporting.buttonOffset = 0;
+            if (exporting.isDirtyExporting) {
+                chart.destroyExport();
             }
 
+            if (isDirty && exportingOptions.enabled !== false) {
+                exporting.exportEvents = [];
+
+                if (exporting) {
+                    exporting.exportingGroup = exporting.exportingGroup ||
+                        chart.renderer.g('exporting-group').attr({
+                            zIndex: 3 // #4955, // #8392
+                        }).add();
+                }
+
+                objectEach(exportingOptions.buttons, function (
+                    button: ExportingButtonOptions
+                ): void {
+                    if (chart.exporting) {
+                        chart.exporting.addButton(button);
+                    }
+                });
+
+                exporting.isDirtyExporting = false;
+            }
         }
-
-        svg = svg
-            .replace(/zIndex="[^"]+"/g, '')
-            .replace(/symbolName="[^"]+"/g, '')
-            .replace(/jQuery\d+="[^"]+"/g, '')
-            .replace(/url\(("|&quot;)(.*?)("|&quot;)\;?\)/g, 'url($2)')
-            .replace(/url\([^#]+#/g, 'url(#')
-            .replace(
-                /<svg /,
-                '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
-            )
-            .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
-            .replace(/\n+/g, ' ')
-
-            // Replace HTML entities, issue #347
-            .replace(/&nbsp;/g, '\u00A0') // No-break space
-            .replace(/&shy;/g, '\u00AD'); // Soft hyphen
-
-        return svg;
     }
-
 }
 
 /* *
