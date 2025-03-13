@@ -30,7 +30,7 @@ Load **Grid Pro** from our public CDN by adding the appropriate JavaScript and C
 <link rel="stylesheet" href="https://code.highcharts.com/dashboards/css/datagrid.css" />
 ```
 
-Alternatively, you can download the file from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
+Alternatively, you can download the files from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
 
 ```html
 <script src="../code/dashboards/datagrid.js"></script>
