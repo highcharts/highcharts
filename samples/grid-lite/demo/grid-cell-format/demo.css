@@ -38,37 +38,21 @@
 }
 
 .hcg-table tbody tr.hcg-row-even:has(td.highlight-cell) td,
-.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td,
-.hcg-table tbody tr.hcg-row-even:has(td.highlight-cell) td.hcg-hovered-column,
-.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td.hcg-hovered-column,
-.hcg-table tbody tr.hcg-hovered-row:has(td.highlight-cell) td,
-.hcg-table tbody tr.hcg-hovered-row:has(td.highlight-cell) td:hover {
-    background-color: var(--highlight-cell);
+.hcg-table tbody tr.hcg-row-odd:has(td.highlight-cell) td {
+    background-color: var(--highlight-cell) !important;
 }
 
-.hcg-table tbody tr.hcg-row-even td.high-color,
-.hcg-table tbody tr:hover td.high-color:hover,
-.hcg-table tbody tr:hover td.high-color,
-.hcg-table tbody td.high-color.hcg-hovered-column,
 .hcg-table tbody td.high-color {
     font-weight: bold;
-    color: #3ea100;
+    color: #3ea100 !important;
 }
 
-.hcg-table tbody tr.hcg-row-even td.low-color,
-.hcg-table tbody tr:hover td.low-color:hover,
-.hcg-table tbody tr:hover td.low-color,
-.hcg-table tbody td.low-color.hcg-hovered-column,
 .hcg-table tbody td.low-color {
     font-weight: bold;
-    color: #c11a1a;
+    color: #c11a1a !important;
 }
 
-.hcg-table tbody tr.hcg-row-even td.over-30,
-.hcg-table tbody tr:hover td.over-30:hover,
-.hcg-table tbody tr:hover td.over-30,
-.hcg-table tbody td.over-30.hcg-hovered-column,
 .hcg-table tbody td.over-30 {
     font-weight: bold;
-    color: #504b1b;
+    color: #504b1b !important;
 }
