@@ -30,6 +30,23 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
  *
  * */
 
+declare module '../../Core/Options' {
+    interface LangOptions {
+        contextButtonTitle?: string;
+        exitFullscreen?: string;
+        downloadJPEG?: string;
+        downloadPDF?: string;
+        downloadPNG?: string;
+        downloadSVG?: string;
+        printChart?: string;
+        viewFullscreen?: string;
+    }
+
+    interface Options {
+        exporting?: ExportingOptions;
+    }
+}
+
 interface PdfFontOptions {
     bold?: string;
     bolditalic?: string;
