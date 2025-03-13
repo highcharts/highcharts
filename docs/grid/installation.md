@@ -34,7 +34,7 @@ Load **Grid Lite** from our public CDN by adding the appropriate JavaScript and 
 <link rel="stylesheet" href="https://code.highcharts.com/grid/css/grid.css" />
 ```
 
-Alternatively, you can download the file from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
+Alternatively, you can download the files from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
 
 ```html
 <script src="../code/grid/grid-lite.js"></script>
