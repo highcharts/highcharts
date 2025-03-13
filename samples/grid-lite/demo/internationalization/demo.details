@@ -1,5 +1,5 @@
 ---
- name: Highcharts Grid Language and Accessibility Demo
+ name: Highcharts Grid Internationalization Demo
  authors:
    - Dawid Dragula
  js_wrap: b
