@@ -334,7 +334,7 @@ class Fullscreen {
      */
     private setButtonText(): void {
         const chart = this.chart,
-            exportDivElements = chart.exportDivElements,
+            exportDivElements = chart.exporting?.exportDivElements,
             exportingOptions = chart.options.exporting,
             menuItems = (
                 exportingOptions &&

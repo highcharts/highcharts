@@ -1059,7 +1059,7 @@ function chartToggleDataTable(
 
 
     // Change the menu item text
-    const exportDivElements = this.exportDivElements,
+    const exportDivElements = this.exporting?.exportDivElements,
         options = this.options.exporting,
         menuItems = options &&
             options.buttons &&
