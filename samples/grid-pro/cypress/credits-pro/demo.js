@@ -1,4 +1,4 @@
-window.grid = DataGrid.dataGrid('container', {
+window.grid = Grid.grid('container', {
     dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
