@@ -4,6 +4,8 @@
 #demo {
     margin: 10px;
     padding: 10px;
+    background-color: var(--hcg-background);
+    color: var(--hcg-color)
 }
 
 .two-cols {
@@ -17,7 +19,6 @@
 }
 
 .grid {
-    background-color: var(--highcharts-background-color);
     border: 1px solid red;
 }
 
