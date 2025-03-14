@@ -36,8 +36,12 @@ async function checkDocsConsistency() {
             const sample = match[2].replace(/\/$/u, '');
             try {
                 FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
+            } catch (e1) {
+                try {
+                    FS.statSync(`samples/${sample}/demo.ts`);
+                } catch (e2) {
+                    error404s.push({ file, sample, reason: 'demo' });
+                }
             }
         }
 
@@ -73,8 +77,12 @@ async function checkDocsConsistency() {
             const sample = match[3].replace(/\/$/u, '');
             try {
                 FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
+            } catch (e1) {
+                try {
+                    FS.statSync(`samples/${sample}/demo.ts`);
+                } catch (e2) {
+                    error404s.push({ file, sample, reason: '@sample' });
+                }
             }
         }
         if (error404s.length) {
@@ -105,8 +113,12 @@ async function checkDocsConsistency() {
             const sample = match[2].replace(/\/$/u, '');
             try {
                 FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
+            } catch (e1) {
+                try {
+                    FS.statSync(`samples/${sample}/demo.ts`);
+                } catch (e2) {
+                    error404s.push({ file, sample, reason: 'demo' });
+                }
             }
         }
 
