@@ -2,7 +2,8 @@
 
 #container {
     height: 380px;
-    margin: 8px;
+    padding: 8px;
+    background-color: var(--hcg-background);
 }
 
 .highcharts-description {

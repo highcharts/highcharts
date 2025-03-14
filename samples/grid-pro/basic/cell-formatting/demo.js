@@ -1,10 +1,10 @@
-DataGrid.setOptions({
+Grid.setOptions({
     lang: {
         locale: 'en-US'
     }
 });
 
-DataGrid.dataGrid('container', {
+Grid.dataGrid('container', {
     dataTable: {
         columns: {
             date: [1640995200000, 1641081600000, 1641168000000, 1641254400000],

@@ -2,10 +2,10 @@
 
 #demo {
     padding: 8px;
+    background-color: var(--hcg-background);
 }
 
 #container {
-    background-color: var(--highcharts-background-color);
     height: 250px;
 }
 
