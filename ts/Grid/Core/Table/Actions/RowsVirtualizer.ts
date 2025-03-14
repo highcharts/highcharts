@@ -473,6 +473,7 @@ class RowsVirtualizer {
         mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
 
         mockRow.render();
+
         this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
 
         const defaultRowHeight = mockRow.htmlElement.offsetHeight;
