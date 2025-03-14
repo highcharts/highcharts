@@ -24,6 +24,9 @@ Grid.grid('container', {
         id: 'ID',
         cells: {
             className: 'bold-column'
+        },
+        header: {
+            className: 'bold-header'
         }
     }, {
         id: 'Salary',

@@ -15,14 +15,14 @@
 
 @media (prefers-color-scheme: dark) {
     .custom-theme {
-        --hcg-header-background: #525252;
-        --hcg-row-border-color: #3c3c3c;
-        --hcg-row-even-background: #666;
-        --hcg-row-background: #666;
-        --highlight-cell: #909a82;
-        --high-color: #133706;
-        --low-color: #60061e;
-        --over-30: #001475;
+        --hcg-header-background: #363636;
+        --hcg-row-border-color: #363636;
+        --hcg-row-even-background: #4f4f4f;
+        --hcg-row-background: #4f4f4f;
+        --highlight-cell: #404c2f;
+        --high-color: #98d76a;
+        --low-color: #ffa8a8;
+        --over-30: #b1befb;
     }
 }
 
@@ -34,7 +34,8 @@
     padding-left: 10px;
 }
 
-.bold-column {
+.hcg-table thead th.bold-header span,
+.hcg-table tbody tr td.bold-column {
     font-weight: bold;
     text-align: center;
 }
