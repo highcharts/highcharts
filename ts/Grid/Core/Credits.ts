@@ -52,7 +52,10 @@ class Credits {
      */
     public static defaultOptions: CreditsOptions = {
         enabled: true,
-        text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
+        // eslint-disable-next-line no-console
+        text: `
+            <img src="https://assets.highcharts.com/grid/logo_light.png" srcset="https://assets.highcharts.com/grid/logo_lightx2.png 2x" class="hcg-light-logo" />
+            <img src="https://assets.highcharts.com/grid/logo_dark.png" srcset="https://assets.highcharts.com/grid/logo_darkx2.png 2x" class="hcg-dark-logo" />`,
         href: 'https://www.highcharts.com',
         position: 'bottom'
     };
@@ -112,7 +115,7 @@ class Credits {
             className: Globals.getClassName('creditsText')
         }, this.containerElement);
 
-        this.textElement.setAttribute('target', '_top');
+        this.textElement.setAttribute('target', '_blank');
 
         this.options = options ?? Credits.defaultOptions;
         this.render();

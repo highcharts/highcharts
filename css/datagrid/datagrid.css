@@ -19,6 +19,14 @@
     --ig-positive-default-background: hsl(120, 22%, 90%);
 }
 
+.hcg-light-logo {
+    display: block;
+}
+
+.hcg-dark-logo {
+    display: none;
+}
+
 @media (prefers-color-scheme: dark) {
     .hcg-container,
     .highcharts-datagrid-container {
@@ -29,6 +37,14 @@
         --ig-neutral-default-background: hsl(0, 0%, 39%);
         --ig-positive-default-border-color: hsl(120, 100%, 25%);
         --ig-positive-default-background: hsl(120, 41%, 25%);
+    }
+
+    .hcg-light-logo {
+        display: none;
+    }
+
+    .hcg-dark-logo {
+        display: block;
     }
 }
 
@@ -130,7 +146,7 @@
     --ig-description-padding: var(--ig-description-vertical-padding) var(--ig-description-horizontal-padding) 0 var(--ig-description-horizontal-padding);
 
     /* Credits padding */
-    --ig-credits-padding: 0 var(--ig-horizontal-padding);
+    --ig-credits-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
 
     /* Default backgrounds and colors */
     --ig-background: var(--hcg-background, transparent);
@@ -828,6 +844,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     color: var(--ig-credits-color);
     font-size: var(--ig-credits-font-size);
     text-decoration: none;
+    display: inline-block;
 }
 
 .hcg-credits-container,
