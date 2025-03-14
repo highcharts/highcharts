@@ -469,6 +469,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-table tbody tr.hcg-mocked-row td {
+    position: absolute;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
