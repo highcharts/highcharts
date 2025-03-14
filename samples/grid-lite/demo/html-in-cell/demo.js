@@ -55,7 +55,7 @@ Grid.grid('container', {
     }, {
         id: 'Link',
         cells: {
-            format: '<a href="{value}">URL</a>'
+            format: '<a href="{value}" target="_blank">URL</a>'
         }
     }, {
         id: 'Checked',
