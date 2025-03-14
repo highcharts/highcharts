@@ -1,12 +1,22 @@
 // Define custom SVG symbols for left and right triangles
-Highcharts.SVGRenderer.prototype.symbols.triangleLeft = (x, y, w, h) =>
-    ['M', x, y + h / 2, 'L', x + w, y, 'L', x + w, y + h, 'Z'];
+Highcharts.SVGRenderer.prototype.symbols.triangleLeft = (
+    x: number, y: number, w: number, h: number
+): Highcharts.SVGPathArray =>
+    [['M', x, y + h / 2], ['L', x + w, y], ['L', x + w, y + h], ['Z']];
 
-Highcharts.SVGRenderer.prototype.symbols.triangleRight = (x, y, w, h) =>
-    ['M', x + w, y + h / 2, 'L', x, y, 'L', x, y + h, 'Z'];
+Highcharts.SVGRenderer.prototype.symbols.triangleRight = (
+    x: number, y: number, w: number, h: number
+): Highcharts.SVGPathArray =>
+    [['M', x + w, y + h / 2], ['L', x, y], ['L', x, y + h], ['Z']];
 
 // Process and transform the data for the chart
-const data = [{
+type DumbbellPointOptions = {
+    name: string,
+    custom: Record<string, any>,
+    low: number,
+    high: number
+};
+const data: DumbbellPointOptions[] = [{
     name: 'wall-breakers',
     previous: 47,
     current: 128
@@ -97,17 +107,21 @@ const data = [{
 }].map(dataPoint => {
     const isIncrease = dataPoint.previous < dataPoint.current;
     return {
-        ...dataPoint,
+        name: dataPoint.name,
         low: isIncrease ? dataPoint.previous : dataPoint.current,
-        high: isIncrease ? dataPoint.current : dataPoint.previous
+        high: isIncrease ? dataPoint.current : dataPoint.previous,
+        custom: {
+            previous: dataPoint.previous,
+            current: dataPoint.current
+        }
     };
 });
 
 // Separate the data into increasing and decreasing series
-const increasingData = [],
-    decreasingData = [];
+const increasingData: DumbbellPointOptions[] = [],
+    decreasingData: DumbbellPointOptions[] = [];
 data.forEach((dataPoint, index) => {
-    const isIncrease = dataPoint.previous < dataPoint.current,
+    const isIncrease = dataPoint.custom.previous < dataPoint.custom.current,
         transformedDataPoint = {
             ...dataPoint,
             x: index
@@ -123,7 +137,6 @@ data.forEach((dataPoint, index) => {
 // Create the chart
 Highcharts.chart('container', {
     chart: {
-        type: 'dumbbell',
         inverted: true
     },
     title: {
@@ -148,7 +161,7 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-        title: ''
+        title: null
     },
 
     legend: {
@@ -156,7 +169,7 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        series: {
+        dumbbell: {
             connectorWidth: 3,
             marker: {
                 radius: 5,
@@ -176,6 +189,7 @@ Highcharts.chart('container', {
     },
 
     series: [{
+        type: 'dumbbell',
         name: 'Increase',
         data: increasingData,
         color: Highcharts.getOptions().colors[2],
@@ -188,6 +202,7 @@ Highcharts.chart('container', {
         }
     },
     {
+        type: 'dumbbell',
         name: 'Decrease',
         data: decreasingData,
         color: Highcharts.getOptions().colors[5],
