@@ -6,7 +6,7 @@ js_wrap: b
 tags:
   - Highcharts Grid demo
 categories:
-  - Basic:
-        priority: 124
+  - General:
+        priority: 130
 use_png_thumbnail: true
 ...

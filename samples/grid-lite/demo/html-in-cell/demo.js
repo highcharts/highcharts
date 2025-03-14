@@ -23,6 +23,11 @@ Grid.grid('container', {
             Checked: [true, false, false]
         }
     },
+    rendering: {
+        rows: {
+            virtualization: false
+        }
+    },
     columns: [{
         id: 'Header',
         cells: {
