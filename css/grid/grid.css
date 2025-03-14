@@ -457,8 +457,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     width: 100%;
 }
 
-.hcg-table tbody tr td,
-.hcg-table tbody tr.hcg-mocked-row td {
+.hcg-table tbody tr td {
     border-right: var(--ig-column-border);
     border-bottom: var(--ig-row-border);
     text-align: var(--ig-text-align);
@@ -470,6 +469,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-table tbody tr.hcg-mocked-row td {
+    position: absolute;
     white-space: nowrap;
     text-overflow: ellipsis;
 }

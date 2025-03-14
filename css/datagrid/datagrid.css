@@ -491,9 +491,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .hcg-table tbody tr td,
-.hcg-table tbody tr td.hcg-mocked-cell,
-.highcharts-datagrid-table tbody tr td,
-.highcharts-datagrid-table tbody tr td.highcharts-datagrid-mocked-cell {
+.highcharts-datagrid-table tbody tr td {
     border-right: var(--ig-column-border);
     border-bottom: var(--ig-row-border);
     text-align: var(--ig-text-align);
@@ -502,6 +500,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     font: var(--ig-font);
     line-height: 1em;
     overflow: hidden;
+}
+
+.hcg-table tbody tr.hcg-mocked-row td,
+.highcharts-datagrid-table tbody tr.hcg-mocked-row td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .hcg-table .hcg-last-header-cell-in-row,

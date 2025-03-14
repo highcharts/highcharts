@@ -469,15 +469,14 @@ class RowsVirtualizer {
         const vp = this.viewport;
         const mockRow = new TableRow(vp, 0);
 
+        mockRow.htmlElement.style.position = 'absolute';
+        mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
+
         mockRow.render();
-        mockRow.htmlElement.classList.add(
-            Globals.getClassName('mockedRow')
-        );
-        vp.tbodyElement.appendChild(mockRow.htmlElement);
+        this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
 
         const defaultRowHeight = mockRow.htmlElement.offsetHeight;
 
-        // Clear all mocked elements
         mockRow.destroy();
 
         return defaultRowHeight;
