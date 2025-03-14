@@ -292,8 +292,8 @@ class Table {
     private updateVirtualization(): void {
         const rows = this.grid.options?.rendering?.rows;
         const threshold = Number(
-            rows?.threshold ||
-            Defaults.defaultOptions.rendering?.rows?.threshold
+            rows?.virtualizationThreshold ||
+            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
         );
         const rowCount = Number(this.dataTable?.rowCount);
 

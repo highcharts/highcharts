@@ -232,7 +232,7 @@ export interface RowsSettings {
      *
      * @default 50
      */
-    threshold?: number;
+    virtualizationThreshold?: number;
 }
 
 /**

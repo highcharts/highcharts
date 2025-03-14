@@ -72,8 +72,7 @@ namespace Defaults {
                 bufferSize: 10,
                 minVisibleRows: 2,
                 strictHeights: false,
-                virtualization: false,
-                threshold: 50
+                virtualizationThreshold: 50
             },
             header: {
                 enabled: true
