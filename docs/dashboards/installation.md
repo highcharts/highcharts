@@ -50,7 +50,7 @@ import * as Dashboards from '@highcharts/dashboards';
 ```
 
 Then, you can use the `HighchartsPlugin` to connect the Highcharts component with the Dashboards.  
-It works similarly for other plugins, e.g., DataGrid.
+It works similarly for other plugins, e.g., Grid.
 
 ```ts
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);

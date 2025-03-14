@@ -1,0 +1,9 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "@highcharts/grid": ["code/grid"],
+            "@highcharts/grid/*": ["code/grid/*"]
+        },
+    }
+}

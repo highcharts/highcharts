@@ -1,0 +1,10 @@
+@import url("https://code.highcharts.com/grid/css/grid.css");
+
+.content {
+    background-color: var(--hcg-background);
+    color: var(--hcg-color);
+}
+
+#container {
+    border: 2px solid red;
+}

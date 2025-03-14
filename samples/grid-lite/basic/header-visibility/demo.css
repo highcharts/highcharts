@@ -1,0 +1,10 @@
+@import url("https://code.highcharts.com/grid/css/grid.css");
+
+.demo {
+    background-color: var(--hcg-background);
+    padding: 8px;
+}
+
+#container {
+    height: 250px;
+}
