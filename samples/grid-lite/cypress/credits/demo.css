@@ -3,5 +3,5 @@
 #container {
     height: 250px;
     padding: 8px;
-    background-color: var(--highcharts-background-color);
+    background-color: var(--hcg-background);
 }
