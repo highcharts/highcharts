@@ -12,7 +12,7 @@ const dataTable = new DataGrid.DataTable({
     }
 });
 
-DataGrid.dataGrid('container', {
+Grid.grid('container', {
     dataTable: dataTable
 }, true).then(grid => {
     const credits = grid.options.credits;

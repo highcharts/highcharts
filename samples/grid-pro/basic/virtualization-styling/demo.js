@@ -35,19 +35,19 @@ function generateRandomData(rows) {
 
 const dataColumns = generateRandomData(100);
 
-const staticGrid = DataGrid.dataGrid('container', {
+const staticGrid = Grid.grid('container', {
     dataTable: {
         columns: dataColumns
     }
 });
 
-const autoGrid = DataGrid.dataGrid('container-noheight', {
+const autoGrid = Grid.grid('container-noheight', {
     dataTable: {
         columns: dataColumns
     }
 });
 
-const dashboardDataGrid = Dashboards.board('dashboard-container', {
+const board = Dashboards.board('dashboard-container', {
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -70,8 +70,8 @@ const dashboardDataGrid = Dashboards.board('dashboard-container', {
         }
     }, {
         renderTo: 'dashboard-col-1',
-        type: 'DataGrid',
-        dataGridOptions: {
+        type: 'Grid',
+        gridOptions: {
             dataTable: {
                 columns: dataColumns
             }
@@ -101,7 +101,7 @@ radioButtons.forEach(el => {
             }
         });
 
-        dashboardDataGrid.mountedComponents[1].component.update({
+        board.mountedComponents[1].component.update({
             dataGridOptions: {
                 rendering: {
                     rows: {

@@ -6,7 +6,7 @@
  * License: www.highcharts.com/license
  */
 
-/*  ==== Start DataGrid Color Scheme  ==== */
+/*  ==== Start Grid Color Scheme  ==== */
 .hcg-container {
     --ig-default-color: #000000;
     --ig-negative-default-border-color: hsl(0, 100%, 50%);
@@ -45,11 +45,11 @@
     }
 }
 
-/*  ==== End DataGrid Color Scheme  ==== */
+/*  ==== End Grid Color Scheme  ==== */
 
 /* stylelint-disable max-line-length */
 
-/* ==== Start DataGrid Variables ==== */
+/* ==== Start Grid Variables ==== */
 .hcg-container {
     /* Fonts */
 
@@ -285,9 +285,9 @@
     --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
 }
 
-/* ==== End DataGrid Variables ==== */
+/* ==== End Grid Variables ==== */
 
-/* DataGrid container */
+/* Grid container */
 .hcg-container * {
     box-sizing: border-box;
     font: var(--ig-font);
@@ -768,7 +768,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     padding: var(--ig-credits-padding);
 }
 
-/* Start DataGrid CSS Helpers Classes */
+/* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
 .hcg-table tbody tr:has(.hcg-negative-row) td::before,
 .hcg-table tbody tr td.hcg-neutral::before,
@@ -885,9 +885,9 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
-/* End DataGrid CSS Helpers Classes */
+/* End Grid CSS Helpers Classes */
 
-/* Start DataGrid Default Theme */
+/* Start Grid Default Theme */
 .hcg-theme-default {
     --hcg-border-radius: 5px;
     --hcg-color: #000000;
@@ -937,4 +937,4 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
-/* End DataGrid Default Theme */
+/* End Grid Default Theme */
