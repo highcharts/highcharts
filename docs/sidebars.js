@@ -95,6 +95,7 @@ module.exports = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
+            'dashboards/grid-standalone',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -274,6 +275,9 @@ module.exports = {
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
+        ],
+        'Flutter': [
+            'flutter/getting-started'
         ]
     }
 };

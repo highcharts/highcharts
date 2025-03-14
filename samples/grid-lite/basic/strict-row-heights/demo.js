@@ -3,7 +3,7 @@ Grid.grid('container', {
         columns: {
             a: Array.from({ length: 100 }, (_, i) => `A${i} quite a long text`),
             b: Array.from({ length: 100 }, (_, i) => `B${i} Lorem ipsum dolor sit amet, consectetur adipiscing elit.`), // eslint-disable-line
-            c: Array.from({ length: 100 }, (_, i) => `C${i}`),
+            c: Array.from({ length: 100 }, (_, i) => `C${i}`), // eslint-disable-line
             d: Array.from({ length: 100 }, (_, i) => `D${i}`),
             'lorem ipsum': Array.from({ length: 100 }, (_, i) => `E${i}`), // eslint-disable-line
             f: Array.from({ length: 100 }, (_, i) => `F${i}`)
@@ -13,5 +13,13 @@ Grid.grid('container', {
         rows: {
             strictHeights: true
         }
-    }
+    },
+    columns: [{
+        id: 'f',
+        cells: {
+            formatter: function () {
+                return '<a href="#">' + this.value + '</a>';
+            }
+        }
+    }]
 });

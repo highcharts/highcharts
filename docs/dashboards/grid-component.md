@@ -1,6 +1,6 @@
-# Grid component
+# Grid Component
 
-The Grid Component can be placed inside a dashboard's cell to allow users to visualize the data in the editable table.
+The **Grid Component** can be placed inside a dashboard's cell to allow users to visualize the data in the editable table.
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/grid-component/grid-options" allow="fullscreen"></iframe>
 

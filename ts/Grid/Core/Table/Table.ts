@@ -189,7 +189,6 @@ class Table {
             );
         }
 
-        this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
             this.columnsResizer = new ColumnsResizer(this);
         }
@@ -198,6 +197,13 @@ class Table {
             tableElement.classList.add(...customClassName.split(/\s+/g));
         }
 
+        // Load columns
+        this.loadColumns();
+
+        // Virtualization
+        this.rowsVirtualizer = new RowsVirtualizer(this);
+
+        // Init Table
         this.init();
 
         // Add event listeners
@@ -231,9 +237,6 @@ class Table {
         fireEvent(this, 'beforeInit');
 
         this.setTbodyMinHeight();
-
-        // Load columns
-        this.loadColumns();
 
         // Load & render head
         if (this.grid.options?.rendering?.header?.enabled) {
