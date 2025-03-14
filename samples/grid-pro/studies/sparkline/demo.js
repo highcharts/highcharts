@@ -1,6 +1,6 @@
 const numberOfRows = 10000;
 
-DataGrid.dataGrid('container', {
+Grid.grid('container', {
     dataTable: {
         columns: {
             a: Array.from({ length: numberOfRows }, (_, i) => `A${i}`),
