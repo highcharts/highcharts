@@ -10,7 +10,7 @@ npm install @highcharts/grid-lite/grid-lite
 ## 2. Import the Grid package
 
 ```ts
-import Grid from '@highcharts/grid-lite/grid-lite';
+import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
 ```
 
 ## 3. Create an HTML container  
@@ -30,7 +30,7 @@ Grid.grid('container', this.options);
 ## Final example
 ```ts
 import { Component, OnInit } from '@angular/core';
-import Grid from '@highcharts/grid-lite/grid-lite';
+import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
 import '@highcharts/grid-lite/css/grid.css';
 
 @Component({

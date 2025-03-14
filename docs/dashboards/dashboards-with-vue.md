@@ -11,7 +11,7 @@ npm install @highcharts/dashboards
 ## 2. Import the Dashboards package
 
 ```typescript
-import * as Dashboards from '@highcharts/dashboards';
+import Dashboards from '@highcharts/dashboards';
 ```
 
 ## 3. Additional packages
@@ -27,14 +27,14 @@ Then, import the package and the dedicated plug to connect it to the Dashboards.
 
 ```typescript
 import Highcharts from 'highcharts';
-import Dashboards from '@highcharts/dashboards';
-import Grid from '@highcharts/dashboards/datagrid';
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import DataGrid from '@highcharts/dashboards/datagrid';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.GridPlugin.custom.connectGrid(Grid);
-
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+
 ```
 
 __Please Note:__ If you are using the **Visual Studio Code** editor with the
@@ -52,9 +52,7 @@ There are two ways to do it:
 To do that, first import the `layout` module and initialize it:
 
 ```typescript
-import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-LayoutModule(Dashboards);
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
 ```
 Then add a div where you want to render the dashboard:
 ```html
