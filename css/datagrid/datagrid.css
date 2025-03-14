@@ -6,7 +6,7 @@
  * License: www.highcharts.com/license
  */
 
-/*  ==== Start DataGrid Color Scheme  ==== */
+/*  ==== Start Grid Color Scheme  ==== */
 
 .hcg-container,
 .highcharts-datagrid-container {
@@ -32,11 +32,11 @@
     }
 }
 
-/*  ==== End DataGrid Color Scheme  ==== */
+/*  ==== End Grid Color Scheme  ==== */
 
 /* stylelint-disable max-line-length */
 
-/* ==== Start DataGrid Variables ==== */
+/* ==== Start Grid Variables ==== */
 .hcg-container,
 .highcharts-datagrid-container {
     /* Fonts */
@@ -273,9 +273,9 @@
     --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
 }
 
-/* ==== End DataGrid Variables ==== */
+/* ==== End Grid Variables ==== */
 
-/* DataGrid container */
+/* Grid container */
 .hcg-container *,
 .highcharts-datagrid-container * {
     box-sizing: border-box;
@@ -836,7 +836,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     padding: var(--ig-credits-padding);
 }
 
-/* Start DataGrid CSS Helpers Classes */
+/* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
 .hcg-table tbody tr:has(.hcg-negative-row) td::before,
 .hcg-table tbody tr td.hcg-neutral::before,
@@ -982,9 +982,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 }
 
-/* End DataGrid CSS Helpers Classes */
+/* End Grid CSS Helpers Classes */
 
-/* Start DataGrid Default Theme */
+/* Start Grid Default Theme */
 .hcg-theme-default {
     --hcg-border-radius: 5px;
     --hcg-color: #000000;
@@ -1034,4 +1034,4 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 }
 
-/* End DataGrid Default Theme */
+/* End Grid Default Theme */
