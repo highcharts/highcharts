@@ -14,7 +14,7 @@ npm install @highcharts/grid-lite/grid-lite
 
 <script setup lang="ts">
 import { watch, ref } from 'vue';
-import Grid from '@highcharts/grid-lite/grid-lite';
+import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
 import '@highcharts/grid-lite/css/grid.css';
 
 const props = defineProps(['config']);
@@ -57,4 +57,4 @@ const config: Grid.Options = {
 </template>
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-grid-vue-ts?file=src%2FApp.vue,src%2Fcomponents%2FGrid.vue).
+See the live example [here](https://stackblitz.com/edit/highcharts-grid-vue-ts-fbnz62i9).
