@@ -14,10 +14,19 @@ Grid.grid('container', {
             className: '{#if (gt value 30)}over-30{/if}'
         }
     },
+    rendering: {
+        theme: 'custom-theme',
+        rows: {
+            minVisibleRows: 5
+        }
+    },
     columns: [{
         id: 'ID',
         cells: {
             className: 'bold-column'
+        },
+        header: {
+            className: 'bold-header'
         }
     }, {
         id: 'Salary',
