@@ -1,3 +1,89 @@
+const createChart = (
+    increasingData: Highcharts.PointOptionsObject[],
+    decreasingData: Highcharts.PointOptionsObject[]
+): Highcharts.Chart =>
+    Highcharts.chart('container', {
+        chart: {
+            inverted: true
+        },
+        title: {
+            text: 'Change in Card Usage'
+        },
+
+        subtitle: {
+            text: 'Season 21 vs Season 22 <br>Top 1000'
+        },
+
+        tooltip: {
+            pointFormat: 'Season 21: used in deck by ' +
+                '<strong>{point.previous}</strong> of 1000 top players<br>' +
+                'Season 22: used in deck by <strong>{point.current}</strong> ' +
+                'of 1000 top players',
+            shared: true
+        },
+
+        xAxis: {
+            type: 'category',
+            opposite: true
+        },
+
+        yAxis: {
+            title: null
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        plotOptions: {
+            dumbbell: {
+                connectorWidth: 3,
+                marker: {
+                    radius: 5,
+                    states: {
+                        hover: {
+                            lineWidth: 0
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    color: 'contrast',
+                    crop: false,
+                    overflow: 'allow'
+                }
+            }
+        },
+
+        series: [{
+            type: 'dumbbell',
+            name: 'Increase',
+            data: increasingData,
+            color: Highcharts.getOptions().colors[2],
+            marker: {
+                enabled: true,
+                symbol: 'triangleRight'
+            },
+            lowMarker: {
+                enabled: false
+            }
+        },
+        {
+            type: 'dumbbell',
+            name: 'Decrease',
+            data: decreasingData,
+            color: Highcharts.getOptions().colors[5],
+            marker: {
+                enabled: false
+            },
+            lowColor: undefined,
+            lowMarker: {
+                enabled: true,
+                symbol: 'triangleLeft'
+            }
+        }]
+    });
+
 // Define custom SVG symbols for left and right triangles
 Highcharts.SVGRenderer.prototype.symbols.triangleLeft = (
     x: number, y: number, w: number, h: number
@@ -10,13 +96,7 @@ Highcharts.SVGRenderer.prototype.symbols.triangleRight = (
     [['M', x + w, y + h / 2], ['L', x, y], ['L', x, y + h], ['Z']];
 
 // Process and transform the data for the chart
-type DumbbellPointOptions = {
-    name: string,
-    custom: Record<string, any>,
-    low: number,
-    high: number
-};
-const data: DumbbellPointOptions[] = [{
+const data: Highcharts.PointOptionsObject[] = [{
     name: 'wall-breakers',
     previous: 47,
     current: 128
@@ -118,8 +198,8 @@ const data: DumbbellPointOptions[] = [{
 });
 
 // Separate the data into increasing and decreasing series
-const increasingData: DumbbellPointOptions[] = [],
-    decreasingData: DumbbellPointOptions[] = [];
+const increasingData: Highcharts.PointOptionsObject[] = [],
+    decreasingData: Highcharts.PointOptionsObject[] = [];
 data.forEach((dataPoint, index) => {
     const isIncrease = dataPoint.custom.previous < dataPoint.custom.current,
         transformedDataPoint = {
@@ -134,85 +214,4 @@ data.forEach((dataPoint, index) => {
     }
 });
 
-// Create the chart
-Highcharts.chart('container', {
-    chart: {
-        inverted: true
-    },
-    title: {
-        text: 'Change in Card Usage'
-    },
-
-    subtitle: {
-        text: 'Season 21 vs Season 22 <br>Top 1000'
-    },
-
-    tooltip: {
-        pointFormat: 'Season 21: used in deck by ' +
-            '<strong>{point.previous}</strong> of 1000 top players<br>' +
-            'Season 22: used in deck by <strong>{point.current}</strong> ' +
-            'of 1000 top players',
-        shared: true
-    },
-
-    xAxis: {
-        type: 'category',
-        opposite: true
-    },
-
-    yAxis: {
-        title: null
-    },
-
-    legend: {
-        enabled: false
-    },
-
-    plotOptions: {
-        dumbbell: {
-            connectorWidth: 3,
-            marker: {
-                radius: 5,
-                states: {
-                    hover: {
-                        lineWidth: 0
-                    }
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                color: 'contrast',
-                crop: false,
-                overflow: 'allow'
-            }
-        }
-    },
-
-    series: [{
-        type: 'dumbbell',
-        name: 'Increase',
-        data: increasingData,
-        color: Highcharts.getOptions().colors[2],
-        marker: {
-            enabled: true,
-            symbol: 'triangleRight'
-        },
-        lowMarker: {
-            enabled: false
-        }
-    },
-    {
-        type: 'dumbbell',
-        name: 'Decrease',
-        data: decreasingData,
-        color: Highcharts.getOptions().colors[5],
-        marker: {
-            enabled: false
-        },
-        lowColor: undefined,
-        lowMarker: {
-            enabled: true,
-            symbol: 'triangleLeft'
-        }
-    }]
-});
+createChart(increasingData, decreasingData);
