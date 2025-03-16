@@ -43,7 +43,8 @@ const {
     extend,
     getStyle,
     merge,
-    pick
+    pick,
+    defined
 } = U;
 
 
@@ -1077,6 +1078,7 @@ class Grid {
      */
     private initVirtualization(): void {
         const rows = this.userOptions.rendering?.rows;
+        const virtualization = rows?.virtualization;
         const threshold = Number(
             rows?.virtualizationThreshold ||
             Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
@@ -1086,7 +1088,7 @@ class Grid {
         // Makes sure all nested options are defined.
         ((this.options ??= {}).rendering ??= {}).rows ??= {};
         this.options.rendering.rows.virtualization =
-            rows?.virtualization || rowCount >= threshold;
+            defined(virtualization) ? virtualization : rowCount >= threshold;
     }
 }
 
