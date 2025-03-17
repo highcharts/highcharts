@@ -9,8 +9,10 @@ See [Webpack documentation](https://webpack.js.org/concepts/) for concept and co
 Overview
 --------
 
-- `externals.json`: Maps imports, that should not be included, to the namespace. 
-  Only masters that are listet in the "included" option will bundle the listed imports.
+- `externals.json`: Maps imports, that should not be included, to the namespace.
+  - Lists all imports in "files" relative to "code/es-modules".
+  - Only masters that are listed in the "included" option will bundle the listed imports.
+  - A leading dot in "namespacePath" will be replaced with the shared namespace.
 
 - `highcharts-es5.webpack.mjs`: Configuration to create UMD bundles from Highcharts ES5 masters.
 
