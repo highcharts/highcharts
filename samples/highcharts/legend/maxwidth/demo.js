@@ -6,6 +6,6 @@ Highcharts.chart('container', {
 
     series: [{
         name: '123456789',
-        data: [void 0]
+        data: [0, 1, 2]
     }]
 });
