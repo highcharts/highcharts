@@ -106,18 +106,30 @@ function chartHideOverlappingLabels(
                     x: label.attr('x'),
                     y: label.attr('y')
                 },
-                bBox = label.getBBox();
+                bBox = label.getBBox(),
+                alignValue = label.alignValue || '',
+                width = bBox.width;
 
-            label.width = bBox.width;
+            let alignOffset = 0;
+
+            label.width = width;
             label.height = bBox.height;
+
+            switch (alignValue) {
+                case 'right':
+                    alignOffset = width;
+                    break;
+                case 'center':
+                    alignOffset = (width / 2);
+                    break;
+                default:
+                    break;
+            }
 
             return {
                 x: pos.x + (
                     label.parentGroup?.translateX || 0
-                ) + padding - (
-                    label.alignValue === 'right' && label.width ||
-                    0
-                ),
+                ) + padding - alignOffset,
                 y: pos.y + (
                     label.parentGroup?.translateY || 0
                 ) + padding,
