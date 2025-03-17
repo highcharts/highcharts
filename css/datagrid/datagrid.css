@@ -19,14 +19,6 @@
     --ig-positive-default-background: hsl(120, 22%, 90%);
 }
 
-.hcg-light-logo {
-    display: block;
-}
-
-.hcg-dark-logo {
-    display: none;
-}
-
 @media (prefers-color-scheme: dark) {
     .hcg-container,
     .highcharts-datagrid-container {
@@ -37,14 +29,6 @@
         --ig-neutral-default-background: hsl(0, 0%, 39%);
         --ig-positive-default-border-color: hsl(120, 100%, 25%);
         --ig-positive-default-background: hsl(120, 41%, 25%);
-    }
-
-    .hcg-light-logo {
-        display: none;
-    }
-
-    .hcg-dark-logo {
-        display: block;
     }
 }
 
@@ -845,14 +829,31 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Credits */
-.hcg-credits,
-.highcharts-datagrid-credits {
+.hcg-credits-container.hcg-credits-lite {
+    text-align: right !important;
+    padding: 5px 0 0 !important;
+}
+
+.hcg-credits-container.hcg-credits-lite .hcg-credits {
+    text-decoration: none !important;
+    display: inline-block !important;
+}
+
+.hcg-credits-container.hcg-credits-pro,
+.highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro {
+    text-align: var(--ig-credits-text-align);
+    padding: var(--ig-credits-padding);
+}
+
+.hcg-credits-container.hcg-credits-pro .hcg-credits,
+.highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro .highcharts-datagrid-credits {
     color: var(--ig-credits-color);
     font-size: var(--ig-credits-font-size);
     text-decoration: none;
     display: inline-block;
 }
 
+<<<<<<< HEAD
 .hcg-credits-container,
 .highcharts-datagrid-credits-container {
     text-align: var(--ig-credits-text-align);
@@ -860,6 +861,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Start Grid CSS Helpers Classes */
+=======
+/* Start DataGrid CSS Helpers Classes */
+>>>>>>> b93250b4a2 (Refactored credits.)
 .hcg-table tbody tr td.hcg-negative::before,
 .hcg-table tbody tr:has(.hcg-negative-row) td::before,
 .hcg-table tbody tr td.hcg-neutral::before,

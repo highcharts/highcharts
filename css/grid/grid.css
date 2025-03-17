@@ -17,14 +17,6 @@
     --ig-positive-default-background: hsl(120, 22%, 90%);
 }
 
-.hcg-light-logo {
-    display: block;
-}
-
-.hcg-dark-logo {
-    display: none;
-}
-
 @media (prefers-color-scheme: dark) {
     .hcg-container {
         --ig-default-color: #ffffff;
@@ -34,14 +26,6 @@
         --ig-neutral-default-background: hsl(0, 0%, 39%);
         --ig-positive-default-border-color: hsl(120, 100%, 25%);
         --ig-positive-default-background: hsl(120, 41%, 25%);
-    }
-
-    .hcg-light-logo {
-        display: none;
-    }
-
-    .hcg-dark-logo {
-        display: block;
     }
 }
 
@@ -756,16 +740,14 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 /* Credits */
-.hcg-credits {
-    color: var(--ig-credits-color);
-    font-size: var(--ig-credits-font-size);
-    text-decoration: none;
-    display: inline-block;
+.hcg-credits-container.hcg-credits-lite {
+    text-align: right !important;
+    padding: 5px 0 0 !important;
 }
 
-.hcg-credits-container {
-    text-align: var(--ig-credits-text-align);
-    padding: var(--ig-credits-padding);
+.hcg-credits-container.hcg-credits-lite .hcg-credits {
+    text-decoration: none !important;
+    display: inline-block !important;
 }
 
 /* Start Grid CSS Helpers Classes */
