@@ -642,7 +642,7 @@ QUnit.test('HTML', function (assert) {
         });
         assert.strictEqual(
             text.element.style.width,
-            '',
+            'auto',
             'The style width should be removed when setting to null'
         );
 
@@ -660,7 +660,7 @@ QUnit.test('HTML', function (assert) {
         });
         assert.strictEqual(
             text.element.style.width,
-            '',
+            'auto',
             'The style width should be removed when setting to undefined'
         );
 

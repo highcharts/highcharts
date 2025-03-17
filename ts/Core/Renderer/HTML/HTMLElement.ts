@@ -363,6 +363,7 @@ class HTMLElement extends SVGElement {
         const {
             element,
             foreignObject,
+            oldTextWidth,
             renderer,
             rotation,
             rotationOriginX,
@@ -416,14 +417,14 @@ class HTMLElement extends SVGElement {
             // avoid the getTextPxLength function using elem.offsetWidth.
             // Calling offsetWidth affects rendering time as it forces layout
             // (#7656).
-            if (textWidth !== this.oldTextWidth) { // #983, #1254
+            if (textWidth !== oldTextWidth) { // #983, #1254
                 const textPxLength = getTextPxLength(),
                     textWidthNum = textWidth || 0,
                     willOverWrap = element.style.textOverflow === '' &&
                         element.style.webkitLineClamp;
                 if (
                     (
-                        textWidthNum > this.oldTextWidth ||
+                        textWidthNum > oldTextWidth ||
                         textPxLength > textWidthNum ||
                         willOverWrap
                     ) && (
@@ -439,8 +440,10 @@ class HTMLElement extends SVGElement {
                         textPxLength > textWidthNum ||
                         // Set width to prevent over-wrapping (#22609)
                         willOverWrap;
+
                     css(element, {
-                        width: usePxWidth ? textWidth + 'px' : 'auto', // #16261
+                        width: usePxWidth && isNumber(textWidth) ?
+                            textWidth + 'px' : 'auto', // #16261
                         display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
@@ -455,14 +458,13 @@ class HTMLElement extends SVGElement {
                     display: 'inline-block',
                     verticalAlign: 'top'
                 });
-                // Firefox needs the foreign object to have a larger width and
-                // height than its content, in order to read its content's size.
-                if (isFirefox) {
-                    foreignObject.attr({
-                        width: renderer.width,
-                        height: renderer.height
-                    });
-                }
+                // In many cases (Firefox always, others on title layout) we
+                // need the foreign object to have a larger width and height
+                // than its content, in order to read its content's size
+                foreignObject.attr({
+                    width: renderer.width,
+                    height: renderer.height
+                });
             }
 
             // Do the calculations and DOM access only if properties changed
@@ -527,11 +529,13 @@ class HTMLElement extends SVGElement {
                         x: x + xCorr,
                         y: y + yCorr,
                         width: element.offsetWidth,
-                        height: element.offsetHeight
+                        height: element.offsetHeight,
+                        'transform-origin': element
+                            .getAttribute('transform-origin') || void 0
                     });
 
                     // Reset, otherwise lineClamp will not work
-                    css(element, { display });
+                    css(element, { display, textAlign });
 
                 } else if (isFirefox) {
                     foreignObject.attr({
