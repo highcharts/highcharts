@@ -750,6 +750,20 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     display: inline-block !important;
 }
 
+.hcg-credits-container.hcg-credits-pro,
+.highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro {
+    text-align: var(--ig-credits-text-align);
+    padding: var(--ig-credits-padding);
+}
+
+.hcg-credits-container.hcg-credits-pro .hcg-credits,
+.highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro .highcharts-datagrid-credits {
+    color: var(--ig-credits-color);
+    font-size: var(--ig-credits-font-size);
+    text-decoration: none;
+    display: inline-block;
+}
+
 /* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
 .hcg-table tbody tr:has(.hcg-negative-row) td::before,

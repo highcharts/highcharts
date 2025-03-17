@@ -853,17 +853,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     display: inline-block;
 }
 
-<<<<<<< HEAD
-.hcg-credits-container,
-.highcharts-datagrid-credits-container {
-    text-align: var(--ig-credits-text-align);
-    padding: var(--ig-credits-padding);
-}
-
-/* Start Grid CSS Helpers Classes */
-=======
-/* Start DataGrid CSS Helpers Classes */
->>>>>>> b93250b4a2 (Refactored credits.)
 .hcg-table tbody tr td.hcg-negative::before,
 .hcg-table tbody tr:has(.hcg-negative-row) td::before,
 .hcg-table tbody tr td.hcg-neutral::before,
