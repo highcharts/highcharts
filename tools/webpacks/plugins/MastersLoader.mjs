@@ -122,9 +122,9 @@ function decorateImports(content, masterImports) {
  * Extracted requirements.
  */
 function extractMasterImports(content, contentFolder, requirePrefix='') {
-    const masterDoclet = content.match(/^\/\*.*?\*\//su)?.[0] || '';
+    const masterDoclet = content.match(/^\/\*(.*?)\*\//su)?.[1] || '';
     const requireMatches =
-        masterDoclet.matchAll(/@requires?[ \t]+([\w\/]+)/gsu);
+        masterDoclet.matchAll(/@requires?[ \t]+([\/\w\.-]+)/gsu);
 
     if (!requireMatches) {
         return;
@@ -184,9 +184,17 @@ function insert(newContent, pos, content) {
 
 
 /**
+ * Loader API for Webpack. Match pattern is defined outside in the general
+ * loader configuration.
+ *
  * @param {string} content
+ * Content of matching file.
+ *
  * @param {Webpack.SourceMap} map
+ * Source map of matching file.
+ *
  * @param {{webpackAST:*}} meta
+ * Meta of matching file.
  */
 function mastersLoader(content, map, meta) {
     try {
