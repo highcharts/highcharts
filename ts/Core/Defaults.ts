@@ -1288,7 +1288,7 @@ const defaultOptions: DefaultOptions = {
          * or an integer representing how many pixels wide the legend can be.
          *
          * @sample {highcharts} highcharts/legend/maxwidth/
-         *
+         *         Max width set to 7%
          * @type      {number|string}
          * @apioption legend.maxWidth
          */
