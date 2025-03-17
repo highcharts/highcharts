@@ -381,6 +381,8 @@ class PlotLineOrBand {
             height: arrayMax(yBounds) - y
         });
 
+        label.alignAttr.y -= renderer.fontMetrics(label).b;
+
         if (
             !label.alignValue ||
             label.alignValue === 'left' ||
