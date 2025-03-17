@@ -89,7 +89,7 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
                     // conditionals: false
                     // hoist_funs: true
                 },
-                mangle: !isModule,
+                mangle: true,
                 module: isModule,
                 sourceMap: true
             })
