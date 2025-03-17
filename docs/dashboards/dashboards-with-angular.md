@@ -25,14 +25,14 @@ npm install highcharts
 Then, import the package and the dedicated plug to connect it to the Dashboards.
 
 ```typescript
-import Highcharts from 'highcharts';
+import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
 import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
 import Grid from '@highcharts/dashboards/es-modules/masters/datagrid.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 
 ```
 
