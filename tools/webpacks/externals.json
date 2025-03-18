@@ -224,6 +224,6 @@
             "modules/gantt",
             "modules/xrange"
         ],
-        "namespacePath": ".Series.types.waterfall"
+        "namespacePath": ".Series.types.xrange"
     }
 ]
