@@ -1,5 +1,9 @@
 @import url("https://code.highcharts.com/grid/css/grid.css");
 
+:root {
+    --hcg-background: #fff;
+}
+
 .custom-theme {
     --hcg-padding: 10px;
     --hcg-header-background: #dfdfdf;
@@ -14,9 +18,13 @@
 }
 
 @media (prefers-color-scheme: dark) {
+    :root {
+        --hcg-background: #333;
+    }
+
     .custom-theme {
-        --hcg-header-background: #363636;
-        --hcg-row-border-color: #363636;
+        --hcg-header-background: #333;
+        --hcg-row-border-color: #333;
         --hcg-row-even-background: #4f4f4f;
         --hcg-row-background: #4f4f4f;
         --highlight-cell: #404c2f;
@@ -27,6 +35,7 @@
 }
 
 #container {
+    background-color: var(--hcg-background);
     margin: 8px;
 }
 
