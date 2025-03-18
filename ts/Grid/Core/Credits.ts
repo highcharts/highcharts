@@ -57,7 +57,7 @@ class Credits {
         // eslint-disable-next-line no-console
         text: `<picture class="hcg-logo-wrapper">
             <source srcset="https://assets.highcharts.com/grid/logo_darkx2.png 2x, https://assets.highcharts.com/grid/logo_dark.png 1x" media="(prefers-color-scheme: dark)">
-            <img src="https://assets.highcharts.com/grid/logo_light.png" srcset="https://assets.highcharts.com/grid/logo_lightx2.png 2x, https://assets.highcharts.com/grid/logo_light.png 1x" alt="Highcharts logo" style="height: 32px !important; width: auto !important; display: block !important;">
+            <img src="https://assets.highcharts.com/grid/logo_light.png" srcset="https://assets.highcharts.com/grid/logo_lightx2.png 2x, https://assets.highcharts.com/grid/logo_light.png 1x" alt="Highcharts logo" style="height: 20px !important; width: auto !important; display: block !important;">
         </picture>`,
         href: 'https://www.highcharts.com',
         position: 'bottom'
@@ -156,11 +156,6 @@ class Credits {
         } else {
             contentWrapper?.appendChild(this.containerElement);
         }
-
-        // Apply grid-lite class
-        this.containerElement.classList.add(
-            Globals.getClassName('creditsLite')
-        );
 
         this.grid.viewport?.reflow();
     }

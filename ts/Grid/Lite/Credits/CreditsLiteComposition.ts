@@ -55,7 +55,7 @@ namespace CreditsLiteComposition {
         const containerStyle = credits.containerElement.style;
 
         // Apply static styles
-        containerStyle.setProperty('display', 'inline-block', 'important');
+        containerStyle.setProperty('display', 'block', 'important');
         containerStyle.setProperty('padding', '5px 0px 0px', 'important');
         containerStyle.setProperty('text-align', 'right', 'important');
 
@@ -80,7 +80,6 @@ namespace CreditsLiteComposition {
      * Callback function called after credits destroy.
      */
     function destroyCredits(this: Table): void {
-        console.log('destreoy observer', creditsObserver);
         creditsObserver.disconnect();
     }
 }

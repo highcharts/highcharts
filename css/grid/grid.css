@@ -740,16 +740,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 /* Credits */
-.hcg-credits-container.hcg-credits-lite {
-    text-align: right !important;
-    padding: 5px 0 0 !important;
-}
-
-.hcg-credits-container.hcg-credits-lite .hcg-credits {
-    text-decoration: none !important;
-    display: inline-block !important;
-}
-
 .hcg-credits-container.hcg-credits-pro,
 .highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro {
     text-align: var(--ig-credits-text-align);
