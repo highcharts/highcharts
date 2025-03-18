@@ -11,6 +11,7 @@
 }
 
 #container {
+    background-color: var(--hcg-background);
     padding: 8px;
 }
 
