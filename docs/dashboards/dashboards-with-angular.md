@@ -11,7 +11,7 @@ npm install @highcharts/dashboards
 ## 2. Import the Dashboards package
 
 ```typescript
-import * as Dashboards from '@highcharts/dashboards';
+import Dashboards from '@highcharts/dashboards';
 ```
 
 ## 3. Additional packages
@@ -25,15 +25,15 @@ npm install highcharts
 Then, import the package and the dedicated plug to connect it to the Dashboards.
 
 ```typescript
-import Highcharts from 'highcharts';
-import Dashboards from '@highcharts/dashboards';
-import Grid from '@highcharts/dashboards/datagrid';
+import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import Grid from '@highcharts/dashboards/es-modules/masters/datagrid.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.GridPlugin.custom.connectGrid(Grid);
-
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
+
 ```
 
 ## 4. Create an HTML structure for the dashboard
@@ -44,9 +44,7 @@ There are two ways to do it:
 To do that, first import the `layout` module and initialize it:
 
 ```typescript
-import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-LayoutModule(Dashboards);
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
 ```
 Then add a div where you want to render the dashboard:
 ```html
@@ -66,5 +64,5 @@ The dashboard is created using the factory function `Dashboards.board`. The func
 
 ## Demos
 See how it works in the following demos:
-- [Basic live example](https://stackblitz.com/edit/angular-pc4xsk)
-- [Custom layout live example](https://stackblitz.com/edit/dashboards-angular-custom-layout)
+- [Basic live example](https://stackblitz.com/edit/angular-kv7m5vtb)
+- [Custom layout live example](https://stackblitz.com/edit/dashboards-angular-custom-layout-eu9kekif)

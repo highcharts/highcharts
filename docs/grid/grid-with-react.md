@@ -13,7 +13,7 @@ npm install @highcharts/grid-lite/grid-lite
 // Grid.tsx
 
 import { useEffect, useRef } from 'react';
-import Grid from '@highcharts/grid-lite/grid-lite';
+import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
 import '@highcharts/grid-lite/css/grid.css';
 
 export default function Grid(props: { config: Grid.Options }) {
@@ -60,4 +60,4 @@ function App() {
 export default App;
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-grid-react-ts?file=src%2FApp.tsx,src%2Fcomponents%2FGrid.tsx).
+See the live example [here](https://stackblitz.com/edit/highcharts-grid-react-ts-mbvpgi2q).
