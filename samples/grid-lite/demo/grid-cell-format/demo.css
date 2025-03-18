@@ -1,0 +1,69 @@
+@import url("https://code.highcharts.com/grid/css/grid.css");
+
+:root {
+    --hcg-background: #fff;
+}
+
+.custom-theme {
+    --hcg-padding: 10px;
+    --hcg-header-background: #dfdfdf;
+    --hcg-header-font-weight: 500;
+    --hcg-row-border-width: 1px;
+    --hcg-row-border-color: #d9d9d9;
+    --hcg-row-even-background: #f9f9f9;
+    --highlight-cell: #f0f2ca;
+    --high-color: #348700;
+    --low-color: #d8003a;
+    --over-30: #152fc2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --hcg-background: #333;
+    }
+
+    .custom-theme {
+        --hcg-header-background: #333;
+        --hcg-row-border-color: #333;
+        --hcg-row-even-background: #4f4f4f;
+        --hcg-row-background: #4f4f4f;
+        --highlight-cell: #404c2f;
+        --high-color: #98d76a;
+        --low-color: #ffa8a8;
+        --over-30: #b1befb;
+    }
+}
+
+#container {
+    background-color: var(--hcg-background);
+    margin: 8px;
+}
+
+.highcharts-description {
+    padding-left: 10px;
+}
+
+.hcg-table thead th.bold-header span,
+.hcg-table tbody tr td.bold-column {
+    font-weight: bold;
+    text-align: center;
+}
+
+.hcg-table tbody tr:has(.highlight-cell) td {
+    background-color: var(--highlight-cell) !important;
+}
+
+.hcg-table tbody td.high-color {
+    font-weight: bold;
+    color: var(--high-color) !important;
+}
+
+.hcg-table tbody td.low-color {
+    font-weight: bold;
+    color: var(--low-color) !important;
+}
+
+.hcg-table tbody td.over-30 {
+    font-weight: bold;
+    color: var(--over-30) !important;
+}
