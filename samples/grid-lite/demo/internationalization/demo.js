@@ -66,7 +66,7 @@ const languages = {
             }
         }],
         caption: {
-            text: 'Fruits Table - Internationalization Demo'
+            text: 'Fruits weight and price'
         }
     },
     no: {
@@ -101,7 +101,7 @@ const languages = {
             }
         }],
         caption: {
-            text: 'Frukttabell - Internasjonaliseringsdemo'
+            text: 'Frukters vekt og pris'
         }
     },
     pl: {
@@ -136,7 +136,7 @@ const languages = {
             }
         }],
         caption: {
-            text: 'Tabela Owoców - Demo internacjonalizacji'
+            text: 'Waga i cena owoców'
         }
     },
     zh: {
@@ -171,17 +171,25 @@ const languages = {
             }
         }],
         caption: {
-            text: '水果表 - 国际化演示'
+            text: '水果的重量和价格'
         }
     }
 };
 
 const languageSelect = document.getElementById('lang-select');
+const languageSpan = document.getElementById('lang-span');
+const uiTranslations = {
+    en: 'Language',
+    no: 'Språk',
+    pl: 'Język',
+    zh: '语言'
+};
 
 function setLanguage(lang) {
     grid.update(languages[lang]);
     grid.container.setAttribute('lang', lang);
     grid.container.setAttribute('aria-lang', lang);
+    languageSpan.textContent = `${uiTranslations[lang]}:`;
 }
 
 languageSelect.addEventListener('change', () => {
