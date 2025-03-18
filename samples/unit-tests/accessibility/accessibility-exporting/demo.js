@@ -26,7 +26,7 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
         'Exporting button should update aria-expanded on click'
     );
 
-    const innerMenu = chart.exporting.exportContextMenu.firstChild;
+    const innerMenu = chart.exporting.contextMenuEl.firstChild;
 
     assert.strictEqual(
         innerMenu.tagName.toLowerCase(),
@@ -98,8 +98,8 @@ QUnit.test(
 
         // These two functions move "highcharts-container" when
         // user selects printing
-        chart.beforePrint();
-        chart.afterPrint();
+        chart.exporting?.beforePrint();
+        chart.exporting?.afterPrint();
 
         for (const [elementIndex, candidateId, testMessage]  of [
             [

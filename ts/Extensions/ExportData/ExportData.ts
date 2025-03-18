@@ -141,7 +141,7 @@ interface ExportDataSeries {
  *
  */
 function wrapLoading(
-    this: Exporting.ChartComposition | Chart,
+    this: Chart,
     fn: Function
 ): void {
     const showMessage = Boolean(this.options.exporting?.showExportInProgress);
@@ -173,7 +173,7 @@ function wrapLoading(
  * @requires modules/exporting
  */
 function chartDownloadCSV(
-    this: Exporting.ChartComposition
+    this: Chart
 ): void {
     wrapLoading.call(this, (): void => {
         const csv = this.getCSV(true);
@@ -198,7 +198,7 @@ function chartDownloadCSV(
  * @requires modules/exporting
  */
 function chartDownloadXLS(
-    this: Exporting.ChartComposition
+    this: Chart
 ): void {
     wrapLoading.call(this, (): void => {
         const uri = 'data:application/vnd.ms-excel;base64,',
@@ -1017,7 +1017,7 @@ function chartHideData(
  * @private
  */
 function chartToggleDataTable(
-    this: Exporting.ChartComposition,
+    this: Chart,
     show?: boolean
 ): void {
     show = pick(show, !this.isDataTableVisible);
@@ -1059,7 +1059,7 @@ function chartToggleDataTable(
 
 
     // Change the menu item text
-    const exportDivElements = this.exporting?.exportDivElements,
+    const exportDivElements = this.exporting?.divElements,
         options = this.options.exporting,
         menuItems = options &&
             options.buttons &&

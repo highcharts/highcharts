@@ -509,9 +509,7 @@ const exporting: ExportingOptions = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function (): void {
-                if (this.fullscreen) {
-                    this.fullscreen.toggle();
-                }
+                this.fullscreen?.toggle();
             }
         },
 
@@ -521,9 +519,7 @@ const exporting: ExportingOptions = {
         printChart: {
             textKey: 'printChart',
             onclick: function (): void {
-                if (this.exporting) {
-                    this.exporting.print();
-                }
+                this.exporting?.print();
             }
         },
 
@@ -540,9 +536,7 @@ const exporting: ExportingOptions = {
         downloadPNG: {
             textKey: 'downloadPNG',
             onclick: function (): void {
-                if (this.exporting) {
-                    this.exporting.exportChart();
-                }
+                this.exporting?.exportChart();
             }
         },
 
@@ -552,11 +546,9 @@ const exporting: ExportingOptions = {
         downloadJPEG: {
             textKey: 'downloadJPEG',
             onclick: function (): void {
-                if (this.exporting) {
-                    this.exporting.exportChart({
-                        type: 'image/jpeg'
-                    });
-                }
+                this.exporting?.exportChart({
+                    type: 'image/jpeg'
+                });
             }
         },
 
@@ -566,11 +558,9 @@ const exporting: ExportingOptions = {
         downloadPDF: {
             textKey: 'downloadPDF',
             onclick: function (): void {
-                if (this.exporting) {
-                    this.exporting.exportChart({
-                        type: 'application/pdf'
-                    });
-                }
+                this.exporting?.exportChart({
+                    type: 'application/pdf'
+                });
             }
         },
 
@@ -580,11 +570,9 @@ const exporting: ExportingOptions = {
         downloadSVG: {
             textKey: 'downloadSVG',
             onclick: function (): void {
-                if (this.exporting) {
-                    this.exporting.exportChart({
-                        type: 'image/svg+xml'
-                    });
-                }
+                this.exporting?.exportChart({
+                    type: 'image/svg+xml'
+                });
             }
         }
 

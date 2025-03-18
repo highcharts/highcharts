@@ -384,9 +384,8 @@ namespace OfflineExporting {
         chartOptions?: Partial<Options>
     ): void {
         /// TO DO: Correct usage for the offline module
-        this.exporting.exportChartLocalCore(
+        this.exporting?.exportChartLocalCore(
             /// OfflineExporting.downloadSVGLocal,
-            /// this as Exporting.ChartComposition,
             exportingOptions,
             chartOptions
         );

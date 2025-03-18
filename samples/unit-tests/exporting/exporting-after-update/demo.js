@@ -14,7 +14,7 @@ QUnit.test('#6007 - exporting after chart.update()', function (assert) {
 
         setTimeout(function () {
             Highcharts.fireEvent(
-                chart.exporting.exportSVGElements[0].element,
+                chart.exporting.svgElements[0].element,
                 'click'
             );
 
@@ -29,7 +29,7 @@ QUnit.test('#6007 - exporting after chart.update()', function (assert) {
             });
 
             Highcharts.fireEvent(
-                chart.exporting.exportSVGElements[0].element,
+                chart.exporting.svgElements[0].element,
                 'click'
             );
 
