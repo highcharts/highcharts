@@ -1027,17 +1027,11 @@ class Tooltip {
         mouseEvent?: PointerEvent
     ): void {
         const tooltip = this,
-            {
-                chart,
-                options,
-                pointer,
-                shared,
-                defaultFormatter
-            } = this,
+            { chart, options, pointer, shared } = this,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             formatString = options.format,
-            formatter = options.formatter,
+            formatter = options.formatter || tooltip.defaultFormatter,
             styledMode = chart.styledMode;
         let wasShared = tooltip.allowShared;
 
@@ -1079,11 +1073,7 @@ class Tooltip {
         this.len = points.length; // #6128
         const text = isString(formatString) ?
             format(formatString, point, chart) :
-            (
-                formatter ?
-                    formatter.call(point, tooltip, this) :
-                    defaultFormatter.call(point, tooltip)
-            );
+            formatter.call(point, tooltip);
 
         // Reset the preliminary circular references
         point.points = void 0;
@@ -1919,8 +1909,7 @@ namespace Tooltip {
     export interface FormatterCallbackFunction {
         (
             this: Point,
-            tooltip: Tooltip,
-            ctx?: any
+            tooltip: Tooltip
         ): (false|string|Array<string>);
     }
 
