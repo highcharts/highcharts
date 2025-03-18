@@ -21,7 +21,7 @@ const grid = Grid.grid('container', {
         text: 'Highcharts Grid'
     },
     caption: {
-        text: 'Fruits Table - Accessibility Demo'
+        text: 'Fruits weight and price'
     },
     columns: [{
         id: 'id',
