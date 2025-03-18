@@ -14,6 +14,7 @@
  * */
 
 import type Grid from '../../Core/Grid';
+import Table from '../../Core/Table/Table';
 
 import Globals from '../../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';
@@ -23,8 +24,9 @@ const {
     addEvent,
     pushUnique
 } = U;
-
 namespace CreditsLiteComposition {
+
+    let creditsObserver: MutationObserver;
 
     /**
      * Extends the grid classes with credits.
@@ -34,13 +36,15 @@ namespace CreditsLiteComposition {
      *
      */
     export function compose(
-        GridClass: typeof Grid
+        GridClass: typeof Grid,
+        TableClass: typeof Table
     ): void {
         if (!pushUnique(Globals.composed, 'CreditsLite')) {
             return;
         }
 
         addEvent(GridClass, 'afterRenderViewport', initCredits);
+        addEvent(TableClass, 'afterDestroy', destroyCredits);
     }
 
     /**
@@ -56,7 +60,7 @@ namespace CreditsLiteComposition {
         containerStyle.setProperty('text-align', 'right', 'important');
 
         // Create an observer that check credits modifications
-        const creditsObserver = new MutationObserver((e) => {
+        creditsObserver = new MutationObserver((e) => {
             if (!credits.containerElement.querySelector('.hcg-logo-wrapper')) {
                 credits.render();
             }
@@ -70,6 +74,14 @@ namespace CreditsLiteComposition {
         });
 
         return credits;
+    }
+
+    /**
+     * Callback function called after credits destroy.
+     */
+    function destroyCredits(this: Table): void {
+        console.log('destreoy observer', creditsObserver);
+        creditsObserver.disconnect();
     }
 }
 

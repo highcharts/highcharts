@@ -427,6 +427,8 @@ class Table {
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
         }
+
+        fireEvent(this, 'afterDestroy');
     }
 
     /**

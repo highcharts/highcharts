@@ -27,8 +27,10 @@ import type Grid from './Grid';
 
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
+import Utils from '../../Core/Utilities';
 
 const { makeHTMLElement } = GridUtils;
+const { fireEvent } = Utils;
 
 /* *
  *

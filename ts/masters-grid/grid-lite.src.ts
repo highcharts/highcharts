@@ -30,6 +30,7 @@ import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
+import Credits from '../Grid/Core/Credits.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
 
 // Fill registries
@@ -101,7 +102,7 @@ G.setOptions = Defaults.setOptions;
 
 G.Table = G.Table || Table;
 
-CreditsLiteComposition.compose(G.Grid);
+CreditsLiteComposition.compose(G.Grid, G.Table);
 /* *
  *
  *  Classic Export
