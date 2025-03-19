@@ -1,6 +1,6 @@
 # Data Modifiers
 
-The data comes in different shapes and sizes from all over the internet, so its format needs to be adjusted to make it accessible to the dashboard. Instead of manually parsing the data, there is an option to use the `DataModifiers`. Those modifiers allow the user to modify the data on the initial load and the end user to modify visible data through the GUI. Each of the modifiers is accessible through the main Dashboards package, except for the `MathModifier`, which is the most complex one and requires loading a separate module from `https://code.highcharts.com/dashboards/modules/math-modifier.js`. Each of the modifiers can be connected to every type of connector.
+The data comes in different shapes and sizes from all over the internet, so its format needs to be adjusted to make it accessible to the dashboard. Instead of manually parsing the data, there is an option to use the `DataModifiers`. Those modifiers allow the user to modify the data on the initial load and the end user to modify visible data through the GUI. Each of the modifiers is accessible through the main Dashboards package, except for the `MathModifier`, which is the most complex one and requires loading a separate module from `https://cdn.jsdelivr.net/npm/@highcharts/dashboards/modules/math-modifier.js`. Each of the modifiers can be connected to every type of connector.
 
 ## Where is the modifier defined?
 The modifier is attached to the connector defined in the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) in its options.

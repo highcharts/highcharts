@@ -158,7 +158,7 @@ In this example, a column named `Sum` is created with data that is the sum of th
 
 Note that you also need to import modules to use the appropriate modifiers. For example:
 ```html
-<script src="https://code.highcharts.com/dashboards/modules/math-modifier.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/modules/math-modifier.js"></script>
 ```
 
 ## Component synchronization
