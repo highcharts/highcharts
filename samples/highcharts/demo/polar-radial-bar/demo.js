@@ -25,7 +25,6 @@ Highcharts.chart('container', {
         tickInterval: 1,
         labels: {
             align: 'right',
-            useHTML: true,
             allowOverlap: true,
             step: 1,
             y: 3,

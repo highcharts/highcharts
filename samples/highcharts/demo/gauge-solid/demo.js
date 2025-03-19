@@ -52,8 +52,7 @@ const gaugeOptions = {
             borderRadius: 3,
             dataLabels: {
                 y: 5,
-                borderWidth: 0,
-                useHTML: true
+                borderWidth: 0
             }
         }
     }

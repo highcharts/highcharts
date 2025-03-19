@@ -1048,6 +1048,25 @@ QUnit.test('Chart update enables navigator (#7067)', function (assert) {
         chart.navigator && chart.navigator.navigatorEnabled,
         'Navigator should be enabled.'
     );
+
+    chart.update({
+        navigator: {
+            adaptToUpdatedData: false,
+            enabled: false
+        }
+    });
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    assert.ok(
+        chart.navigator.series.length,
+        `Navigator series should reappear when reenabling navigator with
+        adaptToUpdatedData: false (#22557).`
+    );
 });
 QUnit.test(
     'Navigator series visibility should be in sync with master series (#8374)',

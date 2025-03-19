@@ -36,7 +36,6 @@ Highcharts.chart('container', {
     },
     tooltip: {
         followPointer: false,
-        useHTML: true,
         headerFormat: '<small>{point.key} days sinsce release</small>'
     },
     yAxis: {

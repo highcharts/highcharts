@@ -6,7 +6,6 @@ Highcharts.chart('container', {
         text: 'How much information people will remember after 3 days'
     },
     subtitle: {
-        useHTML: true,
         text: 'Source: <a href="http://digitalsplashmedia.com/2012/03/picture-superiority-effect-video-explanation/">digitalsplashmedia.com</a>'
     },
     xAxis: {
@@ -23,13 +22,10 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-        pointFormat: '<tr><td style="color:{series.color};padding:0">' +
-            '{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f} %</b></td></tr>',
-        footerFormat: '</table>',
-        shared: true,
-        useHTML: true
+        headerFormat: '<span style="font-size:10px">{point.key}</span><br>',
+        pointFormat: '<span style="color:{series.color};padding:0">' +
+            '{series.name}: </span>' +
+            '<b>{point.y:.1f} %</b>'
     },
     plotOptions: {
         column: {

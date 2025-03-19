@@ -7,7 +7,6 @@ Highcharts.chart('container', {
     },
 
     title: {
-        useHTML: true,
         text: 'Statistics Division of United Nations'
     },
     accessibility: {
