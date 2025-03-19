@@ -24,8 +24,9 @@ const {
     win,
     win: { document: doc }
 } = H;
-
 import RegexLimits from './RegexLimits.js';
+import U from '../Core/Utilities.js';
+const { error } = U;
 
 /* *
  *
@@ -59,6 +60,10 @@ declare global {
     }
 }
 
+interface ScriptOnLoadCallbackFunction {
+    (this: GlobalEventHandlers, ev: Event): void;
+}
+
 /* *
  *
  *  Constants
@@ -75,12 +80,14 @@ const domurl = win.URL || win.webkitURL || win;
 
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
+ *
  * @private
  * @function Highcharts.dataURLtoBlob
+ *
  * @param {string} dataURL
- *        URL to convert
+ * URL to convert.
  * @return {string|undefined}
- *         Blob
+ * Blob.
  */
 function dataURLtoBlob(
     dataURL: string
@@ -88,7 +95,6 @@ function dataURLtoBlob(
     const parts = dataURL
         .replace(/filename=.*;/, '')
         .match(/data:([^;]*)(;base64)?,([A-Z+\d\/]+)/i);
-
 
     if (
         parts &&
@@ -118,10 +124,12 @@ function dataURLtoBlob(
  *
  * @private
  * @function Highcharts.downloadURL
+ *
  * @param {string|global.URL} dataURL
- *        The dataURL/Blob to download
+ * The dataURL/Blob to download.
  * @param {string} filename
- *        The name of the resulting file (w/extension)
+ * The name of the resulting file (w/extension).
+ *
  * @return {void}
  */
 function downloadURL(
@@ -185,6 +193,34 @@ function downloadURL(
     }
 }
 
+/**
+ * Downloads a script and executes a callback when done.
+ *
+ * @private
+ * @function Highcharts.getScript
+ *
+ * @param {string} scriptLocation
+ * The location for the script to fetch.
+ * @param {ScriptOnLoadCallbackFunction} callback
+ * The callback to run on the script load.
+ */
+export function getScript(
+    scriptLocation: string,
+    callback: ScriptOnLoadCallbackFunction
+): void {
+    const head = doc.getElementsByTagName('head')[0],
+        script = doc.createElement('script');
+
+    script.type = 'text/javascript';
+    script.src = scriptLocation;
+    script.onload = callback;
+    script.onerror = function (): void {
+        error('Error loading script ' + scriptLocation);
+    };
+
+    head.appendChild(script);
+}
+
 /* *
  *
  *  Default Export
@@ -193,7 +229,8 @@ function downloadURL(
 
 const DownloadURL = {
     dataURLtoBlob,
-    downloadURL
+    downloadURL,
+    getScript
 };
 
 export default DownloadURL;
