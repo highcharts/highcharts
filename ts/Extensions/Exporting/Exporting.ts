@@ -27,10 +27,13 @@ import type {
     ExportingOptions,
     ExportingButtonOptions
 } from './ExportingOptions';
+import type ExportingLike from './ExportingLike';
 import type { DOMElementType, HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type GradientColor from '../../Core/Color/GradientColor';
 import type { LangOptions } from '../../Core/Options';
 import type NavigationOptions from './NavigationOptions';
 import type Options from '../../Core/Options';
+import type { PatternObject } from '../PatternFill';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -43,7 +46,7 @@ import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposit
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import DownloadURL from '../DownloadURL.js';
-const { downloadURL } = DownloadURL;
+const { downloadURL, getScript } = DownloadURL;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
@@ -51,17 +54,19 @@ import G from '../../Core/Globals.js';
 const {
     composed,
     doc,
+    isFirefox,
     isMS,
+    isSafari,
     SVG_NS,
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
+const { post } = HU;
 import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
-import GradientColor from '../../Core/Color/GradientColor';
-import { PatternObject } from '../PatternFill';
 const {
     addEvent,
+    clearTimeout,
     createElement,
     css,
     discardElement,
@@ -405,7 +410,7 @@ class Exporting {
                             // doing things asynchronously. A cleaner solution
                             // would be nice, but this will do for now.
                             objectURLRevoke = true;
-                            Exporting.getScript(
+                            getScript(
                                 libURL + 'canvg.js',
                                 downloadWithCanVG
                             );
@@ -453,36 +458,6 @@ class Exporting {
         }
 
         return chart.container.innerHTML;
-    }
-
-    /**
-     * Downloads a script and executes a callback when done.
-     *
-     * @private
-     * @function Highcharts.Exporting#getScript
-     *
-     * @param {string} scriptLocation
-     * The location for the script to fetch.
-     * @param {Exporting.ScriptOnLoadCallbackFunction} callback
-     * The callback to run on the script load.
-     *
-     * @requires modules/exporting
-     */
-    public static getScript(
-        scriptLocation: string,
-        callback: Exporting.ScriptOnLoadCallbackFunction
-    ): void {
-        const head = doc.getElementsByTagName('head')[0],
-            script = doc.createElement('script');
-
-        script.type = 'text/javascript';
-        script.src = scriptLocation;
-        script.onload = callback;
-        script.onerror = function (): void {
-            error('Error loading script ' + scriptLocation);
-        };
-
-        head.appendChild(script);
     }
 
     /**
@@ -836,9 +811,9 @@ class Exporting {
                 for (const p in styles) {
                     if (
                         // Some browsers put lots of styles on the prototype...
-                        G.isFirefox ||
+                        isFirefox ||
                         isMS ||
-                        G.isSafari || // #16902
+                        isSafari || // #16902
                         // ... Chrome puts them on the instance
                         Object.hasOwnProperty.call(styles, p)
                     ) {
@@ -1370,7 +1345,7 @@ class Exporting {
                 // #10361, #9998
                 css(chart.renderTo, { overflow: 'hidden' });
                 css(chart.container, { overflow: 'hidden' });
-                U.clearTimeout(menu.hideTimer);
+                clearTimeout(menu.hideTimer);
                 fireEvent(chart, 'exportMenuHidden');
             };
 
@@ -1380,7 +1355,7 @@ class Exporting {
                     menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
                 }),
                 addEvent(menu, 'mouseenter', function (): void {
-                    U.clearTimeout(menu.hideTimer);
+                    clearTimeout(menu.hideTimer);
                 }),
 
                 // Hide it on clicking or touching outside the menu (#2258,
@@ -1576,7 +1551,7 @@ class Exporting {
             ): void {
                 if (elem) {
                     // Remove the event handler
-                    U.clearTimeout(elem.hideTimer); // #5427
+                    clearTimeout(elem.hideTimer); // #5427
                     removeEvent(elem, 'mouseleave');
 
                     // Remove inline events
@@ -1643,7 +1618,7 @@ class Exporting {
             // Do the post
             if (exportingOptions.url) {
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                HU.post(exportingOptions.url, {
+                post(exportingOptions.url, {
                     filename: exportingOptions.filename ?
                         exportingOptions.filename.replace(/\//g, '-') :
                         this.getFilename(),
@@ -1654,10 +1629,9 @@ class Exporting {
                 }, exportingOptions.fetchOptions);
             }
         } else {
-            /// TO DO: Correct usage for the offline module
             // Otherwise (PNG, JPEG, or SVG) export locally
             this.exportChartLocalCore(
-                /// this.downloadSVGLocal,
+                Exporting.downloadSVGLocal,
                 exportingOptions,
                 chartOptions
             );
@@ -1671,6 +1645,9 @@ class Exporting {
      * @private
      * @function Highcharts.Exporting#exportChartLocalCore
      *
+     * @param {Exporting.DownloadSVGLocalFunction} downloadSVGLocal
+     * Get data URL to an image of an SVG and call download on it options
+     * object.
      * @param {Highcharts.ExportingOptions} [exportingOptions]
      * Exporting options, the same as in {@link Highcharts.Chart#exportChart}.
      * @param {Highcharts.Options} [chartOptions]
@@ -1680,7 +1657,7 @@ class Exporting {
      * @requires modules/exporting
      */
     public exportChartLocalCore(
-        /// downloadSVGLocal: Exporting.DownloadSVGLocalFunction,
+        downloadSVGLocal: Exporting.DownloadSVGLocalFunction,
         exportingOptions?: ExportingOptions,
         chartOptions?: Partial<Options>
     ): void {
@@ -1713,7 +1690,7 @@ class Exporting {
                         'Image type not supported for charts with embedded HTML'
                     ));
                 } else {
-                    Exporting.downloadSVGLocal(
+                    downloadSVGLocal(
                         svg,
                         extend(
                             { filename: exporting.getFilename() },
@@ -2277,7 +2254,7 @@ class Exporting {
         }
 
         Exporting.printingChart = chart;
-        if (!G.isSafari) {
+        if (!isSafari) {
             chart.exporting?.beforePrint();
         }
 
@@ -2288,7 +2265,7 @@ class Exporting {
             win.print();
 
             // Allow the browser to prepare before reverting
-            if (!G.isSafari) {
+            if (!isSafari) {
                 setTimeout((): void => {
                     chart.exporting?.afterPrint();
                 }, 1000);
@@ -2361,7 +2338,15 @@ class Exporting {
 
 /* *
  *
- *  Class namespace
+ *  Class Prototype
+ *
+ * */
+
+interface Exporting extends ExportingLike {}
+
+/* *
+ *
+ *  Class Namespace
  *
  * */
 
@@ -2416,10 +2401,6 @@ namespace Exporting {
         ];
     }
 
-    export interface ScriptOnLoadCallbackFunction {
-        (this: GlobalEventHandlers, ev: Event): void;
-    }
-
     /* *
      *
      *  Functions
@@ -2446,7 +2427,7 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        // Check the composition registry for the Exporting class
+        // Check the composition registry for the Exporting
         if (!pushUnique(composed, 'Exporting')) {
             return;
         }
@@ -2499,7 +2480,7 @@ namespace Exporting {
             onChartLayOutTitle
         );
 
-        if (G.isSafari) {
+        if (isSafari) {
             win.matchMedia('print').addListener(
                 function (
                     this: MediaQueryList,
