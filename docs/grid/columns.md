@@ -101,7 +101,7 @@ The optional `sorting` object consists of two configuration options:
 
 - **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). Only the last one will be considered if `order` is defined in multiple columns.
 
-See the [API reference](https://api.highcharts.com/dashboards/#interfaces/_Options.ColumnOptions#sorting).
+See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 
 When the `sortable` option is enabled, clicking the header will toggle the sorting order.
 
