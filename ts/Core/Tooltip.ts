@@ -1843,12 +1843,12 @@ class Tooltip {
                 height = 0,
                 width = 0
             } = label,
-            { positioner } = options,
+            { fixed, positioner } = options,
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (
                 positioner ||
-                (options.fixed && this.getFixedPosition) ||
+                (fixed && this.getFixedPosition) ||
                 this.getPosition
             ).call(
                 this,
@@ -1866,9 +1866,11 @@ class Tooltip {
         // Renderer only exists when tooltip is outside.
         if (renderer && container) {
             // Corrects positions, occurs with tooltip positioner (#16944)
-            if (positioner) {
-                pos.x += left - distance;
-                pos.y += top - distance;
+            if (positioner || fixed) {
+                const { scrollLeft = 0, scrollTop = 0 } = chart
+                    .scrollablePlotArea?.scrollingContainer || {};
+                pos.x += scrollLeft + left - distance;
+                pos.y += scrollTop + top - distance;
             }
 
             // Pad it by the border width and distance. Add 2 to make room for
