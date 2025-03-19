@@ -1300,3 +1300,8 @@ g.highcharts-series,
     stroke: var(--highcharts-neutral-color-20);
     stroke-width: 1px;
 }
+
+.highcharts-gantt-series .highcharts-partfill-overlay {
+    fill: hsla(0, 0%, 0%, 0.3);
+    stroke: hsla(0, 0%, 0%, 0.3);
+}
