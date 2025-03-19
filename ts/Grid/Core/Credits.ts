@@ -161,7 +161,7 @@ class Credits {
 
     private renderAnchor(): HTMLElement {
         const anchorElement = makeHTMLElement<HTMLAnchorElement>('a', {
-            className: Globals.getClassName('creditsText'),
+            className: Globals.getClassName('creditsText')
         }, this.containerElement);
 
         anchorElement.setAttribute('target', '_blank');
