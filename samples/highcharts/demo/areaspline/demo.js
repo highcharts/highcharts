@@ -3,8 +3,7 @@ const commonOptions = {
         url: 'https://demo-live-data.highcharts.com',
         access: {
             url: 'https://demo-live-data.highcharts.com/token/oauth',
-            username: 'username',
-            password: 'password'
+            token: 'token'
         }
     }
 };
@@ -24,9 +23,8 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     currencyId: 'EUR'
 });
 
-Promise.all([
-    connector.load()
-]).then(() => {
+(async () => {
+    await connector.load();
 
     Highcharts.chart('container', {
         chart: {
@@ -57,7 +55,7 @@ Promise.all([
             plotBands: [{
                 from: new Date('2020-07-05').valueOf(),
                 to: new Date('2020-07-22').valueOf(),
-                color: 'rgba(111, 56, 249, 0.852)'
+                color: 'rgba(111, 56, 249, 0.8)'
             }]
         },
         yAxis: {
@@ -82,4 +80,4 @@ Promise.all([
             data: connector.table.getRows(0, undefined)
         }]
     });
-});
+})();
