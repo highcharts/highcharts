@@ -56,7 +56,7 @@ namespace CreditsLiteComposition {
 
         // Apply static styles
         containerStyle.setProperty('display', 'inline-block', 'important');
-        containerStyle.setProperty('padding', '5px 0px 0px', 'important');
+        containerStyle.setProperty('padding', '5px 5px 0px 5px', 'important');
         containerStyle.setProperty('text-align', 'right', 'important');
 
         // Create an observer that check credits modifications

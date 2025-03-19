@@ -126,7 +126,7 @@
     --ig-description-padding: var(--ig-description-vertical-padding) var(--ig-description-horizontal-padding) 0 var(--ig-description-horizontal-padding);
 
     /* Credits padding */
-    --ig-credits-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
+    --ig-credits-padding: 0 var(--ig-horizontal-padding);
 
     /* Default backgrounds and colors */
     --ig-background: var(--hcg-background, transparent);
@@ -269,9 +269,9 @@
     --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
 }
 
-/* ==== End Grid Variables ==== */
+/* ==== End DataGrid Variables ==== */
 
-/* Grid container */
+/* DataGrid container */
 .hcg-container * {
     box-sizing: border-box;
     font: var(--ig-font);
@@ -740,19 +740,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 /* Credits */
-.hcg-credits-container.hcg-credits-pro,
-.highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro {
-    text-align: var(--ig-credits-text-align);
-    padding: var(--ig-credits-padding);
-}
 
-.hcg-credits-container.hcg-credits-pro .hcg-credits,
-.highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro .highcharts-datagrid-credits {
-    color: var(--ig-credits-color);
-    font-size: var(--ig-credits-font-size);
-    text-decoration: none;
-    display: inline-block;
-}
 
 /* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
@@ -923,4 +911,4 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
-/* End Grid Default Theme */
+/* End DataGrid Default Theme */
