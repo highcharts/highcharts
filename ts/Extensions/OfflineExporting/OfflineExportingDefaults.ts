@@ -32,7 +32,7 @@ const OfflineExportingDefaults: ExportingOptions = {
         downloadPDF: {
             textKey: 'downloadPDF',
             onclick: function (this: Chart): void {
-                this.exportChartLocal({
+                this.exporting?.exportChartLocal({
                     type: 'application/pdf'
                 });
             }

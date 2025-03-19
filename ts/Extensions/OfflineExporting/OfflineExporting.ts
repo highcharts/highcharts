@@ -18,30 +18,32 @@
  *
  * */
 
+import type Exporting from '../Exporting/Exporting.js';
 import type {
     DOMElementType,
     HTMLDOMElement,
     SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
-import type Chart from '../../Core/Chart/Chart';
 import type ExportingOptions from '../Exporting/ExportingOptions';
 import type Options from '../../Core/Options';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
+import Chart from '../../Core/Chart/Chart';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import DownloadURL from '../DownloadURL.js';
-const { downloadURL } = DownloadURL;
-import Exporting from '../Exporting/Exporting.js';
-import H from '../../Core/Globals.js';
+const { downloadURL, getScript } = DownloadURL;
+import G from '../../Core/Globals.js';
 const {
+    composed,
     doc,
     win
-} = H;
+} = G;
 import HU from '../../Core/HttpUtilities.js';
 const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
+const { extend, merge, pushUnique } = U;
 
 /* *
  *
@@ -51,9 +53,22 @@ import U from '../../Core/Utilities.js';
 
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
+        /**
+         * Deprecated in favor of [Exporting.exportChartLocal](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChartLocal).
+         *
+         * @deprecated */
         exportChartLocal(
             exportingOptions?: ExportingOptions,
-            chartOptions?: Partial<Options>
+            chartOptions?: Options
+        ): void;
+    }
+}
+
+declare module '../../Extensions/Exporting/ExportingLike' {
+    interface ExportingLike {
+        exportChartLocal(
+            exportingOptions?: ExportingOptions,
+            chartOptions?: Options
         ): void;
     }
 }
@@ -68,40 +83,48 @@ namespace OfflineExporting {
 
     /* *
      *
-     *  Declarations
-     *
-     * */
-
-    export declare class ChartComposition extends Chart {
-        exportChartLocal(
-            exportingOptions?: ExportingOptions,
-            chartOptions?: Partial<Options>
-        ): void;
-    }
-
-    /* *
-     *
      *  Functions
      *
      * */
 
     /**
-     * Extends OfflineExporting with Chart.
+     * Composition function.
+     *
      * @private
+     * @function Highcharts.OfflineExporting#compose
+     *
+     * @param {ExportingClass} ExportingClass
+     * Exporting class.
+     *
+     * @requires modules/offline-exporting
      */
-    export function compose<T extends typeof Chart>(
-        ChartClass: T
-    ): (typeof ChartComposition & T) {
-        const chartProto = ChartClass.prototype as ChartComposition;
-
-        if (!chartProto.exportChartLocal) {
-            chartProto.exportChartLocal = exportChartLocal;
-
-            // Extend the default options to use the local exporter logic
-            U.merge(true, defaultOptions.exporting, OfflineExportingDefaults);
+    export function compose(ExportingClass: typeof Exporting): void {
+        // Check the composition registry for the OfflineExporting
+        if (!pushUnique(composed, 'OfflineExporting')) {
+            return;
         }
 
-        return ChartClass as (typeof ChartComposition & T);
+        // Adding wrappers for the deprecated functions
+        extend(Chart.prototype, {
+            exportChartLocal: function (
+                this: Chart,
+                exportingOptions?: ExportingOptions,
+                chartOptions?: Options
+            ): void {
+                return this.exporting?.exportChartLocal(
+                    exportingOptions,
+                    chartOptions
+                );
+            }
+        });
+
+        const exportingProto = ExportingClass.prototype;
+        if (!exportingProto.exportChartLocal) {
+            exportingProto.exportChartLocal = exportChartLocal;
+
+            // Extend the default options to use the local exporter logic
+            merge(true, defaultOptions.exporting, OfflineExportingDefaults);
+        }
     }
 
     /**
@@ -117,20 +140,18 @@ namespace OfflineExporting {
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
      *
-     * @function Highcharts.downloadSVGLocal
+     * @function Highcharts.OfflineExporting#downloadSVGLocal
      *
      * @param {string} svg
-     * The generated SVG
-     *
+     * The generated SVG.
      * @param {Highcharts.ExportingOptions} options
-     * The exporting options
-     *
+     * The exporting options.
      * @param {Function} failCallback
-     * The callback function in case of errors
-     *
+     * The callback function in case of errors.
      * @param {Function} [successCallback]
-     * The callback function in case of success
+     * The callback function in case of success.
      *
+     * @requires modules/offline-exporting
      */
     export function downloadSVGLocal(
         svg: string,
@@ -150,12 +171,12 @@ namespace OfflineExporting {
             ),
             scale = options.scale || 1;
         let libURL = (
-                options.libURL || (defaultOptions.exporting as any).libURL
+                options.libURL || defaultOptions.exporting?.libURL
             ),
             pdfFont = options.pdfFont;
 
         // Allow libURL to end with or without fordward slash
-        libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
+        libURL = libURL?.slice(-1) !== '/' ? libURL + '/' : libURL;
 
         /*
          * Detect if we need to load TTF fonts for the PDF, then load them and
@@ -176,7 +197,7 @@ namespace OfflineExporting {
             // Register an event in order to add the font once jsPDF is
             // initialized
             const addFont = (
-                variant: 'bold'|'bolditalic'|'italic'|'normal',
+                variant: 'bold' | 'bolditalic' | 'italic' | 'normal',
                 base64: string
             ): void => {
                 win.jspdf.jsPDF.API.events.push([
@@ -188,7 +209,8 @@ namespace OfflineExporting {
                             'HighchartsFont',
                             variant
                         );
-                        if (!(this as any).getFontList().HighchartsFont) {
+
+                        if (!this.getFontList()?.HighchartsFont) {
                             this.setFont('HighchartsFont');
                         }
                     }
@@ -204,12 +226,12 @@ namespace OfflineExporting {
 
             // Add new font if the URL is declared, #6417.
             const variants = ['normal', 'italic', 'bold', 'bolditalic'] as
-                ('bold'|'bolditalic'|'italic'|'normal')[];
+                ('bold' | 'bolditalic' | 'italic' | 'normal')[];
 
             // Shift the first element off the variants and add as a font.
             // Then asynchronously trigger the next variant until calling the
             // callback when the variants are empty.
-            let normalBase64: string|undefined;
+            let normalBase64: string | undefined;
             const shiftAndLoadVariant = (): void => {
                 const variant = variants.shift();
 
@@ -264,7 +286,7 @@ namespace OfflineExporting {
                 // chart container.
                 setStylePropertyFromParents = function (
                     el: DOMElementType,
-                    propName: 'fontFamily'|'fontSize'
+                    propName: ('fontFamily' | 'fontSize')
                 ): void {
                     let curParent = el;
 
@@ -279,7 +301,7 @@ namespace OfflineExporting {
                             el.style[propName] = value;
                             break;
                         }
-                        curParent = curParent.parentNode as any;
+                        curParent = curParent.parentNode;
                     }
                 };
             let titleElements,
@@ -324,11 +346,10 @@ namespace OfflineExporting {
                 }
             });
 
-
             const svgNode = dummySVGContainer.querySelector('svg');
             if (svgNode) {
                 loadPdfFonts(svgNode, (): void => {
-                    svgToPdf(
+                    OfflineExporting.svgToPdf(
                         svgNode,
                         0,
                         scale,
@@ -345,7 +366,6 @@ namespace OfflineExporting {
                     );
                 });
             }
-
         };
 
         if (imageType === 'application/pdf') {
@@ -355,8 +375,8 @@ namespace OfflineExporting {
                 // Must load pdf libraries first. // Don't destroy the object
                 // URL yet since we are doing things asynchronously. A cleaner
                 // solution would be nice, but this will do for now.
-                Exporting.getScript(libURL + 'jspdf.js', function (): void {
-                    Exporting.getScript(libURL + 'svg2pdf.js', downloadPDF);
+                getScript(libURL + 'jspdf.js', function (): void {
+                    getScript(libURL + 'svg2pdf.js', downloadPDF);
                 });
             }
         }
@@ -366,11 +386,10 @@ namespace OfflineExporting {
      * Exporting and offline-exporting modules required. Export a chart to PDF
      * locally in the user's browser.
      *
-     * @function Highcharts.Chart#exportChartLocal
+     * @function Highcharts.Exporting#exportChartLocal
      *
      * @param {Highcharts.ExportingOptions} [exportingOptions]
      * Exporting options, the same as in {@link Highcharts.Chart#exportChart}.
-     *
      * @param {Highcharts.Options} [chartOptions]
      * Additional chart options for the exported chart. For example a different
      * background color can be added here, or `dataLabels` for export only.
@@ -379,21 +398,33 @@ namespace OfflineExporting {
      * @requires modules/offline-exporting
      */
     function exportChartLocal(
-        this: Chart,
+        this: Exporting,
         exportingOptions?: ExportingOptions,
-        chartOptions?: Partial<Options>
+        chartOptions?: Options
     ): void {
-        /// TO DO: Correct usage for the offline module
-        this.exporting?.exportChartLocalCore(
-            /// OfflineExporting.downloadSVGLocal,
+        this.exportChartLocalCore(
+            OfflineExporting.downloadSVGLocal,
             exportingOptions,
             chartOptions
         );
     }
 
-    /* eslint-disable valid-jsdoc */
     /**
+     * Transform from PDF to SVG.
+     *
      * @private
+     * @function Highcharts.OfflineExporting#svgToPdf
+     *
+     * @param {Highcharts.SVGElement} svgElement
+     * The SVG element to convert.
+     * @param {number} margin
+     * The margin to apply.
+     * @param {number} scale
+     * The scale of the SVG.
+     * @param {Function} callback
+     * Callback function to call when the PDF is created.
+     *
+     * @requires modules/offline-exporting
      */
     export function svgToPdf(
         svgElement: SVGElement,
@@ -418,7 +449,7 @@ namespace OfflineExporting {
         [].forEach.call(
             svgElement.querySelectorAll('*[visibility="hidden"]'),
             function (node: SVGDOMElement): void {
-                (node.parentNode as any).removeChild(node);
+                node.parentNode.removeChild(node);
             }
         );
 
@@ -452,6 +483,7 @@ namespace OfflineExporting {
             }
         );
 
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         pdfDoc.svg(svgElement, {
             x: 0,
             y: 0,
