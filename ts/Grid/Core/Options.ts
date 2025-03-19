@@ -222,9 +222,24 @@ export interface RowsSettings {
      * only. In case of large data set, the enabled option improve performance
      * and saves memory.
      *
-     * @default true
+     * The option is automatically set to `true` when the number of rows exceeds
+     * the `virtualizationThreshold` option value. If defined, it takes the
+     * precedence over the `virtualizationThreshold` option.
+     *
+     * @default false
      */
     virtualization?: boolean;
+
+    /**
+     * The rows virtualization threshold option sets the row count limit at
+     * which virtualization is activated. When the number of rows exceeds this
+     * threshold, virtualization is enabled to optimize performance.
+     *
+     * The option has no effect when the `virtualization` option is defined.
+     *
+     * @default 50
+     */
+    virtualizationThreshold?: number;
 }
 
 /**

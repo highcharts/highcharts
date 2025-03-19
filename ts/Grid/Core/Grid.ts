@@ -43,7 +43,8 @@ const {
     extend,
     getStyle,
     merge,
-    pick
+    pick,
+    defined
 } = U;
 
 
@@ -299,6 +300,7 @@ class Grid {
         this.initContainers(renderTo);
         this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
+        this.initVirtualization();
 
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
@@ -539,6 +541,8 @@ class Grid {
 
             this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
+
+            this.initVirtualization();
         }
 
         this.querying.loadOptions();
@@ -1065,6 +1069,26 @@ class Grid {
      */
     public getOptionsJSON(onlyUserOptions = true): string {
         return JSON.stringify(this.getOptions(onlyUserOptions));
+    }
+
+    /**
+     * Enables virtualization if the row count is greater than or equal to the
+     * threshold or virtualization is enabled externally. Should be fired after
+     * the data table is loaded.
+     */
+    private initVirtualization(): void {
+        const rows = this.userOptions.rendering?.rows;
+        const virtualization = rows?.virtualization;
+        const threshold = Number(
+            rows?.virtualizationThreshold ||
+            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
+        );
+        const rowCount = Number(this.dataTable?.rowCount);
+
+        // Makes sure all nested options are defined.
+        ((this.options ??= {}).rendering ??= {}).rows ??= {};
+        this.options.rendering.rows.virtualization =
+            defined(virtualization) ? virtualization : rowCount >= threshold;
     }
 }
 
