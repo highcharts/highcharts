@@ -8,7 +8,6 @@ const commonOptions = {
     }
 };
 
-// eslint-disable-next-line no-undef
 const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: {
