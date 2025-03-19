@@ -17,10 +17,10 @@ Let's dive right in with a bare minimum example of a fully functional DataGrid:
     <meta charset="utf-8" />
     <title>My First DataGrid</title>
 
-    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/datagrid.js"></script>
     <link
       rel="stylesheet"
-      href="https://code.highcharts.com/dashboards/css/datagrid.css"
+      href="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css"
     />
 
     <script type="text/javascript">
@@ -44,10 +44,10 @@ Let's dive right in with a bare minimum example of a fully functional DataGrid:
 ### 1. Import required JS and CSS
 
 ```html
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/datagrid.js"></script>
 <link
   rel="stylesheet"
-  href="https://code.highcharts.com/dashboards/css/datagrid.css"
+  href="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css"
 />
 ```
 

@@ -30,8 +30,8 @@ import '@highcharts/grid-lite/css/grid.css';
 Load **Grid Lite** from our public CDN by adding the appropriate JavaScript and CSS files to your page's `<head>` section:
 
 ```html
-<script src="https://code.highcharts.com/grid/grid-lite.js"></script>
-<link rel="stylesheet" href="https://code.highcharts.com/grid/css/grid.css" />
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
 ```
 
 Alternatively, you can download the files from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:

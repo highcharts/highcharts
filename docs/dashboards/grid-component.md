@@ -7,11 +7,11 @@ The **Grid Component** can be placed inside a dashboard's cell to allow users to
 ## How to start
 
 ### 1. Import
-To use the **Grid Component** in **Dashboards**, you need to import the required modules, namely the [datagrid](https://code.highcharts.com/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js), to bind them together.
+To use the **Grid Component** in **Dashboards**, you need to import the required modules, namely the [datagrid](https://cdn.jsdelivr.net/npm/@highcharts/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js), to bind them together.
 The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Grid** module.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
@@ -29,7 +29,7 @@ Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 You must also import the styles in your main CSS file.
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
 ```
 
 ### 3. Cell identifier

@@ -24,7 +24,7 @@ General structure:
 ## Importing the CSS
 The CSS is not included in the library by default, but you can import it like below:
 ```css
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
 ```
 
 ## Row height

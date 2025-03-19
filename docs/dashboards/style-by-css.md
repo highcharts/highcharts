@@ -24,7 +24,7 @@ using a custom HTML layout.
 The CSS must be explicitly imported, as shown here:
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
 ```
 
 The file `datagrid.css` is needed only if the Grid component is used in the dashboard.
