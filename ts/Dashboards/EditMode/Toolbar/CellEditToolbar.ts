@@ -285,9 +285,7 @@ class CellEditToolbar extends EditToolbar {
             toolbar.editMode.hideToolbars(['cell', 'row']);
 
             // Disable resizer.
-            if (toolbar.editMode.resizer) {
-                toolbar.editMode.resizer.disableResizer();
-            }
+            toolbar.editMode.resizer?.disableResizer();
 
             // Call cellResize dashboard event.
             if (row && row.cells && row.cells.length) {
