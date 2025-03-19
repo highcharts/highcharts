@@ -9,4 +9,5 @@ categories:
   - Various features:
       priority: 1
 use_png_thumbnail: true
+is_morningstar: true
 ...
