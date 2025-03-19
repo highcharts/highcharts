@@ -2591,7 +2591,7 @@ const defaultOptions: DefaultOptions = {
              * @sample {highstock} stock/tooltip/fixed/
              *         Stock chart with fixed tooltip
              */
-            y: 1
+            y: 3
         },
 
         /**

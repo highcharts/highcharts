@@ -124,10 +124,7 @@ Highcharts.stockChart('container', {
         }
     ],
     tooltip: {
-        fixed: true,
-        position: {
-            y: 3
-        }
+        fixed: true
     },
     series: [
         {

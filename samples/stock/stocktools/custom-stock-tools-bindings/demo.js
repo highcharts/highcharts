@@ -76,10 +76,7 @@
         tooltip: {
             shape: 'square',
             headerShape: 'callout',
-            fixed: true,
-            position: {
-                y: 3
-            }
+            fixed: true
         },
         series: [{
             type: 'ohlc',

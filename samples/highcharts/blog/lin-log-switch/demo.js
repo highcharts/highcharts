@@ -105,10 +105,7 @@
             offset: 0
         }],
         tooltip: {
-            fixed: true,
-            position: {
-                y: 3
-            }
+            fixed: true
         },
         series: [{
             type: 'ohlc',
