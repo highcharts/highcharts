@@ -3,6 +3,8 @@ Export module
 
 The exporting module allows your users to download the chart as PDF, PNG, JPG or SVG vector images. It also allows printing the chart directly without distracting elements from the web page. The downloads can be created on the client side if you use the [offline-exporting.js](https://highcharts.com/docs/export-module/client-side-export) module, otherwise they are generated on Highcharts' featured server or optionally [your own server](https://highcharts.com/docs/export-module/setting-up-the-server).
 
+**Note:** If you use the public export server at [https://export.highcharts.com](https://export.highcharts.com) you should read our [Terms of use and Fair Usage Policy](https://www.highcharts.com/docs/export-module/privacy-disclaimer-export) to learn more about requirements and limitations.
+
 Additionally there's the [export data module](https://api.highcharts.com/highcharts/exporting.csv) that enables exporting the chart data to CSV, XLS or HTML table formats.
 
 To enable exporting, the module needs to be included, it can be downloaded from [https://code.highcharts.com/](https://code.highcharts.com/) and included after highcharts.js or highstock.js. The module can also be included directly from [https://code.highcharts.com/](https://code.highcharts.com/) like this:

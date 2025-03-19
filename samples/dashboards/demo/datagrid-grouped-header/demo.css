@@ -1,0 +1,10 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#container {
+    height: 408px;
+    margin: 8px;
+}
+
+.highcharts-description {
+    padding: 0 20px;
+}

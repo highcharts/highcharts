@@ -105,6 +105,13 @@ Dashboards.board('container', {
         },
         sync: {
             highlight: true
+        },
+        dataGridOptions: {
+            columnDefaults: {
+                cells: {
+                    editable: true
+                }
+            }
         }
     }, {
         renderTo: 'dashboard-col-2',
@@ -117,6 +124,13 @@ Dashboards.board('container', {
         },
         sync: {
             highlight: true
+        },
+        dataGridOptions: {
+            columnDefaults: {
+                cells: {
+                    editable: true
+                }
+            }
         }
     }]
 });

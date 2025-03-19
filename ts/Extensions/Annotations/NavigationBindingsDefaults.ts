@@ -279,7 +279,7 @@ const navigation: NavigationOptions = {
                         },
                         navigation.annotationsOptions,
                         (navigation.bindings as any).ellipseAnnotation
-                            .annotationOptions
+                            .annotationsOptions
                     )
                 );
             },

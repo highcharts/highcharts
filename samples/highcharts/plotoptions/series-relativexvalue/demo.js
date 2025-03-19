@@ -12,7 +12,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2020, 0, 1),
+            pointStart: '2020-01-01',
             pointInterval: 36e5, // one hour
             relativeXValue: true
         }

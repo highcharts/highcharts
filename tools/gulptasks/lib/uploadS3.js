@@ -263,7 +263,7 @@ async function putS3Object(
     options = {},
     session = defaultSession
 ) {
-    if (session.dryrun) {
+    if (session && session.dryrun) {
         const fsLib = require('../../libs/fs');
 
         path = Path.join('tmp', 's3', session.bucket, path);

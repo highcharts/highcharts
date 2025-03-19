@@ -321,7 +321,7 @@ namespace RadialAxis {
             ) {
                 return this.tickPositions
                     .map((pos: number): (SVGElement|undefined) =>
-                        this.ticks[pos] && this.ticks[pos].label
+                        this.ticks[pos]?.label
                     )
                     .filter((label: (SVGElement|undefined)): boolean =>
                         Boolean(label)
@@ -344,7 +344,7 @@ namespace RadialAxis {
      */
     function getCrosshairPosition(
         this: AxisComposition,
-        options: PlotLineOptions,
+        options: Axis.PlotLinePathOptions,
         x1: number,
         y1: number
     ): [(number | undefined), number, number] {
@@ -869,7 +869,7 @@ namespace RadialAxis {
             options = this.options,
             isHidden = chart.angular && this.isXAxis,
             pane = this.pane,
-            paneOptions = pane && pane.options;
+            paneOptions = pane?.options;
 
         if (!isHidden && pane && (chart.angular || chart.polar)) {
             const fullCircle = Math.PI * 2,
@@ -930,10 +930,7 @@ namespace RadialAxis {
     function onAxisDestroy(
         this: AxisComposition
     ): void {
-        if (
-            this.chart &&
-            this.chart.labelCollectors
-        ) {
+        if (this.chart?.labelCollectors) {
             const index = (
                 this.labelCollector ?
                     this.chart.labelCollectors.indexOf(

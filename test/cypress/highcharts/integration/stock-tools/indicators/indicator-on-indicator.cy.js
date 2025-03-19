@@ -29,7 +29,7 @@ describe('An indicator on indicator, #15696.', () => {
 
         cy.chart().should(chart =>
             assert.strictEqual(
-                chart.series[2].xData.length - chart.series[3].xData.length,
+                chart.series[2].dataTable.rowCount - chart.series[3].dataTable.rowCount,
                 19,
                 `The second SMA indicator which is based on the previous SMA indicator
                 should be shifted by period (19) thus data should have 19 fewer points.`

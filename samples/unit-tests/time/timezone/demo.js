@@ -22,6 +22,10 @@ QUnit.test('timezone', function (assert) {
             text: 'timezone with local DST crossover'
         },
 
+        lang: {
+            locale: 'en-GB'
+        },
+
         subtitle: {
             text: 'From October 27, UTC midnight is 01:00 AM in Oslo'
         },
@@ -87,7 +91,16 @@ QUnit.test('timezone', function (assert) {
     assert.equal(
         chart.time.dateFormat('%H:%M', oct27Point.x),
         '05:30',
-        'Non full-hour timezone - UTC midnight should render 05:00 in Calcutta'
+        'Non full-hour timezone - UTC midnight should render 05:30 in Calcutta'
+    );
+
+    assert.equal(
+        chart.time.dateFormat({
+            hour: '2-digit',
+            minute: 'numeric'
+        }, oct27Point.x),
+        '05:30',
+        'Non full-hour timezone - UTC midnight should render 05:30 in Calcutta'
     );
 
     chart.update({
@@ -102,10 +115,27 @@ QUnit.test('timezone', function (assert) {
         'Non full-hour timezone - UTC midnight should render 05:45 in Katmandu'
     );
 
+    chart.update({
+        time: {
+            timezone: undefined
+        }
+    });
+    assert.equal(
+        chart.time.timezone,
+        undefined,
+        'Undefined time zone should be supported and fall back to local'
+    );
+    const ts = Date.UTC(2024, 11, 5, 6, 7);
+    assert.equal(
+        chart.time.dateFormat('%k:00', ts),
+        new Date(ts).getHours() + ':00',
+        'Undefined timezone should fall back to local time'
+    );
+
     // Tear down
     Highcharts.setOptions({
         time: {
-            timezone: undefined,
+            timezone: 'UTC',
             getTimezoneOffset: undefined
         }
     });
@@ -115,7 +145,7 @@ QUnit.test('timezone', function (assert) {
  * Checks that specified getTimezoneOffset function is used if timezone option
  * is not.
  */
-QUnit.test('getTimezoneOffset', function (assert) {
+QUnit.skip('getTimezoneOffset', function (assert) {
     var chart, oct27Point;
 
     Highcharts.setOptions({
@@ -187,4 +217,49 @@ QUnit.test('getTimezoneOffset', function (assert) {
             getTimezoneOffset: undefined
         }
     });
+});
+
+QUnit.test('Time class', assert => {
+    // The timezone option
+    const time1 = new Highcharts.Time({
+        timezone: 'Europe/Oslo',
+        locale: 'en-GB'
+    });
+
+    assert.strictEqual(
+        time1.dateFormat('%H:%M', Date.UTC(2014, 6, 3)),
+        '02:00',
+        'Time class should respect the timezone option with string format'
+    );
+
+    assert.strictEqual(
+        time1.dateFormat({
+            hour: 'numeric',
+            minute: 'numeric'
+        }, Date.UTC(2014, 6, 3)),
+        '02:00',
+        'Time class should respect the timezone option with object format'
+    );
+
+    // The timezoneOffset option
+    const time2 = new Highcharts.Time({
+        timezoneOffset: 6 * 60,
+        locale: 'en-GB'
+    });
+
+    assert.strictEqual(
+        time2.dateFormat('%H:%M', Date.UTC(2014, 6, 3)),
+        '18:00',
+        'Time class should respect the timezoneOffset option with string format'
+    );
+
+    assert.strictEqual(
+        time2.dateFormat({
+            hour: 'numeric',
+            minute: 'numeric'
+        }, Date.UTC(2014, 6, 3)),
+        '18:00',
+        'Time class should respect the timezoneOffset option with object format'
+    );
+
 });

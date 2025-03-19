@@ -79,7 +79,7 @@ namespace CenteredUtilities {
             slicingRoom = 2 * (options.slicedOffset || 0),
             plotWidth = chart.plotWidth - 2 * slicingRoom,
             plotHeight = chart.plotHeight - 2 * slicingRoom,
-            centerOption: Array<(number|string|null)> = options.center as any,
+            centerOption = options.center,
             smallestSize = Math.min(plotWidth, plotHeight),
             thickness = options.thickness;
 
@@ -98,8 +98,8 @@ namespace CenteredUtilities {
         }
 
         const positions: Array<number> = [
-            pick(centerOption[0] as any, '50%' as any),
-            pick(centerOption[1] as any, '50%' as any),
+            pick(centerOption?.[0], '50%' as any),
+            pick(centerOption?.[1], '50%' as any),
             // Prevent from negative values
             pick(size && size < 0 ? void 0 : options.size, '100%'),
             pick(

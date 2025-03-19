@@ -1,0 +1,49 @@
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<!-- MQTT client library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
+    integrity="sha384-Ljvyu+Te8lhYTZmOKkTuUHeKBt1i/g8TBMb1lDHfgOlI3c0ZTKEN9KVPBM/priIP"
+    crossorigin="anonymous"></script>
+
+<!-- Dashboards container -->
+<div id="container"></div>
+<!-- Custom elements, outside Dashboards -->
+<div id="custom">
+    <div id="html-log">
+        <h1>MQTT log</h1>
+        <pre id="log-content"></pre>
+    </div>
+    <div id="app-control">
+        <button id="btn-clear-log">Clear log</button>
+        <button id="btn-connect">Connect</button>
+        <span id="connect-status">disconnected</span>
+    </div>
+</div>
+
+<div id="description">
+    <p>This demo shows how to connect to an <a href="https://mqtt.org/" target="_blank">MQTT</a>
+        broker and subscribe to a topic. The data is then displayed in a <i>Highcharts chart</i> and a <i>Dashboards datagrid</i>.
+        The demo also shows how to implement a <i>Custom Connector</i> in Javascript, in his case MQTT. The Custom
+        Connector establishes the connection with the MQTT broker, subscribes to a topic and receives the data. The
+        received data are stored in the connector's data table for use in the chart and datagrid. The connector also supports
+        callbacks for connection status, packet reception and error handling. The connector is a sub-class of the
+        <i>DataConnector</i> and uses the JSON Converter to convert the received data to a format that can be used
+        by the chart and datagrid.
+    </p>
+    <p>MQTT data is delivered from a Highcharts server. It uses the broker
+        <i>broker.hivemq.com</i>, port <i>8000 or 8884 (secure)</i> and data is send every five seconds to the topics
+        <i>highcharts/topic1</i> and <i>highcharts/topic2</i>. The data is random and represents the wind speed in the
+        North Sea and the Baltic Sea. The data is sent in JSON format and has the following structure:</p>
+    </p>
+    <pre class="json">
+{
+    "name": "North Sea",
+    "value": 35.69,
+    "timestamp": "2024-09-12T08:12:01.028Z"
+}
+    </pre>
+</div>

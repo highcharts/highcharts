@@ -19,7 +19,6 @@
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type RangeSelector from './RangeSelector';
-import type Time from '../../Core/Time';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
@@ -78,18 +77,39 @@ function axisMinFromRange(
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            const timeName: Time.TimeUnitValue = type === 'year' ?
-                'FullYear' : 'Month';
-            const date = new time.Date(base);
-            const basePeriod = time.get(timeName, date);
 
-            time.set(timeName, date, basePeriod + count);
+            const original = time.toParts(base),
+                modified = original.slice();
 
-            if (basePeriod === time.get(timeName, date)) {
-                time.set('Date', date, 0); // #6537
+            type MakeTimeArgs = [
+                number, number, number, number, number, number
+            ];
+
+            if (type === 'year') {
+                modified[0] += count;
+            } else {
+                modified[1] += count;
             }
 
-            return date.getTime() - base;
+            let d = time.makeTime.apply(time, modified as MakeTimeArgs);
+            const numbers = time.toParts(d);
+            // When subtracting a month still places us in the same month, like
+            // subtracting one month from March 31 places us on February 31,
+            // which translates to March 3 (#6537)
+            if (
+                type === 'month' &&
+                original[1] === numbers[1] &&
+                Math.abs(count) === 1
+            ) {
+                modified[0] = original[0];
+                modified[1] = original[1];
+                // 0 is the last day of the previous month
+                modified[2] = 0;
+            }
+
+            d = time.makeTime.apply(time, modified as MakeTimeArgs);
+
+            return d - base;
         };
 
     let min,
@@ -140,6 +160,13 @@ function axisMinFromRange(
 /**
  * @private
  */
+function updateRangeSelectorButtons(this: Chart): void {
+    this.rangeSelector?.redrawElements();
+}
+
+/**
+ * @private
+ */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
@@ -159,6 +186,7 @@ function compose(
         addEvent(ChartClass, 'getMargins', onChartGetMargins);
         addEvent(ChartClass, 'redraw', redrawRangeSelector);
         addEvent(ChartClass, 'update', onChartUpdate);
+        addEvent(ChartClass, 'beforeRedraw', updateRangeSelectorButtons);
 
         chartProto.callbacks.push(redrawRangeSelector);
 
@@ -209,7 +237,7 @@ function onChartBeforeRender(
         if (!rangeSelector.options.floating) {
             if (verticalAlign === 'bottom') {
                 this.extraBottomMargin = true;
-            } else if (verticalAlign !== 'middle') {
+            } else if (verticalAlign === 'top') {
                 this.extraTopMargin = true;
             }
         }
@@ -278,15 +306,17 @@ function onChartGetMargins(
 ): void {
     const rangeSelector = this.rangeSelector;
 
-    if (rangeSelector) {
+    if (rangeSelector?.options?.enabled) {
         const rangeSelectorHeight = rangeSelector.getHeight();
 
-        if (this.extraTopMargin) {
-            this.plotTop += rangeSelectorHeight;
-        }
+        const verticalAlign = rangeSelector.options.verticalAlign;
 
-        if (this.extraBottomMargin) {
-            (this.marginBottom as any) += rangeSelectorHeight;
+        if (!rangeSelector.options.floating) {
+            if (verticalAlign === 'bottom') {
+                (this.marginBottom as any) += rangeSelectorHeight;
+            } else if (verticalAlign !== 'middle') {
+                this.plotTop += rangeSelectorHeight;
+            }
         }
     }
 }

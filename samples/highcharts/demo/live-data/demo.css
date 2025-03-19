@@ -43,7 +43,9 @@
 
 .ld-form {
     max-width: 800px;
-    margin: 1em auto;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 1em 10px;
 }
 
 .ld-row {
@@ -70,4 +72,8 @@
 
 .ld-time-input {
     width: 40px;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

@@ -498,7 +498,13 @@ class Navigator {
             [0, 1].forEach((index: number): void => {
                 const symbolName = handlesOptions.symbols[index];
 
-                if (!navigator.handles[index]) {
+                if (
+                    !navigator.handles[index] ||
+                    navigator.handles[index].symbolUrl !== symbolName
+                ) {
+                    // Generate symbol from scratch if we're dealing with an URL
+                    navigator.handles[index]?.destroy();
+
                     navigator.handles[index] = renderer.symbol(
                         symbolName,
                         -width / 2 - 1,
@@ -516,8 +522,13 @@ class Navigator {
                             'highcharts-navigator-handle-' +
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
+
+                    navigator.addMouseEvents();
                 // If the navigator symbol changed, update its path and name
-                } else if (symbolName !== navigator.handles[index].symbolName) {
+                } else if (
+                    !navigator.handles[index].isImg &&
+                    navigator.handles[index].symbolName !== symbolName
+                ) {
                     const symbolFn = symbols[symbolName],
                         path = symbolFn.call(
                             symbols,
@@ -1486,13 +1497,13 @@ class Navigator {
 
 
         // Initialize the scrollbar
-        if ((chart.options.scrollbar as any).enabled) {
+        if (chart.options.scrollbar?.enabled) {
 
             const options = merge<DeepPartial<ScrollbarOptions>>(
                 chart.options.scrollbar,
                 { vertical: chart.inverted }
             );
-            if (!isNumber(options.margin) && navigator.navigatorEnabled) {
+            if (!isNumber(options.margin)) {
                 options.margin = chart.inverted ? -3 : 3;
             }
             chart.scrollbar = navigator.scrollbar = new Scrollbar(
@@ -1549,6 +1560,7 @@ class Navigator {
         returnFalseOnNoBaseSeries?: boolean
     ): (Record<string, (number|undefined)>|undefined) {
         const baseAxis = this.chart.xAxis[0],
+            time = this.chart.time,
             navAxis = this.xAxis,
             navAxisOptions = navAxis.options,
             baseAxisOptions = baseAxis.options;
@@ -1558,20 +1570,20 @@ class Navigator {
         if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
             ret = {
                 dataMin: pick( // #4053
-                    navAxisOptions && navAxisOptions.min,
+                    time.parse(navAxisOptions?.min),
                     numExt(
                         'min',
-                        baseAxisOptions.min as any,
+                        time.parse(baseAxisOptions.min) as any,
                         baseAxis.dataMin as any,
                         navAxis.dataMin as any,
                         navAxis.min as any
                     )
                 ),
                 dataMax: pick(
-                    navAxisOptions && navAxisOptions.max,
+                    time.parse(navAxisOptions?.max),
                     numExt(
                         'max',
-                        baseAxisOptions.max as any,
+                        time.parse(baseAxisOptions.max) as any,
                         baseAxis.dataMax as any,
                         navAxis.dataMax as any,
                         navAxis.max as any
@@ -1759,9 +1771,10 @@ class Navigator {
 
                 navigator.hasNavigatorData =
                     navigator.hasNavigatorData || !!navigatorSeriesData;
-                mergedNavSeriesOptions.data =
+                mergedNavSeriesOptions.data = (
                     navigatorSeriesData ||
-                    baseOptions.data && baseOptions.data.slice(0);
+                    baseOptions.data?.slice(0)
+                );
 
                 // Update or add the series
                 if (linkedNavSeries && linkedNavSeries.options) {
@@ -1883,8 +1896,8 @@ class Navigator {
                     if (baseSeries) {
                         erase(baseSeries, base); // #21043
                     }
-                    if (this.navigatorSeries) {
-                        erase(navigator.series as any, this.navigatorSeries);
+                    if (this.navigatorSeries && navigator.series) {
+                        erase(navigator.series, this.navigatorSeries);
                         if (defined(this.navigatorSeries.options)) {
                             this.navigatorSeries.remove(false);
                         }
@@ -1908,11 +1921,10 @@ class Navigator {
     ): number {
         return this.baseSeries.reduce(
             function (min: number, series: Series): number {
-                // (#10193)
+                // #10193
                 return Math.min(
                     min,
-                    series.xData && series.xData.length ?
-                        series.xData[0] : min
+                    series.getColumn('x')[0] ?? min
                 );
             },
             currentSeriesMin
@@ -2050,7 +2062,7 @@ class Navigator {
 
         // Set the navigator series data to the new data of the base series
         if (navigatorSeries && !navigator.hasNavigatorData) {
-            navigatorSeries.options.pointStart = (baseSeries.xData as any)[0];
+            navigatorSeries.options.pointStart = baseSeries.getColumn('x')[0];
             navigatorSeries.setData(
                 baseSeries.options.data as any,
                 false,
@@ -2071,7 +2083,7 @@ class Navigator {
         navigator: Navigator
     ): boolean|undefined {
         const xDataMin = navigator.getBaseSeriesMin(
-                (baseSeries.xData as any)[0]
+                baseSeries.getColumn('x')[0]
             ),
             xAxis = baseSeries.xAxis,
             max = xAxis.max,
@@ -2136,7 +2148,7 @@ class Navigator {
                     const chart = this,
                         navigator = chart.navigator as Navigator;
 
-                    let marginName = navigator.opposite ?
+                    let marginName: keyof Chart = navigator.opposite ?
                         'plotTop' : 'marginBottom';
 
                     if (chart.inverted) {
@@ -2144,12 +2156,12 @@ class Navigator {
                             'marginRight' : 'plotLeft';
                     }
 
-                    (chart as any)[marginName] =
-                        ((chart as any)[marginName] || 0) + (
-                            navigator.navigatorEnabled || !chart.inverted ?
-                                navigator.height + navigator.scrollbarHeight :
-                                0
-                        ) + navigator.navigatorOptions.margin;
+                    chart[marginName] = (chart[marginName] || 0) + (
+                        navigator.navigatorEnabled || !chart.inverted ?
+                            navigator.height +
+                            (this.scrollbar?.options.margin || 0) +
+                            navigator.scrollbarHeight : 0
+                    ) + (navigator.navigatorOptions.margin || 0);
                 }
             ),
             addEvent(
@@ -2212,6 +2224,12 @@ class Navigator {
         ): void => {
             destroyObjectProperties(coll);
         });
+
+        // Clean up linked series
+        this.baseSeries.forEach((s):void => {
+            s.navigatorSeries = void 0;
+        });
+
         this.navigatorEnabled = false;
     }
 }

@@ -65,13 +65,11 @@ const chart = Highcharts.chart('container', {
         type: 'lowmedhigh'
     },
     title: {
-        text: 'Monthly earnings, by level of education in Norway',
-        align: 'left'
+        text: 'Monthly earnings, by level of education in Norway'
     },
     subtitle: {
         text: 'Source: ' +
-            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>',
-        align: 'left'
+            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>'
     },
     accessibility: {
         point: {

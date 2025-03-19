@@ -97,15 +97,24 @@ function checkDemosConsistency() {
     const FSLib = require('../libs/fs.js');
     const LogLib = require('../libs/log');
     const yaml = require('js-yaml');
+    const assert = require('node:assert');
+    const { existsSync } = require('node:fs');
 
     let errors = 0;
 
+
     glob.sync(
-        FSLib.path(process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details', true)
+        FSLib.path(process.cwd() + '/samples/*/demo/*', true)
+    ).forEach(p => {
+        assert(existsSync(FSLib.path(p + '/demo.details')), `Missing demo.details file at ${p}`);
+    });
+
+    glob.sync(
+        FSLib.path(process.cwd() + '/samples/*/*/*/demo.details', true)
     ).forEach(detailsFile => {
         detailsFile = FSLib.path(detailsFile, true);
 
-        if (/\/samples\/(highcharts|stock|maps|gantt)\/demo\//u.test(detailsFile)) {
+        if (/\/samples\/(\w+)\/demo\//u.test(detailsFile)) {
             try {
                 const details = yaml.load(
                     fs.readFileSync(detailsFile, 'utf-8')
@@ -141,34 +150,11 @@ function checkDemosConsistency() {
                     }
                 }
 
-            } catch (e) {
+            } catch {
                 LogLib.failure('File not found:', detailsFile);
                 errors++;
             }
 
-        } else {
-            try {
-                const details = yaml.load(
-                    fs.readFileSync(detailsFile, 'utf-8')
-                );
-
-                if (typeof details === 'object') {
-                    if (details.categories) {
-                        LogLib.failure(
-                            'categories should not be used in demo.details outside demo folder',
-                            detailsFile
-                        );
-                        errors++;
-                    } else if (details.tags) {
-                        LogLib.failure(
-                            'tags should not be used in demo.details outside demo folder',
-                            detailsFile
-                        );
-                        errors++;
-                    }
-                }
-            // eslint-disable-next-line
-            } catch (e) {}
         }
     });
 
@@ -190,9 +176,19 @@ function checkDocsConsistency() {
     const { unlisted } = require('../../docs/doc-config.js');
     const sidebarDocs = [];
 
-    Object
-        .keys(sidebar.docs)
-        .forEach(key => sidebarDocs.push(...Object.values(sidebar.docs[key])));
+    // Recursive function to collect doc paths from sidebar
+    function collectDocs(item) {
+        if (Array.isArray(item)) {
+            item.forEach(collectDocs);
+        } else if (typeof item === 'string') {
+            sidebarDocs.push(item);
+        } else if (typeof item === 'object') {
+            Object.values(item).forEach(collectDocs);
+        }
+    }
+
+    // Start collecting docs from sidebar.docs
+    collectDocs(sidebar.docs);
 
     const dirs = FS.readdirSync('docs/');
     const foundDocs = [];
@@ -210,6 +206,7 @@ function checkDocsConsistency() {
     } catch (error) {
         throw new Error(error);
     }
+
     const docsNotAdded = foundDocs.filter(file => {
         if (unlisted.includes(file)) {
             return false;

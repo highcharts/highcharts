@@ -62,18 +62,6 @@ const emptyHTML = trustedTypesPolicy ?
     '';
 
 
-// IE9 and PhantomJS are only able to parse XML.
-const hasValidDOMParser = (function (): boolean {
-    try {
-        return Boolean(new DOMParser().parseFromString(
-            emptyHTML,
-            'text/html'
-        ));
-    } catch (e) {
-        return false;
-    }
-}());
-
 /* *
  *
  *  Class
@@ -594,14 +582,23 @@ class AST {
             .replace(/ style=(["'])/g, ' data-style=$1');
 
         let doc;
-        if (hasValidDOMParser) {
+        try {
             doc = new DOMParser().parseFromString(
                 trustedTypesPolicy ?
                     trustedTypesPolicy.createHTML(markup) as unknown as string :
                     markup,
                 'text/html'
             );
-        } else {
+        } catch (e) {
+            // There are two cases where this fails:
+            // 1. IE9 and PhantomJS, where the DOMParser only supports parsing
+            //    XML
+            // 2. Due to a Chromium issue where chart redraws are triggered by
+            //    a `beforeprint` event (#16931),
+            //    https://issues.chromium.org/issues/40222135
+        }
+
+        if (!doc) {
             const body = createElement('div');
             body.innerHTML = markup;
             doc = { body };

@@ -8,20 +8,23 @@
 <div class="buttons-wrapper">
   <div class="highcharts-description">
     The demo allows you to convert the Highcharts Dashboards into JSON and create a new dashboard.<br><br>
-  
+
     For testing, please click on the button "Export Dashboards" button. The JSON
     with your "Highcharts Dashboards" configuration will be saved in the local
     storage.<br><br>
-    
+
     Click on the "Destroy chart" button for removing the current dashboard.<br><br>
-    
+
     By clicking on "Import Dashboards" button, the new Dashboard will
     be created, based on configuration, saved in the local storage.
   </div>
-  <button id="export">Export Dashboards</button>
-  <button id="destroy" disabled>Destroy Dashboards</button>
-  <button id="import" disabled>Create Dashboards</button>
-  <div class="ls-status">Status: 
+
+  <div class="button-row">
+    <button id="export" class="highcharts-demo-button">Export Dashboards</button>
+    <button id="destroy" disabled class="highcharts-demo-button">Destroy Dashboards</button>
+    <button id="import" disabled class="highcharts-demo-button">Create Dashboards</button>
+  </div>
+  <div class="ls-status">Status:
     <span id="ls-status-content">the local storage is empty</span>.
   </div>
 </div>

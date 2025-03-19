@@ -84,7 +84,7 @@ const DragDropDefaults: DragDropDefaults = {
      * @sample {highcharts} highcharts/dragdrop/drag-xrange
      *         Limit dragging
      *
-     * @type      {number}
+     * @type      {number|string}
      * @since     6.2.0
      * @apioption plotOptions.series.dragDrop.dragMinX
      */
@@ -97,7 +97,7 @@ const DragDropDefaults: DragDropDefaults = {
      * @sample {highcharts} highcharts/dragdrop/drag-xrange
      *         Limit dragging
      *
-     * @type      {number}
+     * @type      {number|string}
      * @since     6.2.0
      * @apioption plotOptions.series.dragDrop.dragMaxX
      */

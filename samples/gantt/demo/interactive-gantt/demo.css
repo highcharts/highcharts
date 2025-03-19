@@ -1,8 +1,22 @@
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 #container,
 #buttonGroup {
     max-width: 1200px;
     min-width: 320px;
-    margin: 1em auto;
+    margin: 10px;
 }
 
 .hidden {
@@ -15,10 +29,17 @@
     border: 0;
     background-color: #ddd;
     padding: 13px 18px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.main-container button:hover {
+    background-color: #ccc;
 }
 
 .main-container button[disabled] {
     color: silver;
+    cursor: not-allowed;
 }
 
 .button-row button {

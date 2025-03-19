@@ -21,10 +21,10 @@ jobs:
     name: Node unit tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install Dependencies
@@ -34,7 +34,7 @@ jobs:
         run: npx gulp scripts
 
       - name: Run unit tests
-        run: npx ts-node test/ts-node-unit-tests/index.ts
+        run: npm run test-node
 
   test_cypress:
     name: Cypress tests
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install dependencies
@@ -86,7 +86,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
       # browser-actions/setup-chrome installs chrome at a separate location
       # which setup-chromedriver does not pick up, so doing it manually
@@ -149,7 +149,7 @@ jobs:
   #     - uses: actions/checkout@v3
   #     - uses: actions/setup-node@v4
   #       with:
-  #         node-version: 'lts/*'
+  #         node-version: 'lts/iron'
   #         cache: 'npm'
   #     - name: Install Dependencies
   #       run: npm i

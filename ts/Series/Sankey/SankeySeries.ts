@@ -251,7 +251,7 @@ class SankeySeries extends ColumnSeries {
      *         Returns true if the series has points at all.
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     /**
@@ -333,10 +333,6 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public translate(): void {
-
-        if (!this.processedXData) {
-            this.processData();
-        }
 
         this.generatePoints();
 
@@ -876,23 +872,11 @@ export default SankeySeries;
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
+ * @param {Highcharts.Point} this
  *        Data label context to format
  *
  * @return {string|undefined}
  *         Formatted data label text
- */
-
-/**
- * Context for the node formatter function.
- *
- * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- *//**
- * The node object. The node name, if defined, is available through
- * `this.point.name`.
- * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
- * @type {Highcharts.SankeyNodeObject}
  */
 
 ''; // Detach doclets above

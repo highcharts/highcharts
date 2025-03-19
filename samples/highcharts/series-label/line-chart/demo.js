@@ -46,7 +46,7 @@ Highcharts.chart('container', {
             x: 3
         },
         plotLines: [{
-            value: Date.UTC(1971, 0, 1),
+            value: '1971-01-01',
             color: '#444444',
             width: 3
         }],

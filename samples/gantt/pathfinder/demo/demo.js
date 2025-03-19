@@ -7,8 +7,8 @@ Highcharts.chart('container', {
     },
     xAxis: {
         type: 'datetime',
-        min: Date.UTC(2014, 11, 1),
-        max: Date.UTC(2014, 11, 23)
+        min: '2014-12-01',
+        max: '2014-12-23'
     },
     yAxis: {
         title: '',
@@ -29,27 +29,27 @@ Highcharts.chart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            x: Date.UTC(2014, 11, 1),
-            x2: Date.UTC(2014, 11, 2),
+            x: '2014-12-01',
+            x2: '2014-12-02',
             partialFill: 0.95,
             y: 0,
             id: 'first'
         }, {
-            x: Date.UTC(2014, 11, 2),
-            x2: Date.UTC(2014, 11, 5),
+            x: '2014-12-02',
+            x2: '2014-12-05',
             partialFill: 0.5,
             y: 1,
             id: 'second',
             connect: 'third' // Set a default connection to a point
         }, {
-            x: Date.UTC(2014, 11, 8),
-            x2: Date.UTC(2014, 11, 9),
+            x: '2014-12-08',
+            x2: '2014-12-09',
             partialFill: 0.15,
             y: 2,
             id: 'third'
         }, {
-            x: Date.UTC(2014, 11, 9),
-            x2: Date.UTC(2014, 11, 19),
+            x: '2014-12-09',
+            x2: '2014-12-19',
             partialFill: {
                 amount: 0.3,
                 fill: '#fa0'
@@ -76,8 +76,8 @@ Highcharts.chart('container', {
                 }
             }
         }, {
-            x: Date.UTC(2014, 11, 10),
-            x2: Date.UTC(2014, 11, 23),
+            x: '2014-12-10',
+            x2: '2014-12-23',
             y: 2,
             id: 'fifth',
             // Define multiple connections from this point
@@ -98,7 +98,7 @@ Highcharts.chart('container', {
             format: '{point.name}'
         },
         data: [{
-            x: Date.UTC(2014, 11, 5),
+            x: '2014-12-05',
             name: 'point1',
             y: 2,
             // Connecting to a point in a different series is the same
@@ -110,7 +110,7 @@ Highcharts.chart('container', {
                 }
             }
         }, {
-            x: Date.UTC(2014, 11, 10),
+            x: '2014-12-10',
             name: 'point2',
             y: 0
         }]

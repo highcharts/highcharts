@@ -27,29 +27,21 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * */
 
 /**
- * Language object. The language object is global and it can't be set
- * on each chart initialization. Instead, use `Highcharts.setOptions` to
- * set it before any chart is initialized.
+ * An object containing language-related strings and settings. A typical setup
+ * uses `Highcharts.setOptions` to make the options apply to all charts in the
+ * same page.
  *
  * ```js
  * Highcharts.setOptions({
  *     lang: {
- *         months: [
- *             'Janvier', 'Février', 'Mars', 'Avril',
- *             'Mai', 'Juin', 'Juillet', 'Août',
- *             'Septembre', 'Octobre', 'Novembre', 'Décembre'
- *         ],
- *         weekdays: [
- *             'Dimanche', 'Lundi', 'Mardi', 'Mercredi',
- *             'Jeudi', 'Vendredi', 'Samedi'
- *         ]
+ *         locale: 'fr'
  *     }
  * });
  * ```
  *
  * @optionparent lang
  */
-const lang: Record<string, string> = {
+const lang = {
 
     /**
      * The text for the label for the range selector buttons.
@@ -72,8 +64,23 @@ const lang: Record<string, string> = {
      *
      * @product highstock gantt
      */
-    rangeSelectorTo: '→'
+    rangeSelectorTo: '→',
 
+    /**
+     * The default text for the rangeselector buttons.
+     *
+     * @since next
+     */
+    rangeSelector: {
+        allText: 'All',
+        allTitle: 'View all',
+        monthText: '{count}m',
+        monthTitle: 'View {count} {#eq count 1}month{else}months{/eq}',
+        yearText: '{count}y',
+        yearTitle: 'View {count} {#eq count 1}year{else}years{/eq}',
+        ytdText: 'YTD',
+        ytdTitle: 'View year to date'
+    }
 };
 
 /**
@@ -141,7 +148,23 @@ const rangeSelector: RangeSelectorOptions = {
      *
      * @type      {Array<*>}
      */
-    buttons: void 0,
+    buttons: [{
+        type: 'month',
+        count: 1
+    }, {
+        type: 'month',
+        count: 3
+    }, {
+        type: 'month',
+        count: 6
+    }, {
+        type: 'ytd'
+    }, {
+        type: 'year',
+        count: 1
+    }, {
+        type: 'all'
+    }],
 
     /**
      * How many units of the defined type the button should span. If `type`
@@ -414,17 +437,18 @@ const rangeSelector: RangeSelectorOptions = {
      *         Milliseconds in the range selector
      *
      */
-    inputDateFormat: '%e %b %Y',
+    inputDateFormat: '%[ebY]',
 
     /**
-     * A custom callback function to parse values entered in the input boxes
-     * and return a valid JavaScript time as milliseconds since 1970.
-     * The first argument passed is a value to parse,
-     * second is a boolean indicating use of the UTC time.
+     * A custom callback function to parse values entered in the input boxes and
+     * return a valid JavaScript time as milliseconds since 1970. The first
+     * argument passed is the value to parse, second is a boolean indicating use
+     * of UTC time. The third is a reference to the `time` object. Time zone can
+     * be read from `time.timezone`.
      *
-     * This will only get called for inputs of type `text`. Since v8.2.3,
-     * the input type is dynamically determined based on the granularity
-     * of the `inputDateFormat` and the browser support.
+     * This will only get called for inputs of type `text`. Since v8.2.3, the
+     * input type is dynamically determined based on the granularity of the
+     * `inputDateFormat` and the browser support.
      *
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
@@ -466,8 +490,11 @@ const rangeSelector: RangeSelectorOptions = {
          * The alignment of the input box. Allowed properties are `left`,
          * `center`, `right`.
          *
-         * @sample {highstock} stock/rangeselector/input-button-position/
-         *         Alignment
+         * @sample {highstock} stock/rangeselector/input-button-opposite-alignment/
+         *         Opposite alignment
+         *
+         * @sample {highstock} stock/rangeselector/input-button-same-alignment/
+         *         Same alignment for buttons and input
          *
          * @type  {Highcharts.AlignValue}
          * @since 6.0.0
@@ -513,8 +540,11 @@ const rangeSelector: RangeSelectorOptions = {
          * The alignment of the input box. Allowed properties are `left`,
          * `center`, `right`.
          *
-         * @sample {highstock} stock/rangeselector/input-button-position/
-         *         Alignment
+         * @sample {highstock} stock/rangeselector/input-button-opposite-alignment/
+         *         Opposite alignment
+         *
+         * @sample {highstock} stock/rangeselector/input-button-same-alignment/
+         *         Same alignment for buttons and input
          *
          * @type  {Highcharts.AlignValue}
          * @since 6.0.0

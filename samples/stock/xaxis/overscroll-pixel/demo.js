@@ -10,7 +10,7 @@ Highcharts.stockChart('container', {
 
     series: [{
         name: 'Random data',
-        pointStart: Date.UTC(2017, 0, 1),
+        pointStart: '2017-01-01',
         pointInterval: 1000 * 60 * 60 * 24, // 1 day
         data: (function () {
             // generate an array of random data

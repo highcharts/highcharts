@@ -5,6 +5,10 @@
     margin: 1em auto;
 }
 
+.highcharts-figure {
+    padding: 0;
+}
+
 #container {
     height: 400px;
 }
@@ -43,4 +47,8 @@
 
 .highcharts-data-table tr:hover {
     background: #f1f7ff;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

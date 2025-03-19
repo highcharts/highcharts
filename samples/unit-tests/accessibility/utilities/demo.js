@@ -29,8 +29,8 @@ QUnit.test('Heading auto detection works as expected', function (assert) {
     const getEl = e => document.getElementById(e);
 
     assert.strictEqual(
-        getHeading(document.body), 'p',
-        'document.body should not have a heading.'
+        getHeading(document.body), 'h6',
+        'document.body should not have a heading and give h6 by default.'
     );
     assert.strictEqual(
         getHeading(getEl('1')), 'h3',

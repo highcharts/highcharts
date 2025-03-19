@@ -24,6 +24,7 @@ import type BoxPlotPoint from '../../Series/BoxPlot/BoxPlotPoint';
 import type BulletPoint from '../../Series/Bullet/BulletPoint';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type ColumnRangePoint from '../../Series/ColumnRange/ColumnRangePoint';
+import type { SeriesDragDropPropsObject } from './DraggablePoints';
 import type ErrorBarPoint from '../../Series/ErrorBar/ErrorBarPoint';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
 import type OHLCPoint from '../../Series/OHLC/OHLCPoint';
@@ -50,7 +51,7 @@ const {
  * */
 
 // Line series - only draggableX/Y, no drag handles
-const line = {
+const line: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: {
         axis: 'x',
         move: true
@@ -62,11 +63,11 @@ const line = {
 };
 
 // Flag series - same as line/scatter
-const flags = line;
+const flags: Record<string, Partial<SeriesDragDropPropsObject>> = line;
 
 // Column series - x can be moved, y can only be resized. Note extra
 // functionality for handling upside down columns (below threshold).
-const column = {
+const column: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: {
         axis: 'x',
         move: true
@@ -179,7 +180,7 @@ const column = {
 };
 
 // Boxplot series - move x, resize or move low/q1/q3/high
-const boxplot = {
+const boxplot: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: column.x,
     /**
      * Allow low value to be dragged individually.
@@ -302,7 +303,7 @@ const boxplot = {
 };
 
 // Errorbar series - move x, resize or move low/high
-const errorbar = {
+const errorbar: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: column.x,
     low: {
         ...boxplot.low,
@@ -330,7 +331,7 @@ const errorbar = {
  */
 
 // Bullet graph, x/y same as column, but also allow target to be dragged.
-const bullet = {
+const bullet: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: column.x,
     y: column.y,
     /**
@@ -363,7 +364,7 @@ const bullet = {
 };
 
 // OHLC series - move x, resize or move open/high/low/close
-const ohlc = {
+const ohlc: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: column.x,
     /**
      * Allow low value to be dragged individually.
@@ -488,7 +489,7 @@ const ohlc = {
 };
 
 // Waterfall - mostly as column, but don't show drag handles for sum points
-const waterfall = {
+const waterfall: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: column.x,
     y: merge(column.y, {
         handleFormatter: (
@@ -496,13 +497,13 @@ const waterfall = {
         ): (SVGPath|null) => (
             point.isSum || point.isIntermediateSum ?
                 null :
-                column.y.handleFormatter(point)
+                column?.y?.handleFormatter?.(point) || null
         )
     })
 };
 
 // Columnrange series - move x, resize or move low/high
-const columnrange = {
+const columnrange: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: {
         axis: 'x',
         move: true
@@ -578,7 +579,7 @@ const columnrange = {
 };
 
 // Arearange series - move x, resize or move low/high
-const arearange = {
+const arearange: Record<string, Partial<SeriesDragDropPropsObject>> = {
     x: columnrange.x,
     /**
      * Allow low value to be dragged individually.
@@ -645,7 +646,7 @@ const arearange = {
 };
 
 // Xrange - resize/move x/x2, and move y
-const xrange = {
+const xrange: Record<string, Partial<SeriesDragDropPropsObject>> = {
     y: {
         axis: 'y',
         move: true
@@ -707,7 +708,7 @@ const xrange = {
 };
 
 // Gantt - same as xrange, but with aliases
-const gantt = {
+const gantt: Record<string, Partial<SeriesDragDropPropsObject>> = {
     y: xrange.y,
     /**
      * Allow start value to be dragged individually.

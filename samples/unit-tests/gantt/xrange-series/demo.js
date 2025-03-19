@@ -6,6 +6,9 @@
             chart: {
                 type: 'xrange'
             },
+            time: {
+                locale: 'en-US'
+            },
             xAxis: {
                 type: 'datetime',
                 min: Date.UTC(2014, 11, 1),

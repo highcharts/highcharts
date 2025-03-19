@@ -47,10 +47,6 @@ const getBBox = geometry => {
         'AS', 'FJ', 'FM', 'KI', 'MH', 'NR', 'SB', 'TO', 'TV', 'UM', 'VU', 'WS'
     ];
 
-    /* eslint-disable-next-line no-underscore-dangle */
-    const topo2geo = Highcharts._modules['Maps/GeoJSONComposition.js'].topo2geo;
-
-
     // Remove minor parts of some countries
     // Hawaii, USA
     topology.objects.default.geometries.find(g => g.id === 'US').arcs
@@ -84,7 +80,7 @@ const getBBox = geometry => {
     ru.properties['hc-middle-x'] = 0.65;
     ru.properties['hc-middle-y'] = 0.4;
 
-    const geoJSON = topo2geo(topology);
+    const geoJSON = Highcharts.topo2geo(topology);
 
     const insets = [];
 

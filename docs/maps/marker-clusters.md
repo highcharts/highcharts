@@ -8,11 +8,11 @@ The `marker-clusters` module supports `mappoint` and `scatter` series types.
 
 **Map demo**
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/maps/marker-clusters/europe allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/maps/marker-clusters/europe" allow="fullscreen"></iframe>
 
 **Map demo with optimalized K-Means algorithm**
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/maps/marker-clusters/optimized-kmeans allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/maps/marker-clusters/optimized-kmeans" allow="fullscreen"></iframe>
 
 Installation
 ------------

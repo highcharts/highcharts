@@ -56,7 +56,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            disparityIndexIndicator.yData,
+            disparityIndexIndicator.getColumn('y'),
             [
                 1.1144449207029574,
                 1.3490648008414567,
@@ -85,7 +85,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            disparityIndexIndicator.yData,
+            disparityIndexIndicator.getColumn('y'),
             [
                 1.1144449207029574,
                 1.3490648008414567,
@@ -136,7 +136,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            disparityIndexIndicator.yData,
+            disparityIndexIndicator.getColumn('y'),
             [
                 -7.092691921307613,
                 -3.9269586752566594,
@@ -167,7 +167,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            disparityIndexIndicator.yData,
+            disparityIndexIndicator.getColumn('y'),
             [
                 0.1254026201375433,
                 -0.6706594647717171,
@@ -189,7 +189,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            disparityIndexIndicator.yData,
+            disparityIndexIndicator.getColumn('y'),
             [
                 0.1254026201375433,
                 -0.6706594647717171,
@@ -205,7 +205,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            disparityIndexIndicator.yData,
+            disparityIndexIndicator.getColumn('y'),
             [
                 -0.9115961290560005,
                 -0.1503205703016479,
@@ -235,7 +235,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            disparityIndexIndicator.yData,
+            disparityIndexIndicator.getColumn('y'),
             [
                 2.439024390244402,
                 -20.661157024793912,
@@ -264,7 +264,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            disparityIndexIndicator.yData,
+            disparityIndexIndicator.getColumn('y'),
             [
                 1.886792452831727,
                 -7.283702213281587,

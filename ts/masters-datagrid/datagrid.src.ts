@@ -26,7 +26,9 @@ import _DataGrid from '../DataGrid/DataGrid.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
+import Defaults from '../DataGrid/Defaults.js';
 import Globals from '../DataGrid/Globals.js';
+import whcm from '../Accessibility/HighContrastMode.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -51,12 +53,16 @@ declare global {
         AST: typeof AST;
         DataGrid: typeof _DataGrid;
         dataGrid: typeof _DataGrid.dataGrid;
+        dataGrids: Array<(_DataGrid|undefined)>;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
         DataConnector: typeof DataConnector;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
+        isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
+        defaultOptions: typeof Defaults.defaultOptions;
+        setOptions: typeof Defaults.setOptions;
     }
     interface Window {
         DataGrid: DataGridNamespace;
@@ -80,9 +86,13 @@ G.DataCursor = DataCursor;
 G.DataConverter = DataConverter;
 G.DataGrid = _DataGrid;
 G.dataGrid = _DataGrid.dataGrid;
+G.dataGrids = _DataGrid.dataGrids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
+G.defaultOptions = Defaults.defaultOptions;
+G.setOptions = Defaults.setOptions;
+G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 
 
 /* *

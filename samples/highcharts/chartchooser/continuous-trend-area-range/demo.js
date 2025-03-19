@@ -46,7 +46,7 @@ Highcharts.chart('container', {
             marker: {
                 enabled: false
             },
-            pointStart: Date.UTC(2022, 3, 3, 15),
+            pointStart: '2022-04-03 15:00',
             pointInterval: 36e5 // one hour
         }
     },

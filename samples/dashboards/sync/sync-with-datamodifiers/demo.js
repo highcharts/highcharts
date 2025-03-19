@@ -20,12 +20,8 @@ Dashboards.board('container', {
                     ['Row-B', 2000, 9],
                     ['Row-C', 2009, 3]
                 ],
-                dataTable: {
-                    rowKeysId: 'rkey'
-                },
                 dataModifier: {
                     type: 'Range',
-                    additive: true,
                     ranges: [{
                         column: 'Col-B',
                         minValue: 500,
@@ -72,9 +68,6 @@ Dashboards.board('container', {
                 enabled: true,
                 autoScroll: true
             }
-        },
-        dataGridOptions: {
-            editable: true
         }
     }, {
         // Mirror of the editable datagrid
@@ -88,9 +81,6 @@ Dashboards.board('container', {
                 enabled: true,
                 autoScroll: true
             }
-        },
-        dataGridOptions: {
-            editable: true
         }
     }]
 });

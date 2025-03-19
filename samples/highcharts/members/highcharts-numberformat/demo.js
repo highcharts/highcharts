@@ -1,37 +1,27 @@
-const converters = {
-    // Latin to Farsi
-    fa: function (number) {
-        return number.toString().replace(/\d/g, function (d) {
-            return String.fromCharCode(d.charCodeAt(0) + 1728);
-        });
-    },
-    // Latin to Arabic
-    ar: function (number) {
-        return number.toString().replace(/\d/g, function (d) {
-            return String.fromCharCode(d.charCodeAt(0) + 1584);
-        });
-    }
-};
-
 Highcharts.setOptions({
     lang: {
-        decimalPoint: '\u066B',
-        thousandsSep: '\u066C'
+        locale: 'ar-SA'
     }
 });
 
 Highcharts.chart('container', {
 
     chart: {
-        numberFormatter: function () {
-            const ret = Highcharts.numberFormat.apply(0, arguments);
-            return converters.ar(ret);
-        },
-        type: 'column'
+        type: 'column',
+        style: {
+            fontSize: '1.3rem'
+        }
     },
 
     title: {
         text: 'Arabic digits in Highcharts'
+    },
+
+    xAxis: {
+        type: 'datetime',
+        labels: {
+            format: '{value:%[b]}'
+        }
     },
 
     series: [{
@@ -39,12 +29,11 @@ Highcharts.chart('container', {
             29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
             135.6, 148.5, 216.4, 194.1, 95.6, 54.4
         ],
+        pointStart: '2024-01-01',
+        pointIntervalUnit: 'month',
         dataLabels: {
             enabled: true,
-            format: '{y:.1f}',
-            style: {
-                fontSize: '13px'
-            }
+            format: '{y:.1f}'
         }
     }]
 });

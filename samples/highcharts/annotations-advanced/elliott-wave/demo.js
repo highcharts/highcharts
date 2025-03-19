@@ -1,21 +1,18 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
+    title: {
+        text: 'Elliott Wave advanced annotation'
+    },
     chart: {
-        // inverted: true,
         zooming: {
             type: 'xy'
-        },
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
         }
     },
 
     annotations: [{
         type: 'elliottWave',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             xAxis: 0,
             yAxis: 0,
@@ -47,12 +44,6 @@ Highcharts.chart('container', {
             line: {
                 stroke: 'red'
             }
-        },
-        events: {
-            click: function () {
-                this.cpVisibility = !this.cpVisibility;
-                this.setControlPointsVisibility(this.cpVisibility);
-            }
         }
     }],
 
@@ -63,3 +54,16 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        typeOptions: {
+            line: {
+                stroke: '#af8f6f',
+                strokeWidth: 4
+            }
+        }
+    });
+};

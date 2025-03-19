@@ -20,7 +20,7 @@
  *
  * */
 
-import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
+import type { DataGridOptions } from '../../Plugins/DataGridTypes';
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
 
@@ -67,17 +67,7 @@ export interface Options extends Component.Options {
      * Generic options to adjust behavior and styling of the rendered data
      * grid.
      */
-    dataGridOptions?: BaseDataGridOptions;
-
-    /**
-     * The set of options like `dataGridClassName` and `dataGridID`.
-     */
-    chartClassName?: string;
-
-    /**
-     * The id that is applied to the chart's container.
-     */
-    chartID?: string;
+    dataGridOptions?: DataGridOptions;
 
     /** @private */
     tableAxisMap?: Record<string, string | null>;
@@ -105,21 +95,6 @@ export interface Options extends Component.Options {
      * Sync options for the component.
      */
     syncHandlers?: Sync.OptionsRecord;
-
-    /**
-     * If the `visibleColumns` option is not provided, the data grid will
-     * calculate and include each column from the data connector.
-     * When declared, the data grid will only include the columns that are
-     * listed.
-     *
-     * Alternatively, the column visibility can be controlled by the
-     * `dataGridOptions.columns` option.
-     * ```
-     * Example
-     * visibleColumns: ['Food', 'Vitamin A']
-     * ```
-     */
-    visibleColumns?: Array<string>;
 }
 
 /**

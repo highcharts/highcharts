@@ -40,6 +40,7 @@ interface PdfFontOptions {
 export interface ExportingOptions {
     allowHTML?: boolean;
     allowTableSorting?: boolean;
+    applyStyleSheets?: boolean;
     buttons?: ExportingButtonsOptions;
     chartOptions?: Options;
     enabled?: boolean;

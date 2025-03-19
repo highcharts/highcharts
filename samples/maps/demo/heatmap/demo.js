@@ -28,8 +28,8 @@ Highcharts.chart('container', {
 
     xAxis: {
         tickPixelInterval: 50,
-        min: Date.UTC(2024, 5, 1),
-        max: Date.UTC(2024, 5, 30)
+        min: '2024-06-01',
+        max: '2024-06-30'
     },
 
     yAxis: {

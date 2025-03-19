@@ -69,12 +69,8 @@ declare module '../Core/Chart/ChartLike' {
  */
 function stopEvent(e: Event): void {
     if (e) {
-        if (e.preventDefault) {
-            e.preventDefault();
-        }
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        }
+        e.preventDefault?.();
+        e.stopPropagation?.();
         e.cancelBubble = true;
     }
 }
@@ -194,7 +190,7 @@ class MapNavigation {
 
         // Destroy buttons in case of dynamic update
         while (navButtons.length) {
-            (navButtons.pop() as any).destroy();
+            navButtons.pop()?.destroy();
         }
 
         if (
@@ -332,8 +328,7 @@ class MapNavigation {
             // Check the mapNavigation buttons collision with exporting button
             // and translate the mapNavigation button if they overlap.
             const adjustMapNavBtn = function (): void {
-                const expBtnBBox =
-                        chart.exportingGroup && chart.exportingGroup.getBBox();
+                const expBtnBBox = chart.exportingGroup?.getBBox();
 
                 if (expBtnBBox) {
                     const navBtnsBBox = mapNav.navButtonsGroup.getBBox();
@@ -417,10 +412,14 @@ class MapNavigation {
                         e.target as any,
                         'highcharts-no-mousewheel'
                     )) {
+                        const initialZoom = chart.mapView?.zoom;
                         chart.pointer.onContainerMouseWheel(e);
-                        // Issue #5011, returning false from non-jQuery event
-                        // does not prevent default
-                        stopEvent(e as Event);
+
+                        // If the zoom level changed, prevent the default action
+                        // which is to scroll the page
+                        if (initialZoom !== chart.mapView?.zoom) {
+                            stopEvent(e as Event);
+                        }
                     }
                     return false;
                 }

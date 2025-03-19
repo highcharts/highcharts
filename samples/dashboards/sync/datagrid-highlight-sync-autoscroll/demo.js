@@ -58,15 +58,19 @@ Dashboards.board('container', {
             }
         },
         dataGridOptions: {
-            columns: {
-                Date: {
-                    cellFormatter: function () {
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Date',
+                cells: {
+                    formatter: function () {
                         return new Date(this.value)
                             .toISOString()
                             .substring(0, 10);
                     }
                 }
-            }
+            }]
         }
     }]
 });

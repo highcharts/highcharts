@@ -20,6 +20,7 @@ import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
+import type Types from '../../Shared/Types';
 
 import U from '../Utilities.js';
 const {
@@ -38,6 +39,15 @@ const {
 declare module './AxisComposition' {
     interface AxisComposition {
         dateTime?: DateTimeAxis.Composition['dateTime'];
+        getTimeTicks(
+            normalizedInterval: Time.TimeNormalizedObject,
+            min: number,
+            max: number,
+            startOfWeek?: number,
+            positions?: Array<number>|Types.TypedArray,
+            closestDistance?: number,
+            findHigherRanks?: boolean
+        ): TickPositionsArray;
     }
 }
 
@@ -110,7 +120,7 @@ namespace DateTimeAxis{
 
             axisProto.getTimeTicks = getTimeTicks;
 
-            addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
+            addEvent(AxisClass, 'afterSetType', onAfterSetType);
         }
 
         return AxisClass as (typeof Composition&T);
@@ -142,10 +152,10 @@ namespace DateTimeAxis{
     /**
      * @private
      */
-    function onAfterSetOptions(
+    function onAfterSetType(
         this: Axis
     ): void {
-        if (this.options.type !== 'datetime') {
+        if (this.type !== 'datetime') {
             this.dateTime = void 0;
             return;
         }
@@ -290,7 +300,7 @@ namespace DateTimeAxis{
         public getXDateFormat(
             x: number,
             dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
-        ): string {
+        ): Time.DateTimeFormat {
             const { axis } = this,
                 time = axis.chart.time;
 
