@@ -2606,6 +2606,9 @@ const defaultOptions: DefaultOptions = {
          * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
          * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
+         * Defaults to `callout` for floating tooltip, `rect` for
+         * [fixed](#tooltip.fixed) tooltip.
+         *
          * @type  {Highcharts.TooltipShapeValue}
          * @since 4.0
          * @default undefined
@@ -2746,7 +2749,7 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The pixel width of the tooltip border. Defaults to 0 for single
-         * tooltips and 1 for split tooltips.
+         * tooltips and fixed tooltips, otherwise 1 for split tooltips.
          *
          * In styled mode, the stroke width is set in the
          * `.highcharts-tooltip-box` class.
@@ -2771,7 +2774,8 @@ const defaultOptions: DefaultOptions = {
         borderWidth: void 0,
 
         /**
-         * Whether to apply a drop shadow to the tooltip.
+         * Whether to apply a drop shadow to the tooltip. Defaults to true,
+         * unless the tooltip is [fixed](#tooltip.fixed).
          *
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
          *         True by default
