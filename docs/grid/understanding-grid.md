@@ -1,9 +1,9 @@
-# Understanding Highcharts DataGrid
-At its core the DataGrid consists of a data source that is rendered in x number of columns and rows. Many of the available configuration options applies to the columns and their corresponding row and header cells.
+# Understanding Highcharts Grid
+At its core the grid consists of a data source that is rendered in x number of columns and rows. Many of the available configuration options applies to the columns and their corresponding row and header cells.
 
 ![table](ill_table.png)
 
-The following provides an introduction to the various root configuration objects in DataGrid:
+The following provides an introduction to the various root configuration objects in grid:
 
 ## dataTable
 ```js
@@ -19,7 +19,7 @@ The following provides an introduction to the various root configuration objects
 }
 ```
 
-The `dataTable` object is the only required option for proper rendering of the DataGrid, and `dataTable.columns` creates an instance of the DataTable class. This class has key-value pairs, where the key is used for the header cell, and the value is an array of values for the corresponding row cells.
+The `dataTable` object is the only required option for proper rendering of the grid, and `dataTable.columns` creates an instance of the DataTable class. This class has key-value pairs, where the key is used for the header cell, and the value is an array of values for the corresponding row cells.
 
 Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
 
@@ -55,22 +55,22 @@ Read more about [data handling and the DataTable class](https://www.highcharts.c
 }
 ```
 
-The ' columnDefaults ' object defines default options for all columns in the DataGrid, such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed. Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
+The ' columnDefaults ' object defines default options for all columns in the grid, such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed. Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
 
-Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/grid/columns) or see the API reference for [columndDefaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults) and [columns[]](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columns).
+Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/grid/columns) or see the API reference for [columndDefaults](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.Options-1#columnDefaults) and [columns[]](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.Options-1#columns).
 
 ## caption
 ```js
 {
     caption: {
-        text: "Title of the DataGrid";
+        text: "Title of the Grid";
     }
 }
 ```
 
 The code snippet above shows how the caption of the rendered table is inserted into the `<caption>` HTML element.
 
-For more information on the `caption` option, see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#caption).
+For more information on the `caption` option, see the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.Options-1#caption).
 
 ## header[]
 ```js
@@ -106,10 +106,10 @@ The `accessibility` option object can be used to enable/disable accessibility fe
 For more information on accessibility options read our documentation article on [accessibility](https://www.highcharts.com/docs/grid/accessibility).
 
 ## lang
-To customize the default language or wording for ARIA attributes and announcers, use the `lang.accessibility` option. In the current version of Highcharts DataGrid the `lang` option is solely related to [accessibility](https://www.highcharts.com/docs/grid/accessibility), but will be extended to other use cases as we add more features. Stay up to date by visiting our [changelog](https://www.highcharts.com/blog/changelog/#highcharts-dashboards) and [roadmap](https://www.highcharts.com/blog/roadmap/).
+To customize the default language or wording for ARIA attributes and announcers, use the `lang.accessibility` option. In the current version of Highcharts Grid the `lang` option is solely related to [accessibility](https://www.highcharts.com/docs/grid/accessibility), but will be extended to other use cases as we add more features. Stay up to date by visiting our [changelog](https://www.highcharts.com/blog/changelog/#highcharts-dashboards) and [roadmap](https://www.highcharts.com/blog/roadmap/).
 
 ## rendering
-The `rendering` option object can be used to configure options related to performance and the rendering of the DataGrid. Example: [Rendering.rows](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Row.Row-1) represents the rows in the DataGrid.
+The `rendering` option object can be used to configure options related to performance and the rendering of the grid. Example: [Rendering.rows](https://api.highcharts.com/dashboards/#classes/Grid_Table_Row.Row-1) represents the rows in the grid.
 
 ```js
 {
@@ -122,16 +122,16 @@ The `rendering` option object can be used to configure options related to perfor
 }
 ```
 
-For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/performance) or see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#rendering).
+For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/performance) or see the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.Options-1#rendering).
 
 ## events
-The DataGrid supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of the DataGrid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).
+The Grid supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of the grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).
 
 ## setOptions()
-When adding multiple datagrids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each datagrid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/dashboards/#variables/DataGrid_Defaults.Defaults.defaultOptions).
+When adding multiple Grids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each grid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/dashboards/#variables/Grid_Defaults.Defaults.defaultOptions).
 
 ```js
-DataGrid.setOptions({
+Grid.setOptions({
     columnDefaults: {
         sorting: {
             sortable: false
@@ -139,4 +139,4 @@ DataGrid.setOptions({
     }
 })
 ```
-This example disables end user sorting for every datagrid on the page.
+This example disables end user sorting for every grid on the page.

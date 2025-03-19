@@ -1,6 +1,6 @@
 # Events
 
-The DataGrid supports event listeners that can be added to the [events](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events) object. These listeners will call functions when interacting with the DataGrid.
+The  supports event listeners that can be added to the [events](https://api.highcharts.com/dashboards/#interfaces/_Options.IndividualColumnOptions.html#events) object. These listeners will call functions when interacting with the .
 
 The available events are:
 

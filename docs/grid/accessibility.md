@@ -1,8 +1,8 @@
-# Accessibility (a11y) in Highcharts DataGrid
+# Accessibility (a11y) in Highcharts Grid
 
-Accessibility (a11y) ensures that web content is usable by everyone, including people with disabilities. Highcharts DataGrid, rendered using a standard and accessible HTML `<table>`, is designed with accessibility in mind to provide an inclusive experience for all users.
+Accessibility (a11y) ensures that web content is usable by everyone, including people with disabilities. Highcharts Grid, rendered using a standard and accessible HTML `<table>`, is designed with accessibility in mind to provide an inclusive experience for all users.
 
-Using proper `<table>` semantics, such as `<thead>`, `<tbody>`, and `<th>` with appropriate `scope` attributes, ensures the structure is clear for users relying on assistive technologies like screen readers. Features like keyboard navigation, descriptive headers, and ARIA roles make the datagrid not only functional but also inclusive for users with visual or motor impairments. By prioritizing accessibility, our table-based datagrid becomes an effective tool for everyone.
+Using proper `<table>` semantics, such as `<thead>`, `<tbody>`, and `<th>` with appropriate `scope` attributes, ensures the structure is clear for users relying on assistive technologies like screen readers. Features like keyboard navigation, descriptive headers, and ARIA roles make the grid not only functional but also inclusive for users with visual or motor impairments. By prioritizing accessibility, our table-based grid becomes an effective tool for everyone.
 
 ## Default options
 
@@ -50,9 +50,9 @@ To customize the default language or wording for ARIA attributes and announcers,
 }
 ```
 
-For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.LangOptions).
+For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.LangOptions).
 
-When configuring localization, it typically applies to all datagrids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts DataGrid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
+When configuring localization, it typically applies to all grids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts Grid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
 
 
 ## Header descriptions
@@ -63,4 +63,4 @@ You can add an `aria-description` attribute to individual `<th>` table headers b
 
 Screen readers often skip table captions (`<caption>`) when users scan a page's headings for structure. To ensure accessibility, pair a table caption with a proper heading (`<h1>`–`<h6>`) placed above the table. This approach ensures that users relying on screen readers can understand the table's context while navigating the page.
 
-While the `<caption>` can be configured via the `caption` root option, adding the heading requires manual insertion at an appropriate location in the DOM, as this is not managed by the datagrid.
+While the `<caption>` can be configured via the `caption` root option, adding the heading requires manual insertion at an appropriate location in the DOM, as this is not managed by the grid.
