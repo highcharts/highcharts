@@ -1,5 +1,9 @@
 @import url("https://code.highcharts.com/grid/css/grid.css");
 
+#container {
+    padding: 12px;
+}
+
 .table {
     margin-bottom: 50px;
     height: 350px;
@@ -85,6 +89,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
+    #container {
+        background-color: #333;
+    }
+
     .hcg-container {
         --hcg-caption-color: #eee;
         --hcg-description-color: #eee;
