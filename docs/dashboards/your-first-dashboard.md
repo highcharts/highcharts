@@ -17,7 +17,7 @@ In this example, we will create a simple dashboard with two cells. The first cel
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 

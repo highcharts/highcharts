@@ -22,7 +22,7 @@ LayoutModule(Dashboards);
 Include the JavaScript files in the `<head>` section of your web page as shown below.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
  ```
 

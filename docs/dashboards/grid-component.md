@@ -7,12 +7,12 @@ The **Grid Component** can be placed inside a dashboard's cell to allow users to
 ## How to start
 
 ### 1. Import
-To use the **Grid Component** in **Dashboards**, you need to import the required modules, namely the [datagrid](https://cdn.jsdelivr.net/npm/@highcharts/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js), to bind them together.
+To use the **Grid Component** in **Dashboards**, you need to import the required modules, namely the [datagrid](https://cdn.jsdelivr.net/npm/@highcharts/dashboards/datagrid.js) and the [Dashboards](https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js), to bind them together.
 The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Grid** module.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/datagrid.js"></script>
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 ```
 
 Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.

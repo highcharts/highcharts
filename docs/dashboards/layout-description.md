@@ -11,7 +11,7 @@ The positioning of its components is an essential part of any dashboard. The lay
 To use Dashboards with a layout system and edit mode, you first have to load the `layout` module.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 

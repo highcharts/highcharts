@@ -56,7 +56,7 @@ Dashboards support the use of `Highcharts` charts or maps out of the box.
 The `highcharts` module must be imported *before* the `dashboards` module, as shown here:
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 ```
 
 The `Highcharts`CSS file must be included for the correct chart rendering.
@@ -134,7 +134,7 @@ See the [HighchartsComponent](https://www.highcharts.com/docs/dashboards/highcha
 To visualize data in a row-column layout, you can use the Grid component. The `Grid` module *must* be imported before the **Dashboards** module as shown here:
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/datagrid.js"></script>
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 ```
 
 The `Grid` module has its own style set, so the CSS file must be imported for correct rendering.

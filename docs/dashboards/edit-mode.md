@@ -8,7 +8,7 @@ To be able to use **Dashboards** with the layout system and edit mode, you first
 The order of the imports is important, so make sure that the `layout` module is imported after the **Dashboards** module.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 

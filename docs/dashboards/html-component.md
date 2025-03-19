@@ -12,7 +12,7 @@ The HTML component is the simplest component available in **Highcharts Dashboard
 To use it through the CDN, you need to load the following files
 
 ```html
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 

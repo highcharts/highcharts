@@ -8,11 +8,11 @@ The **Highcharts** Component allows the end-user to define a chart in the dashbo
 We need to load the JavaScript and CSS files in the following order to get started.
 
 ### 1. Import
-To use the Highcharts Component, you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together. The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Highcharts** module.
+To use the Highcharts Component, you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js) to bind them together. The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Highcharts** module.
 
 ```html
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
     <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 

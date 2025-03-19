@@ -7,7 +7,7 @@ The KPI component allows you to visualize *key performance indicators*.
 ## How to start
 
 ### Load Dashboards
-To be able to use KPIComponent you first have to load the main [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) package.
+To be able to use KPIComponent you first have to load the main [Dashboards](https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js) package.
 
 ### Define HTML cell
 Define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.  
@@ -45,7 +45,7 @@ To be able to use Highcharts in KPI you first have to load [Highcharts](https://
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
