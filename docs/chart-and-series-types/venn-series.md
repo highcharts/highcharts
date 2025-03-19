@@ -1,7 +1,7 @@
 Venn series
 ===
 
-The venn series has the ability to visualize both venn and vuler diagrams. They are often used in the fields of mathematics, statistics, logistics and computer science to visualize logical relationships.
+The venn series has the ability to visualize both Venn and Euler diagrams. They are often used in the fields of mathematics, statistics, logistics and computer science to visualize logical relationships.
 
 Euler diagrams displays a number of sets and the relationship between them. The sets are represented by circles, and the relation between the sets are represented by the overlap, or lack of overlap between the circles.
 

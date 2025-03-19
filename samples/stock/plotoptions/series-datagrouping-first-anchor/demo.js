@@ -25,22 +25,26 @@ Highcharts.stockChart('container', {
         plotLines: [{
             value: 0.2 * hour,
             label: {
-                text: 'First point in group'
+                text: 'First point in group',
+                y: 40
             }
         }, {
             value: 1.3 * hour,
             label: {
-                text: 'Last point in group'
+                text: 'Last point in group',
+                y: 40
             }
         }, {
             value: 10.3 * hour,
             label: {
-                text: 'First point in group'
+                text: 'First point in group',
+                y: 40
             }
         }, {
             value: 11.7 * hour,
             label: {
-                text: 'Last point in group'
+                text: 'Last point in group',
+                y: 40
             }
         }],
         plotBands: [{

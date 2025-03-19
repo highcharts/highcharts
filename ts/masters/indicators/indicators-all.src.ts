@@ -63,4 +63,9 @@ import '../../Stock/Indicators/ABands/ABandsIndicator.js';
 import '../../Stock/Indicators/TrendLine/TrendLineIndicator.js';
 import '../../Stock/Indicators/DisparityIndex/DisparityIndexIndicator.js';
 
+import MultipleLinesComposition from '../../Stock/Indicators/MultipleLinesComposition.js';
+const G: AnyRecord = Highcharts;
+G.MultipleLinesComposition =
+    G.MultipleLinesComposition || MultipleLinesComposition;
+
 export default Highcharts;

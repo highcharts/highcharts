@@ -23,7 +23,8 @@ import type Legend from '../../Core/Legend/Legend';
 import type Point from '../../Core/Series/Point';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-
+import type KDPointSearchObjectLike from '../../Core/Series/KDPointSearchObjectLike';
+import type PointerEvent from '../../Core/PointerEvent';
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
@@ -79,6 +80,9 @@ type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
 
+interface KDPointSearchObject extends KDPointSearchObjectLike {
+}
+
 /* *
  *
  *  Functions
@@ -95,7 +99,6 @@ function onAxisFoundExtremes(
 
     const axisLength = this.len,
         { coll, isXAxis, min } = this,
-        dataKey = isXAxis ? 'xData' : 'yData',
         range = (this.max || 0) - (min || 0);
 
     let pxMin = 0,
@@ -116,7 +119,7 @@ function onAxisFoundExtremes(
 
             hasActiveSeries = true;
 
-            const data = (series as any)[dataKey];
+            const data = series.getColumn(isXAxis ? 'x' : 'y');
 
             if (isXAxis) {
                 (series.onPoint || (series as any)).getRadii(0, 0, series);
@@ -175,6 +178,42 @@ function onAxisFoundExtremes(
 
 }
 
+/**
+ * If a user has defined categories, it is necessary to retroactively hide any
+ * ticks added by the 'onAxisFoundExtremes' function above (#21672).
+ *
+ * Otherwise they can show up on the axis, alongside user-defined categories.
+ */
+function onAxisAfterRender(this: Axis): void {
+    const {
+            ticks,
+            tickPositions,
+            dataMin = 0,
+            dataMax = 0,
+            categories
+        } = this,
+        type = this.options.type;
+
+    if (
+        (categories?.length || type === 'category') &&
+        this.series.find((s): boolean | undefined => s.bubblePadding)
+    ) {
+
+        let tickCount = tickPositions.length;
+
+        while (tickCount--) {
+            const tick = ticks[tickPositions[tickCount]],
+                pos = tick.pos || 0;
+
+
+            if (pos > dataMax || pos < dataMin) {
+                tick.label?.hide();
+            }
+        }
+
+    }
+}
+
 /* *
  *
  *  Class
@@ -208,7 +247,7 @@ class BubbleSeries extends ScatterSeries {
 
         dataLabels: {
             formatter: function (
-                this: Point.PointLabelObject
+                this: Point
             ): string { // #2945
                 const { numberFormatter } = this.series.chart;
                 const { z } = (this.point as BubblePoint);
@@ -469,6 +508,11 @@ class BubbleSeries extends ScatterSeries {
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass,
+                'afterRender',
+                onAxisAfterRender
+            );
         }
 
     }
@@ -547,8 +591,8 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public getRadii(): void {
-        const zData = this.zData,
-            yData = this.yData,
+        const zData = this.getColumn('z'),
+            yData = this.getColumn('y'),
             radii = [] as Array<(number|null)>;
 
         let len: number,
@@ -670,7 +714,7 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     /**
@@ -795,7 +839,7 @@ class BubbleSeries extends ScatterSeries {
     public getZExtremes(): BubbleZExtremes|undefined {
 
         const options = this.options,
-            zData = (this.zData || []).filter(isNumber);
+            zData = this.getColumn('z').filter(isNumber);
 
         if (zData.length) {
             const zMin = pick(options.zMin, clamp(
@@ -813,6 +857,59 @@ class BubbleSeries extends ScatterSeries {
         }
     }
 
+    /**
+     * @private
+     * @function Highcharts.Series#searchKDTree
+     */
+    public searchKDTree(
+        point: KDPointSearchObject,
+        compareX?: boolean,
+        e?: PointerEvent,
+        suppliedPointEvaluator: Function = noop,
+        suppliedBSideCheckEvaluator: Function = noop
+    ): (Point|undefined) {
+
+        suppliedPointEvaluator = (
+            p1: Point,
+            p2: Point,
+            comparisonProp: 'dist' | 'distX'
+        ): [Point, boolean] => {
+            const p1Dist = p1[comparisonProp] || 0;
+            const p2Dist = p2[comparisonProp] || 0;
+
+            let ret,
+                flip = false;
+            if (p1Dist === p2Dist) {
+                ret = p1.index > p2.index ? p1 : p2;
+            } else if (p1Dist < 0 && p2Dist < 0) {
+                ret = (
+                    p1Dist - (p1.marker?.radius || 0) >=
+                    p2Dist - (p2.marker?.radius || 0)
+                ) ?
+                    p1 :
+                    p2;
+
+                flip = true;
+            } else {
+                ret = p1Dist < p2Dist ? p1 : p2;
+            }
+
+            return [ret, flip];
+        };
+
+        suppliedBSideCheckEvaluator = (
+            a: number,
+            b: number,
+            flip: boolean
+        ): boolean => !flip && (a > b) || (a < b);
+        return super.searchKDTree(
+            point,
+            compareX,
+            e,
+            suppliedPointEvaluator,
+            suppliedBSideCheckEvaluator
+        );
+    }
 }
 
 /* *
@@ -834,6 +931,7 @@ extend(BubbleSeries.prototype, {
     applyZones: noop,
     bubblePadding: true,
     isBubble: true,
+    keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],
@@ -897,7 +995,7 @@ export default BubbleSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.bubble
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, legendSymbolColor, stack
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.bubble

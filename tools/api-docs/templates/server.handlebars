@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{{#if node.meta.fullname}}{{node.meta.fullname}} | {{/if}}{{productName}} {{platform}} API Reference</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="/static/style.css" type="text/css" />
+
+        <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-touch-icon-57x57.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/static/apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-touch-icon-144x144.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-touch-icon-60x60.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/static/apple-touch-icon-120x120.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-touch-icon-76x76.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-touch-icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon-180x180.png" />
+        <link rel="icon" type="image/png" href="/static/favicon-192x192.png" sizes="192x192" />
+        <link rel="icon" type="image/png" href="/static/favicon-160x160.png" sizes="160x160" />
+        <link rel="icon" type="image/png" href="/static/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="/static/favicon-16x16.png" sizes="16x16" />
+        <link rel="icon" type="image/png" href="/static/favicon-32x32.png" sizes="32x32" />
+
+        <meta property="og:description" content="{{opengraph.description}}" />
+        <meta property="og:determiner" content="{{opengraph.determiner}}" />
+        <meta property="og:image" content="{{opengraph.image}}" />
+        <meta property="og:site_name" content="{{opengraph.sitename}}" />
+        <meta property="og:title" content="{{opengraph.title}}" />
+        <meta property="og:type" content="{{opengraph.type}}" />
+        <meta property="og:url" content="{{opengraph.url}}" />
+        <meta name="searchboost" content="{{searchBoost}}" />
+        <meta name="searchtitle" content="{{searchTitle}}" />
+        <meta name="twitter:card" content="{{twitter.card}}" />
+        <meta name="twitter:creator" content="{{twitter.creator}}" />
+        <meta name="twitter:site" content="{{twitter.site}}" />
+
+        <script type="text/javascript" src="/static/api.js"></script>
+        <script type="text/javascript" src="/websearch/highsoft-websearch.js"></script>
+
+    </head>
+    <body>
+
+        <header class="header">
+            <div class="row row-1">
+                <div id="sidebar-link" class="cell sidebar-link">
+                    <a href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                </div>
+                <div id="highcharts-logo" class="cell">
+                    <a href="https://www.highcharts.com/" title="Highcharts Home Page">
+                        <img alt="Highcharts Home Page" src="/static/highcharts.svg" border="0">
+                    </a>
+                </div>
+                <div id="page-title" class="cell">
+                    <h1>
+                        <a href="/{{productModule}}/">
+                            {{platform}} API Reference
+                        </a>
+                    </h1>
+                </div>
+            </div>
+            <div class="row row-2">
+                {{#if toc}}
+                    <div id="product-selector" class="menu" expanded="false">
+                        <a href="#" class="dropdown-link">{{productName}} <i class="fa fa-chevron-down" aria-hidden="true"></i></a>
+                        <div class="dropdown-menu">
+                            <ul>
+                                {{#each toc}}
+                                <li class="product {{#if active}}highlighted{{/if}}">
+                                    <a id="{{@key}}-link" href="{{#if versions.current}}{{versions.current}}{{else}}#{{/if}}">{{displayName}}</a>
+                                </li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                    {{#if platforms }}
+                        <div id="platform-selector" class="menu" expanded="false">
+                            <a href="#" class="dropdown-link">{{platform}}<i class="fa fa-chevron-down" aria-hidden="true"></i></a>
+                            <div class="dropdown-menu">
+                                <ul class="group-list">
+                                    {{#each platforms }}
+                                    <li class="group {{#if active}}highlighted{{/if}}">
+                                        <a href="{{@this}}">{{@key}}</a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+                    {{/if}}
+                    {{#if version}}
+                    <div id="version" class="menu">
+                        <a href="https://www.highcharts.com/changelog/" target="_blank">v{{version}}</a>
+                    </div>
+                    {{/if}}
+                    {{#if includeClassReference }}
+                        <div id="namespaces" class="menu">
+                            <a href="../class-reference/Highcharts">Namespaces</a>
+                        </div>
+                        <div id="classes" class="menu">
+                            <a href="../class-reference/classes.list">Classes</a>
+                        </div>
+                        <div id="interfaces" class="menu">
+                            <a href="../class-reference/interfaces.list">Interfaces</a>
+                        </div>
+                    {{/if}}
+                {{/if}}
+            </div>
+            </div>
+        </header>
+
+        <div class="wrapper">
+            <div id="sidebar" class="navigation sidebar" expanded="false">
+                <div id="search" class="search-wrapper">
+                    <input type="text" autocapitalize="off" autocomplete="off" autocorrect="off" class="search" dir="auto" placeholder="Search - return for full results" />
+                    <button title="Full results"><i class="fa fa-search"></i></button>
+                    <ul class="results" style="display: none;"></ul>
+                </div>
+                <div id="option-trees-wrapper">
+                    <h3 id="options-header">Configuration options</h3>
+                    <p>For initial declarative chart setup. Download as <a href="{{downloadUrl}}">ZIP</a> or <a href="tree.json">JSON</a>.</p>
+                    {{#unless product.noGlobalOptions }}
+                        <div class="global-options options-tree">
+                            <code>{{product.namespace}}.setOptions({</code>
+                            <div id="global-options" class="tree"></div>
+                            <code>});</code>
+                        </div>
+                    {{/unless}}
+                    <div class="options-tree">
+                        <code>{{product.namespace}}.{{constr}}({</code>
+                        <div id="options" class="tree">
+                            {{#if node.meta.name}}
+                                <div class="node expanded option-{{node.meta.name}} parent">
+                                    <a class="title" href=".">
+                                        {{node.meta.name}}:{{#if node.children}}<i class="fa fa-caret-right"></i>{{/if}}
+                                    </a>
+                                    {{#if node.children}}
+                                        <span class="bracket start">{</span>
+                                        <div class="children" style="max-height:none;">
+                                    {{/if}}
+                            {{/if}}
+                            {{#if node.children}}
+                                {{#each node.children}}
+                                    <div class="node collapsed option-{{this.shortName}} {{#if node.meta.name}}leaf{{else}}parent{{/if}}">
+                                        <a class="title" href="{{this.name}}">
+                                            {{this.shortName}}:{{#if this.node.children}}<i class="fa fa-caret-right"></i>{{/if}}
+                                        </a>
+                                        {{#if this.node.children}}
+                                            <span class="bracket start">{</span>
+                                            <span class="dots">...</span>
+                                            <span class="bracket end first">}</span>
+                                        {{else}}
+                                            <span class="default type-undefined">{{#if this.node.doclet.defaultvalue}}{{this.node.doclet.defaultvalue}}{{else}}null{{/if}}</span>
+                                        {{/if}}
+                                    </div>
+                                {{/each}}
+                            {{else}}
+                                <span class="default type-undefined">{{#if node.doclet.defaultvalue}}{{node.doclet.defaultvalue}}{{else}}null{{/if}}</span>
+                            {{/if}}
+                            {{#if node.meta.name}}
+                                    {{#if node.children}}
+                                        </div>
+                                        <span class="bracket end second">}</span>
+                                    {{/if}}
+                                </div>
+                            {{/if}}
+                        </div>
+                        <code>});</code>
+                    </div>
+                </div>
+                {{#unless product.noClassReference }}
+                    <div id="members-wrapper">
+                        <h3>Members and properties</h3>
+                        <p>For modifying the chart at runtime. See the <a href="/class-reference/classes.list">class reference</a>.</p>
+                    </div>
+                {{/unless}}
+            </div>
+
+            <div id="body" class="body{{#if node.meta.fullname}} loaded{{/if}}">
+                <div id="splashText">
+                    <h1>Welcome to the <strong>{{productName}} {{platform}}</strong> ({{productModule}}) Options Reference</h1>
+                    <p>These pages outline the chart configuration options, and the methods and properties of {{product.namespace}} objects.</p>
+                    <p>Feel free to search this <a target="_blank" href="https://en.wikipedia.org/wiki/Application_programming_interface">API</a> through the search bar or the navigation tree in the sidebar.</p>
+                </div>
+                <div id="search-text-results" style="display:none;"></div>
+                <div id="option-list">
+                    {{#if node.meta.fullname}}
+                        <div class="option highlighted">
+                            <h1 class="title">{{node.meta.fullname}}</h1>
+                            <p class="description">
+                                <p>{{{node.doclet.description}}}</p>
+                                {{#if node.doclet.productdesc}}
+                                    <p>{{{node.doclet.productdesc.value}}}</p>
+                                {{/if}}
+                            </p>
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Copyright &copy; {{year}}, Highsoft AS. All rights reserved.</p>
+            <div id="footer-social" class="footer-social">
+                <a href="https://www.facebook.com/Highcharts" title="Facebook" class="social-icon"><i class="fa fa-facebook"></i></a>
+                <a href="https://twitter.com/Highcharts" title="Twitter" class="social-icon"><i class="fa fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/company/highsoft-solutions-as" title="LinkedIn" class="social-icon"><i class="fa fa-linkedin"></i></a>
+                <a href="https://github.com/highcharts/highcharts" title="Github" class="social-icon"><i class="fa fa-github"></i></a>
+            </div>
+
+            <p>
+                {{productName}} v{{version}} -
+                Generated from branch
+                <a href="https://github.com/highcharts/highcharts/tree/{{versionProps.branch}}">{{versionProps.branch}}</a>
+                (commit <a href="https://github.com/highcharts/highcharts/commit/{{versionProps.commit}}">{{versionProps.commit}}</a>), on {{date}}
+            </p>
+        </div>
+        <script>
+            var state = '{{{name}}}',
+                hasChildren = true,
+                product = '{{{productModule}}}';
+
+            {{#unless node.meta.hasChildren}}
+            hasChildren = false;
+            {{/unless}}
+            hapi.createNavigation('#options', '#global-options', state, product);
+            hapi.createBody('#body', state, hasChildren);
+            hapi.initializeDropdowns('.menu', '.dropdown-link', '.body');
+            hapi.initializeSidebar('.sidebar', '.sidebar-link', '.body');
+            hapi.initializeSearchBar('.search', '#search button', '.results', '#search-text-results', 'search.json', 2, 20);
+            //hapi.simulateHistory();
+
+            // Populate version
+            // hapi.populateVersions();
+
+        </script>
+
+    </body>
+
+</html>

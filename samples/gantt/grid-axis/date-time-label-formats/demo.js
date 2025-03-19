@@ -9,12 +9,12 @@ const chart = Highcharts.ganttChart('container', {
     series: [{
         data: [{
             name: 'Start prototype',
-            start: Date.UTC(2014, 2, 18),
-            end: Date.UTC(2014, 3, 1)
+            start: '2014-03-18',
+            end: '2014-04-01'
         }, {
             name: 'Test prototype',
-            start: Date.UTC(2014, 3, 1),
-            end: Date.UTC(2014, 3, 13)
+            start: '2014-04-01',
+            end: '2014-04-13'
         }]
     }]
 });

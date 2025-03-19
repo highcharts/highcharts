@@ -43,7 +43,7 @@ export interface ColorAxisMarkerOptions {
 export interface ColorAxisOptions extends AxisOptions {
     dataClassColor?: string;
     dataClasses?: Array<ColorAxisDataClassesOptions>;
-    layout?: string;
+    layout?: 'horizontal'|'vertical';
     legend?: LegendOptions;
     marker?: ColorAxisMarkerOptions;
     maxColor?: ColorType;

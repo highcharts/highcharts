@@ -1,6 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Oystein Moseng
- js_wrap: b
-...

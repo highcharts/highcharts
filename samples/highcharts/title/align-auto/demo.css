@@ -1,0 +1,40 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.highcharts-figure {
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+#container {
+    width: 400px;
+    height: 250px;
+    margin: 0 auto;
+    border: 1px dotted silver;
+}
+
+.controls {
+    padding: 10px;
+}
+
+label {
+    display: block;
+    margin: 0.5em 0;
+}
+
+label span {
+    display: inline-block;
+    width: 6em;
+}
+
+input[type="range"] {
+    width: 100%;
+}
+
+input[type="text"] {
+    border: 1px solid silver;
+    border-radius: 4px;
+    width: 20em;
+    padding: 0.5em;
+}

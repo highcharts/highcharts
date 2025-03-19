@@ -271,7 +271,8 @@ namespace FocusBorderComposition {
             scaleY = this.scaleY || parent && parent.scaleY,
             oneDefined = scaleX ? !scaleY : scaleY,
             scaleBoth = oneDefined ? Math.abs(scaleX || scaleY || 1) :
-                (Math.abs(scaleX || 1) + Math.abs(scaleY || 1)) / 2;
+                (Math.abs(scaleX || 1) + Math.abs(scaleY || 1)) / 2,
+            lineHeight = this.renderer.fontMetrics(this).h;
 
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
@@ -320,7 +321,11 @@ namespace FocusBorderComposition {
                 borderPosX = attrX - (bb.width * correction.x) - pad;
             }
             if (!isNaN(attrY)) {
-                borderPosY = attrY - (bb.height * correction.y) - pad;
+                // Correct by line height if "text-achor" == "start", #19335.
+                const dim = this.attr('text-anchor') === 'start' ?
+                    lineHeight :
+                    bb.height;
+                borderPosY = attrY - (dim * correction.y) - pad;
             }
 
             if (isLabel && isRotated) {

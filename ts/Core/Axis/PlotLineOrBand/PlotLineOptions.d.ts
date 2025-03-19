@@ -54,7 +54,7 @@ export interface PlotLineOptions {
     id?: string;
     label?: PlotLineLabelOptions;
     translatedValue?: number;
-    value?: number;
+    value?: number|string;
     width?: number;
     zIndex?: number;
 }

@@ -18,7 +18,7 @@ describe('Edit Mode sidebar', () => {
         });
 
         // Use the standalone input and update component.
-        cy.get('.highcharts-dashboards-edit-accordion-content input').type('test');
+        cy.get('.highcharts-dashboards-edit-accordion-content').eq(0).find('input').type('test');
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
         cy.board().then((board) => {
             assert.strictEqual(
@@ -102,5 +102,22 @@ describe('Edit Mode sidebar', () => {
         // Open connector options
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(2).click();
         cy.get('label.highcharts-dashboards-edit-label-text').contains('connectorName').should('be.not.visible');
+    });
+
+    it('Header should not be accordion, when no nested options, #21955', () => {
+        cy.toggleEditMode();
+
+        // Open sidebar
+        cy.get('#dashboard-col-0').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children().eq(0).click();
+
+        // Navigate to the option
+        cy.get('.highcharts-dashboards-edit-standalone-element').should('exist');
+        cy.get('.highcharts-dashboards-edit-accordion-header').eq(1).click();
+        cy.get('.highcharts-dashboards-edit-accordion-standalone-wrapper')
+            .find('.highcharts-dashboards-edit-accordion-header-wrapper')
+            .should('exist')
+            .find('.highcharts-dashboards-edit-accordion-header-icon')
+            .should('not.exist');
     });
 });

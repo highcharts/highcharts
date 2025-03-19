@@ -37,7 +37,20 @@ Highcharts.chart('container', {
         sourceHeight: 300,
         scale: 1,
         fallbackToExportServer: false,
-        error: fallbackHandler
+        error: fallbackHandler,
+        buttons: {
+            contextButton: {
+                menuItems: [
+                    'viewFullscreen',
+                    'printChart',
+                    'separator',
+                    'downloadPNG',
+                    'downloadJPEG',
+                    'downloadSVG',
+                    'downloadPDF'
+                ]
+            }
+        }
     },
 
     title: {

@@ -1,20 +1,18 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         zooming: {
             type: 'xy'
-        },
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
         }
     },
 
+    title: {
+        text: 'Fibonacci Annotation'
+    },
     annotations: [{
         type: 'fibonacci',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             points: [{
                 x: 2,
@@ -25,13 +23,6 @@ Highcharts.chart('container', {
             }],
             xAxis: 0,
             yAxis: 0
-        },
-
-        events: {
-            click: function () {
-                this.cpVisibility = !this.cpVisibility;
-                this.setControlPointsVisibility(this.cpVisibility);
-            }
         }
     }],
 
@@ -42,3 +33,26 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        labelOptions: {
+            style: {
+                color: '#071952'
+            }
+        },
+        typeOptions: {
+            backgroundColors: [
+                'rgb(7, 25, 82,   0.4)',
+                'rgb(8, 131, 149, 0.4)',
+                'rgb(7, 25, 82,   0.4)',
+                'rgb(8, 131, 149, 0.4)',
+                'rgb(7, 25, 82,   0.4)',
+                'rgb(8, 131, 149, 0.4)'
+            ],
+            lineColor: 'rgba(0, 0, 0, 0.8)'
+        }
+    });
+};

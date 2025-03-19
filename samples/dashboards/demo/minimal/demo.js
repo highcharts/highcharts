@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -233,6 +238,11 @@ Dashboards.board('container', {
         sync: {
             highlight: true,
             visibility: true
+        },
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            }
         }
     }]
 }, true);

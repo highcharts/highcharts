@@ -43,17 +43,26 @@ OPTIONS:
  * */
 
 
+// eslint-disable-next-line jsdoc/require-param
 /**
  * Creates an API tree.
  *
  * @todo filter out private members and options
+ *
+ * @param {string} _
+ * Gulp callback for non-promise async.
+ *
+ * @param {string} source
+ * Source file/folder as API base.
  *
  * @return {Promise}
  * Promise to keep.
  */
 async function apiTree(_, source) {
     const FSLib = require('../libs/fs');
-    const TSLib = require('../libs/ts');
+    const TreeLib = require('../libs/tree');
+    // eslint-disable-next-line node/no-missing-require
+    const TSLib = require('../libs/TS');
     const LogLib = require('../libs/log');
     const argv = require('yargs').argv;
 
@@ -79,9 +88,13 @@ async function apiTree(_, source) {
             [moduleSource] :
             FSLib
                 .getFilePaths(moduleSource, true)
-                .filter(path => !(
-                    path.endsWith('Options.d.ts') ||
-                    path.endsWith('Options.ts')
+                .filter(path => (
+                    path.endsWith('.ts') &&
+                    !(
+                        path.endsWith('.src.ts') ||
+                        path.endsWith('Options.d.ts') ||
+                        path.endsWith('Options.ts')
+                    )
                 ))
     );
     const optionFiles = (
@@ -119,7 +132,7 @@ async function apiTree(_, source) {
 
     await FS.writeFile(
         'tree-modules.json',
-        TSLib.toJSONString(moduleTree, '    '),
+        TreeLib.toJSONString(TreeLib.sortJSONTree(moduleTree), '    '),
         'utf8'
     );
 
@@ -149,7 +162,7 @@ async function apiTree(_, source) {
 
     await FS.writeFile(
         'tree-options.json',
-        TSLib.toJSONString(optionTree, '    '),
+        TreeLib.toJSONString(TreeLib.sortJSONTree(optionTree), '    '),
         'utf8'
     );
 

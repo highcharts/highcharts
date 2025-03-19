@@ -118,14 +118,14 @@ function processSrcJSFile(content) {
 /**
  * Simplifies template literals transpilation to plus concatination.
  *
- * @param {string} content
+ * @param {string|Buffer} content
  * Code content to process.
  *
  * @return {string}
  * Process code content.
  */
 function processTemplateLiterals(content) {
-    return content.replace(templateConcatsPattern, function (
+    return content.toString().replace(templateConcatsPattern, function (
         _match,
         prefix,
         concats

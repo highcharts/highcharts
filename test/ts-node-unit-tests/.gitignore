@@ -1,2 +1,3 @@
 tests/**/*.js
 test-data
+*.tmp.mjs

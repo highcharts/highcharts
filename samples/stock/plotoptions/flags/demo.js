@@ -17,11 +17,11 @@
         }, {
             type: 'flags',
             data: [{
-                x: Date.UTC(2015, 5, 14),
+                x: '2015-06-14',
                 title: 'A',
                 text: 'Shape: "squarepin"'
             }, {
-                x: Date.UTC(2015, 7, 28),
+                x: '2015-08-28',
                 title: 'A',
                 text: 'Shape: "squarepin"'
             }],
@@ -31,10 +31,10 @@
         }, {
             type: 'flags',
             data: [{
-                x: Date.UTC(2015, 6, 1),
+                x: '2015-07-01',
                 text: 'Shape: "circlepin"'
             }, {
-                x: Date.UTC(2015, 7, 1),
+                x: '2015-08-01',
                 text: 'Shape: "circlepin"'
             }],
             shape: 'circlepin',
@@ -43,11 +43,11 @@
         }, {
             type: 'flags',
             data: [{
-                x: Date.UTC(2015, 6, 10),
+                x: '2015-07-10',
                 title: 'C',
                 text: 'Shape: "flag"'
             }, {
-                x: Date.UTC(2015, 7, 11),
+                x: '2015-08-11',
                 title: 'C',
                 text: 'Shape: "flag"'
             }],

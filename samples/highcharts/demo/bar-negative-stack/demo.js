@@ -13,14 +13,12 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     title: {
-        text: 'Population pyramid for Andorra, 2023',
-        align: 'left'
+        text: 'Population pyramid for Andorra, 2023'
     },
     subtitle: {
         text: 'Source: <a ' +
             'href="https://countryeconomy.com/demography/population-structure/andorra"' +
-            'target="_blank">countryeconomy.com</a>',
-        align: 'left'
+            'target="_blank">countryeconomy.com</a>'
     },
     accessibility: {
         point: {

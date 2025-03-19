@@ -174,7 +174,7 @@ QUnit.test(
     });
 
 QUnit.test(
-    '#10733 - scrollbar had wrong range when extremes was the same.',
+    '#10733, #20359 - scrollbar had wrong range when extremes was the same.',
     function (assert) {
         var H = Highcharts,
             chart = H.chart('container', {
@@ -199,6 +199,30 @@ QUnit.test(
             H.isNumber(scrollbar.from) && H.isNumber(scrollbar.to),
             true,
             'Scrollbar starts from left button.'
+        );
+
+        // Chart should display one category at a time and allow scrolling.
+        // The category should be placed within x-axis extremes. (#20359)
+        chart.update({
+            xAxis: {
+                min: 1,
+                max: 1
+            },
+            series: {
+                type: 'column',
+                data: [1, 2, 3, 4]
+            }
+        });
+
+        assert.equal(
+            chart.xAxis[0].scrollbar.from,
+            0.25,
+            'Scrollbar should start at 0.25.'
+        );
+        assert.equal(
+            chart.xAxis[0].scrollbar.to,
+            0.50,
+            'Scrollbar should end at 0.55.'
         );
     }
 );

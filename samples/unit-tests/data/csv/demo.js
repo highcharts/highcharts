@@ -1,7 +1,7 @@
 QUnit.test('csv-datetime-axis', function (assert) {
-    var data = 'Date,Value\n2016-01-01,1\n2016-02-01,2\n2016-03-01,3\n';
+    const data = 'Date,Value\n2016-01-01,1\n2016-02-01,2\n2016-03-01,3\n';
 
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         title: {
             text: 'Datetime Axis'
         },
@@ -28,26 +28,20 @@ QUnit.test('csv-datetime-axis', function (assert) {
             }
         ]
     });
-    var options = chart.options;
 
-    assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis)
-            .type,
-        'datetime',
-        'X axis is date/time'
-    );
+    assert.strictEqual(chart.xAxis[0].type, 'datetime', 'X axis is date/time');
 });
 
 if (!isNaN(Date.parse('Jan 16'))) {
     // Only Chrome parses "Jan 16" as of 2017
     QUnit.test('csv-current-year', function (assert) {
         // Don't log the error 'Could not deduce date format'
-        var error = Highcharts.error;
+        const error = Highcharts.error;
         Highcharts.error = function () {};
 
-        var csv = 'Date,Value\nJan 16,1\nFeb 16,2\nMar 16,3';
+        const csv = 'Date,Value\nJan 16,1\nFeb 16,2\nMar 16,3';
 
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
                 title: {
                     text: 'Deduce that the year is the current year'
                 },
@@ -77,10 +71,7 @@ if (!isNaN(Date.parse('Jan 16'))) {
             options = chart.options;
 
         assert.strictEqual(
-            (Highcharts.isArray(options.xAxis) ?
-                options.xAxis[0] :
-                options.xAxis
-            ).type,
+            chart.xAxis[0].type,
             'datetime',
             'X axis is date/time'
         );
@@ -110,8 +101,8 @@ QUnit.test('csv-deduce-delimiter', function (assert) {
      * It should also fire a warning event or something similar eventually.
      */
 
-    var csv = 'Date,Value\n2016-01-02;4\n2016-01-03;6\n2016-01-04;7';
-    var chart = Highcharts.chart('container', {
+    const csv = 'Date,Value\n2016-01-02;4\n2016-01-03;6\n2016-01-04;7',
+        chart = Highcharts.chart('container', {
             title: {
                 text: 'Deduce delimiter'
             },
@@ -142,25 +133,17 @@ QUnit.test('csv-deduce-delimiter', function (assert) {
         }),
         options = chart.options;
 
-    assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis)
-            .type,
-        'datetime',
-        'X axis is date/time'
-    );
+    assert.strictEqual(chart.xAxis[0].type, 'datetime', 'X axis is date/time');
 
     assert.strictEqual(options.series[0].data[0][1], 4, 'Point 1 is correct');
-
     assert.strictEqual(options.series[0].data[1][1], 6, 'Point 2 is correct');
-
     assert.strictEqual(options.series[0].data[2][1], 7, 'Point 3 is correct');
 });
 
 QUnit.test('csv-deduce-delimiter-ambigious', function (assert) {
-    var data =
-        'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
-
-    var chart = Highcharts.chart('container', {
+    const data =
+        'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000',
+        chart = Highcharts.chart('container', {
             title: {
                 text: 'Deduce ambigious delimiter'
             },
@@ -191,23 +174,16 @@ QUnit.test('csv-deduce-delimiter-ambigious', function (assert) {
         }),
         options = chart.options;
 
-    assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis)
-            .type,
-        'datetime',
-        'X axis is date/time'
-    );
+    assert.strictEqual(chart.xAxis[0].type, 'datetime', 'X axis is date/time');
 
     assert.strictEqual(options.series[0].data[0][1], 1.1, 'Point 1 is correct');
-
     assert.strictEqual(options.series[0].data[1][1], 2, 'Point 2 is correct');
-
     assert.strictEqual(options.series[0].data[2][1], 3, 'Point 3 is correct');
 });
 
 QUnit.test('csv-deduce-format-ddmmyyyy', function (assert) {
-    var data = 'Date,Value\n1/1/2016,4\n3/2/2016,6\n14/4/2016,7';
-    var chart = Highcharts.chart('container', {
+    const data = 'Date,Value\n1/1/2016,4\n3/2/2016,6\n14/4/2016,7',
+        chart = Highcharts.chart('container', {
             title: {
                 text: 'Deduce ddmmyyyy format'
             },
@@ -238,12 +214,7 @@ QUnit.test('csv-deduce-format-ddmmyyyy', function (assert) {
         }),
         options = chart.options;
 
-    assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis)
-            .type,
-        'datetime',
-        'X axis is date/time'
-    );
+    assert.strictEqual(chart.xAxis[0].type, 'datetime', 'X axis is date/time');
 
     assert.strictEqual(
         options.series[0].data[2][0],
@@ -254,14 +225,12 @@ QUnit.test('csv-deduce-format-ddmmyyyy', function (assert) {
 
 QUnit.test('csv-deduce-format-iso', function (assert) {
     // Don't log the error 'Could not deduce date format'
-    var error = Highcharts.error;
+    const error = Highcharts.error;
     Highcharts.error = function () {};
 
-    var data =
-        'Date,Value\n2016-01-29,1\n2016-01-30,2\n2016-01-31,3\n2016-02-01,' +
-        '3\n2016-02-02,3';
-
-    var chart = Highcharts.chart('container', {
+    const data = 'Date,Value\n2016-01-29,1\n2016-01-30,2\n2016-01-31,3\n201' +
+            '6-02-01,3\n2016-02-02,3',
+        chart = Highcharts.chart('container', {
             title: {
                 text: 'Deduce ISO format'
             },
@@ -293,8 +262,7 @@ QUnit.test('csv-deduce-format-iso', function (assert) {
         options = chart.options;
 
     assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis)
-            .type,
+        chart.xAxis[0].type,
         'datetime',
         'X axis is date/time'
     );
@@ -310,9 +278,8 @@ QUnit.test('csv-deduce-format-iso', function (assert) {
 });
 
 QUnit.test('csv-deduce-format-mmddyyyy', function (assert) {
-    var data = 'Date,Value\n1/1/2016,4\n3/2/2016,6\n4/14/2016,7';
-
-    var chart = Highcharts.chart('container', {
+    const data = 'Date,Value\n1/1/2016,4\n3/2/2016,6\n4/14/2016,7',
+        chart = Highcharts.chart('container', {
             title: {
                 text: 'Deduce mmddyyyy format'
             },
@@ -344,8 +311,7 @@ QUnit.test('csv-deduce-format-mmddyyyy', function (assert) {
         options = chart.options;
 
     assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis)
-            .type,
+        chart.xAxis[0].type,
         'datetime',
         'X axis is date/time'
     );
@@ -359,13 +325,12 @@ QUnit.test('csv-deduce-format-mmddyyyy', function (assert) {
 
 QUnit.test('csv-deduce-format-us', function (assert) {
     // Don't log the error 'Could not deduce date format'
-    var error = Highcharts.error;
+    const error = Highcharts.error;
     Highcharts.error = function () {};
 
-    var data =
-        'Date,Value\n2016/1/29,1\n2016/1/30,2\n2016/1/31,3\n2016/2/1,' +
-        '3\n2016/2/1,3';
-    var chart = Highcharts.chart('container', {
+    const data = 'Date,Value\n2016/1/29,1\n2016/1/30,2\n2016/1/31,3\n20' +
+            '16/2/1,3\n2016/2/1,3',
+        chart = Highcharts.chart('container', {
             title: {
                 text: 'Deduce US format'
             },
@@ -398,8 +363,7 @@ QUnit.test('csv-deduce-format-us', function (assert) {
         options = chart.options;
 
     assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis)
-            .type,
+        chart.xAxis[0].type,
         'datetime',
         'X axis is date/time'
     );
@@ -417,35 +381,34 @@ QUnit.test('csv-deduce-format-us', function (assert) {
 QUnit.test('csv-datetime-short-year-1900', function (assert) {
     // When using shorthand, it's assumed the year belongs to the 2000's if
     // it's less or equal to the current year, 1900's if not.
-    var data = 'Date,Value\n11/1/99,4\n12/1/99,6\n13/1/99,7\n';
+    const data = 'Date,Value\n11/1/99,4\n12/1/99,6\n13/1/99,7\n',
+        chart = Highcharts.chart('container', {
+            title: {
+                text: 'Deduce that the year is in the 20st century'
+            },
 
-    var chart = Highcharts.chart('container', {
-        title: {
-            text: 'Deduce that the year is in the 20st century'
-        },
+            subtitle: {
+                text: 'Data input from CSV'
+            },
 
-        subtitle: {
-            text: 'Data input from CSV'
-        },
+            data: {
+                csv: data
+            },
 
-        data: {
-            csv: data
-        },
-
-        plotOptions: {
-            series: {
-                marker: {
-                    enabled: false
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: false
+                    }
                 }
-            }
-        },
+            },
 
-        series: [
-            {
-                lineWidth: 1
-            }
-        ]
-    });
+            series: [
+                {
+                    lineWidth: 1
+                }
+            ]
+        });
 
     assert.strictEqual(chart.options.series[0].data.length, 3, 'Loaded Data');
 
@@ -484,8 +447,8 @@ QUnit.test('csv-datetime-short-year-2000', function (assert) {
     // Should assume that full year is 2000 + short hand, since the shorthand is
     // more likely to be on this side of the century. It also assumes that 16 is
     // the year, since it's stable accross the data points.
-    var data = 'Date,Value\n11/1/16,4\n12/1/16,6\n13/1/16,7';
-    var chart = Highcharts.chart('container', {
+    const data = 'Date,Value\n11/1/16,4\n12/1/16,6\n13/1/16,7',
+        chart = Highcharts.chart('container', {
             title: {
                 text: 'Datetime Short Year Deduction (2000)'
             },
@@ -511,12 +474,10 @@ QUnit.test('csv-datetime-short-year-2000', function (assert) {
                     lineWidth: 1
                 }
             ]
-        }),
-        options = chart.options;
+        });
 
     assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis)
-            .type,
+        chart.xAxis[0].type,
         'datetime',
         'X axis is date/time'
     );
@@ -536,35 +497,34 @@ QUnit.test('csv-datetime-short-year-2000', function (assert) {
 
 QUnit.test('csv-quoted-data', function (assert) {
     // Everything inside double quotes should be interpreted as a single string.
-    var data = '"Category","Value"\n"Cat, A",1\n"Cat; B",2\n"Cat C",3\n';
+    const data = '"Category","Value"\n"Cat, A",1\n"Cat; B",2\n"Cat C",3\n',
+        chart = Highcharts.chart('container', {
+            title: {
+                text: 'Quotes'
+            },
 
-    var chart = Highcharts.chart('container', {
-        title: {
-            text: 'Quotes'
-        },
+            subtitle: {
+                text: 'Data input from CSV'
+            },
 
-        subtitle: {
-            text: 'Data input from CSV'
-        },
+            data: {
+                csv: data
+            },
 
-        data: {
-            csv: data
-        },
-
-        plotOptions: {
-            series: {
-                marker: {
-                    enabled: false
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: false
+                    }
                 }
-            }
-        },
+            },
 
-        series: [
-            {
-                lineWidth: 1
-            }
-        ]
-    });
+            series: [
+                {
+                    lineWidth: 1
+                }
+            ]
+        });
 
     assert.strictEqual(chart.options.series[0].data.length, 3, 'Loaded Data');
 
@@ -574,36 +534,35 @@ QUnit.test('csv-quoted-data', function (assert) {
 });
 
 QUnit.test('csv-quoted-data-escaped', function (assert) {
-    var data =
-        '"Category","Value"\n"Cat: ""Foobar"" A",1\n"Cat; B",2\n"Cat C",3';
+    const data = '"Category","Value"\n"Cat: ""Foobar"" A",1\n"Cat; B",2\n"C' +
+            'at C",3',
+        chart = Highcharts.chart('container', {
+            title: {
+                text: 'Escaped quotes'
+            },
 
-    var chart = Highcharts.chart('container', {
-        title: {
-            text: 'Escaped quotes'
-        },
+            subtitle: {
+                text: 'Data input from CSV'
+            },
 
-        subtitle: {
-            text: 'Data input from CSV'
-        },
+            data: {
+                csv: data
+            },
 
-        data: {
-            csv: data
-        },
-
-        plotOptions: {
-            series: {
-                marker: {
-                    enabled: false
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: false
+                    }
                 }
-            }
-        },
+            },
 
-        series: [
-            {
-                lineWidth: 1
-            }
-        ]
-    });
+            series: [
+                {
+                    lineWidth: 1
+                }
+            ]
+        });
 
     assert.strictEqual(chart.options.series[0].data.length, 3, 'Loaded Data');
 
@@ -617,7 +576,7 @@ QUnit.test('csv-quoted-data-escaped', function (assert) {
 });
 
 QUnit.test('startRow, endRow, startColumn, endColumn', function (assert) {
-    var data =
+    const data =
         'Pad,Pad,Pad,Pad\n' +
         'Pad,Apples,Pears,Pad\n' +
         'Pad,1,2,Pad\n' +

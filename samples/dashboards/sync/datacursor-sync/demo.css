@@ -1,4 +1,3 @@
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
@@ -24,4 +23,8 @@
     #highcharts-dashboards-cell-b0 {
         flex: 1 1 100%;
     }
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

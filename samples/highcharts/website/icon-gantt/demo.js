@@ -39,7 +39,6 @@ const ganttChart = function () {
 
     const day = 1000 * 60 * 60 * 24,
         each = Highcharts.each,
-        reduce = Highcharts.reduce,
         btnShowDialog = document.getElementById('btnShowDialog'),
         btnRemoveTask = document.getElementById('btnRemoveSelected'),
         btnAddTask = document.getElementById('btnAddTask'),
@@ -60,8 +59,8 @@ const ganttChart = function () {
     today.setUTCMilliseconds(0);
     today = today.getTime();
 
-    // Update disabled status of the remove button, depending on whether or
-    // not we
+    // Update disabled status of the remove button,
+    // depending on whether or not we
     // have any selected points.
     function updateRemoveButtonStatus() {
         const chart = this.series.chart;
@@ -346,7 +345,6 @@ const ganttChart = function () {
                 },
                 chartOptions: {
                     chart: {
-                        height: 250,
                         margin: [80, 10, 20, 10]
                     },
                     plotOptions: {
@@ -371,9 +369,6 @@ const ganttChart = function () {
                     minWidth: 251
                 },
                 chartOptions: {
-                    chart: {
-                        height: 300
-                    },
                     plotOptions: {
                         series: {
                             dataLabels: {
@@ -396,9 +391,6 @@ const ganttChart = function () {
                     minWidth: 301
                 },
                 chartOptions: {
-                    chart: {
-                        height: 400
-                    },
                     plotOptions: {
                         series: {
                             dataLabels: {
@@ -421,7 +413,6 @@ const ganttChart = function () {
                 },
                 chartOptions: {
                     chart: {
-                        height: 500,
                         margin: [120, 10, 20, 10]
                     },
                     plotOptions: {
@@ -499,7 +490,7 @@ const ganttChart = function () {
             );
 
         let undef,
-            maxEnd = reduce(series.points, function (acc, point) {
+            maxEnd = series.points.reduce(function (acc, point) {
                 return point.y === y && point.end ?
                     Math.max(acc, point.end) : acc;
             }, 0);

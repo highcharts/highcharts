@@ -1,17 +1,13 @@
-Highcharts.chart('container', {
-    chart: {
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
+const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'Pitchfork advanced annotation'
+    },
     annotations: [{
         type: 'pitchfork',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             points: [{
                 x: 4,
@@ -46,3 +42,22 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        typeOptions: {
+            innerBackground: {
+                fill: '#AD49E1',
+                stroke: '#7A1CAC',
+                strokeWidth: 4
+            },
+            outerBackground: {
+                fill: '#EBD3F8',
+                stroke: '#7A1CAC',
+                strokeWidth: 4
+            }
+        }
+    });
+};

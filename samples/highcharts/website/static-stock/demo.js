@@ -167,8 +167,6 @@
         xAxis: [
             // 0
             {
-                min: Date.UTC(2021, 5, 2),
-                max: Date.UTC(2021, 8, 4),
                 visible: true
 
             }

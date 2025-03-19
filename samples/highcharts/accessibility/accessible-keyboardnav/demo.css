@@ -3,6 +3,10 @@
     margin: 1em auto;
 }
 
+input {
+    margin: 10px;
+}
+
 caption {
     padding-bottom: 15px;
     font-family: Verdana, sans-serif;

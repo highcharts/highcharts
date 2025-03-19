@@ -1,13 +1,11 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Average height and weight for men by country',
-        align: 'left'
+        text: 'Average height and weight for men by country'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.worlddata.info/average-bodyheight.php"' +
-            'target="_blank">WorldData</a>',
-        align: 'left'
+            'target="_blank">WorldData</a>'
     },
     xAxis: {
         gridLineWidth: 1,

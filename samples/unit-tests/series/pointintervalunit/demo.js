@@ -41,7 +41,7 @@ QUnit.test(
 
 QUnit.test('Point interval unit across DST (#4958)', function (assert) {
     Highcharts.setOptions({
-        global: {
+        time: {
             timezone: 'Europe/Lisbon'
         }
     });
@@ -122,8 +122,8 @@ QUnit.test('Point interval unit across DST (#4958)', function (assert) {
 
     // Reset
     Highcharts.setOptions({
-        global: {
-            timezone: undefined
+        time: {
+            timezone: 'UTC'
         }
     });
 });

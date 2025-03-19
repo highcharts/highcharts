@@ -1,0 +1,7 @@
+---
+name: Axis tick test
+authors:
+  - Kent Wincent Holt
+skipTest: true
+js_wrap: b
+...

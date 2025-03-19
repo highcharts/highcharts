@@ -11,7 +11,11 @@
 }
 
 .highcharts-description {
-    margin: 1rem 0;
+    margin: 10px;
+}
+
+.controls {
+    margin: 10px;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -75,8 +75,8 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     }
 
     assert.strictEqual(
-        mainSeries.xData.length,
-        awesomeSeries.xData.length + longerPeriod - 1,
+        mainSeries.getColumn('x').length,
+        awesomeSeries.dataTable.rowCount + longerPeriod - 1,
         'Initial number of Awesome points is correct'
     );
 
@@ -90,8 +90,8 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     ]);
 
     assert.strictEqual(
-        mainSeries.xData.length,
-        awesomeSeries.xData.length + longerPeriod - 1,
+        mainSeries.getColumn('x').length,
+        awesomeSeries.dataTable.rowCount + longerPeriod - 1,
         'After addPoint number of Awesome points is correct'
     );
 
@@ -144,7 +144,7 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     ]);
 
     assert.deepEqual(
-        toFastAOWithRound(awesomeSeries.yData),
+        toFastAOWithRound(awesomeSeries.getColumn('y')),
         [
             268.5088,
             285.2115,
@@ -163,8 +163,8 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     );
 
     assert.strictEqual(
-        mainSeries.xData.length,
-        awesomeSeries.xData.length + longerPeriod - 1,
+        mainSeries.getColumn('x').length,
+        awesomeSeries.dataTable.rowCount + longerPeriod - 1,
         'After setData number of Awesome points is correct'
     );
 
@@ -229,7 +229,7 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     mainSeries.points[mainSeries.points.length - 1].remove();
 
     assert.deepEqual(
-        toFastAOWithRound(awesomeSeries.yData),
+        toFastAOWithRound(awesomeSeries.getColumn('y')),
         [
             268.5088,
             285.2115,

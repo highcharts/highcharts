@@ -4,12 +4,10 @@ Highcharts.chart('container', {
         inverted: true
     },
     title: {
-        text: 'Atmosphere Temperature by Altitude',
-        align: 'left'
+        text: 'Atmosphere Temperature by Altitude'
     },
     subtitle: {
-        text: 'According to the Standard Atmosphere Model',
-        align: 'left'
+        text: 'According to the Standard Atmosphere Model'
     },
     xAxis: {
         reversed: false,

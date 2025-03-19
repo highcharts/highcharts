@@ -83,7 +83,6 @@ Highcharts.mapChart('container', {
             format: '{point.name}'
         },
         tooltip: {
-            useHTML: true,
             headerFormat: 'Name of the province:<br/>',
             pointFormat: '<b>{point.name} </b>'
         }

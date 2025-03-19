@@ -252,7 +252,7 @@ class FunnelSeries extends PieSeries {
      */
     public drawDataLabels(): void {
         (
-            splat(this.options.dataLabels)[0].inside ?
+            splat(this.options.dataLabels || {})[0].inside ?
                 ColumnSeries :
                 PieSeries
         ).prototype.drawDataLabels.call(this);

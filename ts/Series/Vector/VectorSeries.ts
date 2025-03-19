@@ -244,7 +244,7 @@ class VectorSeries extends ScatterSeries {
     public translate(): void {
         Series.prototype.translate.call(this);
 
-        this.lengthMax = arrayMax(this.lengthData as any);
+        this.lengthMax = arrayMax(this.getColumn('length'));
     }
 
 }

@@ -1,9 +1,25 @@
 QUnit.test('RangeSelector update', function (assert) {
-    var chart = Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
         chart: {
             width: 400,
             spacingBottom: 100
         },
+        navigator: {
+            adaptToUpdatedData: false
+        },
+        scrollbar: {
+            enabled: false
+        },
+        rangeSelector: {
+            selected: 3
+        },
+        series: [{}]
+    });
+
+    // No errors so far, with empty chart (#3487 and regression in
+    // RangeSelector)
+
+    chart.update({
         rangeSelector: {
             enabled: false
         },
@@ -52,7 +68,7 @@ QUnit.test('RangeSelector update', function (assert) {
 
     const before = eventCount(chart);
 
-    chart.rangeSelector.update();
+    chart.rangeSelector.update({});
 
     assert.strictEqual(
         eventCount(chart),

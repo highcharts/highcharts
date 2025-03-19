@@ -114,8 +114,13 @@ class StandaloneNavigator {
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
+            userOptions.chart,
             { navigator: userOptions }
         );
+
+        if (this.chartOptions.chart && userOptions.height) {
+            this.chartOptions.chart.height = userOptions.height;
+        }
 
         const chart = new Chart(element, this.chartOptions);
 
@@ -175,13 +180,13 @@ class StandaloneNavigator {
                     if (
                         e.trigger === 'pan' ||
                         e.trigger === 'zoom' ||
-                        e.trigger === 'mouseWheelZoom'
+                        e.trigger === 'mousewheel'
                     ) {
                         nav.setRange(
                             e.min,
                             e.max,
                             true,
-                            e.trigger !== 'pan',
+                            e.trigger !== 'pan' && e.trigger !== 'mousewheel',
                             { trigger: axis }
                         );
                     }
@@ -305,7 +310,12 @@ class StandaloneNavigator {
         newOptions: StandaloneNavigatorOptions,
         redraw?: boolean
     ): void {
-        this.chartOptions = merge(this.chartOptions, { navigator: newOptions });
+        this.chartOptions = merge(
+            this.chartOptions,
+            newOptions.height && { chart: { height: newOptions.height } },
+            newOptions.chart,
+            { navigator: newOptions }
+        );
 
         this.navigator.chart.update(this.chartOptions, redraw);
     }

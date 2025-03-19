@@ -18,7 +18,8 @@
 
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
-import Chart from '../Core/Chart/Chart';
+import Chart from '../Core/Chart/Chart.js';
+import DataTableCore from '../Data/DataTableCore.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
 import Point from '../Core/Series/Point.js';
@@ -181,13 +182,18 @@ namespace SeriesOnPointComposition {
 
         public connector?: SVGElement;
 
+        public dataTable?: DataTableCore;
+
         public options?: OnPoint;
 
         public radii?: Array<number>;
 
         public series: SeriesComposition;
 
-        public zData?: zData;
+        /**
+         * @ignore
+         */
+        public getColumn = bubble.prototype.getColumn;
 
         /**
          * @ignore
@@ -406,13 +412,18 @@ namespace SeriesOnPointComposition {
             this.series.forEach((series: Series): void => {
                 const onPointOpts = series.options.onPoint;
 
-                zData.push(onPointOpts && onPointOpts.z ? onPointOpts.z : null);
+                zData.push(onPointOpts?.z ?? null);
             });
 
+            const dataTable = new DataTableCore({
+                columns: {
+                    z: zData
+                }
+            });
             this.series.forEach((series: Series): void => {
                 // Save z values of all the series
                 if (series.onPoint) {
-                    series.onPoint.zData = series.zData = zData;
+                    series.onPoint.dataTable = series.dataTable = dataTable;
                 }
             });
         }

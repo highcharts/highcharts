@@ -24,8 +24,8 @@
 
     document.getElementById('button').addEventListener('click', () => {
         navigator.setRange(
-            Date.UTC(2014, 0, 1),
-            Date.UTC(2014, 11, 31)
+            '2014-01-01',
+            '2014-12-31'
         );
     });
 })();

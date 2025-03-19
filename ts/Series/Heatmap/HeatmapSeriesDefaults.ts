@@ -42,11 +42,11 @@ const { isNumber } = U;
  *         Heavy heatmap
  *
  * @extends      plotOptions.scatter
- * @excluding    animationLimit, connectEnds, connectNulls, cropThreshold,
- *               dashStyle, findNearestPointBy, getExtremesFromAll, jitter,
- *               linecap, lineWidth, pointInterval, pointIntervalUnit,
- *               pointRange, pointStart, shadow, softThreshold, stacking,
- *               step, threshold, cluster, dragDrop
+ * @excluding    animationLimit, cluster, connectEnds, connectNulls,
+ *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
+ *               getExtremesFromAll, jitter, legendSymbolColor, linecap,
+ *               lineWidth, pointInterval, pointIntervalUnit, pointRange,
+ *               pointStart, shadow, softThreshold, stacking, step, threshold
  * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
