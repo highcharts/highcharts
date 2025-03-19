@@ -141,7 +141,6 @@
         tooltip: {
             shared: true,
             split: false,
-            useHTML: true,
             fixed: true
         },
 
