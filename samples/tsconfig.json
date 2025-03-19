@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "downlevelIteration": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "noEmitOnError": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
@@ -10,7 +10,7 @@
         "baseUrl": "../",
         "module": "none",
         "moduleResolution": "node",
-        "target": "es5",
+        "target": "ES2022",
         "lib": [
             "dom",
             "es5"

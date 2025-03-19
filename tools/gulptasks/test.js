@@ -71,8 +71,33 @@ function checkJSWrap() {
     }
 }
 
+function checkSamplesConsistency() {
+    const FSLib = require('../libs/fs.js');
+    const { existsSync } = require('node:fs');
+    const glob = require('glob');
+    const LogLib = require('../libs/log');
+
+    let errors = 0;
+
+    glob.sync(
+        FSLib.path(process.cwd() + '/samples/*/demo/*', true)
+    ).forEach(p => {
+        if (
+            existsSync(FSLib.path(p + '/demo.ts')) &&
+            existsSync(FSLib.path(p + '/demo.js'))
+        ) {
+            LogLib.failure('Both demo.ts and demo.js found', p);
+            errors++;
+        }
+    });
+
+    if (errors) {
+        throw new Error('Samples validation failed');
+    }
+}
+
 /**
- * Checks if demos has valid configuration
+ * Checks if demos (public ones for the website) have valid configuration
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -259,6 +284,7 @@ specified by config.imageCapture.resultsOutputPath.
     }
 
     checkDocsConsistency();
+    checkSamplesConsistency();
     checkDemosConsistency();
     checkJSWrap();
 
