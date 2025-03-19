@@ -27,7 +27,7 @@ import type Grid from './Grid';
 
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
-import Utils from '../../Core/Utilities';
+import Utils from '../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
 const { fireEvent } = Utils;
