@@ -9,7 +9,7 @@ The order of the imports is important, so make sure that the `layout` module is 
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/modules/layout.js"></script>
 ```
 
 Alternatively, you can also use the NPM package.

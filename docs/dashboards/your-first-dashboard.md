@@ -18,7 +18,7 @@ In this example, we will create a simple dashboard with two cells. The first cel
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/modules/layout.js"></script>
 ```
 
 However, there are other ways to import **Dashboards** packages. For alternative approaches, e.g. install via **npm**, see [this article](https://www.highcharts.com/docs/dashboards/installation).

@@ -16,7 +16,7 @@ The order of the imports is essential, so make sure that the `layout` module is 
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/modules/layout.js"></script>
 ```
 
 Each cell must have an `id` field. The same `id` must be passed to the `renderTo` field in the component config. Example configuration of component and cell:

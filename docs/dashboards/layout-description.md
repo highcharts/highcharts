@@ -12,7 +12,7 @@ To use Dashboards with a layout system and edit mode, you first have to load the
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/modules/layout.js"></script>
 ```
 
 Alternatively, you can download the NPM package like

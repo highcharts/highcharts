@@ -13,7 +13,7 @@ To use the Highcharts Component, you first have to load [Highcharts](https://cod
 ```html
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/dashboards.js"></script>
-    <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@highcharts/dashboards/modules/layout.js"></script>
 ```
 
 Alternatively, you can use the NPM package.
