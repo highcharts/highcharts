@@ -189,7 +189,7 @@ class HTMLElement extends SVGElement {
      *  Static Functions
      *
      * */
-    public static useForeignObject: boolean|undefined = true;
+    public static useForeignObject: boolean|undefined;
 
     /**
      * Compose
