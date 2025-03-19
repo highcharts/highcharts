@@ -10,7 +10,7 @@ const commonOptions = {
 };
 
 // eslint-disable-next-line no-undef
-const connector = new Connectors.Morningstar.TimeSeriesConnector({
+const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: {
         type: 'Price'
@@ -57,7 +57,7 @@ Promise.all([
             plotBands: [{
                 from: new Date('2020-07-05').valueOf(),
                 to: new Date('2020-07-22').valueOf(),
-                color: 'rgba(68, 170, 213, .4)'
+                color: 'rgba(111, 56, 249, 0.852)'
             }]
         },
         yAxis: {
