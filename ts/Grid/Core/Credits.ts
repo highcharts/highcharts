@@ -30,7 +30,6 @@ import GridUtils from './GridUtils.js';
 import Utils from '../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { fireEvent } = Utils;
 
 /* *
  *
