@@ -176,7 +176,7 @@ afterRender(e) {
 You need to import the default CSS stylesheet to your project so that the dashboard displays correctly. You can do it by importing the following CSS files:
 
 ```css
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
 ```
 

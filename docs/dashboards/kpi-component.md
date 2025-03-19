@@ -73,7 +73,7 @@ From version v3.0.0 the KPIComponent with chart does not use [styledMode](https:
 Importing only dashboards CSS file is enough:
 
 ```css
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 ```
 
 Also, be aware that we prepared the component so it was minimalist.  

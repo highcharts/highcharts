@@ -4,7 +4,7 @@ The Light and Dark theme allows you to switch between a light and dark theme for
 To use the Light and Dark theme, you need to import the `dashboards.css` file.
 
 ```css
-@import "https://code.highcharts.com/dashboards/css/dashboards.css";
+@import "https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css";
 ```
 You then need to enable the `styledMode` option for all components that contain a **Highcharts** chart.
 You can do this by setting the `styledMode` option to `true` in the component's configuration.

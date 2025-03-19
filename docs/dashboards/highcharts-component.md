@@ -39,7 +39,7 @@ Then, import the package and the dedicated plugin to connect it to the dashboard
 From version v3.0.0, the Highcharts Component does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so there is no need to load the set of CSS styles to display Highcharts properly.
 Importing only Dashboards' CSS file is enough:
     ```css
-    @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+    @import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
     ```
 
 You can enable the styled mode at any time by setting the `styledMode` option to `true` in your chart options and styling it according to the [Highcharts styling guide](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).

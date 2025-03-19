@@ -28,7 +28,7 @@ Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 ### 2. CSS
 You must also import the styles in your main CSS file.
 ```css
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
 ```
 

@@ -1,5 +1,5 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 
 #csv {
     display: none;

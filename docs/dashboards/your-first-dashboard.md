@@ -27,7 +27,7 @@ However, there are other ways to import **Dashboards** packages. For alternative
 We need CSS styling to display the dashboard properly. The default styles of the dashboard is contained is the **Dashboards** CSS file, and imported as shown below.
 
 ```css
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 ```
 
 ### 4. Add the script

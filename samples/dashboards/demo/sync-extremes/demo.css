@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 
 .highcharts-background-color {
     fill: #f0f0f0;

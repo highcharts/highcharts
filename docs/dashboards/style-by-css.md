@@ -23,7 +23,7 @@ using a custom HTML layout.
 ## Importing the CSS
 The CSS must be explicitly imported, as shown here:
 ```css
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
 ```
 

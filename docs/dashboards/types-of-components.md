@@ -62,7 +62,7 @@ The `highcharts` module must be imported *before* the `dashboards` module, as sh
 The `Highcharts`CSS file must be included for the correct chart rendering.
 ```css
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 ```
 
 For a chart to be displayed, the type `Highcharts` must be specified, the `renderTo` option set must be set, and data must be provided as part of the `chartOptions`.
@@ -140,7 +140,7 @@ To visualize data in a row-column layout, you can use the Grid component. The `G
 The `Grid` module has its own style set, so the CSS file must be imported for correct rendering.
 ```css
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/datagrid.css");
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/dashboards/css/dashboards.css");
 ```
 
 For a chart to be displayed, the type `Grid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `dataGridOptions` object allows you to configure `Grid` specific parameters like cell formatting, column assignment, etc.
