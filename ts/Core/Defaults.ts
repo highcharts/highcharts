@@ -2553,8 +2553,10 @@ const defaultOptions: DefaultOptions = {
          * The HTML of the null point's line in the tooltip. Works analogously
          * to [pointFormat](#tooltip.pointFormat).
          *
+         * @sample {highcharts} highcharts/series/null-interaction
+         *         Line chart with null interaction
          * @sample {highcharts} highcharts/plotoptions/series-nullformat
-         *         Format data label and tooltip for null point.
+         *         Heatmap with null interaction
          *
          * @type      {string}
          * @apioption tooltip.nullFormat

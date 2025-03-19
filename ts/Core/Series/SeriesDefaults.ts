@@ -1851,8 +1851,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * `timeline`. Does not work with series that don't display null
          * points, like `pie`.
          *
+         * @sample {highcharts} highcharts/series/null-interaction/
+         *         Line chart with null interaction
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
-         *         Format data label for null points in heat map
+         *         Heatmap with null interaction
          *
          * @type      {boolean|string}
          * @since     7.1.0

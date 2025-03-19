@@ -643,7 +643,7 @@ class ColumnSeries extends Series {
                 // the middle of the chart.
                 barY,
                 barW,
-                barH
+                point.isNull ? 0 : barH
             );
         });
 
