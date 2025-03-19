@@ -1,28 +1,6 @@
 // Experimental support `foreignObject`. This will resolve all z-index issues.
 Highcharts.HTMLElement.useForeignObject = true;
 
-/*
-const ren = new Highcharts.Renderer(
-    document.getElementById('container'),
-    600,
-    400
-);
-
-ren.circle(100, 100, 3)
-    .attr({
-        fill: '#2caffe'
-    })
-    .add();
-
-// ren.label('Hello label', 100, 100, void 0, void 0, void 0, true)
-ren.text('Hello text', 100, 100, true)
-    .attr({
-        rotation: -45
-    })
-    .add();
-// */
-
-//*
 Highcharts.chart('container', {
 
     chart: {
@@ -35,8 +13,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        // text: 'HTML subtitle <i class="fa fa-check"></i>',
-        text: `<table>
+        text: `<table style="border: 1px solid silver">
             <tr><th>This</th><td>is</td></tr>
             <tr><th>a</th><td>table</td></tr>
         </table>`,
@@ -70,7 +47,7 @@ Highcharts.chart('container', {
 
     tooltip: {
         useHTML: true,
-        footerFormat: `<table>
+        footerFormat: `<table style="border: 1px solid silver">
             <tr><th>This</th><td>is</td></tr>
             <tr><th>a</th><td>table</td></tr>
         </table>`
@@ -97,4 +74,3 @@ Highcharts.chart('container', {
     }
 
 });
-// */
