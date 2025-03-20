@@ -100,11 +100,12 @@ QUnit.test('Bullet chart', function (assert) {
             }
         ]
     });
-    chart.viewData();
+    chart.exporting?.viewData();
 
     assert.equal(
         chart
-            .getTable()
+            .exporting
+            ?.getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -245,11 +246,12 @@ target</th>
             useMultiLevelHeaders: false
         }
     });
-    chart.viewData();
+    chart.exporting?.viewData();
 
     assert.equal(
         chart
-            .getTable()
+            .exporting
+            ?.getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -404,11 +406,12 @@ QUnit.test('Pie chart', function (assert) {
             }
         ]
     });
-    chart.viewData();
+    chart.exporting?.viewData();
 
     assert.equal(
         chart
-            .getTable()
+            .exporting
+            ?.getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -504,11 +507,12 @@ QUnit.test('Custom columnHeaderFormatter', function (assert) {
                 }
             ]
         });
-    chart.viewData();
+    chart.exporting?.viewData();
 
     assert.equal(
         chart
-            .getTable()
+            .exporting
+            ?.getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -626,11 +630,12 @@ QUnit.test('Internationalize export-data table words.', function (assert) {
             }
         ]
     });
-    chart.viewData();
+    chart.exporting?.viewData();
 
     assert.equal(
         chart
-            .getTable()
+            .exporting
+            ?.getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -775,7 +780,8 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
     // Enhancement #12789
     assert.equal(
         chart
-            .getTable()
+            .exporting
+            ?.getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
@@ -852,7 +858,8 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
     // Enhancement #12789
     assert.equal(
         chart
-            .getTable()
+            .exporting
+            ?.getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
@@ -915,7 +922,8 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
     // Enhancement #12789
     assert.equal(
         chart
-            .getTable()
+            .exporting
+            ?.getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
