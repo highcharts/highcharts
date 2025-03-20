@@ -117,7 +117,7 @@ Priority is given to the locale set in the `lang.locale` option, next the lang a
 To set the `locale` use the `setOptions` method shown in the snippet below:
 
 ```js
-.setOptions({
+Grid.setOptions({
     lang: {
         locale: 'en-US'
     }
