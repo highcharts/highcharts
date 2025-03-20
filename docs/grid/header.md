@@ -1,6 +1,6 @@
 # Header options
 
-By default, all columns from the DataTable are imported into the DataGrid in the order they are declared. Use the header[] option to exclude specific columns and/or change their order. This option can also be used to group headers in a hierarchical structure.
+By default, all columns from the DataTable are imported into the Grid in the order they are declared. Use the header[] option to exclude specific columns and/or change their order. This option can also be used to group headers in a hierarchical structure.
 
 ![An illustration showing a header group](ill_header.png)
 
@@ -70,7 +70,7 @@ This example shows deeper nesting of `columns[]`:
 
 ## Summary
 
-Using the `header[]` option gives you full control over which columns are displayed, their order, and how they are grouped and formatted in the DataGrid.
+Using the `header[]` option gives you full control over which columns are displayed, their order, and how they are grouped and formatted in the Grid.
 
 With the exception of header grouping and order, you can also use the root `columns[]` option to, say, change header cell format and exclude columns. The best approach depends on your specific use case.
 

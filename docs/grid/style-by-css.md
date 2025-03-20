@@ -131,12 +131,12 @@ To style column sorting option
 ```
 
 ## Custom classes
-In the DataGrid configuration, you can add a custom class.
+In the Grid configuration, you can add a custom class.
 
 See how the `CSS class` can be added to the column:
 
 ```ts
-DataGrid.dataGrid('container', {
+Grid.grid('container', {
     dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
