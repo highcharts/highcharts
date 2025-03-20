@@ -803,11 +803,11 @@ class Tooltip {
         boxHeight: number,
         point: Point|Tooltip.PositionerPointObject
     ): PositionObject {
-        const position = this.options.position,
-            series = point.series,
-            { chart, split } = this,
+        const series = point.series,
+            { chart, options, split } = this,
+            position = options.position,
             relativeToOption = position.relativeTo,
-            noPane = series?.yAxis?.isRadial &&
+            noPane = options.shared || series?.yAxis?.isRadial &&
                 (relativeToOption === 'pane' || !relativeToOption),
             relativeTo = noPane ? 'plotBox' : relativeToOption,
             bounds = relativeTo === 'chart' ?
@@ -1295,52 +1295,40 @@ class Tooltip {
         }
 
         /**
-         * Calculates the position of the partial tooltip
-         *
+         * Calculate the position of the partial tooltip
          * @private
-         * @param {number} anchorX
-         * The partial tooltip anchor x position
-         *
-         * @param {number} anchorY
-         * The partial tooltip anchor y position
-         *
-         * @param {boolean|undefined} isHeader
-         * Whether the partial tooltip is a header
-         *
-         * @param {number} boxWidth
-         * Width of the partial tooltip
-         *
-         * @return {Highcharts.PositionObject}
-         * Returns the partial tooltip x and y position
          */
-        function defaultPositioner(
-            anchorX: number,
-            anchorY: number,
-            isHeader: (boolean|undefined),
-            boxWidth: number,
-            alignedLeft = true,
-            point?: Point
+        const defaultPositioner: Tooltip.PositionerCallbackFunction = function (
+            boxWidth,
+            boxHeight,
+            point,
+            anchor = [0, 0],
+            alignedLeft = true
         ): PositionObject {
             let x,
                 y;
 
-            if (isHeader) {
+            if (point.isHeader) {
                 y = headerTop ? 0 : adjustedPlotHeight;
                 x = clamp(
-                    anchorX - (boxWidth / 2),
+                    anchor[0] - (boxWidth / 2),
                     bounds.left,
                     bounds.right - boxWidth - (tooltip.outside ? chartLeft : 0)
                 );
             } else if (fixed && point) {
-                const pos = tooltip.getFixedPosition(boxWidth, 0, point);
+                const pos = tooltip.getFixedPosition(
+                    boxWidth,
+                    boxHeight,
+                    point
+                );
                 x = pos.x;
                 y = pos.y - distributionBoxTop;
 
             } else {
-                y = anchorY - distributionBoxTop;
+                y = anchor[1] - distributionBoxTop;
                 x = alignedLeft ?
-                    anchorX - boxWidth - distance :
-                    anchorX + distance;
+                    anchor[0] - boxWidth - distance :
+                    anchor[0] + distance;
                 x = clamp(
                     x, alignedLeft ? x : bounds.left, bounds.right
                 );
@@ -1348,7 +1336,7 @@ class Tooltip {
 
             // NOTE: y is relative to distributionBoxTop
             return { x, y };
-        }
+        };
 
         /**
          * Updates the attributes and styling of the partial tooltip. Creates a
@@ -1464,24 +1452,14 @@ class Tooltip {
 
                 const { anchorX, anchorY } = getAnchor(point);
                 if (typeof anchorY === 'number') {
-                    const size = bBox.height + 1;
-                    const boxPosition = (
-                        positioner ?
-                            positioner.call(
-                                tooltip,
-                                boxWidth,
-                                size,
-                                point
-                            ) :
-                            defaultPositioner(
-                                anchorX,
-                                anchorY,
-                                isHeader,
-                                boxWidth,
-                                void 0,
-                                point
-                            )
-                    );
+                    const size = bBox.height + 1,
+                        boxPosition = (positioner || defaultPositioner).call(
+                            tooltip,
+                            boxWidth,
+                            size,
+                            point,
+                            [anchorX, anchorY]
+                        );
 
                     boxes.push({
                         // 0-align to the top, 1-align to the bottom
@@ -1524,11 +1502,12 @@ class Tooltip {
                 bounds.right - boxStart > boxStart;
         })) {
             boxes = boxes.map((box): BoxObject => {
-                const { x, y } = defaultPositioner(
-                    box.anchorX,
-                    box.anchorY,
-                    box.point.isHeader,
+                const { x, y } = defaultPositioner.call(
+                    this,
                     box.boxWidth,
+                    box.size,
+                    box.point,
+                    [box.anchorX, box.anchorY],
                     false
                 );
                 return extend(box, {
@@ -1945,7 +1924,9 @@ namespace Tooltip {
             this: Tooltip,
             labelWidth: number,
             labelHeight: number,
-            point: (Point|PositionerPointObject)
+            point: (Point|PositionerPointObject),
+            anchor?: [number, number],
+            alignLeft?: boolean
         ): PositionObject;
     }
 
