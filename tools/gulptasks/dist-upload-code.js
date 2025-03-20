@@ -119,9 +119,9 @@ function uploadProductPackage(productProps, options = {}) {
     ];
 
     // For testing cache purging without uploading:
-    /*
-    const uploadFiles = () => console.log('@uploadFiles overridden');
-    zipFilePaths[0] = '';
+    // /*
+    // const uploadFiles = (obj) => console.log(obj);
+    // zipFilePaths[0] = '';
     // */
 
     if (zipFilePaths.length < 1) {
@@ -168,67 +168,71 @@ function uploadProductPackage(productProps, options = {}) {
         name: prettyName
     }));
 
-    const rootJSFiles = gzippedFilesToRootDir.filter(
-        path => !isDirectory(path.from) && !isDotEntry(path.from)
-    );
-    cdnFiles.push.apply(cdnFiles, rootJSFiles);
-    promises.push(uploadFiles({
-        bucket: options.bucket,
-        files: rootJSFiles,
-        name: prettyName,
-        s3Params: {
-            ...options.s3Params,
-            CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
-            Expires: HTTP_EXPIRES.oneDay,
-            ContentEncoding: 'gzip'
-        }
-    }));
+    if (cdnpath || cdnpath === '') {
+        const rootJSFiles = gzippedFilesToRootDir.filter(
+            path => !isDirectory(path.from) && !isDotEntry(path.from)
+        );
+        cdnFiles.push.apply(cdnFiles, rootJSFiles);
+        promises.push(uploadFiles({
+            bucket: options.bucket,
+            files: rootJSFiles,
+            name: prettyName,
+            s3Params: {
+                ...options.s3Params,
+                CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
+                Expires: HTTP_EXPIRES.oneDay,
+                ContentEncoding: 'gzip'
+            }
+        }));
 
-    const rootGfxFiles = gfxFilesToRootDir.filter(
-        path => !isDirectory(path.from) && !isDotEntry(path.from)
-    );
-    cdnFiles.push.apply(cdnFiles, rootGfxFiles);
-    promises.push(uploadFiles({
-        bucket: options.bucket,
-        files: rootGfxFiles,
-        name: prettyName,
-        s3Params: {
-            ...options.s3Params,
-            CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
-            Expires: HTTP_EXPIRES.oneDay
-        }
-    }));
+        const rootGfxFiles = gfxFilesToRootDir.filter(
+            path => !isDirectory(path.from) && !isDotEntry(path.from)
+        );
+        cdnFiles.push.apply(cdnFiles, rootGfxFiles);
+        promises.push(uploadFiles({
+            bucket: options.bucket,
+            files: rootGfxFiles,
+            name: prettyName,
+            s3Params: {
+                ...options.s3Params,
+                CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
+                Expires: HTTP_EXPIRES.oneDay
+            }
+        }));
 
-    const versionJSFiles = gzippedFilesToVersionDir.filter(
-        path => !isDirectory(path.from) && !isDotEntry(path.from)
-    );
-    cdnFiles.push.apply(cdnFiles, versionJSFiles);
-    promises.push(uploadFiles({
-        bucket: options.bucket,
-        files: versionJSFiles,
-        name: prettyName,
-        s3Params: {
-            ...options.s3Params,
-            CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
-            Expires: HTTP_EXPIRES.fiveYears,
-            ContentEncoding: 'gzip'
-        }
-    }));
+        const versionJSFiles = gzippedFilesToVersionDir.filter(
+            path => !isDirectory(path.from) && !isDotEntry(path.from)
+        );
+        cdnFiles.push.apply(cdnFiles, versionJSFiles);
+        promises.push(uploadFiles({
+            bucket: options.bucket,
+            files: versionJSFiles,
+            name: prettyName,
+            s3Params: {
+                ...options.s3Params,
+                CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
+                Expires: HTTP_EXPIRES.fiveYears,
+                ContentEncoding: 'gzip'
+            }
+        }));
 
-    const versionGfxFiles = gfxFilesToVersionedDir.filter(
-        path => !isDirectory(path.from) && !isDotEntry(path.from)
-    );
-    cdnFiles.push.apply(cdnFiles, versionGfxFiles);
-    promises.push(uploadFiles({
-        bucket: options.bucket,
-        files: versionGfxFiles,
-        name: prettyName,
-        s3Params: {
-            ...options.s3Params,
-            CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
-            Expires: HTTP_EXPIRES.fiveYears
-        }
-    }));
+        const versionGfxFiles = gfxFilesToVersionedDir.filter(
+            path => !isDirectory(path.from) && !isDotEntry(path.from)
+        );
+        cdnFiles.push.apply(cdnFiles, versionGfxFiles);
+        promises.push(uploadFiles({
+            bucket: options.bucket,
+            files: versionGfxFiles,
+            name: prettyName,
+            s3Params: {
+                ...options.s3Params,
+                CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
+                Expires: HTTP_EXPIRES.fiveYears
+            }
+        }));
+    } else {
+        log.warn('No cdnpath specified, skipping upload of js and gfx files.');
+    }
 
     // Purge CloudFlare cache POC. Currently stopped by rate limiting?
     const cloudflarePaths = cdnFiles.reduce((paths, f) => {

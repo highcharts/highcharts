@@ -93,7 +93,7 @@ module.exports = {
                     'dashboards/wrappers/dashboards-with-react',
                     'dashboards/wrappers/dashboards-with-vue',
                 ]
-            }
+            },
             'dashboards/layout-description',
             'dashboards/style-by-css',
             'dashboards/edit-mode',
