@@ -53,7 +53,7 @@ function barycenter(this: PackedBubbleLayout): void {
                 parentNode = series.parentNode;
 
             if (
-                layout.options.splitSeries &&
+                this.resolveSplitSeries(node) &&
                 parentNode &&
                 !node.isParentNode
             ) {

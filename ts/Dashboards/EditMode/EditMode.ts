@@ -159,7 +159,7 @@ class EditMode {
             );
             this.isEditOverlayActive = false;
 
-            board.fullscreen = new Dashboards.FullScreen(board);
+            board.fullscreen = new Dashboards.Fullscreen(board);
 
             if (this.customHTMLMode) {
                 board.container.classList.add(
