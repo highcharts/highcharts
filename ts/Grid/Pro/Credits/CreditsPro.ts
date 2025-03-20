@@ -24,6 +24,7 @@
 
 import type { CreditsOptions } from '../../Core/Options';
 
+import Globals from '../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';
 
 /* *
@@ -57,16 +58,30 @@ class CreditsPro extends Credits {
      * determined by the `position` option.
      */
     private appendToContainer(): void {
+        const grid = this.grid;
+        const contentWrapper = grid.contentWrapper;
         const { position } = this.options;
 
         if (position === 'top') {
             // Append the credits to the top of the table.
-            this.grid.contentWrapper?.prepend(this.containerElement);
+            contentWrapper?.prepend(this.containerElement);
             return;
         }
 
         // Append the credits to the bottom of the table.
-        this.grid.contentWrapper?.appendChild(this.containerElement);
+        if (grid.descriptionElement) {
+            contentWrapper?.insertBefore(
+                this.containerElement,
+                grid.descriptionElement
+            );
+        } else {
+            contentWrapper?.appendChild(this.containerElement);
+        }
+
+        // Apply grid-pro class
+        this.containerElement.classList.add(
+            Globals.getClassName('creditsPro')
+        );
     }
 
     /**

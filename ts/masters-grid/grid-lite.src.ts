@@ -101,7 +101,7 @@ G.setOptions = Defaults.setOptions;
 
 G.Table = G.Table || Table;
 
-CreditsLiteComposition.compose(G.Grid);
+CreditsLiteComposition.compose(G.Grid, G.Table);
 /* *
  *
  *  Classic Export

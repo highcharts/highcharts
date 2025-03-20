@@ -130,7 +130,7 @@
     --ig-description-padding: var(--ig-description-vertical-padding) var(--ig-description-horizontal-padding) 0 var(--ig-description-horizontal-padding);
 
     /* Credits padding */
-    --ig-credits-padding: 0 var(--ig-horizontal-padding);
+    --ig-credits-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
 
     /* Default backgrounds and colors */
     --ig-background: var(--hcg-background, transparent);
@@ -829,20 +829,20 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Credits */
-.hcg-credits,
-.highcharts-datagrid-credits {
-    color: var(--ig-credits-color);
-    font-size: var(--ig-credits-font-size);
-    text-decoration: none;
-}
-
-.hcg-credits-container,
-.highcharts-datagrid-credits-container {
+.hcg-credits-container.hcg-credits-pro,
+.highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro {
     text-align: var(--ig-credits-text-align);
     padding: var(--ig-credits-padding);
 }
 
-/* Start Grid CSS Helpers Classes */
+.hcg-credits-container.hcg-credits-pro .hcg-credits,
+.highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro .highcharts-datagrid-credits {
+    color: var(--ig-credits-color);
+    font-size: var(--ig-credits-font-size);
+    text-decoration: none;
+    display: inline-block;
+}
+
 .hcg-table tbody tr td.hcg-negative::before,
 .hcg-table tbody tr:has(.hcg-negative-row) td::before,
 .hcg-table tbody tr td.hcg-neutral::before,

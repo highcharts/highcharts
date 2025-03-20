@@ -269,9 +269,9 @@
     --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
 }
 
-/* ==== End Grid Variables ==== */
+/* ==== End DataGrid Variables ==== */
 
-/* Grid container */
+/* DataGrid container */
 .hcg-container * {
     box-sizing: border-box;
     font: var(--ig-font);
@@ -740,16 +740,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 /* Credits */
-.hcg-credits {
-    color: var(--ig-credits-color);
-    font-size: var(--ig-credits-font-size);
-    text-decoration: none;
-}
 
-.hcg-credits-container {
-    text-align: var(--ig-credits-text-align);
-    padding: var(--ig-credits-padding);
-}
 
 /* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
@@ -920,4 +911,4 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
-/* End Grid Default Theme */
+/* End DataGrid Default Theme */
