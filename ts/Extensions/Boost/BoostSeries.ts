@@ -65,7 +65,7 @@ const {
     defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
-import DataTableCore from '../../Data/DataTableCore';
+import DataTableCore from '../../Data/DataTableCore.js';
 
 /* *
  *
