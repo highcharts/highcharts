@@ -34,6 +34,9 @@ namespace CreditsLiteComposition {
      * @param GridClass
      * The class to extend.
      *
+     * @param TableClass
+     * The class to extend.
+     *
      */
     export function compose(
         GridClass: typeof Grid,
@@ -60,7 +63,7 @@ namespace CreditsLiteComposition {
         containerStyle.setProperty('text-align', 'right', 'important');
 
         // Create an observer that check credits modifications
-        creditsObserver = new MutationObserver((e) => {
+        creditsObserver = new MutationObserver((): void => {
             if (!credits.containerElement.querySelector('.hcg-logo-wrapper')) {
                 credits.render();
             }
