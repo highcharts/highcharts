@@ -87,6 +87,7 @@ namespace Globals {
         resizedColumn: 'column-resized',
         creditsContainer: 'credits-container',
         creditsText: 'credits',
+        creditsPro: 'credits-pro',
         visuallyHidden: 'visually-hidden',
         lastHeaderCellInRow: 'last-header-cell-in-row',
         loadingWrapper: 'loading-wrapper',

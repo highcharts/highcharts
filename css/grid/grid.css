@@ -282,7 +282,7 @@
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
 }
 
-/* ==== End Grid Variables ==== */
+/* ==== End DataGrid Variables ==== */
 
 /* Grid container */
 .hcg-container {
@@ -770,16 +770,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 /* Credits */
-.hcg-credits {
-    color: var(--ig-credits-color);
-    font-size: var(--ig-credits-font-size);
-    text-decoration: none;
-}
-
-.hcg-credits-container {
-    text-align: var(--ig-credits-text-align);
-    padding: var(--ig-credits-padding);
-}
 
 .hcg-light-logo {
     display: var(--ig-credits-light-logo-display);
@@ -943,4 +933,4 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
-/* End Grid Default Theme */
+/* End DataGrid Default Theme */

@@ -276,6 +276,15 @@ class Accessibility {
 
         this.addHighContrast();
     }
+
+    /**
+     * Destroy the accessibility controller.
+     */
+    public destroy(): void {
+        this.element.remove();
+        this.announcerElement.remove();
+        clearTimeout(this.announcerTimeout);
+    }
 }
 
 

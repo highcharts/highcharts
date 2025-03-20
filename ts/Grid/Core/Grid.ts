@@ -331,12 +331,12 @@ class Grid {
      * Initializes the accessibility controller.
      */
     private initAccessibility(): void {
-        if (!this.options?.accessibility?.enabled) {
-            return;
-        }
+        this.accessibility?.destroy();
+        delete this.accessibility;
 
-        // Can be moved to a separate module in the future (if needed).
-        this.accessibility = new Accessibility(this);
+        if (this.options?.accessibility?.enabled) {
+            this.accessibility = new Accessibility(this);
+        }
     }
 
     /**
@@ -533,6 +533,7 @@ class Grid {
         oneToOne = false
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
+        this.initAccessibility();
 
         let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
