@@ -136,7 +136,29 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                             y: 328.98
                         },
                         text: 'Musk\'s Twitter aquisition',
-                        x: 90
+                        x: 70
+                    },
+                    {
+                        point: {
+                            xAxis: 0,
+                            yAxis: 0,
+                            x: '2023-09-16',
+                            y: 265.28
+                        },
+                        text: '5 million cars produced',
+                        x: -15,
+                        y: -15
+                    },
+                    {
+                        point: {
+                            xAxis: 0,
+                            yAxis: 0,
+                            x: '2024-11-05',
+                            y: 251.44
+                        },
+                        text: 'Trump wins elections',
+                        x: -50,
+                        y: -120
                     }
                 ]
             },
@@ -174,6 +196,15 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                         x: 100,
                         y: 50,
                         text: 'Tesla Model S and X Plaid announced'
+                    }, {
+                        point: {
+                            xAxis: 0,
+                            yAxis: 0,
+                            x: '2024-01-24',
+                            y: 207.83
+                        },
+                        y: 70,
+                        text: 'Tesla Model 2 announced'
                     }
                 ]
             }
