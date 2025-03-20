@@ -1,6 +1,6 @@
 # Theming in Highcharts Grid
 
-![table](ill_theming.png)
+![An illustration showing theming concept](ill_theming.png)
 
 Highcharts Grid is designed with theming in mind, making it easy to adapt its styles to match your brand and preferences. While you can customize the grid using standard CSS overrides, we **strongly recommend** leveraging [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) (variables) whenever possible for a more robust and flexible approach. Highcharts Grid includes a [selection of predefined variables](https://www.highcharts.com/docs/grid/theming-variables) for styling the overall grid, ensuring a consistent and maintainable look.
 
@@ -94,4 +94,4 @@ Variable inheritance applies here too, so you only need to override variables th
 
 By following these practices, you can create flexible, maintainable themes that enhance your grid’s appearance while ensuring proper functionality and backward compatibility.
 
-Now check out the article on [theming variables](https://www.highcharts.com/docs/grid/theming-variables) to get a full overview of all available variables and our [theming demo](https://www.highcharts.com/demo) to see it in practice.
+Now check out the article on [theming variables](https://www.highcharts.com/docs/grid/theming-variables) to get a full overview of all available variables and our [theming demo](https://www.highcharts.com/grid/demo/grid-theming) to see it in practice.
