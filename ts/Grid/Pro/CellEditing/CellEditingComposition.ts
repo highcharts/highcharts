@@ -164,6 +164,11 @@ namespace CellEditingComposition {
      * Add the 'editable' hint span element for the editable cell.
      */
     function addEditableCellA11yHint(this: TableCell): void {
+        const a11y = this.row.viewport.grid.accessibility;
+        if (!a11y) {
+            return;
+        }
+
         const editableLang = this.row.viewport.grid.options
             ?.lang?.accessibility?.cellEditing?.editable;
 
@@ -253,7 +258,7 @@ export interface CellEditingLangA11yOptions {
         /**
          * The message when the cell editing was cancelled.
          *
-         * @default 'Editing canceled.'
+         * @default 'Editing cancelled.'
          */
         cancelled?: string;
     }

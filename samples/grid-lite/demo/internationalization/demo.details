@@ -1,0 +1,11 @@
+---
+ name: Grid Internationalization Demo
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+ tags:
+  - Highcharts Grid demo
+ categories:
+  - General:
+        priority: 20
+...
