@@ -41,8 +41,8 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     });
 
     assert.strictEqual(
-        !!chart.navigator && !!chart.scrollbar && !!chart.rangeSelector,
-        false,
+        !chart.navigator && !chart.scrollbar && !chart.rangeSelector,
+        true,
         'navigator, scrollbar, rangeSelector disabled'
     );
     chart.series[0].points[0].onMouseOver();
@@ -86,8 +86,8 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     });
 
     assert.strictEqual(
-        !!chart.navigator && !!chart.scrollbar && !!chart.rangeSelector,
-        false,
+        !chart.navigator && !chart.scrollbar && !chart.rangeSelector,
+        true,
         'navigator, scrollbar, rangeSelector disabled'
     );
 
