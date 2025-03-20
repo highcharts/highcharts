@@ -28,7 +28,10 @@ import type {
     ExportingButtonOptions
 } from './ExportingOptions';
 import type ExportingLike from './ExportingLike';
-import type { DOMElementType, HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type {
+    DOMElementType,
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import type GradientColor from '../../Core/Color/GradientColor';
 import type { LangOptions } from '../../Core/Options';
 import type NavigationOptions from './NavigationOptions';
@@ -46,7 +49,10 @@ import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposit
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import DownloadURL from '../DownloadURL.js';
-const { downloadURL, getScript } = DownloadURL;
+const {
+    downloadURL,
+    getScript
+} = DownloadURL;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
@@ -139,12 +145,12 @@ declare module '../../Core/Chart/ChartLike' {
          * Deprecated in favor of [Exporting.getFilename](https://api.highcharts.com/class-reference/Highcharts.Exporting#getFilename).
          *
          * @deprecated */
-        getFilename(): string | void
+        getFilename(): (string | void);
         /**
          * Deprecated in favor of [Exporting.getSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#getSVG).
          *
          * @deprecated */
-        getSVG(chartOptions?: Partial<Options>): string | void;
+        getSVG(chartOptions?: Partial<Options>): (string | void);
         /**
          * Deprecated in favor of [Exporting.print](https://api.highcharts.com/class-reference/Highcharts.Exporting#print).
          *
@@ -474,7 +480,9 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public static hyphenate(prop: string): string {
+    public static hyphenate(
+        prop: string
+    ): string {
         return prop.replace(
             /[A-Z]/g,
             function (match: string): string {
@@ -655,7 +663,7 @@ class Exporting {
          * @param {Highcharts.HTMLDOMElement} node
          * Element child.
          */
-        function recurse(node: HTMLDOMElement | SVGSVGElement): void {
+        function recurse(node: (HTMLDOMElement | SVGSVGElement)): void {
             const filteredStyles: CSSObject = {};
 
             let styles: CSSObject,
@@ -743,7 +751,7 @@ class Exporting {
                             }
                         // Styles
                         } else {
-                            (filteredStyles as Record<string, string | number | GradientColor | PatternObject | undefined>)[
+                            (filteredStyles as Record<string, (string | number | GradientColor | PatternObject | undefined)>)[
                                 prop
                             ] = val;
                         }
@@ -930,7 +938,9 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public static svgToDataUrl(svg: string): string {
+    public static svgToDataUrl(
+        svg: string
+    ): string {
         // Webkit and not chrome
         const userAgent = win.navigator.userAgent;
         const webKit = (
@@ -1257,7 +1267,7 @@ class Exporting {
      *
      * @param {string} className
      * An identifier for the menu.
-     * @param {Array<string | Highcharts.ExportingMenuObject>} items
+     * @param {Array<(string | Highcharts.ExportingMenuObject)>} items
      * A collection with text and onclicks for the items.
      * @param {number} x
      * The x position of the opener button.
@@ -1403,7 +1413,7 @@ class Exporting {
                         // text displayed, #14352.
                         if (
                             item.textKey === 'viewData' &&
-                            chart.isDataTableVisible
+                            exporting.isDataTableVisible
                         ) {
                             item.textKey = 'hideData';
                         }
@@ -1845,12 +1855,14 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public getSVG(chartOptions?: Partial<Options>): string {
+    public getSVG(
+        chartOptions?: Partial<Options>
+    ): string {
         const chart = this.chart;
         let svg,
             seriesOptions: DeepPartial<SeriesTypeOptions>,
             // Copy the options and add extra options
-            options: Options | undefined = merge<Options>(
+            options: (Options | undefined) = merge<Options>(
                 chart.options,
                 chartOptions
             );
@@ -1957,7 +1969,7 @@ class Exporting {
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
-            type CollType = 'xAxis' | 'yAxis' | 'series';
+            type CollType = ('xAxis' | 'yAxis' | 'series');
             (['xAxis', 'yAxis', 'series'] as Array<CollType>).forEach(
                 function (coll: CollType): void {
                     if (chartOptions[coll]) {
@@ -2212,7 +2224,9 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public moveContainers(moveTo: HTMLDOMElement): void {
+    public moveContainers(
+        moveTo: HTMLDOMElement
+    ): void {
         const chart = this.chart,
             { scrollablePlotArea } = chart;
 
@@ -2281,7 +2295,9 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public renderExporting(this: Chart): void {
+    public renderExporting(
+        this: Chart
+    ): void {
         const chart = this,
             exporting = chart.exporting,
             exportingOptions = chart.options.exporting,
@@ -2416,7 +2432,7 @@ namespace Exporting {
      * @param {ChartClass} ChartClass
      * Chart class.
      * @param {SVGRendererClass} SVGRendererClass
-     * SVGRendererClass class.
+     * SVGRenderer class.
      *
      * @requires modules/exporting
      */
@@ -2528,7 +2544,9 @@ namespace Exporting {
      *
      * @requires modules/exporting
      */
-    function chartCallback(chart: Chart): void {
+    function chartCallback(
+        chart: Chart
+    ): void {
         const exporting = chart.exporting;
         if (exporting) {
             exporting.renderExporting.call(chart);
@@ -2585,7 +2603,9 @@ namespace Exporting {
      *
      * @requires modules/exporting
      */
-    function onChartAfterInit(this: Chart): void {
+    function onChartAfterInit(
+        this: Chart
+    ): void {
         const chart = this;
 
         // Create the exporting instance

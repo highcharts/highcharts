@@ -89,7 +89,7 @@ export interface ExportingButtonOptions {
     menuClassName?: string;
     menuItems?: Array<string>;
     onclick?: Function;
-    symbol?: ('menu'|'menuball'|SymbolKey);
+    symbol?: ('menu' | 'menuball' | SymbolKey);
     symbolFill?: ColorString;
     symbolSize?: number;
     symbolStroke?: ColorString;

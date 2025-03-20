@@ -294,28 +294,28 @@ const exporting: ExportingOptions = {
          * `bold` or `italic` are not defined, the `normal` font will be used
          * for those too.
          *
-         * @type string|undefined
+         * @type string | undefined
          */
         normal: void 0,
 
         /**
          * The TTF font file for bold text.
          *
-         * @type string|undefined
+         * @type string | undefined
          */
         bold: void 0,
 
         /**
          * The TTF font file for bold and italic text.
          *
-         * @type string|undefined
+         * @type string | undefined
          */
         bolditalic: void 0,
 
         /**
          * The TTF font file for italic text.
          *
-         * @type string|undefined
+         * @type string | undefined
          */
         italic: void 0
     },
@@ -428,7 +428,7 @@ const exporting: ExportingOptions = {
              * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
              *         Custom shape as symbol
              *
-             * @type  {Highcharts.SymbolKeyValue|"menu"|"menuball"|string}
+             * @type  {Highcharts.SymbolKeyValue | "menu" | "menuball" | string}
              * @since 2.0
              */
             symbol: 'menu',
@@ -473,6 +473,7 @@ const exporting: ExportingOptions = {
         }
 
     },
+
     /**
      * An object consisting of definitions for the menu items in the context
      * menu. Each key value pair has a `key` that is referenced in the
@@ -816,7 +817,7 @@ const navigation: NavigationOptions = {
          * @sample highcharts/navigation/buttonoptions-symbolfill/
          *         Blue symbol stroke for one of the buttons
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorString | Highcharts.GradientColorObject | Highcharts.PatternObject}
          * @since 2.0
          */
         symbolFill: Palette.neutralColor60,

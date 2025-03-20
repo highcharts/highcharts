@@ -17,7 +17,6 @@
  * */
 
 import type ExportingOptions from '../Exporting/ExportingOptions';
-import type Chart from '../../Core/Chart/Chart';
 
 /* *
  *
@@ -31,7 +30,7 @@ const OfflineExportingDefaults: ExportingOptions = {
     menuItemDefinitions: {
         downloadPDF: {
             textKey: 'downloadPDF',
-            onclick: function (this: Chart): void {
+            onclick: function (): void {
                 this.exporting?.exportChartLocal({
                     type: 'application/pdf'
                 });

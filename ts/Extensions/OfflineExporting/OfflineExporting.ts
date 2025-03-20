@@ -32,7 +32,10 @@ import Chart from '../../Core/Chart/Chart';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import DownloadURL from '../DownloadURL.js';
-const { downloadURL, getScript } = DownloadURL;
+const {
+    downloadURL,
+    getScript
+} = DownloadURL;
 import G from '../../Core/Globals.js';
 const {
     composed,
@@ -43,7 +46,11 @@ import HU from '../../Core/HttpUtilities.js';
 const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
-const { extend, merge, pushUnique } = U;
+const {
+    extend,
+    merge,
+    pushUnique
+} = U;
 
 /* *
  *
@@ -98,7 +105,9 @@ namespace OfflineExporting {
      *
      * @requires modules/offline-exporting
      */
-    export function compose(ExportingClass: typeof Exporting): void {
+    export function compose(
+        ExportingClass: typeof Exporting
+    ): void {
         // Check the composition registry for the OfflineExporting
         if (!pushUnique(composed, 'OfflineExporting')) {
             return;
