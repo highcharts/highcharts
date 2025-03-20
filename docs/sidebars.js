@@ -87,9 +87,13 @@ module.exports = {
         'Dashboards': [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
-            'dashboards/dashboards-with-angular',
-            'dashboards/dashboards-with-react',
-            'dashboards/dashboards-with-vue',
+            {
+                'Wrappers': [
+                    'dashboards/wrappers/dashboards-with-angular',
+                    'dashboards/wrappers/dashboards-with-react',
+                    'dashboards/wrappers/dashboards-with-vue',
+                ]
+            }
             'dashboards/layout-description',
             'dashboards/style-by-css',
             'dashboards/edit-mode',
@@ -120,13 +124,22 @@ module.exports = {
             'grid/columns',
             'grid/header',
             'grid/events',
+            {
+                'Theming': [
+                    'grid/theming/theming',
+                    'grid/theming/theming-variables',
+                ]
+            },
             'grid/performance',
             'grid/style-by-css',
             'grid/accessibility',
-            'grid/grid-with-angular',
-            'grid/grid-with-react',
-            'grid/grid-with-vue'
-            
+            {
+                'Wrappers': [
+                    'grid/wrappers/grid-with-angular',
+                    'grid/wrappers/grid-with-react',
+                    'grid/wrappers/grid-with-vue'
+                ]
+            }
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
