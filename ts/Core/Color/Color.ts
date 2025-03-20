@@ -366,7 +366,8 @@ class Color implements ColorLike {
             if (
                 Color.useColorMix &&
                 isStringColor(this.input) &&
-                isStringColor(to.input)
+                isStringColor(to.input) &&
+                pos < 0.99
             ) {
                 return colorMix(this.input, to.input, pos);
             }
