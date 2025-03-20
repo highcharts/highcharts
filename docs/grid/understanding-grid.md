@@ -1,9 +1,9 @@
 # Understanding Highcharts Grid
-At its core the grid consists of a data source that is rendered in x number of columns and rows. Many of the available configuration options applies to the columns and their corresponding row and header cells.
+At its core the Grid consists of a data source that is rendered in x number of columns and rows. Many of the available configuration options applies to the columns and their corresponding row and header cells.
 
 ![table](ill_table.png)
 
-The following provides an introduction to the various root configuration objects in grid:
+The following provides an introduction to the various root configuration objects in Grid:
 
 ## dataTable
 ```js
@@ -19,7 +19,7 @@ The following provides an introduction to the various root configuration objects
 }
 ```
 
-The `dataTable` object is the only required option for proper rendering of the grid, and `dataTable.columns` creates an instance of the DataTable class. This class has key-value pairs, where the key is used for the header cell, and the value is an array of values for the corresponding row cells.
+The `dataTable` object is the only required option for proper rendering of the Grid, and `dataTable.columns` creates an instance of the DataTable class. This class has key-value pairs, where the key is used for the header cell, and the value is an array of values for the corresponding row cells.
 
 Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
 
@@ -55,7 +55,7 @@ Read more about [data handling and the DataTable class](https://www.highcharts.c
 }
 ```
 
-The ' columnDefaults ' object defines default options for all columns in the grid, such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed. Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
+The ' columnDefaults ' object defines default options for all columns in the Grid, such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed. Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
 
 Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/grid/columns) or see the API reference for [columndDefaults](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.Options-1#columnDefaults) and [columns[]](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.Options-1#columns).
 
@@ -109,7 +109,7 @@ For more information on accessibility options read our documentation article on 
 To customize the default language or wording for ARIA attributes and announcers, use the `lang.accessibility` option. In the current version of Highcharts Grid the `lang` option is solely related to [accessibility](https://www.highcharts.com/docs/grid/accessibility), but will be extended to other use cases as we add more features. Stay up to date by visiting our [changelog](https://www.highcharts.com/blog/changelog/#highcharts-dashboards) and [roadmap](https://www.highcharts.com/blog/roadmap/).
 
 ## rendering
-The `rendering` option object can be used to configure options related to performance and the rendering of the grid. Example: [Rendering.rows](https://api.highcharts.com/dashboards/#classes/Grid_Table_Row.Row-1) represents the rows in the grid.
+The `rendering` option object can be used to configure options related to performance and the rendering of the Grid. Example: [Rendering.rows](https://api.highcharts.com/dashboards/#classes/Grid_Table_Row.Row-1) represents the rows in the grid.
 
 ```js
 {
@@ -125,10 +125,10 @@ The `rendering` option object can be used to configure options related to perfor
 For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/performance) or see the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.Options-1#rendering).
 
 ## events
-The Grid supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of the grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).
+The Grid supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of the Grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).
 
 ## setOptions()
-When adding multiple Grids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each grid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/dashboards/#variables/Grid_Defaults.Defaults.defaultOptions).
+When adding multiple Grids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each Grid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/dashboards/#variables/Grid_Defaults.Defaults.defaultOptions).
 
 ```js
 Grid.setOptions({
@@ -139,4 +139,4 @@ Grid.setOptions({
     }
 })
 ```
-This example disables end user sorting for every grid on the page.
+This example disables end user sorting for every Grid on the page.

@@ -2,9 +2,9 @@
 
 Grid is a versatile tool for displaying and managing tabular data. It offers developers a customizable and interactive table format for data visualization.
 
-Integrated with the Highcharts Dashboards package, grid can be used either as a standalone component or within a dashboard as a [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate grid into various web applications for seamless data interaction and management.
+Integrated with the Highcharts Dashboards package, Grid can be used either as a standalone component or within a dashboard as a [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate Grid into various web applications for seamless data interaction and management.
 
-This section of the documentation focuses on grid as a whole. For specific information on grid in a Dashboards context, see the article on [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component).
+This section of the documentation focuses on Grid as a whole. For specific information on Grid in a Dashboards context, see the article on [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component).
 
 ## My First Grid
 
@@ -45,7 +45,7 @@ Let's dive right in with a bare minimum example of a fully functional Grid:
 
 Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/grid/installation) provides more information and other installation options.
 
-The CSS includes the necessary styles for the grid to function correctly and the default style theme. For information on custom styling, see [Style by CSS](https://www.highcharts.com/docs/grid/style-by-css).
+The CSS includes the necessary styles for Grid to function correctly and the default style theme. For information on custom styling, see [Style by CSS](https://www.highcharts.com/docs/grid/style-by-css).
 
 ### 2. Configure the Grid
 
@@ -61,12 +61,12 @@ Grid.grid("container", {
 });
 ```
 
-Inside the `<script>` tag, create a new instance of the grid by utilizing the `Grid.grid` factory function. This function takes two required arguments:
+Inside the `<script>` tag, create a new instance of the Grid by utilizing the `Grid.grid` factory function. This function takes two required arguments:
 
-1. The ID of the HTML element where the grid should be rendered.
-2. The grid configuration object.
+1. The ID of the HTML element where the Grid should be rendered.
+2. The Grid configuration object.
 
-Only the `dataTable` option is required for a grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
+Only the `dataTable` option is required for a Grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
 
 ### 3. Add the HTML Element
 
@@ -82,4 +82,4 @@ With the configuration above, your Grid should look like this:
 
 <iframe src="https://www.highcharts.com/samples/embed/grid-lite/demo/your-first-grid" allow="fullscreen"></iframe>
 
-Go to [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) to read more about grid structure and configuration options.
+Go to [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) to read more about Grid structure and configuration options.

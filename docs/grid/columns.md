@@ -1,6 +1,6 @@
 # Columns options
 
-Many of the available configuration options in  apply to the columns and their corresponding row and header cells.
+Many of the available configuration options in Grid apply to the columns and their corresponding row and header cells.
 
 ## Defaults
 
@@ -25,7 +25,7 @@ Many of the available configuration options in  apply to the columns and their c
 }
 ```
 
-The ' columnDefaults ' object defines default options for all columns in the , such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed.
+The ' columnDefaults ' object defines default options for all columns in the Grid, such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed.
 
 Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
 
@@ -52,7 +52,7 @@ Note that `className` and `format` support templating as described in [Templatin
 
 Suppose you need more advanced formatting that is not supported through templating. Use the `formatted` callback function instead. As in Highcharts Core, we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)
 
-You can exclude the column, including its header, from the  by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/grid/header).
+You can exclude the column, including its header, from the Grid by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/grid/header).
 
 ## Cells
 
