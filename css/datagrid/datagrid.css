@@ -876,16 +876,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     display: inline-block;
 }
 
-.hcg-light-logo,
-.highcharts-datagrid-logo {
-    display: var(--ig-credits-light-logo-display);
-}
-
-.hcg-dark-logo,
-.highcharts-datagrid-logo {
-    display: var(--ig-credits-dark-logo-display);
-}
-
 /* Loader */
 .hcg-loading-wrapper,
 .highcharts-datagrid-loading-wrapper {

@@ -783,14 +783,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     display: inline-block;
 }
 
-.hcg-light-logo {
-    display: var(--ig-credits-light-logo-display);
-}
-
-.hcg-dark-logo {
-    display: var(--ig-credits-dark-logo-display);
-}
-
 /* Loader */
 .hcg-loading-wrapper {
     display: flex;
