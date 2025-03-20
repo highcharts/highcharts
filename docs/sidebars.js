@@ -120,6 +120,8 @@ module.exports = {
             'grid/columns',
             'grid/header',
             'grid/events',
+            'grid/theming',
+            'grid/theming-variables',
             'grid/performance',
             'grid/style-by-css',
             'grid/accessibility',

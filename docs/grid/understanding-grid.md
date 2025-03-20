@@ -109,7 +109,7 @@ For more information on accessibility options read our documentation article on 
 To customize the default language or wording for ARIA attributes and announcers, use the `lang.accessibility` option. In the current version of Highcharts Grid the `lang` option is solely related to [accessibility](https://www.highcharts.com/docs/grid/accessibility), but will be extended to other use cases as we add more features. Stay up to date by visiting our [changelog](https://www.highcharts.com/blog/changelog/#highcharts-dashboards) and [roadmap](https://www.highcharts.com/blog/roadmap/).
 
 ## rendering
-The `rendering` option object can be used to configure options related to performance and the rendering of the Grid. Example: [Rendering.rows](https://api.highcharts.com/dashboards/#classes/Grid_Table_Row.Row-1) represents the rows in the grid.
+The `rendering` option object can be used to configure options related to performance and the rendering of the Grid. Example: [Rendering.rows](https://api.highcharts.com/dashboards/#classes/Grid_Table_Row.Row-1) represents the rows in the Grid.
 
 ```js
 {

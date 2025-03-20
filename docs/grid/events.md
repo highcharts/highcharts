@@ -1,6 +1,6 @@
 # Events
 
-The  supports event listeners that can be added to the [events](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.IndividualColumnOptions.html#events) object. These listeners will call functions when interacting with the Grid.
+The Grid supports event listeners that can be added to the [events](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.IndividualColumnOptions.html#events) object. These listeners will call functions when interacting with the Grid.
 
 The available events are:
 

@@ -45,7 +45,7 @@ Let's dive right in with a bare minimum example of a fully functional Grid:
 
 Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/grid/installation) provides more information and other installation options.
 
-The CSS includes the necessary styles for Grid to function correctly and the default style theme. For information on custom styling, see [Style by CSS](https://www.highcharts.com/docs/grid/style-by-css).
+The CSS includes the necessary styles for the Grid to function correctly and the default style theme. For information on custom styling, see [Style by CSS](https://www.highcharts.com/docs/grid/style-by-css).
 
 ### 2. Configure the Grid
 
