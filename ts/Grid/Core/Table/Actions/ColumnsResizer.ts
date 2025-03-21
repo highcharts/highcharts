@@ -145,6 +145,7 @@ class ColumnsResizer {
             return;
         }
 
+        const vp = column.viewport;
         const colW = this.columnStartWidth ?? 0;
         const minWidth = ColumnsResizer.getMinWidth(column);
 
@@ -154,6 +155,17 @@ class ColumnsResizer {
         }
 
         column.width = [newW, 'px'];
+
+        if (!Table.RESIZING_SHOULD_CHANGE_ALL_WIDTHS_UNITS_TO_PIXELS) {
+            return;
+        }
+
+        for (let i = 0, iEnd = vp.columns.length; i < iEnd; i++) {
+            const col = vp.columns[i];
+            if (col !== column) {
+                col.width = [col.getPixelWidth(), 'px'];
+            }
+        }
     }
 
     /**

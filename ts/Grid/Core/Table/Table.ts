@@ -53,6 +53,13 @@ const {
  */
 class Table {
 
+    /**
+     * TODO: Remove this property after deciding what should be the default
+     * behavior.
+     * @internal
+     */
+    public static RESIZING_SHOULD_CHANGE_ALL_WIDTHS_UNITS_TO_PIXELS = false;
+
     /* *
     *
     *  Properties
