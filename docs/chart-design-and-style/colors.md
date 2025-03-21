@@ -1,18 +1,29 @@
 Colors
 ======
 
-Highcharts supports solid and semi-transparent colors as well as linear and radial gradients. Unless specified below, this applies to all color options in the Highcharts API, whether it is called color, backgroundColor, borderColor, lineColor etc.
+Highcharts supports solid and semi-transparent colors as well as linear and
+radial gradients. Unless specified below, this applies to all color options in
+the Highcharts API, whether it is called `color`, `backgroundColor`,
+`borderColor`, `lineColor`, `fill`, `stroke` etc.
 
 Solid colors
 ------------
 
-Primarily, Highcharts supports solid colors given in hex format _#00FF00_ and rgb format _rgb(0,255,0)_.
+Highcharts supports any color that the browser recognizes. Internally, colors on
+the following formats are parsed, and color conversions like brightening or
+interpolation are performed by JavaScript:
+* Three-digit hex: `#fff`
+* Four-digit hex (with opacity): `#ffff`
+* Six-digit hex: `#ffffff`
+* Eight-digit hex (with opacity): `#ffffffff`
+* Rgb: `rgb(255, 255, 255)`
+* Rgba (with opacity): `rgba(255, 255, 255, 1)`
 
-Secondary, any color format that is recognized by the browser, like short Hex _#0F0_ or color names (_red, brown, blue_) is supported. However, in some cases Highcharts alters the brightness of the color, like when hovering a column chart. When using the secondary color formats, this operation isn't performed. By plugging in to the Highcharts.Color object, we can make named colors work with external libraries or color definitions, like [this example with RGBColor](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/colors-parsers/).
-
-### Semi-transparent colors - opacity
-
-Semi-transparent colors in Highcharts are given in the rgba format _rgba(255,255,255,1)_. The last parameter is the alpha or opacity that ranges from 0, fully transparent, to 1, fully opaque. Because of this, there are no separate opacity options in the Highcharts API.
+Additionally, Highcharts v12.2 introduced browser-native brightening and
+interpolation via CSS functions, allowing full support for any color format that
+is recognized by the browser, including CSS variables. See the [CSS
+variables](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/colors-css-variables/)
+demo to see how this can be applied to a themed heatmap with color theming.
 
 Linear gradients
 ----------------
