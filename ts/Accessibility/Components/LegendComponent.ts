@@ -431,6 +431,11 @@ class LegendComponent extends AccessibilityComponent {
         item: Legend.Item
     ): void {
         const legendItem = item.legendItem || {};
+        const legendItemLabel = item.legendItem?.label;
+        const legendLabelEl = legendItemLabel?.element;
+        const ellipsis = Boolean(
+            legendItem.label?.styles?.textOverflow === 'ellipsis'
+        );
 
         if (!legendItem.label || !legendItem.group) {
             return;
@@ -450,8 +455,17 @@ class LegendComponent extends AccessibilityComponent {
         const attribs = {
             tabindex: -1,
             'aria-pressed': item.visible,
-            'aria-label': itemLabel
+            'aria-label': itemLabel,
+            title: ''
         };
+
+        if (
+            ellipsis &&
+            (legendLabelEl.textContent || '').indexOf('\u2026') !== -1
+        ) {
+            attribs.title = legendItemLabel?.textStr;
+        }
+
         // Considers useHTML
         const proxyPositioningElement = legendItem.group.div ?
             legendItem.label :
