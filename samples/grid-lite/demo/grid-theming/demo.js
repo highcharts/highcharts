@@ -1,3 +1,6 @@
+/* eslint-disable max-len */
+const { merge } = Highcharts;
+
 const config = {
     dataTable: {
         columns: {
@@ -45,7 +48,6 @@ const config = {
         text: 'Default theme'
     },
     description: {
-        // eslint-disable-next-line max-len
         text: 'If the <code>theme</code> API option is not specified the grid is ' +
             'rendered using the default theme, <code>hcg-theme-default</code>.'
     }
@@ -53,27 +55,48 @@ const config = {
 
 Grid.grid('table_0', config);
 
-config.rendering.theme = 'hcg-theme-default theme-compact';
-config.caption.text = 'Compact variant of default theme';
-config.description.text = 'Extend the default theme by adding new and/or ' +
-    'overriding the default variables inside a custom CSS selector. ' +
-    'In this case <code>theme-compact</code> by setting ' +
-    '<code>theme: \'hcg-theme-default theme-compact\'</code>.';
-Grid.grid('table_1', config);
+Grid.grid('table_1', merge(config, {
+    rendering: {
+        theme: 'hcg-theme-default theme-compact'
+    },
+    caption: {
+        text: 'Compact variant of default theme'
+    },
+    description: {
+        text: 'Extend the default theme by adding new and/or ' +
+            'overriding the default variables inside a custom CSS selector. ' +
+            'In this case <code>theme-compact</code> by setting ' +
+            '<code>theme: \'hcg-theme-default theme-compact\'</code>.'
+    }
+}));
 
-config.rendering.theme = 'my-theme';
-config.caption.text = 'Custom theme with more hover states';
-config.description.text = 'To create a completely custom theme omit ' +
-    '<code>hcg-theme-default</code> and only specify the custom theme, ' +
-    'in this case <code>theme: \'my-theme\'</code>. When starting from ' +
-    'scratch remember to also include a dark variant for dark mode, ' +
-    'and also high contrast if needed.';
-Grid.grid('table_2', config);
+Grid.grid('table_2', merge(config, {
+    rendering: {
+        theme: 'my-theme'
+    },
+    caption: {
+        text: 'Custom theme with more hover states'
+    },
+    description: {
+        text: 'To create a completely custom theme omit ' +
+            '<code>hcg-theme-default</code> and only specify the custom theme, ' +
+            'in this case <code>theme: \'my-theme\'</code>. When starting from ' +
+            'scratch remember to also include a dark variant for dark mode, ' +
+            'and also high contrast if needed.'
+    }
+}));
 
-config.rendering.theme = 'opacity-theme';
-config.caption.text = 'Theme using opacity on hover states';
-config.description.text = 'By using RGBA opacity on hover states instead of ' +
-    'solid colors the overall color scheme can be set using only a base set ' +
-    'of custom variables, and hover states etc. can be tweaked by adjusting ' +
-    'the opacity.';
-Grid.grid('table_3', config);
+Grid.grid('table_3', merge(config, {
+    rendering: {
+        theme: 'opacity-theme'
+    },
+    caption: {
+        text: 'Theme using opacity on hover states'
+    },
+    description: {
+        text: 'By using RGBA opacity on hover states instead of ' +
+            'solid colors the overall color scheme can be set using only a base set ' +
+            'of custom variables, and hover states etc. can be tweaked by adjusting ' +
+            'the opacity.'
+    }
+}));
