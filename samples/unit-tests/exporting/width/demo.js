@@ -96,7 +96,7 @@ QUnit.skip('Exported chart width', function (assert) {
         });
     };
 
-    chart.exportChart({
+    chart.exporting.exportChart({
         width: 200
     });
 });

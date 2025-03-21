@@ -36,7 +36,7 @@ Highcharts.getSVG = function (charts, options, callback) {
                     </svg>`
                 );
             }
-            charts[i].getSVGForLocalExport(options, {}, function () {
+            charts[i].exporting.getSVGForLocalExport(options, {}, function () {
                 console.log('Failed to get SVG');
             }, function (svg) {
                 addSVG(svg);

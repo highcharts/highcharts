@@ -1,5 +1,5 @@
 Highcharts.addEvent(Highcharts.Chart, 'render', function () {
-    const table = this.dataTableDiv;
+    const table = this.exporting.dataTableDiv;
     if (table) {
 
         // Apply styles inline because stylesheets are not passed to the
@@ -47,7 +47,7 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
         if (table.parentNode) {
             table.parentNode.removeChild(table);
         }
-        delete this.dataTableDiv;
+        delete this.exporting.dataTableDiv;
     }
 });
 

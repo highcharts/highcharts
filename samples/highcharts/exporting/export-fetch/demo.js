@@ -41,5 +41,5 @@ const chart = Highcharts.chart('container', {
 document.getElementById('export-button').addEventListener('click', () => {
     window.addEventListener('beforeunload', notifyOnUnload, { once: true });
 
-    chart.exportChart();
+    chart.exporting.exportChart();
 });

@@ -379,7 +379,7 @@ describe('Testing Highcharts in use with modules', () => {
 
         // Offline Exporting
         strictEqual(
-            typeof Highcharts.Chart.prototype.exportChartLocal,
+            typeof Highcharts.Exporting.prototype.exportChartLocal,
             'function',
             'Offline Exporting is loaded.'
         );

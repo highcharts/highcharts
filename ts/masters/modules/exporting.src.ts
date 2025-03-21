@@ -17,6 +17,9 @@ import HttpUtilities from '../../Core/HttpUtilities.js';
 
 const G: AnyRecord = Highcharts;
 
+// Class
+G.Exporting = Exporting;
+
 // Compatibility
 G.HttpUtilities = G.HttpUtilities || HttpUtilities;
 G.ajax = G.HttpUtilities.ajax;

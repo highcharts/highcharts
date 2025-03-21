@@ -32,7 +32,7 @@ const chart = Highcharts.chart('container', {
 
 // the button handler
 document.getElementById('button').addEventListener('click', () => {
-    chart.exportChart(null, {
+    chart.exporting.exportChart(null, {
         chart: {
             backgroundColor: '#FFFFFF'
         }

@@ -27,7 +27,7 @@ Highcharts.chart('container', {
             contextButton: {
                 menuItems: null,
                 onclick: function () {
-                    this.exportChart();
+                    this.exporting.exportChart();
                 }
             }
         }

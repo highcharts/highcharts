@@ -2,7 +2,7 @@
 (function (H) {
     H.addEvent(H.Chart, 'render', e => {
         const chart = e.target;
-        const rows = chart.getDataRows();
+        const rows = chart.exporting.getDataRows();
 
         const data = rows.slice(1)
             .map(row => rows[0].reduce((ob, key, i) => {

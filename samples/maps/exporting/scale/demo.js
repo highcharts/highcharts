@@ -51,7 +51,7 @@
     });
 
     const expScale = scale => {
-        chart.exportChart({
+        chart.exporting.exportChart({
             scale: scale
         });
     };

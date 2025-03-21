@@ -19841,7 +19841,9 @@ highed.ChartPreview = function (parent, attributes) {
 
     function getEmbeddableSVG() {
         return gc(function (chart) {
-            return highed.isFn(chart.getSVG) ? chart.getSVG() : '';
+            return highed.isFn(chart.exporting.getSVG) ?
+                chart.exporting.getSVG() :
+                '';
         });
     }
 
@@ -20078,7 +20080,7 @@ highed.ChartPreview = function (parent, attributes) {
 
     function exportChart(options) {
         gc(function (chart) {
-            chart.exportChart(options, aggregatedOptions);
+            chart.exporting.exportChart(options, aggregatedOptions);
         });
     }
 

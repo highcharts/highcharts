@@ -56,7 +56,7 @@ QUnit.test('Test type option with exportChart', function (assert) {
         };
 
         // Run export
-        chart.exportChart({
+        chart.exporting.exportChart({
             type: 'application/pdf'
         });
         assert.strictEqual(postData.type, 'application/pdf', 'Posting for JPG');

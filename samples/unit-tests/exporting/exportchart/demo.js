@@ -62,7 +62,7 @@ QUnit.test('Testing exportChart', function (assert) {
         };
 
         // Run export
-        chart.exportChart({
+        chart.exporting.exportChart({
             type: 'application/pdf'
         });
 

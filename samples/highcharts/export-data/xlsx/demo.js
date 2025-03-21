@@ -8,7 +8,7 @@
                 xlsxRows = [];
             div.style.display = 'none';
             document.body.appendChild(div);
-            const rows = this.getDataRows(true);
+            const rows = this.exporting.getDataRows(true);
             xlsxRows = rows.slice(1).map(function (row) {
                 return row.map(function (column) {
                     return {
