@@ -19,7 +19,7 @@ Highcharts.chart('container', {
         positioner: function () {
             return {
                 x: 100,
-                y: this.chart.container.getBoundingClientRect().top + 50
+                y: 50
             };
         }
     }
