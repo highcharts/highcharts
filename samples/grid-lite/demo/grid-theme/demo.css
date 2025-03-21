@@ -1,0 +1,10 @@
+@import url("https://code.highcharts.com/grid/css/grid.css");
+
+#container {
+    height: 250px;
+    padding: 8px;
+}
+
+.highcharts-description {
+    padding: 0 20px;
+}
