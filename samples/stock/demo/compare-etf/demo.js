@@ -8,6 +8,10 @@
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
+        title: {
+            text: 'Index vs buffer ETF comparison'
+        },
+
         rangeSelector: {
             enabled: false
         },
@@ -26,6 +30,12 @@
             align: 'left'
         },
 
+        xAxis: {
+            accessibility: {
+                description: 'Datetime axis'
+            }
+        },
+
         yAxis: {
             labels: {
                 format: '{#if (gt value 0)}+{/if}{value}%'
@@ -37,9 +47,9 @@
                 color: 'rgba(152, 251, 152, 0.4)',
                 dashStyle: 'Dash',
                 label: {
-                    align: 'right',
+                    align: 'left',
                     text: `OUTCOME PERIOD CAP: ${PERIOD_CAP}%`,
-                    x: -3,
+                    x: 0,
                     style: {
                         color: '#006666',
                         fontWeight: 'bold'
@@ -51,13 +61,13 @@
                 color: 'rgba(175, 238, 238, 0.6)',
                 dashStyle: 'Dash',
                 label: {
-                    align: 'right',
+                    align: 'left',
                     verticalAlign: 'bottom',
                     text: `OUTCOME PERIOD BUFFER: ${PERIOD_BUFFER}%`,
-                    x: -3,
+                    x: 0,
                     y: 13,
                     style: {
-                        color: '#008B8B',
+                        color: '#007979',
                         fontWeight: 'bold'
                     }
                 }
@@ -85,8 +95,8 @@
         },
 
         tooltip: {
-            pointFormat: '<span style="color:{series.color}">' +
-                        '{series.name}</span>: <b>{point.y} EUR</b> ' +
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                        '{series.name}: <b>{point.y} EUR</b> ' +
                         '({point.change}%)<br/>',
             valueDecimals: 2,
             split: true
