@@ -1,0 +1,96 @@
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    color-scheme: light dark;
+    color: light-dark(#000, #fff);
+    background-color: light-dark(#f8f8f8, #000);
+}
+
+h1 {
+    text-align: center;
+    margin: 15px 0 30px;
+}
+
+#logo-highcharts {
+    width: 1.3em;
+    margin-right: 10px;
+    vertical-align: middle;
+    margin-top: -3px;
+}
+
+#demo-content {
+    color: light-dark(#000, #fff);
+    background-color: light-dark(#f8f8f8, #000);
+    box-shadow: none;
+}
+
+.top-bar {
+    display: none;
+}
+
+main {
+    max-width: 1500px;
+    min-width: 250px;
+    margin: 10px auto;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.intro {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+figure {
+    position: relative;
+    margin: 0;
+    padding: 20px;
+    box-shadow: 0 0 5px rgba(128, 128, 128, 0.6);
+    background-color: light-dark(#fff, #222);
+    border-radius: 8px;
+}
+
+.simplified::before {
+    content: "Simplified";
+    margin-left: -5em;
+    font-size: 1em;
+}
+
+.simplified {
+    position: absolute;
+    right: 20px;
+    z-index: 1;
+}
+
+@media only screen and (max-width: 600px) {
+    figure {
+        padding: 5px;
+        box-shadow: none;
+    }
+
+    main {
+        padding: 10px;
+        margin: 0 auto;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
