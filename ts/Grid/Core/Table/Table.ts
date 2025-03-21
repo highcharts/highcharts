@@ -22,7 +22,6 @@
  *
  * */
 
-import type { ColumnDistribution } from '../Options';
 import type TableRow from './Content/TableRow';
 
 import GridUtils from '../GridUtils.js';
@@ -53,6 +52,13 @@ const {
  * Represents a table viewport of the data grid.
  */
 class Table {
+
+    /**
+     * TODO: Remove this property after deciding what should be the default
+     * behavior.
+     * @internal
+     */
+    public static RESIZING_SHOULD_CHANGE_ALL_WIDTHS_UNITS_TO_PIXELS = false;
 
     /* *
     *
@@ -113,11 +119,6 @@ class Table {
     public rowsVirtualizer: RowsVirtualizer;
 
     /**
-     * The column distribution.
-     */
-    public readonly columnDistribution: ColumnDistribution;
-
-    /**
      * The columns resizer instance that handles the columns resizing logic.
      * @internal
      */
@@ -125,7 +126,6 @@ class Table {
 
     /**
      * The width of each row in the table. Each of the rows has the same width.
-     * Only for the `fixed` column distribution.
      * @internal
      */
     public rowsWidth?: number;
@@ -172,8 +172,6 @@ class Table {
         const dgOptions = grid.options;
         const customClassName = dgOptions?.rendering?.table?.className;
 
-        this.columnDistribution =
-            dgOptions?.rendering?.columns?.distribution as ColumnDistribution;
         this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
         this.scrollable = !!(
             this.grid.initialContainerHeight || this.virtualRows
@@ -328,13 +326,11 @@ class Table {
             this.grid.options?.rendering?.rows?.virtualization;
 
         // Get the width of the rows.
-        if (this.columnDistribution === 'fixed') {
-            let rowsWidth = 0;
-            for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
-                rowsWidth += this.columns[i].width;
-            }
-            this.rowsWidth = rowsWidth;
+        let rowsWidth = 0;
+        for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+            rowsWidth += this.columns[i].getPixelWidth();
         }
+        this.rowsWidth = rowsWidth;
 
         if (isVirtualization || reflowColumns) {
             // Reflow the head
@@ -460,8 +456,9 @@ class Table {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
-            columnDistribution: this.columnDistribution,
-            columnWidths: this.columns.map((column): number => column.width),
+            columnWidths: this.columns.map(
+                (column): [number, 'px' | '%'] | undefined => column.width
+            ),
             focusCursor: this.focusCursor
         };
     }
@@ -480,12 +477,14 @@ class Table {
         this.tbodyElement.scrollLeft = meta.scrollLeft;
 
         if (
-            this.columnDistribution === meta.columnDistribution &&
             this.columns.length === meta.columnWidths.length
         ) {
             const widths = meta.columnWidths;
-            for (let i = 0, iEnd = widths.length; i < iEnd; ++i) {
-                this.columns[i].width = widths[i];
+            for (let i = 0, iEnd = widths.length, width; i < iEnd; ++i) {
+                width = widths[i];
+                if (width) {
+                    this.columns[i].width = width;
+                }
             }
             this.reflow();
 
@@ -538,8 +537,7 @@ namespace Table {
     export interface ViewportStateMetadata {
         scrollTop: number;
         scrollLeft: number;
-        columnDistribution: ColumnDistribution;
-        columnWidths: number[];
+        columnWidths: ([number, 'px' | '%']|undefined)[];
         focusCursor?: [number, number];
     }
 }

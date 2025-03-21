@@ -39,6 +39,7 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 
 /**
  * The distribution of the columns in the grid structure.
+ * @deprecated
  */
 export type ColumnDistribution = 'full' | 'fixed';
 
@@ -154,13 +155,13 @@ export interface RenderingSettings {
 
 export interface ColumnsSettings {
     /**
-     * The distribution of the columns. If `full`, the columns will be
-     * distributed so that the first and the last column are at the edges of
-     * the grid. If `fixed`, the columns will have a fixed width in pixels.
+     * The option is deprecated due to added possibility to set the width
+     * for each column individually with different units.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/fixed-distribution | Fixed distribution}
+     * @deprecated
+     * It will be removed in the next major version.
      *
-     * @default 'full'
+     * @default 'fixed'
      */
     distribution?: ColumnDistribution;
 
@@ -435,6 +436,17 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
+
+    /**
+     * The width of the column. Can be a number or a string with the unit (`px`
+     * or `%`). If set as a number, the width is given in pixels.
+     * 
+     * If undefined, the width is even distributed among all columns that have
+     * no width set.
+     *
+     * @default undefined
+     */
+    width?: number|string;
 
     /**
      * @internal

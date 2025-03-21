@@ -234,7 +234,8 @@ abstract class Cell {
 
         const elementStyle = this.htmlElement.style;
 
-        elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
+        elementStyle.width = elementStyle.maxWidth =
+            column.getPixelWidth() + 'px';
     }
 
     /**

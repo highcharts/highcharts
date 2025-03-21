@@ -33,6 +33,7 @@ import GridUtils from '../GridUtils.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import Templating from '../../../Core/Templating.js';
 import Globals from '../Globals.js';
+import ColumnsResizer from './Actions/ColumnsResizer';
 
 const { merge } = Utils;
 const { makeHTMLElement } = GridUtils;
@@ -74,12 +75,13 @@ class Column {
     public readonly viewport: Table;
 
     /**
-     * The width of the column in the viewport. The interpretation of the
-     * value depends on the `columns.distribution` option:
-     * - `full`: The width is a ratio of the viewport width.
-     * - `fixed`: The width is a fixed number of pixels.
+     * The width of the column in the viewport. An array with a number - value
+     * and a string - unit (e.g., `[100, 'px']`). If undefined, distributed
+     * evenly among the columns.
+     *
+     * @internal
      */
-    public width: number;
+    public width?: [number, '%'|'px'];
 
     /**
      * The cells of the column.
@@ -148,7 +150,7 @@ class Column {
         this.id = id;
         this.index = index;
         this.viewport = viewport;
-        this.width = this.getInitialWidth();
+        this.width = this.getWidthFromOptions();
 
         this.loadData();
     }
@@ -204,12 +206,34 @@ class Column {
     /**
      * Returns the width of the column in pixels.
      */
-    public getWidth(): number {
+    public getPixelWidth(): number {
         const vp = this.viewport;
 
-        return vp.columnDistribution === 'full' ?
-            vp.getWidthFromRatio(this.width) :
-            this.width;
+        if (this.width) {
+            const value = this.width[0];
+            const unit = this.width[1];
+
+            return unit === '%' ?
+                vp.getWidthFromRatio(value / 100) :
+                value;
+        }
+
+        // TODO: Reduce the computational complexity of this calculations.
+
+        let defColWidthCount = 0;
+        let defColWidthSum = 0;
+        vp.columns.filter(column => column.width).forEach(column => {
+            defColWidthCount++;
+            defColWidthSum += column.getPixelWidth();
+        });
+
+        let widthForUndefined =
+            (vp.tbodyElement.clientWidth - defColWidthSum) /
+            (vp.columns.length - defColWidthCount);
+
+        const minWidth = ColumnsResizer.getMinWidth(this);
+
+        return widthForUndefined < minWidth ? minWidth : widthForUndefined;
     }
 
 
@@ -252,69 +276,31 @@ class Column {
     }
 
     /**
-     * Creates a mock element to measure the width of the column from the CSS.
-     * The element is appended to the viewport container and then removed.
-     * It should be called only once for each column.
-     *
-     * @returns The initial width of the column.
+     * Sets the width of the column according to the width option.
      */
-    private getInitialWidth(): number {
-        let result: number;
-        const { viewport } = this;
+    private getWidthFromOptions(): [number, '%'|'px']|undefined {
+        const raw = this.options.width;
 
-        // Set the initial width of the column.
-        const mock = makeHTMLElement('div', {
-            className: Globals.getClassName('columnElement')
-        }, viewport.grid.container);
-
-        mock.setAttribute('data-column-id', this.id);
-        if (this.options.className) {
-            mock.classList.add(...this.options.className.split(/\s+/g));
+        if (!raw) {
+            return;
         }
 
-        if (viewport.columnDistribution === 'full') {
-            result = this.getInitialFullDistWidth(mock);
-        } else {
-            result = mock.offsetWidth || 100;
-        }
-        mock.remove();
-
-        return result;
-    }
-
-    /**
-     * The initial width of the column in the full distribution mode. The last
-     * column in the viewport will have to fill the remaining space.
-     *
-     * @param mock
-     * The mock element to measure the width.
-     */
-    private getInitialFullDistWidth(mock: HTMLElement): number {
-        const vp = this.viewport;
-        const columnsCount = vp.grid.enabledColumns?.length ?? 0;
-
-        if (this.index < columnsCount - 1) {
-            return vp.getRatioFromWidth(mock.offsetWidth) || 1 / columnsCount;
+        if (typeof raw === 'number') {
+            return [raw, 'px'];
         }
 
-        let allPreviousWidths = 0;
-        for (let i = 0, iEnd = columnsCount - 1; i < iEnd; i++) {
-            allPreviousWidths += vp.columns[i].width;
+        const match = raw.match(/^(-?\d*\.?\d+)([a-z%]*)$/);
+
+        if (match) {
+            const number = parseFloat(match[1]);
+            let unit = match[2];
+
+            if (unit !== 'px' && unit !== '%') {
+                unit = 'px';
+            }
+
+            return [number, unit as '%'|'px'];
         }
-
-        const result = 1 - allPreviousWidths;
-
-        if (result < 0) {
-            // eslint-disable-next-line no-console
-            console.warn(
-                'The sum of the columns\' widths exceeds the ' +
-                'viewport width. It may cause unexpected behavior in the ' +
-                'full distribution mode. Check the CSS styles of the ' +
-                'columns. Corrections may be needed.'
-            );
-        }
-
-        return result;
     }
 
     /**

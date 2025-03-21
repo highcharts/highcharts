@@ -213,7 +213,7 @@ class HeaderCell extends Cell {
         let width = 0;
 
         for (const column of this.columns) {
-            width += column.getWidth() || 0;
+            width += column.getPixelWidth() || 0;
         }
 
         // Set the width of the column. Max width is needed for the
