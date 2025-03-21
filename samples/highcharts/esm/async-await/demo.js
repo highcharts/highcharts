@@ -1,9 +1,10 @@
 (async () => {
-    const { default: Highcharts } =
-        await import('https://code.highcharts.com/es-modules/masters/highcharts.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/highcharts-more.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/modules/exporting.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/modules/export-data.src.js');
+    const { default: Highcharts } = await import(
+        'https://code.highcharts.com/esm/highcharts.js'
+    );
+    await import('https://code.highcharts.com/esm/highcharts-more.js');
+    await import('https://code.highcharts.com/esm/modules/exporting.js');
+    await import('https://code.highcharts.com/esm/modules/export-data.js');
 
     Highcharts.chart('container', {
         chart: {

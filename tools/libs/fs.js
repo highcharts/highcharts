@@ -569,7 +569,10 @@ function normalizePath(
     sourcePath = Path.posix.dirname(path(sourcePath, true));
     targetPath = path(targetPath, true);
 
-    if (!targetPath.startsWith('.')) {
+    if (
+        !targetPath.startsWith('./') &&
+        !targetPath.startsWith('../')
+    ) {
         targetPath = Path.posix.relative(sourcePath, targetPath);
     }
 
