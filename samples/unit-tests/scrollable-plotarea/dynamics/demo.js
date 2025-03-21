@@ -298,27 +298,50 @@ QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
     );
 });
 
-QUnit.test(
-    'Pointer events on points outside of plotArea, #21136', assert => {
-        const chart = Highcharts.chart('container', {
-                chart: {
-                    type: 'bar',
-                    scrollablePlotArea: {
-                        minHeight: 500
+QUnit.test('Pointer events', assert => {
+    let hasHovered;
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bar',
+                scrollablePlotArea: {
+                    minHeight: 500,
+                    minWidth: 300
+                }
+            },
+            plotOptions: {
+                series: {
+                    events: {
+                        mouseOver: function () {
+                            hasHovered = true;
+                        }
                     }
-                },
-                series: [{
-                    data: [1, 2, 3]
-                }]
-            }),
-            controller = new TestController(chart);
+                }
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }),
+        controller = new TestController(chart);
 
-        controller.mouseOver(60, 330, undefined, true);
+    controller.mouseOver(60, 330);
 
-        assert.ok(
-            chart.tooltip.isHidden,
-            `Tooltip should be hidden when pointer appears on point outside of
+    assert.ok(
+        chart.tooltip.isHidden,
+        `Tooltip should be hidden when pointer appears on point outside of
             visible plot area, #21136.`
-        );
+    );
+
+    // Trigger scrollbar
+    for (const width of [200, 600]) {
+        chart.update({ chart: { width } });
     }
-);
+
+    // Hover the first point
+    controller.mouseOver(50, 80);
+
+    assert.strictEqual(
+        hasHovered,
+        true,
+        'Toggling scrollbars should not remove events (#22489)'
+    );
+});
