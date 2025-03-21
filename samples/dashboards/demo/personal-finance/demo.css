@@ -92,6 +92,7 @@
     stroke: var(--highcharts-dashboards-orange);
     fill: var(--highcharts-dashboards-orange);
 }
+
 /* Custom classes and ids */
 #saving-button {
     border: none;
