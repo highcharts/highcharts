@@ -3,7 +3,6 @@
 #container {
     padding: 8px;
     background-color: var(--hcg-background);
-    height: 250px;
 }
 
 .highcharts-datagrid-column {

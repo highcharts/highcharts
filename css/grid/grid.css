@@ -9,23 +9,27 @@
 /*  ==== Start Grid Color Scheme  ==== */
 .hcg-container {
     --ig-default-color: #000000;
-    --ig-negative-default-border-color: hsl(0, 100%, 50%);
-    --ig-negative-default-background: hsl(0, 100%, 95%);
-    --ig-neutral-default-border-color: hsl(0, 0%, 35%);
-    --ig-neutral-default-background: hsl(0, 0%, 82%);
-    --ig-positive-default-border-color: hsl(120, 100%, 25%);
-    --ig-positive-default-background: hsl(120, 22%, 90%);
+    --ig-negative-default-border-color: #ff0000;
+    --ig-negative-default-background: #ffe5e5;
+    --ig-neutral-default-border-color: #595959;
+    --ig-neutral-default-background: #d1d1d1;
+    --ig-positive-default-border-color: #008000;
+    --ig-positive-default-background: #e0ebe0;
+    --ig-credits-light-logo-display: block;
+    --ig-credits-dark-logo-display: none;
 }
 
 @media (prefers-color-scheme: dark) {
     .hcg-container {
         --ig-default-color: #ffffff;
-        --ig-negative-default-border-color: hsl(0, 100%, 33%);
-        --ig-negative-default-background: hsl(0, 100%, 21%);
-        --ig-neutral-default-border-color: hsl(0, 0%, 70%);
-        --ig-neutral-default-background: hsl(0, 0%, 39%);
-        --ig-positive-default-border-color: hsl(120, 100%, 25%);
-        --ig-positive-default-background: hsl(120, 41%, 25%);
+        --ig-negative-default-border-color: #a80000;
+        --ig-negative-default-background: #6b0000;
+        --ig-neutral-default-border-color: #b3b3b3;
+        --ig-neutral-default-background: #636363;
+        --ig-positive-default-border-color: #008000;
+        --ig-positive-default-background: #265a26;
+        --ig-credits-light-logo-display: none;
+        --ig-credits-dark-logo-display: block;
     }
 }
 
@@ -44,6 +48,13 @@
     --ig-color: var(--hcg-color, var(--ig-default-color));
     --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
     --ig-text-align: var(--hcg-text-align, left);
+
+    /* Link fonts */
+    --ig-link-color: var(--hcg-link-color, inherit);
+    --ig-link-text-decoration: var(--hcg-link-text-decoration, underline);
+    --ig-link-hovered-color: var(--hcg-link-hovered-color, var(--ig-link-color));
+    --ig-link-hovered-text-decoration: var(--hcg-link-hovered-text-decoration, none);
+    --ig-link-font-weight: var(--hcg-link-font-weight, inherit);
 
     /* Header fonts */
     --ig-header-font-weight: var(--hcg-header-font-weight, var(--ig-font-weight));
@@ -126,7 +137,13 @@
     --ig-description-padding: var(--ig-description-vertical-padding) var(--ig-description-horizontal-padding) 0 var(--ig-description-horizontal-padding);
 
     /* Credits padding */
-    --ig-credits-padding: 0 var(--ig-horizontal-padding);
+    --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, var(--ig-horizontal-padding)));
+    --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, var(--ig-vertical-padding)));
+    --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) 0 var(--ig-credits-horizontal-padding);
+
+    /* Loading indicator */
+    --ig-loading-wrapper-background: var(--hcg-loading-wrapper-background, var(--ig-neutral-default-background));
+    --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
 
     /* Default backgrounds and colors */
     --ig-background: var(--hcg-background, transparent);
@@ -263,20 +280,11 @@
     --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
-
-    /* Loading indicator */
-    --ig-loading-wrapper-background: var(--hcg-loading-wrapper-background, var(--ig-neutral-default-background));
-    --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
 }
 
 /* ==== End DataGrid Variables ==== */
 
-/* DataGrid container */
-.hcg-container * {
-    box-sizing: border-box;
-    font: var(--ig-font);
-}
-
+/* Grid container */
 .hcg-container {
     position: relative;
     display: flex;
@@ -286,8 +294,25 @@
     box-sizing: border-box;
 }
 
+.hcg-container * {
+    box-sizing: border-box;
+    font: var(--ig-font);
+}
+
 .hcg-column {
     width: 0;
+}
+
+/* Links */
+.hcg-container a {
+    color: var(--ig-link-color);
+    text-decoration: var(--ig-link-text-decoration);
+    font-weight: var(--ig-link-font-weight);
+}
+
+.hcg-container a:hover {
+    color: var(--ig-link-hovered-color);
+    text-decoration: var(--ig-link-hovered-text-decoration);
 }
 
 /* Table */
@@ -731,6 +756,11 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     padding: var(--ig-caption-padding);
 }
 
+.hcg-caption * {
+    font: inherit;
+    margin: 0;
+}
+
 /* Description */
 .hcg-description {
     color: var(--ig-description-color);
@@ -741,6 +771,58 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Credits */
 
+.hcg-credits-container.hcg-credits-pro {
+    text-align: var(--ig-credits-text-align);
+    padding: var(--ig-credits-padding);
+}
+
+.hcg-credits-container.hcg-credits-pro .hcg-credits {
+    color: var(--ig-credits-color);
+    font-size: var(--ig-credits-font-size);
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* Loader */
+.hcg-loading-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--idg-loading-wrapper-background);
+    opacity: 0.5;
+    gap: 10px;
+}
+
+.hcg-loading-wrapper .hcg-loading-message {
+    color: var(--hcg-color);
+}
+
+.hcg-container:has(.hcg-loading-wrapper) .hcg-no-data,
+.hcg-container:has(.hcg-loading-wrapper) .hcg-credits-container {
+    opacity: 0;
+}
+
+.hcg-loading-wrapper .hcg-spinner {
+    border: var(--idg-loading-wrapper-border-size) solid var(--hcg-loader-color);
+    border-top: var(--idg-loading-wrapper-border-size) solid var(--hcg-color);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
 
 /* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
@@ -804,110 +886,54 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     border-bottom: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
 }
 
-.hcg-table thead tr th.hcg-right,
+.hcg-table thead tr th.hcg-right .hcg-header-cell-content,
 .hcg-table tbody tr td.hcg-right {
     text-align: right;
 }
 
-.hcg-table thead tr th.hcg-center,
+.hcg-table thead tr th.hcg-center .hcg-header-cell-content,
 .hcg-table tbody tr td.hcg-center {
     text-align: center;
 }
 
-.hcg-table thead tr th.hcg-left,
+.hcg-table thead tr th.hcg-left .hcg-header-cell-content,
 .hcg-table tbody tr td.hcg-left {
     text-align: left;
-}
-
-.hcg-loading-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: var(--idg-loading-wrapper-background);
-    opacity: 0.5;
-    gap: 10px;
-}
-
-.hcg-loading-wrapper .hcg-loading-message {
-    color: var(--hcg-color);
-}
-
-.hcg-container:has(.hcg-loading-wrapper) .hcg-no-data,
-.hcg-container:has(.hcg-loading-wrapper) .hcg-credits-container {
-    opacity: 0;
-}
-
-.hcg-loading-wrapper .hcg-spinner {
-    border: var(--idg-loading-wrapper-border-size) solid var(--hcg-loader-color);
-    border-top: var(--idg-loading-wrapper-border-size) solid var(--hcg-color);
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
 }
 
 /* End Grid CSS Helpers Classes */
 
 /* Start Grid Default Theme */
 .hcg-theme-default {
+    --hcg-font-size: 15px;
+    --hcg-color: #333333;
+    --hcg-background: #ffffff;
+    --hcg-padding: 15px;
     --hcg-border-radius: 5px;
-    --hcg-color: #000000;
-    --hcg-padding: 8px;
     --hcg-border-width: 1px;
     --hcg-border-color: #cccccc;
-    --hcg-background: #ffffff;
-
-    /* Header background color */
-    --hcg-header-background: #f2f2f2;
-
-    /* Even row colors */
-    --hcg-row-even-background: #f7f7f7;
-
-    /* Hovered colors */
-    --hcg-cell-hovered-background: #ccd3ff;
-    --hcg-cell-hovered-row-background: #e6e9ff;
-    --hcg-cell-hovered-column-background: #e6e9ff;
-    --hcg-cell-hovered-header-background: #ccd3ff;
-    --hcg-header-hovered-background: #ccd3ff;
-
-    /* Loader */
+    --hcg-column-border-width: 0;
+    --hcg-row-border-color: #e8e8e8;
+    --hcg-header-background: #eeeeee;
+    --hcg-header-row-border-color: #cccccc;
+    --hcg-header-vertical-padding: 10px;
+    --hcg-row-even-background: #fbfbfb;
+    --hcg-cell-hovered-row-background: #f3f6fe;
+    --hcg-caption-font-size: 18px;
     --hcg-loader-color: #666666;
 }
 
 @media (prefers-color-scheme: dark) {
     .hcg-theme-default {
-        --hcg-color: rgb(255, 255, 255);
-        --hcg-border-color: rgb(92, 92, 92);
-        --hcg-background: #333333;
-
-        /* Header row background color */
-        --hcg-header-background: rgb(61, 61, 61);
-
-        /* Row colors */
-        --hcg-row-even-background: rgb(57, 57, 57);
-
-        /* Hovered colors */
-        --hcg-cell-hovered-background: rgb(65, 74, 92);
-        --hcg-cell-hovered-row-background: rgb(58, 63, 71);
-        --hcg-cell-hovered-column-background: rgb(58, 63, 71);
-        --hcg-cell-hovered-header-background: rgb(65, 74, 92);
-        --hcg-header-hovered-background: rgb(65, 74, 92);
-
-        /* Loader */
-        --hcg-loader-color: rgb(173, 173, 173);
+        --hcg-color: #eeeeee;
+        --hcg-background: #292929;
+        --hcg-border-color: #525252;
+        --hcg-row-border-color: #434343;
+        --hcg-header-background: #3d3d3d;
+        --hcg-header-row-border-color: #525252;
+        --hcg-row-even-background: #2e2e2e;
+        --hcg-cell-hovered-row-background: #2d2f36;
+        --hcg-loader-color: #adadad;
     }
 }
 
