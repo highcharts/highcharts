@@ -82,11 +82,6 @@ class ColumnsResizer {
     private columnStartWidth?: number;
 
     /**
-     * The width of the next column when dragging started.
-     */
-    private nextColumnStartWidth?: number;
-
-    /**
      * The handles and their mouse down event listeners.
      */
     private handles: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
@@ -124,74 +119,27 @@ class ColumnsResizer {
     public renderColumnDragHandles(column: Column, cell: Cell): void {
         const vp = column.viewport;
 
-        if (
-            vp.columnsResizer && (
-                vp.columnDistribution !== 'full' ||
-                (
-                    vp.grid.enabledColumns &&
-                    column.index < vp.grid.enabledColumns.length - 1
-                )
-            )
-        ) {
+        if (vp.columnsResizer) {
             const handle = makeHTMLElement('div', {
                 className: Globals.getClassName('resizerHandles')
             }, cell.htmlElement);
 
             handle.setAttribute('aria-hidden', true);
 
-            vp.columnsResizer?.addHandleListeners(
+            vp.columnsResizer.addHandleListeners(
                 handle, column
             );
         }
     }
 
     /**
-     * Resizes the columns in the full distribution mode.
+     * Resizes the column. If the width of the column is set in percentage, it
+     * will be changed to pixels.
      *
      * @param diff
      * The X position difference in pixels.
      */
-    private fullDistributionResize(diff: number): void {
-        const vp = this.viewport;
-
-        const column = this.draggedColumn;
-        if (!column) {
-            return;
-        }
-
-        const nextColumn = vp.columns[column.index + 1];
-        if (!nextColumn) {
-            return;
-        }
-
-        const leftColW = this.columnStartWidth ?? 0;
-        const rightColW = this.nextColumnStartWidth ?? 0;
-        const minWidth = ColumnsResizer.getMinWidth(column);
-
-        let newLeftW = leftColW + diff;
-        let newRightW = rightColW - diff;
-
-        if (newLeftW < minWidth) {
-            newLeftW = minWidth;
-            newRightW = leftColW + rightColW - minWidth;
-        }
-
-        if (newRightW < minWidth) {
-            newRightW = minWidth;
-            newLeftW = leftColW + rightColW - minWidth;
-        }
-
-        column.width = vp.getRatioFromWidth(newLeftW);
-        nextColumn.width = vp.getRatioFromWidth(newRightW);
-    }
-
-    /**
-     * Resizes the columns in the fixed distribution mode.
-     *
-     * @param diff
-     * The X position difference in pixels.
-     */
-    private fixedDistributionResize(diff: number): void {
+    private resize(diff: number): void {
         const column = this.draggedColumn;
         if (!column) {
             return;
@@ -205,7 +153,7 @@ class ColumnsResizer {
             newW = minWidth;
         }
 
-        column.width = newW;
+        column.width = [newW, 'px'];
     }
 
     /**
@@ -224,11 +172,7 @@ class ColumnsResizer {
         const diff = e.pageX - (this.dragStartX || 0);
         const vp = this.viewport;
 
-        if (vp.columnDistribution === 'full') {
-            this.fullDistributionResize(diff);
-        } else {
-            this.fixedDistributionResize(diff);
-        }
+        this.resize(diff);
 
         vp.reflow(true);
 
@@ -254,7 +198,6 @@ class ColumnsResizer {
         this.draggedColumn = void 0;
         this.draggedResizeHandle = void 0;
         this.columnStartWidth = void 0;
-        this.nextColumnStartWidth = void 0;
     };
 
     /**
@@ -285,9 +228,7 @@ class ColumnsResizer {
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
             this.draggedResizeHandle = handle;
-            this.columnStartWidth = column.getWidth();
-            this.nextColumnStartWidth =
-                vp.columns[column.index + 1]?.getWidth();
+            this.columnStartWidth = column.getPixelWidth();
 
             column.header?.htmlElement.classList.add(
                 Globals.getClassName('resizedColumn')
@@ -321,7 +262,7 @@ class ColumnsResizer {
      * @returns
      * The minimum width in pixels.
      */
-    private static getMinWidth(column: Column): number {
+    public static getMinWidth(column: Column): number {
         const tableColumnEl = column.cells[1].htmlElement;
         const headerColumnEl = column.header?.htmlElement;
 

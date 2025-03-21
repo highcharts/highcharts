@@ -546,6 +546,17 @@ class Grid {
             this.initVirtualization();
         }
 
+        if (options.columns) {
+            // TODO: Optimize this
+            options.columns.forEach((colOpt) => {
+                if (colOpt.width) {
+                    delete this.viewport?.columns.find(
+                        (col) => col.id === colOpt.id
+                    )?.width;
+                }
+            });
+        }
+
         this.querying.loadOptions();
 
         if (render) {
