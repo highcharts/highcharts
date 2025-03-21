@@ -16,8 +16,8 @@ Let's dive right in with a bare minimum example of a fully functional Grid:
   <head>
     <meta charset="utf-8" />
     <title>My First Grid</title>
-    <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
-    <link rel="stylesheet" href="https://code.highcharts.com/grid/css/grid.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
     <script type="text/javascript">
       Grid.grid("container", {
         dataTable: {
@@ -39,8 +39,8 @@ Let's dive right in with a bare minimum example of a fully functional Grid:
 ### 1. Import required JS and CSS
 
 ```html
-<script src="https://code.highcharts.com/grid/grid-lite.js"></script>
-<link rel="stylesheet" href="https://code.highcharts.com/grid/css/grid.css" />
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
 ```
 
 Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/grid/installation) provides more information and other installation options.
