@@ -105,6 +105,9 @@ const NVIDIAPriceConnector =
                 };
             }
         },
+        navigation: {
+            iconsURL: 'renderer'
+        },
         series: [{
             type: 'candlestick',
             id: 'nvidia-candlestick',
