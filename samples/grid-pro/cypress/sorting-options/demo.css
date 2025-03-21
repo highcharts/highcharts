@@ -1,0 +1,14 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#demo {
+    padding: 8px;
+    background-color: var(--hcg-background);
+}
+
+#container {
+    height: 250px;
+}
+
+#custom-options {
+    margin-top: 5px;
+}

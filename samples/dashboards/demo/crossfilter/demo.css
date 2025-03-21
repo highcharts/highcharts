@@ -6,6 +6,10 @@ h2 {
     text-align: center;
 }
 
+.highcharts-datagrid-container {
+    height: 300px;
+}
+
 .navigator-container .highcharts-series-0,
 #csv {
     display: none;

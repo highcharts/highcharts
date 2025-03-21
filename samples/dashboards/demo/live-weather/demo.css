@@ -289,26 +289,11 @@
     text-align: center;
 }
 
-#forecast-grid .highcharts-dashboards-component {
-    background-color: var(--color-background);
-}
-
-#forecast-grid .highcharts-datagrid-table thead {
-    font-size: 0.7em;
-}
-
-#forecast-grid .highcharts-datagrid-hovered-row {
-    background-color: var(--color-hover-background);
-    color: var(--color-hover-text);
-}
-
-#forecast-grid .highcharts-datagrid-hovered-column {
-    background: none;
-}
-
-#forecast-grid .highcharts-datagrid-row td {
-    font-size: 0.8em;
-    padding: 0 10px;
+.hcg-theme-default {
+    --hcg-font-size: 0.95em;
+    --hcg-padding: 8px 10px;
+    --hcg-header-padding: 15px;
+    --hcg-cell-hovered-row-background: var(--color-hover-background);
 }
 
 /**

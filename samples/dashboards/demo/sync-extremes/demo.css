@@ -6,6 +6,10 @@
     fill: #f0f0f0;
 }
 
+.highcharts-datagrid-container {
+    height: 200px;
+}
+
 #dashboard-col-2 .highcharts-line-series path {
     stroke-width: 0;
 }

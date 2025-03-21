@@ -1,0 +1,8 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+
+#container {
+    background-color: var(--hcg-background);
+    color: var(--hcg-color);
+    padding: 8px;
+    height: 100px;
+}

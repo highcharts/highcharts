@@ -200,3 +200,4 @@ indexmundi
 Dataviz
 KIIDs
 SFDR
+Segoe

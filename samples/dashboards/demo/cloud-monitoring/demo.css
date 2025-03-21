@@ -100,10 +100,6 @@ body {
     text-align: center;
 }
 
-#instances-table .highcharts-datagrid-row {
-    height: 50px;
-}
-
 #instances-table .highcharts-datagrid-row img {
     margin-top: 5px;
     width: 30px;
@@ -112,10 +108,6 @@ body {
 
 #instances-table .highcharts-datagrid-table th {
     height: 35px;
-}
-
-#instances-table .highcharts-datagrid-hovered-column {
-    background: none;
 }
 
 #instances-table .highcharts-datagrid-table {

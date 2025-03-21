@@ -62,6 +62,13 @@
     font-weight: bold;
 }
 
+/* Grid theme */
+
+.hcg-custom-theme {
+    --hcg-padding: 10px;
+    --hcg-row-border-width: 1px;
+}
+
 /* Components specific */
 #dashboard-row-1-cell-2 .highcharts-dashboards-component-subtitle {
     color: var(--highcharts-dashboards-orange);
@@ -84,39 +91,6 @@
 #dashboard-row-3-cell-1 .highcharts-color-0 {
     stroke: var(--highcharts-dashboards-orange);
     fill: var(--highcharts-dashboards-orange);
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-container {
-    border: none;
-    font-weight: 100;
-}
-
-.highcharts-datagrid-container table {
-    border: 0;
-}
-
-.highcharts-datagrid-container tbody {
-    background-color: var(--highcharts-neutral-color-0);
-}
-
-.highcharts-datagrid-container {
-    background-color: transparent;
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-table th {
-    background-color: var(--highcharts-neutral-color-0);
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-row {
-    background-color: var(--highcharts-neutral-color-0);
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-hovered-column {
-    background: none;
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-hovered-row td {
-    background: var(--highcharts-dashboards-green-transparent);
 }
 
 /* Custom classes and ids */
