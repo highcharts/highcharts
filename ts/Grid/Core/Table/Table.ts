@@ -210,10 +210,7 @@ class Table {
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
 
-        if (this.virtualRows) {
-            // For now, scroll event is only needed for virtualization.
-            this.tbodyElement.addEventListener('scroll', this.onScroll);
-        }
+        this.tbodyElement.addEventListener('scroll', this.onScroll);
 
         if (this.scrollable) {
             tableElement.classList.add(
@@ -372,7 +369,10 @@ class Table {
      * Handles the scroll event.
      */
     private onScroll = (): void => {
-        this.rowsVirtualizer.scroll();
+        if (this.virtualRows) {
+            this.rowsVirtualizer.scroll();
+        }
+
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
     };
 
@@ -438,9 +438,7 @@ class Table {
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
-        if (this.grid.options?.rendering?.rows?.virtualization) {
-            this.tbodyElement.removeEventListener('scroll', this.onScroll);
-        }
+        this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
 
