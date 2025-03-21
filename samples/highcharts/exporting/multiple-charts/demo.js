@@ -7,7 +7,7 @@ Highcharts.getSVG = function (charts) {
     let width = 0;
 
     const groups = charts.map(chart => {
-        let svg = chart.getSVG();
+        let svg = chart.exporting.getSVG();
         // Get width/height of SVG for export
         const svgWidth = +svg.match(
             /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/

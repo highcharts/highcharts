@@ -119,5 +119,5 @@ QUnit.skip('Exported chart sourceWidth and sourceHeight', function (assert) {
         });
     };
 
-    chart.exportChart();
+    chart.exporting.exportChart();
 });

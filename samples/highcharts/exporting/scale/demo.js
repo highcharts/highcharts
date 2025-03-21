@@ -30,7 +30,7 @@ const chart = Highcharts.chart('container', {
 
 document.querySelectorAll('button.export').forEach(button =>
     button.addEventListener('click', e =>
-        chart.exportChart({
+        chart.exporting.exportChart({
             scale: e.target.dataset.scale
         })
     )

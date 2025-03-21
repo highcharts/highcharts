@@ -67,7 +67,7 @@ QUnit.test('Exported SVG characteristics', function (assert) {
         };
 
         // Run export width override options
-        chart.exportChart({
+        chart.exporting.exportChart({
             type: 'application/pdf'
         }, {
             chart: {
@@ -94,7 +94,7 @@ QUnit.test('Exported SVG characteristics', function (assert) {
 
         // Test overrides for min and max (#7873)
         chart.xAxis[0].setExtremes(1, 5);
-        chart.exportChart({
+        chart.exporting.exportChart({
             type: 'application/pdf'
         });
         assert.notEqual(
@@ -108,7 +108,7 @@ QUnit.test('Exported SVG characteristics', function (assert) {
             'No overrides, August should be outside bounds'
         );
 
-        chart.exportChart({
+        chart.exporting.exportChart({
             type: 'application/pdf'
         }, {
             xAxis: {

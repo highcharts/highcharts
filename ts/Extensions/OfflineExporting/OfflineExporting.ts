@@ -103,6 +103,7 @@ namespace OfflineExporting {
      * @param {ExportingClass} ExportingClass
      * Exporting class.
      *
+     * @requires modules/exporting
      * @requires modules/offline-exporting
      */
     export function compose(
@@ -160,6 +161,7 @@ namespace OfflineExporting {
      * @param {Function} [successCallback]
      * The callback function in case of success.
      *
+     * @requires modules/exporting
      * @requires modules/offline-exporting
      */
     export function downloadSVGLocal(
@@ -358,7 +360,7 @@ namespace OfflineExporting {
             const svgNode = dummySVGContainer.querySelector('svg');
             if (svgNode) {
                 loadPdfFonts(svgNode, (): void => {
-                    OfflineExporting.svgToPdf(
+                    svgToPdf(
                         svgNode,
                         0,
                         scale,
@@ -433,9 +435,10 @@ namespace OfflineExporting {
      * @param {Function} callback
      * Callback function to call when the PDF is created.
      *
+     * @requires modules/exporting
      * @requires modules/offline-exporting
      */
-    export function svgToPdf(
+    function svgToPdf(
         svgElement: SVGElement,
         margin: number,
         scale: number,

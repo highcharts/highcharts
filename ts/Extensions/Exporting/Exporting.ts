@@ -67,7 +67,6 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-const { post } = HU;
 import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -1628,7 +1627,7 @@ class Exporting {
             // Do the post
             if (exportingOptions.url) {
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                post(exportingOptions.url, {
+                HU.post(exportingOptions.url, {
                     filename: exportingOptions.filename ?
                         exportingOptions.filename.replace(/\//g, '-') :
                         this.getFilename(),
@@ -1870,14 +1869,14 @@ class Exporting {
         // Use userOptions to make the options chain in series right (#3881)
         options.plotOptions = merge(
             chart.userOptions.plotOptions,
-            chartOptions && chartOptions.plotOptions
+            chartOptions?.plotOptions
         );
 
         // ... and likewise with time, avoid that undefined time properties are
         // merged over legacy global time options
         options.time = merge(
             chart.userOptions.time,
-            chartOptions && chartOptions.time
+            chartOptions?.time
         );
 
         // Create a sandbox where a new chart will be generated
@@ -2339,6 +2338,8 @@ class Exporting {
      * The exporting options to update with.
      * @param {boolean} [redraw=true]
      * Whether to redraw or not.
+     *
+     * @requires modules/exporting
      */
     public update(
         exportingOptions: ExportingOptions,

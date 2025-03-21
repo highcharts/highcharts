@@ -60,7 +60,7 @@ QUnit.test('Export buttons', function (assert) {
                             {
                                 text: 'Export to PNG (small)',
                                 onclick: function () {
-                                    this.exportChart({
+                                    this.exporting.exportChart({
                                         width: 250
                                     });
                                 }
@@ -68,7 +68,7 @@ QUnit.test('Export buttons', function (assert) {
                             {
                                 text: 'Export to PNG (large)',
                                 onclick: function () {
-                                    this.exportChart();
+                                    this.exporting.exportChart();
                                 },
                                 separator: false
                             }
@@ -112,7 +112,7 @@ QUnit.test('Export buttons', function (assert) {
                 contextButton: {
                     menuItems: null,
                     onclick: function () {
-                        this.exportChart({
+                        this.exporting.exportChart({
                             type: 'application/pdf'
                         });
                     }
@@ -182,7 +182,7 @@ QUnit.test('View/hide data table button, #14338.', function (assert) {
     // Click on the export menu to trigger list creation.
     controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
-    chart.exporting?.toggleDataTable();
+    chart.exporting.toggleDataTable();
     assert.strictEqual(
         chart.exporting.divElements[0].innerText,
         'Hide data table',
@@ -190,7 +190,7 @@ QUnit.test('View/hide data table button, #14338.', function (assert) {
         'be hidden.'
     );
 
-    chart.exporting?.toggleDataTable();
+    chart.exporting.toggleDataTable();
     assert.strictEqual(
         chart.exporting.divElements[0].innerText,
         'View data table',
@@ -233,7 +233,7 @@ QUnit.test(
             'can be hidden.'
         );
 
-        chart.exporting?.toggleDataTable();
+        chart.exporting.toggleDataTable();
         assert.strictEqual(
             chart.exporting.divElements[0].innerText,
             'View data table',

@@ -26,7 +26,7 @@ const chart = Highcharts.chart('container', {
 
 // the button handler
 document.getElementById('button').addEventListener('click', () => {
-    chart.exportChart({
+    chart.exporting.exportChart({
         type: 'application/pdf',
         filename: 'my-pdf'
     });

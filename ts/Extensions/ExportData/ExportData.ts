@@ -235,6 +235,7 @@ namespace ExportData {
      * @param {SeriesClass} SeriesClass
      * Series class.
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     export function compose(
@@ -375,6 +376,7 @@ namespace ExportData {
      *
      * @function Highcharts.Exporting#downloadCSV
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function downloadCSV(
@@ -400,6 +402,7 @@ namespace ExportData {
      *
      * @function Highcharts.Exporting#downloadXLS
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function downloadXLS(
@@ -452,6 +455,7 @@ namespace ExportData {
      * @return {string | undefined}
      * The blob object, or undefined if not supported.
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function getBlobFromContent(
@@ -491,6 +495,7 @@ namespace ExportData {
      * @return {string}
      * CSV representation of the data.
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function getCSV(
@@ -565,6 +570,7 @@ namespace ExportData {
      *
      * @emits Highcharts.Chart#event:exportData
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function getDataRows(
@@ -971,6 +977,7 @@ namespace ExportData {
      *
      * @emits Highcharts.Chart#event:afterGetTable
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function getTable(
@@ -1024,6 +1031,7 @@ namespace ExportData {
      * @return {Highcharts.ASTNode}
      * The abstract syntax tree
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function getTableAST(
@@ -1271,6 +1279,7 @@ namespace ExportData {
      *
      * @function Highcharts.Exporting#hideData
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function hideData(
@@ -1288,6 +1297,7 @@ namespace ExportData {
      * @param {boolean} [show]
      * Whether to show data table or not.
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function toggleDataTable(
@@ -1368,6 +1378,7 @@ namespace ExportData {
      *
      * @emits Highcharts.Chart#event:afterViewData
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function viewData(
@@ -1382,6 +1393,7 @@ namespace ExportData {
      *
      * @private
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function wrapLoading(
@@ -1414,6 +1426,7 @@ namespace ExportData {
      * @private
      * @function Highcharts.Chart#onChartAfterViewData
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function onChartAfterViewData(
@@ -1491,13 +1504,14 @@ namespace ExportData {
      * @private
      * @function Highcharts.Chart#onChartRenderer
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function onChartRenderer(
         this: Chart
     ): void {
         if (
-            this.options.exporting?.showTable &&
+            this.options?.exporting?.showTable &&
             !this.options.chart.forExport
         ) {
             this.exporting?.viewData();
@@ -1511,6 +1525,7 @@ namespace ExportData {
      * @private
      * @function Highcharts.Chart#onChartDestroy
      *
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     function onChartDestroy(
