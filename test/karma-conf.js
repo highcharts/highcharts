@@ -241,8 +241,9 @@ module.exports = function (config) {
                 'cd "' + process.cwd() + '" && npx tsc -p samples'
             );
         } catch (catchedError) {
-            console.error(catchedError);
-            return;
+            const msg = catchedError.stdout.toString();
+            console.error(msg);
+            throw new Error(msg);
         }
     }
 

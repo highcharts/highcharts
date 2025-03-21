@@ -4,6 +4,7 @@
 
 /* eslint no-use-before-define: 0 */
 
+const Babel = require('@babel/core');
 const Gulp = require('gulp');
 const Path = require('path');
 const { readFileSync } = require('node:fs');
@@ -160,7 +161,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
         let path;
 
         const content = [
-            'html', 'css', 'js'
+            'html', 'css', 'js', 'ts'
         ].reduce(
             (obj, ext) => {
                 path = Path.join(directoryPath, 'demo.' + ext);
@@ -173,6 +174,13 @@ async function createExamples(title, sourcePath, targetPath, template) {
             },
             { title }
         );
+
+        if (content.ts) {
+            content.js = Babel.transformSync(content.ts, {
+                presets: ['@babel/preset-typescript'],
+                filename: Path.join(directoryPath, 'demo.ts')
+            }).code;
+        }
 
         const sample = assembleSample(template, content);
 

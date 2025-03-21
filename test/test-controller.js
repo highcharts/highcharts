@@ -171,22 +171,21 @@ var TestController = /** @class */ (function () {
         Object.keys(extra).forEach(function (key) {
             evt[key] = extra[key];
         });
-
         // Extend each touch with pageX and pageY after chart offset corrections
         if (evt.touches) {
-            const twoFingers = evt.touches.length === 2;
-            evt.touches.forEach((touch, i) => {
-                if (twoFingers) {
-                    const sign = i ? 1 : -1;
+            var twoFingers_1 = evt.touches.length === 2;
+            evt.touches.forEach(function (touch, i) {
+                if (twoFingers_1) {
+                    var sign = i ? 1 : -1;
                     touch.pageX += 11 * sign;
                     touch.pageY += 11 * sign;
-                } else {
+                }
+                else {
                     touch.pageX = extra.pageX;
                     touch.pageY = extra.pageY;
                 }
             });
         }
-
         return evt;
     };
     /**
