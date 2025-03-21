@@ -1341,7 +1341,7 @@ class Chart {
                         },
                         descOptions
                     ),
-                    width = descOptions.width || (
+                    width = (descOptions.width || (
                         (
                             uncappedScale > minScale ?
                                 // One line
@@ -1349,7 +1349,7 @@ class Chart {
                                 // Allow word wrap
                                 alignTo.width
                         ) / scale
-                    );
+                    )) + 'px';
 
                 // No animation when switching alignment
                 if (desc.alignValue !== alignAttr.align) {
@@ -1358,7 +1358,7 @@ class Chart {
                 // Set the width and read the height
                 const height = Math.round(
                     desc
-                        .css({ width: `${width}px` })
+                        .css({ width })
                         // Skip the cache for HTML (#3481, #11666)
                         .getBBox(descOptions.useHTML).height
                 );

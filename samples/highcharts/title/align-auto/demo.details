@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Title auto alignment
  authors:
    - Torstein Hønsi
  js_wrap: b

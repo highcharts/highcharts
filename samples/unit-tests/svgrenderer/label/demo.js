@@ -17,28 +17,32 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
 
     label.hide();
     assert.strictEqual(
-        label.div.style.visibility,
+        window.getComputedStyle(label.div || label.element)
+            .visibility,
         'hidden',
         'Visibility is hidden'
     );
 
     label.show();
     assert.strictEqual(
-        label.div.style.visibility,
-        'inherit',
-        'Visibility is inherit'
+        window.getComputedStyle(label.div || label.element)
+            .visibility,
+        'visible',
+        'Computed style should be visible'
     );
 
     label.hide();
     assert.strictEqual(
-        label.div.style.visibility,
+        window.getComputedStyle(label.div || label.element)
+            .visibility,
         'hidden',
         'Visibility is hidden'
     );
 
     label.show(false);
     assert.strictEqual(
-        label.div.style.visibility,
+        window.getComputedStyle(label.div || label.element)
+            .visibility,
         'visible',
         'Visibility is visible'
     );
@@ -518,7 +522,10 @@ QUnit.test('Labels with useHTML', assert => {
     ren.label('Foo', 0, 0, void 0, 0, 0, true).add(g);
 
     assert.strictEqual(
-        g.div.style.visibility,
+        // Parallel HTML
+        g.div?.style.visibility ||
+        // Foreign object
+        g.visibility,
         'hidden',
         'Visibility should be set on parent group div'
     );
