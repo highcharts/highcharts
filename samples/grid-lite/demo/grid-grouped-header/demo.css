@@ -1,11 +1,42 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
 
 #container {
-    height: 408px;
-    padding: 8px;
-    background-color: var(--hcg-background);
+  height: 408px;
+  padding: 20px;
 }
 
 .highcharts-description {
-    padding: 0 20px;
+  padding: 0 20px;
+}
+
+.my-theme {
+  --hcg-padding: 15px;
+  --hcg-font-size: 14px;
+  --hcg-border-color: #e5e5e5;
+  --hcg-header-color: #ffffff;
+  --hcg-header-background: #6c7ae0;
+  --hcg-header-column-border-width: 1px;
+  --hcg-header-vertical-padding: 10px;
+  --hcg-header-hovered-background: #7b88e3;
+  --hcg-row-border-width: 1px;
+  --hcg-cell-hovered-column-background: #fcebf5;
+  --hcg-cell-hovered-row-background: #fcebf5;
+  --hcg-cell-hovered-background: #e03e9c;
+  --hcg-cell-hovered-header-background: #7b88e3;
+  --hcg-cell-hovered-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  #container {
+    background: #333333;
+  }
+
+  .my-theme {
+    --hcg-border-color: #646a9e;
+    --hcg-header-background: #343a6c;
+    --hcg-cell-hovered-column-background: #3d3d3d;
+    --hcg-cell-hovered-row-background: #3d3d3d;
+    --hcg-cell-hovered-background: #841857;
+    --hcg-cell-hovered-header-background: #4b5297;
+  }
 }
