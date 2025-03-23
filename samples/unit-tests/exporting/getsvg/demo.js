@@ -95,13 +95,13 @@ QUnit.test('getSVG', function (assert) {
     output = document.getElementById('output');
     output.innerHTML = svg;
 
-    // assert.strictEqual(
-    //     output.querySelector(
-    //         '.highcharts-legend .highcharts-series-0 text'
-    //     ).textContent,
-    //     'New Series Name',
-    //     'No reference, series name ok'
-    // );
+    assert.strictEqual(
+        output.querySelector(
+            '.highcharts-legend .highcharts-series-0 text'
+        ).textContent,
+        'New Series Name',
+        'No reference, series name ok'
+    );
 
     svg = chart.exporting.getSVG({
         series: [
@@ -115,13 +115,13 @@ QUnit.test('getSVG', function (assert) {
     output = document.getElementById('output');
     output.innerHTML = svg;
 
-    // assert.strictEqual(
-    //     output.querySelector(
-    //         '.highcharts-legend .highcharts-series-1 text'
-    //     ).textContent,
-    //     'Second Series Name',
-    //     'Reference by id, series name ok'
-    // );
+    assert.strictEqual(
+        output.querySelector(
+            '.highcharts-legend .highcharts-series-1 text'
+        ).textContent,
+        'Second Series Name',
+        'Reference by id, series name ok'
+    );
 
     // #14954
     const remove = Element.prototype.remove;

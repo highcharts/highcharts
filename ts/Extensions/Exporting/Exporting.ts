@@ -1972,9 +1972,9 @@ class Exporting {
             (['xAxis', 'yAxis', 'series'] as Array<CollType>).forEach(
                 function (coll: CollType): void {
                     if (chartOptions[coll]) {
-                        chartCopy.update(
-                            chartOptions[coll] as Partial<Options>
-                        );
+                        chartCopy.update({
+                            [coll]: chartOptions[coll]
+                        } as Partial<Options>);
                     }
                 }
             );
