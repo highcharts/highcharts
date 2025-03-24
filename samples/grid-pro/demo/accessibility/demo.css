@@ -53,3 +53,7 @@
 .last {
     margin: 8px 0 0;
 }
+
+.highcharts-description {
+    padding: 0 20px;
+}
