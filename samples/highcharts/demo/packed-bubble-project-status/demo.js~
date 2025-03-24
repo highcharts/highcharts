@@ -10,7 +10,6 @@ Highcharts.chart('container', {
         text: 'Currently planned work for team'
     },
     tooltip: {
-        useHTML: true,
         pointFormat: '<b>{point.name}:</b> {point.value}'
     },
     plotOptions: {

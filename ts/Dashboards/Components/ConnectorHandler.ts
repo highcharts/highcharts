@@ -301,6 +301,8 @@ class ConnectorHandler {
 
             // Start the connector polling.
             if (
+                'enablePolling' in options &&
+                options.enablePolling &&
                 !connector.polling &&
                 connector.components.length === 1 &&
                 'dataRefreshRate' in options
