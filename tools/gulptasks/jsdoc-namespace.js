@@ -80,9 +80,13 @@ async function jsDocNamespace() {
             ))
     );
 
-    if (codeFiles.includes('code/highcharts.src.js')) {
+    // Make sure highcharts.src.js is first.
+    const highchartsIndex = codeFiles.indexOf(
+        path.normalize('code/highcharts.src.js')
+    );
+    if (highchartsIndex > -1) {
         codeFiles.unshift(
-            ...codeFiles.splice(codeFiles.indexOf('code/highcharts.src.js'), 1)
+            ...codeFiles.splice(highchartsIndex, 1)
         );
     }
 

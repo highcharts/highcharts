@@ -96,7 +96,7 @@ function createTreeJson(
             ]
         };
 
-        log.success('Generating', TREE_FILE + '...');
+        log.message('Generating', TREE_FILE + '...');
 
         gulp
             .src(globs, { read: false })
