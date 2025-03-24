@@ -297,21 +297,21 @@ class Exporting {
         failCallback: Function,
         successCallback?: Function
     ): void {
-        const imageType = exportingOptions.type || 'image/png',
+        const imageType = exportingOptions?.type || 'image/png',
             filename = (
-                (exportingOptions.filename || 'chart') +
+                (exportingOptions?.filename || 'chart') +
                 '.' +
                 (
                     imageType === 'image/svg+xml' ?
                         'svg' : imageType.split('/')[1]
                 )
             ),
-            scale = exportingOptions.scale || 1;
+            scale = exportingOptions?.scale || 1;
         let svgurl: string,
             blob,
             finallyHandler: Function,
             libURL = (
-                exportingOptions.libURL ||
+                exportingOptions?.libURL ||
                 defaultOptions.exporting?.libURL
             ),
             objectURLRevoke = true;
@@ -1600,10 +1600,10 @@ class Exporting {
      *
      * @function Highcharts.Exporting#exportChart
      *
-     * @param {Highcharts.ExportingOptions} exportingOptions
+     * @param {Highcharts.ExportingOptions} [exportingOptions]
      * Exporting options in addition to those defined in
      * [exporting](https://api.highcharts.com/highcharts/exporting).
-     * @param {Highcharts.Options} chartOptions
+     * @param {Highcharts.Options} [chartOptions]
      * Additional chart options for the exported chart. For example a
      * different background color can be added here, or `dataLabels` for
      * export only.
@@ -2443,6 +2443,9 @@ namespace Exporting {
     ): void {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
+
+        // Add the Exporting version of the downloadSVGLocal to globals
+        (G as AnyRecord).downloadSVGLocal = Exporting.downloadSVGLocal;
 
         // Check the composition registry for the Exporting
         if (!pushUnique(composed, 'Exporting')) {

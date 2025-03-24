@@ -23,8 +23,6 @@ G.Exporting = Exporting;
 // Compatibility
 G.HttpUtilities = G.HttpUtilities || HttpUtilities;
 G.ajax = G.HttpUtilities.ajax;
-/// TO DO: Correct - for now it can export only png, jpeg, svg
-G.downloadSVGLocal = Exporting.downloadSVGLocal;
 G.getJSON = G.HttpUtilities.getJSON;
 G.post = G.HttpUtilities.post;
 

@@ -109,6 +109,23 @@ namespace OfflineExporting {
     export function compose(
         ExportingClass: typeof Exporting
     ): void {
+        // Add the OfflineExporting version of the downloadSVGLocal to globals
+        (G as AnyRecord).downloadSVGLocal = function downloadSVGLocal(
+            svg: string,
+            exportingOptions: ExportingOptions,
+            failCallback: Function,
+            successCallback?: Function
+        ): void {
+            return (exportingOptions?.type === 'application/pdf' ?
+                OfflineExporting.downloadSVGLocal :
+                (G as AnyRecord).Exporting.downloadSVGLocal)(
+                svg,
+                exportingOptions,
+                failCallback,
+                successCallback
+            );
+        };
+
         // Check the composition registry for the OfflineExporting
         if (!pushUnique(composed, 'OfflineExporting')) {
             return;
@@ -154,7 +171,7 @@ namespace OfflineExporting {
      *
      * @param {string} svg
      * The generated SVG.
-     * @param {Highcharts.ExportingOptions} options
+     * @param {Highcharts.ExportingOptions} exportingOptions
      * The exporting options.
      * @param {Function} failCallback
      * The callback function in case of errors.
@@ -166,25 +183,25 @@ namespace OfflineExporting {
      */
     export function downloadSVGLocal(
         svg: string,
-        options: ExportingOptions,
+        exportingOptions: ExportingOptions,
         failCallback: Function,
         successCallback?: Function
     ): void {
         const dummySVGContainer = doc.createElement('div'),
-            imageType = options.type || 'image/png',
+            imageType = exportingOptions?.type || 'image/png',
             filename = (
-                (options.filename || 'chart') +
+                (exportingOptions?.filename || 'chart') +
                 '.' +
                 (
                     imageType === 'image/svg+xml' ?
                         'svg' : imageType.split('/')[1]
                 )
             ),
-            scale = options.scale || 1;
+            scale = exportingOptions?.scale || 1;
         let libURL = (
-                options.libURL || defaultOptions.exporting?.libURL
+                exportingOptions?.libURL || defaultOptions.exporting?.libURL
             ),
-            pdfFont = options.pdfFont;
+            pdfFont = exportingOptions?.pdfFont;
 
         // Allow libURL to end with or without fordward slash
         libURL = libURL?.slice(-1) !== '/' ? libURL + '/' : libURL;
