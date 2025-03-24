@@ -1,5 +1,5 @@
 ---
- name: Grid Accessibility Demo
+ name: Grid Accessibility
  authors:
    - Dawid Dragula
  js_wrap: b
@@ -7,5 +7,6 @@
   - Highcharts Grid demo
  categories:
   - General:
-        priority: 20
+        priority: 80
+use_png_thumbnail: true
 ...

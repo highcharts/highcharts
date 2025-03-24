@@ -7,6 +7,6 @@ tags:
   - Highcharts Grid demo
 categories:
   - General:
-        priority: 130
+        priority: 60
 use_png_thumbnail: true
 ...
