@@ -205,6 +205,7 @@ const exporting: ExportingOptions = {
      * @since     5.0.0
      * @apioption exporting.libURL
      */
+    libURL: 'https://code.highcharts.com/@product.version@/lib/',
 
     /**
      * Analogous to [sourceWidth](#exporting.sourceWidth).

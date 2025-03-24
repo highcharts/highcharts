@@ -62,10 +62,12 @@ QUnit.test('Testing exportChart', function (assert) {
         };
 
         // Run export
-        chart.exportChart();
+        chart.exportChart({
+            type: 'application/pdf'
+        });
 
         // Assert
-        assert.strictEqual(postData.type, 'image/png', 'Posting for PNG');
+        assert.strictEqual(postData.type, 'application/pdf', 'Posting for PNG');
 
         assert.strictEqual(
             postData.filename,

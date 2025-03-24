@@ -56,8 +56,10 @@ QUnit.test('Test type option with exportChart', function (assert) {
         };
 
         // Run export
-        chart.exportChart();
-        assert.strictEqual(postData.type, 'image/jpeg', 'Posting for JPG');
+        chart.exportChart({
+            type: 'application/pdf'
+        });
+        assert.strictEqual(postData.type, 'application/pdf', 'Posting for JPG');
     } finally {
         Highcharts.HttpUtilities.post = originalPost;
     }

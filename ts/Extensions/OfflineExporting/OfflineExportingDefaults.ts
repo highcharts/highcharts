@@ -26,33 +26,9 @@ import type Chart from '../../Core/Chart/Chart';
  * */
 
 const OfflineExportingDefaults: ExportingOptions = {
-    libURL: 'https://code.highcharts.com/@product.version@/lib/',
-
     // When offline-exporting is loaded, redefine the menu item definitions
-    // related to download.
+    // related to download (adding local PDF export)
     menuItemDefinitions: {
-        downloadPNG: {
-            textKey: 'downloadPNG',
-            onclick: function (this: Chart): void {
-                this.exportChartLocal();
-            }
-        },
-        downloadJPEG: {
-            textKey: 'downloadJPEG',
-            onclick: function (this: Chart): void {
-                this.exportChartLocal({
-                    type: 'image/jpeg'
-                });
-            }
-        },
-        downloadSVG: {
-            textKey: 'downloadSVG',
-            onclick: function (this: Chart): void {
-                this.exportChartLocal({
-                    type: 'image/svg+xml'
-                });
-            }
-        },
         downloadPDF: {
             textKey: 'downloadPDF',
             onclick: function (this: Chart): void {
@@ -61,7 +37,6 @@ const OfflineExportingDefaults: ExportingOptions = {
                 });
             }
         }
-
     }
 };
 
