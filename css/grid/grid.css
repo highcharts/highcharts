@@ -15,8 +15,6 @@
     --ig-neutral-default-background: #d1d1d1;
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #e0ebe0;
-    --ig-credits-light-logo-display: block;
-    --ig-credits-dark-logo-display: none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,8 +26,6 @@
         --ig-neutral-default-background: #636363;
         --ig-positive-default-border-color: #008000;
         --ig-positive-default-background: #265a26;
-        --ig-credits-light-logo-display: none;
-        --ig-credits-dark-logo-display: block;
     }
 }
 
@@ -142,8 +138,7 @@
     --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) 0 var(--ig-credits-horizontal-padding);
 
     /* Loading indicator */
-    --ig-loading-wrapper-background: var(--hcg-loading-wrapper-background, var(--ig-neutral-default-background));
-    --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
+    --ig-loader-color: var(--hcg-loader-color, var(--ig-color));
 
     /* Default backgrounds and colors */
     --ig-background: var(--hcg-background, transparent);
@@ -292,11 +287,11 @@
     height: 100%;
     overflow: hidden;
     box-sizing: border-box;
+    font: var(--ig-font);
 }
 
 .hcg-container * {
     box-sizing: border-box;
-    font: var(--ig-font);
 }
 
 .hcg-column {
@@ -791,26 +786,15 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: var(--idg-loading-wrapper-background);
-    opacity: 0.5;
     gap: 10px;
-}
-
-.hcg-loading-wrapper .hcg-loading-message {
-    color: var(--hcg-color);
-}
-
-.hcg-container:has(.hcg-loading-wrapper) .hcg-no-data,
-.hcg-container:has(.hcg-loading-wrapper) .hcg-credits-container {
-    opacity: 0;
+    color: var(--ig-loader-color);
 }
 
 .hcg-loading-wrapper .hcg-spinner {
-    border: var(--idg-loading-wrapper-border-size) solid var(--hcg-loader-color);
-    border-top: var(--idg-loading-wrapper-border-size) solid var(--hcg-color);
+    border-top: 5px solid var(--ig-loader-color);
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     animation: spin 1s linear infinite;
 }
 
@@ -920,7 +904,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcg-row-even-background: #fbfbfb;
     --hcg-cell-hovered-row-background: #f3f6fe;
     --hcg-caption-font-size: 18px;
-    --hcg-loader-color: #666666;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -933,7 +916,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         --hcg-header-row-border-color: #525252;
         --hcg-row-even-background: #2e2e2e;
         --hcg-cell-hovered-row-background: #2d2f36;
-        --hcg-loader-color: #adadad;
     }
 }
 
