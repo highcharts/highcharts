@@ -29,64 +29,48 @@ Grid.grid('container', {
         'dessert',
         {
             format: 'Nutritional Info',
-            columns: [
-                {
-                    format: 'Macronutrients',
-                    columns: [
-                        {
-                            columnId: 'calories',
-                            format: 'Calories'
-                        },
-                        {
-                            columnId: 'fat',
-                            format: 'Fat (g)'
-                        },
-                        {
-                            columnId: 'carbs',
-                            format: 'Carbs (g)'
-                        },
-                        {
-                            columnId: 'protein',
-                            format: 'Protein (g)'
-                        }
-                    ]
-                },
-                {
-                    format: 'Other Nutrients',
-                    columns: [
-                        {
-                            columnId: 'fiber',
-                            format: 'Fiber (g)'
-                        },
-                        {
-                            columnId: 'sugar',
-                            format: 'Sugar (g)'
-                        },
-                        {
-                            columnId: 'sodium',
-                            format: 'Sodium (mg)'
-                        }
-                    ]
-                }
-            ]
+            columns: [{
+                format: 'Macronutrients',
+                columns: [{
+                    columnId: 'calories',
+                    format: 'Calories'
+                }, {
+                    columnId: 'fat',
+                    format: 'Fat (g)'
+                }, {
+                    columnId: 'carbs',
+                    format: 'Carbs (g)'
+                }, {
+                    columnId: 'protein',
+                    format: 'Protein (g)'
+                }]
+            }, {
+                format: 'Other Nutrients',
+                columns: [{
+                    columnId: 'fiber',
+                    format: 'Fiber (g)'
+                }, {
+                    columnId: 'sugar',
+                    format: 'Sugar (g)'
+                }, {
+                    columnId: 'sodium',
+                    format: 'Sodium (mg)'
+                }]
+            }]
         },
         {
             format: 'Health Score',
-            columns: [
-                {
-                    columnId: 'healthScore',
-                    format: 'Score'
-                }
-            ]
+            columns: [{
+                columnId: 'healthScore',
+                format: 'Score'
+            }]
         }
     ],
     /* You can also format headers in the columns[] API option if prefered. */
-    columns: [
-        {
-            id: 'dessert',
-            header: {
-                format: 'Dessert (100g serving)'
-            }
+    columns: [{
+        id: 'dessert',
+        header: {
+            format: 'Dessert (100g serving)'
         }
-    ]
+    }]
 });
