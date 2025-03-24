@@ -10,7 +10,7 @@ sidebar_label: "Introduction"
 
 **Highcharts Grid Pro** is part of the **Highcharts Dashboards** package, and can be used either as a standalone component or within a dashboard as a [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate Grid into various web applications for seamless data interaction and management.
 
-**Highcharts Grid Lite** is available for free.
+**Highcharts Grid Lite**  is a free version of Highcharts Grid with a basic feature set.
 
 This section of the documentation focuses on **Highcharts Grid** in general. For specific information on **Highcharts Grid** in a Dashboards context, see the article on [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component).
 
