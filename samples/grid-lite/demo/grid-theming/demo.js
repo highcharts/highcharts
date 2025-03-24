@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-const { merge } = Highcharts;
+const { merge } = Grid;
 
 const config = {
     dataTable: {

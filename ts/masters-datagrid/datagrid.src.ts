@@ -30,6 +30,7 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
+import Utilities from '../Core/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
@@ -97,6 +98,7 @@ declare global {
         HeaderCell: typeof HeaderCell;
         TableCell: typeof TableCell;
         Templating: typeof Templating;
+        merge: typeof Utilities.merge;
     }
     interface Window {
         /**
@@ -136,6 +138,7 @@ G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.setOptions = Defaults.setOptions;
 G.Templating = Templating;
 G.product = 'Grid Pro';
+G.merge = Utilities.merge;
 
 G.Table = G.Table || Table;
 G.Column = G.Column || Column;

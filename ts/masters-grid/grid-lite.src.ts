@@ -31,6 +31,7 @@ import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
+import Utilities from '../Core/Utilities.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -67,6 +68,7 @@ declare global {
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
         Templating: typeof Templating;
+        merge: typeof Utilities.merge;
     }
     interface Window {
         Grid: GridNamespace;
@@ -98,6 +100,7 @@ G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.Templating = Templating;
 G.product = 'Grid Lite';
 G.setOptions = Defaults.setOptions;
+G.merge = Utilities.merge;
 
 G.Table = G.Table || Table;
 
