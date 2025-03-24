@@ -410,7 +410,7 @@ export interface IndividualColumnOptions extends ColumnOptions {
      *
      * It does not use templating.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/demo/custom-class | Custom class}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/custom-class | Custom class}
      *
      * @default undefined
      */

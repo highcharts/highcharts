@@ -158,4 +158,4 @@ Grid.grid('container', {
 
 The final result might look like:
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/custom-class" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid-pro/basic/custom-class" allow="fullscreen"></iframe>

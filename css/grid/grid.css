@@ -277,7 +277,7 @@
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
 }
 
-/* ==== End DataGrid Variables ==== */
+/* ==== End Grid Variables ==== */
 
 /* Grid container */
 .hcg-container {
@@ -922,4 +922,4 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
-/* End DataGrid Default Theme */
+/* End Grid Default Theme */
