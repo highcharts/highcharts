@@ -1,3 +1,7 @@
+---
+sidebar_label: "Variables"
+---
+
 # Theming variables
 
 Highcharts Grid includes a set of predefined CSS variables for theming. By defining global variables, such as `--hcg-font-size`, `--hcg-background`, `--hcg-padding` etc., you establish a baseline style for the entire grid. To customize specific sections, replace the global prefix (`--hcg`) with a section-specific prefix, such as `--hcg-header` or `--hcg-caption`. For example, the global variable `--hcg-padding` becomes `--hcg-header-padding` for headers. If no section-specific variable is defined, the grid defaults to the global value.
