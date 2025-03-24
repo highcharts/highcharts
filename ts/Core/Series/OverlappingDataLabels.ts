@@ -30,6 +30,7 @@ import U from '../Utilities.js';
 
 const {
     addEvent,
+    getAlignFactor,
     fireEvent,
     objectEach,
     pick
@@ -107,24 +108,12 @@ function chartHideOverlappingLabels(
                     y: label.attr('y')
                 },
                 bBox = label.getBBox(),
-                alignValue = label.alignValue || '',
-                width = bBox.width;
+                width = bBox.width,
+                alignOffset = getAlignFactor(label.alignValue) * width;
 
-            let alignOffset = 0;
 
             label.width = width;
             label.height = bBox.height;
-
-            switch (alignValue) {
-                case 'right':
-                    alignOffset = width;
-                    break;
-                case 'center':
-                    alignOffset = (width / 2);
-                    break;
-                default:
-                    break;
-            }
 
             return {
                 x: pos.x + (
