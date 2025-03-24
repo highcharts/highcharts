@@ -3,7 +3,7 @@ Row virtualization is a performance optimization technique used in Grid. Instead
 
 ![Illustration showing virtualization of rows](ill_virtualization.png)
 
-This technique significantly enhances Grid performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive interactions such as sorting rows.
+This technique significantly enhances performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive interactions such as sorting rows.
 
 The row virtualization is enabled by default; however, you can easily disable it using the [`virtualization`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.RowsSettings#virtualization) option.
 Please note that large datasets also impact resizing and sorting performance. Some animations or interactions might not be smooth.
@@ -48,7 +48,7 @@ By default, rows adjust their height to fit all content, which can reduce perfor
 ```
 These options can be used to configure how the table should be rendered.
 
-[`table.className`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.TableSettings#className) is appended to the `<table>` element, and can be used to [style the Grid by CSS](https://www.highcharts.com/docs/grid/style-by-css).
+[`table.className`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.TableSettings#className) is appended to the `<table>` element.
 
 [`header.enabled: false`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.HeaderSettings#enabled) disables all [column headers](https://www.highcharts.com/docs/grid/header) by not rendering the `thead` element.
 
