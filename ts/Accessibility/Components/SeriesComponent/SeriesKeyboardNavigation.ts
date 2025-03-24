@@ -144,12 +144,6 @@ function isSkipPoint(
             .keyboardNavigation
             .seriesNavigation
             .skipNullPoints;
-    /*
-    If (point.isNull) {
-        if (defined(skipNullPoints)) {
-            return skipNullPoints;
-        }
-    }*/
 
     return skipNullPoints ?? (!(!point.isNull || nullInteraction) &&
         point.visible === false ||
