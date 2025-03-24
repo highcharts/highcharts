@@ -2,8 +2,14 @@ Grid.grid('container', {
     dataTable: {
         columns: {
             dessert: [
-                'Fruit Salad', 'Rice Pudding', 'Custard', 'Bread Pudding',
-                'Ice Cream', 'Cheesecake', 'Brownie', 'Chocolate Mousse'
+                'Fruit Salad',
+                'Rice Pudding',
+                'Custard',
+                'Bread Pudding',
+                'Ice Cream',
+                'Cheesecake',
+                'Brownie',
+                'Chocolate Mousse'
             ],
             calories: [50, 118, 122, 153, 207, 321, 260, 250],
             fat: [0.3, 2.0, 3.5, 4.0, 11.0, 23.0, 14.0, 16.0],
@@ -13,8 +19,14 @@ Grid.grid('container', {
             sugar: [10, 10, 15, 18, 14, 22, 19, 16],
             sodium: [5, 55, 47, 105, 90, 270, 140, 60],
             healthScore: [
-                'healthy', 'moderate', 'unhealthy', 'unhealthy', 'moderate',
-                'healthy', 'moderate', 'healthy'
+                'healthy',
+                'moderate',
+                'unhealthy',
+                'unhealthy',
+                'moderate',
+                'healthy',
+                'moderate',
+                'healthy'
             ]
         }
     },
