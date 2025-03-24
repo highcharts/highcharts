@@ -1,4 +1,8 @@
-# Grid with Vue
+---
+sidebar_label: "Vue"
+---
+
+# Highcharts Grid with Vue
 To create a Grid with Vue, please follow the steps below:
 
 ## 1. Install the Grid package
