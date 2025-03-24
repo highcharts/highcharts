@@ -1,4 +1,8 @@
-# Grid with React
+---
+sidebar_label: "React"
+---
+
+# Highcharts Grid with React
 To create a Grid with React, please follow the steps below:
 
 ## 1. Install the Grid package

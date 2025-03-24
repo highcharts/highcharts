@@ -1,14 +1,22 @@
-# Introduction to Grid
+---
+sidebar_label: "Introduction"
+---
 
-Grid is a versatile tool for displaying and managing tabular data. It offers developers a customizable and interactive table format for data visualization.
+# Introduction to Highcharts Grid
 
-Integrated with the Highcharts Dashboards package, Grid can be used either as a standalone component or within a dashboard as a [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate Grid into various web applications for seamless data interaction and management.
+**Highcharts Grid** is a versatile tool for displaying and managing tabular data. It offers developers a customizable and interactive table format for data visualization.
 
-This section of the documentation focuses on Grid as a whole. For specific information on Grid in a Dashboards context, see the article on [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component).
+**Highcharts Grid** comes in two versions:
+
+**Highcharts Grid Pro** is part of the **Highcharts Dashboards** package, and can be used either as a standalone component or within a dashboard as a [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate Grid into various web applications for seamless data interaction and management.
+
+**Highcharts Grid Lite**  is a free version of Highcharts Grid with a basic feature set.
+
+This section of the documentation focuses on **Highcharts Grid** in general. For specific information on **Highcharts Grid** in a Dashboards context, see the article on [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component).
 
 ## My First Grid
 
-Let's dive right in with a bare minimum example of a fully functional Grid:
+Let's dive right in with a bare minimum example of a fully functional Grid Lite:
  
 ```html
 <!DOCTYPE html>
@@ -45,9 +53,9 @@ Let's dive right in with a bare minimum example of a fully functional Grid:
 
 Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/grid/installation) provides more information and other installation options.
 
-The CSS includes the necessary styles for the Grid to function correctly and the default style theme. For information on custom styling, see [Style by CSS](https://www.highcharts.com/docs/grid/style-by-css).
+The CSS includes the necessary styles for the grid to function correctly and the default style theme. For more information on custom theming, see [the article on theming](https://www.highcharts.com/docs/grid/theming/theming).
 
-### 2. Configure the Grid
+### 2. Configure the grid
 
 ```js
 Grid.grid("container", {
@@ -61,12 +69,12 @@ Grid.grid("container", {
 });
 ```
 
-Inside the `<script>` tag, create a new instance of the Grid by utilizing the `Grid.grid` factory function. This function takes two required arguments:
+Inside the `<script>` tag, create a new instance of Grid by utilizing the `Grid.grid` factory function. This function takes two required arguments:
 
-1. The ID of the HTML element where the Grid should be rendered.
+1. The ID of the HTML element where Grid should be rendered.
 2. The Grid configuration object.
 
-Only the `dataTable` option is required for a Grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
+Only the `dataTable` option is required for Grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
 
 ### 3. Add the HTML Element
 

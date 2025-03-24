@@ -1,3 +1,7 @@
+---
+sidebar_label: "Installation"
+---
+
 # Grid Installation
 
 Highcharts Grid comes in two versions: **Grid Lite** and **Grid Pro**.

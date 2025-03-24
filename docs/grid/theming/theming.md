@@ -1,4 +1,8 @@
-# Theming in Highcharts Grid
+---
+sidebar_label: "Introduction"
+---
+
+# Introduction to theming
 
 ![An illustration showing theming concept](ill_theming.png)
 
