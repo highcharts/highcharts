@@ -15,8 +15,6 @@
     --ig-neutral-default-background: #d1d1d1;
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #e0ebe0;
-    --ig-credits-light-logo-display: block;
-    --ig-credits-dark-logo-display: none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,8 +26,6 @@
         --ig-neutral-default-background: #636363;
         --ig-positive-default-border-color: #008000;
         --ig-positive-default-background: #265a26;
-        --ig-credits-light-logo-display: none;
-        --ig-credits-dark-logo-display: block;
     }
 }
 
