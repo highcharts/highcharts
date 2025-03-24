@@ -1,3 +1,7 @@
+---
+sidebar_label: "Accessibility"
+---
+
 # Accessibility (a11y) in Highcharts Grid
 
 Accessibility (a11y) ensures that web content is usable by everyone, including people with disabilities. Highcharts Grid is rendered using a standard and accessible HTML `<table>`, and is designed with accessibility in mind to provide an inclusive experience for all users.
