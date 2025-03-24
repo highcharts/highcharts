@@ -1,4 +1,4 @@
-window.grid = Grid.grid('container', {
+Grid.grid('container', {
     dataTable: {
         columns: {
             dessert: [
@@ -28,9 +28,15 @@ window.grid = Grid.grid('container', {
                 'moderate',
                 'healthy'
             ]
-
         }
     },
+    rendering: {
+        theme: 'my-theme'
+    },
+    /*
+     * Use the header API option to define the grouped header structure,
+     * and in this example at the same time format headers.
+     */
     header: [
         'dessert',
         {
@@ -72,6 +78,7 @@ window.grid = Grid.grid('container', {
             }]
         }
     ],
+    /* You can also format headers in the columns[] API option if prefered. */
     columns: [{
         id: 'dessert',
         header: {
