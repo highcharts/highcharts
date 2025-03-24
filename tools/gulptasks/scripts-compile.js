@@ -35,7 +35,10 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     let esModulesFolder,
         targetFolder;
 
-    if (product === 'highcharts') {
+    if (argv.product === 'Grid') {
+        esModulesFolder = fsLib.path(['code', 'grid', 'es-modules']);
+        targetFolder = fsLib.path(['code', 'grid']);
+    } else if (product === 'highcharts') {
         esModulesFolder = '/es-modules/';
         targetFolder = 'code';
     } else if (product === 'dashboards') {
@@ -45,6 +48,7 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
         esModulesFolder = config.esModulesFolderDataGrid;
         targetFolder = config.bundleTargetFolderDataGrid;
     }
+
 
     filePaths = filePaths instanceof Array ?
         filePaths :

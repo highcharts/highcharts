@@ -15,7 +15,18 @@ const util = require('util');
 
 
 const DIST_DIR = 'build/dist';
-const properties = require('../../build-properties.json');
+
+function getProperties() {
+    const argv = require('yargs').argv;
+    const distProduct = argv.product || 'Highcharts';
+
+    switch (distProduct) {
+        case 'Grid':
+            return require('./grid/build-properties.json');
+        default:
+            return require('../../build-properties.json');
+    }
+}
 
 
 /**
@@ -24,7 +35,7 @@ const properties = require('../../build-properties.json');
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function distZip() {
-    const { products, version } = properties;
+    const { products, version } = getProperties();
 
     const zipTasks = Object.keys(products).map(key => {
         const product = products[key];
@@ -60,7 +71,7 @@ function distZip() {
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function distGZip() {
-    const { products } = properties;
+    const { products } = getProperties();
 
     const gzipDirs = glob.sync(`${DIST_DIR}/**/js-gzip`);
     gzipDirs.forEach(dir => {

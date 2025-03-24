@@ -1089,7 +1089,7 @@ namespace Component {
         className?: string;
 
         /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`,
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `Grid`,
          * `Navigator`.
          */
         type: keyof ComponentTypeRegistry;
