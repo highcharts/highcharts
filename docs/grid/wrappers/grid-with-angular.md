@@ -1,4 +1,8 @@
-# Grid with Angular
+---
+sidebar_label: "Angular"
+---
+
+# Highcharts Grid with Angular
 To create a Grid with Angular, please follow the steps below:
 
 ## 1. Install the Grid package
