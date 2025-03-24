@@ -706,7 +706,7 @@ const Options: DeepPartial<A11yOptions> = {
                  *
                  * @since 8.0.0
                  */
-                skipNullPoints: true,
+                skipNullPoints: void 0,
 
                 /**
                  * When a series contains more points than this, we no longer

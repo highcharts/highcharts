@@ -134,21 +134,28 @@ function isSkipSeries(
 function isSkipPoint(
     point: Accessibility.PointComposition
 ): (boolean|number|undefined) {
-    const a11yOptions = point.series.chart.options.accessibility;
-    const pointA11yDisabled = (
-        point.options.accessibility &&
-        point.options.accessibility.enabled === false
-    );
+    const series = point.series,
+        nullInteraction = series.options.nullInteraction,
+        pointOptions = point.options,
+        pointA11yOptions = pointOptions.accessibility,
+        a11yOptions = series.chart.options.accessibility,
+        pointA11yDisabled = pointA11yOptions?.enabled === false,
+        skipNullPoints = a11yOptions
+            .keyboardNavigation
+            .seriesNavigation
+            .skipNullPoints;
+    /*
+    If (point.isNull) {
+        if (defined(skipNullPoints)) {
+            return skipNullPoints;
+        }
+    }*/
 
-    return !(
-        !point.isNull ||
-        point.series.options?.nullInteraction
-    ) &&
-        a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
+    return skipNullPoints ?? (!(!point.isNull || nullInteraction) &&
         point.visible === false ||
         point.isInside === false ||
         pointA11yDisabled ||
-        isSkipSeries(point.series);
+        isSkipSeries(series));
 }
 
 
