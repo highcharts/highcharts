@@ -904,6 +904,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcg-row-even-background: #fbfbfb;
     --hcg-cell-hovered-row-background: #f3f6fe;
     --hcg-caption-font-size: 18px;
+    --hcg-header-column-border-color: #dfdfdf;
+    --hcg-header-column-border-width: 1px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -916,6 +918,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         --hcg-header-row-border-color: #525252;
         --hcg-row-even-background: #2e2e2e;
         --hcg-cell-hovered-row-background: #2d2f36;
+        --hcg-header-column-border-color: #4e4e4e;
     }
 }
 

@@ -1024,6 +1024,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     --hcg-cell-hovered-row-background: #f3f6fe;
     --hcg-caption-font-size: 18px;
     --hcg-credits-padding: 5px;
+    --hcg-header-column-border-color: #dfdfdf;
+    --hcg-header-column-border-width: 1px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1037,6 +1039,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
         --hcg-header-row-border-color: #525252;
         --hcg-row-even-background: #2e2e2e;
         --hcg-cell-hovered-row-background: #2d2f36;
+        --hcg-header-column-border-color: #4e4e4e;
     }
 }
 
