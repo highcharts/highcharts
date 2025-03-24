@@ -9,4 +9,5 @@ categories:
   - Advanced:
         priority: 50
 use_png_thumbnail: true
+is_morningstar: true
 ...
