@@ -528,10 +528,10 @@ class HTMLElement extends SVGElement {
                     foreignObject.attr({
                         x: x + xCorr,
                         y: y + yCorr,
-                        width: element.offsetWidth,
+                        width: element.offsetWidth + 3,
                         height: element.offsetHeight,
                         'transform-origin': element
-                            .getAttribute('transform-origin') || void 0
+                            .getAttribute('transform-origin') || '0 0'
                     });
 
                     // Reset, otherwise lineClamp will not work
@@ -574,7 +574,8 @@ class HTMLElement extends SVGElement {
                     .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
                     .css({
                         background: 'transparent',
-                        margin: 0 // For export
+                        // 3px is to avoid clipping on the right
+                        margin: '0 3px 0 0' // For export
                     })
                     .add(foreignObject)
             );

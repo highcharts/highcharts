@@ -48,7 +48,10 @@ QUnit.test('Legend rtl and useHTML(#4449)', function (assert) {
 
     assert.strictEqual(
         text.foreignObject ?
-            text.foreignObject.attr('x') + text.foreignObject.attr('width') :
+            text.foreignObject.attr('x') +
+                text.foreignObject.attr('width') -
+                // 3 is the static margin of the body inside the foreignObject
+                3 :
             text.element.offsetLeft + text.element.offsetWidth,
         100,
         'Text should be right aligned'
