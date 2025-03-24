@@ -107,13 +107,12 @@ function chartHideOverlappingLabels(
                     x: label.attr('x'),
                     y: label.attr('y')
                 },
-                bBox = label.getBBox(),
-                width = bBox.width,
+                { height, polygon, width } = label.getBBox(),
                 alignOffset = getAlignFactor(label.alignValue) * width;
 
 
             label.width = width;
-            label.height = bBox.height;
+            label.height = height;
 
             return {
                 x: pos.x + (
@@ -122,9 +121,9 @@ function chartHideOverlappingLabels(
                 y: pos.y + (
                     label.parentGroup?.translateY || 0
                 ) + padding,
-                width: (label.width || 0) - 2 * padding,
-                height: (label.height || 0) - 2 * padding,
-                polygon: bBox?.polygon
+                width: width - 2 * padding,
+                height: height - 2 * padding,
+                polygon
             };
         }
     }
