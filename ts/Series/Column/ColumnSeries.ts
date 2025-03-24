@@ -850,23 +850,27 @@ class ColumnSeries extends Series {
             onMouseOver = function (e: PointerEvent): void {
                 pointer?.normalize(e);
 
-                const point = pointer?.getPointFromEvent(e),
-                    // Run point events only for points inside plot area, #21136
-                    isInsidePlot = chart.scrollablePlotArea ?
-                        chart.isInsidePlot(
-                            e.chartX - chart.plotLeft,
-                            e.chartY - chart.plotTop,
-                            {
-                                visiblePlotOnly: true
-                            }
-                        ) : true;
+                const point = pointer?.getPointFromEvent(e);
 
                 // Undefined on graph in scatterchart
                 if (
                     pointer &&
                     point &&
                     series.options.enableMouseTracking &&
-                    isInsidePlot
+                    (
+                    // Run point events only for points inside plot area, #21136
+                        chart.isInsidePlot(
+                            e.chartX - chart.plotLeft,
+                            e.chartY - chart.plotTop,
+                            {
+                                visiblePlotOnly: true
+                            }
+                        ) ||
+                        pointer?.inClass(
+                            e.target as any,
+                            'highcharts-data-label'
+                        )
+                    )
                 ) {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
