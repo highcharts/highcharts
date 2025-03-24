@@ -1073,11 +1073,15 @@ class Navigator {
             navigatorSize = navigator.navigatorSize,
             range = navigator.range,
             dragOffset = navigator.dragOffset,
-            inverted = chart.inverted;
+            inverted = chart.inverted,
+            hideTimer = chart?.tooltip?.hideTimer;
 
         let left = navigator.left,
             chartX;
 
+        if (hideTimer) {
+            clearTimeout(hideTimer);
+        }
 
         // In iOS, a mousemove event with e.pageX === 0 is fired when holding
         // the finger down in the center of the scrollbar. This should be
@@ -1143,10 +1147,7 @@ class Navigator {
                     !this.chart.boosted
                 )
             ) {
-                const hideTimer = navigator?.chart?.tooltip?.hideTimer;
-                if (hideTimer) {
-                    clearTimeout(hideTimer);
-                }
+
                 (e as any).DOMType = e.type;
                 setTimeout(function (): void {
                     navigator.onMouseUp(e);
