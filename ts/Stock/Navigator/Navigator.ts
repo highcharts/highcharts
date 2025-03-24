@@ -1143,6 +1143,10 @@ class Navigator {
                     !this.chart.boosted
                 )
             ) {
+                const hideTimer = navigator?.chart?.tooltip?.hideTimer;
+                if (hideTimer) {
+                    clearTimeout(hideTimer);
+                }
                 (e as any).DOMType = e.type;
                 setTimeout(function (): void {
                     navigator.onMouseUp(e);

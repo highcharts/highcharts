@@ -1132,12 +1132,6 @@ class Tooltip {
 
             // Show it
             if (tooltip.isHidden && tooltip.label) {
-                // #22774
-                if (options.useHTML) {
-                    tooltip.label.element.style.opacity = 1 + '';
-                    tooltip.label.element.style.visibility = 'visible';
-                }
-
                 tooltip.label.attr({
                     opacity: 1
                 }).show();
