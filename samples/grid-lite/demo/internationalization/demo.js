@@ -1,38 +1,3 @@
-const grid = Grid.grid('container', {
-    dataTable: {
-        columns: {
-            id: ['1', '2', '3', '4'],
-            productEN: ['Apple', 'Pear', 'Plum', 'Banana'],
-            productNO: ['Eple', 'Pære', 'Plomme', 'Banan'],
-            productPL: ['Jabłko', 'Gruszka', 'Śliwka', 'Banan'],
-            productZH: ['苹果', '梨', '李子', '香蕉'],
-            weight: [100, 60, 30, 200],
-            price: [1.5, 2.53, 5, 4.5]
-        }
-    },
-    rendering: {
-        rows: {
-            minVisibleRows: 4
-        }
-    },
-    columns: [{
-        id: 'id',
-        header: {
-            format: 'ID'
-        }
-    }, {
-        id: 'weight',
-        cells: {
-            format: '{value} g'
-        }
-    }, {
-        id: 'price',
-        cells: {
-            format: '{value:.2f} €'
-        }
-    }]
-});
-
 const languages = {
     en: {
         lang: {
@@ -176,6 +141,50 @@ const languages = {
     }
 };
 
+const grid = Grid.grid('container', {
+    lang: languages.en.lang,
+    caption: languages.en.caption,
+    header: languages.en.header,
+    dataTable: {
+        columns: {
+            id: ['1', '2', '3', '4'],
+            productEN: ['Apple', 'Pear', 'Plum', 'Banana'],
+            productNO: ['Eple', 'Pære', 'Plomme', 'Banan'],
+            productPL: ['Jabłko', 'Gruszka', 'Śliwka', 'Banan'],
+            productZH: ['苹果', '梨', '李子', '香蕉'],
+            weight: [100, 60, 30, 200],
+            price: [1.5, 2.53, 5, 4.5]
+        }
+    },
+    columns: [{
+        id: 'id',
+        header: {
+            format: 'ID'
+        }
+    }, {
+        id: 'productEN',
+        header: {
+            format: 'Product'
+        }
+    }, {
+        id: 'weight',
+        cells: {
+            format: '{value} g'
+        },
+        header: {
+            format: 'Weight'
+        }
+    }, {
+        id: 'price',
+        cells: {
+            format: '{value:.2f} €'
+        },
+        header: {
+            format: 'Price'
+        }
+    }]
+});
+
 const languageSelect = document.getElementById('lang-select');
 const languageSpan = document.getElementById('lang-span');
 const uiTranslations = {
@@ -195,5 +204,3 @@ function setLanguage(lang) {
 languageSelect.addEventListener('change', () => {
     setLanguage(languageSelect.value);
 });
-
-setLanguage('en');
