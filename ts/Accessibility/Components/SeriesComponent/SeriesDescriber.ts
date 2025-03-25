@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-@product.year@ Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *

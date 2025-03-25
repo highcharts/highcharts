@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-@product.year@ Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Create announcer to speak messages to screen readers and other AT.
  *
