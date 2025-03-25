@@ -139,17 +139,18 @@ function isSkipPoint(
         pointOptions = point.options,
         pointA11yOptions = pointOptions.accessibility,
         a11yOptions = series.chart.options.accessibility,
-        pointA11yDisabled = pointA11yOptions?.enabled === false,
-        skipNullPoints = a11yOptions
-            .keyboardNavigation
-            .seriesNavigation
-            .skipNullPoints;
+        pointA11yDisabled = pointA11yOptions?.enabled === false;
 
-    return skipNullPoints ?? (!(!point.isNull || nullInteraction) &&
-        point.visible === false ||
-        point.isInside === false ||
-        pointA11yDisabled ||
-        isSkipSeries(series));
+    return a11yOptions
+        .keyboardNavigation
+        .seriesNavigation
+        .skipNullPoints ?? (
+        !(!point.isNull || nullInteraction) &&
+                point.visible === false ||
+                point.isInside === false ||
+                pointA11yDisabled ||
+                isSkipSeries(series)
+    );
 }
 
 
