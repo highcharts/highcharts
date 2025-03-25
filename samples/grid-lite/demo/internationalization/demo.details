@@ -8,4 +8,5 @@
  categories:
   - General:
         priority: 70
+ use_png_thumbnail: true
 ...
