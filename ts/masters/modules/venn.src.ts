@@ -3,8 +3,8 @@
  * @module highcharts/modules/venn
  * @requires highcharts
  *
- * (c) 2017-2024 Highsoft AS
- * Authors: Jon Arild Nygard
+ * (c) 2017-@product.year@ Highsoft AS
+ * Author: Jon Arild Nygard
  *
  * License: www.highcharts.com/license
  */

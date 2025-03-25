@@ -6,7 +6,7 @@
  *
  * Money Flow Index indicator for Highcharts Stock
  *
- * (c) 2010-2024 Grzegorz Blachliński
+ * (c) 2010-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

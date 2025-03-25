@@ -6,7 +6,7 @@
  *
  * Client side exporting module
  *
- * (c) 2015-2024 Torstein Honsi / Oystein Moseng
+ * (c) 2015-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

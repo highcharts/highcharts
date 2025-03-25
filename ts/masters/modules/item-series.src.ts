@@ -5,7 +5,7 @@
  *
  * Item series type for Highcharts
  *
- * (c) 2019 Torstein Honsi
+ * (c) 2019-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

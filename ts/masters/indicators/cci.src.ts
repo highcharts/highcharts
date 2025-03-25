@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highcharts Stock
  *
- * (c) 2010-2024 Sebastian Bochan
+ * (c) 2010-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

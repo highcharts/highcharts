@@ -3,7 +3,7 @@
  * @module highcharts/modules/histogram-bellcurve
  * @requires highcharts
  *
- * (c) 2010-2024 Highsoft AS
+ * (c) 2010-@product.year@ Highsoft AS
  * Author: Sebastian Domas
  *
  * License: www.highcharts.com/license

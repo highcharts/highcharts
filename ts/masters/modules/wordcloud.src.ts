@@ -3,8 +3,8 @@
  * @module highcharts/modules/wordcloud
  * @requires highcharts
  *
- * (c) 2016-2024 Highsoft AS
- * Authors: Jon Arild Nygard
+ * (c) 2016-@product.year@ Highsoft AS
+ * Author: Jon Arild Nygard
  *
  * License: www.highcharts.com/license
  */

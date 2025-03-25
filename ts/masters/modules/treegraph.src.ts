@@ -5,7 +5,7 @@
  * @requires highcharts
  * @requires highcharts/modules/treemap
  *
- *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

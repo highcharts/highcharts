@@ -3,7 +3,7 @@
  * @module highcharts/modules/flowmap
  * @requires highcharts
  *
- * (c) 2009-2024
+ * (c) 2009-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

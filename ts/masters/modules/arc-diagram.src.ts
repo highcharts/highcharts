@@ -5,7 +5,7 @@
  *
  * Arc diagram module
  *
- * (c) 2021 Piotr Madej
+ * (c) 2021-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

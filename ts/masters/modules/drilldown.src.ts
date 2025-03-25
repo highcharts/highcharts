@@ -5,9 +5,10 @@
  *
  * Highcharts Drilldown module
  *
+ * (c) 2009-@product.year@ Highsoft AS
  * Author: Torstein Honsi
- * License: www.highcharts.com/license
  *
+ * License: www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

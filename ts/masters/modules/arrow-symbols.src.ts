@@ -5,7 +5,7 @@
  *
  * Arrow Symbols
  *
- * (c) 2017-2024 Lars A. V. Cabrera
+ * (c) 2017-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

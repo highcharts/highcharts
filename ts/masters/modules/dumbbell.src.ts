@@ -3,7 +3,7 @@
  * @module highcharts/modules/dumbbell
  * @requires highcharts
  *
- * (c) 2009-2024 Sebastian Bochan, Rafal Sebestjanski
+ * (c) 2009-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

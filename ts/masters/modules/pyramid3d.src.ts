@@ -8,7 +8,7 @@
  *
  * Highcharts 3D funnel module
  *
- * (c) 2010-2024 Kacper Madej
+ * (c) 2010-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */
