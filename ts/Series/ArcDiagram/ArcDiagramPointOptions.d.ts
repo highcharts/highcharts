@@ -2,7 +2,8 @@
  *
  *  Arc diagram module
  *
- *  (c) 2018-2024 Torstein Honsi
+ *  (c) 2018-@product.year@ Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *

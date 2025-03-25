@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Grzegorz Blachliński
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *

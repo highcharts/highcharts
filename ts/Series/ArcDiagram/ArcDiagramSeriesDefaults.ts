@@ -2,7 +2,8 @@
  *
  *  Arc diagram module
  *
- *  (c) 2021 Piotr Madej, Grzegorz Blachliński
+ *  (c) 2021-@product.year@ Highsoft AS
+ *  Author: Piotr Madej, Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *

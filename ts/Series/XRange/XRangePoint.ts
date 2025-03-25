@@ -2,7 +2,8 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2024 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *

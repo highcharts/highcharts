@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Hubert Kozik
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Hubert Kozik
  *
  *  License: www.highcharts.com/license
  *

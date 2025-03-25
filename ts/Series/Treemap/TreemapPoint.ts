@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2024 Highsoft AS
+ *  (c) 2014-@product.year@ Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *

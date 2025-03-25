@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-@product.year@ Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:

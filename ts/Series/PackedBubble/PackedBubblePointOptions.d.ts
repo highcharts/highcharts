@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *

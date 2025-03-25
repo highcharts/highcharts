@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Hubert Kozik, Kamil Musiałowski
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Hubert Kozik, Kamil Musiałowski
  *
  *  License: www.highcharts.com/license
  *

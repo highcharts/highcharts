@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Rafal Sebestjanski, Piotr Madej
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Rafal Sebestjanski, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *

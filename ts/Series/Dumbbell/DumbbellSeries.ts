@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Sebastian Bochan, Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *

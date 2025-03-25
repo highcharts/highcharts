@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-@product.year@ Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *

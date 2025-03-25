@@ -2,7 +2,8 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *

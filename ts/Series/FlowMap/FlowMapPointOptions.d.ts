@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2018-2024 Askel Eirik Johansson
+ *  (c) 2018-@product.year@ Highsoft AS
+ *  Author: Askel Eirik Johansson
  *
  *  License: www.highcharts.com/license
  *

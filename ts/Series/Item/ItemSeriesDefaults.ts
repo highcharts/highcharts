@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2019-2024 Torstein Honsi
+ *  (c) 2019-@product.year@ Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  Item series type for Highcharts
  *
