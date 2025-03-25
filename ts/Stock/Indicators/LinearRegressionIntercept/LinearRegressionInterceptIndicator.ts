@@ -1,6 +1,7 @@
 /**
  *
- *  (c) 2010-2024 Kamil Kulig
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *

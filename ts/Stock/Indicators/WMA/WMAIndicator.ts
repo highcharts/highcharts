@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Kacper Madej
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Kacper Madej
  *
  *  License: www.highcharts.com/license
  *

@@ -1,6 +1,7 @@
 /**
  *
- *  (c) 2010-2024 Pawel Fus & Daniel Studencki
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Pawel Fus & Daniel Studencki
  *
  *  License: www.highcharts.com/license
  *

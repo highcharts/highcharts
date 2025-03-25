@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/polyfills
  *
- * (c) 2009-2024 Torstein Honsi
+ * (c) 2009-@product.year@ Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

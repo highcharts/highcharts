@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Mateusz Bernacik
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Mateusz Bernacik
  *
  *  License: www.highcharts.com/license
  *

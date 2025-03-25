@@ -1,5 +1,6 @@
 /* *
- *  (c) 2010-2024 Rafal Sebestjanski
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Rafal Sebestjanski
  *
  *  Disparity Index technical indicator for Highcharts Stock
  *

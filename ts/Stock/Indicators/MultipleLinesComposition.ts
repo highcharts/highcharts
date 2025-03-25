@@ -1,6 +1,7 @@
 /**
  *
- *  (c) 2010-2024 Wojciech Chmiel
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Wojciech Chmiel
  *
  *  License: www.highcharts.com/license
  *

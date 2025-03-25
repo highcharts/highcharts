@@ -2,7 +2,7 @@
  * @license Highcharts Grid v@product.version@ (@product.date@)
  * @module grid/grid-lite
  *
- * (c) 2009-2024 Highsoft AS
+ * (c) 2009-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */
