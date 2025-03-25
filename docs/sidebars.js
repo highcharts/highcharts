@@ -131,7 +131,6 @@ module.exports = {
                 ]
             },
             'grid/performance',
-            'grid/style-by-css',
             'grid/accessibility',
             {
                 'Wrappers': [
