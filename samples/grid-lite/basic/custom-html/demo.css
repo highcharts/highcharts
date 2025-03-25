@@ -1,0 +1,10 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+
+#container {
+    background-color: var(--hcg-background);
+    padding: 8px;
+}
+
+.hcg-container tbody td {
+    height: 90px;
+}

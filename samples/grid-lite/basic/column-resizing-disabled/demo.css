@@ -1,0 +1,13 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+
+#container {
+    background-color: var(--hcg-background);
+}
+
+.highcharts-datagrid-column {
+    width: 15%;
+}
+
+.highcharts-datagrid-column[data-column-id="weight"] {
+    width: 40%;
+}

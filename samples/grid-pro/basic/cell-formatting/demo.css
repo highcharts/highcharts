@@ -1,0 +1,16 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#container {
+    padding: 8px;
+    background-color: var(--hcg-background);
+}
+
+.highcharts-datagrid-column {
+    width: 15%;
+}
+
+.custom-column-class-name,
+.highcharts-datagrid-table tbody tr td.custom-column-class-name {
+    color: #f00 !important;
+    width: 40%;
+}

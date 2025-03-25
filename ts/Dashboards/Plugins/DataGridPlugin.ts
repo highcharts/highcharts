@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Karol Kolodziej
+ *  - Dawid Dragula
  *
  * */
 
@@ -19,10 +20,10 @@
  *
  * */
 
-import type { DataGridNamespace } from './DataGridTypes';
+import type { DataGridNamespace, GridNamespace } from './DataGridTypes';
 import type PluginHandler from '../PluginHandler';
 
-import DataGridComponent from '../Components/DataGridComponent/DataGridComponent.js';
+import GridComponent from '../Components/DataGridComponent/DataGridComponent.js';
 
 /* *
  *
@@ -32,9 +33,15 @@ import DataGridComponent from '../Components/DataGridComponent/DataGridComponent
 
 declare module '../Components/ComponentType' {
     interface ComponentTypeRegistry {
-        DataGrid: typeof DataGridComponent;
+        /**
+         * @deprecated
+         * DataGrid will be removed in behalf of Grid in the next major version.
+         */
+        DataGrid: typeof GridComponent;
+        Grid: typeof GridComponent;
     }
 }
+
 
 /* *
  *
@@ -45,12 +52,24 @@ declare module '../Components/ComponentType' {
 /**
  * Connects DataGrid with the Dashboard plugin.
  *
- * @param {Dashboards.DataGrid} dataGrid DataGrid core to connect.
+ * @param DataGridNS
+ * DataGrid core to connect.
+ *
+ * @deprecated
+ * DataGrid will be removed in behalf of Grid in the next major version.
  */
-function connectDataGrid(
-    DataGridNS: DataGridNamespace
-): void {
-    DataGridComponent.DataGridNamespace = DataGridNS;
+function connectDataGrid(DataGridNS: DataGridNamespace): void {
+    connectGrid(DataGridNS);
+}
+
+/**
+ * Connects DataGrid with the Dashboard plugin.
+ *
+ * @param GridNS
+ * Grid core to connect.
+ */
+function connectGrid(GridNS: GridNamespace): void {
+    GridComponent.GridNamespace = GridNS;
 }
 
 /**
@@ -63,7 +82,8 @@ function onRegister(
     e: PluginHandler.Event
 ): void {
     const { ComponentRegistry } = e;
-    ComponentRegistry.registerComponent('DataGrid', DataGridComponent);
+    ComponentRegistry.registerComponent('DataGrid', GridComponent);
+    ComponentRegistry.registerComponent('Grid', GridComponent);
 }
 
 
@@ -84,7 +104,8 @@ function onUnregister(
  * */
 
 const DataGridCustom = {
-    connectDataGrid
+    connectDataGrid,
+    connectGrid
 };
 
 const DataGridPlugin: PluginHandler.DashboardsPlugin<typeof DataGridCustom> = {

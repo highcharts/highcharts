@@ -20,7 +20,7 @@
  *
  * */
 
-import type { DataGridOptions } from '../../Plugins/DataGridTypes';
+import type { GridOptions } from '../../Plugins/DataGridTypes';
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
 
@@ -40,14 +40,31 @@ export interface Options extends Component.Options {
     connector?: Component.ConnectorOptions;
 
     /**
-     * The style class to add to the rendered data grid container.
+     * The style class to add to the rendered data grid container. This option
+     * is now deprecated, and moved to [gridClassName](#gridClassName).
+     *
+     * @deprecated
      */
     dataGridClassName?: string;
 
     /**
-     * The identifier for the rendered data grid container.
+     * The style class to add to the rendered data grid container.
+     *
+     */
+    gridClassName?: string;
+
+    /**
+     * The identifier for the rendered data grid container. This option is now
+     * deprecated, and moved to [gridID](#gridID).
+     *
+     * @deprecated
      */
     dataGridID?: string;
+
+    /**
+     * The identifier for the rendered data grid container.
+     */
+    gridID?: string;
 
     /**
      * Callback to use when a change in the data grid occurs.
@@ -62,12 +79,21 @@ export interface Options extends Component.Options {
      */
     onUpdate(e: KeyboardEvent, connector: Component.ConnectorTypes): void
 
-    type: 'DataGrid';
+    type: 'DataGrid'|'Grid';
     /**
      * Generic options to adjust behavior and styling of the rendered data
      * grid.
      */
-    dataGridOptions?: DataGridOptions;
+    gridOptions?: GridOptions;
+
+    /**
+     * Generic options to adjust behavior and styling of the rendered data
+     * grid. This option is now deprecated, and moved to
+     * [gridOptions](#gridOptions).
+     *
+     * @deprecated
+     */
+    dataGridOptions?: GridOptions;
 
     /** @private */
     tableAxisMap?: Record<string, string | null>;
