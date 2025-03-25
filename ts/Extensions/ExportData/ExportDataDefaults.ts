@@ -42,7 +42,7 @@ const exporting: ExportingOptions = {
      * @sample highcharts/export-data/multilevel-table
      *         Multiple table headers
      *
-     * @type      {boolean|string}
+     * @type      {boolean | string}
      * @since     6.0.4
      * @requires  modules/export-data
      * @apioption exporting.tableCaption
@@ -53,8 +53,8 @@ const exporting: ExportingOptions = {
      * in a HTML table or a JavaScript structure.
      *
      * This module adds data export options to the export menu and provides
-     * functions like `Chart.getCSV`, `Chart.getTable`, `Chart.getDataRows`
-     * and `Chart.viewData`.
+     * functions like `Exporting.getCSV`, `Exporting.getTable`,
+     * `Exporting.getDataRows` and `Exporting.viewData`.
      *
      * The XLS converter is limited and only creates a HTML string that is
      * passed for download, which works but creates a warning before
@@ -130,7 +130,7 @@ const exporting: ExportingOptions = {
          * @sample highcharts/export-data/multilevel-table
          *         Multiple table headers
          *
-         * @type {Function|null}
+         * @type {Function | null}
          */
         columnHeaderFormatter: null,
 
@@ -145,7 +145,7 @@ const exporting: ExportingOptions = {
          * as the browser locale, typically `.` (English) or `,` (German,
          * French etc).
          *
-         * @type  {string|null}
+         * @type  {string | null}
          * @since 6.0.4
          */
         decimalPoint: null,
@@ -156,7 +156,7 @@ const exporting: ExportingOptions = {
          * locale. If the locale _decimal point_ is `,`, the `itemDelimiter`
          * defaults to `;`, otherwise the `itemDelimiter` defaults to `,`.
          *
-         * @type {string|null}
+         * @type {string | null}
          */
         itemDelimiter: null,
 
@@ -164,6 +164,117 @@ const exporting: ExportingOptions = {
          * The line delimiter in the exported data, defaults to a newline.
          */
         lineDelimiter: '\n'
+
+    },
+
+    /**
+     * An object consisting of definitions for the menu items in the context
+     * menu. Each key value pair has a `key` that is referenced in the
+     * [menuItems](#exporting.buttons.contextButton.menuItems) setting,
+     * and a `value`, which is an object with the following properties:
+     *
+     * - **onclick:** The click handler for the menu item
+     *
+     * - **text:** The text for the menu item
+     *
+     * - **textKey:** If internationalization is required, the key to a language
+     *   string
+     *
+     * Custom text for the "exitFullScreen" can be set only in lang options
+     * (it is not a separate button).
+     *
+     * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+     *         Menu item definitions
+     * @sample {highstock} highcharts/exporting/menuitemdefinitions/
+     *         Menu item definitions
+     * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
+     *         Menu item definitions
+     *
+     * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
+     * @default {"downloadCSV": {}, "downloadXLS": {}, "viewData": {}}
+     * @requires modules/export-data
+     */
+    menuItemDefinitions: {
+
+        /**
+         * @ignore
+         */
+        downloadCSV: {
+            textKey: 'downloadCSV',
+            onclick: function (): void {
+                this.exporting?.downloadCSV();
+            }
+        },
+
+        /**
+         * @ignore
+         */
+        downloadXLS: {
+            textKey: 'downloadXLS',
+            onclick: function (): void {
+                this.exporting?.downloadXLS();
+            }
+        },
+
+        /**
+         * @ignore
+         */
+        viewData: {
+            textKey: 'viewData',
+            onclick: function (): void {
+                this.exporting?.wrapLoading(this.exporting.toggleDataTable);
+            }
+        }
+
+    },
+
+    /**
+     * Options for the export related buttons, print and export. In addition
+     * to the default buttons listed here, custom buttons can be added.
+     * See [navigation.buttonOptions](#navigation.buttonOptions) for general
+     * options.
+     *
+     * @type     {Highcharts.Dictionary<*>}
+     */
+    buttons: {
+
+        /**
+         * Options for the export button.
+         *
+         * In styled mode, export button styles can be applied with the
+         * `.highcharts-contextbutton` class.
+         *
+         * @declare  Highcharts.ExportingButtonsOptionsObject
+         * @extends  navigation.buttonOptions
+         */
+        contextButton: {
+
+            /**
+             * A collection of strings pointing to config options for the menu
+             * items. The config options are defined in the
+             * `menuItemDefinitions` option.
+             *
+             * By default, there is the "View in full screen" and "Print" menu
+             * items, plus one menu item for each of the available export types.
+             *
+             * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+             *         Menu item definitions
+             * @sample {highstock} highcharts/exporting/menuitemdefinitions/
+             *         Menu item definitions
+             * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
+             *         Menu item definitions
+             *
+             * @type    {Array<string>}
+             * @default ["separator", "downloadCSV", "downloadXLS", "viewData"]
+             * @requires modules/export-data
+             */
+            menuItems: [
+                'separator',
+                'downloadCSV',
+                'downloadXLS',
+                'viewData'
+            ]
+        }
 
     },
 

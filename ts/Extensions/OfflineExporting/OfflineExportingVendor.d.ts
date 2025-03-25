@@ -58,11 +58,16 @@ declare global {
         addFont(
             postScriptName: string,
             id: string,
-            fontStyle: 'bold'|'bolditalic'|'italic'|'normal',
-            fontWeight?: number|string
+            fontStyle: ('bold' | 'bolditalic' | 'italic' | 'normal'),
+            fontWeight?: (number | string)
         ): void;
         output: Function;
-        setFont(fontFamily: string): void;
+        setFont(
+            fontFamily: string
+        ): void;
+        getFontList(): {
+            HighchartsFont: unknown
+        };
         svg (
             svgElement: SVGElement,
             options: AnyRecord

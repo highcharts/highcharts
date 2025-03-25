@@ -110,7 +110,7 @@ QUnit.skip('Exported chart scale', function (assert) {
             });
         };
 
-        chart.exportChart({
+        chart.exporting.exportChart({
             scale: scale
         });
     }

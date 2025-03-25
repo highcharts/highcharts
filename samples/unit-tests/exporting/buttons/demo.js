@@ -60,7 +60,7 @@ QUnit.test('Export buttons', function (assert) {
                             {
                                 text: 'Export to PNG (small)',
                                 onclick: function () {
-                                    this.exportChart({
+                                    this.exporting.exportChart({
                                         width: 250
                                     });
                                 }
@@ -68,7 +68,7 @@ QUnit.test('Export buttons', function (assert) {
                             {
                                 text: 'Export to PNG (large)',
                                 onclick: function () {
-                                    this.exportChart();
+                                    this.exporting.exportChart();
                                 },
                                 separator: false
                             }
@@ -86,7 +86,8 @@ QUnit.test('Export buttons', function (assert) {
 
     // Click it
     var controller = new TestController(chart),
-        alignAttr = chart.exportSVGElements[0].alignAttr;
+        alignAttr = chart.exporting.svgElements[0].alignAttr;
+
     controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
     assert.strictEqual(
@@ -111,7 +112,7 @@ QUnit.test('Export buttons', function (assert) {
                 contextButton: {
                     menuItems: null,
                     onclick: function () {
-                        this.exportChart({
+                        this.exporting.exportChart({
                             type: 'application/pdf'
                         });
                     }
@@ -176,22 +177,22 @@ QUnit.test('View/hide data table button, #14338.', function (assert) {
 
     // Test menu items
     const controller = new TestController(chart),
-        alignAttr = chart.exportSVGElements[0].alignAttr;
+        alignAttr = chart.exporting.svgElements[0].alignAttr;
 
     // Click on the export menu to trigger list creation.
     controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
-    chart.toggleDataTable();
+    chart.exporting.toggleDataTable();
     assert.strictEqual(
-        chart.exportDivElements[0].innerText,
+        chart.exporting.divElements[0].innerText,
         'Hide data table',
         'There should be text indicating that the table is visible and can ' +
         'be hidden.'
     );
 
-    chart.toggleDataTable();
+    chart.exporting.toggleDataTable();
     assert.strictEqual(
-        chart.exportDivElements[0].innerText,
+        chart.exporting.divElements[0].innerText,
         'View data table',
         'There should be text indicating that the table is hidden and can be ' +
         'visible again.'
@@ -220,21 +221,21 @@ QUnit.test(
 
         // Test menu items
         const controller = new TestController(chart),
-            alignAttr = chart.exportSVGElements[0].alignAttr;
+            alignAttr = chart.exporting.svgElements[0].alignAttr;
 
         // Click on the export menu to trigger list creation.
         controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
         assert.strictEqual(
-            chart.exportDivElements[0].innerText,
+            chart.exporting.divElements[0].innerText,
             'Hide data table',
             'There should be text indicating that the table is visible and ' +
             'can be hidden.'
         );
 
-        chart.toggleDataTable();
+        chart.exporting.toggleDataTable();
         assert.strictEqual(
-            chart.exportDivElements[0].innerText,
+            chart.exporting.divElements[0].innerText,
             'View data table',
             'There should be text indicating that the table is hidden and ' +
             'can be visible again.'

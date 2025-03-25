@@ -20,10 +20,9 @@ const G: AnyRecord = Highcharts;
 
 // Compatibility
 G.dataURLtoBlob = G.dataURLtoBlob || DownloadURL.dataURLtoBlob;
-/// G.downloadSVGLocal = OfflineExporting.downloadSVGLocal;
 G.downloadURL = G.downloadURL || DownloadURL.downloadURL;
 
 // Compose
-OfflineExporting.compose(G.Chart);
+OfflineExporting.compose(G.Exporting);
 
 export default Highcharts;

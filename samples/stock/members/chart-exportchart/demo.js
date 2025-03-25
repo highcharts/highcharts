@@ -26,6 +26,6 @@
     });
 
     document.getElementById('button').addEventListener('click', () => {
-        chart.exportChart();
+        chart.exporting.exportChart();
     });
 })();
