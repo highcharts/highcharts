@@ -38,7 +38,7 @@ ES modules like this:
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts
  *
- * (c) 2009-2024 Highcharts AS
+ * (c) 2009-@product.year@ Highsoft AS
  *
  * License: www.highcharts.com/license
  */

@@ -58,17 +58,18 @@ const getBuildOptions = input => {
         css: './code/js/es-modules'
     };
     return {
+        assetPrefix,
         base,
+        date,
         debug,
         files,
+        mapTypeToSource,
         namespace,
         output,
+        product,
         type,
         version,
-        mapTypeToSource,
-        product,
-        assetPrefix,
-        date
+        year: input.year ?? date.slice(0, 4)
     };
 };
 
@@ -267,14 +268,21 @@ const getBuildScripts = params => {
 };
 
 function replaceMeta(text, input = {}) {
-    const { product, assetPrefix, version, date } = getBuildOptions(input);
+    const {
+        assetPrefix,
+        date,
+        product,
+        version,
+        year
+    } = getBuildOptions(input);
 
     const safeReplace = x => () => x;
 
     return text.replace(/@product.name@/g, safeReplace(product))
         .replace(/@product.assetPrefix@/g, safeReplace(assetPrefix))
         .replace(/@product.version@/g, safeReplace(version))
-        .replace(/@product.date@/g, safeReplace(date));
+        .replace(/@product.date@/g, safeReplace(date))
+        .replace(/@product.year@/g, safeReplace(year));
 }
 
 module.exports = {

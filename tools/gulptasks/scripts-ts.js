@@ -55,8 +55,11 @@ function removeHighcharts(removeFromCode = false) {
  * @param {string} productName
  * Official product name to replace with.
  *
- * @param {string} version
+ * @param {string} productVersion
  * Version string to replace with.
+ *
+ * @param {string} productDate
+ * Date string to replace with. Defaults to the current date.
  *
  * @return {Promise<void>}
  * Promise to keep.
@@ -85,6 +88,8 @@ async function replaceProductPlaceholders(
                         return 'dashboards';
                     case 'date':
                         return productDate.toISOString().substring(0, 10);
+                    case 'year':
+                        return productDate.toISOString().substring(0, 4);
                     case 'name':
                         return productName;
                     case 'version':

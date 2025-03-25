@@ -58,7 +58,8 @@ export class ProductMetaPlugin {
     constructor(options = {}) {
         options = this.options = {
             assetPrefix: '',
-            productDate: new Date().toISOString().substring(0 , 10),
+            productDate: new Date().toISOString().substring(0, 10),
+            productYear: new Date().toISOString().substring(0, 4),
             ...options
         };
 
@@ -169,7 +170,8 @@ export class ProductMetaPlugin {
                 .replace(/@product\.name@/gu, () => options.productName)
                 .replace(/@product\.version@/gu, () => options.productVersion)
                 .replace(/@product\.assetPrefix@/gu, () => options.assetPrefix)
-                .replace(/@product\.date@/gu, () => options.productDate);
+                .replace(/@product\.date@/gu, () => options.productDate)
+                .replace(/@product\.year@/gu, () => options.productYear);
         }
 
 
@@ -204,4 +206,5 @@ export default ProductMetaPlugin;
  * @property {string} [productDate]
  * @property {string} [productName]
  * @property {string} [productVersion]
+ * @property {string} [productYear]
  */

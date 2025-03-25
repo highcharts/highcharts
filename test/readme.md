@@ -61,6 +61,4 @@ limit the number of charts in the test suite.
   public, it is not recommended to have teardown code in `demo.js`.
 
 #### Link References
-- Highchars Utils: https://github.com/highcharts/highcharts-utils
-
-[Highcharts Utils]: https://github.com/highcharts/highcharts-utils
+- Highcharts Utils: https://github.com/highcharts/highcharts-utils
