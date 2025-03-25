@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-@product.year@ Highsoft AS
  *  Authors: Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license

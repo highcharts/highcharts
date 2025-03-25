@@ -1,6 +1,7 @@
 /**
  *
- *  (c) 2010-2024 Paweł Fus
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Paweł Fus
  *
  *  License: www.highcharts.com/license
  *

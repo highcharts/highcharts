@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2024 Christer Vasseng, Torstein Honsi
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Christer Vasseng, Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
