@@ -950,11 +950,11 @@ class Tooltip {
      * @param {number} anchorY
      */
     public move(x: number, y: number, anchorX: number, anchorY: number): void {
-        const tooltip = this,
+        const followPointer = this.followPointer,
             animation = animObject(
-                !tooltip.isHidden && tooltip.options.animation
+                !followPointer && !this.isHidden && this.options.animation
             ),
-            skipAnchor = tooltip.followPointer || (tooltip.len || 0) > 1,
+            skipAnchor = followPointer || (this.len || 0) > 1,
             attr: SVGAttributes = { x, y };
 
         if (!skipAnchor) {
@@ -965,9 +965,9 @@ class Tooltip {
             attr.anchorX = attr.anchorY = NaN;
         }
 
-        animation.step = (): void => tooltip.drawTracker();
+        animation.step = (): void => this.drawTracker();
 
-        tooltip.getLabel().animate(attr, animation);
+        this.getLabel().animate(attr, animation);
     }
 
     /**
