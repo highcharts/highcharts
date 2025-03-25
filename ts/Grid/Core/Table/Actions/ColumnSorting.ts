@@ -2,7 +2,7 @@
  *
  *  Grid ColumnSorting class
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-@product.year@ Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
