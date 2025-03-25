@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2015-2024 Oystein Moseng
+ *  (c) 2015-@product.year@ Highsoft AS
+ *  Author: Oystein Moseng
  *
  *  License: www.highcharts.com/license
  *

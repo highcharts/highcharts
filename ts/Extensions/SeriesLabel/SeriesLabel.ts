@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2009-2024 Torstein Honsi
+ *  (c) 2009-@product.year@ Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *

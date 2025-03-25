@@ -2,7 +2,8 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2024 Pawel Fus
+ *  (c) 2010-@product.year@ Highsoft AS
+ *  Author: Pawel Fus
  *
  *  License: www.highcharts.com/license
  *

@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2009-2024 Rafal Sebestjanski
+ *  (c) 2009-@product.year@ Highsoft AS
+ *  Author: Rafal Sebestjanski
  *
  *  Full screen for Highcharts
  *

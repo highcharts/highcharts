@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2016-2024 Torstein Honsi, Lars Cabrera
+ *  (c) 2016-@product.year@ Highsoft AS
+ *  Author: Torstein Honsi, Lars Cabrera
  *
  *  License: www.highcharts.com/license
  *

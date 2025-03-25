@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2021 Torstein Honsi
+ *  (c) 2021-@product.year@ Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *

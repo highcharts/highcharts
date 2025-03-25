@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2023 Hubert Kozik
+ *  (c) 2023-@product.year@ Highsoft AS
+ *  Author: Hubert Kozik
  *
  *  License: www.highcharts.com/license
  *

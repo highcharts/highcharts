@@ -1,5 +1,6 @@
 /**
- * (c) 2009-2024 Sebastian Bochann
+ * (c) 2009-@product.year@ Highsoft AS
+ *  Author: Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
