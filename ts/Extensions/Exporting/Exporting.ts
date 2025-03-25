@@ -347,7 +347,7 @@ namespace Exporting {
                 if (e) {
                     e.stopPropagation();
                 }
-                (onclick as any).call(chart, e);
+                (onclick as any).call(chart, e, chart);
             };
 
         } else if (menuItems) {
