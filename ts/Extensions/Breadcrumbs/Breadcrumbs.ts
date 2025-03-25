@@ -577,7 +577,8 @@ class Breadcrumbs {
                         callDefaultEvent = buttonEvents.call(
                             breadcrumbs,
                             e as any,
-                            breadcrumb
+                            breadcrumb,
+                            breadcrumbs
                         );
                     }
 

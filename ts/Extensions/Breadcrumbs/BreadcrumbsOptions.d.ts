@@ -28,6 +28,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import Breadcrumbs from './Breadcrumbs';
 
 /* *
  *
@@ -82,7 +83,11 @@ export interface BreadcrumbsButtonsFormatter {
 }
 
 export interface BreadcrumbsClickCallbackFunction {
-    (e: Event, breadcrumb: BreadcrumbOptions): (boolean|undefined);
+    (
+        e: Event,
+        breadcrumb: BreadcrumbOptions,
+        ctx: Breadcrumbs
+    ): (boolean|undefined);
 }
 
 export interface BreadcrumbsOptions {
