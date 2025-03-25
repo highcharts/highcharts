@@ -195,7 +195,7 @@ class StackItem {
             // Format the text in the label.
             str = formatOption ?
                 format(formatOption, this, chart) :
-                (options.formatter as any).call(this);
+                (options.formatter as any).call(this, this);
 
         // Change the text to reflect the new total and set visibility to hidden
         // in case the series is hidden
