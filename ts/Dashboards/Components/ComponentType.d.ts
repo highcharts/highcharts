@@ -2,7 +2,7 @@
  *
  *  Data Layer
  *
- *  (c) 2012-2024 Torstein Honsi
+ *  (c) 2012-@product.year@ Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
