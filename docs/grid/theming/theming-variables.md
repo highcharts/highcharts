@@ -264,7 +264,7 @@ Define a few global variables for a consistent base style. Use section-specific 
 }
 ```
 
-Check our [theming demo](https://www.highcharts.com/grid/demo/grid-theming) to see this theme in practice.
+Check our [theming demo](https://www.highcharts.com/demo/grid-theming) to see this theme in practice.
 
 ## Summary
 
