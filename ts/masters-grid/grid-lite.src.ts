@@ -17,6 +17,8 @@
  *
  * */
 
+import type _Options from '../Grid/Core/Options.ts';
+
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
@@ -105,6 +107,19 @@ G.merge = Utilities.merge;
 G.Table = G.Table || Table;
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
+
+
+/* *
+ *
+ *  Export types
+ *
+ * */
+
+namespace G {
+    export type Options = _Options;
+}
+
+
 /* *
  *
  *  Classic Export
@@ -115,7 +130,6 @@ CreditsLiteComposition.compose(G.Grid, G.Table);
 if (!G.win.Grid) {
     G.win.Grid = G;
 }
-
 
 /* *
  *

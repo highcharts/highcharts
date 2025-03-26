@@ -17,7 +17,7 @@ npm install @highcharts/dashboards
 Then, import the package into your project:
 
 ```js
-import Grid from '@highcharts/dashboards/datagrid';
+import * as Grid from '@highcharts/dashboards/datagrid';
 import '@highcharts/dashboards/css/datagrid.css';
 ```
 
