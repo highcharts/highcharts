@@ -74,7 +74,7 @@ interface DataAfterCompleteCallbackFunction {
 }
 
 interface DataBeforeParseCallbackFunction {
-    (csv: string): string;
+    (csv: string, ctx: Data): string;
 }
 
 interface DataColumnsArray extends Array<DataValueType> {
@@ -987,7 +987,7 @@ class Data {
         }
 
         if (csv && options.beforeParse) {
-            csv = options.beforeParse.call(this, csv);
+            csv = options.beforeParse.call(this, csv, this);
         }
 
         if (csv) {

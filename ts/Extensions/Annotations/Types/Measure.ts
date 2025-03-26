@@ -578,7 +578,7 @@ class Measure extends Annotation {
 
         if (this.labels.length > 0) {
             (this.labels[0]).text = (
-                (formatter && formatter.call(this, this)) ||
+                (formatter && (formatter as any).call(this, this)) ||
                 defaultFormatter.call(this)
             );
 
@@ -1230,6 +1230,7 @@ namespace Measure {
     }
 
 }
+
 
 /* *
  *
