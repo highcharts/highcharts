@@ -8,19 +8,19 @@ To create a Grid with React, please follow the steps below:
 ## 1. Install the Grid package
 Install Grid Lite package with:
 ```bash
-npm install @highcharts/grid-lite/grid-lite
+npm install @highcharts/grid-lite
 ````
 
 ## 2. Create a Grid React component:
 
 ```tsx
-// Grid.tsx
+// GridComponent.tsx
 
 import { useEffect, useRef } from 'react';
 import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
 import '@highcharts/grid-lite/css/grid.css';
 
-export default function Grid(props: { config: Grid.Options }) {
+export default function GridComponent(props: { config: Grid.Options }) {
     const { config } = props;
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -40,10 +40,9 @@ export default function Grid(props: { config: Grid.Options }) {
 ```tsx
 // App.tsx
 
-import Grid from "./components/Grid";
+import GridComponent from "./components/GridComponent";
 
 function App() {
-
     const config: Grid.Options = {
         dataTable: {
             columns: {
@@ -56,7 +55,7 @@ function App() {
 
     return (
         <div className="App">
-            <Grid config={config} />
+            <GridComponent config={config} />
         </div>
     );
 }
