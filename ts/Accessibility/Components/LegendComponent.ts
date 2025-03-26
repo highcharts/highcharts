@@ -461,6 +461,7 @@ class LegendComponent extends AccessibilityComponent {
 
         if (
             ellipsis &&
+            // Unicode character (U+2026) for ellipsis (…)
             (legendLabelEl.textContent || '').indexOf('\u2026') !== -1
         ) {
             attribs.title = legendItemLabel?.textStr;
