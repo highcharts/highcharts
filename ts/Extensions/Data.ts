@@ -127,7 +127,7 @@ interface DataParseDateCallbackFunction {
     (dateValue: string): number;
 }
 interface DataParsedCallbackFunction {
-    (columns: Array<DataColumnsArray>): (boolean|undefined);
+    (columns: Array<DataColumnsArray>, ctx: Data): (boolean|undefined);
 }
 interface DataValueCountObject {
     global: number;
@@ -1791,7 +1791,7 @@ class Data {
      */
     public parsed(): (boolean|undefined) {
         if (this.options.parsed) {
-            return this.options.parsed.call(this, this.columns as any);
+            return this.options.parsed.call(this, this.columns as any, this);
         }
     }
 
