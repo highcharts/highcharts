@@ -6,7 +6,7 @@ tags: ["grid-pro"]
 
 Note: cell editing is not part of Highcharts Grid Lite, so refer to [install instructions](https://www.highcharts.com/docs/dashboards/grid-standalone) for the full version to enable this functionality.
 
-End users can edit data in cells if cell editing is enabled by setting the `columnDefaults.cells.editable` and/or `columns[].cells.editable`API options:
+End users can edit data in cells if cell editing is enabled by setting the `columnDefaults.cells.editable` and/or `columns[].cells.editable` API options:
 
 ```js
 columnDefaults: {
