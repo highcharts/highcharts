@@ -27,6 +27,9 @@ import type { CreditsOptions } from '../../Core/Options';
 import Globals from '../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';
 
+import GridUtils from '../../Core/GridUtils.js';
+const { setHTMLContent } = GridUtils;
+
 /* *
  *
  *  Class
@@ -49,7 +52,7 @@ class CreditsPro extends Credits {
     private setContent(): void {
         const { text, href } = this.options;
 
-        this.textElement.innerHTML = text || '';
+        setHTMLContent(this.textElement, text || '');
         this.textElement.setAttribute('href', href || '');
     }
 
