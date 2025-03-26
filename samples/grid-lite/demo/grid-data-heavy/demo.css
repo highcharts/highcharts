@@ -3,9 +3,14 @@
 #container {
     height: 380px;
     padding: 8px;
-    background-color: var(--hcg-background);
 }
 
 .highcharts-description {
     padding: 0 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #container {
+        background-color: #292929;
+    }
 }
