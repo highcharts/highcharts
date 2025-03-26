@@ -41,7 +41,7 @@
     "plugin": [
         "typedoc-plugin-rename-defaults"
     ],
-    "readme": "../../../docs/grid/general.md",
+    "readme": "./api-docs.md",
     "titleLink": "https://api.highcharts.com/grid/typedoc/index.html",
     "visibilityFilters": {}
 }
