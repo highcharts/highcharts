@@ -1,11 +1,11 @@
 ---
- name: Grid Accessibility
- authors:
-   - Dawid Dragula
- js_wrap: b
- tags:
+name: Grid Accessibility
+authors:
+  - Dawid Dragula
+js_wrap: b
+tags:
   - Highcharts Grid demo
- categories:
+categories:
   - General:
         priority: 80
 use_png_thumbnail: true
