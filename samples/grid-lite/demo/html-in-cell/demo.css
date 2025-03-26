@@ -4,6 +4,10 @@
     --anchor-color: #007bff;
 }
 
+.highcharts-description {
+    padding: 0 20px;
+}
+
 @media (prefers-color-scheme: dark) {
     .hcg-theme-default {
         --anchor-color: #8ec3fc;

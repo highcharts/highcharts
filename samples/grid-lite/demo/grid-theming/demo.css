@@ -4,6 +4,10 @@
     padding: 12px;
 }
 
+.highcharts-description {
+    padding: 0 20px;
+}
+
 .table-wrapper {
     margin-bottom: 50px;
     height: 350px;

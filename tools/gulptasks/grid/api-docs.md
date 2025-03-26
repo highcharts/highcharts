@@ -1,4 +1,4 @@
-If you're looking for details on how to configure <strong><a href="https://www.highcharts.com/docs/grid/general" target="_blank">Highcharts Grid</a></strong> via the API dive into the avaliable API options below, or dive even deeper by using the navigational menu to the left.
+If you're looking for details on how to configure <strong><a href="https://www.highcharts.com/docs/grid/general" target="_blank">Highcharts Grid</a></strong> via the API dive into the available API options below or dive even deeper by using the navigational menu to the left.
 
 <strong><a href="/grid/#interfaces/Grid_Core_Accessibility_A11yOptions.A11yOptions" target="_blank">accessibility</a></strong> \
 Accessibility options
