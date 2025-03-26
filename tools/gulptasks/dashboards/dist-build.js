@@ -16,6 +16,7 @@ const path = require('path');
 
 
 async function buildCSS() {
+    const year = new Date().getFullYear();
     const fsLib = require('../../libs/fs');
     const logLib = require('../../libs/log');
     let { release } = require('yargs').argv;
@@ -34,12 +35,13 @@ async function buildCSS() {
 
     } = require('./_config.json');
 
-    function replaceVersionInFile(file) {
+    function replaceProductMetaInFile(file) {
         fs.writeFileSync(
             file,
             fs
                 .readFileSync(file, 'utf8')
                 .replace(/@product.version@/gu, release)
+                .replace(/@product.year@/gu, year)
         );
     }
 
@@ -53,11 +55,11 @@ async function buildCSS() {
 
 
     for (const cssFile of fsLib.getFilePaths(buildCssTargetDashboards)) {
-        replaceVersionInFile(cssFile);
+        replaceProductMetaInFile(cssFile);
     }
 
     for (const cssFile of fsLib.getFilePaths(buildCssTargetDataGrid)) {
-        replaceVersionInFile(cssFile);
+        replaceProductMetaInFile(cssFile);
     }
 
     logLib.success(`Created ${buildCssTargetDashboards} and ${buildCssTargetDataGrid}`);

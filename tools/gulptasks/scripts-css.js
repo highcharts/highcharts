@@ -2,7 +2,9 @@
  * Copyright (C) Highsoft AS
  */
 
+const fs = require('fs');
 const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -72,7 +74,6 @@ function handleConfig(config) {
 
 function copyCSS(config) {
     const fslib = require('../libs/fs');
-    const path = require('path');
 
     config = handleConfig(config);
 
@@ -95,17 +96,12 @@ function copyCSS(config) {
 /**
  * Changes the HC Grid product version in the CSS files.
  *
- * @param  {string} version
- * Version to replace.
- *
  * @param  {string} folder
  * Folder to replace the version in.
  */
 function replaceGridVersionInFile(folder) {
     const { version } = require('./grid/build-properties.json');
-    const fs = require('fs');
     const files = fs.readdirSync(folder);
-    const path = require('path');
 
     files.forEach(file => {
         const filePath = path.join(folder, file);
@@ -113,6 +109,35 @@ function replaceGridVersionInFile(folder) {
         const updatedContent = content.replace(/@product\.version@/gu, version);
 
         fs.writeFileSync(filePath, updatedContent);
+    });
+}
+
+/**
+ * Recursively changes @product.year@ in CSS files to the current year.
+ *
+ * @param  {string} folder
+ * Folder to replace the year in.
+ */
+function replaceProductMetaInFile(folder) {
+    // Note: can be extended if needed to replace other product meta strings
+    const year = new Date().getFullYear();
+
+    const files = fs.readdirSync(folder, {
+        withFileTypes: true,
+        recursive: true
+    });
+
+    files.forEach(file => {
+        if (file.isDirectory() || !file.name.endsWith('.css')) {
+            // Not a CSS file - skip
+            return;
+        }
+
+        const filePath = path.join(file.parentPath, file.name);
+        fs.writeFileSync(
+            filePath,
+            fs.readFileSync(filePath, 'utf8').replace(/@product\.year@/gu, year)
+        );
     });
 }
 
@@ -135,21 +160,29 @@ function scriptCSS(argv) {
     const log = require('../libs/log');
 
     return new Promise(resolve => {
+        const productConfigs = [];
         if (argv.dashboards) {
             log.message('Generating css for Dashboards...');
             copyCSS(dashboardsConfig);
             copyCSS(datagridConfig);
+            productConfigs.push(dashboardsConfig, datagridConfig);
             log.success('Copied dashboards CSS');
         } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
             replaceGridVersionInFile(gridConfig.target + '/css/');
+            productConfigs.push(gridConfig);
             log.success('Copied grid CSS');
         } else {
             log.message('Generating css for Highcharts...');
             copyCSS(highchartsConfig);
+            productConfigs.push(highchartsConfig);
             log.success('Copied highcharts CSS');
         }
+
+        productConfigs.forEach(productConfig => replaceProductMetaInFile(
+            productConfig.target + '/css/'
+        ));
 
         resolve();
     });
