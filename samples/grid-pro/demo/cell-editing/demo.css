@@ -2,10 +2,15 @@
 
 .content {
     padding: 8px;
-    background-color: var(--hcg-background);
-    color: var(--hcg-color);
 }
 
 .highcharts-description {
     padding: 0 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .content {
+        background-color: #292929;
+        color: #fff;
+    }
 }

@@ -10,6 +10,15 @@
 }
 
 .my-theme {
+    --hcg-color: #333;
+    --hcg-background: #fff;
+    --hcg-border-radius: 5px;
+    --hcg-border-width: 1px;
+    --hcg-column-border-width: 0;
+    --hcg-row-border-color: #e8e8e8;
+    --hcg-row-even-background: #fbfbfb;
+    --hcg-caption-font-size: 18px;
+    --hcg-header-column-border-color: #dfdfdf;
     --hcg-padding: 15px;
     --hcg-font-size: 14px;
     --hcg-border-color: #e5e5e5;
@@ -32,6 +41,12 @@
     }
 
     .my-theme {
+        --hcg-color: #eee;
+        --hcg-background: #292929;
+        --hcg-row-border-color: #434343;
+        --hcg-header-row-border-color: #525252;
+        --hcg-row-even-background: #2e2e2e;
+        --hcg-header-column-border-color: #4e4e4e;
         --hcg-border-color: #646a9e;
         --hcg-header-background: #343a6c;
         --hcg-cell-hovered-column-background: #3d3d3d;
