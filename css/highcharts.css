@@ -311,7 +311,8 @@
     stroke: none;
 }
 
-.highcharts-tooltip text {
+.highcharts-tooltip text,
+.highcharts-tooltip foreignObject span {
     fill: var(--highcharts-neutral-color-80);
     font-size: 0.8em;
 }
@@ -472,6 +473,7 @@ g.highcharts-series,
 }
 
 .highcharts-data-label text,
+.highcharts-data-label span,
 text.highcharts-data-label {
     font-size: 0.7em;
     font-weight: bold;
@@ -627,9 +629,9 @@ text.highcharts-data-label {
     stroke-width: 0;
 }
 
-.highcharts-legend-item > text {
+.highcharts-legend-item > text,
+.highcharts-legend-item span {
     fill: var(--highcharts-neutral-color-80);
-    font-weight: bold;
     font-size: 0.8em;
     cursor: pointer;
     stroke-width: 0;
