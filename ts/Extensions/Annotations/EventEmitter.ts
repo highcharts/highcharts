@@ -95,7 +95,11 @@ abstract class EventEmitter {
         addMouseDownEvent(this.graphic.element);
 
         (emitter.labels || []).forEach((label): void => {
-            if (label.options.useHTML && label.graphic.text) {
+            if (
+                label.options.useHTML &&
+                label.graphic.text &&
+                !label.graphic.text.foreignObject
+            ) {
                 // Mousedown event bound to HTML element (#13070).
                 addMouseDownEvent(label.graphic.text.element);
             }
@@ -154,7 +158,11 @@ abstract class EventEmitter {
                 emitter.graphic.css(cssPointer);
 
                 (emitter.labels || []).forEach((label): void => {
-                    if (label.options.useHTML && label.graphic.text) {
+                    if (
+                        label.options.useHTML &&
+                        label.graphic.text &&
+                        !label.graphic.text.foreignObject
+                    ) {
                         label.graphic.text.css(cssPointer);
                     }
                 });

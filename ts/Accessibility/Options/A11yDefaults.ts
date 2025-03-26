@@ -703,11 +703,12 @@ const Options: DeepPartial<A11yOptions> = {
 
                 /**
                  * Skip null points when navigating through points with the
-                 * keyboard.
+                 * keyboard. By default this is the opposite of
+                 * [series.nullInteraction](https://api.highcharts.com/highcharts/plotOptions.series.nullInteraction).
                  *
                  * @since 8.0.0
                  */
-                skipNullPoints: true,
+                skipNullPoints: void 0,
 
                 /**
                  * When a series contains more points than this, we no longer

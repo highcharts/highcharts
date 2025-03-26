@@ -89,7 +89,7 @@ export interface CSSObject {
     padding?: number|string;
     'pointer-events'?: string;
     pointerEvents?: CSSObject['pointer-events'];
-    position?: 'absolute'|'fixed'|'relative';
+    position?: 'absolute'|'fixed'|'relative'|'static';
     right?: string;
     rotation?: number;
     stroke?: ColorType;
@@ -107,6 +107,7 @@ export interface CSSObject {
     transformOrigin?: string;
     transition?: string;
     userSelect?: string;
+    verticalAlign?: 'bottom'|'middle'|'top';
     visibility?: 'hidden'|'inherit'|'visible';
     'white-space'?: string;
     whiteSpace?: CSSObject['white-space'];

@@ -221,7 +221,11 @@ class LineSeries extends Series {
         points = this.getValidPoints(
             points,
             false,
-            !(options.connectNulls && !nullsAsZeroes && !connectCliffs)
+            options.nullInteraction || !(
+                options.connectNulls &&
+                    !nullsAsZeroes &&
+                    !connectCliffs
+            )
         ) as Array<LinePoint>;
 
         // Build the line

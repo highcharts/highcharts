@@ -20,7 +20,6 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type Axis from '../Axis/Axis';
 import type AxisType from '../Axis/AxisType';
-import type BBoxObject from '../Renderer/BBoxObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
@@ -2194,7 +2193,11 @@ class Series {
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
-            stackThreshold = options.startFromThreshold ? threshold : 0;
+            stackThreshold = options.startFromThreshold ? threshold : 0,
+            nullYSubstitute = (
+                options?.nullInteraction &&
+                yAxis.len
+            );
         let i,
             plotX,
             lastPlotX,
@@ -2329,6 +2332,8 @@ class Series {
             if (isNumber(yValue) && point.plotX !== void 0) {
                 plotY = yAxis.translate(yValue, false, true, false, true);
                 plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
+            } else if (!isNumber(yValue) && nullYSubstitute) {
+                plotY = nullYSubstitute;
             }
             /**
              * The translated Y value for the point in terms of pixels. Relative
@@ -2435,39 +2440,6 @@ class Series {
     }
 
     /**
-     * Get the clipping for the series. Could be called for a series to
-     * initiate animating the clip or to set the final clip (only width
-     * and x).
-     *
-     * @private
-     * @function Highcharts.Series#getClip
-     */
-    public getClipBox(): BBoxObject {
-        const { chart, xAxis, yAxis } = this;
-
-        // If no axes on the series, use global clipBox
-        let { x, y, width, height } = merge(chart.clipBox);
-
-        // Otherwise, use clipBox.width which is corrected for plotBorderWidth
-        // and clipOffset
-        if (xAxis && xAxis.len !== chart.plotSizeX) {
-            width = xAxis.len;
-        }
-
-        if (yAxis && yAxis.len !== chart.plotSizeY) {
-            height = yAxis.len;
-        }
-
-        // If the chart is inverted and the series is not invertible, the chart
-        // clip box should be inverted, but not the series clip box (#20264)
-        if (chart.inverted && !this.invertible) {
-            [width, height] = [height, width];
-        }
-
-        return { x, y, width, height };
-    }
-
-    /**
      * Get the shared clip key, creating it if it doesn't exist.
      *
      * @private
@@ -2491,7 +2463,7 @@ class Series {
         const { chart, group, markerGroup } = this,
             sharedClips = chart.sharedClips,
             renderer = chart.renderer,
-            clipBox = this.getClipBox(),
+            clipBox = chart.getClipBox(this),
             sharedClipKey = this.getSharedClipKey(); // #4526
 
         let clipRect = sharedClips[sharedClipKey];
@@ -2546,7 +2518,7 @@ class Series {
 
         // Initialize the animation. Set up the clipping rectangle.
         if (init && group) {
-            const clipBox = this.getClipBox();
+            const clipBox = chart.getClipBox(this);
 
             // Create temporary animation clips
             if (!animationClipRect) {
@@ -2588,7 +2560,7 @@ class Series {
             // Only first series in this pane
             !animationClipRect.hasClass('highcharts-animating')
         ) {
-            const finalBox = this.getClipBox(),
+            const finalBox = chart.getClipBox(this),
                 step = animation.step;
 
             // Only do this when there are actually markers, or we have multiple
@@ -2661,6 +2633,7 @@ class Series {
             styledMode = chart.styledMode,
             { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
+            nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
             globallyEnabled = pick(
@@ -2691,12 +2664,15 @@ class Series {
                 verb = graphic ? 'animate' : 'attr';
                 pointMarkerOptions = point.marker || {};
                 hasPointMarker = !!point.marker;
-                const shouldDrawMarker = (
-                    (
-                        globallyEnabled &&
-                        typeof pointMarkerOptions.enabled === 'undefined'
-                    ) || pointMarkerOptions.enabled
-                ) && !point.isNull && point.visible !== false;
+                const isNull = point.isNull,
+                    shouldDrawMarker = (
+                        (
+                            globallyEnabled &&
+                            !defined(pointMarkerOptions.enabled)
+                        ) || pointMarkerOptions.enabled
+                    ) &&
+                    (!isNull || nullInteraction) &&
+                    point.visible !== false;
 
                 // Only draw the point if y is defined
                 if (shouldDrawMarker) {
@@ -2914,7 +2890,8 @@ class Series {
         point?: Point,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        const seriesMarkerOptions = this.options.marker,
+        const options = this.options,
+            seriesMarkerOptions = options.marker,
             pointOptions = point?.options,
             pointMarkerOptions = pointOptions?.marker || {},
             pointColorOption = pointOptions?.color,
@@ -2929,7 +2906,7 @@ class Series {
                 pointMarkerOptions.lineWidth,
                 (seriesMarkerOptions as any).lineWidth
             ),
-            opacity = 1;
+            opacity = (point?.isNull && options.nullInteraction) ? 0 : 1;
 
         color = (
             pointColorOption ||
@@ -3608,7 +3585,8 @@ class Series {
         this.buildingKdTree = true;
 
         const series = this,
-            dimensions = (series.options.findNearestPointBy as any)
+            seriesOptions = series.options,
+            dimensions = (seriesOptions.findNearestPointBy as any)
                 .indexOf('y') > -1 ? 2 : 1;
 
         /**
@@ -3661,7 +3639,8 @@ class Series {
                     void 0,
                     // For line-type series restrict to plot area, but
                     // column-type series not (#3916, #4511)
-                    !series.directTouch
+                    !series.directTouch,
+                    seriesOptions?.nullInteraction
                 ),
                 dimensions,
                 dimensions
@@ -3674,7 +3653,7 @@ class Series {
         // be dealing with click events on mobile, so don't delay (#6817).
         syncTimeout(
             startRecursive,
-            series.options.kdNow || e?.type === 'touchstart' ? 0 : 1
+            seriesOptions.kdNow || e?.type === 'touchstart' ? 0 : 1
         );
     }
 
