@@ -180,7 +180,9 @@ class AST {
         'y',
         'y1',
         'y2',
-        'zIndex'
+        'zIndex',
+        'srcset',
+        'media'
     ];
 
     /**
@@ -290,7 +292,9 @@ class AST {
         'tr',
         'u',
         'ul',
-        '#text'
+        '#text',
+        'picture',
+        'source'
     ];
 
     public static emptyHTML = emptyHTML;
