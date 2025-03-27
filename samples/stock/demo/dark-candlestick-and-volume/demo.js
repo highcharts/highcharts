@@ -141,11 +141,7 @@
         tooltip: {
             shared: true,
             split: false,
-            useHTML: true,
-            shadow: false,
-            positioner: function () {
-                return { x: 50, y: 10 };
-            }
+            fixed: true
         },
 
         series: [{

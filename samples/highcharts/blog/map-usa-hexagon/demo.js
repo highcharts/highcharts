@@ -30,7 +30,6 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        useHTML: true,
         headerFormat: null,
         pointFormat: '- State of <b>{point.USstate}</b><br/> - The <b>' +
             '{point.region}</b> region<br/> <b>- {point.capital}</b> is the ' +

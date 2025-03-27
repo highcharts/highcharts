@@ -65,6 +65,7 @@ const {
     defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 
 /* *
  *
@@ -1068,6 +1069,11 @@ function scatterProcessData(
     series.cropped = cropped;
     series.cropStart = 0;
     // For boosted points rendering
+    if (cropped && series.dataTable.modified === series.dataTable) {
+        // Calling setColumns with cropped data must be done on a new instance
+        // to avoid modification of the original (complete) data
+        series.dataTable.modified = new DataTableCore();
+    }
     series.dataTable.modified.setColumns({
         x: processedXData,
         y: processedYData
@@ -1123,7 +1129,8 @@ function seriesRenderCanvas(this: Series): void {
             this.options.xData ||
             this.getColumn('x', true)
         ),
-        lineWidth = pick(options.lineWidth, 1);
+        lineWidth = pick(options.lineWidth, 1),
+        nullYSubstitute = options.nullInteraction && yMin;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1291,7 +1298,7 @@ function seriesRenderCanvas(this: Series): void {
         const chartDestroyed = typeof chart.index === 'undefined';
 
         let x: number,
-            y: number,
+            y,
             clientX,
             plotY,
             percentage,
@@ -1308,7 +1315,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData?.[i] as any;
+                y = yData[i] ?? nullYSubstitute ?? null;
             }
 
             // Resolve low and high for range series
@@ -1590,7 +1597,7 @@ function wrapSeriesProcessData(
             }
 
             // Extra check for zoomed scatter data
-            if (isScatter && !series.yAxis.treeGrid) {
+            if (isScatter && series.yAxis.type !== 'treegrid') {
                 scatterProcessData.call(series, arguments[1]);
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));
