@@ -1,5 +1,4 @@
-Light and Dark Theme
-===
+# Light and Dark Theme
 
 The Light and Dark theme allows you to switch between a light and dark theme for the dashboard.
 To use the Light and Dark theme, you need to import the `dashboards.css` file.
@@ -7,7 +6,7 @@ To use the Light and Dark theme, you need to import the `dashboards.css` file.
 ```css
 @import "https://code.highcharts.com/dashboards/css/dashboards.css";
 ```
-You then need to enable the `styledMode` option for the components that has the Highcharts charts in it.
+You then need to enable the `styledMode` option for all components that contain a **Highcharts** chart.
 You can do this by setting the `styledMode` option to `true` in the component's configuration.
 
 ```js
@@ -39,6 +38,6 @@ You can also force the color scheme by setting the class to the dashboard contai
 <div id="container" class="highcharts-dark">
 ```
 
-### Live example
-Use the radio buttons below the board to change the theme.
+## Live example
+Use the radio buttons below the dashboard to change the theme.
 <iframe style="width: 100%; height: 1264px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/light-dark-theme" allow="fullscreen"></iframe>

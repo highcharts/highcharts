@@ -94,16 +94,25 @@ async function checkDocsConsistency() {
     mdFiles.forEach(file => {
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
-            docsPattern = /https:\/\/(www\.)?highcharts.com\/docs\/([a-zA-Z\-]+\/[a-zA-Z\-]+)/gu,
+            docsPattern = /https:\/\/(www\.)?highcharts.com\/docs\/((?:[\w-]+\/)+[\w-]+)/gu,
+            // Catch unsafe and relative links. Ignore links within the same
+            // document and images.
+            badLinkPattern = /[^!]\[(.*?)\]\((?!https:\/\/|#)(.*?)\)/gu,
             error404s = [];
 
         let match;
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
+            let rewrite;
+
+            if (sample.startsWith('grid/')) {
+                rewrite = sample.replace(/^grid\//, 'grid-lite/');
+            }
+
             try {
-                FS.statSync(`samples/${sample}/demo.js`);
+                FS.statSync(`samples/${rewrite ?? sample}/demo.js`);
             } catch (error) {
-                error404s.push({ file, sample });
+                error404s.push({ file, sample, rewrite });
             }
         }
 
@@ -114,6 +123,14 @@ async function checkDocsConsistency() {
             } catch (error) {
                 error404s.push({ file, docs: sample });
             }
+        }
+
+        while ((match = badLinkPattern.exec(md))) {
+            error404s.push({
+                file,
+                link: match[2],
+                reason: 'unsafe, relative, or bad format'
+            });
         }
 
         if (error404s.length) {

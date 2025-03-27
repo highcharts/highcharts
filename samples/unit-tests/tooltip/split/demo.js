@@ -51,9 +51,35 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
         value;
 
     chart.tooltip.refresh([p1, p2]);
+
+    const ttCorrectVals = {
+            x: 51.5,
+            y: 94.5,
+            width: Highcharts.isFirefox ? 134 : 113,
+            height: 252
+        },
+        candidate = chart
+            .tooltip
+            .label
+            .element
+            .getBoundingClientRect(),
+        chartPos = chart.pointer.getChartPosition();
+
+    candidate.x -= chartPos.left;
+    candidate.y -= chartPos.top;
+
+    for (const key of ['x', 'y', 'width', 'height']) {
+        assert.close(
+            ttCorrectVals[key],
+            candidate[key],
+            15,
+            `The '${key}' of the label should be close to ${ttCorrectVals[key]}`
+        );
+    }
+
     el = chart.tooltip.tt.text.element;
 
-    value = window.getComputedStyle(el).getPropertyValue('color');
+    value = window.getComputedStyle(el).getPropertyValue('fill');
     assert.strictEqual(value, 'rgb(51, 51, 51)', 'tooltip default color.');
 
     el = chart.tooltip.tt.element;
@@ -73,7 +99,7 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     ]);
 
     el = chart.tooltip.tt.text.element;
-    value = window.getComputedStyle(el).getPropertyValue('color');
+    value = window.getComputedStyle(el).getPropertyValue('fill');
     assert.strictEqual(value, 'rgb(255, 0, 0)', 'tooltip color from style.');
 });
 

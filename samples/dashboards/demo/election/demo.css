@@ -472,7 +472,6 @@ text.highcharts-data-label {
 }
 
 /* Custom map tooltip */
-
 #election-map .map-tooltip caption {
     font-size: 13px;
     font-weight: bold;
@@ -578,6 +577,12 @@ text.highcharts-data-label {
     font-size: 1em;
 }
 
+#election-chart-year .datalabels-wrapper {
+    display: inline-block;
+    white-space: normal;
+    width: 200px;
+}
+
 #election-chart-year .highcharts-axis-labels {
     font-size: 1.3em;
     font-weight: bold;
@@ -597,23 +602,6 @@ text.highcharts-data-label {
  *
  **/
 
-#election-grid .highcharts-datagrid-container {
-    border-radius: var(--component-rounded-corners);
-    height: 400px;
-}
-
-#election-grid .highcharts-datagrid-container table {
-    border: 0;
-}
-
-#election-grid .highcharts-datagrid-hovered-row {
-    background-color: var(--color-hover-background);
-}
-
-#election-grid .highcharts-datagrid-hovered-column {
-    background: none;
-}
-
 /* Styling of first row (national results) */
 #election-grid .highcharts-datagrid-row[data-row-index="0"] {
     font-weight: bold;
@@ -621,8 +609,8 @@ text.highcharts-data-label {
     border-bottom: 1px solid #000;
 }
 
-#election-grid .highcharts-datagrid-column-header {
-    border-color: #000;
+#election-grid .highcharts-datagrid-container {
+    height: 400px;
 }
 
 .highcharts-datagrid-row[data-row-index="0"] td {
@@ -741,6 +729,7 @@ text.highcharts-data-label {
     #info-dem2,
     #info-rep2 {
         font-size: 10px;
+        white-space: normal;
     }
 
     #info-dem2 {
@@ -762,7 +751,7 @@ text.highcharts-data-label {
     }
 
     #election-chart-year .datalabels-wrapper {
-        font-size: 0.75em;
+        font-size: 0.65em;
         display: inline-block;
         white-space: normal;
         width: 100px;

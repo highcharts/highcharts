@@ -78,7 +78,6 @@ const defaultChartOptions = {
 
     tooltip: {
         outside: true,
-        useHTML: true,
         hideDelay: 100,
         backgroundColor: 'rgba(250, 250, 250, 0.95)',
         style: {

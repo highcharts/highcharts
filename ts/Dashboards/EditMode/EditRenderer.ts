@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -450,6 +450,18 @@ function renderToggle(
         title = options.title || options.name,
         langKey = options.langKey as keyof EditGlobals.LangAccessibilityOptions;
 
+    if (options.isNested) {
+        const labeledToggleWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.labeledToggleWrapper
+            },
+            {},
+            parentElement
+        );
+        parentElement = labeledToggleWrapper;
+    }
+
     const toggleContainer = createElement(
         'button',
         {
@@ -465,7 +477,7 @@ function renderToggle(
 
     if (title) {
         renderText(
-            toggleContainer,
+            options.isNested ? parentElement : toggleContainer,
             { title }
         );
     }
@@ -893,6 +905,7 @@ export interface ToggleFormFieldOptions {
     name: string;
     lang: EditGlobals.LangOptions;
     langKey?: string;
+    isNested?: boolean;
 }
 
 export interface NestedHeaderFormFieldOptions {

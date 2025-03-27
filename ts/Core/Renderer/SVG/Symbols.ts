@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -48,22 +48,29 @@ function arc(
     const arc: SVGPath = [];
 
     if (options) {
-        const start = options.start || 0,
-            rx = pick(options.r, w),
+        let start = options.start || 0,
+            end = options.end || 0;
+
+        const rx = pick(options.r, w),
             ry = pick(options.r, h || w),
             // Subtract a small number to prevent cos and sin of start and end
             // from becoming equal on 360 arcs (#1561). The size of the circle
             // affects the constant, therefore the division by `rx`. If the
             // proximity is too small, the arc disappears. If it is too great, a
             // gap appears. This can be seen in the animation of the official
-            // bubble demo (#20586).
+            // bubble demo (#20585).
             proximity = 0.0002 / (options.borderRadius ? 1 : Math.max(rx, 1)),
             fullCircle = (
-                Math.abs((options.end || 0) - start - 2 * Math.PI) <
+                Math.abs(end - start - 2 * Math.PI) <
                 proximity
-            ),
-            end = (options.end || 0) - (fullCircle ? proximity : 0),
-            innerRadius = options.innerR,
+            );
+
+        if (fullCircle) {
+            start = Math.PI / 2;
+            end = Math.PI * 2.5 - proximity;
+        }
+
+        const innerRadius = options.innerR,
             open = pick(options.open, fullCircle),
             cosStart = Math.cos(start),
             sinStart = Math.sin(start),
@@ -148,10 +155,10 @@ function callout(
 ): SVGPath {
     const arrowLength = 6,
         halfDistance = 6,
-        r = Math.min((options && options.r) || 0, w, h),
+        r = Math.min((options?.r) || 0, w, h),
         safeDistance = r + halfDistance,
-        anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY || 0;
+        anchorX = options?.anchorX,
+        anchorY = options?.anchorY || 0;
 
     const path = roundedRect(x, y, w, h, { r });
 
@@ -324,7 +331,7 @@ function rect(
     h: number,
     options?: SymbolOptions
 ): SVGPath {
-    if (options && options.r) {
+    if (options?.r) {
         return roundedRect(x, y, w, h, options);
     }
     return [

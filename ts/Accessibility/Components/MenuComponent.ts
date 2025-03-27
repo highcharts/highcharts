@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Accessibility component for exporting menu.
  *
@@ -330,6 +330,11 @@ class MenuComponent extends AccessibilityComponent {
             // enabled on chart
             validate: function (): boolean {
                 return !!chart.exporting &&
+                    chart
+                        .options
+                        .exporting
+                        ?.buttons
+                        ?.contextButton.enabled !== false &&
                     chart.options.exporting.enabled !== false &&
                     (chart.options.exporting.accessibility as any).enabled !==
                     false;

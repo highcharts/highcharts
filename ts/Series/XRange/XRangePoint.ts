@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2024 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2025 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -89,7 +89,7 @@ class XRangePoint extends ColumnPoint {
                 colors.length :
                 series.chart.options.chart.colorCount as any,
             colorIndex = (point.y as any) % colorCount,
-            color = colors && colors[colorIndex];
+            color = colors?.[colorIndex];
 
         return {
             colorIndex: colorIndex,

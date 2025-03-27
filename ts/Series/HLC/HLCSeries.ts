@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Pawel Lysy
+ *  (c) 2010-2025 Pawel Lysy
  *
  *  License: www.highcharts.com/license
  *
@@ -34,6 +34,9 @@ const {
     extend,
     merge
 } = U;
+
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
 
 /* *
  *
@@ -290,11 +293,35 @@ extend(HLCSeries.prototype, {
     pointValKey: 'close'
 });
 
+
+// Extend default lang options with OHLC terms
+const HLCDefaultLangOptions = {
+    stockOpen: 'Open',
+    stockHigh: 'High',
+    stockLow: 'Low',
+    stockClose: 'Close'
+};
+
+extend(
+    defaultOptions.lang,
+    HLCDefaultLangOptions
+);
+
 /* *
  *
  *  Registry
  *
  * */
+
+
+declare module '../../Core/Options'{
+    interface LangOptions {
+        stockOpen?: string;
+        stockHigh?: string;
+        stockLow?: string;
+        stockClose?: string;
+    }
+}
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

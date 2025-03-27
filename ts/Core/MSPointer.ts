@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -306,7 +306,7 @@ class MSPointer extends Pointer {
 
         if (
             this.hasZoom ||
-            pick((tooltip && tooltip.options.followTouchMove), true)
+            pick((tooltip?.options.followTouchMove), true)
         ) {
             this.batchMSEvents(addEvent);
         }

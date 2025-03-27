@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -357,7 +357,7 @@ function fireEvent<T>(
     eventArguments = eventArguments || {};
 
     if (
-        doc.createEvent &&
+        doc?.createEvent &&
         (
             (el as any).dispatchEvent ||
             (

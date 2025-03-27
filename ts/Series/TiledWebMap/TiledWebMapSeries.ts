@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Hubert Kozik, Kamil Musiałowski
+ *  (c) 2010-2025 Hubert Kozik, Kamil Musiałowski
  *
  *  License: www.highcharts.com/license
  *

@@ -399,13 +399,13 @@
         assertEquals(
             assert,
             'Rounding negative (#4573)',
-            '-342 000.00',
+            '-342,000.00',
             numberFormat(-342000, 2)
         );
         assertEquals(
             assert,
             'String decimal count',
-            '2 016',
+            '2,016',
             numberFormat(2016, '0')
         );
         assertEquals(assert, 'Rounding', '2.0', numberFormat(1.96, 1));

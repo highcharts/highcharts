@@ -5,7 +5,7 @@ JSON. Please note that the [getOptions()](https://api.highcharts.com/dashboards/
 
 <iframe style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/exporting/export-to-json allow="fullscreen"></iframe>
 
-### How to use the getOptions()
+## How to use `getOptions()`
 In the example below, the [getOptions()](https://api.highcharts.com/dashboards/#classes/Dashboards_Board.Board-1#getOptions)
 method is available in the `board` object.
 ```js
@@ -20,7 +20,7 @@ const board = Dashboards.board('container', { ... })
 board.getOptions();
 ```
 
-### How to save options into `localStorage`
+## How to save options into `localStorage`
 The state that you extracted from Dashboards can be helpful in your project.
 For instance, you can save it in your `localStorage` object and import it when you need.
 
@@ -35,7 +35,7 @@ localStorage.setItem(
 );
 ```
 
-### How to import options from `localStorage`
+## How to import options from `localStorage`
 Importing the state from `localStorage` is straightforward, as you can use JSON's built-in functionality.
 
 ```js

@@ -28,10 +28,17 @@ async function scriptsWebpack() {
 
     LogLib.message('Packing code...');
 
-    const configs = {
-        Highcharts: 'highcharts.webpack.mjs',
-        HighchartsES5: 'highcharts-es5.webpack.mjs'
-    };
+    let configs;
+    if (argv.product === 'Grid') {
+        configs = {
+            Grid: 'grid.webpack.mjs'
+        };
+    } else {
+        configs = {
+            Highcharts: 'highcharts.webpack.mjs',
+            HighchartsES5: 'highcharts-es5.webpack.mjs'
+        };
+    }
 
     let config;
     let log = '';
@@ -46,6 +53,7 @@ async function scriptsWebpack() {
         log += await ProcessLib.exec(
             `npx webpack -c ${config}`,
             {
+                maxBuffer: 1024 * 1024,
                 silent: argv.verbose ? 1 : 2,
                 timeout: 60000
             }

@@ -158,23 +158,13 @@ div#description {
     }
 }
 
-/* LARGE */
-@media (max-width: 1200px) {
-    #column-chart-1,
-    #data-grid-1,
-    #column-chart-2,
-    #data-grid-2 {
-        flex: 1 1 50%;
-    }
-}
-
-/* MEDIUM */
+/* LARGE, MEDIUM: the page resides in an IFRAME */
 @media (max-width: 992px) {
     #column-chart-1,
     #data-grid-1,
     #column-chart-2,
     #data-grid-2 {
-        flex: 1 1 100%;
+        flex: 1 1 50%;
     }
 }
 

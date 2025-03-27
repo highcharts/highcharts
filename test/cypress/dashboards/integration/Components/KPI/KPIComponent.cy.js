@@ -68,3 +68,18 @@ describe('Linking KPI value to chart point test', () => {
         });
     });
 });
+
+describe('KPI component formula value', () => {
+    before(() => {
+        cy.visit('/dashboards/cypress/kpi-with-connector');
+    });
+
+    it('KPI component formula value should be properly displayed.', () => {
+        cy.board().then(board => {
+            cy.wrap(board.mountedComponents[1].component)
+                .invoke('update', { formula: 'MEDIAN' });
+            cy.get('#kpi .highcharts-dashboards-component-kpi-value')
+                .should('have.text', 650);
+        });
+    });
+});
