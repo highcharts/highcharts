@@ -66,11 +66,6 @@ class GaugePoint extends Point {
         this.state = state;
     }
 
-
-    public resolveColor(): void {
-        super.resolveColor(false);
-    }
-
     /* eslint-enable valid-jsdoc */
 }
 

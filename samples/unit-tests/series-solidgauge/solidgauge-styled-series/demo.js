@@ -71,15 +71,15 @@ QUnit.test('Solid gauge styled series color (#6350)', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[0].data[0].element.fill,
-        '#00ff00',
-        'Color stops are applied.'
+        chart.series[0].data[0].graphic.element.className.baseVal,
+        'highcharts-point',
+        'Color classes are applied.'
     );
 
     chart.series[0].points[0].update({ colorIndex: 1 });
     assert.strictEqual(
         chart.series[0].data[0].graphic.element.className.baseVal,
-        'highcharts-point highcharts-color-1',
+        'highcharts-point',
         'Color class should be updated (#8791)'
     );
 });

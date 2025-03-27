@@ -860,7 +860,7 @@ class Point {
      * @private
      * @function Highcharts.Point#resolveColor
      */
-    public resolveColor(setColorIndex: boolean = true): void {
+    public resolveColor(): void {
         const series = this.series,
             optionsChart = series.chart.options.chart,
             styledMode = series.chart.styledMode;
@@ -868,7 +868,7 @@ class Point {
         let color,
             colors,
             colorCount = optionsChart.colorCount,
-            colorIndex: number | undefined;
+            colorIndex: number;
 
         // Remove points nonZonedColor for later recalculation
         delete (this as any).nonZonedColor;
@@ -879,7 +879,7 @@ class Point {
                 color = (colors as any)[series.colorCounter];
                 colorCount = (colors as any).length;
             }
-            colorIndex = setColorIndex ? series.colorCounter : void 0;
+            colorIndex = series.colorCounter;
             series.colorCounter++;
             // Loop back to zero
             if (series.colorCounter === colorCount) {
@@ -889,7 +889,7 @@ class Point {
             if (!styledMode) {
                 color = series.color;
             }
-            colorIndex = setColorIndex ? series.colorIndex as any : void 0;
+            colorIndex = series.colorIndex as any;
         }
 
         /**
@@ -899,9 +899,7 @@ class Point {
          * @name Highcharts.Point#colorIndex
          * @type {number|undefined}
          */
-        if (setColorIndex) {
-            this.colorIndex = pick(this.options.colorIndex, colorIndex);
-        }
+        this.colorIndex = pick(this.options.colorIndex, colorIndex);
 
         /**
          * The point's current color.
