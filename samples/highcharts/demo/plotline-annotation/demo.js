@@ -25,7 +25,7 @@ const TeslaISIN = 'US88160R1014';
             ],
             startDate: '2023-01-01',
             endDate: '2023-12-31',
-            currencyId: 'EUR'
+            currencyId: 'USD'
         });
 
     await TeslaPriceConnector.load();
@@ -58,6 +58,46 @@ const TeslaISIN = 'US88160R1014';
                                 };
                             }
                         ]
+                    }, {
+                        type: 'path',
+                        points: [
+                            function (annotation) {
+                                return {
+                                    x: Date.UTC(2023, 5, 30),
+                                    xAxis: 0,
+                                    y: annotation.chart.yAxis[0].min,
+                                    yAxis: 0
+                                };
+                            },
+                            function (annotation) {
+                                return {
+                                    x: Date.UTC(2023, 5, 30),
+                                    xAxis: 0,
+                                    y: annotation.chart.yAxis[0].max,
+                                    yAxis: 0
+                                };
+                            }
+                        ]
+                    }, {
+                        type: 'path',
+                        points: [
+                            function (annotation) {
+                                return {
+                                    x: Date.UTC(2023, 8, 30),
+                                    xAxis: 0,
+                                    y: annotation.chart.yAxis[0].min,
+                                    yAxis: 0
+                                };
+                            },
+                            function (annotation) {
+                                return {
+                                    x: Date.UTC(2023, 8, 30),
+                                    xAxis: 0,
+                                    y: annotation.chart.yAxis[0].max,
+                                    yAxis: 0
+                                };
+                            }
+                        ]
                     }
                 ],
                 labels: [
@@ -72,35 +112,7 @@ const TeslaISIN = 'US88160R1014';
                         },
                         y: 0,
                         format: 'Q1 EPS: $0.73'
-                    }
-                ]
-            }, {
-                draggable: '',
-                shapes: [
-                    {
-                        type: 'path',
-                        points: [
-                            function (annotation) {
-                                return {
-                                    x: Date.UTC(2023, 5, 30),
-                                    xAxis: 0,
-                                    y: annotation.chart.yAxis[0].min,
-                                    yAxis: 0
-                                };
-                            },
-                            function (annotation) {
-                                return {
-                                    x: Date.UTC(2023, 5, 30),
-                                    xAxis: 0,
-                                    y: annotation.chart.yAxis[0].max,
-                                    yAxis: 0
-                                };
-                            }
-                        ]
-                    }
-                ],
-                labels: [
-                    {
+                    }, {
                         point: function (annotation) {
                             return {
                                 x: Date.UTC(2023, 5, 30),
@@ -111,35 +123,7 @@ const TeslaISIN = 'US88160R1014';
                         },
                         y: 0,
                         format: 'Q2 EPS: $0.78'
-                    }
-                ]
-            }, {
-                draggable: '',
-                shapes: [
-                    {
-                        type: 'path',
-                        points: [
-                            function (annotation) {
-                                return {
-                                    x: Date.UTC(2023, 8, 30),
-                                    xAxis: 0,
-                                    y: annotation.chart.yAxis[0].min,
-                                    yAxis: 0
-                                };
-                            },
-                            function (annotation) {
-                                return {
-                                    x: Date.UTC(2023, 8, 30),
-                                    xAxis: 0,
-                                    y: annotation.chart.yAxis[0].max,
-                                    yAxis: 0
-                                };
-                            }
-                        ]
-                    }
-                ],
-                labels: [
-                    {
+                    }, {
                         point: function (annotation) {
                             return {
                                 x: Date.UTC(2023, 8, 30),
@@ -154,6 +138,10 @@ const TeslaISIN = 'US88160R1014';
                 ]
             }
         ],
+        tooltip: {
+            valueDecimals: 2,
+            valuePrefix: '$'
+        },
         series: [
             {
                 type: 'line',
