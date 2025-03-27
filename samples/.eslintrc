@@ -15,6 +15,7 @@
     "CallAnalyzer": true,
     "Dashboards": true,
     "DataGrid": true,
+    "Grid": true,
     "GOOGL": true,
     "Highcharts": true,
     "HighchartsConnectors": true,
