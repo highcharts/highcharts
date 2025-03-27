@@ -1,91 +1,96 @@
 // @ts-check
-// `@type` JSDoc annotations allow editor autocompletion and type checking
-// (when paired with `@ts-check`).
-// There are various equivalent ways to declare your Docusaurus config.
-// See: https://docusaurus.io/docs/api/docusaurus-config
+import { themes as prismThemes } from 'prism-react-renderer';
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { visit } from 'unist-util-visit';
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+// Plugin to remove iframe styles that can not be parsed as JSX
+const removeIframeStyle = () => {
+    const transformer = async (ast) => {
+        visit(ast, 'mdxJsxFlowElement', (node) => {
+            if (node.name === 'iframe') {
+                if(Array.isArray(node.attributes)) {
+                    const styleAttr = node.attributes.find(el => el.name === 'style');
+
+                    if(styleAttr && typeof styleAttr.value === 'string') {
+                        // Remove from node.attributes
+                        node.attributes = node.attributes.filter(el => el.name !== 'style');
+                    }
+                }
+            }
+
+        });
+    };
+    return transformer;
+};
 
 /** @type {import('@docusaurus/types').Config} */
-const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+    const config = {
+        title: 'Highcharts Documentation (preview)',
+        favicon: 'img/favicon.ico',
 
-  // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+        // Set the production url of your site here
+        url: 'https://www.highcharts.com',
+        baseUrl: '/docs',
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+        onBrokenLinks: 'throw',
+        onBrokenMarkdownLinks: 'warn',
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
-  },
-
-  presets: [
-    [
-      'classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
-        docs: {
-          path: '../../docs',
-          sidebarPath: '../../docs/sidebars.js',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/highcharts/highcharts/tree/main/packages/create-docusaurus/templates/shared/',
+        i18n: {
+            defaultLocale: 'en',
+            locales: ['en'],
         },
-        theme: {
-          customCss: './src/css/custom.css',
-        },
-      }),
-    ],
-  ],
 
-  themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-    ({
-      // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
-      navbar: {
-        title: 'My Site',
-        logo: {
-          alt: 'My Site Logo',
-          src: 'img/logo.svg',
-        },
-        items: [
-          {
-            type: 'docSidebar',
-            sidebarId: 'docs',
-            position: 'left',
-            label: 'Docs',
-          }
+        presets: [
+            [
+                'classic',
+                /** @type {import('@docusaurus/preset-classic').Options} */
+                ({
+                    docs: {
+                        path: '../../docs',
+                        sidebarPath: '../../docs/sidebars.js',
+                        routeBasePath: '/',
+                        remarkPlugins:[
+                            removeIframeStyle
+                        ]
+                    },
+                    blog: false,
+                    theme: {
+                        customCss: './src/css/custom.css',
+                    },
+                }),
+            ],
         ],
-      },
-      footer: {
-        style: 'dark',
-        links: [],
-        copyright: 'Highsoft for all eternity',
-      },
-      prism: {
-        theme: prismThemes.github,
-        darkTheme: prismThemes.dracula,
-      },
-    }),
-};
+
+        themeConfig:
+        /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+        ({
+            // Replace with your project's social card
+            image: 'img/docusaurus-social-card.jpg',
+            navbar: {
+                title: 'Highcharts Documentation',
+                logo: {
+                    alt: 'My Site Logo',
+                    src: 'img/logo.svg',
+                },
+                items: [
+                    {
+                        type: 'docSidebar',
+                        sidebarId: 'docs',
+                        position: 'left',
+                        label: 'Docs',
+                    }
+                ],
+            },
+            footer: {
+                style: 'dark',
+                links: [],
+                copyright: 'Highsoft for all eternity',
+            },
+            prism: {
+                theme: prismThemes.github,
+                darkTheme: prismThemes.dracula,
+            },
+        }),
+    };
 
 export default config;
