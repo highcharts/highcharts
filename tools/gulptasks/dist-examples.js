@@ -283,28 +283,46 @@ function convertURLToLocal(str) {
  */
 function distExamples() {
     const FS = require('fs');
+    const argv = require('yargs').argv;
+    const distProduct = argv.product || 'Highcharts';
 
     return new Promise((resolve, reject) => {
 
         const promises = [];
-        const samplesSubfolder = {
-            highcharts: {
-                path: ['highcharts', 'demo'],
-                title: 'Highcharts'
-            },
-            highstock: {
-                path: ['stock', 'demo'],
-                title: 'Highstock'
-            },
-            highmaps: {
-                path: ['maps', 'demo'],
-                title: 'Highmaps'
-            },
-            gantt: {
-                path: ['gantt', 'demo'],
-                title: 'Highcharts Gantt'
-            }
-        };
+        let samplesSubfolder = {};
+
+        if (distProduct === 'Highcharts') {
+            samplesSubfolder = {
+                highcharts: {
+                    path: ['highcharts', 'demo'],
+                    title: 'Highcharts'
+                },
+                highstock: {
+                    path: ['stock', 'demo'],
+                    title: 'Highstock'
+                },
+                highmaps: {
+                    path: ['maps', 'demo'],
+                    title: 'Highmaps'
+                },
+                gantt: {
+                    path: ['gantt', 'demo'],
+                    title: 'Highcharts Gantt'
+                }
+            };
+        } else if (distProduct === 'Grid') {
+            samplesSubfolder = {
+                'grid-lite': {
+                    path: ['grid', 'demo'],
+                    title: 'Highcharts Grid Lite'
+                }/* ,
+                'grid-pro': {
+                    path: ['grid', 'demo'],
+                    title: 'Highcharts Grid Pro'
+                }*/
+            };
+        }
+
         const template = FS
             .readFileSync(TEMPLATE_FILE)
             .toString();

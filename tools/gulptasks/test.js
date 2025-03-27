@@ -431,7 +431,6 @@ specified by config.imageCapture.resultsOutputPath.
                 'They can be reviewed in ' + consoleLogPath.cyan + '.'
             );
         }
-
     }
 }
 

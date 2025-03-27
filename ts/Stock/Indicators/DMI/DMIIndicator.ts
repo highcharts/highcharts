@@ -1,5 +1,5 @@
 /* *
- *  (c) 2010-2024 Rafal Sebestjanski
+ *  (c) 2010-2025 Rafal Sebestjanski
  *
  *  Directional Movement Index (DMI) indicator for Highcharts Stock
  *

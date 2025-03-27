@@ -610,6 +610,7 @@ module.exports = function (config) {
                                 );
                             })
                             .catch(err => {
+                                assert.ok(false, err);
                                 console.error(err);
                             })
                             .finally(() => {
