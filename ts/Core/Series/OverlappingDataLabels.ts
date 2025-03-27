@@ -3,7 +3,7 @@
  *  Highcharts module to hide overlapping data labels.
  *  This module is included in Highcharts.
  *
- *  (c) 2009-2024 Torstein Honsi
+ *  (c) 2009-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
