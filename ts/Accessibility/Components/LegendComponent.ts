@@ -459,6 +459,7 @@ class LegendComponent extends AccessibilityComponent {
             title: ''
         };
 
+        // Check if label contains an ellipsis character (\u2026) #22397
         if (
             ellipsis &&
             (legendLabelEl.textContent || '').indexOf('\u2026') !== -1
