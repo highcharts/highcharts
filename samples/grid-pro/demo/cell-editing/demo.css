@@ -4,12 +4,18 @@
     padding: 8px;
 }
 
-.highcharts-description {
-    padding: 0 20px;
+#changelog:not(:empty) {
+    background: #fbfbfb;
+    border-radius: 5px;
+    padding: 10px 15px;
+    border: 1px solid #aaa;
+    max-height: 250px;
+    overflow-y: auto;
 }
 
 @media (prefers-color-scheme: dark) {
-    .content {
+    .content,
+    #changelog:not(:empty) {
         background-color: #292929;
         color: #fff;
     }
