@@ -3,7 +3,7 @@
  * @module highcharts/themes/grid
  * @requires highcharts
  *
- * (c) 2009-2024 Torstein Honsi
+ * (c) 2009-2025 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

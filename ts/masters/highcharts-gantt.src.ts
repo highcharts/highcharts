@@ -2,7 +2,7 @@
  * @license Highcharts Gantt JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts-gantt
  *
- * (c) 2017-2024 Lars Cabrera, Torstein Honsi, Jon Arild Nygard & Oystein Moseng
+ * (c) 2017-2025 Lars Cabrera, Torstein Honsi, Jon Arild Nygard & Oystein Moseng
  *
  * License: www.highcharts.com/license
  */

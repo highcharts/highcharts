@@ -3,7 +3,7 @@
  * @module highcharts/modules/geoheatmap
  * @requires highcharts
  *
- * (c) 2009-2024
+ * (c) 2009-2025
  *
  * License: www.highcharts.com/license
  */

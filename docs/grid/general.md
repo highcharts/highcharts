@@ -17,7 +17,7 @@ This section of the documentation focuses on **Highcharts Grid** in general. For
 ## My First Grid
 
 Let's dive right in with a bare minimum example of a fully functional Grid Lite:
- 
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -88,6 +88,6 @@ Add an HTML element to the `body` with the ID you specified as the first argumen
 
 With the configuration above, your Grid should look like this:
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-lite/demo/your-first-grid" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/demo/your-first-grid" allow="fullscreen"></iframe>
 
 Go to [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) to read more about Grid structure and configuration options.
