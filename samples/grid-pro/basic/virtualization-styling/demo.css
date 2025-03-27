@@ -4,8 +4,6 @@
 #demo {
     margin: 10px;
     padding: 10px;
-    background-color: var(--hcg-background);
-    color: var(--hcg-color);
 }
 
 .two-cols {
@@ -24,4 +22,11 @@
 
 #container {
     height: 500px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #demo {
+        background-color: #292929;
+        color: #fff;
+    }
 }

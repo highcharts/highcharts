@@ -1,6 +1,15 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
 
 #container {
-    background-color: var(--hcg-background);
     padding: 8px;
+}
+
+.highcharts-description {
+    padding: 0 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #container {
+        background-color: #292929;
+    }
 }

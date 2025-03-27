@@ -1,9 +1,7 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 .demo {
-    background-color: var(--hcg-background);
     padding: 8px;
-    color: var(--hcg-color);
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -14,12 +12,12 @@
 .editor {
     margin-top: 8px;
     padding: 8px;
-    border: 1px solid var(--hcg-border-color);
+    border: 1px solid #ccc;
     border-radius: 6px;
 }
 
 .editor details {
-    border: 1px solid var(--hcg-border-color);
+    border: 1px solid #ccc;
     border-radius: 6px;
     padding: 8px;
     margin-top: 6px;
@@ -47,7 +45,7 @@
 .description {
     font-style: italic;
     font-size: 0.8em;
-    color: var(--hcg-loader-color);
+    color: #777;
 }
 
 .last {
@@ -56,4 +54,23 @@
 
 .highcharts-description {
     padding: 0 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .demo {
+        background-color: #292929;
+        color: #fff;
+    }
+
+    .editor {
+        border-color: #525252;
+    }
+
+    .editor details {
+        border-color: #525252;
+    }
+
+    .description {
+        color: #aaa;
+    }
 }

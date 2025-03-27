@@ -25,7 +25,7 @@ npm install @highcharts/grid-lite
 Then, import the package into your project:
 
 ```js
-import Grid from '@highcharts/grid-lite/grid-lite';
+import * as Grid from '@highcharts/grid-lite/grid-lite';
 import '@highcharts/grid-lite/css/grid.css';
 ```
 
