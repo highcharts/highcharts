@@ -135,15 +135,11 @@ const loadScript = async (module: string): Promise<undefined> => {
     }
 
     // ES modules
-    /*
-    @todo Fix and implement new esm bundles
-    Currently fails on webpack.
     if (root.charAt(0) === '.') {
         await import(`${root}/${module}.${extension}`);
         pushUnique(loaded, module);
         return;
     }
-    */
 
     return new Promise((resolve, reject): void => {
         const onload = (): void => {
