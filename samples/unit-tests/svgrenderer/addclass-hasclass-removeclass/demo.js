@@ -106,10 +106,15 @@
 
         var g = ren.g().add();
 
-        ren.text('HTML', 100, 300, true).add(g);
+        const txt = ren.text('HTML', 100, 300, true).add(g);
 
         // The class names should now be set on g.div
-        checkElement('HTML group', g, g.div, assert);
+        checkElement(
+            'HTML group',
+            g,
+            txt.foreignObject ? g.element : g.div,
+            assert
+        );
     });
 
     QUnit.test('Add multiple class names', assert => {
