@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2025 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *

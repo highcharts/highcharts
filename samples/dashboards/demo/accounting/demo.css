@@ -95,6 +95,10 @@
     display: none;
 }
 
+.highcharts-gauge-series .highcharts-data-label text {
+    font-size: 1em;
+}
+
 .highcharts-gauge-series .highcharts-pivot,
 .highcharts-gauge-series .highcharts-dial {
     fill: var(--highcharts-neutral-color-60);

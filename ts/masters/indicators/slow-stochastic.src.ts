@@ -6,7 +6,7 @@
  *
  * Slow Stochastic series type for Highcharts Stock
  *
- * (c) 2010-2024 Pawel Fus
+ * (c) 2010-2025 Pawel Fus
  *
  * License: www.highcharts.com/license
  */

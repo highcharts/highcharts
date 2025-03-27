@@ -39,6 +39,7 @@
 
         tooltip: {
             animation: false,
+            fixed: true,
             borderWidth: 0,
             borderRadius: 15,
             backgroundColor: '#474554',
@@ -65,12 +66,11 @@
                 return `${prefix} ${value}%`;
 
             },
-            positioner: function () {
-                return {
-                    x: this.chart.plotLeft + (this.chart.plotWidth / 2) -
-                        (this.label.bBox.width / 2),
-                    y: this.chart.plotTop + this.chart.plotHeight + 5
-                };
+            position: {
+                align: 'center',
+                relativeTo: 'chart',
+                verticalAlign: 'bottom',
+                y: -10
             }
         },
 

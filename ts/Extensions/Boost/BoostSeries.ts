@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2025 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -1129,7 +1129,8 @@ function seriesRenderCanvas(this: Series): void {
             this.options.xData ||
             this.getColumn('x', true)
         ),
-        lineWidth = pick(options.lineWidth, 1);
+        lineWidth = pick(options.lineWidth, 1),
+        nullYSubstitute = options.nullInteraction && yMin;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1297,7 +1298,7 @@ function seriesRenderCanvas(this: Series): void {
         const chartDestroyed = typeof chart.index === 'undefined';
 
         let x: number,
-            y: number,
+            y,
             clientX,
             plotY,
             percentage,
@@ -1314,7 +1315,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData?.[i] as any;
+                y = yData[i] ?? nullYSubstitute ?? null;
             }
 
             // Resolve low and high for range series
