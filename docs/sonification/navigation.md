@@ -18,10 +18,12 @@ Several of the playback functions accept an event filter, which filters which au
 
 For example:
 
-    chart.sonification.playAdjacent(true, onEndCallback, (e) => {
-        const point = e.relatedPoint || {};
-        return point.color === 'red';
-    });
+```js
+chart.sonification.playAdjacent(true, onEndCallback, (e) => {
+    const point = e.relatedPoint || {};
+    return point.color === 'red';
+});
+```
 
 The above function call will play the next red data point.
 

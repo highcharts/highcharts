@@ -13,19 +13,20 @@ The concept
 
 Advanced annotations are composed of one or more shapes combined with labels. The `type` option specifies the type of advanced annotation to use. This code snippet shows how to easily create the Fibonacci retracement above.
 
-
-        annotations: [{
-            type: 'fibonacci',
-            typeOptions: {
-                points: [{
-                    x: 2,
-                    y: 4
-                }, {
-                    x: 10,
-                    y: 6.5
-                }]
-            }
+```js
+annotations: [{
+    type: 'fibonacci',
+    typeOptions: {
+        points: [{
+            x: 2,
+            y: 4
+        }, {
+            x: 10,
+            y: 6.5
         }]
+    }
+}]
+```
 
 
 The type options and label options
@@ -34,24 +35,25 @@ The type options and label options
 The `typeOptions` feature allows users to customize the appearance and design of an annotation, including its individual shapes and labels. It’s important to note that `typeOptions` settings are specific to each annotation type. Some annotations that use labels also have `labelOptions` where users may configure the label appearance. Below is an example demonstrating how to apply different colors to various shapes using `typeOptions` for the Fibonacci Retracement annotation. Click the "Apply colors" button in the demo to see the effect.
 
 
-        ...
-        labelOptions: {
-            style: {
-                color: '#071952'
-            }
-        },
-        typeOptions: {
-            backgroundColors: [
-                'rgb(7, 25, 82,   0.4)',
-                'rgb(8, 131, 149, 0.4)',
-                'rgb(7, 25, 82,   0.4)',
-                'rgb(8, 131, 149, 0.4)',
-                'rgb(7, 25, 82,   0.4)',
-                'rgb(8, 131, 149, 0.4)'
-            ],
-            lineColor: 'rgba(0, 0, 0, 0.8)'
-        }
-
+```js
+...
+labelOptions: {
+    style: {
+        color: '#071952'
+    }
+},
+typeOptions: {
+    backgroundColors: [
+        'rgb(7, 25, 82,   0.4)',
+        'rgb(8, 131, 149, 0.4)',
+        'rgb(7, 25, 82,   0.4)',
+        'rgb(8, 131, 149, 0.4)',
+        'rgb(7, 25, 82,   0.4)',
+        'rgb(8, 131, 149, 0.4)'
+    ],
+    lineColor: 'rgba(0, 0, 0, 0.8)'
+}
+```
 <iframe style="width: 100%; height: 432px; border: none;" src="https://www.highcharts.com/samples/highcharts/annotations-advanced/fibonacci" allow="fullscreen"></iframe>
 
 Look for the [typeOptions](https://api.highcharts.com/highstock/annotations.fibonacci.typeOptions) and [labelOptions](https://api.highcharts.com/highstock/annotations.fibonacci.labelOptions) for a specific annotation.

@@ -36,9 +36,11 @@ Initialize the map
 
 Read more on initializing a chart in [Your first chart](https://highcharts.com/docs/getting-started/your-first-chart). The map is constructed with the `Highcharts.mapChart` constructor:
 
+```js
     Highcharts.mapChart('container', {
        ...
     });
+```
 
 Add and join data for choropleth maps
 -------------------------------------

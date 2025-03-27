@@ -79,7 +79,7 @@ Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree
 yAxis bindings
 -------------
 
-All Overlay type technical indicators (the ones listed in the left column of the above table, e.g. SMA, EMA, etc.) can be placed on the same yAxis as the main series. However, other technical indicators (right column, e.g. Oscillators: MACD, RSI, etc.), should use a separate yAxis. This is caused by values calculated by algorithms: yAxis extremes for the main series can be <250, 255> but for the Stochastic technical indicator, values are within <0, 100> extremes. A technical indicator can be placed on a separate yAxis as any other series:
+All Overlay type technical indicators (the ones listed in the left column of the above table, e.g. SMA, EMA, etc.) can be placed on the same yAxis as the main series. However, other technical indicators (right column, e.g. Oscillators: MACD, RSI, etc.), should use a separate yAxis. This is caused by values calculated by algorithms: yAxis extremes for the main series can be `<250, 255>` but for the Stochastic technical indicator, values are within `<0, 100>` extremes. A technical indicator can be placed on a separate yAxis as any other series:
 
 1. Create required yAxis:
 

@@ -5,16 +5,17 @@ The Resizer module allows the end-user to define which axes can be resized in a 
 
 Basic configuration:
 
-
-    yAxis: [{
-      height: '50%',
-      resize: {
-        enabled: true
-      }
-    }, {
-      height: '50%',
-      top: '50%'
-    }]
+```js
+yAxis: [{
+  height: '50%',
+  resize: {
+    enabled: true
+  }
+}, {
+  height: '50%',
+  top: '50%'
+}]
+```
 
 
 The configuration above generates a resizer between the first and the second `yAxis`. Now, the end-user can simply resize one `yAxis` to increase its height, and to decrease the second `yAxis`:
