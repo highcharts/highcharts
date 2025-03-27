@@ -1,5 +1,5 @@
 /* *
- *  (c) 2010-2024 Rafal Sebestjanski
+ *  (c) 2010-2025 Rafal Sebestjanski
  *
  *  Disparity Index technical indicator for Highcharts Stock
  *
