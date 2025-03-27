@@ -64,13 +64,13 @@ declare module '../SVG/SVGRendererLike' {
 function commonSetter(
     this: SVGElement,
     value: string,
-    key: string,
+    key: any,
     elem: HTMLDOMElement
 ): void {
-    const style = this.div?.style || elem.style;
+    const style = this.div?.style;
     SVGElement.prototype[`${key}Setter`].call(this, value, key, elem);
     if (style) {
-        style[key as any] = value;
+        elem.style[key] = style[key] = value;
     }
 }
 
