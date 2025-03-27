@@ -37,7 +37,7 @@ The [text](https://api.highcharts.com/highcharts/sonification.defaultSpeechOptio
 
 The below demo illustrates using a format string to map the speech to announce Y-values. It also maps the [speech pitch](https://api.highcharts.com/highcharts/sonification.defaultSpeechOptions.mapping.pitch) to Y-values, meaning the voice speaks at a higher pitch at higher values, and lower at lower values.
 
-<iframe style="width: 100%; height: 490px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/speak-values allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 490px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/speak-values" allow="fullscreen"></iframe>
 
 
 Next Steps

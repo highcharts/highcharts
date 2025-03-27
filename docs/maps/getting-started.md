@@ -9,11 +9,15 @@ Load the required files
 For basics, see [Highcharts installation](https://highcharts.com/docs/getting-started/installation). The framework requirements and installation is the same for Highcharts Maps as for Highcharts. To load Highcharts Maps as a standalone product (if you don't have a license for Highcharts), include this script tag:
 
 
-    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+```html
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+```
 
 If you already have Highcharts installed in the web page and want to run Highcharts Maps as a plugin, include this script tag _after_ `highcharts.js`:
 
-    <script src="https://code.highcharts.com/maps/modules/map.js"></script>
+```html
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+```
 
 Load the map
 ------------

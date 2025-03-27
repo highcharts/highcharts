@@ -27,7 +27,7 @@ Mapping Functions
 
 Mapping functions - not to be confused with the section above - refer to the mathematical function used when performing the mapping. It is possible to map either linearly or logarithmically. The demo below illustrates the difference, and how `logarithmic` mapping can be useful with logarithmic axes.
 
-<iframe style="width: 100%; height: 510px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/log-mapping allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 510px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/log-mapping" allow="fullscreen"></iframe>
 
 The mapping function can be set for any mapping parameter using the [mapFunction](https://api.highcharts.com/highcharts/sonification.defaultInstrumentOptions.mapping.pitch.mapFunction) option.
 
@@ -51,7 +51,7 @@ For example, if mapping pitch to Y-values with inverted polarity, the pitch will
         pitch: '-y'
     }
 
-<iframe style="width: 100%; height: 465px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/polarity-invert allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 465px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/polarity-invert" allow="fullscreen"></iframe>
 
 Mapping Within
 --------------
@@ -64,7 +64,7 @@ For example if mapping pitch to Y values, you may want all series on the same Y 
 
 The demo below illustrates different mapping settings for pitch, where pitch is mapped to Y values.
 
-<iframe style="width: 100%; height: 630px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/mapping-within allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 630px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/mapping-within" allow="fullscreen"></iframe>
 
 Advanced Pitch Mapping
 ----------------------
@@ -95,7 +95,7 @@ It is possible to map pitch to an array of notes, like this:
 
 In this case, all these notes are played for each data point, and the [gapBetweenNotes](https://api.highcharts.com/highcharts/sonification.defaultInstrumentOptions.mapping.gapBetweenNotes) mapping parameter determines the delay between them.
 
-<iframe style="width: 100%; height: 665px; border: none;" src=https://www.highcharts.com/samples/embed/maps/demo/audio-map allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 665px; border: none;" src="https://www.highcharts.com/samples/embed/maps/demo/audio-map" allow="fullscreen"></iframe>
 
 **Mapping to a musical scale:**
 
@@ -115,7 +115,7 @@ The scale is defined as an array of note offsets from the root note, or alternat
 
 The below demo illustrates the various scale presets and how they affect the mapping:
 
-<iframe style="width: 100%; height: 490px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/all-scales allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 490px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/all-scales" allow="fullscreen"></iframe>
 
 Time Mapping
 ------------
@@ -130,7 +130,7 @@ Time can be mapped like other parameters, for example to Y values instead:
         volume: 0.6
     }
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/point-play-time allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/point-play-time" allow="fullscreen"></iframe>
 
 Next steps
 ----------

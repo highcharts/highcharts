@@ -11,7 +11,7 @@ There can be strong accessibility benefits to providing sonification with large 
 
 In Highcharts, we provide a sonification module to allow you full control of playing your data using sound. The sonification module supports a wide range of different use cases, and is designed with flexibility in mind.
 
-<iframe style="width: 100%; height: 760px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/soundscape allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 760px; border: none;" src="https://www.highcharts.com/samples/embed/stock/demo/soundscape" allow="fullscreen"></iframe>
 
 Installation
 ------------
@@ -75,7 +75,7 @@ And actually that's all we need! Clicking the "Play chart" button will play back
 Setting Basic Configuration Options
 ----------------------------------------------
 
-<iframe style="width: 100%; height: 455px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-sequential allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 455px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/chart-sequential" allow="fullscreen"></iframe>
 
 **Duration:**
 
@@ -106,7 +106,7 @@ In particular, we have set the sonification [duration](https://api.highcharts.co
 
 The above chart sonifies in sequence, meaning each series plays individually, one after the other. Sometimes you may want to play the data series together, like in this example:
 
-<iframe style="width: 100%; height: 455px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-simultaneous allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 455px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/chart-simultaneous" allow="fullscreen"></iframe>
 
 This can be achieved by setting the [sonification.order](https://api.highcharts.com/highcharts/sonification.order) option to `simultaneous`.
 
@@ -121,7 +121,7 @@ The above demo also uses two different sounding instruments, one for each series
 
 The sonification module uses the concept of "Tracks". Each track is a layer of sound, and represents a sequence of sounds played by a single instrument or voice. The demo in the previous section uses two main tracks:
 
-1. The first track plays a piano-like instrument for the first series. 
+1. The first track plays a piano-like instrument for the first series.
 2. The second track plays a flute-like instrument for the second series.
 
 Each series by default gets one track, with a piano-like instrument sound, but this can easily be changed.

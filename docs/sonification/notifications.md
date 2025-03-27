@@ -45,7 +45,7 @@ These functions allow us to quickly play a note or speak an announcement without
 
 The below demo illustrates how to set up [sonification event handlers](https://api.highcharts.com/highcharts/sonification.events) and use the functions mentioned above to play notes and speech announcements.
 
-<iframe style="width: 100%; height: 415px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-events allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 415px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/chart-events" allow="fullscreen"></iframe>
 
 Next Steps
 ----------

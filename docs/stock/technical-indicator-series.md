@@ -72,7 +72,7 @@ series: [{
 }]
 ```
 
-<iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 650px; border: none;" src="https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points" allow="fullscreen"></iframe>
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/macd-pivot-points) to check the code.
 
