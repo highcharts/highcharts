@@ -1,11 +1,16 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
 
 #container {
-    background-color: var(--hcg-background);
     height: 400px;
     padding: 8px;
 }
 
 .hcg-table tbody tr td[data-column-id="b"]:hover {
     text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+    #container {
+        background-color: #292929;
+    }
 }

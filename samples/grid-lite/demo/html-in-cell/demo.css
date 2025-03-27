@@ -4,14 +4,21 @@
     --anchor-color: #007bff;
 }
 
+.highcharts-description {
+    padding: 0 20px;
+}
+
 @media (prefers-color-scheme: dark) {
     .hcg-theme-default {
         --anchor-color: #8ec3fc;
     }
+
+    #container {
+        background-color: #292929;
+    }
 }
 
 #container {
-    background-color: var(--hcg-background);
     padding: 8px;
 }
 
@@ -29,7 +36,7 @@ td {
     text-align: center;
 }
 
-td a {
+.hcg-theme-default a {
     color: var(--anchor-color);
 }
 

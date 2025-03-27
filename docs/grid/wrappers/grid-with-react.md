@@ -8,7 +8,7 @@ To create a Grid with React, please follow the steps below:
 ## 1. Install the Grid package
 Install Grid Lite package with:
 ```bash
-npm install @highcharts/grid-lite/grid-lite
+npm install @highcharts/grid-lite
 ````
 
 ## 2. Create a Grid React component:

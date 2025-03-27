@@ -261,6 +261,7 @@ class TableCell extends Cell {
             return;
         }
 
+        this.row.data[this.column.id] = this.value;
         originalDataTable.setCell(
             this.column.id,
             rowTableIndex,
