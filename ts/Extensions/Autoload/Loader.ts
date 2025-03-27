@@ -136,7 +136,8 @@ const loadScript = async (module: string): Promise<undefined> => {
 
     // ES modules
     /*
-    @todo Currently fails on es5-compile. Not needed in es5.
+    @todo Fix and implement new esm bundles
+    Currently fails on webpack.
     if (root.charAt(0) === '.') {
         await import(`${root}/${module}.${extension}`);
         pushUnique(loaded, module);
