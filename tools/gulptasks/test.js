@@ -79,15 +79,28 @@ function checkSamplesConsistency() {
 
     let errors = 0;
 
+    // Avoid double-commit of demo.js and demo.ts
     glob.sync(
         FSLib.path(process.cwd() + '/samples/*/demo/*', true)
     ).forEach(p => {
-        if (
-            existsSync(FSLib.path(p + '/demo.ts')) &&
-            existsSync(FSLib.path(p + '/demo.js'))
-        ) {
-            LogLib.failure('Both demo.ts and demo.js found', p);
-            errors++;
+        if (existsSync(FSLib.path(p + '/demo.ts'))) {
+            const gitignore = FSLib.path(p + '/.gitignore');
+            if (!existsSync(gitignore)) {
+                LogLib.failure(
+                    'Should have a .gitignore file when demo.ts exists',
+                    p
+                );
+                errors++;
+            } else {
+                const content = FSLib.getFile(gitignore);
+                if (!content.includes('demo.js')) {
+                    LogLib.failure(
+                        'Should list demo.js in .gitignore file when demo.ts exists',
+                        p
+                    );
+                    errors++;
+                }
+            }
         }
     });
 
