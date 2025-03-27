@@ -4,7 +4,11 @@
     padding: 8px;
 }
 
-#changelog {
+#changelog:not(:empty) {
+    background: #fbfbfb;
+    border-radius: 5px;
+    padding: 10px 15px;
+    border: 1px solid #858585;
     font-style: italic;
 }
 
