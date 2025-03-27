@@ -103,10 +103,16 @@ async function checkDocsConsistency() {
         let match;
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
+            let rewrite;
+
+            if (sample.startsWith('grid/')) {
+                rewrite = sample.replace(/^grid\//, 'grid-lite/');
+            }
+
             try {
-                FS.statSync(`samples/${sample}/demo.js`);
+                FS.statSync(`samples/${rewrite ?? sample}/demo.js`);
             } catch (error) {
-                error404s.push({ file, sample });
+                error404s.push({ file, sample, rewrite });
             }
         }
 
