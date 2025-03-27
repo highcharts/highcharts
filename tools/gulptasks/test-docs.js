@@ -111,13 +111,19 @@ async function checkDocsConsistency() {
         let match;
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
+            let rewrite;
+
+            if (sample.startsWith('grid/')) {
+                rewrite = sample.replace(/^grid\//, 'grid-lite/');
+            }
+
             try {
-                FS.statSync(`samples/${sample}/demo.js`);
+                FS.statSync(`samples/${rewrite ?? sample}/demo.js`);
             } catch (e1) {
                 try {
-                    FS.statSync(`samples/${sample}/demo.ts`);
+                    FS.statSync(`samples/${rewrite ?? sample}/demo.ts`);
                 } catch (e2) {
-                    error404s.push({ file, sample, reason: 'demo' });
+                    error404s.push({ file, sample, reason: 'demo', rewrite });
                 }
             }
         }
