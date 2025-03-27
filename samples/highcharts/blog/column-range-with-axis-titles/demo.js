@@ -136,10 +136,8 @@ Highcharts.chart('container', {
         enabledButtons: false
     },
     tooltip: {
-        delayForDisplay: 10,
         shared: true,
-        useHTML: true,
-        headerFormat: '<small>\n  {point.x: %b %d}\n  <br/>\n</small>'
+        headerFormat: '<small>{point.x: %b %d}</small><br/>'
     },
     xAxis: {
         type: 'datetime',

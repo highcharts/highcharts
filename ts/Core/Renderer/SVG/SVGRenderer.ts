@@ -663,19 +663,40 @@ class SVGRenderer implements SVGRendererLike {
      */
     public getContrast(color: ColorString): ColorString {
         // #6216, #17273
-        const rgba = Color.parse(color).rgba
-            .map((b8): number => {
-                const c = b8 / 255;
-                return c <= 0.03928 ?
-                    c / 12.92 :
-                    Math.pow((c + 0.055) / 1.055, 2.4);
-            });
+        const rgba256 = Color.parse(color).rgba,
+            // For each rgb channel, compute the luminosity based on all
+            // channels. Subtract this from 0.5 and multiply by a huge number,
+            // so that all colors with luminosity < 0.5 result in a negative
+            // number, and all colors > 0.5 end up very high. This is then
+            // clamped into the range 0-1, to result in either black or white.
+            // The subtraction of 0.5, multiplication by 9e9, and clamping are
+            // workarounds for lack of support for the round() function. As of
+            // 2025, it is too fresh in Chrome, and doesn't work in Safari.
+            channelFunc =
+            ' clamp(0,calc(9e9*(0.5 - (0.2126*r + 0.7152*g + 0.0722*b))),1)';
 
-        // Relative luminance
-        const l = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
+        // The color is parsable by the Color class parsers
+        if (isNumber(rgba256[0]) || !Color.useColorMix) {
+            const rgba = rgba256.map((b8): number => {
+                    const c = b8 / 255;
+                    return c <= 0.04 ?
+                        c / 12.92 :
+                        Math.pow((c + 0.055) / 1.055, 2.4);
+                }),
+                // Relative luminance
+                l = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
 
-        // Use white or black based on which provides more contrast
-        return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ? '#FFFFFF' : '#000000';
+            // Use white or black based on which provides more contrast
+            return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ?
+                '#FFFFFF' :
+                '#000000';
+        }
+
+        // Not parsable, use CSS functions instead
+        return 'color(' +
+            'from ' + color + ' srgb' +
+            channelFunc + channelFunc + channelFunc +
+        ')';
     }
 
     /**
@@ -848,7 +869,7 @@ class SVGRenderer implements SVGRendererLike {
             .on('touchstart', (e: Event): void => e.stopPropagation())
             .on('click', function (e: Event): void {
                 if (curState !== 3) {
-                    callback.call(label, e);
+                    callback?.call(label, e);
                 }
             });
     }

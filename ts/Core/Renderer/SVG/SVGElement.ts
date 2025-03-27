@@ -587,9 +587,10 @@ class SVGElement implements SVGElementLike {
         }
 
         // Extract the stroke width and color
-        const parts = textOutline.split(' ');
-        const color: ColorString = parts[parts.length - 1];
-        let strokeWidth = parts[0];
+        const spacePos = textOutline.indexOf(' '),
+            color: ColorString = textOutline.substring(spacePos + 1);
+
+        let strokeWidth = textOutline.substring(0, spacePos);
 
         if (strokeWidth && strokeWidth !== 'none' && H.svg) {
 
@@ -1144,6 +1145,7 @@ class SVGElement implements SVGElementLike {
                 // SVG requires fill for text
                 if (stylesToApply.color) {
                     stylesToApply.fill = stylesToApply.color;
+                    delete stylesToApply.color;
                 }
             }
             css(elem, stylesToApply);
