@@ -1,7 +1,7 @@
 /* eslint-disable */
 /* *
  * Error information for the debugger module
- * (c) 2010-2025 Torstein Honsi
+ * (c) 2010-2021 Torstein Honsi
  * License: www.highcharts.com/license
  */
 
