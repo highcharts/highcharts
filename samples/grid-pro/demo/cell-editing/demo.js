@@ -13,6 +13,7 @@ Grid.grid('container', {
             afterEdit: function () {
                 changelog.innerHTML +=
                     `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
+                changelog.scrollTop = changelog.scrollHeight;
             }
         }
     },
