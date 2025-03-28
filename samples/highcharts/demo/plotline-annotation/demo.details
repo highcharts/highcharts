@@ -1,0 +1,13 @@
+---
+name: Plot Line Annotation
+authors:
+  - Mateusz Bernacik
+new_until: 2024-04-01
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+  - Annotations
+categories:
+  - Various features:
+      priority: 1
+...
