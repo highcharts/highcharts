@@ -203,6 +203,13 @@ major version number. For example, <strong><span class="minor">@minor</span></st
 </ul>
 <p>The full list of all available modules can be found on the <a href="https://github.com/highcharts/highcharts-dist/tree/master/modules">Highcharts distribution repository</a>.</p>
 
+<h4 id="autoload">Autoload</h4>
+<p>Since v12.2, Highcharts includes an experimental autoload script. This script dynamically loads the
+required modules based on the chart configuration alone. It is intended for
+situations where the implementer doesn't control the configuration, like when
+the chart is built by an LLM or other dynamic processes. See examples for
+<a href="https://www.highcharts.com/samples/highcharts/global/autoload">UMD autoload
+</a> and <a href="https://www.highcharts.com/samples/highcharts/global/autoload-esm">ESM autoload</a>.</p>
 
 <h2 id="highcharts-stock">Highcharts Stock</h2>
 <p>Highcharts Stock files are available under the <strong>/stock</strong> subfolder, with the same folder
