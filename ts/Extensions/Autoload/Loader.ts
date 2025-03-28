@@ -26,7 +26,9 @@ const loaded: string[] = [];
 
 // Default to root and extension that supports ESM imports.
 let root = './',
-    extension = 'js';
+    // In compiled scripts, this gets replaced with .js by the scripts-compile
+    // task.
+    extension = '.src.js';
 
 const addStyleSheets = (
     options: Partial<Options>,
@@ -102,7 +104,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
 };
 
 const setRootFromURL = (url: string): string|undefined => {
-    const regex = /\/highcharts-autoload\.(src.js|js)$/,
+    const regex = /\/highcharts-autoload(\.src\.js|\.js)$/,
         match = url.match(regex);
 
     if (match) {
@@ -122,7 +124,7 @@ const guessRoot = (): void => {
     }
 };
 
-const setRoot = (userRoot = root, userExtension = 'js'): void => {
+const setRoot = (userRoot = root, userExtension = extension): void => {
     root = userRoot;
     extension = userExtension;
 };
@@ -138,7 +140,7 @@ const loadScript = async (module: string): Promise<undefined> => {
         try {
             await import(
                 // eslint-disable-next-line capitalized-comments
-                /* webpackIgnore: true */ `${root}${module}.${extension}`
+                /* webpackIgnore: true */ `${root}${module}${extension}`
             );
             pushUnique(loaded, module);
         } catch (e) {
@@ -163,7 +165,7 @@ const loadScript = async (module: string): Promise<undefined> => {
             document.head.appendChild(link);
         } else {
             const script = document.createElement('script');
-            script.src = `${root}${module}.${extension}`;
+            script.src = `${root}${module}${extension}`;
             script.onload = onload;
             script.onerror = reject;
             document.head.appendChild(script);
