@@ -27,7 +27,7 @@ The CSS must be explicitly imported, as shown here:
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
-The file `datagrid.css` is needed only if the DataGrid component is used in the dashboard.
+The file `datagrid.css` is needed only if the Grid component is used in the dashboard.
 
 ## General CSS classes
 Each class name contains the prefix `highcharts-dashboards` and a suffix that
@@ -144,22 +144,22 @@ To style the chart element of the **Highcharts** component, you need to set the 
 
 For information on how to individually style the dashboard's `Highcharts chart` see the article [style Highcharts Chart.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
 
-### DataGrid component
-To style the dashboard's `DataGrid` component `div` and its content:
+### Grid component
+To style the dashboard's **Grid Component** `div` and its content:
 ```css
 .highcharts-datagrid-container {
     border-radius: 10px;
 }
 ```
 
-To style the dashboard's DataGrid header:
+To style the dashboard's Grid header:
 ```css
 .highcharts-datagrid-column-header {
     background-color: gray;
 }
 ```
 
-To style the dashboard's DataGrid row:
+To style the dashboard's Grid row:
 ```css
 .highcharts-datagrid-row {
     background-color: gray;

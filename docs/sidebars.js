@@ -87,14 +87,19 @@ module.exports = {
         'Dashboards': [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
-            'dashboards/dashboards-with-angular',
-            'dashboards/dashboards-with-react',
-            'dashboards/dashboards-with-vue',
+            {
+                'Wrappers': [
+                    'dashboards/wrappers/dashboards-with-angular',
+                    'dashboards/wrappers/dashboards-with-react',
+                    'dashboards/wrappers/dashboards-with-vue',
+                ]
+            },
             'dashboards/layout-description',
             'dashboards/style-by-css',
             'dashboards/edit-mode',
             'dashboards/types-of-components',
-            'dashboards/datagrid-component',
+            'dashboards/grid-component',
+            'dashboards/grid-standalone',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -109,23 +114,32 @@ module.exports = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
+            'dashboards/grid-migration',
             'dashboards/frequently-asked-questions',
         ],
-        'DataGrid': [
-            'datagrid/general',
-            'datagrid/installation',
-            'datagrid/understanding-datagrid',
-            'datagrid/columns',
-            'datagrid/header',
-            'datagrid/events',
-            'datagrid/performance',
-            'datagrid/style-by-css',
-            'datagrid/accessibility',
-            'datagrid/datagrid-v2-migration',
-            'datagrid/datagrid-with-angular',
-            'datagrid/datagrid-with-react',
-            'datagrid/datagrid-with-vue'
-            
+        'Grid': [
+            'grid/general',
+            'grid/installation',
+            'grid/understanding-grid',
+            'grid/columns',
+            'grid/header',
+            'grid/cell-editing',
+            'grid/events',
+            {
+                'Theming': [
+                    'grid/theming/theming',
+                    'grid/theming/theming-variables',
+                ]
+            },
+            'grid/performance',
+            'grid/accessibility',
+            {
+                'Wrappers': [
+                    'grid/wrappers/grid-with-angular',
+                    'grid/wrappers/grid-with-react',
+                    'grid/wrappers/grid-with-vue'
+                ]
+            }
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',

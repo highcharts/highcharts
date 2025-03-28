@@ -3,7 +3,7 @@
  *  Highcharts module to hide overlapping data labels.
  *  This module is included in Highcharts.
  *
- *  (c) 2009-2024 Torstein Honsi
+ *  (c) 2009-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -30,6 +30,7 @@ import U from '../Utilities.js';
 
 const {
     addEvent,
+    getAlignFactor,
     fireEvent,
     objectEach,
     pick
@@ -106,21 +107,23 @@ function chartHideOverlappingLabels(
                     x: label.attr('x'),
                     y: label.attr('y')
                 },
-                bBox = label.getBBox();
+                { height, polygon, width } = label.getBBox(),
+                alignOffset = getAlignFactor(label.alignValue) * width;
 
-            label.width = bBox.width;
-            label.height = bBox.height;
+
+            label.width = width;
+            label.height = height;
 
             return {
                 x: pos.x + (
                     label.parentGroup?.translateX || 0
-                ) + padding,
+                ) + padding - alignOffset,
                 y: pos.y + (
                     label.parentGroup?.translateY || 0
                 ) + padding,
-                width: (label.width || 0) - 2 * padding,
-                height: (label.height || 0) - 2 * padding,
-                polygon: bBox?.polygon
+                width: width - 2 * padding,
+                height: height - 2 * padding,
+                polygon
             };
         }
     }

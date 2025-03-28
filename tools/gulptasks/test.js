@@ -71,8 +71,46 @@ function checkJSWrap() {
     }
 }
 
+function checkSamplesConsistency() {
+    const FSLib = require('../libs/fs.js');
+    const { existsSync } = require('node:fs');
+    const glob = require('glob');
+    const LogLib = require('../libs/log');
+
+    let errors = 0;
+
+    // Avoid double-commit of demo.js and demo.ts
+    glob.sync(
+        FSLib.path(process.cwd() + '/samples/*/demo/*', true)
+    ).forEach(p => {
+        if (existsSync(FSLib.path(p + '/demo.ts'))) {
+            const gitignore = FSLib.path(p + '/.gitignore');
+            if (!existsSync(gitignore)) {
+                LogLib.failure(
+                    'Should have a .gitignore file when demo.ts exists',
+                    p
+                );
+                errors++;
+            } else {
+                const content = FSLib.getFile(gitignore);
+                if (!content.includes('demo.js')) {
+                    LogLib.failure(
+                        'Should list demo.js in .gitignore file when demo.ts exists',
+                        p
+                    );
+                    errors++;
+                }
+            }
+        }
+    });
+
+    if (errors) {
+        throw new Error('Samples validation failed');
+    }
+}
+
 /**
- * Checks if demos has valid configuration
+ * Checks if demos (public ones for the website) have valid configuration
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -259,6 +297,7 @@ specified by config.imageCapture.resultsOutputPath.
     }
 
     checkDocsConsistency();
+    checkSamplesConsistency();
     checkDemosConsistency();
     checkJSWrap();
 
@@ -392,7 +431,6 @@ specified by config.imageCapture.resultsOutputPath.
                 'They can be reviewed in ' + consoleLogPath.cyan + '.'
             );
         }
-
     }
 }
 

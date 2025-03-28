@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -1089,7 +1089,7 @@ namespace Component {
         className?: string;
 
         /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`,
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `Grid`,
          * `Navigator`.
          */
         type: keyof ComponentTypeRegistry;

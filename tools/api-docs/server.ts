@@ -111,6 +111,15 @@ const PRODUCT_META: Record<string, Record<string, string>> = [
         namespace: 'Highcharts'
     },
     {
+        constructor: 'grid',
+        id: 'grid',
+        module: 'grid',
+        name: 'Highcharts Grid',
+        namespace: 'Grid',
+        noClassReference: true,
+        noGlobalOptions: true
+    },
+    {
         constructor: 'board',
         id: 'dashboards',
         module: 'dashboards',
