@@ -1284,7 +1284,7 @@ class SVGElement implements SVGElementLike {
                 // Destroy own elements
                 ['connector', 'foreignObject'].indexOf(key) !== -1
             ) {
-                wrapper[key].destroy?.();
+                wrapper[key]?.destroy?.();
             }
 
             // Delete all properties
