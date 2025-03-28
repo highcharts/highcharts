@@ -4,7 +4,8 @@ Installation with ES6 modules
 Our product packages are available as ES6-compatible modules since
 Highcharts v6.1. Core files can also be loaded directly as ES modules since
 Highcharts v11.3. The latter allows you to make use of tree shaking to only
-load or bundle what is needed and reduce download and package sizes.
+load or bundle what is needed and reduce download and package sizes. Since v12.2
+the packed bundles are available as ESM.
 
 **Note:** If you code with TypeScript, please take a look at our
 [TypeScript article](https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations)
@@ -160,8 +161,8 @@ Highcharts is available on our CDN as ECMAScript modules. You can [import ES mod
 without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/simple/)):
 ```html
 <script type="module">
-    import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-    import 'https://code.highcharts.com/es-modules/masters/modules/accessibility.src.js';
+    import Highcharts from 'https://code.highcharts.com/esm/highcharts.js';
+    import 'https://code.highcharts.com/esm/modules/accessibility.js';
 
     Highcharts.chart('container', {
         ...
@@ -172,10 +173,10 @@ The following example shows dynamic import with lazy-loading:
 ```js
 const loadHighchartsAndCreateChart = async () => {
     const { default: Highcharts } =
-        await import('https://code.highcharts.com/es-modules/masters/highcharts.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/highcharts-more.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/modules/exporting.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/modules/export-data.src.js');
+        await import('https://code.highcharts.com/esm/highcharts.js');
+    await import('https://code.highcharts.com/esm/highcharts-more.js');
+    await import('https://code.highcharts.com/esm/modules/exporting.js');
+    await import('https://code.highcharts.com/esm/modules/export-data.js');
 
     Highcharts.chart('container', { /* options */ });
 };
@@ -242,8 +243,8 @@ Highcharts.chart('container', {
 ### TypeScript + ESM from CDN
 ```js
 // Load modules the ES6 way
-import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-import 'https://code.highcharts.com/es-modules/masters/modules/exporting.src.js';
+import Highcharts from 'https://code.highcharts.com/esm/highcharts.js';
+import 'https://code.highcharts.com/esm/modules/exporting.js';
 
 // Generate the chart
 Highcharts.chart('container', {
