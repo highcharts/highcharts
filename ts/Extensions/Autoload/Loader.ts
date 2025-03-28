@@ -25,9 +25,8 @@ const H: AnyRecord = G;
 const loaded: string[] = [];
 
 // Default to root and extension that supports ESM imports.
-// @todo When we get ESM bundle builds, we should change this.
-let root = '../../masters',
-    extension = 'src.js';
+let root = './',
+    extension = 'js';
 
 const addStyleSheets = (
     options: Partial<Options>,
@@ -107,7 +106,7 @@ const setRootFromURL = (url: string): string|undefined => {
         match = url.match(regex);
 
     if (match) {
-        root = url.replace(regex, '');
+        root = url.replace(regex, '/');
         extension = match[1];
         return root;
     }
@@ -134,10 +133,18 @@ const loadScript = async (module: string): Promise<undefined> => {
         return;
     }
 
-    // ES modules
-    if (root.charAt(0) === '.') {
-        await import(`${root}/${module}.${extension}`);
-        pushUnique(loaded, module);
+    // Relative root => ES modules
+    if (root === '' || root.charAt(0) === '.') {
+        try {
+            await import(
+                // eslint-disable-next-line capitalized-comments
+                /* webpackIgnore: true */ `${root}${module}.${extension}`
+            );
+            pushUnique(loaded, module);
+        } catch (e) {
+            /* eslint-disable-next-line no-console */
+            console.error(e);
+        }
         return;
     }
 
@@ -150,13 +157,13 @@ const loadScript = async (module: string): Promise<undefined> => {
         if (module.endsWith('.css')) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = `${root}/${module}`;
+            link.href = `${root}${module}`;
             link.onload = onload;
             link.onerror = reject;
             document.head.appendChild(link);
         } else {
             const script = document.createElement('script');
-            script.src = `${root}/${module}.${extension}`;
+            script.src = `${root}${module}.${extension}`;
             script.onload = onload;
             script.onerror = reject;
             document.head.appendChild(script);
