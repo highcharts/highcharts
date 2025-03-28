@@ -122,7 +122,7 @@ const guessRoot = (): void => {
     }
 };
 
-const setRoot = (userRoot: string, userExtension = 'js'): void => {
+const setRoot = (userRoot = root, userExtension = 'js'): void => {
     root = userRoot;
     extension = userExtension;
 };
