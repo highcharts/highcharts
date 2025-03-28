@@ -232,10 +232,10 @@ module.exports = function (config) {
             ChildProcess.execSync(
                 'npx gulp jsdoc-dts'
             );
-            console.log('Compiling test tools...');
-            ChildProcess.execSync(
-                'cd "' + process.cwd() + '" && npx tsc -p test'
-            );
+            // console.log('Compiling test tools...');
+            // ChildProcess.execSync(
+            //     'cd "' + process.cwd() + '" && npx tsc -p test'
+            // );
             console.log('Compiling samples...');
             ChildProcess.execSync(
                 'cd "' + process.cwd() + '" && npx tsc -p samples'
