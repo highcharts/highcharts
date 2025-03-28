@@ -1,7 +1,7 @@
 Navigation for Audio Charts
 ===
 
-<iframe style="width: 100%; height: 635px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sonification-navigation allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 635px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/sonification-navigation" allow="fullscreen"></iframe>
 
 There is various functionality available for dealing with navigation of audio charts in Highcharts.
 
@@ -18,10 +18,12 @@ Several of the playback functions accept an event filter, which filters which au
 
 For example:
 
-    chart.sonification.playAdjacent(true, onEndCallback, (e) => {
-        const point = e.relatedPoint || {};
-        return point.color === 'red';
-    });
+```js
+chart.sonification.playAdjacent(true, onEndCallback, (e) => {
+    const point = e.relatedPoint || {};
+    return point.color === 'red';
+});
+```
 
 The above function call will play the next red data point.
 
@@ -34,4 +36,4 @@ Highcharts has a builtin [chart.sonification.playSegment](https://api.highcharts
 
 The below demo illustrates how this can be used.
 
-<iframe style="width: 100%; height: 565px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/scrubbing allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 565px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/scrubbing" allow="fullscreen"></iframe>

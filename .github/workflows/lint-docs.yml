@@ -6,6 +6,7 @@ on:
     paths:
       - 'docs/**'
       - 'tools/cspell/*'
+      - 'tools/docs-preview/*'
       - '.github/workflows/lint-docs.yml'
 
 permissions:
@@ -37,3 +38,20 @@ jobs:
 
       - name: Check spelling
         run: npm run lint-docs
+
+      - name: Install Docusaurus Dependencies
+        run: npm i
+        working-directory: ./tools/docs-preview
+
+      - name: Build preview
+        run: npm run build
+        working-directory: ./tools/docs-preview
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-build
+          path: |
+            tools/docs-preview/build
+
+

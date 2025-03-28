@@ -17,7 +17,7 @@ There are several presets available for different instrument sounds. Broadly spe
 
 The below demo shows off the available instrument presets:
 
-<iframe style="width: 100%; height: 510px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/all-instruments allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 510px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/all-instruments" allow="fullscreen"></iframe>
 
 Custom Presets
 --------------
@@ -26,7 +26,7 @@ It is possible to create your own custom presets by giving configuration options
 
 The demo below illustrates this:
 
-<iframe style="width: 100%; height: 455px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/custom-instrument allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 455px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/custom-instrument" allow="fullscreen"></iframe>
 
 Using Synth Classes Directly
 ----------------------------
@@ -35,7 +35,7 @@ Both the [Highcharts.sonification.SynthPatch](https://api.highcharts.com/class-r
 
 The below demo shows a use case with `SynthPatch` where we create a simple sonification manually.
 
-<iframe style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/manual-using-synth allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/manual-using-synth" allow="fullscreen"></iframe>
 
 Next Steps
 ----------

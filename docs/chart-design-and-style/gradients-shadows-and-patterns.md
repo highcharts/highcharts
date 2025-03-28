@@ -16,26 +16,25 @@ SVG allows graphical objects to be defined for later usage in the [defs tag](htt
 
 An example of using defs is to apply a gradient: 
 
-    
-    defs: {
-        gradient0: { // key
-            tagName: 'linearGradient',
-            id: 'gradient-0',
-            x1: 0,
-            y1: 0,
-            x2: 0,
-            y2: 1,
-            children: [{
-                tagName: 'stop',
-                offset: 0
-            }, {
-                tagName: 'stop',
-                offset: 1
-            }]
-        }  
-    }  
-      
-    
+```js
+defs: {
+    gradient0: { // key
+        tagName: 'linearGradient',
+        id: 'gradient-0',
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 1,
+        children: [{
+            tagName: 'stop',
+            offset: 0
+        }, {
+            tagName: 'stop',
+            offset: 1
+        }]
+    }
+}
+```
 
 The _key_ (see code comment) doesn't have a general meaning, but can be used for later reference or when merging options. For instance the structure can be modified in depth through `Highcharts.setOptions`. 
 

@@ -12,7 +12,7 @@ _Example of loading both files in a webpage_
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/networkgraph.js"></script> 
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
 ```
 
 Data format
@@ -35,15 +35,15 @@ series: [{
     ]
 }]
 ```
-    
+
 
 _See simple Network Graph demo_
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/initial-positions allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/initial-positions" allow="fullscreen"></iframe>
 
 > _See a Network Graph with a more complex data structure. Notice: You don't have to specify the `from:` and `to:` property for each point when you define the `keys:` option for `plotOptions.networkgraph.keys`_
 
-<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/network-graph allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/network-graph" allow="fullscreen"></iframe>
 
 Algorithm options
 -----------------
@@ -68,7 +68,7 @@ Since version 7.1 additional configuration options are available:
 
 _See the demo below, for a network graph with custom algorithm options applied_
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/forces allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/forces" allow="fullscreen"></iframe>
 
 Link configuration options
 --------------------------
@@ -144,22 +144,22 @@ Customized length between points and colored links:
 
 _See the demo below for a network graph with customized styled links per data series._
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/styled-links allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/styled-links" allow="fullscreen"></iframe>
 
 ### Use Case 2
 
 Comparison of both integrations, Euler and Verlet:
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/integration-comparison allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/integration-comparison" allow="fullscreen"></iframe>
 
 ### Use Case 3
 
 dataLabels around the nodes:
 
-<iframe style="width: 100%; height: 565px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/textpath-datalabels allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 565px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/textpath-datalabels" allow="fullscreen"></iframe>
 
 ### Use Case 4
 
 dataLabels on links:
 
-<iframe style="width: 100%; height: 565px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/link-datalabels allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 565px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/link-datalabels" allow="fullscreen"></iframe>

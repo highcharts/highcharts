@@ -34,16 +34,16 @@ If the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTick
 
 The axis labels can be found along the axis showing the value of the data it corresponds to. Labels can also be customized using a format string or a formatter function:
 
-
-    yAxis: {
-        labels: {
-            format: '{value}%', // provides the same result as:
-            formatter: function() {
-                return this.value + ' %';
-            }
-        },
+```js
+yAxis: {
+    labels: {
+        format: '{value}%', // provides the same result as:
+        formatter: function() {
+            return this.value + ' %';
+        }
     },
-
+},
+```
 
 The above example takes the value of the y-axis label and adds a % symbol at the end of it.
 
@@ -54,12 +54,14 @@ Grid lines are collections of horizontal (and/or vertical) lines that divide a c
 To enable or disable gridlines for either the x or y-axis, set the [gridLineWidth](https://api.highcharts.com/highcharts/xAxis.gridLineWidth) of the respective axis:
 
 
-    xAxis: {
-        gridLineWidth: 1
-    },
-    yAxis: {
-        gridLineWidth: 1
-    }
+```js
+xAxis: {
+    gridLineWidth: 1
+},
+yAxis: {
+    gridLineWidth: 1
+}
+```
 
 
 Grid lines for the y-axis are enabled by default (`gridLineWidth: 1`), and disabled by default for the x-axis  (`gridLineWidth: 0`).
@@ -73,30 +75,31 @@ Multiple axes
 
 It is possible to have multiple axes and linking them with different data series. To do this several axes needs to be created, like this:
 
+```js
+yAxis: [{ //--- Primary yAxis
+    title: {
+        text: 'Temperature'
+    }
+}, { //--- Secondary yAxis
+    title: {
+        text: 'Rainfall'
+    },
+    opposite: true
+}],
 
-    yAxis: [{ //--- Primary yAxis
-        title: {
-            text: 'Temperature'
-        }
-    }, { //--- Secondary yAxis
-        title: {
-            text: 'Rainfall'
-        },
-        opposite: true
-    }],
-
-    series: [{
-        yAxis: 0,
-        data: [
-            49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
-            95.6, 54.4
-        ]
-    },{
-        yAxis: 1,
-        data: [
-            7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6
-        ]
-    }]
+series: [{
+    yAxis: 0,
+    data: [
+        49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
+        95.6, 54.4
+    ]
+},{
+    yAxis: 1,
+    data: [
+        7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6
+    ]
+}]
+```
 
 
 Note that several axes are created using a list, so the first `yAxis` starts with index 0. And the `opposite: true` option puts the axis on the right side of the chart.
@@ -119,51 +122,52 @@ Axis types
 
 An axis can be either, linear, logarithmic, datetime or categories. The axis type is set like this:
 
+```js
+// The types are 'linear', 'logarithmic' and 'datetime'
+yAxis: {
+    type: 'linear',
+}
 
-    // The types are 'linear', 'logarithmic' and 'datetime'
-    yAxis: {
-        type: 'linear',
-    }
-
-    // Categories are set by using an array
-    xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges']
-    }
-
+// Categories are set by using an array
+xAxis: {
+    categories: ['Apples', 'Bananas', 'Oranges']
+}
+```
 
 ### Linear
 
 The numbers along the axis are of linear scale. This is the default axis type. If only y-values are present in a dataseries the x-axis is labeled from 0 to the number of y-values (shows the array index of the y-values):
 
-
-    var chart = new Highcharts.Chart({
-            chart: {
-                renderTo: 'container',
-                type: 'column'
-            },
-            title: {
-                text: 'Fruit Consumption'
-            },
-            xAxis: {
-                title: {
-                    text: 'Fruit Number'
-                },
-                tickInterval: 1
-            },
-            yAxis: {
-                title: {
-                    text: 'Fruit eaten'
-                },
-                tickInterval: 1
-            },
-            series: [{
-                name: 'Jane',
-                data: [1, 0, 4]
-            }, {
-                name: 'John',
-                data: [5, 7, 3]
-            }]
-        }});
+```js
+var chart = new Highcharts.Chart({
+    chart: {
+        renderTo: 'container',
+        type: 'column'
+    },
+    title: {
+        text: 'Fruit Consumption'
+    },
+    xAxis: {
+        title: {
+            text: 'Fruit Number'
+        },
+        tickInterval: 1
+    },
+    yAxis: {
+        title: {
+            text: 'Fruit eaten'
+        },
+        tickInterval: 1
+    },
+    series: [{
+        name: 'Jane',
+        data: [1, 0, 4]
+    }, {
+        name: 'John',
+        data: [5, 7, 3]
+    }]
+}});
+```
 
 ![linear_example.png](linear_example.png)
 

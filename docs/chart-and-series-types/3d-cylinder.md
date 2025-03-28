@@ -7,11 +7,11 @@ Here’re both chart types to compare:
 
 **3D cylinder chart**
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/cylinder allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/cylinder" allow="fullscreen"></iframe>
 
 **3D column chart**
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/css/column-3d allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/css/column-3d" allow="fullscreen"></iframe>
 
 Installation
 ------------
@@ -27,24 +27,24 @@ Configuration
 
 Use Cases
 ---------
+```js
+{
+    chart: {
+        type: 'cylinder',
+        options3d: {
+            enabled: true,
+            alpha: 15,
+            beta: 15,
+            depth: 50,
+            viewDistance: 25
+        }
+    },
+    series: [{
+        data: [1, 2, 3]
+    }]
+}
+```
 
-    
-    {
-                chart: {
-                    type: 'cylinder',
-                    options3d: {
-                        enabled: true,
-                        alpha: 15,
-                        beta: 15,
-                        depth: 50,
-                        viewDistance: 25
-                    }
-                },
-                series: [{
-                    data: [1, 2, 3]
-                }]
-            }
-    
 
 API Docs
 --------

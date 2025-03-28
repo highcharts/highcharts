@@ -84,7 +84,7 @@ Matches the root _svg_ element of the chart. Use this to set styles that shoul
 .highcharts-series
 ```
 
-General styling for all series. To apply styling to only a specific series type, you can define CSS rules for _.highcharts-{type}-series_, for example _.highcharts-area-series_ or _.highcharts-bar-series_. To make specific styling for one single series, you can define CSS rules for _.highcharts-series-{n}_ where _n_ is the index, or give the series a _className_ option.
+General styling for all series. To apply styling to only a specific series type, you can define CSS rules for `.highcharts-{type}-series`, for example `.highcharts-area-series` or `.highcharts-bar-series`. To make specific styling for one single series, you can define CSS rules for `.highcharts-series-{n}` where `n` is the index, or give the series a `className` option.
 
 See [cursor demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-cursor/), [dashstyle demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-dashstyle/), [pie series demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pie-point/), [polygon series demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/polygon/), [waterfall series demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/waterfall/).
 
@@ -92,7 +92,7 @@ See [cursor demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts
 .highcharts-graph
 ```
 
-The graph of a line or line-like series. Use the parent item, ._highcharts-series_ including series type, index or individual class name, to identify specific series. Replaces [plotOptions.series.color](https://api.highcharts.com/highcharts/plotOptions.series.color), [plotOptions.series.lineWidth](https://api.highcharts.com/highcharts/plotOptions.series.lineWidth), [plotOptions.series.dashStyle](https://api.highcharts.com/highcharts/plotOptions.series.dashStyle).
+The graph of a line or line-like series. Use the parent item, `.highcharts-series` including series type, index or individual class name, to identify specific series. Replaces [plotOptions.series.color](https://api.highcharts.com/highcharts/plotOptions.series.color), [plotOptions.series.lineWidth](https://api.highcharts.com/highcharts/plotOptions.series.lineWidth), [plotOptions.series.dashStyle](https://api.highcharts.com/highcharts/plotOptions.series.dashStyle).
 
 ```
 .highcharts-background
@@ -355,7 +355,7 @@ The container of the context menu. Replaces [navigation.menuStyle](https://api.
 .highcharts-menu-item
 ```
 
-The list items in the context menu. Replaces [navigation.menuItemStyle](https://api.highcharts.com/highcharts/navigation.menuItemStyle). Use the _:hover_ pseudo-class to replace [navigation.menuItemHoverStyle](https://api.highcharts.com/highcharts/navigation.menuItemHoverStyle).
+The list items in the context menu. Replaces [navigation.menuItemStyle](https://api.highcharts.com/highcharts/navigation.menuItemStyle). Use the _`:hover`_ pseudo-class to replace [navigation.menuItemHoverStyle](https://api.highcharts.com/highcharts/navigation.menuItemHoverStyle).
 
 [Demo of export menu styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
 
