@@ -232,17 +232,18 @@ module.exports = function (config) {
             ChildProcess.execSync(
                 'npx gulp jsdoc-dts'
             );
-            console.log('Compiling test tools...');
-            ChildProcess.execSync(
-                'cd "' + process.cwd() + '" && npx tsc -p test'
-            );
+            // console.log('Compiling test tools...');
+            // ChildProcess.execSync(
+            //     'cd "' + process.cwd() + '" && npx tsc -p test'
+            // );
             console.log('Compiling samples...');
             ChildProcess.execSync(
                 'cd "' + process.cwd() + '" && npx tsc -p samples'
             );
         } catch (catchedError) {
-            console.error(catchedError);
-            return;
+            const msg = catchedError.stdout.toString();
+            console.error(msg);
+            throw new Error(msg);
         }
     }
 
