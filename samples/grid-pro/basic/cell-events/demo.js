@@ -3,7 +3,6 @@ const msg = document.getElementById('msg');
 Grid.grid('container', {
     dataTable: {
         columns: {
-            date: [1640995200000, 1641081600000, 1641168000000, 1641254400000],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
             price: [1.5, 2.53, 5, 4.5],
