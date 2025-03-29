@@ -75,7 +75,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
 
     // Series types are inferred from `chart.type` and `series.type`
     type ItemWithType = { type?: string };
-    const itemsWithType: Array<ItemWithType> = (options.series || []);
+    const itemsWithType: Array<ItemWithType> = (options.series || []).slice();
     if (options.chart?.type) {
         itemsWithType.push(options.chart);
     }
