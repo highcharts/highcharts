@@ -1,26 +1,18 @@
 QUnit.test('Stock chart specific options in setOptions', function (assert) {
-
     const xAxis = Highcharts.defaultOptions.xAxis;
     let chart;
 
     Highcharts.defaultOptions.xAxis = Highcharts.merge(xAxis);
 
-
-    chart = $('#container')
-        .highcharts('StockChart', {
-            series: [
-                {
-                    data: [1, 2, 3]
-                }
-            ]
-        })
-        .highcharts();
+    chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
 
     assert.strictEqual(
-        chart.navigator.enabled &&
-            chart.scrollbar.enabled &&
-            chart.rangeSelector.enabled,
-        undefined,
+        !!chart.navigator && !!chart.scrollbar && !!chart.rangeSelector,
+        true,
         'navigator, scrollbar, rangeSelector enabled'
     );
 
@@ -42,19 +34,15 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         }
     });
 
-    chart = $('#container')
-        .highcharts('StockChart', {
-            series: [
-                {
-                    data: [1, 2, 3]
-                }
-            ]
-        })
-        .highcharts();
+    chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
 
     assert.strictEqual(
-        chart.navigator && chart.scrollbar && chart.rangeSelector,
-        undefined,
+        !chart.navigator && !chart.scrollbar && !chart.rangeSelector,
+        true,
         'navigator, scrollbar, rangeSelector disabled'
     );
     chart.series[0].points[0].onMouseOver();
@@ -62,7 +50,7 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     assert.strictEqual(
         chart.tooltip.split,
         false,
-        'The instanciated tooltip should not be split (#7307)'
+        'The instantiated tooltip should not be split (#7307)'
     );
 
     assert.strictEqual(
@@ -82,28 +70,24 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     );
     */
 
-    chart = $('#container')
-        .highcharts('StockChart', {
-            navigator: {
-                enabled: false
-            },
-            scrollbar: {
-                enabled: false
-            },
-            rangeSelector: {
-                enabled: false
-            },
-            series: [
-                {
-                    data: [1, 2, 3]
-                }
-            ]
-        })
-        .highcharts();
+    Highcharts.stockChart('container', {
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        },
+        rangeSelector: {
+            enabled: false
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
 
     assert.strictEqual(
-        chart.navigator && chart.scrollbar && chart.rangeSelector,
-        undefined,
+        !chart.navigator && !chart.scrollbar && !chart.rangeSelector,
+        true,
         'navigator, scrollbar, rangeSelector disabled'
     );
 
