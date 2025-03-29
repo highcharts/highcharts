@@ -22,6 +22,7 @@ const {
 } = U;
 
 const H: AnyRecord = G;
+const addedModules: string[] = [];
 const loaded: string[] = [];
 
 // Default to root and extension that supports ESM imports.
@@ -47,11 +48,17 @@ const addStyleSheets = (
 
 };
 
-// Given a Highcharts configuration object, this function will return an array
-// of the required modules.
+/**
+ * Given a Highcharts configuration object, this function will return an array
+ * of the required modules.
+ *
+ * @since next
+ * @param {Partial<Options>} options The Highcharts configuration object.
+ * @return {Array<string>} An array of module names.
+ */
 const getModules = (options: Partial<Options>): Array<string> => {
 
-    const modules: string[] = [];
+    const modules = addedModules.slice();
 
     const recurse = (
         options: AnyRecord,
@@ -129,6 +136,20 @@ const setRoot = (userRoot = root, userExtension = extension): void => {
     extension = userExtension;
 };
 
+/**
+ * Add modules to the list of modules to load. This is useful for
+ * dynamically loading modules that have no reference in the options structure.
+ *
+ * @example
+ * // Load the exporting module without having to set `exporting.enabled` in the
+ * // options.
+ * Highcharts.Loader.addModules(['modules/exporting']);
+ *
+ * @param {Array<string>} modules An array of modules to add.
+ */
+const addModules = (modules: Array<string>): void => {
+    modules.forEach((module): boolean => pushUnique(addedModules, module));
+};
 
 const loadScript = async (module: string): Promise<undefined> => {
     if (loaded.includes(module)) {
@@ -213,6 +234,7 @@ const loadScript = async (module: string): Promise<undefined> => {
 
 const Loader = {
     getModules,
+    addModules,
     setRoot
 };
 
