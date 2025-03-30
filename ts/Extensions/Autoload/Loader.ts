@@ -22,7 +22,7 @@ const {
 } = U;
 
 const H: AnyRecord = G;
-const addedModules: string[] = [];
+const addedFiles: string[] = [];
 const loaded: string[] = [];
 
 // Default to root and extension that supports ESM imports.
@@ -33,32 +33,32 @@ let root = './',
 
 const addStyleSheets = (
     options: Partial<Options>,
-    modules: Array<string>
+    files: Array<string>
 ): void => {
     // Styled mode
     if (options.chart?.styledMode) {
-        pushUnique(modules, 'css/highcharts.css');
+        pushUnique(files, 'css/highcharts.css');
     }
 
     // Stock Tools
     if (options.stockTools) {
-        pushUnique(modules, 'css/stocktools/gui.css');
-        pushUnique(modules, 'css/annotations/popup.css');
+        pushUnique(files, 'css/stocktools/gui.css');
+        pushUnique(files, 'css/annotations/popup.css');
     }
 
 };
 
 /**
  * Given a Highcharts configuration object, this function will return an array
- * of the required modules.
+ * of the required script files.
  *
  * @since next
  * @param {Partial<Options>} options The Highcharts configuration object.
- * @return {Array<string>} An array of module names.
+ * @return {Array<string>} An array of file names.
  */
-const getModules = (options: Partial<Options>): Array<string> => {
+const getFiles = (options: Partial<Options>): Array<string> => {
 
-    const modules = addedModules.slice();
+    const files = addedFiles.slice();
 
     const recurse = (
         options: AnyRecord,
@@ -68,7 +68,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
             const fullKey = path.concat(key).join('.');
             if (fullKey in mapping) {
                 mapping[fullKey].forEach(
-                    (module): boolean => pushUnique(modules, module)
+                    (file): boolean => pushUnique(files, file)
                 );
             }
             if (value && typeof value === 'object') {
@@ -89,7 +89,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
     itemsWithType.forEach((item): void => {
         if (item.type && mapping[`series.${item.type}`]) {
             mapping[`series.${item.type}`].forEach(
-                (module): boolean => pushUnique(modules, module)
+                (file): boolean => pushUnique(files, file)
             );
         }
     });
@@ -99,15 +99,15 @@ const getModules = (options: Partial<Options>): Array<string> => {
         splat(options.annotations).forEach((annotation): void => {
             if (annotation.type && mapping[`annotations.${annotation.type}`]) {
                 mapping[`annotations.${annotation.type}`].forEach(
-                    (module): boolean => pushUnique(modules, module)
+                    (file): boolean => pushUnique(files, file)
                 );
             }
         });
     }
 
-    addStyleSheets(options, modules);
+    addStyleSheets(options, files);
 
-    return Array.from(modules);
+    return Array.from(files);
 };
 
 const setRootFromURL = (url: string): string|undefined => {
@@ -137,22 +137,22 @@ const setRoot = (userRoot = root, userExtension = extension): void => {
 };
 
 /**
- * Add modules to the list of modules to load. This is useful for
+ * Add script files to the list of modules to load. This is useful for
  * dynamically loading modules that have no reference in the options structure.
  *
  * @example
  * // Load the exporting module without having to set `exporting.enabled` in the
  * // options.
- * Highcharts.Loader.addModules(['modules/exporting']);
+ * Highcharts.Loader.addFiles(['modules/exporting']);
  *
- * @param {Array<string>} modules An array of modules to add.
+ * @param {Array<string>} files An array of files to add.
  */
-const addModules = (modules: Array<string>): void => {
-    modules.forEach((module): boolean => pushUnique(addedModules, module));
+const addFiles = (files: Array<string>): void => {
+    files.forEach((file): boolean => pushUnique(addedFiles, file));
 };
 
-const loadScript = async (module: string): Promise<undefined> => {
-    if (loaded.includes(module)) {
+const loadFile = async (file: string): Promise<undefined> => {
+    if (loaded.includes(file)) {
         return;
     }
 
@@ -161,9 +161,9 @@ const loadScript = async (module: string): Promise<undefined> => {
         try {
             await import(
                 // eslint-disable-next-line capitalized-comments
-                /* webpackIgnore: true */ `${root}${module}${extension}`
+                /* webpackIgnore: true */ `${root}${file}${extension}`
             );
-            pushUnique(loaded, module);
+            pushUnique(loaded, file);
         } catch (e) {
             /* eslint-disable-next-line no-console */
             console.error(e);
@@ -173,20 +173,20 @@ const loadScript = async (module: string): Promise<undefined> => {
 
     return new Promise((resolve, reject): void => {
         const onload = (): void => {
-            pushUnique(loaded, module);
+            pushUnique(loaded, file);
             resolve(void 0);
         };
 
-        if (module.endsWith('.css')) {
+        if (file.endsWith('.css')) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = `${root}${module}`;
+            link.href = `${root}${file}`;
             link.onload = onload;
             link.onerror = reject;
             document.head.appendChild(link);
         } else {
             const script = document.createElement('script');
-            script.src = `${root}${module}${extension}`;
+            script.src = `${root}${file}${extension}`;
             script.onload = onload;
             script.onerror = reject;
             document.head.appendChild(script);
@@ -194,7 +194,7 @@ const loadScript = async (module: string): Promise<undefined> => {
     });
 };
 
-// Override the factories to load modules on demand
+// Override the factories to load script files on demand
 (
     ['chart', 'ganttChart', 'mapChart', 'stockChart'] as
     ['chart', 'ganttChart', 'mapChart', 'stockChart']
@@ -207,19 +207,19 @@ const loadScript = async (module: string): Promise<undefined> => {
 
         guessRoot();
 
-        // Load the required modules
-        const modules = getModules(options);
+        // Load the required files
+        const files = getFiles(options);
 
         if (factory === 'stockChart') {
-            modules.unshift('modules/stock');
+            files.unshift('modules/stock');
         } else if (factory === 'ganttChart') {
-            modules.unshift('modules/gantt');
+            files.unshift('modules/gantt');
         } else if (factory === 'mapChart') {
-            modules.unshift('modules/map');
+            files.unshift('modules/map');
         }
 
-        for (const module of modules) {
-            await loadScript(module);
+        for (const file of files) {
+            await loadFile(file);
         }
 
         const constructorName = {
@@ -233,8 +233,8 @@ const loadScript = async (module: string): Promise<undefined> => {
 });
 
 const Loader = {
-    getModules,
-    addModules,
+    getFiles,
+    addFiles,
     setRoot
 };
 
