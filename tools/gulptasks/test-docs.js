@@ -15,10 +15,15 @@ async function checkDocsConsistency() {
     const glob = require('glob');
     const LogLib = require('../libs/log');
 
-    function checkSample(sample, file, error404s) {
-        const files = glob.globSync(`samples/${sample}/demo.{js,mjs}`);
+    function checkSample(sample, file, error404s, reason) {
+        let rewrite;
+
+        if (sample.startsWith('grid/')) {
+            rewrite = sample.replace(/^grid\//, 'grid-lite/');
+        }
+        const files = glob.globSync(`samples/${rewrite ?? sample}/demo.{js,mjs,ts}`);
         if (files.length < 1) {
-            error404s.push({ file, sample });
+            error404s.push({ file, sample, reason, rewrite });
         }
     }
 
@@ -42,7 +47,7 @@ async function checkDocsConsistency() {
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
 
-            checkSample(sample, file, error404s);
+            checkSample(sample, file, error404s, 'demo');
         }
 
         while ((match = requiresPattern.exec(md))) {
@@ -75,7 +80,7 @@ async function checkDocsConsistency() {
 
         while ((match = samplePattern.exec(md))) {
             const sample = match[3].replace(/\/$/u, '');
-            checkSample(sample, file, error404s);
+            checkSample(sample, file, error404s, '@sample');
         }
         if (error404s.length) {
             throw new Error(
@@ -103,7 +108,7 @@ async function checkDocsConsistency() {
         let match;
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
-            checkSample(sample, file, error404s);
+            checkSample(sample, file, error404s, 'demo');
         }
 
         while ((match = docsPattern.exec(md))) {

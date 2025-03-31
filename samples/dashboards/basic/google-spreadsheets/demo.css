@@ -16,6 +16,8 @@ body {
 
 #container {
     padding: 10px;
+    background-color: var(--hcg-background);
+    color: var(--hcg-color);
 }
 
 .row {

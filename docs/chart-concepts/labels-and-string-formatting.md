@@ -7,14 +7,38 @@ Anywhere in Highcharts where text strings occur, they allow modification by _for
 
 Texts and labels in Highcharts are given in HTML, but as the HTML is parsed and rendered in SVG, only a subset is supported. The following tags are supported: `<a>`, `<b>`, `<strong>`, `<i>`, `<em>`, `<br/>`, `<span>`. Spans can be styled with a style attribute, but only text-related CSS that is shared with SVG is handled.
 
-Most places where text is handled in Highcharts, it is also followed by an option called `useHTML`. When this is true, the text is laid out as HTML on top of the chart. This allows for full HTML support and can be a good idea if you want to add images in your labels, tables in your tooltip etc. The downsides are:
+Most places where text is handled in Highcharts, it is also followed by an
+option called `useHTML`. When this is true, the text is laid out as HTML on top
+of the chart. This allows for full HTML support and can be a good idea if you
+want to add images in your labels, tables in your tooltip etc.
 
-*   It will always be laid out on top of all other SVG content. Specifically the tooltip may be rendered below the _useHTML_ label, unless [tooltip.outside](https://api.highcharts.com/highcharts/tooltip.outside) is set to true.
-*   It is not rendered the same way in exported charts, unless you use the experimental [exporting.allowHTML](https://api.highcharts.com/highcharts/exporting.allowHTML) option.
+Prior to Highcharts v12.2, the downsides are:
 
-Using HTML also works around some older browser bugs with bi-directional text. Read more under [Internationalization](https://highcharts.com/docs/advanced-chart-features/internationalization).
+*   It will always be laid out on top of all other SVG content. Specifically the
+    tooltip may be rendered below the _useHTML_ label, unless
+    [tooltip.outside](https://api.highcharts.com/highcharts/tooltip.outside) is
+    set to true.
+*   It is not rendered the same way in exported charts, unless you use the
+    experimental
+    [exporting.allowHTML](https://api.highcharts.com/highcharts/exporting.allowHTML)
+    option.
 
-See a [live demo of `useHTML`](https://highcharts.com/samples/highcharts/members/renderer-usehtml) in some common elements.
+Since v12.2, we implemented an experimental feature to render HTML inside
+`foreignObject` elements in SVG. This fixed the z-index issue, and works across
+all modern browsers. Our goal is to make this the default behavior, but want to
+try it out behind a flag first. To enable this feature, set
+`Highcharts.HTMLElement.useForeignObject` to true. See the [live demo of
+`useHTML` with foreign
+object](https://highcharts.com/samples/highcharts/members/renderer-usehtml-foreignobject).
+
+For the default behavior (a parallel HTML structure outside the SVG), see the
+[live demo of
+`useHTML`](https://highcharts.com/samples/highcharts/members/renderer-usehtml)
+in some common elements.
+
+Using HTML also works around some older browser bugs with bi-directional text.
+Read more
+under [Internationalization](https://highcharts.com/docs/advanced-chart-features/internationalization).
 
 ### Filtering
 For security reasons, Highcharts since version 9 filters out unknown tags and attributes. See [the security page](https://highcharts.com/docs/chart-concepts/security) for details.

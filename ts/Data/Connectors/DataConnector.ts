@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -92,13 +92,14 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Poll timer ID, if active.
      */
     public get polling(): boolean {
-        return !!this.polling;
+        return !!this._polling;
     }
 
     /**
      * Table managed by this DataConnector instance.
      */
     public readonly table: DataTable;
+
 
     /* *
      *

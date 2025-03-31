@@ -1,0 +1,16 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#demo {
+    padding: 8px;
+}
+
+#container {
+    height: 250px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #demo {
+        background-color: #292929;
+        color: #fff;
+    }
+}

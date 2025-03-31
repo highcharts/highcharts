@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -221,19 +221,19 @@ class AccordionMenu {
 
             currentLevel = currentLevel[key];
 
-            if (key === 'dataGridOptions') {
-                const realDataGridOptions =
+            if (key === 'gridOptions') {
+                const realGridOptions =
                     (this.component as any).dataGrid?.options;
 
-                if (realDataGridOptions) {
+                if (realGridOptions) {
                     const oldOptionsBuffer =
                         this.oldOptionsBuffer as Globals.AnyRecord;
-                    if (!oldOptionsBuffer.dataGridOptions) {
-                        oldOptionsBuffer.dataGridOptions = {};
+                    if (!oldOptionsBuffer.gridOptions) {
+                        oldOptionsBuffer.gridOptions = {};
                     }
                     currentOldDataGridOptionsBufferLevel =
-                        oldOptionsBuffer.dataGridOptions as Globals.AnyRecord;
-                    currentDataGridOptionsLevel = realDataGridOptions;
+                        oldOptionsBuffer.gridOptions as Globals.AnyRecord;
+                    currentDataGridOptionsLevel = realGridOptions;
                 }
             } else if (
                 currentDataGridOptionsLevel &&

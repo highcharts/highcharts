@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -794,10 +794,10 @@ export default TreegraphSeries;
  * @extends   series,plotOptions.treegraph
  * @exclude   allowDrillToNode, boostBlending, boostThreshold, curveFactor,
  * centerInCategory, connectEnds, connectNulls, colorAxis, colorKey,
- * dataSorting, dragDrop, findNearestPointBy, getExtremesFromAll, layout,
- * nodePadding,  pointInterval, pointIntervalUnit, pointPlacement, pointStart,
- * relativeXValue, softThreshold, stack, stacking, step,
- * traverseUpButton, xAxis, yAxis, zoneAxis, zones
+ * dataSorting, dragDrop, findNearestPointBy, getExtremesFromAll, groupPadding,
+ * headers, layout, nodePadding, nodeSizeBy, pointInterval, pointIntervalUnit,
+ * pointPlacement, pointStart, relativeXValue, softThreshold, stack, stacking,
+ * step, traverseUpButton, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
  * @requires  modules/treemap
  * @requires  modules/treegraph

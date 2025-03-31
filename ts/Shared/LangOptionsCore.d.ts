@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,4 +23,5 @@ export interface LangOptionsCore {
     shortWeekdays?: Array<string>;
     thousandsSep?: string;
     weekdays?: Array<string>;
+    weekFrom?: string;
 }
