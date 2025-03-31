@@ -821,7 +821,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table tbody td.hcg-edited-cell-error input,
 .highcharts-datagrid-table tbody td.hcg-edited-cell-error input input:focus,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:focus {
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:focus,
+.hcg-table tbody td.hcg-edited-cell-error input,
+.hcg-table tbody td.hcg-edited-cell-error input input:focus,
+.hcg-tabl tbody td.hcg-edited-cell-error input,
+.hcg-tabl tbody td.hcg-edited-cell-error input:focus {
     box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;
 }
