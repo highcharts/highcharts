@@ -8,7 +8,7 @@ Many of the available configuration options in Grid apply to the columns and the
 {
     columnDefaults: {
         cells: {
-            editable: true
+            format: "<span>{value}</span>"
         },
         sorting: {
             sortable: false
@@ -73,7 +73,7 @@ You can exclude the column, including its header, from the Grid by setting `enab
 
 The `columns[].cells` option can configure the cells in individual columns. If needed, you can set defaults for all columns in `columnDefaults.cells`.
 
-The end user can edit each cell in a column directly by setting the `editable` option to true.
+The end user can edit each cell in a column directly by setting the `editable` option to true. Read more in the [Cell editing](https://www.highcharts.com/docs/grid/cell-editing) article.
 
 Note that `className` and `format` support templating as described in [Templating](https://www.highcharts.com/docs/chart-concepts/templating), and `{value}` references the cell value.
 

@@ -26,6 +26,9 @@ Let's dive right in with a bare minimum example of a fully functional Grid Lite:
     <title>My First Grid</title>
     <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
+  </head>
+  <body>
+    <div id="container"></div>
     <script type="text/javascript">
       Grid.grid("container", {
         dataTable: {
@@ -37,9 +40,6 @@ Let's dive right in with a bare minimum example of a fully functional Grid Lite:
         },
       });
     </script>
-  </head>
-  <body>
-    <div id="container"></div>
   </body>
 </html>
 ```

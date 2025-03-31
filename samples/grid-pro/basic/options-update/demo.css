@@ -1,8 +1,6 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 #demo {
-    background-color: var(--hcg-background);
-    color: var(--hcg-color);
     padding: 8px;
 }
 
@@ -20,4 +18,11 @@
     min-height: 250px;
     min-width: 400px;
     margin: 4px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    #demo {
+        background-color: #292929;
+        color: #fff;
+    }
 }

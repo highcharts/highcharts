@@ -2,7 +2,7 @@
  * @license Highcharts Grid v@product.version@ (@product.date@)
  * @module grid/grid-lite
  *
- * (c) 2009-2024 Highsoft AS
+ * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -16,6 +16,8 @@
  *  Imports
  *
  * */
+
+import type _Options from '../Grid/Core/Options.ts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
@@ -105,6 +107,19 @@ G.merge = Utilities.merge;
 G.Table = G.Table || Table;
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
+
+
+/* *
+ *
+ *  Export types
+ *
+ * */
+
+namespace G {
+    export type Options = _Options;
+}
+
+
 /* *
  *
  *  Classic Export
@@ -115,7 +130,6 @@ CreditsLiteComposition.compose(G.Grid, G.Table);
 if (!G.win.Grid) {
     G.win.Grid = G;
 }
-
 
 /* *
  *

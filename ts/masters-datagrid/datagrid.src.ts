@@ -2,7 +2,7 @@
  * @license Highcharts Dashboards v@product.version@ (@product.date@)
  * @module datagrid/datagrid
  *
- * (c) 2009-2024 Highsoft AS
+ * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -17,6 +17,7 @@
  *
  * */
 
+import type _Options from '../Grid/Core/Options.ts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
@@ -149,6 +150,17 @@ GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell);
 CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
+
+
+/* *
+ *
+ *  Export types
+ *
+ * */
+
+namespace G {
+    export type Options = _Options;
+}
 
 
 /* *

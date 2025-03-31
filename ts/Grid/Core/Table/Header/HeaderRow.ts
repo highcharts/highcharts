@@ -2,7 +2,7 @@
  *
  *  Grid HeaderRow class
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *

@@ -1,7 +1,6 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 #container {
-    background-color: var(--hcg-background);
     height: 800px;
     padding: 8px;
 }
@@ -12,4 +11,10 @@
 
 .highcharts-background {
     fill: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+    #container {
+        background-color: #292929;
+    }
 }

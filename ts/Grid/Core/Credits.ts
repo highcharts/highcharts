@@ -2,7 +2,7 @@
  *
  *  Grid Credits class
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -28,7 +28,7 @@ import type Grid from './Grid';
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
 
-const { makeHTMLElement } = GridUtils;
+const { makeHTMLElement, setHTMLContent } = GridUtils;
 
 /* *
  *
@@ -142,7 +142,7 @@ class Credits {
         }
 
         if (text && href) {
-            this.textElement.innerHTML = text;
+            setHTMLContent(this.textElement, text);
             this.textElement.setAttribute('href', href || '');
         }
 

@@ -125,6 +125,7 @@ module.exports = {
             'grid/understanding-grid',
             'grid/columns',
             'grid/header',
+            'grid/cell-editing',
             'grid/events',
             {
                 'Theming': [

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -320,6 +320,8 @@ class SVGRenderer implements SVGRendererLike {
     public unSubPixelFix?: Function;
     public url: string;
     public width!: number;
+    public x = 0;
+    public y = 0;
 
     /* *
      *

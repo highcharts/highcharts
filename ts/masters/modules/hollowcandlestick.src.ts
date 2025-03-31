@@ -6,7 +6,7 @@
  *
  * Hollow Candlestick series type for Highcharts Stock
  *
- * (c) 2010-2024 Karol Kolodziej
+ * (c) 2010-2025 Karol Kolodziej
  *
  * License: www.highcharts.com/license
  */

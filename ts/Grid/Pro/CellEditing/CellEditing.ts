@@ -2,7 +2,7 @@
  *
  *  Grid Cell Editing class.
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@
  *
  * */
 
+import AST from '../../../Core/Renderer/HTML/AST.js';
 import TableCell from '../../Core/Table/Content/TableCell.js';
 import GridUtils from '../../Core/Table/../GridUtils.js';
 import Table from '../../Core/Table/Table.js';
@@ -101,7 +102,7 @@ class CellEditing {
         this.editedCell = cell;
         const cellElement = cell.htmlElement;
 
-        cellElement.innerHTML = '';
+        cellElement.innerHTML = AST.emptyHTML;
         cellElement.classList.add(Globals.getClassName('editedCell'));
 
         this.renderInput();
