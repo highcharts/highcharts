@@ -17,6 +17,19 @@ DataGrid.dataGrid('container', {
             ]
         }
     },
+    lang: {
+        validationErrors: {
+            notEmpty: {
+                error: 'New value cannot be empty.'
+            },
+            number: {
+                error: 'New value has to be a number.'
+            },
+            bool: {
+                error: 'New value has to be a boolean.'
+            }
+        }
+    },
     rendering: {
         rows: {
             minVisibleRows: 5

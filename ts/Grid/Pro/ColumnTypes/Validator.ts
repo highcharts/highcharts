@@ -103,6 +103,9 @@ class Validator {
     ): boolean {
         const { validationRules, dataType } = cell.column.options;
         const rules = Array.from(validationRules || []);
+        const validationErrors =
+            cell.row.viewport.grid.options?.lang?.validationErrors;
+        let err;
 
         if (dataType) {
             // TODO: Remove duplicates in rules array
@@ -114,12 +117,15 @@ class Validator {
 
             if (typeof rule === 'string') {
                 ruleDef = Validator.rulesRegistry[rule];
+                err = validationErrors?.[rule]?.error;
             } else {
                 ruleDef = rule;
             }
 
             if (!ruleDef.validate.call(cell, value)) {
-                errors.push(ruleDef.error);
+                errors.push(
+                    err || ruleDef.error
+                );
             }
         }
 

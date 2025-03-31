@@ -148,6 +148,25 @@ declare module '../../Core/Options' {
     }
 }
 
+declare module '../../Core/Options' {
+    interface LangOptions {
+        /**
+         * Validation options for the column.
+         *
+         * If not set, the validation rules are applied according to the data type.
+         */
+        validationErrors?: validationErrors;
+    }
+    interface validationErrors {
+        notEmpty?: errorDefinition;
+        number?: errorDefinition;
+        bool?: errorDefinition;
+    }
+    interface errorDefinition {
+        error: string;
+    }
+}
+
 /* *
  *
  *  Default Export
