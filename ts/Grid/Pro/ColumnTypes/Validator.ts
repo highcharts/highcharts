@@ -119,7 +119,7 @@ class Validator {
             }
 
             if (!ruleDef.validate.call(cell, value)) {
-                errors.push(ruleDef.errorMessage);
+                errors.push(ruleDef.error);
             }
         }
 
@@ -231,7 +231,7 @@ namespace Validator {
 
     export interface RuleDefinition {
         validate: ValidateFunction;
-        errorMessage: string;
+        error: string;
     }
 
     export interface RulesRegistryType {
@@ -252,18 +252,18 @@ namespace Validator {
     export const rulesRegistry: RulesRegistryType = {
         notEmpty: {
             validate: (value: string): boolean => !!value,
-            errorMessage: 'Value cannot be empty.'
+            error: 'Value cannot be empty.'
         },
         number: {
             validate: (value: string): boolean => !isNaN(Number(value)),
-            errorMessage: 'Value has to be a number.'
+            error: 'Value has to be a number.'
         },
         bool: {
             validate: (value: string): boolean => (
                 value === 'true' || value === 'false' ||
                 Number(value) === 1 || Number(value) === 0
             ),
-            errorMessage: 'Value has to be a boolean.'
+            error: 'Value has to be a boolean.'
         }
     };
 

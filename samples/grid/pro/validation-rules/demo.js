@@ -46,7 +46,7 @@ DataGrid.dataGrid('container', {
             validate: function (value) {
                 return value.indexOf('URL') !== -1;
             },
-            errorMessage: 'The value must contain "URL"'
+            error: 'The value must contain "URL"'
         }]
     }]
 });
