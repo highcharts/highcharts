@@ -150,13 +150,11 @@ If you're uncertain about the specific Highcharts version covered by your licens
         <tr><td><a href="#highcharts-maps">Highcharts Maps</a></td></tr>
         <tr><td><a href="#highcharts-gantt">Highcharts Gantt</a></td></tr>
         <tr><td><a href="#highcharts-dashboards">Highcharts Dashboards</a></td></tr>
-        <tr><td><a href="#highcharts-grid">Highcharts Grid</a></td></tr>
+        <tr><td><a href="#highcharts-grid-lite">Highcharts Grid Lite</a></td></tr>
         <tr><td><a href="#stylecss">Styled mode</a></td></tr>
         <tr><td><a href="#esmodules">ECMAScript modules</a></td></tr>
     </tbody>
 </table>
-
-<p>We recommend loading a <a href="#specific-version">specific version</a> of the library. This ensures that the version you are loading remains compatible with both your configurations and your license.</p>
 
 <h2 id="highcharts-core">Highcharts Core</h2>
 <p>There are many ways to use Highcharts, and you can choose the one that works best with your project. For the details please check the <a href="//www.highcharts.com/docs/getting-started/installation">installation documentation</a>.</p>
@@ -400,16 +398,25 @@ and Highcharts plugin form.</p>
 
 <h2 id="esmodules">ECMAScript modules</h2>
 <p>
-Starting with v6.1.0, Highcharts is available on our CDN as ECMAScript modules.
+Starting with v12.2, the Highcharts bundles are available on our CDN as ECMAScript modules.
 You can <a href="https://jakearchibald.com/2017/es-modules-in-browsers/">import ES modules directly in modern browsers</a>
-without any bundling tools, by using <code>&lt;script type="module"&gt;</code> (<a href="https://jsfiddle.net/highcharts/rtcx6j3h/">demo</a>):
+without any bundling tools, by using <code>&lt;script type="module"&gt;</code>.
 </p>
 <pre>&lt;script type="module"&gt;
-    import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+    import Highcharts from 'https://code.highcharts.com/esm/highcharts.js';
     Highcharts.chart('container', {
         ...
     });
 &lt;/script&gt;</pre>
+<a href="https://www.highcharts.com/samples/highcharts/esm/simple">View it live
+on jsFiddle</a>.
+
+<p>The source modules have been available since v6.1, and can be imported from
+    <code>https://code.highcharts.com/es-modules/masters/highcharts.src.js</code>.
+    This is not recommended in production, as the source files are not minified
+    and are loaded individually, which will lead to a lot of HTTP requests and
+    notable latency.
+</p>
 
 </div></div></div></div></div></div>
 </body></html>
