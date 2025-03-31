@@ -22,12 +22,14 @@
  *
  * */
 
-import type { ColumnDistribution } from '../Options';
+import type { ColumnDistributionType } from '../Options';
 import type TableRow from './Content/TableRow';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
 import DataTable from '../../../Data/DataTable.js';
+import ColumnDistribution from './ColumnDistribution/ColumnDistribution.js';
+import ColumnDistributionStrategy from './ColumnDistribution/ColumnDistributionStrategy';
 import Column from './Column.js';
 import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
@@ -115,7 +117,7 @@ class Table {
     /**
      * The column distribution.
      */
-    public readonly columnDistribution: ColumnDistribution;
+    public readonly columnDistribution: ColumnDistributionStrategy;
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
@@ -172,7 +174,7 @@ class Table {
         const dgOptions = grid.options;
         const customClassName = dgOptions?.rendering?.table?.className;
 
-        this.columnDistribution = this.initColumnDistribution();
+        this.columnDistribution = ColumnDistribution.createStrategy(this);
         this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
         this.scrollable = !!(
             this.grid.initialContainerHeight || this.virtualRows
@@ -284,30 +286,6 @@ class Table {
     }
 
     /**
-     * Returns the column distribution of the table according to the options:
-     * 1. If `columns.distribution` defined, use it. If not:
-     * 2. If any column has a width defined, use `custom`. If not:
-     * 3. Use `full`.
-     */
-    private initColumnDistribution(): ColumnDistribution {
-        const { options } = this.grid;
-        let result = options?.rendering?.columns?.distribution;
-
-        if (result) {
-            return result;
-        }
-
-        if (
-            options?.columns?.some(column => defined(column.width)) ||
-            defined(options?.columnDefaults?.width)
-        ) {
-            return 'custom';
-        }
-
-        return 'full';
-    }
-
-    /**
      * Fires an empty update to properly load the virtualization, only if
      * there's a row count compared to the threshold change detected (due to
      * performance reasons).
@@ -350,14 +328,7 @@ class Table {
         const isVirtualization =
             this.grid.options?.rendering?.rows?.virtualization;
 
-        // Get the width of the rows.
-        if (this.columnDistribution === 'fixed') {
-            let rowsWidth = 0;
-            for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
-                rowsWidth += this.columns[i].width;
-            }
-            this.rowsWidth = rowsWidth;
-        }
+        this.columnDistribution.reflow();
 
         if (isVirtualization || reflowColumns) {
             // Reflow the head
@@ -483,8 +454,8 @@ class Table {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
-            columnDistribution: this.columnDistribution,
-            columnWidths: this.columns.map((column): number => column.width),
+            columnDistributionType: this.columnDistribution.type,
+            columnWidths: Object.values(this.columnDistribution.columnWidths),
             focusCursor: this.focusCursor
         };
     }
@@ -503,12 +474,14 @@ class Table {
         this.tbodyElement.scrollLeft = meta.scrollLeft;
 
         if (
-            this.columnDistribution === meta.columnDistribution &&
+            this.columnDistribution.type === meta.columnDistributionType &&
             this.columns.length === meta.columnWidths.length
         ) {
             const widths = meta.columnWidths;
             for (let i = 0, iEnd = widths.length; i < iEnd; ++i) {
-                this.columns[i].width = widths[i];
+                this.columnDistribution.columnWidths[
+                    this.columns[i].id
+                ] = widths[i];
             }
             this.reflow();
 
@@ -561,7 +534,7 @@ namespace Table {
     export interface ViewportStateMetadata {
         scrollTop: number;
         scrollLeft: number;
-        columnDistribution: ColumnDistribution;
+        columnDistributionType: ColumnDistributionType;
         columnWidths: number[];
         focusCursor?: [number, number];
     }

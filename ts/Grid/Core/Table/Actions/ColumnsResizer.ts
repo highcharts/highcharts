@@ -126,7 +126,7 @@ class ColumnsResizer {
 
         if (
             vp.columnsResizer && (
-                vp.columnDistribution !== 'full' ||
+                vp.columnDistribution.type !== 'full' ||
                 (
                     vp.grid.enabledColumns &&
                     column.index < vp.grid.enabledColumns.length - 1
@@ -181,8 +181,8 @@ class ColumnsResizer {
             newLeftW = leftColW + rightColW - minWidth;
         }
 
-        column.width = vp.getRatioFromWidth(newLeftW);
-        nextColumn.width = vp.getRatioFromWidth(newRightW);
+        // column.width = vp.getRatioFromWidth(newLeftW);
+        // nextColumn.width = vp.getRatioFromWidth(newRightW);
     }
 
     /**
@@ -205,7 +205,7 @@ class ColumnsResizer {
             newW = minWidth;
         }
 
-        column.width = newW;
+        // column.width = newW;
     }
 
     /**
@@ -224,7 +224,7 @@ class ColumnsResizer {
         const diff = e.pageX - (this.dragStartX || 0);
         const vp = this.viewport;
 
-        if (vp.columnDistribution === 'full') {
+        if (vp.columnDistribution.type === 'full') {
             this.fullDistributionResize(diff);
         } else {
             this.fixedDistributionResize(diff);

@@ -40,7 +40,7 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 /**
  * The distribution of the columns in the grid structure.
  */
-export type ColumnDistribution = 'full' | 'fixed' | 'custom';
+export type ColumnDistributionType = 'full' | 'fixed' | 'custom';
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -167,7 +167,7 @@ export interface ColumnsSettings {
      * 
      * @default undefined
      */
-    distribution?: ColumnDistribution;
+    distribution?: ColumnDistributionType;
 
     /**
      * Columns included in the grid structure- contains the columns IDs.
@@ -304,14 +304,14 @@ export interface ColumnOptions {
 
     /**
      * The width of the column. It can be set in pixels or as a percentage of
-     * the table width. If unset, the width will be distributed evenly between
-     * all columns.
-     * 
+     * the table width. If unset, the width is distributed evenly between all
+     * columns.
+     *
      * This option works only when the `distribution` option is set to `custom`.
-     * 
-     * If the `distribution` option is undefined, it will be set to `custom` and
-     * the `width` option will be used to set the width of the column. Other
-     * distribution modes work with CSS-defined column widths.
+     *
+     * If the `distribution` option is undefined, it is set to `custom` and the
+     * `width` option is used to set the width of the column. Other distribution
+     * modes work only with CSS-defined column widths.
      */
     width?: number | string;
 }

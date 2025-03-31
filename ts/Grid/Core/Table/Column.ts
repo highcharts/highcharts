@@ -35,7 +35,6 @@ import Templating from '../../../Core/Templating.js';
 import Globals from '../Globals.js';
 
 const { merge } = Utils;
-const { makeHTMLElement } = GridUtils;
 
 
 /* *
@@ -72,14 +71,6 @@ class Column {
      * The viewport (table) the column belongs to.
      */
     public readonly viewport: Table;
-
-    /**
-     * The width of the column in the viewport. The interpretation of the
-     * value depends on the `columns.distribution` option:
-     * - `full`: The width is a ratio of the viewport width.
-     * - `fixed`: The width is a fixed number of pixels.
-     */
-    public width: number;
 
     /**
      * The cells of the column.
@@ -148,7 +139,7 @@ class Column {
         this.id = id;
         this.index = index;
         this.viewport = viewport;
-        this.width = this.getInitialWidth();
+        viewport.columnDistribution.loadColumn(this);
 
         this.loadData();
     }
@@ -205,13 +196,8 @@ class Column {
      * Returns the width of the column in pixels.
      */
     public getWidth(): number {
-        const vp = this.viewport;
-
-        return vp.columnDistribution === 'full' ?
-            vp.getWidthFromRatio(this.width) :
-            this.width;
+        return this.viewport.columnDistribution.getColumnWidth(this);
     }
-
 
     /**
      * Adds or removes the hovered CSS class to the column element
@@ -249,72 +235,6 @@ class Column {
                 Globals.getClassName('syncedColumn')
             );
         }
-    }
-
-    /**
-     * Creates a mock element to measure the width of the column from the CSS.
-     * The element is appended to the viewport container and then removed.
-     * It should be called only once for each column.
-     *
-     * @returns The initial width of the column.
-     */
-    private getInitialWidth(): number {
-        let result: number;
-        const { viewport } = this;
-
-        // Set the initial width of the column.
-        const mock = makeHTMLElement('div', {
-            className: Globals.getClassName('columnElement')
-        }, viewport.grid.container);
-
-        mock.setAttribute('data-column-id', this.id);
-        if (this.options.className) {
-            mock.classList.add(...this.options.className.split(/\s+/g));
-        }
-
-        if (viewport.columnDistribution === 'full') {
-            result = this.getInitialFullDistWidth(mock);
-        } else {
-            result = mock.offsetWidth || 100;
-        }
-        mock.remove();
-
-        return result;
-    }
-
-    /**
-     * The initial width of the column in the full distribution mode. The last
-     * column in the viewport will have to fill the remaining space.
-     *
-     * @param mock
-     * The mock element to measure the width.
-     */
-    private getInitialFullDistWidth(mock: HTMLElement): number {
-        const vp = this.viewport;
-        const columnsCount = vp.grid.enabledColumns?.length ?? 0;
-
-        if (this.index < columnsCount - 1) {
-            return vp.getRatioFromWidth(mock.offsetWidth) || 1 / columnsCount;
-        }
-
-        let allPreviousWidths = 0;
-        for (let i = 0, iEnd = columnsCount - 1; i < iEnd; i++) {
-            allPreviousWidths += vp.columns[i].width;
-        }
-
-        const result = 1 - allPreviousWidths;
-
-        if (result < 0) {
-            // eslint-disable-next-line no-console
-            console.warn(
-                'The sum of the columns\' widths exceeds the ' +
-                'viewport width. It may cause unexpected behavior in the ' +
-                'full distribution mode. Check the CSS styles of the ' +
-                'columns. Corrections may be needed.'
-            );
-        }
-
-        return result;
     }
 
     /**
