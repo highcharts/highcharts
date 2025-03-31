@@ -172,8 +172,7 @@ class Table {
         const dgOptions = grid.options;
         const customClassName = dgOptions?.rendering?.table?.className;
 
-        this.columnDistribution =
-            dgOptions?.rendering?.columns?.distribution as ColumnDistribution;
+        this.columnDistribution = this.initColumnDistribution();
         this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
         this.scrollable = !!(
             this.grid.initialContainerHeight || this.virtualRows
@@ -282,6 +281,30 @@ class Table {
                 new Column(this, columnId, i)
             );
         }
+    }
+
+    /**
+     * Returns the column distribution of the table according to the options:
+     * 1. If `columns.distribution` defined, use it. If not:
+     * 2. If any column has a width defined, use `custom`. If not:
+     * 3. Use `full`.
+     */
+    private initColumnDistribution(): ColumnDistribution {
+        const { options } = this.grid;
+        let result = options?.rendering?.columns?.distribution;
+
+        if (result) {
+            return result;
+        }
+
+        if (
+            options?.columns?.some(column => defined(column.width)) ||
+            defined(options?.columnDefaults?.width)
+        ) {
+            return 'custom';
+        }
+
+        return 'full';
     }
 
     /**
