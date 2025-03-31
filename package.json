@@ -52,7 +52,8 @@
     "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap",
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
-    "benchmark-compare": "tsx test/ts-node-unit-tests/benchmark-compare.ts"
+    "benchmark-compare": "tsx test/ts-node-unit-tests/benchmark-compare.ts",
+    "preview-docs": "npm run start --workspace=docs-preview"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.592.0",
@@ -140,6 +141,9 @@
     "webpack-cli": "^5.1.4",
     "yargs": "^17.7.2"
   },
+  "workspaces": [
+    "tools/docs-preview"
+  ],
   "overrides": {
     "gulp-jsdoc3": {
       "jsdoc": "^4.0.3"
