@@ -26,9 +26,10 @@ async function transpileJSXSamples() {
             <script type="importmap">
             {
                 "imports": {
-                    "react": "https://esm.sh/react@18.3.1",
-                    "react-dom": "https://esm.sh/react-dom@18.3.1/client",
-                    "highcharts-react-official": "https://esm.sh/gh/highcharts/highcharts-react@v4-dev/index.js"
+                    "react": "https://esm.sh/react",
+                    "react-dom": "https://esm.sh/react-dom/client",
+                    "@highcharts/react": "https://esm.sh/@highcharts/react@next/index.js",
+                    "@highcharts/react/": "https://esm.sh/@highcharts/react@next/"
                 }
             }
             </script>
@@ -50,7 +51,7 @@ async function transpileJSXSamples() {
 
     const styles = `
 #container {
-    height: 400px;
+    min-height: 400px;
 }
 
 details {

@@ -33,3 +33,36 @@ details {
         }
     }
 }
+
+.btn-group {
+    button {
+        background-color: #545ecc;
+        color: white;
+        font-weight: bold;
+        font-family: sans-serif;
+        padding: 12px 16px;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        user-select: none;
+
+        margin: 0px 4px;
+
+        &:first-of-type {
+            border-radius: 5px 0px 0px 5px;
+        }
+
+        &:last-of-type {
+            border-radius: 0px 5px 5px 0px;
+        }
+
+        &:hover {
+            background-color: #666ee8;
+        }
+        &:focus {
+            background-color: #666ee8;
+        }
+    }
+}
+
+
