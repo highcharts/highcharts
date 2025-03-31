@@ -2,7 +2,7 @@
  *
  *  Grid Cell Editing class.
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -165,6 +165,11 @@ namespace CellEditingComposition {
      * Add the 'editable' hint span element for the editable cell.
      */
     function addEditableCellA11yHint(this: TableCell): void {
+        const a11y = this.row.viewport.grid.accessibility;
+        if (!a11y) {
+            return;
+        }
+
         const editableLang = this.row.viewport.grid.options
             ?.lang?.accessibility?.cellEditing?.editable;
 
@@ -254,7 +259,7 @@ export interface CellEditingLangA11yOptions {
         /**
          * The message when the cell editing was cancelled.
          *
-         * @default 'Editing canceled.'
+         * @default 'Editing cancelled.'
          */
         cancelled?: string;
     }
@@ -298,7 +303,7 @@ declare module '../../Core/Options' {
         /**
          * Whether to make the column cells editable `true`, or read-only `false`.
          *
-         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/overview | Editable columns disabled}
+         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Editable columns disabled}
          *
          * @default true
          */

@@ -2,7 +2,7 @@
  * @license Highcharts Dashboards v@product.version@ (@product.date@)
  * @module datagrid/datagrid
  *
- * (c) 2009-2024 Highsoft AS
+ * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -17,6 +17,7 @@
  *
  * */
 
+import type _Options from '../Grid/Core/Options.ts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
@@ -30,6 +31,7 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
+import Utilities from '../Core/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
@@ -98,6 +100,7 @@ declare global {
         HeaderCell: typeof HeaderCell;
         TableCell: typeof TableCell;
         Templating: typeof Templating;
+        merge: typeof Utilities.merge;
     }
     interface Window {
         /**
@@ -137,6 +140,7 @@ G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.setOptions = Defaults.setOptions;
 G.Templating = Templating;
 G.product = 'Grid Pro';
+G.merge = Utilities.merge;
 
 G.Table = G.Table || Table;
 G.Column = G.Column || Column;
@@ -148,6 +152,17 @@ CellEditingComposition.compose(G.Table, G.TableCell);
 CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 ValidatorComposition.compose(G.Table);
+
+
+/* *
+ *
+ *  Export types
+ *
+ * */
+
+namespace G {
+    export type Options = _Options;
+}
 
 
 /* *

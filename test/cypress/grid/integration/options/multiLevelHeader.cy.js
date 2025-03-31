@@ -1,6 +1,6 @@
 describe('DataGrid events.', () => {
     before(() => {
-        cy.visit('grid/cypress/grouped-headers');
+        cy.visit('grid-lite/cypress/grouped-headers');
     });
 
     it('Renders multilevel header.', () => {

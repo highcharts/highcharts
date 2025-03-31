@@ -96,11 +96,20 @@ QUnit.test('Title alignment', function (assert) {
         }
     });
 
-    assert.ok(
-        chart.title.element.offsetLeft + chart.title.element.offsetWidth <
-            chart.chartWidth,
-        'The title should not spill out of the chart area (#7787)'
-    );
+    const foreignObject = chart.title.foreignObject;
+    if (foreignObject) {
+        assert.ok(
+            foreignObject.attr('x') + foreignObject.attr('width') <
+                chart.chartWidth,
+            'The title should not spill out of the chart area (#7787)'
+        );
+    } else {
+        assert.ok(
+            chart.title.element.offsetLeft + chart.title.element.offsetWidth <
+                chart.chartWidth,
+            'The title should not spill out of the chart area (#7787)'
+        );
+    }
 
     const ariaValue = document.getElementById('container')
         .getAttribute('aria-label');

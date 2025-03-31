@@ -19,7 +19,6 @@ Highcharts.chart('container', {
         },
         plotLines: [
             {
-                useHTML: true,
                 color: '#f15c80',
                 dashStyle: 'dot',
                 width: 2,

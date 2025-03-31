@@ -2,7 +2,7 @@
  *
  *  Grid class
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -261,6 +261,7 @@ class TableCell extends Cell {
             return;
         }
 
+        this.row.data[this.column.id] = this.value;
         originalDataTable.setCell(
             this.column.id,
             rowTableIndex,
@@ -294,8 +295,10 @@ class TableCell extends Cell {
 
     /**
      * Handle the formatting content of the cell.
+     *
+     * @internal
      */
-    private formatCell(): string {
+    public formatCell(): string {
         const cellsDefaults =
             this.row.viewport.grid.options?.columnDefaults?.cells || {};
         const options = this.column.options.cells || {};

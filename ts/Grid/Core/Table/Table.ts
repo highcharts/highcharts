@@ -2,7 +2,7 @@
  *
  *  Grid Table Viewport class
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -34,6 +34,7 @@ import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
+import Defaults from '../Defaults.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -188,7 +189,6 @@ class Table {
             );
         }
 
-        this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
             this.columnsResizer = new ColumnsResizer(this);
         }
@@ -197,16 +197,20 @@ class Table {
             tableElement.classList.add(...customClassName.split(/\s+/g));
         }
 
+        // Load columns
+        this.loadColumns();
+
+        // Virtualization
+        this.rowsVirtualizer = new RowsVirtualizer(this);
+
+        // Init Table
         this.init();
 
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
 
-        if (this.virtualRows) {
-            // For now, scroll event is only needed for virtualization.
-            this.tbodyElement.addEventListener('scroll', this.onScroll);
-        }
+        this.tbodyElement.addEventListener('scroll', this.onScroll);
 
         if (this.scrollable) {
             tableElement.classList.add(
@@ -230,9 +234,6 @@ class Table {
         fireEvent(this, 'beforeInit');
 
         this.setTbodyMinHeight();
-
-        // Load columns
-        this.loadColumns();
 
         // Load & render head
         if (this.grid.options?.rendering?.header?.enabled) {
@@ -285,6 +286,24 @@ class Table {
     }
 
     /**
+     * Fires an empty update to properly load the virtualization, only if
+     * there's a row count compared to the threshold change detected (due to
+     * performance reasons).
+     */
+    private updateVirtualization(): void {
+        const rows = this.grid.options?.rendering?.rows;
+        const threshold = Number(
+            rows?.virtualizationThreshold ||
+            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
+        );
+        const rowCount = Number(this.dataTable?.rowCount);
+
+        if (rows?.virtualization !== (rowCount >= threshold)) {
+            this.grid.update();
+        }
+    }
+
+    /**
      * Loads the modified data from the data table and renders the rows.
      */
     public loadPresentationData(): void {
@@ -294,6 +313,7 @@ class Table {
             column.loadData();
         }
 
+        this.updateVirtualization();
         this.rowsVirtualizer.rerender();
     }
 
@@ -350,7 +370,10 @@ class Table {
      * Handles the scroll event.
      */
     private onScroll = (): void => {
-        this.rowsVirtualizer.scroll();
+        if (this.virtualRows) {
+            this.rowsVirtualizer.scroll();
+        }
+
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
     };
 
@@ -360,7 +383,7 @@ class Table {
      * @param index
      * The index of the row to scroll to.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/scroll-to-row | Scroll to row}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
         if (this.grid.options?.rendering?.rows?.virtualization) {
@@ -416,9 +439,7 @@ class Table {
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
-        if (this.grid.options?.rendering?.rows?.virtualization) {
-            this.tbodyElement.removeEventListener('scroll', this.onScroll);
-        }
+        this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
 

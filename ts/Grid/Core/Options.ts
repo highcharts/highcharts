@@ -2,7 +2,7 @@
  *
  *  Grid options
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -94,7 +94,7 @@ export interface Options {
      * Defines the structure of levels in header. Used for grouping columns
      * headers.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/grouped-headers | Grouped headers}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
      */
     header?: Array<GroupedHeaderOptions|string>;
 
@@ -158,7 +158,7 @@ export interface ColumnsSettings {
      * distributed so that the first and the last column are at the edges of
      * the grid. If `fixed`, the columns will have a fixed width in pixels.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/fixed-distribution | Fixed distribution}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/fixed-distribution | Fixed distribution}
      *
      * @default 'full'
      */
@@ -211,7 +211,7 @@ export interface RowsSettings {
      * to set this option to `true` for the performance reasons, to avoid the
      * unnecessary calculations.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/strict-row-heights | Strict row heights}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/strict-row-heights | Strict row heights}
      *
      * @default false
      */
@@ -222,9 +222,24 @@ export interface RowsSettings {
      * only. In case of large data set, the enabled option improve performance
      * and saves memory.
      *
-     * @default true
+     * The option is automatically set to `true` when the number of rows exceeds
+     * the `virtualizationThreshold` option value. If defined, it takes the
+     * precedence over the `virtualizationThreshold` option.
+     *
+     * @default false
      */
     virtualization?: boolean;
+
+    /**
+     * The rows virtualization threshold option sets the row count limit at
+     * which virtualization is activated. When the number of rows exceeds this
+     * threshold, virtualization is enabled to optimize performance.
+     *
+     * The option has no effect when the `virtualization` option is defined.
+     *
+     * @default 50
+     */
+    virtualizationThreshold?: number;
 }
 
 /**
@@ -268,7 +283,7 @@ export interface ColumnOptions {
     /**
      * Column sorting options.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/sorting-options | Sorting options}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
      */
     sorting?: ColumnSortingOptions;
 
@@ -276,7 +291,7 @@ export interface ColumnOptions {
      * Whether the columns should be resizable. It does not affect individual
      * column settings.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/column-resizing-disabled | Column resize disabled}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing-disabled | Column resize disabled}
      *
      * @default true
      */
@@ -305,7 +320,7 @@ export interface ColumnCellOptions {
      *
      * When not set, the default format `'{value}'` is used.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/cell-formatting/ | Cell formatting}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-formatting/ | Cell formatting}
      *
      * @default undefined
      */
@@ -316,7 +331,7 @@ export interface ColumnCellOptions {
      * grid. Applied only to cell that are in the table not the column
      * header.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/cell-formatting/ | Cell formatting}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-formatting/ | Cell formatting}
      *
      * @return
      * A string to be set as a table cell's content.
@@ -365,7 +380,7 @@ export interface ColumnSortingOptions {
      * user interface. However, the order of rows in this column may still
      * change when other columns are sorted.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/sorting-options | Sorting options}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
      *
      * @default true
      */
@@ -395,7 +410,7 @@ export interface IndividualColumnOptions extends ColumnOptions {
      *
      * It does not use templating.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/demo/datagrid-custom-class | Custom class}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/custom-class | Custom class}
      *
      * @default undefined
      */
@@ -408,7 +423,7 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * Shorter way to disable multiple columns at once is to use the `included`
      * array in the `columns` settings.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/overview | Disabled meta column}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Disabled meta column}
      *
      * @default true
      */
@@ -437,7 +452,7 @@ export interface CaptionOptions {
     /**
      * The caption of the grid.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/overview | Caption}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Caption}
      */
     text?: string;
 }

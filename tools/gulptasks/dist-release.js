@@ -15,9 +15,13 @@ const childProcess = require('child_process');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
 
-let productName = 'Highcharts';
-let releaseRepo = 'highcharts-dist';
-let pathToDistRepo = '../' + releaseRepo + '/';
+const releaseRepos = {
+    Highcharts: 'highcharts-dist',
+    Grid: {
+        lite: 'grid-lite-dist'
+        // pro: 'grid-pro-dist'
+    }
+};
 
 /**
  * Asks user a question, and waits for input.
@@ -42,41 +46,57 @@ async function askUser(question) {
 }
 
 /**
+ * Get the handled repos based on the product name.
+ * @param {string} productName The product name.
+ */
+function getHandledRepos(productName) {
+    return productName === 'Grid' ?
+        Object.values(releaseRepos.Grid) : [releaseRepos.Highcharts];
+}
+
+/**
  * Commit, tag and push
  *
  * @param {string|number} version To commit, tag and push.
  * @param {boolean} [push] If true will commit, tag and push.
  * If false it will only print the commands to be run.
+ * @param {string} productName The product name.
  * @return {Promise<*>} Result
  */
-async function runGit(version, push = false) {
-    const commands = [
-        'git add --all',
-        'git commit -m "v' + version + '"',
-        'git tag -a "v' + version + '" -m "Tagged ' + productName.toLowerCase() + ' version ' + version + '"',
-        'git push',
-        'git push origin v' + version
-    ];
+async function runGit(version, push, productName) {
+    const handledRepos = getHandledRepos(productName);
 
-    if (push) {
-        const answer = await askUser(
-            '\nAbout to run the following commands in ' + pathToDistRepo + ': \n\n' +
-            commands.join('\n') +
-            `\n\nVerify the file changes in ${releaseRepo}. Look specifically \n` +
-            'for removed files. Check updated version numbers in some headers. \n' +
-            'To approve or disapprove, press [Y/n]'
-        );
-        if (answer !== 'Y') {
-            const message = 'Aborted before running running git commands!';
-            throw new Error(message);
+    for (const releaseRepo of handledRepos) {
+        const commands = [
+            'git add --all',
+            'git commit -m "v' + version + '"',
+            'git tag -a "v' + version + '" -m "Tagged ' + releaseRepo + ' version ' + version + '"',
+            'git push',
+            'git push origin v' + version
+        ];
+
+        const pathToDistRepo = join('..', releaseRepo);
+
+        if (push) {
+            const answer = await askUser(
+                '\nAbout to run the following commands in ' + pathToDistRepo + ': \n\n' +
+                commands.join('\n') +
+                `\n\nVerify the file changes in ${releaseRepo}. Look specifically \n` +
+                'for removed files. Check updated version numbers in some headers. \n' +
+                'To approve or disapprove, press [Y/n]'
+            );
+            if (answer !== 'Y') {
+                const message = 'Aborted before running running git commands!';
+                throw new Error(message);
+            }
+
+            commands.forEach(command => {
+                log.message('Running command: ' + command);
+                childProcess.execSync(command, { cwd: pathToDistRepo });
+            });
+        } else {
+            log.message('\n-----(Dryrun)------\n Would have ran the following commands:\n\n' + commands.join(' &&\n') + '\n');
         }
-
-        commands.forEach(command => {
-            log.message('Running command: ' + command);
-            childProcess.execSync(command, { cwd: pathToDistRepo });
-        });
-    } else {
-        log.message('\n-----(Dryrun)------\n Would have ran the following commands:\n\n' + commands.join(' &&\n') + '\n');
     }
 }
 
@@ -84,10 +104,13 @@ async function runGit(version, push = false) {
  * Publishes to npm if the --push is part of the argument.
  * @param {boolean} [push]
  * If true it will publish to npm. If false it will only do a dry-run.
+ * @param {string} [releaseRepo] The release repo to push to.
  * @return {Promise<*>}
  * Result
  */
-async function npmPublish(push = false) {
+async function npmPublish(push = false, releaseRepo = releaseRepos.Highcharts) {
+    const pathToDistRepo = join('..', releaseRepo);
+
     if (push) {
         const answer = await askUser(
             '\nAbout to publish to npm using \'latest\' tag. To approve, \n' +
@@ -143,24 +166,31 @@ async function removeFilesInFolder(folder, exceptions) {
  * Add the current version to the Bower and package.json files
  * @param {string} version
  * To replace with
- * @param {Array<string>} files
+ * @param {Array<string>} files The files to update.
+ * @param {string} [productName] The product name.
  * Files which should be updated.
  */
-function updateJSONFiles(version, files) {
+function updateJSONFiles(version, files, productName) {
     log.message('Updating bower.json and package.json for ' + productName + '...');
 
-    files.forEach(function (file) {
-        const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
-        const json = JSON.parse(fileData);
-        json.types = (
-            json.main ?
-                json.main.replace(/\.js$/u, '.d.ts') :
-                'highcharts.d.ts'
-        );
-        json.version = version;
-        const outputJson = JSON.stringify(json, null, '  ');
-        fs.writeFileSync('../' + releaseRepo + '/' + file + '.json', outputJson);
-    });
+    const handledRepos = getHandledRepos(productName);
+    for (const releaseRepo of handledRepos) {
+        files.forEach(function (file) {
+            const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
+            const json = JSON.parse(fileData);
+            if (productName === 'Highcharts') {
+                json.types = (
+                    json.main ?
+                        json.main.replace(/\.js$/u, '.d.ts') :
+                        'highcharts.d.ts'
+                );
+            }
+            json.version = version;
+            const outputJson = JSON.stringify(json, null, '  ');
+            fs.writeFileSync('../' + releaseRepo + '/' + file + '.json', outputJson);
+        });
+    }
+
     log.message('Json files updated!');
 }
 
@@ -168,6 +198,8 @@ function updateJSONFiles(version, files) {
  * Copy the JavaScript files over
  */
 function copyFiles() {
+    const pathToDistRepo = join('..', releaseRepos.Highcharts);
+
     const mapFromTo = {};
     const folders = [{
         from: 'code',
@@ -194,6 +226,7 @@ function copyFiles() {
     const pathsToIgnore = [
         'dashboards',
         'datagrid',
+        'grid',
         'es5'
     ];
 
@@ -235,13 +268,16 @@ function copyFiles() {
  */
 function copyGridFiles() {
     const mapFromTo = {};
-    const folders = [{
-        from: 'code/grid',
-        to: pathToDistRepo
-    }, {
-        from: 'code/grid/css',
-        to: join(pathToDistRepo, 'css')
-    }];
+    const folders = [
+        {
+            from: join('build', 'dist', 'grid-lite', 'code'),
+            to: join('..', releaseRepos.Grid.lite)
+        }
+        // {
+        //     from: join('build', 'dist', 'grid-pro', 'code'),
+        //     to: join('..', releaseRepos.Grid.pro)
+        // }
+    ];
 
     const filesToIgnore = [
         'package.json'
@@ -291,6 +327,14 @@ async function getProductsJs() {
 }
 
 /**
+ * Gets the main branch name of the repository.
+ * @return {string} Branch name
+ */
+function getBranchName() {
+    return (argv.product || 'Highcharts') === 'Highcharts' ? 'master' : 'main';
+}
+
+/**
  * Checks for any untracked or unstaged git changes in the workingDir
  * @param {string} workingDir
  * Directory to use
@@ -309,14 +353,14 @@ function checkForCleanWorkingDirectory(workingDir) {
     }
 
     try {
-        childProcess.execSync('git log origin/master..HEAD', { cwd: pathToDistRepo });
+        childProcess.execSync(`git log origin/${getBranchName()}..HEAD`, { cwd: workingDir });
     } catch (error) {
         log.warn('You have unpushed commits. Please make sure it is intended as it will be part of the release.');
     }
 }
 
 /**
- * Checks if the branch is something else than master branch and asks the user if it is ok.
+ * Checks if the branch is something else than expected branch and asks the user if it is ok.
  * @param {string} repoName
  * Name of repo
  * @param {string} workingDir
@@ -324,9 +368,9 @@ function checkForCleanWorkingDirectory(workingDir) {
  * @return {Promise<void>}
  * Result
  */
-async function checkIfNotMasterBranch(repoName, workingDir) {
+async function checkIfNotExpectedBranch(repoName, workingDir) {
     const branch = childProcess.execSync('git rev-parse --abbrev-ref HEAD', { cwd: workingDir });
-    if (branch.toString().trim() !== 'master') {
+    if (branch.toString().trim() !== getBranchName()) {
         const answer = await askUser(`\nThe current ${repoName} branch is ${branch}. Is this correct [Y/n]?`);
         if (answer !== 'Y') {
             throw new Error('Aborting since current branch is not as expected.');
@@ -336,39 +380,38 @@ async function checkIfNotMasterBranch(repoName, workingDir) {
 
 /**
  * Checks if the user is logged in on npm for publishing.
+ * @param {string} [workingDir] Repository to check.
  * @return {undefined} result
  */
-function checkIfLoggedInOnNpm() {
+function checkIfLoggedInOnNpm(workingDir) {
     try {
-        childProcess.execSync('npm whoami', { cwd: pathToDistRepo });
+        childProcess.execSync('npm whoami', { cwd: workingDir });
     } catch (error) {
         throw new Error(`Not able to run npm whoami. It may be caused by
         - Not being logged into npm, or
-        - The highcharts-dist folder not existing next to highcharts`);
+        - The ${workingDir} folder not existing next to highcharts`);
     }
 }
 
 /**
  * Based on the product, checks if the code folder exists if it is not, compiles it.
+ * @param {string} productName The product name.
  */
-async function checkIfCodeExists() {
+async function checkIfCodeExists(productName) {
     const codePaths = {
-        Highcharts: 'code/highcharts.js',
-        Grid: 'code/grid/grid-lite.js'
+        Highcharts: ['code/highcharts.js'],
+        Grid: [
+            join('build', 'dist', 'grid-lite', 'code', 'grid-lite.js')
+            // join('build', 'dist', 'grid-pro', 'code', 'grid-pro.js')
+        ]
     };
 
-    const filePath = codePaths[productName];
-    if (filePath && !fs.existsSync(filePath)) {
-        throw new Error(`${productName} code not found. Please run 'npm run dist' first.`);
+    const filePaths = codePaths[productName];
+    for (const filePath of filePaths) {
+        if (filePath && !fs.existsSync(filePath)) {
+            throw new Error(`${productName} code not found. Please run 'npm run dist --product ${productName}' first.`);
+        }
     }
-}
-/**
- * Gets the dist repo path based on the product.
- *
- * @return {string} The dist repo path.
- */
-function getDistRepo() {
-    return `../${productName.toLowerCase()}-dist/`;
 }
 
 /**
@@ -378,43 +421,57 @@ function getDistRepo() {
  */
 async function release() {
     // Set some variables
-    productName = argv.product || 'Highcharts';
-    releaseRepo = `${productName.toLowerCase()}-dist`;
-    pathToDistRepo = getDistRepo();
+    const productName = argv.product || 'Highcharts';
+    const reposSettings = releaseRepos[productName];
+    const handledReleaseRepos = productName === 'Grid' ?
+        Object.values(reposSettings) : [reposSettings];
+    const branchName = getBranchName();
 
     // Release
     const products = await getProductsJs();
     const key = Object.keys(products).find(k => k.includes(productName));
     const version = products[key].nr;
 
-    await checkIfCodeExists();
+    await checkIfCodeExists(productName);
 
     log.starting(`Initiating release of ${productName} version ${version}.`);
 
-    if (argv.push) {
-        checkIfLoggedInOnNpm();
+    for (const releaseRepo of handledReleaseRepos) {
+        const pathToDistRepo = join('..', releaseRepo);
+
+        log.message(`=== Handling '${releaseRepo}' repository. ===`);
+
+        if (argv.push) {
+            checkIfLoggedInOnNpm(pathToDistRepo);
+        }
+
+        checkForCleanWorkingDirectory(pathToDistRepo);
+        await checkIfNotExpectedBranch(releaseRepo, pathToDistRepo);
+
+        log.message(`Pulling latest changes from origin and rebasing against ${branchName} branch.`);
+
+        childProcess.execSync(`git pull --rebase origin ${branchName}`, {
+            cwd: pathToDistRepo
+        });
+
+        const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt'];
+        await removeFilesInFolder(pathToDistRepo, keepFiles);
+        log.message('Successfully removed content of ' + pathToDistRepo);
     }
-
-    checkForCleanWorkingDirectory(pathToDistRepo);
-    await checkIfNotMasterBranch(releaseRepo, pathToDistRepo);
-
-    log.message('Pulling latest changes from origin and rebasing against master branch.');
-    childProcess.execSync(`git pull --rebase origin ${productName === 'Highcharts' ? 'master' : 'main'}`, { cwd: pathToDistRepo });
-
-    const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md'];
-    await removeFilesInFolder(pathToDistRepo, keepFiles);
-    log.message('Successfully removed content of ' + pathToDistRepo);
 
     if (productName === 'Highcharts') {
         copyFiles();
-        updateJSONFiles(version, ['bower', 'package']);
+        updateJSONFiles(version, ['bower', 'package'], productName);
     } else if (productName === 'Grid') {
         copyGridFiles();
-        updateJSONFiles(version, ['package']);
+        updateJSONFiles(version, ['package'], productName);
     }
 
-    await runGit(version, argv.push);
-    await npmPublish(argv.push);
+    await runGit(version, argv.push, productName);
+
+    for (const releaseRepo of handledReleaseRepos) {
+        await npmPublish(argv.push, releaseRepo);
+    }
 
     log.success('Release completed successfully!');
     return 'Success!';

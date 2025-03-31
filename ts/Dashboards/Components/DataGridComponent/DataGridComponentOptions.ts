@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -79,7 +79,7 @@ export interface Options extends Component.Options {
      */
     onUpdate(e: KeyboardEvent, connector: Component.ConnectorTypes): void
 
-    type: 'DataGrid';
+    type: 'DataGrid'|'Grid';
     /**
      * Generic options to adjust behavior and styling of the rendered data
      * grid.

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -194,21 +194,21 @@ export interface GridEvents {
     /**
      * Events related to the cells.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/cell-events/ | Grid events}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-events/ | Grid events}
      */
     cell?: CellEvents;
 
     /**
      * Events related to the column.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/cell-events/ | Grid events}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-events/ | Grid events}
      */
     column?: ColumnEvents
 
     /**
      * Events related to the header.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/cell-events/ | Grid events}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-events/ | Grid events}
      */
     header?: HeaderEvents
 }

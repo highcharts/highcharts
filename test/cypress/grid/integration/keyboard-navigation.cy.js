@@ -1,6 +1,6 @@
 describe('Keyboard navigation in DataGrid.', () => {
     before(() => {
-        cy.visit('/grid/basic/overview');
+        cy.visit('/grid-pro/basic/overview');
     });
 
     it('The first visible cell is focusable.', () => {

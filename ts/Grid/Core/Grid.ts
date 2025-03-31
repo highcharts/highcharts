@@ -2,7 +2,7 @@
  *
  *  Highcharts Grid class
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -43,7 +43,8 @@ const {
     extend,
     getStyle,
     merge,
-    pick
+    pick,
+    defined
 } = U;
 
 
@@ -299,6 +300,7 @@ class Grid {
         this.initContainers(renderTo);
         this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
+        this.initVirtualization();
 
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
@@ -329,12 +331,12 @@ class Grid {
      * Initializes the accessibility controller.
      */
     private initAccessibility(): void {
-        if (!this.options?.accessibility?.enabled) {
-            return;
-        }
+        this.accessibility?.destroy();
+        delete this.accessibility;
 
-        // Can be moved to a separate module in the future (if needed).
-        this.accessibility = new Accessibility(this);
+        if (this.options?.accessibility?.enabled) {
+            this.accessibility = new Accessibility(this);
+        }
     }
 
     /**
@@ -531,6 +533,7 @@ class Grid {
         oneToOne = false
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
+        this.initAccessibility();
 
         let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
@@ -539,6 +542,8 @@ class Grid {
 
             this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
+
+            this.initVirtualization();
         }
 
         this.querying.loadOptions();
@@ -1000,7 +1005,7 @@ class Grid {
      * @return
      * JSON representation of the data
      */
-    public getJSON(): string {
+    public getData(): string {
         const json = this.viewport?.dataTable.modified.columns;
 
         if (!this.enabledColumns || !json) {
@@ -1017,26 +1022,74 @@ class Grid {
     }
 
     /**
-     * Returns the current Grid options as a JSON string.
+     * Returns the current grid data as a JSON string.
+     *
+     * @return
+     * JSON representation of the data
+     *
+     * @deprecated
+     */
+    public getJSON(): string {
+        return this.getData();
+    }
+
+    /**
+     * Returns the current Grid options.
      *
      * @param onlyUserOptions
      * Whether to return only the user options or all options (user options
      * merged with the default ones). Default is `true`.
      *
      * @returns
-     * Options as a JSON string.
+     * Grid options.
      */
-    public getOptionsJSON(onlyUserOptions = true): string {
-        const optionsCopy =
+    public getOptions(onlyUserOptions = true): Globals.DeepPartial<Options> {
+        const options =
             onlyUserOptions ? merge(this.userOptions) : merge(this.options);
 
-        if (optionsCopy.dataTable?.id) {
-            optionsCopy.dataTable = {
-                columns: optionsCopy.dataTable.columns
+        if (options.dataTable?.id) {
+            options.dataTable = {
+                columns: options.dataTable.columns
             };
         }
 
-        return JSON.stringify(optionsCopy);
+        return options;
+    }
+
+    /**
+     * Returns the current Grid options.
+     *
+     * @param onlyUserOptions
+     * Whether to return only the user options or all options (user options
+     * merged with the default ones). Default is `true`.
+     *
+     * @returns
+     * Options as a JSON string
+     *
+     * @deprecated
+     */
+    public getOptionsJSON(onlyUserOptions = true): string {
+        return JSON.stringify(this.getOptions(onlyUserOptions));
+    }
+
+    /**
+     * Enables virtualization if the row count is greater than or equal to the
+     * threshold or virtualization is enabled externally. Should be fired after
+     * the data table is loaded.
+     */
+    private initVirtualization(): void {
+        const rows = this.userOptions.rendering?.rows;
+        const virtualization = rows?.virtualization;
+        const threshold = Number(
+            rows?.virtualizationThreshold ||
+            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
+        );
+        const rowCount = Number(this.dataTable?.rowCount);
+
+        // Makes sure all nested options are defined.
+        ((this.options ??= {}).rendering ??= {}).rows ??= {};
+        this.options.rendering.rows.virtualization =
+            defined(virtualization) ? virtualization : rowCount >= threshold;
     }
 }
 

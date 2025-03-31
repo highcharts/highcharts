@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -387,6 +387,7 @@ class Tick {
     ): (SVGElement|undefined) {
         const axis = this.axis,
             { renderer, styledMode } = axis.chart,
+            whiteSpace = labelOptions.style.whiteSpace,
             label = defined(str) && labelOptions.enabled ?
                 renderer
                     .text(
@@ -400,13 +401,13 @@ class Tick {
 
         // Un-rotated length
         if (label) {
-            const whiteSpace = labelOptions.style.whiteSpace || 'normal';
-            // Without position absolute, IE export sometimes is wrong
             if (!styledMode) {
-                label.css(merge(labelOptions.style, { whiteSpace: 'nowrap' }));
+                label.css(merge(labelOptions.style));
             }
             label.textPxLength = label.getBBox().width;
-            if (!styledMode) {
+
+            // Apply the white-space setting after we read the full text width
+            if (!styledMode && whiteSpace) {
                 label.css({ whiteSpace });
             }
         }

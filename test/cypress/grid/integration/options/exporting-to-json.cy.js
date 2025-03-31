@@ -1,6 +1,6 @@
 describe('Exporting to JSON.', () => {
     before(() => {
-        cy.visit('grid/cypress/exporting-json');
+        cy.visit('grid-pro/cypress/exporting-json');
     });
 
     it('DataGrid should be exported to JSON.', () => {

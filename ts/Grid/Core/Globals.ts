@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -69,7 +69,7 @@ namespace Globals {
         syncedCell: 'synced-cell',
         syncedColumn: 'synced-column',
         editedCell: 'edited-cell',
-        mockedCell: 'mocked-cell',
+        mockedRow: 'mocked-row',
         rowsContentNowrap: 'rows-content-nowrap',
         virtualization: 'virtualization',
         scrollableContent: 'scrollable-content',
@@ -87,6 +87,7 @@ namespace Globals {
         resizedColumn: 'column-resized',
         creditsContainer: 'credits-container',
         creditsText: 'credits',
+        creditsPro: 'credits-pro',
         visuallyHidden: 'visually-hidden',
         lastHeaderCellInRow: 'last-header-cell-in-row',
         loadingWrapper: 'loading-wrapper',

@@ -2,7 +2,7 @@
  * @license Highcharts Grid v@product.version@ (@product.date@)
  * @module grid/grid-lite
  *
- * (c) 2009-2024 Highsoft AS
+ * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -16,6 +16,8 @@
  *  Imports
  *
  * */
+
+import type _Options from '../Grid/Core/Options.ts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
@@ -31,6 +33,7 @@ import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
+import Utilities from '../Core/Utilities.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -67,6 +70,7 @@ declare global {
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
         Templating: typeof Templating;
+        merge: typeof Utilities.merge;
     }
     interface Window {
         Grid: GridNamespace;
@@ -98,10 +102,24 @@ G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.Templating = Templating;
 G.product = 'Grid Lite';
 G.setOptions = Defaults.setOptions;
+G.merge = Utilities.merge;
 
 G.Table = G.Table || Table;
 
-CreditsLiteComposition.compose(G.Grid);
+CreditsLiteComposition.compose(G.Grid, G.Table);
+
+
+/* *
+ *
+ *  Export types
+ *
+ * */
+
+namespace G {
+    export type Options = _Options;
+}
+
+
 /* *
  *
  *  Classic Export
@@ -112,7 +130,6 @@ CreditsLiteComposition.compose(G.Grid);
 if (!G.win.Grid) {
     G.win.Grid = G;
 }
-
 
 /* *
  *

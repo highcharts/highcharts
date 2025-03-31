@@ -2,7 +2,7 @@
  *
  *  Grid Credits class
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -28,7 +28,7 @@ import type Grid from './Grid';
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
 
-const { makeHTMLElement } = GridUtils;
+const { makeHTMLElement, setHTMLContent } = GridUtils;
 
 /* *
  *
@@ -52,7 +52,11 @@ class Credits {
      */
     public static defaultOptions: CreditsOptions = {
         enabled: true,
-        text: '<img src="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">',
+        // eslint-disable-next-line no-console
+        text: `<picture class="hcg-logo-wrapper">
+            <source srcset="https://assets.highcharts.com/grid/logo_darkx2.png 2x, https://assets.highcharts.com/grid/logo_dark.png 1x" media="(prefers-color-scheme: dark)">
+            <img src="https://assets.highcharts.com/grid/logo_light.png" srcset="https://assets.highcharts.com/grid/logo_lightx2.png 2x, https://assets.highcharts.com/grid/logo_light.png 1x" alt="Highcharts logo" style="height: 20px !important; width: auto !important; display: inline-block !important;">
+        </picture>`,
         href: 'https://www.highcharts.com',
         position: 'bottom'
     };
@@ -77,7 +81,7 @@ class Credits {
     /**
      * The credits content HTML element.
      */
-    public readonly textElement: HTMLElement;
+    public textElement: HTMLElement;
 
     /**
      * The options for the credits.
@@ -102,17 +106,14 @@ class Credits {
      *
      */
     constructor(grid: Grid, options?: CreditsOptions) {
+
         this.grid = grid;
 
         this.containerElement = makeHTMLElement('div', {
             className: Globals.getClassName('creditsContainer')
         });
 
-        this.textElement = makeHTMLElement<HTMLAnchorElement>('a', {
-            className: Globals.getClassName('creditsText')
-        }, this.containerElement);
-
-        this.textElement.setAttribute('target', '_top');
+        this.textElement = this.renderAnchor();
 
         this.options = options ?? Credits.defaultOptions;
         this.render();
@@ -130,17 +131,41 @@ class Credits {
      * from the container. If also reflows the viewport dimensions.
      */
     public render(): void {
+        const grid = this.grid;
+        const contentWrapper = grid.contentWrapper;
         const { text, href } = this.options;
 
         this.containerElement.remove();
 
+        if (!this.textElement) {
+            this.textElement = this.renderAnchor();
+        }
+
         if (text && href) {
-            this.textElement.innerHTML = text;
+            setHTMLContent(this.textElement, text);
             this.textElement.setAttribute('href', href || '');
         }
 
-        this.grid.contentWrapper?.appendChild(this.containerElement);
+        if (grid.descriptionElement) {
+            contentWrapper?.insertBefore(
+                this.containerElement,
+                grid.descriptionElement
+            );
+        } else {
+            contentWrapper?.appendChild(this.containerElement);
+        }
+
         this.grid.viewport?.reflow();
+    }
+
+    private renderAnchor(): HTMLElement {
+        const anchorElement = makeHTMLElement<HTMLAnchorElement>('a', {
+            className: Globals.getClassName('creditsText')
+        }, this.containerElement);
+
+        anchorElement.setAttribute('target', '_blank');
+
+        return anchorElement;
     }
 
     /**

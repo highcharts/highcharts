@@ -2,7 +2,7 @@
  *
  *  Grid Rows Renderer class.
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -26,16 +26,12 @@ import type { RowsSettings } from '../../Options';
 import type Cell from '../Cell';
 
 import Table from '../Table.js';
-import GridUtils from '../../GridUtils.js';
 import TableRow from '../Content/TableRow.js';
 import Globals from '../../Globals.js';
 import U from '../../../../Core/Utilities.js';
-
-const { makeHTMLElement } = GridUtils;
 const {
     fireEvent
 } = U;
-
 
 /* *
  *
@@ -475,21 +471,19 @@ class RowsVirtualizer {
      * once on initialization.
      */
     private getDefaultRowHeight(): number {
-        const mockRow = makeHTMLElement('tr', {
-            className: Globals.getClassName('rowElement'),
-            style: {
-                position: 'absolute'
-            }
-        }, this.viewport.tbodyElement);
+        const vp = this.viewport;
+        const mockRow = new TableRow(vp, 0);
 
-        const mockCell = makeHTMLElement('td', {
-            innerText: 'mock',
-            className: Globals.getClassName('mockedCell')
-        }, mockRow);
+        mockRow.htmlElement.style.position = 'absolute';
+        mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
 
-        const defaultRowHeight = mockRow.offsetHeight;
-        mockRow.remove();
-        mockCell.remove();
+        mockRow.render();
+
+        this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
+
+        const defaultRowHeight = mockRow.htmlElement.offsetHeight;
+
+        mockRow.destroy();
 
         return defaultRowHeight;
     }

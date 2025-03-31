@@ -1,6 +1,6 @@
 describe('Formatting cells.', () => {
     before(() => {
-        cy.visit('grid/basic/cell-formatting');
+        cy.visit('grid-pro/basic/cell-formatting');
     });
 
     it('Head should be formatted.', () => {

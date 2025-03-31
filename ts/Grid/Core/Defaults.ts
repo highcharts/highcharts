@@ -2,7 +2,7 @@
  *
  *  Grid default options
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -72,7 +72,7 @@ namespace Defaults {
                 bufferSize: 10,
                 minVisibleRows: 2,
                 strictHeights: false,
-                virtualization: true
+                virtualizationThreshold: 50
             },
             header: {
                 enabled: true

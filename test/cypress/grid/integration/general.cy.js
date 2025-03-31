@@ -1,6 +1,6 @@
 describe('Remove the dashboard.', () => {
     before(() => {
-        cy.visit('/dashboards/cypress/datagrid-hidden');
+        cy.visit('/dashboards/cypress/grid-hidden');
     });
 
     it('Rows should be visible when datagrid is switched from hidden.', () => {

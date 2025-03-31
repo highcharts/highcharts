@@ -1,6 +1,6 @@
 describe('DataGrid Header visibility.', () => {
     before(() => {
-        cy.visit('grid/basic/header-visibility');
+        cy.visit('grid-lite/basic/header-visibility');
     });
 
     it('Visibility of the table header should be toggled.', () => {
