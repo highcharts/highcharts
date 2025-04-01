@@ -147,6 +147,7 @@ class Validator {
 
         // Set error container position
         this.setPosition();
+
         // Set width and content
         this.errorsContainer.innerHTML = errors.join('<br />');
 
@@ -160,6 +161,7 @@ class Validator {
         this.errorCell?.htmlElement.classList.add(
             Validator.classNames.editedCellError
         );
+
         this.errorsContainer.style.display = 'block';
     }
 
@@ -167,15 +169,32 @@ class Validator {
      * Hide the error and unset highlight on cell.
      */
     public hide(
-        // hideErrorBox: boolean = true
+        hideErrorBox: boolean = true
     ): void {
         this.errorsContainer.style.display = 'none';
 
-        // if (hideErrorBox) {
+        if (hideErrorBox) {
             this.errorCell?.htmlElement.classList.remove(
                 Validator.classNames.editedCellError
             );
-        // }
+        }
+    }
+
+    /**
+     * Get all siblings like credits element that are below the errorbox.
+     * 
+     * @param element 
+     * @returns 
+     */
+    private getSiblings(element?: HTMLElement): Array<Element> {
+        if (!element || !element.parentNode) return [];
+        
+        return Array
+            .from(element.parentNode.children)
+            .filter(
+                child => child !== element &&
+                !child.classList.contains(Validator.classNames.errorsContainer)
+            );
     }
 
     /**
@@ -183,20 +202,18 @@ class Validator {
      */
     public setPosition(): void {
         const errorCell =
-            this.errorCell?.htmlElement.getBoundingClientRect();
+            this.errorCell?.htmlElement;
         const tableElement =
-            this.viewport.grid.tableElement?.getBoundingClientRect();
-
+            this.viewport.grid.tableElement;
 
         if (!errorCell) {
             return;
         }
 
-        this.errorsContainer.style.top =
-            errorCell.top + errorCell.height - (tableElement?.top || 0) + 'px';
-        this.errorsContainer.style.left =
-            (errorCell.left - (tableElement?.left || 0)) + 'px';
-        this.errorsContainer.style.width = errorCell.width + 'px';
+        this.errorsContainer.style.bottom = this.getSiblings(tableElement)
+            .reduce(
+                (total, el) => total + el.getBoundingClientRect().height, 0
+            ) + 'px';
     }
 
     /**

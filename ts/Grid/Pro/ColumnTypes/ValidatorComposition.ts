@@ -87,7 +87,7 @@ namespace ValidatorComposition {
             const errorContainerTop =
                 errorCellPosition.top + errorCellPosition.height;
 
-            validator.setPosition();
+            // validator.setPosition();
 
             if (
                 (

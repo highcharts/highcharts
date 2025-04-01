@@ -834,12 +834,14 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .hcg-errors-container,
 .highcharts-datagrid-errors-container {
     position: absolute;
-    top: 0;
     left: 0;
+    width: 100%;
     display: none;
     background: var(--ig-negative-background);
     color: var(--ig-negative-border-color);
     padding: var(--hcg-padding);
+    border-bottom-left-radius: var(--ig-border-radius);
+    border-bottom-right-radius: var(--ig-border-radius);
 }
 
 /* Accessibility */

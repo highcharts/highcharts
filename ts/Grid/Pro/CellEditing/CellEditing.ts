@@ -135,6 +135,7 @@ class CellEditing {
             const validationErrors: string[] = [];
             if (!vp.validator.validate(cell, newValue, validationErrors)) {
                 vp.validator.initErrorBox(cell, validationErrors);
+                vp.validator.show();
                 return false;
             } else {
                 vp.validator.hide();
