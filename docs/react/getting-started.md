@@ -12,7 +12,7 @@ The beta release has been tested with:
 
 ## 1. Install Highcharts and highcharts-react from npm
 
-Install the Highcharts package along with our [React wrapper](https://www.npmjs.com/package/@highcharts/react) from npm by running:
+Install the Highcharts package along with our [React integration](https://www.npmjs.com/package/@highcharts/react) from npm by running:
 
 ```sh
 npm install highcharts @highcharts/react
