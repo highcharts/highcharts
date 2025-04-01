@@ -39,13 +39,8 @@ jobs:
       - name: Check spelling
         run: npm run lint-docs
 
-      - name: Install Docusaurus Dependencies
-        run: npm i
-        working-directory: ./tools/docs-preview
-
       - name: Build preview
-        run: npm run build
-        working-directory: ./tools/docs-preview
+        run: npm run preview-docs
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
