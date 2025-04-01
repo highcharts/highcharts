@@ -722,6 +722,7 @@ class Tooltip {
                             alignedRight + h
                     );
                 } else {
+                    ret[dim] = 0;
                     return false;
                 }
             },
@@ -787,7 +788,7 @@ class Tooltip {
             swap();
         }
         run();
-
+console.log('@getPosition', ret)
         return ret;
 
     }
