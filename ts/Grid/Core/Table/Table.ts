@@ -454,8 +454,7 @@ class Table {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
-            columnDistributionType: this.columnDistribution.type,
-            columnWidths: Object.values(this.columnDistribution.columnWidths),
+            columnDistribution: this.columnDistribution,
             focusCursor: this.focusCursor
         };
     }
@@ -473,24 +472,16 @@ class Table {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
 
-        if (
-            this.columnDistribution.type === meta.columnDistributionType &&
-            this.columns.length === meta.columnWidths.length
-        ) {
-            const widths = meta.columnWidths;
-            for (let i = 0, iEnd = widths.length; i < iEnd; ++i) {
-                this.columnDistribution.columnWidths[
-                    this.columns[i].id
-                ] = widths[i];
-            }
+        if (!meta.columnDistribution.invalidated) {
+            const colDistMeta = meta.columnDistribution.exportMetadata();
+            this.columnDistribution.importMetadata(colDistMeta);
             this.reflow();
+        }
 
-            if (meta.focusCursor) {
-                const [rowIndex, columnIndex] = meta.focusCursor;
-
-                const row = this.rows[rowIndex - this.rows[0].index];
-                row?.cells[columnIndex]?.htmlElement.focus();
-            }
+        if (meta.focusCursor) {
+            const [rowIndex, columnIndex] = meta.focusCursor;
+            const row = this.rows[rowIndex - this.rows[0].index];
+            row?.cells[columnIndex]?.htmlElement.focus();
         }
     }
 
@@ -534,8 +525,7 @@ namespace Table {
     export interface ViewportStateMetadata {
         scrollTop: number;
         scrollLeft: number;
-        columnDistributionType: ColumnDistributionType;
-        columnWidths: number[];
+        columnDistribution: ColumnDistributionStrategy;
         focusCursor?: [number, number];
     }
 }

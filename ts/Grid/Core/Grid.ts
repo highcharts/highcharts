@@ -546,6 +546,7 @@ class Grid {
             this.initVirtualization();
         }
 
+        this.viewport?.columnDistribution.validateOnUpdate(options);
         this.querying.loadOptions();
 
         if (render) {

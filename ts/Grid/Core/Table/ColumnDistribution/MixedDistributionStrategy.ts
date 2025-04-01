@@ -25,10 +25,11 @@
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
 
-import ColumnDistribution from './ColumnDistribution.js';
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 
 import U from '../../../../Core/Utilities.js';
+import Globals from '../../Globals.js';
+import Options from '../../Options.js';
 const { defined } = U;
 
 
@@ -91,7 +92,7 @@ class MixedDistributionStrategy extends DistributionStrategy {
     public override getColumnWidth(column: Column): number {
         const vp = this.viewport;
         const widthValue = this.columnWidths[column.id];
-        const minWidth = ColumnDistribution.getMinWidth(column);
+        const minWidth = DistributionStrategy.getMinWidth(column);
 
         if (!defined(widthValue)) {
             const freeWidth =
@@ -120,7 +121,7 @@ class MixedDistributionStrategy extends DistributionStrategy {
         }
 
         const colW = resizer.columnStartWidth ?? 0;
-        const minWidth = ColumnDistribution.getMinWidth(column);
+        const minWidth = DistributionStrategy.getMinWidth(column);
 
         let newW = colW + diff;
         if (newW < minWidth) {
@@ -153,6 +154,50 @@ class MixedDistributionStrategy extends DistributionStrategy {
         }
 
         return occupiedWidth;
+    }
+
+    public override exportMetadata(): MixedDistributionStrategy.Metadata {
+        return {
+            ...super.exportMetadata(),
+            columnWidthUnits: this.columnWidthUnits
+        }
+    }
+
+    public override importMetadata(
+        metadata: MixedDistributionStrategy.Metadata
+    ): void {
+        super.importMetadata(metadata, (colId) => {
+            const unit = metadata.columnWidthUnits[colId];
+            if (defined(unit)) {
+                this.columnWidthUnits[colId] = unit;
+            }
+        });
+    }
+
+    public override validateOnUpdate(newOptions: Globals.DeepPartial<Options>): void {
+        super.validateOnUpdate(newOptions);
+
+        if (
+            newOptions.columnDefaults?.hasOwnProperty('width') ||
+            newOptions.columns?.some((col) => col?.hasOwnProperty('width'))
+        ) {
+            this.invalidated = true;
+        }
+    }
+
+}
+
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace MixedDistributionStrategy {
+
+    export interface Metadata extends DistributionStrategy.Metadata {
+        columnWidthUnits: Record<string, number>;
     }
 
 }

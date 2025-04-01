@@ -26,6 +26,11 @@ import type { ColumnDistributionType } from '../../Options';
 import type Table from '../Table';
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
+import type Globals from '../../Globals.js';
+import type Options from '../../Options.js';
+
+import U from '../../../../Core/Utilities.js';
+const { getStyle } = U;
 
 
 /* *
@@ -38,6 +43,19 @@ import type ColumnsResizer from '../Actions/ColumnsResizer';
  * Represents a column distribution strategy.
  */
 abstract class ColumnDistributionStrategy {
+
+    /* *
+    *
+    *  Static Properties
+    *
+    * */
+
+    /**
+     * The minimum width of a column.
+     * @internal
+     */
+    public static readonly MIN_COLUMN_WIDTH = 20;
+
 
     /* *
     *
@@ -59,6 +77,13 @@ abstract class ColumnDistributionStrategy {
      * The current widths values of the columns.
      */
     public readonly columnWidths: Record<string, number> = {};
+
+    /**
+     * Whether the column distribution strategy is invalidated. This flag is
+     * used to determine whether the column distribution strategy metadata
+     * should be maintained when the table is destroyed and recreated.
+     */
+    public invalidated?: boolean;
 
 
     /* *
@@ -121,6 +146,123 @@ abstract class ColumnDistributionStrategy {
         }
 
         vp.rowsWidth = rowsWidth;
+    }
+
+    /**
+     * Returns the current column distribution strategy metadata.
+     * @internal
+     */
+    public exportMetadata(): ColumnDistributionStrategy.Metadata {
+        return {
+            type: this.type,
+            columnWidths: this.columnWidths
+        }
+    }
+
+    /**
+     * Imports the column distribution strategy metadata. Used to restore the
+     * column distribution strategy after the table is destroyed and recreated.
+     *
+     * @param metadata
+     * The metadata to import.
+     * 
+     * @param columnIterator
+     * A function that is called for each significant column in the table.
+     */
+    public importMetadata(
+        metadata: ColumnDistributionStrategy.Metadata,
+        columnIterator?: (columnId: string) => void
+    ): void {
+        const { enabledColumns } = this.viewport.grid;
+        const savedColumnIds = Object.keys(metadata.columnWidths);
+
+        if (
+            this.invalidated ||
+            this.type !== metadata.type ||
+            !enabledColumns?.length
+        ) {
+            return;
+        }
+
+        let columnId: string;
+        for (let i = 0, iEnd = savedColumnIds.length; i < iEnd; ++i) {
+            columnId = savedColumnIds[i];
+            if (enabledColumns.indexOf(columnId) === -1) {
+                continue;
+            }
+
+            this.columnWidths[columnId] = metadata.columnWidths[columnId];
+            columnIterator?.(columnId);
+        }
+    }
+
+    /**
+     * Validates the column distribution strategy on update. This method
+     * is used to determine whether the current distribution strategy metadata
+     * should be invalidated when the table is updated.
+     *
+     * @param newOptions
+     * The new options to validate.
+     */
+    public validateOnUpdate(newOptions: Globals.DeepPartial<Options>) {
+        if (newOptions.rendering?.columns?.hasOwnProperty('distribution') && (
+            newOptions.rendering?.columns?.distribution !== this.type
+        )) {
+            this.invalidated = true;
+        }
+    }
+
+
+    /* *
+     *
+     * Static Methods
+     * 
+     * */
+
+    /**
+     * Returns the minimum width of the column.
+     *
+     * @param column
+     * The column to get the minimum width for.
+     *
+     * @returns
+     * The minimum width in pixels.
+     */
+    protected static getMinWidth(column: Column): number {
+        const tableColumnEl = column.cells[0]?.htmlElement;
+        const headerColumnEl = column.header?.htmlElement;
+
+        const getElPaddings = (el: HTMLElement): number => (
+            (getStyle(el, 'padding-left', true) || 0) +
+            (getStyle(el, 'padding-right', true) || 0) +
+            (getStyle(el, 'border-left', true) || 0) +
+            (getStyle(el, 'border-right', true) || 0)
+        );
+
+        let result = ColumnDistributionStrategy.MIN_COLUMN_WIDTH;
+        if (tableColumnEl) {
+            result = Math.max(result, getElPaddings(tableColumnEl));
+        }
+        if (headerColumnEl) {
+            result = Math.max(result, getElPaddings(headerColumnEl));
+        }
+        return result;
+    }
+
+}
+
+ 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+namespace ColumnDistributionStrategy {
+
+    export interface Metadata {
+        type: ColumnDistributionType;
+        columnWidths: Record<string, number>;
     }
 
 }

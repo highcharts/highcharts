@@ -50,19 +50,6 @@ class Column {
 
     /* *
     *
-    *  Static Properties
-    *
-    * */
-
-    /**
-     * The minimum width of a column.
-     * @internal
-     */
-    public static readonly MIN_COLUMN_WIDTH = 20;
-
-
-    /* *
-    *
     *  Properties
     *
     * */
