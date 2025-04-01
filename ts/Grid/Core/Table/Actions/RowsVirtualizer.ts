@@ -28,10 +28,6 @@ import type Cell from '../Cell';
 import Table from '../Table.js';
 import TableRow from '../Content/TableRow.js';
 import Globals from '../../Globals.js';
-import U from '../../../../Core/Utilities.js';
-const {
-    fireEvent
-} = U;
 
 /* *
  *
@@ -195,8 +191,6 @@ class RowsVirtualizer {
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
-
-        fireEvent(this.viewport, 'beforeScroll');
 
         if (this.preventScroll) {
             if (lastScrollTop <= target.scrollTop) {

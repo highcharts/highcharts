@@ -62,7 +62,6 @@ namespace ValidatorComposition {
         }
 
         addEvent(TableClass, 'afterInit', initValidatorComposition);
-        addEvent(TableClass, 'beforeScroll', setValidatorPosition);
         addEvent(TableClass, 'afterDestroy', destroy);
     }
 
@@ -71,37 +70,6 @@ namespace ValidatorComposition {
      */
     function initValidatorComposition(this: Table): void {
         this.validator = new Validator(this);
-    }
-
-    /**
-     * Callback function called before scrolling of virtualized rows.
-     */
-    function setValidatorPosition(this: Table): void {
-        const validator = this.validator;
-        const target = this.tbodyElement;
-
-        if (validator.errorsContainer && validator.errorCell) {
-            const errorCellPosition =
-                validator.errorCell.htmlElement.getBoundingClientRect();
-            const targetPosition = target.getBoundingClientRect();
-            const errorContainerTop =
-                errorCellPosition.top + errorCellPosition.height;
-
-            // validator.setPosition();
-
-            if (
-                (
-                    errorContainerTop > targetPosition.top
-                ) && (
-                    errorContainerTop + errorCellPosition.height <
-                    targetPosition.top + targetPosition.height
-                )
-            ) {
-                validator.show();
-            } else {
-                validator.hide();
-            }
-        }
     }
 
     /**
