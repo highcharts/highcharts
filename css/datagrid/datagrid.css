@@ -844,6 +844,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-bottom-right-radius: var(--ig-border-radius);
 }
 
+.highcharts-datagrid-errors-container.hcg-edited-cell-error-fadeIn,
 .hcg-errors-container.hcg-edited-cell-error-fadeIn {
     display: block;
     animation: fadeIn 0.5s;
