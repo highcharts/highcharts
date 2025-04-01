@@ -2807,7 +2807,7 @@ namespace AxisDefaults {
          * @apioption yAxis.scrollbar.margin
          */
 
-        /* eslint-disable highcharts/doclet-apioption-last */
+        /* eslint-disable @highcharts/highcharts/doclet-apioption-last */
         /**
          * Defines the position of the scrollbar. By default, it is positioned
          * on the opposite of the main axis (right side of the chart).
@@ -2828,7 +2828,7 @@ namespace AxisDefaults {
          * @apioption xAxis.scrollbar.opposite
          *
          */
-        /* eslint-enable highcharts/doclet-apioption-last */
+        /* eslint-enable @highcharts/highcharts/doclet-apioption-last */
 
         /**
          * Whether to show the scrollbar when it is fully zoomed out at max
