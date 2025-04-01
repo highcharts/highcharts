@@ -67,7 +67,7 @@ declare module '../../Core/Chart/ChartLike' {
         exportChartLocal(
             exportingOptions?: ExportingOptions,
             chartOptions?: Options
-        ): void;
+        ): Promise<void>;
     }
 }
 
@@ -76,7 +76,7 @@ declare module '../../Extensions/Exporting/ExportingLike' {
         exportChartLocal(
             exportingOptions?: ExportingOptions,
             chartOptions?: Options
-        ): void;
+        ): Promise<void>;
     }
 }
 
@@ -112,17 +112,13 @@ namespace OfflineExporting {
         // Add the OfflineExporting version of the downloadSVGLocal to globals
         (G as AnyRecord).downloadSVGLocal = function downloadSVGLocal(
             svg: string,
-            exportingOptions: ExportingOptions,
-            failCallback: Function,
-            successCallback?: Function
+            exportingOptions: ExportingOptions
         ): void {
             return (exportingOptions?.type === 'application/pdf' ?
                 OfflineExporting.downloadSVGLocal :
                 (G as AnyRecord).Exporting.downloadSVGLocal)(
                 svg,
-                exportingOptions,
-                failCallback,
-                successCallback
+                exportingOptions
             );
         };
 
@@ -133,11 +129,11 @@ namespace OfflineExporting {
 
         // Adding wrappers for the deprecated functions
         extend(Chart.prototype, {
-            exportChartLocal: function (
+            exportChartLocal: async function (
                 this: Chart,
                 exportingOptions?: ExportingOptions,
                 chartOptions?: Options
-            ): void {
+            ): Promise<void> {
                 return this.exporting?.exportChartLocal(
                     exportingOptions,
                     chartOptions
@@ -181,12 +177,11 @@ namespace OfflineExporting {
      * @requires modules/exporting
      * @requires modules/offline-exporting
      */
-    export function downloadSVGLocal(
+    // eslint-disable-next-line @typescript-eslint/require-await
+    export async function downloadSVGLocal(
         svg: string,
-        exportingOptions: ExportingOptions,
-        failCallback: Function,
-        successCallback?: Function
-    ): void {
+        exportingOptions: ExportingOptions
+    ): Promise<void> {
         const dummySVGContainer = doc.createElement('div'),
             imageType = exportingOptions?.type || 'image/png',
             filename = (
@@ -382,14 +377,7 @@ namespace OfflineExporting {
                         0,
                         scale,
                         (pdfData: string): void => {
-                            try {
-                                downloadURL(pdfData, filename);
-                                if (successCallback) {
-                                    successCallback();
-                                }
-                            } catch (e) {
-                                failCallback(e);
-                            }
+                            downloadURL(pdfData, filename);
                         }
                     );
                 });
@@ -425,12 +413,12 @@ namespace OfflineExporting {
      * @requires modules/exporting
      * @requires modules/offline-exporting
      */
-    function exportChartLocal(
+    async function exportChartLocal(
         this: Exporting,
         exportingOptions?: ExportingOptions,
         chartOptions?: Options
-    ): void {
-        this.exportChartLocalCore(
+    ): Promise<void> {
+        await this.exportChartLocalCore(
             OfflineExporting.downloadSVGLocal,
             exportingOptions,
             chartOptions
