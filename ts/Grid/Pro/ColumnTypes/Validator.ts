@@ -162,7 +162,7 @@ class Validator {
             Validator.classNames.editedCellError
         );
 
-        this.errorsContainer.style.display = 'block';
+        this.errorsContainer.classList.add('hcg-edited-cell-error-fadeIn');
     }
 
     /**
@@ -171,7 +171,7 @@ class Validator {
     public hide(
         hideErrorBox: boolean = true
     ): void {
-        this.errorsContainer.style.display = 'none';
+        this.errorsContainer.classList.remove('hcg-edited-cell-error-fadeIn');
 
         if (hideErrorBox) {
             this.errorCell?.htmlElement.classList.remove(

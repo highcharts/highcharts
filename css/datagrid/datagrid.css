@@ -844,6 +844,16 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-bottom-right-radius: var(--ig-border-radius);
 }
 
+.hcg-errors-container.hcg-edited-cell-error-fadeIn {
+    display: block;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
 /* Accessibility */
 .hcg-visually-hidden,
 .highcharts-datagrid-visually-hidden {
