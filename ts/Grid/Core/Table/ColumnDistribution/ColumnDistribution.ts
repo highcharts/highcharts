@@ -84,11 +84,8 @@ namespace ColumnDistribution {
      * @returns
      * The proper column distribution strategy.
      */
-    export function createStrategy(
-        viewport: Table
-    ): DistributionStrategy {
-        const type = assumeDistributionType(viewport);
-        return new distributions[type](viewport);
+    export function createStrategy(viewport: Table): DistributionStrategy {
+        return new distributions[assumeDistributionType(viewport)](viewport);
     }
 
 }

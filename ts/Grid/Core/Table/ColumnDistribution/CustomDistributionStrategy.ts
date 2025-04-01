@@ -22,8 +22,8 @@
  *
  * */
 
-import type Table from '../Table';
 import type Column from '../Column.js';
+import type ColumnsResizer from '../Actions/ColumnsResizer';
 
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 
@@ -36,11 +36,20 @@ import DistributionStrategy from './ColumnDistributionStrategy.js';
 
 class CustomDistributionStrategy extends DistributionStrategy {
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public override readonly type: 'custom' = 'custom';
 
-    constructor (viewport: Table) {
-        super(viewport);
-    }
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     public override loadColumn(column: Column): void {
 
@@ -48,6 +57,10 @@ class CustomDistributionStrategy extends DistributionStrategy {
 
     public override getColumnWidth(column: Column): number {
         return 1;
+    }
+
+    public override resize(resizer: ColumnsResizer, diff: number): void {
+        
     }
 
 }

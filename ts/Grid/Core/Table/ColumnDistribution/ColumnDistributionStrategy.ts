@@ -25,9 +25,7 @@
 import type { ColumnDistributionType } from '../../Options';
 import type Table from '../Table';
 import type Column from '../Column.js';
-
-import U from '../../../../Core/Utilities.js';
-const { defined } = U;
+import type ColumnsResizer from '../Actions/ColumnsResizer';
 
 
 /* *
@@ -98,6 +96,14 @@ abstract class ColumnDistributionStrategy {
      * Returns the column's current width in pixels.
      */
     public abstract getColumnWidth(column: Column): number;
+
+    /**
+     * Resizes the column by the given diff of pixels.
+     *
+     * @param diff
+     * The X position difference in pixels.
+     */
+    public abstract resize(resizer: ColumnsResizer, diff: number): void;
 
     /**
      * Recaulculates the changing dimentions of the table.

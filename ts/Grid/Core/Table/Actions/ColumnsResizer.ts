@@ -79,12 +79,12 @@ class ColumnsResizer {
     /**
      * The width of the dragged column when dragging started.
      */
-    private columnStartWidth?: number;
+    public columnStartWidth?: number;
 
     /**
      * The width of the next column when dragging started.
      */
-    private nextColumnStartWidth?: number;
+    public nextColumnStartWidth?: number;
 
     /**
      * The handles and their mouse down event listeners.
@@ -146,69 +146,6 @@ class ColumnsResizer {
     }
 
     /**
-     * Resizes the columns in the full distribution mode.
-     *
-     * @param diff
-     * The X position difference in pixels.
-     */
-    private fullDistributionResize(diff: number): void {
-        const vp = this.viewport;
-
-        const column = this.draggedColumn;
-        if (!column) {
-            return;
-        }
-
-        const nextColumn = vp.columns[column.index + 1];
-        if (!nextColumn) {
-            return;
-        }
-
-        const leftColW = this.columnStartWidth ?? 0;
-        const rightColW = this.nextColumnStartWidth ?? 0;
-        const minWidth = ColumnsResizer.getMinWidth(column);
-
-        let newLeftW = leftColW + diff;
-        let newRightW = rightColW - diff;
-
-        if (newLeftW < minWidth) {
-            newLeftW = minWidth;
-            newRightW = leftColW + rightColW - minWidth;
-        }
-
-        if (newRightW < minWidth) {
-            newRightW = minWidth;
-            newLeftW = leftColW + rightColW - minWidth;
-        }
-
-        // column.width = vp.getRatioFromWidth(newLeftW);
-        // nextColumn.width = vp.getRatioFromWidth(newRightW);
-    }
-
-    /**
-     * Resizes the columns in the fixed distribution mode.
-     *
-     * @param diff
-     * The X position difference in pixels.
-     */
-    private fixedDistributionResize(diff: number): void {
-        const column = this.draggedColumn;
-        if (!column) {
-            return;
-        }
-
-        const colW = this.columnStartWidth ?? 0;
-        const minWidth = ColumnsResizer.getMinWidth(column);
-
-        let newW = colW + diff;
-        if (newW < minWidth) {
-            newW = minWidth;
-        }
-
-        // column.width = newW;
-    }
-
-    /**
      * Handles the mouse move event on the document.
      *
      * @param e
@@ -224,11 +161,7 @@ class ColumnsResizer {
         const diff = e.pageX - (this.dragStartX || 0);
         const vp = this.viewport;
 
-        if (vp.columnDistribution.type === 'full') {
-            this.fullDistributionResize(diff);
-        } else {
-            this.fixedDistributionResize(diff);
-        }
+        vp.columnDistribution.resize(this, diff);
 
         vp.reflow(true);
 

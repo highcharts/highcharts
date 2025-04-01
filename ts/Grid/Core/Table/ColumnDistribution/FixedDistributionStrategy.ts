@@ -22,8 +22,8 @@
  *
  * */
 
-import type Table from '../Table';
 import type Column from '../Column.js';
+import ColumnsResizer from '../Actions/ColumnsResizer.js';
 
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 import Globals from '../../Globals.js';
@@ -42,11 +42,20 @@ const {
 
 class FixedDistributionStrategy extends DistributionStrategy {
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public override readonly type: 'fixed' = 'fixed';
 
-    constructor (viewport: Table) {
-        super(viewport);
-    }
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     public override loadColumn(column: Column): void {
         this.columnWidths[column.id] = this.getInitialColumnWidth(column);
@@ -56,6 +65,23 @@ class FixedDistributionStrategy extends DistributionStrategy {
         return this.columnWidths[column.id];
     }
 
+    public override resize(resizer: ColumnsResizer, diff: number): void {
+        const column = resizer.draggedColumn;
+        if (!column) {
+            return;
+        }
+
+        const colW = resizer.columnStartWidth ?? 0;
+        // const minWidth = ColumnsResizer.getMinWidth(column);
+        const minWidth = 20; // temp
+
+        let newW = colW + diff;
+        if (newW < minWidth) {
+            newW = minWidth;
+        }
+
+        this.columnWidths[column.id] = newW;
+    }
 
     /**
      * Creates a mock element to measure the width of the column from the CSS.
