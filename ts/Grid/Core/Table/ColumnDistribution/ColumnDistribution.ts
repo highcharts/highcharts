@@ -25,13 +25,17 @@
 import type { ColumnDistributionType } from '../../Options';
 import type Table from '../Table';
 
+import Column from '../Column.js';
 import DistributionStrategy from './ColumnDistributionStrategy.js';
-import CustomDistributionStrategy from './CustomDistributionStrategy.js';
+import MixedDistributionStrategy from './MixedDistributionStrategy.js';
 import FixedDistributionStrategy from './FixedDistributionStrategy.js';
 import FullDistributionStrategy from './FullDistributionStrategy.js';
 
 import U from '../../../../Core/Utilities.js';
-const { defined } = U;
+const {
+    defined,
+    getStyle
+} = U;
 
 
 /* *
@@ -45,7 +49,7 @@ namespace ColumnDistribution {
     type StrategyConstructor = new (viewport: Table) => DistributionStrategy;
 
     const distributions: Record<ColumnDistributionType, StrategyConstructor> = {
-        custom: CustomDistributionStrategy,
+        mixed: MixedDistributionStrategy,
         fixed: FixedDistributionStrategy,
         full: FullDistributionStrategy
     };
@@ -53,7 +57,7 @@ namespace ColumnDistribution {
     /**
      * Returns the column distribution of the table according to the options:
      * 1. If `columns.distribution` defined, use it. If not:
-     * 2. If any column has a width defined, use `custom`. If not:
+     * 2. If any column has a width defined, use `mixed`. If not:
      * 3. Use `full`.
      */
     function assumeDistributionType(viewport: Table): ColumnDistributionType {
@@ -68,7 +72,7 @@ namespace ColumnDistribution {
             options?.columns?.some(column => defined(column.width)) ||
             defined(options?.columnDefaults?.width)
         ) {
-            return 'custom';
+            return 'mixed';
         }
 
         return 'full';
@@ -86,6 +90,36 @@ namespace ColumnDistribution {
      */
     export function createStrategy(viewport: Table): DistributionStrategy {
         return new distributions[assumeDistributionType(viewport)](viewport);
+    }
+
+    /**
+     * Returns the minimum width of the column.
+     *
+     * @param column
+     * The column to get the minimum width for.
+     *
+     * @returns
+     * The minimum width in pixels.
+     */
+    export function getMinWidth(column: Column): number {
+        const tableColumnEl = column.cells[0]?.htmlElement;
+        const headerColumnEl = column.header?.htmlElement;
+
+        const getElPaddings = (el: HTMLElement): number => (
+            (getStyle(el, 'padding-left', true) || 0) +
+            (getStyle(el, 'padding-right', true) || 0) +
+            (getStyle(el, 'border-left', true) || 0) +
+            (getStyle(el, 'border-right', true) || 0)
+        );
+
+        let result = Column.MIN_COLUMN_WIDTH;
+        if (tableColumnEl) {
+            result = Math.max(result, getElPaddings(tableColumnEl));
+        }
+        if (headerColumnEl) {
+            result = Math.max(result, getElPaddings(headerColumnEl));
+        }
+        return result;
     }
 
 }

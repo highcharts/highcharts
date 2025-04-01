@@ -257,36 +257,6 @@ class ColumnsResizer {
             handle.removeEventListener('mousedown', listener);
         }
     }
-
-    /**
-     * Returns the minimum width of the column.
-     *
-     * @param column
-     * The column to get the minimum width for.
-     *
-     * @returns
-     * The minimum width in pixels.
-     */
-    private static getMinWidth(column: Column): number {
-        const tableColumnEl = column.cells[1].htmlElement;
-        const headerColumnEl = column.header?.htmlElement;
-
-        const getElPaddings = (el: HTMLElement): number => (
-            (getStyle(el, 'padding-left', true) || 0) +
-            (getStyle(el, 'padding-right', true) || 0) +
-            (getStyle(el, 'border-left', true) || 0) +
-            (getStyle(el, 'border-right', true) || 0)
-        );
-
-        let result = Column.MIN_COLUMN_WIDTH;
-        if (tableColumnEl) {
-            result = Math.max(result, getElPaddings(tableColumnEl));
-        }
-        if (headerColumnEl) {
-            result = Math.max(result, getElPaddings(headerColumnEl));
-        }
-        return result;
-    }
 }
 
 /* *

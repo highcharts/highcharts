@@ -40,7 +40,7 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 /**
  * The distribution of the columns in the grid structure.
  */
-export type ColumnDistributionType = 'full' | 'fixed' | 'custom';
+export type ColumnDistributionType = 'full' | 'fixed' | 'mixed';
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -157,11 +157,11 @@ export interface ColumnsSettings {
      * The distribution of the columns. If `full`, the columns will be
      * distributed so that the first and the last column are at the edges of
      * the grid. If `fixed`, the columns will have a fixed width in pixels. If
-     * `custom`, the column widths will be set according to the `width` option
+     * `mixed`, the column widths will be set according to the `width` option
      * of each column - CSS styles will be ignored then.
      * 
      * If `undefined`, the default column distribution will be used, which is
-     * `custom` if `width` is set for any column, otherwise `full`.
+     * `mixed` if `width` is set for any column, otherwise `full`.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/fixed-distribution | Fixed distribution}
      * 
@@ -307,9 +307,9 @@ export interface ColumnOptions {
      * the table width. If unset, the width is distributed evenly between all
      * columns.
      *
-     * This option works only when the `distribution` option is set to `custom`.
+     * This option works only when the `distribution` option is set to `mixed`.
      *
-     * If the `distribution` option is undefined, it is set to `custom` and the
+     * If the `distribution` option is undefined, it is set to `mixed` and the
      * `width` option is used to set the width of the column. Other distribution
      * modes work only with CSS-defined column widths.
      */

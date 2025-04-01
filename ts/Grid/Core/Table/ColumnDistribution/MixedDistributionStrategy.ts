@@ -1,6 +1,6 @@
 /* *
  *
- *  Custom Distribution class
+ *  Mixed Distribution class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -25,6 +25,7 @@
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
 
+import ColumnDistribution from './ColumnDistribution.js';
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 
 import U from '../../../../Core/Utilities.js';
@@ -37,7 +38,7 @@ const { defined } = U;
  *
  * */
 
-class CustomDistributionStrategy extends DistributionStrategy {
+class MixedDistributionStrategy extends DistributionStrategy {
 
     /* *
      *
@@ -45,7 +46,7 @@ class CustomDistributionStrategy extends DistributionStrategy {
      *
      * */
 
-    public override readonly type: 'custom' = 'custom';
+    public override readonly type: 'mixed' = 'mixed';
 
     /**
      * Array of units for each column width value. Codified as:
@@ -90,7 +91,7 @@ class CustomDistributionStrategy extends DistributionStrategy {
     public override getColumnWidth(column: Column): number {
         const vp = this.viewport;
         const widthValue = this.columnWidths[column.id];
-        const minWidth = 20; // temp
+        const minWidth = ColumnDistribution.getMinWidth(column);
 
         if (!defined(widthValue)) {
             const freeWidth =
@@ -119,7 +120,7 @@ class CustomDistributionStrategy extends DistributionStrategy {
         }
 
         const colW = resizer.columnStartWidth ?? 0;
-        const minWidth = 20; // temp
+        const minWidth = ColumnDistribution.getMinWidth(column);
 
         let newW = colW + diff;
         if (newW < minWidth) {
@@ -163,4 +164,4 @@ class CustomDistributionStrategy extends DistributionStrategy {
  *
  * */
 
-export default CustomDistributionStrategy;
+export default MixedDistributionStrategy;

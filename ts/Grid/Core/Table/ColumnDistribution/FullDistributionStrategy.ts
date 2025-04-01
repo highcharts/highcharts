@@ -25,6 +25,7 @@
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
 
+import ColumnDistribution from './ColumnDistribution.js';
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 import Globals from '../../Globals.js';
 
@@ -86,8 +87,7 @@ class FullDistributionStrategy extends DistributionStrategy {
 
         const leftColW = resizer.columnStartWidth ?? 0;
         const rightColW = resizer.nextColumnStartWidth ?? 0;
-        // const minWidth = ColumnsResizer.getMinWidth(column);
-        const minWidth = 20; // temp
+        const minWidth = ColumnDistribution.getMinWidth(column);
 
         let newLeftW = leftColW + diff;
         let newRightW = rightColW - diff;
