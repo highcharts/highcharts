@@ -788,7 +788,6 @@ class Tooltip {
             swap();
         }
         run();
-console.log('@getPosition', ret)
         return ret;
 
     }
