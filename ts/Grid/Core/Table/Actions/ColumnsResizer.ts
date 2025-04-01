@@ -60,6 +60,11 @@ class ColumnsResizer {
     private viewport: Table;
 
     /**
+     * Any column is being resized. Turned off after slight delay.
+     */
+    public isResizing: boolean = false;
+
+    /**
      * The column being dragged.
      * @internal
      */
@@ -78,11 +83,13 @@ class ColumnsResizer {
 
     /**
      * The width of the dragged column when dragging started.
+     * @internal
      */
     public columnStartWidth?: number;
 
     /**
      * The width of the next column when dragging started.
+     * @internal
      */
     public nextColumnStartWidth?: number;
 
@@ -188,6 +195,10 @@ class ColumnsResizer {
         this.draggedResizeHandle = void 0;
         this.columnStartWidth = void 0;
         this.nextColumnStartWidth = void 0;
+
+        setTimeout(() => {
+            this.isResizing = false;
+        }, 10);
     };
 
     /**
@@ -206,6 +217,8 @@ class ColumnsResizer {
         const onHandleMouseDown = (e: MouseEvent): void => {
             const vp = column.viewport;
             const { grid } = vp;
+
+            this.isResizing = true;
 
             if (!grid.options?.rendering?.rows?.virtualization) {
                 grid.contentWrapper?.classList.add(
