@@ -15,9 +15,11 @@ When setting the `mapChart` constructor, the default series `type` is `map`.
 If the `type` option is not specified, it is inherited from `chart.type`.
 For an overview of the `map` series options see the [API reference](https://api.highcharts.com/highmaps/series.map).
 
-    Highcharts.mapChart('container', {
-       ...
-    });
+```js
+Highcharts.mapChart('container', {
+   // ...
+});
+```
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/category-map" allow="fullscreen"></iframe>
 
