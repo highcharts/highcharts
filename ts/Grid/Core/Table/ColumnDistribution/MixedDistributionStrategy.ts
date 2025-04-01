@@ -1,6 +1,6 @@
 /* *
  *
- *  Mixed Distribution class
+ *  Mixed Distribution Strategy class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -174,10 +174,13 @@ class MixedDistributionStrategy extends DistributionStrategy {
         });
     }
 
-    public override validateOnUpdate(newOptions: Globals.DeepPartial<Options>): void {
+    public override validateOnUpdate(
+        newOptions: Globals.DeepPartial<Options>
+    ): void {
         super.validateOnUpdate(newOptions);
 
         if (
+            !this.invalidated ||
             newOptions.columnDefaults?.hasOwnProperty('width') ||
             newOptions.columns?.some((col) => col?.hasOwnProperty('width'))
         ) {

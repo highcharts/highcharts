@@ -1,6 +1,6 @@
 /* *
  *
- *  Column Distribution class
+ *  Column Distribution Strategy abstract class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -76,7 +76,7 @@ abstract class ColumnDistributionStrategy {
     /**
      * The current widths values of the columns.
      */
-    public readonly columnWidths: Record<string, number> = {};
+    public columnWidths: Record<string, number> = {};
 
     /**
      * Whether the column distribution strategy is invalidated. This flag is
@@ -115,7 +115,7 @@ abstract class ColumnDistributionStrategy {
      * @param column
      * The column that is loaded.
      */
-    public abstract loadColumn(column: Column): void;
+    protected abstract loadColumn(column: Column): void;
 
     /**
      * Returns the column's current width in pixels.
@@ -129,6 +129,17 @@ abstract class ColumnDistributionStrategy {
      * The X position difference in pixels.
      */
     public abstract resize(resizer: ColumnsResizer, diff: number): void;
+
+    /**
+     * Loads the column to the distribution strategy. Should be called before
+     * the table is rendered.
+     */
+    public loadColumns(): void {
+        const { columns } = this.viewport;
+        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+            this.loadColumn(columns[i]);
+        }
+    }
 
     /**
      * Recaulculates the changing dimentions of the table.

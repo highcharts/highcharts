@@ -1,6 +1,6 @@
 /* *
  *
- *  Fixed Distribution class
+ *  Fixed Distribution Strategy class
  *
  *  (c) 2020-2025 Highsoft AS
  *

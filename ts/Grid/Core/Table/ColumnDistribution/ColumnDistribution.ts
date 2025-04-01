@@ -1,6 +1,6 @@
 /* *
  *
- *  Column Distribution class
+ *  Column Distribution namespace
  *
  *  (c) 2020-2025 Highsoft AS
  *

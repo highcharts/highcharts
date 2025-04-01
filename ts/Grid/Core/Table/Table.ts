@@ -283,6 +283,8 @@ class Table {
                 new Column(this, columnId, i)
             );
         }
+
+        this.columnDistribution.loadColumns();
     }
 
     /**

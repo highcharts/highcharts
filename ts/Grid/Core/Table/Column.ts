@@ -126,7 +126,6 @@ class Column {
         this.id = id;
         this.index = index;
         this.viewport = viewport;
-        viewport.columnDistribution.loadColumn(this);
 
         this.loadData();
     }
