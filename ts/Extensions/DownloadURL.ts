@@ -86,12 +86,13 @@ const domurl = win.URL || win.webkitURL || win;
  *
  * @param {string} dataURL
  * URL to convert.
- * @return {string|undefined}
+ *
+ * @return {string | undefined}
  * Blob.
  */
 function dataURLtoBlob(
     dataURL: string
-): (string|undefined) {
+): (string | undefined) {
     const parts = dataURL
         .replace(/filename=.*;/, '')
         .match(/data:([^;]*)(;base64)?,([A-Z+\d\/]+)/i);
@@ -125,15 +126,13 @@ function dataURLtoBlob(
  * @private
  * @function Highcharts.downloadURL
  *
- * @param {string|global.URL} dataURL
+ * @param {string | global.URL} dataURL
  * The dataURL/Blob to download.
  * @param {string} filename
  * The name of the resulting file (w/extension).
- *
- * @return {void}
  */
 function downloadURL(
-    dataURL: (string|URL),
+    dataURL: (string | URL),
     filename: string
 ): void {
     const nav = win.navigator,
@@ -149,7 +148,6 @@ function downloadURL(
         nav.msSaveOrOpenBlob(dataURL, filename);
         return;
     }
-
     dataURL = '' + dataURL;
 
     if (nav.userAgent.length > RegexLimits.shortLimit) {
