@@ -138,7 +138,7 @@
     /* Credits padding */
     --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, var(--ig-horizontal-padding)));
     --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, var(--ig-vertical-padding)));
-    --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) 0 var(--ig-credits-horizontal-padding);
+    --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding);
 
     /* Loading indicator */
     --ig-loader-color: var(--hcg-loader-color, var(--ig-color));
@@ -278,6 +278,9 @@
     --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+
+    /* Notification colors */
+    --ig-error-color: var(--hcg-error-color, var(--ig-negative-border-color));
 }
 
 /* ==== End Grid Variables ==== */
@@ -835,13 +838,15 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-errors-container {
     position: absolute;
     left: 0;
+    top: 0;
     width: 100%;
     display: none;
+    color: var(--ig-error-color);
+    padding: var(--ig-header-padding);
     background: var(--ig-negative-background);
-    color: var(--ig-negative-border-color);
-    padding: var(--hcg-padding);
-    border-bottom-left-radius: var(--ig-border-radius);
-    border-bottom-right-radius: var(--ig-border-radius);
+    border: 1px solid var(--ig-negative-border-color);
+    border-radius: var(--ig-border-radius);
+    box-shadow: 0 0 15px 1px #00000030;
 }
 
 .highcharts-datagrid-errors-container.hcg-edited-cell-error-fadeIn,
@@ -1077,6 +1082,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
         --hcg-row-even-background: #2e2e2e;
         --hcg-cell-hovered-row-background: #2d2f36;
         --hcg-header-column-border-color: #4e4e4e;
+        --hcg-error-color: #ff0000;
     }
 }
 
