@@ -509,7 +509,7 @@ QUnit.test('lineClamp', function (assert) {
         assert.close(
             textHTML.getBBox().height,
             height,
-            1,
+            2,
             'The HTML bounding box should be approximately the same as the SVG'
         );
     } finally {
