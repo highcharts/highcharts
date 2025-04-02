@@ -1,4 +1,4 @@
-QUnit.test('Test type option with exportChart', function (assert) {
+QUnit.test('Test type option with exportChart', async function (assert) {
     var chart = Highcharts.chart('container', {
             credits: {
                 enabled: false
@@ -56,7 +56,7 @@ QUnit.test('Test type option with exportChart', function (assert) {
         };
 
         // Run export
-        chart.exporting.exportChart({
+        await chart.exporting.exportChart({
             type: 'application/pdf'
         });
         assert.strictEqual(postData.type, 'application/pdf', 'Posting for JPG');
