@@ -209,16 +209,25 @@ class Validator {
             this.errorCell?.htmlElement;
         const tableElement =
             this.viewport.grid.tableElement;
+        const contentWrapper = this.viewport.grid.contentWrapper;
 
-        if (!errorCell) {
+        if (!errorCell || !tableElement || !contentWrapper) {
             return;
         }
 
-        this.errorsContainer.style.top = (tableElement?.offsetTop || 0) + 'px';
-        // this.errorsContainer.style.top = this.getSiblings(tableElement)
-        //     .reduce(
-        //         (total, el) => total + el.getBoundingClientRect().height, 0
-        //     ) + 'px';
+        const tableTop = tableElement.offsetTop,
+            tableHeight = tableElement.offsetHeight,
+            middlePoint = tableTop + (tableHeight / 2),
+            errorCellTop = errorCell.offsetTop - tableTop;
+
+        if (errorCellTop > middlePoint) {
+            this.errorsContainer.style.top = tableTop + 'px';
+            this.errorsContainer.style.bottom = 'auto';
+        } else {
+            this.errorsContainer.style.top = 'auto';
+            this.errorsContainer.style.bottom =
+                contentWrapper.offsetHeight - tableTop - tableHeight + 'px';
+        }
     }
 
     /**
