@@ -205,11 +205,10 @@ class Validator {
      * Set the position of the error box.
      */
     public setPosition(): void {
-        const errorCell =
-            this.errorCell?.htmlElement;
-        const tableElement =
-            this.viewport.grid.tableElement;
-        const contentWrapper = this.viewport.grid.contentWrapper;
+        const vp = this.viewport,
+            errorCell = this.errorCell?.htmlElement,
+            tableElement = vp.grid.tableElement,
+            contentWrapper = vp.grid.contentWrapper;
 
         if (!errorCell || !tableElement || !contentWrapper) {
             return;
@@ -221,7 +220,8 @@ class Validator {
             errorCellTop = errorCell.offsetTop - tableTop;
 
         if (errorCellTop > middlePoint) {
-            this.errorsContainer.style.top = tableTop + 'px';
+            this.errorsContainer.style.top = // avoid header overlap
+                tableTop + (vp.theadElement?.offsetHeight || 0) + 'px';
             this.errorsContainer.style.bottom = 'auto';
         } else {
             this.errorsContainer.style.top = 'auto';
