@@ -71,6 +71,12 @@ declare module '../../Core/Chart/ChartLike' {
     }
 }
 
+declare module '../../Core/GlobalsLike.d.ts' {
+    interface GlobalsLike {
+        Exporting: typeof Exporting
+    }
+}
+
 declare module '../../Extensions/Exporting/ExportingLike' {
     interface ExportingLike {
         exportChartLocal(
@@ -98,7 +104,7 @@ namespace OfflineExporting {
      * Composition function.
      *
      * @private
-     * @function Highcharts.OfflineExporting#compose
+     * @function compose
      *
      * @param {ExportingClass} ExportingClass
      * Exporting class.
@@ -110,16 +116,17 @@ namespace OfflineExporting {
         ExportingClass: typeof Exporting
     ): void {
         // Add the OfflineExporting version of the downloadSVGLocal to globals
-        (G as AnyRecord).downloadSVGLocal = function downloadSVGLocal(
+        G.downloadSVGLocal = async function downloadSVGLocal(
             svg: string,
             exportingOptions: ExportingOptions
-        ): void {
-            return (exportingOptions?.type === 'application/pdf' ?
+        ): Promise<void> {
+            await (exportingOptions?.type === 'application/pdf' ?
                 OfflineExporting.downloadSVGLocal :
-                (G as AnyRecord).Exporting.downloadSVGLocal)(
+                G.Exporting.downloadSVGLocal)(
                 svg,
                 exportingOptions
             );
+            return;
         };
 
         // Check the composition registry for the OfflineExporting
@@ -134,10 +141,11 @@ namespace OfflineExporting {
                 exportingOptions?: ExportingOptions,
                 chartOptions?: Options
             ): Promise<void> {
-                return this.exporting?.exportChartLocal(
+                await this.exporting?.exportChartLocal(
                     exportingOptions,
                     chartOptions
                 );
+                return;
             }
         });
 
@@ -159,20 +167,18 @@ namespace OfflineExporting {
      * - **type:** File type of resulting download. Default is `image/png`.
      * - **scale:** Scaling factor of downloaded image compared to source.
      * Default is `1`.
-     * - **libURL:** URL pointing to location of dependency scripts to download
+     * - **libURL:** URL pointing to location of dependency scripts to
+    download
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
      *
-     * @function Highcharts.OfflineExporting#downloadSVGLocal
+     * @async
+     * @function Highcharts.downloadSVGLocal
      *
      * @param {string} svg
      * The generated SVG.
      * @param {Highcharts.ExportingOptions} exportingOptions
      * The exporting options.
-     * @param {Function} failCallback
-     * The callback function in case of errors.
-     * @param {Function} [successCallback]
-     * The callback function in case of success.
      *
      * @requires modules/exporting
      * @requires modules/offline-exporting
@@ -183,23 +189,14 @@ namespace OfflineExporting {
         exportingOptions: ExportingOptions
     ): Promise<void> {
         const dummySVGContainer = doc.createElement('div'),
-            imageType = exportingOptions?.type || 'image/png',
-            filename = (
-                (exportingOptions?.filename || 'chart') +
-                '.' +
-                (
-                    imageType === 'image/svg+xml' ?
-                        'svg' : imageType.split('/')[1]
-                )
-            ),
-            scale = exportingOptions?.scale || 1;
-        let libURL = (
-                exportingOptions?.libURL || defaultOptions.exporting?.libURL
-            ),
-            pdfFont = exportingOptions?.pdfFont;
-
-        // Allow libURL to end with or without fordward slash
-        libURL = libURL?.slice(-1) !== '/' ? libURL + '/' : libURL;
+            // Get the final image options
+            {
+                type,
+                filename,
+                scale,
+                libURL
+            } = G.Exporting.prepareImageOptions(exportingOptions);
+        let pdfFont = exportingOptions?.pdfFont;
 
         /*
          * Detect if we need to load TTF fonts for the PDF, then load them and
@@ -211,7 +208,6 @@ namespace OfflineExporting {
             svgElement: SVGElement,
             callback: Function
         ): void => {
-
             const hasNonASCII = (s: string): boolean => (
                 // eslint-disable-next-line no-control-regex
                 /[^\u0000-\u007F\u200B]+/.test(s)
@@ -264,7 +260,6 @@ namespace OfflineExporting {
                 }
 
                 const url = pdfFont && pdfFont[variant];
-
                 if (url) {
                     ajax({
                         url,
@@ -384,7 +379,7 @@ namespace OfflineExporting {
             }
         };
 
-        if (imageType === 'application/pdf') {
+        if (type === 'application/pdf') {
             if (win.jspdf && win.jspdf.jsPDF) {
                 downloadPDF();
             } else {
@@ -402,6 +397,7 @@ namespace OfflineExporting {
      * Exporting and offline-exporting modules required. Export a chart to PDF
      * locally in the user's browser.
      *
+     * @async
      * @function Highcharts.Exporting#exportChartLocal
      *
      * @param {Highcharts.ExportingOptions} [exportingOptions]
@@ -419,7 +415,6 @@ namespace OfflineExporting {
         chartOptions?: Options
     ): Promise<void> {
         await this.exportChartLocalCore(
-            OfflineExporting.downloadSVGLocal,
             exportingOptions,
             chartOptions
         );
@@ -428,8 +423,9 @@ namespace OfflineExporting {
     /**
      * Transform from PDF to SVG.
      *
+     * @async
      * @private
-     * @function Highcharts.OfflineExporting#svgToPdf
+     * @function svgToPdf
      *
      * @param {Highcharts.SVGElement} svgElement
      * The SVG element to convert.

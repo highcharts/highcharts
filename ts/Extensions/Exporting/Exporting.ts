@@ -165,6 +165,12 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
+declare module '../../Core/GlobalsLike.d.ts' {
+    interface GlobalsLike {
+        downloadSVGLocal: Exporting.DownloadSVGLocalFunction
+    }
+}
+
 /* *
  *
  *  Constants
@@ -278,6 +284,7 @@ class Exporting {
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
      *
+     * @static
      * @async
      * @function Highcharts.downloadSVGLocal
      *
@@ -292,55 +299,40 @@ class Exporting {
         svg: string,
         exportingOptions: ExportingOptions
     ): Promise<void> {
-        const imageType = exportingOptions?.type || 'image/png',
-            filename = (
-                (exportingOptions?.filename || 'chart') +
-                '.' +
-                (
-                    imageType === 'image/svg+xml' ?
-                        'svg' : imageType.split('/')[1]
-                )
-            ),
-            scale = exportingOptions?.scale || 1,
-            libURL = (
-                exportingOptions?.libURL ||
-                defaultOptions.exporting?.libURL
-            );
-
-        let svgUrl: string;
-
-        // Update properties
-        exportingOptions.type = imageType;
-        exportingOptions.filename = filename;
-        exportingOptions.scale = scale;
-        // Allow libURL to end with or without fordward slash
-        exportingOptions.libURL =
-            libURL?.slice(-1) !== '/' ? libURL + '/' : libURL;
+        // Get the final image options
+        const {
+            type,
+            filename,
+            scale,
+            libURL
+        } = Exporting.prepareImageOptions(exportingOptions);
+        let svgURL: string;
 
         // Initiate download depending on file type
-        if (imageType === 'image/svg+xml') {
+        if (type === 'image/svg+xml') {
             // SVG download. In this case, we want to use Microsoft specific
             // Blob if available
             if (typeof win.MSBlobBuilder !== 'undefined') {
                 const blob = new win.MSBlobBuilder();
                 blob.append(svg);
-                svgUrl = blob.getBlob('image/svg+xml');
+                svgURL = blob.getBlob('image/svg+xml');
             } else {
-                svgUrl = Exporting.svgToDataUrl(svg);
+                svgURL = Exporting.svgToDataURL(svg);
             }
 
             // Download the chart
-            downloadURL(svgUrl, filename);
-        } else if (imageType !== 'application/pdf') {
+            downloadURL(svgURL, filename);
+        } else if (type !== 'application/pdf') {
             // PNG/JPEG download - create bitmap from SVG
-            svgUrl = Exporting.svgToDataUrl(svg);
+            svgURL = Exporting.svgToDataURL(svg);
             try {
                 Exporting.objectURLRevoke = true;
 
                 // First, try to get PNG by rendering on canvas
-                const dataURL = await Exporting.imageToDataUrl(
-                    svgUrl,
-                    exportingOptions,
+                const dataURL = await Exporting.imageToDataURL(
+                    svgURL,
+                    scale,
+                    type,
                     function (): void {
                         if (svg.length > RegexLimits.svgLimit) {
                             throw new Error('Input too long');
@@ -379,10 +371,8 @@ class Exporting {
                                     downloadURL(
                                         win.navigator.msSaveOrOpenBlob ?
                                             canvas.msToBlob() :
-                                            canvas.toDataURL(
-                                                exportingOptions?.type || ''
-                                            ),
-                                        exportingOptions?.filename || ''
+                                            canvas.toDataURL(type),
+                                        filename
                                     );
                                 };
 
@@ -398,8 +388,7 @@ class Exporting {
                                 // nice, but this will do for now
                                 Exporting.objectURLRevoke = true;
                                 getScript(
-                                    (exportingOptions?.libURL || '') +
-                                    'canvg.js',
+                                    libURL + 'canvg.js',
                                     downloadWithCanVG
                                 );
                             }
@@ -414,7 +403,7 @@ class Exporting {
             } finally {
                 if (Exporting.objectURLRevoke) {
                     try {
-                        domurl.revokeObjectURL(svgUrl);
+                        domurl.revokeObjectURL(svgURL);
                     } catch (e) {
                         // Ignore
                     }
@@ -429,6 +418,7 @@ class Exporting {
      *
      * @see Chart#getSVG
      *
+     * @static
      * @function Highcharts.Exporting#getChartHTML
      *
      * @param {Highcharts.Chart} chart
@@ -455,9 +445,10 @@ class Exporting {
      * Make hyphenated property names out of camelCase.
      *
      * @private
+     * @static
      * @function Highcharts.Exporting#hyphenate
      *
-     * @param {string} prop
+     * @param {string} property
      * Property name in camelCase.
      *
      * @return {string}
@@ -466,9 +457,9 @@ class Exporting {
      * @requires modules/exporting
      */
     public static hyphenate(
-        prop: string
+        property: string
     ): string {
-        return prop.replace(
+        return property.replace(
             /[A-Z]/g,
             function (match: string): string {
                 return '-' + match.toLowerCase();
@@ -477,27 +468,31 @@ class Exporting {
     }
 
     /**
-     * Get data:URL from image URL. Pass in callbacks to handle results.
+     * Get data:URL from image URL.
      *
      * @private
+     * @static
      * @async
-     * @function Highcharts.Exporting#imageToDataUrl
+     * @function Highcharts.Exporting#imageToDataURL
      *
      * @param {string} imageURL
-     * The imageURL.
-     * @param {ExportingOptions} exportingOptions
-     * The exporting opions.
-     * @param {Function} taintedCallback
-     * The taintedCallback.
+     * The address or URL of the image.
+     * @param {number} scale
+     * The scale of the image.
+     * @param {string} imageType
+     * The export type of the image.
+     * @param {Function} [taintedCallback]
+     * The optional taintedCallback to call in case of the toDataURL error.
      *
      * @requires modules/exporting
      */
-    public static async imageToDataUrl(
+    public static async imageToDataURL(
         imageURL: string,
-        exportingOptions: ExportingOptions,
+        scale: number,
+        imageType: string,
         taintedCallback?: Function
     ): Promise<void | string> {
-        // First, wait for the image
+        // First, wait for the image to be loaded
         const img = await Exporting.loadImage(imageURL),
             canvas = doc.createElement('canvas'),
             ctx = canvas.getContext && canvas.getContext('2d');
@@ -505,7 +500,6 @@ class Exporting {
         if (!ctx) {
             throw new Error('No canvas found!');
         } else {
-            const scale = exportingOptions?.scale || 1;
             canvas.height = img.height * scale;
             canvas.width = img.width * scale;
             ctx.drawImage(
@@ -514,10 +508,7 @@ class Exporting {
 
             // Now we try to get the contents of the canvas
             try {
-                const imageType = exportingOptions?.type || '';
-                const dataURL = canvas.toDataURL(imageType);
-
-                return dataURL;
+                return canvas.toDataURL(imageType);
             } catch (e) {
                 if (taintedCallback) {
                     taintedCallback();
@@ -532,6 +523,7 @@ class Exporting {
      * Analyze inherited styles from stylesheets and add them inline.
      *
      * @private
+     * @static
      * @function Highcharts.Exporting#inlineStyles
      *
      * @param {Highcharts.Chart} chart
@@ -577,7 +569,7 @@ class Exporting {
          * @private
          * @function recurse
          *
-         * @param {Highcharts.HTMLDOMElement} node
+         * @param {Highcharts.HTMLDOMElement | Highcharts.SVGSVGElement} node
          * Element child.
          */
         function recurse(node: (HTMLDOMElement | SVGSVGElement)): void {
@@ -596,7 +588,7 @@ class Exporting {
              * @private
              * @function filterStyles
              *
-             * @param {string | number | boolean | undefined} val
+             * @param {string | number | Highcharts.GradientColor | Highcharts.PatternObject | undefined} val
              * Style value.
              * @param {string} prop
              * Style property name.
@@ -779,16 +771,17 @@ class Exporting {
     }
 
     /**
-     * Loads an image with the provided URL.
+     * Loads an image from the provided URL.
      *
      * @private
+     * @static
      * @function Highcharts.Exporting#loadImage
      *
      * @param {string} imageURL
      * The address or URL of the image.
      *
      * @return {Promise<HTMLImageElement>}
-     * Returns an image.
+     * Returns a Promise that resolves with the loaded HTMLImageElement.
      *
      * @requires modules/exporting
      */
@@ -821,15 +814,54 @@ class Exporting {
     }
 
     /**
+     * Prepares and returns the image export options with default values where
+     * necessary.
+     *
+     * @private
+     * @static
+     * @function Highcharts.Exporting#prepareImageOptions
+     *
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     * The exporting options.
+     *
+     * @return {Exporting.ImageOptions} The finalized image export options with
+     * ensured values.
+     *
+     * @requires modules/exporting
+     */
+    public static prepareImageOptions(
+        exportingOptions: ExportingOptions
+    ): Exporting.ImageOptions {
+        const type = exportingOptions?.type || 'image/png',
+            libURL = (
+                exportingOptions?.libURL ||
+                defaultOptions.exporting?.libURL
+            );
+
+        return {
+            type,
+            filename: (
+                (exportingOptions?.filename || 'chart') +
+                '.' +
+                (type === 'image/svg+xml' ? 'svg' : type.split('/')[1])
+            ),
+            scale: exportingOptions?.scale || 1,
+            // Allow libURL to end with or without fordward slash
+            libURL: libURL?.slice(-1) !== '/' ? libURL + '/' : libURL
+        };
+    }
+
+    /**
      * Exporting module only. A collection of fixes on the produced SVG to
      * account for expand properties, browser bugs. Returns a cleaned SVG.
      *
      * @private
+     * @static
      * @function Highcharts.Exporting#sanitizeSVG
      *
      * @param {string} svg
      * SVG code to sanitize.
-     * @param {Highcharts.Options} [options]
+     * @param {Highcharts.Options} options
      * Chart options to apply.
      *
      * @return {string}
@@ -839,7 +871,7 @@ class Exporting {
      */
     public static sanitizeSVG(
         svg: string,
-        options?: Options
+        options: Options
     ): string {
         const split = svg.indexOf('</svg>') + 6;
         let html = svg.substr(split);
@@ -848,11 +880,11 @@ class Exporting {
         svg = svg.substr(0, split);
 
         // Move HTML into a foreignObject
-        if (options?.exporting?.allowHTML) {
+        if (options.exporting?.allowHTML) {
             if (html) {
                 html = '<foreignObject x="0" y="0" ' +
-                    'width="' + options?.chart?.width + '" ' +
-                    'height="' + options?.chart?.height + '">' +
+                    'width="' + options.chart.width + '" ' +
+                    'height="' + options.chart.height + '">' +
                     '<body xmlns="http://www.w3.org/1999/xhtml">' +
                     // Some tags needs to be closed in xhtml (#13726)
                     html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
@@ -886,6 +918,7 @@ class Exporting {
      * Get blob URL from SVG code. Falls back to normal data URI.
      *
      * @private
+     * @static
      * @function Highcharts.Exporting#svgToDataURL
      *
      * @param {string} svg
@@ -896,7 +929,7 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public static svgToDataUrl(
+    public static svgToDataURL(
         svg: string
     ): string {
         // Webkit and not chrome
@@ -1545,9 +1578,8 @@ class Exporting {
     }
 
     /**
-     * Exporting module required. Submit an SVG version of the chart along with
-     * some parameters for local conversion (PNG, JPEG, and SVG) or on a server
-     * (PDF).
+     * Submit an SVG version of the chart along with some parameters for local
+     * conversion (PNG, JPEG, and SVG) or conversion on a server (PDF).
      *
      * @sample highcharts/members/chart-exportchart/
      * Export with no options
@@ -1565,9 +1597,8 @@ class Exporting {
      * Exporting options in addition to those defined in
      * [exporting](https://api.highcharts.com/highcharts/exporting).
      * @param {Highcharts.Options} [chartOptions]
-     * Additional chart options for the exported chart. For example a
-     * different background color can be added here, or `dataLabels` for
-     * export only.
+     * Additional chart options for the exported chart. For example a different
+     * background color can be added here, or `dataLabels` for export only.
      *
      * @requires modules/exporting
      */
@@ -1600,25 +1631,17 @@ class Exporting {
             }
         } else {
             // Otherwise (PNG, JPEG, or SVG) export locally
-            await this.exportChartLocalCore(
-                Exporting.downloadSVGLocal,
-                exportingOptions,
-                chartOptions
-            );
+            await this.exportChartLocalCore(exportingOptions, chartOptions);
         }
     }
 
     /**
-     * Exporting module required. Export a chart to an image locally in the
-     * user's browser.
+     * Export a chart to an image locally in the browser.
      *
      * @private
      * @async
      * @function Highcharts.Exporting#exportChartLocalCore
      *
-     * @param {Exporting.DownloadSVGLocalFunction} downloadSVGLocal
-     * Get data URL to an image of an SVG and call download on it options
-     * object.
      * @param {Highcharts.ExportingOptions} [exportingOptions]
      * Exporting options, the same as in {@link Highcharts.Chart#exportChart}.
      * @param {Highcharts.Options} [chartOptions]
@@ -1630,7 +1653,6 @@ class Exporting {
      * @requires modules/exporting
      */
     public async exportChartLocalCore(
-        downloadSVGLocal: Exporting.DownloadSVGLocalFunction,
         exportingOptions?: ExportingOptions,
         chartOptions?: Partial<Options>
     ): Promise<void> {
@@ -1714,14 +1736,30 @@ class Exporting {
 
         await this.getSVGForLocalExport(
             options,
-            chartOptions || {},
-            downloadSVGLocal
+            chartOptions || {}
         );
 
         // Trigger the success event
         fireEvent(chart, 'exportChartLocalSuccess');
     }
 
+    /**
+     * Handles the fallback to the export server when a local export fails.
+     *
+     * @private
+     * @async
+     * @function Highcharts.Exporting#fallbackToServer
+     *
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     * The exporting options.
+     * @param {Error} err
+     * The error that caused the local export to fail.
+     *
+     * @return {Promise<void>}
+     * A promise that resolves when the fallback process is complete.
+     *
+     * @requires modules/exporting
+     */
     public async fallbackToServer(
         exportingOptions: ExportingOptions,
         err: Error
@@ -1783,7 +1821,7 @@ class Exporting {
      * @sample highcharts/members/chart-getsvg/
      * View the SVG from a button
      *
-     * @function Highcharts.Chart#getSVG
+     * @function Highcharts.Exporting#getSVG
      *
      * @param {Highcharts.Options} [chartOptions]
      * Additional chart options for the generated SVG representation. For
@@ -1982,29 +2020,25 @@ class Exporting {
     }
 
     /**
-     * Get SVG of chart prepared for client side export. This converts
-     * embedded images in the SVG to data URIs. It requires the regular
-     * exporting module. The options and chartOptions arguments are passed
-     * to the getSVGForExport function.
+     * Get SVG of chart prepared for client side export. This converts embedded
+     * images in the SVG to data URIs. It requires the regular exporting module.
+     * The options and chartOptions arguments are passed to the getSVGForExport
+     * function.
      *
      * @private
      * @async
-     * @function Highcharts.Chart#getSVGForLocalExport
+     * @function Highcharts.Exporting#getSVGForLocalExport
      *
      * @param {Highcharts.ExportingOptions} exportingOptions
      * The exporting options.
      * @param {Highcharts.Options} chartOptions
      * Additional chart options for the exported chart.
-     * @param {Exporting.DownloadSVGLocalFunction} downloadSVGLocal
-     * Get data URL to an image of an SVG and call download on it options
-     * object.
      *
      * @requires modules/exporting
      */
     public async getSVGForLocalExport(
         exportingOptions: ExportingOptions,
-        chartOptions: Partial<Options>,
-        downloadSVGLocal: Exporting.DownloadSVGLocalFunction
+        chartOptions: Partial<Options>
     ): Promise<void> {
         const chart = this.chart,
             exporting = this,
@@ -2035,20 +2069,19 @@ class Exporting {
             imagesLength = images.length;
         });
 
-        // Trigger hook to get chart copy
-        this.getSVGForExport(exportingOptions, chartOptions);
-
         try {
+            // Trigger hook to get chart copy
+            this.getSVGForExport(exportingOptions, chartOptions);
+
             // If there are no images to embed, the SVG is okay now.
             if (!images || !images.length) {
                 // Use SVG of chart copy
-                await this.downloadSVG(
+                await this.downloadSVGForLocalExport(
                     sanitize(chartCopyContainer?.innerHTML),
                     extend(
                         { filename: exporting.getFilename() },
                         exportingOptions
-                    ),
-                    downloadSVGLocal
+                    )
                 );
                 return;
             }
@@ -2064,9 +2097,10 @@ class Exporting {
                 if (href) {
                     Exporting.objectURLRevoke = false;
 
-                    const dataURL = await Exporting.imageToDataUrl(
+                    const dataURL = await Exporting.imageToDataURL(
                         href,
-                        exportingOptions
+                        exportingOptions?.scale || 1,
+                        exportingOptions?.type || 'image/png'
                     );
 
                     // Converted image to base64
@@ -2089,13 +2123,12 @@ class Exporting {
                 // When done with last image we have our SVG
                 if (images && imagesEmbedded === imagesLength) {
                     // Use SVG of chart copy
-                    await this.downloadSVG(
+                    await this.downloadSVGForLocalExport(
                         sanitize(chartCopyContainer?.innerHTML),
                         extend(
                             { filename: exporting.getFilename() },
                             exportingOptions
-                        ),
-                        downloadSVGLocal
+                        )
                     );
                 }
             }
@@ -2110,10 +2143,27 @@ class Exporting {
         }
     }
 
-    public async downloadSVG(
+    /**
+     * Handles downloading an SVG for local export.
+     *
+     * @private
+     * @async
+     * @function Highcharts.Exporting#downloadSVGForLocalExport
+     *
+     * @param {string} svg
+     * The SVG markup to be exported.
+     * @param {ExportingOptions} exportingOptions
+     * The exporting options.
+     *
+     * @throws {Error}
+     * If the SVG contains `<foreignObject>` elements and the export type is not
+     * SVG, as it may cause issues with CanVG, svg2pdf, and Internet Explorer.
+     *
+     * @requires modules/exporting
+     */
+    public async downloadSVGForLocalExport(
         svg: string,
-        exportingOptions: ExportingOptions,
-        downloadSVGLocal: Exporting.DownloadSVGLocalFunction
+        exportingOptions: ExportingOptions
     ): Promise<void> {
         // If SVG contains foreignObjects PDF fails in all browsers and all
         // exports except SVG will fail in IE, as both CanVG and svg2pdf choke
@@ -2130,7 +2180,8 @@ class Exporting {
                 'Image type not supported for charts with embedded HTML'
             );
         } else {
-            await downloadSVGLocal(svg, exportingOptions);
+            // Trigger SVG download
+            await G.downloadSVGLocal(svg, exportingOptions);
         }
     }
 
@@ -2206,10 +2257,10 @@ class Exporting {
     }
 
     /**
-     * Exporting module required. Clears away other elements in the page and
-     * prints the chart as it is displayed. By default, when the exporting
-     * module is enabled, a context button with a drop down menu in the upper
-     * right corner accesses this function.
+     * Clears away other elements in the page and prints the chart as it is
+     * displayed. By default, when the exporting module is enabled, a context
+     * button with a drop down menu in the upper right corner accesses this
+     * function.
      *
      * @sample highcharts/members/chart-print/
      * Print from a HTML button
@@ -2263,8 +2314,7 @@ class Exporting {
         const chart = this,
             exporting = chart.exporting,
             exportingOptions = chart.options.exporting,
-            isDirty = chart.exporting?.isDirty ||
-                !exporting?.svgElements.length;
+            isDirty = exporting?.isDirty || !exporting?.svgElements.length;
 
         if (exporting) {
             if (exporting.isDirty) {
@@ -2284,7 +2334,7 @@ class Exporting {
                 objectEach(exportingOptions?.buttons, function (
                     button: ExportingButtonOptions
                 ): void {
-                    chart.exporting?.addButton(button);
+                    exporting?.addButton(button);
                 });
                 exporting.isDirty = false;
             }
@@ -2354,12 +2404,19 @@ namespace Exporting {
     export interface DownloadSVGLocalFunction {
         (
             svg: string,
-            options: ExportingOptions
+            exportingOptions: ExportingOptions
         ): Promise<void>
     }
 
     export interface ErrorCallbackFunction {
         (options: ExportingOptions, err: Error): void;
+    }
+
+    export interface ImageOptions {
+        type: string;
+        filename: string;
+        scale: number;
+        libURL: string;
     }
 
     export interface MenuObject {
@@ -2406,7 +2463,7 @@ namespace Exporting {
         Fullscreen.compose(ChartClass);
 
         // Add the Exporting version of the downloadSVGLocal to globals
-        (G as AnyRecord).downloadSVGLocal = Exporting.downloadSVGLocal;
+        G.downloadSVGLocal = Exporting.downloadSVGLocal;
 
         // Check the composition registry for the Exporting
         if (!pushUnique(composed, 'Exporting')) {
@@ -2420,10 +2477,11 @@ namespace Exporting {
                 exportingOptions?: ExportingOptions,
                 chartOptions?: Options
             ): Promise<void> {
-                return this.exporting?.exportChart(
+                await this.exporting?.exportChart(
                     exportingOptions,
                     chartOptions
                 );
+                return;
             },
             getChartHTML: function (
                 this: Chart,
