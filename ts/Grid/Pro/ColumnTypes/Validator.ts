@@ -25,6 +25,7 @@ import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Content/TableCell';
 import type ColumnDataType from './ColumnDataType';
 
+import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
@@ -105,7 +106,7 @@ class Validator {
         const rules = Array.from(validationRules || []);
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
-        let err;
+        // let err;
 
         if (dataType) {
             // TODO: Remove duplicates in rules array
@@ -114,6 +115,7 @@ class Validator {
 
         for (const rule of rules) {
             let ruleDef: Validator.RuleDefinition;
+            let err;
 
             if (typeof rule === 'string') {
                 ruleDef = Validator.rulesRegistry[rule];
@@ -178,6 +180,8 @@ class Validator {
                 Validator.classNames.editedCellError
             );
         }
+
+        this.errorsContainer.innerHTML = AST.emptyHTML;
     }
 
     /**
@@ -186,16 +190,16 @@ class Validator {
      * @param element 
      * @returns 
      */
-    private getSiblings(element?: HTMLElement): Array<Element> {
-        if (!element || !element.parentNode) return [];
+    // private getSiblings(element?: HTMLElement): Array<Element> {
+    //     if (!element || !element.parentNode) return [];
         
-        return Array
-            .from(element.parentNode.children)
-            .filter(
-                child => child !== element &&
-                !child.classList.contains(Validator.classNames.errorsContainer)
-            );
-    }
+    //     return Array
+    //         .from(element.parentNode.children)
+    //         .filter(
+    //             child => child !== element &&
+    //             !child.classList.contains(Validator.classNames.errorsContainer)
+    //         );
+    // }
 
     /**
      * Set the position of the error box.
@@ -210,10 +214,11 @@ class Validator {
             return;
         }
 
-        this.errorsContainer.style.bottom = this.getSiblings(tableElement)
-            .reduce(
-                (total, el) => total + el.getBoundingClientRect().height, 0
-            ) + 'px';
+        this.errorsContainer.style.top = (tableElement?.offsetTop || 0) + 'px';
+        // this.errorsContainer.style.top = this.getSiblings(tableElement)
+        //     .reduce(
+        //         (total, el) => total + el.getBoundingClientRect().height, 0
+        //     ) + 'px';
     }
 
     /**
