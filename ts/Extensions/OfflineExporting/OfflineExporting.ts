@@ -25,6 +25,7 @@ import type {
     SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type ExportingOptions from '../Exporting/ExportingOptions';
+import type { PdfFontOptions } from '../Exporting/ExportingOptions';
 import type Options from '../../Core/Options';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -159,6 +160,51 @@ namespace OfflineExporting {
     }
 
     /**
+     * Converts an SVG string into a PDF file and triggers its download. This
+     * function processes the SVG, applies necessary font adjustments, converts
+     * it to a PDF, and initiates the file download.
+     *
+     * @private
+     * @async
+     * @function downloadPDF
+     *
+     * @param {string} svg
+     * A string representation of the SVG markup to be converted into a PDF.
+     * @param {number} scale
+     * The scaling factor for the PDF output.
+     * @param {string} filename
+     * The name of the downloaded PDF file.
+     * @param {Highcharts.PdfFontOptions} [pdfFont]
+     * An optional object specifying URLs for different font variants (normal,
+     * bold, italic, bolditalic).
+     *
+     * @return {Promise<void>}
+     * A promise that resolves when the PDF has been successfully generated and
+     * downloaded.
+     *
+     * @requires modules/exporting
+     * @requires modules/offline-exporting
+     */
+    async function downloadPDF(
+        svg: string,
+        scale: number,
+        filename: string,
+        pdfFont?: PdfFontOptions
+    ): Promise<void> {
+        const svgNode = preparePDF(svg, pdfFont);
+        if (svgNode) {
+            // Loads all required fonts
+            loadPdfFonts(svgNode, pdfFont);
+
+            // Transform SVG to PDF
+            const pdfData = await svgToPdf(svgNode, 0, scale);
+
+            // Download the PDF
+            downloadURL(pdfData, filename);
+        }
+    }
+
+    /**
      * Get data URL to an image of an SVG and call download on it options
      * object:
      *
@@ -167,8 +213,7 @@ namespace OfflineExporting {
      * - **type:** File type of resulting download. Default is `image/png`.
      * - **scale:** Scaling factor of downloaded image compared to source.
      * Default is `1`.
-     * - **libURL:** URL pointing to location of dependency scripts to
-    download
+     * - **libURL:** URL pointing to location of dependency scripts to download
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
      *
@@ -183,213 +228,31 @@ namespace OfflineExporting {
      * @requires modules/exporting
      * @requires modules/offline-exporting
      */
-    // eslint-disable-next-line @typescript-eslint/require-await
     export async function downloadSVGLocal(
         svg: string,
         exportingOptions: ExportingOptions
     ): Promise<void> {
-        const dummySVGContainer = doc.createElement('div'),
-            // Get the final image options
-            {
-                type,
-                filename,
-                scale,
-                libURL
-            } = G.Exporting.prepareImageOptions(exportingOptions);
-        let pdfFont = exportingOptions?.pdfFont;
+        // Get the final image options
+        const {
+            type,
+            filename,
+            scale,
+            libURL
+        } = G.Exporting.prepareImageOptions(exportingOptions);
 
-        /*
-         * Detect if we need to load TTF fonts for the PDF, then load them and
-         * proceed.
-         *
-         * @private
-         */
-        const loadPdfFonts = (
-            svgElement: SVGElement,
-            callback: Function
-        ): void => {
-            const hasNonASCII = (s: string): boolean => (
-                // eslint-disable-next-line no-control-regex
-                /[^\u0000-\u007F\u200B]+/.test(s)
-            );
-
-            // Register an event in order to add the font once jsPDF is
-            // initialized
-            const addFont = (
-                variant: 'bold' | 'bolditalic' | 'italic' | 'normal',
-                base64: string
-            ): void => {
-                win.jspdf.jsPDF.API.events.push([
-                    'initialized',
-                    function (): void {
-                        this.addFileToVFS(variant, base64);
-                        this.addFont(
-                            variant,
-                            'HighchartsFont',
-                            variant
-                        );
-
-                        if (!this.getFontList()?.HighchartsFont) {
-                            this.setFont('HighchartsFont');
-                        }
-                    }
-                ]);
-            };
-
-            // If there are no non-ASCII characters in the SVG, do not use
-            // bother downloading the font files
-            if (pdfFont && !hasNonASCII(svgElement.textContent || '')) {
-                pdfFont = void 0;
-            }
-
-
-            // Add new font if the URL is declared, #6417.
-            const variants = ['normal', 'italic', 'bold', 'bolditalic'] as
-                ('bold' | 'bolditalic' | 'italic' | 'normal')[];
-
-            // Shift the first element off the variants and add as a font.
-            // Then asynchronously trigger the next variant until calling the
-            // callback when the variants are empty.
-            let normalBase64: string | undefined;
-            const shiftAndLoadVariant = (): void => {
-                const variant = variants.shift();
-
-                // All variants shifted and possibly loaded, proceed
-                if (!variant) {
-                    return callback();
-                }
-
-                const url = pdfFont && pdfFont[variant];
-                if (url) {
-                    ajax({
-                        url,
-                        responseType: 'blob',
-                        success: (data, xhr): void => {
-                            const reader = new FileReader();
-                            reader.onloadend = function (): void {
-                                if (typeof this.result === 'string') {
-                                    const base64 = this.result.split(',')[1];
-                                    addFont(variant, base64);
-
-                                    if (variant === 'normal') {
-                                        normalBase64 = base64;
-                                    }
-                                }
-                                shiftAndLoadVariant();
-                            };
-
-                            reader.readAsDataURL(xhr.response);
-                        },
-                        error: shiftAndLoadVariant
-                    });
-                } else {
-                    // For other variants, fall back to normal text weight/style
-                    if (normalBase64) {
-                        addFont(variant, normalBase64);
-                    }
-                    shiftAndLoadVariant();
-                }
-            };
-            shiftAndLoadVariant();
-        };
-
-        /*
-         * @private
-         */
-        const downloadPDF = (): void => {
-            AST.setElementHTML(dummySVGContainer, svg);
-            const textElements = dummySVGContainer.getElementsByTagName('text'),
-                // Copy style property to element from parents if it's not
-                // there. Searches up hierarchy until it finds prop, or hits the
-                // chart container.
-                setStylePropertyFromParents = function (
-                    el: DOMElementType,
-                    propName: ('fontFamily' | 'fontSize')
-                ): void {
-                    let curParent = el;
-
-                    while (curParent && curParent !== dummySVGContainer) {
-                        if (curParent.style[propName]) {
-                            let value = curParent.style[propName];
-                            if (propName === 'fontSize' && /em$/.test(value)) {
-                                value = Math.round(
-                                    parseFloat(value) * 16
-                                ) + 'px';
-                            }
-                            el.style[propName] = value;
-                            break;
-                        }
-                        curParent = curParent.parentNode;
-                    }
-                };
-            let titleElements,
-                outlineElements;
-
-            // Workaround for the text styling. Making sure it does pick up
-            // settings for parent elements.
-            [].forEach.call(textElements, function (el: SVGDOMElement): void {
-                // Workaround for the text styling. making sure it does pick up
-                // the root element
-                (['fontFamily', 'fontSize'] as ['fontFamily', 'fontSize'])
-                    .forEach((property): void => {
-                        setStylePropertyFromParents(el, property);
-                    });
-
-                el.style.fontFamily = pdfFont && pdfFont.normal ?
-                    // Custom PDF font
-                    'HighchartsFont' :
-                    // Generic font (serif, sans-serif etc)
-                    String(
-                        el.style.fontFamily &&
-                        el.style.fontFamily.split(' ').splice(-1)
-                    );
-
-                // Workaround for plotband with width, removing title from text
-                // nodes
-                titleElements = el.getElementsByTagName('title');
-                [].forEach.call(titleElements, function (
-                    titleElement: HTMLDOMElement
-                ): void {
-                    el.removeChild(titleElement);
-                });
-
-                // Remove all .highcharts-text-outline elements, #17170
-                outlineElements =
-                    el.getElementsByClassName('highcharts-text-outline');
-                while (outlineElements.length > 0) {
-                    const outline = outlineElements[0];
-                    if (outline.parentNode) {
-                        outline.parentNode.removeChild(outline);
-                    }
-                }
-            });
-
-            const svgNode = dummySVGContainer.querySelector('svg');
-            if (svgNode) {
-                loadPdfFonts(svgNode, (): void => {
-                    svgToPdf(
-                        svgNode,
-                        0,
-                        scale,
-                        (pdfData: string): void => {
-                            downloadURL(pdfData, filename);
-                        }
-                    );
-                });
-            }
-        };
-
+        // Local PDF download
         if (type === 'application/pdf') {
-            if (win.jspdf && win.jspdf.jsPDF) {
-                downloadPDF();
-            } else {
-                // Must load pdf libraries first. // Don't destroy the object
-                // URL yet since we are doing things asynchronously. A cleaner
-                // solution would be nice, but this will do for now.
-                getScript(libURL + 'jspdf.js', function (): void {
-                    getScript(libURL + 'svg2pdf.js', downloadPDF);
-                });
+            // Must load pdf libraries first if not found. Don't destroy the
+            // object URL yet since we are doing things asynchronously
+            if (!win.jspdf?.jsPDF) {
+                // Get jspdf
+                await getScript(`${libURL}jspdf.js`);
+                // Get svg2pdf
+                await getScript(`${libURL}svg2pdf.js`);
             }
+
+            // Call the PDF download if SVG element found
+            await downloadPDF(svg, scale, filename, exportingOptions?.pdfFont);
         }
     }
 
@@ -421,6 +284,210 @@ namespace OfflineExporting {
     }
 
     /**
+     * Loads and registers custom fonts for PDF export if non-ASCII characters
+     * are detected in the given SVG element. This function ensures that text
+     * content with special characters is properly rendered in the exported PDF.
+     *
+     * It fetches font files (if provided in `pdfFont`), converts them to
+     * base64, and registers them with jsPDF.
+     *
+     * @private
+     * @function loadPdfFonts
+     *
+     * @param {SVGElement} svgElement
+     * The generated SVG element containing the text content to be exported.
+     * @param {Highcharts.PdfFontOptions} [pdfFont]
+     * An optional object specifying URLs for different font variants (normal,
+     * bold, italic, bolditalic). If non-ASCII characters are not detected,
+     * fonts are not loaded.
+     *
+     * @requires modules/exporting
+     * @requires modules/offline-exporting
+     */
+    function loadPdfFonts(
+        svgElement: SVGElement,
+        pdfFont?: PdfFontOptions
+    ): void {
+        const hasNonASCII = (s: string): boolean => (
+            // eslint-disable-next-line no-control-regex
+            /[^\u0000-\u007F\u200B]+/.test(s)
+        );
+
+        // Register an event in order to add the font once jsPDF is initialized
+        const addFont = (
+            variant: 'bold' | 'bolditalic' | 'italic' | 'normal',
+            base64: string
+        ): void => {
+            win.jspdf.jsPDF.API.events.push([
+                'initialized',
+                function (): void {
+                    this.addFileToVFS(variant, base64);
+                    this.addFont(
+                        variant,
+                        'HighchartsFont',
+                        variant
+                    );
+
+                    if (!this.getFontList()?.HighchartsFont) {
+                        this.setFont('HighchartsFont');
+                    }
+                }
+            ]);
+        };
+
+        // If there are no non-ASCII characters in the SVG, do not use bother
+        // downloading the font files
+        if (pdfFont && !hasNonASCII(svgElement.textContent || '')) {
+            pdfFont = void 0;
+        }
+
+        // Add new font if the URL is declared, #6417
+        const variants = ['normal', 'italic', 'bold', 'bolditalic'] as
+            ('bold' | 'bolditalic' | 'italic' | 'normal')[];
+
+        // Shift the first element off the variants and add as a font.
+        // Then asynchronously trigger the next variant until variants are empty
+        let normalBase64: string | undefined;
+        const shiftAndLoadVariant = (): void => {
+            const variant = variants.shift();
+
+            // All variants shifted and possibly loaded, proceed
+            if (!variant) {
+                return;
+            }
+
+            const url = pdfFont?.[variant];
+            if (url) {
+                ajax({
+                    url,
+                    responseType: 'blob',
+                    success: (_, xhr): void => {
+                        const reader = new FileReader();
+                        reader.onloadend = function (): void {
+                            if (typeof this.result === 'string') {
+                                const base64 = this.result.split(',')[1];
+                                addFont(variant, base64);
+
+                                if (variant === 'normal') {
+                                    normalBase64 = base64;
+                                }
+                            }
+                            shiftAndLoadVariant();
+                        };
+
+                        reader.readAsDataURL(xhr.response);
+                    },
+                    error: shiftAndLoadVariant
+                });
+            } else {
+                // For other variants, fall back to normal text weight/style
+                if (normalBase64) {
+                    addFont(variant, normalBase64);
+                }
+                shiftAndLoadVariant();
+            }
+        };
+        shiftAndLoadVariant();
+    }
+
+    /**
+     * Prepares an SVG for PDF export by ensuring proper text styling and
+     * removing unnecessary elements. This function extracts an SVG element from
+     * a given SVG string, applies font styles inherited from parent elements,
+     * and removes text outlines and title elements to improve PDF rendering.
+     *
+     * @private
+     * @function preparePDF
+     *
+     * @param {string} svg
+     * A string representation of the SVG markup.
+     * @param {Highcharts.PdfFontOptions} [pdfFont]
+     * An optional object specifying URLs for different font variants (normal,
+     * bold, italic, bolditalic). If provided, the text elements are assigned a
+     * custom PDF font.
+     *
+     * @return {SVGSVGElement | null}
+     * Returns the parsed SVG element from the container or `null` if the SVG is
+     * not found.
+     *
+     * @requires modules/exporting
+     * @requires modules/offline-exporting
+     */
+    function preparePDF(
+        svg: string,
+        pdfFont?: PdfFontOptions
+    ): SVGSVGElement | null {
+        const dummySVGContainer = doc.createElement('div');
+        AST.setElementHTML(dummySVGContainer, svg);
+        const textElements = dummySVGContainer.getElementsByTagName('text'),
+            // Copy style property to element from parents if it's not there.
+            // Searches up hierarchy until it finds prop, or hits the chart
+            // container
+            setStylePropertyFromParents = function (
+                el: DOMElementType,
+                propName: ('fontFamily' | 'fontSize')
+            ): void {
+                let curParent = el;
+
+                while (curParent && curParent !== dummySVGContainer) {
+                    if (curParent.style[propName]) {
+                        let value = curParent.style[propName];
+                        if (propName === 'fontSize' && /em$/.test(value)) {
+                            value = Math.round(
+                                parseFloat(value) * 16
+                            ) + 'px';
+                        }
+                        el.style[propName] = value;
+                        break;
+                    }
+                    curParent = curParent.parentNode;
+                }
+            };
+        let titleElements,
+            outlineElements;
+
+        // Workaround for the text styling. Making sure it does pick up
+        // settings for parent elements.
+        [].forEach.call(textElements, function (el: SVGDOMElement): void {
+            // Workaround for the text styling. making sure it does pick up
+            // the root element
+            (['fontFamily', 'fontSize'] as ['fontFamily', 'fontSize'])
+                .forEach((property): void => {
+                    setStylePropertyFromParents(el, property);
+                });
+
+            el.style.fontFamily = pdfFont?.normal ?
+                // Custom PDF font
+                'HighchartsFont' :
+                // Generic font (serif, sans-serif etc)
+                String(
+                    el.style.fontFamily &&
+                    el.style.fontFamily.split(' ').splice(-1)
+                );
+
+            // Workaround for plotband with width, removing title from text
+            // nodes
+            titleElements = el.getElementsByTagName('title');
+            [].forEach.call(titleElements, function (
+                titleElement: HTMLDOMElement
+            ): void {
+                el.removeChild(titleElement);
+            });
+
+            // Remove all .highcharts-text-outline elements, #17170
+            outlineElements =
+                el.getElementsByClassName('highcharts-text-outline');
+            while (outlineElements.length > 0) {
+                const outline = outlineElements[0];
+                if (outline.parentNode) {
+                    outline.parentNode.removeChild(outline);
+                }
+            }
+        });
+        return dummySVGContainer.querySelector('svg');
+    }
+
+    /**
      * Transform from PDF to SVG.
      *
      * @async
@@ -433,24 +500,21 @@ namespace OfflineExporting {
      * The margin to apply.
      * @param {number} scale
      * The scale of the SVG.
-     * @param {Function} callback
-     * Callback function to call when the PDF is created.
      *
      * @requires modules/exporting
      * @requires modules/offline-exporting
      */
-    function svgToPdf(
+    async function svgToPdf(
         svgElement: SVGElement,
         margin: number,
-        scale: number,
-        callback: Function
-    ): void {
+        scale: number
+    ): Promise<string> {
         const width = (Number(svgElement.getAttribute('width')) + 2 * margin) *
             scale,
             height = (Number(svgElement.getAttribute('height')) + 2 * margin) *
                 scale,
             pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
-                // setting orientation to portrait if height exceeds width
+                // Setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',
                 'pt',
                 [width, height]
@@ -496,14 +560,17 @@ namespace OfflineExporting {
             }
         );
 
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        pdfDoc.svg(svgElement, {
+        // Transform from PDF to SVG
+        await pdfDoc.svg(svgElement, {
             x: 0,
             y: 0,
             width,
             height,
             removeInvalid: true
-        }).then(():void => callback(pdfDoc.output('datauristring')));
+        });
+
+        // Return the output
+        return pdfDoc.output('datauristring');
     }
 }
 

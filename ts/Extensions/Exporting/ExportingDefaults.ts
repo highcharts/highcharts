@@ -537,7 +537,10 @@ const exporting: ExportingOptions = {
         downloadPNG: {
             textKey: 'downloadPNG',
             onclick: function (): void {
-                this.exporting?.exportChart();
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                (async (): Promise<void> => {
+                    await this.exporting?.exportChart();
+                })();
             }
         },
 
@@ -547,9 +550,12 @@ const exporting: ExportingOptions = {
         downloadJPEG: {
             textKey: 'downloadJPEG',
             onclick: function (): void {
-                this.exporting?.exportChart({
-                    type: 'image/jpeg'
-                });
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                (async (): Promise<void> => {
+                    await this.exporting?.exportChart({
+                        type: 'image/jpeg'
+                    });
+                })();
             }
         },
 
@@ -559,9 +565,12 @@ const exporting: ExportingOptions = {
         downloadPDF: {
             textKey: 'downloadPDF',
             onclick: function (): void {
-                this.exporting?.exportChart({
-                    type: 'application/pdf'
-                });
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                (async (): Promise<void> => {
+                    await this.exporting?.exportChart({
+                        type: 'application/pdf'
+                    });
+                })();
             }
         },
 
@@ -571,9 +580,12 @@ const exporting: ExportingOptions = {
         downloadSVG: {
             textKey: 'downloadSVG',
             onclick: function (): void {
-                this.exporting?.exportChart({
-                    type: 'image/svg+xml'
-                });
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                (async (): Promise<void> => {
+                    await this.exporting?.exportChart({
+                        type: 'image/svg+xml'
+                    });
+                })();
             }
         }
 

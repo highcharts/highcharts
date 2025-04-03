@@ -47,7 +47,7 @@ declare module '../../Core/Options' {
     }
 }
 
-interface PdfFontOptions {
+export interface PdfFontOptions {
     bold?: string;
     bolditalic?: string;
     italic?: string;

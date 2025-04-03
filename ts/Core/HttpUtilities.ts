@@ -194,43 +194,35 @@ async function post(
     data: Record<string, any>,
     fetchOptions?: RequestInit
 ): Promise<void> {
-    try {
-        // Prepare a form to send the data
-        const formData = new win.FormData();
+    // Prepare a form to send the data
+    const formData = new win.FormData();
 
-        // Add the data to the form
-        objectEach(data, function (value: string, name: string): void {
-            formData.append(name, value);
-        });
-        formData.append('b64', 'true');
+    // Add the data to the form
+    objectEach(data, function (value: string, name: string): void {
+        formData.append(name, value);
+    });
+    formData.append('b64', 'true');
 
-        // Send the POST
-        const response: Response = await win.fetch(url, {
-            method: 'POST',
-            body: formData,
-            ...fetchOptions
-        });
+    // Send the POST
+    const response: Response = await win.fetch(url, {
+        method: 'POST',
+        body: formData,
+        ...fetchOptions
+    });
 
-        // Check the response
-        if (response.ok) {
-            try {
-                // Get the text from the response
-                const text: string = await response.text();
+    // Check the response
+    if (response.ok) {
+        // Get the text from the response
+        const text: string = await response.text();
 
-                // Prepare self-click link with the Base64 representation
-                const link = document.createElement('a');
-                link.href = `data:${data.type as string};base64,${text}`;
-                link.download = data.filename;
-                link.click();
+        // Prepare self-click link with the Base64 representation
+        const link = document.createElement('a');
+        link.href = `data:${data.type as string};base64,${text}`;
+        link.download = data.filename;
+        link.click();
 
-                // Remove the link
-                discardElement(link);
-            } catch {
-                // Ignore
-            }
-        }
-    } catch {
-        // Ignore
+        // Remove the link
+        discardElement(link);
     }
 }
 

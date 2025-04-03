@@ -60,10 +60,6 @@ declare global {
     }
 }
 
-interface ScriptOnLoadCallbackFunction {
-    (this: GlobalEventHandlers, ev: Event): void;
-}
-
 /* *
  *
  *  Constants
@@ -192,31 +188,38 @@ function downloadURL(
 }
 
 /**
- * Downloads a script and executes a callback when done.
+ * Asynchronously downloads a script from a provided location.
  *
  * @private
  * @function Highcharts.getScript
  *
  * @param {string} scriptLocation
  * The location for the script to fetch.
- * @param {ScriptOnLoadCallbackFunction} callback
- * The callback to run on the script load.
  */
 export function getScript(
-    scriptLocation: string,
-    callback: ScriptOnLoadCallbackFunction
-): void {
-    const head = doc.getElementsByTagName('head')[0],
-        script = doc.createElement('script');
+    scriptLocation: string
+): Promise<void> {
+    return new Promise((resolve, reject): void => {
+        const head = doc.getElementsByTagName('head')[0],
+            script = doc.createElement('script');
 
-    script.type = 'text/javascript';
-    script.src = scriptLocation;
-    script.onload = callback;
-    script.onerror = function (): void {
-        error('Error loading script ' + scriptLocation);
-    };
+        // Set type and location for the script
+        script.type = 'text/javascript';
+        script.src = scriptLocation;
 
-    head.appendChild(script);
+        // Resolve in case of a succesful script fetching
+        script.onload = (): void => {
+            resolve();
+        };
+
+        // Reject in case of fail
+        script.onerror = (): void => {
+            reject(error(`Error loading script ${scriptLocation}`));
+        };
+
+        // Append the newly created script
+        head.appendChild(script);
+    });
 }
 
 /* *

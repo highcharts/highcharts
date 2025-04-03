@@ -332,74 +332,70 @@ class Exporting {
                 const dataURL = await Exporting.imageToDataURL(
                     svgURL,
                     scale,
-                    type,
-                    function (): void {
-                        if (svg.length > RegexLimits.svgLimit) {
-                            throw new Error('Input too long');
-                        }
-
-                        // Failed due to tainted canvas
-                        // Create new and untainted canvas
-                        const canvas = doc.createElement('canvas'),
-                            ctx = canvas.getContext('2d'),
-                            matchedImageWidth = svg.match(
-                                // eslint-disable-next-line max-len
-                                /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
-                            ),
-                            matchedImageHeight = svg.match(
-                                // eslint-disable-next-line max-len
-                                /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
-                            );
-
-                        if (
-                            ctx &&
-                            matchedImageWidth &&
-                            matchedImageHeight
-                        ) {
-                            const imageWidth =
-                                +matchedImageWidth[1] * scale,
-                                imageHeight =
-                                    +matchedImageHeight[1] * scale,
-                                downloadWithCanVG = (): void => {
-                                    const v =
-                                        win.canvg.Canvg.fromString(
-                                            ctx,
-                                            svg
-                                        );
-                                    v.start();
-
-                                    downloadURL(
-                                        win.navigator.msSaveOrOpenBlob ?
-                                            canvas.msToBlob() :
-                                            canvas.toDataURL(type),
-                                        filename
-                                    );
-                                };
-
-                            canvas.width = imageWidth;
-                            canvas.height = imageHeight;
-                            if (win.canvg) {
-                                // Use preloaded canvg
-                                downloadWithCanVG();
-                            } else {
-                                // Must load canVG first. Don't destroy the
-                                // object URL yet since we are doing things
-                                // asynchronously. A cleaner solution would be
-                                // nice, but this will do for now
-                                Exporting.objectURLRevoke = true;
-                                getScript(
-                                    libURL + 'canvg.js',
-                                    downloadWithCanVG
-                                );
-                            }
-                        }
-                    }
+                    type
                 );
-                downloadURL(dataURL as string, filename);
-
-            // eslint-disable-next-line no-useless-catch
+                downloadURL(dataURL, filename);
             } catch (error) {
-                throw error;
+                // No need for the below logic to run in case no canvas is found
+                if ((error as Error).message === 'No canvas found!') {
+                    throw error;
+                }
+
+                // Or in case of exceeding the input length
+                if (svg.length > RegexLimits.svgLimit) {
+                    throw new Error('Input too long');
+                }
+
+                // Failed due to tainted canvas
+                // Create new and untainted canvas
+                const canvas = doc.createElement('canvas'),
+                    ctx = canvas.getContext('2d'),
+                    matchedImageWidth = svg.match(
+                        // eslint-disable-next-line max-len
+                        /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                    ),
+                    matchedImageHeight = svg.match(
+                        // eslint-disable-next-line max-len
+                        /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                    );
+
+                if (
+                    ctx &&
+                    matchedImageWidth &&
+                    matchedImageHeight
+                ) {
+                    const imageWidth =
+                        +matchedImageWidth[1] * scale,
+                        imageHeight =
+                            +matchedImageHeight[1] * scale,
+                        downloadWithCanVG = (): void => {
+                            const v =
+                                win.canvg.Canvg.fromString(
+                                    ctx,
+                                    svg
+                                );
+                            v.start();
+
+                            downloadURL(
+                                win.navigator.msSaveOrOpenBlob ?
+                                    canvas.msToBlob() :
+                                    canvas.toDataURL(type),
+                                filename
+                            );
+                        };
+                    canvas.width = imageWidth;
+                    canvas.height = imageHeight;
+
+                    // Must load canVG first if not found. Don't destroy the
+                    // object URL yet since we are doing things asynchronously
+                    if (!win.canvg) {
+                        Exporting.objectURLRevoke = true;
+                        await getScript(libURL + 'canvg.js');
+                    }
+
+                    // Use loaded canvg
+                    downloadWithCanVG();
+                }
             } finally {
                 if (Exporting.objectURLRevoke) {
                     try {
@@ -481,17 +477,14 @@ class Exporting {
      * The scale of the image.
      * @param {string} imageType
      * The export type of the image.
-     * @param {Function} [taintedCallback]
-     * The optional taintedCallback to call in case of the toDataURL error.
      *
      * @requires modules/exporting
      */
     public static async imageToDataURL(
         imageURL: string,
         scale: number,
-        imageType: string,
-        taintedCallback?: Function
-    ): Promise<void | string> {
+        imageType: string
+    ): Promise<string> {
         // First, wait for the image to be loaded
         const img = await Exporting.loadImage(imageURL),
             canvas = doc.createElement('canvas'),
@@ -507,15 +500,7 @@ class Exporting {
             );
 
             // Now we try to get the contents of the canvas
-            try {
-                return canvas.toDataURL(imageType);
-            } catch (e) {
-                if (taintedCallback) {
-                    taintedCallback();
-                } else {
-                    throw e;
-                }
-            }
+            return canvas.toDataURL(imageType);
         }
     }
 
@@ -824,8 +809,8 @@ class Exporting {
      * @param {Highcharts.ExportingOptions} exportingOptions
      * The exporting options.
      *
-     * @return {Exporting.ImageOptions} The finalized image export options with
-     * ensured values.
+     * @return {Exporting.ImageOptions}
+     * The finalized image export options with ensured values.
      *
      * @requires modules/exporting
      */
@@ -2034,12 +2019,15 @@ class Exporting {
      * @param {Highcharts.Options} chartOptions
      * Additional chart options for the exported chart.
      *
+     * @return {Promise<string>}
+     * The sanitized SVG.
+     *
      * @requires modules/exporting
      */
     public async getSVGForLocalExport(
         exportingOptions: ExportingOptions,
         chartOptions: Partial<Options>
-    ): Promise<void> {
+    ): Promise<string | void> {
         const chart = this.chart,
             exporting = this,
             // After grabbing the SVG of the chart's copy container we need
@@ -2049,13 +2037,10 @@ class Exporting {
                 chartCopyOptions
             );
 
-        let el: SVGImageElement,
-            chartCopyContainer: (HTMLDOMElement | undefined),
+        let chartCopyContainer: (HTMLDOMElement | undefined),
             chartCopyOptions: Options,
             href: (string | null) = null,
-            images: (Array<SVGImageElement> | HTMLCollectionOf<SVGImageElement> | undefined),
-            imagesLength = 0,
-            imagesEmbedded = 0;
+            images: (Array<SVGImageElement> | HTMLCollectionOf<SVGImageElement> | undefined);
 
         // Hook into getSVG to get a copy of the chart copy's container (#8273)
         const unbindGetSVG = addEvent(chart, 'getSVG', (
@@ -2066,72 +2051,57 @@ class Exporting {
                 e.chartCopy.container.cloneNode(true) as HTMLElement;
             images = chartCopyContainer && chartCopyContainer
                 .getElementsByTagName('image') || [];
-            imagesLength = images.length;
         });
 
         try {
             // Trigger hook to get chart copy
             this.getSVGForExport(exportingOptions, chartOptions);
 
-            // If there are no images to embed, the SVG is okay now.
-            if (!images || !images.length) {
-                // Use SVG of chart copy
-                await this.downloadSVGForLocalExport(
-                    sanitize(chartCopyContainer?.innerHTML),
-                    extend(
-                        { filename: exporting.getFilename() },
-                        exportingOptions
-                    )
-                );
-                return;
-            }
+            // Get the static array
+            const imagesArray = images ? Array.from(images) : [];
 
             // Go through the images we want to embed
-            for (let i = 0; i < images.length; i++) {
-                el = images[i];
-                href = el.getAttributeNS(
+            for (const image of imagesArray) {
+                href = image.getAttributeNS(
                     'http://www.w3.org/1999/xlink',
                     'href'
                 );
 
                 if (href) {
                     Exporting.objectURLRevoke = false;
-
                     const dataURL = await Exporting.imageToDataURL(
                         href,
                         exportingOptions?.scale || 1,
                         exportingOptions?.type || 'image/png'
                     );
 
-                    // Converted image to base64
-                    ++imagesEmbedded;
-
                     // Change image href in chart copy
-                    el.setAttributeNS(
+                    image.setAttributeNS(
                         'http://www.w3.org/1999/xlink',
                         'href',
-                        dataURL as string
+                        dataURL
                     );
 
                 // Hidden, boosted series have blank href (#10243)
                 } else {
-                    imagesEmbedded++;
-                    el.parentNode.removeChild(el);
-                    i--;
-                }
-
-                // When done with last image we have our SVG
-                if (images && imagesEmbedded === imagesLength) {
-                    // Use SVG of chart copy
-                    await this.downloadSVGForLocalExport(
-                        sanitize(chartCopyContainer?.innerHTML),
-                        extend(
-                            { filename: exporting.getFilename() },
-                            exportingOptions
-                        )
-                    );
+                    image.parentNode.removeChild(image);
                 }
             }
+
+            // Sanitize the SVG
+            const sanitizedSVG = sanitize(chartCopyContainer?.innerHTML);
+
+            // Use SVG of chart copy
+            await this.downloadSVGForLocalExport(
+                sanitizedSVG,
+                extend(
+                    { filename: exporting.getFilename() },
+                    exportingOptions
+                )
+            );
+
+            // Return the sanitized SVG
+            return sanitizedSVG;
         } catch (error) {
             await this.fallbackToServer(
                 exportingOptions,

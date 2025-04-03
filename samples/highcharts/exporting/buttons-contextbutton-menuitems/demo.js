@@ -28,14 +28,18 @@ Highcharts.chart('container', {
                 menuItems: [{
                     text: 'Export to PNG (small)',
                     onclick: function () {
-                        this.exporting.exportChart({
-                            width: 250
-                        });
+                        (async () => {
+                            await this.exporting.exportChart({
+                                width: 250
+                            });
+                        })();
                     }
                 }, {
                     text: 'Export to PNG (large)',
                     onclick: function () {
-                        this.exporting.exportChart();
+                        (async () => {
+                            await this.exporting.exportChart();
+                        })();
                     },
                     separator: false
                 }]
