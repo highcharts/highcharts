@@ -25,6 +25,7 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
+import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistribution';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
@@ -40,7 +41,8 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 /**
  * The distribution of the columns in the grid structure.
  */
-export type ColumnDistributionType = 'full' | 'fixed' | 'mixed';
+export type ColumnDistributionType =
+    keyof typeof ColumnDistribution.distributions;
 
 /**
  * Callback function to be called when a header event is triggered. Returns a

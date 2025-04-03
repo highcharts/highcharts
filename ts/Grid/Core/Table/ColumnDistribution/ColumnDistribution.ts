@@ -42,9 +42,10 @@ const { defined } = U;
 
 namespace ColumnDistribution {
 
-    type StrategyConstructor = new (viewport: Table) => DistributionStrategy;
-
-    const distributions: Record<ColumnDistributionType, StrategyConstructor> = {
+    /**
+     * Registry of column distribution strategies.
+     */
+    export const distributions = {
         mixed: MixedDistributionStrategy,
         fixed: FixedDistributionStrategy,
         full: FullDistributionStrategy
