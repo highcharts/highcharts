@@ -143,11 +143,6 @@ class Table {
      */
     public virtualRows: boolean;
 
-    /**
-     * The flag that indicates if the table is scrollable vertically.
-     */
-    public scrollable: boolean;
-
 
     /* *
     *
@@ -176,9 +171,6 @@ class Table {
 
         this.columnDistribution = ColumnDistribution.createStrategy(this);
         this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
-        this.scrollable = !!(
-            this.grid.initialContainerHeight || this.virtualRows
-        );
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
@@ -211,14 +203,9 @@ class Table {
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
 
+        tableElement.classList.add(Globals.getClassName('scrollableContent'));
+
         this.tbodyElement.addEventListener('scroll', this.onScroll);
-
-        if (this.scrollable) {
-            tableElement.classList.add(
-                Globals.getClassName('scrollableContent')
-            );
-        }
-
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
     }
 
@@ -321,24 +308,15 @@ class Table {
 
     /**
      * Reflows the table's content dimensions.
-     *
-     * @param reflowColumns
-     * Force reflow columns and recalculate widths.
-     *
      */
-    public reflow(reflowColumns: boolean = false): void {
-        const isVirtualization =
-            this.grid.options?.rendering?.rows?.virtualization;
-
+    public reflow(): void {
         this.columnDistribution.reflow();
 
-        if (isVirtualization || reflowColumns) {
-            // Reflow the head
-            this.header?.reflow();
+        // Reflow the head
+        this.header?.reflow();
 
-            // Reflow rows content dimensions
-            this.rowsVirtualizer.reflowRows();
-        }
+        // Reflow rows content dimensions
+        this.rowsVirtualizer.reflowRows();
     }
 
     /**
@@ -358,7 +336,7 @@ class Table {
      * Handles the resize event.
      */
     private onResize = (): void => {
-        this.reflow(this.scrollable);
+        this.reflow();
     };
 
     /**
@@ -477,7 +455,6 @@ class Table {
         if (!meta.columnDistribution.invalidated) {
             const colDistMeta = meta.columnDistribution.exportMetadata();
             this.columnDistribution.importMetadata(colDistMeta);
-            this.reflow();
         }
 
         if (meta.focusCursor) {

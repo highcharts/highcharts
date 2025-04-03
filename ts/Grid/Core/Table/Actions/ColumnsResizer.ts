@@ -170,7 +170,7 @@ class ColumnsResizer {
 
         vp.columnDistribution.resize(this, diff);
 
-        vp.reflow(true);
+        vp.reflow();
 
         if (vp.grid.options?.rendering?.rows?.virtualization) {
             vp.rowsVirtualizer.adjustRowHeights();
@@ -220,13 +220,7 @@ class ColumnsResizer {
 
             this.isResizing = true;
 
-            if (!grid.options?.rendering?.rows?.virtualization) {
-                grid.contentWrapper?.classList.add(
-                    Globals.getClassName('resizerWrapper')
-                );
-                // Apply widths before resizing
-                vp.reflow(true);
-            }
+            vp.reflow();
 
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
