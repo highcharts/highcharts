@@ -839,10 +839,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
+    width: calc(100% - 2 * var(--ig-vertical-padding));
     display: none;
     color: var(--ig-error-color);
-    padding: var(--ig-header-padding);
+    padding: var(--ig-padding);
+    margin: var(--ig-padding);
     background: var(--ig-negative-background);
     border: 1px solid var(--ig-negative-border-color);
     border-radius: var(--ig-border-radius);
