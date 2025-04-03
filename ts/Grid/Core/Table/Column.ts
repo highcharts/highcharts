@@ -29,7 +29,6 @@ import type HeaderCell from './Header/HeaderCell';
 import Table from './Table.js';
 import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
-import GridUtils from '../GridUtils.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import Templating from '../../../Core/Templating.js';
 import Globals from '../Globals.js';

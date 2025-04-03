@@ -195,9 +195,10 @@ class MixedDistributionStrategy extends DistributionStrategy {
         super.validateOnUpdate(newOptions);
 
         if (
-            !this.invalidated ||
-            newOptions.columnDefaults?.hasOwnProperty('width') ||
-            newOptions.columns?.some((col) => col?.hasOwnProperty('width'))
+            !this.invalidated && (
+                newOptions.columnDefaults?.hasOwnProperty('width') ||
+                newOptions.columns?.some((col) => col?.hasOwnProperty('width'))
+            )
         ) {
             this.invalidated = true;
         }
