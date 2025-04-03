@@ -196,9 +196,9 @@ class ColumnsResizer {
         this.columnStartWidth = void 0;
         this.nextColumnStartWidth = void 0;
 
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             this.isResizing = false;
-        }, 10);
+        });
     };
 
     /**
