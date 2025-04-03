@@ -115,6 +115,7 @@ class MixedDistributionStrategy extends DistributionStrategy {
     }
 
     public override resize(resizer: ColumnsResizer, diff: number): void {
+        const vp = this.viewport;
         const column = resizer.draggedColumn;
         if (!column) {
             return;
@@ -130,6 +131,20 @@ class MixedDistributionStrategy extends DistributionStrategy {
 
         this.columnWidths[column.id] = newW;
         this.columnWidthUnits[column.id] = 0; // Always save in px
+
+        // Update all columns to the left of the resized column to have their
+        // widths in px as well
+        for (let i = 0, iEnd = vp.columns.length; i < iEnd; ++i) {
+            const col = vp.columns[i];
+            if (i >= column.index) {
+                break;
+            }
+
+            if (this.columnWidthUnits[col.id] !== 0) {
+                this.columnWidths[col.id] = col.getWidth();
+                this.columnWidthUnits[col.id] = 0;
+            }
+        }
     }
 
     /**
