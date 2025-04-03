@@ -21,6 +21,8 @@ import type _Options from '../Grid/Core/Options.ts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
+import ColumnDistribution from '../Grid/Core/Table/ColumnDistribution/ColumnDistribution.js';
+import ColumnDistributionStrategy from '../Grid/Core/Table/ColumnDistribution/ColumnDistributionStrategy.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
@@ -85,6 +87,8 @@ declare global {
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
         grids: Array<(_Grid|undefined)>;
+        ColumnDistribution: typeof ColumnDistribution;
+        ColumnDistributionStrategy: typeof ColumnDistributionStrategy;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -134,6 +138,8 @@ G.grids = _Grid.grids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
+G.ColumnDistribution = ColumnDistribution;
+G.ColumnDistributionStrategy = ColumnDistributionStrategy;
 G.defaultOptions = Defaults.defaultOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.setOptions = Defaults.setOptions;
