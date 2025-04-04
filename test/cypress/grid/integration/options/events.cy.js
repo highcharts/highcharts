@@ -1,4 +1,4 @@
-describe('DataGrid events.', () => {
+describe('Grid Pro - events.', () => {
     before(() => {
         cy.visit('grid-pro/cypress/column-cell-events');
     });
