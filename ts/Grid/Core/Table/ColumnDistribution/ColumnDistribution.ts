@@ -22,7 +22,6 @@
  *
  * */
 
-import type { ColumnDistributionType } from '../../Options';
 import type Table from '../Table';
 
 import DistributionStrategy from './ColumnDistributionStrategy.js';
@@ -45,16 +44,18 @@ namespace ColumnDistribution {
     /**
      * Abstract class representing a column distribution strategy.
      */
-    export const Strategy = DistributionStrategy;
+    export const AbstractStrategy = DistributionStrategy;
 
     /**
      * Registry of column distribution strategies.
      */
-    export const distributions = {
+    export const types = {
         mixed: MixedDistributionStrategy,
         fixed: FixedDistributionStrategy,
         full: FullDistributionStrategy
     };
+
+    export type StrategyType = keyof typeof types;
 
     /**
      * Returns the column distribution of the table according to the options:
@@ -65,7 +66,7 @@ namespace ColumnDistribution {
      * @param viewport
      * The table that the column distribution strategy is applied to.
      */
-    function assumeDistributionType(viewport: Table): ColumnDistributionType {
+    function assumeDistributionType(viewport: Table): StrategyType {
         const { options } = viewport.grid;
         const result = options?.rendering?.columns?.distribution;
 
@@ -95,7 +96,7 @@ namespace ColumnDistribution {
      * The proper column distribution strategy.
      */
     export function initStrategy(viewport: Table): DistributionStrategy {
-        return new distributions[assumeDistributionType(viewport)](viewport);
+        return new types[assumeDistributionType(viewport)](viewport);
     }
 
 }

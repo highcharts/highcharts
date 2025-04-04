@@ -41,8 +41,7 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 /**
  * The distribution of the columns in the grid structure.
  */
-export type ColumnDistributionType =
-    keyof typeof ColumnDistribution.distributions;
+export type ColumnDistributionType = ColumnDistribution.StrategyType;
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
