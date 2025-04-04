@@ -1283,7 +1283,7 @@ function onChartAfterViewData(
         const row = dataTableDiv.querySelector('thead tr');
         if (row) {
             row.childNodes.forEach((th: any): void => {
-                const table = th.closest('table');
+                const tableBody = dataTableDiv.querySelector('tbody');
 
                 th.addEventListener('click', function (): void {
                     const rows = [...dataTableDiv.querySelectorAll(
@@ -1298,7 +1298,7 @@ function onChartAfterViewData(
                                 !chart.ascendingOrderInTable
                         )
                     ).forEach((tr: HTMLDOMElement): void => {
-                        table.appendChild(tr);
+                        tableBody?.appendChild(tr);
                     });
 
                     headers.forEach((th): void => {
