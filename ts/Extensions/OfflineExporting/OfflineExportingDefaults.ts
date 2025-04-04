@@ -30,8 +30,8 @@ const OfflineExportingDefaults: ExportingOptions = {
     menuItemDefinitions: {
         downloadPDF: {
             textKey: 'downloadPDF',
-            onclick: function (): void {
-                this.exporting?.exportChartLocal({
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChartLocal({
                     type: 'application/pdf'
                 });
             }

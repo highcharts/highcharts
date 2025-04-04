@@ -1,4 +1,4 @@
-QUnit.test('Exported SVG characteristics', function (assert) {
+QUnit.test('Exported SVG characteristics', async function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             backgroundColor: {
@@ -67,7 +67,7 @@ QUnit.test('Exported SVG characteristics', function (assert) {
         };
 
         // Run export width override options
-        chart.exporting.exportChart({
+        await chart.exporting.exportChart({
             type: 'application/pdf'
         }, {
             chart: {
@@ -94,7 +94,7 @@ QUnit.test('Exported SVG characteristics', function (assert) {
 
         // Test overrides for min and max (#7873)
         chart.xAxis[0].setExtremes(1, 5);
-        chart.exporting.exportChart({
+        await chart.exporting.exportChart({
             type: 'application/pdf'
         });
         assert.notEqual(
@@ -108,7 +108,7 @@ QUnit.test('Exported SVG characteristics', function (assert) {
             'No overrides, August should be outside bounds'
         );
 
-        chart.exporting.exportChart({
+        await chart.exporting.exportChart({
             type: 'application/pdf'
         }, {
             xAxis: {
