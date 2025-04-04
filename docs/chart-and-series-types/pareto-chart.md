@@ -7,7 +7,7 @@ The Pareto series is represented by a line series of datapoints extracted from a
 
 _For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.pareto)_
 
-<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/pareto allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 432px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/pareto" allow="fullscreen"></iframe>
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/pareto/) to check the code.
 
@@ -34,7 +34,7 @@ yAxis: [{
         format: '{value}%'
     }
 }]
-```  
+```
 
 For more details about yAxis click on the following [link](https://api.highcharts.com/highcharts/yAxis).
 
@@ -46,7 +46,7 @@ For more details about yAxis click on the following [link](https://api.highchart
     data: [115, 75, 60, 55, 45, 30, 20]
 }
 ```
-    
+
 
 3. Add a pareto series with an baseSeries parameter and yAxis index.
 
@@ -60,7 +60,7 @@ series: [{
     type: 'column',
     zIndex: 2,
         data: [755, 222, 151, 86, 72, 51, 36, 10]
-    }  
+    }
 ]
 ```
 

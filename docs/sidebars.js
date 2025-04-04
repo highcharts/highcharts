@@ -1,6 +1,8 @@
 module.exports = {
     docs: {
-        Highcharts: ['index'],
+        Highcharts: [
+            'public-index'
+        ],
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',

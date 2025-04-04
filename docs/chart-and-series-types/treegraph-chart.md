@@ -10,7 +10,7 @@ Our tree representation is an oriented rooted tree. This means that the directio
 
 In order to use this series type, you need to load the `modules/treemap.js` and `modules/treegraph.js` modules.
 
-<iframe style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treegraph-chart allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/treegraph-chart" allow="fullscreen"></iframe>
 
 ### Data structure
 
@@ -18,17 +18,18 @@ The data is structured as a [tree](https://www.highcharts.com/docs/chart-concept
 
 The following is an example of how the tree is built in Highcharts:
 
-
-    data: [{
-        name: 'I have children',
-        id: 'id-1'
-    }, {
-        name: 'I am a child',
-        parent: 'id-1'
-    }, {
-        name: 'I am a smaller child',
-        parent: 'id-1'
-    }]
+```js
+data: [{
+    name: 'I have children',
+    id: 'id-1'
+}, {
+    name: 'I am a child',
+    parent: 'id-1'
+}, {
+    name: 'I am a smaller child',
+    parent: 'id-1'
+}]
+```
 
 ### Algorithms
 
@@ -41,37 +42,41 @@ API options
 
 In contrast to treemap series, the connections between the nodes are represented as links.  The links are generated from the options of the child. The shape of the link is the same as in the organization chart, and the same options apply.  To apply general options to all links, you can define the link options like this:
 
-    series: [{
-        type: 'treegraph',
-        link: {
-            type: 'curved',
-            lineWidth: 3
-        },
-        data: [{
-            name: 'I have children',
-            id: 'id-1'
-        }, {
-            name: 'I am a child',
-            parent: 'id-1'
-        }, {
-            name: 'I am a smaller child',
-            parent: 'id-1'
-        }]
+```js
+series: [{
+    type: 'treegraph',
+    link: {
+        type: 'curved',
+        lineWidth: 3
+    },
+    data: [{
+        name: 'I have children',
+        id: 'id-1'
+    }, {
+        name: 'I am a child',
+        parent: 'id-1'
+    }, {
+        name: 'I am a smaller child',
+        parent: 'id-1'
     }]
+}]
+```
 
 To change the configuration of a specific link, you have to specify the link object in the point configuration, like this:
 
-    data: [{
-        name: 'parent',
-        id: 'id-1
-    }, {
-        name: 'child',
-        parent: 'id-1',
-        link: {
-            type: 'curved',
-            lineWidth: 5
-        }
-    }]
+```js
+data: [{
+    name: 'parent',
+    id: 'id-1
+}, {
+    name: 'child',
+    parent: 'id-1',
+    link: {
+        type: 'curved',
+        lineWidth: 5
+    }
+}]
+```
 
 This setting will take effect on the link that goes **to** the given node.
 

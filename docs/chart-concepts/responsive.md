@@ -26,4 +26,4 @@ In general, the _responsive_ configuration lets you define size-dependent settin
 
 Watch what happens to the legend in this sample as you scale up or down the browser window size:
 
-<iframe style="width: 100%; height: 500px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/responsive/legend allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 500px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/responsive/legend" allow="fullscreen"></iframe>

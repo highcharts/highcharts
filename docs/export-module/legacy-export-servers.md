@@ -198,23 +198,24 @@ Upload/copy this to the application server. You're done with setting up the high
 
 *   Change you url property for the [exporting option](https://api.highcharts.com/highcharts#exporting.url) in your (javascript) highcharts configuration, and point it to the new installed exporting-server, otherwise it still points at Highcharts export-server at http://export.highcharts.com
 
-
-        exporting:{
-        url:'http://new.server.com/highcharts-export/'
-        }
+```js
+exporting:{
+    url:'http://new.server.com/highcharts-export/'
+}
+```
 *   Remember to install necessary fonts on the server. When characters are missing, they will be displayed as squares on the exported charts. The application will automatically pick the fonts up after installation.
 
     Highcharts sets its font globally to Lucida Grande, so if you use for example a japanese font, you have to set the fontFamily to a japanese-able font with [Highcharts.setOptions](https://api.highcharts.com/highcharts#Highcharts.setOptions), for making the export work.
 
 *   When having problems while using the export-server, the first thing you could do is to enable logging Debug messages. This can give you a clue of what's going wrong. To enable Debug messages, uncomment these lines in highcharts-export/highcharts-export-web/src/main/resources/log4j.properties
 
-
-
-    \# Debug specific class
-     `log4j.logger.services=DEBUG`
-     `log4j.logger.converter=DEBUG`
-     `log4j.logger.exporter=DEBUG`
-     `log4j.logger.pool=DEBUG`
+```
+\# Debug specific class
+ `log4j.logger.services=DEBUG`
+ `log4j.logger.converter=DEBUG`
+ `log4j.logger.exporter=DEBUG`
+ `log4j.logger.pool=DEBUG`
+```
 
 *   **When running on WebLogic**
 
@@ -224,15 +225,16 @@ By default WebLogic registers its own `URLStreamHandler to handle http` URLs. Th
 
 Change line 94,95 from
 
-
-    URL url = new URL("http://" + host + ":"
-     + port + "/");
+```java
+URL url = new URL("http://" + host + ":" + port + "/");
+```
 
 to
 
-
-    sun.net.www.protocol.http.Handler handler = new sun.net.www.protocol.http.Handler();
-    URL url = new URL(null, "http://" + host + ":" + port + "/", handler);
+```java
+sun.net.www.protocol.http.Handler handler = new sun.net.www.protocol.http.Handler();
+URL url = new URL(null, "http://" + host + ":" + port + "/", handler);
+```
 
 2. Goto the folder java/highcharts-export
 3. Update your local maven repository, Run: `mvn install`
@@ -258,13 +260,14 @@ The `index.php` file that handles the POST can be downloaded from our [GitHub re
 
 If for any reason the export-server fails to export images, then consider pasting this code snippet to output error messages. Paste this before Line 78, beginning with the commenting text: `// Do the conversion.`
 
-
-    // Troubleshoot snippet
-    $command = "java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";
-    $output = shell_exec($command);
-    echo "Command: $command <br>";
-    echo "Output: $output";
-    die;
+```php
+// Troubleshoot snippet
+$command = "java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";
+$output = shell_exec($command);
+echo "Command: $command <br>";
+echo "Output: $output";
+die;
+```
 
 ### 4. Other solutions
 
