@@ -71,15 +71,10 @@ class FixedDistributionStrategy extends DistributionStrategy {
             return;
         }
 
-        const colW = resizer.columnStartWidth ?? 0;
-        const minWidth = DistributionStrategy.getMinWidth(column);
-
-        let newW = colW + diff;
-        if (newW < minWidth) {
-            newW = minWidth;
-        }
-
-        this.columnWidths[column.id] = newW;
+        this.columnWidths[column.id] = Math.max(
+            (resizer.columnStartWidth || 0) + diff,
+            DistributionStrategy.getMinWidth(column)
+        );
     }
 
     /**

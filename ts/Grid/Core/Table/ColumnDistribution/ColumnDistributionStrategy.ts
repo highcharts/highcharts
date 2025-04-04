@@ -125,6 +125,9 @@ abstract class ColumnDistributionStrategy {
     /**
      * Resizes the column by the given diff of pixels.
      *
+     * @param resizer
+     * The columns resizer instance that is used to resize the column.
+     * 
      * @param diff
      * The X position difference in pixels.
      */
