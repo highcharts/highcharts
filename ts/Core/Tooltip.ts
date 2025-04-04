@@ -1073,7 +1073,7 @@ class Tooltip {
         this.len = points.length; // #6128
         const text = isString(formatString) ?
             format(formatString, point, chart) :
-            formatter.call(point, tooltip);
+            formatter.call(point, tooltip, point);
 
         // Reset the preliminary circular references
         point.points = void 0;
@@ -1909,7 +1909,8 @@ namespace Tooltip {
     export interface FormatterCallbackFunction {
         (
             this: Point,
-            tooltip: Tooltip
+            tooltip: Tooltip,
+            ctx: Point
         ): (false|string|Array<string>);
     }
 
