@@ -243,7 +243,7 @@ class HeaderCell extends Cell {
             !column || (
                 e.target !== this.htmlElement &&
                 e.target !== column.header?.headerContent
-            )
+            ) || column.viewport.columnsResizer?.isResizing
         ) {
             return;
         }
