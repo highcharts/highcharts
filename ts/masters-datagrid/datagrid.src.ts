@@ -42,6 +42,7 @@ import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import Dash3Compatibility from '../Grid/Pro/Dash3Compatibility.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
+import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -150,6 +151,7 @@ GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell);
 CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
+ValidatorComposition.compose(G.Table);
 
 
 /* *

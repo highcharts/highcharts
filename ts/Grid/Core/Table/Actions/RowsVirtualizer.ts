@@ -29,7 +29,6 @@ import Table from '../Table.js';
 import TableRow from '../Content/TableRow.js';
 import Globals from '../../Globals.js';
 
-
 /* *
  *
  *  Class
