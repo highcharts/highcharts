@@ -10,6 +10,7 @@ import Defaults from "./es-modules/Grid/Core/Defaults";
 
 export { default as Grid } from "./es-modules/Grid/Core/Grid.js";
 export { default as Column } from "./es-modules/Grid/Core/Table/Column.js";
+export { default as ColumnDistribution } from "./es-modules/Grid/Core/Table/ColumnDistribution/ColumnDistribution";
 export { default as TableRow } from "./es-modules/Grid/Core/Table/Content/TableRow.js";
 export { default as TableCell } from "./es-modules/Grid/Core/Table/Content/TableCell.js";
 export { default as Options } from "./es-modules/Grid/Core/Options.js";
@@ -21,9 +22,6 @@ export { default as DataEvent } from "./es-modules/Data/DataEvent";
 export { default as DataModifier } from "./es-modules/Data/Modifiers/DataModifier";
 export { default as DataPool } from "./es-modules/Data/DataPool";
 export { default as DataTable } from "./es-modules/Data/DataTable";
-
-export { default as ColumnDistribution } from "./es-modules/Grid/Core/Table/ColumnDistribution/ColumnDistribution";
-export { default as ColumnDistributionStrategy } from "./es-modules/Grid/Core/Table/ColumnDistribution/ColumnDistributionStrategy";
 
 export const grid: typeof Grid.grid;
 export const grids: typeof Grid.grids;
