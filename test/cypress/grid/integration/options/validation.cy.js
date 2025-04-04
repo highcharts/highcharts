@@ -24,7 +24,9 @@ describe('Grid Pro - validation.', () => {
             .type('4{enter}');
         
         // Top position
-        const bottomCell = 'tr[data-row-index="2"] td[data-column-id="numbers"]';
+        const bottomCell =
+            'tr[data-row-index="2"] td[data-column-id="numbers"]';
+
         cy.get(bottomCell)
             .dblclick()
             .find('input')
@@ -37,7 +39,35 @@ describe('Grid Pro - validation.', () => {
                 expect($errorContainer.position().top < 200)
             });
 
-        cy.get('tr[data-row-index="7"] td[data-column-id="numbers"]')
+        cy.get(topCell)
             .type('4{enter}');
+    });
+
+    it('Custom rule.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="icon"]')
+            .dblclick()
+            .find('input')
+            .clear()
+            .type('{enter}');
+
+        cy.get('.hcg-errors-container').eq(0)
+            .should('be.visible')
+            .should('contain', 'empty') // First rule
+            .should('contain', 'The value must contain "URL"') // Custom rule
+
+        cy.get('tr[data-row-index="2"] td[data-column-id="icon"]')
+            .type('my URL{enter}');
+    });
+
+    it('Lang support.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="numbers"]')
+            .dblclick()
+            .find('input')
+            .clear()
+            .type('{enter}');
+        
+        cy.get('.hcg-errors-container').eq(0)
+            .should('be.visible')
+            .should('contain', 'New value') // Lang rule
     });
 });
