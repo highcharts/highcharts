@@ -123,27 +123,19 @@ class MixedDistributionStrategy extends DistributionStrategy {
 
         const colW = resizer.columnStartWidth ?? 0;
         const minWidth = DistributionStrategy.getMinWidth(column);
+        const nextCol = vp.columns[column.index + 1];
 
-        let newW = colW + diff;
-        if (newW < minWidth) {
-            newW = minWidth;
-        }
+        const newW = Math.max(colW + diff, minWidth);
 
         this.columnWidths[column.id] = newW;
         this.columnWidthUnits[column.id] = 0; // Always save in px
 
-        // Update all columns to the left of the resized column to have their
-        // widths in px as well
-        for (let i = 0, iEnd = vp.columns.length; i < iEnd; ++i) {
-            const col = vp.columns[i];
-            if (i >= column.index) {
-                break;
-            }
-
-            if (this.columnWidthUnits[col.id] !== 0) {
-                this.columnWidths[col.id] = col.getWidth();
-                this.columnWidthUnits[col.id] = 0;
-            }
+        if (nextCol) {
+            this.columnWidths[nextCol.id] = Math.max(
+                (resizer.nextColumnStartWidth ?? 0) + colW - newW,
+                minWidth
+            );
+            this.columnWidthUnits[nextCol.id] = 0; // Always save in px
         }
     }
 
