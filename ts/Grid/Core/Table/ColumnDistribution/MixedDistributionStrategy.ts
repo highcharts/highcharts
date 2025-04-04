@@ -47,7 +47,7 @@ class MixedDistributionStrategy extends DistributionStrategy {
      *
      * */
 
-    public override readonly type: 'mixed' = 'mixed';
+    public override readonly type = 'mixed' as const;
 
     /**
      * Array of units for each column width value. Codified as:
