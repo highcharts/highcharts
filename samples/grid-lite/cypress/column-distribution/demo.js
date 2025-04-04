@@ -8,39 +8,15 @@ const grid = Grid.grid('container', {
             meta: Array.from({ length: 40 }, (_, i) => `F${i}`)
         }
     },
-    rendering: {
-        columns: {
-            distribution: 'mixed'
-        }
-    },
     columns: [{
         id: 'product',
-        header: {
-            format: '20% width'
-        },
         width: '20%'
     }, {
         id: 'weight',
-        header: {
-            format: '100px width'
-        },
         width: '100px'
     }, {
-        id: 'price',
-        header: {
-            format: 'undefined width'
-        }
-    }, {
         id: 'icon',
-        header: {
-            format: '15% width'
-        },
         width: '15%'
-    }, {
-        id: 'meta',
-        header: {
-            format: 'undefined width'
-        }
     }]
 });
 
@@ -61,5 +37,20 @@ document.getElementById('cbx-virt').addEventListener('change', e => {
                 virtualization: e.target.checked
             }
         }
+    });
+});
+
+document.getElementById('btn-remove-widths').addEventListener('click', () => {
+    grid.update({
+        columns: [{
+            id: 'product',
+            width: void 0
+        }, {
+            id: 'weight',
+            width: void 0
+        }, {
+            id: 'icon',
+            width: void 0
+        }]
     });
 });

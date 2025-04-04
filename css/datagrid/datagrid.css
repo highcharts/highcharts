@@ -324,6 +324,7 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    overflow: hidden;
     border: var(--ig-border);
     background: var(--ig-background);
     table-layout: fixed;
