@@ -30,13 +30,10 @@ const OfflineExportingDefaults: ExportingOptions = {
     menuItemDefinitions: {
         downloadPDF: {
             textKey: 'downloadPDF',
-            onclick: function (): void {
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                (async (): Promise<void> => {
-                    await this.exporting?.exportChartLocal({
-                        type: 'application/pdf'
-                    });
-                })();
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChartLocal({
+                    type: 'application/pdf'
+                });
             }
         }
     }

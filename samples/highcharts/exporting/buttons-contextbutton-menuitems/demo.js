@@ -27,19 +27,15 @@ Highcharts.chart('container', {
             contextButton: {
                 menuItems: [{
                     text: 'Export to PNG (small)',
-                    onclick: function () {
-                        (async () => {
-                            await this.exporting.exportChart({
-                                width: 250
-                            });
-                        })();
+                    onclick: async function () {
+                        await this.exporting.exportChart({
+                            width: 250
+                        });
                     }
                 }, {
                     text: 'Export to PNG (large)',
-                    onclick: function () {
-                        (async () => {
-                            await this.exporting.exportChart();
-                        })();
+                    onclick: async function () {
+                        await this.exporting.exportChart();
                     },
                     separator: false
                 }]

@@ -1403,6 +1403,7 @@ class Exporting {
                                 }
                                 menu.hideMenu();
                                 if (typeof item !== 'string' && item.onclick) {
+                                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
                                     item.onclick.apply(chart, arguments);
                                 }
                             }
@@ -2382,6 +2383,10 @@ namespace Exporting {
         (options: ExportingOptions, err: Error): void;
     }
 
+    export interface ExportEventCallback<T> {
+        (this: T, eventArguments: (AnyRecord | Event)): (boolean | void | Promise<boolean | void>);
+    }
+
     export interface ImageOptions {
         type: string;
         filename: string;
@@ -2390,7 +2395,7 @@ namespace Exporting {
     }
 
     export interface MenuObject {
-        onclick?: EventCallback<Chart>;
+        onclick?: ExportEventCallback<Chart>;
         separator?: boolean;
         text?: string;
         textKey?: string;

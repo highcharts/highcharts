@@ -536,11 +536,8 @@ const exporting: ExportingOptions = {
          */
         downloadPNG: {
             textKey: 'downloadPNG',
-            onclick: function (): void {
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                (async (): Promise<void> => {
-                    await this.exporting?.exportChart();
-                })();
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChart();
             }
         },
 
@@ -549,13 +546,10 @@ const exporting: ExportingOptions = {
          */
         downloadJPEG: {
             textKey: 'downloadJPEG',
-            onclick: function (): void {
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                (async (): Promise<void> => {
-                    await this.exporting?.exportChart({
-                        type: 'image/jpeg'
-                    });
-                })();
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChart({
+                    type: 'image/jpeg'
+                });
             }
         },
 
@@ -564,13 +558,10 @@ const exporting: ExportingOptions = {
          */
         downloadPDF: {
             textKey: 'downloadPDF',
-            onclick: function (): void {
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                (async (): Promise<void> => {
-                    await this.exporting?.exportChart({
-                        type: 'application/pdf'
-                    });
-                })();
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChart({
+                    type: 'application/pdf'
+                });
             }
         },
 
@@ -579,13 +570,10 @@ const exporting: ExportingOptions = {
          */
         downloadSVG: {
             textKey: 'downloadSVG',
-            onclick: function (): void {
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                (async (): Promise<void> => {
-                    await this.exporting?.exportChart({
-                        type: 'image/svg+xml'
-                    });
-                })();
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChart({
+                    type: 'image/svg+xml'
+                });
             }
         }
 
