@@ -98,9 +98,9 @@ class MixedDistributionStrategy extends DistributionStrategy {
             const freeWidth =
                 vp.tbodyElement.clientWidth - this.calculateOccupiedWidth();
             const freeColumns =
-                (vp.grid.enabledColumns?.length || 0) - 
+                (vp.grid.enabledColumns?.length || 0) -
                 Object.keys(this.columnWidths).length;
-    
+
             // If undefined width:
             return Math.max(freeWidth / freeColumns, minWidth);
         }
@@ -148,7 +148,10 @@ class MixedDistributionStrategy extends DistributionStrategy {
         let occupiedWidth = 0;
         let unit: number, width: number;
 
-        for (const columnId in this.columnWidths) {
+        const columnIds = Object.keys(this.columnWidths);
+        let columnId: string;
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            columnId = columnIds[i];
             unit = this.columnWidthUnits[columnId];
 
             if (unit === 0) {
@@ -167,13 +170,13 @@ class MixedDistributionStrategy extends DistributionStrategy {
         return {
             ...super.exportMetadata(),
             columnWidthUnits: this.columnWidthUnits
-        }
+        };
     }
 
     public override importMetadata(
         metadata: MixedDistributionStrategy.Metadata
     ): void {
-        super.importMetadata(metadata, (colId) => {
+        super.importMetadata(metadata, (colId): void => {
             const unit = metadata.columnWidthUnits[colId];
             if (defined(unit)) {
                 this.columnWidthUnits[colId] = unit;
@@ -188,8 +191,15 @@ class MixedDistributionStrategy extends DistributionStrategy {
 
         if (
             !this.invalidated && (
-                newOptions.columnDefaults?.hasOwnProperty('width') ||
-                newOptions.columns?.some((col) => col?.hasOwnProperty('width'))
+                Object.hasOwnProperty.call(
+                    newOptions.columnDefaults || {}, 'width'
+                ) ||
+                newOptions.columns?.some(
+                    (col): boolean => Object.hasOwnProperty.call(
+                        col || {},
+                        'width'
+                    )
+                )
             )
         ) {
             this.invalidated = true;

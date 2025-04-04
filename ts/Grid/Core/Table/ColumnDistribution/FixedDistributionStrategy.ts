@@ -48,7 +48,7 @@ class FixedDistributionStrategy extends DistributionStrategy {
      *
      * */
 
-    public override readonly type: 'fixed' = 'fixed';
+    public override readonly type = 'fixed' as const;
 
 
     /* *
@@ -82,10 +82,12 @@ class FixedDistributionStrategy extends DistributionStrategy {
      * The element is appended to the viewport container and then removed.
      * It should be called only once for each column.
      *
+     * @param column
+     * The column for which the initial width is being calculated.
+     *
      * @returns The initial width of the column.
      */
     private getInitialColumnWidth(column: Column): number {
-        let result: number;
         const { viewport } = this;
 
         // Set the initial width of the column.
@@ -98,7 +100,7 @@ class FixedDistributionStrategy extends DistributionStrategy {
             mock.classList.add(...column.options.className.split(/\s+/g));
         }
 
-        result = mock.offsetWidth || 100;
+        const result = mock.offsetWidth || 100;
         mock.remove();
 
         return result;

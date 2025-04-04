@@ -48,7 +48,7 @@ class FullDistributionStrategy extends DistributionStrategy {
     *
     * */
 
-    public override readonly type: 'full' = 'full';
+    public override readonly type = 'full' as const;
 
     private allPreviousWidths: number = 0;
 
@@ -58,7 +58,7 @@ class FullDistributionStrategy extends DistributionStrategy {
     *  Methods
     *
     * */
-    
+
     public override loadColumn(column: Column): void {
         const width = this.getInitialColumnWidth(column);
         this.allPreviousWidths += width;
@@ -111,7 +111,7 @@ class FullDistributionStrategy extends DistributionStrategy {
      *
      * @param column
      * The column to measure the width.
-     * 
+     *
      * @param mock
      * The mock element to measure the width.
      */
@@ -142,14 +142,13 @@ class FullDistributionStrategy extends DistributionStrategy {
      * Creates a mock element to measure the width of the column from the CSS.
      * The element is appended to the viewport container and then removed.
      * It should be called only once for each column.
-     * 
+     *
      * @param column
      * The column to measure the width.
      *
      * @returns The initial width of the column.
      */
     private getInitialColumnWidth(column: Column): number {
-        let result: number;
         const { viewport } = column;
 
         // Set the initial width of the column.
@@ -162,7 +161,7 @@ class FullDistributionStrategy extends DistributionStrategy {
             mock.classList.add(...column.options.className.split(/\s+/g));
         }
 
-        result = this.getInitialFullDistWidth(column, mock);
+        const result = this.getInitialFullDistWidth(column, mock);
         mock.remove();
 
         return result;

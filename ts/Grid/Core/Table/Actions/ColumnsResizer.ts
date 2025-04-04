@@ -31,10 +31,7 @@ import Globals from '../../Globals.js';
 import Utils from '../../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const {
-    fireEvent,
-    getStyle
-} = Utils;
+const { fireEvent } = Utils;
 
 
 /* *
@@ -196,7 +193,7 @@ class ColumnsResizer {
         this.columnStartWidth = void 0;
         this.nextColumnStartWidth = void 0;
 
-        requestAnimationFrame(() => {
+        requestAnimationFrame((): void => {
             this.isResizing = false;
         });
     };
@@ -216,7 +213,6 @@ class ColumnsResizer {
     ): void {
         const onHandleMouseDown = (e: MouseEvent): void => {
             const vp = column.viewport;
-            const { grid } = vp;
 
             this.isResizing = true;
 

@@ -98,7 +98,7 @@ abstract class ColumnDistributionStrategy {
      * @param viewport
      * The table that the column distribution strategy is applied to.
      */
-    constructor (viewport: Table) {
+    constructor(viewport: Table) {
         this.viewport = viewport;
     }
 
@@ -127,7 +127,7 @@ abstract class ColumnDistributionStrategy {
      *
      * @param resizer
      * The columns resizer instance that is used to resize the column.
-     * 
+     *
      * @param diff
      * The X position difference in pixels.
      */
@@ -170,7 +170,7 @@ abstract class ColumnDistributionStrategy {
         return {
             type: this.type,
             columnWidths: this.columnWidths
-        }
+        };
     }
 
     /**
@@ -179,7 +179,7 @@ abstract class ColumnDistributionStrategy {
      *
      * @param metadata
      * The metadata to import.
-     * 
+     *
      * @param columnIterator
      * A function that is called for each significant column in the table.
      */
@@ -218,10 +218,13 @@ abstract class ColumnDistributionStrategy {
      * @param newOptions
      * The new options to validate.
      */
-    public validateOnUpdate(newOptions: Globals.DeepPartial<Options>) {
-        if (newOptions.rendering?.columns?.hasOwnProperty('distribution') && (
+    public validateOnUpdate(newOptions: Globals.DeepPartial<Options>): void {
+        if (
+            Object.hasOwnProperty.call(
+                newOptions.rendering?.columns || {}, 'distribution'
+            ) &&
             newOptions.rendering?.columns?.distribution !== this.type
-        )) {
+        ) {
             this.invalidated = true;
         }
     }
@@ -230,7 +233,7 @@ abstract class ColumnDistributionStrategy {
     /* *
      *
      * Static Methods
-     * 
+     *
      * */
 
     /**
@@ -265,7 +268,7 @@ abstract class ColumnDistributionStrategy {
 
 }
 
- 
+
 /* *
  *
  *  Default Export

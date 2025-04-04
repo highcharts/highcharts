@@ -22,14 +22,13 @@
  *
  * */
 
-import type { ColumnDistributionType } from '../Options';
 import type TableRow from './Content/TableRow';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
 import DataTable from '../../../Data/DataTable.js';
 import ColumnDistribution from './ColumnDistribution/ColumnDistribution.js';
-import ColumnDistributionStrategy from './ColumnDistribution/ColumnDistributionStrategy';
+import ColumnDistributionStrategy from './ColumnDistribution/ColumnDistributionStrategy.js';
 import Column from './Column.js';
 import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
@@ -169,7 +168,7 @@ class Table {
         const dgOptions = grid.options;
         const customClassName = dgOptions?.rendering?.table?.className;
 
-        this.columnDistribution = ColumnDistribution.createStrategy(this);
+        this.columnDistribution = ColumnDistribution.initStrategy(this);
         this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
 
         if (dgOptions?.rendering?.header?.enabled) {
@@ -288,7 +287,7 @@ class Table {
         const rowCount = Number(this.dataTable?.rowCount);
 
         if (rows?.virtualization !== (rowCount >= threshold)) {
-            this.grid.update();
+            void this.grid.update();
         }
     }
 
