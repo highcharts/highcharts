@@ -155,5 +155,9 @@ You can run `npm test` to test code changes with automated unit tests.
 For tests in a browser, run `npx gulp` and use then the `highcharts-utils`
 repository for a local test server.
 
+The default test browser is `FirefoxHeadless`, but you can also other browser
+except `ChromeHeadless`, which is since version 109 not suitable as it lacks a
+WebGL context as required by boost.
+
 For tests in a local npm-based project, run `npx gulp --dts` and then install in
 your project the local Highcharts repository with `npm i ../highcharts/code`.
