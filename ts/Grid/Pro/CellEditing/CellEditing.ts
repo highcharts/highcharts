@@ -143,6 +143,10 @@ class CellEditing {
             }
         }
 
+        // Hide notification
+        this.viewport.validator.hide();
+
+        // Hide input
         this.destroyInput();
         cell.htmlElement.classList.remove(
             Globals.getClassName('editedCell')

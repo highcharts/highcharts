@@ -185,23 +185,6 @@ class Validator {
     }
 
     /**
-     * Get all siblings like credits element that are below the errorbox.
-     * 
-     * @param element 
-     * @returns 
-     */
-    // private getSiblings(element?: HTMLElement): Array<Element> {
-    //     if (!element || !element.parentNode) return [];
-        
-    //     return Array
-    //         .from(element.parentNode.children)
-    //         .filter(
-    //             child => child !== element &&
-    //             !child.classList.contains(Validator.classNames.errorsContainer)
-    //         );
-    // }
-
-    /**
      * Set the position of the error box.
      */
     public setPosition(): void {
