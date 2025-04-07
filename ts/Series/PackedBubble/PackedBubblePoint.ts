@@ -25,6 +25,7 @@ import type PackedBubbleSeries from './PackedBubbleSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 const {
     seriesTypes: {
         bubble: {
@@ -144,6 +145,15 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
             chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
         } else {
             Point.prototype.select.apply(this, arguments);
+        }
+    }
+
+    public setState(
+        state?: (StatesOptionsKey|''),
+        move?: boolean
+    ): void {
+        if (this?.graphic?.parentGroup?.element) {
+            super.setState(state, move);
         }
     }
 
