@@ -21,11 +21,11 @@ import type { DragNodesPoint } from '../DragNodesComposition';
 import type NetworkgraphPoint from '../Networkgraph/NetworkgraphPoint';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 const {
     seriesTypes: {
         bubble: {
@@ -149,7 +149,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
     }
 
     public setState(
-        state?: (StatesOptionsKey|''),
+        state?: StatesOptionsKey,
         move?: boolean
     ): void {
         if (this?.graphic?.parentGroup?.element) {
