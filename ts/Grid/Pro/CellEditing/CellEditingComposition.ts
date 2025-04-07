@@ -27,6 +27,7 @@ import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Content/TableCell';
 import type { GridEvent } from '../../Core/GridUtils';
 import type Validator from '../ColumnTypes/Validator';
+import type ColumnDataType from '../ColumnTypes/ColumnDataType';
 
 import Defaults from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -335,11 +336,6 @@ declare module '../../Core/Options' {
  * The possible types of the edit message.
  */
 export type EditMsgType = 'started' | 'edited' | 'cancelled';
-
-/**
- * Data types of the column cells.
- */
-export type ColumnDataType = 'string' | 'number' | 'bool' | 'date';
 
 /* *
  *

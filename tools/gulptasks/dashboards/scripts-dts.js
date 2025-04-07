@@ -27,7 +27,8 @@ const DTS_FILES = [
     'Core/Renderer/HTML/HTMLAttributes.d.ts',
     'Core/Renderer/SVG/SVGAttributes.d.ts',
     'Core/Renderer/SVG/SVGPath.d.ts',
-    'Shared/LangOptionsCore.d.ts'
+    'Shared/LangOptionsCore.d.ts',
+    'Grid/Pro/ColumnTypes/ColumnDataType.d.ts'
 ].map(fsLib.path);
 
 
