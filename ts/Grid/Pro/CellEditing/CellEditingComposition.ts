@@ -312,19 +312,20 @@ declare module '../../Core/Options' {
 
     interface ColumnOptions {
         /**
-         * The data type of the column. Can be one of `string`, `number`, `boolean`
-         * or `date`.
+         * The data type of the column. Can be one of `string`, `number`,
+         * `boolean` or `date`.
          *
          * TODO: Add default (?)
-         * If not set, the data type is inferred from the first cell in the column.
-         * If the cell is empty, the default type is `string`.
+         * If not set, the data type is inferred from the first cell in the
+         * column. If the cell is empty, the default type is `string`.
          */
         dataType?: ColumnDataType;
 
         /**
          * Validation options for the column.
          *
-         * If not set, the validation rules are applied according to the data type.
+         * If not set, the validation rules are applied according to the data
+         * type.
          */
         validationRules?: (Validator.RuleKey|Validator.RuleDefinition)[];
     }

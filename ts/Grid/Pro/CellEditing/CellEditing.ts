@@ -137,10 +137,10 @@ class CellEditing {
                 vp.validator.initErrorBox(cell, validationErrors);
                 vp.validator.show();
                 return false;
-            } else {
-                vp.validator.hide();
-                vp.validator.errorCell = void 0;
             }
+
+            vp.validator.hide();
+            vp.validator.errorCell = void 0;
         }
 
         // Hide notification

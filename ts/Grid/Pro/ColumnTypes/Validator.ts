@@ -58,7 +58,7 @@ class Validator {
     /**
      * HTML Element for the errors.
      */
-    public errorsContainer: HTMLElement;
+    public notifContainer: HTMLElement;
 
 
     /* *
@@ -69,9 +69,9 @@ class Validator {
 
     constructor(viewport: Table) {
         this.viewport = viewport;
-        this.errorsContainer = makeDiv(Validator.classNames.errorsContainer);
+        this.notifContainer = makeDiv(Validator.classNames.notifContainer);
         this.viewport.grid.contentWrapper?.appendChild(
-            this.errorsContainer
+            this.notifContainer
         );
     }
 
@@ -106,7 +106,6 @@ class Validator {
         const rules = Array.from(validationRules || []);
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
-        // let err;
 
         if (dataType) {
             // TODO: Remove duplicates in rules array
@@ -151,7 +150,7 @@ class Validator {
         this.setPosition();
 
         // Set width and content
-        this.errorsContainer.innerHTML = errors.join('<br />');
+        this.notifContainer.innerHTML = errors.join('<br />');
 
         this.show();
     }
@@ -164,16 +163,26 @@ class Validator {
             Validator.classNames.editedCellError
         );
 
-        this.errorsContainer.classList.add('hcg-edited-cell-error-fadeIn');
+        this.notifContainer.classList.add(
+            Validator.classNames.notifError,
+            Validator.classNames.notifAnimation
+        );
     }
 
     /**
      * Hide the error and unset highlight on cell.
+     *
+     * @param hideErrorBox
+     * The flag that hides the error box.
+     *
      */
     public hide(
         hideErrorBox: boolean = true
     ): void {
-        this.errorsContainer.classList.remove('hcg-edited-cell-error-fadeIn');
+        this.notifContainer.classList.remove(
+            Validator.classNames.notifError,
+            Validator.classNames.notifAnimation
+        );
 
         if (hideErrorBox) {
             this.errorCell?.htmlElement.classList.remove(
@@ -181,7 +190,7 @@ class Validator {
             );
         }
 
-        this.errorsContainer.innerHTML = AST.emptyHTML;
+        this.notifContainer.innerHTML = AST.emptyHTML;
     }
 
     /**
@@ -203,12 +212,12 @@ class Validator {
             errorCellTop = errorCell.offsetTop - tableTop;
 
         if (errorCellTop > middlePoint) {
-            this.errorsContainer.style.top = // avoid header overlap
+            this.notifContainer.style.top = // Avoid header overlap
                 tableTop + (vp.theadElement?.offsetHeight || 0) + 'px';
-            this.errorsContainer.style.bottom = 'auto';
+            this.notifContainer.style.bottom = 'auto';
         } else {
-            this.errorsContainer.style.top = 'auto';
-            this.errorsContainer.style.bottom =
+            this.notifContainer.style.top = 'auto';
+            this.notifContainer.style.bottom =
                 contentWrapper.offsetHeight - tableTop - tableHeight + 'px';
         }
     }
@@ -218,7 +227,7 @@ class Validator {
      */
     public destroy(): void {
         this.errorCell = void 0;
-        this.errorsContainer.remove();
+        this.notifContainer.remove();
     }
 }
 
@@ -237,7 +246,9 @@ namespace Validator {
      * Global validation CSS classes.
      */
     export const classNames = {
-        errorsContainer: Globals.classNamePrefix + 'errors-container',
+        notifContainer: Globals.classNamePrefix + 'notification',
+        notifError: Globals.classNamePrefix + 'notification-error',
+        notifAnimation: Globals.classNamePrefix + 'notification-animation',
         editedCellError: Globals.classNamePrefix + 'edited-cell-error'
     };
 
@@ -261,7 +272,6 @@ namespace Validator {
     }
 
     export type RuleKey = keyof RulesRegistryType;
-
 
     /* *
      *

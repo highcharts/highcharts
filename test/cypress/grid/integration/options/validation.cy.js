@@ -3,7 +3,6 @@ describe('Grid Pro - validation.', () => {
         cy.visit('grid-pro/cypress/cell-editing');
     });
 
-
     it('Notification position.', () => {
 
         // Bottom position
