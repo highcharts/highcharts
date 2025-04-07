@@ -213,7 +213,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * @sample {highcharts} highcharts/series-treemap/headers
          *         Headers for parent nodes
          *
-         * @since next
+         * @since 12.2.0
          */
         headers: false,
         inside: true,
@@ -349,7 +349,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @sample    {highcharts} highcharts/series-treemap/grouppadding/
      *            Group padding
      * @type      {number}
-     * @since     next
+     * @since 12.2.0
      * @product   highcharts
      * @apioption plotOptions.treemap.groupPadding
      */
@@ -378,7 +378,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @sample    {highcharts} highcharts/series-treemap/nodesizeby/
      *            Node sizing
-     * @since     next
+     * @since 12.2.0
      * @type      {string}
      * @validvalue ["group", "leaf"]
      * @default   group
