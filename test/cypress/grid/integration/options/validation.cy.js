@@ -13,7 +13,7 @@ describe('Grid Pro - validation.', () => {
             .clear()
             .type('{enter}');
 
-        cy.get('.hcg-errors-container').eq(0)
+        cy.get('.hcg-notification-error').eq(0)
             .should('be.visible')
             .then(($errorContainer) => {
                 expect($errorContainer.position().top > 200)
@@ -32,7 +32,7 @@ describe('Grid Pro - validation.', () => {
             .clear()
             .type('{enter}');
 
-        cy.get('.hcg-errors-container').eq(0)
+        cy.get('.hcg-notification-error').eq(0)
             .should('be.visible')
             .then(($errorContainer) => {
                 expect($errorContainer.position().top < 200)
@@ -49,7 +49,7 @@ describe('Grid Pro - validation.', () => {
             .clear()
             .type('{enter}');
 
-        cy.get('.hcg-errors-container').eq(0)
+        cy.get('.hcg-notification-error').eq(0)
             .should('be.visible')
             .should('contain', 'empty') // First rule
             .should('contain', 'The value must contain "URL"') // Custom rule
@@ -65,7 +65,7 @@ describe('Grid Pro - validation.', () => {
             .clear()
             .type('{enter}');
         
-        cy.get('.hcg-errors-container').eq(0)
+        cy.get('.hcg-notification-error').eq(0)
             .should('be.visible')
             .should('contain', 'New value') // Lang rule
     });
