@@ -50,15 +50,48 @@ Grid.grid('container', {
         }
     },
     columns: [{
+        id: 'product',
+        dataType: 'string',
+        validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+    }, {
         id: 'numbers',
         dataType: 'number',
-        validationRules: ['notEmpty']
+        validationRules: [{
+            validate: 'notEmpty',
+            error: function () {
+                return 'Not empty formatter';
+            }
+        }, {
+            validate: 'number',
+            error: function () {
+                return 'New value for column: ' +
+                    this.column.id +
+                    ' should be number';
+            }
+        }]
     }, {
         id: 'price',
-        dataType: 'number'
+        dataType: 'number',
+        validationRules: ['notEmpty', {
+            validate: 'number',
+            error: 'Price should be number'
+        }]
     }, {
         id: 'booleans',
-        dataType: 'bool'
+        dataType: 'bool',
+        validationRules: [{
+            validate: 'notEmpty',
+            error: function () {
+                return 'Not empty formatter';
+            }
+        }, {
+            validate: 'bool',
+            error: function () {
+                return 'New value for column: ' +
+                    this.column.id +
+                    ' should be bool';
+            }
+        }]
     }, {
         id: 'icon',
         validationRules: ['notEmpty', {

@@ -29,9 +29,12 @@ import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
+import Utilities from '../../../Core/Utilities.js';
 
 const { makeDiv } = GridUtils;
-
+const {
+    isString
+} = Utilities;
 /* *
  *
  *  Class
@@ -103,13 +106,30 @@ class Validator {
         errors: string[] = []
     ): boolean {
         const { validationRules, dataType } = cell.column.options;
-        const rules = Array.from(validationRules || []);
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
+        let rules = Array.from(validationRules || []);
 
         if (dataType) {
-            // TODO: Remove duplicates in rules array
-            rules.push(...Validator.predefinedRules[dataType]);
+            // Remove duplicates in validationRules
+            const isArrayString = rules.every(rule => typeof rule === 'string');
+
+            if (isArrayString) {
+                rules = [...new Set(rules)];
+            } else {
+                const predefined = Validator.predefinedRules[dataType] || [];
+        
+                const hasPredefined = rules.some(
+                    rule =>
+                        typeof rule !== 'string' &&
+                        typeof rule.validate === 'string' &&
+                        predefined.includes(rule.validate)
+                );
+        
+                if (!hasPredefined) {
+                    rules.push(...predefined);
+                }
+            }
         }
 
         for (const rule of rules) {
@@ -123,10 +143,28 @@ class Validator {
                 ruleDef = rule;
             }
 
-            if (!ruleDef.validate.call(cell, value)) {
-                errors.push(
-                    err || ruleDef.error
-                );
+            let validateFn: Validator.ValidateFunction;
+
+            if (typeof ruleDef.validate === 'string') {
+                const predefinedRules = (
+                    Validator.rulesRegistry[ruleDef.validate]
+                 ) as Validator.RuleDefinition;
+                validateFn =
+                    predefinedRules?.validate as Validator.ValidateFunction;
+            } else {
+                validateFn = ruleDef.validate as Validator.ValidateFunction;
+            }
+            
+            if (typeof validateFn === 'function') {
+                const isValid = validateFn.call(cell, value);
+            
+                if (!isValid) {
+                    if (!err && typeof ruleDef.error === 'function') {
+                        err = ruleDef.error.call(cell);
+                    }
+            
+                    errors.push((err || ruleDef.error) as string);
+                }
             }
         }
 
@@ -258,9 +296,11 @@ namespace Validator {
 
     export type ValidateFunction = (this: TableCell, value: string) => boolean;
 
+    export type ValidationErrorFunction = (this: TableCell) => string;
+
     export interface RuleDefinition {
-        validate: ValidateFunction;
-        error: string;
+        validate: RulesRegistryType|ValidateFunction;
+        error: string|ValidationErrorFunction;
     }
 
     export interface RulesRegistryType {

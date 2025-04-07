@@ -123,15 +123,7 @@ declare module '../../Core/Options' {
          * If not set, the validation rules are applied according to the data
          * type.
          */
-        validationErrors?: validationErrors;
-    }
-    interface validationErrors {
-        notEmpty?: errorDefinition;
-        number?: errorDefinition;
-        bool?: errorDefinition;
-    }
-    interface errorDefinition {
-        error: string;
+        validationErrors?: Validator.RulesRegistryType;
     }
 }
 
