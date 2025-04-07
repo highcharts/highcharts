@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -387,6 +387,7 @@ class Tick {
     ): (SVGElement|undefined) {
         const axis = this.axis,
             { renderer, styledMode } = axis.chart,
+            whiteSpace = labelOptions.style.whiteSpace,
             label = defined(str) && labelOptions.enabled ?
                 renderer
                     .text(
@@ -400,13 +401,13 @@ class Tick {
 
         // Un-rotated length
         if (label) {
-            const whiteSpace = labelOptions.style.whiteSpace || 'normal';
-            // Without position absolute, IE export sometimes is wrong
             if (!styledMode) {
-                label.css(merge(labelOptions.style, { whiteSpace: 'nowrap' }));
+                label.css(merge(labelOptions.style));
             }
             label.textPxLength = label.getBBox().width;
-            if (!styledMode) {
+
+            // Apply the white-space setting after we read the full text width
+            if (!styledMode && whiteSpace) {
                 label.css({ whiteSpace });
             }
         }
@@ -822,23 +823,23 @@ class Tick {
             axisEnd = axisStart + axis.len,
             pxPos = horiz ? x : y;
 
-        // Anything that is not between `axis.pos` and `axis.pos + axis.length`
-        // should not be visible (#20166). The `correctFloat` is for reversed
-        // axes in Safari.
-        if (
-            !axis.chart.polar &&
-            tick.isNew &&
-            (correctFloat(pxPos) < axisStart || pxPos > axisEnd)
-        ) {
-            opacity = 0;
-        }
-
         const labelOpacity = pick(
             opacity,
             tick.label?.newOpacity, // #15528
             1
         );
-        opacity = pick(opacity, 1);
+
+        // Anything that is not between `axis.pos` and `axis.pos + axis.length`
+        // should not be visible (#20166). The `correctFloat` is for reversed
+        // axes in Safari.
+        if (
+            !axis.chart.polar &&
+            (correctFloat(pxPos) < axisStart || pxPos > axisEnd)
+        ) {
+            opacity = 0;
+        }
+
+        opacity ??= 1;
         this.isActive = true;
 
         // Create the grid line

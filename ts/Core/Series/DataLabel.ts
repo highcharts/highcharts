@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -111,6 +111,10 @@ declare module './SeriesLike' {
             alignTo?: BBoxObject,
             isNew?: boolean
         ): (boolean|undefined);
+        mergeArrays(
+            one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
+            two: (DataLabelOptions|Array<DataLabelOptions>|undefined)
+        ): (DataLabelOptions|Array<DataLabelOptions>);
         placeDataLabels?(): void;
         setDataLabelStartPos(
             point: ColumnPoint,
@@ -477,6 +481,7 @@ namespace DataLabel {
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
+            seriesProto.mergeArrays = mergeArrays;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
             seriesProto.hasDataLabels = hasDataLabels;
         }
@@ -564,7 +569,8 @@ namespace DataLabel {
             // Make the labels for each point
             points.forEach((point): void => {
 
-                const dataLabels = point.dataLabels || [];
+                const dataLabels = point.dataLabels || [],
+                    pointColor = point.color || series.color;
 
                 // Merge in series options for the point.
                 // @note dataLabelAttribs (like pointAttribs) would eradicate
@@ -639,8 +645,12 @@ namespace DataLabel {
                                 }
 
                                 point.contrastColor = renderer.getContrast(
-                                    labelBgColor !== 'auto' && labelBgColor ||
-                                    (point.color || series.color) as any
+                                    (
+                                        labelBgColor !== 'auto' &&
+                                        isString(labelBgColor) &&
+                                        labelBgColor
+                                    ) ||
+                                    (isString(pointColor) ? pointColor : '')
                                 );
 
                                 style.color = (
@@ -694,7 +704,11 @@ namespace DataLabel {
                         dataLabel && (
                             !labelEnabled ||
                             !defined(labelText) ||
-                            !!dataLabel.div !== !!labelOptions.useHTML ||
+                            // Changed useHTML value
+                            !!(
+                                dataLabel.div ||
+                                dataLabel.text?.foreignObject
+                            ) !== !!labelOptions.useHTML ||
                             (
                                 // Change from no rotation to rotation and
                                 // vice versa. Don't use defined() because
@@ -715,7 +729,6 @@ namespace DataLabel {
                     // disabled in the point options, or if they fall outside
                     // the plot area.
                     if (labelEnabled && defined(labelText)) {
-
                         if (!dataLabel) {
                             // Create new label element
                             dataLabel = renderer.label(

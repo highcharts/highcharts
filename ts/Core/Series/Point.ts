@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -208,6 +208,13 @@ class Point {
      *
      * @name Highcharts.Point#percentage
      * @type {number|undefined}
+     */
+
+    /**
+     * Array of all hovered points when using shared tooltips.
+     *
+     * @name Highcharts.Point#points
+     * @type {Array<Highcharts.Point>|undefined}
      */
 
     /**
@@ -702,6 +709,8 @@ class Point {
         this.id ??= uniqueKey();
 
         this.resolveColor();
+
+        this.dataLabelOnNull ??= series.options.nullInteraction;
 
         series.chart.pointCount++;
 

@@ -16,21 +16,30 @@
             text: 'AAPL Stock Price'
         },
 
+        tooltip: {
+            valueDecimals: 2,
+            valueSuffix: ' USD'
+        },
+
         series: [{
             name: 'AAPL Stock Price',
+            id: 'aapl',
             data: data,
             lineWidth: 0,
             marker: {
                 enabled: true,
                 radius: 2
             },
-            tooltip: {
-                valueDecimals: 2
-            },
             states: {
                 hover: {
                     lineWidthPlus: 0
                 }
+            }
+        }, {
+            type: 'trendline',
+            linkedTo: 'aapl',
+            marker: {
+                enabled: false
             }
         }]
     });

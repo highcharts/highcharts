@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Paweł Dalek
+ *  (c) 2010-2025 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highcharts Stock
  *
@@ -33,7 +33,7 @@ import type {
     VBPOptions,
     VBPParamsOptions
 } from './VBPOptions';
-import type { TypedArray } from '../../../Core/Series/SeriesOptions';
+import type Types from '../../../Shared/Types';
 import VBPPoint from './VBPPoint.js';
 
 import A from '../../../Core/Animation/AnimationUtilities.js';
@@ -652,7 +652,7 @@ class VBPIndicator extends SMAIndicator {
     // Specifying where each zone should start ans end
     public specifyZones(
         isOHLC: boolean,
-        xValues: Array<number>|TypedArray,
+        xValues: Array<number>|Types.TypedArray,
         yValues: Array<Array<number>>,
         ranges: number,
         volumeSeries: LineSeries
@@ -731,7 +731,7 @@ class VBPIndicator extends SMAIndicator {
         isOHLC: boolean,
         priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>,
         volumeSeries: LineSeries,
-        xValues: Array<number>|TypedArray,
+        xValues: Array<number>|Types.TypedArray,
         yValues: Array<Array<number>>
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         const indicator = this,

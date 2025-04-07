@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -46,7 +46,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TickPositionsArray from './TickPositionsArray';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
+import type Types from '../../Shared/Types';
 
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -215,7 +215,7 @@ class Axis {
     public bottom!: number;
     public categories?: Array<string>;
     public chart!: Chart;
-    public closestPointRange!: number;
+    public closestPointRange?: number;
     public coll!: AxisCollectionKey;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
@@ -620,6 +620,13 @@ class Axis {
 
         this.options = merge(
             sideSpecific,
+            // Merge in the default title for y-axis, which changes with
+            // language settings
+            this.coll === 'yAxis' ? {
+                title: {
+                    text: this.chart.options.lang.yAxisTitle
+                }
+            } : {},
             defaultOptions[this.coll] as AxisOptions,
             userOptions
         );
@@ -1309,7 +1316,7 @@ class Axis {
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
                 closestDataRange = getClosestDistance(
-                    axis.series.map((s): number[]|TypedArray => {
+                    axis.series.map((s): number[]|Types.TypedArray => {
                         const xData = s.getColumn('x');
                         // If xIncrement, we only need to measure the two first
                         // points to get the distance. Saves processing time.
@@ -1636,7 +1643,7 @@ class Axis {
             // The `closestPointRange` is the closest distance between points.
             // In columns it is mostly equal to pointRange, but in lines
             // pointRange is 0 while closestPointRange is some other value
-            if (isXAxis && closestPointRange) {
+            if (isXAxis) {
                 axis.closestPointRange = closestPointRange;
             }
         }
@@ -1957,7 +1964,11 @@ class Axis {
             !axis.series.some((s): boolean|undefined => !s.sorted) ?
                 axis.closestPointRange : 0
         );
-        if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
+        if (
+            !tickIntervalOption &&
+            minTickInterval &&
+            axis.tickInterval < minTickInterval
+        ) {
             axis.tickInterval = minTickInterval;
         }
 
@@ -2192,7 +2203,12 @@ class Axis {
 
         fireEvent(this, 'trimTicks');
 
-        if (!this.isLinked) {
+        if (
+            !this.isLinked ||
+            // Linked non-grid axes should trim ticks, #21743.
+            // Grid axis has custom handling of ticks.
+            !this.grid
+        ) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
                 this.min = roundedMin;
             } else {

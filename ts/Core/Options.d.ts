@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,7 @@ import type DataTableCore from '../Data/DataTableCore';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
 /* *
  *
@@ -33,20 +34,16 @@ export interface LabelsItemsOptions {
     style?: CSSObject;
 }
 
-export interface LangOptions {
-    decimalPoint?: string;
-    invalidDate?: string;
+export interface LangOptions extends LangOptionsCore {
+    chartTitle: string;
     loading: string;
-    locale?: string|Array<string>;
-    months?: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
+    pieSliceName: string;
     resetZoom: string;
     resetZoomTitle: string;
-    shortMonths?: Array<string>;
-    shortWeekdays?: Array<string>;
-    thousandsSep?: string;
-    weekdays?: Array<string>;
+    seriesName: string;
+    yAxisTitle: string;
     zoomIn?: string;
     zoomOut?: string;
 }

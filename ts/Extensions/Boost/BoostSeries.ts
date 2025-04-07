@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2025 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -31,7 +31,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
+import type Types from '../../Shared/Types';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import BoostableMap from './BoostableMap.js';
@@ -65,6 +65,7 @@ const {
     defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 
 /* *
  *
@@ -201,6 +202,7 @@ function boostEnabled(chart: Chart): boolean {
 function compose<T extends typeof Series>(
     SeriesClass: T,
     seriesTypes: typeof SeriesRegistry.seriesTypes,
+    PointClass: typeof Point,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
     if (pushUnique(composed, 'Boost.Series')) {
@@ -235,6 +237,28 @@ function compose<T extends typeof Series>(
         ).forEach((method): void =>
             wrapSeriesFunctions(seriesProto, seriesTypes, method)
         );
+        wrap(
+            PointClass.prototype,
+            'firePointEvent',
+            function (
+                this: typeof PointClass.prototype,
+                proceed,
+                type,
+                e
+            ): boolean | undefined {
+                if (type === 'click' && this.series.boosted) {
+                    const point = e.point;
+
+                    if (
+                        (point.dist || point.distX) >= (
+                            point.series.options.marker?.radius ?? 10
+                        )
+                    ) {
+                        return;
+                    }
+                }
+                return proceed.apply(this, [].slice.call(arguments, 1));
+            });
 
         // Set default options
         Boostables.forEach((type: string): void => {
@@ -588,7 +612,7 @@ function destroyGraphics(
  * Set to true to skip timeouts.
  */
 function eachAsync(
-    arr: Array<unknown>|TypedArray,
+    arr: Array<unknown>|Types.TypedArray,
     fn: Function,
     finalFunc: Function,
     chunkSize?: number,
@@ -769,7 +793,7 @@ function hasExtremes(
  */
 const getSeriesBoosting = (
     series: BoostSeriesComposition,
-    data?: Array<(PointOptions|PointShortOptions)>|TypedArray
+    data?: Array<(PointOptions|PointShortOptions)>|Types.TypedArray
 ): boolean => {
     // Check if will be grouped.
     if (series.forceCrop) {
@@ -1045,6 +1069,11 @@ function scatterProcessData(
     series.cropped = cropped;
     series.cropStart = 0;
     // For boosted points rendering
+    if (cropped && series.dataTable.modified === series.dataTable) {
+        // Calling setColumns with cropped data must be done on a new instance
+        // to avoid modification of the original (complete) data
+        series.dataTable.modified = new DataTableCore();
+    }
     series.dataTable.modified.setColumns({
         x: processedXData,
         y: processedYData
@@ -1093,14 +1122,15 @@ function seriesRenderCanvas(this: Series): void {
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
             (
-                this.getColumn('x', true).length ?
-                    this.getColumn('x', true) :
+                this.getColumn('x').length ?
+                    this.getColumn('x') :
                     void 0
             ) ||
             this.options.xData ||
             this.getColumn('x', true)
         ),
-        lineWidth = pick(options.lineWidth, 1);
+        lineWidth = pick(options.lineWidth, 1),
+        nullYSubstitute = options.nullInteraction && yMin;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1268,7 +1298,7 @@ function seriesRenderCanvas(this: Series): void {
         const chartDestroyed = typeof chart.index === 'undefined';
 
         let x: number,
-            y: number,
+            y,
             clientX,
             plotY,
             percentage,
@@ -1285,7 +1315,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData?.[i] as any;
+                y = yData[i] ?? nullYSubstitute ?? null;
             }
 
             // Resolve low and high for range series
@@ -1533,8 +1563,9 @@ function wrapSeriesProcessData(
     this: Series,
     proceed: Function
 ): void {
-    let dataToMeasure: (PointOptions|PointShortOptions)[]|TypedArray|undefined =
-        this.options.data;
+    let dataToMeasure: (
+        PointOptions|PointShortOptions
+    )[]|Types.TypedArray|undefined = this.options.data;
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
@@ -1566,7 +1597,7 @@ function wrapSeriesProcessData(
             }
 
             // Extra check for zoomed scatter data
-            if (isScatter && !series.yAxis.treeGrid) {
+            if (isScatter && series.yAxis.type !== 'treegrid') {
                 scatterProcessData.call(series, arguments[1]);
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));

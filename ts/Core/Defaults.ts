@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -124,8 +124,18 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * ```
+     *
+     * @optionparent lang
      */
     lang: {
+        weekFrom: 'week from',
+
+        /**
+         * The default chart title.
+         *
+         * @since 12.2.0
+         */
+        chartTitle: 'Chart title',
 
         /**
          * The browser locale to use for date and number formatting. The actual
@@ -165,6 +175,13 @@ const defaultOptions: DefaultOptions = {
          * @type    {Array<string>}
          */
         months: void 0,
+
+        /**
+         * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
+         *
+         * @since 12.2.0
+         */
+        seriesName: 'Series {add index 1}',
 
         /**
          * An array containing the months names in abbreviated form. Corresponds
@@ -257,6 +274,13 @@ const defaultOptions: DefaultOptions = {
         numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
 
         /**
+         * The default name for a pie slice (point).
+         * @since 12.2.0
+         */
+
+        pieSliceName: 'Slice',
+
+        /**
          * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
          * Use 10000 for Japanese, Korean and various Chinese locales, which
          * use symbols for 10^4, 10^8 and 10^12.
@@ -293,13 +317,18 @@ const defaultOptions: DefaultOptions = {
          *
          * @since 1.2.4
          */
+        /**
+         * The default title of the Y axis
+         *
+         * @since 12.2.0
+         */
+        yAxisTitle: 'Values',
         resetZoomTitle: 'Reset zoom level 1:1'
     },
 
     /**
-     * Global options that don't apply to each chart. These options, like
-     * the `lang` options, must be set using the `Highcharts.setOptions`
-     * method.
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
      *
      * ```js
      * Highcharts.setOptions({
@@ -649,7 +678,6 @@ const defaultOptions: DefaultOptions = {
          * @default {highstock} undefined
          */
         text: 'Chart title',
-
         /**
          * The horizontal alignment of the title. Can be one of "left", "center"
          * and "right".
@@ -721,6 +749,25 @@ const defaultOptions: DefaultOptions = {
      *         Subtitle options demonstrated
      */
     subtitle: {
+
+        /**
+         * The horizontal alignment of the subtitle. Can be one of "left",
+         * "center" and "right". Since v12, it defaults to `undefined`, meaning
+         * the actual alignment is inherited from the alignment of the main
+         * title.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title and subtitle alignment, dynamic
+         * @sample {highcharts} highcharts/subtitle/align/
+         *         Footnote at right of plot area
+         * @sample {highstock} stock/chart/subtitle-footnote
+         *         Footnote at bottom right of plot area
+         *
+         * @type  {Highcharts.AlignValue}
+         * @default undefined
+         * @since 2.0
+         * @apioption subtitle.align
+         */
 
         /**
          * When the subtitle is floating, the plot area will not move to make
@@ -851,25 +898,6 @@ const defaultOptions: DefaultOptions = {
          *         Formatted and linked text.
          */
         text: ''
-
-        /**
-         * The horizontal alignment of the subtitle. Can be one of "left",
-         * "center" and "right". Since v12, it defaults to `undefined`, meaning
-         * the actual alignment is inherited from the alignment of the main
-         * title.
-         *
-         * @sample {highcharts} highcharts/title/align-auto/
-         *         Default title and subtitle alignment, dynamic
-         * @sample {highcharts} highcharts/subtitle/align/
-         *         Footnote at right of plot area
-         * @sample {highstock} stock/chart/subtitle-footnote
-         *         Footnote at bottom right of plot area
-         *
-         * @type  {Highcharts.AlignValue}
-         * @default undefined
-         * @since 2.0
-         * @apioption subtitle.align
-         */
     },
 
     /**
@@ -2018,6 +2046,25 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Whether the tooltip should be fixed to one position in the chart, or
+         * located next to the point or mouse. When the tooltip is fixed, the
+         * position can be further specified with the
+         * [tooltip.position](#tooltip.position) options set.
+         *
+         * @sample    highcharts/tooltip/fixed/
+         *            Fixed tooltip and position options
+         * @sample    {highstock} stock/tooltip/fixed/
+         *            Stock chart with fixed tooltip
+         * @sample    {highmaps} maps/tooltip/fixed/
+         *            Map with fixed tooltip
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since 12.2.0
+         * @apioption tooltip.fixed
+         */
+
+        /**
          * Whether the tooltip should follow the mouse as it moves across
          * columns, pie slices and other point types with an extent.
          * By default it behaves this way for pie, polygon, map, sankey
@@ -2202,6 +2249,10 @@ const defaultOptions: DefaultOptions = {
          * xAxis header. xAxis header is not a point, instead `point` argument
          * contains info: `{ plotX: Number, plotY: Number, isHeader: Boolean }`
          *
+         * Since v12.2, the [tooltip.fixed](#tooltip.fixed) option combined with
+         * [tooltip.position](#tooltip.position) covers most of the use cases
+         * for custom tooltip positioning.
+         *
          * The return should be an object containing x and y values, for example
          * `{ x: 100, y: 100 }`.
          *
@@ -2215,6 +2266,8 @@ const defaultOptions: DefaultOptions = {
          *         Split tooltip with fixed positions
          * @sample {highstock} stock/tooltip/positioner-scrollable-plotarea/
          *         Scrollable plot area combined with tooltip positioner
+         *
+         * @see [position](#tooltip.position)
          *
          * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
@@ -2407,7 +2460,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             day: '%[AebY]',
             /** @internal */
-            week: 'Week from %[AebY]',
+            week: '%v %[AebY]',
             /** @internal */
             month: '%[BY]',
             /** @internal */
@@ -2462,6 +2515,86 @@ const defaultOptions: DefaultOptions = {
         padding: 8,
 
         /**
+         * Positioning options for fixed tooltip, taking effect only when
+         * [tooltip.fixed](#tooltip.fixed) is `true`.
+         *
+         * @sample {highcharts} highcharts/tooltip/fixed/
+         *         Fixed tooltip and position options
+         * @sample {highstock} stock/tooltip/fixed/
+         *         Stock chart with fixed tooltip
+         * @sample {highmaps} maps/tooltip/fixed/
+         *         Map with fixed tooltip
+         *
+         * @since 12.2.0
+         */
+        position: {
+            /**
+             * The horizontal alignment of the fixed tooltip.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             *
+             * @type {Highcharts.AlignValue}
+             * @default left
+             * @apioption tooltip.position.align
+             */
+            /**
+             * The vertical alignment of the fixed tooltip.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             *
+             * @type {Highcharts.VerticalAlignValue}
+             * @default top
+             * @apioption tooltip.position.verticalAlign
+             */
+            /**
+             * What the fixed tooltip alignment should be relative to.
+             *
+             * The default, `pane`, means that it is aligned within the plot
+             * area for that given series. If the tooltip is split (as default
+             * in Stock charts), each partial tooltip is aligned within the
+             * series' pane.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             *
+             * @type {string}
+             * @default pane
+             * @validvalue ["pane", "chart", "plotBox", "spacingBox"]
+             * @apioption tooltip.position.relativeTo
+             */
+            /**
+             * X pixel offset from the given position. Can be used to shy away
+             * from axis lines, grid lines etc to avoid the tooltip overlapping
+             * other elements.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             */
+            x: 0,
+            /**
+             * Y pixel offset from the given position. Can be used to shy away
+             * from axis lines, grid lines etc to avoid the tooltip overlapping
+             * other elements.
+             *
+             * @sample highcharts/tooltip/fixed/
+             *         Fixed tooltip
+             * @sample {highstock} stock/tooltip/fixed/
+             *         Stock chart with fixed tooltip
+             */
+            y: 3
+        },
+
+        /**
          * The name of a symbol to use for the border around the tooltip. Can
          * be one of: `"callout"`, `"circle"` or `"rect"`. When
          * [tooltip.split](#tooltip.split)
@@ -2473,10 +2606,14 @@ const defaultOptions: DefaultOptions = {
          * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
          * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
+         * Defaults to `callout` for floating tooltip, `rect` for
+         * [fixed](#tooltip.fixed) tooltip.
+         *
          * @type  {Highcharts.TooltipShapeValue}
          * @since 4.0
+         * @default undefined
+         * @apioption tooltip.shape
          */
-        shape: 'callout',
 
         /**
          * Shows information in the tooltip for all points with the same X
@@ -2552,8 +2689,10 @@ const defaultOptions: DefaultOptions = {
          * The HTML of the null point's line in the tooltip. Works analogously
          * to [pointFormat](#tooltip.pointFormat).
          *
+         * @sample {highcharts} highcharts/series/null-interaction
+         *         Line chart with null interaction
          * @sample {highcharts} highcharts/plotoptions/series-nullformat
-         *         Format data label and tooltip for null point.
+         *         Heatmap with null interaction
          *
          * @type      {string}
          * @apioption tooltip.nullFormat
@@ -2612,7 +2751,7 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The pixel width of the tooltip border. Defaults to 0 for single
-         * tooltips and 1 for split tooltips.
+         * tooltips and fixed tooltips, otherwise 1 for split tooltips.
          *
          * In styled mode, the stroke width is set in the
          * `.highcharts-tooltip-box` class.
@@ -2637,7 +2776,8 @@ const defaultOptions: DefaultOptions = {
         borderWidth: void 0,
 
         /**
-         * Whether to apply a drop shadow to the tooltip.
+         * Whether to apply a drop shadow to the tooltip. Defaults to true,
+         * unless the tooltip is [fixed](#tooltip.fixed).
          *
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
          *         True by default
@@ -2647,8 +2787,9 @@ const defaultOptions: DefaultOptions = {
          *         Fixed tooltip position, border and shadow disabled
          *
          * @type {boolean|Highcharts.ShadowOptionsObject}
+         * @default undefined
+         * @apioption tooltip.shadow
          */
-        shadow: true,
 
         /**
          * Prevents the tooltip from switching or closing when touched or
@@ -2824,7 +2965,7 @@ const defaultOptions: DefaultOptions = {
     }
 };
 
-const defaultTime = new Time(defaultOptions.time);
+const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
@@ -2870,6 +3011,13 @@ function setOptions(
         defaultTime.update({
             locale: options.lang.locale as string|Array<string>
         });
+    }
+
+    if (options.lang?.chartTitle) {
+        defaultOptions.title = {
+            ...defaultOptions.title,
+            text: options.lang.chartTitle
+        } as DefaultOptions['title'];
     }
 
     return defaultOptions;

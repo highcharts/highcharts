@@ -269,6 +269,28 @@ function getDirectoryPaths(directoryPath, includeSubDirectories) {
 }
 
 /**
+ * Get file content.
+ *
+ * @param {string} filePath
+ * File path to read from.
+ *
+ * @param {boolean} [asJSON]
+ * Whether to parse as JSON.
+ *
+ * @return {string|*}
+ * UTF-8 content or JSON.
+ */
+function getFile(filePath, asJSON) {
+    let data = FS.readFileSync(filePath, 'utf8');
+
+    if (asJSON) {
+        data = JSON.parse(data);
+    }
+
+    return data;
+}
+
+/**
  * Calculates the SHA256 hash of a files content.
  *
  * @param {string} filePath
@@ -547,7 +569,10 @@ function normalizePath(
     sourcePath = Path.posix.dirname(path(sourcePath, true));
     targetPath = path(targetPath, true);
 
-    if (!targetPath.startsWith('.')) {
+    if (
+        !targetPath.startsWith('./') &&
+        !targetPath.startsWith('../')
+    ) {
         targetPath = Path.posix.relative(sourcePath, targetPath);
     }
 
@@ -610,6 +635,24 @@ function path(
     return path;
 }
 
+/**
+ * Set file content.
+ *
+ * @param {string} filePath
+ * File path to write to.
+ *
+ * @param {string|*} [data]
+ * UTF-8 content or JSON.
+ */
+function setFile(filePath, data) {
+
+    if (typeof data !== 'string') {
+        data = JSON.stringify(data, null, 4);
+    }
+
+    FS.writeFileSync(filePath, data, 'utf8');
+
+}
 
 /* *
  *
@@ -625,6 +668,7 @@ module.exports = {
     deleteFile,
     getDirectoryHash,
     getDirectoryPaths,
+    getFile,
     getFileHash,
     getFilePaths,
     gzipFile,
@@ -636,5 +680,6 @@ module.exports = {
     moveAllFiles,
     normalizePath,
     parentPath,
-    path
+    path,
+    setFile
 };

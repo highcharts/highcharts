@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -128,13 +128,20 @@ class JSONConnector extends DataConnector {
             table
         });
 
-
         return Promise
             .resolve(
                 dataUrl ?
                     fetch(dataUrl).then(
-                        (json): Promise<any> => json.json()
-                    ) :
+                        (response): Promise<any> => response.json()
+                    )['catch']((error): void => {
+                        connector.emit<JSONConnector.Event>({
+                            type: 'loadError',
+                            detail: eventDetail,
+                            error,
+                            table
+                        });
+                        console.warn(`Unable to fetch data from ${dataUrl}.`); // eslint-disable-line no-console
+                    }) :
                     data || []
             )
             .then((data): Promise<Array<Array<number|string>>> => {
@@ -165,7 +172,6 @@ class JSONConnector extends DataConnector {
                 throw error;
             });
     }
-
 }
 
 /* *

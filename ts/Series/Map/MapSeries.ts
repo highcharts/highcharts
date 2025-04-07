@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ import type {
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type DataTable from '../../Data/DataTable';
 import type { MapDataType } from '../../Maps/GeoJSON';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
@@ -928,7 +929,7 @@ class MapSeries extends ScatterSeries {
                             merge(
                                 mapPoint,
                                 { value: null }
-                            ) as unknown as DataTableCore.RowObject
+                            ) as unknown as DataTable.RowObject
                         );
                         if (!this.useDataTable) {
                             processedData?.push(

@@ -70,10 +70,6 @@ h1#title {
     padding: 0 20px;
 }
 
-#dashboard-col-2 {
-    height: 323px;
-}
-
 #kpi-vitamin-a,
 #kpi-iron {
     flex: 1 1 100%;
