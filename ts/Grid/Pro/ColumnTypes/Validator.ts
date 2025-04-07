@@ -147,7 +147,7 @@ class Validator {
         this.errorCell = cell;
 
         // Set error container position
-        this.setPosition();
+        this.reflow();
 
         // Set width and content
         this.notifContainer.innerHTML = errors.join('<br />');
@@ -185,9 +185,7 @@ class Validator {
         );
 
         if (hideErrorBox) {
-            this.errorCell?.htmlElement.classList.remove(
-                Validator.classNames.editedCellError
-            );
+            this.errorCell = void 0;
         }
 
         this.notifContainer.innerHTML = AST.emptyHTML;
@@ -196,7 +194,7 @@ class Validator {
     /**
      * Set the position of the error box.
      */
-    public setPosition(): void {
+    public reflow(): void {
         const vp = this.viewport,
             errorCell = this.errorCell?.htmlElement,
             tableElement = vp.grid.tableElement,
