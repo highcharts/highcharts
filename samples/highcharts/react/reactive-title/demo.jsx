@@ -7,12 +7,30 @@ import {
     XAxis
 } from '@highcharts/react';
 
+function CountrySelect({ currentCountry, countryData, onChange }) {
+    return (
+        <div>
+            <h2>Select country</h2>
+            {Object.keys(countryData).map((countryName) => (
+                <label key={countryName}>
+                    <input
+                        type="radio"
+                        name="country"
+                        value={countryName}
+                        checked={currentCountry === countryName}
+                        onChange={() => onChange(countryName)}
+                    />
+                    {countryName}
+                </label>
+            ))}
+        </div>
+    );
+}
+
 function TitleFormat({ country }) {
     return (
-        <>
-            Fruit consumption in {country}
-        </>
-    )
+        <>Fruit consumption in <em>{country}</em></>
+    );
 }
 
 function ChartComponent() {
@@ -38,7 +56,6 @@ function ChartComponent() {
 
     return (
         <div>
-
             <Chart>
                 <Title>
                     <TitleFormat country={country} />
@@ -47,19 +64,11 @@ function ChartComponent() {
                 <Series type="column" data={countryData[country]} />
             </Chart>
 
-            <h2>Select country</h2>
-            {Object.keys(countryData).map((countryName) => (
-                <label key={countryName}>
-                    <input
-                        type="radio"
-                        name="country"
-                        value={countryName}
-                        checked={country === countryName}
-                        onChange={() => setCountry(countryName)}
-                    />
-                    {countryName}
-                </label>
-            ))}
+            <CountrySelect
+                currentCountry={country}
+                countryData={countryData}
+                onChange={(c) => setCountry(c)}
+            />
         </div>
     );
 }

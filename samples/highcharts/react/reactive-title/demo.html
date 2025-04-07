@@ -25,12 +25,30 @@
     <span class="hljs-title class_">XAxis</span>
 } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@highcharts/react&#x27;</span>;
 
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">CountrySelect</span>(<span class="hljs-params">{ currentCountry, countryData, onChange }</span>) {
+    <span class="hljs-keyword">return</span> (
+        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Select country<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+            {Object.keys(countryData).map((countryName) =&gt; (
+                <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{countryName}</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">input</span>
+                        <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;radio&quot;</span>
+                        <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;country&quot;</span>
+                        <span class="hljs-attr">value</span>=<span class="hljs-string">{countryName}</span>
+                        <span class="hljs-attr">checked</span>=<span class="hljs-string">{currentCountry</span> === <span class="hljs-string">countryName}</span>
+                        <span class="hljs-attr">onChange</span>=<span class="hljs-string">{()</span> =&gt;</span> onChange(countryName)}
+                    /&gt;
+                    {countryName}
+                <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+            ))}
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}
+
 <span class="hljs-keyword">function</span> <span class="hljs-title function_">TitleFormat</span>(<span class="hljs-params">{ country }</span>) {
     <span class="hljs-keyword">return</span> (
-        <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span>
-            Fruit consumption in {country}
-        <span class="hljs-tag">&lt;/&gt;</span></span>
-    )
+        <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span>Fruit consumption in <span class="hljs-tag">&lt;<span class="hljs-name">em</span>&gt;</span>{country}<span class="hljs-tag">&lt;/<span class="hljs-name">em</span>&gt;</span><span class="hljs-tag">&lt;/&gt;</span></span>
+    );
 }
 
 <span class="hljs-keyword">function</span> <span class="hljs-title function_">ChartComponent</span>(<span class="hljs-params"></span>) {
@@ -56,7 +74,6 @@
 
     <span class="hljs-keyword">return</span> (
         <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
-
             <span class="hljs-tag">&lt;<span class="hljs-name">Chart</span>&gt;</span>
                 <span class="hljs-tag">&lt;<span class="hljs-name">Title</span>&gt;</span>
                     <span class="hljs-tag">&lt;<span class="hljs-name">TitleFormat</span> <span class="hljs-attr">country</span>=<span class="hljs-string">{country}</span> /&gt;</span>
@@ -65,19 +82,11 @@
                 <span class="hljs-tag">&lt;<span class="hljs-name">Series</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;column&quot;</span> <span class="hljs-attr">data</span>=<span class="hljs-string">{countryData[country]}</span> /&gt;</span>
             <span class="hljs-tag">&lt;/<span class="hljs-name">Chart</span>&gt;</span>
 
-            <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Select country<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
-            {Object.keys(countryData).map((countryName) =&gt; (
-                <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{countryName}</span>&gt;</span>
-                    <span class="hljs-tag">&lt;<span class="hljs-name">input</span>
-                        <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;radio&quot;</span>
-                        <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;country&quot;</span>
-                        <span class="hljs-attr">value</span>=<span class="hljs-string">{countryName}</span>
-                        <span class="hljs-attr">checked</span>=<span class="hljs-string">{country</span> === <span class="hljs-string">countryName}</span>
-                        <span class="hljs-attr">onChange</span>=<span class="hljs-string">{()</span> =&gt;</span> setCountry(countryName)}
-                    /&gt;
-                    {countryName}
-                <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-            ))}
+            <span class="hljs-tag">&lt;<span class="hljs-name">CountrySelect</span>
+                <span class="hljs-attr">currentCountry</span>=<span class="hljs-string">{country}</span>
+                <span class="hljs-attr">countryData</span>=<span class="hljs-string">{countryData}</span>
+                <span class="hljs-attr">onChange</span>=<span class="hljs-string">{(c)</span> =&gt;</span> setCountry(c)}
+            /&gt;
         <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
     );
 }

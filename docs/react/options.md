@@ -47,6 +47,59 @@ With the `Tooltip` component, you can customise the information displayed using 
 If you prefer more flexibility, you can use React components and elements as children:
 
 ```jsx
+function TitleFormat({ country }) {
+    return (
+        <>Fruit consumption in <em>{country}</em></>
+    );
+}
+
+function ChartComponent() {
+    const countryData = {
+        Norway: [
+            ['Apples', 1],
+            ['Pears', 2],
+            ['Bananas', 3],
+            ['Oranges', 4]
+        ],
+        Sweden: [
+            ['Apples', 2],
+            ['Pears', 1],
+            ['Bananas', 5],
+            ['Oranges', 1]
+        ]
+    };
+
+    const [
+        country,
+        setCountry
+    ] = useState(Object.keys(countryData)[0]);
+
+    return (
+        <div>
+            <Chart>
+                <Title>
+                    <TitleFormat country={country} />
+                </Title>
+                <XAxis type="category" />
+                <Series type="column" data={countryData[country]} />
+            </Chart>
+
+            <CountrySelect
+                currentCountry={country}
+                countryData={countryData}
+                onChange={(c) => setCountry(c)}
+            />
+        </div>
+    );
+}
+```
+
+See [the full example here](https://www.highcharts.com/samples/embed/highcharts/react/reactive-title).
+
+
+If you want to bind specific elements within your component to specific options, you can use the `data-hc-option` attribute. This attribute allows you to specify which sub-option the element should be bound to. Here's an example:
+
+```jsx
 function TooltipFormat() {
   return (
     <>
