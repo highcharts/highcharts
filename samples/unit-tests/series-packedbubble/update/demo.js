@@ -164,5 +164,5 @@ QUnit.test('Testing hovering while updating (#22892)', function (assert) {
                 clearInterval(interval);
                 done();
             }
-        }, 500);
+        }, 50);
 });
