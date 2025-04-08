@@ -136,7 +136,7 @@ class Validator {
 
             if (typeof rule === 'string') {
                 ruleDef = Validator.rulesRegistry[rule];
-                err = validationErrors?.[rule]?.error;
+                err = validationErrors?.[rule]?.notification;
             } else {
                 ruleDef = rule;
             }
@@ -157,10 +157,10 @@ class Validator {
                 typeof validateFn === 'function' &&
                 !validateFn.call(cell, value)
             ) {
-                if (typeof ruleDef.error === 'function') {
-                    err = ruleDef.error.call(cell, value);
+                if (typeof ruleDef.notification === 'function') {
+                    err = ruleDef.notification.call(cell, value);
                 }
-                errors.push((err || ruleDef.error) as string);
+                errors.push((err || ruleDef.notification) as string);
             }
         }
 
@@ -299,7 +299,7 @@ namespace Validator {
 
     export interface RuleDefinition {
         validate: RulesRegistryType|ValidateFunction;
-        error: string|ValidationErrorFunction;
+        notification: string|ValidationErrorFunction;
     }
 
     export interface RulesRegistryType {
@@ -319,18 +319,18 @@ namespace Validator {
     export const rulesRegistry: RulesRegistryType = {
         notEmpty: {
             validate: (value: string): boolean => !!value,
-            error: 'Value cannot be empty.'
+            notification: 'Value cannot be empty.'
         },
         number: {
             validate: (value: string): boolean => !isNaN(Number(value)),
-            error: 'Value has to be a number.'
+            notification: 'Value has to be a number.'
         },
         bool: {
             validate: (value: string): boolean => (
                 value === 'true' || value === 'false' ||
                 Number(value) === 1 || Number(value) === 0
             ),
-            error: 'Value has to be a boolean.'
+            notification: 'Value has to be a boolean.'
         }
     };
 

@@ -20,13 +20,13 @@ Grid.grid('container', {
     lang: {
         validationErrors: {
             notEmpty: {
-                error: 'New value cannot be empty.'
+                notification: 'New value cannot be empty.'
             },
             number: {
-                error: 'New value has to be a number.'
+                notification: 'New value has to be a number.'
             },
             bool: {
-                error: 'New value has to be a boolean.'
+                notification: 'New value has to be a boolean.'
             }
         }
     },
@@ -58,12 +58,12 @@ Grid.grid('container', {
         dataType: 'number',
         validationRules: [{
             validate: 'notEmpty',
-            error: function () {
+            notification: function () {
                 return 'Not empty formatter';
             }
         }, {
             validate: 'number',
-            error: function (value) {
+            notification: function (value) {
                 return `New value <strong>${value}</strong> should be number`;
             }
         }]
@@ -72,7 +72,7 @@ Grid.grid('container', {
         dataType: 'number',
         validationRules: ['notEmpty', {
             validate: 'number',
-            error: 'Price should be number'
+            notification: 'Price should be number'
         }]
     }, {
         id: 'booleans',
@@ -84,7 +84,7 @@ Grid.grid('container', {
             validate: function (value) {
                 return value.indexOf('URL') !== -1;
             },
-            error: 'The value must contain "URL"'
+            notification: 'The value must contain "URL"'
         }]
     }]
 });

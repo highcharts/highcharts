@@ -15,8 +15,8 @@ describe('Grid Pro - validation.', () => {
 
         cy.get('.hcg-notification-error').eq(0)
             .should('be.visible')
-            .then(($errorContainer) => {
-                expect($errorContainer.position().top > 200)
+            .then(($notifContainer) => {
+                expect($notifContainer.position().top > 200)
             });
 
         cy.get(topCell)
@@ -34,8 +34,8 @@ describe('Grid Pro - validation.', () => {
 
         cy.get('.hcg-notification-error').eq(0)
             .should('be.visible')
-            .then(($errorContainer) => {
-                expect($errorContainer.position().top < 200)
+            .then(($notifContainer) => {
+                expect($notifContainer.position().top < 200)
             });
 
         cy.get(topCell)
