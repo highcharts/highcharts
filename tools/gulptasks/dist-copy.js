@@ -292,7 +292,8 @@ function distCopy() {
                 directory = Path.join(TARGET_DIRECTORY, product, 'code', 'i18n');
                 FsLib.copyAllFiles(
                     Path.join('i18n', 'highcharts'),
-                    directory, true, filePath => filePath.endsWith('.json')
+                    directory,
+                    true
                 );
                 LogLib.success('Created', directory);
             }
