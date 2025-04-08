@@ -112,3 +112,63 @@ QUnit.test('Series update', function (assert) {
         chart plot height, #20264.`
     );
 });
+
+
+QUnit.test('Testing hovering while updating', function (assert) {
+    const done = assert.async();
+
+    let count = 0;
+
+
+    const getChartOptions = count => ({
+        chart: {
+            type: 'packedbubble',
+            animation: false
+        },
+        plotOptions: {
+            packedbubble: {
+                layoutAlgorithm: {
+                    enableSimulation: false,
+                    gravitationalConstant: 0.05,
+                    splitSeries: true,
+                    seriesInteraction: false,
+                    dragBetweenSeries: true,
+                    parentNodeLimit: true
+                }
+            }
+        },
+        series: [
+            {
+                name: 'Series',
+                type: 'packedbubble',
+                data: Array.from({ length: count }).map((_, i) => ({
+                    name: '' + i,
+                    value: i
+                })),
+                layoutAlgorithm: {
+                    gravitationalConstant: 0.01
+                }
+            }
+        ]
+    });
+    const chart = Highcharts.chart('container', getChartOptions(count)),
+        hoverX = chart.plotLeft + (chart.chartWidth / 2),
+        hoverY = chart.plotTop + (chart.chartHeight / 2),
+        tc = new TestController(chart),
+        interval = setInterval(() => {
+            chart.update(getChartOptions(++count), true, true);
+
+            tc.moveTo(hoverX, hoverY);
+
+            if (count === 8) {
+                console.log(chart.hoverPoint.state);
+                assert.strictEqual(
+                    chart.hoverPoint.state,
+                    'hover',
+                    'Hovering a changing packedbubble series should work'
+                );
+                clearInterval(interval);
+                done();
+            }
+        }, 500);
+});
