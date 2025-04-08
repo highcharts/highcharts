@@ -114,52 +114,48 @@ QUnit.test('Series update', function (assert) {
 });
 
 
-QUnit.test('Testing hovering while updating', function (assert) {
-    const done = assert.async();
-
+QUnit.test('Testing hovering while updating (#22892)', function (assert) {
     let count = 0;
 
-
     const getChartOptions = count => ({
-        chart: {
-            type: 'packedbubble',
-            animation: false
-        },
-        plotOptions: {
-            packedbubble: {
-                layoutAlgorithm: {
-                    enableSimulation: false,
-                    gravitationalConstant: 0.05,
-                    splitSeries: true,
-                    seriesInteraction: false,
-                    dragBetweenSeries: true,
-                    parentNodeLimit: true
-                }
-            }
-        },
-        series: [
-            {
-                name: 'Series',
+            chart: {
                 type: 'packedbubble',
-                data: Array.from({ length: count }).map((_, i) => ({
-                    name: '' + i,
-                    value: i
-                })),
-                layoutAlgorithm: {
-                    gravitationalConstant: 0.01
+                animation: false
+            },
+            plotOptions: {
+                packedbubble: {
+                    layoutAlgorithm: {
+                        enableSimulation: false,
+                        splitSeries: true
+                    }
                 }
-            }
-        ]
-    });
-    const chart = Highcharts.chart('container', getChartOptions(count)),
+            },
+            series: [{
+                data: (() => {
+                    const data = [];
+                    for (let i = count; i; --i) {
+                        data.push(i);
+                    }
+                    return data;
+                })()
+            }]
+        }),
+        done = assert.async(),
+        chart = Highcharts.chart('container', getChartOptions(count)),
         hoverX = chart.plotLeft + (chart.chartWidth / 2),
         hoverY = chart.plotTop + (chart.chartHeight / 2),
         tc = new TestController(chart),
+
+        // Change chart config while simulating mouse hovering
+        // the center of the series
         interval = setInterval(() => {
             chart.update(getChartOptions(++count), true, true);
+
+            // We know we will hit either a bubble or the parentBubble
             tc.moveTo(hoverX, hoverY);
 
             if (count === 8) {
+                // Check that hovering worked
                 assert.strictEqual(
                     chart.hoverPoint.state,
                     'hover',
