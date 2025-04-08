@@ -84,7 +84,7 @@ function distGZip() {
     let streams = [];
     Object.keys(products).forEach(key => {
         const dirToZip = `${DIST_DIR}${products[key].distpath}/code`;
-        const files = glob.sync(`${dirToZip}/**/*+(.js|.css|.map)`);
+        const files = glob.sync(`${dirToZip}/**/*+(.js|.json|.css|.map)`);
 
         log.message(`Gzipping files for ${key}... `);
         streams = files.map(filename => {
