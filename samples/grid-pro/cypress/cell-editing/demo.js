@@ -7,6 +7,9 @@ Grid.grid('container', {
             ],
             numbers: [100, 40, 0.5, 200, 150, 120, 50, 30, 25, 200],
             price: [1.5, 2.53, 5, 4.5, 3, 2.8, 6, 4.2, 7, 3.5],
+            booleans: [
+                true, false, true, true, false, true, true, false, false, false
+            ],
             icon: [
                 'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
                 'Oranges URL', 'Grapes URL', 'Strawberries URL',
@@ -18,8 +21,28 @@ Grid.grid('container', {
         validationErrors: {
             notEmpty: {
                 error: 'New value cannot be empty.'
+            },
+            number: {
+                error: 'New value has to be a number.'
+            },
+            bool: {
+                error: 'New value has to be a boolean.'
             }
         }
+    },
+    rendering: {
+        rows: {
+            minVisibleRows: 5
+        }
+    },
+    caption: {
+        text: 'Loreum ipsum caption'
+    },
+    description: {
+        text: 'Loreum ipsum description'
+    },
+    credits: {
+        position: 'bottom'
     },
     columnDefaults: {
         cells: {
@@ -27,12 +50,36 @@ Grid.grid('container', {
         }
     },
     columns: [{
+        id: 'product',
+        dataType: 'string',
+        validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+    }, {
         id: 'numbers',
         dataType: 'number',
-        validationRules: ['notEmpty']
+        validationRules: [{
+            validate: 'notEmpty',
+            error: function () {
+                return 'Not empty formatter';
+            }
+        }, {
+            validate: 'number',
+            error: function () {
+                return 'New value for column: ' +
+                    this.column.id +
+                    ' should be number';
+            }
+        }]
     }, {
         id: 'price',
-        dataType: 'number'
+        dataType: 'number',
+        validationRules: ['notEmpty', {
+            validate: 'number',
+            error: 'Price should be number'
+        }]
+    }, {
+        id: 'booleans',
+        dataType: 'bool',
+        validationRules: ['notEmpty']
     }, {
         id: 'icon',
         validationRules: ['notEmpty', {
