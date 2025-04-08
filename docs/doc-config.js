@@ -32,14 +32,14 @@ module.exports = {
         { from: 'datagrid/header', to: 'grid/header' },
         { from: 'datagrid/events', to: 'grid/events' },
         { from: 'datagrid/performance', to: 'grid/performance' },
-        { from: 'datagrid/style-by-css', to: 'grid/style-by-css' },
+        { from: 'datagrid/style-by-css', to: 'grid/theming/theming' },
         { from: 'datagrid/accessibility', to: 'grid/accessibility' },
         { from: 'datagrid/datagrid-v2-migration', to: 'dashboards/grid-migration' },
         { from: 'datagrid/datagrid-with-angular', to: 'grid/wrappers/grid-with-angular' },
         { from: 'datagrid/datagrid-with-react', to: 'grid/wrappers/grid-with-react' },
         { from: 'datagrid/datagrid-with-vue', to: 'grid/wrappers/grid-with-vue' },
-        { from: 'dashboards/dashboards-with-angular', to: 'dashboards/wrappers/grid-with-angular' },
-        { from: 'dashboards/dashboards-with-react', to: 'dashboards/wrappers/grid-with-react' },
-        { from: 'dashboards/dashboards-with-vue', to: 'dashboards/wrappers/grid-with-vue' }
+        { from: 'dashboards/dashboards-with-angular', to: 'dashboards/wrappers/dashboards-with-angular' },
+        { from: 'dashboards/dashboards-with-react', to: 'dashboards/wrappers/dashboards-with-react' },
+        { from: 'dashboards/dashboards-with-vue', to: 'dashboards/wrappers/dashboards-with-vue' }
     ]
 };
