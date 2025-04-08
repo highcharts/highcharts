@@ -157,11 +157,9 @@ QUnit.test('Testing hovering while updating', function (assert) {
         tc = new TestController(chart),
         interval = setInterval(() => {
             chart.update(getChartOptions(++count), true, true);
-
             tc.moveTo(hoverX, hoverY);
 
             if (count === 8) {
-                console.log(chart.hoverPoint.state);
                 assert.strictEqual(
                     chart.hoverPoint.state,
                     'hover',
