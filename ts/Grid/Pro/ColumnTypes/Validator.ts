@@ -158,7 +158,7 @@ class Validator {
                 !validateFn.call(cell, value)
             ) {
                 if (typeof ruleDef.error === 'function') {
-                    err = ruleDef.error.call(cell);
+                    err = ruleDef.error.call(cell, value);
                 }
                 errors.push((err || ruleDef.error) as string);
             }
@@ -292,7 +292,10 @@ namespace Validator {
 
     export type ValidateFunction = (this: TableCell, value: string) => boolean;
 
-    export type ValidationErrorFunction = (this: TableCell) => string;
+    export type ValidationErrorFunction = (
+        this: TableCell,
+        value?: string
+    ) => string;
 
     export interface RuleDefinition {
         validate: RulesRegistryType|ValidateFunction;

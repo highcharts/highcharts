@@ -63,10 +63,8 @@ Grid.grid('container', {
             }
         }, {
             validate: 'number',
-            error: function () {
-                return 'New value for column: ' +
-                    this.column.id +
-                    ' should be number';
+            error: function (value) {
+                return `New value <strong>${value}</strong> should be number`;
             }
         }]
     }, {
