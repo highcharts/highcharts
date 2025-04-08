@@ -114,7 +114,7 @@ QUnit.test('Series update', function (assert) {
 });
 
 
-QUnit.test('Testing hovering while updating (#22892)', function (assert) {
+QUnit.test('Testing hovering while updating, #22892', function (assert) {
     let count = 0;
 
     const getChartOptions = count => ({
@@ -159,7 +159,7 @@ QUnit.test('Testing hovering while updating (#22892)', function (assert) {
                 assert.strictEqual(
                     chart.hoverPoint.state,
                     'hover',
-                    'Hovering a changing packedbubble series should work'
+                    'Hovering a changing packed bubble series should work'
                 );
                 clearInterval(interval);
                 done();
