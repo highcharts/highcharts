@@ -29,12 +29,8 @@ import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
-import Utilities from '../../../Core/Utilities.js';
 
 const { makeDiv } = GridUtils;
-const {
-    isString
-} = Utilities;
 /* *
  *
  *  Class
@@ -112,20 +108,22 @@ class Validator {
 
         if (dataType) {
             // Remove duplicates in validationRules
-            const isArrayString = rules.every(rule => typeof rule === 'string');
+            const isArrayString = rules.every(
+                (rule): Boolean => typeof rule === 'string'
+            );
 
             if (isArrayString) {
                 rules = [...new Set(rules)];
             } else {
                 const predefined = Validator.predefinedRules[dataType] || [];
-        
+
                 const hasPredefined = rules.some(
-                    rule =>
+                    (rule): Boolean =>
                         typeof rule !== 'string' &&
                         typeof rule.validate === 'string' &&
                         predefined.includes(rule.validate)
                 );
-        
+
                 if (!hasPredefined) {
                     rules.push(...predefined);
                 }
@@ -148,21 +146,20 @@ class Validator {
             if (typeof ruleDef.validate === 'string') {
                 const predefinedRules = (
                     Validator.rulesRegistry[ruleDef.validate]
-                 ) as Validator.RuleDefinition;
+                ) as Validator.RuleDefinition;
                 validateFn =
                     predefinedRules?.validate as Validator.ValidateFunction;
             } else {
                 validateFn = ruleDef.validate as Validator.ValidateFunction;
             }
-            
+
             if (typeof validateFn === 'function') {
                 const isValid = validateFn.call(cell, value);
-            
+
                 if (!isValid) {
                     if (!err && typeof ruleDef.error === 'function') {
                         err = ruleDef.error.call(cell);
                     }
-            
                     errors.push((err || ruleDef.error) as string);
                 }
             }
