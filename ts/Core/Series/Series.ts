@@ -1522,7 +1522,7 @@ class Series {
                         for (const key of Object.keys(pt.options)) {
                             if (key !== 'x') {
                                 columns[key] ||= new Array(dataLength);
-                                columns[key][i] = (pt as any).options[key];
+                                columns[key][i] = (pt as any)[key];
                             }
                         }
                         // Needed for 3d scatter because x is not part of
