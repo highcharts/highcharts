@@ -73,7 +73,7 @@ document.getElementById('addrow').addEventListener('click', e => {
 // method between old table and updated table, instead of working on options.
 // This could run either at the end of setData, or possibly within
 // generatePoints.
-document.getElementById('updaterow').addEventListener('click', e => {
+document.getElementById('updaterow').addEventListener('click', () => {
     dataTable.setRow({
         cost: Math.round(15 * Math.random()),
         revenue: Math.round(10 * Math.random())
