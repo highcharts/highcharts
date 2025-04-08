@@ -153,15 +153,14 @@ class Validator {
                 validateFn = ruleDef.validate as Validator.ValidateFunction;
             }
 
-            if (typeof validateFn === 'function') {
-                const isValid = validateFn.call(cell, value);
-
-                if (!isValid) {
-                    if (!err && typeof ruleDef.error === 'function') {
-                        err = ruleDef.error.call(cell);
-                    }
-                    errors.push((err || ruleDef.error) as string);
+            if (
+                typeof validateFn === 'function' &&
+                !validateFn.call(cell, value)
+            ) {
+                if (typeof ruleDef.error === 'function') {
+                    err = ruleDef.error.call(cell);
                 }
+                errors.push((err || ruleDef.error) as string);
             }
         }
 
