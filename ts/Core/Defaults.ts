@@ -133,7 +133,7 @@ const defaultOptions: DefaultOptions = {
         /**
          * The default chart title.
          *
-         * @since next
+         * @since 12.2.0
          */
         chartTitle: 'Chart title',
 
@@ -179,7 +179,7 @@ const defaultOptions: DefaultOptions = {
         /**
          * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
          *
-         * @since next
+         * @since 12.2.0
          */
         seriesName: 'Series {add index 1}',
 
@@ -275,7 +275,7 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The default name for a pie slice (point).
-         * @since next
+         * @since 12.2.0
          */
 
         pieSliceName: 'Slice',
@@ -320,7 +320,7 @@ const defaultOptions: DefaultOptions = {
         /**
          * The default title of the Y axis
          *
-         * @since next
+         * @since 12.2.0
          */
         yAxisTitle: 'Values',
         resetZoomTitle: 'Reset zoom level 1:1'
@@ -2060,7 +2060,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type      {boolean}
          * @default   false
-         * @since     next
+         * @since 12.2.0
          * @apioption tooltip.fixed
          */
 
@@ -2525,7 +2525,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/fixed/
          *         Map with fixed tooltip
          *
-         * @since next
+         * @since 12.2.0
          */
         position: {
             /**

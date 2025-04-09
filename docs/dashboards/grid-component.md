@@ -1,13 +1,14 @@
 # Grid Component
 
-The **Grid Component** can be placed inside a dashboard's cell to allow users to visualize the data in the editable table.
+**Highcharts Grid Pro** can be placed as a component inside a dashboard's cell to allow users to visualize the data a tabular format.
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/grid-component/grid-options" allow="fullscreen"></iframe>
 
 ## How to start
 
 ### 1. Import
-To use the **Grid Component** in **Dashboards**, you need to import the required modules, namely the [datagrid](https://code.highcharts.com/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js), to bind them together.
+To use **Grid Pro** as a component in Dashboards, you need to import the required modules, [datagrid.js](https://code.highcharts.com/dashboards/datagrid.js) and [dashboards.js](https://code.highcharts.com/dashboards/dashboards.js), and bind them together.
+
 The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Grid** module.
 
 ```html
