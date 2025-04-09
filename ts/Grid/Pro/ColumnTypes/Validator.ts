@@ -168,7 +168,7 @@ class Validator {
     }
 
     /**
-     * Set content and adjust the position.
+     * Set content of notification and adjust the position.
      *
      * @param cell
      * Cell that is currently edited and is not valid.
@@ -190,7 +190,7 @@ class Validator {
     }
 
     /**
-     * Highlight the non-valid cell and display error in the box.
+     * Highlight the non-valid cell and display error in the notification box.
      */
     public show(): void {
         this.errorCell?.htmlElement.classList.add(
@@ -204,10 +204,10 @@ class Validator {
     }
 
     /**
-     * Hide the error and unset highlight on cell.
+     * Hide the notification, error and unset highlight on cell.
      *
      * @param hideErrorBox
-     * The flag that hides the error box.
+     * The flag that hides the error on edited cell.
      *
      */
     public hide(
@@ -290,24 +290,39 @@ namespace Validator {
      *
      * */
 
+    /**
+     * Callback function that checks if field is valid.
+     */
     export type ValidateFunction = (this: TableCell, value: string) => boolean;
 
+    /**
+     * Callback function that returns a error message.
+     */
     export type ValidationErrorFunction = (
         this: TableCell,
         value?: string
     ) => string;
 
+    /**
+     * Definition of the validation rule that should container validate method
+     * and error message displayed in notification.
+     */
     export interface RuleDefinition {
         validate: RulesRegistryType|ValidateFunction;
         notification: string|ValidationErrorFunction;
     }
 
-    export interface RulesRegistryType {
+    /**
+     *  Definition of default validation rules.
+     */    export interface RulesRegistryType {
         notEmpty: RuleDefinition;
         number: RuleDefinition;
         bool: RuleDefinition;
     }
 
+    /**
+     * Type of rule: `notEmpty`, `number` or `bool`. 
+     */
     export type RuleKey = keyof RulesRegistryType;
 
     /* *
@@ -316,6 +331,9 @@ namespace Validator {
      *
      * */
 
+    /**
+     * Definition of default validation rules.
+     */
     export const rulesRegistry: RulesRegistryType = {
         notEmpty: {
             validate: (value: string): boolean => !!value,
@@ -334,6 +352,9 @@ namespace Validator {
         }
     };
 
+    /**
+     * Default validation rules for each dataType.
+     */
     export const predefinedRules: Record<ColumnDataType, RuleKey[]> = {
         number: ['number'],
         bool: ['bool'],

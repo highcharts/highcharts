@@ -53,7 +53,7 @@ Grid.grid('container', {
         id: 'product',
         dataType: 'string',
         // Gets default error message text or from lang (if defined)
-        validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+        validationRules: ['notEmpty']
     }, {
         id: 'numbers',
         dataType: 'number',
