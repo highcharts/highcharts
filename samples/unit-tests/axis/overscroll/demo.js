@@ -349,3 +349,31 @@ QUnit.test('Overscroll with rangeSelector (#22334)', function (assert) {
         'Percent overscroll correct range with rangeSelector enabled'
     );
 });
+
+QUnit.test('Panning with overscroll', function (assert) {
+    const data = [];
+    for (let i = 0; i < 100; i++) {
+        if (i % 10 !== 0) {
+            data.push([i, Math.sin(i)]);
+        }
+    }
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            overscroll: 10,
+            min: 78,
+            max: 98
+        },
+        series: [{
+            data
+        }]
+    });
+
+    const controller = new TestController(chart);
+    controller.pan([700, 200], [200, 200]);
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        109,
+        'Chart should pan to right extreme, where overscroll is set, #21606.'
+    );
+});
