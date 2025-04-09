@@ -649,7 +649,7 @@ namespace OrdinalAxis {
             // Make sure panning to the edges does not decrease the zoomed range
             if (
                 (min <= dataMin && movedUnits < 0) ||
-                (max + overscroll >= dataMax && movedUnits > 0)
+                (max >= dataMax + overscroll && movedUnits > 0)
             ) {
                 return;
             }
@@ -672,6 +672,14 @@ namespace OrdinalAxis {
                 // If we don't compensate for this, we will be allowed to pan
                 // grouped data series passed the right of the plot area.
                 ordinalPositions = extendedAxis.ordinal.positions;
+
+                if (overscroll) {
+                    ordinalPositions = extendedAxis.ordinal.positions =
+                        ordinalPositions.concat(
+                            xAxis.ordinal.getOverscrollPositions()
+                        );
+                }
+
                 if (
                     dataMax >
                     (ordinalPositions as any)[
