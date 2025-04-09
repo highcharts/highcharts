@@ -322,7 +322,7 @@ namespace Validator {
     }
 
     /**
-     * Type of rule: `notEmpty`, `number` or `bool`. 
+     * Type of rule: `notEmpty`, `number` or `bool`.
      */
     export type RuleKey = keyof RulesRegistryType;
 
