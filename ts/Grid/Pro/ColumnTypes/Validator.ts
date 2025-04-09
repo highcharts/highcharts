@@ -314,7 +314,8 @@ namespace Validator {
 
     /**
      *  Definition of default validation rules.
-     */    export interface RulesRegistryType {
+     */
+    export interface RulesRegistryType {
         notEmpty: RuleDefinition;
         number: RuleDefinition;
         bool: RuleDefinition;
