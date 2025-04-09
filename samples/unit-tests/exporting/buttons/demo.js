@@ -59,16 +59,16 @@ QUnit.test('Export buttons', function (assert) {
                         menuItems: [
                             {
                                 text: 'Export to PNG (small)',
-                                onclick: function () {
-                                    this.exporting.exportChart({
+                                onclick: async function () {
+                                    await this.exporting.exportChart({
                                         width: 250
                                     });
                                 }
                             },
                             {
                                 text: 'Export to PNG (large)',
-                                onclick: function () {
-                                    this.exporting.exportChart();
+                                onclick: async function () {
+                                    await this.exporting.exportChart();
                                 },
                                 separator: false
                             }
@@ -111,8 +111,8 @@ QUnit.test('Export buttons', function (assert) {
             buttons: {
                 contextButton: {
                     menuItems: null,
-                    onclick: function () {
-                        this.exporting.exportChart({
+                    onclick: async function () {
+                        await this.exporting.exportChart({
                             type: 'application/pdf'
                         });
                     }
