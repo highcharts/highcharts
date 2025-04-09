@@ -11,7 +11,7 @@
     },
     "plugins": [
         "brackets",
-        "highcharts",
+        "@highcharts/highcharts",
         "@typescript-eslint"
     ],
     "rules": {
@@ -120,13 +120,13 @@
         "@typescript-eslint/restrict-template-expressions": 1, // @todo
         "@typescript-eslint/semi": 2,
         "@typescript-eslint/unbound-method": 0, // @todo
-        "highcharts/doclet-apioption-last": 2,
-        "highcharts/no-highcharts-namespace": 1, // @todo
-        "highcharts/no-highcharts-object": 2,
-        "highcharts/no-mixin": 1, // @todo
-        "highcharts/no-private-constructor-doclet": 0,
-        "highcharts/no-wrap": 1, // @todo
-        "highcharts/quote-members": 2,
+        "@highcharts/highcharts/doclet-apioption-last": 2,
+        "@highcharts/highcharts/no-highcharts-namespace": 1, // @todo
+        "@highcharts/highcharts/no-highcharts-object": 2,
+        "@highcharts/highcharts/no-mixin": 1, // @todo
+        "@highcharts/highcharts/no-private-constructor-doclet": 0,
+        "@highcharts/highcharts/no-wrap": 1, // @todo
+        "@highcharts/highcharts/quote-members": 2,
         "jsdoc/check-alignment": 0,
         "jsdoc/check-param-names": 1,
         "jsdoc/check-tag-names": [
