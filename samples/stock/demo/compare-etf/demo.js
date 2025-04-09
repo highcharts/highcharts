@@ -96,10 +96,11 @@
 
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-                        '{series.name}: <b>{point.y} EUR</b> ' +
+                        '{series.name}</br> <b>{point.y} EUR</b> ' +
                         '({point.change}%)<br/>',
             valueDecimals: 2,
-            split: true
+            split: false,
+            fixed: true
         },
 
         series: [{
