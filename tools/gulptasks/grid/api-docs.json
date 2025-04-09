@@ -30,6 +30,8 @@
         "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
+
+        "../../../ts/Grid/Pro/ColumnTypes/Validator.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,
