@@ -150,6 +150,10 @@ class RenkoSeries extends ColumnSeries {
 
         this.renkoData = renkoData;
 
+        if (!this.useDataTable) {
+            this.processedData = renkoData;
+        }
+
         for (const point of renkoData) {
             processedXData.push(point.x);
             processedYData.push(point.y);
