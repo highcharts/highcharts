@@ -11,7 +11,6 @@ const commonOptions = {
 const NVIDIACorpId = '0P000003RE';
 
 const NVIDIAPriceConnector =
-    // eslint-disable-next-line no-undef
     new HighchartsConnectors.Morningstar.TimeSeriesConnector({
         ...commonOptions,
         series: {
@@ -82,29 +81,7 @@ const NVIDIAPriceConnector =
             headerShape: 'callout',
             borderWidth: 0,
             shadow: false,
-            positioner: function (width, height, point) {
-                const chart = this.chart;
-
-                if (point.formatPrefix === 'point') {
-                    return {
-                        x: point.series.chart.plotLeft,
-                        y: point.series.yAxis.top - chart.plotTop
-                    };
-                }
-
-                return {
-                    x: Math.max(
-                        // Left side limit
-                        chart.plotLeft,
-                        Math.min(
-                            point.plotX + chart.plotLeft - width / 2,
-                            // Right side limit
-                            chart.chartWidth - width - chart.marginRight
-                        )
-                    ),
-                    y: point.plotY
-                };
-            }
+            fixed: true
         },
         series: [{
             type: 'candlestick',

@@ -6,23 +6,25 @@ The Boost module is a stripped down renderer and a set of data handling modifica
 This document will guide you through your first steps with the Highcharts Boost module.
 
 Including the Boost module in your project
--------------------------------
+------------------------------------------
 
 The Boost module is a "renderer-in-a-module". Including [modules/boost.js](https://code.highcharts.com/modules/boost.js) will, by default, activate boost once the number of points or series exceed either of the [boost thresholds](#series-boosting-versus-chart-boosting) for all series that support it (line, column, bar, treemap, heatmap, scatter, bubble, area, areaspline, arearange, columnrange).
 
-If needed, boost can be disabled on a chart-by-chart basis by setting [boost.enabled](https://api.highcharts.com/highcharts/boost.enabled) to `false` in the chart configuration.
+If needed, boost can be disabled on a chart-by-chart basis by setting [`boost.enabled`](https://api.highcharts.com/highcharts/boost.enabled) to `false` in the chart configuration.
 
 **Note**: The Boost module should be included last. This is because it overrides both standard Highcharts functionality, and functionality in certain modules (namely treemap, heatmap, bubble, and scatter).
 
 ### With ES modules
 ```js
-import Highcharts from "highcharts";
-import HighchartsBoost from "highcharts/modules/boost";
-// Import order is important !
-HighchartsBoost(Highcharts);
+import Highcharts from 'highcharts';
+import HighchartsBoost from 'highcharts/modules/boost';
+typeof HighchartsBoost === 'function' && HighchartsBoost(Highcharts);
+```
 
-// Then you can use your Highcharts as usual
-
+For Highcharts from [version 12](https://www.highcharts.com/docs/getting-started/version-12), the import can be simplified to:
+```js
+import Highcharts from 'highcharts';
+import 'highcharts/modules/boost';
 ```
 
 Configuration Options
@@ -51,7 +53,7 @@ The main boost configuration is set in the `boost` property in the chart options
 _Configuration for a boosted line chart._
 
 Configuration Data Options
----------------------
+--------------------------
 
 In boost mode, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
 
@@ -60,7 +62,7 @@ Note that when `dataGrouping` is enabled (default in `stockChart`), boost mode w
 Series boosting versus chart boosting
 -------------------------------------
 
-There are two different ways of boosting charts - on a series-by-series level ([series.boostThreshold](https://api.highcharts.com/highcharts/plotOptions.series.boostThreshold)), and on the chart as a whole ([boost.seriesThreshold](https://api.highcharts.com/highcharts/boost.seriesThreshold)).
+There are two different ways of boosting charts - on a series-by-series level ([`series.boostThreshold`](https://api.highcharts.com/highcharts/plotOptions.series.boostThreshold)), and on the chart as a whole ([`boost.seriesThreshold`](https://api.highcharts.com/highcharts/boost.seriesThreshold)).
 
 The former works well in most cases, whereas the latter is meant for charts with large amounts of series (such as monitoring server clusters).
 
@@ -75,18 +77,21 @@ The Boost module contains a WebGL renderer that replaces parts of the SVG render
 
 * The largest caveat is that rectangles for column and bar charts are always drawn as a single 1 pixel wide line. This will likely not be the desired outcome when zoomed in to the level where each column/bar is visible as an individual entity. Thus, column and bar charts are more suited to series-level boosting.
 * The area of area and areaspline series are drawn as 1px columns. This works well with the intended way of using the Boost module, which is that it kicks in when the number of data points crosses the `boostThreshold`. But if the boost threshold is set too low, an area and areaspline charts will look like a column chart. This is a limitation that we are considering fixing. In addition to this, the _line_ itself is not rendered in area and areaspline series.
-* Marker shapes, apart from circles, are not supported
-* Dash style for lines is not supported
+* Marker shapes, apart from circles, are not supported.
+* Dash style for lines is not supported.
 * Stacking, and negative colors are not supported.
 * Line width is limited to 1px.
+* [`stickyTracking`](https://api.highcharts.com/highcharts/plotOptions.series.stickyTracking) is forced.
 
 The intended way of using the module, is to set thresholds in such a way that the SVG-renderer “takes over” rendering when zooming in. This approach gives the expected interactivity when the points are less dense, coupled with high performance when the point density is high.
+
+When mixing boosted and non-boosted series, setting [`stickyTracking`](https://api.highcharts.com/highcharts/plotOptions.series.stickyTracking) to `false` might cause the canvas to block interactions with underlying non-boosted series.
 
 Optimizing tips
 ---------------
 
 * Set the extremes ([min](https://api.highcharts.com/highcharts/xAxis.min) and [max](https://api.highcharts.com/highcharts/xAxis.max)) explicitly on the `xAxis` and `yAxis` in order for Highcharts to avoid computing the extremes. In a scatter chart with 1M points, this may reduce the rendering time by ~10%.
-* If the value increments on both the X and Y axis aren't small, consider setting [useGPUTranslations](https://api.highcharts.com/highcharts/boost.useGPUTranslations) to true. If you do this and the increments are small (e.g. datetime axis with small time increments) it may cause rendering issues due to floating point rounding errors, so this should be considered case by case.
+* If the value increments on both the X and Y axis aren't small, consider setting [`useGPUTranslations`](https://api.highcharts.com/highcharts/boost.useGPUTranslations) to true. If you do this and the increments are small (e.g. datetime axis with small time increments) it may cause rendering issues due to floating point rounding errors, so this should be considered case by case.
 
 
 Getting timing information
@@ -96,13 +101,13 @@ The Boost module has built-in timing measurements for seeing how different aspec
 
 There are five different probes that can be activated:
 
-*   WebGL initialization (`timeSetup`)
-*   Series processing (`timeSeriesProcessing`)
-*   K-d tree processing (`timeKDTree`)
-*   Buffer copy (`timeBufferCopy`)
-*   Rendering (`timeRendering`)
+*   WebGL initialization ([`timeSetup`](https://api.highcharts.com/highcharts/boost.debug.timeSetup))
+*   Series processing ([`timeSeriesProcessing`](https://api.highcharts.com/highcharts/boost.debug.timeSeriesProcessing))
+*   K-d tree processing ([`timeKDTree`](https://api.highcharts.com/highcharts/boost.debug.timeKDTree))
+*   Buffer copy ([`timeBufferCopy`](https://api.highcharts.com/highcharts/boost.debug.timeBufferCopy))
+*   Rendering ([`timeRendering`](https://api.highcharts.com/highcharts/boost.debug.timeRendering))
 
-All of the above settings are booleans set in the `debug` object on the `boost` property.
+All of the above settings are booleans set in the [`boost.debug`](https://api.highcharts.com/highcharts/boost.debug).
 
 Note that the K-d tree is build async, which means that it will not lock up the UI thread in the browser while in progress. It also happens after the chart is rendered. Because of this, there is a small delay after the chart is rendered before the hover tooltips are activated.
 

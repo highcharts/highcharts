@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ import type RangeSelector from '../RangeSelector/RangeSelector';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type Utilities from '../../Core/Utilities';
+import type ChartOptions from '../../Core/Chart/ChartOptions';
 
 /* *
  *
@@ -91,7 +92,9 @@ export interface NavigatorOptions extends BaseNavigatorOptions {
     top?: number;
 }
 
-export interface StandaloneNavigatorOptions extends BaseNavigatorOptions { }
+export interface StandaloneNavigatorOptions extends BaseNavigatorOptions {
+    chart: ChartOptions;
+}
 
 /* *
  *

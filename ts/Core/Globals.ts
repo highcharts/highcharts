@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -197,7 +197,7 @@ namespace Globals {
                 window :
                 {}
         ) as (Window&typeof globalThis), // eslint-disable-line node/no-unsupported-features/es-builtins
-        doc = win.document,
+        doc = win.document as (Document|undefined),
         svg = !!(
             doc?.createElementNS?.(SVG_NS, 'svg') as SVGSVGElement|undefined
         )?.createSVGRect,

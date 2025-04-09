@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,7 +17,8 @@
  * */
 
 import type Chart from './Chart/Chart';
-import type Time from './Time';
+import type TimeBase from '../Shared/TimeBase';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
 import D from './Defaults.js';
 const {
@@ -29,7 +30,6 @@ const {
     pageLang
 } = G;
 import U from './Utilities.js';
-import { LangOptionsCore } from './Options';
 const {
     extend,
     getNestedProperty,
@@ -553,9 +553,37 @@ namespace Templating {
     }
     export interface Owner {
         options?: OwnerOptions;
-        time?: Time;
+        time?: TimeBase;
         numberFormatter?: Function
     }
 }
 
 export default Templating;
+
+/* *
+ * API Declarations
+ * */
+
+/**
+ * @interface Highcharts.Templating
+ *
+ * The Highcharts.Templating interface provides a structure for defining
+ * helpers. Helpers can be used as conditional blocks or functions within
+ * expressions. Highcharts includes several built-in helpers and supports
+ * the addition of custom helpers.
+ *
+ * @see [More information](
+ * https://www.highcharts.com/docs/chart-concepts/templating#helpers)
+ *
+ * @example
+ * // Define a custom helper to return the absolute value of a number
+ * Highcharts.Templating.helpers.abs = value => Math.abs(value);
+ *
+ * // Usage in a format string
+ * format: 'Absolute value: {abs point.y}'
+ *
+ * @name Highcharts.Templating#helpers
+ * @type {Record<string, Function>}
+ */
+
+(''); // Keeps doclets above in file

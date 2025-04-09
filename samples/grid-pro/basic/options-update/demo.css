@@ -1,0 +1,28 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#demo {
+    padding: 8px;
+}
+
+#container {
+    height: 250px;
+}
+
+#update label {
+    margin-top: 8px;
+    display: block;
+}
+
+#update textarea {
+    display: block;
+    min-height: 250px;
+    min-width: 400px;
+    margin: 4px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    #demo {
+        background-color: #292929;
+        color: #fff;
+    }
+}

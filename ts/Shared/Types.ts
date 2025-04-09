@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -33,6 +33,23 @@ namespace Types {
     export type DeepPartial<T> = {
         [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
     };
+
+    /**
+     * Any typed array.
+     */
+    export type TypedArray = (
+        Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|
+        Int32Array|Uint32Array|Float32Array|Float64Array
+    );
+
+    /**
+     * Constructor of a typed array.
+     */
+    export type TypedArrayConstructor = (
+        Int8ArrayConstructor|Uint8ArrayConstructor|Uint8ClampedArrayConstructor|
+        Int16ArrayConstructor|Uint16ArrayConstructor|Int32ArrayConstructor|
+        Uint32ArrayConstructor|Float32ArrayConstructor|Float64ArrayConstructor
+    );
 
 }
 

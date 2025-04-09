@@ -108,7 +108,7 @@ run();
 Google Sheets is a spreadsheet application included in Google's free, web-based Google Docs Editors suite.
 
 With the `GoogleSheetsConnector` in Highcharts Dashboards, you can load tables from a Google spreadsheet into one of your dashboard 
-components, whether a DataGrid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing.
+components, whether a Grid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing.
 Alternatively, the data may be filtered or modified before it is parsed in the `beforeParse` callback.
 
 The connector requires two API keys: one for the Google Spreadsheets API and one for the document itself. In addition, the Google account owner must grant read access to the document. See the [GoogleSheetsConnector API](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) for further details.
@@ -202,7 +202,7 @@ This tutorial shows how to implement a `Custom Data Connector` for the
 ### About MQTT
 [MQTT](https://en.wikipedia.org/wiki/MQTT) is the de facto standard protocol for low-resource, low-power devices and is widely used in [IoT](https://en.wikipedia.org/wiki/Internet_of_things) applications across a wide range of industries: mobile internet, Smart Hardware, the Internet of Vehicles, Smart Cities, Telemedicine, Power, Oil, Energy, and other fields.
 
-The hub of the **MQTT** network infrastructure is the so-called broker, a server to which applications can send messages and where clients (e.g., a web application) can subscribe to a topic. MQTT is a protocol on top of **TCP/IP** and for web clients available as [WebSocket](https://en.wikipedia.org/wiki/WebSocket) or TCP.
+The hub of the **MQTT** network infrastructure is the so-called broker, a server to which applications can send messages and where clients (e.g., a web application) can subscribe to a topic. MQTT is a protocol on top of **TCP/IP** and for web clients available as [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) or TCP.
 
 ### MQTT data
 The **MQTT** data packet consists of a `topic` that uniquely defines a data set for a specific connection and a text payload. The payload is typically a **JSON** object, and the `MQTT custom connector` described in this tutorial supports JSON only.
@@ -273,7 +273,7 @@ The client options are the following:
 
 The `MQTTConnector` is implemented in a sample application that displays incoming data from two connectors, one for each MQTT topic.
 
-Each connector provides data for a `spline` chart and a `DataGrids` component. In addition, timestamped events and the raw data are displayed as unformatted text in a message log that resides outside the **Dashboards** container. The user may clear the log.
+Each connector provides data for a `spline` chart and a **Grid Component**. In addition, timestamped events and the raw data are displayed as unformatted text in a message log that resides outside the **Dashboards** container. The user may clear the log.
 
 The sample application relies on data being published to the two MQTT topics (*highcharts/topic1* and *highcharts/topic2*). The payload of the MQTT packet must be in a specific format to work correctly (see the example below).
 
