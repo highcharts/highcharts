@@ -606,8 +606,7 @@ namespace OrdinalAxis {
         let runBase = false;
 
         if (
-            panning &&
-            panning.type !== 'y' &&
+            panning?.type !== 'y' &&
             xAxis.options.ordinal &&
             xAxis.series.length &&
             // On touch devices, let default function handle the pinching
@@ -673,20 +672,15 @@ namespace OrdinalAxis {
                 // grouped data series passed the right of the plot area.
                 ordinalPositions = extendedAxis.ordinal.positions;
 
-                if (overscroll) {
+                if (overscroll) { // #21606
                     ordinalPositions = extendedAxis.ordinal.positions =
                         ordinalPositions.concat(
                             xAxis.ordinal.getOverscrollPositions()
                         );
                 }
 
-                if (
-                    dataMax >
-                    (ordinalPositions as any)[
-                        (ordinalPositions as any).length - 1
-                    ]
-                ) {
-                    (ordinalPositions as any).push(dataMax);
+                if (dataMax > ordinalPositions[ordinalPositions.length - 1]) {
+                    ordinalPositions.push(dataMax);
                 }
 
                 // Get the new min and max values by getting the ordinal index
@@ -736,8 +730,8 @@ namespace OrdinalAxis {
 
         // Revert to the linear chart.pan version
         if (runBase || (panning && /y/.test(panning.type))) {
-            if (overscroll) {
-                xAxis.max = (xAxis.dataMax as any) + overscroll;
+            if (overscroll && isNumber(xAxis.dataMax)) {
+                xAxis.max = xAxis.dataMax + overscroll;
             }
         } else {
             e.preventDefault();
