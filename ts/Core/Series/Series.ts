@@ -261,7 +261,8 @@ class Series {
         'eventOptions',
         'navigatorSeries',
         'symbolIndex',
-        'baseSeries'
+        'baseSeries',
+        'useDataTable'
     ];
 
     /**
