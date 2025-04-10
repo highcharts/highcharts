@@ -546,6 +546,7 @@ class Grid {
             this.initVirtualization();
         }
 
+        this.viewport?.columnDistribution.validateOnUpdate(options);
         this.querying.loadOptions();
 
         if (render) {
@@ -805,11 +806,9 @@ class Grid {
 
         this.accessibility?.setA11yOptions();
 
-        if (this.viewport?.virtualRows) {
-            this.viewport.reflow();
-        }
-
         fireEvent(this, 'afterRenderViewport');
+
+        this.viewport?.reflow();
     }
 
     /**

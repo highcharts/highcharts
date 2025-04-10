@@ -60,13 +60,13 @@ namespace CreditsProComposition {
             credits: CreditsPro.defaultOptions
         });
 
-        addEvent(GridClass, 'afterRenderViewport', initCreditsComposition);
+        addEvent(GridClass, 'afterRenderViewport', initCredits);
     }
 
     /**
      * Callback function called before table initialization.
      */
-    function initCreditsComposition(this: Grid): void {
+    function initCredits(this: Grid): void {
         this.credits = new CreditsPro(this, this.options?.credits);
     }
 }

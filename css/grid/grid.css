@@ -315,6 +315,7 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    overflow: hidden;
     border: var(--ig-border);
     background: var(--ig-background);
     table-layout: fixed;
@@ -362,8 +363,8 @@
     text-overflow: ellipsis;
 }
 
-.hcg-resizer-content thead,
-.hcg-resizer-content tbody {
+.hcg-resizable-content thead,
+.hcg-resizable-content tbody {
     display: block;
     overflow: hidden;
     width: 100%;
@@ -385,7 +386,7 @@
     border-bottom-right-radius: var(--ig-border-radius);
 }
 
-.hcg-resizer-content tr {
+.hcg-resizable-content tr {
     width: 100%;
 }
 
