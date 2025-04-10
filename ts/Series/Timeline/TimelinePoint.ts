@@ -250,7 +250,8 @@ class TimelinePoint extends LinePoint {
 
     public applyOptions(
         options: (PointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): Point {
         const isNull = (
                 this.isNull ||
@@ -276,10 +277,12 @@ class TimelinePoint extends LinePoint {
             )
         );
 
-        const p = super.applyOptions(options, x);
+        const p = super.applyOptions(options, x, isMock);
 
-        this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
-        p.isNull = isNull;
+        if (!isMock) {
+            this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
+            p.isNull = isNull;
+        }
 
         return p;
     }

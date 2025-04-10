@@ -24,7 +24,7 @@
  * */
 
 import type CircleObject from '../../Core/Geometry/CircleObject';
-import DataTableCore from '../../Data/DataTableCore';
+import type DataTableCore from '../../Data/DataTableCore';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type VennPointOptions from './VennPointOptions';
 
@@ -836,14 +836,15 @@ function nelderMead(
  */
 function processVennData(
     // @todo: Remove VennPointOptions when useDataTable is remvoed
-    dataTable: DataTableCore|Array<VennPointOptions>,
+    dataTable: DataTableCore|Array<VennPointOptions>|undefined,
     splitter: string
 ): Array<VennRelationObject> {
-    const rows: Array<VennPointOptions> = dataTable instanceof DataTableCore ?
-        new Array(dataTable.rowCount)
+    const rows: Array<VennPointOptions> = (dataTable as DataTableCore)?.columns ?
+        new Array((dataTable as DataTableCore).rowCount)
             .fill(void 0)
             .map((_, i): VennPointOptions =>
-                dataTable.getRowObject(i) as unknown as VennPointOptions
+                (dataTable as DataTableCore)
+                    .getRowObject(i) as unknown as VennPointOptions
             ) :
         (isArray(dataTable) ? dataTable : []);
 

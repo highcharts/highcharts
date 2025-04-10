@@ -307,12 +307,17 @@ class Point {
      * @param {number} [x]
      *        Optionally, the x value.
      *
+     * @param {boolean} [isMock]
+     *        If true, the point is not a real instance, but a mock object
+     *        created for handling data. Avoid some logic.
+     *
      * @return {Highcharts.Point}
      *         The Point instance.
      */
     public applyOptions(
         options: (PointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): Point {
         const point = this,
             series = point.series,
@@ -327,15 +332,6 @@ class Point {
             extend(point.options, options as any) :
             options;
 
-        // Since options are copied into the Point instance, some accidental
-        // options must be shielded (#5681)
-        if ((options as any).group) {
-            delete (point as any).group;
-        }
-        if (options.dataLabels) {
-            delete point.dataLabels;
-        }
-
         /**
          * The y value of the point.
          * @name Highcharts.Point#y
@@ -348,11 +344,6 @@ class Point {
                 point,
                 pointValKey
             ) as (number|null|undefined);
-        }
-
-        // The point is initially selected by options (#5777)
-        if (point.selected) {
-            point.state = 'select';
         }
 
         /**
@@ -384,9 +375,26 @@ class Point {
             }
         }
 
-        point.isNull = this.isValid && !this.isValid();
+        if (!isMock) {
+            // The point is initially selected by options (#5777)
+            if (point.selected) {
+                point.state = 'select';
+            }
 
-        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
+            // Since options are copied into the Point instance, some accidental
+            // options must be shielded (#5681)
+            if ((options as any).group) {
+                delete (point as any).group;
+            }
+            if (options.dataLabels) {
+                delete point.dataLabels;
+            }
+
+            point.isNull = this.isValid && !this.isValid();
+
+            // #9233, #10874
+            point.formatPrefix = point.isNull ? 'null' : 'point';
+        }
 
         return point;
     }

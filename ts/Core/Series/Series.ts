@@ -1517,7 +1517,7 @@ class Series {
                     } as DataTable.ColumnCollection;
                     for (i = 0; i < dataLength; i++) {
                         const pt = series.pointClass.prototype.applyOptions
-                            .apply({ series }, [data[i]]);
+                            .call({ series }, data[i], void 0, true);
                         columns.x[i] = pt.x;
                         for (const key of Object.keys(pt.options)) {
                             if (key !== 'x') {
