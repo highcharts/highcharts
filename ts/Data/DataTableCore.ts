@@ -278,13 +278,20 @@ class DataTableCore {
      * Output the table in the console.
      * @todo remove/comment out this method before production
      */
-    public log(limit = Infinity): void {
-        /* eslint-disable-next-line no-console */
+    public log(limit = 10, start = 0, msg = ''): void {
+        /* eslint-disable no-console */
+        console.group(
+            (msg ? msg + ' / ' : '') + `Limit: ${limit}, Start: ${start}`
+        );
         console.table(
             new Array(Math.min(this.rowCount, limit))
                 .fill(void 0)
-                .map((_, i): DataTable.RowObject => this.getRowObject(i) || {})
+                .map((_, i): DataTable.RowObject =>
+                    this.getRowObject(i + start) || {}
+                )
         );
+        console.groupEnd();
+        /* eslint-enable no-console */
     }
 
     /**

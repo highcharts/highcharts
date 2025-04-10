@@ -1636,11 +1636,6 @@ class Series {
 
             // Test for DataTable-based data handling
             if (this.useDataTable) {
-                /* eslint-disable-next-line no-console */
-                console.group(`@setData: ${series.name}, ${table.rowCount} rows`);
-                table.log(10);
-                /* eslint-disable-next-line no-console */
-                console.groupEnd();
                 data = void 0;
             }
 
