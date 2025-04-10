@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,7 +22,7 @@ import type FlagSeries from '../../Series/Flags/FlagsSeries';
 import type Point from '../Series/Point.js';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
+import type Types from '../../Shared/Types';
 
 import Axis from './Axis.js';
 import DataTableCore from '../../Data/DataTableCore.js';
@@ -50,16 +50,6 @@ const {
 declare module './AxisComposition' {
     interface AxisComposition {
         ordinal?: OrdinalAxis.Additions;
-        /** @deprecated */
-        getTimeTicks(
-            normalizedInterval: Time.TimeNormalizedObject,
-            min: number,
-            max: number,
-            startOfWeek?: number,
-            positions?: Array<number>|TypedArray,
-            closestDistance?: number,
-            findHigherRanks?: boolean
-        ): TickPositionsArray;
         /** @deprecated */
         lin2val(val: number): number;
         /** @deprecated */
@@ -112,7 +102,7 @@ namespace OrdinalAxis {
             min: number,
             max: number,
             startOfWeek: number,
-            positions?: Array<number>|TypedArray,
+            positions?: Array<number>|Types.TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;

@@ -22,10 +22,12 @@
         "../../../ts/Dashboards/EditMode/Toolbar/RowEditToolbar.ts",
         "../../../ts/Dashboards/EditMode/Toolbar/SidebarEditToolbar.ts",
         "../../../ts/Dashboards/EditMode/SidebarPopup.ts",
+        "../../../ts/Dashboards/EditMode/EditGlobals.ts",
 
         // Components
         "../../../ts/Dashboards/Components/Component.ts",
         "../../../ts/Dashboards/Components/ComponentOptions.ts",
+        "../../../ts/Dashboards/Components/ComponentType.d.ts",
         "../../../ts/Dashboards/Components/ConnectorHandler.ts",
         "../../../ts/Dashboards/Components/EditableOptions.ts",
         "../../../ts/Dashboards/Components/HTMLComponent/HTMLComponent.ts",
@@ -67,36 +69,6 @@
         "../../../ts/Data/DataPoolOptions.ts",
         "../../../ts/Data/DataTable.ts",
         "../../../ts/Data/DataTableOptions.ts",
-
-        // DataGrid
-        "../../../ts/DataGrid/DataGrid.ts",
-        "../../../ts/DataGrid/Defaults.ts",
-        "../../../ts/DataGrid/Options.ts",
-        "../../../ts/DataGrid/Table/Cell.ts",
-        "../../../ts/DataGrid/Table/Column.ts",
-        "../../../ts/DataGrid/Table/Row.ts",
-        "../../../ts/DataGrid/Table/Table.ts",
-        "../../../ts/DataGrid/Table/Header/TableHeader.ts",
-        "../../../ts/DataGrid/Globals.ts",
-        "../../../ts/DataGrid/Utils.ts",
-
-        // DataGrid - Header
-        "../../../ts/DataGrid/Header/HeaderCell.ts",
-        "../../../ts/DataGrid/Header/HeaderRow.ts",
-        "../../../ts/DataGrid/Header/TableHeader.ts",
-
-        // DataGrid - Content
-        "../../../ts/DataGrid/Content/TableCell.ts",
-        "../../../ts/DataGrid/Content/TableRow.ts",
-
-        "../../../ts/DataGrid/Table/Actions/CellEditing.ts",
-        "../../../ts/DataGrid/Table/Actions/ColumnsResizer.ts",
-        "../../../ts/DataGrid/Table/Actions/ColumnSorting.ts",
-        "../../../ts/DataGrid/Table/Actions/RowsVirtualizer.ts",
-
-        // DataGrid - A11y
-        "../../../ts/DataGrid/Accessibility/A11yOptions.ts",
-        "../../../ts/DataGrid/Accessibility/Accessibility.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,

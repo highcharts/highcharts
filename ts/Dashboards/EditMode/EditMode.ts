@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -159,7 +159,7 @@ class EditMode {
             );
             this.isEditOverlayActive = false;
 
-            board.fullscreen = new Dashboards.FullScreen(board);
+            board.fullscreen = new Dashboards.Fullscreen(board);
 
             if (this.customHTMLMode) {
                 board.container.classList.add(

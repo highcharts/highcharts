@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -140,7 +140,7 @@ class PiePoint extends Point {
     ) {
         super(series, options, x);
 
-        this.name ??= 'Slice';
+        this.name ??= series.chart.options.lang.pieSliceName;
 
         // Add event listener for select
         const toggleSlice = (e: (AnyRecord|Event)): void => {

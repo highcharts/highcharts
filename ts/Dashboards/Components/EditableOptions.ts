@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -61,7 +61,11 @@ class EditableOptions {
 
         for (let i = 0, iEnd = options.length; i < iEnd; i++) {
             const option = options[i];
-            if (option.name === 'connectorName') {
+            if (
+                option.propertyPath?.some(
+                    (path): boolean => path === 'connector'
+                )
+            ) {
                 const board = this.component.board;
                 const selectOptions = !board ?
                     [] :

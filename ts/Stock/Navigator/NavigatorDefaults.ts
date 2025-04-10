@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -106,7 +106,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @sample {highstock} stock/navigator/margin/
      *         A margin of 2 draws the navigator closer to the X axis labels
      */
-    margin: 25,
+    margin: 22,
 
     /**
      * Whether the mask should be inside the range marking the zoomed
@@ -571,7 +571,7 @@ const NavigatorDefaults: NavigatorOptions = {
         crosshair: false,
 
         title: {
-            text: null
+            text: void 0
         },
 
         tickLength: 0,
