@@ -298,6 +298,7 @@ module.exports = {
             'react/getting-started',
             'react/series-and-chart-types',
             'react/options',
+            'react/options-component-format',
             'react/component-children',
         ]
     }
