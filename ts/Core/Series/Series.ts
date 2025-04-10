@@ -100,6 +100,7 @@ const {
     insertItem,
     isArray,
     isNumber,
+    isObject,
     isString,
     merge,
     objectEach,
@@ -2011,6 +2012,21 @@ class Series {
                         ) as unknown as PointOptions;
                 } else {
                     pOptions = table.getRowObject(i) as unknown as PointOptions;
+
+                    // We need to read the data options to be able to
+                    // distinguish between an explicit x value and a computed
+                    // one, for example when doing uniqueNames. The data table
+                    // doesn't make this distinction. Maybe we need to address
+                    // this in a different way in order to make this work with
+                    // data table as an option.
+                    const dataOption = dataOptions?.[cursor];
+                    if (!(
+                        dataOption &&
+                        isObject(dataOption, true) &&
+                        isNumber(dataOption.x)
+                    )) {
+                        delete pOptions.x;
+                    }
                 }
 
                 // #970:
