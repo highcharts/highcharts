@@ -20,8 +20,7 @@ Highcharts.chart('container', {
 
     navigation: {
         buttonOptions: {
-            verticalAlign: 'bottom',
-            y: -20
+            verticalAlign: 'bottom'
         }
     }
 

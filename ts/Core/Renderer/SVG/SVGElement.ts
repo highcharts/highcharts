@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -1284,7 +1284,7 @@ class SVGElement implements SVGElementLike {
                 // Destroy own elements
                 ['connector', 'foreignObject'].indexOf(key) !== -1
             ) {
-                wrapper[key].destroy?.();
+                wrapper[key]?.destroy?.();
             }
 
             // Delete all properties

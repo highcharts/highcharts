@@ -4,20 +4,20 @@ sidebar_label: "Introduction"
 
 # Introduction to Highcharts Grid
 
-**Highcharts Grid** is a versatile tool for displaying and managing tabular data. It offers developers a customizable and interactive table format for data visualization.
+**Highcharts Grid** (formerly known as DataGrid) is a versatile tool for displaying and managing tabular data. Originally introduced as a component in Highcharts Dashboards, it provides a high-performance, interactive, and editable data table solution.
 
-**Highcharts Grid** comes in two versions:
+Highcharts Grid is available in two versions:
 
-**Highcharts Grid Pro** is part of the **Highcharts Dashboards** package, and can be used either as a standalone component or within a dashboard as a [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate Grid into various web applications for seamless data interaction and management.
+**Highcharts Grid Lite** – A free version with a basic feature set.
 
-**Highcharts Grid Lite**  is a free version of Highcharts Grid with a basic feature set.
+**Highcharts Grid Pro** – A more advanced, commercial version that currently requires a [Highcharts Dashboards](https://www.highcharts.com/docs/dashboards/grid-component) license and includes additional features. Though it is part of the Dashboards package and license, Grid Pro can also be used as a [standalone component](https://www.highcharts.com/docs/dashboards/grid-standalone).
 
-This section of the documentation focuses on **Highcharts Grid** in general. For specific information on **Highcharts Grid** in a Dashboards context, see the article on [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component).
+This documentation focuses on **Highcharts Grid** in general. For specific information on **Highcharts Grid Pro** in a Dashboards context, see the article on [Dashboards Grid Component](https://www.highcharts.com/docs/dashboards/grid-component).
 
 ## My First Grid
 
-Let's dive right in with a bare minimum example of a fully functional Grid Lite:
- 
+Let's dive right in with a bare minimum example of a fully functional **Grid Lite**:
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -88,6 +88,6 @@ Add an HTML element to the `body` with the ID you specified as the first argumen
 
 With the configuration above, your Grid should look like this:
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-lite/demo/your-first-grid" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/demo/your-first-grid" allow="fullscreen"></iframe>
 
 Go to [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) to read more about Grid structure and configuration options.
