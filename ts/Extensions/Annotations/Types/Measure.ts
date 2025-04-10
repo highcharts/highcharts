@@ -154,7 +154,7 @@ function defaultFormatter(
 ): string {
     return 'Min: ' + this.min +
         '<br>Max: ' + this.max +
-        '<br>Average: ' + this.average +
+        '<br>Average: ' + this.average.toFixed(2) +
         '<br>Bins: ' + this.bins;
 }
 

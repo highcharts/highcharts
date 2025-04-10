@@ -155,7 +155,10 @@
     },
     {
         "files": ["Series/Bubble/BubbleSeries"],
-        "included": ["highcharts-more"],
+        "included": [
+            "highcharts-more",
+            "modules/map"
+        ],
         "namespacePath": ".Series.types.bubble"
     },
     {
