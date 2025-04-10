@@ -23,9 +23,10 @@ Allows the use of steps instead of a straight line.
 
 Code to enable step:
 
-    
-    plotOptions: {
-        series: {
-            step: 'left' // or 'center' or 'right'
-        }
+```js
+plotOptions: {
+    series: {
+        step: 'left' // or 'center' or 'right'
     }
+}
+```

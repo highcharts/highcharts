@@ -16,21 +16,22 @@ If the min and maximum width of the chart is set, there is more control over the
 
 _See example below for setting tickIntervals per Axis grid._
 
-
-    xAxis: [{
-        labels: {
-          format: '{value:%w}' // day of the week
-        },
-        grid: { // default setting
-          enabled: true
-        }
-        tickInterval: 1000 * 60 * 60 * 24, // Day
-      }, {
-        labels: {
-          format: '{value:%W}'
-        },
-        tickInterval: 1000 * 60 * 60 * 24 * 7 // week
-      }],
+```js
+xAxis: [{
+    labels: {
+      format: '{value:%w}' // day of the week
+    },
+    grid: { // default setting
+      enabled: true
+    }
+    tickInterval: 1000 * 60 * 60 * 24, // Day
+  }, {
+    labels: {
+      format: '{value:%W}'
+    },
+    tickInterval: 1000 * 60 * 60 * 24 * 7 // week
+  }],
+```
 
 _See live code example for setting tickInterval per Axis grid_
 

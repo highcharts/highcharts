@@ -1,0 +1,9 @@
+---
+name: Reactive title
+authors:
+  - Gøran Slettemark
+js_wrap: b
+alt_text: >-
+  Highcharts React sample showing a reactive chart that allows picking between
+  showing fruit consumption in Norway and Sweden.
+...

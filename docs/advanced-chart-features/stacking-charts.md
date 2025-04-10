@@ -9,18 +9,18 @@ Two series supports additional types of stacking:
 
 Here is an example of `"normal"` stacking:
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/area-stacked allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/area-stacked" allow="fullscreen"></iframe>
 
 Here is an example of `"percent"` stacking:
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/area-stacked-percent allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/area-stacked-percent" allow="fullscreen"></iframe>
 
 Here is an example of `"overlap"` stacking in waterfall:
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/series-waterfall-with-overlap-stacking allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/plotoptions/series-waterfall-with-overlap-stacking" allow="fullscreen"></iframe>
 
 Here is an example of `"stream"` stacking in streamgraph:
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/streamgraph allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/streamgraph" allow="fullscreen"></iframe>
 
 

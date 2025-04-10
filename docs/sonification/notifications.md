@@ -10,27 +10,29 @@ Using Conditional Tracks
 
 One way to accomplish this is with [conditional tracks](https://www.highcharts.com/docs/sonification/conditional-tracks), where we play a sound or announce some speech when certain criteria are met, such as when a specific value is reached.
 
-    globalTracks: [{
-        instrument: 'vibraphone',
-        mapping: {
-            pitch: ['c6', 'g6'],
-            gapBetweenNotes: 140
-        },
-        activeWhen: {
-            prop: 'y',
-            crossingUp: 100
-        }
-    }, {
-        instrument: 'saxophone',
-        mapping: {
-            pitch: ['g6', 'c6'],
-            gapBetweenNotes: 140
-        },
-        activeWhen: {
-            prop: 'y',
-            crossingDown: 100
-        }
-    }]
+```js
+globalTracks: [{
+    instrument: 'vibraphone',
+    mapping: {
+        pitch: ['c6', 'g6'],
+        gapBetweenNotes: 140
+    },
+    activeWhen: {
+        prop: 'y',
+        crossingUp: 100
+    }
+}, {
+    instrument: 'saxophone',
+    mapping: {
+        pitch: ['g6', 'c6'],
+        gapBetweenNotes: 140
+    },
+    activeWhen: {
+        prop: 'y',
+        crossingDown: 100
+    }
+}]
+```
 
 In the example above we are setting up two notifications, one for when the Y-value crosses over 100, and a different one when it crosses below.
 
@@ -45,7 +47,7 @@ These functions allow us to quickly play a note or speak an announcement without
 
 The below demo illustrates how to set up [sonification event handlers](https://api.highcharts.com/highcharts/sonification.events) and use the functions mentioned above to play notes and speech announcements.
 
-<iframe style="width: 100%; height: 415px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-events allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 415px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/chart-events" allow="fullscreen"></iframe>
 
 Next Steps
 ----------

@@ -17,38 +17,39 @@ Defining the points in a waterfall is pretty straight forward. Each point is acc
 
 Furthermore, a waterfall series has two kinds of automatically computed columns. These points don't have an Y value, only a flag that specifies their type:
 
-*   `isIntermediateSum`   
+*   `isIntermediateSum` 
     When this property is true, the points acts as a summary column for the values added or subtracted since the last intermediate sum.
-*   `isSum`  
+*   `isSum`
     When this property is true, the point display the total sum across the entire series.
 
 Sample code:
 
-    
-    data: [{
-        name: 'Start',
-        y: 120000
-    }, {
-        name: 'Product Revenue',
-        y: 569000
-    }, {
-        name: 'Service Revenue',
-        y: 231000
-    }, {
-        name: 'Positive Balance',
-        isIntermediateSum: true,
-        color: '#0066FF'
-    }, {
-        name: 'Fixed Costs',
-        y: -342000
-    }, {
-        name: 'Variable Costs',
-        y: -233000
-    }, {
-        name: 'Balance',
-        isSum: true,
-        color: '#0066FF'
-    }]
+```js
+data: [{
+    name: 'Start',
+    y: 120000
+}, {
+    name: 'Product Revenue',
+    y: 569000
+}, {
+    name: 'Service Revenue',
+    y: 231000
+}, {
+    name: 'Positive Balance',
+    isIntermediateSum: true,
+    color: '#0066FF'
+}, {
+    name: 'Fixed Costs',
+    y: -342000
+}, {
+    name: 'Variable Costs',
+    y: -233000
+}, {
+    name: 'Balance',
+    isSum: true,
+    color: '#0066FF'
+}]
+```
 
 ### Colors
 
