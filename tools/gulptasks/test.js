@@ -50,7 +50,7 @@ function checkJSWrap() {
         process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/**/demo.html'
     ).forEach(f => {
 
-        const detailsFile = f.replace(/\.html$/, '.details');
+        const detailsFile = f.replace(/\.html$/u, '.details');
 
         try {
             const details = yaml.safeLoad(
@@ -60,7 +60,7 @@ function checkJSWrap() {
                 LogLib.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
-        } catch (e) {
+        } catch {
             LogLib.failure('File not found:', detailsFile);
             errors++;
         }
@@ -163,7 +163,7 @@ function checkDemosConsistency() {
                 }
 
                 const { name, categories: demoCategories, tags: demoTags } = details;
-                if (!name || /High.*demo/.test(name)) {
+                if (!name || /High.*demo/u.test(name)) {
                     LogLib.failure('no name set, or default name used:', detailsFile);
                     errors++;
                 }
@@ -369,40 +369,24 @@ specified by config.imageCapture.resultsOutputPath.
             }
         });
 
-        await new Promise((resolve, reject) => new KarmaServer(
-            karmaConfig,
-            err => {
-
-                // Force exit in BrowserStack GitHub Action
-                // eslint-disable-next-line node/no-process-exit
-                setTimeout(() => process.exit(err), 3000);
-
-                if (err !== 0) {
-
-                    if (argv.speak) {
-                        log.say('Tests failed!');
-                    }
-
-                    reject(new PluginError('karma', {
-                        message: 'Tests failed'
-                    }));
-
-                    return;
-                }
-
-                try {
-                    saveRun(runConfig);
-                } catch (catchedError) {
-                    log.warn(catchedError);
-                }
-
+        await new KarmaServer(karmaConfig)
+            .start()
+            .then(() => {
                 if (argv.speak) {
                     log.say('Tests succeeded!');
                 }
-
-                resolve();
-            }
-        ).start());
+            })
+            .catch(() => {
+                if (argv.speak) {
+                    log.say('Tests failed!');
+                }
+                throw new PluginError('karma', {
+                    message: 'Tests failed'
+                });
+            })
+            .finally(() => {
+                saveRun(runConfig);
+            });
 
         // Capture console.error, console.warn and console.log
         const consoleLogPath = `${BASE}/test/console.log`;
@@ -411,9 +395,9 @@ specified by config.imageCapture.resultsOutputPath.
             'utf-8'
         ).catch(() => {});
         if (consoleLog) {
-            const errors = (consoleLog.match(/ ERROR:/g) || []).length,
-                warnings = (consoleLog.match(/ WARN:/g) || []).length,
-                logs = (consoleLog.match(/ LOG:/g) || []).length;
+            const errors = (consoleLog.match(/ ERROR:/gu) || []).length,
+                warnings = (consoleLog.match(/ WARN:/gu) || []).length,
+                logs = (consoleLog.match(/ LOG:/gu) || []).length;
 
             const message = [];
             if (errors) {
