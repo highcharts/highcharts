@@ -26,8 +26,8 @@ import type { ColumnDistributionType } from '../../Options';
 import type Table from '../Table';
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
-import type Globals from '../../Globals.js';
-import type Options from '../../Options.js';
+import type Globals from '../../Globals';
+import type Options from '../../Options';
 
 import U from '../../../../Core/Utilities.js';
 const { getStyle } = U;

@@ -70,21 +70,16 @@ class MixedDistributionStrategy extends DistributionStrategy {
         }
 
         let value: number;
-        let unitCode: number;
+        let unitCode: number = 0;
 
         if (typeof raw === 'number') {
-            unitCode = 0;
             value = raw;
+            unitCode = 0;
         } else {
-            const match = raw.match(/^(-?\d*\.?\d+)([a-z%]*)$/);
-            if (!match) {
-                return;
-            }
-
-            value = parseFloat(match[1]);
-            unitCode = match[2] === '%' ? 1 : 0;
+            value = parseFloat(raw);
+            unitCode = raw.charAt(raw.length - 1) === '%' ? 1 : 0;
         }
-
+        
         this.columnWidthUnits[column.id] = unitCode;
         this.columnWidths[column.id] = value;
     }
