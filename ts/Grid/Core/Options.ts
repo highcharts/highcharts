@@ -162,7 +162,7 @@ export interface ColumnsSettings {
      * of each column - CSS styles will be ignored then.
      *
      * If `undefined`, the default column distribution will be used, which is
-     * `mixed` if `width` is set for any column, otherwise `full`.
+     * `mixed`, if `width` is set for any column, otherwise `full`.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-distribution | Distribution overview}
      *
