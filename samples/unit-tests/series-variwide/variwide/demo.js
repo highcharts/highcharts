@@ -127,6 +127,17 @@ QUnit.test('variwide', function (assert) {
         true,
         'The width of the first point should not be less than 1px (#11510)'
     );
+
+    chart.xAxis[0].setExtremes(void 0, void 0, false);
+
+    chart.series[0].setData([[0, 5, 2], [2, 7, 1], [3, 9, 9]]);
+
+    const lastPoint = chart.series[0].points[chart.series[0].points.length - 1];
+
+    assert.ok(
+        chart.xAxis[0].max > lastPoint.x + lastPoint.z,
+        'Linear x-axis extremes should include z-value of last point, #20611'
+    );
 });
 
 QUnit.test('variwide null points', function (assert) {
