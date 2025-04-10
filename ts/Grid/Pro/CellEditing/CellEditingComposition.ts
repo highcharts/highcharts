@@ -315,7 +315,6 @@ declare module '../../Core/Options' {
  */
 export type EditMsgType = 'started' | 'edited' | 'cancelled';
 
-
 /* *
  *
  *  Default Export

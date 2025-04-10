@@ -246,6 +246,7 @@ class Table {
         // this.footer.render();
 
         this.rowsVirtualizer.initialRender();
+        fireEvent(this, 'afterInit');
     }
 
     /**
@@ -434,7 +435,7 @@ class Table {
     }
 
     /**
-     * Destroys the data grid table.
+     * Destroys the grid table.
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
