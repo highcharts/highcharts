@@ -21,6 +21,8 @@
  * */
 
 import type Types from '../Shared/Types';
+import type JSONConverter from './Converters/JSONConverter';
+import type GoogleSheetsConverter from './Converters/GoogleSheetsConverter';
 
 
 /* *
@@ -46,10 +48,24 @@ export interface DataTableOptions {
      * Custom ID to identify the new DataTable instance.
      */
     id?: string;
+
+    /**
+     * A custom callback function that parses the data table data. Supported
+     * connectors are: JSON, CSV and Google Spreadsheets.
+     */
+    parser?: DataTableParserCallbackFunction<
+    | JSONConverter.Data
+    | string
+    | GoogleSheetsConverter.GoogleSpreadsheetJSON
+    >;
 }
 
 
 export type DataTableValue = (boolean|null|number|string|undefined);
+
+export type DataTableParserCallbackFunction<T> = {
+    (data: T): T;
+};
 
 
 /* *

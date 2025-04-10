@@ -24,6 +24,7 @@ import type {
     BeforeParseCallbackFunction,
     ColumnNamesOptions
 } from '../Connectors/JSONConnectorOptions';
+import type { DataTableParserCallbackFunction } from '../DataTableOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -116,7 +117,8 @@ class JSONConverter extends DataConverter {
      */
     public parse(
         options: JSONConverter.UserOptions,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEvent.Detail,
+        parser?: DataTableParserCallbackFunction<JSONConverter.Data>
     ): void {
         const converter = this;
 
@@ -145,6 +147,10 @@ class JSONConverter extends DataConverter {
 
         if (beforeParse) {
             data = beforeParse(data);
+        }
+
+        if (parser) {
+            data = parser(data);
         }
 
         data = data.slice();

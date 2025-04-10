@@ -61,12 +61,26 @@ abstract class DataConnector implements DataEvent.Emitter {
      *
      * @param {DataConnector.UserOptions} [options]
      * Options to use in the connector.
+     *
+     * @param {Array<DataTable>} [dataTables]
+     * Multiple connector data tables options.
      */
     public constructor(
-        options: DataConnector.UserOptions = {}
+        options: DataConnector.UserOptions = {},
+        dataTables: Array<DataTable> = []
     ) {
-        this.table = new DataTable(options.dataTable);
         this.metadata = options.metadata || { columns: {} };
+
+        // Create a data table for each defined in the dataTables user options.
+        if (dataTables?.length > 0) {
+            for (let i = 0, iEnd = dataTables.length; i < iEnd; ++i) {
+                this.dataTables[i] = new DataTable(dataTables[i]);
+            }
+
+        // If user options dataTables is not defined, generate a default table.
+        } else {
+            this.dataTables[0] = new DataTable(options.dataTable);
+        }
     }
 
     /* *
@@ -96,10 +110,19 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Table managed by this DataConnector instance.
+     * Gets the first data table.
+     *
+     * @return {DataTable}
+     * The data table instance.
      */
-    public readonly table: DataTable;
+    public get table(): DataTable {
+        return this.getTable();
+    }
 
+    /**
+     * Tables managed by this DataConnector instance.
+     */
+    public dataTables: Array<DataTable> = [];
 
     /* *
      *
@@ -181,6 +204,28 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
+     * Returns a single data table instance based on the provided id. Otherwise,
+     * returns the first data table.
+     *
+     * @param {string} [id]
+     * The data table id.
+     *
+     * @return {DataTable}
+     * The data table instance.
+     */
+    public getTable(id?: string): DataTable {
+        const firstTable = this.dataTables[0];
+
+        if (id) {
+            return this.dataTables.find(
+                (table: DataTable): boolean => table.id === id
+            ) ?? firstTable;
+        }
+
+        return firstTable;
+    }
+
+    /**
      * Retrieves the columns of the dataTable,
      * applies column order from meta.
      *
@@ -258,7 +303,7 @@ abstract class DataConnector implements DataEvent.Emitter {
         }
     }
 
-    public setModifierOptions(
+    public async setModifierOptions(
         modifierOptions?: DataModifierTypeOptions
     ): Promise<this> {
         const ModifierClass = (
@@ -266,13 +311,14 @@ abstract class DataConnector implements DataEvent.Emitter {
             DataModifier.types[modifierOptions.type]
         );
 
-        return this.table
-            .setModifier(
+        for (const table of this.dataTables) {
+            await table.setModifier(
                 ModifierClass ?
-                    new ModifierClass(modifierOptions as AnyRecord) :
-                    void 0
-            )
-            .then((): this => this);
+                    new ModifierClass(modifierOptions as AnyRecord) : void 0
+            );
+        }
+
+        return this;
     }
 
     /**
@@ -285,6 +331,7 @@ abstract class DataConnector implements DataEvent.Emitter {
         refreshTime: number = 1000
     ): void {
         const connector = this;
+        const tables = connector.dataTables;
 
         window.clearTimeout(connector._polling);
 
@@ -294,7 +341,7 @@ abstract class DataConnector implements DataEvent.Emitter {
                     (error): void => connector.emit<DataConnector.ErrorEvent>({
                         type: 'loadError',
                         error,
-                        table: connector.table
+                        tables
                     })
                 )
                 .then((): void => {
@@ -358,7 +405,7 @@ namespace DataConnector {
      * The default event object for a DataConnector.
      */
     export interface Event extends DataEvent {
-        readonly table: DataTable;
+        readonly tables: DataTable[];
     }
 
     /**

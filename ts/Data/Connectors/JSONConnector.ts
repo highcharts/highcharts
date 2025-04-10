@@ -22,6 +22,8 @@
 import type DataEvent from '../DataEvent';
 import type Types from '../../Shared/Types';
 import type JSONConnectorOptions from './JSONConnectorOptions';
+import type DataTable from '../DataTable';
+import type { DataTableParserCallbackFunction } from '../DataTableOptions';
 
 import DataConnector from './DataConnector.js';
 import U from '../../Core/Utilities.js';
@@ -65,13 +67,17 @@ class JSONConnector extends DataConnector {
      *
      * @param {JSONConnector.UserOptions} [options]
      * Options for the connector and converter.
+     *
+     * @param {Array<DataTable>} [dataTables]
+     * Multiple connector data tables options.
      */
     public constructor(
-        options?: JSONConnector.UserOptions
+        options?: JSONConnector.UserOptions,
+        dataTables?: Array<DataTable>
     ) {
         const mergedOptions = merge(JSONConnector.defaultOptions, options);
 
-        super(mergedOptions);
+        super(mergedOptions, dataTables);
 
         this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
@@ -118,14 +124,14 @@ class JSONConnector extends DataConnector {
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
             converter = connector.converter,
-            table = connector.table,
+            tables = connector.dataTables,
             { data, dataUrl, dataModifier } = connector.options;
 
         connector.emit<JSONConnector.Event>({
             type: 'load',
             data,
             detail: eventDetail,
-            table
+            tables
         });
 
         return Promise
@@ -138,7 +144,7 @@ class JSONConnector extends DataConnector {
                             type: 'loadError',
                             detail: eventDetail,
                             error,
-                            table
+                            tables
                         });
                         console.warn(`Unable to fetch data from ${dataUrl}.`); // eslint-disable-line no-console
                     }) :
@@ -146,11 +152,18 @@ class JSONConnector extends DataConnector {
             )
             .then((data): Promise<Array<Array<number|string>>> => {
                 if (data) {
-                    // If already loaded, clear the current rows
-                    table.deleteColumns();
-                    converter.parse({ data });
+                    // Iterate over all tables to parse the columns.
+                    for (const table of tables) {
+                        table.deleteColumns();
+                        converter.parse(
+                            { data },
+                            void 0,
+                            table.parser as
+                            DataTableParserCallbackFunction<JSONConverter.Data>
+                        );
 
-                    table.setColumns(converter.getTable().getColumns());
+                        table.setColumns(converter.getTable().getColumns());
+                    }
                 }
                 return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);
             })
@@ -159,7 +172,7 @@ class JSONConnector extends DataConnector {
                     type: 'afterLoad',
                     data,
                     detail: eventDetail,
-                    table
+                    tables
                 });
                 return connector;
             })['catch']((error): never => {
@@ -167,7 +180,7 @@ class JSONConnector extends DataConnector {
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table
+                    tables
                 });
                 throw error;
             });

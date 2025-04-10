@@ -244,9 +244,12 @@ class HighchartsComponent extends Component {
             const connector = connectorHandler.connector;
             if (connector) {
                 connector.on('afterLoad', (e: DataConnector.Event): void => {
-                    if (e.table) {
-                        connector.table.setColumns(e.table.getColumns());
-                    }
+                    const eventTable = e.tables.find(
+                        (table: DataTable): boolean => table.id === this.tableId
+                    ) ?? e.tables[0];
+                    const table = connector.getTable(this.tableId);
+
+                    table.setColumns(eventTable.getColumns());
                 });
             }
         }
@@ -359,7 +362,7 @@ class HighchartsComponent extends Component {
         point: Point,
         connectorHandler: HighchartsComponent.HCConnectorHandler
     ): void {
-        const table = connectorHandler.connector?.table;
+        const table = connectorHandler.connector?.getTable(this.tableId);
         const columnAssignment = connectorHandler.columnAssignment;
         const seriesId = point.series.options.id;
         const converter = new DataConverter();

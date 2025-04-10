@@ -26,6 +26,9 @@
 import type DataEvent from './DataEvent.js';
 import type DataTable from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
+import type { DataTableParserCallbackFunction } from './DataTableOptions.js';
+import type JSONConverter from './Converters/JSONConverter.js';
+import type GoogleSheetsConverter from './Converters/GoogleSheetsConverter.js';
 
 import ColumnUtils from './ColumnUtils.js';
 const { setLength, splice } = ColumnUtils;
@@ -96,6 +99,7 @@ class DataTableCore {
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
+        this.parser = options.parser;
 
         let rowCount = 0;
 
@@ -125,6 +129,12 @@ class DataTableCore {
     public rowCount: number;
 
     protected versionTag: string;
+
+    public parser?: DataTableParserCallbackFunction<
+    | JSONConverter.Data
+    | string
+    | GoogleSheetsConverter.GoogleSpreadsheetJSON
+    >;
 
     /* *
      *

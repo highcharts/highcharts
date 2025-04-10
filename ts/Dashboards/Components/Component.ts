@@ -235,6 +235,10 @@ abstract class Component {
      */
     public id: string;
     /**
+     * Reference to the specific connector data table.
+     */
+    public tableId?: string;
+    /**
      * An array of options marked as editable by the UI.
      *
      */
@@ -328,6 +332,12 @@ abstract class Component {
                     new ConnectorHandler(this, connectorOptions)
                 );
             }
+
+            // Assign the data table id to define the proper connector data
+            // table instance.
+            this.tableId = isArray(this.options.connector) ?
+                this.options.connector[0].tableId :
+                this.options.connector.tableId;
         }
 
         this.editableOptions =

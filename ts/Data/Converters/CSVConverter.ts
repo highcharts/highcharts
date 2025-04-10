@@ -25,6 +25,7 @@
 import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
 import type { BeforeParseCallbackFunction } from '../Connectors/CSVConnectorOptions';
+import type { DataTableParserCallbackFunction } from '../DataTableOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -218,7 +219,8 @@ class CSVConverter extends DataConverter {
      */
     public parse(
         options: CSVConverter.UserOptions,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEvent.Detail,
+        parser?: DataTableParserCallbackFunction<string>
     ): void {
         const converter = this,
             dataTypes = converter.dataTypes,
@@ -248,8 +250,14 @@ class CSVConverter extends DataConverter {
             headers: converter.headers
         });
 
-        if (csv && beforeParse) {
-            csv = beforeParse(csv);
+        if (csv) {
+            if (beforeParse) {
+                csv = beforeParse(csv);
+            }
+
+            if (parser) {
+                csv = parser(csv);
+            }
         }
 
         if (csv) {
