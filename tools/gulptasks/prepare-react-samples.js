@@ -28,6 +28,7 @@ async function transpileJSXSamples() {
                 "imports": {
                     "react": "https://esm.sh/react",
                     "react-dom": "https://esm.sh/react-dom/client",
+                    "highcharts/": "https://code.highcharts.com/",
                     "@highcharts/react": "https://esm.sh/@highcharts/react@next/index.js",
                     "@highcharts/react/": "https://esm.sh/@highcharts/react@next/"
                 }
@@ -92,24 +93,17 @@ details {
 
     const jsxFiles = glob.iterate('samples/**/demo.jsx');
 
-    const { writeFile, readFile } = require('node:fs/promises');
+    const { writeFile, readFile, stat } = require('node:fs/promises');
 
     for await (const jsxPath of jsxFiles) {
         const originalCode = await readFile(jsxPath, 'utf8');
         const output = await swc.transform(originalCode, config);
 
         const adjecentHTMLFile = jsxPath.replace('.jsx', '.html');
-        const adjecentCSSFile = jsxPath.replace('.jsx', '.css');
 
         await writeFile(
             adjecentHTMLFile,
-            html`<details><summary>Code</summary><pre><code>${hljs.highlight(originalCode, { language: 'javascript' }).value}</code></pre></details>`,
-            { force: true }
-        );
-
-        await writeFile(
-            adjecentCSSFile,
-            '/* DO NOT EDIT */\n' + styles,
+            html`<style>${styles}</style><details><summary>Code</summary><pre><code>${hljs.highlight(originalCode, { language: 'javascript' }).value}</code></pre></details>`,
             { force: true }
         );
 
