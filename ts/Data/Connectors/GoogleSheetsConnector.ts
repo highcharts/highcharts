@@ -26,6 +26,8 @@
 import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type Types from '../../Shared/Types';
+import type { DataTableParserCallbackFunction } from '../DataTableOptions';
+import type DataTable from '../DataTable';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -111,12 +113,13 @@ class GoogleSheetsConnector extends DataConnector {
      * Options for the connector and converter.
      */
     public constructor(
-        options?: GoogleSheetsConnector.UserOptions
+        options?: GoogleSheetsConnector.UserOptions,
+        dataTables?: Array<DataTable>
     ) {
         const mergedOptions =
             merge(GoogleSheetsConnector.defaultOptions, options);
 
-        super(mergedOptions);
+        super(mergedOptions, dataTables);
 
         this.converter = new GoogleSheetsConverter(mergedOptions);
         this.options = mergedOptions;
@@ -153,7 +156,7 @@ class GoogleSheetsConnector extends DataConnector {
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
             converter = connector.converter,
-            table = connector.table,
+            tables = connector.dataTables,
             {
                 dataModifier,
                 dataRefreshRate,
@@ -171,7 +174,7 @@ class GoogleSheetsConnector extends DataConnector {
         connector.emit<GoogleSheetsConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            table,
+            tables,
             url
         });
 
@@ -191,16 +194,27 @@ class GoogleSheetsConnector extends DataConnector {
                     throw new Error(json.error.message);
                 }
 
-                converter.parse({
-                    firstRowAsNames,
-                    json
-                });
+                // Iterate over all tables to parse the columns.
+                for (const table of tables) {
+                    const dataTableOptions = {
+                        key: table.key,
+                        parser: table.parser as
+                        DataTableParserCallbackFunction<
+                        GoogleSheetsConverter.GoogleSpreadsheetJSON['values']
+                        >
+                    };
+                    converter.parse(
+                        { firstRowAsNames, json },
+                        void 0,
+                        dataTableOptions
+                    );
 
-                // If already loaded, clear the current table
-                table.deleteColumns();
-                table.setColumns(
-                    converter.getTable().getColumns()
-                );
+                    // If already loaded, clear the current table
+                    table.deleteColumns();
+                    table.setColumns(
+                        converter.getTable().getColumns()
+                    );
+                }
 
                 return connector.setModifierOptions(dataModifier);
             })
@@ -208,7 +222,7 @@ class GoogleSheetsConnector extends DataConnector {
                 connector.emit<GoogleSheetsConnector.Event>({
                     type: 'afterLoad',
                     detail: eventDetail,
-                    table,
+                    tables,
                     url
                 });
 
@@ -226,7 +240,7 @@ class GoogleSheetsConnector extends DataConnector {
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table
+                    tables
                 });
                 throw error;
             });
@@ -267,6 +281,16 @@ namespace GoogleSheetsConnector {
         Types.DeepPartial<GoogleSheetsConnectorOptions> &
         GoogleSheetsConverter.UserOptions
     );
+
+    /**
+     * The data table options used in the corresponding converter.
+     */
+    export type DataTableOptions = {
+        key?: string;
+        parser?: DataTableParserCallbackFunction<
+        GoogleSheetsConverter.GoogleSpreadsheetJSON['values']
+        >
+    };
 
     /* *
      *

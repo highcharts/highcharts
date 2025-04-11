@@ -24,6 +24,7 @@ import type {
     BeforeParseCallbackFunction,
     ColumnNamesOptions
 } from '../Connectors/JSONConnectorOptions';
+import type JSONConnector from '../Connectors/JSONConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -116,7 +117,8 @@ class JSONConverter extends DataConverter {
      */
     public parse(
         options: JSONConverter.UserOptions,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEvent.Detail,
+        dataTableOptions?: JSONConnector.DataTableOptions
     ): void {
         const converter = this;
 
@@ -128,6 +130,8 @@ class JSONConverter extends DataConverter {
             firstRowAsNames,
             columnNames
         } = options;
+        const parser = dataTableOptions?.parser;
+
         let data = options.data;
 
         if (!data) {
@@ -145,6 +149,10 @@ class JSONConverter extends DataConverter {
 
         if (beforeParse) {
             data = beforeParse(data);
+        }
+
+        if (parser) {
+            data = parser(data);
         }
 
         data = data.slice();

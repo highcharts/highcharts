@@ -25,6 +25,8 @@
 import type DataEvent from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
 import type Types from '../../Shared/Types';
+import type DataTable from '../DataTable';
+import type { DataTableParserCallbackFunction } from '../DataTableOptions';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -69,13 +71,18 @@ class CSVConnector extends DataConnector {
      *
      * @param {CSVConnector.UserOptions} [options]
      * Options for the connector and converter.
+     *
+     * @param {Array<DataTable>} [dataTables]
+     * Multiple connector data tables options.
+     *
      */
     public constructor(
-        options?: CSVConnector.UserOptions
+        options?: CSVConnector.UserOptions,
+        dataTables?: Array<DataTable>
     ) {
         const mergedOptions = merge(CSVConnector.defaultOptions, options);
 
-        super(mergedOptions);
+        super(mergedOptions, dataTables);
 
         this.converter = new CSVConverter(mergedOptions);
         this.options = mergedOptions;
@@ -122,7 +129,7 @@ class CSVConnector extends DataConnector {
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
             converter = connector.converter,
-            table = connector.table,
+            tables = connector.dataTables,
             {
                 csv,
                 csvURL,
@@ -133,7 +140,7 @@ class CSVConnector extends DataConnector {
             type: 'load',
             csv,
             detail: eventDetail,
-            table
+            tables
         });
 
 
@@ -147,10 +154,22 @@ class CSVConnector extends DataConnector {
             )
             .then((csv): Promise<string> => {
                 if (csv) {
-                    // If already loaded, clear the current rows
-                    table.deleteColumns();
-                    converter.parse({ csv });
-                    table.setColumns(converter.getTable().getColumns());
+                    // Iterate over all tables to parse the columns.
+                    for (const table of tables) {
+                        table.deleteColumns();
+                        const dataTableOptions = {
+                            key: table.key,
+                            parser: table.parser as
+                            DataTableParserCallbackFunction<string>
+                        };
+                        converter.parse(
+                            { csv },
+                            void 0,
+                            dataTableOptions
+                        );
+
+                        table.setColumns(converter.getTable().getColumns());
+                    }
                 }
                 return connector
                     .setModifierOptions(dataModifier)
@@ -161,7 +180,7 @@ class CSVConnector extends DataConnector {
                     type: 'afterLoad',
                     csv,
                     detail: eventDetail,
-                    table
+                    tables
                 });
                 return connector;
             })['catch']((error): never => {
@@ -169,7 +188,7 @@ class CSVConnector extends DataConnector {
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table
+                    tables
                 });
                 throw error;
             });
@@ -220,6 +239,14 @@ namespace CSVConnector {
         Types.DeepPartial<CSVConnectorOptions>&
         CSVConverter.UserOptions
     );
+
+    /**
+     * The data table options used in the corresponding converter.
+     */
+    export type DataTableOptions = {
+        key?: string;
+        parser?: DataTableParserCallbackFunction<string>;
+    };
 
 }
 

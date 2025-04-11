@@ -24,6 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type { BeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
+import type GoogleSheetsConnector from '../Connectors/GoogleSheetsConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -118,10 +119,12 @@ class GoogleSheetsConverter extends DataConverter {
      */
     public parse(
         options: GoogleSheetsConverter.UserOptions,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEvent.Detail,
+        dataTableOptions?: GoogleSheetsConnector.DataTableOptions
     ): (boolean|undefined) {
         const converter = this,
-            parseOptions = merge(converter.options, options);
+            parseOptions = merge(converter.options, options),
+            parser = dataTableOptions?.parser;
 
         let columns = ((
             parseOptions.json?.values
@@ -145,8 +148,14 @@ class GoogleSheetsConverter extends DataConverter {
 
         // If beforeParse is defined, use it to modify the data
         const { beforeParse, json } = parseOptions;
-        if (beforeParse && json) {
-            columns = beforeParse(json.values);
+        if (json) {
+            if (beforeParse) {
+                columns = beforeParse(json.values);
+            }
+
+            if (parser) {
+                columns = parser(json.values);
+            }
         }
 
         let column;
