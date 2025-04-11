@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
+const log = require('../tools/libs/log');
 const aliases = require('../samples/data/json-sources/index.json');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
@@ -253,8 +254,8 @@ module.exports = function (config) {
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
         // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
-        // Chrome 109
-        [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
+        // Chrome 109+
+        [getProperties()['karma.defaultbrowser'] || 'FirefoxHeadless'];
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
@@ -281,6 +282,12 @@ module.exports = function (config) {
     }
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
+
+    if (browsers.includes('ChromeHeadless')) {
+        log.warn(
+            'ChromeHeadless 109+ will fail in WebGL-based tests, e.g. boost.'
+        );
+    }
 
     let tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
@@ -511,7 +518,7 @@ module.exports = function (config) {
                     // samples
                     if (argv.debug) {
                         if (js.indexOf('Highcharts.setOptions') !== -1) {
-                            console.log(
+                            log.warn(
                                 `Warning - Highcharts.setOptions found in: ${file.path}`.yellow
                             );
                         }
@@ -519,7 +526,7 @@ module.exports = function (config) {
                             js.indexOf('Highcharts.wrap') !== -1 ||
                             js.indexOf('H.wrap') !== -1
                         ) {
-                            console.log(
+                            log.warn(
                                 `Warning - Highcharts.wrap found in: ${file.path}`.yellow
                             );
                         }

@@ -95,8 +95,7 @@ class Fullscreen {
 
         const promise = board.boardWrapper.requestFullscreen();
 
-        // eslint-disable-next-line highcharts/quote-members
-        promise.catch((): void => {
+        promise['catch']((): void => {
             throw new Error('Full screen is not supported.');
         });
     }

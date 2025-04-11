@@ -21,13 +21,13 @@ decreased download size but in an increased delay caused by the amount of
 production.
 
 ```html
-    <script type="module">
-        import Chart from 'https://code.highcharts.com/es-modules/Core/Chart/Chart.js';
-        import LineSeries from 'https://code.highcharts.com/es-modules/Series/Line/LineSeries.js';
+<script type="module">
+    import Chart from 'https://code.highcharts.com/es-modules/Core/Chart/Chart.js';
+    import LineSeries from 'https://code.highcharts.com/es-modules/Series/Line/LineSeries.js';
 
-        // Example to create a simple line chart in a div#container:
-        new Chart('container', { series: [{ data: [1, 2, 3]}] });
-    </script>
+    // Example to create a simple line chart in a div#container:
+    new Chart('container', { series: [{ data: [1, 2, 3]}] });
+</script>
 ```
 
 
@@ -70,8 +70,8 @@ Create the bundle by running `node webpack -c webpack.config.js` and load the
 result in your web page.
 
 ```html
-    <div id="container"></div>
-    <script type="module" src="./dist/mybundle.js"></script>
+<div id="container"></div>
+<script type="module" src="./dist/mybundle.js"></script>
 ```
 
 For a column chart or pie chart, the code of `mychart.js` looks similar.
@@ -106,27 +106,27 @@ packages.
 Do as below to activate data labels for example.
 
 ```js
-    import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
-    import LineSeries from 'highcharts/es-modules/Series/Line/LineSeries.js';
-    import DataLabel from 'highcharts/es-modules/Core/Series/DataLabel.js';
+import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
+import LineSeries from 'highcharts/es-modules/Series/Line/LineSeries.js';
+import DataLabel from 'highcharts/es-modules/Core/Series/DataLabel.js';
 
-    DataLabel.compose(LineSeries);
+DataLabel.compose(LineSeries);
 ```
 
 ```js
-    import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
-    import ColumnSeries from 'highcharts/es-modules/Series/Column/ColumnSeries.js';
-    import ColumnDataLabel from 'highcharts/es-modules/Series/Column/ColumnDataLabel.js';
+import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
+import ColumnSeries from 'highcharts/es-modules/Series/Column/ColumnSeries.js';
+import ColumnDataLabel from 'highcharts/es-modules/Series/Column/ColumnDataLabel.js';
 
-    ColumnDataLabel.compose(ColumnSeries);
+ColumnDataLabel.compose(ColumnSeries);
 ```
 
 ```js
-    import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
-    import PieSeries from 'highcharts/es-modules/Series/Pie/PieSeries.js';
-    import PieDataLabel from 'highcharts/es-modules/Series/Pie/PieDataLabel.js';
+import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
+import PieSeries from 'highcharts/es-modules/Series/Pie/PieSeries.js';
+import PieDataLabel from 'highcharts/es-modules/Series/Pie/PieDataLabel.js';
 
-    PieDataLabel.compose(PieSeries);
+PieDataLabel.compose(PieSeries);
 ```
 
 
@@ -198,9 +198,7 @@ import Highcharts from 'highcharts';
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
-import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module. (CommonJS only)
-Exporting(Highcharts);
+import 'highcharts/modules/exporting';
 
 // Generate the chart
 Highcharts.chart('container', {
@@ -217,11 +215,7 @@ import Highcharts from 'highcharts';
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
-import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module. (CommonJS only)
-if(typeof Exporting === 'function') {
-    Exporting(Highcharts);
-}
+import 'highcharts/modules/exporting';
 
 // Generate the chart
 Highcharts.chart('container', {
