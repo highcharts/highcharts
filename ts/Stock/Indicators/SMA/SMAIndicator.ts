@@ -558,6 +558,9 @@ class SMAIndicator extends LineSeries {
         }
 
         if (overwriteData) {
+            Object.values(valueColumns).forEach((column): void => {
+                column.length = processedData.xData.length;
+            });
             table.setColumns({
                 x: processedData.xData as Array<number>,
                 ...valueColumns
