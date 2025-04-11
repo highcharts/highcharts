@@ -1302,6 +1302,7 @@ class Tooltip {
             boxWidth,
             boxHeight,
             point,
+            ctx,
             anchor = [0, 0],
             alignedLeft = true
         ): PositionObject {
@@ -1458,6 +1459,7 @@ class Tooltip {
                             boxWidth,
                             size,
                             point,
+                            void 0,
                             [anchorX, anchorY]
                         );
 
@@ -1507,6 +1509,7 @@ class Tooltip {
                     box.boxWidth,
                     box.size,
                     box.point,
+                    void 0,
                     [box.anchorX, box.anchorY],
                     false
                 );
@@ -1833,7 +1836,8 @@ class Tooltip {
                 this,
                 width,
                 height,
-                point
+                point,
+                this
             ),
             doc = H.doc;
 
@@ -1926,6 +1930,7 @@ namespace Tooltip {
             labelWidth: number,
             labelHeight: number,
             point: (Point|PositionerPointObject),
+            ctx?: Tooltip,
             anchor?: [number, number],
             alignLeft?: boolean
         ): PositionObject;
