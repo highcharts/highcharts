@@ -386,8 +386,7 @@ class DataTableCore {
             indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
 
         objectEach(row, (cellValue, columnName): void => {
-            let column = columns[columnName] ||
-                eventDetail?.addColumns !== false && new Array(indexRowCount);
+            let column = columns[columnName] || new Array(indexRowCount);
             if (column) {
                 if (insert) {
                     column = splice(

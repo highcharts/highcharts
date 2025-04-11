@@ -4140,7 +4140,8 @@ class Series {
         // series.generatePoints the Point instance will be created on demand
         // and pushed to the series.data array.
         const point = { series: series } as any;
-        series.pointClass.prototype.applyOptions.apply(point, [options]);
+        series.pointClass.prototype.applyOptions
+            .call(point, options, void 0, false);
         const x: (number|null) = point.x;
 
         // Get the insertion point
@@ -4153,7 +4154,7 @@ class Series {
         }
 
         // Insert the row at the given index
-        table.setRow(point, i, true, { addColumns: false });
+        table.setRow(extend({ x }, point.options), i, true);
 
         if (names && point.name) {
             names[x as any] = point.name;
