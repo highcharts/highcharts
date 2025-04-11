@@ -9,10 +9,11 @@ One thing that is important to notice is that gauges have no x-axis. The x-axis 
 
 To create an Angular gauge set chart.type to "gauge":
 
-
-    chart: {
-        type: 'gauge'
-    }
+```js
+chart: {
+    type: 'gauge'
+}
+```
 
 Normally there is only one point in a gauge series, but it also handles multiple point, like in our clock example with three dials. You can add as many background elements as you like to the gauge, allowing you to style it all the way from the minimal default design to heavy, 3D like works of art with shadows and reflections created with linear and radial gradients.
 

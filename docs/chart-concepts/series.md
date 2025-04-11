@@ -194,7 +194,7 @@ series: [{
 
 In some cases, you would want to display certain sections of the graph different. A common example is to use different colors when data falls in a certain range.  This effect can be achieved by using `zones`.  By default zoning is done on the yAxis, but this can be easily changed by setting the `zoneAxis` variable on the series.  For the zoning itself, you have to define an array called `zones` where each entry corresponds to a zone, delimited by a parameter `value`, which is the point up to which the zones goes. The settings that can be overwritten for each zone are color, fillColor and dashStyle.
 
-<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/series/color-zones-simple allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 475px;" src="https://www.highcharts.com/samples/embed/highcharts/series/color-zones-simple" allow="fullscreen"></iframe>
 
 Code used for the zoning:
 
@@ -212,7 +212,7 @@ zones: [{
 
 Another common use of this is to style future, estimated data points differently.
 
-<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/series/color-zones-dashstyle-dot allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 475px;" src="https://www.highcharts.com/samples/embed/highcharts/series/color-zones-dashstyle-dot" allow="fullscreen"></iframe>
 
 Code used for the zoning:
 
