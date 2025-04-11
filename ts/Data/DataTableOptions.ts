@@ -50,6 +50,12 @@ export interface DataTableOptions {
     id?: string;
 
     /**
+     * A reference to the specific data table key defined in the component's
+     * connector options.
+     */
+    key?: string;
+
+    /**
      * A custom callback function that parses the data table data. Supported
      * connectors are: JSON, CSV and Google Spreadsheets.
      */

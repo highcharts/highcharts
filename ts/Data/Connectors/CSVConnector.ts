@@ -157,11 +157,15 @@ class CSVConnector extends DataConnector {
                     // Iterate over all tables to parse the columns.
                     for (const table of tables) {
                         table.deleteColumns();
+                        const dataTableOptions = {
+                            key: table.key,
+                            parser: table.parser as
+                            DataTableParserCallbackFunction<string>
+                        };
                         converter.parse(
                             { csv },
                             void 0,
-                            table.parser as
-                            DataTableParserCallbackFunction<string>
+                            dataTableOptions
                         );
 
                         table.setColumns(converter.getTable().getColumns());
@@ -235,6 +239,14 @@ namespace CSVConnector {
         Types.DeepPartial<CSVConnectorOptions>&
         CSVConverter.UserOptions
     );
+
+    /**
+     * The data table options used in the corresponding converter.
+     */
+    export type DataTableOptions = {
+        key?: string;
+        parser?: DataTableParserCallbackFunction<string>;
+    };
 
 }
 

@@ -155,11 +155,15 @@ class JSONConnector extends DataConnector {
                     // Iterate over all tables to parse the columns.
                     for (const table of tables) {
                         table.deleteColumns();
+                        const dataTableOptions = {
+                            key: table.key,
+                            parser: table.parser as
+                            DataTableParserCallbackFunction<JSONConverter.Data>
+                        };
                         converter.parse(
                             { data },
                             void 0,
-                            table.parser as
-                            DataTableParserCallbackFunction<JSONConverter.Data>
+                            dataTableOptions
                         );
 
                         table.setColumns(converter.getTable().getColumns());
@@ -230,6 +234,14 @@ namespace JSONConnector {
         Types.DeepPartial<JSONConnectorOptions>&
         JSONConverter.UserOptions
     );
+
+    /**
+     * The data table options used in the corresponding converter.
+     */
+    export type DataTableOptions = {
+        key?: string;
+        parser?: DataTableParserCallbackFunction<JSONConverter.Data>;
+    };
 
 }
 

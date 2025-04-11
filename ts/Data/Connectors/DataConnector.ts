@@ -204,21 +204,21 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Returns a single data table instance based on the provided id. Otherwise,
-     * returns the first data table.
+     * Returns a single data table instance based on the provided key.
+     * Otherwise, returns the first data table.
      *
-     * @param {string} [id]
-     * The data table id.
+     * @param {string} [key]
+     * The data table key.
      *
      * @return {DataTable}
      * The data table instance.
      */
-    public getTable(id?: string): DataTable {
+    public getTable(key?: string): DataTable {
         const firstTable = this.dataTables[0];
 
-        if (id) {
+        if (key) {
             return this.dataTables.find(
-                (table: DataTable): boolean => table.id === id
+                (table: DataTable): boolean => table.key === key
             ) ?? firstTable;
         }
 

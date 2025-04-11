@@ -67,7 +67,7 @@ class ConnectorHandler {
     /**
      * Reference to the specific connector data table.
      */
-    public tableId?: string;
+    public dataTableKey?: string;
 
     /**
      * The component that the connector is tied to.
@@ -217,15 +217,15 @@ class ConnectorHandler {
         this.connector = connector;
 
         if (connector) {
-            const tableId = this.options.tableId;
+            const dataTableKey = this.options.dataTableKey;
             const dataTables = connector.dataTables;
 
-            if (tableId) {
+            if (dataTableKey) {
                 // Iterate over all connector data tables to find those used by
                 // the component.
                 for (const table of dataTables) {
                     // Perform only if the data table is used by the component.
-                    if (table.id === this.options.tableId) {
+                    if (table.key === this.options.dataTableKey) {
                         this.setTable(table);
                     }
                 }
@@ -437,7 +437,7 @@ namespace ConnectorHandler {
         /**
          * Reference to the specific connector data table.
          */
-        tableId?: string;
+        dataTableKey?: string;
     }
 }
 

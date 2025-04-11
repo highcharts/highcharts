@@ -196,13 +196,17 @@ class GoogleSheetsConnector extends DataConnector {
 
                 // Iterate over all tables to parse the columns.
                 for (const table of tables) {
-                    converter.parse(
-                        { firstRowAsNames, json },
-                        void 0,
-                        table.parser as
+                    const dataTableOptions = {
+                        key: table.key,
+                        parser: table.parser as
                         DataTableParserCallbackFunction<
                         GoogleSheetsConverter.GoogleSpreadsheetJSON['values']
                         >
+                    };
+                    converter.parse(
+                        { firstRowAsNames, json },
+                        void 0,
+                        dataTableOptions
                     );
 
                     // If already loaded, clear the current table
@@ -277,6 +281,16 @@ namespace GoogleSheetsConnector {
         Types.DeepPartial<GoogleSheetsConnectorOptions> &
         GoogleSheetsConverter.UserOptions
     );
+
+    /**
+     * The data table options used in the corresponding converter.
+     */
+    export type DataTableOptions = {
+        key?: string;
+        parser?: DataTableParserCallbackFunction<
+        GoogleSheetsConverter.GoogleSpreadsheetJSON['values']
+        >
+    };
 
     /* *
      *

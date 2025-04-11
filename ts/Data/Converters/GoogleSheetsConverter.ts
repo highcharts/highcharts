@@ -24,7 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type { BeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
-import type { DataTableParserCallbackFunction } from '../DataTableOptions';
+import type GoogleSheetsConnector from '../Connectors/GoogleSheetsConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -120,13 +120,11 @@ class GoogleSheetsConverter extends DataConverter {
     public parse(
         options: GoogleSheetsConverter.UserOptions,
         eventDetail?: DataEvent.Detail,
-        parser?:
-        DataTableParserCallbackFunction<
-        GoogleSheetsConverter.GoogleSpreadsheetJSON['values']
-        >
+        dataTableOptions?: GoogleSheetsConnector.DataTableOptions
     ): (boolean|undefined) {
         const converter = this,
-            parseOptions = merge(converter.options, options);
+            parseOptions = merge(converter.options, options),
+            parser = dataTableOptions?.parser;
 
         let columns = ((
             parseOptions.json?.values

@@ -99,6 +99,7 @@ class DataTableCore {
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
+        this.key = options.key;
         this.parser = options.parser;
 
         let rowCount = 0;
@@ -129,6 +130,8 @@ class DataTableCore {
     public rowCount: number;
 
     protected versionTag: string;
+
+    public key?: string;
 
     public parser?: DataTableParserCallbackFunction<
     | JSONConverter.Data
