@@ -369,11 +369,23 @@ QUnit.test('Panning with overscroll', function (assert) {
     });
 
     const controller = new TestController(chart);
-    controller.pan([700, 200], [200, 200]);
+    controller.pan([chart.plotWidth - 50, 200], [100, 200]);
 
     assert.strictEqual(
         chart.xAxis[0].max,
         109,
         'Chart should pan to right extreme, where overscroll is set, #21606.'
+    );
+
+    chart.xAxis[0].setExtremes(77, 109);
+
+    // Pan twice
+    controller.pan([chart.plotWidth - 50, 200], [0, 200]);
+    controller.pan([chart.plotWidth - 50, 200], [0, 200]);
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        77,
+        'xAxis.min should not change when panning over the right extreme.'
     );
 });

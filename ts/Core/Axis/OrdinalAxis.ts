@@ -647,9 +647,10 @@ namespace OrdinalAxis {
 
             // Make sure panning to the edges does not decrease the zoomed range
             if (
-                (min <= dataMin && movedUnits < 0) ||
-                (max >= dataMax + overscroll && movedUnits > 0)
+                (min <= dataMin && movedUnits <= 0) ||
+                (max >= dataMax + overscroll && movedUnits >= 0)
             ) {
+                e.preventDefault();
                 return;
             }
 
