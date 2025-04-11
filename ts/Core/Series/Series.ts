@@ -4254,6 +4254,8 @@ class Series {
                 });
 
                 table.deleteRows(i);
+                // Reset modified data (shouldn't this happen automagically?)
+                table.modified = table;
 
                 point?.destroy();
 
