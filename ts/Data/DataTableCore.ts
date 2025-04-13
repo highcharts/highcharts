@@ -278,7 +278,7 @@ class DataTableCore {
      * Output the table in the console.
      * @todo remove/comment out this method before production
      */
-    public log(limit = 10, start = 0, msg = ''): void {
+    public log(msg = '', limit = 10, start = 0): void {
         /* eslint-disable no-console */
         console.group(
             (msg ? msg + ' / ' : '') + `Limit: ${limit}, Start: ${start}`

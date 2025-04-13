@@ -214,11 +214,7 @@ class TimelinePoint extends LinePoint {
     }
 
     public isValid(): boolean {
-        return (
-            this.options.y !== null ||
-            this.series.options.nullInteraction ||
-            true
-        );
+        return this.options.y !== null;
     }
 
     public setState(): void {
@@ -253,12 +249,7 @@ class TimelinePoint extends LinePoint {
         x?: number,
         isMock?: boolean
     ): Point {
-        const isNull = (
-                this.isNull ||
-                options === null ||
-                (options as PointOptions).y === null
-            ),
-            series = this.series;
+        const series = this.series;
 
         if (!x && !(options as any)?.x) {
             if (isNumber(this.x)) {
@@ -271,17 +262,13 @@ class TimelinePoint extends LinePoint {
 
         options = Point.prototype.optionsToObject.call(
             this,
-            options ?? (
-                (series.options.nullInteraction && { y: 0 }) ||
-                    null
-            )
+            options
         );
 
         const p = super.applyOptions(options, x, isMock);
 
         if (!isMock) {
             this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
-            p.isNull = isNull;
         }
 
         return p;
