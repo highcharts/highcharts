@@ -1,5 +1,15 @@
 * {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
 }
 
 /* GENERAL */
@@ -288,7 +298,7 @@ li.highcharts-active {
 
 /* Responsive design */
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1330px) {
     .highcharts-stocktools-toolbar li > .highcharts-menu-item-title {
         display: none;
     }

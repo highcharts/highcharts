@@ -56,22 +56,19 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        borderWidth: 0,
         backgroundColor: 'none',
-        shadow: false,
-        style: {
-            fontSize: '16px'
-        },
-        valueSuffix: '%',
+        fixed: true,
         pointFormat: '{series.name}<br>' +
             '<span style="font-size: 2em; color: {point.color}; ' +
             'font-weight: bold">{point.y}</span>',
-        positioner: function (labelWidth) {
-            return {
-                x: (this.chart.chartWidth - labelWidth) / 2,
-                y: (this.chart.plotHeight / 2) + 15
-            };
-        }
+        position: {
+            align: 'center',
+            verticalAlign: 'middle'
+        },
+        style: {
+            fontSize: '16px'
+        },
+        valueSuffix: '%'
     },
 
     pane: {

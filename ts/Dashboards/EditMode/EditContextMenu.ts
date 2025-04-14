@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -53,6 +53,13 @@ class EditContextMenu extends Menu {
             type: 'toggle',
             getValue: function (item: MenuItem): boolean {
                 return item.menu.editMode.isActive();
+            },
+            setValue: function (item: MenuItem, value: boolean): void {
+                const inputElem = item.innerElement?.querySelector('input');
+
+                if (inputElem) {
+                    inputElem.checked = value;
+                }
             },
             langKey: 'editMode',
             events: {
@@ -166,6 +173,18 @@ class EditContextMenu extends Menu {
                     'false'
                 );
             }
+        }
+
+        // Set editMode toggle state
+        const toggleEditMode = this.activeItems.find(
+            (item): boolean => item.options.langKey === 'editMode'
+        );
+
+        if (toggleEditMode) {
+            (toggleEditMode.options as MenuItem.ToggleOptions).setValue(
+                toggleEditMode,
+                this.editMode.isActive()
+            );
         }
     }
 

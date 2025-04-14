@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2025 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -25,10 +25,11 @@ import type {
     BoostTargetObject
 } from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
+import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type Pointer from '../../Core/Pointer';
+import type Types from '../../Shared/Types';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
@@ -118,9 +119,9 @@ function getBoostClipRect(
     }
 
     // Clipping of individual series (#11906, #19039).
-    if ((target as Series).getClipBox) {
+    if ((target as Series).is) {
         const { xAxis, yAxis } = target as Series;
-        clipBox = (target as Series).getClipBox();
+        clipBox = chart.getClipBox(target as Series);
         if (chart.inverted) {
             const lateral = clipBox.width;
             clipBox.width = clipBox.height;
@@ -229,7 +230,7 @@ function isChartSeriesBoosting(
         }
 
         if (patientMax(
-            series.processedXData,
+            series.getColumn('x', true),
             seriesOptions.data as any,
             /// series.xData,
             series.points
@@ -368,16 +369,15 @@ function onChartCallback(
  * @return {number}
  * Max value
  */
-function patientMax(...args: Array<Array<unknown>>): number {
+function patientMax(...args: Array<Array<unknown>|Types.TypedArray>): number {
     let r = -Number.MAX_VALUE;
 
-    args.forEach(function (t: Array<unknown>): (boolean|undefined) {
+    args.forEach((t): boolean|undefined => {
         if (
             typeof t !== 'undefined' &&
             t !== null &&
             typeof t.length !== 'undefined'
         ) {
-            /// r = r < t.length ? t.length : r;
             if (t.length > 0) {
                 r = t.length;
                 return true;

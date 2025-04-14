@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -95,9 +95,11 @@ class VariwideSeries extends ColumnSeries {
             force
         );
 
+        const zData = this.getColumn('z');
+
         (this.xAxis.reversed ?
-            (this.zData as any).slice().reverse() :
-            (this.zData as any)
+            zData.slice().reverse() :
+            zData
         ).forEach(
             function (
                 this: VariwideSeries,
@@ -112,7 +114,7 @@ class VariwideSeries extends ColumnSeries {
 
         if (this.xAxis.categories) {
             this.xAxis.variwide = true;
-            this.xAxis.zData = this.zData; // Used for label rank
+            this.xAxis.zData = zData; // Used for label rank
         }
         return;
     }
@@ -307,6 +309,7 @@ interface VariwideSeries {
 
 extend(VariwideSeries.prototype, {
     irregularWidths: true,
+    keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
     pointClass: VariwidePoint

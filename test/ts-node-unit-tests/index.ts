@@ -7,7 +7,7 @@ import { run as runGulp } from '../../tools/gulptasks/lib/gulp';
 import '../../gulpfile.js';
 
 import * as glob from 'glob';
-const files = glob.sync(join(__dirname, 'tests') + '/**/*.test.ts');
+const files = glob.sync(join(__dirname , 'tests') + '/**/*.test.ts');
 
 (async ()=> {
     await runGulp('scripts');

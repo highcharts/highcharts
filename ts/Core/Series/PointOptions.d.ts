@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -97,8 +97,8 @@ export interface PointOptions {
     selected?: boolean;
     states?: PointStatesOptions<Point>;
     visible?: boolean;
-    x?: number;
-    y?: (null|number);
+    x?: number|string;
+    y?: null|number;
     legendSymbolColor?: ColorType;
 }
 

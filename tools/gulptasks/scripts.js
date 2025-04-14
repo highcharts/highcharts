@@ -38,56 +38,18 @@ function saveRun() {
 
     const fs = require('fs');
     const fslib = require('../libs/fs');
+    const logLib = require('../libs/log');
     const stringlib = require('./lib/string');
+    const argv = require('yargs').argv;
 
-    const latestCodeHash = fslib.getDirectoryHash(
-        CODE_DIRECTORY, true, stringlib.removeComments
-    );
-    const latestCSSHash = fslib.getDirectoryHash(
-        CSS_DIRECTORY, true, stringlib.removeComments
-    );
-    const latestGFXHash = fslib.getDirectoryHash(GFX_DIRECTORY);
-    const latestJSHash = fslib.getDirectoryHash(
-        JS_DIRECTORY, true, stringlib.removeComments
-    );
-    const latestTSHash = fslib.getDirectoryHash(TS_DIRECTORY, true);
+    const product = argv.product || 'Highcharts';
 
-    const configuration = {
-        latestCodeHash,
-        latestCSSHash,
-        latestGFXHash,
-        latestJSHash,
-        latestTSHash
-    };
-
-    fs.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
-}
-
-/**
- * Tests whether code and js directory are in sync.
- *
- * @return {boolean}
- *         True, if code is out of sync.
- */
-function shouldRun() {
-
-    const fs = require('fs');
-    const fslib = require('../libs/fs');
-    const log = require('../libs/log');
-    const stringlib = require('./lib/string');
-
-    let configuration = {
-        latestCodeHash: '',
-        latestCSSHash: '',
-        latestGFXHash: '',
-        latestJSHash: '',
-        latestTSHash: ''
-    };
-
-    if (fs.existsSync(CONFIGURATION_FILE)) {
-        configuration = JSON.parse(
-            fs.readFileSync(CONFIGURATION_FILE).toString()
-        );
+    let config;
+    try {
+        config = JSON.parse(fs.readFileSync(CONFIGURATION_FILE).toString());
+    } catch {
+        logLib.message('Cannot read scripts hashes config file. Loading empty config.');
+        config = {};
     }
 
     const latestCodeHash = fslib.getDirectoryHash(
@@ -102,11 +64,60 @@ function shouldRun() {
     );
     const latestTSHash = fslib.getDirectoryHash(TS_DIRECTORY, true);
 
-    if (latestCodeHash === configuration.latestCodeHash &&
-        latestCSSHash === configuration.latestCSSHash &&
-        latestGFXHash === configuration.latestGFXHash &&
-        latestJSHash === configuration.latestJSHash &&
-        latestTSHash === configuration.latestTSHash
+    config[product] = {
+        latestCodeHash,
+        latestCSSHash,
+        latestGFXHash,
+        latestJSHash,
+        latestTSHash
+    };
+
+    fs.writeFileSync(CONFIGURATION_FILE, JSON.stringify(config));
+}
+
+/**
+ * Tests whether code and js directory are in sync.
+ *
+ * @return {boolean}
+ *         True, if code is out of sync.
+ */
+function shouldRun() {
+
+    const fs = require('fs');
+    const fslib = require('../libs/fs');
+    const argv = require('yargs').argv;
+    const log = require('../libs/log');
+    const stringlib = require('./lib/string');
+
+    const product = argv.product || 'Highcharts';
+
+    let config = {};
+    if (fs.existsSync(CONFIGURATION_FILE)) {
+        config = JSON.parse(
+            fs.readFileSync(CONFIGURATION_FILE).toString()
+        );
+    }
+
+    config = config[product] || {};
+
+    const latestCodeHash = fslib.getDirectoryHash(
+        // TODO: Code directory should be dependent on the product
+        CODE_DIRECTORY, true, stringlib.removeComments
+    );
+    const latestCSSHash = fslib.getDirectoryHash(
+        CSS_DIRECTORY, true, stringlib.removeComments
+    );
+    const latestGFXHash = fslib.getDirectoryHash(GFX_DIRECTORY);
+    const latestJSHash = fslib.getDirectoryHash(
+        JS_DIRECTORY, true, stringlib.removeComments
+    );
+    const latestTSHash = fslib.getDirectoryHash(TS_DIRECTORY, true);
+
+    if (latestCodeHash === config.latestCodeHash &&
+        latestCSSHash === config.latestCSSHash &&
+        latestGFXHash === config.latestGFXHash &&
+        latestJSHash === config.latestJSHash &&
+        latestTSHash === config.latestTSHash
     ) {
 
         log.success(
@@ -135,8 +146,14 @@ function shouldRun() {
 function task() {
 
     const argv = require('yargs').argv;
+    const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
+    const utils = require('./utils');
+
+    if (!utils.validateProduct(argv.product)) {
+        return Promise.resolve();
+    }
 
     if (processLib.isRunning('scripts-watch')) {
         logLib.warn('Running watch process detected. Skipping task...');
@@ -155,19 +172,33 @@ function task() {
     return new Promise((resolve, reject) => {
 
         if (
+            argv.assembler ||
             argv.force ||
-            argv.webpack ||
             shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
-
             processLib.isRunning('scripts_incomplete', true, true);
 
-            gulp.series(
-                'scripts-ts',
-                'scripts-css',
-                argv.webpack ? 'scripts-webpack' : 'scripts-js'
-            )(
+            if (argv.clear) {
+                fsLib.deleteDirectory('code', true);
+            }
+
+            gulp.series(...(
+                argv.assembler ?
+                    [
+                        'scripts-css',
+                        'scripts-ts',
+                        'scripts-es5',
+                        'scripts-js',
+                        'scripts-code'
+                    ] :
+                    [
+                        'scripts-css',
+                        'scripts-ts',
+                        'scripts-webpack',
+                        'scripts-code'
+                    ]
+            ))(
                 function (error) {
 
                     processLib.isRunning('scripts_incomplete', false, true);

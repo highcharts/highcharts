@@ -48,7 +48,7 @@ QUnit.test('Pareto', function (assert) {
     );
 
     assert.deepEqual(
-        chart.series[0].yData,
+        chart.series[0].getColumn('y'),
         [
             54.591467823572,
             70.643528561099,
@@ -69,7 +69,7 @@ QUnit.test('Pareto', function (assert) {
     assert.deepEqual(chart.series[0].points.length, 9, 'addPoint');
 
     assert.deepEqual(
-        chart.series[0].yData,
+        chart.series[0].getColumn('y'),
         [
             53.813257305773,
             69.636493228795,
@@ -88,7 +88,7 @@ QUnit.test('Pareto', function (assert) {
     assert.deepEqual(chart.series[1].points.length, 8, 'removePoint');
 
     assert.deepEqual(
-        chart.series[0].yData,
+        chart.series[0].getColumn('y'),
         [
             34.259259259259,
             57.561728395062,
@@ -107,7 +107,7 @@ QUnit.test('Pareto', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[0].yData,
+        chart.series[0].getColumn('y'),
         [
             10.504201680672,
             42.226890756303,

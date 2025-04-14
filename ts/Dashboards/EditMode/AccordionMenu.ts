@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -221,19 +221,19 @@ class AccordionMenu {
 
             currentLevel = currentLevel[key];
 
-            if (key === 'dataGridOptions') {
-                const realDataGridOptions =
+            if (key === 'gridOptions') {
+                const realGridOptions =
                     (this.component as any).dataGrid?.options;
 
-                if (realDataGridOptions) {
+                if (realGridOptions) {
                     const oldOptionsBuffer =
                         this.oldOptionsBuffer as Globals.AnyRecord;
-                    if (!oldOptionsBuffer.dataGridOptions) {
-                        oldOptionsBuffer.dataGridOptions = {};
+                    if (!oldOptionsBuffer.gridOptions) {
+                        oldOptionsBuffer.gridOptions = {};
                     }
                     currentOldDataGridOptionsBufferLevel =
-                        oldOptionsBuffer.dataGridOptions as Globals.AnyRecord;
-                    currentDataGridOptionsLevel = realDataGridOptions;
+                        oldOptionsBuffer.gridOptions as Globals.AnyRecord;
+                    currentDataGridOptionsLevel = realGridOptions;
                 }
             } else if (
                 currentDataGridOptionsLevel &&
@@ -326,6 +326,7 @@ class AccordionMenu {
             ...options,
             iconsURLPrefix: this.iconsURLPrefix,
             value: component.getEditableOptionValue(options.propertyPath),
+            enabledOnOffLabels: options.type === 'toggle',
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)
@@ -361,6 +362,7 @@ class AccordionMenu {
             const accordionOptions = nestedOptions[i].options;
             const showToggle = !!nestedOptions[i].showToggle;
             const propertyPath = nestedOptions[i].propertyPath || [];
+            const lang = (component.board?.editMode || EditGlobals).lang;
 
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
@@ -372,13 +374,16 @@ class AccordionMenu {
                         this.updateOptions(propertyPath, value),
                     isNested: !!accordionOptions,
                     isStandalone: !accordionOptions,
-                    lang: (component.board?.editMode || EditGlobals).lang
+                    lang
                 }
             );
 
             for (let j = 0, jEnd = accordionOptions?.length; j < jEnd; ++j) {
                 this.renderAccordion(
-                    accordionOptions[j] as EditableOptions.Options,
+                    merge(
+                        accordionOptions[j] as EditableOptions.Options,
+                        { lang, isNested: true }
+                    ),
                     collapsedHeader.content,
                     component
                 );

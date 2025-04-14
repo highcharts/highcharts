@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -203,21 +203,17 @@ namespace Responsive {
         const mergedOptions = merge(
             ...ruleIds
                 .map((ruleId): (RuleOptions|undefined) => find(
-                    (options || {}).rules || [],
+                    options?.rules || [],
                     (rule): boolean => (rule._id === ruleId)
                 ))
-                .map((rule): (GlobalOptions|undefined) => (
-                    rule && rule.chartOptions
-                ))
+                .map((rule): (GlobalOptions|undefined) => rule?.chartOptions)
         );
 
         mergedOptions.isResponsiveOptions = true;
 
         // Stringified key for the rules that currently apply.
         ruleIds = ((ruleIds.toString() as any) || void 0);
-        const currentRuleIds = (
-            currentResponsive && currentResponsive.ruleIds
-        );
+        const currentRuleIds = currentResponsive?.ruleIds;
 
         // Changes in what rules apply
         if ((ruleIds as any) !== currentRuleIds) {

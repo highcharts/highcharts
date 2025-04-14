@@ -10,7 +10,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2015, 0, 1),
+            pointStart: '2015-01-01',
             pointIntervalUnit: 'month'
         }
     },

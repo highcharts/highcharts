@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -168,13 +168,13 @@ class PlotLineOrBand {
         const { axis, options } = this,
             { horiz, logarithmic } = axis,
             { color, events, zIndex = 0 } = options,
+            { renderer, time } = axis.chart,
             groupAttribs: SVGAttributes = {},
-            renderer = axis.chart.renderer,
 
             // These properties only exist on either band or line
-            to = (options as PlotBandOptions).to,
-            from = (options as PlotBandOptions).from,
-            value = (options as PlotLineOptions).value,
+            to = time.parse((options as PlotBandOptions).to),
+            from = time.parse((options as PlotBandOptions).from),
+            value = time.parse((options as PlotLineOptions).value),
             borderWidth = (options as PlotBandOptions).borderWidth;
 
         let optionsLabel = options.label,
@@ -380,6 +380,8 @@ class PlotLineOrBand {
             width: bBoxWidth,
             height: arrayMax(yBounds) - y
         });
+
+        label.alignAttr.y -= renderer.fontMetrics(label).b;
 
         if (
             !label.alignValue ||
@@ -624,6 +626,8 @@ export default PlotLineOrBand;
 /**
  * The start position of the plot band in axis units.
  *
+ * On datetime axes, the value can be given as a timestamp or a date string.
+ *
  * @sample {highcharts} highcharts/xaxis/plotbands-color/
  *         Datetime axis
  * @sample {highcharts} highcharts/xaxis/plotbands-from/
@@ -631,7 +635,7 @@ export default PlotLineOrBand;
  * @sample {highstock} stock/xaxis/plotbands/
  *         Plot band on Y axis
  *
- * @type      {number}
+ * @type      {number|string}
  * @apioption xAxis.plotBands.from
  */
 
@@ -650,6 +654,8 @@ export default PlotLineOrBand;
 /**
  * The end position of the plot band in axis units.
  *
+ * On datetime axes, the value can be given as a timestamp or a date string.
+ *
  * @sample {highcharts} highcharts/xaxis/plotbands-color/
  *         Datetime axis
  * @sample {highcharts} highcharts/xaxis/plotbands-from/
@@ -657,7 +663,7 @@ export default PlotLineOrBand;
  * @sample {highstock} stock/xaxis/plotbands/
  *         Plot band on Y axis
  *
- * @type      {number}
+ * @type      {number|string}
  * @apioption xAxis.plotBands.to
  */
 
@@ -945,12 +951,14 @@ export default PlotLineOrBand;
 /**
  * The position of the line in axis units.
  *
+ * On datetime axes, the value can be given as a timestamp or a date string.
+ *
  * @sample {highcharts} highcharts/xaxis/plotlines-color/
  *         Between two categories on X axis
  * @sample {highstock} stock/xaxis/plotlines/
  *         Plot line on Y axis
  *
- * @type      {number}
+ * @type      {number|string}
  * @apioption xAxis.plotLines.value
  */
 

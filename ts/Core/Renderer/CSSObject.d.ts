@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -68,6 +68,7 @@ export interface CSSObject {
     height?: string|0;
     'justify-content'?: AlignValue;
     left?: string|0;
+    lineClamp?: number;
     lineHeight?: string|0;
     lineWidth?: (number|string); // @todo: Check this. It's not CSS...
     listStyle?: string;
@@ -87,7 +88,7 @@ export interface CSSObject {
     padding?: number|string;
     'pointer-events'?: string;
     pointerEvents?: CSSObject['pointer-events'];
-    position?: 'absolute'|'fixed'|'relative';
+    position?: 'absolute'|'fixed'|'relative'|'static';
     right?: string;
     rotation?: number;
     stroke?: ColorType;
@@ -105,12 +106,15 @@ export interface CSSObject {
     transformOrigin?: string;
     transition?: string;
     userSelect?: string;
+    verticalAlign?: 'bottom'|'middle'|'top';
     visibility?: 'hidden'|'inherit'|'visible';
     'white-space'?: string;
     whiteSpace?: CSSObject['white-space'];
     width?: string|0;
     WebkitBoxShadow?: string;
     WebkitOverflowScrolling?: string;
+    WebkitBoxOrient?: 'vertical'|'horizontal';
+    WebkitLineClamp?: number;
     '-webkit-tap-highlight-color'?: string;
     zIndex?: number;
     'z-index'?: number;

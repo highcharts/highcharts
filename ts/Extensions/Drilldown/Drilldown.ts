@@ -47,7 +47,6 @@ import type Tick from '../../Core/Axis/Tick';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
-import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import DrilldownDefaults from './DrilldownDefaults.js';
@@ -395,8 +394,7 @@ class ChartAdditions {
             colorProp: SeriesOptions = chart.styledMode ?
                 { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) } :
                 { color: point.color || oldSeries.color },
-            levelNumber = oldSeries.options._levelNumber || 0,
-            pointIndex = oldSeries.points.indexOf(point);
+            levelNumber = oldSeries.options._levelNumber || 0;
 
         if (!chart.drilldownLevels) {
             chart.drilldownLevels = [];
@@ -453,12 +451,10 @@ class ChartAdditions {
             shapeArgs: point.shapeArgs,
             // No graphic in line series with markers disabled
             bBox: point.graphic ? point.graphic.getBBox() : {},
-            color: point.isNull ?
-                Color.parse(colorProp.color).setOpacity(0).get() :
-                colorProp.color,
+            color: point.isNull ? 'rgba(0,0,0,0)' : colorProp.color,
             lowerSeriesOptions: ddOptions,
-            pointOptions: (oldSeries.options.data as any)[pointIndex],
-            pointIndex: pointIndex,
+            pointOptions: point.options,
+            pointIndex: point.index,
             oldExtremes: {
                 xMin: xAxis && xAxis.userMin,
                 xMax: xAxis && xAxis.userMax,
@@ -726,7 +722,9 @@ class ChartAdditions {
                         }
                     }
                 }
-                oldSeries.xData = []; // Overcome problems with minRange (#2898)
+
+                // Overcome problems with minRange (#2898)
+                oldSeries.dataTable.setColumn('x', []);
 
                 // Reset the names to start new series from the beginning.
                 // Do it once to preserve names when multiple
@@ -884,7 +882,7 @@ class ChartAdditions {
             }
         }
 
-        if (!chart.mapView) {
+        if (!chart.mapView && !isMultipleDrillUp) {
             chart.redraw();
         }
 
@@ -1141,7 +1139,7 @@ namespace Drilldown {
         (this.xAxis || []).forEach((axis): void => {
             axis.ddPoints = {};
             axis.series.forEach((series): void => {
-                const xData = series.xData || [],
+                const xData = series.getColumn('x'),
                     points = series.points;
 
                 for (let i = 0, iEnd = xData.length, p; i < iEnd; i++) {

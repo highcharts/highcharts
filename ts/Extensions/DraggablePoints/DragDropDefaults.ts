@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
@@ -84,7 +84,7 @@ const DragDropDefaults: DragDropDefaults = {
      * @sample {highcharts} highcharts/dragdrop/drag-xrange
      *         Limit dragging
      *
-     * @type      {number}
+     * @type      {number|string}
      * @since     6.2.0
      * @apioption plotOptions.series.dragDrop.dragMinX
      */
@@ -97,7 +97,7 @@ const DragDropDefaults: DragDropDefaults = {
      * @sample {highcharts} highcharts/dragdrop/drag-xrange
      *         Limit dragging
      *
-     * @type      {number}
+     * @type      {number|string}
      * @since     6.2.0
      * @apioption plotOptions.series.dragDrop.dragMaxX
      */

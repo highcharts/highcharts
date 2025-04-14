@@ -356,7 +356,7 @@ QUnit.test('Stock panning (#6276, #21319)', function (assert) {
 });
 
 QUnit.test(
-    'Ordinal axis panning, when data is equally spaced (#13334).',
+    'Ordinal axis panning.',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             xAxis: {
@@ -415,7 +415,36 @@ QUnit.test(
         assert.notEqual(
             initialMin,
             chart.xAxis[0].min,
-            'Chart should pan horizontally.'
+            'Chart should pan horizontally, when data is equally spaced #13334.'
+        );
+
+        const data = [];
+
+        for (let i = 0; i < 100000; i++) {
+            data.push([400 + i, 1]);
+        }
+
+        chart.series[0].update({
+            data,
+            type: 'column',
+            dataGrouping: {
+                forced: true,
+                units: [[
+                    'second',
+                    [1]
+                ]]
+            }
+        });
+
+        chart.xAxis[0].setExtremes(2000, 45000);
+
+        controller.pan([100, 200], [200, 200]);
+
+        assert.equal(
+            chart.xAxis[0].min,
+            0,
+            `It should be possible to pan to the axis minimum in a data grouped
+            ordinal column chart, #21524.`
         );
     }
 );

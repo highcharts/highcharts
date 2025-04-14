@@ -1,5 +1,6 @@
 Highcharts.setOptions({
     lang: {
+        locale: 'ar',
         downloadJPEG: 'JPEG تحميل صورة',
         downloadPDF: 'PDF تحميل صورة',
         downloadPNG: 'PNG تحميل صورة',

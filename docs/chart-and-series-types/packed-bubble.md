@@ -12,14 +12,16 @@ The configuration of `packedbubble` differs little from other series types like 
 
 Here is an [example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/blog/packed-bubble-basic) of a packed bubble chart in its simplest form:
 
-    Highcharts.chart('container', {
-        chart: {
-            type: 'packedbubble'
-        },
-        series: [{
-            data: [50, 12, 33, 45, 60] // sizes of the bubble
-        }]
-    });
+```js
+Highcharts.chart('container', {
+    chart: {
+        type: 'packedbubble'
+    },
+    series: [{
+        data: [50, 12, 33, 45, 60] // sizes of the bubble
+    }]
+});
+```
 
 Data format
 -----------
@@ -28,49 +30,50 @@ In the above example, the series data for Packed Bubble takes a one-dimensional 
 
 Here is an example of how to set the data for a packed bubble with 3 series and different data formats:
 
-
-    Highcharts.chart('container', {
-        chart: {
-            type: 'packedbubble',
-        },
-        series: [{
-            name: 'Coffee', // Coffee series
-            data: [{
-                // name property is used for the datalabel
-                // value property is used for the volume of the bubble
-                value: 12,
-                name: 'Bert'
-            }, {
-                value: 5,
-                name: 'John'
-            }, {
-                value: 10,
-                name: 'Sandra'
-            }, {
-                value: 7,
-                name: 'Cecile'
-            }]
+```js
+Highcharts.chart('container', {
+    chart: {
+        type: 'packedbubble',
+    },
+    series: [{
+        name: 'Coffee', // Coffee series
+        data: [{
+            // name property is used for the datalabel
+            // value property is used for the volume of the bubble
+            value: 12,
+            name: 'Bert'
         }, {
-            name: 'Energy drinks', // Energy drinks series
-            data: [{
-                value: 10,
-                name: 'Tristan'
-            }]
+            value: 5,
+            name: 'John'
         }, {
-            name: 'Tea', // Tea series
-            data: [5, 6, 8, {
-                value: 10,
-                name: 'Mustapha',
-                color: 'pink'
-            }]
+            value: 10,
+            name: 'Sandra'
+        }, {
+            value: 7,
+            name: 'Cecile'
         }]
-    });
+    }, {
+        name: 'Energy drinks', // Energy drinks series
+        data: [{
+            value: 10,
+            name: 'Tristan'
+        }]
+    }, {
+        name: 'Tea', // Tea series
+        data: [5, 6, 8, {
+            value: 10,
+            name: 'Mustapha',
+            color: 'pink'
+        }]
+    }]
+});
+```
 
 Notice in the code above, that the Tea data series is set with one dimensional array, except for the last point, which is set with values for volume, name and a color.
 
-<iframe width="100%" height="710" style="null" src=https://www.highcharts.com/samples/embed/highcharts/blog/packed-bubble-simple-demo allow="fullscreen"></iframe>
+<iframe width="100%" height="710" style="null" src="https://www.highcharts.com/samples/embed/highcharts/blog/packed-bubble-simple-demo" allow="fullscreen"></iframe>
 
-<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble" allow="fullscreen"></iframe>
 
 Bubble sizes
 ------------
@@ -79,23 +82,24 @@ Packed Bubble charts with a dataset of either many small or large values need so
 
 Here is an example of setting min and max size for bubbles:
 
+```js
+Highcharts.chart('container', {
+    chart: {
+        type: 'packedbubble'
+    },
+    plotOptions: {
+        packedbubble: {
+            minSize: 15,
+            maxSize: 300
+        }
+    },
+    series: [{
+        data: [1, 75, 112, 180, 20, 3000]
+    }]
+});
+```
 
-    Highcharts.chart('container', {
-        chart: {
-            type: 'packedbubble'
-        },
-        plotOptions: {
-            packedbubble: {
-                minSize: 15,
-                maxSize: 300
-            }
-        },
-        series: [{
-            data: [1, 75, 112, 180, 20, 3000]
-        }]
-    });
-
-<iframe width="100%" height="500" style="null" src=https://www.highcharts.com/samples/embed/highcharts/blog/packed-bubble-basic allow="fullscreen"></iframe>
+<iframe width="100%" height="500" style="null" src="https://www.highcharts.com/samples/embed/highcharts/blog/packed-bubble-basic" allow="fullscreen"></iframe>
 
 ----------------------------------------------
 
@@ -130,7 +134,7 @@ plotOptions: {
 }
 ```
 
-<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split" allow="fullscreen"></iframe>
 
 ### SIMULATION
 
@@ -149,7 +153,7 @@ plotOptions: {
 }
 ```
 
-<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral" allow="fullscreen"></iframe>
 
 ### DRAG AND DROP
 
@@ -179,7 +183,7 @@ Use Cases
 
 1. Force-approach algorithm.
 
-<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble" allow="fullscreen"></iframe>
 
 2. Configuration
 
@@ -198,7 +202,7 @@ plotOptions: {
 
 1. Force-approach algorithm with split series.
 
-<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split" allow="fullscreen"></iframe>
 
 2. Configuration:
 
@@ -220,4 +224,4 @@ plotOptions: {
 
 1. 7.0. Spiral packing - simple, fast alternative of the packed bubble, that may be used for more complicated data sets:
 
-<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral" allow="fullscreen"></iframe>

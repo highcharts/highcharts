@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -100,8 +100,6 @@ class TimelineSeries extends LineSeries {
     public visibilityMap!: Array<(boolean|TimelinePoint|TimelinePointOptions)>;
 
     public visiblePointsCount?: number;
-
-    public yData?: Array<number>;
 
     /* *
      *
@@ -229,25 +227,27 @@ class TimelineSeries extends LineSeries {
         super.generatePoints();
 
         const series = this,
-            points = series.points;
+            points = series.points,
+            pointsLen = points.length,
+            xData = series.getColumn('x');
 
-        for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
-            points[i].applyOptions({
-                x: (series.xData as any)[i]
-            }, (series.xData as any)[i]);
+        for (let i = 0, iEnd = pointsLen; i < iEnd; ++i) {
+            const x = xData[i];
+            points[i].applyOptions({ x: x }, x);
         }
     }
 
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
         const series = this,
+            nullInteraction = series.options.nullInteraction,
             map = (
-                series.data.length ?
-                    series.data :
-                    series.userOptions.data || []
+                (series.data.length ? series.data : series.options.data) || []
             ).map((
                 point: (TimelinePoint|TimelinePointOptions)
             ): (boolean|TimelinePoint|TimelinePointOptions) => (
-                point && point.visible !== false && !point.isNull ?
+                point &&
+                point.visible !== false &&
+                (!point.isNull || nullInteraction) ?
                     point :
                     false
             ));
@@ -288,7 +288,12 @@ class TimelineSeries extends LineSeries {
 
                     // New way of calculating closestPointRangePx value, which
                     // respects the real point visibility is needed.
-                    if (point.visible && !point.isNull) {
+                    if (
+                        point.visible && (
+                            !point.isNull ||
+                            series.options.nullInteraction
+                        )
+                    ) {
                         if (defined(lastPlotX)) {
                             closestPointRangePx = Math.min(
                                 closestPointRangePx,
@@ -441,10 +446,10 @@ class TimelineSeries extends LineSeries {
 
 // Add series-specific properties after data is already processed, #17890
 addEvent(TimelineSeries, 'afterProcessData', function (): void {
-    const series = this;
+    const series = this,
+        xData = series.getColumn('x');
 
-    let visiblePoints = 0,
-        i: (number|undefined);
+    let visiblePoints = 0;
 
     series.visibilityMap = series.getVisibilityMap();
 
@@ -457,9 +462,8 @@ addEvent(TimelineSeries, 'afterProcessData', function (): void {
 
     series.visiblePointsCount = visiblePoints;
 
-    for (i = 0; i < (series.xData as any).length; i++) {
-        (series.yData as any)[i] = 1;
-    }
+    this.dataTable.setColumn('y', new Array(xData.length).fill(1));
+
 });
 
 /* *

@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
+const log = require('../tools/libs/log');
 const aliases = require('../samples/data/json-sources/index.json');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
@@ -201,7 +202,7 @@ if (!fs.existsSync(path.join(__dirname, '../tmp'))) {
     fs.mkdirSync(path.join(__dirname, '../tmp'));
 }
 aliases.forEach(alias => {
-    JSONSources[alias.url] = JSON.parse(fs.readFileSync(
+    const data = fs.readFileSync(
         path.join(
             __dirname,
             '..',
@@ -209,7 +210,10 @@ aliases.forEach(alias => {
             alias.filename
         ),
         'utf8'
-    ));
+    );
+    JSONSources[alias.url] = alias.filename.endsWith('csv') ?
+        data :
+        JSON.parse(data);
 });
 fs.writeFileSync(
     path.join(__dirname, '../tmp/json-sources.js'),
@@ -229,17 +233,18 @@ module.exports = function (config) {
             ChildProcess.execSync(
                 'npx gulp jsdoc-dts'
             );
-            console.log('Compiling test tools...');
-            ChildProcess.execSync(
-                'cd "' + process.cwd() + '" && npx tsc -p test'
-            );
+            // console.log('Compiling test tools...');
+            // ChildProcess.execSync(
+            //     'cd "' + process.cwd() + '" && npx tsc -p test'
+            // );
             console.log('Compiling samples...');
             ChildProcess.execSync(
                 'cd "' + process.cwd() + '" && npx tsc -p samples'
             );
         } catch (catchedError) {
-            console.error(catchedError);
-            return;
+            const msg = catchedError.stdout.toString();
+            console.error(msg);
+            throw new Error(msg);
         }
     }
 
@@ -249,8 +254,8 @@ module.exports = function (config) {
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
         // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
-        // Chrome 109
-        [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
+        // Chrome 109+
+        [getProperties()['karma.defaultbrowser'] || 'FirefoxHeadless'];
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
@@ -277,6 +282,12 @@ module.exports = function (config) {
     }
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
+
+    if (browsers.includes('ChromeHeadless')) {
+        log.warn(
+            'ChromeHeadless 109+ will fail in WebGL-based tests, e.g. boost.'
+        );
+    }
 
     let tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
@@ -407,7 +418,8 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
         browserConsoleLogOptions: {
             path: `${process.cwd()}/test/console.log`,
-            terminal: false
+            // Show in terminal only when running specific tests for debugging
+            terminal: Boolean(argv.tests)
         },
         browsers: browsers,
         autoWatch: false,
@@ -423,15 +435,18 @@ module.exports = function (config) {
         },
 
         formatError: function (s) {
-            let ret = s.replace(
-                /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
-                function (a, b, c) {
-                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan + '\n' +
-                    '\t' + a.replace(/^@/, '@ ') + '\n<<<splitter>>>';
-                }
-            );
+            let ret = s
+                .replace(
+                    /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
+                    (a, b, c) => (
+                        `http://localhost:3030/samples/#test/${c}`.cyan + '\n\t' +
+                        a.replace(/^@/, '@ ')
+                    )
+                )
+                .replace(/\@code\//g, '@ code/');
 
             // Insert link to utils
+            /*
             let regex = /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/;
             let match = s.match(regex);
 
@@ -444,9 +459,10 @@ module.exports = function (config) {
 
                 ret = ret.replace(regex, a => a.cyan);
             }
+            */
 
             // Skip the call stack, it's internal QUnit stuff
-            ret = ret.split('<<<splitter>>>')[0];
+            // ret = ret.split('<<<splitter>>>')[0];
 
             return ret;
         },
@@ -502,7 +518,7 @@ module.exports = function (config) {
                     // samples
                     if (argv.debug) {
                         if (js.indexOf('Highcharts.setOptions') !== -1) {
-                            console.log(
+                            log.warn(
                                 `Warning - Highcharts.setOptions found in: ${file.path}`.yellow
                             );
                         }
@@ -510,7 +526,7 @@ module.exports = function (config) {
                             js.indexOf('Highcharts.wrap') !== -1 ||
                             js.indexOf('H.wrap') !== -1
                         ) {
-                            console.log(
+                            log.warn(
                                 `Warning - Highcharts.wrap found in: ${file.path}`.yellow
                             );
                         }
@@ -601,6 +617,7 @@ module.exports = function (config) {
                                 );
                             })
                             .catch(err => {
+                                assert.ok(false, err);
                                 console.error(err);
                             })
                             .finally(() => {

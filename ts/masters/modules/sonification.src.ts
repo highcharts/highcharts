@@ -5,7 +5,7 @@
  *
  * Sonification module
  *
- * (c) 2010-2024 Highsoft AS
+ * (c) 2010-2025 Highsoft AS
  * Author: Øystein Moseng
  *
  * License: www.highcharts.com/license

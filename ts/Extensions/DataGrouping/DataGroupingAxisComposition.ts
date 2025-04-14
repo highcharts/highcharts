@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -157,7 +157,10 @@ function getGroupPixelWidth(
                 )
             );
 
-            dataLength = (series[i].processedXData || series[i].data).length;
+            dataLength = (
+                series[i].dataTable.modified ||
+                series[i].dataTable
+            ).rowCount;
 
             // Execute grouping if the amount of points is greater than the
             // limit defined in groupPixelWidth

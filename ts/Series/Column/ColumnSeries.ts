@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -157,7 +157,7 @@ class ColumnSeries extends Series {
         if (init && clipOffset) {
             attr.scaleY = 0.001;
             translatedThreshold = clamp(
-                yAxis.toPixels(options.threshold as any),
+                yAxis.toPixels(options.threshold || 0),
                 yAxisPos,
                 yAxisPos + yAxis.len
             );
@@ -411,39 +411,61 @@ class ColumnSeries extends Series {
             objectEach(
                 this.xAxis.stacking?.stacks,
                 (stack: Record<string, StackItem>): void => {
-                    if (typeof point.x === 'number') {
-                        const stackItem = stack[point.x.toString()];
+                    const points = typeof point.x === 'number' ?
+                            stack[point.x.toString()]?.points :
+                            void 0,
+                        pointValues = points?.[this.index],
+                        yStackMap: Record<string, number> = {};
 
-                        if (stackItem) {
-                            const pointValues = stackItem.points[this.index];
+                    // Look for the index
+                    if (points && isArray(pointValues)) {
+                        let baseIndex = this.index;
 
-                            // Look for the index
-                            if (isArray(pointValues)) {
-                                // If there are multiple points with the same X
-                                // then gather all series in category, and
-                                // assign index
-                                const seriesIndexes = Object
-                                    .keys(stackItem.points)
-                                    .filter((pointKey): boolean =>
-                                        // Filter out duplicate X's
-                                        !pointKey.match(',') &&
-                                        // Filter out null points
-                                        stackItem.points[pointKey] &&
-                                        stackItem.points[pointKey].length > 1
-                                    )
-                                    .map(parseFloat)
-                                    .filter((index): boolean =>
-                                        visibleSeries.indexOf(index) !== -1
-                                    )
-                                    .sort((a, b): number => b - a);
+                        // If there are multiple points with the same X then
+                        // gather all series in category, and assign index
+                        const seriesIndexes = Object
+                            .keys(points)
+                            .filter((pointKey): boolean =>
+                                // Filter out duplicate X's
+                                !pointKey.match(',') &&
+                                // Filter out null points
+                                points[pointKey] &&
+                                points[pointKey].length > 1
+                            )
+                            .map(parseFloat)
+                            .filter((index): boolean =>
+                                visibleSeries.indexOf(index) !== -1
+                            )
 
-                                indexInCategory = seriesIndexes.indexOf(
-                                    this.index
-                                );
-                                totalInCategory = seriesIndexes.length;
+                            // When the series `stack` option is defined, assign
+                            // all subsequent column of the same stack to the
+                            // same index as the base column of the stack, then
+                            // filter out the original series index so that
+                            // `seriesIndexes` is shortened to the amount of
+                            // stacks, not the amount of series (#20550).
+                            .filter((index): boolean => {
+                                const otherOptions = this.chart.series[index]
+                                        .options,
+                                    yStack = otherOptions.stacking &&
+                                        otherOptions.stack;
 
-                            }
-                        }
+                                if (defined(yStack)) {
+                                    if (isNumber(yStackMap[yStack])) {
+                                        if (baseIndex === index) {
+                                            baseIndex = yStackMap[yStack];
+                                        }
+
+                                        return false;
+                                    }
+                                    yStackMap[yStack] = index;
+                                }
+                                return true;
+                            })
+                            .sort((a, b): number => b - a);
+
+                        indexInCategory = seriesIndexes.indexOf(baseIndex);
+                        totalInCategory = seriesIndexes.length;
+
                     }
                 }
             );
@@ -472,6 +494,11 @@ class ColumnSeries extends Series {
         const series = this,
             chart = series.chart,
             options = series.options,
+            // For points whithout graphics (null points) this value is used
+            // to reserve space around the point such that:
+            //      - normal/null points are spaced similarily,
+            //      - focusborders of null points are like those of "0" points
+            // This ensures consistent dimensions between null/normal points.
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
             borderWidth = series.borderWidth = pick(
@@ -568,7 +595,7 @@ class ColumnSeries extends Series {
             }
 
             // Adjust for null or missing points
-            if (options.centerInCategory && !options.stacking) {
+            if (options.centerInCategory) {
                 barX = series.adjustForMissingColumns(
                     barX,
                     pointWidth,
@@ -576,6 +603,7 @@ class ColumnSeries extends Series {
                     metrics
                 );
             }
+
 
             // Cache for access in polar
             point.barX = barX;
@@ -613,7 +641,7 @@ class ColumnSeries extends Series {
                 // #3169, drilldown from null must have a position to work from.
                 // #6585, dataLabel should be placed on xAxis, not floating in
                 // the middle of the chart.
-                point.isNull ? translatedThreshold : barY,
+                barY,
                 barW,
                 point.isNull ? 0 : barH
             );
@@ -667,7 +695,9 @@ class ColumnSeries extends Series {
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                 (options as any)[strokeWidthOption] ||
                 (this as any)[strokeWidthOption] || 0,
-            opacity = pick(point && point.opacity, options.opacity, 1);
+            opacity = (point?.isNull && options.nullInteraction) ?
+                0 :
+                (point?.opacity ?? options.opacity ?? 1);
 
         // Handle zone colors
         if (point && this.zones.length) {
@@ -737,6 +767,7 @@ class ColumnSeries extends Series {
         const series = this,
             chart = this.chart,
             options = series.options,
+            nullInteraction = options.nullInteraction,
             renderer = chart.renderer,
             animationLimit = options.animationLimit || 250;
         let shapeArgs;
@@ -749,7 +780,7 @@ class ColumnSeries extends Series {
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
 
-            if (isNumber(plotY) && point.y !== null) {
+            if (isNumber(plotY) && (point.y !== null || nullInteraction)) {
                 shapeArgs = point.shapeArgs;
 
                 // When updating a series between 2d and 3d or cartesian and
@@ -827,23 +858,27 @@ class ColumnSeries extends Series {
             onMouseOver = function (e: PointerEvent): void {
                 pointer?.normalize(e);
 
-                const point = pointer?.getPointFromEvent(e),
-                    // Run point events only for points inside plot area, #21136
-                    isInsidePlot = chart.scrollablePlotArea ?
-                        chart.isInsidePlot(
-                            e.chartX - chart.plotLeft,
-                            e.chartY - chart.plotTop,
-                            {
-                                visiblePlotOnly: true
-                            }
-                        ) : true;
+                const point = pointer?.getPointFromEvent(e);
 
                 // Undefined on graph in scatterchart
                 if (
                     pointer &&
                     point &&
                     series.options.enableMouseTracking &&
-                    isInsidePlot
+                    (
+                    // Run point events only for points inside plot area, #21136
+                        chart.isInsidePlot(
+                            e.chartX - chart.plotLeft,
+                            e.chartY - chart.plotTop,
+                            {
+                                visiblePlotOnly: true
+                            }
+                        ) ||
+                        pointer?.inClass(
+                            e.target as any,
+                            'highcharts-data-label'
+                        )
+                    )
                 ) {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -82,8 +82,8 @@ function wrapSeriesGeneratePoints(
         cropStart = this.cropStart || 0,
         data = this.data || [],
         points = [],
-        processedXData = this.processedXData,
-        processedYData = this.processedYData;
+        processedXData = this.getColumn('x', true),
+        processedYData = this.getColumn('y', true);
 
     let cursor: number,
         point: typeof PointClass.prototype;

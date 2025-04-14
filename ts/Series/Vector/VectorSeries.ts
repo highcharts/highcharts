@@ -2,7 +2,7 @@
  *
  *  Vector plot series module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -244,7 +244,7 @@ class VectorSeries extends ScatterSeries {
     public translate(): void {
         Series.prototype.translate.call(this);
 
-        this.lengthMax = arrayMax(this.lengthData as any);
+        this.lengthMax = arrayMax(this.getColumn('length'));
     }
 
 }

@@ -1,7 +1,9 @@
 Axes
 ====
 
-The x-axis and y-axis are shown by default in all charts containing data series with a [cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system). Here is a quick overview of the axis elements:
+The x-axis and y-axis are shown by default in all charts containing data series
+with a [cartesian coordinate system](https://www.highcharts.com/docs/chart-concepts/dataviz-glossary#cartesian-coordinate-system).
+Here is a quick overview of the axis elements:
 
 ![axis_description.png](axis_description.png)
 
@@ -22,7 +24,7 @@ Note that **datetime** axes are based on milliseconds, so for example an interva
 
 On **logarithmic** axes, the `tickInterval` is based on powers, so a `tickInterval` of 1 means one tick on each of 0.1, 1, 10, 100 etc. A `tickInterval` of 2 means a tick of 0.1, 10, 1000 etc. A `tickInterval` of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
 
-The `tickPixelInterval` option sets an approximate pixel interval of the tick marks based on a pixel value (if `tickInterval` is null). This makes it work well with responsive layouts, ensuring a reasonable distance between ticks regardless of the chart size and axis length. It doesn't apply to categorized axis. Defaults to 72 for the y-axis and 100 for the x-axis.
+The `tickPixelInterval` option sets an approximate pixel interval of the tick marks based on a pixel value (if `tickInterval` is nullish). This makes it work well with responsive layouts, ensuring a reasonable distance between ticks regardless of the chart size and axis length. It doesn't apply to categorized axis. Defaults to 72 for the y-axis and 100 for the x-axis.
 
 ### Minor ticks
 
@@ -30,17 +32,18 @@ If the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTick
 
 ### Labels
 
-The axis labels can be found along the axis showing the value of the data it corresponds to. Labels can also be customized using a formatter function:
+The axis labels can be found along the axis showing the value of the data it corresponds to. Labels can also be customized using a format string or a formatter function:
 
-
-    yAxis: {
-        labels: {
-            formatter: function() {
-                return this.value + ' %';
-            }
-        },
+```js
+yAxis: {
+    labels: {
+        format: '{value}%', // provides the same result as:
+        formatter: function() {
+            return this.value + ' %';
+        }
     },
-
+},
+```
 
 The above example takes the value of the y-axis label and adds a % symbol at the end of it.
 
@@ -51,12 +54,14 @@ Grid lines are collections of horizontal (and/or vertical) lines that divide a c
 To enable or disable gridlines for either the x or y-axis, set the [gridLineWidth](https://api.highcharts.com/highcharts/xAxis.gridLineWidth) of the respective axis:
 
 
-    xAxis: {
-        gridLineWidth: 1
-    },
-    yAxis: {
-        gridLineWidth: 1
-    }
+```js
+xAxis: {
+    gridLineWidth: 1
+},
+yAxis: {
+    gridLineWidth: 1
+}
+```
 
 
 Grid lines for the y-axis are enabled by default (`gridLineWidth: 1`), and disabled by default for the x-axis  (`gridLineWidth: 0`).
@@ -70,30 +75,31 @@ Multiple axes
 
 It is possible to have multiple axes and linking them with different data series. To do this several axes needs to be created, like this:
 
+```js
+yAxis: [{ //--- Primary yAxis
+    title: {
+        text: 'Temperature'
+    }
+}, { //--- Secondary yAxis
+    title: {
+        text: 'Rainfall'
+    },
+    opposite: true
+}],
 
-    yAxis: [{ //--- Primary yAxis
-        title: {
-            text: 'Temperature'
-        }
-    }, { //--- Secondary yAxis
-        title: {
-            text: 'Rainfall'
-        },
-        opposite: true
-    }],
-
-    series: [{
-        yAxis: 0,
-        data: [
-            49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
-            95.6, 54.4
-        ]
-    },{
-        yAxis: 1,
-        data: [
-            7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6
-        ]
-    }]
+series: [{
+    yAxis: 0,
+    data: [
+        49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
+        95.6, 54.4
+    ]
+},{
+    yAxis: 1,
+    data: [
+        7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6
+    ]
+}]
+```
 
 
 Note that several axes are created using a list, so the first `yAxis` starts with index 0. And the `opposite: true` option puts the axis on the right side of the chart.
@@ -116,51 +122,52 @@ Axis types
 
 An axis can be either, linear, logarithmic, datetime or categories. The axis type is set like this:
 
+```js
+// The types are 'linear', 'logarithmic' and 'datetime'
+yAxis: {
+    type: 'linear',
+}
 
-    // The types are 'linear', 'logarithmic' and 'datetime'
-    yAxis: {
-        type: 'linear',
-    }
-
-    // Categories are set by using an array
-    xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges']
-    }
-
+// Categories are set by using an array
+xAxis: {
+    categories: ['Apples', 'Bananas', 'Oranges']
+}
+```
 
 ### Linear
 
 The numbers along the axis are of linear scale. This is the default axis type. If only y-values are present in a dataseries the x-axis is labeled from 0 to the number of y-values (shows the array index of the y-values):
 
-
-    var chart = new Highcharts.Chart({
-            chart: {
-                renderTo: 'container',
-                type: 'column'
-            },
-            title: {
-                text: 'Fruit Consumption'
-            },
-            xAxis: {
-                title: {
-                    text: 'Fruit Number'
-                },
-                tickInterval: 1
-            },
-            yAxis: {
-                title: {
-                    text: 'Fruit eaten'
-                },
-                tickInterval: 1
-            },
-            series: [{
-                name: 'Jane',
-                data: [1, 0, 4]
-            }, {
-                name: 'John',
-                data: [5, 7, 3]
-            }]
-        }});
+```js
+var chart = new Highcharts.Chart({
+    chart: {
+        renderTo: 'container',
+        type: 'column'
+    },
+    title: {
+        text: 'Fruit Consumption'
+    },
+    xAxis: {
+        title: {
+            text: 'Fruit Number'
+        },
+        tickInterval: 1
+    },
+    yAxis: {
+        title: {
+            text: 'Fruit eaten'
+        },
+        tickInterval: 1
+    },
+    series: [{
+        name: 'Jane',
+        data: [1, 0, 4]
+    }, {
+        name: 'John',
+        data: [5, 7, 3]
+    }]
+}});
+```
 
 ![linear_example.png](linear_example.png)
 
@@ -182,19 +189,7 @@ If you would like to show zero and negative values on a logarithmic axis in High
 
 A datetime axis prints labels of round date values in appropriate intervals. Internally, a datetime axis is a linear numeric axis based on milliseconds since midnight Jan 1, 1970, as specified by the JavaScript Date object. Depending on the scale the datetime label will either be represented as time or a date.
 
-Some useful functions are:
-
-
-    // Get time in millis for UTC
-    Date.UTC(year,month,day,hours,minutes,seconds,millisec)
-
-    // Get time in millis for your local time
-    Date.parse("Month day, year");
-
-    // Built in Highcharts date formatter based on the [PHP strftime](https://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat) for usage)
-    Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
-
-Note that Unix based server timestamps are represented as seconds not milliseconds. This is useful to know since PHP time is based on a Unix timestamp, so to use it with Highcharts the value only needs to be multiplied by 1000.
+On datetime axes, all time settings may be given either as milliseconds, date strings (since v12), or Date objects. This includes options like `min` and `max`, arguments to `Axis.setExtremes`, as well as related options like `point.x` and `series.pointStart`. Date strings are parsed and assigned the current timezone as given in the chart-level [time.timezone](https://api.highcharts.com/highcharts/time.timezone) option, or to the timezone indicated in the time string itself.
 
 In Highcharts Stock the x-axis is always a datetime axis.
 

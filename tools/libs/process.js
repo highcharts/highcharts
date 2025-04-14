@@ -66,33 +66,56 @@ function exec(command, options = {}) {
 
     const silent = options.silent;
 
+    function toStdOut(data) {
+        process.stdout.write(data);
+    }
+
     return new Promise((resolve, reject) => {
+        let cli;
 
-        const cli = ChildProcess.exec(command, options, (error, stdout) => {
+        try {
+            cli = ChildProcess.exec(command, options, (error, stdout) => {
 
-            if (error) {
-                LogLib.failure(error);
-                reject(error);
-                return;
+                if (error) {
+                    LogLib.failure(error);
+                    reject(error);
+                    return;
+                }
+
+                if (silent !== 2) {
+                    LogLib.success(
+                        (
+                            silent ?
+                                'Command finished (silent):' :
+                                'Command finished:'
+                        ),
+                        command
+                    );
+                }
+
+                if (!silent) {
+                    cli.stdout.off('data', toStdOut);
+                }
+
+                resolve(stdout);
+            });
+
+            if (!silent) {
+                cli.stdout.on('data', toStdOut);
             }
 
-            if (silent !== 2) {
-                LogLib.success(
-                    (
-                        silent ?
-                            'Command finished (silent):' :
-                            'Command finished:'
-                    ),
-                    command
-                );
+        } catch (error) {
+
+            LogLib.failure(error);
+
+            if (cli && !silent) {
+                cli.stdout.off('data', toStdOut);
             }
 
-            resolve(stdout);
-        });
+            reject(error);
 
-        if (!silent) {
-            cli.stdout.on('data', data => process.stdout.write(data));
         }
+
     });
 }
 
@@ -112,7 +135,7 @@ function isRunning(name, runningFlag) {
 
     const config = readConfig();
     const dictionary = config.isRunning;
-    const key = name.replace(/[^-\w]+/g, '_');
+    const key = name.replace(/[^-\w]+/gu, '_');
 
     if (typeof runningFlag === 'undefined') {
         runningFlag = dictionary[key];
@@ -176,7 +199,7 @@ function onExit(name, callback) {
                 if (exit) {
                     // Handle typeErrors
                     if (typeof code !== 'number') {
-                        LogLib.error(code);
+                        LogLib.failure(code);
                         code = 1;
                     }
 
@@ -186,7 +209,7 @@ function onExit(name, callback) {
         ));
     }
 
-    const key = name.replace(/[^-\w]+/g, '_');
+    const key = name.replace(/[^-\w]+/gu, '_');
 
     onExitCallbacks[key] = callback;
 }

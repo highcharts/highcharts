@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -64,6 +64,7 @@ const {
     objectEach,
     pick,
     removeEvent,
+    splat,
     uniqueKey
 } = U;
 
@@ -207,6 +208,8 @@ namespace Exporting {
         /** @requires modules/exporting */
         /** @requires modules/exporting */
         print(): void;
+        /** @requires modules/exporting */
+        resolveCSSVariables(): void;
         /** @requires modules/exporting */
         sanitizeSVG(svg: string, options: Options): string;
     }
@@ -641,12 +644,18 @@ namespace Exporting {
             chartProto.addButton = addButton;
             chartProto.destroyExport = destroyExport;
             chartProto.renderExporting = renderExporting;
+            chartProto.resolveCSSVariables = resolveCSSVariables;
 
             chartProto.callbacks.push(chartCallback);
             addEvent(
                 ChartClass as typeof ChartComposition,
                 'init',
                 onChartInit
+            );
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'layOutTitle',
+                onChartLayOutTitle
             );
 
             if (G.isSafari) {
@@ -1054,6 +1063,7 @@ namespace Exporting {
         if (applyStyleSheets) {
             this.inlineStyles();
         }
+        this.resolveCSSVariables();
 
         return this.container.innerHTML;
     }
@@ -1237,26 +1247,40 @@ namespace Exporting {
 
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis): void {
-            const axisCopy = find(chartCopy.axes, function (
-                    copy: Axis
-                ): boolean {
-                    return copy.options.internalKey ===
-                        axis.userOptions.internalKey;
-                }),
-                extremes = axis.getExtremes(),
-                userMin = extremes.userMin,
-                userMax = extremes.userMax;
+            const axisCopy = find(chartCopy.axes, (copy: Axis): boolean =>
+                copy.options.internalKey === axis.userOptions.internalKey
+            );
 
-            if (
-                axisCopy &&
-                ((
-                    typeof userMin !== 'undefined' &&
-                    userMin !== axisCopy.min) || (
-                    typeof userMax !== 'undefined' &&
-                    userMax !== axisCopy.max
-                ))
-            ) {
-                axisCopy.setExtremes(userMin, userMax, true, false);
+            if (axisCopy) {
+                const extremes = axis.getExtremes(),
+                    // Make sure min and max overrides in the
+                    // `exporting.chartOptions.xAxis` settings are reflected.
+                    // These should override user-set extremes via zooming,
+                    // scrollbar etc (#7873).
+                    exportOverride = splat(chartOptions?.[axis.coll] || {})[0],
+                    userMin = 'min' in exportOverride ?
+                        exportOverride.min :
+                        extremes.userMin,
+                    userMax = 'max' in exportOverride ?
+                        exportOverride.max :
+                        extremes.userMax;
+
+                if (
+                    ((
+                        typeof userMin !== 'undefined' &&
+                        userMin !== axisCopy.min
+                    ) || (
+                        typeof userMax !== 'undefined' &&
+                        userMax !== axisCopy.max
+                    ))
+                ) {
+                    axisCopy.setExtremes(
+                        userMin ?? void 0,
+                        userMax ?? void 0,
+                        true,
+                        false
+                    );
+                }
             }
         });
 
@@ -1547,6 +1571,28 @@ namespace Exporting {
     }
 
     /**
+     * Resolve CSS variables into hex colors
+     */
+    function resolveCSSVariables(
+        this: ChartComposition
+    ): void {
+        const svgElements = this.container.querySelectorAll('*'),
+            colorAttributes = ['color', 'fill', 'stop-color', 'stroke'];
+
+        Array.from(svgElements).forEach((element: Element): void => {
+            colorAttributes.forEach((attr): void => {
+                const attrValue = element.getAttribute(attr);
+                if (attrValue?.includes('var(')) {
+                    element.setAttribute(
+                        attr,
+                        getComputedStyle(element).getPropertyValue(attr)
+                    );
+                }
+            });
+        });
+    }
+
+    /**
      * Move the chart container(s) to another div.
      *
      * @function Highcharts#moveContainers
@@ -1624,6 +1670,39 @@ namespace Exporting {
             ): void => {
                 update('navigation', options, redraw);
             });
+    }
+
+    /**
+     * On layout of titles (title, subtitle and caption), adjust the `alignTo``
+     * box to avoid the context menu button.
+     * @private
+     */
+    function onChartLayOutTitle(
+        this: ChartComposition,
+        { alignTo, key, textPxLength }: Chart.LayoutTitleEventObject
+    ): void {
+        const exportingOptions = this.options.exporting,
+            { align, buttonSpacing = 0, verticalAlign, width = 0 } = merge(
+                this.options.navigation?.buttonOptions,
+                exportingOptions?.buttons?.contextButton
+            ),
+            space = alignTo.width - textPxLength,
+            widthAdjust = width + buttonSpacing;
+
+        if (
+            (exportingOptions?.enabled ?? true) &&
+            key === 'title' &&
+            align === 'right' &&
+            verticalAlign === 'top'
+        ) {
+            if (space < 2 * widthAdjust) {
+                if (space < widthAdjust) {
+                    alignTo.width -= widthAdjust;
+                } else if (this.title?.alignValue !== 'left') {
+                    alignTo.x -= widthAdjust - space / 2;
+                }
+            }
+        }
     }
 
     /**
@@ -1732,26 +1811,28 @@ namespace Exporting {
         options: Options
     ): string {
 
-        const split = svg.indexOf('</svg>') + 6;
+        const split = svg.indexOf('</svg>') + 6,
+            useForeignObject = svg.indexOf('<foreignObject') > -1;
         let html = svg.substr(split);
 
         // Remove any HTML added to the container after the SVG (#894, #9087)
         svg = svg.substr(0, split);
 
-        // Move HTML into a foreignObject
-        if (options && options.exporting && options.exporting.allowHTML) {
-            if (html) {
-                html = '<foreignObject x="0" y="0" ' +
-                            'width="' + options.chart.width + '" ' +
-                            'height="' + options.chart.height + '">' +
-                    '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    // Some tags needs to be closed in xhtml (#13726)
-                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
-                    '</body>' +
-                    '</foreignObject>';
-                svg = svg.replace('</svg>', html + '</svg>');
-            }
+        if (useForeignObject) {
+            // Some tags needs to be closed in xhtml (#13726)
+            svg = svg.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />');
 
+        // Move HTML into a foreignObject
+        } else if (html && options?.exporting?.allowHTML) {
+            html = '<foreignObject x="0" y="0" ' +
+                    'width="' + options.chart.width + '" ' +
+                    'height="' + options.chart.height + '">' +
+                '<body xmlns="http://www.w3.org/1999/xhtml">' +
+                // Some tags needs to be closed in xhtml (#13726)
+                html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                '</body>' +
+                '</foreignObject>';
+            svg = svg.replace('</svg>', html + '</svg>');
         }
 
         svg = svg
@@ -1766,11 +1847,6 @@ namespace Exporting {
             )
             .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
             .replace(/\n+/g, ' ')
-            // Batik doesn't support rgba fills and strokes (#3095)
-            .replace(
-                /(fill|stroke)="rgba\(([ \d]+,[ \d]+,[ \d]+),([ \d\.]+)\)"/g, // eslint-disable-line max-len
-                '$1="rgb($2)" $1-opacity="$3"'
-            )
 
             // Replace HTML entities, issue #347
             .replace(/&nbsp;/g, '\u00A0') // No-break space

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2025 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -853,6 +853,7 @@ extend(FlowMapSeries.prototype, {
     pointClass: FlowMapPoint,
     pointArrayMap: ['from', 'to', 'weight'],
     drawPoints: ColumnSeries.prototype.drawPoints,
+    dataColumnKeys: ColumnSeries.prototype.dataColumnKeys,
     // Make it work on zoom or pan.
     useMapGeometry: true
 });

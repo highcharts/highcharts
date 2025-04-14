@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2024 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2025 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -115,7 +115,7 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
 
     tooltip: {
 
-        headerFormat: '<span style="font-size: 0.8em">{point.x} - {point.x2}</span><br/>',
+        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.x} - {point.x2}</span><br/>',
 
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
     },

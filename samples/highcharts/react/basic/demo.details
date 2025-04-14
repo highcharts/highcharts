@@ -1,0 +1,8 @@
+---
+name: Basic React
+authors:
+  - Gøran Slettemark
+js_wrap: b
+alt_text: >-
+  Highcharts React sample showing a simple line chart.
+...

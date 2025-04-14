@@ -46,13 +46,14 @@ QUnit.test('Ordinal general tests.', function (assert) {
             'ordinal is enabled (#12716).'
     );
 
+    let xData = chart.series[0].getColumn('x');
     assert.close(
         chart.xAxis[0].toValue(
             chart.series[0].data[chart.series[0].data.length - 1].plotX,
             true
         ),
         0.001,
-        chart.series[0].xData[chart.series[0].xData.length - 1],
+        xData[xData.length - 1],
         'Column: toValue should return a correct value for ordinal axes, #18863'
     );
 
@@ -62,13 +63,14 @@ QUnit.test('Ordinal general tests.', function (assert) {
         });
     });
 
+    xData = chart.series[0].getColumn('x');
     assert.close(
         chart.xAxis[0].toValue(
             chart.xAxis[0].len,
             true
         ),
         0.001,
-        chart.series[0].xData[chart.series[0].xData.length - 1],
+        xData[xData.length - 1],
         'Line: toValue should return a correct value for ordinal axes, #18863'
     );
 
@@ -1234,7 +1236,7 @@ QUnit.test('Scatter boost ordinal updates, #20284.', assert => {
 
     chart.update({ series: data.reverse() });
 
-    const length = chart.series[0].processedXData.length;
+    const length = chart.series[0].getColumn('x', true).length;
     assert.notEqual(length, 0, 'The processedXData should be calculated.');
 });
 

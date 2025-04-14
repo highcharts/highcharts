@@ -1,3 +1,9 @@
+Highcharts.setOptions({
+    lang: {
+        locale: 'zh'
+    }
+});
+
 Highcharts.chart('container', {
     chart: {
         type: 'column',

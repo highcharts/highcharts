@@ -64,7 +64,10 @@ Highcharts.chart('container', {
             keys: ['from', 'to'],
             layoutAlgorithm: {
                 enableSimulation: true,
-                friction: -0.9
+                friction: -0.9,
+                gravitationalConstant:
+                    document.getElementById('container').scrollWidth < 500 ?
+                        0.2 : 0.06
             }
         }
     },

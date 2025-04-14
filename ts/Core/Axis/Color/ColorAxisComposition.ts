@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -219,7 +219,7 @@ namespace ColorAxisComposition {
         colorAxes.forEach(function (colorAxis: ColorAxis): void {
             options = colorAxis.options;
 
-            if (options && options.showInLegend) {
+            if (options?.showInLegend) {
                 // Data classes
                 if (options.dataClasses && options.visible) {
                     colorAxisItems = colorAxisItems.concat(
@@ -293,8 +293,7 @@ namespace ColorAxisComposition {
         this: Series
     ): void {
         if (
-            this.chart.colorAxis &&
-            this.chart.colorAxis.length ||
+            this.chart.colorAxis?.length ||
             (this as TreemapSeries).colorAttribs
         ) {
             this.translateColors();

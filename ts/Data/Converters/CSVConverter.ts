@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -86,7 +86,7 @@ class CSVConverter extends DataConverter {
      *
      * */
 
-    private columns: Array<DataTable.Column> = [];
+    private columns: Array<DataTable.BasicColumn> = [];
     private headers: Array<string> = [];
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
@@ -641,6 +641,20 @@ namespace CSVConverter {
     export type UserOptions = Partial<(Options&SpecialOptions)>;
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        CSV: typeof CSVConverter;
+    }
+}
+
+DataConverter.registerType('CSV', CSVConverter);
 
 /* *
  *

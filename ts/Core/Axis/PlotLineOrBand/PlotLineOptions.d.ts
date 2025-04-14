@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -54,7 +54,7 @@ export interface PlotLineOptions {
     id?: string;
     label?: PlotLineLabelOptions;
     translatedValue?: number;
-    value?: number;
+    value?: number|string;
     width?: number;
     zIndex?: number;
 }

@@ -1127,7 +1127,10 @@ QUnit.test(
     function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {
-                width: 400
+                width: 400,
+                style: {
+                    fontFamily: 'Helvetica, Arial, sans-serif'
+                }
             },
             xAxis: {
                 breaks: [{
@@ -1150,7 +1153,7 @@ QUnit.test(
         assert.close(
             chart.xAxis[0].toValue(100),
             0.26227,
-            0.05,
+            0.07,
             'The toValue method should return correct value when breakes ' +
             'enabled.'
         );

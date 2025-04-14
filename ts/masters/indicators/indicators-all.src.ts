@@ -6,7 +6,7 @@
  *
  * All technical indicators for Highcharts Stock
  *
- * (c) 2010-2024 Pawel Fus
+ * (c) 2010-2025 Pawel Fus
  *
  * License: www.highcharts.com/license
  */
@@ -62,5 +62,10 @@ import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngleIndica
 import '../../Stock/Indicators/ABands/ABandsIndicator.js';
 import '../../Stock/Indicators/TrendLine/TrendLineIndicator.js';
 import '../../Stock/Indicators/DisparityIndex/DisparityIndexIndicator.js';
+
+import MultipleLinesComposition from '../../Stock/Indicators/MultipleLinesComposition.js';
+const G: AnyRecord = Highcharts;
+G.MultipleLinesComposition =
+    G.MultipleLinesComposition || MultipleLinesComposition;
 
 export default Highcharts;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *  Author: Sebastian Domas
  *
  *  License: www.highcharts.com/license
@@ -228,9 +228,9 @@ class HistogramSeries extends ColumnSeries {
     }
 
     public setDerivedData(): void {
-        const yData = (this.baseSeries as any).yData;
+        const yData = this.baseSeries?.getColumn('y');
 
-        if (!yData.length) {
+        if (!yData?.length) {
             this.setData([]);
             return;
         }

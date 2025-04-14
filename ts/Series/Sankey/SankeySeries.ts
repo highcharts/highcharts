@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -251,7 +251,7 @@ class SankeySeries extends ColumnSeries {
      *         Returns true if the series has points at all.
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     /**
@@ -309,7 +309,8 @@ class SankeySeries extends ColumnSeries {
 
         // Link attributes
         return {
-            fill: Color.parse(color).setOpacity(values.linkOpacity).get()
+            fill: color,
+            'fill-opacity': values.linkOpacity
         };
 
     }
@@ -333,10 +334,6 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public translate(): void {
-
-        if (!this.processedXData) {
-            this.processData();
-        }
 
         this.generatePoints();
 

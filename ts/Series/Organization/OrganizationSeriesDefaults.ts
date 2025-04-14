@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2024 Torstein Honsi
+ *  (c) 2018-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -259,7 +259,9 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '0.9em'
+            fontSize: '0.9em',
+            /** @internal */
+            textAlign: 'left'
         },
 
         useHTML: true,

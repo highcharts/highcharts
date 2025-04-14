@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -369,7 +369,7 @@ class AxisResizer {
                         plotHeight
                     ));
 
-                if (!isFirst) {
+                if (!isFirst && axesGroup === nextAxes) {
                     // Try to change height first. yDelta could had changed
                     yDelta = chartY - resizer.lastPos;
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -139,6 +139,13 @@ class CellHTML extends GUIElement {
  * */
 
 namespace CellHTML {
+    /**
+     * Checks if a valid cell HTML instance.
+     */
+    export function isCellHTML(cellHTML: unknown): cellHTML is CellHTML {
+        return cellHTML instanceof CellHTML;
+    }
+
     /**
      * Options for each cell.
      **/

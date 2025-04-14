@@ -1,4 +1,4 @@
-name: Dashboards lighthouse tests
+name: Dashboards and Grid lighthouse tests
 on:
   pull_request:
     branches:
@@ -45,6 +45,8 @@ jobs:
 
       - name: Build Highcharts
         run: npx gulp scripts
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
 
@@ -88,6 +90,9 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
 
@@ -102,7 +107,7 @@ jobs:
           install: false
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tmp-files
           path: |

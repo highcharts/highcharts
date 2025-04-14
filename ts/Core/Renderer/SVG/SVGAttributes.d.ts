@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -114,10 +114,12 @@ export interface SVGAttributes {
     tabindex?: number;
     tableValues?: string;
     text?: string;
+    textAlign?: 'center'|'left'|'right';
     'text-align'?: 'center'|'left'|'right';
     'text-anchor'?: string;
     title?: string;
     transform?: string;
+    'transform-origin'?: string;
     translateX?: number;
     translateY?: number;
     type?: string;

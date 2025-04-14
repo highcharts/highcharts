@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  Extension for 3d axes
  *
@@ -108,7 +108,7 @@ function onAxisAfterSetOptions(
         chart = axis.chart,
         options = axis.options;
 
-    if (chart.is3d && chart.is3d() && axis.coll !== 'colorAxis') {
+    if (chart.is3d?.() && axis.coll !== 'colorAxis') {
         options.tickWidth = pick(options.tickWidth, 0);
         options.gridLineWidth = pick(options.gridLineWidth, 1);
     }
@@ -359,7 +359,7 @@ function wrapAxisGetSlotWidth(
         }
         // If next label position is defined, then recalculate its position
         // basing on the perspective.
-        if (nextTick && nextTick.label && nextTick.label.xy) {
+        if (nextTick?.label?.xy) {
             nextLabelPos = perspective3D({
                 x: nextTick.label.xy.x,
                 y: nextTick.label.xy.y,

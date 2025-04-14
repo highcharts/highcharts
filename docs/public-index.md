@@ -1,13 +1,17 @@
+---
+slug: index
+---
+
 # Highcharts Documentation
 
 Topics
 ------
 
-*   [Installation](getting-started/installation)
-*   [Your first chart](getting-started/your-first-chart)
-*   [Your first dashboard](dashboards/your-first-dashboard)
-*   [General FAQs](getting-started/frequently-asked-questions)
-*   [Dashboards FAQs](dashboards/frequently-asked-questions)
+*   [Installation](https://www.highcharts.com/docs/getting-started/installation)
+*   [Your first chart](https://www.highcharts.com/docs/getting-started/your-first-chart)
+*   [Your first dashboard](https://www.highcharts.com/docs/dashboards/your-first-dashboard)
+*   [General FAQs](https://www.highcharts.com/docs/getting-started/frequently-asked-questions)
+*   [Dashboards FAQs](https://www.highcharts.com/docs/dashboards/frequently-asked-questions)
 
 
 Demos

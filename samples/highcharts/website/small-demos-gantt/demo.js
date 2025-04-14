@@ -60,8 +60,8 @@ function inverted() {
         xAxis: [{
             opposite: false,
             visible: true,
-            min: Date.UTC(2018, 10, 25),
-            max: Date.UTC(2018, 11, 24),
+            min: '2018-11-25',
+            max: '2018-12-24',
             labels: {
                 allowOverlap: true,
                 enabled: false
@@ -126,46 +126,46 @@ function inverted() {
         series: [{
             name: 'Project 1',
             data: [{
-                start: Date.UTC(2018, 11, 1),
-                end: Date.UTC(2018, 11, 8),
+                start: '2018-12-01',
+                end: '2018-12-08',
                 // completed: 0.65,
                 name: 'Done',
                 id: 'Prep'
             },
             {
-                start: Date.UTC(2018, 11, 9),
-                end: Date.UTC(2018, 11, 16),
+                start: '2018-12-09',
+                end: '2018-12-16',
                 name: 'Done',
                 id: 'Design'
             },
             {
-                start: Date.UTC(2018, 11, 1),
-                end: Date.UTC(2018, 11, 8),
+                start: '2018-12-01',
+                end: '2018-12-08',
                 // completed: 0.5,
                 name: 'Doing',
                 id: 'Dev'
             }, {
-                start: Date.UTC(2018, 11, 9),
-                end: Date.UTC(2018, 11, 16),
+                start: '2018-12-09',
+                end: '2018-12-16',
                 // completed: 0.5,
                 name: 'Doing',
                 id: 'Content'
             }, {
-                start: Date.UTC(2018, 11, 1),
-                end: Date.UTC(2018, 11, 8),
+                start: '2018-12-01',
+                end: '2018-12-08',
                 // completed: 0.15,
                 name: 'Do',
                 id: 'QA'
             }, {
-                start: Date.UTC(2018, 11, 9),
-                end: Date.UTC(2018, 11, 16),
+                start: '2018-12-09',
+                end: '2018-12-16',
                 // completed: 0.3,
                 name: 'Do',
                 id: 'Launch'
             },
             {
-                start: Date.UTC(2018, 11, 17),
-                end: Date.UTC(2018, 11, 23),
+                start: '2018-12-17',
+                end: '2018-12-23',
                 // completed: 0.3,
                 name: 'Do',
                 id: 'Promo'
@@ -567,8 +567,8 @@ function nav() {
         xAxis: {
             visible: true,
             zIndex: 10,
-            min: Date.UTC(2017, 11, 1),
-            max: Date.UTC(2018, 2, 4),
+            min: '2017-12-01',
+            max: '2018-03-04',
             grid: {
                 enabled: true,
                 cellHeight: 20,
@@ -670,36 +670,36 @@ function nav() {
         series: [{
             name: 'Project 1',
             data: [{
-                start: Date.UTC(2017, 11, 1),
-                end: Date.UTC(2018, 1, 2),
+                start: '2017-12-01',
+                end: '2018-02-02',
                 completed: 0.85,
                 name: 'Prototyping',
                 borderColor: Highcharts.getOptions().colors[3]
             }, {
-                start: Date.UTC(2018, 1, 2),
-                end: Date.UTC(2018, 11, 5),
+                start: '2018-02-02',
+                end: '2018-12-05',
                 completed: 0.5,
                 name: 'Development'
             }, {
-                start: Date.UTC(2018, 11, 8),
-                end: Date.UTC(2018, 11, 9),
+                start: '2018-12-08',
+                end: '2018-12-09',
                 completed: 0.15,
                 name: 'Testing'
             }, {
-                start: Date.UTC(2018, 11, 9),
-                end: Date.UTC(2018, 11, 19),
+                start: '2018-12-09',
+                end: '2018-12-19',
                 completed: {
                     amount: 0.3,
                     fill: '#fa0'
                 },
                 name: 'Development'
             }, {
-                start: Date.UTC(2018, 11, 10),
-                end: Date.UTC(2018, 11, 23),
+                start: '2018-12-10',
+                end: '2018-12-23',
                 name: 'Testing'
             }, {
-                start: Date.UTC(2018, 11, 25, 8),
-                end: Date.UTC(2018, 11, 25, 16),
+                start: '2018-12-25 08:00',
+                end: '2018-12-25 16:00',
                 name: 'Release'
             }]
         }],

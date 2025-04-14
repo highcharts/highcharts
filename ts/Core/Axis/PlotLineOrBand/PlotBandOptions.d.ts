@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -54,10 +54,10 @@ export interface PlotBandOptions {
     className?: string;
     color?: ColorType;
     events?: any;
-    from?: number;
+    from?: number|string;
     id?: string;
     label?: PlotBandLabelOptions;
-    to?: number;
+    to?: number|string;
     zIndex?: number;
 }
 

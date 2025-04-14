@@ -846,7 +846,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     });
 
     const series = chart.series[0],
-        mapView = chart.mapView;
+        mapView = chart.mapView,
+        columnNames = Object.keys(series.dataTable.columns);
 
     let centerBeforeUpdate,
         zoomBeforeUpdate;
@@ -939,7 +940,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         zoom: undefined
     });
 
-    let ruPoint = series.points[148];
+    let ruPoint = series.points.find(p => p['hc-key'] === 'ru');
 
     assert.strictEqual(
         ruPoint['hc-key'],
@@ -960,7 +961,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     const removedPoint = data.splice(148, 1)[0];
     series.setData(data);
 
-    ruPoint = series.points[216]; // null point
+    ruPoint = series.points.find(p => p['hc-key'] === 'ru'); // null point
 
     assert.strictEqual(
         ruPoint['hc-key'],
@@ -978,7 +979,13 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     series.update({}, false);
     series.addPoint(removedPoint);
 
-    ruPoint = series.points[199];
+    assert.deepEqual(
+        Object.keys(series.dataTable.columns),
+        columnNames,
+        'The column names should not change after addPoint'
+    );
+
+    ruPoint = series.points.find(p => p['hc-key'] === 'ru');
 
     assert.strictEqual(
         ruPoint['hc-key'],

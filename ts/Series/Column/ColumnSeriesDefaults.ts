@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -102,6 +102,8 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      *
      * @sample {highcharts} highcharts/series-column/centerincategory/
      *         Center in category
+     * @sample {highcharts} highcharts/series/stack-centerincategory/
+     *         Center in category, stacked and grouped
      *
      * @since   8.0.1
      * @product highcharts highstock gantt

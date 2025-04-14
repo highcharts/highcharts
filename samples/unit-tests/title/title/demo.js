@@ -48,7 +48,7 @@ QUnit.test(
             '8px',
             'Font size is 8px'
         );
-        delete Highcharts.defaultOptions.title.style;
+        delete Highcharts.defaultOptions.title.style.fontSize;
 
         chart = $('#container')
             .highcharts('StockChart', {
@@ -71,9 +71,6 @@ QUnit.test(
             '30px',
             'Font size is 30px'
         );
-
-        // Reset
-        delete Highcharts.defaultOptions.title.style;
     }
 );
 
@@ -94,16 +91,25 @@ QUnit.test('Title alignment', function (assert) {
         title: {
             useHTML: true,
             align: 'right',
-            text: `Here is a title that helps show the issue, < it is pretty
-                long`
+            text: 'Here is a title that helps show the issue, < it is pretty ' +
+                'long'
         }
     });
 
-    assert.ok(
-        chart.title.element.offsetLeft + chart.title.element.offsetWidth <
-            chart.chartWidth,
-        'The title should not spill out of the chart area (#7787)'
-    );
+    const foreignObject = chart.title.foreignObject;
+    if (foreignObject) {
+        assert.ok(
+            foreignObject.attr('x') + foreignObject.attr('width') <
+                chart.chartWidth,
+            'The title should not spill out of the chart area (#7787)'
+        );
+    } else {
+        assert.ok(
+            chart.title.element.offsetLeft + chart.title.element.offsetWidth <
+                chart.chartWidth,
+            'The title should not spill out of the chart area (#7787)'
+        );
+    }
 
     const ariaValue = document.getElementById('container')
         .getAttribute('aria-label');
@@ -116,7 +122,8 @@ QUnit.test('Title alignment', function (assert) {
     chart.update({
         title: {
             align: 'center',
-            useHTML: false
+            useHTML: false,
+            minScale: 1
         }
     });
 

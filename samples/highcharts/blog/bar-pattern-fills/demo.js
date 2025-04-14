@@ -13,11 +13,15 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'V1',
-        color: 'url(#highcharts-default-pattern-0)',
+        color: {
+            patternIndex: 0
+        },
         data: [5, 3]
     }, {
         name: 'V2',
-        color: 'url(#highcharts-default-pattern-8)',
+        color: {
+            patternIndex: 8
+        },
         data: [2, -2]
     }, {
         name: 'V3',

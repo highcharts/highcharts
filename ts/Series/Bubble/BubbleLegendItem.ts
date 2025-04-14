@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -34,8 +34,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
 import F from '../../Core/Templating.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -261,14 +259,11 @@ class BubbleLegendItem {
                     options.borderColor,
                     series.color
                 );
-                bubbleAttribs.fill = pick(
-                    range.color,
-                    options.color,
-                    fillOpacity !== 1 ?
-                        color(series.color).setOpacity(fillOpacity)
-                            .get('rgba') :
-                        series.color
-                );
+                bubbleAttribs.fill = range.color || options.color;
+                if (!bubbleAttribs.fill) {
+                    bubbleAttribs.fill = series.color;
+                    bubbleAttribs['fill-opacity'] = fillOpacity ?? 1;
+                }
                 connectorAttribs.stroke = pick(
                     range.connectorColor,
                     options.connectorColor,
@@ -532,7 +527,7 @@ class BubbleLegendItem {
             format = (options.labels as any).format;
         const { numberFormatter } = this.chart;
 
-        return format ? F.format(format, range) :
+        return format ? F.format(format, range, this.chart) :
             formatter ? formatter.call(range) :
                 numberFormatter(range.value, 1);
     }
@@ -584,7 +579,7 @@ class BubbleLegendItem {
         series.forEach(function (s: BubbleSeries): void {
             // Find the min and max Z, like in bubble series
             if (s.isBubble && !s.ignoreSeries) {
-                zData = s.zData.filter(isNumber);
+                zData = s.getColumn('z').filter(isNumber);
 
                 if (zData.length) {
                     minZ = pick(s.options.zMin, Math.min(

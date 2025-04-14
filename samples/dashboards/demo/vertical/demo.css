@@ -11,7 +11,17 @@
 }
 
 body {
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
     color: var(--text-color);
 }
 
@@ -21,6 +31,11 @@ h2 {
 
 .highcharts-background {
     fill: var(--highcharts-neutral-color-5);
+}
+
+.highcharts-description {
+    padding: 0 20px;
+    color: #000;
 }
 
 #container {

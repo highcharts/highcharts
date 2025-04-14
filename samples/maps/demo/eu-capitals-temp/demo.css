@@ -4,3 +4,7 @@
     max-width: 600px;
     margin: 0 auto;
 }
+
+.highcharts-map-series .highcharts-point {
+    transition: fill 2500ms;
+}

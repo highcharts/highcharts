@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -161,10 +161,8 @@ class LineSeries extends Series {
                 }
 
                 graph[verb](attribs)
-                // Add shadow to normal series (0) or to first
-                // zone (1) #3932
+                    // Add shadow to normal series as well as zones
                     .shadow(
-                        (i < 2) &&
                         options.shadow &&
                         // If shadow is defined, call function with
                         // `filterUnits: 'userSpaceOnUse'` to avoid known
@@ -222,7 +220,11 @@ class LineSeries extends Series {
         points = this.getValidPoints(
             points,
             false,
-            !(options.connectNulls && !nullsAsZeroes && !connectCliffs)
+            options.nullInteraction || !(
+                options.connectNulls &&
+                    !nullsAsZeroes &&
+                    !connectCliffs
+            )
         ) as Array<LinePoint>;
 
         // Build the line
@@ -236,7 +238,7 @@ class LineSeries extends Series {
             let pathToPoint: SVGPath;
 
             if (
-                (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
+                (point.leftCliff || lastPoint?.rightCliff) &&
                 !connectCliffs
             ) {
                 gap = true; // ... and continue
@@ -607,10 +609,14 @@ export default LineSeries;
  */
 
 /**
- * The x value of the point. For datetime axes, the X value is the timestamp
- * in milliseconds since 1970.
+ * The x value of the point.
  *
- * @type      {number}
+ * For datetime axes, a number value is the timestamp in milliseconds since
+ * 1970, while a date string is parsed according to the [current time zone]
+ * (https://api.highcharts.com/highcharts/time.timezone) of the
+ * chart. Date strings are supported since v12.
+ *
+ * @type      {number|string}
  * @product   highcharts highstock
  * @apioption series.line.data.x
  */

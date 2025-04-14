@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts
  *
- * (c) 2009-2024 Torstein Honsi
+ * (c) 2009-2025 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -33,6 +33,7 @@ import Chart from '../Core/Chart/Chart.js';
 import ScrollablePlotArea from '../Extensions/ScrollablePlotArea.js';
 import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
 import StackItem from '../Core/Axis/Stacking/StackItem.js';
+import DataTableCore from '../Data/DataTableCore.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 import '../Series/Line/LineSeries.js';
@@ -46,7 +47,7 @@ import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
-import OverlappingDataLabels from '../Extensions/OverlappingDataLabels.js';
+import OverlappingDataLabels from '../Core/Series/OverlappingDataLabels.js';
 import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
@@ -58,6 +59,7 @@ G.Axis = Axis;
 G.Chart = Chart;
 G.Color = Color;
 G.DataLabel = DataLabel;
+G.DataTableCore = DataTableCore;
 G.Fx = Fx;
 G.HTMLElement = HTMLElement;
 G.Legend = Legend;

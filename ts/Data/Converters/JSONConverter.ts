@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -86,7 +86,7 @@ class JSONConverter extends DataConverter {
      *
      * */
 
-    private columns: Array<DataTable.Column> = [];
+    private columns: Array<DataTable.BasicColumn> = [];
     private headers: Array<string>|ColumnNamesOptions = [];
 
     /**
@@ -295,6 +295,20 @@ namespace JSONConverter {
     export type UserOptions = Partial<(Options&SpecialOptions)>;
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        JSON: typeof JSONConverter;
+    }
+}
+
+DataConverter.registerType('JSON', JSONConverter);
 
 /* *
  *

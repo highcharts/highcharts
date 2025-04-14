@@ -1,6 +1,8 @@
 module.exports = {
     docs: {
-        Highcharts: ['index'],
+        Highcharts: [
+            'public-index'
+        ],
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
@@ -11,7 +13,8 @@ module.exports = {
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
             'getting-started/how-to-create-custom-highcharts-packages',
-            'getting-started/optional-dependencies'
+            'getting-started/optional-dependencies',
+            'getting-started/version-12'
         ],
         'Chart concepts': [
             'chart-concepts/understanding-highcharts',
@@ -29,7 +32,8 @@ module.exports = {
             'chart-concepts/drilldown',
             'chart-concepts/3d-charts',
             'chart-concepts/responsive',
-            'chart-concepts/security'
+            'chart-concepts/security',
+            'chart-concepts/dataviz-glossary'
         ],
         'Stock': [
             'stock/getting-started-stock',
@@ -41,6 +45,8 @@ module.exports = {
             'stock/cumulative-sum',
             'stock/hollow-candlestick-chart',
             'stock/heikinashi',
+            'stock/renko',
+            'stock/pointandfigure',
             'stock/data-grouping',
             'stock/depth-chart',
             'stock/flag-series',
@@ -83,14 +89,19 @@ module.exports = {
         'Dashboards': [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
-            'dashboards/dashboards-with-angular',
-            'dashboards/dashboards-with-react',
-            'dashboards/dashboards-with-vue',
+            {
+                'Wrappers': [
+                    'dashboards/wrappers/dashboards-with-angular',
+                    'dashboards/wrappers/dashboards-with-react',
+                    'dashboards/wrappers/dashboards-with-vue',
+                ]
+            },
             'dashboards/layout-description',
             'dashboards/style-by-css',
             'dashboards/edit-mode',
             'dashboards/types-of-components',
-            'dashboards/datagrid-component',
+            'dashboards/grid-component',
+            'dashboards/grid-standalone',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -105,22 +116,32 @@ module.exports = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
+            'dashboards/grid-migration',
             'dashboards/frequently-asked-questions',
         ],
-        'DataGrid': [
-            'datagrid/general',
-            'datagrid/installation',
-            'datagrid/understanding-datagrid',
-            'datagrid/columns',
-            'datagrid/header',
-            'datagrid/events',
-            'datagrid/performance',
-            'datagrid/style-by-css',
-            'datagrid/datagrid-v2-migration',
-            'datagrid/datagrid-with-angular',
-            'datagrid/datagrid-with-react',
-            'datagrid/datagrid-with-vue'
-            
+        'Grid': [
+            'grid/general',
+            'grid/installation',
+            'grid/understanding-grid',
+            'grid/columns',
+            'grid/header',
+            'grid/cell-editing',
+            'grid/events',
+            {
+                'Theming': [
+                    'grid/theming/theming',
+                    'grid/theming/theming-variables',
+                ]
+            },
+            'grid/performance',
+            'grid/accessibility',
+            {
+                'Wrappers': [
+                    'grid/wrappers/grid-with-angular',
+                    'grid/wrappers/grid-with-react',
+                    'grid/wrappers/grid-with-vue'
+                ]
+            }
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
@@ -208,7 +229,35 @@ module.exports = {
             'working-with-data/live-data',
             'working-with-data/data-from-a-database',
             'working-with-data/getting-data-across-domains-jsonp',
-            'working-with-data/server-side-data-grouping'
+            'working-with-data/server-side-data-grouping',
+            {
+                'Morningstar Connectors': [
+                    'morningstar/morningstar',
+                    'morningstar/goal-analysis',
+                    'morningstar/risk-score',
+                    'morningstar/regulatory-news-announcements',
+                    'morningstar/security-details',
+                    'morningstar/x-ray',
+                    {
+                        'Time Series': [
+                            'morningstar/time-series/time-series',
+                            'morningstar/time-series/cumulative-return',
+                            'morningstar/time-series/dividend',
+                            'morningstar/time-series/growth',
+                            'morningstar/time-series/ohlcv',
+                            'morningstar/time-series/price'
+                        ],
+                        'Screeners': [
+                            'morningstar/screeners/screener',
+                            'morningstar/screeners/esg-screener',
+                            'morningstar/screeners/find-similar-screener',
+                            'morningstar/screeners/investment-screener',
+                            'morningstar/screeners/investor-preferences',
+                            'morningstar/screeners/regulatory-screener',
+                        ]
+                    }
+                ]
+            }
         ],
         'Chart design and style': [
             'chart-design-and-style/design-and-style',
@@ -241,6 +290,9 @@ module.exports = {
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
+        ],
+        'Flutter': [
+            'flutter/getting-started'
         ]
     }
 };

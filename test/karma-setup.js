@@ -37,6 +37,9 @@ Highcharts.setOptions({
     chart: {
         animation: false
     },
+    lang: {
+        locale: 'en-GB'
+    },
     plotOptions: {
         series: {
             animation: false,
@@ -128,7 +131,28 @@ function handleDefaultOptionsFunctions(save) {
 }
 handleDefaultOptionsFunctions(true);
 */
+const getUndefinedRecursive = (result, obj) => {
+    for (const [key, value] of Object.entries(obj)) {
+          if (value === void 0) {
+            result[key] = void 0;
+        }
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+            result[key] = {};
+            getUndefinedRecursive(result[key], value);
+            if (!Object.keys(result[key]).length) {
+                delete result[key];
+            }
+        }
+    }
+    return result;
+};
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
+// Some options are undefined by default, we need to save them because JSON
+// doesn't serialize undefined values.
+Highcharts.explicitUndefineds = getUndefinedRecursive(
+    {},
+    Highcharts.defaultOptions
+);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 Highcharts.radialDefaultOptionsRaw =
     JSON.stringify(Highcharts.RadialAxis.radialDefaultOptions);
@@ -221,7 +245,10 @@ function resetDefaultOptions(testName) {
     delete Highcharts.defaultOptions.global.getTimezoneOffset;
     delete Highcharts.defaultOptions.time.getTimezoneOffset;
 
-    Highcharts.setOptions(defaultOptionsRaw);
+    Highcharts.setOptions(Highcharts.merge(
+        defaultOptionsRaw,
+        Highcharts.explicitUndefineds
+    ));
 
     // Restore radial axis defaults
     Highcharts.RadialAxis.radialDefaultOptions =
@@ -537,6 +564,28 @@ Highcharts.prepareShot = function (chart) {
                 break;
             }
         }
+
+        // Breaks inside foreign objects are considered tainted canvas
+		// ¯\_(ツ)_/¯
+        [].forEach.call(
+			chart.container.querySelectorAll('foreignObject br'),
+			function (br) {
+				br.parentNode.replaceChild(document.createElement('div'), br);
+			}
+		);
+
+        // Replace images in foreign objects
+        [].forEach.call(
+			chart.container.querySelectorAll('foreignObject img'),
+			function (img) {
+				const div = document.createElement('div');
+                div.style.width = '16px';
+                div.style.height = '16px';
+                div.style.position = 'inline-block';
+                div.style.backgroundColor = '#ddd';
+                img.parentNode.replaceChild(div, img);
+			}
+		);
     }
 };
 
@@ -692,17 +741,39 @@ function saveSVGSnapshot(svg, path) {
     }
 }
 
+// Ported from the offline-exporting module
+function svgToDataUrl(svg) {
+    var DOMURL = (window.URL || window.webkitURL || window);
+
+    // Webkit and not chrome
+    var userAgent = window.navigator.userAgent;
+    var webKit = (
+        userAgent.indexOf('WebKit') > -1 &&
+        userAgent.indexOf('Chrome') < 0
+    );
+
+    try {
+        // Safari requires data URI since it doesn't allow navigation to
+        // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
+        // (#14780).
+        if (!webKit && svg.indexOf('<foreignObject') === -1) {
+            return DOMURL.createObjectURL(new window.Blob([svg], {
+                type: 'image/svg+xml;charset-utf-16'
+            }));
+        }
+    } catch (e) {
+        // Ignore
+    }
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
 
 function svgToPixels(svg, canvas) {
     var DOMURL = (window.URL || window.webkitURL || window);
     var ctx = canvas.getContext && canvas.getContext('2d');
 
-    // Invalidate images, loading external images will throw an error
-    // svg = svg.replace(/xlink:href/g, 'data-href');
-    var blob = new Blob([svg], { type: 'image/svg+xml' });
-
     var img = new Image(CANVAS_WIDTH, CANVAS_HEIGHT);
-    img.src = DOMURL.createObjectURL(blob);
+    img.src = svgToDataUrl(svg);
 
     return new Promise(function (resolve, reject) {
         img.onload = function () {
@@ -748,10 +819,14 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
         loadReferenceSVG(path)
             .then(function (referenceSVG) {
-                return Promise.all([
-                    svgToPixels(referenceSVG, referenceCanvas),
-                    candidatePixels
-                ]);
+                return Promise
+                    .all([
+                        svgToPixels(referenceSVG, referenceCanvas),
+                        candidatePixels
+                    ])
+                    .catch(function (err) {
+                        reject(err);
+                    });
             })
             .then(function (pixelsInFile) {
                 var referencePixels = pixelsInFile[0];
