@@ -281,13 +281,13 @@ async function test(gulpback) {
     const argv = require('yargs').argv;
     const childProcess = require('node:child_process');
     const fs = require('node:fs');
-    const log = require('../libs/log');
+    const logLib = require('../libs/log');
     const PluginError = require('plugin-error');
 
     const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 
     if (argv.help || argv.helpme) {
-        log.message(
+        logLib.message(
             `HIGHCHARTS TYPESCRIPT TEST RUNNER
 
 Available arguments for 'gulp test':` +
@@ -326,7 +326,7 @@ specified by config.imageCapture.resultsOutputPath.
     // If false, there's no modified products
     // If undefined, there's no product argument, so fall back to karma config
     if (productTests === false) {
-        log.message('No tests to run, exiting early');
+        logLib.message('No tests to run, exiting early');
         return;
     }
 
@@ -335,9 +335,9 @@ specified by config.imageCapture.resultsOutputPath.
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
-            log.failure(error.message);
+            logLib.failure(error.message);
 
-            log.failure(
+            logLib.failure(
                 '✖ The files have not been built' +
                 ' since the last source code changes.' +
                 ' Run `npx gulp` and try again.' +
@@ -351,7 +351,7 @@ specified by config.imageCapture.resultsOutputPath.
 
     if (shouldRunTests) {
 
-        log.message('Run `gulp test --help` for available options');
+        logLib.message('Run `gulp test --help` for available options');
 
         const tests = [];
 
@@ -367,12 +367,13 @@ specified by config.imageCapture.resultsOutputPath.
         ], {
             cwd: process.cwd(),
             stdio: ['ignore', process.stdout, process.stderr],
-            timeout: 600000
+            timeout: 600000,
+            shell: path.sep === path.win32.sep
         });
 
-        if (result.error) {
+        if (result.error || result.status !== 0) {
             if (argv.speak) {
-                log.say('Tests failed!');
+                logLib.say('Tests failed!');
             }
             throw new PluginError('karma', {
                 message: 'Tests failed'
@@ -380,7 +381,7 @@ specified by config.imageCapture.resultsOutputPath.
         }
 
         if (argv.speak) {
-            log.say('Tests succeeded!');
+            logLib.say('Tests succeeded!');
         }
 
         saveRun(runConfig);
@@ -407,7 +408,7 @@ specified by config.imageCapture.resultsOutputPath.
                 message.push(`${logs} logs`);
             }
 
-            log.message(
+            logLib.message(
                 `The browser console logged ${message.join(', ')}.\n` +
                 'They can be reviewed in ' + consoleLogPath.cyan + '.'
             );
