@@ -24,7 +24,7 @@
  * */
 
 import type Table from '../../Core/Table/Table';
-import type TableCell from '../../Core/Table/Content/TableCell';
+import type TableCell from '../../Core/Table/Body/TableCell';
 import type { GridEvent } from '../../Core/GridUtils';
 
 import Defaults from '../../Core/Defaults.js';

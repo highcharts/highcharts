@@ -24,7 +24,7 @@
  * */
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import TableCell from '../../Core/Table/Content/TableCell.js';
+import TableCell from '../../Core/Table/Body/TableCell.js';
 import GridUtils from '../../Core/Table/../GridUtils.js';
 import Table from '../../Core/Table/Table.js';
 import Globals from '../../Core/Globals.js';

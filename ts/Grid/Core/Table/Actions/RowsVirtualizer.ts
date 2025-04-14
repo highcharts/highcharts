@@ -26,7 +26,7 @@ import type { RowsSettings } from '../../Options';
 import type Cell from '../Cell';
 
 import Table from '../Table.js';
-import TableRow from '../Content/TableRow.js';
+import TableRow from '../Body/TableRow.js';
 import Globals from '../../Globals.js';
 
 /* *

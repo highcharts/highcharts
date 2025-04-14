@@ -22,7 +22,7 @@
  * */
 
 import type Table from '../../Core/Table/Table';
-import type TableCell from '../../Core/Table/Content/TableCell';
+import type TableCell from '../../Core/Table/Body/TableCell';
 import type ColumnDataType from './ColumnDataType';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';

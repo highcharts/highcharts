@@ -23,7 +23,7 @@
  * */
 
 import type { ColumnDistribution } from '../Options';
-import type TableRow from './Content/TableRow';
+import type TableRow from './Body/TableRow';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';

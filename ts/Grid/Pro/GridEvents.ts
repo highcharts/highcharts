@@ -20,7 +20,7 @@
  * */
 
 import type Column from '../Core/Table/Column';
-import type TableCell from '../Core/Table/Content/TableCell';
+import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 

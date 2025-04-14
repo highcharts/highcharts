@@ -36,7 +36,7 @@ import Utilities from '../Core/Utilities.js';
 import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
-import TableCell from '../Grid/Core/Table/Content/TableCell.js';
+import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
