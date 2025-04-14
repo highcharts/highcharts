@@ -340,6 +340,8 @@ class Column {
 
 namespace Column {
     export type Options = Omit<IndividualColumnOptions, 'id'>;
+
+    export type DataType = 'string' | 'number' | 'bool' | 'date';
 }
 
 

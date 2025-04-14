@@ -23,7 +23,7 @@
 
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
-import type ColumnDataType from './ColumnDataType';
+import type Column from '../../Core/Table/Column';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
@@ -356,7 +356,7 @@ namespace Validator {
     /**
      * Default validation rules for each dataType.
      */
-    export const predefinedRules: Record<ColumnDataType, RuleKey[]> = {
+    export const predefinedRules: Record<Column.DataType, RuleKey[]> = {
         number: ['number'],
         bool: ['bool'],
         string: [],

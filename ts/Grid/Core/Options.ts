@@ -28,6 +28,7 @@ import type {
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
+import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 
 
@@ -274,6 +275,16 @@ export interface ColumnOptions {
      * Options for all cells in the column.
      */
     cells?: ColumnCellOptions;
+
+    /**
+     * The data type of the column. Can be one of `string`, `number`,
+     * `boolean` or `date`.
+     *
+     * TODO: Add default (?)
+     * If not set, the data type is inferred from the first cell in the
+     * column. If the cell is empty, the default type is `string`.
+     */
+    dataType?: Column.DataType;
 
     /**
      * Options for all the header cells in the column.

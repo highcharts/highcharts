@@ -27,15 +27,14 @@ const DTS_FILES = [
     'Core/Renderer/HTML/HTMLAttributes.d.ts',
     'Core/Renderer/SVG/SVGAttributes.d.ts',
     'Core/Renderer/SVG/SVGPath.d.ts',
-    'Shared/LangOptionsCore.d.ts',
-    'Grid/Pro/ColumnTypes/ColumnDataType.d.ts'
+    'Shared/LangOptionsCore.d.ts'
 ].map(fsLib.path);
 
 
 const DTS_FOLDERS = [
     'Dashboards/',
     'Data/',
-    'DataGrid/'
+    'Grid/'
 ].map(fsLib.path);
 
 
