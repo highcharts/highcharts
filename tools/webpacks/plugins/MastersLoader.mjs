@@ -42,9 +42,6 @@ import FSLib from '../../libs/fs.js';
  * Decorated master content.
  */
 function decorateImports(content, masterImports) {
-    if (typeof content !== 'string') {
-        return `\n// @OOPS ${typeof content}\nexport const oops = 343;`;
-    }
     try {
         const importsMatches = content.matchAll(
             /(?:\n|\r\n)import.*?from.*?(['"])(.*?)\1.*?(?:\n|\r\n)/gsu
