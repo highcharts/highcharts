@@ -606,7 +606,7 @@ function parentPath(
  * Converts from POSIX path to the system-specific path by default. Set the flag
  * to convert to POSIX.
  *
- * @param {string|Array<string>} path
+ * @param {string|Array<string>} pathToConvert
  * Path to convert.
  *
  * @param {boolean} [toPosix]
@@ -616,23 +616,30 @@ function parentPath(
  * Converted path.
  */
 function path(
-    path,
+    pathToConvert,
     toPosix
 ) {
 
-    if (typeof path !== 'string') {
-        path = Path.join(...path);
-    }
-
     if (Path.sep !== Path.posix.sep) {
+
+        if (typeof pathToConvert !== 'string') {
+            pathToConvert = Path.join(
+                ...pathToConvert.map(ptc => path(ptc, toPosix))
+            );
+        }
+
         return (
             toPosix ?
-                path.replaceAll(SEP, PSEP) :
-                path.replaceAll(PSEP, SEP)
+                pathToConvert.replaceAll(SEP, PSEP) :
+                pathToConvert.replaceAll(PSEP, SEP)
         );
     }
 
-    return path;
+    if (typeof pathToConvert !== 'string') {
+        pathToConvert = Path.join(...pathToConvert);
+    }
+
+    return pathToConvert;
 }
 
 /**
