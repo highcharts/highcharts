@@ -271,13 +271,18 @@ function checkDocsConsistency() {
 /**
  * Run the test suite.
  *
+ * @param {Function} gulpback
+ * Internal async function by Gulp.js.
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function test() {
-    const fs = require('fs');
+async function test(gulpback) {
     const argv = require('yargs').argv;
+    const childProcess = require('node:child_process');
+    const fs = require('node:fs');
     const log = require('../libs/log');
+    const PluginError = require('plugin-error');
 
     const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 
@@ -326,7 +331,7 @@ specified by config.imageCapture.resultsOutputPath.
     }
 
     // Conditionally build required code
-    await gulp.task('scripts')();
+    await gulp.task('scripts')(gulpback);
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
@@ -348,45 +353,37 @@ specified by config.imageCapture.resultsOutputPath.
 
         log.message('Run `gulp test --help` for available options');
 
-        const KarmaServer = require('karma').Server;
-        const { parseConfig } = require('karma').config;
+        const tests = [];
 
-        const PluginError = require('plugin-error');
-        const {
-            reporters: defaultReporters,
-            browserDisconnectTimeout: defaultTimeout
-        } = require(KARMA_CONFIG_FILE);
+        if (Array.isArray(productTests)) {
+            tests.push('--tests');
+            productTests.forEach(testPath => tests.push(`unit-tests/${testPath}/**/demo.js`));
+        }
 
-        const karmaConfig = parseConfig(KARMA_CONFIG_FILE, {
-            reporters: argv.dots ? ['dots'] : defaultReporters,
-            browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
-            singleRun: true,
-            tests: Array.isArray(productTests) ?
-                productTests.map(testPath => `samples/unit-tests/${testPath}/**/demo.js`) :
-                void 0,
-            client: {
-                cliArgs: argv
-            }
+        const result = childProcess.spawnSync('npx', [
+            'karma', 'start', KARMA_CONFIG_FILE,
+            ...tests,
+            ...process.argv
+        ], {
+            cwd: process.cwd(),
+            stdio: ['ignore', process.stdout, process.stderr],
+            timeout: 600000
         });
 
-        await new KarmaServer(karmaConfig)
-            .start()
-            .then(() => {
-                if (argv.speak) {
-                    log.say('Tests succeeded!');
-                }
-            })
-            .catch(() => {
-                if (argv.speak) {
-                    log.say('Tests failed!');
-                }
-                throw new PluginError('karma', {
-                    message: 'Tests failed'
-                });
-            })
-            .finally(() => {
-                saveRun(runConfig);
+        if (result.error) {
+            if (argv.speak) {
+                log.say('Tests failed!');
+            }
+            throw new PluginError('karma', {
+                message: 'Tests failed'
             });
+        }
+
+        if (argv.speak) {
+            log.say('Tests succeeded!');
+        }
+
+        saveRun(runConfig);
 
         // Capture console.error, console.warn and console.log
         const consoleLogPath = `${BASE}/test/console.log`;
