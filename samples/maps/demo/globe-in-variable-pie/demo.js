@@ -75,7 +75,6 @@ const getGraticule = () => {
         country.properties['hc-key'],
         country.id
     ]);
-
     const countries = topology.objects.default.geometries.filter(el =>
         data.map(c => c.name).includes(el.properties.name)
     );
@@ -132,7 +131,7 @@ const getGraticule = () => {
                                     duration: 1000,
                                     step: (now, fx) => {
                                         const rotation =
-                                                    geodesic[Math.round(now)];
+                                            geodesic[Math.round(now)];
                                         chart.mapView.update(
                                             {
                                                 projection: {
@@ -418,6 +417,7 @@ const getGraticule = () => {
             style: {
                 fontSize: '1em'
             },
+            valueDecimals: 2,
             headerFormat:
                         `<span style="font-weight: bold">
                         {point.key}</span><br/>`,
@@ -504,8 +504,7 @@ const getGraticule = () => {
                         unselect() {
                             const point = this,
                                 countryName = point.name,
-                                mapPoint =
-                                            chart.findCountry(countryName);
+                                mapPoint = chart.findCountry(countryName);
                             mapPoint.update({
                                 color: null
                             });
@@ -518,8 +517,7 @@ const getGraticule = () => {
                             const point = this,
                                 selectedPoints = chart.getSelectedPoints(),
                                 countryName = point.name,
-                                mapPoint =
-                                                chart.findCountry(countryName);
+                                mapPoint = chart.findCountry(countryName);
                             mapPoint.update({
                                 color: '#ffffff99'
                             });
