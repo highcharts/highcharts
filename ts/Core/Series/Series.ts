@@ -2008,8 +2008,7 @@ class Series {
                     pOptions = dataOptions ?
                         dataOptions[cursor] :
                         table.getRowObject(
-                            i,
-                            dataColumnKeys
+                            i
                         ) as unknown as PointOptions;
                 } else {
                     pOptions = table.getRowObject(i) as unknown as PointOptions;
