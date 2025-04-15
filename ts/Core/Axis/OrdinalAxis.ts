@@ -914,7 +914,10 @@ namespace OrdinalAxis {
                 min = extremes.min,
                 max = extremes.max,
                 hasBreaks = axis.brokenAxis?.hasBreaks,
-                isOrdinal = axis.options.ordinal;
+                isOrdinal = axis.options.ordinal,
+                overscroll = axis.options.overscroll &&
+                    axis.ordinal.convertOverscroll(axis.options.overscroll) ||
+                    0;
 
             let len,
                 uniqueOrdinalPositions,
@@ -1058,10 +1061,8 @@ namespace OrdinalAxis {
                         !axis.options.keepOrdinalPadding &&
                         (
                             ordinalPositions[0] - min > dist ||
-                            (
-                                max -
-                                ordinalPositions[ordinalPositions.length - 1]
-                            ) > dist
+                            max - overscroll - ordinalPositions[len - 1] >
+                            dist
                         )
                     ) {
                         useOrdinal = true;
@@ -1074,9 +1075,7 @@ namespace OrdinalAxis {
                     } else if (len === 1) {
                         // We have just one point, closest distance is unknown.
                         // Assume then it is last point and overscrolled range:
-                        overscrollPointsRange = axis.ordinal.convertOverscroll(
-                            axis.options.overscroll
-                        );
+                        overscrollPointsRange = overscroll;
                         ordinalPositions = [
                             ordinalPositions[0],
                             ordinalPositions[0] + overscrollPointsRange
