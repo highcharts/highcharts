@@ -2253,6 +2253,7 @@ class Series {
             // Calculate the bottom y value for stacked series
             if (
                 stacking &&
+                stacking !== 'disabled' &&
                 series.visible &&
                 stacks &&
                 stacks[xValue]
@@ -4778,9 +4779,16 @@ class Series {
         series.isDirty = true;
 
         // In a stack, all other series are affected
-        if (series.options.stacking) {
+        if (
+            series.options.stacking &&
+            series.options.stacking !== 'disabled'
+        ) {
             chart.series.forEach((otherSeries): void => {
-                if (otherSeries.options.stacking && otherSeries.visible) {
+                if (
+                    otherSeries.options.stacking &&
+                    (otherSeries.options.stacking !== 'disabled') &&
+                    otherSeries.visible
+                ) {
                     otherSeries.isDirty = true;
                 }
             });
