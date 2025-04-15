@@ -182,7 +182,7 @@ test('CSVConnector from URL', async (assert) => {
     const doneLoading = assert.async(3);
 
     connector.on('afterLoad', (e) => {
-        const eventTable = e.tables[0];
+        const eventTable = Object.values(e.tables)[0];
         assert.ok(
             eventTable.getRowCount() > 1,
             'DataConnector should have rows.'
@@ -237,7 +237,7 @@ test('CSVConnector from URL', async (assert) => {
     });
 
     connector.on('load', (e) => {
-        assert.deepEqual(e.tables[0], connector.table, 'DataTable from event is same as DataTable from connector')
+        assert.deepEqual(Object.values(e.tables)[0], connector.table, 'DataTable from event is same as DataTable from connector')
     });
 
     connector.on('loadError', (e) => {

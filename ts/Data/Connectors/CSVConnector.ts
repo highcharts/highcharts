@@ -26,7 +26,6 @@ import type DataEvent from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
 import type Types from '../../Shared/Types';
 import type DataTable from '../DataTable';
-import type { DataTableParserCallbackFunction } from '../DataTableOptions';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -155,19 +154,9 @@ class CSVConnector extends DataConnector {
             .then((csv): Promise<string> => {
                 if (csv) {
                     // Iterate over all tables to parse the columns.
-                    for (const table of tables) {
+                    for (const table of Object.values(tables)) {
                         table.deleteColumns();
-                        const dataTableOptions = {
-                            key: table.key,
-                            parser: table.parser as
-                            DataTableParserCallbackFunction<string>
-                        };
-                        converter.parse(
-                            { csv },
-                            void 0,
-                            dataTableOptions
-                        );
-
+                        converter.parse({ csv });
                         table.setColumns(converter.getTable().getColumns());
                     }
                 }
@@ -239,14 +228,6 @@ namespace CSVConnector {
         Types.DeepPartial<CSVConnectorOptions>&
         CSVConverter.UserOptions
     );
-
-    /**
-     * The data table options used in the corresponding converter.
-     */
-    export type DataTableOptions = {
-        key?: string;
-        parser?: DataTableParserCallbackFunction<string>;
-    };
 
 }
 

@@ -25,6 +25,7 @@ import type { DataConnectorTypes } from './DataConnectorType';
 import type { DataConnectorOptions, MetaColumn, Metadata } from './DataConnectorOptions';
 import type DataEvent from '../DataEvent';
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
+import type DataTableOptions from '../DataTableOptions';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
@@ -67,14 +68,15 @@ abstract class DataConnector implements DataEvent.Emitter {
      */
     public constructor(
         options: DataConnector.UserOptions = {},
-        dataTables: Array<DataTable> = []
+        dataTables: Array<DataTableOptions> = []
     ) {
         this.metadata = options.metadata || { columns: {} };
 
         // Create a data table for each defined in the dataTables user options.
         if (dataTables?.length > 0) {
             for (let i = 0, iEnd = dataTables.length; i < iEnd; ++i) {
-                this.dataTables[i] = new DataTable(dataTables[i]);
+                const dataTable = dataTables[i];
+                this.dataTables[dataTable?.key ?? i] = new DataTable(dataTable);
             }
 
         // If user options dataTables is not defined, generate a default table.
@@ -122,7 +124,7 @@ abstract class DataConnector implements DataEvent.Emitter {
     /**
      * Tables managed by this DataConnector instance.
      */
-    public dataTables: Array<DataTable> = [];
+    public dataTables: Record<string, DataTable> = {};
 
     /* *
      *
@@ -214,15 +216,10 @@ abstract class DataConnector implements DataEvent.Emitter {
      * The data table instance.
      */
     public getTable(key?: string): DataTable {
-        const firstTable = this.dataTables[0];
-
         if (key) {
-            return this.dataTables.find(
-                (table: DataTable): boolean => table.key === key
-            ) ?? firstTable;
+            return this.dataTables[key];
         }
-
-        return firstTable;
+        return Object.values(this.dataTables)[0];
     }
 
     /**
@@ -311,7 +308,7 @@ abstract class DataConnector implements DataEvent.Emitter {
             DataModifier.types[modifierOptions.type]
         );
 
-        for (const table of this.dataTables) {
+        for (const table of Object.values(this.dataTables)) {
             await table.setModifier(
                 ModifierClass ?
                     new ModifierClass(modifierOptions as AnyRecord) : void 0
@@ -405,7 +402,7 @@ namespace DataConnector {
      * The default event object for a DataConnector.
      */
     export interface Event extends DataEvent {
-        readonly tables: DataTable[];
+        readonly tables: Record<string, DataTable>;
     }
 
     /**

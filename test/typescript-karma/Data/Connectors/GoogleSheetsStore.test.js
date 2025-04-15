@@ -17,7 +17,7 @@ test('GoogleDataConnector', (assert) => {
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
-        const eventTable = e.tables[0];
+        const eventTable = Object.values(e.tables)[0];
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
@@ -136,7 +136,7 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
             'beforeParse was fired'
         );
 
-        const columnNames = e.tables[0].getColumnNames();
+        const columnNames = Object.values(e.tables)[0].getColumnNames();
         assert.deepEqual(
             columnNames,
             ['Test0', 'Test1', 'Test2', 'Test3'],
@@ -173,7 +173,7 @@ test('GoogleDataConnector, worksheet 1', async (assert) => {
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
-        const eventTable = e.tables[0];
+        const eventTable = Object.values(e.tables)[0];
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
@@ -224,7 +224,7 @@ test('GoogleDataConnector, worksheet 2', async (assert) => {
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
-        const eventTable = e.tables[0];
+        const eventTable = Object.values(e.tables)[0];
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],

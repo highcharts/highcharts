@@ -342,7 +342,9 @@ Dashboards.board('container', {
                     const handleCursor = e => {
                         const target = e.cursor.target;
                         const rowIndex = e.cursor.row;
-                        const yColumn = e.tables[0].columns[syncedColumnName];
+                        const yColumn =
+                            Object.values(e.tables)[0]
+                                .columns[syncedColumnName];
 
                         const averages = [
                             yColumn.slice(0, rowIndex + 1),

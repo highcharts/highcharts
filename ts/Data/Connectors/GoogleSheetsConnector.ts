@@ -26,7 +26,6 @@
 import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type Types from '../../Shared/Types';
-import type { DataTableParserCallbackFunction } from '../DataTableOptions';
 import type DataTable from '../DataTable';
 
 import DataConnector from './DataConnector.js';
@@ -195,19 +194,8 @@ class GoogleSheetsConnector extends DataConnector {
                 }
 
                 // Iterate over all tables to parse the columns.
-                for (const table of tables) {
-                    const dataTableOptions = {
-                        key: table.key,
-                        parser: table.parser as
-                        DataTableParserCallbackFunction<
-                        GoogleSheetsConverter.GoogleSpreadsheetJSON['values']
-                        >
-                    };
-                    converter.parse(
-                        { firstRowAsNames, json },
-                        void 0,
-                        dataTableOptions
-                    );
+                for (const table of Object.values(tables)) {
+                    converter.parse({ firstRowAsNames, json });
 
                     // If already loaded, clear the current table
                     table.deleteColumns();
@@ -281,16 +269,6 @@ namespace GoogleSheetsConnector {
         Types.DeepPartial<GoogleSheetsConnectorOptions> &
         GoogleSheetsConverter.UserOptions
     );
-
-    /**
-     * The data table options used in the corresponding converter.
-     */
-    export type DataTableOptions = {
-        key?: string;
-        parser?: DataTableParserCallbackFunction<
-        GoogleSheetsConverter.GoogleSpreadsheetJSON['values']
-        >
-    };
 
     /* *
      *

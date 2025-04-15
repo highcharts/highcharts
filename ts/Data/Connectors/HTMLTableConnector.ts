@@ -128,7 +128,7 @@ class HTMLTableConnector extends DataConnector {
         connector.emit<HTMLTableConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            tables: [table],
+            tables: { table },
             tableElement: connector.tableElement
         });
 
@@ -153,7 +153,7 @@ class HTMLTableConnector extends DataConnector {
                 type: 'loadError',
                 detail: eventDetail,
                 error,
-                tables: [table]
+                tables: { table }
             });
 
             return Promise.reject(new Error(error));
@@ -174,7 +174,7 @@ class HTMLTableConnector extends DataConnector {
                 connector.emit<HTMLTableConnector.Event>({
                     type: 'afterLoad',
                     detail: eventDetail,
-                    tables: [table],
+                    tables: { table },
                     tableElement: connector.tableElement
                 });
                 return connector;

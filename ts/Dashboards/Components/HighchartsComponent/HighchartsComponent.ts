@@ -244,12 +244,16 @@ class HighchartsComponent extends Component {
             const connector = connectorHandler.connector;
             if (connector) {
                 connector.on('afterLoad', (e: DataConnector.Event): void => {
-                    const eventTable = e.tables.find(
-                        (table: DataTable): boolean =>
-                            table.key === this.dataTableKey
-                    ) ?? e.tables[0];
-                    const table = connector.getTable(this.dataTableKey);
+                    const eventTables = e.tables;
+                    let eventTable;
 
+                    if (this.dataTableKey) {
+                        eventTable = eventTables[this.dataTableKey];
+                    } else {
+                        eventTable = Object.values(eventTables)[0];
+                    }
+
+                    const table = connector.getTable(this.dataTableKey);
                     table.setColumns(eventTable.getColumns());
                 });
             }

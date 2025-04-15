@@ -282,7 +282,7 @@ test('HTMLTableConnector from HTML element', function (assert) {
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
-        const eventTable = e.tables[0];
+        const eventTable = Object.values(e.tables)[0];
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],

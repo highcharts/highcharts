@@ -23,7 +23,6 @@ import type DataEvent from '../DataEvent';
 import type Types from '../../Shared/Types';
 import type JSONConnectorOptions from './JSONConnectorOptions';
 import type DataTable from '../DataTable';
-import type { DataTableParserCallbackFunction } from '../DataTableOptions';
 
 import DataConnector from './DataConnector.js';
 import U from '../../Core/Utilities.js';
@@ -153,19 +152,9 @@ class JSONConnector extends DataConnector {
             .then((data): Promise<Array<Array<number|string>>> => {
                 if (data) {
                     // Iterate over all tables to parse the columns.
-                    for (const table of tables) {
+                    for (const table of Object.values(tables)) {
                         table.deleteColumns();
-                        const dataTableOptions = {
-                            key: table.key,
-                            parser: table.parser as
-                            DataTableParserCallbackFunction<JSONConverter.Data>
-                        };
-                        converter.parse(
-                            { data },
-                            void 0,
-                            dataTableOptions
-                        );
-
+                        converter.parse({ data });
                         table.setColumns(converter.getTable().getColumns());
                     }
                 }
@@ -234,14 +223,6 @@ namespace JSONConnector {
         Types.DeepPartial<JSONConnectorOptions>&
         JSONConverter.UserOptions
     );
-
-    /**
-     * The data table options used in the corresponding converter.
-     */
-    export type DataTableOptions = {
-        key?: string;
-        parser?: DataTableParserCallbackFunction<JSONConverter.Data>;
-    };
 
 }
 
