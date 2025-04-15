@@ -367,7 +367,7 @@ specified by config.imageCapture.resultsOutputPath.
         ], {
             cwd: process.cwd(),
             stdio: ['ignore', process.stdout, process.stderr],
-            timeout: 600000,
+            timeout: 1800000,
             shell: path.sep === path.win32.sep
         });
 
