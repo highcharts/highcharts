@@ -74,6 +74,11 @@ class Column {
     public readonly viewport: Table;
 
     /**
+     * Type of the data in the column.
+     */
+    public readonly dataType: Column.DataType;
+
+    /**
      * The width of the column in the viewport. The interpretation of the
      * value depends on the `columns.distribution` option:
      * - `full`: The width is a ratio of the viewport width.
@@ -140,17 +145,22 @@ class Column {
         id: string,
         index: number
     ) {
-        this.options = merge(
-            viewport.grid.options?.columnDefaults ?? {},
-            viewport.grid.columnOptionsMap?.[id] ?? {}
-        );
-
+        const { grid } = viewport;
+        
         this.id = id;
         this.index = index;
         this.viewport = viewport;
-        this.width = this.getInitialWidth();
 
         this.loadData();
+
+        this.dataType = this.assumeDataType();
+        this.options = merge(
+            grid.options?.columnDefaults ?? {},
+            grid.options?.dataTypeColumnDefaults?.[this.dataType] ?? {},
+            grid.columnOptionsMap?.[id] ?? {}
+        );
+
+        this.width = this.getInitialWidth();
     }
 
 
@@ -165,6 +175,33 @@ class Column {
      */
     public loadData(): void {
         this.data = this.viewport.dataTable.getColumn(this.id, true);
+    }
+
+    /**
+     * Assumes the data type of the column based on the data in the column.
+     * Data must be loaded before calling this method.
+     */
+    private assumeDataType(): Column.DataType {
+        const { grid } = this.viewport;
+
+        let type = grid.columnOptionsMap?.[this.id]?.dataType;
+        if (type) {
+            return type;
+        }
+
+        type = grid.options?.columnDefaults?.dataType;
+        if (type) {
+            return type;
+        }
+
+        switch (typeof this.data?.[0]) {
+            case 'number':
+                return 'number';
+            case 'boolean':
+                return 'bool';
+            default:
+                return 'string';
+        }
     }
 
     /**

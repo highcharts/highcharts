@@ -72,9 +72,15 @@ export interface Options {
 
     /**
      * Default options for all the columns in the grid. Can be overridden
-     * by individual column options.
+     * by the `dataTypeColumnDefaults` and individual column options.
      */
     columnDefaults?: ColumnOptions;
+
+    /**
+     * Default options for all the columns in the grid. Can be overridden
+     * by individual column options.
+     */
+    dataTypeColumnDefaults?: Record<Column.DataType, Omit<ColumnOptions, 'dataType'>>;
 
     /**
      * Options for individual columns.
@@ -280,9 +286,8 @@ export interface ColumnOptions {
      * The data type of the column. Can be one of `string`, `number`,
      * `boolean` or `date`.
      *
-     * TODO: Add default (?)
      * If not set, the data type is inferred from the first cell in the
-     * column. If the cell is empty, the default type is `string`.
+     * column.
      */
     dataType?: Column.DataType;
 

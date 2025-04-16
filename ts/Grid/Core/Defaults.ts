@@ -84,6 +84,18 @@ namespace Defaults {
                 sortable: true
             },
             resizing: true
+        },
+        dataTypeColumnDefaults: {
+            'bool': {
+                cells: {
+                    format: '{#if (eq value null)}{else}{#if value}✓{else}✗{/if}{/if}'
+                }
+            },
+            'date': {
+                cells: {
+                    format: '{value:%Y-%m-%d %H:%M:%S}'
+                }
+            }
         }
     };
 
