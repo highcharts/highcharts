@@ -382,7 +382,8 @@ function navigationResizeYAxes(
             height: position.height + '%',
             top: position.top + '%',
             resize: resizers[index],
-            offset: 0
+            offset: 0,
+            visible: true
         }, false);
     });
 }
