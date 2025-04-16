@@ -99,6 +99,7 @@ class CandlestickSeries extends OHLCSeries {
             color = point.color || this.color; // (#14826)
 
         attribs['stroke-width'] = options.lineWidth;
+        attribs['fill-opacity'] = options.fillOpacity;
 
         attribs.fill = point.options.color ||
             (isUp ? (options.upColor || color) : color);
