@@ -160,7 +160,7 @@ class MapSeries extends ScatterSeries {
 
     public processedData: Array<(
         MapPointOptions|PointOptions|PointShortOptions
-    )> = [];
+    )>|undefined;
 
     public transformGroups: Array<SVGElement>|undefined;
 
@@ -731,8 +731,9 @@ class MapSeries extends ScatterSeries {
      */
     public processData(): (boolean|undefined) {
         const options = this.options,
-            optionsData = this.useDataTable ? void 0 : options.data,
+            optionsData = options.data,
             dataTable = this.dataTable,
+            useDataTable = options.dataTable && !optionsData,
             chart = this.chart,
             chartOptions = chart.options.chart,
             joinBy = this.joinBy,
@@ -779,9 +780,11 @@ class MapSeries extends ScatterSeries {
         });
 
         // Reset processedData
-        this.processedData = [];
-        const processedData = this.useDataTable ? void 0 : this.processedData;
-        if (!this.useDataTable && processedData) {
+        if (!useDataTable) {
+            this.processedData = [];
+        }
+        const processedData = useDataTable ? void 0 : this.processedData;
+        if (!useDataTable && processedData) {
             // Pick up numeric values, add index. Convert Array point
             // definitions to objects using pointArrayMap.
             if (optionsData) {
@@ -865,7 +868,7 @@ class MapSeries extends ScatterSeries {
             // Registered the point codes that actually hold data
             if (joinBy[1]) {
                 const joinKey = joinBy[1];
-                if (this.useDataTable) {
+                if (useDataTable) {
                     for (let i = 0; i < modified.rowCount; i++) {
                         const mapKey = getNestedProperty(
                             joinKey,
@@ -890,7 +893,7 @@ class MapSeries extends ScatterSeries {
 
             if (options.allAreas) {
                 // Register the point codes that actually hold data
-                if (!this.useDataTable && processedData) {
+                if (!useDataTable && processedData) {
                     if (joinBy[1]) {
                         const joinKey = joinBy[1];
 
@@ -931,7 +934,7 @@ class MapSeries extends ScatterSeries {
                                 { value: null }
                             ) as unknown as DataTable.RowObject
                         );
-                        if (!this.useDataTable) {
+                        if (!useDataTable) {
                             processedData?.push(
                                 merge(mapPoint, { value: null })
                             );
@@ -942,7 +945,7 @@ class MapSeries extends ScatterSeries {
         }
         // The processedXData array is used by general chart logic for checking
         // data length in various scanarios.
-        if (this.useDataTable) {
+        if (useDataTable) {
             this.dataTable.modified = modified;
         } else if (processedData) {
             this.dataTable.rowCount = processedData.length;
