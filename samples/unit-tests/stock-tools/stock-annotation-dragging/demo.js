@@ -55,6 +55,15 @@ QUnit.test('Dragging annotation', assert => {
                 dataGrouping: {
                     enabled: true
                 }
+            }, {
+                type: 'flags',
+                data: [{
+                    x: data[50][0]
+                }, {
+                    x: data[52][0]
+                }, {
+                    x: data[55][0]
+                }]
             }
         ]
     });
@@ -72,6 +81,17 @@ QUnit.test('Dragging annotation', assert => {
         newPlotX,
         1,
         `Annotation moved by ${diff} pixels`
+    );
+
+    testController.pan(
+        [chart.plotLeft + newPlotX, 200],
+        [chart.plotLeft + newPlotX + 200, 200]
+    );
+    assert.close(
+        newPlotX + 200,
+        annotation.points[0].plotX,
+        1,
+        'Annotation should move freely over flags series, #22657.'
     );
 });
 
