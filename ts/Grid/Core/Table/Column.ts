@@ -24,17 +24,18 @@
 
 import type { IndividualColumnOptions } from '../Options';
 import type Cell from './Cell';
+import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
-import CellContentRenderer from './CellContent/CellContentRenderer.js';
-import TextRenderer from './CellContent/TextRenderer.js';
 import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
 import GridUtils from '../GridUtils.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import Templating from '../../../Core/Templating.js';
+import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
+import TableCell from './Body/TableCell';
 
 const { merge } = Utils;
 const { makeHTMLElement } = GridUtils;
@@ -79,11 +80,6 @@ class Column {
      * Type of the data in the column.
      */
     public readonly dataType: Column.DataType;
-
-    /**
-     * The renderer for the content of the column cells.
-     */
-    public cellRenderer: CellContentRenderer;
 
     /**
      * The width of the column in the viewport. The interpretation of the
@@ -167,7 +163,6 @@ class Column {
             grid.columnOptionsMap?.[id] ?? {}
         );
 
-        this.cellRenderer = this.createCellRenderer();
         this.width = this.getInitialWidth();
     }
 
@@ -186,10 +181,10 @@ class Column {
     }
 
     /**
-     * Creates a cell renderer for the column.
+     * Creates a cell content instance.
      */
-    public createCellRenderer(): CellContentRenderer {
-        return new TextRenderer();
+    public initCellContent(cell: TableCell): CellContent {
+        return new TextContent(cell);
     }
 
     /**

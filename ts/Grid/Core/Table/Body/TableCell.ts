@@ -27,6 +27,7 @@ import type Column from '../Column';
 import type TableRow from './TableRow';
 
 import Cell from '../Cell.js';
+import CellContent from '../CellContent/CellContent.js';
 
 import Utils from '../../../../Core/Utilities.js';
 const {
@@ -58,6 +59,8 @@ class TableCell extends Cell {
 
     public override column: Column;
 
+    public readonly content: CellContent;
+
 
     /* *
     *
@@ -81,6 +84,7 @@ class TableCell extends Cell {
         this.row = row;
 
         this.column.registerCell(this);
+        this.content = this.column.initCellContent(this);
     }
 
 
@@ -230,7 +234,7 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
 
-        this.column.cellRenderer.render(this);
+        this.content.render();
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
 
@@ -290,6 +294,7 @@ class TableCell extends Cell {
      * Destroys the cell.
      */
     public destroy(): void {
+        this.content.destroy();
         super.destroy();
     }
 }

@@ -21,8 +21,8 @@
  *
  * */
 
-import TableCell from '../Body/TableCell.js';
-import CellContentRenderer from './CellContentRenderer.js';
+import AST from '../../../../Core/Renderer/HTML/AST.js';
+import CellContent from './CellContent.js';
 
 import GridUtils from '../../GridUtils.js';
 const {
@@ -41,16 +41,23 @@ const {
  *
  * */
 
-class TextRenderer extends CellContentRenderer {
+class TextContent extends CellContent {
 
-    /**
-     * Render the cell content.
-     * 
-     * @param cell
-     * The cell to render the content for.
-     */
-    public override render(cell: TableCell): void {
-        setHTMLContent(cell.htmlElement, this.format(cell));
+    private rendered: boolean = false;
+
+    public override render(): void {
+        this.destroy();
+        setHTMLContent(this.cell.htmlElement, this.format());
+        this.rendered = true;
+    }
+
+    public override destroy(): void {
+        if (!this.rendered) {
+            return;
+        }
+        
+        this.cell.htmlElement.innerHTML = AST.emptyHTML;
+        this.rendered = false;
     }
 
     /**
@@ -61,7 +68,8 @@ class TextRenderer extends CellContentRenderer {
      *
      * @internal
      */
-    private format(cell: TableCell): string {
+    private format(): string {
+        const { cell } = this;
         const cellsDefaults =
             cell.row.viewport.grid.options?.columnDefaults?.cells || {};
         const options = cell.column.options.cells || {};
@@ -100,4 +108,4 @@ class TextRenderer extends CellContentRenderer {
  *
  * */
 
-export default TextRenderer;
+export default TextContent;
