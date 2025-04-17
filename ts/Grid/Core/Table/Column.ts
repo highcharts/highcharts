@@ -27,6 +27,8 @@ import type Cell from './Cell';
 import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
+import CellContentRenderer from './CellContent/CellContentRenderer.js';
+import TextRenderer from './CellContent/TextRenderer.js';
 import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
 import GridUtils from '../GridUtils.js';
@@ -77,6 +79,11 @@ class Column {
      * Type of the data in the column.
      */
     public readonly dataType: Column.DataType;
+
+    /**
+     * The renderer for the content of the column cells.
+     */
+    public cellRenderer: CellContentRenderer;
 
     /**
      * The width of the column in the viewport. The interpretation of the
@@ -160,6 +167,7 @@ class Column {
             grid.columnOptionsMap?.[id] ?? {}
         );
 
+        this.cellRenderer = this.createCellRenderer();
         this.width = this.getInitialWidth();
     }
 
@@ -178,8 +186,15 @@ class Column {
     }
 
     /**
-     * Assumes the data type of the column based on the data in the column.
-     * Data must be loaded before calling this method.
+     * Creates a cell renderer for the column.
+     */
+    public createCellRenderer(): CellContentRenderer {
+        return new TextRenderer();
+    }
+
+    /**
+     * Assumes the data type of the column based on the options or data in the
+     * column if not specified.
      */
     private assumeDataType(): Column.DataType {
         const { grid } = this.viewport;
