@@ -55,15 +55,6 @@ QUnit.test('Dragging annotation', assert => {
                 dataGrouping: {
                     enabled: true
                 }
-            }, {
-                type: 'flags',
-                data: [{
-                    x: data[50][0]
-                }, {
-                    x: data[52][0]
-                }, {
-                    x: data[55][0]
-                }]
             }
         ]
     });
@@ -82,6 +73,17 @@ QUnit.test('Dragging annotation', assert => {
         1,
         `Annotation moved by ${diff} pixels`
     );
+
+    chart.addSeries({
+        type: 'flags',
+        data: [{
+            x: data[50][0]
+        }, {
+            x: data[52][0]
+        }, {
+            x: data[55][0]
+        }]
+    });
 
     testController.pan(
         [chart.plotLeft + newPlotX, 200],
