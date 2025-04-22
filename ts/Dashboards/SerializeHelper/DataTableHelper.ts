@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -78,7 +78,7 @@ function toJSON(
 ): DataTableHelper.JSON {
     const json: DataTableHelper.JSON = {
         $class: 'Data.DataTable',
-        columns: obj.getColumns()
+        columns: obj.getColumns(void 0, false, true)
     };
 
     // Custom ID

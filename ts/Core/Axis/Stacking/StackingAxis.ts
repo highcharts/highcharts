@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -135,13 +135,13 @@ function chartGetStacks(
 
     // Reset stacks for each axis
     chart.axes.forEach((axis): void => {
-        if (axis.stacking && axis.stacking.stacks && axis.hasVisibleSeries) {
+        if (axis.stacking?.stacks && axis.hasVisibleSeries) {
             axis.stacking.oldStacks = axis.stacking.stacks;
         }
     });
 
     chart.series.forEach((series): void => {
-        const xAxisOptions = series.xAxis && series.xAxis.options || {};
+        const xAxisOptions = series.xAxis?.options || {};
 
         if (series.options.stacking && series.reserveSpace()) {
             series.stackKey = [

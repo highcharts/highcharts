@@ -47,9 +47,14 @@ QUnit.test('Legend rtl and useHTML(#4449)', function (assert) {
     });
 
     assert.strictEqual(
-        text.element.offsetLeft + text.element.offsetWidth,
+        text.foreignObject ?
+            text.foreignObject.attr('x') +
+                text.foreignObject.attr('width') -
+                // 3 is the static margin of the body inside the foreignObject
+                3 :
+            text.element.offsetLeft + text.element.offsetWidth,
         100,
-        'Text is right aligned'
+        'Text should be right aligned'
     );
 });
 // Highcharts 4.0.1, Issue #3158
@@ -150,7 +155,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
     });
 
     assert.ok(
-        text.getBBox().width <= 100,
+        text.getBBox().width <= 100 + (Highcharts.isFirefox ? 2 : 0),
         'Text directly inside anchor should be wrapped (#16173)'
     );
 
@@ -165,45 +170,39 @@ QUnit.test('Text word wrap with markup', function (assert) {
     );
 });
 
-QUnit.module('whiteSpace: "nowrap"', hooks => {
+QUnit.test('Skip tspans', assert => {
     const { Renderer } = Highcharts;
     const renderer = new Renderer(
         document.getElementById('container'),
         400,
         300
     );
-    const text = renderer
-        .text('test', 100, 40)
-        .css({
-            whiteSpace: 'nowrap'
-        })
-        .add();
+    try {
+        const text = renderer
+            .text('test', 100, 40)
+            .css({
+                whiteSpace: 'nowrap'
+            })
+            .add();
 
-    // Cleanup
-    hooks.after(() => {
-        renderer.destroy();
-        text.destroy();
-    });
-
-    QUnit.test('Skip tspans', assert => {
         text.attr({ text: 'single_word' });
         assert.strictEqual(
             text.element.innerHTML,
             'single_word',
-            'should not use tspan when whiteSpace equals "nowrap", and text ' +
-            'equals "single_word".'
+            'should not use tspan when whiteSpace equals "nowrap", and ' +
+            'text equals "single_word".'
         );
 
         text.attr({ text: 'two words' });
         assert.strictEqual(
             text.element.innerHTML,
             'two words',
-            'should not use tspan when whiteSpace equals "nowrap", and text ' +
-            'equals "two words".'
+            'should not use tspan when whiteSpace equals "nowrap", and ' +
+            'text equals "two words".'
         );
-    });
-
-    // TODO: move rest of nowrap tests into this module.
+    } finally {
+        renderer.destroy();
+    }
 });
 
 QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {
@@ -475,19 +474,47 @@ QUnit.test('lineClamp', function (assert) {
         400
     );
 
-    const text = ren.text('The quick brown fox jumps over the lazy dog', 30, 30)
-        .css({
-            lineClamp: 2,
-            width: '100px'
-        })
-        .add();
+    try {
+        const textSVG = ren.text(
+            'The quick brown fox jumps over the lazy dog',
+            30,
+            30
+        )
+            .css({
+                lineClamp: 2,
+                width: '100px'
+            })
+            .add();
 
-    assert.strictEqual(
-        text.element.querySelectorAll('tspan[dy]').length,
-        1,
-        'Exactly one line break should be applied'
-    );
+        assert.strictEqual(
+            textSVG.element.querySelectorAll('tspan[dy]').length,
+            1,
+            'Exactly one line break should be applied'
+        );
 
+        const height = textSVG.getBBox().height;
+
+        const textHTML = ren.text(
+            'The quick brown fox jumps over the lazy dog',
+            130,
+            30,
+            true
+        )
+            .css({
+                lineClamp: 2,
+                width: '100px'
+            })
+            .add();
+
+        assert.close(
+            textHTML.getBBox().height,
+            height,
+            2,
+            'The HTML bounding box should be approximately the same as the SVG'
+        );
+    } finally {
+        ren.destroy();
+    }
 });
 
 QUnit.test('BBox for mulitiple lines', function (assert) {
@@ -569,15 +596,21 @@ QUnit.test('HTML', function (assert) {
             'Tags don\'t start with spaces (#7126)'
         );
 
-        var html = renderer.text('useHTML', 100, 100, true).add();
+        text = renderer.text('useHTML', 100, 100, true).add();
+
         assert.close(
-            html.element.offsetLeft,
+            text.foreignObject ?
+                text.foreignObject.attr('x') :
+                text.element.offsetLeft,
             100,
             1,
             'Left offset should reflect initial position'
         );
         assert.close(
-            html.element.offsetHeight + html.element.offsetTop,
+            text.foreignObject ?
+                text.foreignObject.attr('height') +
+                    text.foreignObject.attr('y') :
+                text.element.offsetHeight + text.element.offsetTop,
             100,
             10,
             'Top offset should reflect initial position'
@@ -596,6 +629,7 @@ QUnit.test('HTML', function (assert) {
             '100px',
             'The style width should should now 100px'
         );
+
         text.css({
             fontWeight: 'bold'
         });
@@ -611,7 +645,7 @@ QUnit.test('HTML', function (assert) {
         });
         assert.strictEqual(
             text.element.style.width,
-            '',
+            'auto',
             'The style width should be removed when setting to null'
         );
 
@@ -629,7 +663,7 @@ QUnit.test('HTML', function (assert) {
         });
         assert.strictEqual(
             text.element.style.width,
-            '',
+            'auto',
             'The style width should be removed when setting to undefined'
         );
 

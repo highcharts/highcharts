@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -572,6 +572,12 @@ class Cell extends GUIElement {
  * */
 
 namespace Cell {
+    /**
+     * Checks if a valid cell instance.
+     */
+    export function isCell(cell: unknown): cell is Cell {
+        return cell instanceof Cell;
+    }
 
     /**
      * Responsive options of the cell.

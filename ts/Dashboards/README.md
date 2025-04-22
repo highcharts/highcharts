@@ -14,7 +14,7 @@ Note that this library also includes [Highcharts DataGrid](https://www.highchart
 
 - Licensing: [shop.highcharts.com](https://shop.highcharts.com/)
 - Support: [www.highcharts.com/support](http://www.highcharts.com/support)
-- Issues: [Repo guidelines](repo-guidelines.md)
+- Issues: [Repo guidelines](/repo-guidelines.md)
 
 Highcharts Dashboards is a [source available](https://en.wikipedia.org/wiki/Source-available_software) product. Please refer to [shop.highcharts.com](https://shop.highcharts.com/) for details on licensing.
 
@@ -30,7 +30,7 @@ Instead of downloading, you can use our CDN to access files directly. See [code.
 
 ```HTML
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <link rel="stylesheet" src="https://code.highcharts.com/dashboards/css/dashboards.css">
+    <link rel="stylesheet" href="https://code.highcharts.com/dashboards/css/dashboards.css">
 ```
 
 ### Install from npm

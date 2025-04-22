@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2024 Sebastian Bochann
+ * (c) 2009-2025 Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
@@ -217,6 +217,39 @@ export default PriceIndication;
  * @product   highstock
  * @requires  modules/price-indicator
  * @apioption plotOptions.series.lastVisiblePrice
+ */
+
+/**
+ * The color of the line of last visible price.
+ * By default, color is not applied and the line is not visible.
+ *
+ * @type      {string}
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.color
+ *
+ */
+
+/**
+ * Name of the dash style to use for the line of last visible price.
+ *
+ * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/
+ *         Possible values demonstrated
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @product   highstock
+ * @default   Solid
+ * @apioption plotOptions.series.lastVisiblePrice.dashStyle
+ *
+ */
+
+/**
+ * Width of the last visible price line.
+ *
+ * @type      {number}
+ * @product   highstock
+ * @default   1
+ * @apioption plotOptions.series.lastVisiblePrice.width
+ *
  */
 
 /**
@@ -454,6 +487,29 @@ export default PriceIndication;
  * @type      {string}
  * @product   highstock
  * @apioption plotOptions.series.lastPrice.color
+ *
+ */
+
+/**
+ * Name of the dash style to use for the line of last price.
+ *
+ * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/
+ *         Possible values demonstrated
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @product   highstock
+ * @default   Solid
+ * @apioption plotOptions.series.lastPrice.dashStyle
+ *
+ */
+
+/**
+ * Width of the last price line.
+ *
+ * @type      {number}
+ * @product   highstock
+ * @default   1
+ * @apioption plotOptions.series.lastPrice.width
  *
  */
 

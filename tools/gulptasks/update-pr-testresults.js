@@ -336,15 +336,17 @@ async function createPRReviewFile(testResults, pr) {
  * @param {Array} diffingSamples list
  * @param {number} pr number to upload for
  * @param {boolean} includeReview file
+ * @param {boolean} includeDiffFiles upload image files
  * @return {object|undefined} result of upload or undefined
  */
 async function uploadVisualTestFiles(
     diffingSamples,
     pr,
-    includeReview = true
+    includeReview = true,
+    includeDiffFiles = false
 ) {
     let result;
-    const files = diffingSamples.reduce((resultingFiles, sample) => {
+    const files = includeDiffFiles ? diffingSamples.reduce((resultingFiles, sample) => {
         resultingFiles.push({
             from: `samples/${sample[0]}/reference.svg`,
             to: buildImgS3Path('reference.svg', sample[0], pr)
@@ -358,7 +360,7 @@ async function uploadVisualTestFiles(
             to: buildImgS3Path('diff.gif', sample[0], pr)
         });
         return resultingFiles;
-    }, []);
+    }, []) : [];
 
     files.push({
         from: 'test/visual-test-results.json',

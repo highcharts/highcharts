@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-
 //
 // Application objects
 //
@@ -1159,12 +1158,13 @@ try {
     console.error('Paho MQTT library not found:', e);
 }
 
-/* eslint-disable no-underscore-dangle */
-const modules = Dashboards._modules;
-const DataConnector = Dashboards.DataConnector;
-// eslint-disable-next-line max-len
-const JSONConverter = modules['Data/Converters/JSONConverter.js']; // TBD: use namespace when becoming available
-const merge = Highcharts.merge;
+// Dashboards classes/objects
+const {
+    DataConnector,
+    DataConverter,
+    merge
+} = Dashboards;
+const JSONConverter = DataConverter.types.JSON;
 
 // Connector instances
 const connectorTable = {};

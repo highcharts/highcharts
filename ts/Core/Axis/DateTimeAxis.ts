@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,6 +20,7 @@ import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
+import type Types from '../../Shared/Types';
 
 import U from '../Utilities.js';
 const {
@@ -38,6 +39,15 @@ const {
 declare module './AxisComposition' {
     interface AxisComposition {
         dateTime?: DateTimeAxis.Composition['dateTime'];
+        getTimeTicks(
+            normalizedInterval: Time.TimeNormalizedObject,
+            min: number,
+            max: number,
+            startOfWeek?: number,
+            positions?: Array<number>|Types.TypedArray,
+            closestDistance?: number,
+            findHigherRanks?: boolean
+        ): TickPositionsArray;
     }
 }
 

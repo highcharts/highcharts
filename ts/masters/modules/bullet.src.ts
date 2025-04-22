@@ -5,7 +5,7 @@
  *
  * Bullet graph series type for Highcharts
  *
- * (c) 2010-2024 Kacper Madej
+ * (c) 2010-2025 Kacper Madej
  *
  * License: www.highcharts.com/license
  */

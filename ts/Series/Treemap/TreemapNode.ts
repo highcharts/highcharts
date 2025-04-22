@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Pawel Lysy
+ *  (c) 2010-2025 Pawel Lysy
  *
  *  License: www.highcharts.com/license
  *
@@ -37,6 +37,7 @@ class TreemapNode {
     childrenTotal = 0;
     ignore?: boolean;
     isLeaf?: boolean;
+    isGroup?: boolean;
     levelDynamic?: number;
     name?: string;
     parent?: string;

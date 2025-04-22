@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -89,7 +89,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
  *
  */
 export interface BeforeParseCallbackFunction {
-    (data: DataTable.Column[]): DataTable.Column[];
+    (data: DataTable.BasicColumn[]): DataTable.BasicColumn[];
 }
 
 /* *

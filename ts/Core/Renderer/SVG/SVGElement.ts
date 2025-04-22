@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -166,7 +166,6 @@ class SVGElement implements SVGElementLike {
     public fakeTS?: boolean;
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
-    public hasBoxWidthChanged?: boolean;
     public height?: number;
     public imgwidth?: number;
     public imgheight?: number;
@@ -411,8 +410,7 @@ class SVGElement implements SVGElementLike {
         alignTo?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
-        const attribs: SVGAttributes = {},
-            renderer = this.renderer,
+        const renderer = this.renderer,
             alignedObjects = renderer.alignedObjects,
             initialAlignment = Boolean(alignOptions);
 
@@ -454,7 +452,10 @@ class SVGElement implements SVGElementLike {
             // Default: top align
             y = (alignToBox.y || 0) + (alignOptions.y || 0) +
                 ((alignToBox.height || 0) - (alignOptions.height || 0)) *
-                getAlignFactor(alignOptions.verticalAlign);
+                getAlignFactor(alignOptions.verticalAlign),
+            attribs: SVGAttributes = {
+                'text-align': alignOptions?.align
+            };
 
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
@@ -586,9 +587,10 @@ class SVGElement implements SVGElementLike {
         }
 
         // Extract the stroke width and color
-        const parts = textOutline.split(' ');
-        const color: ColorString = parts[parts.length - 1];
-        let strokeWidth = parts[0];
+        const spacePos = textOutline.indexOf(' '),
+            color: ColorString = textOutline.substring(spacePos + 1);
+
+        let strokeWidth = textOutline.substring(0, spacePos);
 
         if (strokeWidth && strokeWidth !== 'none' && H.svg) {
 
@@ -1143,6 +1145,7 @@ class SVGElement implements SVGElementLike {
                 // SVG requires fill for text
                 if (stylesToApply.color) {
                     stylesToApply.fill = stylesToApply.color;
+                    delete stylesToApply.color;
                 }
             }
             css(elem, stylesToApply);
@@ -1179,8 +1182,8 @@ class SVGElement implements SVGElementLike {
         if (strokeWidth as unknown as string === 'inherit') {
             strokeWidth = 1;
         }
-        value = value && value.toLowerCase();
         if (value) {
+            value = value.toLowerCase();
             const v = value
                 .replace('shortdashdotdot', '3,1,1,1,1,1,')
                 .replace('shortdashdot', '3,1,1,1')
@@ -1244,8 +1247,6 @@ class SVGElement implements SVGElementLike {
             wrapper.clipPath = clipPath.destroy();
         }
 
-        wrapper.connector = wrapper.connector?.destroy();
-
         // Destroy stops in case this is a gradient object @todo old code?
         if (wrapper.stops) {
             for (i = 0; i < wrapper.stops.length; i++) {
@@ -1261,8 +1262,7 @@ class SVGElement implements SVGElementLike {
         // In case of useHTML, clean up empty containers emulating SVG groups
         // (#1960, #2393, #2697).
         while (
-            parentToClean &&
-            parentToClean.div &&
+            parentToClean?.div &&
             parentToClean.div.childNodes.length === 0
         ) {
             grandParent = (parentToClean as any).parentGroup;
@@ -1276,19 +1276,19 @@ class SVGElement implements SVGElementLike {
             erase(renderer.alignedObjects, wrapper);
         }
 
-        objectEach(wrapper, function (val: unknown, key: string): void {
+        objectEach(wrapper as AnyRecord, (val: unknown, key): void => {
 
-            // Destroy child elements of a group
             if (
-                (wrapper as AnyRecord)[key] &&
-                (wrapper as AnyRecord)[key].parentGroup === wrapper &&
-                (wrapper as AnyRecord)[key].destroy
+                // Destroy child elements of a group
+                wrapper[key]?.parentGroup === wrapper ||
+                // Destroy own elements
+                ['connector', 'foreignObject'].indexOf(key) !== -1
             ) {
-                (wrapper as AnyRecord)[key].destroy();
+                wrapper[key]?.destroy?.();
             }
 
             // Delete all properties
-            delete (wrapper as AnyRecord)[key];
+            delete wrapper[key];
         });
 
         return;
@@ -1315,7 +1315,7 @@ class SVGElement implements SVGElementLike {
             this.pathArray = value;
             value = value.reduce(
                 (acc, seg, i): string => {
-                    if (!seg || !seg.join) {
+                    if (!seg?.join) {
                         return (seg || '').toString();
                     }
                     return (i ? acc + ' ' : '') + seg.join(' ');
@@ -1914,13 +1914,13 @@ class SVGElement implements SVGElementLike {
         const existingGradient = (
             this.element.gradient &&
             this.renderer.gradients[this.element.gradient]
-        );
+        ) || void 0;
 
         this.element.radialReference = coordinates;
 
         // On redrawing objects with an existing gradient, the gradient needs
         // to be repositioned (#3801)
-        if (existingGradient && existingGradient.radAttr) {
+        if (existingGradient?.radAttr) {
             existingGradient.animate(
                 this.renderer.getRadialAttr(
                     coordinates,
@@ -2186,12 +2186,15 @@ class SVGElement implements SVGElementLike {
     ): void {
         const {
             element,
+            foreignObject,
             matrix,
+            padding,
             rotation = 0,
             rotationOriginX,
             rotationOriginY,
             scaleX,
             scaleY,
+            text,
             translateX = 0,
             translateY = 0
         } = this;
@@ -2212,17 +2215,21 @@ class SVGElement implements SVGElementLike {
         if (rotation) {
             transform.push(
                 'rotate(' + rotation + ' ' +
-                pick(rotationOriginX, element.getAttribute('x'), 0) +
+                (rotationOriginX ?? element.getAttribute('x') ?? this.x ?? 0) +
                 ' ' +
-                pick(rotationOriginY, element.getAttribute('y') || 0) + ')'
+                (rotationOriginY ?? element.getAttribute('y') ?? this.y ?? 0) +
+                ')'
             );
 
             // HTML labels rotation (#20685)
-            if (this.text?.element.tagName === 'SPAN') {
-                this.text.attr({
+            if (
+                text?.element.tagName === 'SPAN' &&
+                !text?.foreignObject
+            ) {
+                text.attr({
                     rotation,
-                    rotationOriginX: (rotationOriginX || 0) - this.padding,
-                    rotationOriginY: (rotationOriginY || 0) - this.padding
+                    rotationOriginX: (rotationOriginX || 0) - padding,
+                    rotationOriginY: (rotationOriginY || 0) - padding
                 });
             }
         }
@@ -2234,8 +2241,9 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length && !(this.text || this).textPath) {
-            element.setAttribute(attrib, transform.join(' '));
+        if (transform.length && !(text || this).textPath) {
+            (foreignObject?.element || element)
+                .setAttribute(attrib, transform.join(' '));
         }
     }
 

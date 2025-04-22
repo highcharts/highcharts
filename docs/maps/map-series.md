@@ -1,7 +1,10 @@
 Map series
 ==========
 
-The `map` series is the basic series type in Highcharts Maps. It creates a [choropleth map](https://en.wikipedia.org/wiki/Choropleth_map) offering the ability to create map shapes and visualize their values through color coding or patterns.
+The `map` series is the basic series type in Highcharts Maps. It creates a
+[choropleth map](https://www.highcharts.com/docs/chart-concepts/dataviz-glossary#choropleth-map) offering
+the ability to create map shapes and visualize their values through color coding
+or patterns.
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/all-maps" allow="fullscreen"></iframe>
 
@@ -12,9 +15,11 @@ When setting the `mapChart` constructor, the default series `type` is `map`.
 If the `type` option is not specified, it is inherited from `chart.type`.
 For an overview of the `map` series options see the [API reference](https://api.highcharts.com/highmaps/series.map).
 
-    Highcharts.mapChart('container', {
-       ...
-    });
+```js
+Highcharts.mapChart('container', {
+   // ...
+});
+```
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/category-map" allow="fullscreen"></iframe>
 

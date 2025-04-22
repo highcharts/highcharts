@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -351,7 +351,7 @@ class HTMLComponent extends Component {
     /**
      * Get the HTML component's options.
      * @returns
-     * The JSON of HTML component's options.
+     * HTML component's options.
      *
      * @internal
      *

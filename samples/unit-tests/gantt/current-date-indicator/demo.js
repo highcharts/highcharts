@@ -141,10 +141,10 @@
     QUnit.test('Format', function (assert) {
         // %a, %b %d %Y, %H:%M:%S
         var formatRegex = new RegExp(
-                // 'Tue, 6 Dec 2016, '
-                /^[A-Z][a-z]{2}, [0-9]{1,2} [A-Z][a-z]{2,3} [0-9]{4}, /.source +
-                    // '21:35:12'
-                    /[0-9]{2}:[0-9]{2}$/.source
+                // 'Tue, 6 Dec 2016'
+                /^[A-Z][a-z]{2}, [0-9]{1,2} [A-Z][a-z]{2,3} [0-9]{4}/.source +
+                    // ', 21:35:12' or ' at 21:35:12' (Safari renders "at")
+                    /(,| at) [0-9]{2}:[0-9]{2}$/.source
             ),
             customFormat,
             chart = Highcharts.chart('container', defaultConfig),

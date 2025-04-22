@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Christer Vasseng, Torstein Honsi
+ *  (c) 2010-2025 Christer Vasseng, Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -100,7 +100,7 @@ function ajax(
     }
 
     r.open((settings.type || 'get').toUpperCase(), settings.url, true);
-    if (!settings.headers || !settings.headers['Content-Type']) {
+    if (!settings.headers?.['Content-Type']) {
         r.setRequestHeader(
             'Content-Type',
             headers[settings.dataType || 'json'] || headers.text
@@ -133,7 +133,7 @@ function ajax(
                         }
                     }
                 }
-                return settings.success && settings.success(res, r);
+                return settings.success?.(res, r);
             }
 
             handleError(r, r.responseText);
