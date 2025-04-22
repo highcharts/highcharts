@@ -1,7 +1,7 @@
 Treemap
 ===
 
-<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels allow="fullscreen"></iframe>
+<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels" allow="fullscreen"></iframe>
 
 ### Requirements
 
@@ -16,19 +16,20 @@ The tree automatically has one node at the top representing the root node. If a 
 
 The following is an example of how the tree is built in Highcharts:
 
-
-    data: [{
-        name: 'I have children',
-        id: 'id-1'
-    }, {
-        name: 'I am a child',
-        parent: 'id-1',
-        value: 2
-    }, {
-        name: 'I am a smaller child',
-        parent: 'id-1',
-        value: 1
-    }]
+```js
+data: [{
+    name: 'I have children',
+    id: 'id-1'
+}, {
+    name: 'I am a child',
+    parent: 'id-1',
+    value: 2
+}, {
+    name: 'I am a smaller child',
+    parent: 'id-1',
+    value: 1
+}]
+```
 
 
 ### Algorithms
@@ -81,42 +82,44 @@ The each child which is passed along has the following variables:
 
 A starting point for the function could be the following
 
+```js
+function myFunction(parent, children) {
+    childrenAreas = [];
+    children.forEach(function(child) {
+        // Do some calculations
 
-    function myFunction(parent, children) {
-        childrenAreas = [];
-        children.forEach(function(child) {
-            // Do some calculations
-
-            // These return values are required for each child
-            childrenAreas.push({
-                x: someXValue,
-                y: someYValue,
-                width: someWidth,
-                height: someHeight
-            });
+        // These return values are required for each child
+        childrenAreas.push({
+            x: someXValue,
+            y: someYValue,
+            width: someWidth,
+            height: someHeight
         });
-        return childrenAreas;
-    };
+    });
+    return childrenAreas;
+};
+```
 
 
 After the algorithm function is finished, then we have to add it by extending the treemap prototype with the function
 
-
-    Highcharts.seriesTypes.treemap.prototype.myCustomAlgorithm = myFunction;
+```js
+Highcharts.seriesTypes.treemap.prototype.myCustomAlgorithm = myFunction;
+```
 
 
 Afterwards when you declare the chart options, then specify that the series.layoutAlgorithm should be your new custom algorithm.
 
-
-    const chart = new Highcharts.Chart({
-        ...
-        series: [{
-           layoutAlgorithm: "myCustomAlgorithm",
-           ...
-        }],
-        ...
-    });
-
+```js
+const chart = new Highcharts.Chart({
+    ...
+    series: [{
+       layoutAlgorithm: "myCustomAlgorithm",
+       ...
+    }],
+    ...
+});
+```
 
 ### Work with levels
 
@@ -124,24 +127,24 @@ The levels option gives the ability to set options on a specific level. This com
 
 Below is an example where the first level will use the Slice And Dice algorithm, and the rest will use the Squarified algorithm. Also all points on the second level will be colored blue, while the rest will be in the color red.
 
-
-    const chart = new Highcharts.Chart({
-        ...
-        series: [{
-           layoutAlgorithm: 'squarified',
-           color: 'red',
-           levels: [{
-               level: 1,
-               layoutAlgorithm: 'sliceAndDice'
-           }, {
-               level: 2,
-               color: 'blue'
-           }],
-           ...
-        }],
-        ...
-    });
-
+```js
+const chart = new Highcharts.Chart({
+    ...
+    series: [{
+       layoutAlgorithm: 'squarified',
+       color: 'red',
+       levels: [{
+           level: 1,
+           layoutAlgorithm: 'sliceAndDice'
+       }, {
+           level: 2,
+           color: 'blue'
+       }],
+       ...
+    }],
+    ...
+});
+```
 
 ##### Level Is Constant:
 
@@ -171,49 +174,50 @@ experimental option
 [nodeSizeBy](https://api.highcharts.com/highcharts/series.treemap.dataLabels.nodeSizeBy),
 that can be set to `leaf`.
 
-<iframe style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/series-treemap/headers allow="fullscreen"></iframe>
+<iframe style="border: 0; width: 100%; height: 420px;" src="https://www.highcharts.com/samples/embed/highcharts/series-treemap/headers" allow="fullscreen"></iframe>
 
 
 
 ### Use with ColorAxis
 
-<iframe style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-coloraxis allow="fullscreen"></iframe>
+<iframe style="border: 0; width: 100%; height: 420px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/treemap-coloraxis" allow="fullscreen"></iframe>
 
 For use with `colorAxis`, then the `modules/heatmap.js`must be included as well.
 
 After the module is included in your project, a `colorAxis` object can be defined in the chart options. Read the [API](https://api.highcharts.com/highmaps/colorAxis) for details about its options.
 
-
-    const chart = new Highcharts.Chart({
-        ...
-        colorAxis: {
-            minColor: '#FFFFFF',
-            maxColor: Highcharts.getOptions().colors[0]
-        },
-        ...
-    });
+```js
+const chart = new Highcharts.Chart({
+    ...
+    colorAxis: {
+        minColor: '#FFFFFF',
+        maxColor: Highcharts.getOptions().colors[0]
+    },
+    ...
+});
+```
 
 
 And each point needs its own `colorValue`.
 
-
-    const chart = new Highcharts.Chart({
+```js
+const chart = new Highcharts.Chart({
+    ...
+    colorAxis: {
         ...
-        colorAxis: {
-            ...
-        },
-        series: [{
-            ...
-            data: [{
-                name: "Point 1",
-                value: 1,
-                colorValue: 5 // This value decides which color on the scale that the point gets.
-            }],
-            ...
+    },
+    series: [{
+        ...
+        data: [{
+            name: "Point 1",
+            value: 1,
+            colorValue: 5 // This value decides which color on the scale that the point gets.
         }],
         ...
-    });
-
+    }],
+    ...
+});
+```
 
 [Full example is found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-coloraxis)
 
@@ -223,22 +227,22 @@ Treemap clustering simplifies the visualization of large datasets by organizing 
 
 To configure treemap clustering, the `cluster` option is used. Within this option, you can specify `pixelWidth` and `pixelHeight`, which set the minimum pixel size for areas before they are grouped. These thresholds ensure that smaller sections are consolidated into larger, more visible areas for better clarity. The `name` parameter allows you to define a custom label for the grouped nodes, which will appear in tooltips, data labels, and other chart elements. Read the [API](https://api.highcharts.com/highcharts/series.treemap.cluster) for details about its options.
 
-
-    const chart = new Highcharts.Chart({
+```js
+const chart = new Highcharts.Chart({
+    ...
+    series: [{
         ...
-        series: [{
-            ...
-            type: "treemap",
-            cluster: {
-                enabled: true,
-                pixelHeight: 20,
-                pixelWidth: 10
-            }
-            ...
-        }],
+        type: "treemap",
+        cluster: {
+            enabled: true,
+            pixelHeight: 20,
+            pixelWidth: 10
+        }
         ...
-    });
-
+    }],
+    ...
+});
+```
 
 [Full example is found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/treemap-grouping-advanced)
 
