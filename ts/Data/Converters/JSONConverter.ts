@@ -128,7 +128,6 @@ class JSONConverter extends DataConverter {
             firstRowAsNames,
             columnNames
         } = options;
-
         let data = options.data;
 
         if (!data) {
