@@ -341,21 +341,27 @@ function onGetPlotBox(
 function onAfterDrawChartBox(this: Chart): void {
     const chart = this;
 
+    let clipRect;
+
     if (chart.series.find((series): boolean => !!series.zooming)) {
         if (!chart.zoomClipRect) {
-            chart.zoomClipRect = chart.renderer.clipRect({
-                x: chart.plotLeft,
-                y: chart.plotTop,
-                width: chart.inverted ? chart.clipBox.height :
-                    chart.clipBox.width,
-                height: chart.inverted ? chart.clipBox.width :
-                    chart.clipBox.height
-            });
+            chart.zoomClipRect = chart.renderer.clipRect();
         }
 
-        chart.seriesGroup?.clip(chart.zoomClipRect);
-        chart.dataLabelsGroup?.clip(chart.zoomClipRect);
+        chart.zoomClipRect.attr({
+            x: chart.plotLeft,
+            y: chart.plotTop,
+            width: chart.inverted ? chart.clipBox.height :
+                chart.clipBox.width,
+            height: chart.inverted ? chart.clipBox.width :
+                chart.clipBox.height
+        });
+
+        clipRect = chart.zoomClipRect;
     }
+
+    chart.seriesGroup?.clip(clipRect);
+    chart.dataLabelsGroup?.clip(clipRect);
 }
 
 /**
