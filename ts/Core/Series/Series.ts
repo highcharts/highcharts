@@ -278,6 +278,7 @@ class Series {
         'dataTable',
 
         'processedData', // #17057
+        'hasProcessedDataTable', // #17057
 
         'xIncrement',
         'cropped',
@@ -361,6 +362,8 @@ class Series {
     public halo?: SVGElement;
 
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
+
+    public hasProcessedDataTable?: boolean;
 
     public hasRendered?: boolean;
 
@@ -1964,7 +1967,10 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            dataOptions = series.processedData || options.data,
+            // @todo - consider if we can replace `processedData` with
+            // hasProcessedDataTable altogether
+            dataOptions = series.hasProcessedDataTable ? void 0 :
+                (series.processedData || options.data),
             table = series.dataTable.modified,
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
@@ -4164,7 +4170,7 @@ class Series {
             isInTheMiddle ||
             // When processedData is present we need to splice an empty slot
             // into series.data, otherwise generatePoints won't pick it up.
-            series.processedData
+            series.processedData || series.hasProcessedDataTable
         ) {
             series.data.splice(i, 0, null as any);
             series.processData();
