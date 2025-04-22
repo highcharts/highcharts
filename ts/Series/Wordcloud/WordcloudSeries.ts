@@ -155,7 +155,13 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public drawPoints(): void {
-        if (this.zooming) {
+        if (
+            this.zooming ||
+            (
+                this.defaultScale &&
+                this.group.scaleX !== this.defaultScale
+            )
+        ) {
             return;
         }
         const series = this,
