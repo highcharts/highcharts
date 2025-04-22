@@ -79,7 +79,7 @@ class MixedDistributionStrategy extends DistributionStrategy {
             value = parseFloat(raw);
             unitCode = raw.charAt(raw.length - 1) === '%' ? 1 : 0;
         }
-        
+
         this.columnWidthUnits[column.id] = unitCode;
         this.columnWidths[column.id] = value;
     }
