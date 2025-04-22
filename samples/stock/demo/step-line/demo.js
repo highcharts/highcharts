@@ -19,10 +19,6 @@
             text: 'Investment simulator'
         },
 
-        xAxis: {
-            overscroll: '10px'
-        },
-
         yAxis: {
             labels: {
                 align: 'left',
