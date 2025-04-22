@@ -1,4 +1,8 @@
 (async () => {
+    Highcharts.Templating.helpers.lastValue = function () {
+        const points = arguments[0].ctx.points;
+        return points[points.length - 1].y.toFixed(2);
+    };
 
     // Load the dataset
     const data = await fetch(
@@ -7,13 +11,8 @@
 
     // Create the chart
     Highcharts.stockChart('container', {
-
-        chart: {
-            spacingRight: 25
-        },
-
         rangeSelector: {
-            selected: 1
+            selected: 4
         },
 
         title: {
@@ -26,12 +25,17 @@
 
         yAxis: {
             labels: {
-                align: 'left'
+                align: 'left',
+                format: '{value:,.2f}'
             }
         },
 
         legend: {
             enabled: true
+        },
+
+        tooltip: {
+            valueSuffix: ' EUR'
         },
 
         plotOptions: {
@@ -40,20 +44,7 @@
                     valueDecimals: 2
                 },
                 pointStart: '2023-01-01',
-                pointInterval: 86400000, // One day
-                lastPrice: {
-                    enabled: true,
-                    color: 'transparent',
-                    label: {
-                        enabled: true,
-                        format: '{value:.2f}',
-                        backgroundColor: '#ffffff',
-                        borderWidth: 1,
-                        style: {
-                            color: '#000000'
-                        }
-                    }
-                }
+                pointInterval: 86400000 // One day
             }
         },
 
@@ -66,7 +57,7 @@
                     legend: {
                         align: 'right',
                         layout: 'proximate',
-                        margin: 50
+                        labelFormat: '{name} <b>({lastValue} EUR)</b>'
                     }
                 }
             }]
@@ -75,20 +66,10 @@
         series: [{
             name: 'Invested amount',
             data: data[0],
-            step: true,
-            lastPrice: {
-                label: {
-                    borderColor: '#2caffe'
-                }
-            }
+            step: true
         }, {
             name: 'Portfolio value',
-            data: data[1],
-            lastPrice: {
-                label: {
-                    borderColor: '#544fc5'
-                }
-            }
+            data: data[1]
         }]
     });
 })();
