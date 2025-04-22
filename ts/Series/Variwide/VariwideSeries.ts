@@ -248,7 +248,7 @@ class VariwideSeries extends ColumnSeries {
 
         return {
             min: arrayMin(xData),
-            max: max + (!this.xAxis.categories ? maxZ : 0)
+            max: max + (this.xAxis.categories ? 0 : maxZ)
         };
     }
 }
