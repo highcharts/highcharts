@@ -74,9 +74,13 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                             ],
                         type: 'select',
                         selectOptions: [{
+                            name: ''
+                        }, {
                             name: 'full'
                         }, {
                             name: 'fixed'
+                        }, {
+                            name: 'mixed'
                         }]
                     }, {
                         name: 'Editable Grid',
