@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Proxy elements are used to shadow SVG elements in HTML for assistive
  *  technology, such as screen readers or voice input software.
@@ -39,7 +39,7 @@ type Nullable<T> = {
 export type NullableHTMLAttributes = Nullable<HTMLAttributes>;
 
 import H from '../Core/Globals.js';
-const { doc } = H;
+const { doc, win } = H;
 import U from '../Core/Utilities.js';
 const {
     attr,
@@ -309,12 +309,16 @@ class ProxyElement {
             pointer = this.chart.pointer;
 
         if (chartDiv && posElement?.getBoundingClientRect && pointer) {
-            const rectEl = posElement.getBoundingClientRect(),
+            const scrollTop = win.scrollY ||
+                doc.documentElement.scrollTop,
+                rectEl = posElement.getBoundingClientRect(),
                 chartPos = pointer.getChartPosition();
 
             return {
                 x: (rectEl.left - chartPos.left) / chartPos.scaleX,
-                y: (rectEl.top - chartPos.top) / chartPos.scaleY,
+                // #21994, Add scroll position as "getBoundingClientRect"
+                // returns the position from the viewport, not the document top.
+                y: ((rectEl.top + scrollTop) - chartPos.top) / chartPos.scaleY,
                 width: rectEl.right / chartPos.scaleX -
                     rectEl.left / chartPos.scaleX,
                 height: rectEl.bottom / chartPos.scaleY -

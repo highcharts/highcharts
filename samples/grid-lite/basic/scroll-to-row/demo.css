@@ -1,0 +1,38 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+
+#demo {
+    padding: 8px;
+}
+
+#container {
+    margin-bottom: 15px;
+    height: 400px;
+    width: 100%;
+}
+
+.highcharts-datagrid-row[data-row-index="998"] td {
+    height: 150px;
+}
+
+.highcharts-datagrid-column {
+    width: 15%;
+}
+
+.highcharts-datagrid-column[data-column-id="b"] {
+    width: 30%;
+}
+
+.highcharts-datagrid-column[data-column-id="c"] {
+    width: 10%;
+}
+
+.custom-caption-class {
+    text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+    #demo {
+        background-color: #292929;
+        color: #fff;
+    }
+}

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Torstein Honsi
+ *  (c) 2009-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -550,7 +550,7 @@ namespace BrokenAxis {
         ): (number|null) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
 
             if (!breakArray || !isNumber(val)) {
                 return val;
@@ -583,7 +583,7 @@ namespace BrokenAxis {
         ): (number|null) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
 
             if (!breakArray || !isNumber(val)) {
                 return val;

@@ -187,3 +187,10 @@ Cypress.Commands.add('dropComponent', (elementName) => {
     cy.get(elementName).first().trigger('mousemove', 'right', {force: true});
     cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
 });
+
+Cypress.Commands.add('grid', () =>
+    cy.window().its('Grid.grids').should('have.length.gte', 1).then(grids => {
+        const [grid] = grids;
+        return grid;
+    })
+);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -27,7 +27,6 @@ import type LangOptions from './LangOptions';
  * */
 
 const langOptions: DeepPartial<LangOptions> = {
-
     /**
      * Configure the accessibility strings in the chart. Requires the
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)

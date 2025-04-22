@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -8,10 +8,19 @@
  *
  *  Authors:
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
 'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Types from '../Shared/Types';
 
 
 /* *
@@ -30,7 +39,7 @@ export interface DataTableOptions {
     /**
      * Initial columns with their values.
      */
-    columns?: Record<string, Array<DataTableValue>>;
+    columns?: Record<string, Array<DataTableValue>|Types.TypedArray>;
 
 
     /**

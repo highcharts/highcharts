@@ -1,4 +1,4 @@
-QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
+QUnit.test('Auto rotation and wrapping', function (assert) {
     $('#container').highcharts({
         chart: {
             width: 1000,
@@ -11,8 +11,8 @@ QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
                 autoRotation: [-25]
             },
             categories: [
-                'Jan sad asd asd asd sa',
-                'Feb asd asd sad as as',
+                'Jan­sad­asd­asd­asd­sa',
+                'Feb-as-as-as-as-as',
                 'Mar sad asd asd asd as'
             ]
         },
@@ -33,6 +33,11 @@ QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
         'Initially not rotated'
     );
 
+    assert.ok(
+        xAxis.ticks[xAxis.tickPositions[2]].label.getBBox().height < 20,
+        'The label should not be wrapped (#22764)'
+    );
+
     chart.setSize(400, 300);
     assert.strictEqual(
         xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
@@ -46,6 +51,40 @@ QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
         0,
         'Not rotated in the end'
     );
+
+    // Test wrapping
+    chart.xAxis[0].update({
+        labels: {
+            autoRotation: undefined,
+            style: {
+                textOverflow: 'none'
+            }
+        }
+    });
+
+    // Notice: height is just a rough estimation but enough for the tests
+    const h = xAxis.ticks[xAxis.tickPositions[3]].label.getBBox().height;
+    [0, 1, 2].forEach(i => {
+        const labelHeight = xAxis.ticks[xAxis.tickPositions[i]].label.getBBox()
+            .height;
+        assert.ok(
+            labelHeight < h * 2,
+            `${i} label should not be wrapped when enough space`
+        );
+    });
+
+    chart.setSize(400, 300);
+    [0, 1, 2].forEach(i => {
+        const labelHeight = xAxis.ticks[xAxis.tickPositions[i]].label.getBBox()
+            .height;
+        assert.ok(
+            // wrapped
+            (labelHeight > h * 2) ||
+            // but not at every possible whitespace
+            (labelHeight < h * 6),
+            `${i} label should be wrapped when not enough space`
+        );
+    });
 });
 
 QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
@@ -130,7 +169,7 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
         }
     });
 
-    var labelLength = chart.xAxis[0].ticks[0].label.element.offsetWidth;
+    var labelLength = chart.xAxis[0].ticks[0].label.getBBox().width;
     assert.ok(
         labelLength > 15,
         `Label length should be more than 15px, got ${labelLength}`
@@ -139,14 +178,14 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
     chart.setSize(600, 400, false);
 
     assert.ok(
-        chart.xAxis[0].ticks[0].label.element.offsetWidth > labelLength,
-        'Label has expanded'
+        chart.xAxis[0].ticks[0].label.getBBox().width > labelLength,
+        'Label should have expanded'
     );
 
     chart.setSize(100, 400, false);
 
     assert.strictEqual(
-        chart.xAxis[0].ticks[0].label.element.offsetWidth,
+        chart.xAxis[0].ticks[0].label.getBBox().width,
         labelLength,
         'Back to start'
     );
@@ -583,8 +622,10 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
     );
 
     assert.ok(
-        parseFloat(chart.xAxis[0].ticks[0].label.element.style.left) >=
-            chart.plotLeft,
+        (
+            chart.xAxis[0].ticks[0].label.foreignObject?.attr('x') ??
+            parseFloat(chart.xAxis[0].ticks[0].label.element.style.left)
+        ) >= chart.plotLeft,
         'The label should be within the tick bounds'
     );
 });
@@ -675,8 +716,16 @@ QUnit.test(
             ]
         });
 
+        if (chart.xAxis[0].ticks[0].label.foreignObject) {
+            assert.notEqual(
+                chart.xAxis[0].ticks[0].label.foreignObject.attr('width'),
+                0,
+                'The foreign object should have a width'
+            );
+        }
+
         assert.strictEqual(
-            chart.xAxis[0].labelGroup.div.children.item(0).style.fontSize,
+            chart.xAxis[0].ticks[0].label.element.style.fontSize,
             '40px',
             'xAxis labels should have font size 40px'
         );

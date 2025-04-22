@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2024 Highsoft AS
+ *  (c) 2014-2025 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -196,7 +196,6 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @since 4.1.0
      */
     dataLabels: {
-        defer: false,
         enabled: true,
         formatter: function (): string {
             const point: TreemapPoint = this && this.point ?
@@ -206,6 +205,17 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
 
             return name;
         },
+        /**
+         * Whether the data label should act as a group-level header. For leaf
+         * nodes, headers are not supported and the data label will be rendered
+         * inside.
+         *
+         * @sample {highcharts} highcharts/series-treemap/headers
+         *         Headers for parent nodes
+         *
+         * @since 12.2.0
+         */
+        headers: false,
         inside: true,
         padding: 2,
         verticalAlign: 'middle',
@@ -331,6 +341,18 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
         }
     },
 
+    /**
+     * Group padding for parent elements in terms of pixels. See also the
+     * `nodeSizeBy` option that controls how the leaf nodes' size is affected by
+     * the padding.
+     *
+     * @sample    {highcharts} highcharts/series-treemap/grouppadding/
+     *            Group padding
+     * @type      {number}
+     * @since 12.2.0
+     * @product   highcharts
+     * @apioption plotOptions.treemap.groupPadding
+     */
 
     /**
      * Set options on specific levels. Takes precedence over series options,
@@ -345,6 +367,22 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @since     4.1.0
      * @product   highcharts
      * @apioption plotOptions.treemap.levels
+     */
+
+    /**
+     * Experimental. How to set the size of child nodes when a header or padding
+     * is present. When `leaf`, the group is expanded to make room for headers
+     * and padding in order to preserve the relative sizes between leaves. When
+     * `group`, the leaves are naïvely fit into the remaining area after the
+     * header and padding are subtracted.
+     *
+     * @sample    {highcharts} highcharts/series-treemap/nodesizeby/
+     *            Node sizing
+     * @since 12.2.0
+     * @type      {string}
+     * @validvalue ["group", "leaf"]
+     * @default   group
+     * @apioption plotOptions.treemap.nodeSizeBy
      */
 
     /**
@@ -490,7 +528,8 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
     colorKey: 'colorValue',
 
     /**
-     * The opacity of a point in treemap. When a point has children, the
+     * The opacity of grouped points in treemap. When a point has children, the
+     * group point is covering the children, and is given this opacity. The
      * visibility of the children is determined by the opacity.
      *
      * @since 4.2.4
@@ -577,7 +616,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/treemap-grouping-advanced
      *         Advanced demo of Treemap grouping
      *
-     * @since next
+     * @since 12.1.0
      *
      * @excluding allowOverlap, animation, dataLabels, drillToCluster, events,
      * layoutAlgorithm, marker, states, zones
@@ -607,7 +646,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * Enable or disable Treemap grouping.
          *
          * @type {boolean}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         enabled: false,
@@ -616,7 +655,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * The pixel threshold width of area, which is used in Treemap grouping.
          *
          * @type {number}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         pixelWidth: void 0,
@@ -626,7 +665,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * grouping.
          *
          * @type {number}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         pixelHeight: void 0,
@@ -637,7 +676,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * grouped points.
          *
          * @type {string}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         name: void 0,
@@ -650,7 +689,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * portion of the graph, ensuring better visual balance and readability.
          *
          * @type {number}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         reductionFactor: void 0,
@@ -660,7 +699,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * of small nodes.
          *
          * @type {number}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         minimumClusterSize: 5,

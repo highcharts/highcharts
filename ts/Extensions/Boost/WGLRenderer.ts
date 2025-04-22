@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2025 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -887,7 +887,15 @@ class WGLRenderer {
             }
 
             // Cull points outside the extremes
-            if (y === null || (!isYInside && !nextInside && !prevInside)) {
+
+            // Continue if `sdata` has only one point as `nextInside` asserts
+            // whether the next point exists and will thus be false. (#22194)
+            if (
+                y === null || (
+                    !isYInside && sdata.length > 1 &&
+                    !nextInside && !prevInside
+                )
+            ) {
                 beginSegment();
                 continue;
             }

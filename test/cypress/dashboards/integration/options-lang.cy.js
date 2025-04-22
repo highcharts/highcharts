@@ -95,4 +95,13 @@ describe('Editable component options', () => {
             .should('have.text', norwegianEditMode.confirmDestroyRow);
         cy.get('.highcharts-dashboards-edit-popup-close').eq(0).click();
     });
+
+    it('Lang should be applied on add component list', function() {
+        cy.get('.highcharts-dashboards-edit-tools-btn').first().click();
+        cy.get('.highcharts-dashboards-edit-grid-items div').each((el) => {
+            expect(el).to.exist;
+            cy.wrap(el)
+                .contains('My')
+        });
+    });
 });

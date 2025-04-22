@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2024 Highsoft AS
+ *  (c) 2014-2025 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -50,6 +50,20 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         cropThreshold?: number;
     }
+}
+
+export interface TreemapDataLabelOptions extends DataLabelOptions {
+    /**
+     * Whether the data label should act as a group-level header. For leaf
+     * nodes, headers are not supported and the data label will be rendered
+     * inside.
+     *
+     * @sample {highcharts} highcharts/series-treemap/headers
+     *         Headers for parent nodes
+     *
+     * @since 12.2.0
+     */
+    headers?: boolean
 }
 
 export type TreemapSeriesLayoutAlgorithmValue = (
@@ -132,7 +146,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * Enable or disable Treemap grouping.
      *
      * @type {boolean}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     enabled: boolean;
@@ -141,7 +155,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * The pixel threshold width of area, which is used in Treemap grouping.
      *
      * @type {number}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     pixelWidth?: number;
@@ -150,7 +164,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * The pixel threshold height of area, which is used in Treemap grouping.
      *
      * @type {number}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     pixelHeight?: number;
@@ -160,7 +174,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * etc. By default it is set to '+ n', where n is number of grouped points.
      *
      * @type {string}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     name?: string;
@@ -172,7 +186,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * graph, ensuring better visual balance and readability.
      *
      * @type {number}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     reductionFactor?: number;
@@ -182,7 +196,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * small nodes.
      *
      * @type {number}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     minimumClusterSize?: number;
@@ -284,7 +298,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      *
      * @product highcharts
      */
-    dataLabels?: Partial<DataLabelOptions>;
+    dataLabels?: Partial<TreemapDataLabelOptions>;
 
     /**
      * Can set the layoutAlgorithm option on a specific level.
@@ -520,7 +534,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     /**
      * @since 4.1.0
      */
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    dataLabels?: (TreemapDataLabelOptions|Array<TreemapDataLabelOptions>);
 
     drillUpButton?: TreemapSeriesUpButtonOptions;
 
@@ -538,7 +552,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/treemap-grouping-advanced
      *         Advanced demo of Treemap grouping
      *
-     * @since next
+     * @since 12.1.0
      *
      * @excluding allowOverlap, animation, dataLabels, drillToCluster, events,
      * layoutAlgorithm, marker, states, zones
@@ -546,6 +560,17 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @product highcharts
      */
     cluster?: TreemapSeriesClusterOptions;
+
+    /**
+     * Group padding for parent elements in terms of pixels. See also the
+     * `nodeSizeBy` option that controls how the leaf nodes' size is affected by
+     * the padding.
+     *
+     * @sample {highcharts} highcharts/series-treemap/grouppadding/
+     *         Group padding
+     * @since 12.2.0
+     */
+    groupPadding?: number;
 
     /**
      * Whether to ignore hidden points when the layout algorithm runs.
@@ -635,6 +660,20 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     levels?: Array<TreemapSeriesLevelOptions>;
 
     marker?: PointMarkerOptions;
+
+    /**
+     * Experimental. How to set the size of child nodes when a header or padding
+     * is present. When `leaf`, the group is expanded to make room for headers
+     * and padding in order to preserve the relative sizes between leaves. When
+     * `group`, the leaves are naïvely fit into the remaining area after the
+     * header and padding are subtracted.
+     *
+     * @sample  {highcharts} highcharts/series-treemap/nodesizeby/
+     *          Node sizing
+     * @since 12.2.0
+     * @default parent
+     */
+    nodeSizeBy?: 'group'|'leaf';
 
     /**
      * The opacity of a point in treemap. When a point has children, the
