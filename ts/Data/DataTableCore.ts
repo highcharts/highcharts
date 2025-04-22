@@ -29,6 +29,7 @@ import type DataTableOptions from './DataTableOptions.js';
 import type { DataTableParserCallbackFunction } from './DataTableOptions.js';
 import type JSONConverter from './Converters/JSONConverter.js';
 import type GoogleSheetsConverter from './Converters/GoogleSheetsConverter.js';
+import type { ColumnNamesOptions } from './Connectors/JSONConnectorOptions.js';
 
 import ColumnUtils from './ColumnUtils.js';
 const { setLength, splice } = ColumnUtils;
@@ -99,7 +100,10 @@ class DataTableCore {
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
-        this.parser = options.parser;
+        this.columnNames = options.columnNames;
+        this.orientation = options.orientation;
+        this.firstRowAsNames = options.firstRowAsNames;
+        this.beforeParse = options.beforeParse;
 
         let rowCount = 0;
 
@@ -130,7 +134,13 @@ class DataTableCore {
 
     protected versionTag: string;
 
-    public parser?: DataTableParserCallbackFunction<
+    public columnNames?: Array<string> | ColumnNamesOptions;
+
+    public firstRowAsNames?: boolean;
+
+    public orientation?: 'columns' | 'rows';
+
+    public beforeParse?: DataTableParserCallbackFunction<
     | JSONConverter.Data
     | string
     | GoogleSheetsConverter.GoogleSpreadsheetJSON

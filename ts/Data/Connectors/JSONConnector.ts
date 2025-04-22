@@ -23,6 +23,7 @@ import type DataEvent from '../DataEvent';
 import type Types from '../../Shared/Types';
 import type JSONConnectorOptions from './JSONConnectorOptions';
 import type DataTable from '../DataTable';
+import type { BeforeParseCallbackFunction } from './JSONConnectorOptions';
 
 import DataConnector from './DataConnector.js';
 import U from '../../Core/Utilities.js';
@@ -78,7 +79,6 @@ class JSONConnector extends DataConnector {
 
         super(mergedOptions, dataTables);
 
-        this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
 
         if (mergedOptions.enablePolling) {
@@ -103,13 +103,54 @@ class JSONConnector extends DataConnector {
     /**
      * The attached parser that converts the data format to the table.
      */
-    public readonly converter: JSONConverter;
+    public converter?: JSONConverter;
 
     /* *
      *
      *  Functions
      *
      * */
+
+
+    /**
+     * Iterates over the data tables and initiates the corresponding converters.
+     * Assigns the first converter.
+     *
+     * @param {Array<Array<number|string>>}[data]
+     * Data retrieved from the provided URL.
+     */
+    public initConverters(data: Array<Array<number | string>>): void {
+        let index = 0;
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            const {
+                columnNames,
+                firstRowAsNames,
+                orientation,
+                beforeParse
+            } = table;
+            const dataTableOptions = {
+                dataTableKey: key,
+                columnNames,
+                firstRowAsNames,
+                orientation,
+                beforeParse: beforeParse as BeforeParseCallbackFunction
+            };
+
+            const mergedOptions = merge(dataTableOptions, this.options);
+            const converter = new JSONConverter(mergedOptions);
+
+            // Assign the first converter.
+            if (index === 0) {
+                this.converter = converter;
+            }
+
+            table.deleteColumns();
+            converter.parse({ data });
+            table.setColumns(converter.getTable().getColumns());
+
+            index++;
+        }
+    }
 
     /**
      * Initiates the loading of the JSON source to the connector
@@ -122,7 +163,6 @@ class JSONConnector extends DataConnector {
      */
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
-            converter = connector.converter,
             tables = connector.dataTables,
             { data, dataUrl, dataModifier } = connector.options;
 
@@ -151,12 +191,7 @@ class JSONConnector extends DataConnector {
             )
             .then((data): Promise<Array<Array<number|string>>> => {
                 if (data) {
-                    // Iterate over all tables to parse the columns.
-                    for (const table of Object.values(tables)) {
-                        table.deleteColumns();
-                        converter.parse({ data });
-                        table.setColumns(converter.getTable().getColumns());
-                    }
+                    this.initConverters(data);
                 }
                 return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);
             })

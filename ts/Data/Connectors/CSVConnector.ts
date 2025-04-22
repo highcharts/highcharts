@@ -26,6 +26,7 @@ import type DataEvent from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
 import type Types from '../../Shared/Types';
 import type DataTable from '../DataTable';
+import type { BeforeParseCallbackFunction } from './CSVConnectorOptions';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -83,7 +84,6 @@ class CSVConnector extends DataConnector {
 
         super(mergedOptions, dataTables);
 
-        this.converter = new CSVConverter(mergedOptions);
         this.options = mergedOptions;
 
         if (mergedOptions.enablePolling) {
@@ -108,13 +108,54 @@ class CSVConnector extends DataConnector {
     /**
      * The attached parser, which can be replaced in the constructor
      */
-    public readonly converter: CSVConverter;
+    public converter?: CSVConverter;
 
     /* *
      *
      *  Functions
      *
      * */
+
+    /**
+     * Iterates over the data tables and initiates the corresponding converters.
+     * Assigns the first converter.
+     *
+     * @param {string}[csv]
+     * Data retrieved from the provided URL.
+     */
+    public initConverters(csv: string): void {
+        let index = 0;
+
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            const {
+                columnNames,
+                firstRowAsNames,
+                orientation,
+                beforeParse
+            } = table;
+            const dataTableOptions = {
+                dataTableKey: key,
+                columnNames,
+                firstRowAsNames,
+                orientation,
+                beforeParse: beforeParse as BeforeParseCallbackFunction
+            };
+
+            const mergedOptions = merge(dataTableOptions, this.options);
+            const converter = new CSVConverter(mergedOptions);
+
+            table.deleteColumns();
+            converter.parse({ csv });
+            table.setColumns(converter.getTable().getColumns());
+
+            // Assign the first converter.
+            if (index === 0) {
+                this.converter = converter;
+            }
+
+            index++;
+        }
+    }
 
     /**
      * Initiates the loading of the CSV source to the connector
@@ -127,7 +168,6 @@ class CSVConnector extends DataConnector {
      */
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
-            converter = connector.converter,
             tables = connector.dataTables,
             {
                 csv,
@@ -153,13 +193,9 @@ class CSVConnector extends DataConnector {
             )
             .then((csv): Promise<string> => {
                 if (csv) {
-                    // Iterate over all tables to parse the columns.
-                    for (const table of Object.values(tables)) {
-                        table.deleteColumns();
-                        converter.parse({ csv });
-                        table.setColumns(converter.getTable().getColumns());
-                    }
+                    this.initConverters(csv);
                 }
+
                 return connector
                     .setModifierOptions(dataModifier)
                     .then((): string => csv);

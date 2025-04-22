@@ -248,10 +248,8 @@ class CSVConverter extends DataConverter {
             headers: converter.headers
         });
 
-        if (csv) {
-            if (beforeParse) {
-                csv = beforeParse(csv);
-            }
+        if (csv && beforeParse) {
+            csv = beforeParse(csv);
         }
 
         if (csv) {

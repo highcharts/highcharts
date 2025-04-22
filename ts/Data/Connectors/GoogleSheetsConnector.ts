@@ -27,6 +27,7 @@ import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type Types from '../../Shared/Types';
 import type DataTable from '../DataTable';
+import type { BeforeParseCallbackFunction } from './GoogleSheetsConnectorOptions';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -135,13 +136,57 @@ class GoogleSheetsConnector extends DataConnector {
     /**
      * The attached converter, which can be replaced in the constructor
      */
-    public readonly converter: GoogleSheetsConverter;
+    public converter: GoogleSheetsConverter;
 
     /* *
      *
      *  Functions
      *
      * */
+
+    /**
+     * Iterates over the data tables and initiates the corresponding converters.
+     * Assigns the first converter.
+     *
+     * @param {GoogleSheetsConverter.GoogleSpreadsheetJSON}[json]
+     * Data retrieved from the provided URL.
+     */
+    public initConverters(
+        json: GoogleSheetsConverter.GoogleSpreadsheetJSON
+    ): void {
+        let index = 0;
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            const {
+                columnNames,
+                firstRowAsNames,
+                orientation,
+                beforeParse
+            } = table;
+            const dataTableOptions = {
+                dataTableKey: key,
+                columnNames,
+                firstRowAsNames,
+                orientation,
+                beforeParse: beforeParse as BeforeParseCallbackFunction
+            };
+
+            const mergedOptions = merge(dataTableOptions, this.options);
+            const converter = new GoogleSheetsConverter(mergedOptions);
+
+            converter.parse({ json });
+
+            // Assign the first converter.
+            if (index === 0) {
+                this.converter = converter;
+            }
+
+            // If already loaded, clear the current table
+            table.deleteColumns();
+            table.setColumns(converter.getTable().getColumns());
+
+            index++;
+        }
+    }
 
     /**
      * Loads data from a Google Spreadsheet.
@@ -154,13 +199,11 @@ class GoogleSheetsConnector extends DataConnector {
      */
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
-            converter = connector.converter,
             tables = connector.dataTables,
             {
                 dataModifier,
                 dataRefreshRate,
                 enablePolling,
-                firstRowAsNames,
                 googleAPIKey,
                 googleSpreadsheetKey
             } = connector.options,
@@ -188,22 +231,11 @@ class GoogleSheetsConnector extends DataConnector {
                 response.json()
             ))
             .then((json): Promise<this> => {
-
                 if (isGoogleError(json)) {
                     throw new Error(json.error.message);
                 }
 
-                // Iterate over all tables to parse the columns.
-                for (const table of Object.values(tables)) {
-                    converter.parse({ firstRowAsNames, json });
-
-                    // If already loaded, clear the current table
-                    table.deleteColumns();
-                    table.setColumns(
-                        converter.getTable().getColumns()
-                    );
-                }
-
+                this.initConverters(json);
                 return connector.setModifierOptions(dataModifier);
             })
             .then((): this => {

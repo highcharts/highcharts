@@ -232,7 +232,7 @@ class ConnectorHandler {
 
                 // Take the first connector data table if id not provided.
             } else {
-                this.setTable(dataTables[0]);
+                this.setTable(Object.values(dataTables)[0]);
             }
         }
 

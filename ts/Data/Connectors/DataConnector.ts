@@ -73,10 +73,17 @@ abstract class DataConnector implements DataEvent.Emitter {
         this.metadata = options.metadata || { columns: {} };
 
         // Create a data table for each defined in the dataTables user options.
+        let dataTableIndex = 0;
         if (dataTables?.length > 0) {
             for (let i = 0, iEnd = dataTables.length; i < iEnd; ++i) {
                 const dataTable = dataTables[i];
-                this.dataTables[dataTable?.key ?? i] = new DataTable(dataTable);
+                const key = dataTable?.key;
+                this.dataTables[key ?? dataTableIndex] =
+                    new DataTable(dataTable);
+
+                if (!key) {
+                    dataTableIndex++;
+                }
             }
 
         // If user options dataTables is not defined, generate a default table.
@@ -95,7 +102,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * The DataConverter responsible for handling conversion of provided data to
      * a DataConnector.
      */
-    public abstract readonly converter: DataConverter;
+    public abstract converter?: DataConverter;
 
     /**
      * Metadata to describe the connector and the content of columns.

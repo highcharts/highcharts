@@ -23,6 +23,7 @@
 import type Types from '../Shared/Types';
 import type JSONConverter from './Converters/JSONConverter';
 import type GoogleSheetsConverter from './Converters/GoogleSheetsConverter';
+import type { ColumnNamesOptions } from './Connectors/JSONConnectorOptions';
 
 
 /* *
@@ -56,10 +57,34 @@ export interface DataTableOptions {
     key?: string;
 
     /**
+     * If JSON data is row oriented, these options define keys for the columns.
+     * In column oriented case this is handled automatically unless the
+     * `firstRowAsNames` set to false, then the `columnNames` can be used.
+     *
+     * In case of complex JSON structure, use the `ColumnNamesOptions` to define
+     * the key and path to the data.
+     *
+     * When more flexibility is needed you can use the `beforeParse` callback
+     * function and parse the rows into a valid JSON yourself. Nevertheless, the
+     * parsed JSON is going to be transformed into a valid table structure.
+     */
+    columnNames?: Array<string> | ColumnNamesOptions;
+
+    /**
+     * Should first row be treated as names of columns.
+     */
+    firstRowAsNames?: boolean;
+
+    /**
+     * Whether data is in columns or rows.
+     */
+    orientation?: 'columns' | 'rows';
+
+    /**
      * A custom callback function that parses the data table data. Supported
      * connectors are: JSON, CSV and Google Spreadsheets.
      */
-    parser?: DataTableParserCallbackFunction<
+    beforeParse?: DataTableParserCallbackFunction<
     | JSONConverter.Data
     | string
     | GoogleSheetsConverter.GoogleSpreadsheetJSON
