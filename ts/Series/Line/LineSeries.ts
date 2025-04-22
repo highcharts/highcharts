@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -220,7 +220,11 @@ class LineSeries extends Series {
         points = this.getValidPoints(
             points,
             false,
-            !(options.connectNulls && !nullsAsZeroes && !connectCliffs)
+            options.nullInteraction || !(
+                options.connectNulls &&
+                    !nullsAsZeroes &&
+                    !connectCliffs
+            )
         ) as Array<LinePoint>;
 
         // Build the line

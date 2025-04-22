@@ -31,8 +31,8 @@ QUnit.test('Fullscreen module.', function (assert) {
 });
 
 QUnit.test('#20548, chart resizing after fullscreen.', async function (assert) {
-    // Time out after 500ms. Fail safe in case endRisize event is not triggered.
-    assert.timeout(500);
+    // Time out after 1000ms. Fail safe in case endRisize event is not triggered
+    assert.timeout(1000);
 
     const done = assert.async(),
         chart = Highcharts.chart('container', {

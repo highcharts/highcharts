@@ -1,3 +1,7 @@
+---
+slug: index
+---
+
 # Highcharts Documentation
 
 Topics

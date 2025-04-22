@@ -11,7 +11,7 @@ Load Highcharts with require
 ```js
 var Highcharts = require('highcharts');
 // Load module after Highcharts is loaded
-require('highcharts/modules/exporting')(Highcharts);
+require('highcharts/modules/exporting');
 // Create the chart
 Highcharts.chart('container', { /*Highcharts options*/ });
 ```
@@ -31,7 +31,7 @@ These Stock, Maps, and Gantt bundles can't run in the same page along with each 
 // Highstock bundle includes Stock and basic Highcharts
 var Highcharts = require('highcharts/highstock');
 // Load Highcharts Maps as a module to get both Maps and Stock
-require('highcharts/modules/map')(Highcharts);
+require('highcharts/modules/map');
 ```
 
 Alternatively when only Maps functionality is needed, and not Stock:

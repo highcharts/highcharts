@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -42,7 +42,10 @@ const defaultOptions: DataGridHighlightSyncOptions = {
 
 const syncPair: Sync.SyncPair = {
     emitter: function (this: Component): (() => void) | void {
-        if (this.type !== 'DataGrid') {
+        if (
+            this.type !== 'DataGrid' && // To be removed in v4
+            this.type !== 'Grid'
+        ) {
             return;
         }
         const component = this as DataGridComponent;
@@ -100,7 +103,10 @@ const syncPair: Sync.SyncPair = {
         };
     },
     handler: function (this: Component): (() => void) | void {
-        if (this.type !== 'DataGrid') {
+        if (
+            this.type !== 'DataGrid' && // To be removed in v4
+            this.type !== 'Grid'
+        ) {
             return;
         }
         const component = this as DataGridComponent;

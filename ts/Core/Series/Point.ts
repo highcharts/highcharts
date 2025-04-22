@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -709,6 +709,8 @@ class Point {
         this.id ??= uniqueKey();
 
         this.resolveColor();
+
+        this.dataLabelOnNull ??= series.options.nullInteraction;
 
         series.chart.pointCount++;
 

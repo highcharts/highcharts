@@ -29,7 +29,7 @@ import Webpack from 'webpack';
  * */
 
 
-const HEADER_PATTERN = /\/\*\*[\s]+\*[\s]+@license.*?\*\//su;
+const HEADER_PATTERN = /\/\*!?\*[\s]+\*[\s]+@license.*?\*\//su;
 
 
 const HOOKS_NAME = 'Highcharts.ProductMetaPlugin';

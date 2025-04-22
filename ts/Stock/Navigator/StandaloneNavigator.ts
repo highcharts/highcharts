@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Mateusz Bernacik
+ *  (c) 2010-2025 Mateusz Bernacik
  *
  *  License: www.highcharts.com/license
  *
@@ -114,6 +114,7 @@ class StandaloneNavigator {
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
+            userOptions.chart,
             { navigator: userOptions }
         );
 
@@ -312,6 +313,7 @@ class StandaloneNavigator {
         this.chartOptions = merge(
             this.chartOptions,
             newOptions.height && { chart: { height: newOptions.height } },
+            newOptions.chart,
             { navigator: newOptions }
         );
 

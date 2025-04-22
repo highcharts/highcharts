@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -130,6 +130,7 @@ export interface SeriesOptions {
     marker?: PointMarkerOptions;
     name?: string;
     negativeColor?: ColorType;
+    nullInteraction?: boolean;
     opacity?: number;
     point?: SeriesPointOptions;
     pointPlacement?: (number|string);

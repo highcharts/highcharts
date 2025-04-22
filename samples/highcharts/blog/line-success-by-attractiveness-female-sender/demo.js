@@ -5,7 +5,6 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        useHTML: true,
         text: 'Source: <a href="https://theblog.okcupid.com/your-looks-and-your-inbox-8715c0f1561e">theblog.okcupid</a>'
     },
     xAxis: {

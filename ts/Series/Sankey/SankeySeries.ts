@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -309,7 +309,8 @@ class SankeySeries extends ColumnSeries {
 
         // Link attributes
         return {
-            fill: Color.parse(color).setOpacity(values.linkOpacity).get()
+            fill: color,
+            'fill-opacity': values.linkOpacity
         };
 
     }
