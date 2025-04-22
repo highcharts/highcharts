@@ -40,7 +40,7 @@ QUnit.test('Set basemap on chart object', function (assert) {
     );
 
     series.update({
-        data: [{ 'hc-key': 'ad-6407' }, { 'hc-key': 'ad-6406', value: null }],
+        data: [{ 'hc-key': 'ad-03' }, { 'hc-key': 'ad-02', value: null }],
         mapData: Highcharts.maps['countries/ad/ad-all']
     });
 
