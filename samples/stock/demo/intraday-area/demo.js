@@ -16,7 +16,7 @@
         },
 
         xAxis: {
-            overscroll: 60000 * 30
+            overscroll: '25px'
         },
 
         rangeSelector: {
