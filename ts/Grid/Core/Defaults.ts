@@ -65,9 +65,6 @@ namespace Defaults {
             timezone: 'UTC'
         },
         rendering: {
-            columns: {
-                distribution: 'full'
-            },
             rows: {
                 bufferSize: 10,
                 minVisibleRows: 2,
