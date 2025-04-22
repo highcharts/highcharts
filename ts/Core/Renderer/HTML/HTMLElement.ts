@@ -145,8 +145,6 @@ const decorateSVGGroup = (
         ) : void => {
             g[key] = value;
 
-            div.style.transform = `scale(${g.scaleX}, ${g.scaleY})`;
-
             g.doTransform = true;
         };
 

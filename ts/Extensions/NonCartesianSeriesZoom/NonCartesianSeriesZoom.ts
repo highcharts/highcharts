@@ -341,9 +341,7 @@ function onAfterDrawChartBox(this: Chart): void {
     let clipRect;
 
     if (chart.series.find((series): boolean => !!series.zooming)) {
-        if (!chart.zoomClipRect) {
-            chart.zoomClipRect = chart.renderer.clipRect();
-        }
+        chart.zoomClipRect ||= chart.renderer.clipRect();
 
         chart.zoomClipRect.attr({
             x: chart.plotLeft,

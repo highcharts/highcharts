@@ -2651,17 +2651,15 @@ class Chart {
         }
 
         // The series
-        if (!chart.seriesGroup) {
-            chart.seriesGroup = renderer.g('series-group')
-                .attr({ zIndex: 3 })
-                .shadow(chart.options.chart.seriesGroupShadow)
-                .add();
-        }
-        if (!chart.dataLabelsGroup) {
-            chart.dataLabelsGroup = renderer.g('datalabels-group')
-                .attr({ zIndex: 3 })
-                .add();
-        }
+        chart.seriesGroup ||= renderer.g('series-group')
+            .attr({ zIndex: 3 })
+            .shadow(chart.options.chart.seriesGroupShadow)
+            .add();
+
+        chart.dataLabelsGroup ||= renderer.g('datalabels-group')
+            .attr({ zIndex: 6 })
+            .add();
+
         chart.renderSeries();
 
         // Credits
@@ -3981,6 +3979,8 @@ class Chart {
                     hasZoomed = true;
                 }
 
+                // Show the resetZoom button for non-cartesian series,
+                // except when triggered by mouse wheel zoom
                 if (
                     !this.hasCartesianSeries &&
                     !reset &&

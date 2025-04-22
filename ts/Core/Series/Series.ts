@@ -3372,18 +3372,20 @@ class Series {
 
         fireEvent(this, 'getPlotBox', params);
 
+        const { scale, translateX, translateY } = params;
+
         return {
-            translateX: params.translateX,
-            translateY: params.translateY,
+            translateX,
+            translateY,
             rotation: inverted ? 90 : 0,
             rotationOriginX: inverted ?
-                params.scale * (horAxis.len - vertAxis.len) / 2 :
+                scale * (horAxis.len - vertAxis.len) / 2 :
                 0,
             rotationOriginY: inverted ?
-                params.scale * (horAxis.len + vertAxis.len) / 2 :
+                scale * (horAxis.len + vertAxis.len) / 2 :
                 0,
-            scaleX: inverted ? -params.scale : params.scale, // #1623
-            scaleY: params.scale
+            scaleX: inverted ? -scale : scale, // #1623
+            scaleY: scale
         };
     }
 
