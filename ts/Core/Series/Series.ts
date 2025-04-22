@@ -1967,10 +1967,7 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            // @todo - consider if we can replace `processedData` with
-            // hasProcessedDataTable altogether
-            dataOptions = series.hasProcessedDataTable ? void 0 :
-                (series.processedData || options.data),
+            dataOptions = series.hasProcessedDataTable ? void 0 : options.data,
             table = series.dataTable.modified,
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
@@ -4170,7 +4167,7 @@ class Series {
             isInTheMiddle ||
             // When processedData is present we need to splice an empty slot
             // into series.data, otherwise generatePoints won't pick it up.
-            series.processedData || series.hasProcessedDataTable
+            series.hasProcessedDataTable
         ) {
             series.data.splice(i, 0, null as any);
             series.processData();

@@ -269,10 +269,6 @@ class PointAndFigureSeries extends ScatterSeries {
         modified.setColumn('upTrend', processedUpTrendData);
         series.pnfDataGroups = pnfDataGroups;
 
-        if (!this.useDataTable) {
-            this.processedData = finalData;
-        }
-
         return {
             modified,
             cropped: false,
