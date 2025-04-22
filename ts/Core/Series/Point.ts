@@ -779,7 +779,7 @@ class Point {
                     if (series.xAxis?.dateTime) {
                         ret.x = series.chart.time.parse(options[0]);
                     } else {
-                        ret.name = options[0];
+                        ret[series.tupleKey || 'name'] = options[0];
                     }
                 } else if (firstItemType === 'number') {
                     ret.x = options[0];

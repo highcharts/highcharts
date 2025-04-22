@@ -86,6 +86,7 @@ declare module '../../Core/Series/SeriesLike' {
         getProjectedBounds?(): MapBounds|undefined;
         mapTitle?: string;
         transformGroups?: Array<SVGElement>|undefined;
+        tupleKey?: string;
         useMapGeometry?: boolean;
     }
 }
@@ -158,10 +159,6 @@ class MapSeries extends ScatterSeries {
 
     public points!: Array<MapPoint>;
 
-    public processedData: Array<(
-        MapPointOptions|PointOptions|PointShortOptions
-    )>|undefined;
-
     public transformGroups: Array<SVGElement>|undefined;
 
     public valueData?: Array<number>;
@@ -169,6 +166,8 @@ class MapSeries extends ScatterSeries {
     public valueMax?: number;
 
     public valueMin?: number;
+
+    public tupleKey = 'hc-key';
 
     /* *
      *
@@ -688,11 +687,8 @@ class MapSeries extends ScatterSeries {
 
     public updateData(): boolean {
         // #16782
-        if (this.processedData || this.hasProcessedDataTable) {
-            return false;
-        }
-
-        return super.updateData.apply(this, arguments);
+        return !this.hasProcessedDataTable &&
+            super.updateData.apply(this, arguments);
     }
 
     /**
@@ -776,11 +772,6 @@ class MapSeries extends ScatterSeries {
         Object.entries(dataTable.columns).forEach(([key, column]): void => {
             modified.setColumn(key, column);
         });
-
-        // Automatically copy first item to hc-key
-        if (!options.keys && modified.columns.name) {
-            modified.setColumn('hc-key', modified.columns.name);
-        }
 
         if (mapData) {
             this.mapData = mapData;
