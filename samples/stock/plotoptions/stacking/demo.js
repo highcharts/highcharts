@@ -6,7 +6,7 @@ Highcharts.stockChart('container', {
 
     plotOptions: {
         series: {
-            stacking: 'disabled'
+            stacking: 'normal'
         }
     },
 
