@@ -58,10 +58,14 @@ const initGrid = data => {
 
 // Init
 (async () => {
+    const data = {};
+
+    // Load data
     const instances = await fetch(
         'https://demo-live-data.highcharts.com/instances.json'
     ).then(response => response.json());
 
+    // Fields that we would like to extract from data
     const fields = [
         'InstanceId',
         'InstanceType',
@@ -70,8 +74,8 @@ const initGrid = data => {
         'DiskSpace',
         'HealthIndicator'
     ];
-    const data = {};
 
+    // Parse data
     instances.forEach(instance => {
         fields.forEach(field => {
             if (!data[field]) {
@@ -82,5 +86,6 @@ const initGrid = data => {
         });
     });
 
+    // Init Grid
     initGrid(data);
 })();
