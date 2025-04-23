@@ -91,6 +91,11 @@ class RowsVirtualizer {
      */
     public rowSettings?: RowsSettings;
 
+    /**
+     * If the translation exceeds the max scroll allowed for the browser, the
+     * scroll ratio is used to calculate the scroll position.
+     */
+    public scrollRatio: number = 1;
 
     /* *
     *
@@ -112,6 +117,7 @@ class RowsVirtualizer {
         this.strictRowHeights = this.rowSettings.strictHeights as boolean;
         this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
         this.defaultRowHeight = this.getDefaultRowHeight();
+        this.scrollRatio = this.getScrollRatio();
 
         if (this.strictRowHeights) {
             viewport.tbodyElement.classList.add(
@@ -202,7 +208,7 @@ class RowsVirtualizer {
         }
 
         // Do vertical virtual scrolling
-        const rowCursor = Math.floor(target.scrollTop / rowHeight);
+        const rowCursor = this.getRowCursor();
         if (this.rowCursor !== rowCursor) {
             this.renderRows(rowCursor);
         }
@@ -217,6 +223,16 @@ class RowsVirtualizer {
             target.scrollTop = lastScrollTop;
             this.preventScroll = true;
         }
+    }
+
+    /**
+     * Calculates the row cursor based on the scroll position.
+     */
+    private getRowCursor(): number {
+        const target = this.viewport.tbodyElement;
+        const rowHeight = this.defaultRowHeight;
+
+        return Math.floor(target.scrollTop / rowHeight) * this.scrollRatio;
     }
 
     /**
@@ -481,6 +497,43 @@ class RowsVirtualizer {
         mockRow.destroy();
 
         return defaultRowHeight;
+    }
+
+    /**
+     * Check the browser and its max scroll allowed. If the translation exceeds
+     * the max scroll allowed for the browser, calculate the scroll ratio.
+     */
+    private getScrollRatio(): number {
+        const maxScrollHeight = this.getMaxScrollHeight();
+        const rowHeight = this.defaultRowHeight;
+        const totalRows = this.viewport.dataTable.getRowCount();
+        const heightNeeded = totalRows * rowHeight;
+
+        if (heightNeeded > maxScrollHeight) {
+            return maxScrollHeight / heightNeeded
+        }
+
+        return 1;
+    }
+
+    /**
+     * Creates a div test element and returns the max scroll height.
+     */
+    private getMaxScrollHeight(): number {
+        const div = document.createElement('div');
+        div.style.position = 'absolute';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.width = '1px';
+        div.style.height = '1px';
+        div.style.overflow = 'scroll';
+        div.style.height = '100000000px';
+
+        document.body.appendChild(div);
+        const maxScroll = div.scrollHeight;
+        document.body.removeChild(div);
+
+        return maxScroll;
     }
 }
 

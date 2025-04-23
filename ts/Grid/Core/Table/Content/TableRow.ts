@@ -187,9 +187,10 @@ class TableRow extends Row {
      * @param value
      * The vertical translation of the row.
      */
-    public setTranslateY(value: number): void {
-        this.translateY = value;
-        this.htmlElement.style.transform = `translateY(${value}px)`;
+    public setTranslateY(value: number, useRatio: boolean = true): void {
+        const scrollRatio = this.viewport.rowsVirtualizer.scrollRatio;
+
+        this.htmlElement.style.transform = `translateY(${value * (useRatio ? scrollRatio : 1)}px)`;
     }
 
     /**
