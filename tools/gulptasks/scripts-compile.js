@@ -29,7 +29,6 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     const fs = require('fs'),
         fsLib = require('../libs/fs'),
         logLib = require('../libs/log'),
-        path = require('path'),
         swc = require('@swc/core'),
         argv = require('yargs').argv;
     let esModulesFolder,
@@ -92,6 +91,9 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
                 compress: {
                     // conditionals: false
                     // hoist_funs: true
+                },
+                format: {
+                    comments: 'some'
                 },
                 mangle: true,
                 module: isModule,

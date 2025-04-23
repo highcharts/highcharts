@@ -4,13 +4,15 @@ sidebar_label: "Installation"
 
 # Grid Installation
 
-Highcharts Grid comes in two versions: **Grid Lite** and **Grid Pro**.
-- **Grid Lite** is a free version of Grid with a basic feature set.
-- **Grid Pro** is a more advanced, commercial version with additional features. It is currently part of the **Dashboards** package and will be available as a standalone package in parallel with the next major **Dashboards** version (v4.0).
+Highcharts Grid is available in two versions:
+
+**Highcharts Grid Lite** – A free version with a basic feature set.
+
+**Highcharts Grid Pro** – A more advanced, commercial version that currently requires a [Highcharts Dashboards](https://www.highcharts.com/docs/dashboards/grid-component) license and includes additional features. Though it is part of the Dashboards package and license, Grid Pro can also be used as a [standalone component](https://www.highcharts.com/docs/dashboards/grid-standalone).
 
 ## Installing Grid Pro
 
-Currently, **Grid Pro** is part of Highcharts Dashboards and will be available as a standalone library after the release of Dashboards v4. See the [Dashboards Grid Standalone](https://www.highcharts.com/docs/dashboards/grid-standalone) documentation article for more info.
+See the [Dashboards Grid Standalone](https://www.highcharts.com/docs/dashboards/grid-standalone) article for more information on installing **Grid Pro**.
 
 ## Installing Grid Lite
 
