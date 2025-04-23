@@ -87,7 +87,7 @@ export interface AccessibilityOptions {
 
 export interface AccessibilityPointOptions {
     dateFormat?: string;
-    dateFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
+    dateFormatter?: ScreenReaderFormatterCallbackFunction<Point, Chart>;
     describeNull: boolean;
     descriptionFormat?: string;
     descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
@@ -158,8 +158,8 @@ export interface ScreenReaderClickCallbackFunction {
     (evt: MouseEvent, chart?: Accessibility.ChartComposition): void;
 }
 
-export interface ScreenReaderFormatterCallbackFunction<T> {
-    (context: T): string;
+export interface ScreenReaderFormatterCallbackFunction<T, U = void> {
+    (context: T, outerContext?: U): string;
 }
 
 export interface SeriesAccessibilityKeyboardNavigationOptions {
