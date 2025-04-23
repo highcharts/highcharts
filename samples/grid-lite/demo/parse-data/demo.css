@@ -1,0 +1,24 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+
+#container {
+    padding: 8px;
+}
+
+.highcharts-description {
+    padding: 0 20px;
+}
+
+.hcg-table td[data-column-id="HealthIndicator"] {
+    text-align: center;
+}
+
+td img {
+    width: 16px;
+    height: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #container {
+        background-color: #292929;
+    }
+}
