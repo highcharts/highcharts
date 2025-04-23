@@ -116,7 +116,8 @@ class Series3D extends Series {
             zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
             rawPoints = [] as Array<Position3DObject>,
             rawPointsX: Array<number> = [],
-            stack = seriesOptions.stacking ?
+            stack = seriesOptions.stacking &&
+                seriesOptions.stacking !== 'disabled' ?
                 (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
                 series.index || 0;
 

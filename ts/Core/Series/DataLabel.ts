@@ -292,7 +292,10 @@ namespace DataLabel {
                     // that parts of the align box is inside the plot area
                     // (#12370). When stacking, it is always inside regardless
                     // of the option (#15148).
-                    pick(options.inside, !!this.options.stacking) &&
+                    pick(
+                        options.inside, this.options.stacking &&
+                        this.options.stacking !== 'disabled'
+                    ) &&
                     alignTo &&
                     chart.isInsidePlot(
                         plotX,
@@ -660,7 +663,10 @@ namespace DataLabel {
                                         labelOptions.inside
                                     ) ||
                                     pInt(distance || 0) < 0 ||
-                                    seriesOptions.stacking
+                                    (
+                                        seriesOptions.stacking &&
+                                        seriesOptions.stacking !== 'disabled'
+                                    )
                                 ) ?
                                     point.contrastColor :
                                     contrastColor;

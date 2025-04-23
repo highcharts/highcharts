@@ -106,7 +106,8 @@ function columnSeriesTranslate3dShapes(
         chart = series.chart,
         seriesOptions = series.options,
         depth = (seriesOptions as any).depth,
-        stack = seriesOptions.stacking ?
+        stack = seriesOptions.stacking &&
+        seriesOptions.stacking !== 'disabled' ?
             (seriesOptions.stack || 0) :
             series.index; // #4743
 
@@ -609,7 +610,12 @@ function wrapSeriesAlignDataLabel(
     ) {
         const series = this as ColumnSeries,
             seriesOptions: ColumnSeriesOptions = series.options,
-            inside = pick(options.inside, !!series.options.stacking),
+            inside = pick(
+                options.inside,
+                (series.options.stacking &&
+                series.options.stacking !== 'disabled'
+                )
+            ),
             options3d = chart.options.chart.options3d as any,
             xOffset = point.pointWidth / 2 || 0;
 

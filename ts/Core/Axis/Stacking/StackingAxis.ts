@@ -143,7 +143,11 @@ function chartGetStacks(
     chart.series.forEach((series): void => {
         const xAxisOptions = series.xAxis?.options || {};
 
-        if (series.options.stacking && series.reserveSpace()) {
+        if (
+            series.options.stacking &&
+            series.options.stacking !== 'disabled' &&
+            series.reserveSpace()
+        ) {
             series.stackKey = [
                 series.type,
                 pick(series.options.stack, ''),
@@ -238,7 +242,9 @@ function seriesModifyStacks(
         processedXData = series.getColumn('x', true),
         stacking = series.options.stacking,
         stacker: (StackerFunction|undefined) =
-            (series as AnyRecord)[stacking + 'Stacker'];
+        stacking && stacking !== 'disabled' ?
+            (series as AnyRecord)[stacking + 'Stacker'] :
+            void 0;
 
     let stackIndicator: StackItemIndicatorObject;
 
@@ -332,7 +338,8 @@ function seriesSetStackedPoints(
     stackingParam?: string
 ): void {
 
-    const type = stackingParam || this.options.stacking;
+    const rawType = stackingParam || this.options.stacking,
+        type = rawType === 'disabled' ? void 0 : rawType;
 
     if (
         !type ||

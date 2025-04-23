@@ -2221,13 +2221,15 @@ class Series {
                 stackValues: (Array<number>|undefined),
                 yValue = point.y,
                 lowValue = point.low;
-            const stacks = stacking && yAxis.stacking?.stacks[(
-                series.negStacks &&
+            const stacks = stacking &&
+                stacking !== 'disabled' &&
+                yAxis.stacking?.stacks[(
+                    series.negStacks &&
                 (yValue as any) <
                 (stackThreshold ? 0 : (threshold as any)) ?
-                    '-' :
-                    ''
-            ) + series.stackKey];
+                        '-' :
+                        ''
+                ) + series.stackKey];
 
             plotX = xAxis.translate( // #3923
                 xValue, false, false, false, true, pointPlacement

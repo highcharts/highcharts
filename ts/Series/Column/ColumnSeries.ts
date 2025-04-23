@@ -274,6 +274,7 @@ class ColumnSeries extends Series {
                 ) { // #642, #2086
                     if (
                         otherOptions.stacking &&
+                        otherOptions.stacking !== 'disabled' &&
                         otherOptions.stacking !== 'group'
                     ) {
                         stackKey = otherSeries.stackKey;
@@ -449,7 +450,7 @@ class ColumnSeries extends Series {
                                     yStack = otherOptions.stacking &&
                                         otherOptions.stack;
 
-                                if (defined(yStack)) {
+                                if (defined(yStack) && yStack !== 'disabled') {
                                     if (isNumber(yStackMap[yStack])) {
                                         if (baseIndex === index) {
                                             baseIndex = yStackMap[yStack];
