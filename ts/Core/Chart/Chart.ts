@@ -3791,29 +3791,28 @@ class Chart {
                 continue;
             }
 
-            let newMin = axis.toValue(minPx, true) +
-                // Don't apply offset for selection (#20784)
-                    (
-                        selection || axis.isOrdinal ?
-                            0 : minPointOffset * pointRangeDirection
-                    ),
-                newMax =
-                    axis.toValue(
-                        minPx + len / scale, true
-                    ) -
-                    (
-                        // Don't apply offset for selection (#20784)
-                        selection || axis.isOrdinal ?
-                            0 :
-                            (
-                                (minPointOffset * pointRangeDirection) ||
-                                // Polar zoom tests failed when this was not
-                                // commented:
-                                // (axis.isXAxis && axis.pointRangePadding) ||
-                                0
-                            )
-                    ),
-                allExtremes = axis.allExtremes;
+            // Adjust offset to ensure selection zoom triggers correctly
+            // (#22945)
+            const isPolar = axis.chart.polar,
+                offset = isPolar ?
+                    0 :
+                    (minPointOffset * pointRangeDirection || 0);
+
+            const eventMin = axis.toValue(minPx, true),
+                eventMax = axis.toValue(minPx + len / scale, true);
+
+            let newMin = eventMin + offset,
+                newMax = eventMax - offset;
+
+            if (selection) {
+                selection[axis.coll as 'xAxis' | 'yAxis'].push({
+                    axis,
+                    min: Math.min(eventMin, eventMax),
+                    max: Math.max(eventMin, eventMax)
+                });
+            }
+
+            let allExtremes = axis.allExtremes;
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
