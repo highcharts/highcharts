@@ -766,4 +766,29 @@ QUnit.test('Date objects as X values, column', function (assert) {
                 should not affect the stack order.`
             );
         });
+
+    QUnit.test(
+        'Disable stacking via disabled flag, #19033',
+        function (assert) {
+            const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'disabled'
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            });
+
+            assert.strictEqual(
+                chart.series[0].options.stacking,
+                'disabled',
+                'Stacking should be "disabled" when set in options.'
+            );
+        }
+    );
 }());

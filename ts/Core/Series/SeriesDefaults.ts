@@ -841,6 +841,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Area
      *
      * @type       {string}
+     * @default    disabled
      * @product    highcharts highstock
      * @validvalue ["disabled", "normal", "overlap", "percent", "stream"]
      * @apioption  plotOptions.series.stacking
