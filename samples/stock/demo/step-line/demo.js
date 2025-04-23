@@ -1,7 +1,7 @@
 (async () => {
     Highcharts.Templating.helpers.lastValue = function () {
-        const points = arguments[0].ctx.points;
-        return points[points.length - 1].y.toFixed(2);
+        const data = arguments[0].ctx.data;
+        return data[data.length - 1].y.toFixed(2);
     };
 
     // Load the dataset
@@ -20,6 +20,7 @@
         },
 
         yAxis: {
+            opposite: false,
             labels: {
                 align: 'left',
                 format: '{value:,.2f}'
@@ -40,7 +41,7 @@
                     valueDecimals: 2
                 },
                 pointStart: '2023-01-01',
-                pointInterval: 86400000 // One day
+                pointIntervalUnit: 'day'
             }
         },
 
