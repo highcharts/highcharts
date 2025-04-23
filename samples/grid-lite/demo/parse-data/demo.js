@@ -33,7 +33,7 @@ const initGrid = data => {
                 cells: {
                     formatter: function () {
                         const disk = this.value.RootDisk;
-                        return disk.UsedGB + 'GB / ' + disk.SizeGB + 'GB';
+                        return `${disk.UsedGB}GB / ${disk.SizeGB}GB`;
                     }
                 }
             },
@@ -46,9 +46,10 @@ const initGrid = data => {
                 cells: {
                     formatter: function () {
                         const val = this.value;
-                        return `<img src='https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${val.toLowerCase()}-ico.${val === 'Critical' ? 'png' : 'svg'}' alt='${
-                            val
-                        }'/>`;
+                        return `<img
+                            src='https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${val.toLowerCase()}-ico.${val === 'Critical' ? 'png' : 'svg'}'
+                            alt='${val}'
+                        />`;
                     }
                 }
             }
