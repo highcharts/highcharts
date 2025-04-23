@@ -1254,6 +1254,9 @@ namespace OrdinalAxis {
                 // Add the fake series to hold the full data, then apply
                 // processData to it
                 axis.series.forEach((series): void => {
+                    if ((series as FlagSeries).takeOrdinalPosition === false) {
+                        return; // #22657
+                    }
                     fakeSeries = {
                         xAxis: fakeAxis,
                         chart: chart,
