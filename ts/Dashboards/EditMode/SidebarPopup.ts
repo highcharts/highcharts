@@ -545,6 +545,11 @@ class SidebarPopup extends BaseForm {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
             editCellContext.setHighlight(true);
+            if (editMode.resizer) {
+                editMode.resizer.setSnapPositions(
+                    editMode.editCellContext as Cell
+                );
+            }
         } else if (
             CellHTML.isCellHTML(editCellContext) && editMode.cellToolbar
         ) {

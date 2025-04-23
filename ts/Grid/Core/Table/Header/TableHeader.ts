@@ -141,7 +141,7 @@ class TableHeader {
         if (
             header &&
             bordersWidth > 0 &&
-            this.viewport.columnDistribution === 'full'
+            this.viewport.columnDistribution.type === 'full'
         ) {
             const row = this.columns[this.columns.length - 1].header?.row;
             const lastCellEl = row?.cells[row.cells.length - 1]?.htmlElement;
