@@ -31,10 +31,13 @@ QUnit.test('Selection event', function (assert) {
         series: [{
             type: 'column',
             pointWidth: 50,
-            data: [
-                { x: 0, y: 1 },
-                { x: 1, y: 2 }
-            ]
+            data: [{
+                x: 0,
+                y: 1
+            }, {
+                x: 1,
+                y: 2
+            }]
         }]
     });
 
@@ -52,19 +55,13 @@ QUnit.test('Selection event', function (assert) {
 
     chart.update({
         chart: {
-            zoomType: 'x',
             events: {
                 selection: function () {
                     this.destroy();
                     return false;
                 }
             }
-        },
-        series: [{
-            type: 'area',
-            name: 'USD to EUR',
-            data: [1, 3, 2, 4, 3, 5, 4, 6, 5, 7]
-        }]
+        }
     });
 
     // Pan
