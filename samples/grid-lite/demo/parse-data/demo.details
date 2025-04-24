@@ -1,5 +1,5 @@
 ---
-name: Fetch Data Grid
+name: Grid with data from an external source
 authors:
   - Sebastian Bochan
 js_wrap: b
