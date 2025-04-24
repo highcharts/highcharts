@@ -8,45 +8,35 @@ const initGrid = data => {
                 distribution: 'mixed'
             }
         },
+        header: [{
+            columnId: 'InstanceId',
+            format: 'ID'
+        }, {
+            columnId: 'InstanceType',
+            format: 'Type'
+        }, {
+            columnId: 'PublicIpAddress',
+            format: 'Public IP'
+        },
+        'State',
+        {
+            columnId: 'UsedGB',
+            format: 'Disk used / size'
+        }, {
+            columnId: 'HealthIndicator',
+            format: 'Health'
+        }],
         columns: [
             {
-                id: 'InstanceId',
-                header: {
-                    format: 'ID'
-                }
-            },
-            {
-                id: 'InstanceType',
-                header: {
-                    format: 'Type'
-                }
-            },
-            {
-                id: 'PublicIpAddress',
-                header: {
-                    format: 'Public IP'
-                }
-            },
-            {
-                id: 'State'
-            },
-            {
-                id: 'DiskSpace',
-                header: {
-                    format: 'Disk used / size'
-                },
+                id: 'UsedGB',
                 cells: {
                     formatter: function () {
-                        const disk = this.value.RootDisk;
-                        return `${disk.UsedGB}GB / ${disk.SizeGB}GB`;
+                        return `${this.value}GB / ${this.row.data.SizeGB}GB`;
                     }
                 }
             },
             {
                 id: 'HealthIndicator',
-                header: {
-                    format: 'Health'
-                },
                 width: '100px',
                 useHTML: true,
                 cells: {
@@ -78,18 +68,30 @@ const initGrid = data => {
         'InstanceType',
         'PublicIpAddress',
         'State',
-        'DiskSpace',
+        'DiskSpace.RootDisk.UsedGB',
+        'DiskSpace.RootDisk.SizeGB',
         'HealthIndicator'
     ];
 
     // Parse data
     instances.forEach(instance => {
         fields.forEach(field => {
-            if (!data[field]) {
-                data[field] = [];
+            const keys = field.split('.');
+            const fieldName = keys[keys.length - 1];
+            let current = instance;
+
+            if (!data[fieldName]) {
+                data[fieldName] = [];
             }
 
-            data[field].push(instance[field]);
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!(keys[i] in current)) {
+                    current[keys[i]] = {};
+                }
+                current = current[keys[i]];
+            }
+
+            data[fieldName].push(current[keys[keys.length - 1]]);
         });
     });
 
