@@ -28,7 +28,7 @@ Grid.grid('container', {
     }, {
         id: 'price',
         header: {
-            format: 'undefined width'
+            format: 'Not defined width'
         }
     }, {
         id: 'icon',
@@ -39,7 +39,7 @@ Grid.grid('container', {
     }, {
         id: 'meta',
         header: {
-            format: 'undefined width'
+            format: 'Not defined width'
         }
     }]
 });

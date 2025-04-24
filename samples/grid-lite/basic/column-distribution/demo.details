@@ -1,6 +1,7 @@
 ---
- name: Highcharts Dashboards Demo
+ name: Column distribution Demo
  authors:
    - Dawid Dragula
+   - Sebastian Bochan
  js_wrap: b
 ...

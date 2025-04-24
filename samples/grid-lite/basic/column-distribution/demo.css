@@ -6,16 +6,11 @@
 
 #container {
     height: 250px;
-}
-
-.demo {
     padding: 8px;
-    font-family: sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
-    .demo {
+    #container {
         background-color: #292929;
-        color: #eee;
     }
 }
