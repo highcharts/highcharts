@@ -7,7 +7,8 @@ QUnit.test('Range series data labels(#4421)', function (assert) {
 
     const chart = Highcharts.chart('container', {
         chart: {
-            type: 'arearange'
+            type: 'arearange',
+            width: 600
         },
         rangeSelector: {
             selected: 0
