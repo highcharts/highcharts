@@ -13,7 +13,8 @@ Overview
 * [Adding modules](#adding-modules)
   - [Adding a self-contained module](#adding-a-self-contained-module)
   - [Adding a module with shared code](#adding-a-module-with-shared-code)
-  - []
+
+* [Updating a module with shared code](#updating-a-module-with-shared-code)
 
 * [Adding a product](#adding-a-product)
 
@@ -85,7 +86,7 @@ This helps Webpack to make the correct decision to decided when to bundle the co
 **Example:**
 
 ```TypeScript
-// File: ts/masters/module/example.src.ts
+// File: ts/masters/modules/example.src.ts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/example
@@ -107,7 +108,7 @@ export default Highcharts;
 ```
 
 ```TypeScript
-// File: ts/masters/module/second-example.src.ts
+// File: ts/masters/modules/second-example.src.ts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/second-example
@@ -122,12 +123,22 @@ export default Highcharts;
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import ExampleClass from '../../Extensions/ExampleClass.js';
+import SecondExample from '../../Extensions/SecondExample.js';
 const G: AnyRecord = Highcharts;
-G.ExampleClass = G.ExampleClass || ExampleClass;
+G.SecondExample = G.SecondExample || SecondExample;
 export default Highcharts;
 ```
 
+Now an entry in `externals.json` is needed, to inform Webpack about the namespace property for `ExampleClass` as used by `SecondExample`.
+
+```JSON
+// File: tools/webpacks/externals.json
+[{
+    "files": ["Extensions/ExampleClass"],
+    "included": ["modules/example"],
+    "namespacePath": ".{name}"
+}]
+```
 
 Updating a module with shared code
 ----------------------------------
@@ -256,10 +267,10 @@ Before hunting for the bug, take a minute to understand our plugins.
 
 * `externals.mjs`: This Webpack callback decides, whether a file should be bundled or can be expected on the namespace.
   In `externals.json` can you map imports to the namespace and modules.
+  If a file is not mentioned in `externals.mjs` it gets always bundled as an import.
 
 * `plugins/MastersLoader.mjs`: This is a Webpack loader to prepare masters files for ESM bundling.
-  It adds all `@requires` modules of a master file as imports to auto-resolve.  
-  Webpack will automatically reduce the imports to avoid any double bundling.
+  It adds all `@requires` modules of a master file as imports to auto-resolve.
   The imports then can be picked up in the externals callback to make them mandatory external as in `highcharts.webpack.mjs`.
 
 * `plugins/Error16Plugin.mjs`: The Webpack plugin adds error 16 to product UMD bundles.
@@ -270,7 +281,7 @@ Before hunting for the bug, take a minute to understand our plugins.
 * `plugins/UMDExtensionPlugin.mjs`: With this Webpack plugin the shared product namespace is added to all UMD loaders.
   By default the Webpack plugin only adds a namespace to the classic global fallback, while UMD loaders are expected to solve dependencies by file path.
 
-### Hints
+**Hints:**
 
 * If produced bundles are not working at all, it is likely an issue with the regular expression of the plugins.
 
