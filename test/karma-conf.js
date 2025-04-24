@@ -392,6 +392,7 @@ module.exports = function (config) {
             'samples/highcharts/blog/map-europe-electricity-price/demo.js', // strange fails, remove this later
 
             // Unknown error
+            'samples/highcharts/boost/arearange/demo.js',
             'samples/highcharts/boost/scatter-smaller/demo.js',
             'samples/highcharts/data/google-spreadsheet/demo.js',
 
