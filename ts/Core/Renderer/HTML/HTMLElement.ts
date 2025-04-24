@@ -318,6 +318,7 @@ class HTMLElement extends SVGElement {
         if (isNumber(Number(styles?.fontSize))) {
             styles.fontSize += 'px';
         }
+
         extend(this.styles, styles);
         css(element, styles);
 
