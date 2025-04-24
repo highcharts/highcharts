@@ -13,7 +13,7 @@ import FSLib from '../libs/fs.js';
 import Error16Plugin from './plugins/Error16Plugin.mjs';
 import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
-import { makeExternals, resolveExternals } from './externals.mjs';
+import { loadExternalsJSON, makeExternals, resolveExternals } from './externals.mjs';
 
 
 /* *
@@ -39,6 +39,8 @@ const productMasters = [
     'highstock',
     'standalone-navigator'
 ];
+
+loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
 
 
 /* *

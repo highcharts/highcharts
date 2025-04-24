@@ -30,8 +30,7 @@ import FSLib from '../libs/fs.js';
 
 
 /** @type {ExternalsJSON} */
-const externals =
-    FSLib.getFile(FSLib.path([import.meta.dirname, 'externals.json']), true);
+const externals = [];
 
 
 /* *
@@ -62,6 +61,29 @@ function createUMDConfig(namespace, ...pathMembers) {
         commonjs2: commonjs,
         root: [namespace, ...pathMembers]
     };
+}
+
+
+/**
+ * Loads a configuration file with an array of external descriptions. This gets
+ * consumed by internallt by `resolveExternals`.
+ *
+ * @see {@link ExternalsJSON}
+ *
+ * @param {string} filePath
+ * File path to the configuration JSON.
+ */
+export function loadExternalsJSON(filePath) {
+    const entries = FSLib.getFile(filePath, true);
+
+    externals.length = 0;
+
+    if (entries instanceof Array) {
+        for (const entry of entries) {
+            externals.push(entry);
+        }
+    }
+
 }
 
 
@@ -281,6 +303,8 @@ export async function resolveExternals(
 
 
 export default {
+    loadExternalsJSON,
+    makeExternals,
     resolveExternals
 };
 
