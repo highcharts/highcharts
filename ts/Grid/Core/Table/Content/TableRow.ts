@@ -187,7 +187,7 @@ class TableRow extends Row {
      * @param value
      * The vertical translation of the row.
      */
-    public setTranslateY(value: number, useRatio: boolean = true): void {
+    public setTranslateY(value: number, useRatio: boolean): void {
         const scrollRatio = this.viewport.rowsVirtualizer.scrollRatio;
 
         this.htmlElement.style.transform = `translateY(${value * (useRatio ? scrollRatio : 1)}px)`;
@@ -197,8 +197,9 @@ class TableRow extends Row {
      * Returns the default top offset of the row (before adjusting row heights).
      * @internal
      */
-    public getDefaultTopOffset(): number {
-        return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
+    public getDefaultTopOffset(useRatio?: boolean): number {
+        return this.index * this.viewport.rowsVirtualizer.defaultRowHeight *
+            (useRatio ? this.viewport.rowsVirtualizer.scrollRatio : 1);
     }
 }
 

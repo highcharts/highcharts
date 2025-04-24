@@ -232,7 +232,7 @@ class RowsVirtualizer {
         const target = this.viewport.tbodyElement;
         const rowHeight = this.defaultRowHeight;
 
-        return Math.floor(target.scrollTop / rowHeight) * this.scrollRatio;
+        return Math.floor(target.scrollTop / rowHeight);
     }
 
     /**
@@ -250,7 +250,7 @@ class RowsVirtualizer {
         rowTop = rowBottom - newHeight;
 
         lastRow.htmlElement.style.height = newHeight + 'px';
-        lastRow.setTranslateY(rowTop);
+        lastRow.setTranslateY(rowTop, true);
         for (let j = 0, jEnd = lastRow.cells.length; j < jEnd; ++j) {
             lastRow.cells[j].htmlElement.style.transform = '';
         }
@@ -263,7 +263,7 @@ class RowsVirtualizer {
 
             row.htmlElement.style.height = newHeight + 'px';
 
-            row.setTranslateY(rowTop);
+            row.setTranslateY(rowTop, false);
             for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                 row.cells[j].htmlElement.style.transform = '';
             }
@@ -301,18 +301,18 @@ class RowsVirtualizer {
             vp.tbodyElement.appendChild(last.htmlElement);
 
             if (isVirtualization) {
-                last.setTranslateY(last.getDefaultTopOffset());
+                last.setTranslateY(last.getDefaultTopOffset(), true);
             }
         }
 
-        const from = Math.max(0, Math.min(
-            rowCursor - buffer,
+        const from = Math.round(Math.max(0, Math.min(
+            (rowCursor - buffer) * (1 / this.scrollRatio),
             vp.dataTable.getRowCount() - rowsPerPage
-        ));
-        const to = Math.min(
-            rowCursor + rowsPerPage + buffer,
+        )));
+        const to = Math.round(Math.min(
+            (rowCursor + rowsPerPage + buffer) * (1 / this.scrollRatio),
             rows[rows.length - 1].index - 1
-        );
+        ));
 
         const alwaysLastRow = rows.pop();
         const tempRows: TableRow[] = [];
@@ -322,7 +322,7 @@ class RowsVirtualizer {
             const row = rows[i];
             const rowIndex = row.index;
 
-            if (rowIndex < from || rowIndex > to) {
+            if (rowIndex < from || rowIndex > to || this.scrollRatio < 1) {
                 row.destroy();
             } else {
                 tempRows.push(row);
@@ -341,7 +341,10 @@ class RowsVirtualizer {
                 rows.push(newRow);
                 newRow.rendered = false;
                 if (isVirtualization) {
-                    newRow.setTranslateY(newRow.getDefaultTopOffset());
+                    newRow.setTranslateY(
+                        newRow.getDefaultTopOffset(),
+                        i === from && this.scrollRatio !== 1
+                    );
                 }
             }
         }
@@ -395,7 +398,7 @@ class RowsVirtualizer {
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
 
-        let translateBuffer = rows[0].getDefaultTopOffset();
+        let translateBuffer = rows[0].getDefaultTopOffset(this.scrollRatio !== 1);
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
@@ -442,10 +445,10 @@ class RowsVirtualizer {
             }
         }
 
-        rows[0].setTranslateY(translateBuffer);
+        rows[0].setTranslateY(translateBuffer, false);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
-            rows[i].setTranslateY(translateBuffer);
+            rows[i].setTranslateY(translateBuffer, false);
         }
 
         // Set the proper offset for the last row
@@ -453,7 +456,8 @@ class RowsVirtualizer {
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
             lastRow.setTranslateY(
-                preLastRow.htmlElement.offsetHeight + translateBuffer
+                preLastRow.htmlElement.offsetHeight + translateBuffer,
+                true
             );
         }
     }
