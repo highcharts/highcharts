@@ -567,10 +567,7 @@ class Series {
             series.setDataSortingOptions();
 
         } else if (!series.points && !series.data) {
-            series.setData(
-                options.dataTable || options.data,
-                false
-            );
+            series.setData(options.data, false);
         }
 
         fireEvent(this, 'afterInit');
@@ -1574,7 +1571,7 @@ class Series {
 
                 // If a DataTable is passed and no column assignment is set,
                 // use it directly
-                if (columnAssignment || !options.dataTable) {
+                if (columnAssignment || dataTable) {
                     // Set the columns
                     const columns = getTableSpecificColumns(dataTable);
                     table.setColumns(columns);
