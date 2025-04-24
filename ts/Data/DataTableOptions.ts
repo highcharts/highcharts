@@ -24,6 +24,7 @@ import type Types from '../Shared/Types';
 import type JSONConverter from './Converters/JSONConverter';
 import type GoogleSheetsConverter from './Converters/GoogleSheetsConverter';
 import type { ColumnNamesOptions } from './Connectors/JSONConnectorOptions';
+import type { DataModifierTypeOptions } from './Modifiers/DataModifierType';
 
 
 /* *
@@ -79,6 +80,28 @@ export interface DataTableOptions {
      * Whether data is in columns or rows.
      */
     orientation?: 'columns' | 'rows';
+
+    /**
+     * Options for the modifier that shall be applied to the table to create a
+     * modified version. This modified version is available via the
+     * `DataTable.modified` property.
+     *
+     * @example
+     * ``` JavaScript
+     * const connector = new CSVConnector({
+     *   csv: 'a,b,c\n1,2,3\n4,5,6',
+     *   dataModifier: {
+     *     type: 'Invert'
+     *   }
+     * });
+     * await connector.load();
+     * console.log(table.getColumns());
+     * // {"a":[1,4],"b":[2,5],"c":[3,6]}
+     * console.log(table.modified.getColumns());
+     * // {0:[1,2,3],1:[4,5,6],columnNames:["a","b","c"]}
+     * ```
+     */
+    dataModifier?: DataModifierTypeOptions;
 
     /**
      * A custom callback function that parses the data table data. Supported

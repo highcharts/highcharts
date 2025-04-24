@@ -141,8 +141,9 @@ class CSVConnector extends DataConnector {
                 beforeParse: beforeParse as BeforeParseCallbackFunction
             };
 
-            const mergedOptions = merge(dataTableOptions, this.options);
-            const converter = new CSVConverter(mergedOptions);
+            const converter = new CSVConverter(
+                merge(dataTableOptions, this.options)
+            );
 
             table.deleteColumns();
             converter.parse({ csv });

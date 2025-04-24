@@ -310,15 +310,19 @@ abstract class DataConnector implements DataEvent.Emitter {
     public async setModifierOptions(
         modifierOptions?: DataModifierTypeOptions
     ): Promise<this> {
-        const ModifierClass = (
-            modifierOptions &&
-            DataModifier.types[modifierOptions.type]
-        );
-
         for (const table of Object.values(this.dataTables)) {
+            const mergedModifierOptions = merge(
+                table.dataModifier, modifierOptions
+            );
+            const ModifierClass = (
+                mergedModifierOptions &&
+                DataModifier.types[mergedModifierOptions.type]
+            );
+
             await table.setModifier(
                 ModifierClass ?
-                    new ModifierClass(modifierOptions as AnyRecord) : void 0
+                    new ModifierClass(mergedModifierOptions as AnyRecord) :
+                    void 0
             );
         }
 

@@ -170,8 +170,9 @@ class GoogleSheetsConnector extends DataConnector {
                 beforeParse: beforeParse as BeforeParseCallbackFunction
             };
 
-            const mergedOptions = merge(dataTableOptions, this.options);
-            const converter = new GoogleSheetsConverter(mergedOptions);
+            const converter = new GoogleSheetsConverter(
+                merge(dataTableOptions, this.options)
+            );
 
             converter.parse({ json });
 

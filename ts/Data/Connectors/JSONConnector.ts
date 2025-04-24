@@ -136,8 +136,9 @@ class JSONConnector extends DataConnector {
                 beforeParse: beforeParse as BeforeParseCallbackFunction
             };
 
-            const mergedOptions = merge(dataTableOptions, this.options);
-            const converter = new JSONConverter(mergedOptions);
+            const converter = new JSONConverter(
+                merge(dataTableOptions, this.options)
+            );
 
             // Assign the first converter.
             if (index === 0) {
@@ -189,7 +190,7 @@ class JSONConnector extends DataConnector {
                     }) :
                     data || []
             )
-            .then((data): Promise<Array<Array<number|string>>> => {
+            .then((data): Promise<Array<Array<number | string>>> => {
                 if (data) {
                     this.initConverters(data);
                 }

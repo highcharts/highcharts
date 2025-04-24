@@ -221,14 +221,8 @@ class ConnectorHandler {
             const dataTables = connector.dataTables;
 
             if (dataTableKey) {
-                // Iterate over all connector data tables to find those used by
-                // the component.
-                for (const [key, table] of Object.entries(dataTables)) {
-                    // Perform only if the data table is used by the component.
-                    if (key === this.options.dataTableKey) {
-                        this.setTable(table);
-                    }
-                }
+                // Match all components where the data tables are used.
+                this.setTable(dataTables[dataTableKey]);
 
                 // Take the first connector data table if id not provided.
             } else {
