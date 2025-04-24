@@ -21,13 +21,9 @@
  *
  * */
 
-import TableCell from '../../Core/Table/Body/TableCell.js';
-import CellContent from '../../Core/Table/CellContent/CellContent.js';
+import CellContent from '../../../Core/Table/CellContent/CellContent.js';
 
-import GridUtils from '../../Core/GridUtils.js';
-const {
-    setHTMLContent
-} = GridUtils;
+import GridUtils from '../../../Core/GridUtils.js';
 
 
 /* *
@@ -37,6 +33,11 @@ const {
  * */
 
 class CheckboxContent extends CellContent {
+    
+    public options: CellContent.Options = {
+        type: 'checkbox',
+        disableDblClickEditor: true
+    };
 
     private input?: HTMLInputElement;
 
@@ -55,6 +56,7 @@ class CheckboxContent extends CellContent {
     }
 
     private onChange = (e: Event): void => {
+        // TODO: Handle data table update
         console.log('Checkbox changed', (e.target as HTMLInputElement).checked);
     }
 

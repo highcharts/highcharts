@@ -24,11 +24,12 @@
 
 import type Column from '../../Core/Table/Column';
 import type CellContent from '../../Core/Table/CellContent/CellContent';
+import type CellContentType from './CellContentType';
 import type TableCell from '../../Core/Table/Body/TableCell';
 
 import Globals from '../../Core/Globals.js';
 import TextContent from '../../Core/Table/CellContent/TextContent.js';
-import CheckboxContent from './CheckboxContent.js';
+import CheckboxContent from './ContentTypes/CheckboxContent.js';
 
 import U from '../../../Core/Utilities.js';
 const {
@@ -70,6 +71,19 @@ namespace CellContentProComposition {
         }
     }
 
+}
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Options' {
+    interface ColumnOptions {
+        rendering?: CellContentType['options'];
+    }
 }
 
 

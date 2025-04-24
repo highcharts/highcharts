@@ -43,7 +43,7 @@ import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingCompositi
 import Dash3Compatibility from '../Grid/Pro/Dash3Compatibility.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
-import CellContentProComposition from '../Grid/Pro/CellContent/CellContentProComposition.js';
+import CellContentProComposition from '../Grid/Pro/CellRendering/CellContentProComposition.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';

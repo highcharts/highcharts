@@ -31,6 +31,8 @@ import TableCell from '../Body/TableCell.js';
  * */
 
 abstract class CellContent {
+
+    public abstract options: CellContent.Options;
     
     public readonly cell: TableCell;
 
@@ -47,6 +49,32 @@ abstract class CellContent {
      * Destroy the cell content.
      */
     public abstract destroy(): void;
+}
+
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace CellContent {
+
+    export interface Options {
+        /**
+         * The cell content type.
+         */
+        type: string;
+
+        /**
+         * Disable double click to trigger the cell value editor (regular text
+         * input).
+         *
+         * @internal TODO: move to Pro
+         */
+        disableDblClickEditor?: boolean;
+    }
+
 }
 
 

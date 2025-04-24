@@ -46,6 +46,12 @@ const {
 
 class TextContent extends CellContent {
 
+    // TODO: This options should be moved to the Column instance, so that they
+    // are not duplicated for each cell.
+    public override options: TextContent.Options = {
+        type: 'text'
+    };
+
     private rendered: boolean = false;
     private format?: string;
     private formatter?: (this: TableCell) => string;
@@ -124,6 +130,10 @@ class TextContent extends CellContent {
  * */
 
 namespace TextContent {
+
+    export interface Options extends CellContent.Options {
+        type: 'text';
+    }
 
     /**
      * Default formats for data types.

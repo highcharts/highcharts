@@ -143,7 +143,8 @@ namespace CellEditingComposition {
     ): void {
         if (
             e.originalEvent?.key !== 'Enter' ||
-            !this.column.options.cells?.editable
+            !this.column.options.cells?.editable ||
+            this.content.options.disableDblClickEditor
         ) {
             return;
         }
@@ -155,7 +156,10 @@ namespace CellEditingComposition {
      * Callback function called when a cell is double clicked.
      */
     function onCellDblClick(this: TableCell): void {
-        if (this.column.options.cells?.editable) {
+        if (
+            this.column.options.cells?.editable &&
+            !this.content.options.disableDblClickEditor
+        ) {
             this.row.viewport.cellEditing?.startEditing(this);
         }
     }
