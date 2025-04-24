@@ -3,6 +3,11 @@ const initGrid = data => {
         dataTable: {
             columns: data
         },
+        rendering: {
+            columns: {
+                distribution: 'mixed'
+            }
+        },
         columns: [
             {
                 id: 'InstanceId',
@@ -42,6 +47,7 @@ const initGrid = data => {
                 header: {
                     format: 'Health'
                 },
+                width: '100px',
                 useHTML: true,
                 cells: {
                     formatter: function () {
