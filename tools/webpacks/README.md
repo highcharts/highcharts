@@ -35,7 +35,7 @@ There are three reasons to change something in the webpacks folder:
 Adding modules
 --------------
 
-Not every module requires changes in Webpack:
+Not every new module requires changes in Webpack:
 
 * [Adding a self-contained module](#adding-a-self-contained-module)
 
@@ -50,7 +50,7 @@ If the module requires other modules (or products) to function properly, just ma
 The order of the `@requires` tags is important and should follow the logical dependencies.
 Circular dependencies must be avoided.
 
-#### Example
+**Example:**
 
 ```TypeScript
 // File: ts/masters/module/example.src.ts
@@ -82,7 +82,7 @@ In our example the `example.src.ts` module requires the Highcharts namespace fro
 If you module provides shared code required by other modules, you have to define the relationship in `externals.json`.
 This helps Webpack to make the correct decision to decided when to bundle the code and when to expect the code on the product namespace.
 
-#### Example
+**Example:**
 
 ```TypeScript
 // File: ts/masters/module/example.src.ts
@@ -132,29 +132,121 @@ export default Highcharts;
 Updating a module with shared code
 ----------------------------------
 
-@TODO
+Webpack provides an callback option where one can define dynamically, whether a file for the current bundle should be included.
+Our callback system can be found in `externals.mjs` with the related definitions in `externals.json`.
 
-In `externals.json` you define which code files should go into which bundle and
-be accessible under a certain namespace path. The root namespace should not be
-defined to keep the flexibility over multiple products.
+In `externals.json` you define which code files should go into which bundle and otherwise be accessible under a certain namespace path.
+The root namespace should not be defined to keep the flexibility over multiple product namespaces.
 
-Each entry is an object to provide:
-- `files`: List all imports relative to "code/es-modules".
-- `included`: Only module masters that are listed in the "included" option will
-  bundle the listed files if they are referenced as imports. An empty array
-  defaults to the default product master (`highcharts`).
-- `namespacePath`: This reflects the namespace assignment in the masters files
-  (the ones in `included`).
-  * A leading dot will be replaced with the shared namespace.
-  * A `{name}` pattern will be replaced with the imports file name without the
-    file extension.
+Each entry is an object with the following properties:
+
+* `files`: Defines the matches that are covered by this entry.
+
+* `included`: Defines the masters files that should bundle the covered file matches.
+  An empty array defaults to the default product master (`highcharts`).
+
+* `namespacePath`: This point to the namespace property when the files are not bundled.
+  - It reflects the namespace assignment that happens in the masters files (the ones in `included`).
+  - A leading dot will be replaced with the shared product namespace.
+  - A `{name}` pattern will be replaced with the imports file name (without file extension).
+  - If the export of a file is merged into the namespace root itself, then you can keep the namespace empty.
+
+**Examples:**
+
+```JSON
+[
+    {
+        "files": [
+            "Stock/Indicators/SMA/SMAIndicator"
+        ],
+        "included": [
+            "module/stock"
+        ],
+        "namespace": ".Series.types.sma"
+    },
+    {
+        "files": [
+            "Shared/TimeBase",
+        ],
+        "included": [], // = highcharts
+        "namespace": ".Time"
+    },
+    {
+        "files": [
+            "Core/Utilities"
+        ],
+        "included": [],
+        "namespace": "" // Utilities properties are part of the namespace itself.
+    }
+]
+```
 
 
 Adding a product
 ----------------
 
-@TODO
+Completely new products will usually need a new configuration, that contains:
 
+* The target folder to place bundles in.
+
+* Information about the bundle structure.
+
+* The externals callback for complex products with module system.
+
+* Plugins to adjust masters doclet and bundle structure.
+
+**Example:**
+
+```JavaScript
+const masterFile = './code/product/es-modules/masters/product.src.js'.replaceAll(Path.sep, Path.posix.sep);
+const masterPath = Path.posix.relative('./code/product/es-modules/masters/', masterFile);
+const masterName = masterPath.replace(/(?:\.src)?\.js$/u, '');
+export default [{
+    entry: masterFile,
+    experiments: { outputModule: true },
+    externals = [(info) => {
+        const contextPath = FSLib.path([info.context, info.request], true);
+        if (contextPath.includes('masters')) {
+            return makeExternals(
+                info,
+                masterName,
+                mastersFolder,
+                namespace,
+                'module-import'
+            );
+        } else {
+            return resolveExternals(
+                info,
+                masterName,
+                sourceFolder,
+                namespace,
+                productMasters[0],
+                'module-import'
+            );
+        }
+    }],
+    mode: 'production',
+    module: { rules: [ {
+        test: /\.src\.js$/u,
+        exclude: /node_modules/u,
+        use: {
+            loader: Path.posix.join(import.meta.dirname, 'plugins/MastersLoader.mjs'),
+            options: {
+                mastersFolder: Path.posix.dirname(mastersFile),
+                requirePrefix: 'highcharts'
+            }
+        }
+    } ] },
+    output: {
+        filename: masterPath,
+        globalObject: 'this',
+        library: { type: 'modern-module' },
+        module: true,
+        path: Path.resolve('./code/product/esm/')
+    },
+    plugins: [new ProductMetaPlugin({ productName: 'Product' })]
+}];
+```
 
 
 Fixing a Webpack bug
@@ -166,7 +258,9 @@ Before hunting for the bug, take a minute to understand our plugins.
   In `externals.json` can you map imports to the namespace and modules.
 
 * `plugins/MastersLoader.mjs`: This is a Webpack loader to prepare masters files for ESM bundling.
-  It adds all `@requires` of a master file as imports to auto-resolve.
+  It adds all `@requires` modules of a master file as imports to auto-resolve.  
+  Webpack will automatically reduce the imports to avoid any double bundling.
+  The imports then can be picked up in the externals callback to make them mandatory external as in `highcharts.webpack.mjs`.
 
 * `plugins/Error16Plugin.mjs`: The Webpack plugin adds error 16 to product UMD bundles.
    It gets raised when multiple products with the same namespace are loaded.
