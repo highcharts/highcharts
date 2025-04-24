@@ -4393,7 +4393,8 @@ class Series {
             // directly after chart initialization, or when applying responsive
             // rules (#6912).
             animation = series.finishedAnimating && { animation: false },
-            kinds = {} as Record<string, number>;
+            kinds = {} as Record<string, number>,
+            dataOptions = options.data || options.dataTable;
         let seriesOptions: SeriesOptions,
             n,
             keepProps = Series.keepProps.slice(),
@@ -4433,13 +4434,13 @@ class Series {
                 keepProps.push(key + 'Data');
             });
 
-            if (options.data) {
+            if (dataOptions) {
                 // `setData` uses `dataSorting` options so we need to update
                 // them earlier
                 if (options.dataSorting) {
                     extend(series.options.dataSorting, options.dataSorting);
                 }
-                this.setData(options.data as any, false);
+                this.setData(dataOptions as any, false);
             }
         } else {
             this.dataTable.modified = this.dataTable;
