@@ -261,12 +261,12 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
     // .highcharts-tooltip-container svg { vertical-align: top; }, but still
     // there will be a difference of:
     // - Chrome v135: ~1.5 px
-    // - Firefox v128esr: 2 px
+    // - Firefox v128esr: 2 px (~2.25 px on Linux/CI)
     const magicNumber = 5;
     assert.close(
         chart.yAxis[0].toPixels(point.y) + chartBox.top,
         tooltipClient.bottom - magicNumber,
-        1,
+        2,
         `Tooltip with outside and split properties set to true should be
         rendered properly - y position (#17720).`
     );
