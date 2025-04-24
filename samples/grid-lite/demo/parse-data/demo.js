@@ -26,30 +26,28 @@ const initGrid = data => {
             columnId: 'HealthIndicator',
             format: 'Health'
         }],
-        columns: [
-            {
-                id: 'UsedGB',
-                cells: {
-                    formatter: function () {
-                        return `${this.value}GB / ${this.row.data.SizeGB}GB`;
-                    }
-                }
-            },
-            {
-                id: 'HealthIndicator',
-                width: '100px',
-                useHTML: true,
-                cells: {
-                    formatter: function () {
-                        const val = this.value;
-                        return `<img
-                            src='https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${val.toLowerCase()}-ico.${val === 'Critical' ? 'png' : 'svg'}'
-                            alt='${val}'
-                        />`;
-                    }
+        columns: [{
+            id: 'UsedGB',
+            cells: {
+                formatter: function () {
+                    return `${this.value}GB / ${this.row.data.SizeGB}GB`;
                 }
             }
-        ]
+        },
+        {
+            id: 'HealthIndicator',
+            width: '100px',
+            className: 'test',
+            cells: {
+                formatter: function () {
+                    const val = this.value;
+                    return `<img
+                        src='https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${val.toLowerCase()}-ico.${val === 'Critical' ? 'png' : 'svg'}'
+                        alt='${val}'
+                    />`;
+                }
+            }
+        }]
     });
 };
 
@@ -60,7 +58,9 @@ const initGrid = data => {
     // Fetch JSON data from external source
     const instances = await fetch(
         'https://demo-live-data.highcharts.com/instances.json'
-    ).then(response => response.json());
+    )
+        .then(response => response.json())
+        .catch(err => console.log(err));
 
     // The properties we would like to extract from the JSON
     const fields = [
@@ -74,7 +74,7 @@ const initGrid = data => {
     ];
 
     // Parse the properties to a data format that Grid can consume (https://www.highcharts.com/docs/grid/understanding-grid#datatable)
-    instances.forEach(instance => {
+    (instances || []).forEach(instance => {
         fields.forEach(field => {
             const keys = field.split('.');
             const fieldName = keys[keys.length - 1];
