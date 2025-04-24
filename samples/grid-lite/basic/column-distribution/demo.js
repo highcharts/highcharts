@@ -1,4 +1,4 @@
-const grid = Grid.grid('container', {
+Grid.grid('container', {
     dataTable: {
         columns: {
             product: Array.from({ length: 40 }, (_, i) => `A${i}`),
@@ -42,24 +42,4 @@ const grid = Grid.grid('container', {
             format: 'undefined width'
         }
     }]
-});
-
-document.getElementById('select-distr').addEventListener('change', e => {
-    grid.update({
-        rendering: {
-            columns: {
-                distribution: e.target.value
-            }
-        }
-    });
-});
-
-document.getElementById('cbx-virt').addEventListener('change', e => {
-    grid.update({
-        rendering: {
-            rows: {
-                virtualization: e.target.checked
-            }
-        }
-    });
 });
