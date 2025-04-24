@@ -79,6 +79,89 @@ Note that `className` and `format` support templating as described in [Templatin
 
 Suppose you need more advanced formatting that is not supported through templating. Use the `formatted` callback function instead. As in **Highcharts Core**, we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)
 
+## Width
+
+Column widths in **Highcharts Grid** are controlled by the distribution strategy. This strategy, set through the [`rendering.columns.distribution`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnsSettings) option, defines how columns should be sized and how they behave when resizing the grid. The distribution can be explicitly set to `'mixed'`, `'full'`, or `'fixed'`. If not set, the grid automatically selects a suitable strategy based on column configuration.
+
+### Default Strategy Selection
+
+When `rendering.columns.distribution` is left `undefined`:
+
+- **`'full'`** is automatically selected if **no columns** specify a `width` option.
+- **`'mixed'`** is automatically selected if **at least one column** specifies a `width` option.
+
+This automatic selection simplifies configuration, as specifying widths for columns immediately enables mixed distribution.
+
+### Mixed Distribution Strategy (`'mixed'`)
+
+Use the mixed distribution when you want explicit control over individual column widths:
+
+- **Defined via**: each column’s `columns[].width` option:
+  - **Number or a string ending in `px`**: interpreted as pixels
+  - **String ending in `%`**: percentage of the table width
+- **Behavior**:
+  - Columns with defined `width` use their specified pixel or percentage value.
+  - Columns without defined `width` evenly share the remaining space, respecting each column’s `minWidth`.
+  - **Resizing**: Drag-resizing converts the widths of both the column to the left and the column to the right of the drag handle to fixed pixel values.
+
+```js
+Grid.grid('container', {
+  rendering: {
+    columns: {
+      distribution: 'mixed'
+    }
+  },
+  columns: [{
+    id: 'product',
+    width: 150 // static 150 px
+  }, {
+    id: 'price',
+    width: '20%' // 20% of table
+  }, {
+    id: 'stock'
+    // no width set, covers remaining space
+  }],
+  ...
+});
+```
+
+### Full Distribution Strategy (`'full'`)
+
+Use the full distribution when columns should proportionally fill the available table width:
+
+- **Defined via**: initial measurement of columns using CSS, stored as a ratio. Equally distributed if not defined.
+- **Behavior**:
+  - All columns proportionally share table width based on their initial CSS-measured widths.
+  - The **last column** fills remaining space (logs a warning if CSS widths exceed 100%).
+  - **Resizing**: Adjusting one column resizes both it and the adjacent column proportionally, while other columns maintain their positions and proportions.
+
+```css
+.hcg-column[data-column-id="product"] {
+    width: 50%;
+}
+```
+
+### Fixed Distribution Strategy (`'fixed'`)
+
+Use fixed distribution to keep columns at strictly defined widths:
+
+- **Defined via**: single-time measurement using CSS (defaults to 100 px).
+- **Behavior**:
+  - Columns retain their initial set pixel widths.
+  - **Resizing**: Only the dragged column changes width, causing columns to the right to be moved accordingly.
+
+```css
+.hcg-column[data-column-id="product"] {
+    width: 200px;
+}
+```
+
+### Custom Distribution Strategy
+
+If the provided distribution strategies do not meet your requirements, you can define a custom distribution strategy. You can achieve this by either modifying an existing strategy through inheritance or creating a completely new one by extending the abstract column strategy.
+
+See an example of extending the existing `'mixed'` distribution strategy [here](https://jsfiddle.net/BlackLabel/u2v4p6cd/).
+
 ## Sorting
 
 ```js
