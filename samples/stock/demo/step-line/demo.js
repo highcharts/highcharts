@@ -23,7 +23,7 @@
             opposite: false,
             labels: {
                 align: 'left',
-                format: '{value:,.2f}'
+                x: 0
             }
         },
 
