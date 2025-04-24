@@ -21,6 +21,9 @@
  *
  * */
 
+import type Column from '../Column';
+import type TableCell from '../Body/TableCell';
+
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
 
@@ -44,10 +47,23 @@ const {
 class TextContent extends CellContent {
 
     private rendered: boolean = false;
+    private format?: string;
+    private formatter?: (this: TableCell) => string;
+
+    constructor (cell: TableCell) {
+        super(cell);
+        const cellOptions = cell.column.options.cells || {};
+
+        this.format =
+            cellOptions.format ??
+            TextContent.defaultFormatsForDataTypes[cell.column.dataType];
+
+        this.formatter = cellOptions.formatter;
+    }
 
     public override render(): void {
         this.destroy();
-        setHTMLContent(this.cell.htmlElement, this.format());
+        setHTMLContent(this.cell.htmlElement, this.doFormatting());
         this.rendered = true;
     }
 
@@ -68,12 +84,11 @@ class TextContent extends CellContent {
      *
      * @internal
      */
-    private format(): string {
+    private doFormatting(): string {
         const { cell } = this;
         const cellsDefaults =
             cell.row.viewport.grid.options?.columnDefaults?.cells || {};
-        const options = cell.column.options.cells || {};
-        const { format, formatter } = options;
+        const { format, formatter } = this;
         const isDefaultFormat = cellsDefaults.format === format;
         const isDefaultFormatter = cellsDefaults.formatter === formatter;
 
@@ -97,6 +112,27 @@ class TextContent extends CellContent {
         }
 
         return cellContent;
+    }
+
+}
+
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace TextContent {
+
+    /**
+     * Default formats for data types.
+     */
+    export const defaultFormatsForDataTypes: Record<Column.DataType, string> = {
+        string: '{value}',
+        number: '{value}',
+        bool: '{#if (eq value null)}{else}{#if value}✓{else}✗{/if}{/if}',
+        date: '{value:%Y-%m-%d %H:%M:%S}'
     }
 
 }

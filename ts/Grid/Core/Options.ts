@@ -77,12 +77,6 @@ export interface Options {
     columnDefaults?: ColumnOptions;
 
     /**
-     * Default options for all the columns in the grid. Can be overridden
-     * by individual column options.
-     */
-    dataTypeColumnDefaults?: Record<Column.DataType, Omit<ColumnOptions, 'dataType'>>;
-
-    /**
      * Options for individual columns.
      */
     columns?: Array<IndividualColumnOptions>;

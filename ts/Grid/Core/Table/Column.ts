@@ -159,7 +159,6 @@ class Column {
         this.dataType = this.assumeDataType();
         this.options = merge(
             grid.options?.columnDefaults ?? {},
-            grid.options?.dataTypeColumnDefaults?.[this.dataType] ?? {},
             grid.columnOptionsMap?.[id] ?? {}
         );
 
