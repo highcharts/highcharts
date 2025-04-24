@@ -32,23 +32,25 @@ Configuration Options
 
 The main boost configuration is set in the `boost` property in the chart options. See [the API](https://api.highcharts.com/highcharts/boost) for the detailed description of available options.
 
-    {
-        boost: {
-            useGPUTranslations: true,
-            // Chart-level boost when there are more than 5 series in the chart
-            seriesThreshold: 5
-        },
+```js
+{
+    boost: {
+        useGPUTranslations: true,
+        // Chart-level boost when there are more than 5 series in the chart
+        seriesThreshold: 5
+    },
 
-        title: {
-            text: 'Highcharts Boost'
-        },
+    title: {
+        text: 'Highcharts Boost'
+    },
 
-        series: [{
-            boostThreshold: 1,  // Boost when there are more than 1
-                                // point in the series.
-            data: [ [0, 1], [1, 2], [2, 3] ]
-        }]
-    };
+    series: [{
+        boostThreshold: 1,  // Boost when there are more than 1
+                            // point in the series.
+        data: [ [0, 1], [1, 2], [2, 3] ]
+    }]
+};
+```
 
 _Configuration for a boosted line chart._
 
