@@ -23,6 +23,7 @@ import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
+import type InfoRegionsComponent from '../Components/InfoRegionsComponent';
 
 /* *
  *
@@ -99,10 +100,10 @@ export interface AccessibilityPointOptions {
 
 export interface AccessibilityScreenReaderSectionOptions {
     afterChartFormat: string;
-    afterChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
+    afterChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>;
     axisRangeDateFormat: string;
     beforeChartFormat: string;
-    beforeChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
+    beforeChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>;
     onPlayAsSoundClick?: ScreenReaderClickCallbackFunction;
     onViewDataTableClick?: ScreenReaderClickCallbackFunction;
 }
@@ -155,7 +156,11 @@ export interface PointAccessibilityOptionsObject {
 }
 
 export interface ScreenReaderClickCallbackFunction {
-    (evt: MouseEvent, chart?: Accessibility.ChartComposition): void;
+    (
+        evt: MouseEvent,
+        chart?: Accessibility.ChartComposition,
+        ctx?: GlobalEventHandlers
+    ): void;
 }
 
 export interface ScreenReaderFormatterCallbackFunction<T, U = void> {
