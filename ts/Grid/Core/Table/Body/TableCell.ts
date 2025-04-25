@@ -234,6 +234,7 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
 
+        this.content?.destroy();
         this.content.add();
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);

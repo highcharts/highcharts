@@ -49,8 +49,10 @@ class CheckboxContent extends CellContent {
     }
 
     private onChange = (e: Event): void => {
-        // TODO: Handle data table update
-        console.log('Checkbox changed', (e.target as HTMLInputElement).checked);
+        this.cell.setValue(
+            (e.target as HTMLInputElement).checked,
+            true
+        );
     }
 
 }

@@ -71,8 +71,10 @@ class SelectContent extends CellContent {
     }
 
     private onChange = (e: Event): void => {
-        // TODO: Handle data table update
-        console.log('Select changed', (e.target as HTMLSelectElement).value);
+        this.cell.setValue(
+            (e.target as HTMLSelectElement).value,
+            true
+        );
     }
 
 }
