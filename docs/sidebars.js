@@ -293,6 +293,13 @@ module.exports = {
         ],
         'Flutter': [
             'flutter/getting-started'
+        ],
+        'React integration (beta)': [
+            'react/getting-started',
+            'react/series-and-chart-types',
+            'react/options',
+            'react/options-component-format',
+            'react/component-children',
         ]
     }
 };

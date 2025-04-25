@@ -3363,18 +3363,29 @@ class Series {
             vertAxis = this.xAxis;
         }
 
-        return {
+        const params = {
+            scale: 1,
             translateX: horAxis ? horAxis.left : chart.plotLeft,
             translateY: vertAxis ? vertAxis.top : chart.plotTop,
+            name
+        };
+
+        fireEvent(this, 'getPlotBox', params);
+
+        const { scale, translateX, translateY } = params;
+
+        return {
+            translateX,
+            translateY,
             rotation: inverted ? 90 : 0,
             rotationOriginX: inverted ?
-                (horAxis.len - vertAxis.len) / 2 :
+                scale * (horAxis.len - vertAxis.len) / 2 :
                 0,
             rotationOriginY: inverted ?
-                (horAxis.len + vertAxis.len) / 2 :
+                scale * (horAxis.len + vertAxis.len) / 2 :
                 0,
-            scaleX: inverted ? -1 : 1, // #1623
-            scaleY: 1
+            scaleX: inverted ? -scale : scale, // #1623
+            scaleY: scale
         };
     }
 
