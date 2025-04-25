@@ -535,7 +535,7 @@ QUnit.test('General marker-clusters', function (assert) {
             {
                 type: 'scatter',
                 marker: {
-                    symbol: url.replace(')', '?' + Date.now() + ')')
+                    symbol: url.replace(')', '?mc_' + Date.now() + ')')
                 },
                 animation: {
                     duration: 0
