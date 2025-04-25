@@ -14,6 +14,9 @@ Grid.grid('container', {
                 'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
                 'Oranges URL', 'Grapes URL', 'Strawberries URL',
                 'Blueberries URL', 'Cherries URL', 'Mangoes URL'
+            ],
+            country: [
+                'PL', 'NL', 'RO', 'EC', 'ES', 'IT', 'DE', 'PL', 'TR', 'BR'
             ]
         }
     },
@@ -99,5 +102,22 @@ Grid.grid('container', {
             },
             notification: 'The value must contain "URL"'
         }]
+    }, {
+        id: 'country',
+        dataType: 'string',
+        rendering: {
+            type: 'select',
+            options: [
+                { value: 'PL', label: 'Poland' },
+                { value: 'NL', label: 'Netherlands' },
+                { value: 'RO', label: 'Romania' },
+                { value: 'EC', label: 'Ecuador' },
+                { value: 'ES', label: 'Spain' },
+                { value: 'IT', label: 'Italy' },
+                { value: 'DE', label: 'Germany' },
+                { value: 'TR', label: 'Turkey' },
+                { value: 'BR', label: 'Brazil' }
+            ]
+        }
     }]
 });
