@@ -1,6 +1,6 @@
 /* *
  *
- *  Checkbox Cell Renderer abstract class
+ *  Checkbox Cell Renderer class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -23,8 +23,6 @@
 
 import CellContent from '../../../Core/Table/CellContent/CellContent.js';
 
-import GridUtils from '../../../Core/GridUtils.js';
-
 
 /* *
  *
@@ -33,15 +31,10 @@ import GridUtils from '../../../Core/GridUtils.js';
  * */
 
 class CheckboxContent extends CellContent {
-    
-    public options: CellContent.Options = {
-        type: 'checkbox',
-        disableDblClickEditor: true
-    };
 
     private input?: HTMLInputElement;
 
-    public override render(): void {
+    public override add(): void {
         this.input = document.createElement('input');
         this.input.type = 'checkbox';
         this.input.checked = !!this.cell.value;

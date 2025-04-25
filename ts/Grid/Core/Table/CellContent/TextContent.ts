@@ -1,6 +1,6 @@
 /* *
  *
- *  Text Cell Renderer abstract class
+ *  Text Cell Renderer class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -46,30 +46,12 @@ const {
 
 class TextContent extends CellContent {
 
-    // TODO: This options should be moved to the Column instance, so that they
-    // are not duplicated for each cell.
-    public override options: TextContent.Options = {
-        type: 'text'
-    };
-
     private rendered: boolean = false;
-    private format?: string;
-    private formatter?: (this: TableCell) => string;
 
-    constructor (cell: TableCell) {
-        super(cell);
-        const cellOptions = cell.column.options.cells || {};
 
-        this.format =
-            cellOptions.format ??
-            TextContent.defaultFormatsForDataTypes[cell.column.dataType];
-
-        this.formatter = cellOptions.formatter;
-    }
-
-    public override render(): void {
+    public override add(): void {
         this.destroy();
-        setHTMLContent(this.cell.htmlElement, this.doFormatting());
+        setHTMLContent(this.cell.htmlElement, this.format());
         this.rendered = true;
     }
 
@@ -90,13 +72,11 @@ class TextContent extends CellContent {
      *
      * @internal
      */
-    private doFormatting(): string {
+    private format(): string {
         const { cell } = this;
         const cellsDefaults =
             cell.row.viewport.grid.options?.columnDefaults?.cells || {};
-        const { format, formatter } = this;
-        const isDefaultFormat = cellsDefaults.format === format;
-        const isDefaultFormatter = cellsDefaults.formatter === formatter;
+        const { format, formatter } = cell.column.options.cells || {};
 
         let value = cell.value;
         if (!defined(value)) {
@@ -104,6 +84,15 @@ class TextContent extends CellContent {
         }
 
         let cellContent = '';
+
+        if (!format && !formatter) {
+            return cell.format(
+                TextContent.defaultFormatsForDataTypes[cell.column.dataType]
+            );
+        }
+
+        const isDefaultFormat = cellsDefaults.format === format;
+        const isDefaultFormatter = cellsDefaults.formatter === formatter;
 
         if (isDefaultFormat && isDefaultFormatter) {
             cellContent = formatter ?
@@ -130,10 +119,6 @@ class TextContent extends CellContent {
  * */
 
 namespace TextContent {
-
-    export interface Options extends CellContent.Options {
-        type: 'text';
-    }
 
     /**
      * Default formats for data types.

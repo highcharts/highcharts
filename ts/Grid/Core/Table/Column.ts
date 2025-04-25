@@ -37,8 +37,11 @@ import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
 import TableCell from './Body/TableCell';
 
-const { merge } = Utils;
 const { makeHTMLElement } = GridUtils;
+const {
+    merge,
+    fireEvent
+} = Utils;
 
 
 /* *
@@ -163,6 +166,8 @@ class Column {
         );
 
         this.width = this.getInitialWidth();
+
+        fireEvent(this, 'afterInit');
     }
 
 
@@ -182,7 +187,7 @@ class Column {
     /**
      * Creates a cell content instance.
      */
-    public initCellContent(cell: TableCell): CellContent {
+    public createCellContent(cell: TableCell): CellContent {
         return new TextContent(cell);
     }
 

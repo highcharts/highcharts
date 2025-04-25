@@ -24,15 +24,15 @@
 
 import type Column from '../../Core/Table/Column';
 import type CellContent from '../../Core/Table/CellContent/CellContent';
-import type CellContentType from './CellContentType';
+import type CellRendererType from './CellRendererType';
 import type TableCell from '../../Core/Table/Body/TableCell';
 
+import CellRendererRegistry from './CellRendererRegistry.js';
 import Globals from '../../Core/Globals.js';
-import TextContent from '../../Core/Table/CellContent/TextContent.js';
-import CheckboxContent from './ContentTypes/CheckboxContent.js';
 
 import U from '../../../Core/Utilities.js';
 const {
+    addEvent,
     pushUnique
 } = U;
 
@@ -46,7 +46,7 @@ const {
 /**
  * @internal
  */
-namespace CellContentProComposition {
+namespace CellRenderersComposition {
 
     /**
      * Extends the grid classes with cell editing functionality.
@@ -57,22 +57,26 @@ namespace CellContentProComposition {
     export function compose(
         ColumnClass: typeof Column
     ): void {
-        if (!pushUnique(Globals.composed, 'CellContentPro')) {
+        if (!pushUnique(Globals.composed, 'CellRenderers')) {
             return;
         }
 
-        ColumnClass.prototype.initCellContent = function (cell: TableCell): CellContent {
-            switch (this.dataType) {
-                case 'bool': // TODO: add more conditions - e.g. if editable
-                    return new CheckboxContent(cell);
-                default:
-                    return new TextContent(cell);
-            }
-        }
+        addEvent(ColumnClass, 'afterInit', afterColumnInit);
+
+        ColumnClass.prototype.createCellContent = createCellContent;
     }
 
-}
+    function afterColumnInit(this: Column): void {
+        this.cellRenderer = new CellRendererRegistry.types[
+            this.options.rendering?.type ||
+            CellRendererRegistry.dataTypeDefaults[this.dataType]
+        ](this);
+    }
 
+    function createCellContent(this: Column, cell: TableCell): CellContent {
+        return this.cellRenderer.render(cell);
+    }
+}
 
 /* *
  *
@@ -82,7 +86,13 @@ namespace CellContentProComposition {
 
 declare module '../../Core/Options' {
     interface ColumnOptions {
-        rendering?: CellContentType['options'];
+        rendering?: CellRendererType['options'];
+    }
+}
+
+declare module '../../Core/Table/Column' {
+    export default interface Column {
+        cellRenderer: CellRendererType;
     }
 }
 
@@ -93,4 +103,4 @@ declare module '../../Core/Options' {
  *
  * */
 
-export default CellContentProComposition;
+export default CellRenderersComposition;

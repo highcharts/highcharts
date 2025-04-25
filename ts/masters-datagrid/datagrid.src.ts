@@ -43,9 +43,16 @@ import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingCompositi
 import Dash3Compatibility from '../Grid/Pro/Dash3Compatibility.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
-import CellContentProComposition from '../Grid/Pro/CellRendering/CellContentProComposition.js';
+import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 
-// Fill registries
+
+/* *
+ *
+ *  Registers Imports
+ *
+ * */
+
+// Connectors
 import '../Data/Connectors/CSVConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';
@@ -54,10 +61,17 @@ import '../Data/Modifiers/ChainModifier.js';
 import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
+
+// Compositions
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import '../Grid/Pro/Dash3Compatibility.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
+
+// Cell Renderers
+import '../Grid/Pro/CellRendering/Renderers/TextRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
+
 
 /* *
  *
@@ -153,7 +167,7 @@ CellEditingComposition.compose(G.Table, G.TableCell);
 CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 ValidatorComposition.compose(G.Table);
-CellContentProComposition.compose(G.Column);
+CellRenderersComposition.compose(G.Column);
 
 
 /* *

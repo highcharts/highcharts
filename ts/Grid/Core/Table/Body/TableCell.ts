@@ -84,7 +84,7 @@ class TableCell extends Cell {
         this.row = row;
 
         this.column.registerCell(this);
-        this.content = this.column.initCellContent(this);
+        this.content = this.column.createCellContent(this);
     }
 
 
@@ -234,7 +234,7 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
 
-        this.content.render();
+        this.content.add();
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
 

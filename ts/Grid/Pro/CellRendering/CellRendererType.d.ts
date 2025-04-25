@@ -1,6 +1,6 @@
 /* *
  *
- *  Cell Content Type
+ *  Cell Renderer Type
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -13,7 +13,6 @@
  *
  * */
 
-import TextContent from "../../Core/Table/CellContent/TextContent";
 
 /* *
  *
@@ -22,22 +21,21 @@ import TextContent from "../../Core/Table/CellContent/TextContent";
  * */
 
 /**
- * Contains all possible class types of the cell content registry.
+ * Contains all possible class types of the cell renderer registry.
  */
-export type CellContentClassType =
-    CellContentTypeRegistry[keyof CellContentTypeRegistry];
+export type CellRendererClassType =
+    CellRendererTypeRegistry[keyof CellRendererTypeRegistry];
 
 /**
  * Contains all possible types of the class registry.
  */
-export type CellContentType = CellContentClassType['prototype'];
+export type CellRendererType = CellRendererClassType['prototype'];
 
 /**
  * Describes the class registry as a record object with class name and their
  * class types (aka class constructor).
  */
-export interface CellContentTypeRegistry {
-    text: typeof TextContent;
+export interface CellRendererTypeRegistry {
     // Extend this interface with the declare module pattern.
 }
 
@@ -47,4 +45,4 @@ export interface CellContentTypeRegistry {
  *
  * */
 
-export default CellContentType;
+export default CellRendererType;
