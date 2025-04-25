@@ -27,7 +27,7 @@ import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type Types from '../../Shared/Types';
 import type DataTable from '../DataTable';
-import type { BeforeParseCallbackFunction } from './GoogleSheetsConnectorOptions';
+import type { GoogleSheetsBeforeParseCallbackFunction } from './GoogleSheetsConnectorOptions';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -167,7 +167,8 @@ class GoogleSheetsConnector extends DataConnector {
                 columnNames,
                 firstRowAsNames,
                 orientation,
-                beforeParse: beforeParse as BeforeParseCallbackFunction
+                beforeParse:
+                    beforeParse as GoogleSheetsBeforeParseCallbackFunction
             };
 
             const converter = new GoogleSheetsConverter(

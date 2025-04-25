@@ -88,7 +88,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
  * before parsing it. Must return an array of DataTable columns.
  *
  */
-export interface BeforeParseCallbackFunction {
+export interface GoogleSheetsBeforeParseCallbackFunction {
     (data: DataTable.BasicColumn[]): DataTable.BasicColumn[];
 }
 

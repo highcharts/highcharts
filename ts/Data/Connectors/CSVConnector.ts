@@ -26,7 +26,7 @@ import type DataEvent from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
 import type Types from '../../Shared/Types';
 import type DataTable from '../DataTable';
-import type { BeforeParseCallbackFunction } from './CSVConnectorOptions';
+import type { CSVBeforeParseCallbackFunction } from './CSVConnectorOptions';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -138,7 +138,7 @@ class CSVConnector extends DataConnector {
                 columnNames,
                 firstRowAsNames,
                 orientation,
-                beforeParse: beforeParse as BeforeParseCallbackFunction
+                beforeParse: beforeParse as CSVBeforeParseCallbackFunction
             };
 
             const converter = new CSVConverter(

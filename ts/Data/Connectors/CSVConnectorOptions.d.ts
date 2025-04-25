@@ -70,7 +70,7 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
  * Callback function allowing modification of the data before parsing it.
  * Must return a valid CSV structure.
  */
-export interface BeforeParseCallbackFunction {
+export interface CSVBeforeParseCallbackFunction {
     (csv: string): string;
 }
 

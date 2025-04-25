@@ -26,11 +26,10 @@
 import type DataEvent from './DataEvent.js';
 import type DataTable from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
-import type { DataTableParserCallbackFunction } from './DataTableOptions.js';
-import type JSONConverter from './Converters/JSONConverter.js';
-import type GoogleSheetsConverter from './Converters/GoogleSheetsConverter.js';
 import type { ColumnNamesOptions } from './Connectors/JSONConnectorOptions.js';
 import type { DataModifierTypeOptions } from './Modifiers/DataModifierType.js';
+
+import DataConnector from './Connectors/DataConnector.js';
 
 import ColumnUtils from './ColumnUtils.js';
 const { setLength, splice } = ColumnUtils;
@@ -144,11 +143,7 @@ class DataTableCore {
 
     public dataModifier?: DataModifierTypeOptions;
 
-    public beforeParse?: DataTableParserCallbackFunction<
-    | JSONConverter.Data
-    | string
-    | GoogleSheetsConverter.GoogleSpreadsheetJSON
-    >;
+    public beforeParse?: DataConnector.BeforeParseCallbackFunction;
 
     /* *
      *

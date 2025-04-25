@@ -21,10 +21,10 @@
  * */
 
 import type Types from '../Shared/Types';
-import type JSONConverter from './Converters/JSONConverter';
-import type GoogleSheetsConverter from './Converters/GoogleSheetsConverter';
 import type { ColumnNamesOptions } from './Connectors/JSONConnectorOptions';
 import type { DataModifierTypeOptions } from './Modifiers/DataModifierType';
+
+import DataConnector from './Connectors/DataConnector.js';
 
 
 /* *
@@ -107,11 +107,7 @@ export interface DataTableOptions {
      * A custom callback function that parses the data table data. Supported
      * connectors are: JSON, CSV and Google Spreadsheets.
      */
-    beforeParse?: DataTableParserCallbackFunction<
-    | JSONConverter.Data
-    | string
-    | GoogleSheetsConverter.GoogleSpreadsheetJSON
-    >;
+    beforeParse?: DataConnector.BeforeParseCallbackFunction;
 }
 
 

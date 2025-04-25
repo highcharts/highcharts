@@ -104,7 +104,7 @@ export interface ColumnNamesOptions {
  *
  * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-enable-polling/ | JSON Connector with beforeParse and enablePolling }
  */
-export interface BeforeParseCallbackFunction {
+export interface JSONBeforeParseCallbackFunction {
     (data: JSONConverter.Data): JSONConverter.Data;
 }
 

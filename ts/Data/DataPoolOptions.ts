@@ -110,12 +110,12 @@ export interface DataPoolConnectorOptions
      *         },
      *         dataTables: [{
      *             id: "data-table-0",
-     *             parser: function (payload) {
+     *             beforeParse: function (payload) {
      *                 return payload;
      *             }
      *         }, {
      *             id: "data-table-1",
-     *             parser: function (payload) {
+     *             beforeParse: function (payload) {
      *                 payload.forEach((data, index) => {
      *                     payload[index][3] = payload[index][3] -= 10;
      *                 });

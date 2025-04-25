@@ -23,7 +23,7 @@ import type DataEvent from '../DataEvent';
 import type Types from '../../Shared/Types';
 import type JSONConnectorOptions from './JSONConnectorOptions';
 import type DataTable from '../DataTable';
-import type { BeforeParseCallbackFunction } from './JSONConnectorOptions';
+import type { JSONBeforeParseCallbackFunction } from './JSONConnectorOptions';
 
 import DataConnector from './DataConnector.js';
 import U from '../../Core/Utilities.js';
@@ -133,7 +133,7 @@ class JSONConnector extends DataConnector {
                 columnNames,
                 firstRowAsNames,
                 orientation,
-                beforeParse: beforeParse as BeforeParseCallbackFunction
+                beforeParse: beforeParse as JSONBeforeParseCallbackFunction
             };
 
             const converter = new JSONConverter(

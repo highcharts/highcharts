@@ -26,6 +26,9 @@ import type { DataConnectorOptions, MetaColumn, Metadata } from './DataConnector
 import type DataEvent from '../DataEvent';
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
 import type DataTableOptions from '../DataTableOptions';
+import type { JSONBeforeParseCallbackFunction } from './JSONConnectorOptions';
+import type { CSVBeforeParseCallbackFunction } from './CSVConnectorOptions';
+import type { GoogleSheetsBeforeParseCallbackFunction } from './GoogleSheetsConnectorOptions';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
@@ -102,7 +105,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * The DataConverter responsible for handling conversion of provided data to
      * a DataConnector.
      */
-    public abstract converter?: DataConverter;
+    public converter?: DataConverter;
 
     /**
      * Metadata to describe the connector and the content of columns.
@@ -427,6 +430,15 @@ namespace DataConnector {
      * Option of the DataConnector.
      */
     export type UserOptions = Partial<DataConnectorOptions>;
+
+    /**
+     * A custom callback function that parses the data table data. Supported
+     * connectors are: JSON, CSV and Google Spreadsheets.
+     */
+    export type BeforeParseCallbackFunction =
+        JSONBeforeParseCallbackFunction
+        | CSVBeforeParseCallbackFunction
+        | GoogleSheetsBeforeParseCallbackFunction;
 
     /* *
      *
