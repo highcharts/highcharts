@@ -57,7 +57,7 @@ const initGrid = data => {
 (async () => {
     const data = {};
 
-    // Load data
+    // Fetch JSON data from external source
     const instances = await fetch(
         'https://demo-live-data.highcharts.com/instances.json'
     ).then(response => response.json());
