@@ -73,7 +73,7 @@ const initGrid = data => {
         'HealthIndicator'
     ];
 
-    // Parse data
+    // Parse the properties to a data format that Grid can consume (https://www.highcharts.com/docs/grid/understanding-grid#datatable)
     instances.forEach(instance => {
         fields.forEach(field => {
             const keys = field.split('.');
