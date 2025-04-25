@@ -4,8 +4,8 @@ const initGrid = data => {
             columns: data
         },
         rendering: {
-            columns: {
-                distribution: 'mixed'
+            rows: {
+                strictHeights: true
             }
         },
         header: [{
@@ -37,12 +37,12 @@ const initGrid = data => {
         {
             id: 'HealthIndicator',
             width: '100px',
-            className: 'test',
+            className: 'text-center',
             cells: {
                 formatter: function () {
                     const val = this.value;
                     return `<img
-                        src='https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${val.toLowerCase()}-ico.${val === 'Critical' ? 'png' : 'svg'}'
+                        src='https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${val.toLowerCase()}-ico.svg'
                         alt='${val}'
                     />`;
                 }
