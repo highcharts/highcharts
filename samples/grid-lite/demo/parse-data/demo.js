@@ -62,7 +62,7 @@ const initGrid = data => {
         'https://demo-live-data.highcharts.com/instances.json'
     ).then(response => response.json());
 
-    // Fields that we would like to extract from data
+    // The properties we would like to extract from the JSON
     const fields = [
         'InstanceId',
         'InstanceType',
