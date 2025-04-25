@@ -14,6 +14,7 @@ import Error16Plugin from './plugins/Error16Plugin.mjs';
 import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
 import { loadExternalsJSON, makeExternals, resolveExternals } from './externals.mjs';
+import { getMasterName } from './utilities.mjs';
 
 
 /* *
@@ -41,20 +42,6 @@ const productMasters = [
 ];
 
 loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
-
-
-/* *
- *
- *  Functions
- *
- * */
-
-
-function getMasterName(masterPath) {
-    return masterPath
-        .replace(/(?:\.src)?\.js$/u, '')
-        .replaceAll(Path.sep, Path.posix.sep);
-}
 
 
 /* *

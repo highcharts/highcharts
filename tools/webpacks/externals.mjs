@@ -65,6 +65,41 @@ function createUMDConfig(namespace, ...pathMembers) {
 
 
 /**
+ * Decorates an import path to make sure it follows specifications.
+ *
+ * @param {string} path
+ * Import path to decorate.
+ *
+ * @param {boolean} [asCJS]
+ * Flag to indicate that the import path is for a CommonJS module.
+ *
+ * @return {string}
+ * Decorated import path according to specifications.
+ */
+function decorateImportPath(
+    path,
+    asCJS
+) {
+
+    if (asCJS) {
+        const extMatch = path.match(/\.[jt]sx?$/u);
+        if (extMatch) {
+            path = path.substring(0, path.length - extMatch[0].length);
+        }
+    } else {
+        if (!path.match(/^[.]{1,2}\//u)) {
+            path = `./${path}`;
+        }
+        if (!path.match(/\.[jt]sx?$/u)) {
+            path += '.js';
+        }
+    }
+
+    return path;
+}
+
+
+/**
  * Loads a configuration file with an array of external descriptions. This gets
  * consumed by internallt by `resolveExternals`.
  *
@@ -152,41 +187,6 @@ export async function makeExternals(
                 [externalsType]: [namespace, namespaceName]
             };
     }
-}
-
-
-/**
- * Decorates an import path to make sure it follows specifications.
- *
- * @param {string} path
- * Import path to decorate.
- *
- * @param {boolean} [asCJS]
- * Flag to indicate that the import path is for a CommonJS module.
- *
- * @return {string}
- * Decorated import path according to specifications.
- */
-function decorateImportPath(
-    path,
-    asCJS
-) {
-
-    if (asCJS) {
-        const extMatch = path.match(/\.[jt]sx?$/u);
-        if (extMatch) {
-            path = path.substring(0, path.length - extMatch[0].length);
-        }
-    } else {
-        if (!path.match(/^[.]{1,2}\//u)) {
-            path = `./${path}`;
-        }
-        if (!path.match(/\.[jt]sx?$/u)) {
-            path += '.js';
-        }
-    }
-
-    return path;
 }
 
 
