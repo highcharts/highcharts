@@ -8,8 +8,8 @@
     padding: 0 20px;
 }
 
-.hcg-table td[data-column-id="HealthIndicator"],
-.hcg-table th[data-column-id="HealthIndicator"] span {
+.hcg-table td.text-center,
+.hcg-table th.text-center span {
     text-align: center;
 }
 
