@@ -104,10 +104,10 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite --browsers ChromeHeadless
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite --browsers ChromeHeadless
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite --browsers ChromeHeadless
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite --browsers ChromeHeadless
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
 
       - name: Checkout current branch
         uses: actions/checkout@v4
@@ -127,10 +127,10 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --browsers ChromeHeadless --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --browsers ChromeHeadless --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --browsers ChromeHeadless --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --browsers ChromeHeadless --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
 
       - name: Comment on PR and upload visual test result
         run: |
