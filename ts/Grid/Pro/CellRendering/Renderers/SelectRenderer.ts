@@ -42,7 +42,7 @@ const {
  * */
 
 /**
- * Renderer for the Select.
+ * Renderer for the Select in a column..
  */
 class SelectRenderer extends CellRenderer {
 

@@ -42,7 +42,7 @@ const {
  * */
 
 /**
- * Renderer for the Text.
+ * Renderer for the Text in a column..
  */
 class TextRenderer extends CellRenderer {
 

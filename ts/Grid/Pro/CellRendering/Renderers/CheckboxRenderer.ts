@@ -42,7 +42,7 @@ const {
  * */
 
 /**
- * Renderer for the Checkbox.
+ * Renderer for the Checkbox in a column.
  */
 class CheckboxRenderer extends CellRenderer {
 

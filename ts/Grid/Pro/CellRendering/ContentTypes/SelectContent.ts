@@ -32,7 +32,7 @@ import SelectRenderer from '../Renderers/SelectRenderer.js';
  * */
 
 /**
- * Represents a select type of content.
+ * Represents a select type of cell content.
  */
 class SelectContent extends CellContent {
 
@@ -40,24 +40,27 @@ class SelectContent extends CellContent {
     private optionElements: HTMLOptionElement[] = [];
 
     public override add(): void {
+        const cell = this.cell;
         const options =
             this.cell.column.options.rendering as SelectRenderer.Options;
 
         this.select = document.createElement('select');
+        this.select.name = cell.column.id + '-' + cell.row.id;
+
         for (const option of options.options) {
             const optionElement = document.createElement('option');
             optionElement.value = option.value;
             optionElement.textContent = option.label || option.value;
             optionElement.disabled = !!option.disabled;
 
-            if (this.cell.value === option.value) {
+            if (cell.value === option.value) {
                 optionElement.selected = true;
             }
 
             this.select.appendChild(optionElement);
             this.optionElements.push(optionElement);
         }
-        this.cell.htmlElement.appendChild(this.select);
+        cell.htmlElement.appendChild(this.select);
 
         this.select.addEventListener('change', this.onChange);
     }

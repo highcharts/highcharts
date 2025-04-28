@@ -23,7 +23,6 @@
 
 import CellContent from '../../../Core/Table/CellContent/CellContent.js';
 
-
 /* *
  *
  *  Class
@@ -31,17 +30,21 @@ import CellContent from '../../../Core/Table/CellContent/CellContent.js';
  * */
 
 /**
- * Represents a checkbox type of content.
+ * Represents a checkbox type of cell content.
  */
 class CheckboxContent extends CellContent {
 
     private input?: HTMLInputElement;
 
     public override add(): void {
+        const cell = this.cell;
+
         this.input = document.createElement('input');
         this.input.type = 'checkbox';
-        this.input.checked = !!this.cell.value;
-        this.cell.htmlElement.appendChild(this.input);
+        this.input.checked = !!cell.value;
+        this.input.name = cell.column.id + '-' + cell.row.id;
+
+        cell.htmlElement.appendChild(this.input);
 
         this.input.addEventListener('change', this.onChange);
     }

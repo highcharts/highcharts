@@ -26,6 +26,7 @@ import type Column from '../../Core/Table/Column';
 import type CellContent from '../../Core/Table/CellContent/CellContent';
 import type CellRendererType from './CellRendererType';
 import type TableCell from '../../Core/Table/Body/TableCell';
+import type GridUtils from '../../Core/GridUtils';
 
 import CellRendererRegistry from './CellRendererRegistry.js';
 import Globals from '../../Core/Globals.js';

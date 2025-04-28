@@ -33,7 +33,7 @@ import type CellContent from '../../Core/Table/CellContent/CellContent';
  * */
 
 /**
- * Renderer class that initialize all options.
+ * Renderer class that initialize all options per column.
  */
 abstract class CellRenderer {
 
