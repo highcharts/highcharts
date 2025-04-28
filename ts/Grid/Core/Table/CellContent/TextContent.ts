@@ -43,10 +43,12 @@ const {
  *
  * */
 
+/**
+ * Represents a text type of content.
+ */
 class TextContent extends CellContent {
 
     private rendered: boolean = false;
-
 
     public override add(): void {
         this.destroy();

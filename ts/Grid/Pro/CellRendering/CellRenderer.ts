@@ -32,6 +32,9 @@ import type CellContent from '../../Core/Table/CellContent/CellContent';
  *
  * */
 
+/**
+ * Renderer class that initialize all options.
+ */
 abstract class CellRenderer {
 
     public abstract options: CellRenderer.Options;

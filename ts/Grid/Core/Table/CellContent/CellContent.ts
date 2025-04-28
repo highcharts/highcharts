@@ -31,6 +31,9 @@ import TableCell from '../Body/TableCell.js';
  *
  * */
 
+/**
+ * Represents a cell content in the grid.
+ */
 abstract class CellContent {
 
     public readonly cell: TableCell;

@@ -31,6 +31,9 @@ import SelectRenderer from '../Renderers/SelectRenderer.js';
  *
  * */
 
+/**
+ * Represents a select type of content.
+ */
 class SelectContent extends CellContent {
 
     private select?: HTMLSelectElement;
@@ -59,6 +62,9 @@ class SelectContent extends CellContent {
         this.select.addEventListener('change', this.onChange);
     }
 
+    /**
+     * Destroy the select in the cell content.
+     */
     public destroy(): void {
         this.select?.removeEventListener('change', this.onChange);
 
@@ -70,6 +76,10 @@ class SelectContent extends CellContent {
         this.select?.remove();
     }
 
+    /**
+     * Set value when option in select is changed.
+     * @internal
+     */
     private onChange = (e: Event): void => {
         this.cell.setValue(
             (e.target as HTMLSelectElement).value,

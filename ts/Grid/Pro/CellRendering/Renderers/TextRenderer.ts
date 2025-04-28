@@ -41,6 +41,9 @@ const {
  *
  * */
 
+/**
+ * Renderer for the Text.
+ */
 class TextRenderer extends CellRenderer {
 
     public static defaultOptions: TextRenderer.Options = {

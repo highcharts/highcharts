@@ -30,6 +30,9 @@ import CellContent from '../../../Core/Table/CellContent/CellContent.js';
  *
  * */
 
+/**
+ * Represents a checkbox type of content.
+ */
 class CheckboxContent extends CellContent {
 
     private input?: HTMLInputElement;

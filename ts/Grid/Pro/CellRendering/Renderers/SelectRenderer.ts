@@ -41,6 +41,9 @@ const {
  *
  * */
 
+/**
+ * Renderer for the Select.
+ */
 class SelectRenderer extends CellRenderer {
 
     public static defaultOptions: SelectRenderer.Options = {

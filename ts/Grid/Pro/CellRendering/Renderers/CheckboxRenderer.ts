@@ -41,6 +41,9 @@ const {
  *
  * */
 
+/**
+ * Renderer for the Checkbox.
+ */
 class CheckboxRenderer extends CellRenderer {
 
     public static defaultOptions: CheckboxRenderer.Options = {

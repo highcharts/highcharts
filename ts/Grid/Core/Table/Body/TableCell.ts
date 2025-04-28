@@ -57,8 +57,14 @@ class TableCell extends Cell {
      */
     public row: TableRow;
 
+    /**
+     * The column of the cell.
+     */
     public override column: Column;
 
+    /**
+     * The cell's content.
+     */
     public readonly content: CellContent;
 
 
