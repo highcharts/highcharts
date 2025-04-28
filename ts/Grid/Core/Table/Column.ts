@@ -152,7 +152,7 @@ class Column {
         index: number
     ) {
         const { grid } = viewport;
-        
+
         this.id = id;
         this.index = index;
         this.viewport = viewport;
@@ -186,6 +186,10 @@ class Column {
 
     /**
      * Creates a cell content instance.
+     *
+     * @param cell
+     * The cell that is to be edited.
+     *
      */
     public createCellContent(cell: TableCell): CellContent {
         return new TextContent(cell);

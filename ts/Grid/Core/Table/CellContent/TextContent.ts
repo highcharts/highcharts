@@ -22,7 +22,6 @@
  * */
 
 import type Column from '../Column';
-import type TableCell from '../Body/TableCell';
 
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
@@ -59,14 +58,14 @@ class TextContent extends CellContent {
         if (!this.rendered) {
             return;
         }
-        
+
         this.cell.htmlElement.innerHTML = AST.emptyHTML;
         this.rendered = false;
     }
 
     /**
      * Returns the formatted value of the cell.
-     * 
+     *
      * @param cell
      * The cell to format the content for.
      *
@@ -128,10 +127,8 @@ namespace TextContent {
         number: '{value}',
         bool: '{#if (eq value null)}{else}{#if value}✓{else}✗{/if}{/if}',
         date: '{value:%Y-%m-%d %H:%M:%S}'
-    }
-
+    };
 }
-
 
 /* *
  *

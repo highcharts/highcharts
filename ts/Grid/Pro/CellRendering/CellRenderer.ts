@@ -35,7 +35,7 @@ import type CellContent from '../../Core/Table/CellContent/CellContent';
 abstract class CellRenderer {
 
     public abstract options: CellRenderer.Options;
-    
+
     public readonly column: Column;
 
     public constructor(column: Column) {

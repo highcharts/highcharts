@@ -66,6 +66,11 @@ namespace CellRenderersComposition {
         ColumnClass.prototype.createCellContent = createCellContent;
     }
 
+    /**
+     * Init a type of content for a column.
+     * @param this
+     * Current column.
+     */
     function afterColumnInit(this: Column): void {
         this.cellRenderer = new CellRendererRegistry.types[
             this.options.rendering?.type ||
@@ -73,6 +78,17 @@ namespace CellRenderersComposition {
         ](this);
     }
 
+    /**
+     * Render content of cell.
+     * @param this
+     * Current column.
+     *
+     * @param cell
+     * Current cell.
+     *
+     * @returns
+     * Formatted cell content.
+     */
     function createCellContent(this: Column, cell: TableCell): CellContent {
         return this.cellRenderer.render(cell);
     }

@@ -75,8 +75,7 @@ class SelectContent extends CellContent {
             (e.target as HTMLSelectElement).value,
             true
         );
-    }
-
+    };
 }
 
 

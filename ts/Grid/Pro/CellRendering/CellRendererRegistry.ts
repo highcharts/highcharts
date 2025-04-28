@@ -48,8 +48,8 @@ namespace CellRendererRegistry {
      * Map of cell renderer types to their corresponding data types.
      */
     export const dataTypeDefaults: Record<
-        Column.DataType,
-        keyof typeof types
+    Column.DataType,
+    keyof typeof types
     > = {
         // TODO: Move it out of the cell renderer registry or make it more
         // generic by adding a registry function.
@@ -68,10 +68,10 @@ namespace CellRendererRegistry {
     /**
      * Method used to register new cell renderer classes.
      *
-     * @param {string} key
+     * @param key
      * Registry key of the cell renderer class.
      *
-     * @param {ComponentType} CellRendererClass
+     * @param CellRendererClass
      * Cell renderer class (aka class constructor) to register.
      */
     export function registerRenderer<T extends keyof CellRendererTypeRegistry>(

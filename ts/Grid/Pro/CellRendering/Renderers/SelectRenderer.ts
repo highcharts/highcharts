@@ -57,7 +57,7 @@ class SelectRenderer extends CellRenderer {
         this.options = merge(
             this.column.options.rendering || {},
             SelectRenderer.defaultOptions
-        )
+        );
     }
 
     public override render(cell: TableCell): SelectContent {

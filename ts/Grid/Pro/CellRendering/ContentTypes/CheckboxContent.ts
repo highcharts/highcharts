@@ -53,8 +53,7 @@ class CheckboxContent extends CellContent {
             (e.target as HTMLInputElement).checked,
             true
         );
-    }
-
+    };
 }
 
 

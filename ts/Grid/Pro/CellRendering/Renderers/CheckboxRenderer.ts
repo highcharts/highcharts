@@ -56,7 +56,7 @@ class CheckboxRenderer extends CellRenderer {
         this.options = merge(
             this.column.options.rendering || {},
             CheckboxRenderer.defaultOptions
-        )
+        );
     }
 
     public override render(cell: TableCell): CheckboxContent {

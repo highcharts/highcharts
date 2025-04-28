@@ -52,7 +52,7 @@ class TextRenderer extends CellRenderer {
     public format?: string;
     public formatter?: (this: TableCell) => string;
 
-    constructor (column: Column) {
+    constructor(column: Column) {
         super(column);
 
         this.options = merge(
