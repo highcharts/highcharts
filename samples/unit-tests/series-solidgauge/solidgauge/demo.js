@@ -195,6 +195,7 @@ QUnit.test('Solid gauge: legend', function (assert) {
         pane: [
             {
                 center: ['75%', '80%'],
+                size: '100%',
                 endAngle: 90.0,
                 startAngle: -90.0
             }

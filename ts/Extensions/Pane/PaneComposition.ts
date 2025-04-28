@@ -84,10 +84,10 @@ function onAfterSetChartSize(this: Chart): void {
     for (const pane of this.pane) {
         if (pane.center && pane.axis) {
             if (pane.center[0] > maxCenterX) {
-                maxCenterX = pane.center[0];
+                maxCenterX = (pane.center[2] / this.plotWidth) * pane.center[0];
             }
             if (pane.center[1] > maxCenterY) {
-                maxCenterY = pane.center[1];
+                maxCenterY = (pane.center[2] / this.plotWidth) * pane.center[1];
             }
             foundValidPane = true;
         }
@@ -95,8 +95,8 @@ function onAfterSetChartSize(this: Chart): void {
 
     // Adjust clip box only if pane is valid (has axis)
     if (foundValidPane) {
-        this.clipBox.x += maxCenterX - this.plotWidth / 2;
-        this.clipBox.y += maxCenterY - this.plotHeight / 2;
+        this.clipBox.x += maxCenterX - (this.plotWidth / 2);
+        this.clipBox.y += maxCenterY - (this.plotHeight / 2);
     }
 }
 
