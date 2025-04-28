@@ -160,7 +160,9 @@ Use fixed distribution to keep columns at strictly defined widths:
 
 If the provided distribution strategies do not meet your requirements, you can define a custom distribution strategy. You can achieve this by either modifying an existing strategy through inheritance or creating a completely new one by extending the abstract column strategy.
 
-See an example of extending the existing `'mixed'` distribution strategy [here](https://jsfiddle.net/BlackLabel/u2v4p6cd/).
+See an example of extending the existing `'mixed'` distribution strategy.
+
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/custom-column-distribution" allow="fullscreen"></iframe>
 
 ## Sorting
 
