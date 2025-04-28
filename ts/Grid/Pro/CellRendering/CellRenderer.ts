@@ -65,12 +65,6 @@ namespace CellRenderer {
          * The cell content type.
          */
         type: string;
-
-        /**
-         * Disable double click to trigger the cell value editor (regular text
-         * input).
-         */
-        disableDblClickEditor?: boolean;
     }
 
 }

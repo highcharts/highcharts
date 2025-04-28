@@ -144,7 +144,7 @@ namespace CellEditingComposition {
         if (
             e.originalEvent?.key !== 'Enter' ||
             !this.column.options.cells?.editable ||
-            this.column.cellRenderer.options.disableDblClickEditor
+            this.column.cellRenderer.options.type !== 'text'
         ) {
             return;
         }
@@ -158,7 +158,7 @@ namespace CellEditingComposition {
     function onCellDblClick(this: TableCell): void {
         if (
             this.column.options.cells?.editable &&
-            !this.column.cellRenderer.options.disableDblClickEditor
+            this.column.cellRenderer.options.type === 'text'
         ) {
             this.row.viewport.cellEditing?.startEditing(this);
         }

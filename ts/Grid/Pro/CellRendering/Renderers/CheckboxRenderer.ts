@@ -47,8 +47,7 @@ const {
 class CheckboxRenderer extends CellRenderer {
 
     public static defaultOptions: CheckboxRenderer.Options = {
-        type: 'checkbox',
-        disableDblClickEditor: true
+        type: 'checkbox'
     };
 
     public override options: CheckboxRenderer.Options;

@@ -48,7 +48,6 @@ class SelectRenderer extends CellRenderer {
 
     public static defaultOptions: SelectRenderer.Options = {
         type: 'select',
-        disableDblClickEditor: true,
         options: []
     };
 
