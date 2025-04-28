@@ -1485,7 +1485,7 @@ class PolarAdditions {
         LineSeriesClass: typeof LineSeries,
         SplineSeriesClass: typeof SplineSeries
     ): void {
-        Pane.compose(ChartClass, PointerClass);
+        Pane.compose(ChartClass, PointerClass, SeriesClass);
         RadialAxis.compose(AxisClass, TickClass);
 
         if (pushUnique(composed, 'Polar')) {

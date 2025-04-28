@@ -79,6 +79,7 @@ import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
+import BBoxObject from '../Renderer/BBoxObject';
 const {
     arrayMax,
     arrayMin,
@@ -316,6 +317,8 @@ class Series {
     public buildingKdTree?: boolean;
 
     public chart!: Chart;
+
+    public chartClipBox?: BBoxObject;
 
     public closestPointRange?: number;
 
@@ -2462,20 +2465,24 @@ class Series {
         const { chart, group, markerGroup } = this,
             sharedClips = chart.sharedClips,
             renderer = chart.renderer,
-            clipBox = chart.getClipBox(this),
             sharedClipKey = this.getSharedClipKey(); // #4526
 
+        this.chartClipBox = chart.getClipBox(this);
+
         let clipRect = sharedClips[sharedClipKey];
+
+        fireEvent(this, 'setClip');
 
         // If a clipping rectangle for the same set of axes does not exist,
         // create it
         if (!clipRect) {
-            sharedClips[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+            sharedClips[sharedClipKey] = clipRect =
+                renderer.clipRect(this.chartClipBox);
 
         // When setting chart size, or when the series is rendered again before
         // starting animating, in compliance to a responsive rule
         } else {
-            clipRect.animate(clipBox);
+            clipRect.animate(this.chartClipBox);
         }
 
         if (group) {

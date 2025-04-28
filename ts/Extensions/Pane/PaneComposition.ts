@@ -69,41 +69,35 @@ function chartGetHoverPane(
 }
 
 /**
- * Adjusts the chart's clipBox based on the position of panes.
+ * Adjusts the clipBox based on the position of panes.
  * @private
  */
-function onAfterSetChartSize(this: Chart): void {
-    if (!this.pane || this.pane.length === 0) {
+function onSetClip(this: Series): void {
+    if (!this.chartClipBox || !this.xAxis || !this.yAxis) {
         return;
     }
 
-    let maxCenterX = 0,
-        maxCenterY = 0,
-        foundValidPane = false;
+    const { plotWidth, plotHeight } = this.chart,
+        smallestSize = Math.min(plotWidth, plotHeight),
+        xPane = this.xAxis.pane,
+        yPane = this.yAxis.pane;
 
-    for (const pane of this.pane) {
-        if (pane.center && pane.axis) {
-            if (pane.center[0] > maxCenterX) {
-                maxCenterX = (pane.center[2] / this.plotWidth) * pane.center[0];
-            }
-            if (pane.center[1] > maxCenterY) {
-                maxCenterY = (pane.center[2] / this.plotWidth) * pane.center[1];
-            }
-            foundValidPane = true;
-        }
+    if (xPane && xPane.axis) {
+        this.chartClipBox.x += xPane.center[0] -
+            (xPane.center[2] / smallestSize) * plotWidth / 2;
     }
 
-    // Adjust clip box only if pane is valid (has axis)
-    if (foundValidPane) {
-        this.clipBox.x += maxCenterX - (this.plotWidth / 2);
-        this.clipBox.y += maxCenterY - (this.plotHeight / 2);
+    if (yPane && yPane.axis) {
+        this.chartClipBox.y += yPane.center[1] -
+            (yPane.center[2] / smallestSize) * plotHeight / 2;
     }
 }
 
 /** @private */
 function compose(
     ChartClass: typeof Chart,
-    PointerClass: typeof Pointer
+    PointerClass: typeof Pointer,
+    SeriesClass: typeof Series
 ): void {
     const chartProto = ChartClass.prototype as PaneChart;
 
@@ -112,7 +106,6 @@ function compose(
         chartProto.getHoverPane = chartGetHoverPane;
 
         addEvent(ChartClass, 'afterIsInsidePlot', onChartAfterIsInsiderPlot);
-        addEvent(ChartClass, 'afterSetChartSize', onAfterSetChartSize);
 
         addEvent(PointerClass, 'afterGetHoverData', onPointerAfterGetHoverData);
         addEvent(
@@ -120,6 +113,8 @@ function compose(
             'beforeGetHoverData',
             onPointerBeforeGetHoverData
         );
+
+        addEvent(SeriesClass, 'setClip', onSetClip);
     }
 
 }
