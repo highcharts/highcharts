@@ -592,6 +592,24 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
 }
 
+.hcg-table tbody td:focus:has(input, select),
+.highcharts-datagrid-table tbody td:focus:has(input, select),
+.hcg-table thead th:focus-visible:has(input, select),
+.highcharts-datagrid-table thead th:focus-visible:has(input, select) {
+    box-shadow: none;
+}
+
+.hcg-table tbody td:focus input,
+.hcg-table tbody td:focus select,
+.highcharts-datagrid-table tbody td:focus input,
+.highcharts-datagrid-table tbody td:focus select,
+.hcg-table thead th:focus-visible input,
+.hcg-table thead th:focus-visible select,
+.highcharts-datagrid-table thead th:focus-visible input,
+.highcharts-datagrid-table thead th:focus-visible select {
+    outline: 1px solid rgb(117, 124, 199);
+}
+
 /* Header hovered background and color */
 .hcg-table thead tr th.hcg-column-sortable:hover,
 .highcharts-datagrid-table thead tr th.highcharts-datagrid-column-sortable:hover {
@@ -820,7 +838,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-left: none;
 }
 
-.hcg-table tbody td.hcg-edited-cell input,
+/* .hcg-table tbody td.hcg-edited-cell input,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
 .hcg-table tbody td.hcg-edited-cell input:focus,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
@@ -836,9 +854,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     box-shadow: inset 0 0 0 1px #0000ed;
     padding: var(--ig-padding);
     background: #b7d4ff;
-}
+} */
 
-.highcharts-datagrid-table tbody td.hcg-edited-cell-error input,
+/* .highcharts-datagrid-table tbody td.hcg-edited-cell-error input,
 .highcharts-datagrid-table tbody td.hcg-edited-cell-error input input:focus,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:focus,
@@ -849,7 +867,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     color: var(--ig-color);
     box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;
-}
+} */
 
 /* Notification container */
 .hcg-notification,
