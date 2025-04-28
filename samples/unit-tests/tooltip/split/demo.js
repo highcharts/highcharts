@@ -55,7 +55,10 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     const ttCorrectVals = {
             x: 51.5,
             y: 94.5,
-            width: Highcharts.isFirefox ? 134 : 113,
+            width: (Highcharts.isFirefox && !(
+                // FF v137+ works like Chrome
+                +Highcharts.win.navigator?.userAgent.split('Firefox/')[1] >= 137
+            )) ? 134 : 113,
             height: 252
         },
         candidate = chart
