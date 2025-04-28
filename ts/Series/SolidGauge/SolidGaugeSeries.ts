@@ -270,51 +270,6 @@ class SolidGaugeSeries extends GaugeSeries {
             PieSeries.prototype.animate.call(this, init);
         }
     }
-
-    /**
-     * Override the clipping for the series.
-     * @private
-     */
-    public setClip(): void {
-        const { chart, group, markerGroup } = this,
-            sharedClips = chart.sharedClips,
-            renderer = chart.renderer,
-            clipBox = chart.getClipBox(this),
-            sharedClipKey = this.getSharedClipKey(); // #4526
-
-        let clipRect = sharedClips[sharedClipKey];
-
-        if (this.xAxis?.pane) {
-            clipBox.x += this.xAxis.pane.center[0] - chart.plotWidth / 2;
-        }
-
-        if (this.yAxis?.pane) {
-            clipBox.y += this.yAxis.pane.center[1] - chart.plotHeight / 2;
-        }
-
-        // If a clipping rectangle for the same set of axes does not exist,
-        // create it
-        if (!clipRect) {
-            sharedClips[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
-
-        // When setting chart size, or when the series is rendered again before
-        // starting animating, in compliance to a responsive rule
-        } else {
-            clipRect.animate(clipBox);
-        }
-
-        if (group) {
-            // When clip is false, reset to no clip after animation
-            group.clip(this.options.clip === false ? void 0 : clipRect);
-        }
-
-        // Unclip temporary animation clip
-        if (markerGroup) {
-            markerGroup.clip();
-        }
-    }
-
-
 }
 
 /* *
