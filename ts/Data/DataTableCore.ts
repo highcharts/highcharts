@@ -135,11 +135,11 @@ class DataTableCore {
 
     protected versionTag: string;
 
-    public columnNames?: Array<string> | ColumnNamesOptions;
+    public columnNames?: Array<string>|ColumnNamesOptions;
 
     public firstRowAsNames?: boolean;
 
-    public orientation?: 'columns' | 'rows';
+    public orientation?: 'columns'|'rows';
 
     public dataModifier?: DataModifierTypeOptions;
 

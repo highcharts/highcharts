@@ -69,7 +69,7 @@ export interface DataTableOptions {
      * function and parse the rows into a valid JSON yourself. Nevertheless, the
      * parsed JSON is going to be transformed into a valid table structure.
      */
-    columnNames?: Array<string> | ColumnNamesOptions;
+    columnNames?: Array<string>|ColumnNamesOptions;
 
     /**
      * Should first row be treated as names of columns.
@@ -79,7 +79,7 @@ export interface DataTableOptions {
     /**
      * Whether data is in columns or rows.
      */
-    orientation?: 'columns' | 'rows';
+    orientation?: 'columns'|'rows';
 
     /**
      * Options for the modifier that shall be applied to the table to create a
@@ -106,17 +106,13 @@ export interface DataTableOptions {
     /**
      * A custom callback function that parses the data before it's being parsed
      * to the data table format inside the converter.
-     * Supported connectors are: JSON, CSV and Google Spreadsheets.
+     * Supported connectors are: JSON, CSV and Google Sheets.
      */
     beforeParse?: DataConnector.BeforeParseCallbackFunction;
 }
 
 
 export type DataTableValue = (boolean|null|number|string|undefined);
-
-export type DataTableParserCallbackFunction<T> = {
-    (data: T): T;
-};
 
 
 /* *

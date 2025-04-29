@@ -118,7 +118,7 @@ class JSONConnector extends DataConnector {
      * @param {Array<Array<number|string>>}[data]
      * Data retrieved from the provided URL.
      */
-    public initConverters(data: Array<Array<number | string>>): void {
+    public initConverters(data: Array<Array<number|string>>): void {
         let index = 0;
         for (const [key, table] of Object.entries(this.dataTables)) {
             const options = this.options;
@@ -185,7 +185,7 @@ class JSONConnector extends DataConnector {
                     }) :
                     data || []
             )
-            .then((data): Promise<Array<Array<number | string>>> => {
+            .then((data): Promise<Array<Array<number|string>>> => {
                 if (data) {
                     this.initConverters(data);
                 }

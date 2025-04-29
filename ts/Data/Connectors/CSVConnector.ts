@@ -124,7 +124,6 @@ class CSVConnector extends DataConnector {
      */
     public initConverters(csv: string): void {
         let index = 0;
-
         for (const [key, table] of Object.entries(this.dataTables)) {
             const options = this.options;
             // Takes over the connector default options.

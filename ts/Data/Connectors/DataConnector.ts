@@ -434,7 +434,7 @@ namespace DataConnector {
     /**
      * A custom callback function that parses the data before it's being parsed
      * to the data table format inside the converter.
-     * Supported connectors are: JSON, CSV and Google Spreadsheets.
+     * Supported connectors are: JSON, CSV and Google Google Sheets.
      */
     export type BeforeParseCallbackFunction =
         JSONBeforeParseCallbackFunction
