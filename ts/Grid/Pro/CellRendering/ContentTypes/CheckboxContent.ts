@@ -43,7 +43,7 @@ class CheckboxContent extends CellContent {
         this.input.type = 'checkbox';
         this.input.checked = !!cell.value;
         this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled =! cell.column.options.cells?.editable;
+        this.input.disabled = !cell.column.options.cells?.editable;
 
         cell.htmlElement.appendChild(this.input);
 
