@@ -4,6 +4,7 @@
  *
  * */
 
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
@@ -72,8 +73,15 @@ function chartGetHoverPane(
  * Adjusts the clipBox based on the position of panes.
  * @private
  */
-function onSetClip(this: Series): void {
-    if (!this.chartClipBox || !this.xAxis || !this.yAxis) {
+function onSetClip(
+    this: Series,
+    {
+        clipBox
+    }: {
+        clipBox: BBoxObject
+    }
+): void {
+    if (!this.xAxis || !this.yAxis) {
         return;
     }
 
@@ -83,12 +91,12 @@ function onSetClip(this: Series): void {
         yPane = this.yAxis.pane;
 
     if (xPane && xPane.axis) {
-        this.chartClipBox.x += xPane.center[0] -
+        clipBox.x += xPane.center[0] -
             (xPane.center[2] / smallestSize) * plotWidth / 2;
     }
 
     if (yPane && yPane.axis) {
-        this.chartClipBox.y += yPane.center[1] -
+        clipBox.y += yPane.center[1] -
             (yPane.center[2] / smallestSize) * plotHeight / 2;
     }
 }

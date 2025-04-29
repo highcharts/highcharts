@@ -269,6 +269,7 @@ class SolidGaugeSeries extends GaugeSeries {
             this.startAngleRad = this.thresholdAngleRad;
             PieSeries.prototype.animate.call(this, init);
         }
+
     }
 }
 
