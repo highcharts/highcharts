@@ -6,7 +6,6 @@ describe('Multiple dataTables rendering', () => {
 
     it('Should render multiple dataTables properly.', () => {
         cy.board().then((board) => {
-            console.info(board);
             const DATA_TABLE_KEY = 'kpis';
             const connector = board.dataPool.connectors[CONNECTOR_ID];
             const dataTablesArray = Object.values(connector.dataTables);
