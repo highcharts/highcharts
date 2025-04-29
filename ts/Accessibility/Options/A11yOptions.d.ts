@@ -24,7 +24,7 @@ import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type InfoRegionsComponent from '../Components/InfoRegionsComponent';
-
+import type NewDataAnnouncer from '../Components/SeriesComponent/NewDataAnnouncer';
 /* *
  *
  *  Declarations
@@ -36,6 +36,7 @@ export interface AccessibilityAnnouncementFormatter {
         updatedSeries: Array<Series>,
         addedSeries?: Series,
         addedPoint?: Point,
+        ctx?: NewDataAnnouncer
     ): false|string;
 }
 
