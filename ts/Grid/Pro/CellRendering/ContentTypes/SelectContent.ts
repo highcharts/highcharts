@@ -46,7 +46,7 @@ class SelectContent extends CellContent {
 
         this.select = document.createElement('select');
         this.select.name = cell.column.id + '-' + cell.row.id;
-        this.select.disabled =!cell.column.options.cells?.editable;
+        this.select.disabled = !cell.column.options.cells?.editable;
 
         for (const option of options.options) {
             const optionElement = document.createElement('option');
@@ -82,6 +82,10 @@ class SelectContent extends CellContent {
 
     /**
      * Set value when option in select is changed.
+     *
+     * @param e
+     * Mouse event object.
+     *
      * @internal
      */
     private onChange = (e: Event): void => {
