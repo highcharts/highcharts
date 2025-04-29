@@ -60,7 +60,7 @@ describe('Grid Pro - validation.', () => {
     });
 
     it('Lang support.', () => {
-        const boolCell = 'tr[data-row-index="2"] td[data-column-id="booleans"]';
+        const boolCell = 'tr[data-row-index="2"] td[data-column-id="product"]';
         cy.get(boolCell)
             .dblclick()
             .find('input')

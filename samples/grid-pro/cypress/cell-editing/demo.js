@@ -14,6 +14,9 @@ Grid.grid('container', {
                 'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
                 'Oranges URL', 'Grapes URL', 'Strawberries URL',
                 'Blueberries URL', 'Cherries URL', 'Mangoes URL'
+            ],
+            country: [
+                'PL', 'NL', 'RO', 'EC', 'ES', 'IT', 'DE', 'PL', 'TR', 'BR'
             ]
         }
     },
@@ -24,9 +27,6 @@ Grid.grid('container', {
             },
             number: {
                 notification: 'New value has to be a number.'
-            },
-            bool: {
-                notification: 'New value has to be a boolean.'
             }
         }
     },
@@ -52,6 +52,7 @@ Grid.grid('container', {
     columns: [{
         id: 'product',
         dataType: 'string',
+        // Gets default error message text or from lang (if defined)
         validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
     }, {
         id: 'numbers',
@@ -77,7 +78,19 @@ Grid.grid('container', {
     }, {
         id: 'booleans',
         dataType: 'bool',
-        validationRules: ['notEmpty']
+        validationRules: [{
+            validate: 'notEmpty',
+            notification: function () {
+                return 'Not empty formatter';
+            }
+        }, {
+            validate: 'bool',
+            notification: function () {
+                return 'New value for column: ' +
+                    this.column.id +
+                    ' should be bool';
+            }
+        }]
     }, {
         id: 'icon',
         validationRules: ['notEmpty', {
@@ -86,5 +99,22 @@ Grid.grid('container', {
             },
             notification: 'The value must contain "URL"'
         }]
+    }, {
+        id: 'country',
+        dataType: 'string',
+        rendering: {
+            type: 'select',
+            options: [
+                { value: 'PL', label: 'Poland' },
+                { value: 'NL', label: 'Netherlands' },
+                { value: 'RO', label: 'Romania' },
+                { value: 'EC', label: 'Ecuador' },
+                { value: 'ES', label: 'Spain' },
+                { value: 'IT', label: 'Italy' },
+                { value: 'DE', label: 'Germany' },
+                { value: 'TR', label: 'Turkey' },
+                { value: 'BR', label: 'Brazil' }
+            ]
+        }
     }]
 });
