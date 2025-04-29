@@ -8,18 +8,17 @@ describe('Rendering types.', () => {
             .should('be.visible')
             .contains('✓')
             .find('input[type="checkbox"]')
-            .should('not.exist')
-            // .contains('✓');
+            .should('not.exist');
 
         cy.get('tr[data-row-index="1"] td[data-column-id="booleans"]').eq(0)
             .should('be.visible')
             .contains('✗')
             .find('input[type="checkbox"]')
-            .should('not.exist')
+            .should('not.exist');
     });
 
     it('Formatted date.', () => {
         cy.get('tr[data-row-index="0"] td[data-column-id="date"]').eq(0)
-            .contains('2023-01-01')
+            .contains('2023-01-01');
     });
 });
