@@ -104,8 +104,9 @@ export interface DataTableOptions {
     dataModifier?: DataModifierTypeOptions;
 
     /**
-     * A custom callback function that parses the data table data. Supported
-     * connectors are: JSON, CSV and Google Spreadsheets.
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     * Supported connectors are: JSON, CSV and Google Spreadsheets.
      */
     beforeParse?: DataConnector.BeforeParseCallbackFunction;
 }

@@ -81,6 +81,12 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      * The number of the first row to load.
      */
     startRow?: number;
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     */
+    beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
 }
 
 /**

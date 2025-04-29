@@ -23,7 +23,6 @@ import type DataEvent from '../DataEvent';
 import type Types from '../../Shared/Types';
 import type JSONConnectorOptions from './JSONConnectorOptions';
 import type DataTable from '../DataTable';
-import type { JSONBeforeParseCallbackFunction } from './JSONConnectorOptions';
 
 import DataConnector from './DataConnector.js';
 import U from '../../Core/Utilities.js';
@@ -122,33 +121,29 @@ class JSONConnector extends DataConnector {
     public initConverters(data: Array<Array<number | string>>): void {
         let index = 0;
         for (const [key, table] of Object.entries(this.dataTables)) {
-            const {
-                columnNames,
-                firstRowAsNames,
-                orientation,
-                beforeParse
-            } = table;
+            const options = this.options;
+            // Takes over the connector default options.
             const dataTableOptions = {
                 dataTableKey: key,
-                columnNames,
-                firstRowAsNames,
-                orientation,
-                beforeParse: beforeParse as JSONBeforeParseCallbackFunction
+                columnNames: table.columnNames ?? options.columnNames,
+                firstRowAsNames: table.firstRowAsNames ??
+                    options.firstRowAsNames,
+                orientation: table.orientation ?? options.orientation,
+                beforeParse: table.beforeParse ?? options.beforeParse
             };
 
             const converter = new JSONConverter(
-                merge(dataTableOptions, this.options)
+                merge(this.options, dataTableOptions)
             );
-
-            // Assign the first converter.
-            if (index === 0) {
-                this.converter = converter;
-            }
 
             table.deleteColumns();
             converter.parse({ data });
             table.setColumns(converter.getTable().getColumns());
 
+            // Assign the first converter.
+            if (index === 0) {
+                this.converter = converter;
+            }
             index++;
         }
     }
@@ -253,12 +248,9 @@ namespace JSONConnector {
     }
 
     /**
-     * Available options for constructor and converter of the JSONConnector.
+     * Available options for constructor of the JSONConnector.
      */
-    export type UserOptions = (
-        Types.DeepPartial<JSONConnectorOptions>&
-        JSONConverter.UserOptions
-    );
+    export type UserOptions = Types.DeepPartial<JSONConnectorOptions>;
 
 }
 

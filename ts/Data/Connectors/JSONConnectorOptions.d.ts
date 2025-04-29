@@ -80,6 +80,12 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      * @default 'rows'
      */
     orientation?: 'columns'|'rows';
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     */
+    beforeParse?: JSONBeforeParseCallbackFunction;
 }
 
 /**

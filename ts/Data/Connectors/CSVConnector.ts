@@ -26,7 +26,6 @@ import type DataEvent from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
 import type Types from '../../Shared/Types';
 import type DataTable from '../DataTable';
-import type { CSVBeforeParseCallbackFunction } from './CSVConnectorOptions';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -127,22 +126,17 @@ class CSVConnector extends DataConnector {
         let index = 0;
 
         for (const [key, table] of Object.entries(this.dataTables)) {
-            const {
-                columnNames,
-                firstRowAsNames,
-                orientation,
-                beforeParse
-            } = table;
+            const options = this.options;
+            // Takes over the connector default options.
             const dataTableOptions = {
                 dataTableKey: key,
-                columnNames,
-                firstRowAsNames,
-                orientation,
-                beforeParse: beforeParse as CSVBeforeParseCallbackFunction
+                firstRowAsNames: table.firstRowAsNames ??
+                    options.firstRowAsNames,
+                beforeParse: table.beforeParse ?? options.beforeParse
             };
 
             const converter = new CSVConverter(
-                merge(dataTableOptions, this.options)
+                merge(this.options, dataTableOptions)
             );
 
             table.deleteColumns();
@@ -153,7 +147,6 @@ class CSVConnector extends DataConnector {
             if (index === 0) {
                 this.converter = converter;
             }
-
             index++;
         }
     }
@@ -259,12 +252,9 @@ namespace CSVConnector {
     }
 
     /**
-     * Available options for constructor and converter of the CSVConnector.
+     * Available options for constructor of the CSVConnector.
      */
-    export type UserOptions = (
-        Types.DeepPartial<CSVConnectorOptions>&
-        CSVConverter.UserOptions
-    );
+    export type UserOptions = Types.DeepPartial<CSVConnectorOptions>;
 
 }
 

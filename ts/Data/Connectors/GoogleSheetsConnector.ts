@@ -27,7 +27,6 @@ import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type Types from '../../Shared/Types';
 import type DataTable from '../DataTable';
-import type { GoogleSheetsBeforeParseCallbackFunction } from './GoogleSheetsConnectorOptions';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -156,36 +155,28 @@ class GoogleSheetsConnector extends DataConnector {
     ): void {
         let index = 0;
         for (const [key, table] of Object.entries(this.dataTables)) {
-            const {
-                columnNames,
-                firstRowAsNames,
-                orientation,
-                beforeParse
-            } = table;
+            const options = this.options;
+            // Takes over the connector default options.
             const dataTableOptions = {
                 dataTableKey: key,
-                columnNames,
-                firstRowAsNames,
-                orientation,
-                beforeParse:
-                    beforeParse as GoogleSheetsBeforeParseCallbackFunction
+                firstRowAsNames: table.firstRowAsNames ??
+                    options.firstRowAsNames,
+                beforeParse: table.beforeParse ?? options.beforeParse
             };
 
             const converter = new GoogleSheetsConverter(
-                merge(dataTableOptions, this.options)
+                merge(this.options, dataTableOptions)
             );
-
             converter.parse({ json });
-
-            // Assign the first converter.
-            if (index === 0) {
-                this.converter = converter;
-            }
 
             // If already loaded, clear the current table
             table.deleteColumns();
             table.setColumns(converter.getTable().getColumns());
 
+            // Assign the first converter.
+            if (index === 0) {
+                this.converter = converter;
+            }
             index++;
         }
     }
@@ -296,13 +287,9 @@ namespace GoogleSheetsConnector {
     }
 
     /**
-     * Available options for constructor and converter of the
-     * GoogleSheetsConnector.
+     * Available options for constructor of the GoogleSheetsConnector.
      */
-    export type UserOptions = (
-        Types.DeepPartial<GoogleSheetsConnectorOptions> &
-        GoogleSheetsConverter.UserOptions
-    );
+    export type UserOptions = Types.DeepPartial<GoogleSheetsConnectorOptions>;
 
     /* *
      *
