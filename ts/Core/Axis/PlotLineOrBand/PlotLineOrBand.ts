@@ -991,7 +991,7 @@ export default PlotLineOrBand;
  */
 
 /**
- * Text labels for the plot bands
+ * Text labels for the plot lines
  *
  * @apioption xAxis.plotLines.label
  */
@@ -1009,6 +1009,15 @@ export default PlotLineOrBand;
  * @default    left
  * @since      2.1
  * @apioption  xAxis.plotLines.label.align
+ */
+
+/**
+ * Whether or not the label can be hidden if it overlaps with another label.
+ *
+ * @type      {boolean}
+ * @default   undefined
+ * @since     11.4.8
+ * @apioption xAxis.plotBands.label.allowOverlap
  */
 
 /**
