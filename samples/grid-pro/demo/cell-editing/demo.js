@@ -26,7 +26,16 @@ Grid.grid('container', {
     },
     columns: [{
         id: 'available',
-        dataType: 'bool'
+        dataType: 'bool',
+        rendering: {
+            type: 'checkbox',
+            events: {
+                change: function () {
+                    changelog.innerHTML +=
+                        `<strong>${this.column.id}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
+                }
+            }
+        }
     }, {
         id: 'weight'
     }, {
@@ -49,7 +58,13 @@ Grid.grid('container', {
                 { value: 'DE', label: 'Germany' },
                 { value: 'TR', label: 'Turkey' },
                 { value: 'BR', label: 'Brazil' }
-            ]
+            ],
+            events: {
+                change: function () {
+                    changelog.innerHTML +=
+                        `<strong>${this.column.id}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
+                }
+            }
         }
     }]
 });

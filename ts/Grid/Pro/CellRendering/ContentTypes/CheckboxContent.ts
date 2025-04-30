@@ -60,6 +60,8 @@ class CheckboxContent extends CellContent {
             (e.target as HTMLInputElement).checked,
             true
         );
+
+        this.cell.column.options.rendering?.events?.change?.call(this.cell);
     };
 }
 

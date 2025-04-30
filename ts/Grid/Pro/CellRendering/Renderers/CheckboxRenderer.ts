@@ -47,7 +47,8 @@ const {
 class CheckboxRenderer extends CellRenderer {
 
     public static defaultOptions: CheckboxRenderer.Options = {
-        type: 'checkbox'
+        type: 'checkbox',
+        events: {}
     };
 
     public override options: CheckboxRenderer.Options;
@@ -77,9 +78,8 @@ class CheckboxRenderer extends CellRenderer {
 namespace CheckboxRenderer {
 
     export interface Options extends CellRenderer.Options {
-        type: 'checkbox';
+        type: 'checkbox'
     }
-
 }
 
 

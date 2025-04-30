@@ -93,6 +93,7 @@ class SelectContent extends CellContent {
             (e.target as HTMLSelectElement).value,
             true
         );
+        this.cell.column.options.rendering?.events?.change?.call(this.cell);
     };
 }
 

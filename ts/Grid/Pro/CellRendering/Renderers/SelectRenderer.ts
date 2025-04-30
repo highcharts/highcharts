@@ -51,6 +51,7 @@ class SelectRenderer extends CellRenderer {
         options: []
     };
 
+    
     public override options: SelectRenderer.Options;
 
     public constructor(column: Column) {
@@ -87,7 +88,6 @@ namespace SelectRenderer {
         type: 'select';
         options: SelectOption[];
     }
-
 }
 
 
