@@ -3,9 +3,11 @@ const changelog = document.querySelector('#changelog');
 Grid.grid('container', {
     dataTable: {
         columns: {
+            available: [true, false, true, true],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
-            price: [1.5, 2.53, 5, 4.5]
+            price: [1.5, 2.53, 5, 4.5],
+            country: ['PL', 'NL', 'RO', 'EC']
         }
     },
     events: {
@@ -23,11 +25,31 @@ Grid.grid('container', {
         }
     },
     columns: [{
+        id: 'available',
+        dataType: 'bool'
+    }, {
         id: 'weight'
     }, {
         id: 'product',
         cells: {
             editable: false
+        }
+    }, {
+        id: 'country',
+        dataType: 'string',
+        rendering: {
+            type: 'select',
+            options: [
+                { value: 'PL', label: 'Poland' },
+                { value: 'NL', label: 'Netherlands' },
+                { value: 'RO', label: 'Romania' },
+                { value: 'EC', label: 'Ecuador' },
+                { value: 'ES', label: 'Spain' },
+                { value: 'IT', label: 'Italy' },
+                { value: 'DE', label: 'Germany' },
+                { value: 'TR', label: 'Turkey' },
+                { value: 'BR', label: 'Brazil' }
+            ]
         }
     }]
 });
