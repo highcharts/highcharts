@@ -335,12 +335,18 @@ const generate = async () => {
 
 
     // Find colors in default options
-    const findColors = obj => {
+    const findColors = (obj, cssVariables) => {
         const theme = {};
+        const hyphenate = str => {
+            const hyphenized = str
+                .replace(/([a-z])([A-Z])/g, '$1-$2')
+                .replace(/[0-9]+/g, '-$&');
+            return hyphenized.toLowerCase();
+        };
         if (typeof obj === 'object' && !Array.isArray(obj)) {
             for (const [key, value] of Object.entries(obj)) {
                 if (value && typeof value === 'object') {
-                    const children = findColors(value, key);
+                    const children = findColors(value, cssVariables);
                     if (children) {
                         theme[key] = children;
                     }
@@ -360,7 +366,13 @@ const generate = async () => {
                                 `Color missing for ${value} in palette`
                             );
                         }
-                        theme[key] = color;
+
+                        if (cssVariables) {
+                            theme[key] =
+                                `var(--highcharts-${hyphenate(paletteKey)})`;
+                        } else {
+                            theme[key] = color;
+                        }
                     }
                 }
             }
@@ -386,6 +398,17 @@ const generate = async () => {
     });
 
     document.getElementById('js').innerText = JSON.stringify(theme, null, '  ');
+
+    // JavaScript with CSS variables
+    const themeCSSVariables = JSON
+        .stringify(
+            findColors(defaultOptions, true),
+            null,
+            '    '
+        )
+        .replace(/"([a-zA-Z0-9-]+)":/g, '$1:')
+        .replace(/"/g, '\'');
+    document.getElementById('js-css-variables').innerText = themeCSSVariables;
 
     await chartPreview(theme);
 
