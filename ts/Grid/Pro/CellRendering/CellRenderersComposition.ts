@@ -102,6 +102,10 @@ namespace CellRenderersComposition {
 
 declare module '../../Core/Options' {
     interface ColumnOptions {
+        /**
+         * Options to control the cell content rendering. By default type of
+         * content is based on dataType option.
+         */
         rendering?: CellRendererType['options'];
     }
 }

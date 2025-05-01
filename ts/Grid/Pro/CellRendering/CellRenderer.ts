@@ -65,6 +65,10 @@ namespace CellRenderer {
          * The cell content type.
          */
         type: string;
+        /**
+         * Events related to the content like: `change` that is triggered when
+         * status select or checkbox is changed.
+         */
         events?: TypeEvents
     }
 
