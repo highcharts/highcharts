@@ -1,5 +1,5 @@
 ---
- name: Column distribution Demo
+ name: Custom column distribution Demo
  authors:
    - Dawid Dragula
    - Sebastian Bochan
