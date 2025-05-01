@@ -157,3 +157,15 @@ columns: [
     }
     ...
 ]
+```
+
+## Data type
+
+The [dataType](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#dataType) specifies the type of the column (`string`, `number`, `boolean` or `date`).
+The data type determines how the cell content is rendered. For example, setting the type to boolean displays a check or cross symbol based on the value.
+
+If this property is not defined, the data type is automatically inferred from the first cell in the column.
+
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-data-type" allow="fullscreen"></iframe>
+
+For more details on customizing cell content, refer to the [cell content section](https://www.highcharts.com/docs/grid/cell-content).
