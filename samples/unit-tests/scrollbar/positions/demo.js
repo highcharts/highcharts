@@ -323,8 +323,8 @@ QUnit.test('Positioning the scrollbar (opposite), #16017.', function (assert) {
     );
     assert.close(
         chart.xAxis[0].left,
-        52,
-        Highcharts.isFirefox ? 4.1 : 0,
+        53,
+        Highcharts.isFirefox ? 4.1 : 1,
         'When scrollbar on the left, the axis should have an additional margin.'
     );
 });

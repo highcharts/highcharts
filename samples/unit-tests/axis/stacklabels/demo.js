@@ -221,10 +221,11 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
     assert.strictEqual(
         lastStackLabel.alignAttr.x +
             lastStackLabel.width -
-            lastStackLabel.padding <=
+            lastStackLabel.padding, // <=
             chart.plotWidth,
-        true,
-        'Stack label should be inside plot area right'
+        //true,
+        //'Stack label should be inside plot area right'
+        'Expect 198 and fail with something smaller (197.46875)'
     );
 });
 
