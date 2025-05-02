@@ -333,7 +333,7 @@ abstract class Component {
                 );
             }
 
-            // Assign the data table id to define the proper connector data
+            // Assign the data table key to define the proper connector data
             // table instance.
             this.dataTableKey = isArray(this.options.connector) ?
                 this.options.connector[0].dataTableKey :
@@ -694,6 +694,13 @@ abstract class Component {
                 );
             }
             await this.initConnectors();
+        }
+
+        // Assign the data table key to define the proper connector data
+        // table instance.
+        const firstConnectorDataTableKey = connectorOptions[0]?.dataTableKey;
+        if (firstConnectorDataTableKey) {
+            this.dataTableKey = firstConnectorDataTableKey;
         }
 
         if (shouldRerender || eventObject.shouldForceRerender) {

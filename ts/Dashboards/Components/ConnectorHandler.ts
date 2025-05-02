@@ -166,7 +166,7 @@ class ConnectorHandler {
      * @param table
      * The data table instance for settings and events.
      */
-    private setTable(table: DataTable): void {
+    public setTable(table: DataTable): void {
         // Set up event listeners
         this.clearTableListeners(table);
         this.setupTableListeners(table);

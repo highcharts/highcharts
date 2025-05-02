@@ -460,6 +460,13 @@ class HighchartsComponent extends Component {
             const options: ConnectorOptions = connectorHandler.options;
             let columnAssignment = options.columnAssignment;
 
+            // Set the new data table based on the data table key.
+            const connector = connectorHandler.connector;
+            const dataTableKey = this.dataTableKey;
+            if (connector && dataTableKey) {
+                connectorHandler.setTable(connector.dataTables[dataTableKey]);
+            }
+
             if (!columnAssignment && connectorHandler.presentationTable) {
                 columnAssignment = this.getDefaultColumnAssignment(
                     connectorHandler.presentationTable.getColumnNames(),
