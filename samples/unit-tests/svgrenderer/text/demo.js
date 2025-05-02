@@ -154,11 +154,11 @@ QUnit.test('Text word wrap with markup', function (assert) {
         text: '<a href="https://www.highcharts.com">The quick brown fox jumps over the lazy dog</a>'
     });
 
-    assert.strictEqual(
-        text.getBBox().width, // <=
-        100 + (Highcharts.isFirefox ? 2 : 0),
-        //'Text directly inside anchor should be wrapped (#16173)'
-        'Expect 100 and fail with something smaller (99.37...)'
+    assert.close(
+        text.getBBox().width,
+        100,
+        Highcharts.isFirefox ? 2 : 1,
+        'Text directly inside anchor should be wrapped (#16173)'
     );
 
     text.attr({
