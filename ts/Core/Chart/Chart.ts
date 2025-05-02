@@ -3793,12 +3793,10 @@ class Chart {
 
             // Adjust offset to ensure selection zoom triggers correctly
             // (#22945)
-            const isPolar = axis.chart.polar,
-                offset = (isPolar || axis.isOrdinal) ?
+            const offset = (this.polar || axis.isOrdinal) ?
                     0 :
-                    (minPointOffset * pointRangeDirection || 0);
-
-            const eventMin = axis.toValue(minPx, true),
+                    (minPointOffset * pointRangeDirection || 0),
+                eventMin = axis.toValue(minPx, true),
                 eventMax = axis.toValue(minPx + len / scale, true);
 
             let newMin = eventMin + offset,
