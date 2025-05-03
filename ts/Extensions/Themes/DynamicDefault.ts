@@ -34,20 +34,18 @@ const { setOptions } = D;
 /**
  * The color variable names and values are copied from highcharts.css
  */
-const styleSheet = `
-:root,
-.highcharts-light {
-    /* Colors for data series and points */
-    --highcharts-color-0: #2caffe;
-    --highcharts-color-1: #544fc5;
-    --highcharts-color-2: #00e272;
-    --highcharts-color-3: #fe6a35;
-    --highcharts-color-4: #6b8abc;
-    --highcharts-color-5: #d568fb;
-    --highcharts-color-6: #2ee0ca;
-    --highcharts-color-7: #fa4b42;
-    --highcharts-color-8: #feb56a;
-    --highcharts-color-9: #91e8e1;
+const defaultRules = `
+        /* Colors for data series and points */
+        --highcharts-color-0: #2caffe;
+        --highcharts-color-1: #544fc5;
+        --highcharts-color-2: #00e272;
+        --highcharts-color-3: #fe6a35;
+        --highcharts-color-4: #6b8abc;
+        --highcharts-color-5: #d568fb;
+        --highcharts-color-6: #2ee0ca;
+        --highcharts-color-7: #fa4b42;
+        --highcharts-color-8: #feb56a;
+        --highcharts-color-9: #91e8e1;
 
     /* Chart background, point stroke for markers and columns etc */
     --highcharts-background-color: #ffffff;
@@ -115,40 +113,21 @@ const styleSheet = `
     --highcharts-annotation-color-3: rgba(156, 229, 161, 0.4);
     --highcharts-annotation-color-4: rgba(162, 241, 130, 0.4);
     --highcharts-annotation-color-5: rgba(169, 255, 101, 0.4);
-}
+`;
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        /* UI colors */
-        --highcharts-background-color: rgb(48, 48, 48);
+const darkRules = `
+    /* Colors for data series and points */
+    --highcharts-color-0: #2caffe;
+    --highcharts-color-1: #00e272;
+    --highcharts-color-2: #efdf00;
 
-        /*
-            Neutral color variations
-            https://www.highcharts.com/samples/highcharts/css/palette-helper
-        */
-        --highcharts-neutral-color-100: rgb(255, 255, 255);
-        --highcharts-neutral-color-80: rgb(214, 214, 214);
-        --highcharts-neutral-color-60: rgb(173, 173, 173);
-        --highcharts-neutral-color-40: rgb(133, 133, 133);
-        --highcharts-neutral-color-20: rgb(92, 92, 92);
-        --highcharts-neutral-color-10: rgb(71, 71, 71);
-        --highcharts-neutral-color-5: rgb(61, 61, 61);
-        --highcharts-neutral-color-3: rgb(57, 57, 57);
-
-        /* Highlight color variations */
-        --highcharts-highlight-color-100: rgb(122, 167, 255);
-        --highcharts-highlight-color-80: rgb(108, 144, 214);
-        --highcharts-highlight-color-60: rgb(94, 121, 173);
-        --highcharts-highlight-color-20: rgb(65, 74, 92);
-        --highcharts-highlight-color-10: rgb(58, 63, 71);
-    }
-}
-
-.highcharts-dark {
     /* UI colors */
     --highcharts-background-color: rgb(48, 48, 48);
 
-    /* Neutral color variations */
+    /*
+        Neutral color variations
+        https://www.highcharts.com/samples/highcharts/css/palette-helper
+    */
     --highcharts-neutral-color-100: rgb(255, 255, 255);
     --highcharts-neutral-color-80: rgb(214, 214, 214);
     --highcharts-neutral-color-60: rgb(173, 173, 173);
@@ -164,6 +143,23 @@ const styleSheet = `
     --highcharts-highlight-color-60: rgb(94, 121, 173);
     --highcharts-highlight-color-20: rgb(65, 74, 92);
     --highcharts-highlight-color-10: rgb(58, 63, 71);
+`;
+
+
+const styleSheet = `
+:root,
+.highcharts-light {
+    ${defaultRules}
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        ${darkRules}
+    }
+}
+
+.highcharts-dark {
+    ${darkRules}
 }
 `;
 
@@ -180,6 +176,18 @@ namespace DynamicDefaultTheme {
      * sample
      */
     export const options: DeepPartial<DefaultOptions> = {
+        colors: [
+            'var(--highcharts-color-0)',
+            'var(--highcharts-color-1)',
+            'var(--highcharts-color-2)',
+            'var(--highcharts-color-3)',
+            'var(--highcharts-color-4)',
+            'var(--highcharts-color-5)',
+            'var(--highcharts-color-6)',
+            'var(--highcharts-color-7)',
+            'var(--highcharts-color-8)',
+            'var(--highcharts-color-9)'
+        ],
         global: {
             buttonTheme: {
                 fill: 'var(--highcharts-neutral-color-3)',
@@ -345,6 +353,130 @@ namespace DynamicDefaultTheme {
                 borderColor: 'var(--highcharts-background-color)',
                 fillColor: 'var(--highcharts-background-color)'
             },
+            arearange: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                }
+            },
+            areasplinerange: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                }
+            },
+            boxplot: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)',
+                fillColor: 'var(--highcharts-background-color)'
+            },
+            bubble: {
+                marker: {
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                }
+            },
+            columnrange: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
+            },
+            columnpyramid: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
+            },
+            errorbar: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)',
+                fillColor: 'var(--highcharts-background-color)',
+                color: 'var(--highcharts-neutral-color-100)'
+            },
+            gauge: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                },
+                dataLabels: {
+                    borderColor: 'var(--highcharts-neutral-color-20)'
+                },
+                dial: {
+                    backgroundColor: 'var(--highcharts-neutral-color-100)',
+                    borderColor: 'var(--highcharts-neutral-color-20)'
+                },
+                pivot: {
+                    borderColor: 'var(--highcharts-neutral-color-20)',
+                    backgroundColor: 'var(--highcharts-neutral-color-100)'
+                }
+            },
+            packedbubble: {
+                marker: {
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                }
+            },
+            polygon: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                }
+            },
+            waterfall: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-neutral-color-80)',
+                lineColor: 'var(--highcharts-neutral-color-80)'
+            },
             map: {
                 states: {
                     hover: {
@@ -385,16 +517,6 @@ namespace DynamicDefaultTheme {
                     }
                 }
             },
-            bubble: {
-                marker: {
-                    states: {
-                        select: {
-                            fillColor: 'var(--highcharts-neutral-color-20)',
-                            lineColor: 'var(--highcharts-neutral-color-100)'
-                        }
-                    }
-                }
-            },
             mapbubble: {
                 marker: {
                     states: {
@@ -415,6 +537,24 @@ namespace DynamicDefaultTheme {
                     }
                 },
                 nullColor: 'var(--highcharts-neutral-color-3)'
+            },
+            sankey: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
+            },
+            dependencywheel: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
             }
         },
         legend: {

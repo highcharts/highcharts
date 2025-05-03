@@ -116,7 +116,7 @@ Highcharts.chart('container', {
             text: 'Inflation'
         },
         plotLines: [{
-            color: 'black',
+            color: 'var(--highcharts-neutral-color-100, black)',
             width: 2,
             value: 13.5492019749684,
             animation: {

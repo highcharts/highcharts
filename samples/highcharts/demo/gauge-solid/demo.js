@@ -11,8 +11,7 @@ const gaugeOptions = {
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor:
-                Highcharts.defaultOptions.legend.backgroundColor || '#fafafa',
+            backgroundColor: 'var(--highcharts-neutral-color-3, #fafafa)',
             borderRadius: 5,
             innerRadius: '60%',
             outerRadius: '100%',
