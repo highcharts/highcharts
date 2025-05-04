@@ -555,6 +555,24 @@ namespace DynamicDefaultTheme {
                     }
                 },
                 borderColor: 'var(--highcharts-background-color)'
+            },
+            funnel: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
+            },
+            pyramid: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
             }
         },
         legend: {
