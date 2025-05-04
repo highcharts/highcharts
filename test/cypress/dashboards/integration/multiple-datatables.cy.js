@@ -4,7 +4,7 @@ describe('Multiple dataTables rendering', () => {
     });
     const CONNECTOR_ID = 'data-connector';
 
-    it('Should render multiple dataTables properly.', () => {
+    it('Render multiple dataTables.', () => {
         cy.board().then((board) => {
             const DATA_TABLE_KEY = 'kpis';
             const connector = board.dataPool.connectors[CONNECTOR_ID];
@@ -29,7 +29,7 @@ describe('Multiple dataTables rendering', () => {
         });
     });
 
-    it('Should adjust multiple dataTables options properly.', () => {
+    it('Adjust multiple dataTables.', () => {
         cy.board().then((board) => {
             const DATA_TABLE_KEY = 'kpis';
             const dataPool = board.dataPool;

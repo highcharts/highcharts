@@ -65,9 +65,9 @@ export interface DataTableOptions {
      * In case of complex JSON structure, use the `ColumnNamesOptions` to define
      * the key and path to the data.
      *
-     * When more flexibility is needed you can use the `beforeParse` callback
-     * function and parse the rows into a valid JSON yourself. Nevertheless, the
-     * parsed JSON is going to be transformed into a valid table structure.
+     * If you have more complex data, you can adjust it by  the `beforeParse`
+     * callback function to manually parse the rows into valid JSON. However,
+     * the resulting JSON will still be converted into a proper table structure.
      */
     columnNames?: Array<string>|ColumnNamesOptions;
 

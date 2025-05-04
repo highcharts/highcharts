@@ -333,8 +333,7 @@ abstract class Component {
                 );
             }
 
-            // Assign the data table key to define the proper connector data
-            // table instance.
+            // Assign the data table key to define the proper dataTable.
             this.dataTableKey = isArray(this.options.connector) ?
                 this.options.connector[0].dataTableKey :
                 this.options.connector.dataTableKey;
@@ -696,8 +695,7 @@ abstract class Component {
             await this.initConnectors();
         }
 
-        // Assign the data table key to define the proper connector data
-        // table instance.
+        // Assign the data table key to define the proper dataTable.
         const firstConnectorDataTableKey = connectorOptions[0]?.dataTableKey;
         if (firstConnectorDataTableKey) {
             this.dataTableKey = firstConnectorDataTableKey;
