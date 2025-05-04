@@ -65,11 +65,6 @@ class ConnectorHandler {
      */
     public connectorId?: string;
     /**
-     * Reference to the specific connector data table.
-     */
-    public dataTableKey?: string;
-
-    /**
      * The component that the connector is tied to.
      */
     public component: Component;
@@ -217,7 +212,7 @@ class ConnectorHandler {
         this.connector = connector;
 
         if (connector) {
-            const dataTableKey = this.options.dataTableKey;
+            const dataTableKey = this.component.dataTableKey;
             const dataTables = connector.dataTables;
 
             if (dataTableKey) {
