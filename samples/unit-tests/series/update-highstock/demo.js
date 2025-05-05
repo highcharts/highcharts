@@ -80,7 +80,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Navigator series\' do not allow linkeTo (#6734).',
+    'Navigator series\' do not allow linkedTo (#6734).',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             series: [

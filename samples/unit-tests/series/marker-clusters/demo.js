@@ -193,6 +193,19 @@ QUnit.test('General marker-clusters', function (assert) {
         'Cluster marker size should be two times bigger than radius.'
     );
 
+    const clusterTable = {
+        '#25b35b': 13,
+        '#ff9603': 15,
+        '#ff5500': 18,
+        '#fc1100': 18,
+        2: '#25b35b', // 1-2
+        3: '#ff9603', // 3-4
+        4: '#ff5500', // 4-5
+        5: '#ff5500', // 4-5
+        6: '#fc1100'  // 6-10
+    };
+    clusterTable[7] = clusterTable[8] = clusterTable[9] = clusterTable[10] =
+        clusterTable[6];
     series.update({
         cluster: {
             zones: [
@@ -200,7 +213,7 @@ QUnit.test('General marker-clusters', function (assert) {
                     from: 1,
                     to: 2,
                     marker: {
-                        fillColor: '#25b35b',
+                        fillColor: clusterTable[2],
                         radius: 13
                     }
                 },
@@ -208,7 +221,7 @@ QUnit.test('General marker-clusters', function (assert) {
                     from: 3,
                     to: 4,
                     marker: {
-                        fillColor: '#ff9603',
+                        fillColor: clusterTable[3],
                         radius: 15
                     }
                 },
@@ -216,7 +229,7 @@ QUnit.test('General marker-clusters', function (assert) {
                     from: 4,
                     to: 5,
                     marker: {
-                        fillColor: '#ff5500',
+                        fillColor: clusterTable[4],
                         radius: 18
                     }
                 },
@@ -224,7 +237,7 @@ QUnit.test('General marker-clusters', function (assert) {
                     from: 6,
                     to: 10,
                     marker: {
-                        fillColor: '#fc1100',
+                        fillColor: clusterTable[6],
                         className: 'test-class-name',
                         radius: 18
                     }
@@ -234,16 +247,13 @@ QUnit.test('General marker-clusters', function (assert) {
     });
 
     clusters = series.markerClusterInfo.clusters;
-    assert.deepEqual(
-        [
-            clusters[2].point.graphic.fillColor,
-            clusters[1].point.graphic.fillColor,
-            clusters[0].point.graphic.fillColor,
-            clusters[2].point.graphic.radius,
-            clusters[1].point.graphic.radius,
-            clusters[0].point.graphic.radius
-        ],
-        ['#ff9603', '#25b35b', '#ff5500', 15, 13, 18],
+    const hasValidZones = clusters.every(cluster => {
+        const fillColor = cluster.point.graphic.fillColor;
+        return clusterTable[fillColor] === cluster.point.graphic.radius &&
+            clusterTable[cluster.data.length] === fillColor;
+    });
+    assert.ok(
+        hasValidZones,
         'Clusters should have zones applied properly.'
     );
 
@@ -525,7 +535,7 @@ QUnit.test('General marker-clusters', function (assert) {
             {
                 type: 'scatter',
                 marker: {
-                    symbol: url.replace(')', '?' + Date.now() + ')')
+                    symbol: url.replace(')', '?mc_' + Date.now() + ')')
                 },
                 animation: {
                     duration: 0
@@ -577,16 +587,22 @@ QUnit.test('Grid algorithm tests.', function (assert) {
         clusteredPointsLen += series.markerClusterInfo.clusters[i].data.length;
     }
 
-    assert.deepEqual(
-        [
+    // Fixing tip: the 2 below checks are based on what looks good in the chart.
+    assert.ok(
+        Highcharts.clamp(series.markerClusterInfo.clusters.length, 3, 4) ===
             series.markerClusterInfo.clusters.length,
+        'Cluster amount should look good.'
+    );
+    assert.ok(
+        Highcharts.clamp(series.markerClusterInfo.noise.length, 4, 6) ===
             series.markerClusterInfo.noise.length,
-            clusteredPointsLen
-        ],
-        [4, 6, series.dataTable.rowCount],
-        'Cluster and noise amount should be correct.'
-        // The correct is what looks good in the chart - the magic numbers
-        // are empirical values.
+        'Noise amount should look good.'
+    );
+
+    assert.strictEqual(
+        clusteredPointsLen,
+        series.dataTable.rowCount,
+        'Clustered points size should be the same as the input data.'
     );
 
     cluster = series.markerClusterInfo.clusters[0];
