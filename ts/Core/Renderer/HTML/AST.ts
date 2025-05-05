@@ -253,6 +253,7 @@ class AST {
         'feGaussianBlur',
         'feMerge',
         'feMergeNode',
+        'femorphology',
         'feMorphology',
         'feOffset',
         'filter',
