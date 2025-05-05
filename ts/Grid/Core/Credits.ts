@@ -128,7 +128,7 @@ class Credits {
 
     /**
      * Render the credits. If the credits are disabled, they will be removed
-     * from the container. If also reflows the viewport dimensions.
+     * from the container.
      */
     public render(): void {
         const grid = this.grid;
@@ -154,8 +154,6 @@ class Credits {
         } else {
             contentWrapper?.appendChild(this.containerElement);
         }
-
-        this.grid.viewport?.reflow();
     }
 
     private renderAnchor(): HTMLElement {
