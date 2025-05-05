@@ -66,7 +66,7 @@ async function scriptsWebpack() {
 
     }
 
-    await FSP.writeFile('webpack.log', log, { flag: 'a' });
+    await FSP.writeFile('webpack.log', log, { flag: 'a' }); // 'a' - append
 
     LogLib.success('Finished packing.');
 

@@ -101,7 +101,7 @@ function decorateImportPath(
 
 /**
  * Loads a configuration file with an array of external descriptions. This gets
- * consumed by internallt by `resolveExternals`.
+ * consumed internally by `resolveExternals`.
  *
  * @see {@link ExternalsJSON}
  *

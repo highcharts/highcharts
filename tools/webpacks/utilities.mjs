@@ -39,7 +39,7 @@ export function debugLog(...anything) {
         })
         .join(' ');
 
-    FS.writeFileSync('webpack.log', content, { flag: 'a' });
+    FS.writeFileSync('webpack.log', content, { flag: 'a' }); // 'a' - append
 }
 
 
