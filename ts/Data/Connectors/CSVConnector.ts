@@ -115,40 +115,6 @@ class CSVConnector extends DataConnector {
      *
      * */
 
-    /**
-     * Iterates over the data tables and initiates the corresponding converters.
-     * Assigns the first converter.
-     *
-     * @param {string}[csv]
-     * Data retrieved from the provided URL.
-     */
-    public initConverters(csv: string): void {
-        let index = 0;
-        for (const [key, table] of Object.entries(this.dataTables)) {
-            const options = this.options;
-            // Takes over the connector default options.
-            const dataTableOptions = {
-                dataTableKey: key,
-                firstRowAsNames: table.firstRowAsNames ??
-                    options.firstRowAsNames,
-                beforeParse: table.beforeParse ?? options.beforeParse
-            };
-
-            const converter = new CSVConverter(
-                merge(this.options, dataTableOptions)
-            );
-
-            table.deleteColumns();
-            converter.parse({ csv });
-            table.setColumns(converter.getTable().getColumns());
-
-            // Assign the first converter.
-            if (index === 0) {
-                this.converter = converter;
-            }
-            index++;
-        }
-    }
 
     /**
      * Initiates the loading of the CSV source to the connector
@@ -186,7 +152,27 @@ class CSVConnector extends DataConnector {
             )
             .then((csv): Promise<string> => {
                 if (csv) {
-                    this.initConverters(csv);
+                    this.initConverters<string>(
+                        csv,
+                        (key, table): CSVConverter => {
+                            const options = this.options;
+                            // Takes over the connector default options.
+                            const dataTableOptions = {
+                                dataTableKey: key,
+                                firstRowAsNames: table.firstRowAsNames ??
+                                    options.firstRowAsNames,
+                                beforeParse: table.beforeParse ??
+                                    options.beforeParse
+                            };
+
+                            return new CSVConverter(
+                                merge(this.options, dataTableOptions)
+                            );
+                        },
+                        (converter, data): void => {
+                            converter.parse({ csv: data });
+                        }
+                    );
                 }
 
                 return connector

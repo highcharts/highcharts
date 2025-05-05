@@ -143,43 +143,6 @@ class GoogleSheetsConnector extends DataConnector {
      *
      * */
 
-    /**
-     * Iterates over the data tables and initiates the corresponding converters.
-     * Assigns the first converter.
-     *
-     * @param {GoogleSheetsConverter.GoogleSpreadsheetJSON}[json]
-     * Data retrieved from the provided URL.
-     */
-    public initConverters(
-        json: GoogleSheetsConverter.GoogleSpreadsheetJSON
-    ): void {
-        let index = 0;
-        for (const [key, table] of Object.entries(this.dataTables)) {
-            const options = this.options;
-            // Takes over the connector default options.
-            const dataTableOptions = {
-                dataTableKey: key,
-                firstRowAsNames: table.firstRowAsNames ??
-                    options.firstRowAsNames,
-                beforeParse: table.beforeParse ?? options.beforeParse
-            };
-
-            const converter = new GoogleSheetsConverter(
-                merge(this.options, dataTableOptions)
-            );
-            converter.parse({ json });
-
-            // If already loaded, clear the current table
-            table.deleteColumns();
-            table.setColumns(converter.getTable().getColumns());
-
-            // Assign the first converter.
-            if (index === 0) {
-                this.converter = converter;
-            }
-            index++;
-        }
-    }
 
     /**
      * Loads data from a Google Spreadsheet.
@@ -228,7 +191,27 @@ class GoogleSheetsConnector extends DataConnector {
                     throw new Error(json.error.message);
                 }
 
-                this.initConverters(json);
+                this.initConverters<GoogleSheetsConverter.GoogleSpreadsheetJSON>(
+                    json,
+                    (key, table): GoogleSheetsConverter => {
+                        const options = this.options;
+                        // Takes over the connector default options.
+                        const dataTableOptions = {
+                            dataTableKey: key,
+                            firstRowAsNames: table.firstRowAsNames ??
+                                options.firstRowAsNames,
+                            beforeParse: table.beforeParse ??
+                                options.beforeParse
+                        };
+
+                        return new GoogleSheetsConverter(
+                            merge(this.options, dataTableOptions)
+                        );
+                    },
+                    (converter, data): void => {
+                        converter.parse({ json: data });
+                    }
+                );
                 return connector.setModifierOptions(dataModifier);
             })
             .then((): this => {

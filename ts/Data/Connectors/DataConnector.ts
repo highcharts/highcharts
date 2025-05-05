@@ -29,6 +29,7 @@ import type DataTableOptions from '../DataTableOptions';
 import type { JSONBeforeParseCallbackFunction } from './JSONConnectorOptions';
 import type { CSVBeforeParseCallbackFunction } from './CSVConnectorOptions';
 import type { GoogleSheetsBeforeParseCallbackFunction } from './GoogleSheetsConnectorOptions';
+import type DataConverterType from '../Converters/DataConverterType';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
@@ -388,6 +389,42 @@ abstract class DataConnector implements DataEvent.Emitter {
         return this.metadata.columns[name];
     }
 
+    /**
+     * Iterates over the dataTables and initiates the corresponding converters.
+     * Updates the dataTables and assigns the first converter.
+     *
+     * @param {T}[data]
+     * Data specific to the corresponding converter.
+     *
+     * @param {DataConnector.CreateConverterFunction}[createConverter]
+     * Creates a specific converter combining the dataTable options.
+     *
+     * @param {DataConnector.ParseDataFunction<T>}[parseData]
+     * Runs the converter parse method with the specific data type.
+     */
+    public initConverters<T>(
+        data: T,
+        createConverter: DataConnector.CreateConverterFunction,
+        parseData: DataConnector.ParseDataFunction<T>
+    ): void {
+        let index = 0;
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            // Create a proper converter and parse its data.
+            const converter = createConverter(key, table);
+            parseData(converter, data);
+
+            // Update the dataTable.
+            table.deleteColumns();
+            table.setColumns(converter.getTable().getColumns());
+
+            // Assign the first converter.
+            if (index === 0) {
+                this.converter = converter;
+            }
+            index++;
+        }
+    }
+
 }
 
 /* *
@@ -440,6 +477,20 @@ namespace DataConnector {
         JSONBeforeParseCallbackFunction
         | CSVBeforeParseCallbackFunction
         | GoogleSheetsBeforeParseCallbackFunction;
+
+    /**
+     * Creates a specific converter combining the dataTable options.
+     */
+    export interface CreateConverterFunction {
+        (key: string, table: DataTable): DataConverterType
+    }
+
+    /**
+     * Runs the converter parse method with the specific data type.
+     */
+    export interface ParseDataFunction<T> {
+        (converter: DataConverterType, data: T): void
+    }
 
     /* *
      *

@@ -112,43 +112,6 @@ class JSONConnector extends DataConnector {
 
 
     /**
-     * Iterates over the data tables and initiates the corresponding converters.
-     * Assigns the first converter.
-     *
-     * @param {Array<Array<number|string>>}[data]
-     * Data retrieved from the provided URL.
-     */
-    public initConverters(data: Array<Array<number|string>>): void {
-        let index = 0;
-        for (const [key, table] of Object.entries(this.dataTables)) {
-            const options = this.options;
-            // Takes over the connector default options.
-            const dataTableOptions = {
-                dataTableKey: key,
-                columnNames: table.columnNames ?? options.columnNames,
-                firstRowAsNames: table.firstRowAsNames ??
-                    options.firstRowAsNames,
-                orientation: table.orientation ?? options.orientation,
-                beforeParse: table.beforeParse ?? options.beforeParse
-            };
-
-            const converter = new JSONConverter(
-                merge(this.options, dataTableOptions)
-            );
-
-            table.deleteColumns();
-            converter.parse({ data });
-            table.setColumns(converter.getTable().getColumns());
-
-            // Assign the first converter.
-            if (index === 0) {
-                this.converter = converter;
-            }
-            index++;
-        }
-    }
-
-    /**
      * Initiates the loading of the JSON source to the connector
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -185,11 +148,36 @@ class JSONConnector extends DataConnector {
                     }) :
                     data || []
             )
-            .then((data): Promise<Array<Array<number|string>>> => {
+            .then((data): Promise<JSONConverter.Data> => {
                 if (data) {
-                    this.initConverters(data);
+                    this.initConverters<JSONConverter.Data>(
+                        data,
+                        (key, table): JSONConverter => {
+                            const options = this.options;
+                            // Takes over the connector default options.
+                            const dataTableOptions = {
+                                dataTableKey: key,
+                                columnNames: table.columnNames ??
+                                    options.columnNames,
+                                firstRowAsNames: table.firstRowAsNames ??
+                                options.firstRowAsNames,
+                                orientation: table.orientation ??
+                                    options.orientation,
+                                beforeParse: table.beforeParse ??
+                                    options.beforeParse
+                            };
+
+                            return new JSONConverter(
+                                merge(this.options, dataTableOptions)
+                            );
+                        },
+                        (converter, data): void => {
+                            converter.parse({ data });
+                        }
+                    );
                 }
-                return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);
+                return connector.setModifierOptions(dataModifier)
+                    .then((): JSONConverter.Data => data);
             })
             .then((data): this => {
                 connector.emit<JSONConnector.Event>({
