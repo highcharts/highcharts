@@ -27,6 +27,9 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
+const {
+    composed
+} = H;
 import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
 import U from '../../Core/Utilities.js';
@@ -36,9 +39,11 @@ const {
     crisp,
     defined,
     destroyObjectProperties,
+    extend,
     fireEvent,
     merge,
     pick,
+    pushUnique,
     removeEvent
 } = U;
 
@@ -91,6 +96,10 @@ class Scrollbar {
 
     public static compose(AxisClass: typeof Axis): void {
         ScrollbarAxis.compose(AxisClass, Scrollbar);
+
+        if (pushUnique(composed, 'Scrollbar')) {
+            extend(defaultOptions, { scrollbar: ScrollbarDefaults });
+        }
     }
 
     /**
@@ -950,18 +959,6 @@ namespace Scrollbar {
         (e: PointerEvent): void;
     }
 }
-
-/* *
- *
- *  Registry
- *
- * */
-
-defaultOptions.scrollbar = merge(
-    true,
-    Scrollbar.defaultOptions,
-    defaultOptions.scrollbar
-);
 
 /* *
  *
