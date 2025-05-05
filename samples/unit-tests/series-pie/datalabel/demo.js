@@ -504,12 +504,16 @@ QUnit.test(
             '#15909: Hidden point with useHTML dataLabels should not throw'
         );
 
-        Highcharts.fireEvent(points[0].dataLabel.div, 'mouseover', {
-            which: 1,
-            pageX: offset.left +
-                points[0].dataLabel.dataLabelPosition.natural.x,
-            pageY: offset.top + points[0].dataLabel.dataLabelPosition.natural.y
-        });
+        Highcharts.fireEvent(
+            // Parallel HTML || Foreign object
+            points[0].dataLabel.div || points[0].dataLabel.element,
+            'mouseover', {
+                which: 1,
+                pageX: offset.left +
+                    points[0].dataLabel.dataLabelPosition.natural.x,
+                pageY: offset.top +
+                    points[0].dataLabel.dataLabelPosition.natural.y
+            });
 
         assert.strictEqual(
             points[0] === chart.hoverPoint,
@@ -517,12 +521,16 @@ QUnit.test(
             'First point hovered.'
         );
 
-        Highcharts.fireEvent(points[4].dataLabel.div, 'mouseover', {
-            which: 1,
-            pageX: offset.left +
-                points[4].dataLabel.dataLabelPosition.natural.x,
-            pageY: offset.top + points[4].dataLabel.dataLabelPosition.natural.y
-        });
+        Highcharts.fireEvent(
+            // Parallel HTML || Foreign object
+            points[4].dataLabel.div || points[4].dataLabel.element,
+            'mouseover', {
+                which: 1,
+                pageX: offset.left +
+                    points[4].dataLabel.dataLabelPosition.natural.x,
+                pageY: offset.top +
+                    points[4].dataLabel.dataLabelPosition.natural.y
+            });
 
         assert.strictEqual(
             points[4] === chart.hoverPoint,
@@ -534,7 +542,7 @@ QUnit.test(
             pageX: offset.left +
                 points[4].dataLabel.dataLabelPosition.natural.x,
             pageY: offset.top + points[4].dataLabel.dataLabelPosition.y,
-            target: points[4].dataLabel.div
+            target: points[4].dataLabel.div || points[4].dataLabel.element
         });
 
         assert.strictEqual(clicked, true, 'Click event on dataLabel works.');

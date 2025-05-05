@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -301,6 +301,8 @@ class ConnectorHandler {
 
             // Start the connector polling.
             if (
+                'enablePolling' in options &&
+                options.enablePolling &&
                 !connector.polling &&
                 connector.components.length === 1 &&
                 'dataRefreshRate' in options

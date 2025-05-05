@@ -1,11 +1,3 @@
-QUnit.test('tooltip', function (assert) {
-    assert.strictEqual(
-        Highcharts.Series.types.solidgauge.prototype.noSharedTooltip,
-        true,
-        'noSharedTooltip: true. #5354'
-    );
-});
-
 QUnit.test('Solid gauge yAxis.update (#5895)', function (assert) {
     const gaugeOptions = {
         chart: {
@@ -166,7 +158,13 @@ QUnit.test('Solid gauge animated color', function (assert) {
     }
 });
 
-QUnit.test('Solid gauge: legend', function (assert) {
+QUnit.test('Solid gauge: defaults & legend', function (assert) {
+    assert.strictEqual(
+        Highcharts.Series.types.solidgauge.prototype.noSharedTooltip,
+        true,
+        'solidgauge\'s noSharedTooltip should be true by default (#5354).'
+    );
+
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'solidgauge'

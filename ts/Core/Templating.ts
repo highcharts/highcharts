@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -559,3 +559,31 @@ namespace Templating {
 }
 
 export default Templating;
+
+/* *
+ * API Declarations
+ * */
+
+/**
+ * @interface Highcharts.Templating
+ *
+ * The Highcharts.Templating interface provides a structure for defining
+ * helpers. Helpers can be used as conditional blocks or functions within
+ * expressions. Highcharts includes several built-in helpers and supports
+ * the addition of custom helpers.
+ *
+ * @see [More information](
+ * https://www.highcharts.com/docs/chart-concepts/templating#helpers)
+ *
+ * @example
+ * // Define a custom helper to return the absolute value of a number
+ * Highcharts.Templating.helpers.abs = value => Math.abs(value);
+ *
+ * // Usage in a format string
+ * format: 'Absolute value: {abs point.y}'
+ *
+ * @name Highcharts.Templating#helpers
+ * @type {Record<string, Function>}
+ */
+
+(''); // Keeps doclets above in file
