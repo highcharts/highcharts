@@ -102,7 +102,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palettes.colors[2],
+                lineColor: Palettes.dataColors[2],
                 /**
                  * Pixel width of the line.
                  */
@@ -117,7 +117,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palettes.colors[8],
+                lineColor: Palettes.dataColors[8],
                 /**
                  * Pixel width of the line.
                  */

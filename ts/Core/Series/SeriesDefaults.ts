@@ -20,7 +20,7 @@ import type Point from './Point';
 import type Series from './Series';
 import type { PlotOptionsOf } from './SeriesOptions';
 
-import { Palette } from '../Color/Palettes.js';
+import Palette from '../Color/Palettes.js';
 
 /* *
  *

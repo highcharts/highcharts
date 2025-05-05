@@ -19,7 +19,7 @@
 import type MapPoint from './MapPoint';
 import type MapSeriesOptions from './MapSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 

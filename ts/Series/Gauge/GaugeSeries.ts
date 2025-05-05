@@ -31,7 +31,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,

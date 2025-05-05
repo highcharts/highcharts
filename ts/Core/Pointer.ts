@@ -38,7 +38,7 @@ const {
     composed,
     isTouchDevice
 } = H;
-import { Palette } from '../Core/Color/Palettes.js';
+import Palette from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 const {

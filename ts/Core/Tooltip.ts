@@ -40,7 +40,7 @@ const {
     doc,
     isSafari
 } = H;
-import { Palette } from './Color/Palettes.js';
+import Palette from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';

@@ -18,7 +18,7 @@
 
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

@@ -18,7 +18,7 @@
 
 import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

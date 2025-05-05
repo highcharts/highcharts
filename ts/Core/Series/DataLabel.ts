@@ -35,7 +35,7 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import F from '../Templating.js';
 const { format } = F;
-import { Palette } from '../Color/Palettes.js';
+import Palette from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
 const {

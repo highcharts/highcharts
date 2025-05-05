@@ -20,7 +20,7 @@
 
 import type A11yOptions from './A11yOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

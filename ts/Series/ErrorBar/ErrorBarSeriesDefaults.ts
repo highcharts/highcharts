@@ -18,7 +18,7 @@
 
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

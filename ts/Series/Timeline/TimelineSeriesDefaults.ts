@@ -24,7 +24,7 @@ import type Point from '../../Core/Series/Point';
 import type TimelinePoint from './TimelinePoint';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

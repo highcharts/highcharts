@@ -35,7 +35,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import T from '../../Core/Templating.js';

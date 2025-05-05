@@ -20,7 +20,7 @@
 
 import type AxisResizerOptions from './AxisResizerOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

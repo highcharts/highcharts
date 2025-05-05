@@ -20,7 +20,7 @@
 
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

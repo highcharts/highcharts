@@ -20,7 +20,7 @@ import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine';
 import MockPoint from '../MockPoint.js';
-import { Palette } from '../../../Core/Color/Palettes.js';
+import Palette from '../../../Core/Color/Palettes.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
