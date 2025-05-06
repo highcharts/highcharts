@@ -65,22 +65,11 @@ class Column {
     public readonly viewport: Table;
 
     /**
-<<<<<<< HEAD
      * Type of the data in the column.
      */
     public readonly dataType: Column.DataType;
 
     /**
-     * The width of the column in the viewport. The interpretation of the
-     * value depends on the `columns.distribution` option:
-     * - `full`: The width is a ratio of the viewport width.
-     * - `fixed`: The width is a fixed number of pixels.
-     */
-    public width: number;
-
-    /**
-=======
->>>>>>> master
      * The cells of the column.
      */
     public cells: Cell[] = [];
