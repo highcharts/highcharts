@@ -681,9 +681,7 @@ const setupDashboard = instanceId => {
                             const val = this.value;
                             return `<img src="https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${
                                 val.toLowerCase()
-                            }-ico.${val === 'Critical' ? 'png' : 'svg'}" alt="${
-                                val
-                            }"/>`;
+                            }-ico.svg" alt="${val}"/>`;
                         }
                     }
                 }],
