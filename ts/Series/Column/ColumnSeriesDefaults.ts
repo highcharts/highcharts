@@ -292,8 +292,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              */
 
             /**
-             * How much to brighten the point on interaction. Requires the
-             * main color to be defined in hex or rgb(a) format.
+             * How much to brighten the point on interaction.
              *
              * In styled mode, the hover brightening is by default replaced
              * with a fill-opacity set in the `.highcharts-point:hover`

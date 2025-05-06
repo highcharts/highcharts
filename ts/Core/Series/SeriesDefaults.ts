@@ -2300,9 +2300,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
                 /**
                  * Opacity for the halo unless a specific fill is overridden
-                 * using the `attributes` setting. Note that Highcharts is
-                 * only able to apply opacity to colors of hex or rgb(a)
-                 * formats.
+                 * using the `attributes` setting.
                  *
                  * @since   4.0
                  * @product highcharts highstock
