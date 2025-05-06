@@ -7,30 +7,31 @@ Plot lines and plot bands are quite similar in use. They both have the option of
 
 Plot bands can be created either on the x-axis or the y-axis. It can also be created on both axes:
 
-    
-    xAxis: {
-      ...,
-      plotBands: [{
-        color: 'orange', // Color value
-        from: 3, // Start of the plot band
-        to: 4 // End of the plot band
-      }],
-      plotLines: [{
-        color: 'red', // Color value
-        dashStyle: 'longdashdot', // Style of the plot line. Default to solid
-        value: 3, // Value of where the line will appear
-        width: 2 // Width of the line    
-      }]
-    },
-    yAxis: {
-      ...,
-      plotBands: [{
-        ... // Same as in the xAxis
-      }],
-      plotLines: [{
-        ... // Same as in the xAxis
-      }]
-    }
+```js
+xAxis: {
+  ...,
+  plotBands: [{
+    color: 'orange', // Color value
+    from: 3, // Start of the plot band
+    to: 4 // End of the plot band
+  }],
+  plotLines: [{
+    color: 'red', // Color value
+    dashStyle: 'longdashdot', // Style of the plot line. Default to solid
+    value: 3, // Value of where the line will appear
+    width: 2 // Width of the line
+  }]
+},
+yAxis: {
+  ...,
+  plotBands: [{
+    ... // Same as in the xAxis
+  }],
+  plotLines: [{
+    ... // Same as in the xAxis
+  }]
+}
+```
 
 Labels
 ------
@@ -41,38 +42,40 @@ The plot bands and plot lines have the option of containing a label. This is a t
 
 To create labels for plot bands or lines you can add the object "label":
 
-    
-    plotBands: {
-      ...,
-      label: { 
-        text: 'I am a label', // Content of the label. 
-        align: 'left', // Positioning of the label. Default to center.
-        x: +10 // Amount of pixels the label will be repositioned according to the alignment. 
-      }
-    }
+```js
+plotBands: {
+  ...,
+  label: {
+    text: 'I am a label', // Content of the label.
+    align: 'left', // Positioning of the label. Default to center.
+    x: +10 // Amount of pixels the label will be repositioned according to the alignment.
+  }
+}
+```
 
 Events
 
 "events" are an object which can be created inside a plot band or plot line object. This object defines mouse events according to the band or line. Values that are supported are click, mouseover, mouseout and mousemove.
 
-    
-    plotBands: {
-      ...,
-      events: {
-        click: function () {
-          // Action performed when event occurs
-        },
-        mouseover: function () {
-          // Action performed when event occurs
-        },
-        mouseout: function () {
-          // Action performed when event occurs
-        },
-        mousemove: function () {
-          // Action performed when event occurs
-        }
-      }
+```js
+plotBands: {
+  ...,
+  events: {
+    click: function () {
+      // Action performed when event occurs
+    },
+    mouseover: function () {
+      // Action performed when event occurs
+    },
+    mouseout: function () {
+      // Action performed when event occurs
+    },
+    mousemove: function () {
+      // Action performed when event occurs
     }
+  }
+}
+```
 
 [Example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/xaxis/plotbands-events/) of how events can be used.
 

@@ -344,6 +344,7 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    overflow: hidden;
     border: var(--ig-border);
     background: var(--ig-background);
     table-layout: fixed;
@@ -396,10 +397,10 @@
     text-overflow: ellipsis;
 }
 
-.hcg-resizer-content thead,
-.highcharts-datagrid-resizer-content thead,
-.hcg-resizer-content tbody,
-.highcharts-datagrid-resizer-content tbody {
+.hcg-resizable-content thead,
+.highcharts-datagrid-resizable-content thead,
+.hcg-resizable-content tbody,
+.highcharts-datagrid-resizable-content tbody {
     display: block;
     overflow: hidden;
     width: 100%;
@@ -425,8 +426,8 @@
     border-bottom-right-radius: var(--ig-border-radius);
 }
 
-.hcg-resizer-content tr,
-.highcharts-datagrid-resizer-content tr {
+.hcg-resizable-content tr,
+.highcharts-datagrid-resizable-content tr {
     width: 100%;
 }
 

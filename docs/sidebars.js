@@ -1,6 +1,8 @@
 module.exports = {
     docs: {
-        Highcharts: ['index'],
+        Highcharts: [
+            'public-index'
+        ],
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
@@ -292,6 +294,13 @@ module.exports = {
         ],
         'Flutter': [
             'flutter/getting-started'
+        ],
+        'React integration (beta)': [
+            'react/getting-started',
+            'react/series-and-chart-types',
+            'react/options',
+            'react/options-component-format',
+            'react/component-children',
         ]
     }
 };

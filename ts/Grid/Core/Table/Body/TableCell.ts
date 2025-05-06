@@ -240,6 +240,9 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
 
+        // Render the table cell element content.
+        // setHTMLContent(this.htmlElement, this.formatCell());
+
         this.content?.destroy();
         this.content.add();
         this.htmlElement.setAttribute('data-value', this.value + '');
