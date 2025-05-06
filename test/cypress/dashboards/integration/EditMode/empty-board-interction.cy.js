@@ -12,4 +12,11 @@ describe('Empty board interaction', () => {
 
         cy.get('.highcharts-dashboards-edit-resize-snap').should('be.visible');
     });
+
+    it('When adding Highcharts component to an empty board, sidebar should be visible.', () => {
+        cy.grabComponent('Highcharts');
+        cy.dropComponent('#container');
+
+        cy.get('.highcharts-dashboards-edit-sidebar').should('be.visible');
+    });
 });
