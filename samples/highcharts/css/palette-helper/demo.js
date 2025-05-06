@@ -180,7 +180,22 @@ const chartPreview = async theme => {
     });
 };
 
-const defaultOptions = Highcharts.merge(Highcharts.defaultOptions);
+const defaultOptions = Highcharts.merge(
+    Highcharts.defaultOptions,
+    {
+        xAxis: {
+            grid: {
+                borderColor: '#cccccc'
+            }
+        },
+        yAxis: {
+            grid: {
+                borderColor: '#cccccc'
+            }
+        }
+    }
+);
+
 
 // Generate a random color scheme using the third-party color-scheme package
 // https://github.com/c0bra/color-scheme-js

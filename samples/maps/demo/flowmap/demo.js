@@ -108,7 +108,7 @@
             },
             fillColor: '#31c2cc',
             fillOpacity: 0.2,
-            color: '#0000FF',
+            color: '#2caffe',
             data: [{
                 from: 'Oslo',
                 to: 'Helsinki',

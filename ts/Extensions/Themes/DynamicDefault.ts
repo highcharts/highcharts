@@ -538,6 +538,24 @@ namespace DynamicDefaultTheme {
                 },
                 nullColor: 'var(--highcharts-neutral-color-3)'
             },
+            xrange: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
+            },
+            gantt: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
+            },
             sankey: {
                 states: {
                     select: {
@@ -573,6 +591,22 @@ namespace DynamicDefaultTheme {
                     }
                 },
                 borderColor: 'var(--highcharts-background-color)'
+            },
+            timeline: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                },
+                dataLabels: {
+                    backgroundColor: 'var(--highcharts-background-color)',
+                    borderColor: 'var(--highcharts-neutral-color-40)',
+                    color: 'var(--highcharts-neutral-color-80)'
+                }
             }
         },
         legend: {
@@ -589,6 +623,11 @@ namespace DynamicDefaultTheme {
             },
             itemHiddenStyle: {
                 color: 'var(--highcharts-neutral-color-60)'
+            },
+            title: {
+                style: {
+                    color: 'var(--highcharts-neutral-color-80)'
+                }
             },
             bubbleLegend: {
                 labels: {
@@ -629,7 +668,10 @@ namespace DynamicDefaultTheme {
             minorTickColor: 'var(--highcharts-neutral-color-40)',
             lineColor: 'var(--highcharts-neutral-color-80)',
             gridLineColor: 'var(--highcharts-neutral-color-10)',
-            tickColor: 'var(--highcharts-neutral-color-80)'
+            tickColor: 'var(--highcharts-neutral-color-80)',
+            grid: {
+                borderColor: 'var(--highcharts-neutral-color-20)'
+            }
         },
         yAxis: {
             labels: {
@@ -651,6 +693,9 @@ namespace DynamicDefaultTheme {
                 style: {
                     color: 'var(--highcharts-neutral-color-100)'
                 }
+            },
+            grid: {
+                borderColor: 'var(--highcharts-neutral-color-20)'
             }
         },
         scrollbar: {
