@@ -318,11 +318,11 @@ namespace Validator {
     export interface RulesRegistryType {
         notEmpty: RuleDefinition;
         number: RuleDefinition;
-        bool: RuleDefinition;
+        boolean: RuleDefinition;
     }
 
     /**
-     * Type of rule: `notEmpty`, `number` or `bool`.
+     * Type of rule: `notEmpty`, `number` or `boolean`.
      */
     export type RuleKey = keyof RulesRegistryType;
 
@@ -344,7 +344,7 @@ namespace Validator {
             validate: (value: string): boolean => !isNaN(Number(value)),
             notification: 'Value has to be a number.'
         },
-        bool: {
+        boolean: {
             validate: (value: string): boolean => (
                 value === 'true' || value === 'false' ||
                 Number(value) === 1 || Number(value) === 0
@@ -358,8 +358,8 @@ namespace Validator {
      */
     export const predefinedRules: Record<Column.DataType, RuleKey[]> = {
         number: ['number'],
-        bool: ['bool'],
-        string: [],
+        boolean: ['boolean'],
+        string: ['notEmpty'],
         date: ['number']
     };
 }

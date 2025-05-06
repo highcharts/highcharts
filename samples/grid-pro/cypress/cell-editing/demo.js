@@ -77,14 +77,14 @@ Grid.grid('container', {
         }]
     }, {
         id: 'booleans',
-        dataType: 'bool',
+        dataType: 'boolean',
         validationRules: [{
             validate: 'notEmpty',
             notification: function () {
                 return 'Not empty formatter';
             }
         }, {
-            validate: 'bool',
+            validate: 'boolean',
             notification: function () {
                 return 'New value for column: ' +
                     this.column.id +

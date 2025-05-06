@@ -28,7 +28,7 @@ Grid.grid('container', {
             number: {
                 notification: 'New value has to be a number.'
             },
-            bool: {
+            boolean: {
                 notification: 'New value has to be a boolean.'
             }
         }
@@ -80,18 +80,18 @@ Grid.grid('container', {
         }]
     }, {
         id: 'booleans',
-        dataType: 'bool',
+        dataType: 'boolean',
         validationRules: [{
             validate: 'notEmpty',
             notification: function () {
                 return 'Not empty formatter';
             }
         }, {
-            validate: 'bool',
+            validate: 'boolean',
             notification: function () {
                 return 'New value for column: ' +
                     this.column.id +
-                    ' should be bool';
+                    ' should be boolean';
             }
         }]
     }, {
