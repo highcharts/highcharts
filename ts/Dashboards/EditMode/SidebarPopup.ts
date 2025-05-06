@@ -441,7 +441,7 @@ class SidebarPopup extends BaseForm {
 
                                         if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
-                                                newCell.mountedComponent.chart,
+                                                chart,
                                                 'render',
                                                 (): void => {
                                                     sidebar.editMode
