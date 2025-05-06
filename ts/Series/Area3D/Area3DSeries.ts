@@ -79,7 +79,7 @@ function wrapAreaSeriesGetGraphPath(
         for (let i = 0; i < series.points.length; i++) {
             bottomPoints.push({
                 x: series.rawPointsX[i],
-                y: options.stacking && options.stacking !== 'disabled' ?
+                y: options.stacking ?
                     series.points[i].yBottom : translatedThreshold,
                 z: series.zPadding
             } as any);

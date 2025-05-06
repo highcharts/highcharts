@@ -203,7 +203,7 @@ class WaterfallSeries extends ColumnSeries {
         super.processData.call(this, force);
 
         // Record extremes only if stacking was not set:
-        if (!options.stacking || options.stacking === 'disabled') {
+        if (!options.stacking) {
             series.dataMin = dataMin + threshold;
             series.dataMax = dataMax;
         }
@@ -298,7 +298,7 @@ class WaterfallSeries extends ColumnSeries {
                 // stacked, yAxis is reversed and it also depends on point's
                 // value
                 let yPos: number;
-                if (stacking && stacking !== 'disabled') {
+                if (stacking) {
                     const connectorThreshold = prevStackX.connectorThreshold;
 
                     yPos = crisp(
@@ -340,11 +340,7 @@ class WaterfallSeries extends ColumnSeries {
                 prevBox &&
                 path.length &&
                 (
-                    (
-                        (!stacking || stacking === 'disabled') &&
-                        prevY < 0 &&
-                        !reversedYAxis
-                    ) ||
+                    (!stacking && prevY < 0 && !reversedYAxis) ||
                     (prevY > 0 && reversedYAxis)
                 )
             ) {
@@ -552,7 +548,7 @@ class WaterfallSeries extends ColumnSeries {
             stackedYNeg,
             stackedYPos;
 
-        if (stacking && stacking !== 'disabled') {
+        if (stacking) {
             yAxis = this.yAxis;
             waterfallStacks = yAxis.waterfall.stacks;
             stackedYNeg = this.stackedYNeg = [];
@@ -649,7 +645,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
 
         // Code responsible for correct positions of stacked points
         // starts here
-        if (stacking && stacking !== 'disabled') {
+        if (stacking) {
             if (actualStack) {
                 const actualStackX = actualStack[i];
 

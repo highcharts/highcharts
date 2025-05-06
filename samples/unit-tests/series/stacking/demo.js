@@ -765,10 +765,12 @@ QUnit.test('Date objects as X values, column', function (assert) {
                 `Enabling centerInCategory and setting reversedStacks to false
                 should not affect the stack order.`
             );
-        });
+        }
+    );
+
 
     QUnit.test(
-        'Disable stacking via disabled flag, #19033',
+        'Disable stacking via null flag, #19033',
         function (assert) {
             const chart = Highcharts.chart('container', {
                 chart: {
@@ -776,7 +778,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
                 },
                 plotOptions: {
                     series: {
-                        stacking: 'disabled'
+                        stacking: null
                     }
                 },
                 series: [{
@@ -786,8 +788,8 @@ QUnit.test('Date objects as X values, column', function (assert) {
 
             assert.strictEqual(
                 chart.series[0].options.stacking,
-                'disabled',
-                'Stacking should be "disabled" when set in options.'
+                null,
+                'Stacking should be "disabled" when set null in options.'
             );
         }
     );

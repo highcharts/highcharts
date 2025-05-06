@@ -70,8 +70,7 @@ namespace ColumnDataLabel {
             below = (point as AreaRangePoint).below ?? // Range series
                 (point.plotY || 0) > (this.translatedThreshold ?? yLen),
             // Draw it inside the box?
-            inside = dlOptions.inside ??
-            (options.stacking && options.stacking !== 'disabled');
+            inside = dlOptions.inside ?? !!options.stacking;
 
         // Align to the column itself, or the top of it
         if (dlBox) { // Area range uses this method but not alignTo

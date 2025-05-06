@@ -150,9 +150,7 @@ class GanttSeries extends XRangeSeries {
             shapeArgs: SVGAttributes = point.shapeArgs as any,
             plotY = point.plotY,
             state = point.selected && 'select',
-            cutOff = seriesOpts.stacking &&
-            seriesOpts.stacking !== 'disabled' &&
-            !seriesOpts.borderRadius;
+            cutOff = seriesOpts.stacking && !seriesOpts.borderRadius;
 
         let graphic = point.graphic,
             diamondShape: SVGPath;

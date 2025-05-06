@@ -106,8 +106,7 @@ function columnSeriesTranslate3dShapes(
         chart = series.chart,
         seriesOptions = series.options,
         depth = (seriesOptions as any).depth,
-        stack = seriesOptions.stacking &&
-        seriesOptions.stacking !== 'disabled' ?
+        stack = seriesOptions.stacking ?
             (seriesOptions.stack || 0) :
             series.index; // #4743
 
@@ -362,7 +361,9 @@ function onColumnSeriesAfterInit(
 
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
-            const stacks = retrieveStacks(this.chart, stacking) as AnyRecord,
+            const stacks = retrieveStacks(
+                    this.chart, stacking || void 0
+                ) as AnyRecord,
                 stack: (string|number) = seriesOptions.stack || 0;
 
             let i; // Position within the stack
@@ -610,12 +611,7 @@ function wrapSeriesAlignDataLabel(
     ) {
         const series = this as ColumnSeries,
             seriesOptions: ColumnSeriesOptions = series.options,
-            inside = pick(
-                options.inside,
-                (series.options.stacking &&
-                series.options.stacking !== 'disabled'
-                )
-            ),
+            inside = pick(options.inside, !!series.options.stacking),
             options3d = chart.options.chart.options3d as any,
             xOffset = point.pointWidth / 2 || 0;
 

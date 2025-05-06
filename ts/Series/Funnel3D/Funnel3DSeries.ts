@@ -115,11 +115,7 @@ class Funnel3DSeries extends ColumnSeries {
                 series.translatedThreshold,
                 series.yAxis.len
             ),
-            inside = pick(
-                options.inside, (series.options.stacking &&
-                series.options.stacking !== 'disabled'
-                )
-            ),
+            inside = pick(options.inside, !!series.options.stacking),
             dlBox: BBoxObject = {
                 x: dlBoxRaw.x,
                 y: dlBoxRaw.y,

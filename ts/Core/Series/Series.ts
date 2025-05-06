@@ -2221,15 +2221,13 @@ class Series {
                 stackValues: (Array<number>|undefined),
                 yValue = point.y,
                 lowValue = point.low;
-            const stacks = stacking &&
-                stacking !== 'disabled' &&
-                yAxis.stacking?.stacks[(
-                    series.negStacks &&
+            const stacks = stacking && yAxis.stacking?.stacks[(
+                series.negStacks &&
                 (yValue as any) <
                 (stackThreshold ? 0 : (threshold as any)) ?
-                        '-' :
-                        ''
-                ) + series.stackKey];
+                    '-' :
+                    ''
+            ) + series.stackKey];
 
             plotX = xAxis.translate( // #3923
                 xValue, false, false, false, true, pointPlacement
@@ -2255,7 +2253,6 @@ class Series {
             // Calculate the bottom y value for stacked series
             if (
                 stacking &&
-                stacking !== 'disabled' &&
                 series.visible &&
                 stacks &&
                 stacks[xValue]
@@ -4781,16 +4778,9 @@ class Series {
         series.isDirty = true;
 
         // In a stack, all other series are affected
-        if (
-            series.options.stacking &&
-            series.options.stacking !== 'disabled'
-        ) {
+        if (series.options.stacking) {
             chart.series.forEach((otherSeries): void => {
-                if (
-                    otherSeries.options.stacking &&
-                    (otherSeries.options.stacking !== 'disabled') &&
-                    otherSeries.visible
-                ) {
+                if (otherSeries.options.stacking && otherSeries.visible) {
                     otherSeries.isDirty = true;
                 }
             });

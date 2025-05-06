@@ -847,11 +847,7 @@ function wrapColumnSeriesAlignDataLabel(
     isNew?: boolean
 ): void {
     const chart = this.chart,
-        inside = pick(
-            options.inside,
-            (this.options.stacking && this.options.stacking !== 'disabled'
-            )
-        );
+        inside = pick(options.inside, !!this.options.stacking);
 
     let angle,
         shapeArgs,
@@ -999,7 +995,7 @@ function onAfterColumnTranslate(
             if (chart.inverted) {
                 point.plotY = yAxis.translate(pointY);
 
-                if (stacking && stacking !== 'disabled' && yAxis.stacking) {
+                if (stacking && yAxis.stacking) {
                     stack = yAxis.stacking.stacks[(pointY < 0 ? '-' : '') +
                         series.stackKey];
 

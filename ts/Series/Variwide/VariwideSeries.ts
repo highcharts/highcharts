@@ -288,7 +288,7 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
         }
     }
 
-    if (this.options.stacking && this.options.stacking !== 'disabled') {
+    if (this.options.stacking) {
         this.correctStackLabels();
     }
 

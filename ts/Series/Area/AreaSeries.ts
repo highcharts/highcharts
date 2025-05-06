@@ -214,7 +214,6 @@ class AreaSeries extends LineSeries {
             ): void {
                 const point = points[i],
                     stackedValues = stacking &&
-                        stacking !== 'disabled' &&
                         stacks[point.x as any].points[seriesIndex as any],
                     nullVal = (point as any)[side + 'Null'] || 0,
                     cliffVal = (point as any)[side + 'Cliff'] || 0;
@@ -233,7 +232,7 @@ class AreaSeries extends LineSeries {
                     isNull = !!nullVal;
 
                 } else if (
-                    (!stacking || stacking === 'disabled') &&
+                    !stacking &&
                     points[otherI] &&
                     points[otherI].isNull
                 ) {
@@ -268,21 +267,21 @@ class AreaSeries extends LineSeries {
         points = points || this.points;
 
         // Fill in missing points
-        if (stacking && stacking !== 'disabled') {
+        if (stacking) {
             points = this.getStackPoints(points);
         }
 
         for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
 
             // Reset after series.update of stacking property (#12033)
-            if (!stacking || stacking === 'disabled') {
+            if (!stacking) {
                 points[i].leftCliff = points[i].rightCliff =
                     points[i].leftNull = points[i].rightNull = void 0;
             }
 
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);
-            yBottom = stacking && stacking !== 'disabled' ?
+            yBottom = stacking ?
                 pick(points[i].yBottom, translatedThreshold) :
                 translatedThreshold;
 
@@ -293,11 +292,7 @@ class AreaSeries extends LineSeries {
                 }
                 // Skip null point when stacking is false and connectNulls
                 // true
-                if (
-                    !(isNull &&
-                    (!stacking || stacking === 'disabled') &&
-                    connectNulls)
-                ) {
+                if (!(isNull && !stacking && connectNulls)) {
                     graphPoints.push(points[i]);
                     bottomPoints.push({ // @todo make real point object
                         x: i,
@@ -332,7 +327,6 @@ class AreaSeries extends LineSeries {
         if (
             this.chart.series.length > 1 &&
             stacking &&
-            stacking !== 'disabled' &&
             graphPoints.some((point): boolean | undefined => point.isCliff)
         ) {
             areaPath.hasStackedCliffs = graphPath.hasStackedCliffs = true;
@@ -368,7 +362,7 @@ class AreaSeries extends LineSeries {
 
         points = points || this.points;
 
-        if (this.options.stacking && this.options.stacking !== 'disabled') {
+        if (this.options.stacking) {
 
             for (let i = 0; i < points.length; i++) {
                 // Reset after point update (#7326)
