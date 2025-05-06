@@ -25,7 +25,7 @@ Grid.grid('container', {
             number: {
                 notification: 'New value has to be a number.'
             },
-            bool: {
+            boolean: {
                 notification: 'New value has to be a boolean.'
             }
         }
@@ -76,8 +76,8 @@ Grid.grid('container', {
         }]
     }, {
         id: 'booleans',
-        dataType: 'bool',
-        validationRules: ['notEmpty']
+        dataType: 'boolean',
+        validationRules: ['notEmpty', 'boolean']
     }, {
         id: 'icon',
         validationRules: ['notEmpty', {
