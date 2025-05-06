@@ -891,7 +891,7 @@ class TreemapSeries extends ScatterSeries {
 
                 // Hide labels for shapes that are too small
                 } else {
-                    style.width = '1px';
+                    style.width = `${width}px`;
                     style.visibility = 'hidden';
                 }
             }

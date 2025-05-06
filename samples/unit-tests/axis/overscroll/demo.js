@@ -349,3 +349,58 @@ QUnit.test('Overscroll with rangeSelector (#22334)', function (assert) {
         'Percent overscroll correct range with rangeSelector enabled'
     );
 });
+
+QUnit.test('Panning with overscroll', function (assert) {
+    const data = [];
+    for (let i = 0; i <= 100; i++) {
+        data.push(
+            [i, Math.sin(i), Math.sin(i) + 1, Math.sin(i) + 1, Math.sin(i)]
+        );
+    }
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            overscroll: 50
+        },
+        series: [{
+            type: 'candlestick',
+            data
+        }]
+    });
+
+    const controller = new TestController(chart);
+    controller.pan([chart.plotWidth - 50, 200], [100, 200]);
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        150,
+        'Chart should pan to right extreme, where overscroll is set, #21606.'
+    );
+
+    chart.xAxis[0].setExtremes(77, 150);
+
+    // Pan twice
+    controller.pan([chart.plotWidth - 50, 200], [0, 200]);
+    controller.pan([chart.plotWidth - 50, 200], [0, 200]);
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        77,
+        'xAxis.min should not change when panning over the right extreme.'
+    );
+
+    const extremes = chart.xAxis[0].getExtremes();
+
+    controller.pan([50, 200], [300, 200]);
+
+    assert.ok(
+        extremes.max > chart.xAxis[0].max,
+        'Chart should pan away from overscroll.'
+    );
+
+    assert.close(
+        chart.xAxis[0].max - chart.xAxis[0].min,
+        extremes.max - extremes.min,
+        2,
+        'xAxis range should not change when panning away from overscroll.'
+    );
+});

@@ -436,10 +436,12 @@ class SidebarPopup extends BaseForm {
                                 'layoutChanged',
                                 (e): void => {
                                     if (newCell && e.type === 'newComponent') {
+                                        const chart =
+                                            newCell.mountedComponent.chart;
 
-                                        if (newCell.mountedComponent.chart) {
+                                        if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
-                                                newCell.mountedComponent.chart,
+                                                chart,
                                                 'render',
                                                 (): void => {
                                                     sidebar.editMode
@@ -545,6 +547,11 @@ class SidebarPopup extends BaseForm {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
             editCellContext.setHighlight(true);
+            if (editMode.resizer) {
+                editMode.resizer.setSnapPositions(
+                    editMode.editCellContext as Cell
+                );
+            }
         } else if (
             CellHTML.isCellHTML(editCellContext) && editMode.cellToolbar
         ) {

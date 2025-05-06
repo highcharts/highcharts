@@ -29,6 +29,30 @@ if (!Array.prototype.find) {
         }
     };
 }
+if (!Array.prototype.fill) {
+    // eslint-disable-next-line no-extend-native
+    Array.prototype.fill = function <T> (
+        value: T,
+        start?: number,
+        end?: number
+    ): T[] {
+        const O = Object(this),
+            len = O.length >>> 0,
+            relativeStart = Number(start) || 0;
+
+        let k = relativeStart === -Infinity ? 0 : relativeStart < 0 ?
+            Math.max(len + relativeStart, 0) : Math.min(relativeStart, len);
+
+        const relativeEnd = end === void 0 ? len : Number(end),
+            final = relativeEnd === -Infinity ? 0 : relativeEnd < 0 ?
+                Math.max(len + relativeEnd, 0) : Math.min(relativeEnd, len);
+
+        while (k < final) {
+            O[k++] = value;
+        }
+        return O;
+    };
+}
 if (!Object.entries) {
     Object.entries = function <T> (obj: Record<string, T>): Array<[string, T]> {
         const keys = Object.keys(obj),

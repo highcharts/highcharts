@@ -67,10 +67,10 @@ function commonSetter(
     key: string,
     elem: HTMLDOMElement
 ): void {
-    const style = this.div?.style || elem.style;
+    const style = this.div?.style;
     SVGElement.prototype[`${key}Setter`].call(this, value, key, elem);
     if (style) {
-        style[key as any] = value;
+        elem.style[key as any] = style[key as any] = value;
     }
 }
 
@@ -135,6 +135,15 @@ const decorateSVGGroup = (
             g[key] = value;
 
             div.style[key === 'translateX' ? 'left' : 'top'] = `${value}px`;
+
+            g.doTransform = true;
+        };
+
+        g.scaleXSetter = g.scaleYSetter = (
+            value: number|string|null,
+            key: string
+        ) : void => {
+            g[key] = value;
 
             g.doTransform = true;
         };
