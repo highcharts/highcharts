@@ -439,7 +439,7 @@ class SidebarPopup extends BaseForm {
                                         const chart =
                                             newCell.mountedComponent.chart;
 
-                                        if (chart && chart.isDirtyBox) {
+                                        if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
                                                 newCell.mountedComponent.chart,
                                                 'render',
