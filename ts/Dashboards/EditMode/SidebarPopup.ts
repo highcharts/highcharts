@@ -436,7 +436,8 @@ class SidebarPopup extends BaseForm {
                                 'layoutChanged',
                                 (e): void => {
                                     if (newCell && e.type === 'newComponent') {
-                                        const chart = newCell.mountedComponent.chart;
+                                        const chart =
+                                            newCell.mountedComponent.chart;
 
                                         if (chart && chart.isDirtyBox) {
                                             const unbind = addEvent(
