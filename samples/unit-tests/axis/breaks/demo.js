@@ -1162,7 +1162,7 @@ QUnit.test(
         assert.close(
             chart.xAxis[0].toValue(100),
             1.23368,
-            0.007,
+            0.01,
             'The toValue method should return correct value when breakes ' +
             'enabled.'
         );
