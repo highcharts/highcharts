@@ -112,7 +112,7 @@ class Validator {
                 (rule): Boolean => typeof rule === 'string'
             );
 
-            if (isArrayString) {
+            if (rules.length > 0 && isArrayString) {
                 rules = [...new Set(rules)];
             } else {
                 const predefined = Validator.predefinedRules[dataType] || [];

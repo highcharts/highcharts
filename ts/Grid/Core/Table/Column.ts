@@ -193,7 +193,7 @@ class Column {
             case 'number':
                 return 'number';
             case 'boolean':
-                return 'bool';
+                return 'boolean';
             default:
                 return 'string';
         }

@@ -55,7 +55,7 @@ namespace CellRendererRegistry {
         // generic by adding a registry function.
         string: 'text',
         number: 'text',
-        bool: 'checkbox',
+        boolean: 'checkbox',
         date: 'text'
     };
 
