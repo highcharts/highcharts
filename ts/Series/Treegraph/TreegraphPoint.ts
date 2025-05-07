@@ -23,7 +23,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes';
+import Palette from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

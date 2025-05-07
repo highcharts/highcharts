@@ -43,7 +43,7 @@ const {
     merge,
     pick
 } = U;
-import { Palette } from '../../../Core/Color/Palettes.js';
+import Palette from '../../../Core/Color/Palettes.js';
 
 /* *
  *

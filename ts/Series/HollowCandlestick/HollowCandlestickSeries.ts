@@ -22,7 +22,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
 

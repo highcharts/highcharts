@@ -24,7 +24,7 @@ import H from './Globals.js';
 const {
     isTouchDevice
 } = H;
-import { Palette } from './Color/Palettes.js';
+import Palette from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
@@ -94,7 +94,7 @@ const defaultOptions: DefaultOptions = {
      *     "#91e8e1"
      * ]
      */
-    colors: Palettes.colors,
+    colors: Palettes.dataColors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for

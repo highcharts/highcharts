@@ -18,7 +18,7 @@
 
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

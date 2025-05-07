@@ -28,7 +28,7 @@ const {
     composed,
     noop
 } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';

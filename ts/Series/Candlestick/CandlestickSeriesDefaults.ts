@@ -18,7 +18,7 @@
 
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

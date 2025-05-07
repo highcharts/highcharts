@@ -61,7 +61,7 @@ const {
     intersectRect
 } = SLU;
 import U from '../../Core/Utilities.js';
-import { Palette } from '../../Core/Color/Palettes';
+import Palette from '../../Core/Color/Palettes.js';
 const {
     addEvent,
     extend,

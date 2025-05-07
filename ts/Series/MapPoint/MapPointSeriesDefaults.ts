@@ -19,7 +19,7 @@
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

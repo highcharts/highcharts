@@ -55,7 +55,7 @@ const {
     doc,
     noop
 } = H;
-import { Palette } from '../Core/Color/Palettes.js';
+import Palette from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

@@ -18,7 +18,7 @@
 
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

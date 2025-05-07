@@ -19,7 +19,7 @@
 import type HeatmapPoint from './HeatmapPoint';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 

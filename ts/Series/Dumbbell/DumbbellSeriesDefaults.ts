@@ -18,7 +18,7 @@
 
 import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

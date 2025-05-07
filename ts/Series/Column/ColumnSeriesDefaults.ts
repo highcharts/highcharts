@@ -19,7 +19,7 @@
 import type ColumnSeries from './ColumnSeries';
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

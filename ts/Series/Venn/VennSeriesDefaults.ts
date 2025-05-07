@@ -25,7 +25,7 @@
 
 import type VennSeriesOptions from './VennSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

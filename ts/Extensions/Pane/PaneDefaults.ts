@@ -21,7 +21,7 @@ import type {
     PaneOptions
 } from './PaneOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

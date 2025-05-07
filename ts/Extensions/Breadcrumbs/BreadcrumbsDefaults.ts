@@ -21,7 +21,7 @@
 import type BreadcrumbsOptions from './BreadcrumbsOptions';
 import type { LangOptions } from '../../Core/Options';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

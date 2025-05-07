@@ -19,7 +19,7 @@
 import type MapChart from '../Core/Chart/MapChart';
 import type MapNavigationOptions from './MapNavigationOptions';
 
-import { Palette } from '../Core/Color/Palettes.js';
+import Palette from '../Core/Color/Palettes.js';
 
 /* *
  *

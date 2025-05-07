@@ -25,7 +25,7 @@ const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
 import PieSeriesDefaults from './PieSeriesDefaults.js';
 import Series from '../../Core/Series/Series.js';

@@ -20,7 +20,7 @@ import type NavigatorOptions from './NavigatorOptions';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 

@@ -24,7 +24,7 @@ import type OrganizationSeriesOptions from './OrganizationSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SankeyPoint from '../Sankey/SankeyPoint';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *
