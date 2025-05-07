@@ -51,10 +51,10 @@ describe('Data polling restarting', () => {
       const signal = connector.abortController.signal;
       // Component reference should be initially added to the connector.
       expect(connector.components).not.be.empty;
-      // Connector polling should be run initially.
-      expect(connector.polling).to.be.true;
       // Expect request not to be aborted.
       expect(signal.aborted).to.be.false;
+      // Connector polling should be run initially.
+      expect(connector.polling).to.be.true;
 
       // Destroy the component.
       const component = dashboard.mountedComponents[0].component;
@@ -77,10 +77,10 @@ describe('Data polling restarting', () => {
       const connector = await dashboard.dataPool.getConnector('fetched-data');
       // Component reference should be added to the connector.
       expect(connector.components).not.be.empty;
-      // Connector polling should be run again.
-      expect(connector.polling).to.be.true;
       // Expect request not to be aborted.
       expect(connector.abortController.signal.aborted).to.be.false;
+      // Connector polling should be run again.
+      expect(connector.polling).to.be.true;
     });
   });
 });
