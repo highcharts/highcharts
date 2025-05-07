@@ -179,7 +179,7 @@ class GoogleSheetsConnector extends DataConnector {
             throw new Error('Invalid URL: ' + url);
         }
 
-        return fetch(url)
+        return fetch(url, { signal: connector?.abortController?.signal })
             .then((
                 response
             ): Promise<GoogleSheetsConverter.GoogleSpreadsheetJSON> => (
