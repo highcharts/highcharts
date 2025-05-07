@@ -176,6 +176,9 @@ class TreegraphSeries extends TreemapSeries {
             true,
             super.applyPalette() as DeepPartial<TreegraphSeriesOptions>,
             {
+                marker: {
+                    lineColor: void 0
+                },
                 link: {
                     color: palette.neutralColor60
                 }
