@@ -12,7 +12,6 @@
  *
  * */
 
-import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
@@ -32,7 +31,12 @@ export interface DMIOptions extends SMAOptions, MultipleLinesComposition.Indicat
 }
 
 export interface DMILineOptions {
-    styles?: CSSObject;
+    styles?: DMILineStylesOptions;
+}
+
+export interface DMILineStylesOptions {
+    lineColor?: string;
+    lineWidth?: number;
 }
 
 export interface DMIParamsOptions extends SMAParamsOptions {

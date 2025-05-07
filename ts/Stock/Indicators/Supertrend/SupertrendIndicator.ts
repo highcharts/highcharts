@@ -30,7 +30,6 @@ import type {
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
-import Palette from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     atr: ATRIndicator,
@@ -131,22 +130,28 @@ class SupertrendIndicator extends SMAIndicator {
         },
         /**
          * Color of the Supertrend series line that is beneath the main series.
+         * Defaults to the
+         * [palette.positiveColor](#palette.positiveColor) setting.
          *
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with risingTrendColor
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.supertrend.risingTrendColor
          */
-        risingTrendColor: Palette.positiveColor,
+
         /**
          * Color of the Supertrend series line that is above the main series.
+         * Defaults to the
+         * [palette.negativeColor](#palette.negativeColor) setting.
          *
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with fallingTrendColor
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.supertrend.fallingTrendColor
          */
-        fallingTrendColor: Palette.negativeColor,
+
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -161,11 +166,12 @@ class SupertrendIndicator extends SMAIndicator {
                 lineWidth: 1,
 
                 /**
-                 * Color of the line.
+                 * Color of the line. Defaults to the
+                 * [palette.neutralColor80](#palette.neutralColor80) setting.
                  *
                  * @type {Highcharts.ColorString}
+                 * @apioption plotOptions.supertrend.changeTrendLine.styles.lineColor
                  */
-                lineColor: Palette.neutralColor80,
 
                 /**
                  * The dash or dot style of the grid lines. For possible
@@ -232,6 +238,28 @@ class SupertrendIndicator extends SMAIndicator {
                 unbinder();
             }, {
                 order: 1
+            }
+        );
+    }
+
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<SupertrendOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<SupertrendOptions>,
+            {
+                risingTrendColor: palette.positiveColor,
+                fallingTrendColor: palette.negativeColor,
+                changeTrendLine: {
+                    styles: {
+                        lineColor: palette.neutralColor80
+                    }
+                }
             }
         );
     }

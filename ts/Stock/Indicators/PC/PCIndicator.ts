@@ -25,7 +25,6 @@ import type PCPoint from './PCPoint';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
@@ -98,11 +97,12 @@ class PCIndicator extends SMAIndicator {
             styles: {
                 /**
                  * Color of the top line. If not set, it's inherited from
-                 * [plotOptions.pc.color](#plotOptions.pc.color).
+                 * [plotOptions.pc.color](#plotOptions.pc.color). Defaults to
+                 * the [palette.dataColors[2]](#palette.dataColors[2]) setting.
                  *
                  * @type {Highcharts.ColorString}
+                 * @apioption plotOptions.pc.topLine.styles.lineColor
                  */
-                lineColor: Palettes.dataColors[2],
                 /**
                  * Pixel width of the line.
                  */
@@ -113,11 +113,12 @@ class PCIndicator extends SMAIndicator {
             styles: {
                 /**
                  * Color of the bottom line. If not set, it's inherited from
-                 * [plotOptions.pc.color](#plotOptions.pc.color).
+                 * [plotOptions.pc.color](#plotOptions.pc.color). Defaults to
+                 * the [palette.dataColors[8]](#palette.dataColors[8]) setting.
                  *
                  * @type {Highcharts.ColorString}
+                 * @apioption plotOptions.pc.bottomLine.styles.lineColor
                  */
-                lineColor: Palettes.dataColors[8],
                 /**
                  * Pixel width of the line.
                  */
@@ -144,6 +145,31 @@ class PCIndicator extends SMAIndicator {
      *  Functions
      *
      * */
+
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<PCOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<PCOptions>,
+            {
+                topLine: {
+                    styles: {
+                        lineColor: palette.dataColors[2]
+                    }
+                },
+                bottomLine: {
+                    styles: {
+                        lineColor: palette.dataColors[8]
+                    }
+                }
+            }
+        );
+    }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesLike,

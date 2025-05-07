@@ -27,7 +27,6 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import Palette from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
@@ -113,13 +112,14 @@ class DMIIndicator extends SMAIndicator {
                 /**
                  * Pixel width of the line.
                  */
-                lineWidth: 1,
+                lineWidth: 1
                 /**
-                 * Color of the line.
+                 * Color of the line. Defaults to the
+                 * [palette.positiveColor](#palette.positiveColor) setting.
                  *
                  * @type {Highcharts.ColorString}
+                 * @apioption plusDILine.styles.lineColor
                  */
-                lineColor: Palette.positiveColor // Green-ish
             }
         },
         /**
@@ -133,13 +133,14 @@ class DMIIndicator extends SMAIndicator {
                 /**
                  * Pixel width of the line.
                  */
-                lineWidth: 1,
+                lineWidth: 1
                 /**
-                 * Color of the line.
+                 * Color of the line. Defaults to the
+                 * [palette.negativeColor](#palette.negativeColor) setting.
                  *
                  * @type {Highcharts.ColorString}
+                 * @apioption minusDILine.styles.lineColor
                  */
-                lineColor: Palette.negativeColor // Red-ish
             }
         },
         dataGrouping: {
@@ -160,6 +161,31 @@ class DMIIndicator extends SMAIndicator {
      *  Functions
      *
      * */
+
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<DMIOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<DMIOptions>,
+            {
+                plusDILine: {
+                    styles: {
+                        lineColor: palette.positiveColor
+                    }
+                },
+                minusDILine: {
+                    styles: {
+                        lineColor: palette.negativeColor
+                    }
+                }
+            }
+        );
+    }
 
     public calculateDM(
         yVal: Array<Array<number>>,

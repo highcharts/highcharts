@@ -22,7 +22,6 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
-import Palette from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     column: {
@@ -87,27 +86,30 @@ class AOIndicator extends SMAIndicator {
         /**
          * Color of the Awesome oscillator series bar that is greater than the
          * previous one. Note that if a `color` is defined, the `color`
-         * takes precedence and the `greaterBarColor` is ignored.
+         * takes precedence and the `greaterBarColor` is ignored. Defaults to
+         * the [palette.positiveColor](#palette.positiveColor) setting;
          *
          * @sample {highstock} stock/indicators/ao/
          *         greaterBarColor
          *
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
+         * @apioption plotOptions.ao.greaterBarColor
          */
-        greaterBarColor: Palette.positiveColor,
+
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
-         * takes precedence and the `lowerBarColor` is ignored.
+         * takes precedence and the `lowerBarColor` is ignored. Defaults to the
+         * [palette.negativeColor](#palette.negativeColor) setting.
          *
          * @sample {highstock} stock/indicators/ao/
          *         lowerBarColor
          *
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
+         * @apioption plotOptions.ao.lowerBarColor
          */
-        lowerBarColor: Palette.negativeColor,
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,
@@ -136,6 +138,23 @@ class AOIndicator extends SMAIndicator {
      *  Functions
      *
      * */
+
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<AOIndicator['options']> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<AOIndicator['options']>,
+            {
+                greaterBarColor: palette.positiveColor,
+                lowerBarColor: palette.negativeColor
+            }
+        );
+    }
 
     public drawGraph(this: AOIndicator): void {
         const indicator = this,
