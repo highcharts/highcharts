@@ -54,7 +54,7 @@ export interface LegendOptions {
     align: AlignValue;
     alignColumns: boolean;
     backgroundColor?: ColorType;
-    borderColor: ColorType;
+    borderColor?: ColorType;
     borderRadius: number;
     borderWidth?: number;
     className: string;
@@ -64,7 +64,7 @@ export interface LegendOptions {
     itemCheckboxStyle: CSSObject;
     itemDistance?: number;
     itemHiddenStyle: CSSObject;
-    itemHoverStyle: CSSObject;
+    itemHoverStyle?: CSSObject;
     itemMarginBottom: number;
     itemMarginTop: number;
     itemStyle: CSSObject;
@@ -101,11 +101,11 @@ export interface LegendOptions {
 export type LegendItemClickCallback = E<PointerEvent>;
 
 export interface LegendNavigationOptions {
-    activeColor: ColorType;
+    activeColor?: ColorType;
     animation?: (boolean|Partial<AnimationOptions>);
     arrowSize?: number;
     enabled?: boolean;
-    inactiveColor: ColorType;
+    inactiveColor?: ColorType;
     style?: CSSObject;
 }
 

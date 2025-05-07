@@ -1633,7 +1633,9 @@ class Legend {
                         }
 
                         if (!styledMode) {
-                            legendLabel.css(legend.options.itemHoverStyle);
+                            legendLabel.css(
+                                legend.options.itemHoverStyle || {}
+                            );
                         }
                     })
                     .on('mouseout', function (): void {

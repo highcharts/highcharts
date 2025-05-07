@@ -441,6 +441,54 @@ class Chart {
                             backgroundColor: palette.backgroundColor,
                             borderColor: palette.highlightColor80,
                             plotBorderColor: palette.neutralColor20
+                        },
+                        colors: palette.dataColors,
+                        title: {
+                            style: {
+                                color: palette.neutralColor80
+                            }
+                        },
+                        subtitle: {
+                            style: {
+                                color: palette.neutralColor60
+                            }
+                        },
+                        caption: {
+                            style: {
+                                color: palette.neutralColor60
+                            }
+                        },
+                        credits: {
+                            style: {
+                                color: palette.neutralColor40
+                            }
+                        },
+                        legend: {
+                            borderColor: palette.neutralColor40,
+                            itemStyle: {
+                                color: palette.neutralColor80
+                            },
+                            itemHoverStyle: {
+                                color: palette.highlightColor100
+                            },
+                            itemHiddenStyle: {
+                                color: palette.neutralColor60
+                            },
+                            navigation: {
+                                activeColor: palette.highlightColor100,
+                                inactiveColor: palette.neutralColor20
+                            }
+                        },
+                        loading: {
+                            style: {
+                                backgroundColor: palette.backgroundColor
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: palette.backgroundColor,
+                            style: {
+                                color: palette.neutralColor80
+                            }
                         }
                     },
                     defaultOptions,

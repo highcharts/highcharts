@@ -162,7 +162,7 @@ function compose(
  */
 function createPatterns(): Array<PatternOptionsObject> {
     const patterns: Array<PatternOptionsObject> = [],
-        colors: Array<string> = getOptions().colors as any;
+        colors: Array<string> = getOptions().palette.dataColors;
 
     // Start with subtle patterns
     let i = 0;
