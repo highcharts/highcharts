@@ -131,6 +131,17 @@ namespace ColorAxisComposition {
 
             wrapChartCreateAxis(ChartClass);
 
+            addEvent(ChartClass, 'redraw', function (): void {
+
+                for (const colorAxis of this.colorAxis || []) {
+                    if (colorAxis.width !== colorAxis.labelRight) {
+                        (colorAxis as any).update(
+                            { labelRight: colorAxis.width }
+                        );
+                    }
+                }
+            });
+
             fxProto.fillSetter = wrapFxFillSetter;
             fxProto.strokeSetter = wrapFxStrokeSetter;
 
