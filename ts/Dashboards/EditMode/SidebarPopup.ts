@@ -400,6 +400,7 @@ class SidebarPopup extends BaseForm {
                         e as PointerEvent,
                         void 0,
                         (dropContext: Cell|Row): void => {
+
                             // Add component if there is no layout yet.
                             if (this.editMode.board.layouts.length === 0) {
                                 const board = this.editMode.board,
@@ -419,8 +420,9 @@ class SidebarPopup extends BaseForm {
                                 dropContext = layout.rows[0];
                             }
 
-                            if (!dropContext) {
+                            if (!dropContext?.type) {
                                 const layouts = sidebar.editMode.board.layouts;
+
                                 dragDrop.dropContext = dropContext =
                                     layouts[layouts.length - 1].addRow(
                                         {},
@@ -437,7 +439,7 @@ class SidebarPopup extends BaseForm {
                                 (e): void => {
                                     if (newCell && e.type === 'newComponent') {
                                         const chart =
-                                            newCell.mountedComponent.chart;
+                                            newCell.mountedComponent?.chart;
 
                                         if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
