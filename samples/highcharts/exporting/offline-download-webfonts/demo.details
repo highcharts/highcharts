@@ -1,0 +1,8 @@
+---
+ name: Highcharts Demo
+ applyCSP: false
+ authors:
+   - Øystein Moseng
+ requiresManualTesting: true
+ js_wrap: b
+...

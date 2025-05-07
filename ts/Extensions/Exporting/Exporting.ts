@@ -323,6 +323,12 @@ class Exporting {
             // Download the chart
             downloadURL(svgURL, filename);
         } else if (type !== 'application/pdf') {
+            const includeFonts = true;
+
+            if (includeFonts) {
+                svg = await Exporting.inlineFonts(svg);
+            }
+
             // PNG/JPEG download - create bitmap from SVG
             svgURL = Exporting.svgToDataURL(svg);
             try {
@@ -457,9 +463,7 @@ class Exporting {
     ): string {
         return property.replace(
             /[A-Z]/g,
-            function (match: string): string {
-                return '-' + match.toLowerCase();
-            }
+            (match: string): string => '-' + match.toLowerCase()
         );
     }
 
@@ -502,6 +506,108 @@ class Exporting {
             // Now we try to get the contents of the canvas
             return canvas.toDataURL(imageType);
         }
+    }
+    private static async fetchCSS(href: string): Promise<CSSStyleSheet> {
+        const content = await fetch(href)
+            .then((res): Promise<string> => res.text());
+
+        const newSheet = new CSSStyleSheet();
+        newSheet.replaceSync(content);
+
+        return newSheet;
+    }
+
+    private static async handleStyleSheet(
+        sheet: CSSStyleSheet,
+        resultArray: string[]
+    ): Promise<void> {
+        try {
+            for (const rule of Array.from(sheet.cssRules)) {
+                if (rule instanceof CSSImportRule) {
+                    const sheet = await Exporting.fetchCSS(rule.href);
+                    await Exporting.handleStyleSheet(sheet, resultArray);
+                }
+
+                if (rule instanceof CSSFontFaceRule) {
+                    // TODO: Resolve relative urls in cssText
+                    resultArray.push(rule.cssText);
+                }
+            }
+        } catch (err) {
+            if (sheet.href) {
+                const newSheet = await Exporting.fetchCSS(sheet.href);
+                await Exporting.handleStyleSheet(newSheet, resultArray);
+            }
+        }
+    }
+
+    private static async fetchStyleSheets(): Promise<string[]> {
+        const cssTexts: string[] = [];
+
+        for (const sheet of Array.from(doc.styleSheets)) {
+            await Exporting.handleStyleSheet(sheet, cssTexts);
+        }
+
+        return cssTexts;
+    }
+
+    public static async inlineFonts(svg: string): Promise<string> {
+        const cssTexts = await Exporting.fetchStyleSheets();
+
+        let cssText = cssTexts.join('\n');
+
+        const urlRegex = /url\(([^)]+)\)/g;
+        const urls: string[] = [];
+        let match;
+        while ((match = urlRegex.exec(cssText))) {
+            const m = match[1].replace(/['"]/g, '');
+            if (!urls.includes(m)) {
+                urls.push(m);
+            }
+        }
+
+        const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        };
+
+        const replacements: Record<string, string> = {};
+        for (const url of urls) {
+            try {
+                const res = await fetch(url);
+                const contentType = res.headers.get('Content-Type') || '';
+                replacements[url] =
+                    `data:${contentType};base64,${arrayBufferToBase64(await res.arrayBuffer())}`;
+            } catch {
+                // eslint-disable-next-line
+            }
+        }
+
+        cssText = cssText.replace(urlRegex, (_, url: string): string => {
+            const strippedUrl = url.replace(/['"]/g, '');
+            return replacements[strippedUrl] ? `url(${replacements[strippedUrl]})` : `url(${strippedUrl})`;
+        });
+
+        const svgDoc = new DOMParser().parseFromString(
+            svg,
+            'image/svg+xml'
+        );
+        const svgElement = svgDoc.querySelector('svg');
+
+        if (svgElement) {
+            const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+            styleEl.textContent = cssText;
+
+            svgElement.insertBefore(styleEl, svgElement.firstChild);
+
+            return svgElement.outerHTML;
+        }
+
+        return svg;
     }
 
     /**
@@ -547,6 +653,7 @@ class Exporting {
                 iframeDoc.createElementNS(SVG_NS, 'svg')
             );
         }
+
 
         /**
          * Call this on all elements and recurse to children.
@@ -624,12 +731,12 @@ class Exporting {
                     if (
                         (
                             (parentStyles as CSSObject)[
-                                prop as keyof CSSObject
+                            prop as keyof CSSObject
                             ] !== val ||
                             node.nodeName === 'svg'
                         ) &&
                         (defaultStyles[node.nodeName])[
-                            prop as keyof CSSObject
+                        prop as keyof CSSObject
                         ] !== val
                     ) {
                         // Attributes
@@ -642,7 +749,7 @@ class Exporting {
                                     Exporting.hyphenate(prop), val as string
                                 );
                             }
-                        // Styles
+                            // Styles
                         } else {
                             (filteredStyles as Record<string, (string | number | GradientColor | PatternObject | undefined)>)[
                                 prop
@@ -1014,11 +1121,11 @@ class Exporting {
         const theme = chart.styledMode ? {} : btnOptions.theme;
 
         let callback: (EventCallback<SVGElement> | undefined) = (
-            (): void => {}
+            (): void => { }
         );
 
         if (onclick) {
-            callback = function (
+            callback = function(
                 this: SVGElement,
                 e: (Event | AnyRecord)
             ): void {
@@ -1028,7 +1135,7 @@ class Exporting {
                 onclick.call(chart, e);
             };
         } else if (menuItems) {
-            callback = function (
+            callback = function(
                 this: SVGElement,
                 e: (Event | AnyRecord)
             ): void {
@@ -1076,7 +1183,7 @@ class Exporting {
             .attr({
                 title: pick(chart.options.lang[
                     (btnOptions._titleKey ||
-                    btnOptions.titleKey) as keyof LangOptions
+                        btnOptions.titleKey) as keyof LangOptions
                 ] as string, '')
             });
 
@@ -1160,7 +1267,7 @@ class Exporting {
         this.moveContainers(chart.renderTo);
 
         // Restore all body content
-        [].forEach.call(childNodes, function (
+        [].forEach.call(childNodes, function(
             node: HTMLDOMElement,
             i: number
         ): void {
@@ -1218,7 +1325,7 @@ class Exporting {
         }
 
         // Hide all body content
-        [].forEach.call(printReverseInfo.childNodes, function (
+        [].forEach.call(printReverseInfo.childNodes, function(
             node: HTMLDOMElement,
             i: number
         ): void {
@@ -1287,8 +1394,8 @@ class Exporting {
             exporting.contextMenuEl = (chart as AnyRecord)[cacheName] = menu =
                 createElement(
                     'div', {
-                        className: className
-                    },
+                    className: className
+                },
                     {
                         position: 'absolute',
                         zIndex: 1000,
@@ -1320,7 +1427,7 @@ class Exporting {
             }
 
             // Hide on mouse out
-            menu.hideMenu = function (): void {
+            menu.hideMenu = function(): void {
                 css(menu, { display: 'none' });
                 if (button) {
                     button.setState(0);
@@ -1337,17 +1444,17 @@ class Exporting {
 
             // Hide the menu some time after mouse leave (#1357)
             exporting.events?.push(
-                addEvent(menu, 'mouseleave', function (): void {
+                addEvent(menu, 'mouseleave', function(): void {
                     menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
                 }),
 
-                addEvent(menu, 'mouseenter', function (): void {
+                addEvent(menu, 'mouseenter', function(): void {
                     clearTimeout(menu.hideTimer);
                 }),
 
                 // Hide it on clicking or touching outside the menu (#2258,
                 // #2335, #2407)
-                addEvent(doc, 'mouseup', function (e: PointerEvent): void {
+                addEvent(doc, 'mouseup', function(e: PointerEvent): void {
                     if (
                         !chart.pointer?.inClass(
                             e.target as DOMElementType,
@@ -1358,7 +1465,7 @@ class Exporting {
                     }
                 }),
 
-                addEvent(menu, 'click', function (): void {
+                addEvent(menu, 'click', function(): void {
                     if (chart.exporting?.openMenu) {
                         menu.hideMenu();
                     }
@@ -1366,7 +1473,7 @@ class Exporting {
             );
 
             // Create the items
-            items.forEach(function (
+            items.forEach(function(
                 item: (string | Exporting.MenuObject)
             ): void {
                 if (typeof item === 'string') {
@@ -1397,7 +1504,7 @@ class Exporting {
 
                         element = createElement('li', {
                             className: 'highcharts-menu-item',
-                            onclick: function (e: PointerEvent): void {
+                            onclick: function(e: PointerEvent): void {
                                 if (e) { // IE7
                                     e.stopPropagation();
                                 }
@@ -1412,12 +1519,12 @@ class Exporting {
                         AST.setElementHTML(
                             element,
                             item.text || chart.options.lang[
-                                item.textKey as keyof LangOptions
+                            item.textKey as keyof LangOptions
                             ] as string
                         );
 
                         if (!chart.styledMode) {
-                            element.onmouseover = function (
+                            element.onmouseover = function(
                                 this: GlobalEventHandlers
                             ): void {
                                 css(
@@ -1425,7 +1532,7 @@ class Exporting {
                                     navOptions?.menuItemHoverStyle || {}
                                 );
                             };
-                            element.onmouseout = function (
+                            element.onmouseout = function(
                                 this: GlobalEventHandlers
                             ): void {
                                 css(
@@ -1532,7 +1639,7 @@ class Exporting {
 
         // Destroy the divs for the menu
         if (exportDivElements) {
-            exportDivElements.forEach(function (
+            exportDivElements.forEach(function(
                 elem: (Exporting.DivElement | null),
                 i: number
             ): void {
@@ -1556,7 +1663,7 @@ class Exporting {
         }
 
         if (exportEvents) {
-            exportEvents.forEach(function (unbind: Function): void {
+            exportEvents.forEach(function(unbind: Function): void {
                 unbind();
             });
             exportEvents.length = 0;
@@ -1647,10 +1754,10 @@ class Exporting {
             // Return true if the SVG contains images with external data. With
             // the boost module there are `image` elements with encoded PNGs,
             // these are supported by svg2pdf and should pass (#10243).
-            hasExternalImages = function (): boolean {
+            hasExternalImages = function(): boolean {
                 return [].some.call(
                     chart.container.getElementsByTagName('image'),
-                    function (image: HTMLDOMElement): boolean {
+                    function(image: HTMLDOMElement): boolean {
                         const href = image.getAttribute('href');
                         return (
                             href !== '' &&
@@ -1884,7 +1991,7 @@ class Exporting {
 
         // Prepare for replicating the chart
         options.series = [];
-        chart.series.forEach(function (serie): void {
+        chart.series.forEach(function(serie): void {
             seriesOptions = merge(serie.userOptions, { // #4912
                 animation: false, // Turn off animation
                 enableMouseTracking: false,
@@ -1899,7 +2006,7 @@ class Exporting {
         });
 
         const colls: Record<string, boolean> = {};
-        chart.axes.forEach(function (axis): void {
+        chart.axes.forEach(function(axis): void {
             // Assign an internal key to ensure a one-to-one mapping (#5924)
             if (!axis.userOptions.internalKey) { // #6444
                 axis.userOptions.internalKey = uniqueKey();
@@ -1937,7 +2044,7 @@ class Exporting {
         if (chartOptions) {
             type CollType = ('xAxis' | 'yAxis' | 'series');
             (['xAxis', 'yAxis', 'series'] as Array<CollType>).forEach(
-                function (coll: CollType): void {
+                function(coll: CollType): void {
                     if (chartOptions[coll]) {
                         chartCopy.update({
                             [coll]: chartOptions[coll]
@@ -1948,7 +2055,7 @@ class Exporting {
         }
 
         // Reflect axis extremes in the export (#5924)
-        chart.axes.forEach(function (axis): void {
+        chart.axes.forEach(function(axis): void {
             const axisCopy = find(chartCopy.axes, (copy: Axis): boolean =>
                 copy.options.internalKey === axis.userOptions.internalKey
             );
@@ -1972,9 +2079,9 @@ class Exporting {
                         typeof userMin !== 'undefined' &&
                         userMin !== axisCopy.min
                     ) || (
-                        typeof userMax !== 'undefined' &&
-                        userMax !== axisCopy.max
-                    ))
+                            typeof userMax !== 'undefined' &&
+                            userMax !== axisCopy.max
+                        ))
                 ) {
                     axisCopy.setExtremes(
                         userMin ?? void 0,
@@ -1992,6 +2099,7 @@ class Exporting {
             chart.styledMode ||
             options.exporting?.applyStyleSheets
         );
+
 
         fireEvent(this.chart, 'getSVG', { chartCopy: chartCopy });
 
@@ -2083,7 +2191,7 @@ class Exporting {
                         dataURL
                     );
 
-                // Hidden, boosted series have blank href (#10243)
+                    // Hidden, boosted series have blank href (#10243)
                 } else {
                     image.parentNode.removeChild(image);
                 }
@@ -2222,7 +2330,7 @@ class Exporting {
                     scrollablePlotArea.scrollingContainer
                 ] :
                 [chart.container]
-        ).forEach(function (div: HTMLDOMElement): void {
+        ).forEach(function(div: HTMLDOMElement): void {
             moveTo.appendChild(div);
         });
     }
@@ -2302,7 +2410,7 @@ class Exporting {
                         }).add();
                 }
 
-                objectEach(exportingOptions?.buttons, function (
+                objectEach(exportingOptions?.buttons, function(
                     button: ExportingButtonOptions
                 ): void {
                     exporting?.addButton(button);
@@ -2343,7 +2451,7 @@ class Exporting {
  *
  * */
 
-interface Exporting extends ExportingLike {}
+interface Exporting extends ExportingLike { }
 
 /* *
  *
@@ -2403,7 +2511,7 @@ namespace Exporting {
 
     export interface PrintReverseInfoObject {
         childNodes: NodeListOf<ChildNode>;
-        origDisplay: Array<(string | null)> ;
+        origDisplay: Array<(string | null)>;
         resetParams?: [
             (number | null)?,
             (number | null)?,
@@ -2447,7 +2555,7 @@ namespace Exporting {
 
         // Adding wrappers for the deprecated functions
         extend(Chart.prototype, {
-            exportChart: async function (
+            exportChart: async function(
                 this: Chart,
                 exportingOptions?: ExportingOptions,
                 chartOptions?: Options
@@ -2458,24 +2566,24 @@ namespace Exporting {
                 );
                 return;
             },
-            getChartHTML: function (
+            getChartHTML: function(
                 this: Chart,
                 applyStyleSheets?: boolean
             ): string {
                 return Exporting.getChartHTML(this, applyStyleSheets);
             },
-            getFilename: function (
+            getFilename: function(
                 this: Chart
             ): (string | void) {
                 return this.exporting?.getFilename();
             },
-            getSVG: function (
+            getSVG: function(
                 this: Chart,
                 chartOptions?: Partial<Options>
             ): (string | void) {
                 return this.exporting?.getSVG(chartOptions);
             },
-            print: function (
+            print: function(
                 this: Chart
             ): void {
                 return this.exporting?.print();
@@ -2496,7 +2604,7 @@ namespace Exporting {
 
         if (isSafari) {
             win.matchMedia('print').addListener(
-                function (
+                function(
                     this: MediaQueryList,
                     mqlEvent: MediaQueryListEvent
                 ): void {
@@ -2732,26 +2840,26 @@ export default Exporting;
  *
  * @interface Highcharts.ExportingMenuObject
  *//**
- * The text for the menu item.
- *
- * @name Highcharts.ExportingMenuObject#text
- * @type {string | undefined}
- *//**
- * If internationalization is required, the key to a language string.
- *
- * @name Highcharts.ExportingMenuObject#textKey
- * @type {string | undefined}
- *//**
- * The click handler for the menu item.
- *
- * @name Highcharts.ExportingMenuObject#onclick
- * @type {Highcharts.EventCallbackFunction<Highcharts.Chart> | undefined}
- *//**
- * Indicates a separator line instead of an item.
- *
- * @name Highcharts.ExportingMenuObject#separator
- * @type {boolean | undefined}
- */
+* The text for the menu item.
+*
+* @name Highcharts.ExportingMenuObject#text
+* @type {string | undefined}
+*//**
+* If internationalization is required, the key to a language string.
+*
+* @name Highcharts.ExportingMenuObject#textKey
+* @type {string | undefined}
+*//**
+* The click handler for the menu item.
+*
+* @name Highcharts.ExportingMenuObject#onclick
+* @type {Highcharts.EventCallbackFunction<Highcharts.Chart> | undefined}
+*//**
+* Indicates a separator line instead of an item.
+*
+* @name Highcharts.ExportingMenuObject#separator
+* @type {boolean | undefined}
+*/
 
 /**
  * Possible MIME types for exporting.
