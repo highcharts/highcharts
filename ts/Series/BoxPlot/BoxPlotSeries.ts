@@ -82,6 +82,22 @@ class BoxPlotSeries extends ColumnSeries {
      *
      * */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<BoxPlotSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<BoxPlotSeriesOptions>,
+            {
+                fillColor: palette.backgroundColor
+            }
+        );
+    }
+
     // Get presentational attributes
     public pointAttribs(): SVGAttributes {
         // No attributes should be set on point.graphic which is the group

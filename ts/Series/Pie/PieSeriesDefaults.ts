@@ -20,8 +20,6 @@ import type PieSeries from './PieSeries';
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -575,6 +573,9 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      * together with a `borderWidth` to fill drawing gaps created by
      * antialiazing artefacts in borderless pies.
      *
+     * Defaults to the [palette.backgroundColor](#palette.backgroundColor)
+     * setting.
+     *
      * In styled mode, the border stroke is given in the `.highcharts-point`
      * class.
      *
@@ -584,10 +585,11 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #ffffff
      * @product highcharts highmaps
+     * @apioption plotOptions.pie.borderColor
      *
      * @private
      */
-    borderColor: Palette.backgroundColor,
+    // borderColor: Palette.backgroundColor,
 
     /**
      * The width of the border surrounding each slice.

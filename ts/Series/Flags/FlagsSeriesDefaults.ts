@@ -18,8 +18,6 @@
 
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -198,12 +196,14 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      */
 
     /**
-     * The fill color for the flags.
+     * The fill color for the flags. Defaults to the
+     * [palette.backgroundColor](#palette.backgroundColor) setting
      *
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highstock
+     * @apioption plotOptions.flags.fillColor
      */
-    fillColor: Palette.backgroundColor,
+    // fillColor: Palette.backgroundColor,
 
     /**
      * The color of the line/border of the flag.
@@ -233,20 +233,23 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
         hover: {
 
             /**
-             * The color of the line/border of the flag.
+             * The color of the line/border of the flag. Defaults to the
+             * [palette.neutralColor100](#palette.neutralColor100) setting.
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highstock
+             * @apioption plotOptions.flags.states.hover.lineColor
              */
-            lineColor: Palette.neutralColor100,
+            // lineColor: Palette.neutralColor100,
 
             /**
-             * The fill or background color of the flag.
+             * The fill or background color of the flag. Defaults to the
+             * [palette.highlightColor20](#palette.highlightColor20) setting.
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highstock
              */
-            fillColor: Palette.highlightColor20
+            // fillColor: Palette.highlightColor20
         }
     },
 

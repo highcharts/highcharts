@@ -24,7 +24,6 @@ import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import Palette from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -93,9 +92,9 @@ class LineSeries extends Series {
      * @function Highcharts.Series#drawGraph
      */
     public drawGraph(): void {
-        const options = this.options,
+        const { chart, options } = this,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
-            styledMode = this.chart.styledMode;
+            styledMode = chart.styledMode;
 
         // Draw the graph
         [this, ...this.zones].forEach((owner, i): void => {
@@ -122,7 +121,7 @@ class LineSeries extends Series {
                  * @name Highcharts.Series#graph
                  * @type {Highcharts.SVGElement|undefined}
                  */
-                owner.graph = graph = this.chart.renderer
+                owner.graph = graph = chart.renderer
                     .path(graphPath)
                     .addClass(
                         'highcharts-graph' +
@@ -141,7 +140,7 @@ class LineSeries extends Series {
                         owner.color ||
                         this.color ||
                         // When colorByPoint = true
-                        Palette.neutralColor20
+                        chart.options.palette.neutralColor20
                     ),
                     'stroke-width': options.lineWidth || 0,
                     // Polygon series use filled graph

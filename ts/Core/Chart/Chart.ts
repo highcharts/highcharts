@@ -434,7 +434,18 @@ class Chart {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // Do the merge
+            const palette = merge(defaultOptions.palette, userOptions.palette);
+            const options: Options = merge(
+                    {
+                        chart: {
+                            backgroundColor: palette.backgroundColor,
+                            borderColor: palette.highlightColor80,
+                            plotBorderColor: palette.neutralColor20
+                        }
+                    },
+                    defaultOptions,
+                    userOptions
+                ),
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
 

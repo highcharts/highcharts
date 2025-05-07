@@ -19,8 +19,6 @@
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -52,11 +50,7 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
         ): (string|undefined) { // #2945
             return this.point.name;
         },
-        overflow: false as any,
-        style: {
-            /** @internal */
-            color: Palette.neutralColor100
-        }
+        overflow: false as any
     },
     legendSymbol: 'lineMarker'
 };

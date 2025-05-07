@@ -18,8 +18,6 @@
 
 import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -85,11 +83,14 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
      * priority over the series color. To avoid this, set `lowColor` to
      * `undefined`.
      *
+     * Defaults to the [palette.neutralColor80](#palette.neutralColor80)
+     * setting.
+     *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since 8.0.0
      * @product   highcharts highstock
      */
-    lowColor: Palette.neutralColor80,
+    // lowColor: Palette.neutralColor80,
 
     /**
      * Color of the line that connects the dumbbell point's values.

@@ -19,7 +19,6 @@
 import type MapPoint from './MapPoint';
 import type MapSeriesOptions from './MapSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -96,7 +95,8 @@ const MapSeriesDefaults: MapSeriesOptions = {
     marker: null as any,
 
     /**
-     * The color to apply to null points.
+     * The color to apply to null points. Defaults to the
+     * [palette.neutralColor3](#palette.neutralColor3) setting.
      *
      * In styled mode, the null point fill is set in the
      * `.highcharts-null-point` class.
@@ -107,8 +107,9 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      *
      * @private
+     * @apioption plotOptions.map.nullColor
      */
-    nullColor: Palette.neutralColor3,
+    // nullColor: Palette.neutralColor3,
 
     /**
      * Whether to allow pointer interaction like tooltips and mouse events
@@ -153,7 +154,8 @@ const MapSeriesDefaults: MapSeriesOptions = {
     allAreas: true,
 
     /**
-     * The border color of the map areas.
+     * The border color of the map areas. Defaults to the
+     * [palette.neutralColor10](#palette.neutralColor10) setting.
      *
      * In styled mode, the border stroke is given in the `.highcharts-point`
      * class.
@@ -162,13 +164,12 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *         Borders demo
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   #cccccc
      * @product   highmaps
      * @apioption plotOptions.series.borderColor
      *
      * @private
      */
-    borderColor: Palette.neutralColor10,
+    // borderColor: Palette.neutralColor10,
 
     /**
      * The border width of each map area.
@@ -261,13 +262,14 @@ const MapSeriesDefaults: MapSeriesOptions = {
              */
 
             /**
-             * The border color of the point in this state.
+             * The border color of the point in this state. Defaults to the
+             * [palette.neutralColor60](#palette.neutralColor60) setting.
              *
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product   highmaps
              * @apioption plotOptions.series.states.hover.borderColor
              */
-            borderColor: Palette.neutralColor60,
+            // borderColor: Palette.neutralColor60,
 
             /**
              * The border width of the point in this state
@@ -319,7 +321,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @product   highmaps
              * @apioption plotOptions.series.states.select.color
              */
-            color: Palette.neutralColor20
+            // color: Palette.neutralColor20
         }
     },
 

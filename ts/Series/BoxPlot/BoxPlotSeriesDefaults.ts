@@ -18,8 +18,6 @@
 
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -79,7 +77,8 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
     whiskerLength: '50%',
 
     /**
-     * The fill color of the box.
+     * The fill color of the box. Defaults to the
+     * [palette.backgroundColor](#palette.backgroundColor) setting.
      *
      * In styled mode, the fill color can be set with the
      * `.highcharts-boxplot-box` class.
@@ -88,11 +87,11 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      *         Box plot styling
      *
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #ffffff
      * @since   3.0
      * @product highcharts
+     * @apioption plotOptions.boxplot.fillColor
      */
-    fillColor: Palette.backgroundColor,
+    // fillColor: Palette.backgroundColor,
 
     /**
      * The width of the line surrounding the box. If any of

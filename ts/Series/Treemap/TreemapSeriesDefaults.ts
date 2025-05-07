@@ -21,7 +21,6 @@
 import type TreemapPoint from './TreemapPoint';
 import type TreemapSeriesOptions from './TreemapSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const { isString } = U;
@@ -514,11 +513,13 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
     // Presentational options
 
     /**
-     * The color of the border surrounding each tree map item.
+     * The color of the border surrounding each tree map item. Defaults to the
+     * [palette.neutralColor10](#palette.neutralColor10) setting.
      *
      * @type {Highcharts.ColorString}
+     * @apioption plotOptions.treemap.borderColor
      */
-    borderColor: Palette.neutralColor10,
+    // borderColor: Palette.neutralColor10,
 
     /**
      * The width of the border surrounding each tree map item.
@@ -552,9 +553,12 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
         hover: {
 
             /**
-             * The border color for the hovered state.
+             * The border color for the hovered state. Defaults to the
+             * [palette.neutralColor40](#palette.neutralColor40) setting.
+             *
+             * @apioption plotOptions.treemap.states.hover.borderColor
              */
-            borderColor: Palette.neutralColor40,
+            // borderColor: Palette.neutralColor40,
 
             /**
              * Brightness for the hovered point. Defaults to 0 if the

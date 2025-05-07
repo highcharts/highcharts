@@ -23,7 +23,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -104,6 +103,7 @@ class TreegraphPoint extends TreemapPoint {
             { width, height, shape, style } = btnOptions,
             padding = 2,
             chart = this.series.chart,
+            palette = chart.options.palette,
             calculatedOpacity = (
                 point.visible &&
                 (point.collapsed ||
@@ -123,7 +123,7 @@ class TreegraphPoint extends TreemapPoint {
                 fill = (
                     btnOptions.fillColor ||
                     point.color ||
-                    Palette.neutralColor20
+                    palette.neutralColor20
                 );
             point.collapseButton = chart.renderer
                 .label(point.collapsed ? '+' : '-', x, y, shape)
@@ -135,7 +135,7 @@ class TreegraphPoint extends TreemapPoint {
                     rotation: chart.inverted ? 90 : 0,
                     rotationOriginX: width / 2,
                     rotationOriginY: height / 2,
-                    stroke: btnOptions.lineColor || Palette.backgroundColor,
+                    stroke: btnOptions.lineColor || palette.backgroundColor,
                     'stroke-width': btnOptions.lineWidth,
                     'text-align': 'center',
                     align: 'center',
@@ -150,7 +150,7 @@ class TreegraphPoint extends TreemapPoint {
                     {
                         color: typeof fill === 'string' ?
                             chart.renderer.getContrast(fill) :
-                            Palette.neutralColor80
+                            palette.neutralColor80
                     },
                     style
                 ))

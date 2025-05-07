@@ -18,8 +18,6 @@
 
 import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -81,6 +79,8 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
 
     /**
      * The color of the line that connects columns in a waterfall series.
+     * Defaults to the [palette.neutralColor80](#palette.neutralColor80)
+     * setting.
      *
      * In styled mode, the stroke can be set with the `.highcharts-graph`
      * class.
@@ -88,8 +88,9 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since   3.0
      * @product highcharts
+     * @apioption plotOptions.waterfall.lineColor
      */
-    lineColor: Palette.neutralColor80,
+    // lineColor: Palette.neutralColor80,
 
     /**
      * A name for the dash style to use for the line connecting the columns
@@ -107,7 +108,8 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
     dashStyle: 'Dot',
 
     /**
-     * The color of the border of each waterfall column.
+     * The color of the border of each waterfall column. Defaults to the
+     * [palette.neutralColor80](#palette.neutralColor80) setting.
      *
      * In styled mode, the border stroke can be set with the
      * `.highcharts-point` class.
@@ -115,8 +117,9 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since   3.0
      * @product highcharts
+     * @apioption plotOptions.waterfall.borderColor
      */
-    borderColor: Palette.neutralColor80,
+    // borderColor: Palette.neutralColor80,
 
     states: {
 

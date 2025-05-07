@@ -19,7 +19,6 @@
 import type HeatmapPoint from './HeatmapPoint';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -140,12 +139,15 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     interpolation: false,
 
     /**
-     * The color applied to null points. In styled mode, a general CSS class
-     * is applied instead.
+     * The color applied to null points. Defaults to the
+     * [palette.neutralColor3](#palette.neutralColor3) setting.
+     *
+     * In styled mode, a general CSS class is applied instead.
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @apioption plotOptions.heatmap.nullColor
      */
-    nullColor: Palette.neutralColor3,
+    // nullColor: Palette.neutralColor3,
 
     dataLabels: {
         formatter: function (): string { // #2945

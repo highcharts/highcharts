@@ -20,8 +20,6 @@ import type Point from './Point';
 import type Series from './Series';
 import type { PlotOptionsOf } from './SeriesOptions';
 
-import Palette from '../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -1119,14 +1117,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
         /**
          * The color of the point marker's outline. When `undefined`, the
-         * series' or point's color is used.
+         * series' or point's color is used. Defaults to the
+         * [palette.backgroundColor](#palette.backgroundColor) setting.
          *
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         Inherit from series color (undefined)
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.series.marker.lineColor
          */
-        lineColor: Palette.backgroundColor,
+        // lineColor: Palette.backgroundColor,
 
         /**
          * The width of the point marker's outline.
@@ -1340,25 +1340,29 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  */
 
                 /**
-                 * The fill color of the point marker.
+                 * The fill color of the point marker. Defaults to the
+                 * [palette.neutralColor20](#palette.neutralColor20) setting.
                  *
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
                  *         Solid red discs for selected points
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @apioption plotOptions.series.marker.states.select.fillColor
                  */
-                fillColor: Palette.neutralColor20,
+                // fillColor: Palette.neutralColor20,
 
                 /**
-                 * The color of the point marker's outline. When
-                 * `undefined`, the series' or point's color is used.
+                 * The color of the point marker's outline. Defaults to the
+                 * [palette.neutralColor100](#palette.neutralColor100) setting.
                  *
-                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
+                 * @sample {highcharts}
+                 *         highcharts/plotoptions/series-marker-states-select-linecolor/
                  *         Red line color for selected points
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @apioption plotOptions.series.marker.states.select.lineColor
                  */
-                lineColor: Palette.neutralColor100,
+                // lineColor: Palette.neutralColor100,
 
                 /**
                  * The width of the point marker's outline.

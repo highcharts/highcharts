@@ -18,8 +18,6 @@
 
 import type ChartOptions from './ChartOptions';
 
-import Palette from '../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -1267,10 +1265,11 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {null|number|string}
      */
-    height: null,
+    height: null
 
     /**
-     * The color of the outer chart border.
+     * The color of the outer chart border. Defaults to the
+     * [palette.highlightColor80](#palette.highlightColor80) setting.
      *
      * @see In styled mode, the stroke is set with the
      *      `.highcharts-background` class.
@@ -1283,8 +1282,10 @@ const ChartDefaults: ChartOptions = {
      *         Border options
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default #0022ff
+     * @apioption chart.borderColor
      */
-    borderColor: Palette.highlightColor80,
+    // borderColor: Palette.highlightColor80,
 
     /**
      * The pixel width of the outer chart border.
@@ -1305,7 +1306,8 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * The background color or gradient for the outer chart area.
+     * The background color or gradient for the outer chart area. Defaults to
+     * the [palette.backgroundColor](#palette.backgroundColor) setting.
      *
      * @see In styled mode, the background is set with the
      *      `.highcharts-background` class.
@@ -1324,8 +1326,10 @@ const ChartDefaults: ChartOptions = {
      *         Gradient
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default #ffffff
+     * @apioption chart.backgroundColor
      */
-    backgroundColor: Palette.backgroundColor,
+    // backgroundColor: Palette.backgroundColor,
 
     /**
      * The background color or gradient for the plot area.
@@ -1370,7 +1374,8 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * The color of the inner chart or plot area border.
+     * The color of the inner chart or plot area border. Defaults to the
+     * [palette.neutralColor20](#palette.neutralColor20) setting.
      *
      * @see In styled mode, a plot border stroke can be set with the
      *      `.highcharts-plot-border` class.
@@ -1383,8 +1388,10 @@ const ChartDefaults: ChartOptions = {
      *         Plot border options
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default #cccccc
+     * @apioption chart.plotBorderColor
      */
-    plotBorderColor: Palette.neutralColor20
+    // plotBorderColor: Palette.neutralColor20
 
 };
 

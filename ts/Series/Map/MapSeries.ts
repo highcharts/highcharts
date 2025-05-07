@@ -908,6 +908,31 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<MapSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<MapSeriesOptions>,
+            {
+                nullColor: palette.neutralColor3,
+                borderColor: palette.neutralColor10,
+                states: {
+                    hover: {
+                        borderColor: palette.neutralColor60
+                    },
+                    select: {
+                        color: palette.neutralColor20
+                    }
+                }
+            }
+        );
+    }
+
+    /**
      * Extend setOptions by picking up the joinBy option and applying it to a
      * series property.
      * @private

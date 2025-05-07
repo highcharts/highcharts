@@ -19,8 +19,6 @@
 import type ColumnSeries from './ColumnSeries';
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -322,8 +320,9 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @default #cccccc
              * @product highcharts highstock gantt
+             * @apioption plotOptions.column.states.select.color
              */
-            color: Palette.neutralColor20,
+            // color: Palette.neutralColor20,
 
             /**
              * A specific border color for the selected point.
@@ -331,8 +330,9 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @default #000000
              * @product highcharts highstock gantt
+             * @apioption plotOptions.column.states.select.borderColor
              */
-            borderColor: Palette.neutralColor100
+            // borderColor: Palette.neutralColor100
         }
     },
 
@@ -368,7 +368,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @since   2.0
      * @product highcharts
      */
-    threshold: 0,
+    threshold: 0
 
     /**
      * The width of the border surrounding each column or bar. Defaults to
@@ -399,8 +399,9 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   #ffffff
      * @product   highcharts highstock gantt
+     * @apioption plotOptions.column.borderColor
      */
-    borderColor: Palette.backgroundColor
+    // borderColor: Palette.backgroundColor
 
 };
 

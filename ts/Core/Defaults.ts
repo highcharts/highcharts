@@ -25,7 +25,6 @@ const {
     isTouchDevice
 } = H;
 import Palette from './Color/Palettes.js';
-import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
@@ -63,6 +62,8 @@ declare module './GlobalsLike' {
  */
 const defaultOptions: DefaultOptions = {
 
+    palette: Palette,
+
     /**
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
@@ -94,7 +95,7 @@ const defaultOptions: DefaultOptions = {
      *     "#91e8e1"
      * ]
      */
-    colors: Palettes.dataColors,
+    colors: Palette.dataColors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for

@@ -31,7 +31,6 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Palette from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -138,7 +137,7 @@ class GaugeSeries extends Series {
              * @product highcharts
              */
             dataLabels: {
-                borderColor: Palette.neutralColor20,
+                /// borderColor: Palette.neutralColor20,
                 borderRadius: 3,
                 borderWidth: 1,
                 crop: false,
@@ -164,7 +163,9 @@ class GaugeSeries extends Series {
              */
             dial: {
                 /**
-                 * The background or fill color of the gauge's dial.
+                 * The background or fill color of the gauge's dial. Defaults to
+                 * the [palette.neutralColor100](#palette.neutralColor100)
+                 * setting.
                  *
                  * @sample {highcharts} highcharts/plotoptions/gauge-dial/
                  *         Dial options demonstrated
@@ -175,7 +176,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.backgroundColor
                  */
-                backgroundColor: Palette.neutralColor100,
+                // backgroundColor: Palette.neutralColor100,
 
                 /**
                  * The length of the dial's base part, relative to the total
@@ -210,7 +211,8 @@ class GaugeSeries extends Series {
                 /**
                  * The border color or stroke of the gauge's dial. By default,
                  * the borderWidth is 0, so this must be set in addition to a
-                 * custom border color.
+                 * custom border color. Defaults to the
+                 * [palette.neutralColor20](#palette.neutralColor20) setting.
                  *
                  * @sample {highcharts} highcharts/plotoptions/gauge-dial/
                  *         Dial options demonstrated
@@ -221,7 +223,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.borderColor
                  */
-                borderColor: Palette.neutralColor20,
+                // borderColor: Palette.neutralColor20,
 
                 /**
                  * The width of the gauge dial border in pixels.
@@ -354,12 +356,13 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.borderWidth
                  */
-                borderWidth: 0,
+                borderWidth: 0
 
                 /**
                  * The border or stroke color of the pivot. In able to change
                  * this, the borderWidth must also be set to something other
-                 * than the default 0.
+                 * than the default 0. Defaults to the
+                 * [palette.neutralColor20](#palette.neutralColor20) setting.
                  *
                  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
                  *         Pivot options demonstrated
@@ -370,10 +373,11 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.borderColor
                  */
-                borderColor: Palette.neutralColor20,
+                // borderColor: Palette.neutralColor20,
 
                 /**
-                 * The background color or fill of the pivot.
+                 * The background color or fill of the pivot. Defaults to the
+                 * [palette.neutralColor100](#palette.neutralColor100) setting.
                  *
                  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
                  *         Pivot options demonstrated
@@ -384,7 +388,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.backgroundColor
                  */
-                backgroundColor: Palette.neutralColor100
+                // backgroundColor: Palette.neutralColor100
             },
 
             tooltip: {
@@ -421,6 +425,32 @@ class GaugeSeries extends Series {
      *  Functions
      *
      * */
+
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<GaugeSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<GaugeSeriesOptions>,
+            {
+                dataLabels: {
+                    borderColor: palette.neutralColor20
+                },
+                dial: {
+                    backgroundColor: palette.neutralColor100,
+                    borderColor: palette.neutralColor20
+                },
+                pivot: {
+                    backgroundColor: palette.neutralColor100,
+                    borderColor: palette.neutralColor20
+                }
+            }
+        );
+    }
 
     /* eslint-disable valid-jsdoc */
 

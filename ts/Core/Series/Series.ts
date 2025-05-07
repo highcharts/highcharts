@@ -769,6 +769,33 @@ class Series {
     }
 
     /**
+     * Internal, overridable function to apply the palette colors to the default
+     * series options just in time before they are applied to the series.
+     * @private
+     */
+    public applyPalette(): DeepPartial<SeriesTypeOptions> {
+        const palette = this.chart.options.palette;
+        return {
+            borderColor: palette.backgroundColor,
+            marker: {
+                lineColor: palette.backgroundColor,
+                states: {
+                    select: {
+                        fillColor: palette.neutralColor20,
+                        lineColor: palette.neutralColor100
+                    }
+                }
+            },
+            states: {
+                select: {
+                    borderColor: palette.neutralColor100,
+                    color: palette.neutralColor20
+                }
+            }
+        };
+    }
+
+    /**
      * Set the series options by merging from the options tree. Called
      * internally on initializing and updating series. This function will
      * not redraw the series. For API usage, use {@link Series#update}.
@@ -786,7 +813,7 @@ class Series {
             seriesUserOptions = merge(itemOptions),
             styledMode = chart.styledMode,
             e = {
-                plotOptions: plotOptions,
+                plotOptions,
                 userOptions: seriesUserOptions
             };
         let zone;
@@ -819,6 +846,7 @@ class Series {
         this.userOptions = e.userOptions;
 
         const options: SeriesTypeOptions = merge(
+            this.applyPalette(),
             typeOptions,
             plotOptions.series,
             // #3881, chart instance plotOptions[type] should trump

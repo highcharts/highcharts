@@ -18,8 +18,6 @@
 
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -74,7 +72,8 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
     threshold: null,
 
     /**
-     * The color of the line/border of the candlestick.
+     * The color of the line/border of the candlestick. Defaults to the
+     * [palette.neutralColor100](#palette.neutralColor100) setting.
      *
      * In styled mode, the line stroke can be set with the
      * `.highcharts-candlestick-series .highcahrts-point` rule.
@@ -87,8 +86,10 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #000000
      * @product highstock
+     * @apioption plotOptions.candlestick.lineColor
      */
-    lineColor: Palette.neutralColor100,
+    // lineColor: Palette.neutralColor100,
+
     /**
      * The pixel width of the candlestick line/border. Defaults to `1`.
      *
@@ -100,7 +101,8 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      */
     lineWidth: 1,
     /**
-     * The fill color of the candlestick when values are rising.
+     * The fill color of the candlestick when values are rising. Defaults to the
+     * [palette.backgroundColor](#palette.backgroundColor) setting.
      *
      * In styled mode, the up color can be set with the
      * `.highcharts-candlestick-series .highcharts-point-up` rule.
@@ -113,9 +115,10 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #ffffff
      * @product highstock
+     * @apioption plotOptions.candlestick.upColor
     */
+    // upColor: Palette.backgroundColor,
 
-    upColor: Palette.backgroundColor,
     /**
      * @product highstock
      */

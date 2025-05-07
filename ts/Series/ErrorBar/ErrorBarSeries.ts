@@ -78,6 +78,22 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<ErrorBarSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<ErrorBarSeriesOptions>,
+            {
+                color: palette.neutralColor100
+            }
+        );
+    }
+
     public getColumnMetrics(): ColumnMetricsObject {
         const series = this;
 

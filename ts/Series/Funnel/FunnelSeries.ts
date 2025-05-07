@@ -147,6 +147,27 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<FunnelSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<FunnelSeriesOptions>,
+            {
+                states: {
+                    select: {
+                        color: palette.highlightColor20,
+                        borderColor: palette.neutralColor100
+                    }
+                }
+            }
+        );
+    }
+
     /* eslint-disable valid-jsdoc */
 
     /**

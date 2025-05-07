@@ -18,8 +18,6 @@
 
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -50,15 +48,18 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
      * [stemColor](#plotOptions.errorbar.stemColor) and
      * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
      *
+     * Defaults to the [palette.neutralColor100](#palette.neutralColor100)
+     * setting.
+     *
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #000000
      * @since   3.0
      * @product highcharts
+     * @apioption plotOptions.errorbar.color
      */
-    color: Palette.neutralColor100,
+    // color: Palette.neutralColor100,
 
     grouping: false,
 

@@ -25,7 +25,6 @@ const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Palette from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
 import PieSeriesDefaults from './PieSeriesDefaults.js';
 import Series from '../../Core/Series/Series.js';
@@ -162,7 +161,7 @@ class PieSeries extends Series {
     public drawEmpty(): void {
         const start = this.startAngleRad,
             end = this.endAngleRad,
-            options = this.options;
+            { chart, options } = this;
         let centerX,
             centerY;
 
@@ -172,7 +171,7 @@ class PieSeries extends Series {
             centerY = this.center[1];
 
             if (!this.graph) {
-                this.graph = this.chart.renderer
+                this.graph = chart.renderer
                     .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
                     .addClass('highcharts-empty-series')
                     .add(this.group);
@@ -195,7 +194,8 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color || Palette.neutralColor20
+                    stroke: options.color ||
+                        chart.options.palette.neutralColor20
                 });
             }
 

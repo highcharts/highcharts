@@ -237,6 +237,27 @@ class TreemapSeries extends ScatterSeries {
 
     /* eslint-disable valid-jsdoc */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<TreemapSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<TreemapSeriesOptions>,
+            {
+                borderColor: palette.neutralColor10,
+                states: {
+                    hover: {
+                        borderColor: palette.neutralColor40
+                    }
+                }
+            }
+        );
+    }
+
     public algorithmCalcPoints(
         directionChange: boolean,
         last: boolean,

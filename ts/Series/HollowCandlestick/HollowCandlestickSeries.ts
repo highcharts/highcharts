@@ -22,7 +22,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import Palette from '../../Core/Color/Palettes.js';
 import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
 
@@ -81,8 +80,9 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public static defaultOptions: HollowCandlestickSeriesOptions = merge(CandlestickSeries.defaultOptions, {
         /**
-         * The fill color of the candlestick when the current
-         * close is lower than the previous one.
+         * The fill color of the candlestick when the current close is lower
+         * than the previous one. Defaults to the
+         * [palette.negativeColor](#palette.negativeColor) setting.
          *
          * @sample stock/plotoptions/hollow-candlestick-color/
          *     Custom colors
@@ -91,17 +91,19 @@ class HollowCandlestickSeries extends CandlestickSeries {
          *
          * @type    {ColorType}
          * @product highstock
+         * @apioption plotOptions.hollowcandlestick.color
          */
-        color: Palette.negativeColor,
+        // color: Palette.negativeColor,
 
         dataGrouping: {
             groupAll: true,
             groupPixelWidth: 10
-        },
+        }
 
         /**
          * The color of the line/border of the hollow candlestick when
-         * the current close is lower than the previous one.
+         * the current close is lower than the previous one. Defaults to the
+         * [palette.negativeColor](#palette.negativeColor) setting.
          *
          * @sample stock/plotoptions/hollow-candlestick-color/
          *     Custom colors
@@ -110,12 +112,14 @@ class HollowCandlestickSeries extends CandlestickSeries {
          *
          * @type    {ColorType}
          * @product highstock
+         * @apioption plotOptions.hollowcandlestick.lineColor
          */
-        lineColor: Palette.negativeColor,
+        // lineColor: Palette.negativeColor,
 
         /**
-         * The fill color of the candlestick when the current
-         * close is higher than the previous one.
+         * The fill color of the candlestick when the current close is higher
+         * than the previous one. Defaults to the
+         * [palette.positiveColor](#palette.positiveColor) setting.
          *
          * @sample stock/plotoptions/hollow-candlestick-color/
          *     Custom colors
@@ -124,12 +128,14 @@ class HollowCandlestickSeries extends CandlestickSeries {
          *
          * @type    {ColorType}
          * @product highstock
+         * @apioption plotOptions.hollowcandlestick.upColor
          */
-        upColor: Palette.positiveColor,
+        // upColor: Palette.positiveColor,
 
         /**
-         * The color of the line/border of the hollow candlestick when
-         * the current close is higher than the previous one.
+         * The color of the line/border of the hollow candlestick when the
+         * current close is higher than the previous one. Defaults to the
+         * [palette.positiveColor](#palette.positiveColor) setting.
          *
          * @sample stock/plotoptions/hollow-candlestick-color/
          *     Custom colors
@@ -138,8 +144,9 @@ class HollowCandlestickSeries extends CandlestickSeries {
          *
          * @type    {ColorType}
          * @product highstock
+         * @apioption plotOptions.hollowcandlestick.upLineColor
          */
-        upLineColor: Palette.positiveColor
+        // upLineColor: Palette.positiveColor
 
     } as HollowCandlestickSeriesOptions);
 
@@ -161,6 +168,25 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Functions
      *
      * */
+
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<HollowCandlestickSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<HollowCandlestickSeriesOptions>,
+            {
+                color: palette.negativeColor,
+                lineColor: palette.negativeColor,
+                upColor: palette.positiveColor,
+                upLineColor: palette.positiveColor
+            }
+        );
+    }
 
     /**
      * Iterate through all points and get their type.
@@ -208,12 +234,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Line color
      */
     public getLineColor(trendDirection: 'up'|'down'): ColorType {
-        const series = this;
+        const { chart, options } = this,
+            palette = chart.options.palette;
 
         // Return line color based on trend direction
         return trendDirection === 'up' ?
-            series.options.upColor || Palette.positiveColor :
-            series.options.color || Palette.negativeColor;
+            options.upColor || palette.positiveColor :
+            options.color || palette.negativeColor;
     }
 
     /**
@@ -229,15 +256,16 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Point fill color
      */
     public getPointFill(hollowcandleInfo: HollowcandleInfo): ColorType {
-        const series = this;
+        const { chart, options } = this,
+            palette = chart.options.palette;
 
         // Return fill color only for bearish candles.
         if (hollowcandleInfo.isBullish) {
             return 'transparent';
         }
         return hollowcandleInfo.trendDirection === 'up' ?
-            series.options.upColor || Palette.positiveColor :
-            series.options.color || Palette.negativeColor;
+            options.upColor || palette.positiveColor :
+            options.color || palette.negativeColor;
     }
 
     /**

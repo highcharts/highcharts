@@ -18,8 +18,6 @@
 
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  Constants
@@ -92,12 +90,15 @@ const TreegraphSeriesDefaults = {
          */
 
         /**
-         * The color of the links between nodes.
+         * The color of the links between nodes. Defaults to the
+         * [palette.neutralColor60](#palette.neutralColor60) setting.
          *
          * @type {Highcharts.ColorString}
          * @private
+         * @apioption series.treegraph.link.color
          */
-        color: Palette.neutralColor60,
+        // color: Palette.neutralColor60,
+
         /**
          * The line width of the links connecting nodes, in pixels.
          * @type {number}

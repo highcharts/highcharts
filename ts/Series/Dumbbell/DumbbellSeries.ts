@@ -101,6 +101,22 @@ class DumbbellSeries extends AreaRangeSeries {
      * */
 
     /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<DumbbellSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<DumbbellSeriesOptions>,
+            {
+                lowColor: palette.neutralColor80
+            }
+        );
+    }
+
+    /**
      * Get connector line path and styles that connects dumbbell point's low and
      * high values.
      * @private
