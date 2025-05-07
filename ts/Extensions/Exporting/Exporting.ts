@@ -557,13 +557,16 @@ class Exporting {
         let cssText = cssTexts.join('\n');
 
         const urlRegex = /url\(([^)]+)\)/g;
-        const urls = new Set<string>();
+        const urls: string[] = [];
         let match;
         while ((match = urlRegex.exec(cssText))) {
-            urls.add(match[1].replace(/['"]/g, ''));
+            const m = match[1].replace(/['"]/g, '');
+            if (!urls.includes(m)) {
+                urls.push(m);
+            }
         }
 
-        const arrayBufferToBase64 = (buffer: ArrayBuffer):string => {
+        const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
             let binary = '';
             const bytes = new Uint8Array(buffer);
             for (let i = 0; i < bytes.byteLength; i++) {
@@ -728,12 +731,12 @@ class Exporting {
                     if (
                         (
                             (parentStyles as CSSObject)[
-                                prop as keyof CSSObject
+                            prop as keyof CSSObject
                             ] !== val ||
                             node.nodeName === 'svg'
                         ) &&
                         (defaultStyles[node.nodeName])[
-                            prop as keyof CSSObject
+                        prop as keyof CSSObject
                         ] !== val
                     ) {
                         // Attributes
@@ -1122,7 +1125,7 @@ class Exporting {
         );
 
         if (onclick) {
-            callback = function (
+            callback = function(
                 this: SVGElement,
                 e: (Event | AnyRecord)
             ): void {
@@ -1132,7 +1135,7 @@ class Exporting {
                 onclick.call(chart, e);
             };
         } else if (menuItems) {
-            callback = function (
+            callback = function(
                 this: SVGElement,
                 e: (Event | AnyRecord)
             ): void {
@@ -1264,7 +1267,7 @@ class Exporting {
         this.moveContainers(chart.renderTo);
 
         // Restore all body content
-        [].forEach.call(childNodes, function (
+        [].forEach.call(childNodes, function(
             node: HTMLDOMElement,
             i: number
         ): void {
@@ -1322,7 +1325,7 @@ class Exporting {
         }
 
         // Hide all body content
-        [].forEach.call(printReverseInfo.childNodes, function (
+        [].forEach.call(printReverseInfo.childNodes, function(
             node: HTMLDOMElement,
             i: number
         ): void {
@@ -1391,8 +1394,8 @@ class Exporting {
             exporting.contextMenuEl = (chart as AnyRecord)[cacheName] = menu =
                 createElement(
                     'div', {
-                        className: className
-                    },
+                    className: className
+                },
                     {
                         position: 'absolute',
                         zIndex: 1000,
@@ -1424,7 +1427,7 @@ class Exporting {
             }
 
             // Hide on mouse out
-            menu.hideMenu = function (): void {
+            menu.hideMenu = function(): void {
                 css(menu, { display: 'none' });
                 if (button) {
                     button.setState(0);
@@ -1441,17 +1444,17 @@ class Exporting {
 
             // Hide the menu some time after mouse leave (#1357)
             exporting.events?.push(
-                addEvent(menu, 'mouseleave', function (): void {
+                addEvent(menu, 'mouseleave', function(): void {
                     menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
                 }),
 
-                addEvent(menu, 'mouseenter', function (): void {
+                addEvent(menu, 'mouseenter', function(): void {
                     clearTimeout(menu.hideTimer);
                 }),
 
                 // Hide it on clicking or touching outside the menu (#2258,
                 // #2335, #2407)
-                addEvent(doc, 'mouseup', function (e: PointerEvent): void {
+                addEvent(doc, 'mouseup', function(e: PointerEvent): void {
                     if (
                         !chart.pointer?.inClass(
                             e.target as DOMElementType,
@@ -1462,7 +1465,7 @@ class Exporting {
                     }
                 }),
 
-                addEvent(menu, 'click', function (): void {
+                addEvent(menu, 'click', function(): void {
                     if (chart.exporting?.openMenu) {
                         menu.hideMenu();
                     }
@@ -1470,7 +1473,7 @@ class Exporting {
             );
 
             // Create the items
-            items.forEach(function (
+            items.forEach(function(
                 item: (string | Exporting.MenuObject)
             ): void {
                 if (typeof item === 'string') {
@@ -1501,7 +1504,7 @@ class Exporting {
 
                         element = createElement('li', {
                             className: 'highcharts-menu-item',
-                            onclick: function (e: PointerEvent): void {
+                            onclick: function(e: PointerEvent): void {
                                 if (e) { // IE7
                                     e.stopPropagation();
                                 }
@@ -1516,12 +1519,12 @@ class Exporting {
                         AST.setElementHTML(
                             element,
                             item.text || chart.options.lang[
-                                item.textKey as keyof LangOptions
+                            item.textKey as keyof LangOptions
                             ] as string
                         );
 
                         if (!chart.styledMode) {
-                            element.onmouseover = function (
+                            element.onmouseover = function(
                                 this: GlobalEventHandlers
                             ): void {
                                 css(
@@ -1529,7 +1532,7 @@ class Exporting {
                                     navOptions?.menuItemHoverStyle || {}
                                 );
                             };
-                            element.onmouseout = function (
+                            element.onmouseout = function(
                                 this: GlobalEventHandlers
                             ): void {
                                 css(
@@ -1636,7 +1639,7 @@ class Exporting {
 
         // Destroy the divs for the menu
         if (exportDivElements) {
-            exportDivElements.forEach(function (
+            exportDivElements.forEach(function(
                 elem: (Exporting.DivElement | null),
                 i: number
             ): void {
@@ -1660,7 +1663,7 @@ class Exporting {
         }
 
         if (exportEvents) {
-            exportEvents.forEach(function (unbind: Function): void {
+            exportEvents.forEach(function(unbind: Function): void {
                 unbind();
             });
             exportEvents.length = 0;
@@ -1751,10 +1754,10 @@ class Exporting {
             // Return true if the SVG contains images with external data. With
             // the boost module there are `image` elements with encoded PNGs,
             // these are supported by svg2pdf and should pass (#10243).
-            hasExternalImages = function (): boolean {
+            hasExternalImages = function(): boolean {
                 return [].some.call(
                     chart.container.getElementsByTagName('image'),
-                    function (image: HTMLDOMElement): boolean {
+                    function(image: HTMLDOMElement): boolean {
                         const href = image.getAttribute('href');
                         return (
                             href !== '' &&
@@ -1988,7 +1991,7 @@ class Exporting {
 
         // Prepare for replicating the chart
         options.series = [];
-        chart.series.forEach(function (serie): void {
+        chart.series.forEach(function(serie): void {
             seriesOptions = merge(serie.userOptions, { // #4912
                 animation: false, // Turn off animation
                 enableMouseTracking: false,
@@ -2003,7 +2006,7 @@ class Exporting {
         });
 
         const colls: Record<string, boolean> = {};
-        chart.axes.forEach(function (axis): void {
+        chart.axes.forEach(function(axis): void {
             // Assign an internal key to ensure a one-to-one mapping (#5924)
             if (!axis.userOptions.internalKey) { // #6444
                 axis.userOptions.internalKey = uniqueKey();
@@ -2041,7 +2044,7 @@ class Exporting {
         if (chartOptions) {
             type CollType = ('xAxis' | 'yAxis' | 'series');
             (['xAxis', 'yAxis', 'series'] as Array<CollType>).forEach(
-                function (coll: CollType): void {
+                function(coll: CollType): void {
                     if (chartOptions[coll]) {
                         chartCopy.update({
                             [coll]: chartOptions[coll]
@@ -2052,7 +2055,7 @@ class Exporting {
         }
 
         // Reflect axis extremes in the export (#5924)
-        chart.axes.forEach(function (axis): void {
+        chart.axes.forEach(function(axis): void {
             const axisCopy = find(chartCopy.axes, (copy: Axis): boolean =>
                 copy.options.internalKey === axis.userOptions.internalKey
             );
@@ -2076,9 +2079,9 @@ class Exporting {
                         typeof userMin !== 'undefined' &&
                         userMin !== axisCopy.min
                     ) || (
-                        typeof userMax !== 'undefined' &&
+                            typeof userMax !== 'undefined' &&
                             userMax !== axisCopy.max
-                    ))
+                        ))
                 ) {
                     axisCopy.setExtremes(
                         userMin ?? void 0,
@@ -2327,7 +2330,7 @@ class Exporting {
                     scrollablePlotArea.scrollingContainer
                 ] :
                 [chart.container]
-        ).forEach(function (div: HTMLDOMElement): void {
+        ).forEach(function(div: HTMLDOMElement): void {
             moveTo.appendChild(div);
         });
     }
@@ -2407,7 +2410,7 @@ class Exporting {
                         }).add();
                 }
 
-                objectEach(exportingOptions?.buttons, function (
+                objectEach(exportingOptions?.buttons, function(
                     button: ExportingButtonOptions
                 ): void {
                     exporting?.addButton(button);
@@ -2552,7 +2555,7 @@ namespace Exporting {
 
         // Adding wrappers for the deprecated functions
         extend(Chart.prototype, {
-            exportChart: async function (
+            exportChart: async function(
                 this: Chart,
                 exportingOptions?: ExportingOptions,
                 chartOptions?: Options
@@ -2563,24 +2566,24 @@ namespace Exporting {
                 );
                 return;
             },
-            getChartHTML: function (
+            getChartHTML: function(
                 this: Chart,
                 applyStyleSheets?: boolean
             ): string {
                 return Exporting.getChartHTML(this, applyStyleSheets);
             },
-            getFilename: function (
+            getFilename: function(
                 this: Chart
             ): (string | void) {
                 return this.exporting?.getFilename();
             },
-            getSVG: function (
+            getSVG: function(
                 this: Chart,
                 chartOptions?: Partial<Options>
             ): (string | void) {
                 return this.exporting?.getSVG(chartOptions);
             },
-            print: function (
+            print: function(
                 this: Chart
             ): void {
                 return this.exporting?.print();
@@ -2601,7 +2604,7 @@ namespace Exporting {
 
         if (isSafari) {
             win.matchMedia('print').addListener(
-                function (
+                function(
                     this: MediaQueryList,
                     mqlEvent: MediaQueryListEvent
                 ): void {
