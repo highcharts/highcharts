@@ -43,6 +43,12 @@ function generateRandomData(rows) {
 const grid = Grid.grid('container', {
     dataTable: {
         columns: generateRandomData(1000000)
+    },
+    rendering: {
+        rows: {
+            bufferSize: 0,
+            strictHeights: false
+        }
     }
 });
 

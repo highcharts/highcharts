@@ -232,7 +232,7 @@ class RowsVirtualizer {
         const target = this.viewport.tbodyElement;
         const rowHeight = this.defaultRowHeight;
 
-        return Math.floor(target.scrollTop / rowHeight);
+        return Math.floor(Math.floor(target.scrollTop / rowHeight) * (1 / this.scrollRatio));
     }
 
     /**
@@ -301,18 +301,18 @@ class RowsVirtualizer {
             vp.tbodyElement.appendChild(last.htmlElement);
 
             if (isVirtualization) {
-                last.setTranslateY(last.getDefaultTopOffset(), true);
+                last.setTranslateY(last.getDefaultTopOffset(true), false);
             }
         }
 
-        const from = Math.round(Math.max(0, Math.min(
-            (rowCursor - buffer) * (1 / this.scrollRatio),
+        const from = Math.max(0, Math.min(
+            rowCursor - buffer,
             vp.dataTable.getRowCount() - rowsPerPage
-        )));
-        const to = Math.round(Math.min(
-            (rowCursor + rowsPerPage + buffer) * (1 / this.scrollRatio),
-            rows[rows.length - 1].index - 1
         ));
+        const to = Math.min(
+            rowCursor + rowsPerPage + buffer,
+            rows[rows.length - 1].index - 1
+        );
 
         const alwaysLastRow = rows.pop();
         const tempRows: TableRow[] = [];
@@ -454,10 +454,14 @@ class RowsVirtualizer {
         // Set the proper offset for the last row
         const lastRow = rows[rowsLn - 1];
         const preLastRow = rows[rowsLn - 2];
-        if (preLastRow && preLastRow.index === lastRow.index - 1) {
+        if (
+            preLastRow && preLastRow.index === lastRow.index - 1 &&
+            /* eslint-disable-next-line max-len */
+            lastRow.htmlElement.offsetHeight !== preLastRow.htmlElement.offsetHeight
+        ) {
             lastRow.setTranslateY(
                 preLastRow.htmlElement.offsetHeight + translateBuffer,
-                true
+                false
             );
         }
     }
