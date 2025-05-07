@@ -420,7 +420,7 @@ class SidebarPopup extends BaseForm {
                                 dropContext = layout.rows[0];
                             }
 
-                            if (!dropContext || !dropContext.type) {
+                            if (!dropContext?.type) {
                                 const layouts = sidebar.editMode.board.layouts;
 
                                 dragDrop.dropContext = dropContext =
