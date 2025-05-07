@@ -323,6 +323,12 @@ class Exporting {
             // Download the chart
             downloadURL(svgURL, filename);
         } else if (type !== 'application/pdf') {
+            const includeFonts = true;
+
+            if (includeFonts) {
+                svg = await Exporting.inlineFonts(svg);
+            }
+
             // PNG/JPEG download - create bitmap from SVG
             svgURL = Exporting.svgToDataURL(svg);
             try {
@@ -457,9 +463,7 @@ class Exporting {
     ): string {
         return property.replace(
             /[A-Z]/g,
-            function (match: string): string {
-                return '-' + match.toLowerCase();
-            }
+            (match: string): string => '-' + match.toLowerCase()
         );
     }
 
@@ -502,6 +506,105 @@ class Exporting {
             // Now we try to get the contents of the canvas
             return canvas.toDataURL(imageType);
         }
+    }
+    private static async fetchCSS(href: string): Promise<CSSStyleSheet> {
+        const content = await fetch(href)
+            .then((res): Promise<string> => res.text());
+
+        const newSheet = new CSSStyleSheet();
+        newSheet.replaceSync(content);
+
+        return newSheet;
+    }
+
+    private static async handleStyleSheet(
+        sheet: CSSStyleSheet,
+        resultArray: string[]
+    ): Promise<void> {
+        try {
+            for (const rule of Array.from(sheet.cssRules)) {
+                if (rule instanceof CSSImportRule) {
+                    const sheet = await Exporting.fetchCSS(rule.href);
+                    await Exporting.handleStyleSheet(sheet, resultArray);
+                }
+
+                if (rule instanceof CSSFontFaceRule) {
+                    // TODO: Resolve relative urls in cssText
+                    resultArray.push(rule.cssText);
+                }
+            }
+        } catch (err) {
+            if (sheet.href) {
+                const newSheet = await Exporting.fetchCSS(sheet.href);
+                await Exporting.handleStyleSheet(newSheet, resultArray);
+            }
+        }
+    }
+
+    private static async fetchStyleSheets(): Promise<string[]> {
+        const cssTexts: string[] = [];
+
+        for (const sheet of Array.from(doc.styleSheets)) {
+            await Exporting.handleStyleSheet(sheet, cssTexts);
+        }
+
+        return cssTexts;
+    }
+
+    public static async inlineFonts(svg: string): Promise<string> {
+        const cssTexts = await Exporting.fetchStyleSheets();
+
+        let cssText = cssTexts.join('\n');
+
+        const urlRegex = /url\(([^)]+)\)/g;
+        const urls = new Set<string>();
+        let match;
+        while ((match = urlRegex.exec(cssText))) {
+            urls.add(match[1].replace(/['"]/g, ''));
+        }
+
+        const arrayBufferToBase64 = (buffer: ArrayBuffer):string => {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        };
+
+        const replacements: Record<string, string> = {};
+        for (const url of urls) {
+            try {
+                const res = await fetch(url);
+                const contentType = res.headers.get('Content-Type') || '';
+                replacements[url] =
+                    `data:${contentType};base64,${arrayBufferToBase64(await res.arrayBuffer())}`;
+            } catch {
+                // eslint-disable-next-line
+            }
+        }
+
+        cssText = cssText.replace(urlRegex, (_, url: string): string => {
+            const strippedUrl = url.replace(/['"]/g, '');
+            return replacements[strippedUrl] ? `url(${replacements[strippedUrl]})` : `url(${strippedUrl})`;
+        });
+
+        const svgDoc = new DOMParser().parseFromString(
+            svg,
+            'image/svg+xml'
+        );
+        const svgElement = svgDoc.querySelector('svg');
+
+        if (svgElement) {
+            const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+            styleEl.textContent = cssText;
+
+            svgElement.insertBefore(styleEl, svgElement.firstChild);
+
+            return svgElement.outerHTML;
+        }
+
+        return svg;
     }
 
     /**
@@ -547,6 +650,7 @@ class Exporting {
                 iframeDoc.createElementNS(SVG_NS, 'svg')
             );
         }
+
 
         /**
          * Call this on all elements and recurse to children.
@@ -642,7 +746,7 @@ class Exporting {
                                     Exporting.hyphenate(prop), val as string
                                 );
                             }
-                        // Styles
+                            // Styles
                         } else {
                             (filteredStyles as Record<string, (string | number | GradientColor | PatternObject | undefined)>)[
                                 prop
@@ -1014,7 +1118,7 @@ class Exporting {
         const theme = chart.styledMode ? {} : btnOptions.theme;
 
         let callback: (EventCallback<SVGElement> | undefined) = (
-            (): void => {}
+            (): void => { }
         );
 
         if (onclick) {
@@ -1076,7 +1180,7 @@ class Exporting {
             .attr({
                 title: pick(chart.options.lang[
                     (btnOptions._titleKey ||
-                    btnOptions.titleKey) as keyof LangOptions
+                        btnOptions.titleKey) as keyof LangOptions
                 ] as string, '')
             });
 
@@ -1973,7 +2077,7 @@ class Exporting {
                         userMin !== axisCopy.min
                     ) || (
                         typeof userMax !== 'undefined' &&
-                        userMax !== axisCopy.max
+                            userMax !== axisCopy.max
                     ))
                 ) {
                     axisCopy.setExtremes(
@@ -1992,6 +2096,7 @@ class Exporting {
             chart.styledMode ||
             options.exporting?.applyStyleSheets
         );
+
 
         fireEvent(this.chart, 'getSVG', { chartCopy: chartCopy });
 
@@ -2083,7 +2188,7 @@ class Exporting {
                         dataURL
                     );
 
-                // Hidden, boosted series have blank href (#10243)
+                    // Hidden, boosted series have blank href (#10243)
                 } else {
                     image.parentNode.removeChild(image);
                 }
@@ -2343,7 +2448,7 @@ class Exporting {
  *
  * */
 
-interface Exporting extends ExportingLike {}
+interface Exporting extends ExportingLike { }
 
 /* *
  *
@@ -2403,7 +2508,7 @@ namespace Exporting {
 
     export interface PrintReverseInfoObject {
         childNodes: NodeListOf<ChildNode>;
-        origDisplay: Array<(string | null)> ;
+        origDisplay: Array<(string | null)>;
         resetParams?: [
             (number | null)?,
             (number | null)?,
@@ -2732,26 +2837,26 @@ export default Exporting;
  *
  * @interface Highcharts.ExportingMenuObject
  *//**
- * The text for the menu item.
- *
- * @name Highcharts.ExportingMenuObject#text
- * @type {string | undefined}
- *//**
- * If internationalization is required, the key to a language string.
- *
- * @name Highcharts.ExportingMenuObject#textKey
- * @type {string | undefined}
- *//**
- * The click handler for the menu item.
- *
- * @name Highcharts.ExportingMenuObject#onclick
- * @type {Highcharts.EventCallbackFunction<Highcharts.Chart> | undefined}
- *//**
- * Indicates a separator line instead of an item.
- *
- * @name Highcharts.ExportingMenuObject#separator
- * @type {boolean | undefined}
- */
+* The text for the menu item.
+*
+* @name Highcharts.ExportingMenuObject#text
+* @type {string | undefined}
+*//**
+* If internationalization is required, the key to a language string.
+*
+* @name Highcharts.ExportingMenuObject#textKey
+* @type {string | undefined}
+*//**
+* The click handler for the menu item.
+*
+* @name Highcharts.ExportingMenuObject#onclick
+* @type {Highcharts.EventCallbackFunction<Highcharts.Chart> | undefined}
+*//**
+* Indicates a separator line instead of an item.
+*
+* @name Highcharts.ExportingMenuObject#separator
+* @type {boolean | undefined}
+*/
 
 /**
  * Possible MIME types for exporting.
