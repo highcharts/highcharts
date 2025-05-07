@@ -19,7 +19,10 @@ import {
     Tooltip,
     Legend
 } from '@highcharts/react';
+
 ```
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/complex" style="width: 100%; height: 800px; border: 0;"></iframe>
 
 Here's an example of adding a custom title:
 
