@@ -30,7 +30,6 @@ import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
-import Palette from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
 const {
@@ -170,6 +169,7 @@ class PlotLineOrBand {
             { color, events, zIndex = 0 } = options,
             { renderer, time } = axis.chart,
             groupAttribs: SVGAttributes = {},
+            palette = axis.chart.options.palette,
 
             // These properties only exist on either band or line
             to = time.parse((options as PlotBandOptions).to),
@@ -195,7 +195,7 @@ class PlotLineOrBand {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || Palette.neutralColor40;
+                attribs.stroke = color || palette.neutralColor40;
                 attribs['stroke-width'] = pick(
                     (options as PlotLineOptions).width,
                     1
@@ -205,7 +205,7 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // Plot band
-                attribs.fill = color || Palette.highlightColor10;
+                attribs.fill = color || palette.highlightColor10;
                 if (borderWidth) {
                     attribs.stroke = (options as PlotBandOptions).borderColor;
                     attribs['stroke-width'] = borderWidth;

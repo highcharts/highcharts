@@ -38,7 +38,6 @@ const {
     composed,
     isTouchDevice
 } = H;
-import Palette from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 const {
@@ -414,7 +413,7 @@ class Pointer {
                         selectionMarker.attr({
                             fill:
                                 selectionMarkerFill ||
-                                color(Palette.highlightColor80)
+                                color(chart.options.palette.highlightColor80)
                                     .setOpacity(0.25).get()
                         });
                     }

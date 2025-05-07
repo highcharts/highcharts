@@ -55,7 +55,6 @@ const {
     doc,
     noop
 } = H;
-import Palette from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -577,7 +576,7 @@ namespace BoostCanvas {
             chart.options.loading = merge(loadingOptions, {
                 labelStyle: {
                     backgroundColor: color(
-                        Palette.backgroundColor
+                        chart.options.palette.backgroundColor
                     ).setOpacity(0.75).get(),
                     padding: '1em',
                     borderRadius: '0.5em'
