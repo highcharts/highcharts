@@ -54,7 +54,7 @@ import AxisDefaults from './AxisDefaults.js';
 const { xAxis, yAxis } = AxisDefaults;
 import Color from '../Color/Color.js';
 import D from '../Defaults.js';
-const { defaultOptions } = D;
+const { colorize, defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -630,6 +630,8 @@ class Axis {
             defaultOptions[this.coll] as AxisOptions,
             userOptions
         );
+
+        colorize(this.options, this.chart.options.palette);
 
         fireEvent(this, 'afterSetOptions', { userOptions });
     }

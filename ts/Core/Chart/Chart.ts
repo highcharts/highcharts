@@ -59,6 +59,7 @@ const {
 import Axis from '../Axis/Axis.js';
 import D from '../Defaults.js';
 const {
+    colorize,
     defaultOptions
 } = D;
 import Templating from '../Templating.js';
@@ -434,9 +435,11 @@ class Chart {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // Do the merge
+            const options = merge(defaultOptions, userOptions),
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
+
+            colorize(options, options.palette);
 
             /**
              * The original options given to the constructor or a chart factory

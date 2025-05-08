@@ -61,7 +61,7 @@ const {
 } = A;
 import DataTableCore from '../../Data/DataTableCore.js';
 import D from '../Defaults.js';
-const { defaultOptions } = D;
+const { colorize, defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -785,6 +785,7 @@ class Series {
             userOptions = chart.userOptions || {},
             seriesUserOptions = merge(itemOptions),
             styledMode = chart.styledMode,
+            palette = chartOptions.palette,
             e = {
                 plotOptions: plotOptions,
                 userOptions: seriesUserOptions
@@ -826,6 +827,7 @@ class Series {
             userPlotOptionsType,
             seriesUserOptions
         );
+        colorize(options, palette);
 
         // The tooltip options are merged between global and series specific
         // options. Importance order ascendingly:
@@ -842,6 +844,7 @@ class Series {
             userPlotOptionsType.tooltip, // 6
             seriesUserOptions.tooltip // 7
         );
+        colorize(this.tooltipOptions, palette);
 
         // When shared tooltip, stickyTracking is true by default,
         // unless user says otherwise.

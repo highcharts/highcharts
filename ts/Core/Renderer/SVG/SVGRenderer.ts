@@ -38,7 +38,7 @@ import type { SymbolKey } from './SymbolType';
 
 import AST from '../HTML/AST.js';
 import D from '../../Defaults.js';
-const { defaultOptions } = D;
+const { colorize, defaultOptions } = D;
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
@@ -765,11 +765,16 @@ class SVGRenderer implements SVGRendererLike {
                 'button'
             ),
             styledMode = this.styledMode,
-            args = arguments;
+            args = arguments,
+            { global, palette } = charts[this.chartIndex]?.options ||
+                defaultOptions;
 
         let curState = 0;
 
-        theme = merge(defaultOptions.global.buttonTheme, theme);
+        theme = colorize(
+            merge(global.buttonTheme, theme),
+            palette
+        );
 
         // @todo Consider moving this to a lower level, like .attr
         if (styledMode) {
