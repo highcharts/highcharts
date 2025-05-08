@@ -463,8 +463,8 @@ class SidebarPopup extends BaseForm {
                                             );
                                             sidebar.show(newCell);
                                             newCell.setHighlight();
+                                            unbindLayoutChanged();
                                         }
-
                                     }
                                 }
                             );
