@@ -447,8 +447,8 @@ function lastPath(
 ) {
     return (
         Path.sep !== Path.posix.sep &&
-            path.includes(PSEP) &&
-            path.split(PSEP).length > path.split(SEP).length ?
+        path.includes(PSEP) &&
+        path.split(PSEP).length > path.split(SEP).length ?
             Path.posix.basename(path) :
             Path.basename(path)
     );
@@ -589,8 +589,8 @@ function parentPath(
 ) {
     return (
         Path.sep !== Path.posix.sep &&
-            path.includes(PSEP) &&
-            path.split(PSEP).length > path.split(SEP).length ?
+        path.includes(PSEP) &&
+        path.split(PSEP).length > path.split(SEP).length ?
             Path.posix.dirname(path) :
             Path.dirname(path)
     );
