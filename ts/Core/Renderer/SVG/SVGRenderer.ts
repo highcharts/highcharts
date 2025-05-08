@@ -38,7 +38,7 @@ import type { SymbolKey } from './SymbolType';
 
 import AST from '../HTML/AST.js';
 import D from '../../Defaults.js';
-const { colorize, defaultOptions } = D;
+const { defaultOptions } = D;
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
@@ -328,6 +328,20 @@ class SVGRenderer implements SVGRendererLike {
      *  Functions
      *
      * */
+
+    public applyPalette(color: string): string {
+        const palette = (
+            charts[this.chartIndex]?.options ||
+            defaultOptions
+        ).palette;
+        return (color.indexOf('{palette.') !== -1) ?
+            color.replace(
+                /{palette\.([a-zA-Z0-9]+)}/g,
+                (match: string, name: string): string =>
+                    (palette as any)[name] as string
+            ) :
+            color;
+    }
 
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
@@ -664,6 +678,7 @@ class SVGRenderer implements SVGRendererLike {
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
     public getContrast(color: ColorString): ColorString {
+        color = this.applyPalette(color);
         // #6216, #17273
         const rgba256 = Color.parse(color).rgba,
             // For each rgb channel, compute the luminosity based on all
@@ -765,16 +780,11 @@ class SVGRenderer implements SVGRendererLike {
                 'button'
             ),
             styledMode = this.styledMode,
-            args = arguments,
-            { global, palette } = charts[this.chartIndex]?.options ||
-                defaultOptions;
+            args = arguments;
 
         let curState = 0;
 
-        theme = colorize(
-            merge(global.buttonTheme, theme),
-            palette
-        );
+        theme = merge(defaultOptions.global.buttonTheme, theme);
 
         // @todo Consider moving this to a lower level, like .attr
         if (styledMode) {

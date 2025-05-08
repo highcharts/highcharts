@@ -66,7 +66,9 @@ QUnit.test('Adapt height', function (assert) {
     chart.setSize(400);
 
     assert.strictEqual(
-        chart.options.chart.backgroundColor,
+        chart.renderer.applyPalette(
+            chart.options.chart.backgroundColor
+        ),
         '#ffffff',
         'Chart should have default background'
     );

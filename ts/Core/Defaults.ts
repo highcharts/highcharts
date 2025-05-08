@@ -29,10 +29,6 @@ import Time from './Time.js';
 import U from './Utilities.js';
 const {
     fireEvent,
-    isDOMElement,
-    isObject,
-    isString,
-    objectEach,
     merge
 } = U;
 
@@ -3028,27 +3024,6 @@ function setOptions(
     return defaultOptions;
 }
 
-/**
- * Apply the palette to an options structure containing formats like
- * `{palette.something}`.
- */
-function colorize<T extends object>(
-    o: T,
-    palette: Record<string, string|Array<any>>
-): T {
-    objectEach(o, (value, key): void => {
-        if (isString(value) && value.indexOf('{palette.') !== -1) {
-            (o as any)[key] = value.replace(
-                /{palette\.([a-zA-Z0-9]+)}/g,
-                (match: string, name: string): string => palette[name] as string
-            );
-        } else if (isObject(value, true) && !isDOMElement(value)) {
-            colorize(value, palette);
-        }
-    });
-    return o;
-}
-
 /* *
  *
  *  Default Export
@@ -3056,7 +3031,6 @@ function colorize<T extends object>(
  * */
 
 const DefaultOptions = {
-    colorize,
     defaultOptions,
     defaultTime,
     getOptions,

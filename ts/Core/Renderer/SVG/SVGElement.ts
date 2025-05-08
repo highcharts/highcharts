@@ -1067,7 +1067,8 @@ class SVGElement implements SVGElementLike {
     public css(styles: CSSObject): this {
         const oldStyles = this.styles,
             newStyles: CSSObject = {},
-            elem = this.element;
+            elem = this.element,
+            renderer = this.renderer;
 
         let textWidth,
             hasNew = !oldStyles;
@@ -1109,7 +1110,7 @@ class SVGElement implements SVGElementLike {
             // Store object
             extend(this.styles, styles);
 
-            if (textWidth && (!svg && this.renderer.forExport)) {
+            if (textWidth && (!svg && renderer.forExport)) {
                 delete styles.width;
             }
 
@@ -1144,7 +1145,9 @@ class SVGElement implements SVGElementLike {
 
                 // SVG requires fill for text
                 if (stylesToApply.color) {
-                    stylesToApply.fill = stylesToApply.color;
+                    stylesToApply.fill = renderer.applyPalette(
+                        stylesToApply.color
+                    );
                     delete stylesToApply.color;
                 }
             }
@@ -1156,7 +1159,7 @@ class SVGElement implements SVGElementLike {
             // Rebuild text after added. Cache mechanisms in the buildText will
             // prevent building if there are no significant changes.
             if (this.element.nodeName === 'text') {
-                this.renderer.buildText(this);
+                renderer.buildText(this);
             }
 
             // Apply text outline after added
@@ -1350,7 +1353,7 @@ class SVGElement implements SVGElementLike {
         element: SVGDOMElement
     ): void {
         if (typeof value === 'string') {
-            element.setAttribute(key, value);
+            element.setAttribute(key, this.renderer.applyPalette(value));
         } else if (value) {
             this.complexColor(value as any, key, element);
         }
