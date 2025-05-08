@@ -76,7 +76,7 @@ function distGZip() {
     const gzipDirs = glob.sync(`${DIST_DIR}/**/js-gzip`);
     gzipDirs.forEach(dir => {
         log.message('Deleting dir ', dir);
-        libFS.deleteDirectory(dir, true);
+        libFS.deleteDirectory(dir);
     });
 
     log.starting('GZipping files..');

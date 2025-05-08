@@ -104,16 +104,14 @@ function copyFile(fileSourcePath, fileTargetPath) {
 }
 
 /**
- * Deletes a directory.
+ * Deletes a directory recursivly.
  *
  * @param {string} directoryPath
  *        Directory path
  *
- * @param {boolean} [includeEntries]
- *        Set to true to remove containing entries as well
- *
- * @param {Function | undefined} [filterCallback]
- *        Callback to return `true` for files to delete.
+ * @param {Function} [filterCallback]
+ *        Callback to return `true` for files to delete, otherwise will
+ *        eventually fail.
  *
  * @return {void}
  *
@@ -121,31 +119,28 @@ function copyFile(fileSourcePath, fileTargetPath) {
  */
 function deleteDirectory(
     directoryPath,
-    includeEntries = true,
-    filterCallback = void 0
+    filterCallback
 ) {
     if (!FS.existsSync(directoryPath)) {
         return;
     }
 
-    if (includeEntries) {
-        if (!filterCallback) {
-            FS.rmSync(directoryPath, { recursive: true });
-            return;
-        }
-
+    if (filterCallback) {
         getDirectoryPaths(directoryPath).forEach(
-            path => deleteDirectory(path, true, filterCallback)
+            path => deleteDirectory(path, filterCallback)
         );
 
         for (const filePath of getFilePaths(directoryPath)) {
             if (filterCallback(filePath) === true) {
-                deleteFile(filePath, true);
+                deleteFile(filePath);
             }
         }
+
+        FS.rmdirSync(directoryPath);
+    } else {
+        FS.rmSync(directoryPath, { recursive: true });
     }
 
-    FS.rmdirSync(directoryPath);
 }
 
 /**
@@ -452,8 +447,8 @@ function lastPath(
 ) {
     return (
         Path.sep !== Path.posix.sep &&
-        path.includes(PSEP) &&
-        path.split(PSEP).length > path.split(SEP).length ?
+            path.includes(PSEP) &&
+            path.split(PSEP).length > path.split(SEP).length ?
             Path.posix.basename(path) :
             Path.basename(path)
     );
@@ -594,8 +589,8 @@ function parentPath(
 ) {
     return (
         Path.sep !== Path.posix.sep &&
-        path.includes(PSEP) &&
-        path.split(PSEP).length > path.split(SEP).length ?
+            path.includes(PSEP) &&
+            path.split(PSEP).length > path.split(SEP).length ?
             Path.posix.dirname(path) :
             Path.dirname(path)
     );
