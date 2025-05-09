@@ -20,6 +20,7 @@
 import * as PPath from 'node:path/posix';
 
 import FSLib from '../../libs/fs.js';
+import { debugLog } from '../utilities.mjs';
 
 
 /* *
@@ -99,6 +100,7 @@ function decorateImports(content, masterImports) {
 
         }
     } catch (error) {
+        debugLog(error);
         content = `/* ERROR: ${error} */\n${content}`;
     }
 

@@ -13,7 +13,8 @@ import FSLib from '../libs/fs.js';
 import Error16Plugin from './plugins/Error16Plugin.mjs';
 import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
-import { resolveExternals } from './externals.mjs';
+import { loadExternalsJSON, resolveExternals } from './externals.mjs';
+import { getMasterName } from './utilities.mjs';
 
 /* *
  *
@@ -38,6 +39,8 @@ const productMasters = [
     'standalone-navigator'
 ];
 
+loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
+
 
 /* *
  *
@@ -51,7 +54,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
         const masterPath = Path.relative(mastersFolder, masterFile)
-        const masterName = masterPath.replace(/(?:\.src)?\.js$/u, '');
+        const masterName = getMasterName(masterPath);
         const webpackConfig = {
             // path to the main file
             entry: './' + masterFile.replaceAll(Path.sep, Path.posix.sep),
