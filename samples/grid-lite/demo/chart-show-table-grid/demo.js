@@ -1,15 +1,3 @@
-const gridElement = document.getElementById('grid');
-
-function toggleGrid() {
-    if (gridElement.classList.contains('hide')) {
-        gridElement.classList.remove('hide');
-        gridElement.classList.add('show');
-    } else {
-        gridElement.classList.remove('show');
-        gridElement.classList.add('hide');
-    }
-}
-
 const series = [{
     name: 'Installation & Developers',
     data: [
@@ -83,16 +71,19 @@ const chart = Highcharts.chart('chart', {
 
     exporting: {
         menuItemDefinitions: {
-            grid: {
+            viewData: {
                 onclick: function () {
-                    toggleGrid();
-                },
-                text: 'Toggle Grid view'
+                    const isGridDisplayed = toggleGrid();
+                    const viewDataElement = this.exportDivElements[0];
+                    viewDataElement.innerText = isGridDisplayed ?
+                        'Hide data table' :
+                        'Show data table';
+                }
             }
         },
         buttons: {
             contextButton: {
-                menuItems: ['viewData', 'grid']
+                menuItems: ['viewData']
             }
         }
     },
@@ -115,6 +106,7 @@ const chart = Highcharts.chart('chart', {
     }
 
 });
+chart.getTable();
 
 const xAxis = chart.xAxis[0];
 const years = xAxis.tickPositions;
@@ -129,8 +121,20 @@ cols = {
     ...cols
 };
 
-Grid.grid('grid', {
+const grid = Grid.grid('grid', {
     dataTable: {
         columns: cols
     }
 });
+
+function toggleGrid() {
+    const classList = grid.container.classList;
+    if (classList.contains('hide')) {
+        classList.remove('hide');
+        classList.add('show');
+    } else {
+        classList.remove('show');
+        classList.add('hide');
+    }
+    return classList.contains('show');
+}
