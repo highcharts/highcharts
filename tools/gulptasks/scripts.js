@@ -180,7 +180,7 @@ function task() {
             processLib.isRunning('scripts_incomplete', true, true);
 
             if (argv.clear) {
-                fsLib.deleteDirectory('code', true);
+                fsLib.deleteDirectory('code');
             }
 
             gulp.series(...(
