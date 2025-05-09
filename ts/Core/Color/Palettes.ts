@@ -73,6 +73,9 @@ const palette = {
      */
     negativeColor: '#f21313',
 
+    /**
+     * Colors for data series and points
+     */
     dataColors: [
         '#2caffe',
         '#544fc5',
