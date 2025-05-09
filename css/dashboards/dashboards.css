@@ -324,7 +324,8 @@
 
 /* Edit mode */
 /* stylelint-disable-next-line max-line-length */
-.highcharts-dashboards-edit-enabled.highcharts-dashboards-edit-cell-highlight-active {
+.highcharts-dashboards-edit-enabled.highcharts-dashboards-edit-cell-highlight-active,
+.highcharts-dashboards-edit-enabled iframe {
     pointer-events: none;
 }
 
@@ -639,7 +640,7 @@
 .highcharts-dashboards-edit-toolbar {
     color: var(--highcharts-neutral-color-60);
     position: absolute;
-    z-index: 9997;
+    z-index: 9999;
     border-radius: 3px;
     box-shadow:
         0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),

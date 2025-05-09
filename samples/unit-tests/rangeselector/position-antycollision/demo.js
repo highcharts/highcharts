@@ -70,7 +70,7 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
 
     chart = Highcharts.stockChart('container', {
         chart: {
-            spacing: [10, 21, 10, 52],
+            // spacing: [10, 21, 10, 52],
             style: {
                 fontFamily: 'Helvetica, Arial, sans-serif'
             }
@@ -123,8 +123,9 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
 
     assert.close(
         chart.plotLeft + chart.plotWidth / 2,
-        (chart.plotLeft + selectorGroupBBox.x) + selectorGroupBBox.width / 2,
-        5,
+        chart.rangeSelector.buttonGroup.translateX + selectorGroupBBox.x +
+            selectorGroupBBox.width / 2,
+        1.001,
         'rangeSelector buttons should be centered correctly (#13014).'
     );
 
