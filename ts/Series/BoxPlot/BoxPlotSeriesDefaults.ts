@@ -18,8 +18,6 @@
 
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -92,7 +90,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    fillColor: Palette.backgroundColor,
+    fillColor: '{palette.backgroundColor}',
 
     /**
      * The width of the line surrounding the box. If any of

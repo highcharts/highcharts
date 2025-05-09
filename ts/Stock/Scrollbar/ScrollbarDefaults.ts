@@ -18,8 +18,6 @@
 
 import type ScrollbarOptions from './ScrollbarOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  Constant
@@ -152,7 +150,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    barBackgroundColor: Palette.neutralColor20,
+    barBackgroundColor: '{palette.neutralColor20}',
 
     /**
      * The width of the bar's border.
@@ -167,7 +165,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    barBorderColor: Palette.neutralColor20,
+    barBorderColor: '{palette.neutralColor20}',
 
     /**
      * The color of the small arrow inside the scrollbar buttons.
@@ -177,7 +175,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonArrowColor: Palette.neutralColor80,
+    buttonArrowColor: '{palette.neutralColor80}',
 
     /**
      * The color of scrollbar buttons.
@@ -187,7 +185,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonBackgroundColor: Palette.neutralColor10,
+    buttonBackgroundColor: '{palette.neutralColor10}',
 
     /**
      * The color of the border of the scrollbar buttons.
@@ -197,7 +195,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonBorderColor: Palette.neutralColor20,
+    buttonBorderColor: '{palette.neutralColor20}',
 
     /**
      * The border width of the scrollbar buttons.
@@ -232,7 +230,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    trackBorderColor: Palette.neutralColor20,
+    trackBorderColor: '{palette.neutralColor20}',
 
     /**
      * The corner radius of the border of the scrollbar track.

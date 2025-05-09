@@ -32,7 +32,6 @@ import type {
     TreeGridAxisOptions
 } from './TreeGridOptions';
 
-import Palette from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -157,7 +156,7 @@ function renderLabelIcon(
         icon
             .attr({
                 cursor: 'pointer',
-                'fill': pick(params.color, Palette.neutralColor60),
+                'fill': params.color || '{palette.neutralColor60}',
                 'stroke-width': 1,
                 stroke: options.lineColor,
                 strokeWidth: options.lineWidth || 0

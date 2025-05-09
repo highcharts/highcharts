@@ -971,7 +971,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     assert.strictEqual(
         ruPoint.graphic.attr('fill'),
-        series.options.nullColor,
+        chart.renderer.applyPalette(series.options.nullColor),
         'The ru null point\'s color should be correct.'
     );
 

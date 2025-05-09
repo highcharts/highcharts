@@ -20,8 +20,6 @@
 
 import type BubbleLegendItem from './BubbleLegendItem';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  Constants
@@ -178,7 +176,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
             /** @ignore-option */
             fontSize: '0.9em',
             /** @ignore-option */
-            color: Palette.neutralColor100
+            color: '{palette.neutralColor100}'
         },
         /**
          * The x position offset of the label relative to the

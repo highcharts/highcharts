@@ -35,7 +35,6 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import F from '../Templating.js';
 const { format } = F;
-import Palette from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
 const {
@@ -545,10 +544,11 @@ namespace DataLabel {
             seriesOptions = series.options,
             renderer = chart.renderer,
             { backgroundColor, plotBackgroundColor } = chart.options.chart,
+            palette = chart.options.palette,
             contrastColor = renderer.getContrast(
                 (isString(plotBackgroundColor) && plotBackgroundColor) ||
                 (isString(backgroundColor) && backgroundColor) ||
-                Palette.neutralColor100
+                palette.neutralColor100
             ),
             seriesDlOptions = mergedDataLabelOptions(series);
 
@@ -637,7 +637,7 @@ namespace DataLabel {
                                 labelOptions.color,
                                 style.color,
                                 isString(series.color) ? series.color : void 0,
-                                Palette.neutralColor100
+                                palette.neutralColor100
                             );
                             // Get automated contrast color
                             if (style.color === 'contrast') {

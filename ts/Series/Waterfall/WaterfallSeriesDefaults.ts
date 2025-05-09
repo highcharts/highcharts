@@ -18,8 +18,6 @@
 
 import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -89,7 +87,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    lineColor: Palette.neutralColor80,
+    lineColor: '{palette.neutralColor80}',
 
     /**
      * A name for the dash style to use for the line connecting the columns
@@ -116,7 +114,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    borderColor: Palette.neutralColor80,
+    borderColor: '{palette.neutralColor80}',
 
     states: {
 

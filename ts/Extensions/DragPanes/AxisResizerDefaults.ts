@@ -20,8 +20,6 @@
 
 import type AxisResizerOptions from './AxisResizerOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -140,7 +138,7 @@ const AxisResizerDefaults: AxisResizerOptions = {
          * @type     {Highcharts.ColorString}
          * @requires modules/drag-panes
          */
-        lineColor: Palette.neutralColor20,
+        lineColor: '{palette.neutralColor20}',
 
         /**
          * Dash style of the control line.

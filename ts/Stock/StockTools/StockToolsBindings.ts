@@ -32,7 +32,6 @@ import type Toolbar from './StockToolbar';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import Palette from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
     addFlagFromForm,
@@ -647,7 +646,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60
+                                color: '{palette.neutralColor60}'
                             }
                         }
                     },
@@ -709,7 +708,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60
+                                color: '{palette.neutralColor60}'
                             }
                         }
                     },
@@ -766,23 +765,23 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             point: { x, y },
                             crosshairX: {
                                 strokeWidth: 1,
-                                stroke: Palette.neutralColor100
+                                stroke: '{palette.neutralColor100}'
                             },
                             crosshairY: {
                                 enabled: false,
                                 strokeWidth: 0,
-                                stroke: Palette.neutralColor100
+                                stroke: '{palette.neutralColor100}'
                             },
                             background: {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: Palette.backgroundColor
+                                stroke: '{palette.backgroundColor}'
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60
+                                color: '{palette.neutralColor60}'
                             }
                         }
                     },
@@ -836,22 +835,22 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             crosshairX: {
                                 enabled: false,
                                 strokeWidth: 0,
-                                stroke: Palette.neutralColor100
+                                stroke: '{palette.neutralColor100}'
                             },
                             crosshairY: {
                                 strokeWidth: 1,
-                                stroke: Palette.neutralColor100
+                                stroke: '{palette.neutralColor100}'
                             },
                             background: {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: Palette.backgroundColor
+                                stroke: '{palette.backgroundColor}'
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60
+                                color: '{palette.neutralColor60}'
                             }
                         }
                     },
@@ -906,20 +905,20 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: Palette.backgroundColor
+                                stroke: '{palette.backgroundColor}'
                             },
                             crosshairX: {
                                 strokeWidth: 1,
-                                stroke: Palette.neutralColor100
+                                stroke: '{palette.neutralColor100}'
                             },
                             crosshairY: {
                                 strokeWidth: 1,
-                                stroke: Palette.neutralColor100
+                                stroke: '{palette.neutralColor100}'
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60
+                                color: '{palette.neutralColor60}'
                             }
                         }
                     },
@@ -978,7 +977,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60
+                                color: '{palette.neutralColor60}'
                             }
                         }
                     },
@@ -1086,7 +1085,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: Palette.negativeColor
+                                        fill: '{palette.negativeColor}'
                                     }
                                 }
                             },
@@ -1160,7 +1159,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60,
+                                color: '{palette.neutralColor60}',
                                 fontSize: '0.7em'
                             }
                         },
@@ -1270,7 +1269,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60,
+                                color: '{palette.neutralColor60}',
                                 fontSize: '0.7em'
                             }
                         },
@@ -1334,8 +1333,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             connector: {
                                 fill: 'none',
                                 stroke: closestPoint.below ?
-                                    Palette.negativeColor :
-                                    Palette.positiveColor
+                                    '{palette.negativeColor}' :
+                                    '{palette.positiveColor}'
                             }
                         },
                         shapeOptions: {

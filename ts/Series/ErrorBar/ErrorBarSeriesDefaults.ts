@@ -18,8 +18,6 @@
 
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -58,7 +56,7 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    color: Palette.neutralColor100,
+    color: '{palette.neutralColor100}',
 
     grouping: false,
 

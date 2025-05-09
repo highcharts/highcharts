@@ -18,8 +18,6 @@
 
 import type RangeSelectorOptions from './RangeSelectorOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  Declarations
@@ -577,7 +575,7 @@ const rangeSelector: RangeSelectorOptions = {
      */
     inputStyle: {
         /** @ignore */
-        color: Palette.highlightColor80,
+        color: '{palette.highlightColor80}',
         /** @ignore */
         cursor: 'pointer',
         /** @ignore */
@@ -597,7 +595,7 @@ const rangeSelector: RangeSelectorOptions = {
      */
     labelStyle: {
         /** @ignore */
-        color: Palette.neutralColor60,
+        color: '{palette.neutralColor60}',
         /** @ignore */
         fontSize: '0.8em'
     }

@@ -18,8 +18,6 @@
 
 import type ColorAxis from './ColorAxis';
 
-import Palette from '../../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -248,7 +246,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product   highcharts highstock highmaps
      */
-    gridLineColor: Palette.backgroundColor,
+    gridLineColor: '{palette.backgroundColor}',
 
     /**
      * The width of the grid lines extending from the axis across the
@@ -333,7 +331,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highstock highmaps
          */
-        color: Palette.neutralColor40
+        color: '{palette.neutralColor40}'
     },
 
     /**
@@ -382,7 +380,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highcharts highstock highmaps
      */
-    minColor: Palette.highlightColor10,
+    minColor: '{palette.highlightColor10}',
 
     /**
      * The color to represent the maximum of the color axis. Unless
@@ -402,7 +400,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highcharts highstock highmaps
      */
-    maxColor: Palette.highlightColor100,
+    maxColor: '{palette.highlightColor100}',
 
     /**
      * Color stops for the gradient of a scalar color axis. Use this in

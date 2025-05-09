@@ -8,7 +8,6 @@ import type AnnotationOptions from './AnnotationOptions';
 import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const { defined } = U;
 
@@ -158,7 +157,7 @@ const AnnotationDefaults: AnnotationOptions = {
          *
          * @type {Highcharts.ColorString}
          */
-        borderColor: Palette.neutralColor100,
+        borderColor: '{palette.neutralColor100}',
 
         /**
          * The border radius in pixels for the annotation's label.
@@ -640,8 +639,8 @@ const AnnotationDefaults: AnnotationOptions = {
          */
         style: {
             cursor: 'pointer',
-            fill: Palette.backgroundColor,
-            stroke: Palette.neutralColor100,
+            fill: '{palette.backgroundColor}',
+            stroke: '{palette.neutralColor100}',
             'stroke-width': 2
         },
 

@@ -20,8 +20,6 @@ import type PieSeries from './PieSeries';
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -587,7 +585,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *
      * @private
      */
-    borderColor: Palette.backgroundColor,
+    borderColor: '{palette.backgroundColor}',
 
     /**
      * The width of the border surrounding each slice.

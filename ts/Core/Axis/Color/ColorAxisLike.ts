@@ -26,7 +26,7 @@ import type Point from '../../Series/Point';
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import U from '../../Utilities.js';
-const { merge } = U;
+const { isString, merge } = U;
 
 /* *
  *
@@ -147,13 +147,19 @@ namespace ColorAxisLike {
     ): void {
         const axis = this,
             options = axis.options,
+            renderer = axis.chart.renderer,
             stops = axis.stops = options.stops || [
                 [0, options.minColor || ''],
                 [1, options.maxColor || '']
             ];
 
         for (let i = 0, iEnd = stops.length; i < iEnd; ++i) {
-            stops[i].color = color(stops[i][1]);
+            const colorValue = stops[i][1];
+            stops[i].color = color(
+                isString(colorValue) ?
+                    renderer.applyPalette(colorValue) :
+                    colorValue
+            );
         }
     }
 

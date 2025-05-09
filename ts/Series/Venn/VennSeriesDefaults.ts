@@ -25,8 +25,6 @@
 
 import type VennSeriesOptions from './VennSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -61,7 +59,7 @@ import Palette from '../../Core/Color/Palettes.js';
  */
 const VennSeriesDefaults: VennSeriesOptions = {
 
-    borderColor: Palette.neutralColor20,
+    borderColor: '{palette.neutralColor20}',
 
     borderDashStyle: 'solid' as any,
 
@@ -118,7 +116,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
 
             opacity: 1,
 
-            borderColor: Palette.neutralColor80
+            borderColor: '{palette.neutralColor80}'
 
         },
 
@@ -127,9 +125,9 @@ const VennSeriesDefaults: VennSeriesOptions = {
          */
         select: {
 
-            color: Palette.neutralColor20,
+            color: '{palette.neutralColor20}',
 
-            borderColor: Palette.neutralColor100,
+            borderColor: '{palette.neutralColor100}',
 
             animation: false
 

@@ -19,8 +19,6 @@
 import type MapChart from '../Core/Chart/MapChart';
 import type MapNavigationOptions from './MapNavigationOptions';
 
-import Palette from '../Core/Color/Palettes.js';
-
 /* *
  *
  *  Constants
@@ -104,7 +102,7 @@ const mapNavigation: MapNavigationOptions = {
          */
         style: {
             /** @ignore */
-            color: Palette.neutralColor60,
+            color: '{palette.neutralColor60}',
             /** @ignore */
             fontSize: '1em',
             /** @ignore */
@@ -125,9 +123,9 @@ const mapNavigation: MapNavigationOptions = {
          */
         theme: {
             /** @ignore */
-            fill: Palette.backgroundColor,
+            fill: '{palette.backgroundColor}',
             /** @ignore */
-            stroke: Palette.neutralColor10,
+            stroke: '{palette.neutralColor10}',
             /** @ignore */
             'stroke-width': 1,
             /** @ignore */

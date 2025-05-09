@@ -20,7 +20,9 @@ QUnit.test('Set basemap on chart object', function (assert) {
     });
 
     const series = chart.series[0],
-        nullColor = Highcharts.Series.types.map.defaultOptions.nullColor;
+        nullColor = chart.renderer.applyPalette(
+            Highcharts.Series.types.map.defaultOptions.nullColor
+        );
 
     assert.strictEqual(
         series.mapData.length,

@@ -161,13 +161,17 @@ QUnit.test(
 
         assert.strictEqual(
             DMIIndicator.graphplusDILine.element.getAttribute('stroke'),
-            DMIIndicator.options.plusDILine.styles.lineColor,
+            chart.renderer.applyPalette(
+                DMIIndicator.options.plusDILine.styles.lineColor
+            ),
             'The +DI line color should be green-ish by default.'
         );
 
         assert.strictEqual(
             DMIIndicator.graphminusDILine.element.getAttribute('stroke'),
-            DMIIndicator.options.minusDILine.styles.lineColor,
+            chart.renderer.applyPalette(
+                DMIIndicator.options.minusDILine.styles.lineColor
+            ),
             'The -DI line color should be red-ish by default.'
         );
 

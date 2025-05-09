@@ -20,8 +20,6 @@
 
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -154,14 +152,14 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
              *
              * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            color: Palette.neutralColor20,
+            color: '{palette.neutralColor20}',
 
             /**
              * A specific border color for the selected point.
              *
              * @type {Highcharts.ColorString}
              */
-            borderColor: Palette.neutralColor100
+            borderColor: '{palette.neutralColor100}'
 
         }
 

@@ -18,8 +18,6 @@
 
 import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
 
-import Palette from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -89,7 +87,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
      * @since 8.0.0
      * @product   highcharts highstock
      */
-    lowColor: Palette.neutralColor80,
+    lowColor: '{palette.neutralColor80}',
 
     /**
      * Color of the line that connects the dumbbell point's values.
