@@ -434,7 +434,66 @@ class Chart {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // Do the merge
+            const palette = merge(defaultOptions.palette, userOptions.palette);
+            const options: Options = merge(
+                    {
+                        chart: {
+                            backgroundColor: palette.backgroundColor,
+                            borderColor: palette.highlightColor80,
+                            plotBorderColor: palette.neutralColor20
+                        },
+                        colors: palette.dataColors,
+                        title: {
+                            style: {
+                                color: palette.neutralColor80
+                            }
+                        },
+                        subtitle: {
+                            style: {
+                                color: palette.neutralColor60
+                            }
+                        },
+                        caption: {
+                            style: {
+                                color: palette.neutralColor60
+                            }
+                        },
+                        credits: {
+                            style: {
+                                color: palette.neutralColor40
+                            }
+                        },
+                        legend: {
+                            borderColor: palette.neutralColor40,
+                            itemStyle: {
+                                color: palette.neutralColor80
+                            },
+                            itemHoverStyle: {
+                                color: palette.highlightColor100
+                            },
+                            itemHiddenStyle: {
+                                color: palette.neutralColor60
+                            },
+                            navigation: {
+                                activeColor: palette.highlightColor100,
+                                inactiveColor: palette.neutralColor20
+                            }
+                        },
+                        loading: {
+                            style: {
+                                backgroundColor: palette.backgroundColor
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: palette.backgroundColor,
+                            style: {
+                                color: palette.neutralColor80
+                            }
+                        }
+                    },
+                    defaultOptions,
+                    userOptions
+                ),
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
 

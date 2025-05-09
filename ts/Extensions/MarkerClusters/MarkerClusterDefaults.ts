@@ -23,7 +23,7 @@
 import type MarkerClusterOptions from './MarkerClusterOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

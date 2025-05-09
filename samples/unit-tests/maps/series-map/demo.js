@@ -48,7 +48,7 @@ QUnit.test('Mapping of joinBy with data', assert => {
 
         assert.strictEqual(
             series.points[i].color,
-            Highcharts.Series.types.map.defaultOptions.nullColor,
+            series.applyPalette().nullColor,
             `The joinBy changed - ${i + 1}. point should no longer be colored.`
         );
     });

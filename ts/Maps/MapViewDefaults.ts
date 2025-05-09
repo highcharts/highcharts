@@ -20,7 +20,7 @@ import type {
     MapViewOptions
 } from './MapViewOptions';
 
-import { Palette } from '../Core/Color/Palettes.js';
+import Palette from '../Core/Color/Palettes.js';
 
 /* *
  *

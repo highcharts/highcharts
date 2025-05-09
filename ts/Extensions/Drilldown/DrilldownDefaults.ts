@@ -20,7 +20,7 @@
 
 import type DrilldownOptions from './DrilldownOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

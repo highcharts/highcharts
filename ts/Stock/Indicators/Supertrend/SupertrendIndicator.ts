@@ -30,7 +30,7 @@ import type {
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
-import { Palette } from '../../../Core/Color/Palettes.js';
+import Palette from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     atr: ATRIndicator,

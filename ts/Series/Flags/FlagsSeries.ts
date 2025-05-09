@@ -124,6 +124,28 @@ class FlagsSeries extends ColumnSeries {
      * */
 
     /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<FlagsSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as unknown as DeepPartial<FlagsSeriesOptions>,
+            {
+                fillColor: palette.backgroundColor,
+                states: {
+                    hover: {
+                        fillColor: palette.highlightColor20,
+                        lineColor: palette.neutralColor100
+                    }
+                }
+            }
+        );
+    }
+
+    /**
      * Disable animation, but keep clipping (#8546).
      * @private
      */

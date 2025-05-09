@@ -79,6 +79,21 @@ class CandlestickSeries extends OHLCSeries {
      * */
 
     /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<CandlestickSeriesOptions> {
+        const options:DeepPartial<CandlestickSeriesOptions> =
+                super.applyPalette(),
+            palette = this.chart.options.palette;
+
+        options.lineColor = palette.neutralColor100;
+        options.upColor = palette.backgroundColor;
+
+        return options;
+    }
+
+    /**
      * Postprocess mapping between options and SVG attributes
      *
      * @private

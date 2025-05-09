@@ -22,7 +22,7 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../../Core/Color/Palettes.js';
+import Palette from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     column: {

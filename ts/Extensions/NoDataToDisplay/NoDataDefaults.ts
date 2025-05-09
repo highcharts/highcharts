@@ -23,7 +23,7 @@
 import type { LangOptions } from '../../Core/Options';
 import type NoDataOptions from './NoDataOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

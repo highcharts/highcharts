@@ -94,6 +94,25 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<OrganizationSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<OrganizationSeriesOptions>,
+            {
+                borderColor: palette.neutralColor60,
+                link: {
+                    color: palette.neutralColor60
+                }
+            }
+        );
+    }
+
     public alignDataLabel(
         point: OrganizationPoint,
         dataLabel: SVGLabel,

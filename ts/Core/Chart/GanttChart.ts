@@ -28,7 +28,7 @@ import type Options from '../Options';
 import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import { Palette } from '../Color/Palettes.js';
+import Palette from '../Color/Palettes.js';
 import U from '../Utilities.js';
 const {
     isArray,

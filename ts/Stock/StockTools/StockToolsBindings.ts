@@ -32,7 +32,7 @@ import type Toolbar from './StockToolbar';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
     addFlagFromForm,

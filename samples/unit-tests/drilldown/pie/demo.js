@@ -339,7 +339,8 @@ QUnit.test('Slice color after drilldown and select (#4359)', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points[0].graphic.attr('fill'),
-        chart.series[0].options.colors[0],
+        // Changed with the palette refactor, now consistent with column series
+        chart.series[0].applyPalette().states.select.color,
         'Proper select-state color'
     );
 

@@ -166,6 +166,27 @@ class TreegraphSeries extends TreemapSeries {
     }
 
     /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<TreegraphSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<TreegraphSeriesOptions>,
+            {
+                marker: {
+                    lineColor: void 0
+                },
+                link: {
+                    color: palette.neutralColor60
+                }
+            }
+        );
+    }
+
+    /**
      * Calculate `a` and `b` parameters of linear transformation, where
      * `finalPosition = a * calculatedPosition + b`.
      *

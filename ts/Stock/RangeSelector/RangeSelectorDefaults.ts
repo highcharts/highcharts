@@ -18,7 +18,7 @@
 
 import type RangeSelectorOptions from './RangeSelectorOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

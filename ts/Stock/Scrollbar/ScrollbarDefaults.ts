@@ -18,7 +18,7 @@
 
 import type ScrollbarOptions from './ScrollbarOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
+import Palette from '../../Core/Color/Palettes.js';
 
 /* *
  *

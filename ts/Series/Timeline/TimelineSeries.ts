@@ -107,6 +107,26 @@ class TimelineSeries extends LineSeries {
      *
      * */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<TimelineSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<TimelineSeriesOptions>,
+            {
+                dataLabels: {
+                    backgroundColor: palette.backgroundColor,
+                    borderColor: palette.neutralColor40,
+                    color: palette.neutralColor80
+                }
+            }
+        );
+    }
+
     public alignDataLabel(
         point: TimelinePoint,
         dataLabel: SVGLabel,
