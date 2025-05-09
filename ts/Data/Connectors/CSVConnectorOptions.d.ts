@@ -64,13 +64,19 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      * @default ','
      */
     itemDelimiter?: string;
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     */
+    beforeParse?: CSVBeforeParseCallbackFunction;
 }
 
 /**
  * Callback function allowing modification of the data before parsing it.
  * Must return a valid CSV structure.
  */
-export interface BeforeParseCallbackFunction {
+export interface CSVBeforeParseCallbackFunction {
     (csv: string): string;
 }
 

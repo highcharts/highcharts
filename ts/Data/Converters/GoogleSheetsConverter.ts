@@ -23,7 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type { BeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
+import type { GoogleSheetsBeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -226,7 +226,7 @@ namespace GoogleSheetsConverter {
      * Options that are not compatible with ClassJSON
      */
     export interface SpecialOptions {
-        beforeParse?: BeforeParseCallbackFunction;
+        beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
     }
 
     /**
