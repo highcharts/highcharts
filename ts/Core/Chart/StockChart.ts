@@ -819,7 +819,7 @@ namespace StockChart {
 
                         x1 = axis2.pos;
                         x2 = x1 + axis2.len;
-                        y1 = y2 = Math.round(axisTop + axis.height - transVal);
+                        y1 = y2 = axisTop + axis.height - transVal;
 
                         // Outside plot area
                         if (
