@@ -24,7 +24,8 @@ import H from './Globals.js';
 const {
     isTouchDevice
 } = H;
-import palette from './Color/Palettes.js';
+import Palette from './Color/Palettes.js';
+const { palette } = Palette;
 import Time from './Time.js';
 import U from './Utilities.js';
 const {

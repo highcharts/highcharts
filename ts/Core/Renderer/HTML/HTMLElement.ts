@@ -330,7 +330,7 @@ class HTMLElement extends SVGElement {
 
         extend(this.styles, styles);
         if (styles.color) {
-            styles.color = this.renderer.applyPalette(styles.color);
+            styles.color = this.applyPalette(styles.color);
         }
         css(element, styles);
 

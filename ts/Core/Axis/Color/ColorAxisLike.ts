@@ -25,6 +25,8 @@ import type Point from '../../Series/Point';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
+import Palette from '../../Color/Palettes.js';
+const { applyPalette } = Palette;
 import U from '../../Utilities.js';
 const { isString, merge } = U;
 
@@ -147,7 +149,6 @@ namespace ColorAxisLike {
     ): void {
         const axis = this,
             options = axis.options,
-            renderer = axis.chart.renderer,
             stops = axis.stops = options.stops || [
                 [0, options.minColor || ''],
                 [1, options.maxColor || '']
@@ -157,7 +158,7 @@ namespace ColorAxisLike {
             const colorValue = stops[i][1];
             stops[i].color = color(
                 isString(colorValue) ?
-                    renderer.applyPalette(colorValue) :
+                    applyPalette(colorValue, axis.chart) :
                     colorValue
             );
         }

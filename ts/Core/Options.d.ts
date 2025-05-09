@@ -68,7 +68,7 @@ export interface Options {
     colors?: Array<ColorString>;
     lang: LangOptions;
     loading?: LoadingOptions;
-    palette: typeof Palette;
+    palette: typeof Palette['palette'];
     plotOptions: SeriesTypePlotOptions;
     symbols?: Array<SymbolKey>;
     global: GlobalOptions;

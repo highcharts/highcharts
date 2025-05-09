@@ -24,6 +24,7 @@ import H from '../Globals.js';
 const {
     win
 } = H;
+import palette from './Palettes.js';
 import U from '../Utilities.js';
 const {
     isNumber,
@@ -176,6 +177,15 @@ class Color implements ColorLike {
     public constructor(
         input: ColorType
     ) {
+
+        if (typeof input === 'string') {
+            input = input.replace(
+                /{palette\.([a-zA-Z0-9]+)}/g,
+                (match: string, name: string): string =>
+                    (palette as any)[name] as string
+            );
+        }
+
         this.input = input;
 
         const GlobalColor = (H as AnyRecord).Color;

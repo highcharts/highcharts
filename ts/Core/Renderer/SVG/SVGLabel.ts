@@ -258,7 +258,7 @@ class SVGLabel extends SVGElement {
         if (value) {
             this.needsBox = true;
             if (isString(value)) {
-                value = this.renderer.applyPalette(value);
+                value = this.applyPalette(value);
             }
         }
         // For animation getter (#6776)
