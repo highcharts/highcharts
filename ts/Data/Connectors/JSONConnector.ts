@@ -132,7 +132,7 @@ class JSONConnector extends DataConnector {
             .resolve(
                 dataUrl ?
                     fetch(dataUrl, {
-                        signal: connector?.abortController?.signal
+                        signal: connector?.pollingController?.signal
                     }).then(
                         (response): Promise<any> => response.json()
                     )['catch']((error): void => {

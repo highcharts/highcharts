@@ -48,7 +48,7 @@ describe('Data polling restarting', () => {
   it('Should restart the connector polling.', () => {
     cy.board().then(async dashboard => {
       const connector = await dashboard.dataPool.getConnector('fetched-data');
-      const signal = connector.abortController.signal;
+      const signal = connector.pollingController.signal;
       // Component reference should be initially added to the connector.
       expect(connector.components).not.be.empty;
       // Expect request not to be aborted.
@@ -78,7 +78,7 @@ describe('Data polling restarting', () => {
       // Component reference should be added to the connector.
       expect(connector.components).not.be.empty;
       // Expect request not to be aborted.
-      expect(connector.abortController.signal.aborted).to.be.false;
+      expect(connector.pollingController.signal.aborted).to.be.false;
       // Connector polling should be run again.
       expect(connector.polling).to.be.true;
     });
