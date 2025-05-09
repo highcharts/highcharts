@@ -24,7 +24,8 @@ import H from '../Globals.js';
 const {
     win
 } = H;
-import palette from './Palettes.js';
+import Palette from './Palettes.js';
+const { applyPalette } = Palette;
 import U from '../Utilities.js';
 const {
     isNumber,
@@ -179,11 +180,7 @@ class Color implements ColorLike {
     ) {
 
         if (typeof input === 'string') {
-            input = input.replace(
-                /{palette\.([a-zA-Z0-9]+)}/g,
-                (match: string, name: string): string =>
-                    (palette as any)[name] as string
-            );
+            input = applyPalette(input);
         }
 
         this.input = input;

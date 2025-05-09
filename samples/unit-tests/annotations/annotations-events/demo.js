@@ -310,10 +310,9 @@ QUnit.test('Annotations events - general', function (assert) {
 
     controller.mouseUp();
 
-    assert.close(
-        chart.yAxis[1].toPixels(10),
-        chart.yAxis[1].toPixels(rect.points[2].y),
-        1.1,
+    assert.strictEqual(
+        Math.round(chart.yAxis[1].toPixels(10)),
+        Math.round(chart.yAxis[1].toPixels(rect.points[2].y)),
         '#19024, rectangle should resize to exact drag position.'
     );
 
