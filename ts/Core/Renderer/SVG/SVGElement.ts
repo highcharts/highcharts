@@ -931,7 +931,6 @@ class SVGElement implements SVGElementLike {
             radAttr: SVGAttributes,
             gradients: Record<string, SVGElement>,
             stops: (GradientColor['stops']|undefined),
-            stopColor: ColorString,
             stopOpacity,
             radialReference: Array<number>,
             id,
@@ -1011,19 +1010,19 @@ class SVGElement implements SVGElementLike {
                     // The gradient needs to keep a list of stops to be able to
                     // destroy them
                     gradientObject.stops = [];
-                    (stops as any).forEach(function (
-                        stop: [number, ColorString]
-                    ): void {
-                        if (stop[1].indexOf('rgba') === 0) {
-                            colorObject = Color.parse(stop[1]);
+                    (stops as any).forEach((
+                        [offset, stopColor]: [number, ColorString]
+                    ): void => {
+                        stopColor = renderer.applyPalette(stopColor);
+                        if (stopColor.indexOf('rgba') === 0) {
+                            colorObject = Color.parse(stopColor);
                             stopColor = colorObject.get('rgb') as any;
                             stopOpacity = colorObject.get('a') as any;
                         } else {
-                            stopColor = stop[1];
                             stopOpacity = 1;
                         }
                         const stopObject = renderer.createElement('stop').attr({
-                            offset: stop[0],
+                            offset,
                             'stop-color': stopColor,
                             'stop-opacity': stopOpacity
                         }).add(gradientObject as any);
@@ -1145,11 +1144,19 @@ class SVGElement implements SVGElementLike {
 
                 // SVG requires fill for text
                 if (stylesToApply.color) {
-                    stylesToApply.fill = renderer.applyPalette(
-                        stylesToApply.color
-                    );
+                    stylesToApply.fill = stylesToApply.color;
                     delete stylesToApply.color;
                 }
+
+                // Apply palette
+                (['fill', 'stroke'] as ('fill'|'stroke')[]).forEach(
+                    (key): void => {
+                        const value = stylesToApply[key];
+                        stylesToApply[key] = isString(value) ?
+                            renderer.applyPalette(value) :
+                            value;
+                    }
+                );
             }
             css(elem, stylesToApply);
         }
