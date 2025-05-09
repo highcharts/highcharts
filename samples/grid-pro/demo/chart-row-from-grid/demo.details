@@ -1,0 +1,6 @@
+---
+ name: Click Grid to draw on chart
+ authors:
+   - Mikkel Espolin Birkeland
+ js_wrap: b
+...
