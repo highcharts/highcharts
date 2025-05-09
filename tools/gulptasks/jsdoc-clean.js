@@ -24,7 +24,7 @@ function jsdDocClean() {
     return new Promise((resolve, reject) => {
 
         try {
-            fsLib.deleteDirectory('build/api', true);
+            fsLib.deleteDirectory(fsLib.path(['build', 'api']));
             resolve();
         } catch (catchedError) {
             logLib.failure(catchedError);

@@ -97,7 +97,7 @@ async function distBuildDashboards() {
         gfxFolder
     } = require('./_config.json');
 
-    fsLib.deleteDirectory(buildFolder, true);
+    fsLib.deleteDirectory(buildFolder);
     logLib.success(`Deleted ${buildFolder}`);
 
     const buildCodeTarget = path.join(buildFolder, 'code');
@@ -143,7 +143,7 @@ async function distBuildDataGrid() {
         bundleTargetFolderDataGrid
     } = require('./_config.json');
 
-    fsLib.deleteDirectory(buildFolderDataGrid, true);
+    fsLib.deleteDirectory(buildFolderDataGrid);
     logLib.success(`Deleted ${buildFolderDataGrid}`);
 
     const buildCodeDataGridTarget = path.join(buildFolderDataGrid, 'code');

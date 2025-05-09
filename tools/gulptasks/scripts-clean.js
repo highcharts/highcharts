@@ -37,7 +37,7 @@ function task() {
         try {
             for (const directory of TARGET_DIRECTORIES) {
                 log.message('Cleaning', directory, '...');
-                fs.deleteDirectory(directory, true);
+                fs.deleteDirectory(directory);
             }
             log.success('Cleaned');
             resolve();
