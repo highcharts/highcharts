@@ -84,6 +84,9 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
             this.series.options.upColor
         ) {
             this.color = this.series.options.upColor;
+            if (typeof this.color === 'string') {
+                this.color = applyPalette(this.color, this.series.chart);
+            }
         }
     }
 
@@ -96,9 +99,6 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
         super.resolveColor();
         if (!this.series.is('heikinashi')) {
             this.resolveUpColor();
-        }
-        if (typeof this.color === 'string') {
-            this.color = applyPalette(this.color, this.series.chart);
         }
     }
 
