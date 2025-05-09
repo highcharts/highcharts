@@ -231,8 +231,10 @@ class RowsVirtualizer {
     private getRowCursor(): number {
         const target = this.viewport.tbodyElement;
         const rowHeight = this.defaultRowHeight;
+        const scrollRatio = this.scrollRatio;
+        const adjustedScrollTop = target.scrollTop / scrollRatio;
 
-        return Math.floor(Math.floor(target.scrollTop / rowHeight) * (1 / this.scrollRatio));
+        return Math.floor(adjustedScrollTop / rowHeight);
     }
 
     /**
