@@ -39,7 +39,7 @@ function task() {
             for (const ptd of PATHS_TO_DELETE) {
                 log.message('Cleaning', ptd, '...');
                 if (fs.isDirectory(ptd)) {
-                    fs.deleteDirectory(ptd, true);
+                    fs.deleteDirectory(ptd);
                 } else {
                     fs.deleteFile(ptd);
                 }
