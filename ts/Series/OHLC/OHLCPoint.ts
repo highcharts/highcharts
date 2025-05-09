@@ -20,6 +20,8 @@ import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
 import type Series from './../../Core/Series/Series';
 
+import Palette from '../../Core/Color/Palettes.js';
+const { applyPalette } = Palette;
 import Point from './../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -94,6 +96,9 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
         super.resolveColor();
         if (!this.series.is('heikinashi')) {
             this.resolveUpColor();
+        }
+        if (typeof this.color === 'string') {
+            this.color = applyPalette(this.color, this.series.chart);
         }
     }
 
