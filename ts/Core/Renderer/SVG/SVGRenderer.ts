@@ -332,6 +332,14 @@ class SVGRenderer implements SVGRendererLike {
      * */
 
     /**
+     * Apply palette templating strings to a color string
+     * @private
+     */
+    public applyPalette(color: string): string {
+        return applyPalette(color, charts[this.chartIndex]);
+    }
+
+    /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
      * for gradients, fills, filters etc. Styled mode only. A hook for adding
      * general definitions to the SVG's defs tag. Definitions can be referenced
@@ -667,7 +675,7 @@ class SVGRenderer implements SVGRendererLike {
      */
     public getContrast(color: ColorString): ColorString {
 
-        color = applyPalette(color);
+        color = this.applyPalette(color);
 
         // #6216, #17273
         const rgba256 = Color.parse(color).rgba,

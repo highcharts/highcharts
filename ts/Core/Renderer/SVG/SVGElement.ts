@@ -45,7 +45,6 @@ const {
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
-    charts,
     deg2rad,
     doc,
     svg,
@@ -53,8 +52,6 @@ const {
     win,
     isFirefox
 } = H;
-import Palette from '../../Color/Palettes.js';
-const { applyPalette } = Palette;
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -554,17 +551,6 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Apply palette templating strings to a color string
-     * @private
-     */
-    public applyPalette(color: string): string {
-        return applyPalette(
-            color,
-            charts[this.renderer.chartIndex]
-        );
-    }
-
-    /**
      * Apply a text outline through a custom CSS property, by copying the text
      * element and apply stroke to the copy. Used internally. Contrast checks at
      * [example](https://jsfiddle.net/highcharts/43soe9m1/2/).
@@ -1027,7 +1013,7 @@ class SVGElement implements SVGElementLike {
                     (stops as any).forEach((
                         [offset, stopColor]: [number, ColorString]
                     ): void => {
-                        stopColor = this.applyPalette(stopColor);
+                        stopColor = renderer.applyPalette(stopColor);
                         if (stopColor.indexOf('rgba') === 0) {
                             colorObject = Color.parse(stopColor);
                             stopColor = colorObject.get('rgb') as any;
@@ -1167,7 +1153,7 @@ class SVGElement implements SVGElementLike {
                     (key): void => {
                         const value = stylesToApply[key];
                         stylesToApply[key] = isString(value) ?
-                            this.applyPalette(value) :
+                            renderer.applyPalette(value) :
                             value;
                     }
                 );
@@ -1374,7 +1360,7 @@ class SVGElement implements SVGElementLike {
         element: SVGDOMElement
     ): void {
         if (typeof value === 'string') {
-            element.setAttribute(key, this.applyPalette(value));
+            element.setAttribute(key, this.renderer.applyPalette(value));
         } else if (value) {
             this.complexColor(value as any, key, element);
         }
