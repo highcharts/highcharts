@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Dashboards Test
+name: Dashboards and Grid Test
 
 # Controls when the workflow will run
 on:
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,6 +47,9 @@ jobs:
 
       - name: Build Highcharts definitions
         run: npx gulp jsdoc-dts
+
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
 
       - name: Run Dashboards Tests
         run: npx gulp dashboards/test

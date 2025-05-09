@@ -1138,6 +1138,15 @@ QUnit.test(
                     to: 7
                 }]
             },
+            // All yAxis options juts to avoid font/browser/OS related issues
+            yAxis: {
+                opposite: true,
+                labels: {
+                    reserveSpace: false,
+                    x: -50
+                },
+                offset: 70
+            },
             series: [{
                 data: [
                     [0, 1],
@@ -1152,8 +1161,8 @@ QUnit.test(
 
         assert.close(
             chart.xAxis[0].toValue(100),
-            0.26227,
-            0.07,
+            1.23368,
+            0.01,
             'The toValue method should return correct value when breakes ' +
             'enabled.'
         );

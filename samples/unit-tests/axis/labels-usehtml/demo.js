@@ -11,7 +11,7 @@ QUnit.test('Auto rotation and wrapping', function (assert) {
                 autoRotation: [-25]
             },
             categories: [
-                'Jan&shy;sad&shy;asd&shy;asd&shy;asd&shy;sa',
+                'Jan­sad­asd­asd­asd­sa',
                 'Feb-as-as-as-as-as',
                 'Mar sad asd asd asd as'
             ]
@@ -31,6 +31,11 @@ QUnit.test('Auto rotation and wrapping', function (assert) {
         xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
         0,
         'Initially not rotated'
+    );
+
+    assert.ok(
+        xAxis.ticks[xAxis.tickPositions[2]].label.getBBox().height < 20,
+        'The label should not be wrapped (#22764)'
     );
 
     chart.setSize(400, 300);
@@ -164,7 +169,7 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
         }
     });
 
-    var labelLength = chart.xAxis[0].ticks[0].label.element.offsetWidth;
+    var labelLength = chart.xAxis[0].ticks[0].label.getBBox().width;
     assert.ok(
         labelLength > 15,
         `Label length should be more than 15px, got ${labelLength}`
@@ -173,14 +178,14 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
     chart.setSize(600, 400, false);
 
     assert.ok(
-        chart.xAxis[0].ticks[0].label.element.offsetWidth > labelLength,
-        'Label has expanded'
+        chart.xAxis[0].ticks[0].label.getBBox().width > labelLength,
+        'Label should have expanded'
     );
 
     chart.setSize(100, 400, false);
 
     assert.strictEqual(
-        chart.xAxis[0].ticks[0].label.element.offsetWidth,
+        chart.xAxis[0].ticks[0].label.getBBox().width,
         labelLength,
         'Back to start'
     );
@@ -617,8 +622,10 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
     );
 
     assert.ok(
-        parseFloat(chart.xAxis[0].ticks[0].label.element.style.left) >=
-            chart.plotLeft,
+        (
+            chart.xAxis[0].ticks[0].label.foreignObject?.attr('x') ??
+            parseFloat(chart.xAxis[0].ticks[0].label.element.style.left)
+        ) >= chart.plotLeft,
         'The label should be within the tick bounds'
     );
 });
@@ -709,8 +716,16 @@ QUnit.test(
             ]
         });
 
+        if (chart.xAxis[0].ticks[0].label.foreignObject) {
+            assert.notEqual(
+                chart.xAxis[0].ticks[0].label.foreignObject.attr('width'),
+                0,
+                'The foreign object should have a width'
+            );
+        }
+
         assert.strictEqual(
-            chart.xAxis[0].labelGroup.div.children.item(0).style.fontSize,
+            chart.xAxis[0].ticks[0].label.element.style.fontSize,
             '40px',
             'xAxis labels should have font size 40px'
         );

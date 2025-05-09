@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -759,7 +759,7 @@ class KPIComponent extends Component {
     /**
      * Get the KPI component's options.
      * @returns
-     * The JSON of KPI component's options.
+     * KPI component's options.
      *
      * @internal
      *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,6 +14,7 @@
  *
  * */
 
+import type { AlignValue, VerticalAlignValue } from './Renderer/AlignObject';
 import type AnimationOptions from './Animation/AnimationOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
@@ -54,6 +55,7 @@ export interface TooltipOptions {
     dateTimeLabelFormats: Time.DateTimeLabelFormatsOption;
     distance?: number;
     enabled: boolean;
+    fixed?: boolean;
     followPointer?: boolean;
     followTouchMove?: boolean;
     footerFormat: string;
@@ -68,9 +70,10 @@ export interface TooltipOptions {
     padding: number;
     pointFormat: string;
     pointFormatter?: F.FormatterCallback<Point>;
+    position: TooltipPositionOptions;
     positioner?: Tooltip.PositionerCallbackFunction;
-    shadow: (boolean|Partial<ShadowOptionsObject>);
-    shape: Tooltip.ShapeValue;
+    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    shape?: Tooltip.ShapeValue;
     shared: boolean;
     snap: number;
     split?: boolean;
@@ -83,6 +86,14 @@ export interface TooltipOptions {
     valuePrefix?: string;
     valueSuffix?: string;
     xDateFormat?: Time.DateTimeFormat;
+}
+
+interface TooltipPositionOptions {
+    align?: AlignValue;
+    relativeTo?: 'chart'|'pane'|'plotBox'|'spacingBox'
+    verticalAlign?: VerticalAlignValue;
+    x: number;
+    y: number;
 }
 
 /* *

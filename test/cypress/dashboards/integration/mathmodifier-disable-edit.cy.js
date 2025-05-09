@@ -1,6 +1,6 @@
 describe('MathModifier created columns and interaction.', () => {
     before(() => {
-        cy.visit('/dashboards/cypress/datagrid-mathmodifier/');
+        cy.visit('/dashboards/cypress/grid-mathmodifier/');
     })
 
     it('DataGrid and HC component should disable changing the mathmodifier column.', () => {

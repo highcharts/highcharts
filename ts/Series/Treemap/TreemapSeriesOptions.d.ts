@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2024 Highsoft AS
+ *  (c) 2014-2025 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -61,7 +61,7 @@ export interface TreemapDataLabelOptions extends DataLabelOptions {
      * @sample {highcharts} highcharts/series-treemap/headers
      *         Headers for parent nodes
      *
-     * @since next
+     * @since 12.2.0
      */
     headers?: boolean
 }
@@ -568,7 +568,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      *
      * @sample {highcharts} highcharts/series-treemap/grouppadding/
      *         Group padding
-     * @since  next
+     * @since 12.2.0
      */
     groupPadding?: number;
 
@@ -670,7 +670,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      *
      * @sample  {highcharts} highcharts/series-treemap/nodesizeby/
      *          Node sizing
-     * @since   next
+     * @since 12.2.0
      * @default parent
      */
     nodeSizeBy?: 'group'|'leaf';

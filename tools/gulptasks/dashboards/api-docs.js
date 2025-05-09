@@ -14,7 +14,7 @@ async function apiDocs() {
     const fsLib = require('../../libs/fs');
     const processLib = require('../../libs/process');
 
-    await fsLib.deleteDirectory('build/api/dashboards', true);
+    await fsLib.deleteDirectory('build/api/dashboards');
     await processLib.exec(
         'npx typedoc' +
         ' --options tools/gulptasks/dashboards/api-docs.json' +

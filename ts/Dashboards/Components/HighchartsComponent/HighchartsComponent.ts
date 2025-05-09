@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -823,7 +823,7 @@ class HighchartsComponent extends Component {
     /**
      * Get the HighchartsComponent component's options.
      * @returns
-     * The JSON of HighchartsComponent component's options.
+     * HighchartsComponent component's options.
      *
      * @internal
      *
