@@ -53,6 +53,8 @@ const {
     symbolSizes,
     win
 } = H;
+import Palette from '../../Color/Palettes.js';
+const { applyPalette } = Palette;
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -328,6 +330,28 @@ class SVGRenderer implements SVGRendererLike {
      *  Functions
      *
      * */
+
+    /**
+     * Apply palette templating strings to a color string
+     * @private
+     */
+    public applyPalette(input: string): string;
+    public applyPalette(input: CSSObject): undefined;
+    public applyPalette(input: string|CSSObject): string|undefined {
+        // When a string is passed, return the resolved string
+        if (isString(input)) {
+            return applyPalette(input, charts[this.chartIndex]);
+        }
+        // When an object is passed, replace its members
+        (['fill', 'stroke'] as ('fill'|'stroke')[]).forEach(
+            (key): void => {
+                const value = input[key];
+                if (isString(value)) {
+                    input[key] = applyPalette(value, charts[this.chartIndex]);
+                }
+            }
+        );
+    }
 
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
@@ -664,6 +688,9 @@ class SVGRenderer implements SVGRendererLike {
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
     public getContrast(color: ColorString): ColorString {
+
+        color = this.applyPalette(color);
+
         // #6216, #17273
         const rgba256 = Color.parse(color).rgba,
             // For each rgb channel, compute the luminosity based on all
