@@ -43,8 +43,6 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
-import Palette from '../Color/Palettes.js';
-const { applyPalette } = Palette;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -896,12 +894,6 @@ class Point {
             colorIndex = series.colorIndex as any;
         }
 
-        // Apply palette
-        color = this.options.color ?? color;
-        if (typeof color === 'string') {
-            color = applyPalette(color, series.chart);
-        }
-
         /**
          * The point's current color index, used in styled mode instead of
          * `color`. The color index is inserted in class names used for styling.
@@ -917,7 +909,7 @@ class Point {
          * @name Highcharts.Point#color
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
          */
-        this.color = color;
+        this.color = pick(this.options.color, color);
     }
 
     /**

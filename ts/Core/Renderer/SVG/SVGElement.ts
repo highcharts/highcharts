@@ -1149,14 +1149,7 @@ class SVGElement implements SVGElementLike {
                 }
 
                 // Apply palette
-                (['fill', 'stroke'] as ('fill'|'stroke')[]).forEach(
-                    (key): void => {
-                        const value = stylesToApply[key];
-                        stylesToApply[key] = isString(value) ?
-                            renderer.applyPalette(value) :
-                            value;
-                    }
-                );
+                renderer.applyPalette(stylesToApply);
             }
             css(elem, stylesToApply);
         }

@@ -335,8 +335,22 @@ class SVGRenderer implements SVGRendererLike {
      * Apply palette templating strings to a color string
      * @private
      */
-    public applyPalette(color: string): string {
-        return applyPalette(color, charts[this.chartIndex]);
+    public applyPalette(input: string): string;
+    public applyPalette(input: CSSObject): undefined;
+    public applyPalette(input: string|CSSObject): string|undefined {
+        // When a string is passed, return the resolved string
+        if (isString(input)) {
+            return applyPalette(input, charts[this.chartIndex]);
+        }
+        // When an object is passed, replace its members
+        (['fill', 'stroke'] as ('fill'|'stroke')[]).forEach(
+            (key): void => {
+                const value = input[key];
+                if (isString(value)) {
+                    input[key] = applyPalette(value, charts[this.chartIndex]);
+                }
+            }
+        );
     }
 
     /**

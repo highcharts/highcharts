@@ -20,8 +20,6 @@ import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
 import type Series from './../../Core/Series/Series';
 
-import Palette from '../../Core/Color/Palettes.js';
-const { applyPalette } = Palette;
 import Point from './../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -84,9 +82,6 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
             this.series.options.upColor
         ) {
             this.color = this.series.options.upColor;
-            if (typeof this.color === 'string') {
-                this.color = applyPalette(this.color, this.series.chart);
-            }
         }
     }
 
