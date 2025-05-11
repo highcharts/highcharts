@@ -144,8 +144,6 @@ QUnit.test('Position of grid lines and tick marks (#22981)', function (assert) {
 
     for (const pos in ticks) {
         if (Object.hasOwnProperty.call(ticks, pos)) {
-            console.log(ticks[pos].mark.attr('d').split(' ')[2]);
-            console.log(ticks[pos].gridLine.attr('d').split(' ')[2]);
             assert.strictEqual(
                 ticks[pos].mark.attr('d').split(' ')[2],
                 ticks[pos].gridLine.attr('d').split(' ')[2],
