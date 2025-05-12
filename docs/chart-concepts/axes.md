@@ -32,7 +32,7 @@ If the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTick
 
 ### How are ticks calculated in Highcharts?
 Highcharts offers several options to control the appearance and placement of ticks on axes. By default, the axis extremes and tick positions are calculated so that all data values fit inside the chart. Ticks are placed at “round” values (like 1, 2, 5, 10, 20, 50, etc. for linear axes, or minute, hour, month, etc. for datetime axes). This makes charts easier to read and interpret.
-For example, if your data’s minimum is 2 and maximum is 16, the yAxis might automatically span from 0 to 20, with ticks at 0, 5, 10, 15, and 20. This default behavior can be modified using several options.
+For example, if your data’s minimum is 2 and maximum is 16, the y-axis might automatically span from 0 to 20, with ticks at 0, 5, 10, 15, and 20. This default behavior can be modified using several options.
 
 #### Controlling tick placement
  -   ​`tickInterval`​: Sets the interval between ticks to a fixed value.
@@ -43,24 +43,23 @@ For example, if your data’s minimum is 2 and maximum is 16, the yAxis might au
 
 #### Axis extremes and ticks
 By default, axes will start and end on a tick. This means the axis minimum and maximum are rounded to the nearest tick values. You can control this behavior using the `startOnTick` and `endOnTick` options. These options can even override explicit `min` and `max` settings, so the axis begins and ends on neat tick values.
--   [Demo with and without startOnTick/endOnTick](https://jsfiddle.net/BlackLabel/kmxe7udj/)
 #### Related options
 There are several additional options that affect tick calculation and axis extremes:
--   `alignTicks`
--   `ceiling`
--   `floor`
--   `max`
--   `min`
--   `minTickInterval`
--   `minRange`
--   `softMax`
--   `softMin`
--   `startOnTick`
--   `tickAmount`
--   `tickInterval`
--   `tickPixelInterval`
--   `tickPositioner`
--   `tickPositions`
+-   [`alignTicks`](https://api.highcharts.com/highcharts/xAxis.alignTicks)
+-   [`ceiling`](https://api.highcharts.com/highcharts/xAxis.ceiling)
+-   [`floor`](https://api.highcharts.com/highcharts/xAxis.floor)
+-   [`max`](https://api.highcharts.com/highcharts/xAxis.max)
+-   [`min`](https://api.highcharts.com/highcharts/xAxis.min)
+-   [`minTickInterval`](https://api.highcharts.com/highcharts/xAxis.minorTickInterval)
+-   [`minRange`](https://api.highcharts.com/highcharts/xAxis.minRange)
+-   [`softMax`](https://api.highcharts.com/highcharts/xAxis.softMax)
+-   [`softMin`](https://api.highcharts.com/highcharts/xAxis.softMin)
+-   [`startOnTick`](https://api.highcharts.com/highcharts/xAxis.startOnTick)
+-   [`tickAmount`](https://api.highcharts.com/highcharts/xAxis.tickAmount)
+-   [`tickInterval`](https://api.highcharts.com/highcharts/xAxis.tickInterval)
+-   [`tickPixelInterval`](https://api.highcharts.com/highcharts/xAxis.tickPixelInterval)
+-   [`tickPositioner`](https://api.highcharts.com/highcharts/xAxis.tickPositioner)
+-   [`tickPositions`](https://api.highcharts.com/highcharts/xAxis.tickPositions)
 
 ### Labels
 

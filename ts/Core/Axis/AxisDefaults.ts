@@ -1905,18 +1905,9 @@ namespace AxisDefaults {
          * overrides the default behaviour of [tickPixelInterval](
          * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
          *
-         * Note on Time Zones and Dates:
-         * Highcharts uses UTC by default for all date-time axes. If you define
-         * tickPositions using JavaScript Date objects or timestamps generated
-         * by new Date(...), these are based on the local time zone of the
-         * user's computer. This can cause misalignment between your intended
-         * tick positions and what is displayed, especially near month
-         * boundaries.
-         * To achieve consistent results across all users and time zones, use
-         * UTC timestamps generated via Date.UTC(...), or (in Highcharts v12+)
-         * use ISO date strings like '2024-01-31'. For charts that should
-         * display dates in a specific time zone, set time.timezone
-         * (e.g., 'Europe/Oslo'). See time options for more details.
+         * Note: When working with date-time axes, be aware of time zone
+         * handling. See the [documentation on time options](https://www.highcharts.com/docs/chart-concepts/axes#datetime)
+         * for best practices.
          *
          * @see [tickPositioner](#xAxis.tickPositioner)
          *
