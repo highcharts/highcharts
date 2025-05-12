@@ -1140,6 +1140,16 @@ function seriesRenderCanvas(this: Series): void {
         minI: (number|undefined),
         maxI: (number|undefined);
 
+    // Remove k-d-tree mock points after zoom (#20330)
+    if (
+        this.boosted &&
+        this.chart.hoverPoint?.series === this
+    ) {
+        this.points.length = 0;
+        this.chart.hoverPoint = null as any;
+        this.chart.hoverPoints = [];
+        this.chart.tooltip?.hide?.();
+    }
 
     // When touch-zooming or mouse-panning, re-rendering the canvas would not
     // perform fast enough. Instead, let the axes redraw, but not the series.
