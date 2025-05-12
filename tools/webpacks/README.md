@@ -81,7 +81,7 @@ In our example the `example.src.ts` module requires the Highcharts namespace fro
 ### Adding a module with shared code
 
 If you module provides shared code required by other modules, you have to define the relationship in `externals.json`.
-This helps Webpack to make the correct decision to decided when to bundle the code and when to expect the code on the product namespace.
+This helps Webpack to make the correct decision when to bundle the code and when to expect the code on the product namespace.
 
 **Example:**
 
