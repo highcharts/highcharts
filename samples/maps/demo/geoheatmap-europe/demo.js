@@ -29,7 +29,7 @@
 
         series: [{
             name: 'Europe',
-            borderColor: 'rgba(0, 0, 0, 0.4)',
+            borderColor: '#888',
             states: {
                 inactive: {
                     enabled: false

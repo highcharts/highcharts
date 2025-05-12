@@ -26,7 +26,10 @@ import type {
     ExportingOptions,
     ExportingButtonOptions
 } from './ExportingOptions';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type {
+    HTMLDOMElement,
+    SVGDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import type NavigationOptions from './NavigationOptions';
 import type Options from '../../Core/Options';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
@@ -1571,22 +1574,27 @@ namespace Exporting {
     }
 
     /**
-     * Resolve CSS variables into hex colors
+     * Resolve CSS variables into constant color values
      */
     function resolveCSSVariables(
         this: ChartComposition
     ): void {
-        const svgElements = this.container.querySelectorAll('*'),
-            colorAttributes = ['color', 'fill', 'stop-color', 'stroke'];
-
-        Array.from(svgElements).forEach((element: Element): void => {
-            colorAttributes.forEach((attr): void => {
-                const attrValue = element.getAttribute(attr);
+        Array.from(
+            this.container.querySelectorAll('*') as NodeListOf<SVGDOMElement>
+        ).forEach((element): void => {
+            ['color', 'fill', 'stop-color', 'stroke'].forEach((prop): void => {
+                const attrValue = element.getAttribute(prop);
                 if (attrValue?.includes('var(')) {
                     element.setAttribute(
-                        attr,
-                        getComputedStyle(element).getPropertyValue(attr)
+                        prop,
+                        getComputedStyle(element).getPropertyValue(prop)
                     );
+                }
+
+                const styleValue = element.style?.[prop as any];
+                if (styleValue?.includes('var(')) {
+                    element.style[prop as any] =
+                        getComputedStyle(element).getPropertyValue(prop);
                 }
             });
         });
