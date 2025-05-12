@@ -66,7 +66,7 @@
     "@highcharts/eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.1.0",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.6",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.2.0",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.12",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.13",
     "@highcharts/highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.5",
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
