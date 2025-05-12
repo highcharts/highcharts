@@ -2,7 +2,7 @@
  *
  *  Grid default options
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -65,9 +65,6 @@ namespace Defaults {
             timezone: 'UTC'
         },
         rendering: {
-            columns: {
-                distribution: 'full'
-            },
             rows: {
                 bufferSize: 10,
                 minVisibleRows: 2,

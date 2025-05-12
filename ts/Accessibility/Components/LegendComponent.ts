@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Accessibility component for chart legend.
  *
@@ -431,6 +431,11 @@ class LegendComponent extends AccessibilityComponent {
         item: Legend.Item
     ): void {
         const legendItem = item.legendItem || {};
+        const legendItemLabel = item.legendItem?.label;
+        const legendLabelEl = legendItemLabel?.element;
+        const ellipsis = Boolean(
+            legendItem.label?.styles?.textOverflow === 'ellipsis'
+        );
 
         if (!legendItem.label || !legendItem.group) {
             return;
@@ -450,8 +455,18 @@ class LegendComponent extends AccessibilityComponent {
         const attribs = {
             tabindex: -1,
             'aria-pressed': item.visible,
-            'aria-label': itemLabel
+            'aria-label': itemLabel,
+            title: ''
         };
+
+        // Check if label contains an ellipsis character (\u2026) #22397
+        if (
+            ellipsis &&
+            (legendLabelEl.textContent || '').indexOf('\u2026') !== -1
+        ) {
+            attribs.title = legendItemLabel?.textStr;
+        }
+
         // Considers useHTML
         const proxyPositioningElement = legendItem.group.div ?
             legendItem.label :

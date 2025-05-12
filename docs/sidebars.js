@@ -1,6 +1,8 @@
 module.exports = {
     docs: {
-        Highcharts: ['index'],
+        Highcharts: [
+            'public-index'
+        ],
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
@@ -123,6 +125,7 @@ module.exports = {
             'grid/understanding-grid',
             'grid/columns',
             'grid/header',
+            'grid/cell-editing',
             'grid/events',
             {
                 'Theming': [
@@ -131,7 +134,6 @@ module.exports = {
                 ]
             },
             'grid/performance',
-            'grid/style-by-css',
             'grid/accessibility',
             {
                 'Wrappers': [
@@ -291,6 +293,13 @@ module.exports = {
         ],
         'Flutter': [
             'flutter/getting-started'
+        ],
+        'React integration (beta)': [
+            'react/getting-started',
+            'react/series-and-chart-types',
+            'react/options',
+            'react/options-component-format',
+            'react/component-children',
         ]
     }
 };

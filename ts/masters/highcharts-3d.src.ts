@@ -24,7 +24,7 @@ import Pie3DSeries from '../Series/Pie3D/Pie3DSeries.js';
 import '../Series/Scatter3D/Scatter3DSeries.js';
 const G: AnyRecord = Highcharts;
 // Compositions
-Area3DSeries.compose(G.seriesTypes.area);
+Area3DSeries.compose(G.Series.types.area);
 Axis3DComposition.compose(G.Axis, G.Tick);
 Chart3D.compose(G.Chart, G.Fx);
 Column3DComposition.compose(G.Series, StackItem);

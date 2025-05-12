@@ -2,7 +2,7 @@
  * @license Highcharts Dashboards v@product.version@ (@product.date@)
  * @module datagrid/datagrid
  *
- * (c) 2009-2024 Highsoft AS
+ * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -17,9 +17,11 @@
  *
  * */
 
+import type _Options from '../Grid/Core/Options.ts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
+import ColumnDistribution from '../Grid/Core/Table/ColumnDistribution/ColumnDistribution.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
@@ -84,6 +86,7 @@ declare global {
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
         grids: Array<(_Grid|undefined)>;
+        ColumnDistribution: typeof ColumnDistribution;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -133,6 +136,7 @@ G.grids = _Grid.grids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
+G.ColumnDistribution = ColumnDistribution;
 G.defaultOptions = Defaults.defaultOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.setOptions = Defaults.setOptions;
@@ -149,6 +153,17 @@ GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell);
 CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
+
+
+/* *
+ *
+ *  Export types
+ *
+ * */
+
+namespace G {
+    export type Options = _Options;
+}
 
 
 /* *

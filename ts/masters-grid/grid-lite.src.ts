@@ -2,7 +2,7 @@
  * @license Highcharts Grid v@product.version@ (@product.date@)
  * @module grid/grid-lite
  *
- * (c) 2009-2024 Highsoft AS
+ * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -17,8 +17,11 @@
  *
  * */
 
+import type _Options from '../Grid/Core/Options.ts';
+
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
+import ColumnDistribution from '../Grid/Core/Table/ColumnDistribution/ColumnDistribution.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
@@ -57,6 +60,7 @@ declare global {
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
         grids: Array<(_Grid|undefined)>;
+        ColumnDistribution: typeof ColumnDistribution;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -92,6 +96,7 @@ G.DataConverter = DataConverter;
 G.Grid = _Grid;
 G.grid = _Grid.grid;
 G.grids = _Grid.grids;
+G.ColumnDistribution = ColumnDistribution;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
@@ -105,6 +110,19 @@ G.merge = Utilities.merge;
 G.Table = G.Table || Table;
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
+
+
+/* *
+ *
+ *  Export types
+ *
+ * */
+
+namespace G {
+    export type Options = _Options;
+}
+
+
 /* *
  *
  *  Classic Export
@@ -115,7 +133,6 @@ CreditsLiteComposition.compose(G.Grid, G.Table);
 if (!G.win.Grid) {
     G.win.Grid = G;
 }
-
 
 /* *
  *

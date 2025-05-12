@@ -2,10 +2,15 @@
 
 #demo {
     padding: 8px;
-    background-color: var(--hcg-background);
-    color: var(--hcg-color);
 }
 
 #container {
     height: 250px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #demo {
+        background-color: #292929;
+        color: #fff;
+    }
 }

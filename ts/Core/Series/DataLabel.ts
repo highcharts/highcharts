@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -497,7 +497,8 @@ namespace DataLabel {
             'dataLabelsGroup',
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
-            (this.options.dataLabels as any).zIndex || 6
+            (this.options.dataLabels as any).zIndex || 6,
+            this.chart.dataLabelsGroup
         );
     }
 
@@ -704,7 +705,11 @@ namespace DataLabel {
                         dataLabel && (
                             !labelEnabled ||
                             !defined(labelText) ||
-                            !!dataLabel.div !== !!labelOptions.useHTML ||
+                            // Changed useHTML value
+                            !!(
+                                dataLabel.div ||
+                                dataLabel.text?.foreignObject
+                            ) !== !!labelOptions.useHTML ||
                             (
                                 // Change from no rotation to rotation and
                                 // vice versa. Don't use defined() because
@@ -725,7 +730,6 @@ namespace DataLabel {
                     // disabled in the point options, or if they fall outside
                     // the plot area.
                     if (labelEnabled && defined(labelText)) {
-
                         if (!dataLabel) {
                             // Create new label element
                             dataLabel = renderer.label(

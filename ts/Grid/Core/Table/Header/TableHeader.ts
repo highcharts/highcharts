@@ -2,7 +2,7 @@
  *
  *  Grid TableHeader class
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -141,7 +141,7 @@ class TableHeader {
         if (
             header &&
             bordersWidth > 0 &&
-            this.viewport.columnDistribution === 'full'
+            this.viewport.columnDistribution.type === 'full'
         ) {
             const row = this.columns[this.columns.length - 1].header?.row;
             const lastCellEl = row?.cells[row.cells.length - 1]?.htmlElement;

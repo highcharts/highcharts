@@ -1,8 +1,14 @@
-# Using Grid as a standalone component
+# Using Grid Pro as a standalone component
 
-Highcharts **Grid** (formerly **DataGrid**) was originally a basic [component](https://www.highcharts.com/docs/dashboards/grid-component) in **Highcharts Dashboards**, providing a high-performance, interactive, and editable data table solution. With the release of **Dashboards v4.0**, Grid will become a standalone product - **Grid Pro**. Its basic version, **Grid Lite**, is already available *([learn more about it here](https://www.highcharts.com/docs/grid/general)).*
+**Highcharts Grid** (formerly known as DataGrid) is a versatile tool for displaying and managing tabular data. Originally introduced as a component in Highcharts Dashboards, it provides a high-performance, interactive, and editable data table solution.
 
-For now **Grid Pro** is a part of **Highcharts Dashboards**, but can also be used as a standalone component outside of Dashboards, as described below.
+Highcharts Grid is available in two versions:
+
+**Highcharts Grid Lite** – A free version with a basic feature set.
+
+**Highcharts Grid Pro** – A more advanced, commercial version that currently requires a Highcharts Dashboards license and includes additional features. Though it is part of the Dashboards package and license, Grid Pro can also be used as a standalone component outside of Dashboards.
+
+Documentation for Highcharts Grid Pro can be found in the [general documentation for Higcharts Grid](https://www.highcharts.com/docs/grid/general).
 
 ## Installing Grid Pro
 
@@ -17,7 +23,7 @@ npm install @highcharts/dashboards
 Then, import the package into your project:
 
 ```js
-import Grid from '@highcharts/dashboards/datagrid';
+import * as Grid from '@highcharts/dashboards/datagrid';
 import '@highcharts/dashboards/css/datagrid.css';
 ```
 

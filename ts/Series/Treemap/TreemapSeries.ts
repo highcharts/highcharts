@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2024 Highsoft AS
+ *  (c) 2014-2025 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -891,7 +891,7 @@ class TreemapSeries extends ScatterSeries {
 
                 // Hide labels for shapes that are too small
                 } else {
-                    style.width = '1px';
+                    style.width = `${width}px`;
                     style.visibility = 'hidden';
                 }
             }

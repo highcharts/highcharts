@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -606,8 +606,7 @@ namespace OrdinalAxis {
         let runBase = false;
 
         if (
-            panning &&
-            panning.type !== 'y' &&
+            panning?.type !== 'y' &&
             xAxis.options.ordinal &&
             xAxis.series.length &&
             // On touch devices, let default function handle the pinching
@@ -648,9 +647,10 @@ namespace OrdinalAxis {
 
             // Make sure panning to the edges does not decrease the zoomed range
             if (
-                (min <= dataMin && movedUnits < 0) ||
-                (max + overscroll >= dataMax && movedUnits > 0)
+                (min <= dataMin && movedUnits <= 0) ||
+                (max >= dataMax + overscroll && movedUnits >= 0)
             ) {
+                e.preventDefault();
                 return;
             }
 
@@ -672,13 +672,16 @@ namespace OrdinalAxis {
                 // If we don't compensate for this, we will be allowed to pan
                 // grouped data series passed the right of the plot area.
                 ordinalPositions = extendedAxis.ordinal.positions;
-                if (
-                    dataMax >
-                    (ordinalPositions as any)[
-                        (ordinalPositions as any).length - 1
-                    ]
-                ) {
-                    (ordinalPositions as any).push(dataMax);
+
+                if (overscroll) { // #21606
+                    ordinalPositions = extendedAxis.ordinal.positions =
+                        ordinalPositions.concat(
+                            xAxis.ordinal.getOverscrollPositions()
+                        );
+                }
+
+                if (dataMax > ordinalPositions[ordinalPositions.length - 1]) {
+                    ordinalPositions.push(dataMax);
                 }
 
                 // Get the new min and max values by getting the ordinal index
@@ -728,8 +731,8 @@ namespace OrdinalAxis {
 
         // Revert to the linear chart.pan version
         if (runBase || (panning && /y/.test(panning.type))) {
-            if (overscroll) {
-                xAxis.max = (xAxis.dataMax as any) + overscroll;
+            if (overscroll && isNumber(xAxis.dataMax)) {
+                xAxis.max = xAxis.dataMax + overscroll;
             }
         } else {
             e.preventDefault();
@@ -911,7 +914,10 @@ namespace OrdinalAxis {
                 min = extremes.min,
                 max = extremes.max,
                 hasBreaks = axis.brokenAxis?.hasBreaks,
-                isOrdinal = axis.options.ordinal;
+                isOrdinal = axis.options.ordinal,
+                overscroll = axis.options.overscroll &&
+                    axis.ordinal.convertOverscroll(axis.options.overscroll) ||
+                    0;
 
             let len,
                 uniqueOrdinalPositions,
@@ -1055,10 +1061,8 @@ namespace OrdinalAxis {
                         !axis.options.keepOrdinalPadding &&
                         (
                             ordinalPositions[0] - min > dist ||
-                            (
-                                max -
-                                ordinalPositions[ordinalPositions.length - 1]
-                            ) > dist
+                            max - overscroll - ordinalPositions[len - 1] >
+                            dist
                         )
                     ) {
                         useOrdinal = true;
@@ -1071,9 +1075,7 @@ namespace OrdinalAxis {
                     } else if (len === 1) {
                         // We have just one point, closest distance is unknown.
                         // Assume then it is last point and overscrolled range:
-                        overscrollPointsRange = axis.ordinal.convertOverscroll(
-                            axis.options.overscroll
-                        );
+                        overscrollPointsRange = overscroll;
                         ordinalPositions = [
                             ordinalPositions[0],
                             ordinalPositions[0] + overscrollPointsRange
@@ -1252,6 +1254,9 @@ namespace OrdinalAxis {
                 // Add the fake series to hold the full data, then apply
                 // processData to it
                 axis.series.forEach((series): void => {
+                    if ((series as FlagSeries).takeOrdinalPosition === false) {
+                        return; // #22657
+                    }
                     fakeSeries = {
                         xAxis: fakeAxis,
                         chart: chart,

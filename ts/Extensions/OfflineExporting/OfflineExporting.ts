@@ -55,6 +55,7 @@ AST.allowedAttributes.push(
     'data-z-index',
     'fill-opacity',
     'filter',
+    'preserveAspectRatio',
     'rx',
     'ry',
     'stroke-dasharray',
@@ -62,6 +63,7 @@ AST.allowedAttributes.push(
     'stroke-opacity',
     'text-anchor',
     'transform',
+    'transform-origin',
     'version',
     'viewBox',
     'visibility',
@@ -71,7 +73,10 @@ AST.allowedAttributes.push(
 AST.allowedTags.push(
     'desc',
     'clippath',
-    'g'
+    'fedropshadow',
+    'femorphology',
+    'g',
+    'image'
 );
 
 /* *

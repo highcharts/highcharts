@@ -27,6 +27,12 @@
         "../../../ts/Grid/Core/GridUtils.ts",
         "../../../ts/Grid/Core/Options.ts",
 
+        "../../../ts/Grid/Core/Table/ColumnDistribution/ColumnDistribution.ts",
+        "../../../ts/Grid/Core/Table/ColumnDistribution/ColumnDistributionStrategy.ts",
+        "../../../ts/Grid/Core/Table/ColumnDistribution/FixedDistributionStrategy.ts",
+        "../../../ts/Grid/Core/Table/ColumnDistribution/FullDistributionStrategy.ts",
+        "../../../ts/Grid/Core/Table/ColumnDistribution/MixedDistributionStrategy.ts",
+
         "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
@@ -41,7 +47,7 @@
     "plugin": [
         "typedoc-plugin-rename-defaults"
     ],
-    "readme": "../../../docs/grid/general.md",
+    "readme": "./api-docs.md",
     "titleLink": "https://api.highcharts.com/grid/typedoc/index.html",
     "visibilityFilters": {}
 }
