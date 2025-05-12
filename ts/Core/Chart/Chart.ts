@@ -3807,7 +3807,8 @@ class Chart {
                 eventMax = axis.toValue(minPx + len / scale, true);
 
             let newMin = eventMin + offset,
-                newMax = eventMax - offset;
+                newMax = eventMax - offset,
+                allExtremes = axis.allExtremes;
 
             if (selection) {
                 selection[axis.coll as 'xAxis' | 'yAxis'].push({
@@ -3816,8 +3817,6 @@ class Chart {
                     max: Math.max(eventMin, eventMax)
                 });
             }
-
-            let allExtremes = axis.allExtremes;
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
