@@ -190,6 +190,43 @@ Dashboards.DataConnector.registerType(
 
 /**
  *
+ * Global chart options
+ *
+ **/
+Highcharts.setOptions({
+    chart: {
+        spacing: [24, 36, 36, 36]
+    },
+    navigator: {
+        enabled: false
+    },
+    rangeSelector: {
+        enabled: false
+    },
+    scrollbar: {
+        enabled: false
+    },
+    stockTools: {
+        gui: {
+            enabled: false
+        }
+    },
+    xAxis: {
+        startOnTick: true,
+        endOnTick: true
+    },
+    yAxis: {
+        title: {
+            enabled: false
+        }
+    },
+    legend: {
+        enabled: false
+    }
+});
+
+/**
+ *
  *  Dashboard execution
  *
  **/
@@ -257,29 +294,10 @@ Dashboards.board('container', {
             ],
             chartOptions: {
                 chart: {
-                    spacing: [24, 36, 36, 36],
                     type: 'hollowcandlestick'
                 },
                 title: {
                     text: `2024 Q${index + 1}`
-                },
-                navigator: {
-                    enabled: false
-                },
-                rangeSelector: {
-                    enabled: false
-                },
-                scrollbar: {
-                    enabled: false
-                },
-                stockTools: {
-                    gui: {
-                        enabled: false
-                    }
-                },
-                xAxis: {
-                    startOnTick: true,
-                    endOnTick: true
                 }
             }
         })),
@@ -300,7 +318,6 @@ Dashboards.board('container', {
             ],
             chartOptions: {
                 chart: {
-                    spacing: [24, 36, 36, 36],
                     type: 'column'
                 },
                 title: {
@@ -314,19 +331,6 @@ Dashboards.board('container', {
                         'Open price',
                         'Close price'
                     ]
-                },
-                plotOptions: {
-                    series: {
-                        color: 'rgba(236, 206, 174, 1)'
-                    }
-                },
-                yAxis: {
-                    title: {
-                        enabled: false
-                    }
-                },
-                legend: {
-                    enabled: false
                 }
             }
         }
