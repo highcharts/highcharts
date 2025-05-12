@@ -89,6 +89,22 @@ describe('Add components through UI', () => {
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-cell').children().should('be.visible')
     });
 
+    it('Board should not crash when removing added component', function() {
+        // Act- add HTML component
+        cy.grabComponent('HTML');
+        cy.dropComponent('#dashboard-col-2');
+        cy.hideSidebar();
+        // Remove HTML component
+        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click({ force: true, multiple: true });
+        // Act- add HTML component again
+        cy.grabComponent('HTML');
+        cy.dropComponent('#dashboard-col-1');
+
+        // Assert
+        cy.get('.highcharts-dashboards-edit-sidebar').should('exist');
+    });
+
     it('should be able to add a chart component and resize it', function() {
         // Act
         cy.grabComponent('chart');

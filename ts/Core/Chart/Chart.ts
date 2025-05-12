@@ -321,6 +321,7 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
+    public dataLabelsGroup?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -371,6 +372,7 @@ class Chart {
     public xAxis!: Array<AxisType>;
     public yAxis!: Array<AxisType>;
     public zooming!: ChartZoomingOptions;
+    public zoomClipRect?: SVGElement;
 
     /* *
      *
@@ -2649,12 +2651,15 @@ class Chart {
         }
 
         // The series
-        if (!chart.seriesGroup) {
-            chart.seriesGroup = renderer.g('series-group')
-                .attr({ zIndex: 3 })
-                .shadow(chart.options.chart.seriesGroupShadow)
-                .add();
-        }
+        chart.seriesGroup ||= renderer.g('series-group')
+            .attr({ zIndex: 3 })
+            .shadow(chart.options.chart.seriesGroupShadow)
+            .add();
+
+        chart.dataLabelsGroup ||= renderer.g('datalabels-group')
+            .attr({ zIndex: 6 })
+            .add();
+
         chart.renderSeries();
 
         // Credits
@@ -3751,12 +3756,14 @@ class Chart {
             } = params,
             { inverted, time } = this;
 
-        let hasZoomed = false,
-            displayButton: boolean|undefined,
-            isAnyAxisPanning: true|undefined;
-
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
+
+        fireEvent(this, 'transform', params);
+
+        let hasZoomed = params.hasZoomed || false,
+            displayButton: boolean|undefined,
+            isAnyAxisPanning: true|undefined;
 
         for (const axis of axes) {
             const {
@@ -3964,6 +3971,16 @@ class Chart {
                     hasZoomed = true;
                 }
 
+                // Show the resetZoom button for non-cartesian series,
+                // except when triggered by mouse wheel zoom
+                if (
+                    !this.hasCartesianSeries &&
+                    !reset &&
+                    trigger !== 'mousewheel'
+                ) {
+                    displayButton = true;
+                }
+
                 if (event) {
                     this[horiz ? 'mouseDownX' : 'mouseDownY'] =
                         event[horiz ? 'chartX' : 'chartY'];
@@ -4148,6 +4165,7 @@ namespace Chart {
         selection?: Pointer.SelectEventObject;
         from?: Partial<BBoxObject>;
         trigger?: string;
+        hasZoomed?: boolean;
     }
 
     export interface CreateAxisOptionsObject {

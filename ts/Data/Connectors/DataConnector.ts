@@ -100,6 +100,12 @@ abstract class DataConnector implements DataEvent.Emitter {
      */
     public readonly table: DataTable;
 
+    /**
+     * The polling controller used to abort the request when data polling stops.
+     * It gets assigned when data polling starts.
+     */
+    public pollingController?: AbortController;
+
 
     /* *
      *
@@ -286,6 +292,10 @@ abstract class DataConnector implements DataEvent.Emitter {
     ): void {
         const connector = this;
 
+        // Assign a new abort controller.
+        this.pollingController = new AbortController();
+
+        // Clear the polling timeout.
         window.clearTimeout(connector._polling);
 
         connector._polling = window.setTimeout(
@@ -312,8 +322,11 @@ abstract class DataConnector implements DataEvent.Emitter {
     public stopPolling(): void {
         const connector = this;
 
-        window.clearTimeout(connector._polling);
+        // Abort the existing request.
+        connector?.pollingController?.abort();
 
+        // Clear the polling timeout.
+        window.clearTimeout(connector._polling);
         delete connector._polling;
     }
 
