@@ -767,6 +767,132 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
+     * The color of the outer chart border. Defaults to the
+     * [palette.highlightColor80](#palette.highlightColor80) setting.
+     *
+     * @see In styled mode, the stroke is set with the
+     *      `.highcharts-background` class.
+     *
+     * @sample {highcharts} highcharts/chart/bordercolor/
+     *         Brown border
+     * @sample {highstock} stock/chart/border/
+     *         Brown border
+     * @sample {highmaps} maps/chart/border/
+     *         Border options
+     *
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default #0022ff
+     * @apioption chart.borderColor
+     */
+    // borderColor: Palette.highlightColor80,
+
+    /**
+     * The pixel width of the outer chart border.
+     *
+     * @see In styled mode, the stroke is set with the
+     *      `.highcharts-background` class.
+     *
+     * @sample {highcharts} highcharts/chart/borderwidth/
+     *         5px border
+     * @sample {highstock} stock/chart/border/
+     *         2px border
+     * @sample {highmaps} maps/chart/border/
+     *         Border options
+     *
+     * @type      {number}
+     * @default   0
+     * @apioption chart.borderWidth
+     */
+
+    /**
+     * The background color or gradient for the outer chart area. Defaults to
+     * the [palette.backgroundColor](#palette.backgroundColor) setting.
+     *
+     * @see In styled mode, the background is set with the
+     *      `.highcharts-background` class.
+     *
+     * @sample {highcharts} highcharts/chart/backgroundcolor-color/
+     *         Color
+     * @sample {highcharts} highcharts/chart/backgroundcolor-gradient/
+     *         Gradient
+     * @sample {highstock} stock/chart/backgroundcolor-color/
+     *         Color
+     * @sample {highstock} stock/chart/backgroundcolor-gradient/
+     *         Gradient
+     * @sample {highmaps} maps/chart/backgroundcolor-color/
+     *         Color
+     * @sample {highmaps} maps/chart/backgroundcolor-gradient/
+     *         Gradient
+     *
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default #ffffff
+     * @apioption chart.backgroundColor
+     */
+    // backgroundColor: Palette.backgroundColor,
+
+    /**
+     * The background color or gradient for the plot area.
+     *
+     * @see In styled mode, the plot background is set with the
+     *      `.highcharts-plot-background` class.
+     *
+     * @sample {highcharts} highcharts/chart/plotbackgroundcolor-color/
+     *         Color
+     * @sample {highcharts} highcharts/chart/plotbackgroundcolor-gradient/
+     *         Gradient
+     * @sample {highstock} stock/chart/plotbackgroundcolor-color/
+     *         Color
+     * @sample {highstock} stock/chart/plotbackgroundcolor-gradient/
+     *         Gradient
+     * @sample {highmaps} maps/chart/plotbackgroundcolor-color/
+     *         Color
+     * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
+     *         Gradient
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @apioption chart.plotBackgroundColor
+     */
+
+    /**
+     * The URL for an image to use as the plot background. To set an image
+     * as the background for the entire chart, set a CSS background image
+     * to the container element. Note that for the image to be applied to
+     * exported charts, its URL needs to be accessible by the export server.
+     *
+     * @see In styled mode, a plot background image can be set with the
+     *      `.highcharts-plot-background` class and a [custom pattern](
+     *      https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
+     *
+     * @sample {highcharts} highcharts/chart/plotbackgroundimage/
+     *         Skies
+     * @sample {highstock} stock/chart/plotbackgroundimage/
+     *         Skies
+     *
+     * @type      {string}
+     * @apioption chart.plotBackgroundImage
+     */
+
+    /**
+     * The color of the inner chart or plot area border. Defaults to the
+     * [palette.neutralColor20](#palette.neutralColor20) setting.
+     *
+     * @see In styled mode, a plot border stroke can be set with the
+     *      `.highcharts-plot-border` class.
+     *
+     * @sample {highcharts} highcharts/chart/plotbordercolor/
+     *         Blue border
+     * @sample {highstock} stock/chart/plotborder/
+     *         Blue border
+     * @sample {highmaps} maps/chart/plotborder/
+     *         Plot border options
+     *
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default #cccccc
+     * @apioption chart.plotBorderColor
+     */
+    // plotBorderColor: Palette.neutralColor20
+
+    /**
      * When true, cartesian charts like line, spline, area and column are
      * transformed into the polar coordinate system. This produces _polar
      * charts_, also known as _radar charts_.
@@ -1224,7 +1350,6 @@ const ChartDefaults: ChartOptions = {
                 y: 10
             }
         }
-
     },
     /**
      * An explicit width for the chart. By default (when `null`) the width
@@ -1266,133 +1391,6 @@ const ChartDefaults: ChartOptions = {
      * @type {null|number|string}
      */
     height: null
-
-    /**
-     * The color of the outer chart border. Defaults to the
-     * [palette.highlightColor80](#palette.highlightColor80) setting.
-     *
-     * @see In styled mode, the stroke is set with the
-     *      `.highcharts-background` class.
-     *
-     * @sample {highcharts} highcharts/chart/bordercolor/
-     *         Brown border
-     * @sample {highstock} stock/chart/border/
-     *         Brown border
-     * @sample {highmaps} maps/chart/border/
-     *         Border options
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #0022ff
-     * @apioption chart.borderColor
-     */
-    // borderColor: Palette.highlightColor80,
-
-    /**
-     * The pixel width of the outer chart border.
-     *
-     * @see In styled mode, the stroke is set with the
-     *      `.highcharts-background` class.
-     *
-     * @sample {highcharts} highcharts/chart/borderwidth/
-     *         5px border
-     * @sample {highstock} stock/chart/border/
-     *         2px border
-     * @sample {highmaps} maps/chart/border/
-     *         Border options
-     *
-     * @type      {number}
-     * @default   0
-     * @apioption chart.borderWidth
-     */
-
-    /**
-     * The background color or gradient for the outer chart area. Defaults to
-     * the [palette.backgroundColor](#palette.backgroundColor) setting.
-     *
-     * @see In styled mode, the background is set with the
-     *      `.highcharts-background` class.
-     *
-     * @sample {highcharts} highcharts/chart/backgroundcolor-color/
-     *         Color
-     * @sample {highcharts} highcharts/chart/backgroundcolor-gradient/
-     *         Gradient
-     * @sample {highstock} stock/chart/backgroundcolor-color/
-     *         Color
-     * @sample {highstock} stock/chart/backgroundcolor-gradient/
-     *         Gradient
-     * @sample {highmaps} maps/chart/backgroundcolor-color/
-     *         Color
-     * @sample {highmaps} maps/chart/backgroundcolor-gradient/
-     *         Gradient
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #ffffff
-     * @apioption chart.backgroundColor
-     */
-    // backgroundColor: Palette.backgroundColor,
-
-    /**
-     * The background color or gradient for the plot area.
-     *
-     * @see In styled mode, the plot background is set with the
-     *      `.highcharts-plot-background` class.
-     *
-     * @sample {highcharts} highcharts/chart/plotbackgroundcolor-color/
-     *         Color
-     * @sample {highcharts} highcharts/chart/plotbackgroundcolor-gradient/
-     *         Gradient
-     * @sample {highstock} stock/chart/plotbackgroundcolor-color/
-     *         Color
-     * @sample {highstock} stock/chart/plotbackgroundcolor-gradient/
-     *         Gradient
-     * @sample {highmaps} maps/chart/plotbackgroundcolor-color/
-     *         Color
-     * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
-     *         Gradient
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @apioption chart.plotBackgroundColor
-     */
-
-    /**
-     * The URL for an image to use as the plot background. To set an image
-     * as the background for the entire chart, set a CSS background image
-     * to the container element. Note that for the image to be applied to
-     * exported charts, its URL needs to be accessible by the export server.
-     *
-     * @see In styled mode, a plot background image can be set with the
-     *      `.highcharts-plot-background` class and a [custom pattern](
-     *      https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
-     *
-     * @sample {highcharts} highcharts/chart/plotbackgroundimage/
-     *         Skies
-     * @sample {highstock} stock/chart/plotbackgroundimage/
-     *         Skies
-     *
-     * @type      {string}
-     * @apioption chart.plotBackgroundImage
-     */
-
-    /**
-     * The color of the inner chart or plot area border. Defaults to the
-     * [palette.neutralColor20](#palette.neutralColor20) setting.
-     *
-     * @see In styled mode, a plot border stroke can be set with the
-     *      `.highcharts-plot-border` class.
-     *
-     * @sample {highcharts} highcharts/chart/plotbordercolor/
-     *         Blue border
-     * @sample {highstock} stock/chart/plotborder/
-     *         Blue border
-     * @sample {highmaps} maps/chart/plotborder/
-     *         Plot border options
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #cccccc
-     * @apioption chart.plotBorderColor
-     */
-    // plotBorderColor: Palette.neutralColor20
-
 };
 
 /* *

@@ -42,6 +42,39 @@ import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
 
     /**
+     * The width of the border surrounding each column or bar. Defaults to
+     * `1` when there is room for a border, but to `0` when the columns are
+     * so dense that a border would cover the next column.
+     *
+     * In styled mode, the stroke width can be set with the
+     * `.highcharts-point` rule.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
+     *         2px black border
+     *
+     * @type      {number}
+     * @default   undefined
+     * @product   highcharts highstock gantt
+     * @apioption plotOptions.column.borderWidth
+     */
+
+    /**
+     * The color of the border surrounding each column or bar.
+     *
+     * In styled mode, the border stroke can be set with the
+     * `.highcharts-point` rule.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
+     *         Dark gray border
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default   #ffffff
+     * @product   highcharts highstock gantt
+     * @apioption plotOptions.column.borderColor
+     */
+    // borderColor: Palette.backgroundColor
+
+    /**
      * The corner radius of the border surrounding each column or bar. A number
      * signifies pixels. A percentage string, like for example `50%`, signifies
      * a relative size. For columns this is relative to the column width, for
@@ -369,39 +402,6 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @product highcharts
      */
     threshold: 0
-
-    /**
-     * The width of the border surrounding each column or bar. Defaults to
-     * `1` when there is room for a border, but to `0` when the columns are
-     * so dense that a border would cover the next column.
-     *
-     * In styled mode, the stroke width can be set with the
-     * `.highcharts-point` rule.
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
-     *         2px black border
-     *
-     * @type      {number}
-     * @default   undefined
-     * @product   highcharts highstock gantt
-     * @apioption plotOptions.column.borderWidth
-     */
-
-    /**
-     * The color of the border surrounding each column or bar.
-     *
-     * In styled mode, the border stroke can be set with the
-     * `.highcharts-point` rule.
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
-     *         Dark gray border
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   #ffffff
-     * @product   highcharts highstock gantt
-     * @apioption plotOptions.column.borderColor
-     */
-    // borderColor: Palette.backgroundColor
 
 };
 
