@@ -25,6 +25,20 @@ is recognized by the browser, including CSS variables. See the [CSS
 variables](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/colors-css-variables/)
 demo to see how this can be applied to a themed heatmap with color theming.
 
+### Color indices
+
+Highcharts uses a color palette defined through CSS variables and classes. By default, there are 10 colors (indices 0-9) available through the `--highcharts-color-{n}` CSS variables and `.highcharts-color-{n}` classes.
+
+For color indices above 9, you need to define them explicitly in your CSS:
+
+```css
+:root {
+  --highcharts-color-10: #ff9933;
+  --highcharts-color-11: #00B050;
+  /* Add more as needed */
+}
+```
+
 Linear gradients
 ----------------
 
