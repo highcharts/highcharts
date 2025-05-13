@@ -150,6 +150,16 @@ The rectangle that appears when mouse-dragging for zooming. Replaces [chart.sel
 
 Colors used for series, or individual points when [colorByPoint](https://api.highcharts.com/highcharts/plotOptions.column.colorByPoint) is set, typically for pie charts etc. Each such color rule sets the fill and stroke to a default color in _highcharts.css_, then these properties may be overridden by more specific rules, for example for a common stroke on pies. The best place to set your own custom colors is by overriding the `--highcharts-color-{n}` variables in `highcharts.css`, otherwise the strokes and fills must be set more specifically. Replaces [colors](https://api.highcharts.com/highcharts/colors).
 
+Note that by default, only color indices 0-9 are defined. For color indices above 9, you need to define the corresponding CSS variables and classes:
+
+```css
+:root {
+  --highcharts-color-10: #ff9933;
+  --highcharts-color-11: #00B050;
+  /* Add more as needed */
+}
+```
+
 [Demo of styling series and point colors](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/colors/).
 
 ```
