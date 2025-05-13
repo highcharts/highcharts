@@ -70,7 +70,7 @@ async function distJSGZipDashboards() {
 
     const zipCacheFolder = path.join(buildFolder, 'js-gzip');
 
-    fsLib.deleteDirectory(zipCacheFolder, true);
+    fsLib.deleteDirectory(zipCacheFolder);
     logLib.success(`Deleted ${zipCacheFolder}`);
 
     const sourceFolder = `${buildFolder}/code`;
@@ -116,7 +116,7 @@ async function distJSGZipDataGrid() {
 
     const zipCacheFolder = path.join(buildFolderDataGrid, 'js-gzip');
 
-    fsLib.deleteDirectory(zipCacheFolder, true);
+    fsLib.deleteDirectory(zipCacheFolder);
     logLib.success(`Deleted ${zipCacheFolder}`);
 
     const sourceFolder = `${buildFolderDataGrid}/code`;
