@@ -182,14 +182,15 @@ test('CSVConnector from URL', async (assert) => {
     const doneLoading = assert.async(3);
 
     connector.on('afterLoad', (e) => {
+        const eventTable = Object.values(e.tables)[0];
         assert.ok(
-            e.table.getRowCount() > 1,
+            eventTable.getRowCount() > 1,
             'DataConnector should have rows.'
         );
 
         // Check that the connector is updated
         // with the new dataset when polling
-        states[pollNumber] = e.table.clone();
+        states[pollNumber] = eventTable.clone();
 
         if (pollNumber > 0 && states[pollNumber]) {
             assert.strictEqual(
@@ -236,7 +237,7 @@ test('CSVConnector from URL', async (assert) => {
     });
 
     connector.on('load', (e) => {
-        assert.deepEqual(e.table, connector.table, 'DataTable from event is same as DataTable from connector')
+        assert.deepEqual(Object.values(e.tables)[0], connector.table, 'DataTable from event is same as DataTable from connector')
     });
 
     connector.on('loadError', (e) => {
