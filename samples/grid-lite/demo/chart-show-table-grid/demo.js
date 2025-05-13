@@ -30,6 +30,8 @@ const series = [{
     ]
 }];
 
+let grid = null;
+
 const chart = Highcharts.chart('chart', {
 
     title: {
@@ -73,12 +75,21 @@ const chart = Highcharts.chart('chart', {
         menuItemDefinitions: {
             viewData: {
                 onclick: function () {
-                    const isGridDisplayed = toggleGrid();
+                    if (grid === null) {
+                        createGrid();
+                    } else {
+                        grid.container.classList.toggle('hide');
+                    }
+                    const isGridHidden = grid.container
+                        .classList.contains(
+                            'hide'
+                        );
                     const viewDataElement = this.exportDivElements[0];
-                    viewDataElement.innerText = isGridDisplayed ?
-                        'Hide data table' :
-                        'Show data table';
+                    viewDataElement.innerText = isGridHidden ?
+                        'Show data table' :
+                        'Hide data table';
                 }
+
             }
         },
         buttons: {
@@ -106,35 +117,17 @@ const chart = Highcharts.chart('chart', {
     }
 
 });
-chart.getTable();
 
-const xAxis = chart.xAxis[0];
-const years = xAxis.tickPositions;
+const years = chart.xAxis[0].tickPositions;
 
-let cols = series.reduce((acc, s) => {
-    acc[s.name] = s.data;
-    return acc;
-}, {});
-
-cols = {
+const cols = {
     Year: years,
-    ...cols
+    ...Object.fromEntries(series.map(s => [s.name, s.data]))
 };
 
-const grid = Grid.grid('grid', {
-    dataTable: {
-        columns: cols
-    }
-});
-
-function toggleGrid() {
-    const classList = grid.container.classList;
-    if (classList.contains('hide')) {
-        classList.remove('hide');
-        classList.add('show');
-    } else {
-        classList.remove('show');
-        classList.add('hide');
-    }
-    return classList.contains('show');
+function createGrid() {
+    const gridElement = document.createElement('div');
+    gridElement.id = 'grid';
+    document.getElementById('container').appendChild(gridElement);
+    grid = Grid.grid('grid', { dataTable: { columns: cols } });
 }
