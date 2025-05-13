@@ -329,10 +329,7 @@ class HTMLElement extends SVGElement {
         }
 
         extend(this.styles, styles);
-        if (styles.color) {
-            styles.color = this.renderer.applyPalette(styles.color);
-        }
-        css(element, styles);
+        css(element, this.renderer.applyPalette(styles));
 
         // Now that all styles are applied, to the transform
         if (doTransform) {
