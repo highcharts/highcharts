@@ -1822,7 +1822,7 @@ class Tooltip {
                 pointer,
                 renderer
             } = this,
-            label = this.getLabel(),
+            label = (this.label || this.getLabel()),
             {
                 height = 0,
                 width = 0
