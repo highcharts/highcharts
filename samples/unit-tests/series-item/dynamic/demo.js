@@ -28,6 +28,29 @@ QUnit.test('Item series dynamics', assert => {
         series.points[0].color,
         'Circles color should update when the point updates (#17257)'
     );
+
+    document.getElementById('container').style.maxHeight = '250px';
+
+    const {
+        series: [series2]
+    } = Highcharts.chart('container', {
+        series: [
+            {
+                type: 'item',
+                data: [1, 2]
+            }
+        ]
+    });
+
+    assert.ok(
+        series2.points[0].graphics[0].width,
+        'Item series width should not be zero, #22953.'
+    );
+
+    assert.ok(
+        series2.points[0].graphics[0].height,
+        'Item series height should not be zero, #22953.'
+    );
 });
 
 QUnit.test('Full circle- points should not overlap.', function (assert) {
