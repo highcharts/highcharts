@@ -729,8 +729,7 @@ namespace Exporting {
         const chart = this,
             navOptions: NavigationOptions =
                 chart.options.navigation as any,
-            chartWidth = chart.chartWidth,
-            chartHeight = chart.chartHeight,
+            { chartWidth, chartHeight, renderer } = chart,
             cacheName = 'cache-' + className,
             // For mouse leave detection
             menuPadding = Math.max(width, height);
@@ -769,11 +768,14 @@ namespace Exporting {
 
             // Presentational CSS
             if (!chart.styledMode) {
-                css(innerMenu, extend<CSSObject>({
-                    MozBoxShadow: '3px 3px 10px #888',
-                    WebkitBoxShadow: '3px 3px 10px #888',
-                    boxShadow: '3px 3px 10px #888'
-                }, navOptions.menuStyle as any));
+                css(
+                    innerMenu,
+                    renderer.applyPalette(extend({
+                        MozBoxShadow: '3px 3px 10px #0008',
+                        WebkitBoxShadow: '3px 3px 10px #0008',
+                        boxShadow: '3px 3px 10px #0008'
+                    }, navOptions.menuStyle || {}))
+                );
             }
 
             // Hide on mouse out
@@ -867,16 +869,32 @@ namespace Exporting {
                             element.onmouseover = function (
                                 this: HTMLDOMElement
                             ): void {
-                                css(this, navOptions.menuItemHoverStyle as any);
+                                css(
+                                    this,
+                                    renderer.applyPalette(
+                                        navOptions.menuItemHoverStyle || {}
+                                    )
+                                );
                             } as any;
                             element.onmouseout = function (
                                 this: HTMLDOMElement
                             ): void {
-                                css(this, navOptions.menuItemStyle as any);
+                                css(
+                                    this,
+                                    renderer.applyPalette(
+                                        navOptions.menuItemStyle || {}
+                                    )
+                                );
                             } as any;
-                            css(element, extend({
-                                cursor: 'pointer'
-                            } as CSSObject, navOptions.menuItemStyle || {}));
+                            css(
+                                element,
+                                renderer.applyPalette(
+                                    extend(
+                                        { cursor: 'pointer' } as CSSObject,
+                                        navOptions.menuItemStyle || {}
+                                    )
+                                )
+                            );
                         }
                     }
 
