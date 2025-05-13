@@ -1,5 +1,7 @@
 let chart = null; // Chart is not created initially
 
+const activeCols = new Set();
+
 Grid.grid('grid', {
     dataTable: {
         columns: {
@@ -37,6 +39,11 @@ Grid.grid('grid', {
                     return;
                 }
 
+                // We get the x axis from the Year column
+                const years = this.row.viewport.columns.find(
+                    c => c.id === 'Year'
+                )?.data ?? [];
+
                 // Create chart if it doesn't exist
                 if (!chart) {
                     chart = Highcharts.chart('chart', {
@@ -45,10 +52,7 @@ Grid.grid('grid', {
                             align: 'center'
                         },
                         xAxis: {
-                            categories: [
-                                2010, 2011, 2012, 2013, 2014, 2015,
-                                2016, 2017, 2018, 2019, 2020, 2021, 2022
-                            ]
+                            categories: years
                         },
                         yAxis: {
                             title: {
@@ -64,32 +68,17 @@ Grid.grid('grid', {
                     s => s.name === this.column.id
                 );
 
-                const toggleColumnHighlight = (columnId, active) => {
-                    // Get all cells in the column
-                    const cells = this.column.cells;
-                    cells.forEach(cell => {
-                        const cellElement = cell.htmlElement;
-                        if (active) {
-                            cellElement.classList.add('active-column');
-                        } else {
-                            cellElement.classList.remove('active-column');
-                        }
-                    });
-                    // Also highlight the header
-                    const headerCell = this.column.header.htmlElement;
-                    if (active) {
-                        headerCell.classList.add('active-column');
+                const toggleColumnHighlight = () => {
+                    if (activeCols.has(this.column.id)) {
+                        activeCols.delete(this.column.id);
                     } else {
-                        headerCell.classList.remove('active-column');
+                        activeCols.add(this.column.id);
                     }
                 };
 
                 if (existingSeries) {
                     // Remove the series from chart
                     existingSeries.remove();
-                    // Remove highlighting from the column
-                    toggleColumnHighlight(this.column.id, false);
-
                     // If no series left, destroy the chart
                     if (chart.series.length === 0) {
                         chart.destroy();
@@ -99,12 +88,23 @@ Grid.grid('grid', {
                     // Add new series to chart
                     chart.addSeries({
                         name: this.column.id,
-                        data: this.column.cells.map(c => c.value)
+                        data: this.column.data
                     });
-                    // Add highlighting to the column
-                    toggleColumnHighlight(this.column.id, true);
                 }
+                toggleColumnHighlight();
+                setActiveColumnStyle(this);
+            },
+            afterSetValue: function () {
+                setActiveColumnStyle(this);
             }
         }
     }
 });
+
+function setActiveColumnStyle(cell) {
+    const isActive = activeCols.has(cell.column.id);
+    const cells = cell.column.cells;
+    cells.forEach(c => {
+        c.htmlElement.classList.toggle('active-column', isActive);
+    });
+}
