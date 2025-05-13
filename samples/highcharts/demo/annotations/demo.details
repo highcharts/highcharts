@@ -12,6 +12,7 @@ tags:
   - Highcharts demo
   - Annotations
   - Stock Data
+  - Morningstar
 categories:
   - Line charts
 is_morningstar: true
