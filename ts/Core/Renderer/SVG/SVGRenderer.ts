@@ -336,14 +336,17 @@ class SVGRenderer implements SVGRendererLike {
      * @private
      */
     public applyPalette(input: string): string;
-    public applyPalette(input: CSSObject): undefined;
-    public applyPalette(input: string|CSSObject): string|undefined {
+    public applyPalette(input: CSSObject): CSSObject;
+    public applyPalette(input: string|CSSObject): string|CSSObject {
         // When a string is passed, return the resolved string
         if (isString(input)) {
             return applyPalette(input, charts[this.chartIndex]);
         }
         // When an object is passed, replace its members
-        (['fill', 'stroke'] as ('fill'|'stroke')[]).forEach(
+        (
+            ['background', 'color', 'fill', 'stroke'] as
+            ('background'|'color'|'fill'|'stroke')[]
+        ).forEach(
             (key): void => {
                 const value = input[key];
                 if (isString(value)) {
@@ -351,6 +354,7 @@ class SVGRenderer implements SVGRendererLike {
                 }
             }
         );
+        return input;
     }
 
     /**
