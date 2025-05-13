@@ -12,6 +12,7 @@ const gaugeOptions = {
         endAngle: 90,
         background: {
             backgroundColor: 'var(--highcharts-neutral-color-3, #fafafa)',
+            borderColor: 'var(--highcharts-neutral-color-20, #ccc)',
             borderRadius: 5,
             innerRadius: '60%',
             outerRadius: '100%',

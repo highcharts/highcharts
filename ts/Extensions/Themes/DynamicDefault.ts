@@ -477,6 +477,17 @@ namespace DynamicDefaultTheme {
                 borderColor: 'var(--highcharts-neutral-color-80)',
                 lineColor: 'var(--highcharts-neutral-color-80)'
             },
+            scatter3d: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                }
+            },
             map: {
                 states: {
                     hover: {
@@ -564,6 +575,28 @@ namespace DynamicDefaultTheme {
                     }
                 },
                 borderColor: 'var(--highcharts-background-color)'
+            },
+            solidgauge: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                },
+                dataLabels: {
+                    borderColor: 'var(--highcharts-neutral-color-20)'
+                },
+                dial: {
+                    backgroundColor: 'var(--highcharts-neutral-color-100)',
+                    borderColor: 'var(--highcharts-neutral-color-20)'
+                },
+                pivot: {
+                    borderColor: 'var(--highcharts-neutral-color-20)',
+                    backgroundColor: 'var(--highcharts-neutral-color-100)'
+                }
             },
             dependencywheel: {
                 states: {
@@ -728,6 +761,23 @@ namespace DynamicDefaultTheme {
             labelStyle: {
                 color: 'var(--highcharts-neutral-color-60)'
             }
+        },
+        zAxis: {
+            labels: {
+                style: {
+                    color: 'var(--highcharts-neutral-color-80)'
+                }
+            },
+            title: {
+                style: {
+                    color: 'var(--highcharts-neutral-color-60)'
+                }
+            },
+            minorGridLineColor: 'var(--highcharts-neutral-color-5)',
+            minorTickColor: 'var(--highcharts-neutral-color-40)',
+            lineColor: 'var(--highcharts-neutral-color-80)',
+            gridLineColor: 'var(--highcharts-neutral-color-10)',
+            tickColor: 'var(--highcharts-neutral-color-80)'
         },
         colorAxis: {
             labels: {
