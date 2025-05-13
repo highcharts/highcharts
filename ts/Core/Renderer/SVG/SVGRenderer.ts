@@ -765,11 +765,38 @@ class SVGRenderer implements SVGRendererLike {
                 'button'
             ),
             styledMode = this.styledMode,
+            palette = defaultOptions.palette,
             args = arguments;
 
         let curState = 0;
 
-        theme = merge(defaultOptions.global.buttonTheme, theme);
+        theme = merge(
+            {
+                fill: palette.neutralColor3,
+                stroke: palette.neutralColor20,
+                style: {
+                    color: palette.neutralColor80
+                },
+                states: {
+                    hover: {
+                        fill: palette.neutralColor10
+                    },
+                    select: {
+                        fill: palette.neutralColor10,
+                        style: {
+                            color: palette.neutralColor100
+                        }
+                    },
+                    disabled: {
+                        style: {
+                            color: palette.neutralColor20
+                        }
+                    }
+                }
+            },
+            defaultOptions.global.buttonTheme,
+            theme
+        );
 
         // @todo Consider moving this to a lower level, like .attr
         if (styledMode) {

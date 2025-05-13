@@ -133,6 +133,23 @@ class HeatmapSeries extends ScatterSeries {
      * */
 
     /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<HeatmapSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<HeatmapSeriesOptions>,
+            {
+                borderColor: void 0,
+                nullColor: palette.neutralColor3
+            }
+        );
+    }
+
+    /**
      * @private
      */
     public drawPoints(): void {

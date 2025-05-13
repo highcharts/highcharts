@@ -12,7 +12,6 @@
  *
  * */
 
-import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
@@ -27,10 +26,17 @@ import type {
 
 export interface PCOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     params?: PCParamsOptions;
-    bottomLine: Record<string, CSSObject>;
-    topLine: Record<string, CSSObject>;
+    bottomLine: PCLineOptions;
+    topLine: PCLineOptions;
 }
 
+export interface PCLineOptions {
+    styles?: PCLineStylesOptions;
+}
+export interface PCLineStylesOptions {
+    lineColor?: string;
+    lineWidth?: number;
+}
 export interface PCParamsOptions extends SMAParamsOptions {
     // For inheritance
 }

@@ -92,6 +92,26 @@ class MapPointSeries extends ScatterSeries {
      *
      * */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<MapPointSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<MapPointSeriesOptions>,
+            {
+                dataLabels: {
+                    style: {
+                        color: palette.neutralColor100
+                    }
+                }
+            }
+        );
+    }
+
     /* eslint-disable valid-jsdoc */
 
     public drawDataLabels(): void {

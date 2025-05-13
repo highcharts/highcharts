@@ -13,7 +13,7 @@
  * */
 
 import type ColorType from '../../../Core/Color/ColorType';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -29,10 +29,19 @@ import type SupertrendPoint from './SupertrendPoint';
 * */
 
 export interface SupertrendOptions extends SMAOptions {
-    changeTrendLine?: Record<string, CSSObject>;
+    changeTrendLine?: SupertrendLineOptions;
     fallingTrendColor?: ColorType;
     params?: SupertrendParamsOptions;
     risingTrendColor?: ColorType;
+}
+
+export interface SupertrendLineOptions {
+    styles?: SupertrendLineStylesOptions;
+}
+export interface SupertrendLineStylesOptions {
+    dashStyle?: DashStyleValue;
+    lineColor?: ColorType;
+    lineWidth?: number;
 }
 
 export interface SupertrendParamsOptions extends SMAParamsOptions {

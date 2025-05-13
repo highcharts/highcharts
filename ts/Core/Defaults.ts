@@ -24,8 +24,7 @@ import H from './Globals.js';
 const {
     isTouchDevice
 } = H;
-import { Palette } from './Color/Palettes.js';
-import Palettes from './Color/Palettes.js';
+import palette from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
@@ -63,6 +62,8 @@ declare module './GlobalsLike' {
  */
 const defaultOptions: DefaultOptions = {
 
+    palette,
+
     /**
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
@@ -93,8 +94,9 @@ const defaultOptions: DefaultOptions = {
      *     "#feb56a",
      *     "#91e8e1"
      * ]
+     *
+     * @apioption colors
      */
-    colors: Palettes.colors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
@@ -354,8 +356,9 @@ const defaultOptions: DefaultOptions = {
         buttonTheme: {
             /**
              * The fill color for buttons
+             *
+             * @apioption global.buttonTheme.fill
              */
-            fill: Palette.neutralColor3,
             /**
              * The padding of buttons
              */
@@ -366,8 +369,9 @@ const defaultOptions: DefaultOptions = {
             r: 2,
             /**
              * The stroke color for buttons
+             *
+             * @apioption global.buttonTheme.stroke
              */
-            stroke: Palette.neutralColor20,
             /**
              * The stroke width for buttons
              */
@@ -376,7 +380,6 @@ const defaultOptions: DefaultOptions = {
              * CSS styling for the buttons' text
              */
             style: {
-                color: Palette.neutralColor80,
                 cursor: 'pointer',
                 fontSize: '0.8em',
                 fontWeight: 'normal'
@@ -388,31 +391,20 @@ const defaultOptions: DefaultOptions = {
                 /**
                  * Hover state overrides for the buttons are applied in addition
                  * to the normal state options
+                 * @apioption global.buttonTheme.states.hover
                  */
-                hover: {
-                    fill: Palette.neutralColor10
-                },
+                /**
+                 * Disabled state overrides for the buttons are applied in
+                 * addition to the normal state options
+                 * @apioption global.buttonTheme.states.disabled
+                 */
                 /**
                  * Select state overrides for the buttons are applied in
                  * addition to the normal state options
                  */
                 select: {
-                    fill: Palette.highlightColor10,
                     style: {
-                        color: Palette.neutralColor100,
                         fontWeight: 'bold'
-                    }
-                },
-                /**
-                 * Disabled state overrides for the buttons are applied in
-                 * addition to the normal state options
-                 */
-                disabled: {
-                    /**
-                     * Disabled state CSS style overrides for the buttons' text
-                     */
-                    style: {
-                        color: Palette.neutralColor20
                     }
                 }
             }
@@ -661,7 +653,6 @@ const defaultOptions: DefaultOptions = {
          * @default   {highstock} { "color": "#333333", "fontSize": "16px" }
          */
         style: {
-            color: Palette.neutralColor80,
             fontWeight: 'bold'
         },
 
@@ -882,7 +873,6 @@ const defaultOptions: DefaultOptions = {
          * @default   {"color": "#666666"}
          */
         style: {
-            color: Palette.neutralColor60,
             /**
              * @type {number|string}
              */
@@ -965,7 +955,6 @@ const defaultOptions: DefaultOptions = {
          * @default   {"color": "#666666"}
          */
         style: {
-            color: Palette.neutralColor60,
             /**
              * @type {number|string}
              */
@@ -1320,7 +1309,8 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * The color of the drawn border around the legend.
+         * The color of the drawn border around the legend. Defaults to the
+         * [palette.neutralColor40](#palette.neutralColor40) setting.
          *
          * @see In styled mode, the legend border stroke can be applied with the
          *      `.highcharts-legend-box` class.
@@ -1333,8 +1323,9 @@ const defaultOptions: DefaultOptions = {
          *         Border and background options
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption legend.borderColor
          */
-        borderColor: Palette.neutralColor40,
+        // borderColor: Palette.neutralColor40,
 
         /**
          * The border corner radius of the legend.
@@ -1430,11 +1421,12 @@ const defaultOptions: DefaultOptions = {
                  * @type {number|string}
                  */
                 fontSize: '0.8em'
-            },
+            }
 
             /**
              * The color for the active up or down arrow in the legend page
-             * navigation.
+             * navigation. Defaults to the
+             * [palette.highlightColor100](#palette.highlightColor100) setting.
              *
              * @see In styled mode, the active arrow be styled with the
              *      `.highcharts-legend-nav-active` class.
@@ -1446,12 +1438,15 @@ const defaultOptions: DefaultOptions = {
              *
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
+             *
+             * @apioption legend.navigation.activeColor
              */
-            activeColor: Palette.highlightColor100,
+            // activeColor: Palette.highlightColor100,
 
             /**
              * The color of the inactive up or down arrow in the legend page
-             * navigation. .
+             * navigation. Defaults to the
+             * [palette.neutralColor20](#palette.neutralColor20) setting.
              *
              * @see In styled mode, the inactive arrow be styled with the
              *      `.highcharts-legend-nav-inactive` class.
@@ -1464,7 +1459,7 @@ const defaultOptions: DefaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: Palette.neutralColor20
+            // inactiveColor: Palette.neutralColor20
         },
 
         /**
@@ -1545,10 +1540,6 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor80,
-            /**
-             * @ignore
-             */
             cursor: 'pointer',
             /**
              * @ignore
@@ -1579,13 +1570,8 @@ const defaultOptions: DefaultOptions = {
          *
          * @type    {Highcharts.CSSObject}
          * @default {"color": "#000000"}
+         * @apioption legend.itemHoverStyle
          */
-        itemHoverStyle: {
-            /**
-             * @ignore
-             */
-            color: Palette.neutralColor100
-        },
 
         /**
          * CSS styles for each legend item when the corresponding series or
@@ -1603,10 +1589,6 @@ const defaultOptions: DefaultOptions = {
          * @default {"color": "#cccccc"}
          */
         itemHiddenStyle: {
-            /**
-             * @ignore
-             */
-            color: Palette.neutralColor60,
             /**
              * @ignore
              */
@@ -1972,10 +1954,6 @@ const defaultOptions: DefaultOptions = {
              * @ignore
              */
             position: 'absolute',
-            /**
-             * @ignore
-             */
-            backgroundColor: Palette.backgroundColor,
             /**
              * @ignore
              */
@@ -2725,7 +2703,8 @@ const defaultOptions: DefaultOptions = {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 
         /**
-         * The background color or gradient for the tooltip.
+         * The background color or gradient for the tooltip. Defaults to the
+         * [palette.backgroundColor](#palette.backgroundColor) setting.
          *
          * In styled mode, the stroke width is set in the
          * `.highcharts-tooltip-box` class.
@@ -2746,8 +2725,8 @@ const defaultOptions: DefaultOptions = {
          *         Tooltip in styled mode
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption tooltip.backgroundColor
          */
-        backgroundColor: Palette.backgroundColor,
 
         /**
          * The pixel width of the tooltip border. Defaults to 0 for single
@@ -2816,8 +2795,6 @@ const defaultOptions: DefaultOptions = {
          * @type {Highcharts.CSSObject}
          */
         style: {
-            /** @internal */
-            color: Palette.neutralColor80,
             /** @internal */
             cursor: 'default',
             /**
@@ -2939,8 +2916,6 @@ const defaultOptions: DefaultOptions = {
         style: {
             /** @internal */
             cursor: 'pointer',
-            /** @internal */
-            color: Palette.neutralColor40,
             /**
              * @type {number|string}
              */
@@ -2978,6 +2953,8 @@ const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
  * Default options.
  */
 function getOptions(): DefaultOptions {
+    // Legacy support for colors, it is often used in demos etc
+    defaultOptions.colors ??= defaultOptions.palette.dataColors;
     return defaultOptions;
 }
 

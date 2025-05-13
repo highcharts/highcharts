@@ -44,7 +44,7 @@ declare module './Series/SeriesOptions' {
 
 export interface TooltipOptions {
     animation: boolean|Partial<AnimationOptions>;
-    backgroundColor: ColorType;
+    backgroundColor?: ColorType;
     borderColor?: ColorType;
     borderRadius: number;
     borderWidth?: number;

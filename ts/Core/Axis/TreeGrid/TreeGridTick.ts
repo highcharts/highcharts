@@ -32,7 +32,7 @@ import type {
     TreeGridAxisOptions
 } from './TreeGridOptions';
 
-import { Palette } from '../../Color/Palettes.js';
+import Palette from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,

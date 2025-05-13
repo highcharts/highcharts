@@ -137,6 +137,23 @@ class WaterfallSeries extends ColumnSeries {
      *
      * */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<WaterfallSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<WaterfallSeriesOptions>,
+            {
+                lineColor: palette.neutralColor80,
+                borderColor: palette.neutralColor80
+            }
+        );
+    }
+
     // After generating points, set y-values for all sums.
     public generatePoints(): void {
 

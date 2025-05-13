@@ -413,6 +413,31 @@ class VennSeries extends ScatterSeries {
 
     /* eslint-disable valid-jsdoc */
 
+    /**
+     * Apply the palette colors
+     * @private
+     */
+    public applyPalette(): DeepPartial<VennSeriesOptions> {
+        const palette = this.chart.options.palette;
+
+        return merge(
+            true,
+            super.applyPalette() as DeepPartial<VennSeriesOptions>,
+            {
+                borderColor: palette.neutralColor20,
+                states: {
+                    hover: {
+                        borderColor: palette.neutralColor80
+                    },
+                    select: {
+                        borderColor: palette.neutralColor100,
+                        color: palette.neutralColor20
+                    }
+                }
+            }
+        );
+    }
+
     public animate(init?: boolean): void {
         if (!init) {
             const series = this,
