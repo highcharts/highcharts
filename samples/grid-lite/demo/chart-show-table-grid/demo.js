@@ -89,12 +89,11 @@ const chart = Highcharts.chart('chart', {
                         'Show data table' :
                         'Hide data table';
                 }
-
             }
         },
         buttons: {
             contextButton: {
-                menuItems: ['viewData']
+                menuItems: ['viewFullscreen', 'printChart', 'viewData']
             }
         }
     },
