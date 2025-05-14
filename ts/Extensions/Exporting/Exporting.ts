@@ -773,9 +773,9 @@ namespace Exporting {
             // Presentational CSS
             if (!chart.styledMode) {
                 css(innerMenu, extend<CSSObject>({
-                    MozBoxShadow: '3px 3px 10px #888',
-                    WebkitBoxShadow: '3px 3px 10px #888',
-                    boxShadow: '3px 3px 10px #888'
+                    MozBoxShadow: '3px 3px 10px #0008',
+                    WebkitBoxShadow: '3px 3px 10px #0008',
+                    boxShadow: '3px 3px 10px #0008'
                 }, navOptions.menuStyle as any));
             }
 

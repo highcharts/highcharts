@@ -576,28 +576,6 @@ namespace DynamicDefaultTheme {
                 },
                 borderColor: 'var(--highcharts-background-color)'
             },
-            solidgauge: {
-                marker: {
-                    lineColor: 'var(--highcharts-background-color)',
-                    states: {
-                        select: {
-                            fillColor: 'var(--highcharts-neutral-color-20)',
-                            lineColor: 'var(--highcharts-neutral-color-100)'
-                        }
-                    }
-                },
-                dataLabels: {
-                    borderColor: 'var(--highcharts-neutral-color-20)'
-                },
-                dial: {
-                    backgroundColor: 'var(--highcharts-neutral-color-100)',
-                    borderColor: 'var(--highcharts-neutral-color-20)'
-                },
-                pivot: {
-                    borderColor: 'var(--highcharts-neutral-color-20)',
-                    backgroundColor: 'var(--highcharts-neutral-color-100)'
-                }
-            },
             dependencywheel: {
                 states: {
                     select: {
@@ -625,6 +603,72 @@ namespace DynamicDefaultTheme {
                 },
                 borderColor: 'var(--highcharts-background-color)'
             },
+            histogram: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
+            },
+            bellcurve: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                }
+            },
+            item: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                },
+                borderColor: 'var(--highcharts-background-color)'
+            },
+            organization: {
+                states: {
+                    select: {
+                        color: 'var(--highcharts-neutral-color-20)',
+                        borderColor: 'var(--highcharts-neutral-color-100)'
+                    }
+                },
+                borderColor: 'var(--highcharts-neutral-color-60)',
+                link: {
+                    color: 'var(--highcharts-neutral-color-60)'
+                }
+            },
+            solidgauge: {
+                marker: {
+                    lineColor: 'var(--highcharts-background-color)',
+                    states: {
+                        select: {
+                            fillColor: 'var(--highcharts-neutral-color-20)',
+                            lineColor: 'var(--highcharts-neutral-color-100)'
+                        }
+                    }
+                },
+                dataLabels: {
+                    borderColor: 'var(--highcharts-neutral-color-20)'
+                },
+                dial: {
+                    backgroundColor: 'var(--highcharts-neutral-color-100)',
+                    borderColor: 'var(--highcharts-neutral-color-20)'
+                },
+                pivot: {
+                    borderColor: 'var(--highcharts-neutral-color-20)',
+                    backgroundColor: 'var(--highcharts-neutral-color-100)'
+                }
+            },
             timeline: {
                 marker: {
                     lineColor: 'var(--highcharts-background-color)',
@@ -639,6 +683,25 @@ namespace DynamicDefaultTheme {
                     backgroundColor: 'var(--highcharts-background-color)',
                     borderColor: 'var(--highcharts-neutral-color-40)',
                     color: 'var(--highcharts-neutral-color-80)'
+                }
+            },
+            treemap: {
+                states: {
+                    hover: {
+                        borderColor: 'var(--highcharts-neutral-color-40)'
+                    }
+                },
+                borderColor: 'var(--highcharts-neutral-color-10)'
+            },
+            treegraph: {
+                states: {
+                    hover: {
+                        borderColor: 'var(--highcharts-neutral-color-40)'
+                    }
+                },
+                borderColor: 'var(--highcharts-neutral-color-10)',
+                link: {
+                    color: 'var(--highcharts-neutral-color-60)'
                 }
             }
         },
