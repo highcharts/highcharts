@@ -16,8 +16,7 @@
 
 .chart {
     float: left;
-    max-height: 800px;
-    height: 75vh;
+    min-height: 650px;
     position: relative;
     width: 100%;
 }
