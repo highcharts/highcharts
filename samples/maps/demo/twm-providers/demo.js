@@ -77,7 +77,11 @@
         },
 
         legend: {
-            backgroundColor: 'rgba(255,255,255,0.85)',
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-background-color, white),
+                transparent 15%
+            )`,
             align: 'left',
             layout: 'vertical',
             symbolRadius: 0,
