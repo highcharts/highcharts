@@ -351,8 +351,11 @@ namespace DynamicDefaultTheme {
                     }
                 },
                 borderColor: 'var(--highcharts-background-color)',
-                fillColor: 'var(--highcharts-background-color)'
-            },
+                fillColor: 'var(--highcharts-background-color)',
+                style: {
+                    color: 'var(--highcharts-neutral-color-100)'
+                }
+            } as any,
             arearange: {
                 marker: {
                     lineColor: 'var(--highcharts-background-color)',

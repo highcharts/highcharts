@@ -425,11 +425,7 @@ const options = {
                         '{xDescription}. {point.title}: {point.text}.'
                 }
             },
-            color: 'var(--highcharts-neutral-color-80, #333)',
-            opacity: 0.8,
-            style: {
-                color: 'var(--highcharts-neutral-color-100, black)'
-            }
+            opacity: 0.8
         }
     },
     series: [
