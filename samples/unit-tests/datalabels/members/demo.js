@@ -68,8 +68,9 @@ QUnit.test('Series.drawDataLabels', function (assert) {
     drawDataLabels.call(series);
     assert.strictEqual(
         !!point.dataLabel,
-        true,
-        'Should create dataLabel when series.dataLabels.enabled=true'
+        false,
+        `Should create dataLabel when series.dataLabels.enabled=true, but not
+        if empty string`
     );
     assert.strictEqual(
         !!point.dataLabel.added,
