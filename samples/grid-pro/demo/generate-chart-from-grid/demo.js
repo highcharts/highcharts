@@ -34,15 +34,16 @@ Grid.grid('grid', {
     events: {
         cell: {
             click: function () {
+                const yearColumnId = 'Year';
                 // Skip if clicked on Year column
-                if (this.column.id === 'Year') {
+                if (this.column.id === yearColumnId) {
                     return;
                 }
 
                 // We get the x axis from the Year column
-                const years = this.row.viewport.columns.find(
-                    c => c.id === 'Year'
-                )?.data ?? [];
+                const years = this.row.viewport.grid.dataTable.getColumn(
+                    yearColumnId
+                );
 
                 // Create chart if it doesn't exist
                 if (!chart) {
@@ -58,8 +59,7 @@ Grid.grid('grid', {
                             title: {
                                 text: 'Number of Employees'
                             }
-                        },
-                        series: []
+                        }
                     });
                 }
 
@@ -107,4 +107,5 @@ function setActiveColumnStyle(cell) {
     cells.forEach(c => {
         c.htmlElement.classList.toggle('active-column', isActive);
     });
+    cell.column.header.htmlElement.classList.toggle('active-column', isActive);
 }

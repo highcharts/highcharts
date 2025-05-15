@@ -7,3 +7,8 @@
 .active-column {
     background: rgba(30, 136, 229, 0.12) !important; /* Soft blue, 12% opacity */
 }
+
+#grid {
+    /* display about 5 rows in the Grid */
+    height: 315px;
+}

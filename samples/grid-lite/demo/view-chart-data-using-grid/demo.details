@@ -1,5 +1,5 @@
 ---
- name: Click Grid to draw on chart
+ name: View chart data using Grid
  authors:
    - Mikkel Espolin Birkeland
  js_wrap: b
