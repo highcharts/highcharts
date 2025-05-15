@@ -1,0 +1,6 @@
+---
+ name: Generate charts from Grid
+ authors:
+   - Mikkel Espolin Birkeland
+ js_wrap: b
+...
