@@ -33,11 +33,11 @@ Grid.grid('container', {
                 mouseOut: function () {
                     doc.getElementById('cellMouseOut').value = 'cellMouseOut';
                 },
-                afterSetValue: function () {
+                afterRender: function () {
                     if (this.row.index !== 1 || this.column.id !== 'weight') {
                         return;
                     }
-                    const el = doc.getElementById('cellAfterSetValue');
+                    const el = doc.getElementById('cellAfterRender');
                     console.log(this.row.index, this.column.id);
                     const counter = +el.value;
                     el.value = counter + 1;
@@ -83,11 +83,11 @@ Grid.grid('container', {
                     doc.getElementById('cellMouseOut').value =
                         'cellMouseOutColumnOption';
                 },
-                afterSetValue: function () {
+                afterRender: function () {
                     if (this.row.index !== 1 || this.column.id !== 'weight') {
                         return;
                     }
-                    const el = doc.getElementById('cellAfterSetValue');
+                    const el = doc.getElementById('cellAfterRender');
                     console.log(this.row.index, this.column.id);
                     const counter = +el.value;
                     el.value = counter + 1;
@@ -118,11 +118,11 @@ Grid.grid('container', {
             mouseOut: function () {
                 doc.getElementById('cellMouseOut').value = 'cellMouseOut';
             },
-            afterSetValue: function () {
+            afterRender: function () {
                 if (this.row.index !== 1 || this.column.id !== 'weight') {
                     return;
                 }
-                const el = doc.getElementById('cellAfterSetValue');
+                const el = doc.getElementById('cellafterRender');
                 console.log(this.row.index, this.column.id);
                 const counter = +el.value;
                 el.value = counter + 1;

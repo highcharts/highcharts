@@ -91,7 +91,7 @@ function compose(
         'mouseOut',
         'dblClick',
         'click',
-        'afterSetValue'
+        'afterRender'
     ] as const).forEach((name): void => {
         addEvent(TableCellClass, name, (e: GridEvent<TableCell>): void => {
             const cell = e.target;
@@ -177,8 +177,18 @@ export interface CellEvents {
     /**
      * Callback function to be called after the cell value is set (on init or
      * after editing).
+     *
+     * Use the `afterRender` event instead.
+     *
+     * @deprecated
      */
     afterSetValue?: CellEventCallback;
+
+    /**
+     * Callback function to be called after the cell value is set (on init or
+     * after editing).
+     */
+    afterRender?: CellEventCallback;
 }
 
 /**

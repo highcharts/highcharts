@@ -49,21 +49,21 @@ describe('Grid Pro - events.', () => {
         cy.get('#cellDblClick').should('have.value', 'cellDblClickColumnOption');
     });
 
-    it('AfterSetValue event.', () => {
+    it('AfterRender event.', () => {
         // ColumnDefaults
-        cy.get('#cellAfterSetValue').should('have.value', '1');
+        cy.get('#cellAfterRenderValue').should('have.value', '1');
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="price"]')
             .dblclick({force: true})
             .find('input')
             .type('1{enter}');
-        cy.get('#cellAfterSetValue').should('have.value', '2');
+        cy.get('#cellAfterRender').should('have.value', '2');
 
         // ColumnOptions
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="weight"]')
             .dblclick({force: true})
             .find('input')
             .type('1{enter}');
-        cy.get('#cellAfterSetValue').should('have.value', '3');
+        cy.get('#cellAfterRender').should('have.value', '3');
     });
 
     it('AfterSorting column event.', () => {
