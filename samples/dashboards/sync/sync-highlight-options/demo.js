@@ -46,7 +46,7 @@ const board = Dashboards.board('container', {
             }
         }
     },
-    ...(Array.from({ length: 2 }), (_, index) => ({
+    ...Array.from({ length: 2 }, (_, index) => ({
         type: 'DataGrid',
         renderTo: `grid-${index}`,
         connector: {
