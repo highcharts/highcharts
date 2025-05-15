@@ -84,7 +84,7 @@ const chart = Highcharts.chart('chart', {
                         .classList.contains(
                             'hide'
                         );
-                    const viewDataElement = this.exportDivElements[0];
+                    const viewDataElement = this.exportDivElements[2];
                     viewDataElement.innerText = isGridHidden ?
                         'Show data table' :
                         'Hide data table';
