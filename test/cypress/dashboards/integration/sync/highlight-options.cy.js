@@ -3,12 +3,12 @@ describe("Highlight sync options", () => {
         cy.visit('/dashboards/sync/sync-highlight-options');
     });
 
-    it('All highlight sync options are disabled', () => {
+    it('All chart highlight sync options are disabled', () => {
         cy.boardRendered();
 
-        cy.get('#cbx-showTooltip').click();
-        cy.get('#cbx-highlightPoint').click();
-        cy.get('#cbx-showCrosshair').click();
+        cy.get('#cbx-chart\\ showTooltip').click();
+        cy.get('#cbx-chart\\ highlightPoint').click();
+        cy.get('#cbx-chart\\ showCrosshair').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(0).trigger('mouseover');
 
@@ -30,8 +30,8 @@ describe("Highlight sync options", () => {
         });
     });
 
-    it('Highlight showTooltip option is enabled', () => {
-        cy.get('#cbx-showTooltip').click();
+    it('Chart highlight showTooltip option is enabled', () => {
+        cy.get('#cbx-chart\\ showTooltip').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(1).trigger('mouseover');
 
@@ -43,8 +43,8 @@ describe("Highlight sync options", () => {
         });
     });
 
-    it('Highlight highlightPoint option is enabled', () => {
-        cy.get('#cbx-highlightPoint').click();
+    it('Chart highlight highlightPoint option is enabled', () => {
+        cy.get('#cbx-chart\\ highlightPoint').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(2).trigger('mouseover');
 
@@ -57,8 +57,8 @@ describe("Highlight sync options", () => {
         });
     });
 
-    it('Highlight showCrosshair option is enabled', () => {
-        cy.get('#cbx-showCrosshair').click();
+    it('Chart highlight showCrosshair option is enabled', () => {
+        cy.get('#cbx-chart\\ showCrosshair').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(3).trigger('mouseover');
 
@@ -71,8 +71,8 @@ describe("Highlight sync options", () => {
         });
     });
 
-    it('Highlight sync is disabled', () => {
-        cy.get('#cbx-enabled').click();
+    it('Chart highlight sync is disabled', () => {
+        cy.get('#cbx-chart\\ enabled').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(4).trigger('mouseover');
 
@@ -95,5 +95,16 @@ describe("Highlight sync options", () => {
                 'When hovering over DataGrid, chart should not have crosshair.'
             )
         });
+    });
+
+    it('Grid highlight sync is enabled', () => {
+        cy.get('#cbx-grid\\ enabled').click();
+
+        // Highlight the row from the first grid.
+        cy.get('#grid-0 tr.highcharts-datagrid-row').eq(4).trigger('mouseover');
+
+        // The corresponding row from the second grid should be highlighted.
+        cy.get('#grid-1 tr.highcharts-datagrid-row').eq(4)
+            .should('have.class', 'highcharts-datagrid-synced-row');
     });
 });

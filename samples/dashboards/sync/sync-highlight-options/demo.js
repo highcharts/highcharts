@@ -12,28 +12,18 @@ const board = Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'datagrid'
-                }, {
                     id: 'chart'
+                }]
+            }, {
+                cells: [{
+                    id: 'grid-0'
+                }, {
+                    id: 'grid-1'
                 }]
             }]
         }]
     },
     components: [{
-        type: 'DataGrid',
-        renderTo: 'datagrid',
-        connector: {
-            id: 'vegetables'
-        },
-        sync: {
-            highlight: true
-        },
-        dataGridOptions: {
-            credits: {
-                enabled: false
-            }
-        }
-    }, {
         type: 'Highcharts',
         renderTo: 'chart',
         connector: {
@@ -55,7 +45,22 @@ const board = Dashboards.board('container', {
                 crosshair: true
             }
         }
-    }]
+    },
+    ...(Array.from({ length: 2 }), (_, index) => ({
+        type: 'DataGrid',
+        renderTo: `grid-${index}`,
+        connector: {
+            id: 'vegetables'
+        },
+        sync: {
+            highlight: true
+        },
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            }
+        }
+    }))]
 });
 
 
@@ -67,10 +72,9 @@ const optionsCbx = document.querySelectorAll('.option');
 
 optionsCbx.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
-        const value = checkbox.dataset.value;
         const { checked } = checkbox;
 
-        if (value === 'enabled') {
+        if (checkbox.id === 'cbx-chart enabled') {
             optionsCbx.forEach(cbx => {
                 if (cbx.dataset.value !== 'enabled') {
                     cbx.disabled = !checked;
@@ -78,12 +82,59 @@ optionsCbx.forEach(checkbox => {
             });
         }
 
-        board.mountedComponents[1].component.update({
-            sync: {
-                highlight: {
-                    [value]: checked
-                }
-            }
+        const checkboxId = checkbox.id;
+        const componentIndices =
+            checkboxId.includes('cbx-chart') ? [0] : [1, 2];
+
+        componentIndices.forEach(index => {
+            board.mountedComponents[index].component.update({
+                ...(checkboxId.includes('enabled') && ({
+                    sync: {
+                        highlight: {
+                            enabled: checked
+                        }
+                    }
+                })),
+                ...(checkboxId.includes('showTooltip') && ({
+                    chartOptions: {
+                        tooltip: {
+                            enabled: checked
+                        }
+                    }
+                })),
+                ...(checkboxId.includes('highlightPoint') && ({
+                    chartOptions: {
+                        plotOptions: {
+                            series: {
+                                ...(!checked && ({
+                                    events: {
+                                        mouseOver() {
+                                            return checked;
+                                        }
+                                    }
+                                })),
+                                marker: {
+                                    states: {
+                                        hover: {
+                                            enabled: checked
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })),
+                ...(checkboxId.includes('showCrosshair') && ({
+                    chartOptions: {
+                        xAxis: {
+                            crosshair: checked
+                        },
+                        yAxis: {
+                            crosshair: checked
+                        }
+                    }
+                }))
+            });
         });
     });
 });

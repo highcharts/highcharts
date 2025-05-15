@@ -176,6 +176,16 @@ const syncPair: Sync.SyncPair = {
                 'point.mouseOut' + groupKey,
                 handleCursorOut
             );
+            cursor.addListener(
+                table.id,
+                'dataGrid.hoverRow' + groupKey,
+                handleCursor
+            );
+            cursor.addListener(
+                table.id,
+                'dataGrid.hoverOut' + groupKey,
+                handleCursorOut
+            );
         };
 
         const unregisterCursorListeners = (): void => {
@@ -193,6 +203,16 @@ const syncPair: Sync.SyncPair = {
             cursor.removeListener(
                 table.id,
                 'point.mouseOut' + groupKey,
+                handleCursorOut
+            );
+            cursor.removeListener(
+                table.id,
+                'dataGrid.hoverRow' + groupKey,
+                handleCursor
+            );
+            cursor.removeListener(
+                table.id,
+                'dataGrid.hoverOut' + groupKey,
                 handleCursorOut
             );
         };
