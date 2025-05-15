@@ -35,8 +35,10 @@ Grid.grid('grid', {
         cell: {
             click: function () {
                 const yearColumnId = 'Year';
+                const columnId = this.column.id;
+
                 // Skip if clicked on Year column
-                if (this.column.id === yearColumnId) {
+                if (columnId === yearColumnId) {
                     return;
                 }
 
@@ -65,14 +67,14 @@ Grid.grid('grid', {
 
                 // Check if series already exists in the chart
                 const existingSeries = chart.series.find(
-                    s => s.name === this.column.id
+                    s => s.name === columnId
                 );
 
                 const toggleColumnHighlight = () => {
-                    if (activeCols.has(this.column.id)) {
-                        activeCols.delete(this.column.id);
+                    if (activeCols.has(columnId)) {
+                        activeCols.delete(columnId);
                     } else {
-                        activeCols.add(this.column.id);
+                        activeCols.add(columnId);
                     }
                 };
 
@@ -87,7 +89,7 @@ Grid.grid('grid', {
                 } else {
                     // Add new series to chart
                     chart.addSeries({
-                        name: this.column.id,
+                        name: columnId,
                         data: this.column.data
                     });
                 }

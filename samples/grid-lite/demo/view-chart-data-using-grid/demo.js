@@ -75,7 +75,7 @@ const chart = Highcharts.chart('chart', {
         menuItemDefinitions: {
             viewData: {
                 onclick: function () {
-                    if (grid === null) {
+                    if (!grid) {
                         createGrid();
                     } else {
                         grid.container.classList.toggle('hide');
@@ -85,9 +85,8 @@ const chart = Highcharts.chart('chart', {
                             'hide'
                         );
                     const viewDataElement = this.exportDivElements[2];
-                    viewDataElement.innerText = isGridHidden ?
-                        'Show data table' :
-                        'Hide data table';
+                    viewDataElement.innerText =
+                        `${isGridHidden ? 'Show' : 'Hide'} data table`;
                 }
             }
         },
