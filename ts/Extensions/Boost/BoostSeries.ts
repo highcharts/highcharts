@@ -824,7 +824,7 @@ function onSeriesDestroy(
         chart.boost &&
         chart.boost.markerGroup === series.markerGroup
     ) {
-        series.markerGroup = null as any;
+        series.markerGroup = void 0;
     }
 
     if (chart.hoverPoints) {
@@ -836,7 +836,7 @@ function onSeriesDestroy(
     }
 
     if (chart.hoverPoint && chart.hoverPoint.series === series) {
-        chart.hoverPoint = null as any;
+        chart.hoverPoint = void 0;
     }
 }
 
@@ -1141,14 +1141,22 @@ function seriesRenderCanvas(this: Series): void {
         maxI: (number|undefined);
 
     // Remove k-d-tree mock points after zoom (#20330)
-    if (this.points) {
-        this.points.length = 0;
+    if (!this.boosted) {
+        return;
     }
 
-    if (this.boosted && chart.hoverPoint?.series === this) {
-        chart.hoverPoint = null as any;
-        chart.hoverPoints = [];
+    this.points?.forEach((point): void => {
+        point?.destroyElements?.();
+    });
+    this.points = [];
+
+    if (chart.hoverPoint?.series === this) {
+        chart.hoverPoint = void 0;
     }
+
+    chart.hoverPoints = chart.hoverPoints?.filter(
+        (point): boolean => point.series !== this
+    ) ?? [];
 
     // When touch-zooming or mouse-panning, re-rendering the canvas would not
     // perform fast enough. Instead, let the axes redraw, but not the series.

@@ -148,7 +148,8 @@ QUnit.test('Hovered points are cleared after zoom, #20330)', function (assert) {
         },
         plotOptions: {
             series: {
-                boostThreshold: 1
+                boostThreshold: 1,
+                cropThreshold: 1
             }
         },
         tooltip: {
