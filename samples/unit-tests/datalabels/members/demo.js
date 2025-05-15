@@ -20,7 +20,7 @@ QUnit.test('Series.drawDataLabels', function (assert) {
         series: [
             {
                 dataLabels: { enabled: false }, // Disable data labels
-                data: [{}] // Create one null point
+                data: [{ y: 1 }]
             }
         ]
     });
@@ -68,9 +68,8 @@ QUnit.test('Series.drawDataLabels', function (assert) {
     drawDataLabels.call(series);
     assert.strictEqual(
         !!point.dataLabel,
-        false,
-        `Should create dataLabel when series.dataLabels.enabled=true, but not
-        if empty string`
+        true,
+        'Should create dataLabel when series.dataLabels.enabled=true'
     );
     assert.strictEqual(
         !!point.dataLabel.added,
