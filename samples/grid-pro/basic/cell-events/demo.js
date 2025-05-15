@@ -10,47 +10,32 @@ Grid.grid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    columns: [{
-        id: 'product',
-        header: {
-            format: 'Product (editable)'
-        },
-        cells: {
-            editable: true
-        }
-    }, {
-        id: 'metaData',
-        header: {
-            format: 'MetaData (unsortable)'
-        },
-        sorting: {
-            sortable: false
-        }
-    }],
-    events: {
+    columnDefaults: {
         cell: {
-            afterEdit: function () {
-                msg.innerText = `Edited a cell in the ${this.row.index} row` +
-                    ` and the '${this.column.id}' column.`;
-            },
-            click: function () {
-                msg.innerText = `Clicked on a cell with value '${this.value}'` +
-                    `, in the column '${this.column.id}'.`;
-            },
-            dblClick: function () {
-                msg.innerText = 'Double clicked on a cell with value ' +
-                    `'${this.value}', in the column '${this.column.id}'.`;
-            },
-            mouseOver: function () {
-                msg.innerText = `Hovered a cell with value '${this.value}'` +
-                    `, in the column '${this.column.id}'.`;
-            },
-            mouseOut: function () {
-                msg.innerText = `Unhovered a cell with value '${this.value}'` +
-                    `, in the column '${this.column.id}'.`;
+            events: {
+                afterEdit: function () {
+                    msg.innerText = `Edited a cell in the ${this.row.index} ` +
+                        ` row and the '${this.column.id}' column.`;
+                },
+                click: function () {
+                    msg.innerText = 'Clicked on a cell with value ' +
+                        `'${this.value}', in the column '${this.column.id}'.`;
+                },
+                dblClick: function () {
+                    msg.innerText = 'Double clicked on a cell with value ' +
+                        `'${this.value}', in the column '${this.column.id}'.`;
+                },
+                mouseOver: function () {
+                    msg.innerText = 'Hovered a cell with value' +
+                        `'${this.value}', in the column '${this.column.id}'.`;
+                },
+                mouseOut: function () {
+                    msg.innerText = 'Unhovered a cell with value ' +
+                        `'${this.value}', in the column '${this.column.id}'.`;
+                }
             }
         },
-        column: {
+        events: {
             afterResize: function () {
                 msg.innerText = `Resized the column '${this.id}' to ` +
                     `${Math.round(this.width * 1000) / 10}%.`;
@@ -72,10 +57,29 @@ Grid.grid('container', {
             }
         },
         header: {
-            click: function () {
-                msg.innerText =
-                    `Clicked the header of the column '${this.id}'.`;
+            events: {
+                click: function () {
+                    msg.innerText =
+                        `Clicked the header of the column '${this.id}'.`;
+                }
             }
         }
-    }
+    },
+    columns: [{
+        id: 'product',
+        header: {
+            format: 'Product (editable)'
+        },
+        cells: {
+            editable: true
+        }
+    }, {
+        id: 'metaData',
+        header: {
+            format: 'MetaData (unsortable)'
+        },
+        sorting: {
+            sortable: false
+        }
+    }]
 });
