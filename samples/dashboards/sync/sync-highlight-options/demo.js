@@ -72,9 +72,10 @@ const optionsCbx = document.querySelectorAll('.option');
 
 optionsCbx.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
+        const checkboxId = checkbox.id;
         const { checked } = checkbox;
 
-        if (checkbox.id === 'cbx-chart enabled') {
+        if (checkboxId === 'cbx-chart enabled') {
             optionsCbx.forEach(cbx => {
                 if (cbx.dataset.value !== 'enabled') {
                     cbx.disabled = !checked;
@@ -82,10 +83,8 @@ optionsCbx.forEach(checkbox => {
             });
         }
 
-        const checkboxId = checkbox.id;
         const componentIndices =
             checkboxId.includes('cbx-chart') ? [0] : [1, 2];
-
         componentIndices.forEach(index => {
             board.mountedComponents[index].component.update({
                 ...(checkboxId.includes('enabled') && ({
