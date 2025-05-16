@@ -51,7 +51,7 @@ describe('Grid Pro - events.', () => {
 
     it('AfterRender event.', () => {
         // ColumnDefaults
-        cy.get('#cellAfterRenderValue').should('have.value', '1');
+        cy.get('#cellAfterRender').should('have.value', '1');
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="price"]')
             .dblclick({force: true})
             .find('input')
