@@ -282,13 +282,14 @@ test('HTMLTableConnector from HTML element', function (assert) {
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
+        const eventTable = Object.values(e.tables)[0];
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
             'Events are fired in the correct order'
         )
         assert.strictEqual(
-            e.table.getRowCount(),
+            eventTable.getRowCount(),
             tableElement.querySelectorAll('tr').length - 1,
             'Connector loaded from HTML element has same amount of rows minus the column names'
         )
@@ -296,7 +297,7 @@ test('HTMLTableConnector from HTML element', function (assert) {
         // const connectorFromJSON = HTMLTableConnector.fromJSON(connector.toJSON());
         // connectorFromJSON.load();
 
-        // testExportedDataTable(e.table, connectorFromJSON.table, assert);
+        // testExportedDataTable(eventTable, connectorFromJSON.table, assert);
 
         doneLoading();
     });

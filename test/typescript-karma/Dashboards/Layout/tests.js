@@ -368,3 +368,39 @@ test('IDs of rows, cells and layouts', function (assert) {
     assert.strictEqual(cell.getAttribute('id'), null, 'Cell\'s id should not exist');
     assert.strictEqual(row.getAttribute('id'), null, 'Row\'s id should not exist');
 })
+
+
+test('Board destroy with custom HTML', function (assert) {
+    // Prepare custom HTML for the board.
+    const container = setupContainer();
+    const chartContainer = document.createElement("div")
+    chartContainer.id = "chart-container"
+    document.getElementById("test-container").appendChild(chartContainer)
+
+    const component = {
+        renderTo: "chart-container",
+        type: "Highcharts",
+        chartOptions: {
+          series: [
+            {
+              type: "column",
+              data: [1, 2, 3],
+            },
+          ],
+        },
+    };
+    const board = Dashboards.board(container.id, {
+        components: [component],
+    });
+
+    assert.ok(board.mountedComponents.length === 1, "There should be one mounted component");
+    board.destroy();
+    assert.strictEqual(Object.keys(board).length, 0, "Board should be destroyed and empty");
+    assert.ok(chartContainer, "Chart container (custom HTML) should exist");
+
+    const board2 = Dashboards.board(container.id, {
+        components: [component],
+    });
+    assert.ok(board2.mountedComponents.length === 1, "There should be one mounted component");
+})
+
