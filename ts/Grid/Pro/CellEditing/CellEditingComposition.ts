@@ -114,7 +114,7 @@ namespace CellEditingComposition {
             function (e: AnyRecord): void {
 
                 this.column.viewport.grid.options
-                    ?.events?.cell?.afterEdit?.call(this);
+                    ?.events?.cell?.afterRender?.call(this);
 
                 announceA11yUserEditedCell(
                     this,
@@ -275,7 +275,7 @@ declare module '../GridEvents' {
         /**
          * Callback function to be called after editing of cell value.
          */
-        afterEdit?: CellEventCallback;
+        afterRender?: CellEventCallback;
     }
 }
 

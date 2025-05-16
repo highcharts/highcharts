@@ -13,7 +13,7 @@ Grid.grid('container', {
     columnDefaults: {
         cell: {
             events: {
-                afterEdit: function () {
+                afterRender: function () {
                     msg.innerText = `Edited a cell in the ${this.row.index} ` +
                         ` row and the '${this.column.id}' column.`;
                 },

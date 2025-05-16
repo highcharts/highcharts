@@ -8,18 +8,16 @@ Grid.grid('container', {
             price: [1.5, 2.53, 5, 4.5]
         }
     },
-    events: {
-        cell: {
-            afterEdit: function () {
-                changelog.innerHTML +=
-                    `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
-                changelog.scrollTop = changelog.scrollHeight;
-            }
-        }
-    },
     columnDefaults: {
         cells: {
-            editable: true
+            editable: true,
+            events: {
+                afterRender: function () {
+                    changelog.innerHTML +=
+                        `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
+                    changelog.scrollTop = changelog.scrollHeight;
+                }
+            }
         }
     },
     columns: [{
