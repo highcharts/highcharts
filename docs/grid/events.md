@@ -4,7 +4,9 @@ tags: ["grid-pro"]
 
 # Events
 
-The Grid supports event listeners that can be added to the [events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#columnDefaults) object in `columnDefaults` or a particular column. These listeners will call functions when interacting with the Grid.
+The Grid supports event listeners that can be added to the [columnDefaults.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#columnDefaults) object or a particular column. These listeners will call functions when interacting with the Grid.
+
+Please note that the [events](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.IndividualColumnOptions.html#events) has been deprecated.
 
 The available events are:
 
@@ -13,6 +15,7 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterRender`      | Triggered after setting a cell's value (init/edit).      | `this: Cell`          |
+| `afterSetValue`    | Deprecated. Use `afterRender` instead.                   | `this: Cell`          |
 | `click`            | Triggered after clicking on a cell.                      | `this: Cell`          |
 | `dblClick`         | Triggered after double-clicking on a cell.               | `this: Cell`          |
 | `mouseOver`        | Triggered when the mouse is hovered over a cell.         | `this: Cell`          |
@@ -45,7 +48,7 @@ columnDefaults: {
       console.log('Column sorted:', this);
     }
   },
-  cell: {
+  cells: {
     events: {
       afterRender: function () {
         console.log('Cell value set:', this);
