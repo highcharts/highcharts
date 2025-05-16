@@ -24,6 +24,7 @@
 
 import type { IndividualColumnOptions } from '../Options';
 import type Cell from './Cell';
+import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
@@ -31,9 +32,14 @@ import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import Templating from '../../../Core/Templating.js';
+import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
+import TableCell from './Body/TableCell';
 
-const { merge } = Utils;
+const {
+    merge,
+    fireEvent
+} = Utils;
 
 
 /* *
@@ -57,6 +63,11 @@ class Column {
      * The viewport (table) the column belongs to.
      */
     public readonly viewport: Table;
+
+    /**
+     * Type of the data in the column.
+     */
+    public readonly dataType: Column.DataType;
 
     /**
      * The cells of the column.
@@ -117,16 +128,23 @@ class Column {
         id: string,
         index: number
     ) {
-        this.options = merge(
-            viewport.grid.options?.columnDefaults ?? {},
-            viewport.grid.columnOptionsMap?.[id] ?? {}
-        );
+        const { grid } = viewport;
 
         this.id = id;
         this.index = index;
         this.viewport = viewport;
 
         this.loadData();
+
+        this.dataType = this.assumeDataType();
+        this.options = merge(
+            grid.options?.columnDefaults ?? {},
+            grid.columnOptionsMap?.[id] ?? {}
+        );
+
+        // this.width = this.getInitialWidth();
+
+        fireEvent(this, 'afterInit');
     }
 
 
@@ -141,6 +159,44 @@ class Column {
      */
     public loadData(): void {
         this.data = this.viewport.dataTable.getColumn(this.id, true);
+    }
+
+    /**
+     * Creates a cell content instance.
+     *
+     * @param cell
+     * The cell that is to be edited.
+     *
+     */
+    public createCellContent(cell: TableCell): CellContent {
+        return new TextContent(cell);
+    }
+
+    /**
+     * Assumes the data type of the column based on the options or data in the
+     * column if not specified.
+     */
+    private assumeDataType(): Column.DataType {
+        const { grid } = this.viewport;
+
+        let type = grid.columnOptionsMap?.[this.id]?.dataType;
+        if (type) {
+            return type;
+        }
+
+        type = grid.options?.columnDefaults?.dataType;
+        if (type) {
+            return type;
+        }
+
+        switch (typeof this.data?.[0]) {
+            case 'number':
+                return 'number';
+            case 'boolean':
+                return 'boolean';
+            default:
+                return 'string';
+        }
     }
 
     /**
@@ -245,6 +301,8 @@ class Column {
 
 namespace Column {
     export type Options = Omit<IndividualColumnOptions, 'id'>;
+
+    export type DataType = 'string' | 'number' | 'boolean' | 'date';
 }
 
 
