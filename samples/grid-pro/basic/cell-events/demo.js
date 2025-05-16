@@ -11,7 +11,7 @@ Grid.grid('container', {
         }
     },
     columnDefaults: {
-        cell: {
+        cells: {
             events: {
                 afterRender: function () {
                     msg.innerText = `Edited a cell in the ${this.row.index} ` +
