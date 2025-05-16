@@ -34,14 +34,14 @@ columns: [
 
 ## Rendering
 
-In the [rendering](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#rendering) API option you can customize content of the cell, based on dataType.
+In the [renderer](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#renderer) API option you can customize content of the cell, based on dataType.
 
 For instance, you can print string data as a select.
 
 ```js
 {
     dataType: 'string',
-    rendering: {
+    renderer: {
         type: 'select',
         options: [
             { value: 'NO', label: 'Norway' },
@@ -60,7 +60,7 @@ The following example demonstrates how to define and use event callbacks within 
 
 ```js
 dataType: 'bool',
-rendering: {
+renderer: {
     type: 'checkbox',
     events: {
         change: function () {

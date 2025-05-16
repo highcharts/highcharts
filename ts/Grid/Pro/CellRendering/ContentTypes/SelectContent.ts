@@ -42,7 +42,7 @@ class SelectContent extends CellContent {
     public override add(): void {
         const cell = this.cell;
         const options =
-            this.cell.column.options.rendering as SelectRenderer.Options;
+            this.cell.column.options.renderer as SelectRenderer.Options;
 
         this.select = document.createElement('select');
         this.select.name = cell.column.id + '-' + cell.row.id;

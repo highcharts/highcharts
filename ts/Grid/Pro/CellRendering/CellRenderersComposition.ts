@@ -73,7 +73,7 @@ namespace CellRenderersComposition {
      */
     function afterColumnInit(this: Column): void {
         this.cellRenderer = new CellRendererRegistry.types[
-            this.options.rendering?.type ||
+            this.options.renderer?.type ||
             CellRendererRegistry.dataTypeDefaults[this.dataType]
         ](this);
     }
@@ -106,7 +106,7 @@ declare module '../../Core/Options' {
          * Options to control the cell content rendering. By default type of
          * content is based on dataType option.
          */
-        rendering?: CellRendererType['options'];
+        renderer?: CellRendererType['options'];
     }
 }
 

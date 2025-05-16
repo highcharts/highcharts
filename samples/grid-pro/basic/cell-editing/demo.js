@@ -105,7 +105,7 @@ Grid.grid('container', {
     }, {
         id: 'country',
         dataType: 'string',
-        rendering: {
+        renderer: {
             type: 'select',
             options: [
                 { value: 'PL', label: 'Poland' },

@@ -25,7 +25,7 @@ Grid.grid('container', {
     columns: [{
         id: 'available',
         dataType: 'bool',
-        rendering: {
+        renderer: {
             type: 'checkbox'
         }
     }, {
@@ -38,7 +38,7 @@ Grid.grid('container', {
     }, {
         id: 'country',
         dataType: 'string',
-        rendering: {
+        renderer: {
             type: 'select',
             options: [
                 { value: 'PL', label: 'Poland' },

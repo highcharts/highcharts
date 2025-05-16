@@ -58,7 +58,7 @@ class SelectRenderer extends CellRenderer {
         super(column);
 
         this.options = merge(
-            this.column.options.rendering || {},
+            this.column.options.renderer || {},
             SelectRenderer.defaultOptions
         );
     }
