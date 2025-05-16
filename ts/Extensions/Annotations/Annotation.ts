@@ -49,6 +49,8 @@ import ControllableImage from './Controllables/ControllableImage.js';
 import ControllableLabel from './Controllables/ControllableLabel.js';
 import ControlPoint from './ControlPoint.js';
 import ControlTarget from './ControlTarget.js';
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
 import EventEmitter from './EventEmitter.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
@@ -70,6 +72,9 @@ const {
  * */
 
 declare module '../../Core/Options'{
+    interface DefaultOptions {
+        annotations?: AnnotationOptions;
+    }
     interface Options {
         annotations?: (AnnotationOptions|Array<AnnotationOptions>);
     }
@@ -167,6 +172,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      *  Static Properties
      *
      * */
+    public static typeOptions: DeepPartial<Annotation['userOptions']> = {};
 
     /**
      * @private
@@ -282,7 +288,7 @@ class Annotation extends EventEmitter implements ControlTarget {
          * @name Highcharts.Annotation#options
          * @type {Highcharts.AnnotationsOptions}
          */
-        this.options = merge(this.defaultOptions, userOptions);
+        this.setOptions(userOptions);
 
         /**
          * The user options for the annotations.
@@ -352,7 +358,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     public labelCollector!: Chart.LabelCollectorFunction;
     public labels: Array<ControllableLabelType>;
     public labelsGroup!: SVGElement;
-    public options: AnnotationOptions;
+    public options!: AnnotationOptions;
     public shapes: Array<ControllableShapeType>;
     public shapesGroup!: SVGElement;
     public userOptions: AnnotationOptions;
@@ -797,7 +803,12 @@ class Annotation extends EventEmitter implements ControlTarget {
      *        User options for an annotation
      */
     public setOptions(userOptions: AnnotationOptions): void {
-        this.options = merge(this.defaultOptions, userOptions);
+        this.options = merge(
+            this.defaultOptions,
+            // Get the static typeOptions from the class
+            (this.constructor as typeof Annotation).typeOptions,
+            userOptions
+        );
     }
 
     /**
@@ -896,6 +907,7 @@ interface Annotation extends ControlTarget {
 }
 
 Annotation.prototype.defaultOptions = AnnotationDefaults;
+defaultOptions.annotations = AnnotationDefaults;
 
 /**
  * List of events for `annotation.options.events` that should not be

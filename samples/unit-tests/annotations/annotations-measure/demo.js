@@ -1,4 +1,25 @@
 QUnit.test('General tests for measure annotation', function (assert) {
+    Highcharts.setOptions({
+        annotations: {
+            labelOptions: {
+                borderColor: 'green',
+                backgroundColor: 'green',
+                style: {
+                    color: 'green'
+                }
+            },
+            controlPointOptions: {
+                style: {
+                    fill: 'green',
+                    stroke: 'green'
+                }
+            },
+            shapeOptions: {
+                stroke: 'green',
+                fill: 'green'
+            }
+        }
+    });
     const chart = Highcharts.chart('container', {
         annotations: [{
             type: 'measure',
@@ -51,6 +72,15 @@ QUnit.test('General tests for measure annotation', function (assert) {
         4,
         'Bins should be calculated correctly.'
     );
+
+    assert.strictEqual(
+        chart.container.querySelector(
+            '.highcharts-annotation-shapes .highcharts-measure-crosshair-x'
+        ).getAttribute('fill'),
+        'green',
+        'Shape color should be set according to global options'
+    );
+
 });
 
 
