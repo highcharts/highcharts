@@ -153,8 +153,8 @@ class EditMode {
             // Create edit overlay.
             this.editOverlay = createElement(
                 'div', {
-                    className: EditGlobals.classNames.editOverlay
-                }, {},
+                className: EditGlobals.classNames.editOverlay
+            }, {},
                 board.container
             );
             this.isEditOverlayActive = false;
@@ -245,7 +245,7 @@ class EditMode {
     /**
      * @internal
      */
-    public mouseCellContext?: Cell|CellHTML;
+    public mouseCellContext?: Cell | CellHTML;
     /**
      * @internal
      */
@@ -253,11 +253,11 @@ class EditMode {
     /**
      * @internal
      */
-    public potentialCellContext?: Cell|CellHTML;
+    public potentialCellContext?: Cell | CellHTML;
     /**
      * @internal
      */
-    public editCellContext?: Cell|CellHTML;
+    public editCellContext?: Cell | CellHTML;
     /**
      * @internal
      */
@@ -372,6 +372,12 @@ class EditMode {
             }
         }
 
+        addEvent(document, 'keydown', (e: KeyboardEvent): void => {
+            if (e.key === 'Escape' && editMode.isActive()) {
+                editMode.hideToolbars(['cell', 'row']);
+            }
+        });
+
         if (editMode.cellToolbar) {
             // Stop context detection when mouse on cell toolbar.
             addEvent(
@@ -389,6 +395,7 @@ class EditMode {
                     editMode.isContextDetectionActive = true;
                 }
             );
+
         }
 
         if (editMode.rowToolbar) {
@@ -446,16 +453,16 @@ class EditMode {
         // Add container for the board.
         board.container = createElement(
             'div', {
-                className: Globals.classNames.boardContainer
-            }, {},
+            className: Globals.classNames.boardContainer
+        }, {},
             board.boardWrapper
         );
 
         // Create layouts wrapper.
         board.layoutsWrapper = createElement(
             'div', {
-                className: Globals.classNames.layoutsWrapper
-            }, {},
+            className: Globals.classNames.layoutsWrapper
+        }, {},
             board.container
         );
 
@@ -575,7 +582,7 @@ class EditMode {
      * Set events for the cell.
      * @internal
      */
-    public setCellEvents(cell: Cell|CellHTML): void {
+    public setCellEvents(cell: Cell | CellHTML): void {
         const editMode = this;
 
         if (CellHTML.isCellHTML(cell)) {
@@ -899,8 +906,8 @@ class EditMode {
             return;
         }
 
-        let cellContext: Cell|CellHTML|undefined;
-        let rowContext: Row|undefined;
+        let cellContext: Cell | CellHTML | undefined;
+        let rowContext: Row | undefined;
 
         if (editMode.mouseCellContext) {
             cellContext = editMode.mouseCellContext;
@@ -960,8 +967,8 @@ class EditMode {
      * @internal
      */
     public setEditCellContext(
-        editCellContext: Cell|CellHTML,
-        oldEditCellContext?: Cell|CellHTML
+        editCellContext: Cell | CellHTML,
+        oldEditCellContext?: Cell | CellHTML
     ): void {
         const editMode = this;
         const oldContext = oldEditCellContext;
