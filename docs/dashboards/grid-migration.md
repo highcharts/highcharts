@@ -27,7 +27,7 @@ Some API options have been renamed or removed. For the full list, make sure to c
         }
     },
     columnDefaults: {
-        cell: {
+        cells: {
             editable: true,
             events: {
                 afterRender: function () {
@@ -80,7 +80,6 @@ Some API options have been renamed or removed. For the full list, make sure to c
         className: 'custom-column-class-name',
         cells: {
             format: 'V:{value}';
-            }
         }
     }, {
         id: 'metaData',

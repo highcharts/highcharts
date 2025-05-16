@@ -87,7 +87,7 @@ columns: [{
       // callback
     }
   }
-  cell: {
+  cells: {
     events: {
       click: function () {
         // callback
