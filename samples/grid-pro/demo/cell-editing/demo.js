@@ -10,31 +10,23 @@ Grid.grid('container', {
             country: ['PL', 'NL', 'RO', 'EC']
         }
     },
-    events: {
-        cell: {
-            afterEdit: function () {
-                changelog.innerHTML +=
-                    `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
-                changelog.scrollTop = changelog.scrollHeight;
-            }
-        }
-    },
     columnDefaults: {
         cells: {
-            editable: true
+            editable: true,
+            events: {
+                afterRender: function () {
+                    changelog.innerHTML +=
+                        `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
+                    changelog.scrollTop = changelog.scrollHeight;
+                }
+            }
         }
     },
     columns: [{
         id: 'available',
         dataType: 'bool',
         rendering: {
-            type: 'checkbox',
-            events: {
-                change: function () {
-                    changelog.innerHTML +=
-                        `<strong>${this.column.id}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
-                }
-            }
+            type: 'checkbox'
         }
     }, {
         id: 'weight'
@@ -58,13 +50,7 @@ Grid.grid('container', {
                 { value: 'DE', label: 'Germany' },
                 { value: 'TR', label: 'Turkey' },
                 { value: 'BR', label: 'Brazil' }
-            ],
-            events: {
-                change: function () {
-                    changelog.innerHTML +=
-                        `<strong>${this.column.id}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
-                }
-            }
+            ]
         }
     }]
 });
