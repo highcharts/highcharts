@@ -204,10 +204,6 @@ class InfinityLine extends CrookedLine {
 interface InfinityLine {
     defaultOptions: CrookedLine['defaultOptions'];
 }
-InfinityLine.prototype.defaultOptions = merge(
-    CrookedLine.prototype.defaultOptions,
-    {}
-);
 
 /* *
  *

@@ -101,6 +101,89 @@ class TimeCycles extends CrookedLine {
 
     /* *
      *
+     *  Static Properties
+     *
+     * */
+    public static typeOptions = merge(
+        CrookedLine.typeOptions,
+        /**
+         * The TimeCycles Annotation
+         *
+         * @sample highcharts/annotations-advanced/time-cycles/
+         *         Time Cycles annotation
+         *
+         * @extends      annotations.crookedLine
+         * @product      highstock
+         * @exclude      labelOptions
+         * @optionparent annotations.timeCycles
+         */
+        {
+            typeOptions: {
+                /**
+                 * @exclude   y
+                 * @product   highstock
+                 * @apioption annotations.timeCycles.typeOptions.points
+                 */
+
+                controlPointOptions: [{
+                    positioner: function (
+                        this: ControlPoint,
+                        target: TimeCycles
+                    ): PositionObject {
+                        const point = target.points[0],
+                            position = target.anchor(point).absolutePosition;
+
+                        return {
+                            x: position.x - (this.graphic.width || 0) / 2,
+                            y: target.y - (this.graphic.height || 0)
+                        };
+                    },
+                    events: {
+                        drag: function (
+                            this: ControlPoint,
+                            e: AnnotationEventObject,
+                            target: TimeCycles
+                        ): void {
+                            const position = target.anchor(
+                                target.points[0]
+                            ).absolutePosition;
+                            target.translatePoint(e.chartX - position.x, 0, 0);
+                            target.redraw(false);
+                        }
+                    }
+                }, {
+                    positioner: function (
+                        this: ControlPoint,
+                        target: TimeCycles
+                    ): PositionObject {
+                        const point = target.points[1],
+                            position = target.anchor(point).absolutePosition;
+
+                        return {
+                            x: position.x - (this.graphic.width || 0) / 2,
+                            y: target.y - (this.graphic.height || 0)
+                        };
+                    },
+                    events: {
+                        drag: function (
+                            this: ControlPoint,
+                            e: AnnotationEventObject,
+                            target: TimeCycles
+                        ): void {
+                            const position = target.anchor(
+                                target.points[1]
+                            ).absolutePosition;
+                            target.translatePoint(e.chartX - position.x, 0, 1);
+                            target.redraw(false);
+                        }
+                    }
+                }]
+            }
+        }
+    );
+
+    /* *
+     *
      *  Functions
      *
      * */
@@ -247,84 +330,6 @@ interface TimeCycles {
     numberOfCircles: number;
     y: number;
 }
-
-TimeCycles.prototype.defaultOptions = merge(
-    CrookedLine.prototype.defaultOptions,
-    /**
-     * The TimeCycles Annotation
-     *
-     * @sample highcharts/annotations-advanced/time-cycles/
-     *         Time Cycles annotation
-     *
-     * @extends      annotations.crookedLine
-     * @product      highstock
-     * @exclude      labelOptions
-     * @optionparent annotations.timeCycles
-     */
-    {
-        typeOptions: {
-            /**
-             * @exclude   y
-             * @product   highstock
-             * @apioption annotations.timeCycles.typeOptions.points
-             */
-
-            controlPointOptions: [{
-                positioner: function (
-                    this: ControlPoint,
-                    target: TimeCycles
-                ): PositionObject {
-                    const point = target.points[0],
-                        position = target.anchor(point).absolutePosition;
-
-                    return {
-                        x: position.x - (this.graphic.width || 0) / 2,
-                        y: target.y - (this.graphic.height || 0)
-                    };
-                },
-                events: {
-                    drag: function (
-                        this: ControlPoint,
-                        e: AnnotationEventObject,
-                        target: TimeCycles
-                    ): void {
-                        const position = target.anchor(
-                            target.points[0]
-                        ).absolutePosition;
-                        target.translatePoint(e.chartX - position.x, 0, 0);
-                        target.redraw(false);
-                    }
-                }
-            }, {
-                positioner: function (
-                    this: ControlPoint,
-                    target: TimeCycles
-                ): PositionObject {
-                    const point = target.points[1],
-                        position = target.anchor(point).absolutePosition;
-
-                    return {
-                        x: position.x - (this.graphic.width || 0) / 2,
-                        y: target.y - (this.graphic.height || 0)
-                    };
-                },
-                events: {
-                    drag: function (
-                        this: ControlPoint,
-                        e: AnnotationEventObject,
-                        target: TimeCycles
-                    ): void {
-                        const position = target.anchor(
-                            target.points[1]
-                        ).absolutePosition;
-                        target.translatePoint(e.chartX - position.x, 0, 1);
-                        target.redraw(false);
-                    }
-                }
-            }]
-        }
-    }
-);
 
 /* *
  *

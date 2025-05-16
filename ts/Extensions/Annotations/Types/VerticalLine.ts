@@ -46,6 +46,58 @@ class VerticalLine extends Annotation {
      *
      * */
 
+    /**
+     * A vertical line annotation.
+     *
+     * @sample highcharts/annotations-advanced/vertical-line/
+     *         Vertical line
+     *
+     * @extends      annotations.crookedLine
+     * @excluding    labels, shapes, controlPointOptions
+     * @product      highstock
+     * @optionparent annotations.verticalLine
+     */
+    public static typeOptions = {
+        typeOptions: {
+            /**
+             * @ignore
+             */
+            yOffset: 10,
+
+            /**
+             * Label options.
+             *
+             * @extends annotations.crookedLine.labelOptions
+             */
+            label: {
+                offset: -40,
+                point: function (
+                    target: Controllable
+                ): AnnotationPointType {
+                    return target.annotation.points[0];
+                } as any,
+                allowOverlap: true,
+                backgroundColor: 'none',
+                borderWidth: 0,
+                crop: true,
+                overflow: 'none' as any,
+                shape: 'rect',
+                text: '{y:.2f}'
+            },
+
+            /**
+             * Connector options.
+             *
+             * @extends   annotations.crookedLine.shapeOptions
+             * @excluding height, r, type, width
+             */
+            connector: {
+                strokeWidth: 1,
+                markerEnd: 'arrow'
+            }
+        } as any
+    };
+
     public static connectorFirstPoint(
         target: Controllable
     ): MockPointOptions {
@@ -160,61 +212,6 @@ interface VerticalLine {
     defaultOptions: Annotation['defaultOptions'];
     options: VerticalLine.Options;
 }
-
-VerticalLine.prototype.defaultOptions = merge(
-    Annotation.prototype.defaultOptions,
-    /**
-     * A vertical line annotation.
-     *
-     * @sample highcharts/annotations-advanced/vertical-line/
-     *         Vertical line
-     *
-     * @extends      annotations.crookedLine
-     * @excluding    labels, shapes, controlPointOptions
-     * @product      highstock
-     * @optionparent annotations.verticalLine
-     */
-    {
-        typeOptions: {
-            /**
-             * @ignore
-             */
-            yOffset: 10,
-
-            /**
-             * Label options.
-             *
-             * @extends annotations.crookedLine.labelOptions
-             */
-            label: {
-                offset: -40,
-                point: function (
-                    target: Controllable
-                ): AnnotationPointType {
-                    return target.annotation.points[0];
-                } as any,
-                allowOverlap: true,
-                backgroundColor: 'none',
-                borderWidth: 0,
-                crop: true,
-                overflow: 'none' as any,
-                shape: 'rect',
-                text: '{y:.2f}'
-            },
-
-            /**
-             * Connector options.
-             *
-             * @extends   annotations.crookedLine.shapeOptions
-             * @excluding height, r, type, width
-             */
-            connector: {
-                strokeWidth: 1,
-                markerEnd: 'arrow'
-            }
-        }
-    }
-);
 
 /* *
  *
