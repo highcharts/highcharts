@@ -66,6 +66,26 @@ describe('Grid Pro - events.', () => {
         cy.get('#cellAfterRender').should('have.value', '3');
     });
 
+    it('Cell afterEdit event', () => {
+        // ColumnDefaults
+        cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]')
+            .dblclick({force: true})
+            .find('input')
+            .clear()
+            .type('Strawberries');
+
+        cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
+
+        // ColumnOptions
+        cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="weight"]')
+            .dblclick({force: true})
+            .find('input')
+            .clear()
+            .type('4');
+
+        cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
+    });
+
     it('AfterSorting column event.', () => {
         // ColumnDefaults
         cy.get('th[data-column-id="product"]').click();

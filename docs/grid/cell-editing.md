@@ -26,15 +26,15 @@ columns: [
 
 In the example above cell editing is enabled for ALL columns, expect the `firstName` column. The reverse can be achived by not setting `columnDefaults` and `columns[].cells.editable: true` instead.
 
-## The afterRender event
+## The afterEdit event
 
-The `afterRender` event is called after a cell value is edited, and can be used to e.g. post result to server, generate feedback GUI etc:
+The `afterEdit` event is called after a cell value is edited, and can be used to e.g. post result to server, generate feedback GUI etc:
 
 ```js
 columnDefaults: {
   cells: {
     events: {
-      afterRender: function () {
+      afterEdit: function () {
         console.log(`${this.column.id} for ${this.row.data.firstName} was updated to ${this.value}`);
       }
     }

@@ -14,7 +14,8 @@ The available events are:
 
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
-| `afterRender`      | Triggered after setting a cell's value (init/edit).      | `this: Cell`          |
+| `afterEdit`        | Triggered after a cell's value is edited.                | `this: Cell`          |
+| `afterRender`      | Triggered after setting a cell's value (init/edit)       | `this: Cell`          |
 | `afterSetValue`    | Deprecated. Use `afterRender` instead.                   | `this: Cell`          |
 | `click`            | Triggered after clicking on a cell.                      | `this: Cell`          |
 | `dblClick`         | Triggered after double-clicking on a cell.               | `this: Cell`          |
@@ -50,8 +51,11 @@ columnDefaults: {
   },
   cells: {
     events: {
-      afterRender: function () {
+      afterEdit: function () {
         console.log('Cell value set:', this);
+      },
+      afterRender: function () {
+        console.log('Cell value:', this);
       },
       click: function () {
         console.log('Cell clicked:', this);

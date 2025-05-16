@@ -30,6 +30,9 @@ Some API options have been renamed or removed. For the full list, make sure to c
         cells: {
             editable: true,
             events: {
+                afterEdit: function () {
+                    // Callback action
+                },
                 afterRender: function () {
                     // Callback action
                 },
