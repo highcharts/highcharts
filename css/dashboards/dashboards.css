@@ -511,6 +511,7 @@
     justify-content: space-around;
     display: flex;
     min-width: 100px;
+    gap: 8px;
 }
 
 .highcharts-dashboards-edit-toggle-wrapper,
