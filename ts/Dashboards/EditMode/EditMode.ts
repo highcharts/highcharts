@@ -153,8 +153,8 @@ class EditMode {
             // Create edit overlay.
             this.editOverlay = createElement(
                 'div', {
-                className: EditGlobals.classNames.editOverlay
-            }, {},
+                    className: EditGlobals.classNames.editOverlay
+                }, {},
                 board.container
             );
             this.isEditOverlayActive = false;
@@ -453,16 +453,16 @@ class EditMode {
         // Add container for the board.
         board.container = createElement(
             'div', {
-            className: Globals.classNames.boardContainer
-        }, {},
+                className: Globals.classNames.boardContainer
+            }, {},
             board.boardWrapper
         );
 
         // Create layouts wrapper.
         board.layoutsWrapper = createElement(
             'div', {
-            className: Globals.classNames.layoutsWrapper
-        }, {},
+                className: Globals.classNames.layoutsWrapper
+            }, {},
             board.container
         );
 
