@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import HeatmapModule from 'highcharts/modules/heatmap';
-
-HeatmapModule(Highcharts);
+import 'highcharts/modules/heatmap';
 
 test();
 

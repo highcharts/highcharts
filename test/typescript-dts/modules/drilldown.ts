@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import DrilldownModule from 'highcharts/modules/drilldown';
-
-DrilldownModule(Highcharts);
+import 'highcharts/modules/drilldown';
 
 test_drillUp();
 test_labelStyling();

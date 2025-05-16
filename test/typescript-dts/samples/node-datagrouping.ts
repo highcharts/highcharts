@@ -11,9 +11,7 @@
  */
 
 import * as Highcharts from "highcharts/highstock.src";
-import DataGrouping from 'highcharts/modules/datagrouping.src';
-
-DataGrouping(Highcharts);
+import 'highcharts/modules/datagrouping.src';
 
 // Generate some random, high-resolution data. This function emulates raw data
 // with an hourly resolution that we want to group into days.
