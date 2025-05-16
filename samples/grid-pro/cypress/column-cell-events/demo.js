@@ -33,6 +33,9 @@ Grid.grid('container', {
                 mouseOut: function () {
                     doc.getElementById('cellMouseOut').value = 'cellMouseOut';
                 },
+                afterEdit: function () {
+                    doc.getElementById('cellAfterEdit').value = 'cellAfterEdit';
+                },
                 afterRender: function () {
                     if (this.row.index !== 1 || this.column.id !== 'weight') {
                         return;
@@ -122,7 +125,7 @@ Grid.grid('container', {
                 if (this.row.index !== 1 || this.column.id !== 'weight') {
                     return;
                 }
-                const el = doc.getElementById('cellafterRender');
+                const el = doc.getElementById('cellAfterRender');
                 console.log(this.row.index, this.column.id);
                 const counter = +el.value;
                 el.value = counter + 1;
