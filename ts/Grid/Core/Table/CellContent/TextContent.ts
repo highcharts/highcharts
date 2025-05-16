@@ -127,7 +127,7 @@ namespace TextContent {
     export const defaultFormatsForDataTypes: Record<Column.DataType, string> = {
         string: '{value}',
         number: '{value}',
-        boolean: '{#if (eq value null)}{else}{#if value}✓{else}✗{/if}{/if}',
+        boolean: '{value}',
         date: '{value:%Y-%m-%d %H:%M:%S}'
     };
 }

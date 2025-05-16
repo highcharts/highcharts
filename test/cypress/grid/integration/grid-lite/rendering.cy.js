@@ -6,13 +6,13 @@ describe('Rendering types.', () => {
     it('Boolean sign only.', () => {
         cy.get('tr[data-row-index="0"] td[data-column-id="booleans"]').eq(0)
             .should('be.visible')
-            .contains('✓')
+            .contains('true')
             .find('input[type="checkbox"]')
             .should('not.exist');
 
         cy.get('tr[data-row-index="1"] td[data-column-id="booleans"]').eq(0)
             .should('be.visible')
-            .contains('✗')
+            .contains('false')
             .find('input[type="checkbox"]')
             .should('not.exist');
     });
