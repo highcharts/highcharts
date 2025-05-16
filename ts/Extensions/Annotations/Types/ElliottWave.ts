@@ -30,6 +30,54 @@ const { merge } = U;
 
 class ElliottWave extends CrookedLine {
 
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    public static typeOptions = merge(
+        CrookedLine.typeOptions,
+        /**
+         * An elliott wave annotation.
+         *
+         * @sample highcharts/annotations-advanced/elliott-wave/
+         *         Elliott wave
+         *
+         * @extends      annotations.crookedLine
+         * @product      highstock
+         * @optionparent annotations.elliottWave
+         */
+        {
+            typeOptions: {
+
+                /**
+                 * @extends   annotations.crookedLine.labelOptions
+                 * @apioption annotations.elliottWave.typeOptions.points.label
+                 */
+
+                /**
+                 * @ignore-option
+                 */
+                labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
+                line: {
+                    strokeWidth: 1
+                }
+            },
+
+            labelOptions: {
+                align: 'center',
+                allowOverlap: true,
+                crop: true,
+                overflow: 'none' as any,
+                type: 'rect',
+                backgroundColor: 'none',
+                borderWidth: 0,
+                y: -5
+            } as any
+        }
+    );
+
     /* *
      *
      * Functions
@@ -62,50 +110,8 @@ class ElliottWave extends CrookedLine {
  * */
 
 interface ElliottWave {
-    defaultOptions: CrookedLine['defaultOptions'];
+
 }
-
-ElliottWave.prototype.defaultOptions = merge(
-    CrookedLine.prototype.defaultOptions,
-    /**
-     * An elliott wave annotation.
-     *
-     * @sample highcharts/annotations-advanced/elliott-wave/
-     *         Elliott wave
-     *
-     * @extends      annotations.crookedLine
-     * @product      highstock
-     * @optionparent annotations.elliottWave
-     */
-    {
-        typeOptions: {
-
-            /**
-             * @extends   annotations.crookedLine.labelOptions
-             * @apioption annotations.elliottWave.typeOptions.points.label
-             */
-
-            /**
-             * @ignore-option
-             */
-            labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
-            line: {
-                strokeWidth: 1
-            }
-        },
-
-        labelOptions: {
-            align: 'center',
-            allowOverlap: true,
-            crop: true,
-            overflow: 'none' as any,
-            type: 'rect',
-            backgroundColor: 'none',
-            borderWidth: 0,
-            y: -5
-        }
-    }
-);
 
 /* *
  *

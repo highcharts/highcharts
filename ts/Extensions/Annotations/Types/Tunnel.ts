@@ -52,6 +52,130 @@ class Tunnel extends CrookedLine {
 
     /* *
      *
+     *  Static Properties
+     *
+     * */
+    public static typeOptions = merge(
+        CrookedLine.typeOptions,
+        /**
+         * A tunnel annotation.
+         *
+         * @extends annotations.crookedLine
+         * @sample highcharts/annotations-advanced/tunnel/
+         *         Tunnel
+         * @product highstock
+         * @optionparent annotations.tunnel
+         */
+        {
+            typeOptions: {
+                /**
+                 * Background options.
+                 *
+                 * @type {Object}
+                 * @excluding height, point, points, r, type, width, markerEnd,
+                 *            markerStart
+                 */
+                background: {
+                    fill: 'rgba(130, 170, 255, 0.4)',
+                    strokeWidth: 0
+                },
+                line: {
+                    strokeWidth: 1
+                },
+                /**
+                 * The height of the annotation in terms of yAxis.
+                 */
+                height: -2,
+
+
+                /**
+                 * Options for the control point which controls
+                 * the annotation's height.
+                 *
+                 * @extends annotations.crookedLine.controlPointOptions
+                 * @excluding positioner, events
+                 */
+                heightControlPoint: {
+                    positioner: function (
+                        this: ControlPoint,
+                        target: Controllable
+                    ): PositionObject {
+                        const startXY = MockPoint.pointToPixels(
+                                target.points[2]
+                            ),
+                            endXY = MockPoint.pointToPixels(target.points[3]),
+                            x = (startXY.x + endXY.x) / 2;
+
+                        return {
+                            x: x - (this.graphic.width || 0) / 2,
+                            y: getSecondCoordinate(startXY, endXY, x) -
+                            (this.graphic.height || 0) / 2
+                        };
+                    },
+                    events: {
+                        drag: function (
+                            this: Tunnel,
+                            e: AnnotationEventObject,
+                            target: Tunnel
+                        ): void {
+                            if (
+                                target.chart.isInsidePlot(
+                                    e.chartX - target.chart.plotLeft,
+                                    e.chartY - target.chart.plotTop,
+                                    {
+                                        visiblePlotOnly: true
+                                    }
+                                )
+                            ) {
+                                target.translateHeight(
+                                    this.mouseMoveToTranslation(e).y
+                                );
+
+                                target.redraw(false);
+                            }
+                        }
+                    }
+                }
+            },
+
+            /**
+             * @extends annotations.crookedLine.controlPointOptions
+             * @excluding positioner, events
+             */
+            controlPointOptions: {
+                events: {
+                    drag: function (
+                        this: Tunnel,
+                        e: AnnotationEventObject,
+                        target: Tunnel
+                    ): void {
+                        if (
+                            target.chart.isInsidePlot(
+                                e.chartX - target.chart.plotLeft,
+                                e.chartY - target.chart.plotTop,
+                                {
+                                    visiblePlotOnly: true
+                                }
+                            )
+                        ) {
+                            const translation = this.mouseMoveToTranslation(e);
+
+                            target.translateSide(
+                                translation.x,
+                                translation.y,
+                                !!this.index
+                            );
+
+                            target.redraw(false);
+                        }
+                    }
+                }
+            }
+        }
+    );
+
+    /* *
+     *
      * Functions
      *
      * */
@@ -208,123 +332,6 @@ class Tunnel extends CrookedLine {
 interface Tunnel {
     defaultOptions: CrookedLine['defaultOptions'];
 }
-
-Tunnel.prototype.defaultOptions = merge(
-    CrookedLine.prototype.defaultOptions,
-    /**
-     * A tunnel annotation.
-     *
-     * @extends annotations.crookedLine
-     * @sample highcharts/annotations-advanced/tunnel/
-     *         Tunnel
-     * @product highstock
-     * @optionparent annotations.tunnel
-     */
-    {
-        typeOptions: {
-            /**
-             * Background options.
-             *
-             * @type {Object}
-             * @excluding height, point, points, r, type, width, markerEnd,
-             *            markerStart
-             */
-            background: {
-                fill: 'rgba(130, 170, 255, 0.4)',
-                strokeWidth: 0
-            },
-            line: {
-                strokeWidth: 1
-            },
-            /**
-             * The height of the annotation in terms of yAxis.
-             */
-            height: -2,
-
-
-            /**
-             * Options for the control point which controls
-             * the annotation's height.
-             *
-             * @extends annotations.crookedLine.controlPointOptions
-             * @excluding positioner, events
-             */
-            heightControlPoint: {
-                positioner: function (
-                    this: ControlPoint,
-                    target: Controllable
-                ): PositionObject {
-                    const startXY = MockPoint.pointToPixels(target.points[2]),
-                        endXY = MockPoint.pointToPixels(target.points[3]),
-                        x = (startXY.x + endXY.x) / 2;
-
-                    return {
-                        x: x - (this.graphic.width || 0) / 2,
-                        y: getSecondCoordinate(startXY, endXY, x) -
-                        (this.graphic.height || 0) / 2
-                    };
-                },
-                events: {
-                    drag: function (
-                        this: Tunnel,
-                        e: AnnotationEventObject,
-                        target: Tunnel
-                    ): void {
-                        if (
-                            target.chart.isInsidePlot(
-                                e.chartX - target.chart.plotLeft,
-                                e.chartY - target.chart.plotTop,
-                                {
-                                    visiblePlotOnly: true
-                                }
-                            )
-                        ) {
-                            target.translateHeight(
-                                this.mouseMoveToTranslation(e).y
-                            );
-
-                            target.redraw(false);
-                        }
-                    }
-                }
-            }
-        },
-
-        /**
-         * @extends annotations.crookedLine.controlPointOptions
-         * @excluding positioner, events
-         */
-        controlPointOptions: {
-            events: {
-                drag: function (
-                    this: Tunnel,
-                    e: AnnotationEventObject,
-                    target: Tunnel
-                ): void {
-                    if (
-                        target.chart.isInsidePlot(
-                            e.chartX - target.chart.plotLeft,
-                            e.chartY - target.chart.plotTop,
-                            {
-                                visiblePlotOnly: true
-                            }
-                        )
-                    ) {
-                        const translation = this.mouseMoveToTranslation(e);
-
-                        target.translateSide(
-                            translation.x,
-                            translation.y,
-                            !!this.index
-                        );
-
-                        target.redraw(false);
-                    }
-                }
-            }
-        }
-    }
-);
 
 /* *
  *
