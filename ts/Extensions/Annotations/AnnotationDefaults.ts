@@ -34,8 +34,10 @@ const { defined } = U;
  * @sample highcharts/demo/annotations/ Annotated chart
  * @sample highcharts/css/annotations Styled mode
  * @sample highcharts/annotations-advanced/controllable Controllable items
- * @sample {highstock} stock/annotations/fibonacci-retracements Custom
- *         annotation, Fibonacci retracement
+ * @sample {highstock} stock/annotations/fibonacci-retracements
+ *         Custom annotation, Fibonacci retracement
+ * @sample highcharts/annotations/shape/
+ *         Themed crooked line annotation
  *
  * @type         {Array<*>}
  * @since        6.0.0
@@ -52,6 +54,18 @@ const AnnotationDefaults: AnnotationOptions = {
      *
      * @type      {number|string}
      * @apioption annotations.id
+     */
+
+    /**
+     * For advanced annotations, this option defines the type of annotation. Can
+     * be one of the keys listed under the
+     * [types option](https://api.highcharts.com/highstock/annotations.type).
+     *
+     * @sample    highcharts/annotations-advanced/crooked-line
+     *            Crooked line annotation
+     * @requires  modules/annotations-advanced
+     * @type      {string}
+     * @apioption annotations.type
      */
 
     /**
@@ -706,9 +720,12 @@ const AnnotationDefaults: AnnotationOptions = {
     events: {},
 
     /**
-     * Options for specific advanced annotation types.
+     * Option override for specific advanced annotation types. This collection
+     * is intended for general theming using `Highcharts.setOptions()`.
      *
-     * @requires modules/annotations
+     * @sample   highcharts/annotations/shape/
+     *           Themed crooked line annotation
+     * @requires modules/annotations-advanced
      */
     types: {},
 
