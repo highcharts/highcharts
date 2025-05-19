@@ -2241,7 +2241,7 @@ class Exporting {
 
         Exporting.printingChart = chart;
         if (!isSafari) {
-            Exporting.printingChart.exporting?.beforePrint();
+            this.beforePrint();
         }
 
         // Give the browser time to draw WebGL content, an issue that randomly
