@@ -21,42 +21,15 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* *
- *
- *  Functions
- *
- * */
-
-/**
- * @private
- */
-function getSecondCoordinate(
-    p1: PositionObject,
-    p2: PositionObject,
-    x: number
-): number {
-    return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
-}
-
-/* *
- *
- *  Class
- *
- * */
-
-class Tunnel extends CrookedLine {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-    public static typeOptions = merge(
-        CrookedLine.typeOptions,
+if (defaultOptions.annotations) {
+    defaultOptions.annotations.types.tunnel = merge(
+        defaultOptions.annotations.types.crookedLine,
         /**
          * A tunnel annotation.
          *
@@ -64,7 +37,7 @@ class Tunnel extends CrookedLine {
          * @sample highcharts/annotations-advanced/tunnel/
          *         Tunnel
          * @product highstock
-         * @optionparent annotations.tunnel
+         * @optionparent annotations.types.tunnel
          */
         {
             typeOptions: {
@@ -173,6 +146,32 @@ class Tunnel extends CrookedLine {
             }
         }
     );
+}
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function getSecondCoordinate(
+    p1: PositionObject,
+    p2: PositionObject,
+    x: number
+): number {
+    return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class Tunnel extends CrookedLine {
 
     /* *
      *

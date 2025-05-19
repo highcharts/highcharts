@@ -22,6 +22,8 @@ import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -41,81 +43,19 @@ interface TimeCyclesOptions extends CrookedLine.Options {
     yAxis: number;
 }
 
-/* *
- *
- *  Functions
- *
- * */
-
-/**
- * Function to create start of the path.
- * @param {number} x x position of the TimeCycles
- * @param {number} y y position of the TimeCycles
- * @return {string} path
- */
-function getStartingPath(x: number, y: number): SVGPath.MoveTo {
-    return ['M', x, y];
-}
-
-/**
- * Function which generates the path of the halfcircle.
- *
- * @param {number} pixelInterval diameter of the circle in pixels
- * @param {number} numberOfCircles number of cricles
- * @param {number} startX x position of the first circle
- * @param {number} y y position of the bottom of the timeCycles
- * @return {string} path
- *
- */
-function getCirclePath(
-    pixelInterval: number,
-    numberOfCircles: number,
-    startX: number,
-    y: number
-): Array<SVGPath.Arc> {
-    const path: Array<SVGPath.Arc> = [];
-
-    for (let i = 1; i <= numberOfCircles; i++) {
-        path.push([
-            'A',
-            pixelInterval / 2,
-            pixelInterval / 2,
-            0,
-            1,
-            1,
-            startX + i * pixelInterval,
-            y
-        ]);
-    }
-
-    return path;
-}
-
-/* *
- *
- *  Class
- *
- * */
-
-class TimeCycles extends CrookedLine {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-    public static typeOptions = merge(
-        CrookedLine.typeOptions,
+if (defaultOptions.annotations) {
+    defaultOptions.annotations.types.timeCycles = merge(
+        defaultOptions.annotations.types.crookedLine,
         /**
          * The TimeCycles Annotation
          *
          * @sample highcharts/annotations-advanced/time-cycles/
          *         Time Cycles annotation
          *
-         * @extends      annotations.crookedLine
+         * @extends      annotations.types.crookedLine
          * @product      highstock
          * @exclude      labelOptions
-         * @optionparent annotations.timeCycles
+         * @optionparent annotations.types.timeCycles
          */
         {
             typeOptions: {
@@ -181,6 +121,65 @@ class TimeCycles extends CrookedLine {
             }
         }
     );
+}
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Function to create start of the path.
+ * @param {number} x x position of the TimeCycles
+ * @param {number} y y position of the TimeCycles
+ * @return {string} path
+ */
+function getStartingPath(x: number, y: number): SVGPath.MoveTo {
+    return ['M', x, y];
+}
+
+/**
+ * Function which generates the path of the halfcircle.
+ *
+ * @param {number} pixelInterval diameter of the circle in pixels
+ * @param {number} numberOfCircles number of cricles
+ * @param {number} startX x position of the first circle
+ * @param {number} y y position of the bottom of the timeCycles
+ * @return {string} path
+ *
+ */
+function getCirclePath(
+    pixelInterval: number,
+    numberOfCircles: number,
+    startX: number,
+    y: number
+): Array<SVGPath.Arc> {
+    const path: Array<SVGPath.Arc> = [];
+
+    for (let i = 1; i <= numberOfCircles; i++) {
+        path.push([
+            'A',
+            pixelInterval / 2,
+            pixelInterval / 2,
+            0,
+            1,
+            1,
+            startX + i * pixelInterval,
+            y
+        ]);
+    }
+
+    return path;
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class TimeCycles extends CrookedLine {
 
     /* *
      *

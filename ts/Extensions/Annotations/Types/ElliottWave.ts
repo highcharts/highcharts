@@ -19,34 +19,23 @@ import type ColorType from '../../../Core/Color/ColorType';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* *
- *
- *  Class
- *
- * */
-
-class ElliottWave extends CrookedLine {
-
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-    public static typeOptions = merge(
-        CrookedLine.typeOptions,
+if (defaultOptions.annotations) {
+    defaultOptions.annotations.types.elliottWave = merge(
+        defaultOptions.annotations.types.crookedLine,
         /**
          * An elliott wave annotation.
          *
          * @sample highcharts/annotations-advanced/elliott-wave/
          *         Elliott wave
          *
-         * @extends      annotations.crookedLine
+         * @extends      annotations.types.crookedLine
          * @product      highstock
-         * @optionparent annotations.elliottWave
+         * @optionparent annotations.types.elliottWave
          */
         {
             typeOptions: {
@@ -77,6 +66,15 @@ class ElliottWave extends CrookedLine {
             } as any
         }
     );
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class ElliottWave extends CrookedLine {
 
     /* *
      *

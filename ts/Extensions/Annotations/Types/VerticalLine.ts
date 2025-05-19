@@ -25,6 +25,8 @@ import type {
 import type MockPointOptions from '../MockPointOptions';
 
 import Annotation from '../Annotation.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -32,32 +34,19 @@ const {
     pick
 } = U;
 
-/* *
- *
- *  Class
- *
- * */
-
-class VerticalLine extends Annotation {
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
+if (defaultOptions.annotations) {
     /**
      * A vertical line annotation.
      *
      * @sample highcharts/annotations-advanced/vertical-line/
      *         Vertical line
      *
-     * @extends      annotations.crookedLine
+     * @extends      annotations.types.crookedLine
      * @excluding    labels, shapes, controlPointOptions
      * @product      highstock
-     * @optionparent annotations.verticalLine
+     * @optionparent annotations.types.verticalLine
      */
-    public static typeOptions = {
+    defaultOptions.annotations.types.verticalLine = {
         typeOptions: {
             /**
              * @ignore
@@ -97,6 +86,15 @@ class VerticalLine extends Annotation {
             }
         } as any
     };
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class VerticalLine extends Annotation {
 
     public static connectorFirstPoint(
         target: Controllable

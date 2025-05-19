@@ -19,86 +19,26 @@ import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import { Palette } from '../../../Core/Color/Palettes.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* *
- *
- *  Functions
- *
- * */
-
-/**
- * @private
- */
-function createPathDGenerator(
-    retracementIndex: number,
-    isBackground?: boolean
-): Function {
-    return function (this: Controllable): SVGPath {
-        const annotation = this.annotation as Fibonacci;
-
-        if (!annotation.startRetracements || !annotation.endRetracements) {
-            return [];
-        }
-        const leftTop = this.anchor(
-                annotation.startRetracements[retracementIndex]
-            ).absolutePosition,
-            rightTop = this.anchor(
-                annotation.endRetracements[retracementIndex]
-            ).absolutePosition,
-            d: SVGPath = [
-                ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
-                ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
-            ];
-
-        if (isBackground) {
-            const rightBottom = this.anchor(
-                annotation.endRetracements[retracementIndex - 1]
-            ).absolutePosition;
-
-            const leftBottom = this.anchor(
-                annotation.startRetracements[retracementIndex - 1]
-            ).absolutePosition;
-
-            d.push(
-                ['L', Math.round(rightBottom.x), Math.round(rightBottom.y)],
-                ['L', Math.round(leftBottom.x), Math.round(leftBottom.y)]
-            );
-        }
-
-        return d;
-    };
-}
-
-/* *
- *
- *  Class
- *
- * */
-
-class Fibonacci extends Tunnel {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    public static typeOptions = merge(
-        Tunnel.typeOptions,
+if (defaultOptions.annotations) {
+    defaultOptions.annotations.types.fibonacci = merge(
+        defaultOptions.annotations.types.tunnel,
         /**
          * A fibonacci annotation.
          *
          * @sample highcharts/annotations-advanced/fibonacci/
          *         Fibonacci
          *
-         * @extends      annotations.crookedLine
+         * @extends      annotations.types.crookedLine
          * @product      highstock
-         * @optionparent annotations.fibonacci
+         * @optionparent annotations.types.fibonacci
          */
         {
             typeOptions: {
@@ -171,13 +111,76 @@ class Fibonacci extends Tunnel {
                 overflow: 'none' as any,
                 shape: 'rect',
                 style: {
-                    color: 'grey'
+                    color: Palette.neutralColor60
                 },
                 verticalAlign: 'middle',
                 y: 0
             } as any
         }
     );
+}
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function createPathDGenerator(
+    retracementIndex: number,
+    isBackground?: boolean
+): Function {
+    return function (this: Controllable): SVGPath {
+        const annotation = this.annotation as Fibonacci;
+
+        if (!annotation.startRetracements || !annotation.endRetracements) {
+            return [];
+        }
+        const leftTop = this.anchor(
+                annotation.startRetracements[retracementIndex]
+            ).absolutePosition,
+            rightTop = this.anchor(
+                annotation.endRetracements[retracementIndex]
+            ).absolutePosition,
+            d: SVGPath = [
+                ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
+                ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
+            ];
+
+        if (isBackground) {
+            const rightBottom = this.anchor(
+                annotation.endRetracements[retracementIndex - 1]
+            ).absolutePosition;
+
+            const leftBottom = this.anchor(
+                annotation.startRetracements[retracementIndex - 1]
+            ).absolutePosition;
+
+            d.push(
+                ['L', Math.round(rightBottom.x), Math.round(rightBottom.y)],
+                ['L', Math.round(leftBottom.x), Math.round(leftBottom.y)]
+            );
+        }
+
+        return d;
+    };
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class Fibonacci extends Tunnel {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     public static levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
 

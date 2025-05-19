@@ -18,36 +18,25 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../MockPointOptions';
 
 import Annotation from '../Annotation.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* *
- *
- *  Class
- *
- * */
-
-class Pitchfork extends InfinityLine {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    public static typeOptions = merge(
-        InfinityLine.typeOptions,
+if (defaultOptions.annotations) {
+    defaultOptions.annotations.types.pitchfork = merge(
+        defaultOptions.annotations.types.infinityLine,
         /**
          * A pitchfork annotation.
          *
          * @sample highcharts/annotations-advanced/pitchfork/
          *         Pitchfork
          *
-         * @extends      annotations.infinityLine
+         * @extends      annotations.types.infinityLine
          * @product      highstock
-         * @optionparent annotations.pitchfork
+         * @optionparent annotations.types.pitchfork
          */
         {
             typeOptions: {
@@ -74,6 +63,15 @@ class Pitchfork extends InfinityLine {
             }
         }
     );
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class Pitchfork extends InfinityLine {
 
     public static topLineEdgePoint = Pitchfork.outerLineEdgePoint(1);
     public static bottomLineEdgePoint = Pitchfork.outerLineEdgePoint(0);

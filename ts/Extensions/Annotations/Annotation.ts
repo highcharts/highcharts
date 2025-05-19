@@ -167,13 +167,6 @@ function getLabelsAndShapesOptions(
  */
 class Annotation extends EventEmitter implements ControlTarget {
 
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-    public static typeOptions: DeepPartial<Annotation['userOptions']> = {};
-
     /**
      * @private
      */
@@ -804,9 +797,13 @@ class Annotation extends EventEmitter implements ControlTarget {
      */
     public setOptions(userOptions: AnnotationOptions): void {
         this.options = merge(
+            // Shared for all annotation types
             this.defaultOptions,
-            // Get the static typeOptions from the class
-            (this.constructor as typeof Annotation).typeOptions,
+            // The static typeOptions from the class
+            (
+                userOptions.type &&
+                this.defaultOptions.types[userOptions.type]
+            ) || {},
             userOptions
         );
     }

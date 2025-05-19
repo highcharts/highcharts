@@ -703,11 +703,18 @@ const AnnotationDefaults: AnnotationOptions = {
     events: {},
 
     /**
+     * Options for specific advanced annotation types.
+     *
+     * @requires modules/annotations
+     */
+    types: {},
+
+    /**
      * The Z index of the annotation.
      */
     zIndex: 6
 
-} as AnnotationOptions; // Type options are expected but not set
+} as AnnotationOptions;
 
 /* *
  *

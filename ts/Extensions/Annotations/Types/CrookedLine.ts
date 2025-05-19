@@ -25,22 +25,13 @@ import type MockPointOptions from '../MockPointOptions';
 
 import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* *
- *
- *  Class
- *
- * */
-
-class CrookedLine extends Annotation {
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
+if (defaultOptions.annotations) {
     /**
     * A crooked line annotation.
     *
@@ -48,9 +39,9 @@ class CrookedLine extends Annotation {
     *         Crooked line
     *
     * @product      highstock
-    * @optionparent annotations.crookedLine
+    * @optionparent annotations.types.crookedLine
     */
-    public static typeOptions = {
+    defaultOptions.annotations.types.crookedLine = {
         /**
          * @extends   annotations.labelOptions
          * @apioption annotations.crookedLine.labelOptions
@@ -156,9 +147,9 @@ class CrookedLine extends Annotation {
 
                         // Update options:
                         typeOptions.points[this.index].x =
-                           target.points[this.index].x;
+                        target.points[this.index].x;
                         typeOptions.points[this.index].y =
-                           target.points[this.index].y;
+                        target.points[this.index].y;
 
                         target.redraw(false);
                     }
@@ -166,6 +157,15 @@ class CrookedLine extends Annotation {
             }
         }
     };
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class CrookedLine extends Annotation {
 
     /* *
      *
@@ -248,15 +248,6 @@ class CrookedLine extends Annotation {
     }
 }
 
-/* *
- *
- *  Class Prototype
- *
- * */
-
-interface CrookedLine {
-    defaultOptions: Annotation['defaultOptions'];
-}
 
 /* *
  *
