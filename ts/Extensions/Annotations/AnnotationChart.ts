@@ -34,6 +34,7 @@ const {
     find,
     fireEvent,
     isArray,
+    isObject,
     pick,
     wrap
 } = U;
@@ -344,12 +345,22 @@ function chartRemoveAnnotation(
 function onChartAfterInit(
     this: Chart
 ): void {
-    const chart = this as AnnotationChart;
+    const chart = this as AnnotationChart,
+        annotationsOption = this.options.annotations,
+        annotationsUserOption = this.userOptions.annotations;
 
     chart.annotations = [];
 
-    if (!isArray(this.options.annotations)) {
+    if (!isArray(annotationsOption)) {
         this.options.annotations = [];
+    }
+
+    if (
+        isObject(annotationsUserOption, true) &&
+        isObject(annotationsOption, true) &&
+        isArray(this.options.annotations)
+    ) {
+        this.options.annotations.push(annotationsOption);
     }
 
 }
