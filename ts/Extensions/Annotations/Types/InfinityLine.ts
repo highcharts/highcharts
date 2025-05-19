@@ -26,7 +26,7 @@ const { merge } = U;
 
 if (defaultOptions.annotations) {
     /**
-     * An infinity line annotation.
+     * Options for the infinity line annotation type.
      *
      * @sample highcharts/annotations-advanced/infinity-line/
      *         Infinity line

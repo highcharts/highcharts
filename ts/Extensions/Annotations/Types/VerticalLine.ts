@@ -36,7 +36,7 @@ const {
 
 if (defaultOptions.annotations) {
     /**
-     * A vertical line annotation.
+     * Options for the vertical line annotation type.
      *
      * @sample highcharts/annotations-advanced/vertical-line/
      *         Vertical line

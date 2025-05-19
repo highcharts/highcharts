@@ -49,7 +49,7 @@ import { Palette } from '../../../Core/Color/Palettes.js';
 
 if (defaultOptions.annotations) {
     /**
-     * A measure annotation.
+     * Options for the measure annotation type.
      *
      * @extends annotations.types.crookedLine
      * @excluding labels, labelOptions, shapes, shapeOptions

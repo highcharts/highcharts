@@ -29,7 +29,7 @@ if (defaultOptions.annotations) {
     defaultOptions.annotations.types.pitchfork = merge(
         defaultOptions.annotations.types.infinityLine,
         /**
-         * A pitchfork annotation.
+         * Options for the pitchfork annotation type.
          *
          * @sample highcharts/annotations-advanced/pitchfork/
          *         Pitchfork

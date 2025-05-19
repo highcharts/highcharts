@@ -28,7 +28,7 @@ if (defaultOptions.annotations) {
     defaultOptions.annotations.types.elliottWave = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
-         * An elliott wave annotation.
+         * Options for the elliott wave annotation type.
          *
          * @sample highcharts/annotations-advanced/elliott-wave/
          *         Elliott wave

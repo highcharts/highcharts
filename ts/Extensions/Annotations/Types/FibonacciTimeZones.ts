@@ -33,7 +33,7 @@ if (defaultOptions.annotations) {
     defaultOptions.annotations.types.fibonacciTimeZones = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
-         * The Fibonacci Time Zones annotation.
+         * Options for the fibonacci time zones annotation type.
          *
          * @sample highcharts/annotations-advanced/fibonacci-time-zones/
          *         Fibonacci Time Zones

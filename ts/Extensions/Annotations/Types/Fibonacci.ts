@@ -31,7 +31,7 @@ if (defaultOptions.annotations) {
     defaultOptions.annotations.types.fibonacci = merge(
         defaultOptions.annotations.types.tunnel,
         /**
-         * A fibonacci annotation.
+         * Options for the fibonacci annotation type.
          *
          * @sample highcharts/annotations-advanced/fibonacci/
          *         Fibonacci

@@ -17,6 +17,16 @@ QUnit.test('General tests for measure annotation', function (assert) {
             shapeOptions: {
                 stroke: 'green',
                 fill: 'green'
+            },
+            types: {
+                measure: {
+                    controlPointOptions: {
+                        style: {
+                            fill: 'lightgreen',
+                            stroke: 'lightgreen'
+                        }
+                    }
+                }
             }
         }
     });
@@ -79,6 +89,14 @@ QUnit.test('General tests for measure annotation', function (assert) {
         ).getAttribute('fill'),
         'green',
         'Shape color should be set according to global options'
+    );
+
+    assert.strictEqual(
+        chart.container.querySelector(
+            '.highcharts-control-points path'
+        ).style.fill,
+        'lightgreen',
+        'Shape color should be set according to global, type-specific options'
     );
 
 });

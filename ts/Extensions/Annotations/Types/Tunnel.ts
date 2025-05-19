@@ -31,7 +31,7 @@ if (defaultOptions.annotations) {
     defaultOptions.annotations.types.tunnel = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
-         * A tunnel annotation.
+         * Options for the tunnel annotation type.
          *
          * @extends annotations.types.crookedLine
          * @sample highcharts/annotations-advanced/tunnel/

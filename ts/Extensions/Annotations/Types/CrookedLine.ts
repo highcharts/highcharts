@@ -33,7 +33,7 @@ const { merge } = U;
 
 if (defaultOptions.annotations) {
     /**
-    * A crooked line annotation.
+    * Options for the crooked line annotation type.
     *
     * @sample highcharts/annotations-advanced/crooked-line/
     *         Crooked line

@@ -47,7 +47,7 @@ if (defaultOptions.annotations) {
     defaultOptions.annotations.types.timeCycles = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
-         * The TimeCycles Annotation
+         * Options for the  time cycles annotation type.
          *
          * @sample highcharts/annotations-advanced/time-cycles/
          *         Time Cycles annotation

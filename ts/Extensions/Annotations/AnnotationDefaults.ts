@@ -58,12 +58,12 @@ const AnnotationDefaults: AnnotationOptions = {
 
     /**
      * For advanced annotations, this option defines the type of annotation. Can
-     * be one of the keys listed under the
-     * [types option](https://api.highcharts.com/highstock/annotations.type).
+     * be one of the keys listed under the [types option](#annotations.types).
      *
      * @sample    highcharts/annotations-advanced/crooked-line
      *            Crooked line annotation
      * @requires  modules/annotations-advanced
+     * @product   highstock
      * @type      {string}
      * @apioption annotations.type
      */
@@ -725,6 +725,7 @@ const AnnotationDefaults: AnnotationOptions = {
      *
      * @sample   highcharts/annotations/shape/
      *           Themed crooked line annotation
+     * @product highstock
      * @requires modules/annotations-advanced
      */
     types: {},
