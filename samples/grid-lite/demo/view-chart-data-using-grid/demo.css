@@ -7,3 +7,13 @@
 .hide {
     display: none;
 }
+
+.theme-custom {
+    --primary-color: 223, 249, 231;
+    --hover-background-color: #5749ad;
+    --hcg-header-background: rgba(var(--primary-color), 1);
+    --hcg-header-color: var(--dark-text-color);
+    --hcg-cell-hovered-background: var(--hover-background-color);
+    --hcg-cell-hovered-color: white;
+    --hcg-border-radius: 1px;
+}

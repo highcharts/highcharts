@@ -127,5 +127,35 @@ function createGrid() {
     const gridElement = document.createElement('div');
     gridElement.id = 'grid';
     document.getElementById('container').appendChild(gridElement);
-    grid = Grid.grid('grid', { dataTable: { columns: cols } });
+    grid = Grid.grid('grid', {
+        dataTable:
+        {
+            columns: cols
+        },
+        rendering: {
+            columns: {
+                distribution: 'mixed'
+            },
+            theme: 'hcg-theme-default theme-custom'
+        },
+        columnDefaults: {
+            cells: {
+                // Format numbers to mimic the chart tooltip
+                // Uses Highcharts template engine to add commas on thousands
+                format: '{value:,.0f}'
+            }
+        },
+        columns: [
+            {
+                id: 'Year',
+                name: 'Year',
+                // 100px width for Year column
+                width: 100,
+                cells: {
+                    // We do not want commas on the Year column
+                    format: '{value}'
+                }
+            }
+        ]
+    });
 }
