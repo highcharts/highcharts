@@ -33,8 +33,8 @@ const {
     erase,
     find,
     fireEvent,
+    isArray,
     pick,
-    splat,
     wrap
 } = U;
 
@@ -348,9 +348,9 @@ function onChartAfterInit(
 
     chart.annotations = [];
 
-    this.options.annotations = this.options.annotations ?
-        splat(this.options.annotations) :
-        [];
+    if (!isArray(this.options.annotations)) {
+        this.options.annotations = [];
+    }
 
 }
 

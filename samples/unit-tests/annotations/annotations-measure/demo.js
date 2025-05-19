@@ -21,7 +21,7 @@ QUnit.test('General tests for measure annotation', function (assert) {
         }
     });
     const chart = Highcharts.chart('container', {
-        annotations: { // Deliberately a single object instead of an array
+        annotations: [{
             type: 'measure',
             controlPointOptions: {
                 visible: true
@@ -36,7 +36,7 @@ QUnit.test('General tests for measure annotation', function (assert) {
                     height: 150 + 'px'
                 }
             }
-        },
+        }],
 
         series: [{
             data: [
