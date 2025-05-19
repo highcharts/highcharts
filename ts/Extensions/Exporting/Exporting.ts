@@ -139,7 +139,7 @@ declare module '../../Core/Chart/ChartLike' {
          * Deprecated in favor of [Exporting.getChartHTML](https://api.highcharts.com/class-reference/Highcharts.Exporting#getChartHTML).
          *
          * @deprecated */
-        getChartHTML(applyStyleSheets?: boolean): string;
+        getChartHTML(applyStyleSheets?: boolean): (string | void);
         /**
          * Deprecated in favor of [Exporting.getFilename](https://api.highcharts.com/class-reference/Highcharts.Exporting#getFilename).
          *
@@ -177,9 +177,7 @@ declare module '../../Core/GlobalsLike.d.ts' {
  *
  * */
 
-// Dummy object so we can reuse our canvas-tools.js without errors
-export const CanVGRenderer: AnyRecord = {},
-    domurl = win.URL || win.webkitURL || win;
+export const domurl = win.URL || win.webkitURL || win;
 
 /* *
  *
@@ -409,35 +407,6 @@ class Exporting {
     }
 
     /**
-     * Return the unfiltered innerHTML of the chart container. Used as hook for
-     * plugins. In styled mode, it also takes care of inlining CSS style rules.
-     *
-     * @see Chart#getSVG
-     *
-     * @static
-     * @function Highcharts.Exporting#getChartHTML
-     *
-     * @param {Highcharts.Chart} chart
-     * The chart instance.
-     * @param {boolean} [applyStyleSheets]
-     * whether or not to apply the style sheets.
-     *
-     * @return {string}
-     * The unfiltered SVG of the chart.
-     *
-     * @requires modules/exporting
-     */
-    public static getChartHTML(
-        chart: Chart,
-        applyStyleSheets?: boolean
-    ): string {
-        if (applyStyleSheets) {
-            Exporting.inlineStyles(chart);
-        }
-        return chart.container.innerHTML;
-    }
-
-    /**
      * Make hyphenated property names out of camelCase.
      *
      * @private
@@ -488,7 +457,7 @@ class Exporting {
         // First, wait for the image to be loaded
         const img = await Exporting.loadImage(imageURL),
             canvas = doc.createElement('canvas'),
-            ctx = canvas.getContext && canvas.getContext('2d');
+            ctx = canvas?.getContext('2d');
 
         if (!ctx) {
             throw new Error('No canvas found!');
@@ -502,257 +471,6 @@ class Exporting {
             // Now we try to get the contents of the canvas
             return canvas.toDataURL(imageType);
         }
-    }
-
-    /**
-     * Analyze inherited styles from stylesheets and add them inline.
-     *
-     * @private
-     * @static
-     * @function Highcharts.Exporting#inlineStyles
-     *
-     * @param {Highcharts.Chart} chart
-     * The chart instance.
-     *
-     * @todo What are the border styles for text about? In general, text has a
-     * lot of properties.
-     *
-     * @todo Make it work with IE9 and IE10.
-     *
-     * @requires modules/exporting
-     */
-    public static inlineStyles(
-        chart: Chart
-    ): void {
-        const denylist = Exporting.inlineDenylist,
-            allowlist = Exporting.inlineAllowlist, // For IE
-            defaultStyles: Record<string, CSSObject> = {};
-        let dummySVG: SVGElement;
-
-        // Create an iframe where we read default styles without pollution from
-        // this body
-        const iframe: HTMLIFrameElement = doc.createElement('iframe');
-        css(iframe, {
-            width: '1px',
-            height: '1px',
-            visibility: 'hidden'
-        });
-        doc.body.appendChild(iframe);
-
-        const iframeDoc = (
-            iframe.contentWindow && iframe.contentWindow.document
-        );
-        if (iframeDoc) {
-            iframeDoc.body.appendChild(
-                iframeDoc.createElementNS(SVG_NS, 'svg')
-            );
-        }
-
-        /**
-         * Call this on all elements and recurse to children.
-         *
-         * @private
-         * @function recurse
-         *
-         * @param {Highcharts.HTMLDOMElement | Highcharts.SVGSVGElement} node
-         * Element child.
-         */
-        function recurse(node: (HTMLDOMElement | SVGSVGElement)): void {
-            const filteredStyles: CSSObject = {};
-            let styles: CSSObject,
-                parentStyles: (CSSObject | SVGAttributes),
-                dummy: Element,
-                denylisted: (boolean | undefined),
-                allowlisted: (boolean | undefined),
-                i: number;
-
-            /**
-             * Check computed styles and whether they are in the allow/denylist
-             * for styles or attributes.
-             *
-             * @private
-             * @function filterStyles
-             *
-             * @param {string | number | Highcharts.GradientColor | Highcharts.PatternObject | undefined} val
-             * Style value.
-             * @param {string} prop
-             * Style property name.
-             */
-            function filterStyles(
-                val: (
-                    string |
-                    number |
-                    GradientColor |
-                    PatternObject |
-                    undefined
-                ),
-                prop: string
-            ): void {
-
-                // Check against allowlist & denylist
-                denylisted = allowlisted = false;
-                if (allowlist.length) {
-                    // Styled mode in IE has a allowlist instead. Exclude all
-                    // props not in this list.
-                    i = allowlist.length;
-                    while (i-- && !allowlisted) {
-                        allowlisted = allowlist[i].test(prop);
-                    }
-                    denylisted = !allowlisted;
-                }
-
-                // Explicitly remove empty transforms
-                if (prop === 'transform' && val === 'none') {
-                    denylisted = true;
-                }
-
-                i = denylist.length;
-                while (i-- && !denylisted) {
-                    if (prop.length > RegexLimits.shortLimit) {
-                        throw new Error('Input too long');
-                    }
-                    denylisted = (
-                        denylist[i].test(prop) ||
-                        typeof val === 'function'
-                    );
-                }
-
-                if (!denylisted) {
-                    // If parent node has the same style, it gets inherited, no
-                    // need to inline it. Top-level props should be diffed
-                    // against parent (#7687).
-                    if (
-                        (
-                            (parentStyles as CSSObject)[
-                                prop as keyof CSSObject
-                            ] !== val ||
-                            node.nodeName === 'svg'
-                        ) &&
-                        (defaultStyles[node.nodeName])[
-                            prop as keyof CSSObject
-                        ] !== val
-                    ) {
-                        // Attributes
-                        if (
-                            !Exporting.inlineToAttributes ||
-                            Exporting.inlineToAttributes.indexOf(prop) !== -1
-                        ) {
-                            if (val) {
-                                node.setAttribute(
-                                    Exporting.hyphenate(prop), val as string
-                                );
-                            }
-                        // Styles
-                        } else {
-                            (filteredStyles as Record<string, (string | number | GradientColor | PatternObject | undefined)>)[
-                                prop
-                            ] = val;
-                        }
-                    }
-                }
-            }
-
-            if (
-                iframeDoc &&
-                node.nodeType === 1 &&
-                Exporting.unstyledElements.indexOf(node.nodeName) === -1
-            ) {
-                styles =
-                    win.getComputedStyle(node, null) as unknown as CSSObject;
-                parentStyles = node.nodeName === 'svg' ?
-                    {} :
-                    win.getComputedStyle(
-                        node.parentNode, null
-                    ) as unknown as CSSObject;
-
-                // Get default styles from the browser so that we don't have to
-                // add these
-                if (!defaultStyles[node.nodeName]) {
-                    /*
-                    If (!dummySVG) {
-                        dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
-                        dummySVG.setAttribute('version', '1.1');
-                        doc.body.appendChild(dummySVG);
-                    }
-                    */
-                    dummySVG =
-                        iframeDoc.getElementsByTagName(
-                            'svg'
-                        )[0] as unknown as SVGElement;
-                    dummy = iframeDoc.createElementNS(
-                        node.namespaceURI,
-                        node.nodeName
-                    );
-                    dummySVG.appendChild(dummy);
-
-                    // Get the defaults into a standard object (simple merge
-                    // won't do)
-                    const s = win.getComputedStyle(dummy, null),
-                        defaults: Record<string, string> = {};
-                    for (const key in s) {
-                        if (
-                            key.length < RegexLimits.shortLimit &&
-                            typeof s[key] === 'string' &&
-                            !/^\d+$/.test(key)
-                        ) {
-                            defaults[key] = s[key];
-                        }
-                    }
-                    defaultStyles[node.nodeName] = defaults;
-
-                    // Remove default fill, otherwise text disappears when
-                    // exported
-                    if (node.nodeName === 'text') {
-                        delete defaultStyles.text.fill;
-                    }
-                    dummySVG.removeChild(dummy);
-                }
-
-                // Loop through all styles and add them inline if they are ok
-                for (const p in styles) {
-                    if (
-                        // Some browsers put lots of styles on the prototype...
-                        isFirefox ||
-                        isMS ||
-                        isSafari || // #16902
-                        // ... Chrome puts them on the instance
-                        Object.hasOwnProperty.call(styles, p)
-                    ) {
-                        filterStyles(styles[p as keyof CSSObject], p);
-                    }
-                }
-
-                // Apply styles
-                css(node, filteredStyles);
-
-                // Set default stroke width (needed at least for IE)
-                if (node.nodeName === 'svg') {
-                    node.setAttribute('stroke-width', '1px');
-                }
-
-                if (node.nodeName === 'text') {
-                    return;
-                }
-
-                // Recurse
-                [].forEach.call(node.children || node.childNodes, recurse);
-            }
-        }
-
-        /**
-         * Remove the dummy objects used to get defaults.
-         *
-         * @private
-         * @function tearDown
-         */
-        function tearDown(): void {
-            dummySVG.parentNode.removeChild(dummySVG);
-            // Remove trash from DOM that stayed after each exporting
-            iframe.parentNode.removeChild(iframe);
-        }
-
-        recurse(chart.container.querySelector('svg') as SVGSVGElement);
-        tearDown();
     }
 
     /**
@@ -837,8 +555,8 @@ class Exporting {
     }
 
     /**
-     * Exporting module only. A collection of fixes on the produced SVG to
-     * account for expand properties, browser bugs. Returns a cleaned SVG.
+     * A collection of fixes on the produced SVG to account for expand
+     * properties and browser bugs. Returns a cleaned SVG.
      *
      * @private
      * @static
@@ -1488,19 +1206,18 @@ class Exporting {
      * Destroy the export buttons.
      *
      * @private
-     * @function Highcharts.Exporting#destroyExport
+     * @function Highcharts.Exporting#destroy
      *
      * @param {global.Event} [e]
      * Event object.
      *
      * @requires modules/exporting
      */
-    public destroyExport(
-        this: Chart,
+    public destroy(
         e?: Event
     ): void {
-        const chart = e ? (e.target as unknown as Chart) : this,
-            exporting = chart.exporting,
+        const exporting = this,
+            chart = e ? (e.target as unknown as Chart) : exporting.chart,
             exportSVGElements = exporting?.svgElements,
             exportDivElements = exporting?.divElements,
             exportEvents = chart.exporting?.events;
@@ -1560,6 +1277,48 @@ class Exporting {
                 unbind();
             });
             exportEvents.length = 0;
+        }
+    }
+
+    /**
+     * Handles downloading an SVG for local export.
+     *
+     * @private
+     * @async
+     * @function Highcharts.Exporting#downloadSVGForLocalExport
+     *
+     * @param {string} svg
+     * The SVG markup to be exported.
+     * @param {ExportingOptions} exportingOptions
+     * The exporting options.
+     *
+     * @throws {Error}
+     * If the SVG contains `<foreignObject>` elements and the export type is not
+     * SVG, as it may cause issues with CanVG, svg2pdf, and Internet Explorer.
+     *
+     * @requires modules/exporting
+     */
+    public async downloadSVGForLocalExport(
+        svg: string,
+        exportingOptions: ExportingOptions
+    ): Promise<void> {
+        // If SVG contains foreignObjects PDF fails in all browsers and all
+        // exports except SVG will fail in IE, as both CanVG and svg2pdf choke
+        // on this. Gracefully fall back.
+        if (
+            svg.indexOf('<foreignObject') > -1 &&
+            exportingOptions.type !== 'image/svg+xml' &&
+            (
+                isMS ||
+                exportingOptions.type === 'application/pdf'
+            )
+        ) {
+            throw new Error(
+                'Image type not supported for charts with embedded HTML'
+            );
+        } else {
+            // Trigger SVG download
+            await G.downloadSVGLocal(svg, exportingOptions);
         }
     }
 
@@ -1761,6 +1520,32 @@ class Exporting {
             // Allow fallbacking to server only for PDFs that failed locally
             await this.exportChart(exportingOptions);
         }
+    }
+
+    /**
+     * Return the unfiltered innerHTML of the chart container. Used as hook for
+     * plugins. In styled mode, it also takes care of inlining CSS style rules.
+     *
+     * @see Chart#getSVG
+     *
+     * @function Highcharts.Exporting#getChartHTML
+     *
+     * @param {boolean} [applyStyleSheets]
+     * whether or not to apply the style sheets.
+     *
+     * @return {string}
+     * The unfiltered SVG of the chart.
+     *
+     * @requires modules/exporting
+     */
+    public getChartHTML(
+        applyStyleSheets?: boolean
+    ): string {
+        const chart = this.chart;
+        if (applyStyleSheets) {
+            this.inlineStyles();
+        }
+        return chart.container.innerHTML;
     }
 
     /**
@@ -1987,13 +1772,12 @@ class Exporting {
         });
 
         // Get the SVG from the container's innerHTML
-        svg = Exporting.getChartHTML(
-            chartCopy,
+        svg = chartCopy.exporting?.getChartHTML(
             chart.styledMode ||
             options.exporting?.applyStyleSheets
-        );
+        ) || '';
 
-        fireEvent(this.chart, 'getSVG', { chartCopy: chartCopy });
+        fireEvent(chart, 'getSVG', { chartCopy: chartCopy });
 
         svg = Exporting.sanitizeSVG(svg, options);
 
@@ -2003,6 +1787,47 @@ class Exporting {
         discardElement(sandbox);
 
         return svg;
+    }
+
+    /**
+     * Gets the SVG for export using the getSVG function with additional
+     * options.
+     *
+     * @private
+     * @function Highcharts.Exporting#getSVGForExport
+     *
+     * @param {Highcharts.ExportingOptions} [exportingOptions]
+     * The exporting options.
+     * @param {Highcharts.Options} [chartOptions]
+     * Additional chart options for the exported chart.
+     *
+     * @return {string}
+     * The SVG representation of the rendered chart.
+     *
+     * @requires modules/exporting
+     */
+    public getSVGForExport(
+        exportingOptions?: ExportingOptions,
+        chartOptions?: Partial<Options>
+    ): string {
+        const currentExportingOptions: ExportingOptions = this.options;
+        return this.getSVG(merge(
+            { chart: { borderRadius: 0 } },
+            currentExportingOptions.chartOptions,
+            chartOptions,
+            {
+                exporting: {
+                    sourceWidth: (
+                        exportingOptions?.sourceWidth ||
+                        currentExportingOptions.sourceWidth
+                    ),
+                    sourceHeight: (
+                        exportingOptions?.sourceHeight ||
+                        currentExportingOptions.sourceHeight
+                    )
+                }
+            }
+        ));
     }
 
     /**
@@ -2115,86 +1940,249 @@ class Exporting {
     }
 
     /**
-     * Handles downloading an SVG for local export.
+     * Analyze inherited styles from stylesheets and add them inline.
      *
      * @private
-     * @async
-     * @function Highcharts.Exporting#downloadSVGForLocalExport
+     * @function Highcharts.Exporting#inlineStyles
      *
-     * @param {string} svg
-     * The SVG markup to be exported.
-     * @param {ExportingOptions} exportingOptions
-     * The exporting options.
+     * @todo What are the border styles for text about? In general, text has a
+     * lot of properties.
      *
-     * @throws {Error}
-     * If the SVG contains `<foreignObject>` elements and the export type is not
-     * SVG, as it may cause issues with CanVG, svg2pdf, and Internet Explorer.
+     * @todo Make it work with IE9 and IE10.
      *
      * @requires modules/exporting
      */
-    public async downloadSVGForLocalExport(
-        svg: string,
-        exportingOptions: ExportingOptions
-    ): Promise<void> {
-        // If SVG contains foreignObjects PDF fails in all browsers and all
-        // exports except SVG will fail in IE, as both CanVG and svg2pdf choke
-        // on this. Gracefully fall back.
-        if (
-            svg.indexOf('<foreignObject') > -1 &&
-            exportingOptions.type !== 'image/svg+xml' &&
-            (
-                isMS ||
-                exportingOptions.type === 'application/pdf'
-            )
-        ) {
-            throw new Error(
-                'Image type not supported for charts with embedded HTML'
-            );
-        } else {
-            // Trigger SVG download
-            await G.downloadSVGLocal(svg, exportingOptions);
-        }
-    }
+    public inlineStyles(): void {
+        const denylist = Exporting.inlineDenylist,
+            allowlist = Exporting.inlineAllowlist, // For IE
+            defaultStyles: Record<string, CSSObject> = {};
+        let dummySVG: SVGElement;
 
-    /**
-     * Gets the SVG for export using the getSVG function with additional
-     * options.
-     *
-     * @private
-     * @function Highcharts.Exporting#getSVGForExport
-     *
-     * @param {Highcharts.ExportingOptions} [exportingOptions]
-     * The exporting options.
-     * @param {Highcharts.Options} [chartOptions]
-     * Additional chart options for the exported chart.
-     *
-     * @return {string}
-     * The SVG representation of the rendered chart.
-     *
-     * @requires modules/exporting
-     */
-    public getSVGForExport(
-        exportingOptions?: ExportingOptions,
-        chartOptions?: Partial<Options>
-    ): string {
-        const currentExportingOptions: ExportingOptions = this.options;
-        return this.getSVG(merge(
-            { chart: { borderRadius: 0 } },
-            currentExportingOptions.chartOptions,
-            chartOptions,
+        // Create an iframe where we read default styles without pollution from
+        // this body
+        const iframe = createElement(
+            'iframe',
+            void 0,
             {
-                exporting: {
-                    sourceWidth: (
-                        exportingOptions?.sourceWidth ||
-                        currentExportingOptions.sourceWidth
-                    ),
-                    sourceHeight: (
-                        exportingOptions?.sourceHeight ||
-                        currentExportingOptions.sourceHeight
-                    )
+                width: '1px',
+                height: '1px',
+                visibility: 'hidden'
+            },
+            doc.body
+        ) as HTMLIFrameElement;
+
+        const iframeDoc = iframe.contentWindow?.document;
+        if (iframeDoc) {
+            iframeDoc.body.appendChild(
+                iframeDoc.createElementNS(SVG_NS, 'svg')
+            );
+        }
+
+        /**
+         * Call this on all elements and recurse to children.
+         *
+         * @private
+         * @function recurse
+         *
+         * @param {Highcharts.HTMLDOMElement | Highcharts.SVGSVGElement} node
+         * Element child.
+         */
+        function recurse(node: (HTMLDOMElement | SVGSVGElement)): void {
+            const filteredStyles: CSSObject = {};
+            let styles: CSSObject,
+                parentStyles: (CSSObject | SVGAttributes),
+                dummy: Element,
+                denylisted: (boolean | undefined),
+                allowlisted: (boolean | undefined),
+                i: number;
+
+            /**
+             * Check computed styles and whether they are in the allow/denylist
+             * for styles or attributes.
+             *
+             * @private
+             * @function filterStyles
+             *
+             * @param {string | number | Highcharts.GradientColor | Highcharts.PatternObject | undefined} val
+             * Style value.
+             * @param {string} prop
+             * Style property name.
+             */
+            function filterStyles(
+                val: (
+                    string |
+                    number |
+                    GradientColor |
+                    PatternObject |
+                    undefined
+                ),
+                prop: string
+            ): void {
+
+                // Check against allowlist & denylist
+                denylisted = allowlisted = false;
+                if (allowlist.length) {
+                    // Styled mode in IE has a allowlist instead. Exclude all
+                    // props not in this list.
+                    i = allowlist.length;
+                    while (i-- && !allowlisted) {
+                        allowlisted = allowlist[i].test(prop);
+                    }
+                    denylisted = !allowlisted;
+                }
+
+                // Explicitly remove empty transforms
+                if (prop === 'transform' && val === 'none') {
+                    denylisted = true;
+                }
+
+                i = denylist.length;
+                while (i-- && !denylisted) {
+                    if (prop.length > RegexLimits.shortLimit) {
+                        throw new Error('Input too long');
+                    }
+                    denylisted = (
+                        denylist[i].test(prop) ||
+                        typeof val === 'function'
+                    );
+                }
+
+                if (!denylisted) {
+                    // If parent node has the same style, it gets inherited, no
+                    // need to inline it. Top-level props should be diffed
+                    // against parent (#7687).
+                    if (
+                        (
+                            (parentStyles as CSSObject)[
+                                prop as keyof CSSObject
+                            ] !== val ||
+                            node.nodeName === 'svg'
+                        ) &&
+                        (defaultStyles[node.nodeName])[
+                            prop as keyof CSSObject
+                        ] !== val
+                    ) {
+                        // Attributes
+                        if (
+                            !Exporting.inlineToAttributes ||
+                            Exporting.inlineToAttributes.indexOf(prop) !== -1
+                        ) {
+                            if (val) {
+                                node.setAttribute(
+                                    Exporting.hyphenate(prop), val as string
+                                );
+                            }
+                        // Styles
+                        } else {
+                            (filteredStyles as Record<string, (string | number | GradientColor | PatternObject | undefined)>)[
+                                prop
+                            ] = val;
+                        }
+                    }
                 }
             }
-        ));
+
+            if (
+                iframeDoc &&
+                node.nodeType === 1 &&
+                Exporting.unstyledElements.indexOf(node.nodeName) === -1
+            ) {
+                styles =
+                    win.getComputedStyle(node, null) as unknown as CSSObject;
+                parentStyles = node.nodeName === 'svg' ?
+                    {} :
+                    win.getComputedStyle(
+                        node.parentNode, null
+                    ) as unknown as CSSObject;
+
+                // Get default styles from the browser so that we don't have to
+                // add these
+                if (!defaultStyles[node.nodeName]) {
+                    /*
+                    If (!dummySVG) {
+                        dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
+                        dummySVG.setAttribute('version', '1.1');
+                        doc.body.appendChild(dummySVG);
+                    }
+                    */
+                    dummySVG =
+                        iframeDoc.getElementsByTagName(
+                            'svg'
+                        )[0] as unknown as SVGElement;
+                    dummy = iframeDoc.createElementNS(
+                        node.namespaceURI,
+                        node.nodeName
+                    );
+                    dummySVG.appendChild(dummy);
+
+                    // Get the defaults into a standard object (simple merge
+                    // won't do)
+                    const s = win.getComputedStyle(dummy, null),
+                        defaults: Record<string, string> = {};
+                    for (const key in s) {
+                        if (
+                            key.length < RegexLimits.shortLimit &&
+                            typeof s[key] === 'string' &&
+                            !/^\d+$/.test(key)
+                        ) {
+                            defaults[key] = s[key];
+                        }
+                    }
+                    defaultStyles[node.nodeName] = defaults;
+
+                    // Remove default fill, otherwise text disappears when
+                    // exported
+                    if (node.nodeName === 'text') {
+                        delete defaultStyles.text.fill;
+                    }
+                    dummySVG.removeChild(dummy);
+                }
+
+                // Loop through all styles and add them inline if they are ok
+                for (const p in styles) {
+                    if (
+                        // Some browsers put lots of styles on the prototype...
+                        isFirefox ||
+                        isMS ||
+                        isSafari || // #16902
+                        // ... Chrome puts them on the instance
+                        Object.hasOwnProperty.call(styles, p)
+                    ) {
+                        filterStyles(styles[p as keyof CSSObject], p);
+                    }
+                }
+
+                // Apply styles
+                css(node, filteredStyles);
+
+                // Set default stroke width (needed at least for IE)
+                if (node.nodeName === 'svg') {
+                    node.setAttribute('stroke-width', '1px');
+                }
+
+                if (node.nodeName === 'text') {
+                    return;
+                }
+
+                // Recurse
+                [].forEach.call(node.children || node.childNodes, recurse);
+            }
+        }
+
+        /**
+         * Remove the dummy objects used to get defaults.
+         *
+         * @private
+         * @function tearDown
+         */
+        function tearDown(): void {
+            dummySVG.parentNode.removeChild(dummySVG);
+            // Remove trash from DOM that stayed after each exporting
+            iframe.parentNode.removeChild(iframe);
+        }
+
+        recurse(this.chart.container.querySelector('svg') as SVGSVGElement);
+        tearDown();
     }
 
     /**
@@ -2253,7 +2241,7 @@ class Exporting {
 
         Exporting.printingChart = chart;
         if (!isSafari) {
-            chart.exporting?.beforePrint();
+            Exporting.printingChart.exporting?.beforePrint();
         }
 
         // Give the browser time to draw WebGL content, an issue that randomly
@@ -2275,21 +2263,19 @@ class Exporting {
      * Add the buttons on chart load.
      *
      * @private
-     * @function Highcharts.Exporting#renderExporting
+     * @function Highcharts.Exporting#render
      *
      * @requires modules/exporting
      */
-    public renderExporting(
-        this: Chart
-    ): void {
-        const chart = this,
-            exporting = chart.exporting,
+    public render(): void {
+        const exporting = this,
+            chart = exporting.chart,
             exportingOptions = chart.options.exporting,
             isDirty = exporting?.isDirty || !exporting?.svgElements.length;
 
         if (exporting) {
             if (exporting.isDirty) {
-                exporting.destroyExport.call(chart);
+                exporting.destroy();
             }
 
             if (isDirty && exportingOptions?.enabled !== false) {
@@ -2461,8 +2447,8 @@ namespace Exporting {
             getChartHTML: function (
                 this: Chart,
                 applyStyleSheets?: boolean
-            ): string {
-                return Exporting.getChartHTML(this, applyStyleSheets);
+            ): (string | void) {
+                return this.exporting?.getChartHTML(applyStyleSheets);
             },
             getFilename: function (
                 this: Chart
@@ -2547,13 +2533,17 @@ namespace Exporting {
     ): void {
         const exporting = chart.exporting;
         if (exporting) {
-            exporting.renderExporting.call(chart);
+            exporting.render();
 
             // Add the exporting buttons on each chart redraw
-            addEvent(chart, 'redraw', exporting.renderExporting);
+            addEvent(chart, 'redraw', function (): void {
+                this.exporting?.render();
+            });
 
             // Destroy the export elements at chart destroy
-            addEvent(chart, 'destroy', exporting.destroyExport);
+            addEvent(chart, 'destroy', function (): void {
+                this.exporting?.destroy();
+            });
         }
 
         // Uncomment this to see a button directly below the chart, for quick
