@@ -50,7 +50,7 @@ if (defaultOptions.annotations) {
                  *         Fibonacci annotation reversed
                  *
                  * @type {boolean}
-                 * @apioption annotations.fibonacci.typeOptions.reversed
+                 * @apioption annotations.types.fibonacci.typeOptions.reversed
                  */
                 reversed: false,
 
@@ -96,8 +96,8 @@ if (defaultOptions.annotations) {
                  * An array with options for the labels.
                  *
                  * @type      {Array<*>}
-                 * @extends   annotations.crookedLine.labelOptions
-                 * @apioption annotations.fibonacci.typeOptions.labels
+                 * @extends   annotations.types.crookedLine.labelOptions
+                 * @apioption annotations.types.fibonacci.typeOptions.labels
                  */
                 labels: []
             },

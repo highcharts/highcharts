@@ -62,7 +62,7 @@ if (defaultOptions.annotations) {
                 /**
                  * @exclude   y
                  * @product   highstock
-                 * @apioption annotations.timeCycles.typeOptions.points
+                 * @apioption annotations.types.timeCycles.typeOptions.points
                  */
 
                 controlPointOptions: [{

@@ -49,7 +49,7 @@ if (defaultOptions.annotations) {
                  * @exclude   y
                  * @since     9.3.0
                  * @product   highstock
-                 * @apioption annotations.fibonacciTimeZones.typeOptions.points
+                 * @apioption annotations.types.fibonacciTimeZones.typeOptions.points
                  */
 
                 // Options for showing in popup edit
@@ -59,7 +59,7 @@ if (defaultOptions.annotations) {
                      *
                      * @type      {string}
                      * @since     9.3.0
-                     * @apioption annotations.fibonacciTimeZones.typeOptions.line.stroke
+                     * @apioption annotations.types.fibonacciTimeZones.typeOptions.line.stroke
                      */
                     stroke: Palette.neutralColor80,
                     /**
@@ -68,7 +68,7 @@ if (defaultOptions.annotations) {
                      * @type      {number}
                      * @since     9.3.0
                      * @default   1
-                     * @apioption annotations.fibonacciTimeZones.typeOptions.line.strokeWidth
+                     * @apioption annotations.types.fibonacciTimeZones.typeOptions.line.strokeWidth
                      */
                     strokeWidth: 1,
                     // Don't inherit fill (don't display in popup edit)

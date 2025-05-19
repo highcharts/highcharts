@@ -51,7 +51,7 @@ if (defaultOptions.annotations) {
     /**
      * A measure annotation.
      *
-     * @extends annotations.crookedLine
+     * @extends annotations.types.crookedLine
      * @excluding labels, labelOptions, shapes, shapeOptions
      * @sample highcharts/annotations-advanced/measure/
      *         Measure
@@ -145,7 +145,7 @@ if (defaultOptions.annotations) {
                  *
                  * @type      {Highcharts.DashStyleValue}
                  * @default   Dash
-                 * @apioption annotations.measure.typeOptions.crosshairY.dashStyle
+                 * @apioption annotations.types.measure.typeOptions.crosshairY.dashStyle
                  *
                  */
                 dashStyle: 'Dash',

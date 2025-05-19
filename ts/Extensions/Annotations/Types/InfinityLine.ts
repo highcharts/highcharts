@@ -25,6 +25,16 @@ import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
 if (defaultOptions.annotations) {
+    /**
+     * An infinity line annotation.
+     *
+     * @sample highcharts/annotations-advanced/infinity-line/
+     *         Infinity line
+     *
+     * @extends      annotations.types.crookedLine
+     * @product      highstock
+     * @optionparent annotations.types.infinityLine
+     */
     defaultOptions.annotations.types.infinityLine = merge(
         defaultOptions.annotations.types.crookedLine
     );
@@ -262,9 +272,9 @@ export default InfinityLine;
  * @sample highcharts/annotations-advanced/infinity-line/
  *         Infinity Line
  *
- * @extends   annotations.crookedLine
+ * @extends   annotations.types.crookedLine
  * @product   highstock
- * @apioption annotations.infinityLine
+ * @apioption annotations.types.infinityLine
  */
 
 (''); // Keeps doclets above in transpiled file

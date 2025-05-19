@@ -56,7 +56,7 @@ if (defaultOptions.annotations) {
             /**
              * Label options.
              *
-             * @extends annotations.crookedLine.labelOptions
+             * @extends annotations.types.crookedLine.labelOptions
              */
             label: {
                 offset: -40,
@@ -77,7 +77,7 @@ if (defaultOptions.annotations) {
             /**
              * Connector options.
              *
-             * @extends   annotations.crookedLine.shapeOptions
+             * @extends   annotations.types.crookedLine.shapeOptions
              * @excluding height, r, type, width
              */
             connector: {

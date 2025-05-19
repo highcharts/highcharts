@@ -33,7 +33,7 @@ if (defaultOptions.annotations) {
         /**
          * A tunnel annotation.
          *
-         * @extends annotations.crookedLine
+         * @extends annotations.types.crookedLine
          * @sample highcharts/annotations-advanced/tunnel/
          *         Tunnel
          * @product highstock
@@ -65,7 +65,7 @@ if (defaultOptions.annotations) {
                  * Options for the control point which controls
                  * the annotation's height.
                  *
-                 * @extends annotations.crookedLine.controlPointOptions
+                 * @extends annotations.types.crookedLine.controlPointOptions
                  * @excluding positioner, events
                  */
                 heightControlPoint: {
@@ -112,7 +112,7 @@ if (defaultOptions.annotations) {
             },
 
             /**
-             * @extends annotations.crookedLine.controlPointOptions
+             * @extends annotations.types.crookedLine.controlPointOptions
              * @excluding positioner, events
              */
             controlPointOptions: {

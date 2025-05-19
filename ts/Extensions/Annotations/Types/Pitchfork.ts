@@ -43,7 +43,7 @@ if (defaultOptions.annotations) {
                 /**
                  * Inner background options.
                  *
-                 * @extends   annotations.crookedLine.shapeOptions
+                 * @extends   annotations.types.crookedLine.shapeOptions
                  * @excluding height, r, type, width
                  */
                 innerBackground: {
@@ -53,7 +53,7 @@ if (defaultOptions.annotations) {
                 /**
                  * Outer background options.
                  *
-                 * @extends   annotations.crookedLine.shapeOptions
+                 * @extends   annotations.types.crookedLine.shapeOptions
                  * @excluding height, r, type, width
                  */
                 outerBackground: {

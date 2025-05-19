@@ -41,8 +41,8 @@ if (defaultOptions.annotations) {
             typeOptions: {
 
                 /**
-                 * @extends   annotations.crookedLine.labelOptions
-                 * @apioption annotations.elliottWave.typeOptions.points.label
+                 * @extends   annotations.types.crookedLine.labelOptions
+                 * @apioption annotations.types.elliottWave.typeOptions.points.label
                  */
 
                 /**

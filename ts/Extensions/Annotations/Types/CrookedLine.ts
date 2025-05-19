@@ -44,12 +44,12 @@ if (defaultOptions.annotations) {
     defaultOptions.annotations.types.crookedLine = {
         /**
          * @extends   annotations.labelOptions
-         * @apioption annotations.crookedLine.labelOptions
+         * @apioption annotations.types.crookedLine.labelOptions
          */
 
         /**
          * @extends   annotations.shapeOptions
-         * @apioption annotations.crookedLine.shapeOptions
+         * @apioption annotations.types.crookedLine.shapeOptions
          */
 
         /**
@@ -71,27 +71,27 @@ if (defaultOptions.annotations) {
 
             /**
              * @type      {Array<*>}
-             * @apioption annotations.crookedLine.typeOptions.points
+             * @apioption annotations.types.crookedLine.typeOptions.points
              */
 
             /**
              * The x position of the point.
              *
              * @type      {number}
-             * @apioption annotations.crookedLine.typeOptions.points.x
+             * @apioption annotations.types.crookedLine.typeOptions.points.x
              */
 
             /**
              * The y position of the point.
              *
              * @type      {number}
-             * @apioption annotations.crookedLine.typeOptions.points.y
+             * @apioption annotations.types.crookedLine.typeOptions.points.y
              */
 
             /**
              * @type      {number}
              * @excluding positioner, events
-             * @apioption annotations.crookedLine.typeOptions.points.controlPoint
+             * @apioption annotations.types.crookedLine.typeOptions.points.controlPoint
              */
 
             /**
