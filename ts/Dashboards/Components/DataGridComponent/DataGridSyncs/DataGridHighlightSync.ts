@@ -121,8 +121,8 @@ const syncPair: Sync.SyncPair = {
             return;
         }
 
-        const table = component.connectorHandlers?.[0]?.connector
-            ?.getTable(component.dataTableKey);
+        const table =
+            component.getFirstConnector()?.getTable(component.dataTableKey);
 
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
