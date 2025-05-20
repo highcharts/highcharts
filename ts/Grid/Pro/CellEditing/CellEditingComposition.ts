@@ -321,7 +321,7 @@ declare module '../../Core/Options' {
         editable?: boolean;
     }
 
-    interface ColumnnOptions {
+    interface ColumnOptions {
         editMode?: ColumnEditModeOptions;
     }
 }

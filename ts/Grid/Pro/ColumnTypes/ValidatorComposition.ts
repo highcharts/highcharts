@@ -93,8 +93,8 @@ declare module '../../Core/Table/Table' {
     }
 }
 
-declare module '../../Core/Options' {
-    interface ColumnOptions {
+declare module '../../Pro/CellEditing/CellEditingComposition' {
+    interface ColumnEditModeOptions {
         /**
          * Validation options for the column.
          *

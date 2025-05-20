@@ -101,10 +101,10 @@ class Validator {
         value: string,
         errors: string[] = []
     ): boolean {
-        const { validationRules, dataType } = cell.column.options;
+        const { editMode, dataType } = cell.column.options;
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
-        let rules = Array.from(validationRules || []);
+        let rules = Array.from(editMode?.validationRules || []);
 
         if (dataType) {
             // Remove duplicates in validationRules
