@@ -299,7 +299,8 @@ module.exports = {
             'react/series-and-chart-types',
             'react/options',
             'react/options-component-format',
-            'react/component-children',
+            'react/nextjs',
+            'react/component-children'
         ]
     }
 };
