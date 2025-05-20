@@ -473,12 +473,13 @@ class Row extends GUIElement {
 
     public setHighlight(remove?: boolean): void {
         const container = this.container;
-        if (remove !== undefined) {
-            container.classList.toggle(
-                EditGlobals.classNames.rowContextHighlight, !remove
-            );
+        const highlightClass = EditGlobals.classNames.rowContextHighlight;
+        if (remove === true) {
+            container.classList.remove(highlightClass);
+        } else if (remove === false) {
+            container.classList.add(highlightClass);
         } else {
-            container.classList.toggle(EditGlobals.classNames.rowContextHighlight);
+            container.classList.toggle(highlightClass);
         }
     }
 
