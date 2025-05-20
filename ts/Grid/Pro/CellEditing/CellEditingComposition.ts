@@ -26,6 +26,7 @@
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type { GridEvent } from '../../Core/GridUtils';
+import type CellRendererType from '../CellRendering/CellRendererType';
 
 import Defaults from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -229,6 +230,13 @@ namespace CellEditingComposition {
  * */
 
 /**
+ * The options for the cell edit mode functionality.
+ */
+export interface ColumnEditModeOptions {
+    renderer?: CellRendererType['options'];
+}
+
+/**
  * Accessibility options for the Grid cell editing functionality.
  */
 export interface CellEditingLangA11yOptions {
@@ -311,6 +319,10 @@ declare module '../../Core/Options' {
          * @default true
          */
         editable?: boolean;
+    }
+
+    interface ColumnnOptions {
+        editMode?: ColumnEditModeOptions;
     }
 }
 

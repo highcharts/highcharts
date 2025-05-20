@@ -44,8 +44,12 @@ abstract class CellContent {
 
     /**
      * Render the cell content.
+     * 
+     * @param parent
+     * The parent element to which the cell content will be added. If not set,
+     * the cell's main HTML element will be used.
      */
-    public abstract add(): void;
+    public abstract add(parent?: HTMLElement): void;
 
     /**
      * Destroy the cell content.

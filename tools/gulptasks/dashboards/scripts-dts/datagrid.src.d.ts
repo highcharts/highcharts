@@ -12,6 +12,12 @@ import './es-modules/Grid/Pro/GridEvents';
 import './es-modules/Grid/Pro/CellEditing/CellEditingComposition';
 import './es-modules/Grid/Pro/Dash3Compatibility';
 import './es-modules/Grid/Pro/Credits/CreditsProComposition';
+import './es-modules/Grid/Pro/ColumnTypes/ValidatorComposition';
+import './es-modules/Grid/Pro/CellRendering/CellRenderersComposition';
+import './es-modules/Grid/Pro/CellRendering/Renderers/TextRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/CheckboxRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/SelectRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/TextInputRenderer';
 
 export { /** @deprecated Use `Grid` instead. */ default as DataGrid } from './es-modules/Grid/Core/Grid.js';
 export { default as Grid } from './es-modules/Grid/Core/Grid.js';

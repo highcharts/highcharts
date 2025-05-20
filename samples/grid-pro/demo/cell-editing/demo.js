@@ -24,7 +24,7 @@ Grid.grid('container', {
     },
     columns: [{
         id: 'available',
-        dataType: 'bool',
+        dataType: 'boolean',
         renderer: {
             type: 'checkbox'
         }

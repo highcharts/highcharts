@@ -16,7 +16,7 @@ Grid.grid('container', {
     },
     columns: [{
         id: 'boolNumber',
-        dataType: 'bool'
+        dataType: 'boolean'
     }, {
         id: 'date',
         dataType: 'date'

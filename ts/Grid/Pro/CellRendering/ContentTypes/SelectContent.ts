@@ -39,7 +39,7 @@ class SelectContent extends CellContent {
     private select?: HTMLSelectElement;
     private optionElements: HTMLOptionElement[] = [];
 
-    public override add(): void {
+    public override add(parent: HTMLElement = this.cell.htmlElement): void {
         const cell = this.cell;
         const options =
             this.cell.column.options.renderer as SelectRenderer.Options;
@@ -61,15 +61,13 @@ class SelectContent extends CellContent {
             this.select.appendChild(optionElement);
             this.optionElements.push(optionElement);
         }
-        cell.htmlElement.appendChild(this.select);
+        
+        parent.appendChild(this.select);
 
         this.select.addEventListener('change', this.onChange);
     }
 
-    /**
-     * Destroy the select in the cell content.
-     */
-    public destroy(): void {
+    public override destroy(): void {
         this.select?.removeEventListener('change', this.onChange);
 
         for (const optionElement of this.optionElements) {
@@ -81,14 +79,12 @@ class SelectContent extends CellContent {
     }
 
     /**
-     * Set value when option in select is changed.
+     * Handles the change event of the select element.
      *
      * @param e
      * Mouse event object.
-     *
-     * @internal
      */
-    private onChange = (e: Event): void => {
+    public onChange = (e: Event): void => {
         this.cell.setValue(
             (e.target as HTMLSelectElement).value,
             true

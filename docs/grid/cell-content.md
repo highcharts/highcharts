@@ -59,7 +59,7 @@ Cell content supports basic event handling triggered by end-user interactions wi
 The following example demonstrates how to define and use event callbacks within the events object:
 
 ```js
-dataType: 'bool',
+dataType: 'boolean',
 renderer: {
     type: 'checkbox',
     events: {

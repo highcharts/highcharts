@@ -1,6 +1,6 @@
 /* *
  *
- *  Checkbox Cell Renderer class
+ *  Select Cell Renderer class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -22,6 +22,8 @@
  * */
 
 import CellContent from '../../../Core/Table/CellContent/CellContent.js';
+import SelectRenderer from '../Renderers/SelectRenderer.js';
+
 
 /* *
  *
@@ -30,42 +32,61 @@ import CellContent from '../../../Core/Table/CellContent/CellContent.js';
  * */
 
 /**
- * Represents a checkbox type of cell content.
+ * Represents a select type of cell content.
  */
-class CheckboxContent extends CellContent {
+class TextInputContent extends CellContent {
 
     private input?: HTMLInputElement;
+    private optionElements: HTMLOptionElement[] = [];
 
     public override add(parent: HTMLElement = this.cell.htmlElement): void {
         const cell = this.cell;
 
         this.input = document.createElement('input');
-        this.input.type = 'checkbox';
-        this.input.checked = !!cell.value;
+        this.input.value = '' + cell.value;
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !cell.column.options.cells?.editable;
 
         parent.appendChild(this.input);
 
         this.input.addEventListener('change', this.onChange);
+        this.input.addEventListener('keydown', this.onKeyDown);
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.input?.removeEventListener('change', this.onChange);
+
+        for (const optionElement of this.optionElements) {
+            optionElement.remove();
+        }
+        this.optionElements.length = 0;
+
         this.input?.remove();
     }
 
     /**
-     * Handles the change event of the checkbox.
-     * 
+     * Handles the change event of the input element.
+     *
      * @param e
-     * The event object. 
+     * Mouse event object.
      */
     public onChange = (e: Event): void => {
         this.cell.setValue(
-            (e.target as HTMLInputElement).checked,
+            (e.target as HTMLSelectElement).value,
             true
         );
+    };
+
+    /**
+     * Handles the keydown event of the input element.
+     * 
+     * @param e
+     * Keyboard event object.
+     */
+    public onKeyDown = (e: KeyboardEvent): void => {
+        if (this.input && e.key === 'Escape') {
+            this.input.value = '' + this.cell.value;
+        }
     };
 }
 
@@ -76,4 +97,4 @@ class CheckboxContent extends CellContent {
  *
  * */
 
-export default CheckboxContent;
+export default TextInputContent;

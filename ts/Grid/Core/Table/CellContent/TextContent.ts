@@ -48,21 +48,12 @@ const {
  */
 class TextContent extends CellContent {
 
-    private rendered: boolean = false;
-
-    public override add(): void {
-        this.destroy();
-        setHTMLContent(this.cell.htmlElement, this.format());
-        this.rendered = true;
+    public override add(parent: HTMLElement = this.cell.htmlElement): void {
+        setHTMLContent(parent, this.format());
     }
 
     public override destroy(): void {
-        if (!this.rendered) {
-            return;
-        }
-
-        this.cell.htmlElement.innerHTML = AST.emptyHTML;
-        this.rendered = false;
+        // Not needed yet
     }
 
     /**
