@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import SeriesLabelModule from "highcharts/modules/series-label";
-
-SeriesLabelModule(Highcharts);
+import "highcharts/modules/series-label";
 
 Highcharts.setOptions({
     plotOptions: {
