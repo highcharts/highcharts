@@ -20,6 +20,9 @@ Grid.grid('container', {
                     changelog.scrollTop = changelog.scrollHeight;
                 }
             }
+        },
+        editMode: {
+            enabled: true
         }
     },
     columns: [{
