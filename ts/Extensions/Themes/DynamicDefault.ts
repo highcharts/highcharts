@@ -828,6 +828,23 @@ namespace DynamicDefaultTheme {
                 color: 'var(--highcharts-neutral-color-60)'
             }
         },
+        pane: {
+            background: {
+                borderColor: 'var(--highcharts-neutral-color-20)',
+                backgroundColor: {
+                    stops: [
+                        [
+                            0,
+                            'var(--highcharts-background-color)'
+                        ],
+                        [
+                            1,
+                            'var(--highcharts-neutral-color-10)'
+                        ]
+                    ]
+                }
+            }
+        },
         zAxis: {
             labels: {
                 style: {

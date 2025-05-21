@@ -409,21 +409,43 @@ const generate = async () => {
             maskFill: new Color(palette.highlightColor60)
                 .setOpacity(0.3)
                 .get()
+        },
+        pane: {
+            background: {
+                backgroundColor: {
+                    // Palette helper not good at arrays
+                    stops: [
+                        [0, palette.backgroundColor],
+                        [1, palette.neutralColor10]
+                    ]
+                }
+            }
         }
     });
 
     document.getElementById('js').innerText = JSON.stringify(theme, null, '  ');
 
     // JavaScript with CSS variables
-    const themeCSSVariables = JSON
-        .stringify(
-            findColors(defaultOptions, true),
-            null,
-            '    '
-        )
+    const themeCSSVariables = findColors(defaultOptions, true);
+    Highcharts.merge(true, themeCSSVariables, {
+        pane: {
+            background: {
+                backgroundColor: {
+                    // Palette helper not good at arrays
+                    stops: [
+                        [0, 'var(--highcharts-background-color)'],
+                        [1, 'var(--highcharts-neutral-color-10)']
+                    ]
+                }
+            }
+        }
+    });
+    const seriealizedThemeCSSVariables = JSON
+        .stringify(themeCSSVariables, null, '    ')
         .replace(/"([a-zA-Z0-9-]+)":/g, '$1:')
         .replace(/"/g, '\'');
-    document.getElementById('js-css-variables').innerText = themeCSSVariables;
+    document.getElementById('js-css-variables').innerText =
+        seriealizedThemeCSSVariables;
 
     await chartPreview(theme);
 
