@@ -177,8 +177,20 @@ class CellEditing {
     /**
      * Handles the blur event on the input field.
      */
-    private onInputBlur = (): void => {
+    private readonly onInputBlur = (): void => {
         if (!this.stopEditing()) {
+            this.editModeContent?.getMainElement().focus();
+        }
+    };
+
+    /**
+     * Handles the change event on the input field.
+     */
+    private readonly onInputChange = (): void => {
+        if (
+            this.editModeContent?.finishAfterChange &&
+            !this.stopEditing()
+        ) {
             this.editModeContent?.getMainElement().focus();
         }
     };
@@ -190,13 +202,13 @@ class CellEditing {
      * @param e
      * The keyboard event.
      */
-    private onInputKeyDown = (e: KeyboardEvent): void => {
-        const { keyCode } = e;
+    private readonly onInputKeyDown = (e: KeyboardEvent): void => {
+        const { key } = e;
 
         // Enter / Escape
-        if (keyCode === 13 || keyCode === 27) {
+        if (key === 'Enter' || key === 'Escape') {
             // Cancel editing on escape
-            this.stopEditing(keyCode === 13);
+            this.stopEditing(key === 'Enter');
         }
     };
 
@@ -210,30 +222,23 @@ class CellEditing {
             return;
         }
 
-        const cellEl = cell.htmlElement;
         this.editModeContent = cell.column.editModeRenderer?.render(cell);
-        const input = this.editModeContent.getMainElement();
+        this.editModeContent.getMainElement().focus();
 
-        input.focus();
-
-        input.addEventListener('blur', this.onInputBlur);
-        input.addEventListener('keydown', this.onInputKeyDown);
+        this.editModeContent.blurHandler = this.onInputBlur;
+        this.editModeContent.changeHandler = this.onInputChange;
+        this.editModeContent.keyDownHandler = this.onInputKeyDown;
     }
 
     /**
      * Removes event listeners and the input element.
      */
     private destroy(): void {
-        const emContent = this.editModeContent;
-        if (!emContent) {
+        if (!this.editModeContent) {
             return;
         }
 
-        const input = emContent.getMainElement();
-        input.removeEventListener('keydown', this.onInputKeyDown);
-        input.removeEventListener('blur', this.onInputBlur);
-
-        emContent.destroy();
+        this.editModeContent.destroy();
         delete this.editModeContent;
     }
 }

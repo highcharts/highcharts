@@ -38,7 +38,16 @@ import { EditModeContent } from '../../CellEditing/CellEditMode.js';
  */
 class CheckboxContent extends CellContent implements EditModeContent {
 
+    public finishAfterChange: boolean = false;
+
+    public blurHandler?: (e: FocusEvent) => void;
+
+    public keyDownHandler?: (e: KeyboardEvent) => void;
+
+    public changeHandler?: (e: Event) => void;
+
     private input: HTMLInputElement;
+
 
     constructor(cell: TableCell, parent?: HTMLElement) {
         super(cell, parent);
@@ -57,6 +66,8 @@ class CheckboxContent extends CellContent implements EditModeContent {
         this.parentElement.appendChild(this.input);
 
         this.input.addEventListener('change', this.onChange);
+        this.input.addEventListener('keydown', this.onKeyDown);
+        this.input.addEventListener('blur', this.onBlur);
 
         return this.input;
     }
@@ -70,21 +81,29 @@ class CheckboxContent extends CellContent implements EditModeContent {
     }
 
     public destroy(): void {
+        this.input?.removeEventListener('keydown', this.onKeyDown);
+        this.input?.removeEventListener('blur', this.onBlur);
         this.input?.removeEventListener('change', this.onChange);
         this.input?.remove();
     }
 
-    /**
-     * Handles the change event of the checkbox.
-     * 
-     * @param e
-     * The event object. 
-     */
-    public onChange = (e: Event): void => {
-        this.cell.setValue(
-            (e.target as HTMLInputElement).checked,
-            true
-        );
+    private readonly onChange = (e: Event): void => {
+        if (this.changeHandler) {
+            this.changeHandler(e);
+        } else {
+            this.cell.setValue(
+                (e.target as HTMLInputElement).checked,
+                true
+            );
+        }
+    };
+
+    private readonly onKeyDown = (e: KeyboardEvent): void => {
+        this.keyDownHandler?.(e)
+    };
+
+    private readonly onBlur = (e: FocusEvent): void => {
+        this.blurHandler?.(e);
     };
 }
 

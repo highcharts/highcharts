@@ -38,8 +38,15 @@ import { EditModeContent } from '../../CellEditing/CellEditMode.js';
  */
 class TextInputContent extends CellContent implements EditModeContent {
 
+    public finishAfterChange: boolean = true;
+
+    public blurHandler?: (e: FocusEvent) => void;
+
+    public keyDownHandler?: (e: KeyboardEvent) => void;
+
+    public changeHandler?: (e: Event) => void;
+
     private input: HTMLInputElement;
-    private optionElements: HTMLOptionElement[] = [];
 
     constructor(cell: TableCell, parent?: HTMLElement) {
         super(cell, parent);
@@ -58,6 +65,7 @@ class TextInputContent extends CellContent implements EditModeContent {
 
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);
+        this.input.addEventListener('blur', this.onBlur);
 
         return this.input;
     }
@@ -71,39 +79,34 @@ class TextInputContent extends CellContent implements EditModeContent {
     }
 
     public override destroy(): void {
+        this.input?.removeEventListener('blur', this.onBlur);
+        this.input?.removeEventListener('keydown', this.onKeyDown);
         this.input?.removeEventListener('change', this.onChange);
-
-        for (const optionElement of this.optionElements) {
-            optionElement.remove();
-        }
-        this.optionElements.length = 0;
 
         this.input?.remove();
     }
 
-    /**
-     * Handles the change event of the input element.
-     *
-     * @param e
-     * Mouse event object.
-     */
-    public onChange = (e: Event): void => {
-        this.cell.setValue(
-            (e.target as HTMLSelectElement).value,
-            true
-        );
+    private readonly onChange = (e: Event): void => {
+        if (this.changeHandler) {
+            this.changeHandler(e);
+        } else {
+            this.cell.setValue(
+                (e.target as HTMLSelectElement).value,
+                true
+            );
+        }
     };
 
-    /**
-     * Handles the keydown event of the input element.
-     * 
-     * @param e
-     * Keyboard event object.
-     */
-    public onKeyDown = (e: KeyboardEvent): void => {
-        if (this.input && e.key === 'Escape') {
+    private readonly onKeyDown = (e: KeyboardEvent): void => {
+        if (this.keyDownHandler) {
+            this.keyDownHandler(e);
+        } else if (this.input && e.key === 'Escape') {
             this.input.value = '' + this.cell.value;
         }
+    };
+
+    private readonly onBlur = (e: FocusEvent): void => {
+        this.blurHandler?.(e);
     };
 }
 

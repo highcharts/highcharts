@@ -39,6 +39,14 @@ import SelectRenderer from '../Renderers/SelectRenderer.js';
  */
 class SelectContent extends CellContent implements EditModeContent {
 
+    public finishAfterChange: boolean = true;
+
+    public blurHandler?: (e: FocusEvent) => void;
+
+    public keyDownHandler?: (e: KeyboardEvent) => void;
+
+    public changeHandler?: (e: Event) => void;
+
     private select: HTMLSelectElement;
 
     private optionElements: HTMLOptionElement[] = [];
@@ -75,11 +83,15 @@ class SelectContent extends CellContent implements EditModeContent {
         this.parentElement.appendChild(this.select);
 
         this.select.addEventListener('change', this.onChange);
+        this.select.addEventListener('keydown', this.onKeyDown);
+        this.select.addEventListener('blur', this.onBlur);
 
         return this.select;
     }
 
     public override destroy(): void {
+        this.select?.removeEventListener('blur', this.onBlur);
+        this.select?.removeEventListener('keydown', this.onKeyDown);
         this.select?.removeEventListener('change', this.onChange);
 
         for (const optionElement of this.optionElements) {
@@ -98,17 +110,23 @@ class SelectContent extends CellContent implements EditModeContent {
         return this.select;
     }
 
-    /**
-     * Handles the change event of the select element.
-     *
-     * @param e
-     * Mouse event object.
-     */
-    public onChange = (e: Event): void => {
-        this.cell.setValue(
-            (e.target as HTMLSelectElement).value,
-            true
-        );
+    private readonly onChange = (e: Event): void => {
+        if (this.changeHandler) {
+            this.changeHandler(e);
+        } else {
+            this.cell.setValue(
+                (e.target as HTMLInputElement).value,
+                true
+            );
+        }
+    };
+
+    private readonly onKeyDown = (e: KeyboardEvent): void => {
+        this.keyDownHandler?.(e)
+    };
+
+    private readonly onBlur = (e: FocusEvent): void => {
+        this.blurHandler?.(e);
     };
 }
 

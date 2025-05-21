@@ -38,6 +38,10 @@ E extends HTMLElement = HTMLElement
     getMainElement(): E;
     getValue(): T;
     destroy(): void;
+    blurHandler?: (e: FocusEvent) => void;
+    keyDownHandler?: (e: KeyboardEvent) => void;
+    changeHandler?: (e: Event) => void;
+    finishAfterChange: boolean;
 }
 
 export interface EditModeRenderer {
