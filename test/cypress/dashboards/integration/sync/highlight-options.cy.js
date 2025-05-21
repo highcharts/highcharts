@@ -6,9 +6,9 @@ describe("Highlight sync options", () => {
     it('All chart highlight sync options are disabled', () => {
         cy.boardRendered();
 
-        cy.get('#cbx-chart\\ showTooltip').click();
-        cy.get('#cbx-chart\\ highlightPoint').click();
-        cy.get('#cbx-chart\\ showCrosshair').click();
+        cy.get('#cbx-chart-showTooltip').click();
+        cy.get('#cbx-chart-highlightPoint').click();
+        cy.get('#cbx-chart-showCrosshair').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(0).trigger('mouseover');
 
@@ -31,7 +31,7 @@ describe("Highlight sync options", () => {
     });
 
     it('Chart highlight showTooltip option is enabled', () => {
-        cy.get('#cbx-chart\\ showTooltip').click();
+        cy.get('#cbx-chart-showTooltip').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(1).trigger('mouseover');
 
@@ -44,7 +44,7 @@ describe("Highlight sync options", () => {
     });
 
     it('Chart highlight highlightPoint option is enabled', () => {
-        cy.get('#cbx-chart\\ highlightPoint').click();
+        cy.get('#cbx-chart-highlightPoint').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(2).trigger('mouseover');
 
@@ -58,7 +58,7 @@ describe("Highlight sync options", () => {
     });
 
     it('Chart highlight showCrosshair option is enabled', () => {
-        cy.get('#cbx-chart\\ showCrosshair').click();
+        cy.get('#cbx-chart-showCrosshair').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(3).trigger('mouseover');
 
@@ -72,7 +72,7 @@ describe("Highlight sync options", () => {
     });
 
     it('Chart highlight sync is disabled', () => {
-        cy.get('#cbx-chart\\ enabled').click();
+        cy.get('#cbx-chart-enabled').click();
 
         cy.get('tr.highcharts-datagrid-row').eq(4).trigger('mouseover');
 
@@ -98,7 +98,7 @@ describe("Highlight sync options", () => {
     });
 
     it('Grid highlight sync is enabled', () => {
-        cy.get('#cbx-grid\\ enabled').click();
+        cy.get('#cbx-grid-enabled').click();
 
         // Highlight the row from the first grid.
         cy.get('#grid-0 tr.highcharts-datagrid-row').eq(4).trigger('mouseover');

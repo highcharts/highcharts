@@ -1,3 +1,17 @@
+const gridOptions = {
+    type: 'DataGrid',
+    connector: {
+        id: 'vegetables'
+    },
+    sync: {
+        highlight: true
+    },
+    dataGridOptions: {
+        credits: {
+            enabled: false
+        }
+    }
+};
 const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -46,21 +60,14 @@ const board = Dashboards.board('container', {
             }
         }
     },
-    ...Array.from({ length: 2 }, (_, index) => ({
-        type: 'DataGrid',
-        renderTo: `grid-${index}`,
-        connector: {
-            id: 'vegetables'
-        },
-        sync: {
-            highlight: true
-        },
-        dataGridOptions: {
-            credits: {
-                enabled: false
-            }
-        }
-    }))]
+    {
+        renderTo: 'grid-0',
+        ...gridOptions
+    },
+    {
+        renderTo: 'grid-1',
+        ...gridOptions
+    }]
 });
 
 
@@ -72,10 +79,10 @@ const optionsCbx = document.querySelectorAll('.option');
 
 optionsCbx.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
-        const checkboxId = checkbox.id;
-        const { checked } = checkbox;
+        const { checked, dataset } = checkbox;
+        const checkboxDataValue = dataset.value;
 
-        if (checkboxId === 'cbx-chart enabled') {
+        if (checkboxDataValue === 'enabled') {
             optionsCbx.forEach(cbx => {
                 if (cbx.dataset.value !== 'enabled') {
                     cbx.disabled = !checked;
@@ -84,24 +91,24 @@ optionsCbx.forEach(checkbox => {
         }
 
         const componentIndices =
-            checkboxId.includes('cbx-chart') ? [0] : [1, 2];
+            checkbox.id === 'cbx-grid-enabled' ? [1, 2] : [0];
         componentIndices.forEach(index => {
             board.mountedComponents[index].component.update({
-                ...(checkboxId.includes('enabled') && ({
+                ...(checkboxDataValue === 'enabled' && ({
                     sync: {
                         highlight: {
                             enabled: checked
                         }
                     }
                 })),
-                ...(checkboxId.includes('showTooltip') && ({
+                ...(checkboxDataValue === 'showTooltip' && ({
                     chartOptions: {
                         tooltip: {
                             enabled: checked
                         }
                     }
                 })),
-                ...(checkboxId.includes('highlightPoint') && ({
+                ...(checkboxDataValue === 'highlightPoint' && ({
                     chartOptions: {
                         plotOptions: {
                             series: {
@@ -123,7 +130,7 @@ optionsCbx.forEach(checkbox => {
                         }
                     }
                 })),
-                ...(checkboxId.includes('showCrosshair') && ({
+                ...(checkboxDataValue === 'showCrosshair' && ({
                     chartOptions: {
                         xAxis: {
                             crosshair: checked
