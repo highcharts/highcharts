@@ -36,7 +36,7 @@ Highcharts.getSVG = async function (charts, options) {
             }
 
             try {
-                const svg = await charts[i].exporting.getSVGForLocalExport(
+                const svg = await charts[i].exporting.localExport(
                     options,
                     {}
                 );

@@ -77,7 +77,7 @@ const exporting: ExportingOptions = {
      *
      * @type      {boolean}
      * @default   false
-     * @since 12.0.0
+     * @since     12.0.0
      * @apioption exporting.applyStyleSheets
      */
 
@@ -206,6 +206,27 @@ const exporting: ExportingOptions = {
      * @apioption exporting.libURL
      */
     libURL: 'https://code.highcharts.com/@product.version@/lib/',
+
+    /**
+     * Whether the chart should be exported using the browser's built-in
+     * capabilities, allowing offline exports without requiring access to the
+     * Highcharts export server, or sent directly to the export server for
+     * processing and downloading.
+     *
+     * This option is different from `exporting.fallbackToExportServer`, which
+     * controls whether the export server should be used as a fallback only if
+     * the local export fails. In contrast, `exporting.local` explicitly defines
+     * which export method to use.
+     *
+     * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
+     *
+     * @type      {boolean}
+     * @default   true
+     * @since     12.2.1
+     * @requires  modules/exporting
+     * @apioption exporting.local
+     */
+    local: true,
 
     /**
      * Analogous to [sourceWidth](#exporting.sourceWidth).

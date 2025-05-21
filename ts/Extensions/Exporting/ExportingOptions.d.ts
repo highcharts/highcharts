@@ -66,6 +66,7 @@ export interface ExportingOptions {
     filename?: string;
     fetchOptions?: RequestInit;
     libURL?: string;
+    local?: boolean;
     menuItemDefinitions?: Record<string, Exporting.MenuObject>;
     pdfFont?: PdfFontOptions;
     printMaxWidth?: number;

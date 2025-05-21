@@ -377,13 +377,6 @@ describe('Testing Highcharts in use with modules', () => {
             'No Data To Display is loaded.'
         );
 
-        // Offline Exporting
-        strictEqual(
-            typeof Highcharts.Exporting.prototype.exportChartLocal,
-            'function',
-            'Offline Exporting is loaded.'
-        );
-
         // Series Label
         strictEqual(
             typeof Highcharts.SVGRenderer.prototype.symbols.connector,

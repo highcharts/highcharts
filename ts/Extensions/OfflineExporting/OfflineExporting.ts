@@ -48,7 +48,9 @@ const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     extend,
+    fireEvent,
     merge,
     pushUnique
 } = U;
@@ -62,7 +64,7 @@ const {
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         /**
-         * Deprecated in favor of [Exporting.exportChartLocal](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChartLocal).
+         * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
          *
          * @deprecated */
         exportChartLocal(
@@ -75,15 +77,6 @@ declare module '../../Core/Chart/ChartLike' {
 declare module '../../Core/GlobalsLike.d.ts' {
     interface GlobalsLike {
         Exporting: typeof Exporting
-    }
-}
-
-declare module '../../Extensions/Exporting/ExportingLike' {
-    interface ExportingLike {
-        exportChartLocal(
-            exportingOptions?: ExportingOptions,
-            chartOptions?: Options
-        ): Promise<void>;
     }
 }
 
@@ -117,18 +110,36 @@ namespace OfflineExporting {
         ExportingClass: typeof Exporting
     ): void {
         // Add the OfflineExporting version of the downloadSVGLocal to globals
-        G.downloadSVGLocal = async function downloadSVGLocal(
-            svg: string,
-            exportingOptions: ExportingOptions
-        ): Promise<void> {
-            await (exportingOptions?.type === 'application/pdf' ?
-                OfflineExporting.downloadSVGLocal :
-                G.Exporting.downloadSVGLocal)(
-                svg,
-                exportingOptions
-            );
-            return;
-        };
+        addEvent(
+            ExportingClass,
+            'downloadSVG',
+            async function (
+                e: Exporting.DownloadSVGEventArgs
+            ): Promise<void> {
+                const { svg, exportingOptions, exporting, preventDefault } = e;
+
+                // Check if PDF export is requested
+                if (exportingOptions?.type === 'application/pdf') {
+                    // Prevent the default export behavior
+                    preventDefault && preventDefault();
+
+                    try {
+                        // Run the PDF local export
+                        await OfflineExporting.downloadSVG(
+                            svg,
+                            exportingOptions,
+                            exporting
+                        );
+                    } catch (error) {
+                        // Try to fallback to the server
+                        await exporting?.fallbackToServer(
+                            exportingOptions,
+                            error as Error
+                        );
+                    }
+                }
+            }
+        );
 
         // Check the composition registry for the OfflineExporting
         if (!pushUnique(composed, 'OfflineExporting')) {
@@ -142,7 +153,7 @@ namespace OfflineExporting {
                 exportingOptions?: ExportingOptions,
                 chartOptions?: Options
             ): Promise<void> {
-                await this.exporting?.exportChartLocal(
+                await this.exporting?.exportChart(
                     exportingOptions,
                     chartOptions
                 );
@@ -150,13 +161,8 @@ namespace OfflineExporting {
             }
         });
 
-        const exportingProto = ExportingClass.prototype;
-        if (!exportingProto.exportChartLocal) {
-            exportingProto.exportChartLocal = exportChartLocal;
-
-            // Extend the default options to use the local exporter logic
-            merge(true, defaultOptions.exporting, OfflineExportingDefaults);
-        }
+        // Extend the default options to use the local exporter logic
+        merge(true, defaultOptions.exporting, OfflineExportingDefaults);
     }
 
     /**
@@ -218,19 +224,22 @@ namespace OfflineExporting {
      * Highcharts options pointing to our server.
      *
      * @async
-     * @function Highcharts.downloadSVGLocal
+     * @function Highcharts.Exporting#downloadSVG
      *
      * @param {string} svg
      * The generated SVG.
      * @param {Highcharts.ExportingOptions} exportingOptions
      * The exporting options.
+     * @param {Highcharts.Exporting} [exporting]
+     * The exporting object.
      *
      * @requires modules/exporting
      * @requires modules/offline-exporting
      */
-    export async function downloadSVGLocal(
+    export async function downloadSVG(
         svg: string,
-        exportingOptions: ExportingOptions
+        exportingOptions: ExportingOptions,
+        exporting?: Exporting
     ): Promise<void> {
         // Get the final image options
         const {
@@ -253,34 +262,11 @@ namespace OfflineExporting {
 
             // Call the PDF download if SVG element found
             await downloadPDF(svg, scale, filename, exportingOptions?.pdfFont);
+            if (exporting) {
+                // Trigger the success event
+                fireEvent(exporting, 'downloadSVGSuccess');
+            }
         }
-    }
-
-    /**
-     * Exporting and offline-exporting modules required. Export a chart to PDF
-     * locally in the user's browser.
-     *
-     * @async
-     * @function Highcharts.Exporting#exportChartLocal
-     *
-     * @param {Highcharts.ExportingOptions} [exportingOptions]
-     * Exporting options, the same as in {@link Highcharts.Chart#exportChart}.
-     * @param {Highcharts.Options} [chartOptions]
-     * Additional chart options for the exported chart. For example a different
-     * background color can be added here, or `dataLabels` for export only.
-     *
-     * @requires modules/exporting
-     * @requires modules/offline-exporting
-     */
-    async function exportChartLocal(
-        this: Exporting,
-        exportingOptions?: ExportingOptions,
-        chartOptions?: Options
-    ): Promise<void> {
-        await this.exportChartLocalCore(
-            exportingOptions,
-            chartOptions
-        );
     }
 
     /**

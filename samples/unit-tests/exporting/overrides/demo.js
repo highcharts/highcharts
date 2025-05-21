@@ -68,6 +68,7 @@ QUnit.test('Exported SVG characteristics', async function (assert) {
 
         // Run export width override options
         await chart.exporting.exportChart({
+            local: false,
             type: 'application/pdf'
         }, {
             chart: {
@@ -109,6 +110,7 @@ QUnit.test('Exported SVG characteristics', async function (assert) {
         );
 
         await chart.exporting.exportChart({
+            local: false,
             type: 'application/pdf'
         }, {
             xAxis: {

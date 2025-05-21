@@ -108,6 +108,7 @@ QUnit.test('Export buttons', function (assert) {
 
     chart.update({
         exporting: {
+            local: false,
             buttons: {
                 contextButton: {
                     menuItems: null,

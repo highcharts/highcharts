@@ -167,7 +167,11 @@ declare module '../../Core/Chart/ChartOptions' {
 
 declare module '../../Core/GlobalsLike.d.ts' {
     interface GlobalsLike {
-        downloadSVGLocal: Exporting.DownloadSVGLocalFunction
+        /**
+         * Deprecated in favor of [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG).
+         *
+         * @deprecated */
+        downloadSVGLocal: Exporting.DownloadSVGFunction
     }
 }
 
@@ -284,19 +288,41 @@ class Exporting {
      *
      * @static
      * @async
-     * @function Highcharts.downloadSVGLocal
+     * @function Highcharts.Exporting#downloadSVG
      *
      * @param {string} svg
      * The generated SVG.
      * @param {Highcharts.ExportingOptions} exportingOptions
      * The exporting options.
+     * @param {Highcharts.Exporting} [exporting]
+     * The exporting object.
      *
      * @requires modules/exporting
      */
-    public static async downloadSVGLocal(
+    // eslint-disable-next-line @typescript-eslint/require-await
+    public static async downloadSVG(
         svg: string,
-        exportingOptions: ExportingOptions
+        exportingOptions: ExportingOptions,
+        exporting?: Exporting
     ): Promise<void> {
+        const eventArgs: Exporting.DownloadSVGEventArgs = {
+            svg,
+            exportingOptions,
+            exporting
+        };
+
+        // Fire a custom event before the export starts
+        fireEvent(
+            this.prototype,
+            'downloadSVG',
+            eventArgs
+        );
+
+        // If the event was prevented, do not proceed with the export
+        if (eventArgs.defaultPrevented) {
+            return;
+        }
+
         // Get the final image options
         const {
             type,
@@ -307,7 +333,12 @@ class Exporting {
         let svgURL: string;
 
         // Initiate download depending on file type
-        if (type === 'image/svg+xml') {
+        if (type === 'application/pdf') {
+            // Error in case of offline-exporting module is not loaded
+            throw new Error(
+                'Offline exporting logic for PDF type is not found.'
+            );
+        } else if (type === 'image/svg+xml') {
             // SVG download. In this case, we want to use Microsoft specific
             // Blob if available
             if (typeof win.MSBlobBuilder !== 'undefined') {
@@ -317,10 +348,9 @@ class Exporting {
             } else {
                 svgURL = Exporting.svgToDataURL(svg);
             }
-
             // Download the chart
             downloadURL(svgURL, filename);
-        } else if (type !== 'application/pdf') {
+        } else {
             // PNG/JPEG download - create bitmap from SVG
             svgURL = Exporting.svgToDataURL(svg);
             try {
@@ -334,7 +364,8 @@ class Exporting {
                 );
                 downloadURL(dataURL, filename);
             } catch (error) {
-                // No need for the below logic to run in case no canvas is found
+                // No need for the below logic to run in case no canvas is
+                // found
                 if ((error as Error).message === 'No canvas found!') {
                     throw error;
                 }
@@ -385,7 +416,8 @@ class Exporting {
                     canvas.height = imageHeight;
 
                     // Must load canVG first if not found. Don't destroy the
-                    // object URL yet since we are doing things asynchronously
+                    // object URL yet since we are doing things
+                    // asynchronously
                     if (!win.canvg) {
                         Exporting.objectURLRevoke = true;
                         await getScript(libURL + 'canvg.js');
@@ -398,11 +430,16 @@ class Exporting {
                 if (Exporting.objectURLRevoke) {
                     try {
                         domurl.revokeObjectURL(svgURL);
-                    } catch (e) {
+                    } catch {
                         // Ignore
                     }
                 }
             }
+        }
+
+        if (exporting) {
+            // Trigger the success event
+            fireEvent(exporting, 'downloadSVGSuccess');
         }
     }
 
@@ -651,7 +688,7 @@ class Exporting {
                     type: 'image/svg+xml;charset-utf-16'
                 }));
             }
-        } catch (e) {
+        } catch {
             // Ignore
         }
         return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
@@ -1281,48 +1318,6 @@ class Exporting {
     }
 
     /**
-     * Handles downloading an SVG for local export.
-     *
-     * @private
-     * @async
-     * @function Highcharts.Exporting#downloadSVGForLocalExport
-     *
-     * @param {string} svg
-     * The SVG markup to be exported.
-     * @param {ExportingOptions} exportingOptions
-     * The exporting options.
-     *
-     * @throws {Error}
-     * If the SVG contains `<foreignObject>` elements and the export type is not
-     * SVG, as it may cause issues with CanVG, svg2pdf, and Internet Explorer.
-     *
-     * @requires modules/exporting
-     */
-    public async downloadSVGForLocalExport(
-        svg: string,
-        exportingOptions: ExportingOptions
-    ): Promise<void> {
-        // If SVG contains foreignObjects PDF fails in all browsers and all
-        // exports except SVG will fail in IE, as both CanVG and svg2pdf choke
-        // on this. Gracefully fall back.
-        if (
-            svg.indexOf('<foreignObject') > -1 &&
-            exportingOptions.type !== 'image/svg+xml' &&
-            (
-                isMS ||
-                exportingOptions.type === 'application/pdf'
-            )
-        ) {
-            throw new Error(
-                'Image type not supported for charts with embedded HTML'
-            );
-        } else {
-            // Trigger SVG download
-            await G.downloadSVGLocal(svg, exportingOptions);
-        }
-    }
-
-    /**
      * Submit an SVG version of the chart along with some parameters for local
      * conversion (PNG, JPEG, and SVG) or conversion on a server (PDF).
      *
@@ -1351,16 +1346,22 @@ class Exporting {
         exportingOptions?: ExportingOptions,
         chartOptions?: Options
     ): Promise<void> {
-        // Send the request to the server if it is PDF
-        if (exportingOptions?.type === 'application/pdf') {
+        // Merge the options
+        exportingOptions = merge(this.options, exportingOptions);
+
+        // If local if expected
+        if (exportingOptions?.local) {
+            // Trigger the local export logic
+            await this.localExport(
+                exportingOptions,
+                chartOptions || {}
+            );
+        } else {
             // Get the SVG representation
             const svg = this.getSVGForExport(
                 exportingOptions,
                 chartOptions
             );
-
-            // Merge the options
-            exportingOptions = merge(this.options, exportingOptions);
 
             // Do the post
             if (exportingOptions.url) {
@@ -1374,118 +1375,7 @@ class Exporting {
                     svg
                 }, exportingOptions.fetchOptions);
             }
-        } else {
-            // Otherwise (PNG, JPEG, or SVG) export locally
-            await this.exportChartLocalCore(exportingOptions, chartOptions);
         }
-    }
-
-    /**
-     * Export a chart to an image locally in the browser.
-     *
-     * @private
-     * @async
-     * @function Highcharts.Exporting#exportChartLocalCore
-     *
-     * @param {Highcharts.ExportingOptions} [exportingOptions]
-     * Exporting options, the same as in {@link Highcharts.Chart#exportChart}.
-     * @param {Highcharts.Options} [chartOptions]
-     * Additional chart options for the exported chart. For example a different
-     * background color can be added here, or `dataLabels` for export only.
-     *
-     * @emits Highcharts.Chart#event:exportChartLocalSuccess
-     *
-     * @requires modules/exporting
-     */
-    public async exportChartLocalCore(
-        exportingOptions?: ExportingOptions,
-        chartOptions?: Partial<Options>
-    ): Promise<void> {
-        const chart = this.chart,
-            options = merge(this.options, exportingOptions),
-            // Return true if the SVG contains images with external data. With
-            // the boost module there are `image` elements with encoded PNGs,
-            // these are supported by svg2pdf and should pass (#10243).
-            hasExternalImages = function (): boolean {
-                return [].some.call(
-                    chart.container.getElementsByTagName('image'),
-                    function (image: HTMLDOMElement): boolean {
-                        const href = image.getAttribute('href');
-                        return (
-                            href !== '' &&
-                            typeof href === 'string' &&
-                            href.indexOf('data:') !== 0
-                        );
-                    }
-                );
-            };
-
-        // If we are on IE and in styled mode, add an allowlist to the renderer
-        // for inline styles that we want to pass through. There are so many
-        // styles by default in IE that we don't want to denylist them all.
-        if (isMS && chart.styledMode && !Exporting.inlineAllowlist.length) {
-            Exporting.inlineAllowlist.push(
-                /^blockSize/,
-                /^border/,
-                /^caretColor/,
-                /^color/,
-                /^columnRule/,
-                /^columnRuleColor/,
-                /^cssFloat/,
-                /^cursor/,
-                /^fill$/,
-                /^fillOpacity/,
-                /^font/,
-                /^inlineSize/,
-                /^length/,
-                /^lineHeight/,
-                /^opacity/,
-                /^outline/,
-                /^parentRule/,
-                /^rx$/,
-                /^ry$/,
-                /^stroke/,
-                /^textAlign/,
-                /^textAnchor/,
-                /^textDecoration/,
-                /^transform/,
-                /^vectorEffect/,
-                /^visibility/,
-                /^x$/,
-                /^y$/
-            );
-        }
-
-        // Always fall back on:
-        // - MS browsers: Embedded images JPEG/PNG, or any PDF
-        // - Embedded images and PDF
-        if (
-            (
-                isMS &&
-                (
-                    options.type === 'application/pdf' ||
-                    chart.container.getElementsByTagName('image').length &&
-                    options.type !== 'image/svg+xml'
-                )
-            ) || (
-                options.type === 'application/pdf' &&
-                hasExternalImages()
-            )
-        ) {
-            await this.fallbackToServer(
-                options,
-                new Error('Image type not supported for this chart/browser.')
-            );
-            return;
-        }
-
-        await this.getSVGForLocalExport(
-            options,
-            chartOptions || {}
-        );
-
-        // Trigger the success event
-        fireEvent(chart, 'exportChartLocalSuccess');
     }
 
     /**
@@ -1517,6 +1407,9 @@ class Exporting {
                 error(28, true);
             }
         } else if (exportingOptions.type === 'application/pdf') {
+            // The local must be false to fallback to server for PDF export
+            exportingOptions.local = false;
+
             // Allow fallbacking to server only for PDFs that failed locally
             await this.exportChart(exportingOptions);
         }
@@ -1831,115 +1724,6 @@ class Exporting {
     }
 
     /**
-     * Get SVG of chart prepared for client side export. This converts embedded
-     * images in the SVG to data URIs. It requires the regular exporting module.
-     * The options and chartOptions arguments are passed to the getSVGForExport
-     * function.
-     *
-     * @private
-     * @async
-     * @function Highcharts.Exporting#getSVGForLocalExport
-     *
-     * @param {Highcharts.ExportingOptions} exportingOptions
-     * The exporting options.
-     * @param {Highcharts.Options} chartOptions
-     * Additional chart options for the exported chart.
-     *
-     * @return {Promise<string>}
-     * The sanitized SVG.
-     *
-     * @requires modules/exporting
-     */
-    public async getSVGForLocalExport(
-        exportingOptions: ExportingOptions,
-        chartOptions: Partial<Options>
-    ): Promise<string | void> {
-        const chart = this.chart,
-            exporting = this,
-            // After grabbing the SVG of the chart's copy container we need
-            // to do sanitation on the SVG
-            sanitize = (svg?: string): string => Exporting.sanitizeSVG(
-                svg || '',
-                chartCopyOptions
-            );
-
-        let chartCopyContainer: (HTMLDOMElement | undefined),
-            chartCopyOptions: Options,
-            href: (string | null) = null,
-            images: (Array<SVGImageElement> | HTMLCollectionOf<SVGImageElement> | undefined);
-
-        // Hook into getSVG to get a copy of the chart copy's container (#8273)
-        const unbindGetSVG = addEvent(chart, 'getSVG', (
-            e: { chartCopy: Chart }
-        ): void => {
-            chartCopyOptions = e.chartCopy.options;
-            chartCopyContainer =
-                e.chartCopy.container.cloneNode(true) as HTMLElement;
-            images = chartCopyContainer && chartCopyContainer
-                .getElementsByTagName('image') || [];
-        });
-
-        try {
-            // Trigger hook to get chart copy
-            this.getSVGForExport(exportingOptions, chartOptions);
-
-            // Get the static array
-            const imagesArray = images ? Array.from(images) : [];
-
-            // Go through the images we want to embed
-            for (const image of imagesArray) {
-                href = image.getAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href'
-                );
-
-                if (href) {
-                    Exporting.objectURLRevoke = false;
-                    const dataURL = await Exporting.imageToDataURL(
-                        href,
-                        exportingOptions?.scale || 1,
-                        exportingOptions?.type || 'image/png'
-                    );
-
-                    // Change image href in chart copy
-                    image.setAttributeNS(
-                        'http://www.w3.org/1999/xlink',
-                        'href',
-                        dataURL
-                    );
-
-                // Hidden, boosted series have blank href (#10243)
-                } else {
-                    image.parentNode.removeChild(image);
-                }
-            }
-
-            // Sanitize the SVG
-            const sanitizedSVG = sanitize(chartCopyContainer?.innerHTML);
-
-            // Use SVG of chart copy
-            await this.downloadSVGForLocalExport(
-                sanitizedSVG,
-                extend(
-                    { filename: exporting.getFilename() },
-                    exportingOptions
-                )
-            );
-
-            // Return the sanitized SVG
-            return sanitizedSVG;
-        } catch (error) {
-            await this.fallbackToServer(
-                exportingOptions,
-                error as Error
-            );
-        } finally {
-            // Clean up
-            unbindGetSVG();
-        }
-    }
-
-    /**
      * Analyze inherited styles from stylesheets and add them inline.
      *
      * @private
@@ -2186,6 +1970,210 @@ class Exporting {
     }
 
     /**
+     * Get SVG of chart prepared for client side export. This converts embedded
+     * images in the SVG to data URIs. It requires the regular exporting module.
+     * The options and chartOptions arguments are passed to the getSVGForExport
+     * function.
+     *
+     * @private
+     * @async
+     * @function Highcharts.Exporting#localExport
+     *
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     * The exporting options.
+     * @param {Highcharts.Options} chartOptions
+     * Additional chart options for the exported chart.
+     *
+     * @return {Promise<string>}
+     * The sanitized SVG.
+     *
+     * @requires modules/exporting
+     */
+    public async localExport(
+        exportingOptions: ExportingOptions,
+        chartOptions: Partial<Options>
+    ): Promise<string | void> {
+        const chart = this.chart,
+            exporting = this,
+            // After grabbing the SVG of the chart's copy container we need
+            // to do sanitation on the SVG
+            sanitize = (svg?: string): string => Exporting.sanitizeSVG(
+                svg || '',
+                chartCopyOptions
+            ),
+            // Return true if the SVG contains images with external data.
+            // With the boost module there are `image` elements with encoded
+            // PNGs, these are supported by svg2pdf and should pass (#10243)
+            hasExternalImages = function (): boolean {
+                return [].some.call(
+                    chart.container.getElementsByTagName('image'),
+                    function (image: HTMLDOMElement): boolean {
+                        const href = image.getAttribute('href');
+                        return (
+                            href !== '' &&
+                            typeof href === 'string' &&
+                            href.indexOf('data:') !== 0
+                        );
+                    }
+                );
+            };
+
+        let chartCopyContainer: (HTMLDOMElement | undefined),
+            chartCopyOptions: Options,
+            href: (string | null) = null,
+            images: (Array<SVGImageElement> | HTMLCollectionOf<SVGImageElement> | undefined);
+
+        // If we are on IE and in styled mode, add an allowlist to the
+        // renderer for inline styles that we want to pass through. There
+        // are so many styles by default in IE that we don't want to
+        // denylist them all
+        if (isMS && chart.styledMode && !Exporting.inlineAllowlist.length) {
+            Exporting.inlineAllowlist.push(
+                /^blockSize/,
+                /^border/,
+                /^caretColor/,
+                /^color/,
+                /^columnRule/,
+                /^columnRuleColor/,
+                /^cssFloat/,
+                /^cursor/,
+                /^fill$/,
+                /^fillOpacity/,
+                /^font/,
+                /^inlineSize/,
+                /^length/,
+                /^lineHeight/,
+                /^opacity/,
+                /^outline/,
+                /^parentRule/,
+                /^rx$/,
+                /^ry$/,
+                /^stroke/,
+                /^textAlign/,
+                /^textAnchor/,
+                /^textDecoration/,
+                /^transform/,
+                /^vectorEffect/,
+                /^visibility/,
+                /^x$/,
+                /^y$/
+            );
+        }
+
+        // Always fall back on:
+        // - MS browsers: Embedded images JPEG/PNG, or any PDF
+        // - Embedded images and PDF
+        if (
+            (
+                isMS &&
+                (
+                    exportingOptions.type === 'application/pdf' ||
+                    chart.container.getElementsByTagName('image').length &&
+                    exportingOptions.type !== 'image/svg+xml'
+                )
+            ) || (
+                exportingOptions.type === 'application/pdf' &&
+                hasExternalImages()
+            )
+        ) {
+            await this.fallbackToServer(
+                exportingOptions,
+                new Error(
+                    'Image type not supported for this chart/browser.'
+                )
+            );
+            return;
+        }
+
+        // Hook into getSVG to get a copy of the chart copy's container (#8273)
+        const unbindGetSVG = addEvent(chart, 'getSVG', (
+            e: { chartCopy: Chart }
+        ): void => {
+            chartCopyOptions = e.chartCopy.options;
+            chartCopyContainer =
+                e.chartCopy.container.cloneNode(true) as HTMLElement;
+            images = chartCopyContainer && chartCopyContainer
+                .getElementsByTagName('image') || [];
+        });
+
+        try {
+            // Trigger hook to get chart copy
+            this.getSVGForExport(exportingOptions, chartOptions);
+
+            // Get the static array
+            const imagesArray = images ? Array.from(images) : [];
+
+            // Go through the images we want to embed
+            for (const image of imagesArray) {
+                href = image.getAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'href'
+                );
+
+                if (href) {
+                    Exporting.objectURLRevoke = false;
+                    const dataURL = await Exporting.imageToDataURL(
+                        href,
+                        exportingOptions?.scale || 1,
+                        exportingOptions?.type || 'image/png'
+                    );
+
+                    // Change image href in chart copy
+                    image.setAttributeNS(
+                        'http://www.w3.org/1999/xlink',
+                        'href',
+                        dataURL
+                    );
+
+                // Hidden, boosted series have blank href (#10243)
+                } else {
+                    image.parentNode.removeChild(image);
+                }
+            }
+
+            // Sanitize the SVG
+            const sanitizedSVG = sanitize(chartCopyContainer?.innerHTML);
+
+            // Use SVG of chart copy. If SVG contains foreignObjects PDF fails
+            // in all browsers and all exports except SVG will fail in IE, as
+            // both CanVG and svg2pdf choke on this. Gracefully fall back.
+            if (
+                sanitizedSVG.indexOf('<foreignObject') > -1 &&
+                exportingOptions.type !== 'image/svg+xml' &&
+                (
+                    isMS ||
+                    exportingOptions.type === 'application/pdf'
+                )
+            ) {
+                throw new Error(
+                    'Image type not supported for charts with embedded HTML'
+                );
+            } else {
+                // Trigger SVG download
+                await Exporting.downloadSVG(
+                    sanitizedSVG,
+                    extend(
+                        { filename: exporting.getFilename() },
+                        exportingOptions
+                    ),
+                    this
+                );
+            }
+
+            // Return the sanitized SVG
+            return sanitizedSVG;
+        } catch (error) {
+            await this.fallbackToServer(
+                exportingOptions,
+                error as Error
+            );
+        } finally {
+            // Clean up
+            unbindGetSVG();
+        }
+    }
+
+    /**
      * Move the chart container(s) to another div.
      *
      * @private
@@ -2358,11 +2346,19 @@ namespace Exporting {
         hideMenu(): void;
     }
 
-    export interface DownloadSVGLocalFunction {
+    export interface DownloadSVGFunction {
         (
             svg: string,
             exportingOptions: ExportingOptions
         ): Promise<void>
+    }
+
+    export interface DownloadSVGEventArgs {
+        svg: string;
+        exportingOptions: ExportingOptions;
+        exporting?: Exporting;
+        defaultPrevented?: boolean;
+        preventDefault?: Function;
     }
 
     export interface ErrorCallbackFunction {
@@ -2423,8 +2419,8 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        // Add the Exporting version of the downloadSVGLocal to globals
-        G.downloadSVGLocal = Exporting.downloadSVGLocal;
+        // Add the downloadSVGLocal function to globals
+        G.downloadSVGLocal = Exporting.downloadSVG;
 
         // Check the composition registry for the Exporting
         if (!pushUnique(composed, 'Exporting')) {
