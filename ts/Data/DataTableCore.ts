@@ -38,7 +38,8 @@ import U from '../Core/Utilities.js';
 const {
     fireEvent,
     objectEach,
-    uniqueKey
+    uniqueKey,
+    defined
 } = U;
 
 
@@ -81,13 +82,22 @@ class DataTableCore {
     public constructor(
         options: DataTableOptions = {}
     ) {
+        const {
+            id,
+            columns,
+            columnNames,
+            firstRowAsNames,
+            orientation,
+            dataModifier,
+            beforeParse
+        } = options;
         /**
          * Whether the ID was automatic generated or given in the constructor.
          *
          * @name Highcharts.DataTable#autoId
          * @type {boolean}
          */
-        this.autoId = !options.id;
+        this.autoId = !id;
         this.columns = {};
 
         /**
@@ -96,19 +106,31 @@ class DataTableCore {
          * @name Highcharts.DataTable#id
          * @type {string}
          */
-        this.id = (options.id || uniqueKey());
+        this.id = (id || uniqueKey());
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
-        this.columnNames = options.columnNames;
-        this.firstRowAsNames = options.firstRowAsNames;
-        this.orientation = options.orientation;
-        this.dataModifier = options.dataModifier;
-        this.beforeParse = options.beforeParse;
+
+        // Set the table options only if defined.
+        if (defined(columnNames)) {
+            this.columnNames = columnNames;
+        }
+        if (defined(firstRowAsNames)) {
+            this.firstRowAsNames = firstRowAsNames;
+        }
+        if (defined(orientation)) {
+            this.orientation = orientation;
+        }
+        if (defined(dataModifier)) {
+            this.dataModifier = dataModifier;
+        }
+        if (defined(beforeParse)) {
+            this.beforeParse = beforeParse;
+        }
 
         let rowCount = 0;
 
-        objectEach(options.columns || {}, (column, columnName): void => {
+        objectEach(columns || {}, (column, columnName): void => {
             this.columns[columnName] = column.slice();
             rowCount = Math.max(rowCount, column.length);
         });
