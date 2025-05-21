@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import MapModule from 'highcharts/modules/map';
-
-MapModule(Highcharts);
+import 'highcharts/modules/map';
 
 test_simple();
 test_series();
