@@ -24,7 +24,8 @@ export default function ChartPage() {
 
 ## Streaming data from the server
 
-You can use the server-side rendering for data fetching and then stream the data to a client component rendering your chart.
+While Highcharts does not work on the server, you can use server-side rendering
+for data fetching and then stream the data to a client component rendering your chart.
 
 Consider this `page.tsx` file:
 ```jsx
