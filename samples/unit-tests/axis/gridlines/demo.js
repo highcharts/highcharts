@@ -127,3 +127,29 @@ QUnit.test('Animation of grid lines and tick marks', function (assert) {
 
     TestUtilities.lolexUninstall(clock);
 });
+
+
+QUnit.test('Position of grid lines and tick marks (#22981)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        yAxis: [{
+            tickWidth: 1,
+            gridLineColor: 'red',
+            tickAmount: 4
+        }],
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }]
+    });
+    const ticks = chart.yAxis[0].ticks;
+
+    for (const pos in ticks) {
+        if (Object.hasOwnProperty.call(ticks, pos)) {
+            assert.strictEqual(
+                ticks[pos].mark.attr('d').split(' ')[2],
+                ticks[pos].gridLine.attr('d').split(' ')[2],
+                `Tick ${pos} mark and grid line should have the same y
+                position.`
+            );
+        }
+    }
+});
