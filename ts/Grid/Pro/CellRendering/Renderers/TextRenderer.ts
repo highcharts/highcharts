@@ -24,6 +24,9 @@
 
 import type Column from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
+import type {
+    EditModeRendererTypeName
+} from '../../CellEditing/CellEditingComposition';
 
 import CellRenderer from '../CellRenderer.js';
 import CellRendererRegistry from '../CellRendererRegistry.js';
@@ -46,6 +49,7 @@ const {
  */
 class TextRenderer extends CellRenderer {
 
+    public static defaultEditingRenderer: EditModeRendererTypeName = 'textInput';
     public static defaultOptions: TextRenderer.Options = {
         type: 'text'
     };

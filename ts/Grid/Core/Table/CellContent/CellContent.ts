@@ -36,20 +36,31 @@ import TableCell from '../Body/TableCell.js';
  */
 abstract class CellContent {
 
+    public readonly parentElement: HTMLElement;
     public readonly cell: TableCell;
 
-    public constructor(cell: TableCell) {
+    /**
+     * Creates and renders the cell content.
+     *
+     * @param cell
+     * The cell to which the content belongs.
+     *
+     * @param parent 
+     * The parent element to which the content will be appended. If not
+     * provided, the cell's HTML element will be used.
+     */
+    public constructor(
+        cell: TableCell,
+        parent: HTMLElement = cell.htmlElement
+    ) {
         this.cell = cell;
+        this.parentElement = parent;
     }
 
     /**
-     * Render the cell content.
-     * 
-     * @param parent
-     * The parent element to which the cell content will be added. If not set,
-     * the cell's main HTML element will be used.
+     * Renders the cell content.
      */
-    public abstract add(parent?: HTMLElement): void;
+    protected abstract add(): void;
 
     /**
      * Destroy the cell content.

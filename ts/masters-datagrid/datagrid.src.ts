@@ -168,7 +168,7 @@ G.HeaderCell = G.HeaderCell || HeaderCell;
 G.TableCell = G.TableCell || TableCell;
 
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
-CellEditingComposition.compose(G.Table, G.TableCell);
+CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
 CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 ValidatorComposition.compose(G.Table);

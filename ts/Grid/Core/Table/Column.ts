@@ -142,8 +142,6 @@ class Column {
             grid.columnOptionsMap?.[id] ?? {}
         );
 
-        // this.width = this.getInitialWidth();
-
         fireEvent(this, 'afterInit');
     }
 

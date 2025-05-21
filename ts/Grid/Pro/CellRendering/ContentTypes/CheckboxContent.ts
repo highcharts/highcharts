@@ -21,7 +21,11 @@
  *
  * */
 
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+
 import CellContent from '../../../Core/Table/CellContent/CellContent.js';
+import { EditModeContent } from '../../CellEditing/CellEditMode.js';
+
 
 /* *
  *
@@ -32,11 +36,16 @@ import CellContent from '../../../Core/Table/CellContent/CellContent.js';
 /**
  * Represents a checkbox type of cell content.
  */
-class CheckboxContent extends CellContent {
+class CheckboxContent extends CellContent implements EditModeContent {
 
-    private input?: HTMLInputElement;
+    private input: HTMLInputElement;
 
-    public override add(parent: HTMLElement = this.cell.htmlElement): void {
+    constructor(cell: TableCell, parent?: HTMLElement) {
+        super(cell, parent);
+        this.input = this.add();
+    }
+
+    protected override add(): HTMLInputElement {
         const cell = this.cell;
 
         this.input = document.createElement('input');
@@ -45,9 +54,19 @@ class CheckboxContent extends CellContent {
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !cell.column.options.cells?.editable;
 
-        parent.appendChild(this.input);
+        this.parentElement.appendChild(this.input);
 
         this.input.addEventListener('change', this.onChange);
+
+        return this.input;
+    }
+
+    public getValue(): boolean {
+        return this.input.checked;
+    }
+
+    public getMainElement(): HTMLInputElement {
+        return this.input;
     }
 
     public destroy(): void {

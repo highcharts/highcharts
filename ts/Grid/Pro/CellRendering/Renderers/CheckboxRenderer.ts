@@ -24,12 +24,16 @@
 
 import type Column from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
+import type {
+    EditModeRendererTypeName
+} from '../../CellEditing/CellEditingComposition';
 
 import CellRenderer from '../CellRenderer.js';
 import CellRendererRegistry from '../CellRendererRegistry.js';
 import CheckboxContent from '../ContentTypes/CheckboxContent.js';
 
 import U from '../../../../Core/Utilities.js';
+import { EditModeRenderer } from '../../CellEditing/CellEditMode';
 const {
     merge
 } = U;
@@ -44,8 +48,9 @@ const {
 /**
  * Renderer for the Checkbox in a column.
  */
-class CheckboxRenderer extends CellRenderer {
+class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
 
+    public static defaultEditingRenderer: EditModeRendererTypeName = 'checkbox';
     public static defaultOptions: CheckboxRenderer.Options = {
         type: 'checkbox'
     };
@@ -61,8 +66,11 @@ class CheckboxRenderer extends CellRenderer {
         );
     }
 
-    public override render(cell: TableCell): CheckboxContent {
-        return new CheckboxContent(cell);
+    public override render(
+        cell: TableCell,
+        parent: HTMLElement = cell.htmlElement
+    ): CheckboxContent {
+        return new CheckboxContent(cell, parent);
     }
 
 }

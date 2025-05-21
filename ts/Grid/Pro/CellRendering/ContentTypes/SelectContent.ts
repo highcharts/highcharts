@@ -21,6 +21,9 @@
  *
  * */
 
+import type { EditModeContent } from '../../CellEditing/CellEditMode';
+import type TableCell from '../../../Core/Table/Body/TableCell';
+
 import CellContent from '../../../Core/Table/CellContent/CellContent.js';
 import SelectRenderer from '../Renderers/SelectRenderer.js';
 
@@ -34,12 +37,19 @@ import SelectRenderer from '../Renderers/SelectRenderer.js';
 /**
  * Represents a select type of cell content.
  */
-class SelectContent extends CellContent {
+class SelectContent extends CellContent implements EditModeContent {
 
-    private select?: HTMLSelectElement;
+    private select: HTMLSelectElement;
+
     private optionElements: HTMLOptionElement[] = [];
 
-    public override add(parent: HTMLElement = this.cell.htmlElement): void {
+    
+    public constructor(cell: TableCell, parent?: HTMLElement) {
+        super(cell, parent);
+        this.select = this.add();
+    }
+
+    protected override add(): HTMLSelectElement {
         const cell = this.cell;
         const options =
             this.cell.column.options.renderer as SelectRenderer.Options;
@@ -62,9 +72,11 @@ class SelectContent extends CellContent {
             this.optionElements.push(optionElement);
         }
         
-        parent.appendChild(this.select);
+        this.parentElement.appendChild(this.select);
 
         this.select.addEventListener('change', this.onChange);
+
+        return this.select;
     }
 
     public override destroy(): void {
@@ -76,6 +88,14 @@ class SelectContent extends CellContent {
         this.optionElements.length = 0;
 
         this.select?.remove();
+    }
+
+    public getValue(): string {
+        return this.select.value;
+    }
+
+    public getMainElement(): HTMLSelectElement {
+        return this.select;
     }
 
     /**

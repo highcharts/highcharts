@@ -21,8 +21,10 @@
  *
  * */
 
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+
 import CellContent from '../../../Core/Table/CellContent/CellContent.js';
-import SelectRenderer from '../Renderers/SelectRenderer.js';
+import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 
 
 /* *
@@ -32,14 +34,19 @@ import SelectRenderer from '../Renderers/SelectRenderer.js';
  * */
 
 /**
- * Represents a select type of cell content.
+ * Represents a text input type of cell content.
  */
-class TextInputContent extends CellContent {
+class TextInputContent extends CellContent implements EditModeContent {
 
-    private input?: HTMLInputElement;
+    private input: HTMLInputElement;
     private optionElements: HTMLOptionElement[] = [];
 
-    public override add(parent: HTMLElement = this.cell.htmlElement): void {
+    constructor(cell: TableCell, parent?: HTMLElement) {
+        super(cell, parent);
+        this.input = this.add();
+    }
+
+    public override add(): HTMLInputElement {
         const cell = this.cell;
 
         this.input = document.createElement('input');
@@ -47,10 +54,20 @@ class TextInputContent extends CellContent {
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !cell.column.options.cells?.editable;
 
-        parent.appendChild(this.input);
+        this.parentElement.appendChild(this.input);
 
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);
+
+        return this.input;
+    }
+
+    public getValue(): string {
+        return this.input?.value || '';
+    }
+
+    public getMainElement(): HTMLInputElement {
+        return this.input;
     }
 
     public override destroy(): void {
