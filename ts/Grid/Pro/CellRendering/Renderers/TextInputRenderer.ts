@@ -60,20 +60,13 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
     
     public override options: TextInputRenderer.Options;
 
-    public constructor(column: Column) {
+    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-
-        this.options = merge(
-            this.column.options.renderer || {},
-            TextInputRenderer.defaultOptions
-        );
+        this.options = merge(TextInputRenderer.defaultOptions, options);
     }
 
-    public override render(
-        cell: TableCell,
-        parent: HTMLElement = cell.htmlElement
-    ): TextInputContent {
-        return new TextInputContent(cell, parent);
+    public override render(cell: TableCell): TextInputContent {
+        return new TextInputContent(cell, this);
     }
 
 }

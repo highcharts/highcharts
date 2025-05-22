@@ -22,10 +22,10 @@
  * */
 
 import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type TextInputRenderer from '../Renderers/TextInputRenderer.js';
 
-import CellContent from '../../../Core/Table/CellContent/CellContent.js';
 import { EditModeContent } from '../../CellEditing/CellEditMode.js';
-
+import CellContentPro from '../CellContentPro.js';
 
 /* *
  *
@@ -36,7 +36,7 @@ import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 /**
  * Represents a text input type of cell content.
  */
-class TextInputContent extends CellContent implements EditModeContent {
+class TextInputContent extends CellContentPro implements EditModeContent {
 
     public finishAfterChange: boolean = true;
 
@@ -48,8 +48,8 @@ class TextInputContent extends CellContent implements EditModeContent {
 
     private input: HTMLInputElement;
 
-    constructor(cell: TableCell, parent?: HTMLElement) {
-        super(cell, parent);
+    constructor(cell: TableCell, renderer: TextInputRenderer) {
+        super(cell, renderer);
         this.input = this.add();
     }
 
@@ -61,7 +61,7 @@ class TextInputContent extends CellContent implements EditModeContent {
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !cell.column.options.cells?.editable;
 
-        this.parentElement.appendChild(this.input);
+        this.cell.htmlElement.appendChild(this.input);
 
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);

@@ -59,20 +59,13 @@ class SelectRenderer extends CellRenderer implements EditModeRenderer {
     
     public override options: SelectRenderer.Options;
 
-    public constructor(column: Column) {
+    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-
-        this.options = merge(
-            this.column.options.renderer || {},
-            SelectRenderer.defaultOptions
-        );
+        this.options = merge(SelectRenderer.defaultOptions, options);
     }
 
-    public override render(
-        cell: TableCell,
-        parent: HTMLElement = cell.htmlElement
-    ): SelectContent {
-        return new SelectContent(cell, parent);
+    public override render(cell: TableCell): SelectContent {
+        return new SelectContent(cell, this);
     }
 
 }

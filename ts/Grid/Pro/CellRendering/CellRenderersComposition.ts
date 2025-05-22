@@ -72,10 +72,12 @@ namespace CellRenderersComposition {
      * Current column.
      */
     function afterColumnInit(this: Column): void {
-        this.cellRenderer = new CellRendererRegistry.types[
+        const Constructor = CellRendererRegistry.types[
             this.options.renderer?.type ||
             CellRendererRegistry.dataTypeDefaults[this.dataType]
-        ](this);
+        ];
+
+        this.cellRenderer = new Constructor(this, this.options.renderer || {});
     }
 
     /**

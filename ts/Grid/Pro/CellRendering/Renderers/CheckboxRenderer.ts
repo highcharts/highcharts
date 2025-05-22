@@ -57,20 +57,13 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
 
     public override options: CheckboxRenderer.Options;
 
-    public constructor(column: Column) {
+    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-
-        this.options = merge(
-            this.column.options.renderer || {},
-            CheckboxRenderer.defaultOptions
-        );
+        this.options = merge(CheckboxRenderer.defaultOptions, options);
     }
 
-    public override render(
-        cell: TableCell,
-        parent: HTMLElement = cell.htmlElement
-    ): CheckboxContent {
-        return new CheckboxContent(cell, parent);
+    public override render(cell: TableCell): CheckboxContent {
+        return new CheckboxContent(cell, this);
     }
 
 }

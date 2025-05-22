@@ -37,6 +37,7 @@ import CellEditing from './CellEditing.js';
 import CellRendererRegistry from '../CellRendering/CellRendererRegistry.js';
 import GU from '../../Core/GridUtils.js';
 import U from '../../../Core/Utilities.js';
+import SlowStochasticIndicator from '../../../Stock/Indicators/SlowStochastic/SlowStochasticIndicator';
 
 const {
     makeHTMLElement
@@ -150,14 +151,14 @@ namespace CellEditingComposition {
      * The column to create the edit mode renderer for.
      */
     function createEditModeRenderer(column: Column): EditModeRendererType {
-        const { editMode } = column.options;
-        const editModeRendererTypeName = editMode?.renderer?.type;
+        const editModeOptions = column.options.editMode;
+        const editModeRendererTypeName = editModeOptions?.renderer?.type;
         const staticRendererTypeName = column.options?.renderer?.type || 'text';
 
         if (editModeRendererTypeName) {
             return new CellRendererRegistry.types[
                 editModeRendererTypeName
-            ](column);
+            ](column, editModeOptions?.renderer || {});
         }
 
         const staticRendererType = CellRendererRegistry.types[
@@ -166,7 +167,7 @@ namespace CellEditingComposition {
 
         return new CellRendererRegistry.types[
             staticRendererType.defaultEditingRenderer
-        ](column);
+        ](column, editModeOptions?.renderer || {});
     }
 
     /**

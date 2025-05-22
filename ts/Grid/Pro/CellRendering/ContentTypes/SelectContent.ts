@@ -23,9 +23,9 @@
 
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
+import type SelectRenderer from '../Renderers/SelectRenderer.js';
 
-import CellContent from '../../../Core/Table/CellContent/CellContent.js';
-import SelectRenderer from '../Renderers/SelectRenderer.js';
+import CellContentPro from '../CellContentPro.js';
 
 
 /* *
@@ -37,7 +37,7 @@ import SelectRenderer from '../Renderers/SelectRenderer.js';
 /**
  * Represents a select type of cell content.
  */
-class SelectContent extends CellContent implements EditModeContent {
+class SelectContent extends CellContentPro implements EditModeContent {
 
     public finishAfterChange: boolean = true;
 
@@ -52,15 +52,14 @@ class SelectContent extends CellContent implements EditModeContent {
     private optionElements: HTMLOptionElement[] = [];
 
     
-    public constructor(cell: TableCell, parent?: HTMLElement) {
-        super(cell, parent);
+    public constructor(cell: TableCell, renderer: SelectRenderer) {
+        super(cell, renderer);
         this.select = this.add();
     }
 
     protected override add(): HTMLSelectElement {
         const cell = this.cell;
-        const options =
-            this.cell.column.options.renderer as SelectRenderer.Options;
+        const options = this.renderer.options as SelectRenderer.Options;
 
         this.select = document.createElement('select');
         this.select.name = cell.column.id + '-' + cell.row.id;
@@ -80,7 +79,7 @@ class SelectContent extends CellContent implements EditModeContent {
             this.optionElements.push(optionElement);
         }
         
-        this.parentElement.appendChild(this.select);
+        this.cell.htmlElement.appendChild(this.select);
 
         this.select.addEventListener('change', this.onChange);
         this.select.addEventListener('keydown', this.onKeyDown);

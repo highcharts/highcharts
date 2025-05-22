@@ -22,7 +22,7 @@
  *
  * */
 
-import TableCell from '../Body/TableCell.js';
+import type TableCell from '../Body/TableCell';
 
 
 /* *
@@ -36,7 +36,6 @@ import TableCell from '../Body/TableCell.js';
  */
 abstract class CellContent {
 
-    public readonly parentElement: HTMLElement;
     public readonly cell: TableCell;
 
     /**
@@ -44,17 +43,9 @@ abstract class CellContent {
      *
      * @param cell
      * The cell to which the content belongs.
-     *
-     * @param parent 
-     * The parent element to which the content will be appended. If not
-     * provided, the cell's HTML element will be used.
      */
-    public constructor(
-        cell: TableCell,
-        parent: HTMLElement = cell.htmlElement
-    ) {
+    public constructor(cell: TableCell) {
         this.cell = cell;
-        this.parentElement = parent;
     }
 
     /**

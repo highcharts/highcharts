@@ -21,10 +21,11 @@
  *
  * */
 
+import type CheckboxRenderer from '../Renderers/CheckboxRenderer.js';
 import type TableCell from '../../../Core/Table/Body/TableCell.js';
 
-import CellContent from '../../../Core/Table/CellContent/CellContent.js';
 import { EditModeContent } from '../../CellEditing/CellEditMode.js';
+import CellContentPro from '../CellContentPro.js';
 
 
 /* *
@@ -36,7 +37,7 @@ import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 /**
  * Represents a checkbox type of cell content.
  */
-class CheckboxContent extends CellContent implements EditModeContent {
+class CheckboxContent extends CellContentPro implements EditModeContent {
 
     public finishAfterChange: boolean = false;
 
@@ -49,8 +50,8 @@ class CheckboxContent extends CellContent implements EditModeContent {
     private input: HTMLInputElement;
 
 
-    constructor(cell: TableCell, parent?: HTMLElement) {
-        super(cell, parent);
+    constructor(cell: TableCell, renderer: CheckboxRenderer) {
+        super(cell, renderer);
         this.input = this.add();
     }
 
@@ -63,7 +64,7 @@ class CheckboxContent extends CellContent implements EditModeContent {
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !cell.column.options.cells?.editable;
 
-        this.parentElement.appendChild(this.input);
+        this.cell.htmlElement.appendChild(this.input);
 
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);

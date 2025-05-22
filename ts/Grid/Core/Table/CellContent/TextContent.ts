@@ -49,17 +49,17 @@ const {
  */
 class TextContent extends CellContent {
 
-    constructor(cell: TableCell, parent?: HTMLElement) {
-        super(cell, parent);
+    constructor(cell: TableCell) {
+        super(cell);
         this.add();
     }
 
     protected override add(): void {
-        setHTMLContent(this.parentElement, this.format());
+        setHTMLContent(this.cell.htmlElement, this.format());
     }
 
     public override destroy(): void {
-        this.parentElement.innerHTML = AST.emptyHTML;
+        this.cell.htmlElement.innerHTML = AST.emptyHTML;
     }
 
     /**
