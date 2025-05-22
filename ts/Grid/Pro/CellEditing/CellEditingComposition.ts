@@ -24,8 +24,9 @@
  * */
 
 import type Table from '../../Core/Table/Table';
-import type TableCell from '../../Core/Table/Content/TableCell';
+import type TableCell from '../../Core/Table/Body/TableCell';
 import type { GridEvent } from '../../Core/GridUtils';
+import type CellRendererType from '../CellRendering/CellRendererType';
 
 import Defaults from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -143,7 +144,8 @@ namespace CellEditingComposition {
     ): void {
         if (
             e.originalEvent?.key !== 'Enter' ||
-            !this.column.options.cells?.editable
+            !this.column.options.cells?.editable ||
+            this.column.cellRenderer.options.type !== 'text'
         ) {
             return;
         }
@@ -155,7 +157,10 @@ namespace CellEditingComposition {
      * Callback function called when a cell is double clicked.
      */
     function onCellDblClick(this: TableCell): void {
-        if (this.column.options.cells?.editable) {
+        if (
+            this.column.options.cells?.editable &&
+            this.column.cellRenderer.options.type === 'text'
+        ) {
             this.row.viewport.cellEditing?.startEditing(this);
         }
     }
@@ -223,6 +228,13 @@ namespace CellEditingComposition {
  *  Declarations
  *
  * */
+
+/**
+ * The options for the cell edit mode functionality.
+ */
+export interface ColumnEditModeOptions {
+    renderer?: CellRendererType['options'];
+}
 
 /**
  * Accessibility options for the Grid cell editing functionality.
@@ -308,13 +320,16 @@ declare module '../../Core/Options' {
          */
         editable?: boolean;
     }
+
+    interface ColumnOptions {
+        editMode?: ColumnEditModeOptions;
+    }
 }
 
 /**
  * The possible types of the edit message.
  */
 export type EditMsgType = 'started' | 'edited' | 'cancelled';
-
 
 /* *
  *

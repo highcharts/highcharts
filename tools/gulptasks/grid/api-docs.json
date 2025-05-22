@@ -13,8 +13,8 @@
         "../../../ts/Grid/Core/Table/Actions/ColumnSorting.ts",
         "../../../ts/Grid/Core/Table/Actions/ColumnsResizer.ts",
         "../../../ts/Grid/Core/Table/Actions/RowsVirtualizer.ts",
-        "../../../ts/Grid/Core/Table/Content/TableCell.ts",
-        "../../../ts/Grid/Core/Table/Content/TableRow.ts",
+        "../../../ts/Grid/Core/Table/Body/TableCell.ts",
+        "../../../ts/Grid/Core/Table/Body/TableRow.ts",
         "../../../ts/Grid/Core/Table/Header/HeaderCell.ts",
         "../../../ts/Grid/Core/Table/Header/HeaderRow.ts",
         "../../../ts/Grid/Core/Table/Header/TableHeader.ts",
@@ -36,6 +36,8 @@
         "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
+
+        "../../../ts/Grid/Pro/ColumnTypes/Validator.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,
