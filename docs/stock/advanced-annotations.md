@@ -1,10 +1,15 @@
 Advanced Annotations module
 ===========================
 
-Combining multiple shapes and labels to create a meaningful highlight can be challenging and time consuming. The advanced annotations module simplifies this process, enabling users to add complex yet practical annotations to charts—particularly valuable for technical analysis. Below is a list of all available advanced annotations. See here for [basic annotations](https://www.highcharts.com/docs/advanced-chart-features/annotations-module).
+Combining multiple shapes and labels to create a meaningful highlight can be
+challenging and time consuming. The advanced annotations module simplifies this
+process, enabling users to add complex yet practical annotations to charts
+— particularly valuable for technical analysis. Below is a list of all available
+advanced annotations. See here for [basic
+annotations](https://www.highcharts.com/docs/advanced-chart-features/annotations-module).
  
 
-Include the following file `modules/annotations-advanced.js` after highcharts.js or highstock.js to enable advanced annotations.
+Include the file `modules/annotations-advanced.js` after `highcharts.js` or `highstock.js` to enable advanced annotations.
 
 <iframe style="width: 100%; height: 432px; border: none;" src="https://www.highcharts.com/samples/highcharts/annotations-advanced/fibonacci" allow="fullscreen"></iframe>
 
