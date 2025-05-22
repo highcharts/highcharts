@@ -47,58 +47,73 @@ Grid.grid('container', {
     columnDefaults: {
         cells: {
             editable: true
+        },
+        editMode: {
+            enabled: true
         }
     },
     columns: [{
         id: 'product',
         dataType: 'string',
-        // Gets default error message text or from lang (if defined)
-        validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+        editMode: {
+            // Gets default error message text or from lang (if defined)
+            validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+        }
     }, {
         id: 'numbers',
         dataType: 'number',
-        validationRules: [{
-            validate: 'notEmpty',
-            notification: function () {
-                return 'Not empty formatter';
-            }
-        }, {
-            validate: 'number',
-            notification: function (value) {
-                return `New value <strong>${value}</strong> should be number`;
-            }
-        }]
+        editMode: {
+            validationRules: [{
+                validate: 'notEmpty',
+                notification: function () {
+                    return 'Not empty formatter';
+                }
+            }, {
+                validate: 'number',
+                notification: function (value) {
+                    return `New value <strong>${
+                        value
+                    }</strong> should be number`;
+                }
+            }]
+        }
     }, {
         id: 'price',
         dataType: 'number',
-        validationRules: ['notEmpty', {
-            validate: 'number',
-            notification: 'Price should be number'
-        }]
+        editMode: {
+            validationRules: ['notEmpty', {
+                validate: 'number',
+                notification: 'Price should be number'
+            }]
+        }
     }, {
         id: 'booleans',
         dataType: 'boolean',
-        validationRules: [{
-            validate: 'notEmpty',
-            notification: function () {
-                return 'Not empty formatter';
-            }
-        }, {
-            validate: 'boolean',
-            notification: function () {
-                return 'New value for column: ' +
-                    this.column.id +
-                    ' should be bool';
-            }
-        }]
+        editMode: {
+            validationRules: [{
+                validate: 'notEmpty',
+                notification: function () {
+                    return 'Not empty formatter';
+                }
+            }, {
+                validate: 'boolean',
+                notification: function () {
+                    return 'New value for column: ' +
+                        this.column.id +
+                        ' should be bool';
+                }
+            }]
+        }
     }, {
         id: 'icon',
-        validationRules: ['notEmpty', {
-            validate: function (value) {
-                return value.indexOf('URL') !== -1;
-            },
-            notification: 'The value must contain "URL"'
-        }]
+        editMode: {
+            validationRules: ['notEmpty', {
+                validate: function (value) {
+                    return value.indexOf('URL') !== -1;
+                },
+                notification: 'The value must contain "URL"'
+            }]
+        }
     }, {
         id: 'country',
         dataType: 'string',

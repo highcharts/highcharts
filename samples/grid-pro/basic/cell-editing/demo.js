@@ -50,6 +50,9 @@ Grid.grid('container', {
     columnDefaults: {
         cells: {
             editable: true
+        },
+        editMode: {
+            enabled: true
         }
     },
     columns: [{
@@ -89,7 +92,13 @@ Grid.grid('container', {
     }, {
         id: 'booleans',
         dataType: 'boolean',
+        renderer: {
+            type: 'text'
+        },
         editMode: {
+            renderer: {
+                type: 'checkbox'
+            },
             validationRules: [{
                 validate: 'notEmpty',
                 notification: function () {
@@ -106,6 +115,9 @@ Grid.grid('container', {
         }
     }, {
         id: 'icon',
+        renderer: {
+            type: 'textInput'
+        },
         editMode: {
             validationRules: ['notEmpty', {
                 validate: function (value) {

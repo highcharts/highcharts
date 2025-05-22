@@ -1,6 +1,6 @@
 /* *
  *
- *  Text Input Cell Renderer class
+ *  Date Input Cell Renderer class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -31,7 +31,7 @@ import type {
 
 import CellRenderer from '../CellRenderer.js';
 import CellRendererRegistry from '../CellRendererRegistry.js';
-import TextInputContent from '../ContentTypes/TextInputContent.js';
+import DateInputContent from '../ContentTypes/DateInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
 const {
@@ -48,31 +48,25 @@ const {
 /**
  * Renderer for the Select in a column..
  */
-class TextInputRenderer extends CellRenderer implements EditModeRenderer {
+class DateInputRenderer extends CellRenderer implements EditModeRenderer {
 
-    public static defaultEditingRenderer: Record<
-        Column.DataType, EditModeRendererTypeName
-    > = {
-        string: 'textInput',
-        number: 'textInput',
-        boolean: 'checkbox',
-        date: 'dateInput'
-    }
+    public static defaultEditingRenderer: EditModeRendererTypeName =
+        'dateInput';
 
-    public static defaultOptions: TextInputRenderer.Options = {
-        type: 'textInput'
+    public static defaultOptions: DateInputRenderer.Options = {
+        type: 'dateInput'
     };
 
     
-    public override options: TextInputRenderer.Options;
+    public override options: DateInputRenderer.Options;
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-        this.options = merge(TextInputRenderer.defaultOptions, options);
+        this.options = merge(DateInputRenderer.defaultOptions, options);
     }
 
-    public override render(cell: TableCell): TextInputContent {
-        return new TextInputContent(cell, this);
+    public override render(cell: TableCell): DateInputContent {
+        return new DateInputContent(cell, this);
     }
 
 }
@@ -84,9 +78,9 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
  *
  * */
 
-namespace TextInputRenderer {
+namespace DateInputRenderer {
     export interface Options extends CellRenderer.Options {
-        type: 'textInput';
+        type: 'dateInput';
     }
 }
 
@@ -99,11 +93,11 @@ namespace TextInputRenderer {
 
 declare module '../CellRendererType' {
     interface CellRendererTypeRegistry {
-        textInput: typeof TextInputRenderer
+        dateInput: typeof DateInputRenderer
     }
 }
 
-CellRendererRegistry.registerRenderer('textInput', TextInputRenderer);
+CellRendererRegistry.registerRenderer('dateInput', DateInputRenderer);
 
 
 /* *
@@ -112,4 +106,4 @@ CellRendererRegistry.registerRenderer('textInput', TextInputRenderer);
  *
  * */
 
-export default TextInputRenderer;
+export default DateInputRenderer;

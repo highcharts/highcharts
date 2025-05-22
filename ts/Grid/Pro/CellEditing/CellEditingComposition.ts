@@ -25,15 +25,19 @@
 
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
+import type Column from '../../Core/Table/Column';
 import type { GridEvent } from '../../Core/GridUtils';
 import type CellRendererType from '../CellRendering/CellRendererType';
+import type { EditModeRenderer } from './CellEditMode';
+import type Options from '../../Core/Options';
 
 import Defaults from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
 import CellEditing from './CellEditing.js';
-
+import CellRendererRegistry from '../CellRendering/CellRendererRegistry.js';
 import GU from '../../Core/GridUtils.js';
 import U from '../../../Core/Utilities.js';
+import SlowStochasticIndicator from '../../../Stock/Indicators/SlowStochastic/SlowStochasticIndicator';
 
 const {
     makeHTMLElement
@@ -60,7 +64,7 @@ namespace CellEditingComposition {
     /**
      * Default options for the cell editing.
      */
-    const defaultOptions = {
+    const defaultOptions: Globals.DeepPartial<Options> = {
         accessibility: {
             announcements: {
                 cellEditing: true
@@ -77,6 +81,11 @@ namespace CellEditingComposition {
                     }
                 }
             }
+        },
+        columnDefaults: {
+            editMode: {
+                enabled: false
+            }
         }
     };
 
@@ -92,13 +101,16 @@ namespace CellEditingComposition {
      */
     export function compose(
         TableClass: typeof Table,
-        TableCellClass: typeof TableCell
+        TableCellClass: typeof TableCell,
+        ColumnClass: typeof Column
     ): void {
         if (!pushUnique(Globals.composed, 'CellEditing')) {
             return;
         }
 
         merge(true, Defaults.defaultOptions, defaultOptions);
+
+        addEvent(ColumnClass, 'afterInit', afterColumnInit);
 
         addEvent(TableClass, 'beforeInit', initTable);
         addEvent(TableCellClass, 'keyDown', onCellKeyDown);
@@ -133,6 +145,50 @@ namespace CellEditingComposition {
     }
 
     /**
+     * Creates the edit mode renderer for the column.
+     * 
+     * @param column
+     * The column to create the edit mode renderer for.
+     */
+    function createEditModeRenderer(column: Column): EditModeRendererType {
+        const editModeOptions = column.options.editMode;
+        const editModeRendererTypeName = editModeOptions?.renderer?.type;
+        const staticRendererTypeName = column.options?.renderer?.type || 'text';
+
+        if (editModeRendererTypeName) {
+            return new CellRendererRegistry.types[
+                editModeRendererTypeName
+            ](column, editModeOptions?.renderer || {});
+        }
+
+        const staticRendererType = CellRendererRegistry.types[
+            staticRendererTypeName
+        ];
+
+        let defRenderer = staticRendererType.defaultEditingRenderer;
+        if (typeof defRenderer !== 'string') {
+            defRenderer = defRenderer[column.dataType];
+        }
+
+        return new CellRendererRegistry.types[defRenderer](
+            column,
+            defRenderer === staticRendererTypeName ?
+                column.options.renderer || {} : {}
+        );
+    }
+
+    /**
+     * Callback function called after column initialization.
+     */
+    function afterColumnInit(this: Column): void {
+        const { options } = this;
+
+        if (options?.editMode?.enabled) {
+            this.editModeRenderer = createEditModeRenderer(this);
+        }
+    }
+
+    /**
      * Callback function called when a key is pressed on a cell.
      *
      * @param e
@@ -145,7 +201,7 @@ namespace CellEditingComposition {
         if (
             e.originalEvent?.key !== 'Enter' ||
             !this.column.options.cells?.editable ||
-            this.column.cellRenderer.options.type !== 'text'
+            !this.column.editModeRenderer
         ) {
             return;
         }
@@ -159,7 +215,7 @@ namespace CellEditingComposition {
     function onCellDblClick(this: TableCell): void {
         if (
             this.column.options.cells?.editable &&
-            this.column.cellRenderer.options.type === 'text'
+            this.column.editModeRenderer
         ) {
             this.row.viewport.cellEditing?.startEditing(this);
         }
@@ -229,11 +285,15 @@ namespace CellEditingComposition {
  *
  * */
 
+export type EditModeRendererType = Extract<CellRendererType, EditModeRenderer>;
+export type EditModeRendererTypeName = EditModeRendererType['options']['type'];
+
 /**
  * The options for the cell edit mode functionality.
  */
 export interface ColumnEditModeOptions {
-    renderer?: CellRendererType['options'];
+    enabled?: boolean; // TODO: Decide what to do with it or with the `editable` option
+    renderer?: EditModeRendererType['options'];
 }
 
 /**
@@ -279,6 +339,12 @@ export interface CellEditingLangA11yOptions {
 declare module '../../Core/Table/Table' {
     export default interface Table {
         cellEditing?: CellEditing;
+    }
+}
+
+declare module '../../Core/Table/Column' {
+    export default interface Column {
+        editModeRenderer?: EditModeRendererType;
     }
 }
 

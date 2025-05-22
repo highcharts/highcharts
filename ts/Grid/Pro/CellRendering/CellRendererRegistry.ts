@@ -44,21 +44,6 @@ namespace CellRendererRegistry {
      */
     export const types = {} as CellRendererTypeRegistry;
 
-    /**
-     * Map of cell renderer types to their corresponding data types.
-     */
-    export const dataTypeDefaults: Record<
-    Column.DataType,
-    keyof typeof types
-    > = {
-        // TODO: Move it out of the cell renderer registry or make it more
-        // generic by adding a registry function.
-        string: 'text',
-        number: 'text',
-        boolean: 'checkbox',
-        date: 'text'
-    };
-
     /* *
      *
      *  Functions
