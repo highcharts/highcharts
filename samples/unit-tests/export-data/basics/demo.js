@@ -1387,7 +1387,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
             .exporting
             .dataTableDiv
             .children[0]
-            .children[3]
+            .children[2]
+            .children[0]
             .children[0]
             .innerText,
         'BE',
@@ -1398,7 +1399,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
             .exporting
             .dataTableDiv
             .children[0]
-            .children[3]
+            .children[2]
+            .children[0]
             .children[1]
             .innerText,
         '50',
@@ -1409,7 +1411,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
             .exporting
             .dataTableDiv
             .children[0]
-            .children[4]
+            .children[2]
+            .children[1]
             .children[0]
             .innerText,
         'DE',
@@ -1420,7 +1423,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
             .exporting
             .dataTableDiv
             .children[0]
-            .children[4]
+            .children[2]
+            .children[1]
             .children[1]
             .innerText,
         '60',
@@ -1440,7 +1444,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
             .exporting
             .dataTableDiv
             .children[0]
-            .children[3]
+            .children[2]
+            .children[0]
             .children[0]
             .innerText,
         'NO',
@@ -1451,7 +1456,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
             .exporting
             .dataTableDiv
             .children[0]
-            .children[3]
+            .children[2]
+            .children[0]
             .children[1]
             .innerText,
         '70',
@@ -1462,7 +1468,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
             .exporting
             .dataTableDiv
             .children[0]
-            .children[4]
+            .children[2]
+            .children[1]
             .children[0]
             .innerText,
         'NL',
@@ -1473,7 +1480,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
             .exporting
             .dataTableDiv
             .children[0]
-            .children[4]
+            .children[2]
+            .children[1]
             .children[1]
             .innerText,
         '100',

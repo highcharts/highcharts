@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,6 +27,7 @@ import type {
     DataPoolConnectorOptions
 } from './DataPoolOptions.js';
 import type DataTable from './DataTable.js';
+import type DataConnectorType from './Connectors/DataConnectorType';
 
 import DataConnector from './Connectors/DataConnector.js';
 import DataPoolDefaults from './DataPoolDefaults.js';
@@ -95,7 +96,7 @@ class DataPool implements DataEvent.Emitter {
      * Internal dictionary with the connectors and their IDs.
      * @private
      */
-    protected readonly connectors: Record<string, DataConnector>;
+    protected readonly connectors: Record<string, DataConnectorType>;
 
 
     /**
@@ -143,12 +144,12 @@ class DataPool implements DataEvent.Emitter {
      * @param {string} connectorId
      * ID of the connector.
      *
-     * @return {Promise<Data.DataConnector>}
+     * @return {Promise<Data.DataConnectorType>}
      * Returns the connector.
      */
     public getConnector(
         connectorId: string
-    ): Promise<DataConnector> {
+    ): Promise<DataConnectorType> {
         const connector = this.connectors[connectorId];
 
         // Already loaded
@@ -279,12 +280,12 @@ class DataPool implements DataEvent.Emitter {
      * @param {Data.DataPoolConnectorOptions} options
      * Options of connector.
      *
-     * @return {Promise<Data.DataConnector>}
+     * @return {Promise<Data.DataConnectorType>}
      * Returns the connector.
      */
     protected loadConnector(
         options: DataPoolConnectorOptions
-    ): Promise<DataConnector> {
+    ): Promise<DataConnectorType> {
         return new Promise((resolve, reject): void => {
 
             this.emit<DataPool.Event>({
@@ -298,7 +299,10 @@ class DataPool implements DataEvent.Emitter {
                 throw new Error(`Connector type not found. (${options.type})`);
             }
 
-            const connector = new ConnectorClass(options.options);
+            const connector = new ConnectorClass(
+                options.options,
+                options.dataTables
+            );
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             connector

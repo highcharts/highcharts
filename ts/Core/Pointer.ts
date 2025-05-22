@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -395,7 +395,6 @@ class Pointer {
 
             // Make a selection
             if (
-                (chart.hasCartesianSeries || chart.mapView) &&
                 this.hasZoom &&
                 clickedInside &&
                 !panKeyPressed
@@ -819,8 +818,14 @@ class Pointer {
 
                 // Get all points with the same x value as the hoverPoint
                 searchSeries.forEach(function (s): any {
+                    const nullInteraction = s.options?.nullInteraction;
                     let point = find(s.points, function (p: Point): boolean {
-                        return p.x === hoverPoint.x && !p.isNull;
+                        return (
+                            p.x === hoverPoint.x && (
+                                !p.isNull ||
+                                !!nullInteraction
+                            )
+                        );
                     });
 
                     if (isObject(point)) {

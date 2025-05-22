@@ -1,7 +1,7 @@
 /**
  * @license Highcharts
  *
- * (c) 2009-2022 Torstein Honsi
+ * (c) 2009-2025 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -52,7 +52,7 @@
     /* Minor grid lines etc. */
     --highcharts-neutral-color-5: #f2f2f2;
 
-    /* Tooltip backgroud, button fills, map null points. */
+    /* Tooltip background, button fills, map null points. */
     --highcharts-neutral-color-3: #f7f7f7;
 
     /*
@@ -311,7 +311,8 @@
     stroke: none;
 }
 
-.highcharts-tooltip text {
+.highcharts-tooltip text,
+.highcharts-tooltip foreignObject span {
     fill: var(--highcharts-neutral-color-80);
     font-size: 0.8em;
 }
@@ -472,6 +473,7 @@ g.highcharts-series,
 }
 
 .highcharts-data-label text,
+.highcharts-data-label span,
 text.highcharts-data-label {
     font-size: 0.7em;
     font-weight: bold;
@@ -627,9 +629,9 @@ text.highcharts-data-label {
     stroke-width: 0;
 }
 
-.highcharts-legend-item > text {
+.highcharts-legend-item > text,
+.highcharts-legend-item span {
     fill: var(--highcharts-neutral-color-80);
-    font-weight: bold;
     font-size: 0.8em;
     cursor: pointer;
     stroke-width: 0;
@@ -1299,4 +1301,9 @@ g.highcharts-series,
 .highcharts-grid-axis .highcharts-axis-line {
     stroke: var(--highcharts-neutral-color-20);
     stroke-width: 1px;
+}
+
+.highcharts-gantt-series .highcharts-partfill-overlay {
+    fill: hsla(0, 0%, 0%, 0.3);
+    stroke: hsla(0, 0%, 0%, 0.3);
 }

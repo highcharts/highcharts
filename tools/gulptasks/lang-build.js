@@ -12,13 +12,13 @@ const log = require('../libs/log');
  *         Promise to keep
  */
 async function langBuild() {
-    const { resolve } = require('node:path');
+    const { resolve, join } = require('node:path');
     const { readdir, writeFile } = require('node:fs/promises');
 
     const assert = require('node:assert');
 
-    const LANG_DIR = 'i18n';
-    const TS_FOLDER = 'ts/masters/i18n';
+    const LANG_DIR = join('i18n', 'highcharts');
+    const TS_FOLDER = join('ts', 'masters', 'i18n');
 
 
     const langBase = require(resolve(LANG_DIR, 'lang.json'));

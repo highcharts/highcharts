@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -38,9 +38,9 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      * In case of complex JSON structure, use the `ColumnNamesOptions` to define
      * the key and path to the data.
      *
-     * When more flexibility is needed you can use the `beforeParse` callback
-     * function and parse the rows into a valid JSON yourself. Nevertheless, the
-     * parsed JSON is going to be transformed into a valid table structure.
+     * If you have more complex data, you can adjust it by  the `beforeParse`
+     * callback function to manually parse the rows into valid JSON. However,
+     * the resulting JSON will still be converted into a proper table structure.
      */
     columnNames?: Array<string>|ColumnNamesOptions;
 
@@ -80,6 +80,12 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      * @default 'rows'
      */
     orientation?: 'columns'|'rows';
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     */
+    beforeParse?: JSONBeforeParseCallbackFunction;
 }
 
 /**
@@ -104,7 +110,7 @@ export interface ColumnNamesOptions {
  *
  * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-enable-polling/ | JSON Connector with beforeParse and enablePolling }
  */
-export interface BeforeParseCallbackFunction {
+export interface JSONBeforeParseCallbackFunction {
     (data: JSONConverter.Data): JSONConverter.Data;
 }
 

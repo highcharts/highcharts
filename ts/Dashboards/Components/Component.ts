@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -33,12 +33,12 @@ import type Serializable from '../Serializable';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 
 import Cell from '../Layout/Cell.js';
 import CellHTML from '../Layout/CellHTML.js';
 import CallbackRegistry from '../CallbackRegistry.js';
 import ConnectorHandler from './ConnectorHandler.js';
-import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
 import Sync from './Sync/Sync.js';
@@ -56,7 +56,8 @@ const {
     objectEach,
     isFunction,
     getStyle,
-    diffObjects
+    diffObjects,
+    removeEvent
 } = U;
 
 import CU from './ComponentUtilities.js';
@@ -234,6 +235,10 @@ abstract class Component {
      */
     public id: string;
     /**
+     * Reference to the specific connector data table.
+     */
+    public dataTableKey?: string;
+    /**
      * An array of options marked as editable by the UI.
      *
      */
@@ -327,6 +332,11 @@ abstract class Component {
                     new ConnectorHandler(this, connectorOptions)
                 );
             }
+
+            // Assign the data table key to define the proper dataTable.
+            this.dataTableKey = isArray(this.options.connector) ?
+                this.options.connector[0].dataTableKey :
+                this.options.connector.dataTableKey;
         }
 
         this.editableOptions =
@@ -685,6 +695,12 @@ abstract class Component {
             await this.initConnectors();
         }
 
+        // Assign the data table key to define the proper dataTable.
+        const firstConnectorDataTableKey = connectorOptions[0]?.dataTableKey;
+        if (firstConnectorDataTableKey) {
+            this.dataTableKey = firstConnectorDataTableKey;
+        }
+
         if (shouldRerender || eventObject.shouldForceRerender) {
             this.render();
         }
@@ -860,6 +876,10 @@ abstract class Component {
         for (const connectorHandler of this.connectorHandlers) {
             connectorHandler.destroy();
         }
+
+        // Used to removed the onTableChanged event.
+        removeEvent(this);
+
         this.element.remove();
     }
 
@@ -1084,7 +1104,7 @@ namespace Component {
         className?: string;
 
         /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`,
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `Grid`,
          * `Navigator`.
          */
         type: keyof ComponentTypeRegistry;
@@ -1198,7 +1218,7 @@ namespace Component {
     }
 
     /** @internal */
-    export type ConnectorTypes = DataConnector;
+    export type ConnectorTypes = DataConnectorType;
 
     /**
      * Allowed types for the text.

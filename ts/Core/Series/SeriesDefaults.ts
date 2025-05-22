@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -550,6 +550,25 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
+     */
+
+    /**
+     * Whether or not data-points with the value of `null` should be interactive.
+     * When this is set to `true`, tooltips may highlight these points, and this
+     * option also enables keyboard navigation for such points. Format options
+     * for such points include [`nullFormat`](#tooltip.nullFormat) and [`nullFormater`](#tooltip.nullFormatter).
+     * Works for these series: `line`, `spline`, `area`, `area-spline`,
+     * `column`, `bar`, and* `timeline`.
+     *
+     * @sample {highcharts} highcharts/series/null-interaction/
+     *         Chart with interactive `null` points
+     *
+     * @sample {highcharts} highcharts/series-timeline/null-interaction/
+     *         Timeline series with `null` points
+     *
+     * @type      {boolean|undefined}
+     * @product   highcharts highstock
+     * @apioption plotOptions.series.nullInteraction
      */
 
     /**
@@ -1825,12 +1844,17 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         /**
          * Format for points with the value of null. Works analogously to
          * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
-         * be applied only to series which support displaying null points
-         * i.e `heatmap` or `tilemap`. Does not work with series that don't
-         * display null points, like `line`, `column`, `bar` or `pie`.
+         * be applied only to series which support displaying null points.
+         * `heatmap` and `tilemap` supports `nullFormat` by default while the
+         * following series requires [#series.nullInteraction] set to `true`:
+         * `line`, `spline`, `area`, `area-spline`, `column`, `bar`, and
+         * `timeline`. Does not work with series that don't display null
+         * points, like `pie`.
          *
+         * @sample {highcharts} highcharts/series/null-interaction/
+         *         Line chart with null interaction
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
-         *         Format data label for null points in heat map
+         *         Heatmap with null interaction
          *
          * @type      {boolean|string}
          * @since     7.1.0
@@ -1839,13 +1863,14 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
         /**
          * Callback JavaScript function that defines formatting for points
-         * with the value of null. Works analogously to
-         * [formatter](#plotOptions.series.dataLabels.formatter).
+         * with the value of null. Works analogously to [formatter](#plotOptions.series.dataLabels.formatter).
          * `nullFormatter` can be applied only to series which support
-         * displaying null points i.e `heatmap` or `tilemap`. Does not work
-         * with series that don't display null points, like `line`, `column`,
-         * `bar` or `pie`.
-         *
+         * displaying null points. `heatmap` and `tilemap` supports
+         * `nullFormatter` by default while the following series requires [#series.nullInteraction]
+         * set to `true`: `line`, `spline`, `area`, `area-spline`, `column`,
+         * `bar`, and `timeline`. Does not work with series that don't display
+         * null points, like `pie`.
+
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
          *         Format data label for null points in heat map
          *
@@ -2275,9 +2300,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
                 /**
                  * Opacity for the halo unless a specific fill is overridden
-                 * using the `attributes` setting. Note that Highcharts is
-                 * only able to apply opacity to colors of hex or rgb(a)
-                 * formats.
+                 * using the `attributes` setting.
                  *
                  * @since   4.0
                  * @product highcharts highstock
@@ -2381,7 +2404,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since     2.3
      * @extends   tooltip
      * @excluding animation, backgroundColor, borderColor, borderRadius,
-     *            borderWidth, className, crosshairs, enabled, formatter,
+     *            borderWidth, className, crosshairs, enabled, fixed, formatter,
      *            headerShape, hideDelay, outside, padding, positioner,
      *            shadow, shape, shared, snap, split, stickOnContact,
      *            style, useHTML

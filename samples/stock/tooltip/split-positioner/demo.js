@@ -12,6 +12,11 @@
             headerShape: 'callout',
             borderWidth: 0,
             shadow: false,
+            /*
+            Positioner callback. Note that this is much simpler since Highcharts
+            v12.2, when the `tooltip.fixed` and `tooltip.position` options were
+            introduced.
+            */
             positioner: function (width, height, point) {
                 const chart = this.chart;
                 let position;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -11,12 +11,29 @@
  *
  * */
 
-import Component from './Component';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
-import DataTable from '../../Data/DataTable.js';
 
+import Component from './Component';
+import DataTable from '../../Data/DataTable.js';
 import Cell from '../Layout/Cell.js';
 import Globals from '../Globals.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Data/Connectors/DataConnector' {
+    export default interface DataConnector {
+        /**
+         * Components that are fed by the connector.
+         * @internal
+         */
+        components?: Component[];
+    }
+}
+
 
 /* *
  *
@@ -139,6 +156,45 @@ class ConnectorHandler {
     }
 
     /**
+     * Sets the data table settings and events.
+     *
+     * @param table
+     * The data table instance for settings and events.
+     */
+    public setTable(table: DataTable): void {
+        // Set up event listeners
+        this.clearTableListeners(table);
+        this.setupTableListeners(table);
+
+        // Re-setup if modifier changes
+        table.on(
+            'setModifier',
+            (): void => this.clearTableListeners(table)
+        );
+        table.on(
+            'afterSetModifier',
+            (e: DataTable.SetModifierEvent): void => {
+                if (e.type === 'afterSetModifier' && e.modified) {
+                    this.setupTableListeners(e.modified);
+                    this.component.emit({
+                        type: 'tableChanged',
+                        connector: this.connector
+                    });
+                }
+            }
+        );
+
+        if (this.presentationModifier) {
+            this.presentationTable =
+                this.presentationModifier.modifyTable(
+                    table.modified.clone()
+                ).modified;
+        } else {
+            this.presentationTable = table;
+        }
+    }
+
+    /**
      * Sets the connector for the component connector handler.
      *
      * @param connector
@@ -156,39 +212,20 @@ class ConnectorHandler {
         this.connector = connector;
 
         if (connector) {
-            // Set up event listeners
-            this.clearTableListeners();
-            this.setupTableListeners(connector.table);
+            const dataTableKey = this.component.dataTableKey;
+            const dataTables = connector.dataTables;
 
-            // Re-setup if modifier changes
-            connector.table.on(
-                'setModifier',
-                (): void => this.clearTableListeners()
-            );
-            connector.table.on(
-                'afterSetModifier',
-                (e: DataTable.SetModifierEvent): void => {
-                    if (e.type === 'afterSetModifier' && e.modified) {
-                        this.setupTableListeners(e.modified);
-                        this.component.emit({
-                            type: 'tableChanged',
-                            connector: connector
-                        });
-                    }
-                }
-            );
+            if (dataTableKey) {
+                // Match a data table used in this component.
+                this.setTable(dataTables[dataTableKey]);
 
-            if (connector.table) {
-                if (this.presentationModifier) {
-                    this.presentationTable =
-                        this.presentationModifier.modifyTable(
-                            connector.table.modified.clone()
-                        ).modified;
-                } else {
-                    this.presentationTable = connector.table;
-                }
+                // Take the first connector data table if id not provided.
+            } else {
+                this.setTable(Object.values(dataTables)[0]);
             }
         }
+
+        this.addConnectorAssignment();
 
         return this.component;
     }
@@ -231,16 +268,20 @@ class ConnectorHandler {
 
     /**
      * Remove event listeners in data table.
+     *
+     * @param table
+     * The connector data table (data source).
+     *
      * @internal
      */
-    private clearTableListeners(): void {
+    private clearTableListeners(table: DataTable): void {
         const connector = this.connector;
         const tableEvents = this.tableEvents;
 
-        this.destroy();
+        this.removeTableEvents();
 
         if (connector) {
-            tableEvents.push(connector.table.on(
+            tableEvents.push(table.on(
                 'afterSetModifier',
                 (e): void => {
                     if (e.type === 'afterSetModifier') {
@@ -260,15 +301,89 @@ class ConnectorHandler {
         }
     }
 
+    /**
+     * Adds the component to the provided connector.
+     * Starts the connector polling if inactive and one component is provided.
+     */
+    private addConnectorAssignment(): void {
+        const { connector } = this;
+        if (!connector) {
+            return;
+        }
+
+        if (!connector.components) {
+            connector.components = [];
+        }
+
+        if (!connector.components.includes(this.component)) {
+            const options = connector.options;
+
+            // Add the component assignment.
+            connector.components.push(this.component);
+
+            // Start the connector polling.
+            if (
+                'enablePolling' in options &&
+                options.enablePolling &&
+                !connector.polling &&
+                connector.components.length === 1 &&
+                'dataRefreshRate' in options
+            ) {
+                connector.startPolling(
+                    Math.max(options.dataRefreshRate || 0, 1) * 1000
+                );
+            }
+        }
+    }
+
+    /**
+     * Removes the component instance from the provided connector.
+     * Stops the connector polling if the last element is removed.
+     */
+    private removeConnectorAssignment(): void {
+        const { connector } = this;
+        if (!connector?.components) {
+            return;
+        }
+
+        const index = connector.components.indexOf(this.component);
+        if (index > -1) {
+            connector.components.splice(index, 1);
+
+            if (!connector.components.length) {
+                connector.stopPolling();
+                delete connector.components;
+            }
+        }
+    }
+
+    /**
+     * Clears all event listeners in the table.
+     */
+    private removeTableEvents(): void {
+        this.tableEvents.forEach((clearEvent): void => clearEvent());
+        this.tableEvents.length = 0;
+    }
+
+    /**
+     * Updates the options for the connector handler.
+     *
+     * @param newOptions
+     * The new options to update.
+     */
     public updateOptions(
         newOptions: ConnectorHandler.ConnectorOptions
     ): void {
         this.options = newOptions;
     }
 
+    /**
+     * Destroys the connector handler.
+     * @internal
+     */
     public destroy(): void {
-        this.tableEvents.forEach((clearEvent): void => clearEvent());
-        this.tableEvents.length = 0;
+        this.removeConnectorAssignment();
+        this.removeTableEvents();
     }
 }
 
@@ -307,6 +422,11 @@ namespace ConnectorHandler {
          * @internal
          */
         presentationModifier?: DataModifier;
+
+        /**
+         * Reference to the specific connector data table.
+         */
+        dataTableKey?: string;
     }
 }
 

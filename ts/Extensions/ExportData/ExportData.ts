@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -1455,7 +1455,7 @@ namespace ExportData {
             const row = dataTableDiv.querySelector('thead tr');
             if (row) {
                 row.childNodes.forEach((th: any): void => {
-                    const table = th.closest('table');
+                    const tableBody = dataTableDiv.querySelector('tbody');
 
                     th.addEventListener('click', function (): void {
                         const rows = [...dataTableDiv.querySelectorAll(
@@ -1471,7 +1471,7 @@ namespace ExportData {
                                         !exporting.ascendingOrderInTable
                                 )
                             ).forEach((tr: HTMLDOMElement): void => {
-                                table.appendChild(tr);
+                                tableBody?.appendChild(tr);
                             });
 
                             headers.forEach((th): void => {

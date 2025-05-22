@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -274,12 +274,18 @@ class CellEditToolbar extends EditToolbar {
             const row = toolbar.cell.row;
             const cellId = toolbar.cell.id;
 
+            // Disable row highlight.
+            toolbar.cell.row.setHighlight();
+
             toolbar.resetEditedCell();
             toolbar.cell.destroy();
             toolbar.cell = void 0;
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
+
+            // Disable resizer.
+            toolbar.editMode.resizer?.disableResizer();
 
             // Call cellResize dashboard event.
             if (row && row.cells && row.cells.length) {

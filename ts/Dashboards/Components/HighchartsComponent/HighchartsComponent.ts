@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -244,9 +244,17 @@ class HighchartsComponent extends Component {
             const connector = connectorHandler.connector;
             if (connector) {
                 connector.on('afterLoad', (e: DataConnector.Event): void => {
-                    if (e.table) {
-                        connector.table.setColumns(e.table.getColumns());
+                    const eventTables = e.tables;
+                    let eventTable;
+
+                    if (this.dataTableKey) {
+                        eventTable = eventTables[this.dataTableKey];
+                    } else {
+                        eventTable = Object.values(eventTables)[0];
                     }
+
+                    const table = connector.getTable(this.dataTableKey);
+                    table.setColumns(eventTable.getColumns());
                 });
             }
         }
@@ -359,7 +367,7 @@ class HighchartsComponent extends Component {
         point: Point,
         connectorHandler: HighchartsComponent.HCConnectorHandler
     ): void {
-        const table = connectorHandler.connector?.table;
+        const table = connectorHandler.connector?.getTable(this.dataTableKey);
         const columnAssignment = connectorHandler.columnAssignment;
         const seriesId = point.series.options.id;
         const converter = new DataConverter();
@@ -451,6 +459,13 @@ class HighchartsComponent extends Component {
         for (const connectorHandler of connectorHandlers) {
             const options: ConnectorOptions = connectorHandler.options;
             let columnAssignment = options.columnAssignment;
+
+            // Set the new data table based on the data table key.
+            const connector = connectorHandler.connector;
+            const dataTableKey = this.dataTableKey;
+            if (connector && dataTableKey) {
+                connectorHandler.setTable(connector.dataTables[dataTableKey]);
+            }
 
             if (!columnAssignment && connectorHandler.presentationTable) {
                 columnAssignment = this.getDefaultColumnAssignment(
@@ -823,7 +838,7 @@ class HighchartsComponent extends Component {
     /**
      * Get the HighchartsComponent component's options.
      * @returns
-     * The JSON of HighchartsComponent component's options.
+     * HighchartsComponent component's options.
      *
      * @internal
      *

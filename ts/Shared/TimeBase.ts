@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -497,7 +497,8 @@ class TimeBase {
         // Check if the string has time zone information
         const hasTimezone = s.indexOf('Z') > -1 ||
                 /([+-][0-9]{2}):?[0-9]{2}$/.test(s),
-            isYYYYMMDD = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s);
+            // YYYY-MM-DD and YYYY-MM are always UTC
+            isYYYYMMDD = /^[0-9]{4}-[0-9]{2}(-[0-9]{2}|)$/.test(s);
 
         if (!hasTimezone && !isYYYYMMDD) {
             s += 'Z';

@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -93,6 +93,7 @@ AST.allowedAttributes.push(
     'data-z-index',
     'fill-opacity',
     'filter',
+    'preserveAspectRatio',
     'rx',
     'ry',
     'stroke-dasharray',
@@ -100,6 +101,7 @@ AST.allowedAttributes.push(
     'stroke-opacity',
     'text-anchor',
     'transform',
+    'transform-origin',
     'version',
     'viewBox',
     'visibility',
@@ -109,7 +111,10 @@ AST.allowedAttributes.push(
 AST.allowedTags.push(
     'desc',
     'clippath',
-    'g'
+    'fedropshadow',
+    'femorphology',
+    'g',
+    'image'
 );
 
 /* *
@@ -613,25 +618,28 @@ class Exporting {
         svg: string,
         options: Options
     ): string {
-        const split = svg.indexOf('</svg>') + 6;
+        const split = svg.indexOf('</svg>') + 6,
+            useForeignObject = svg.indexOf('<foreignObject') > -1;
         let html = svg.substr(split);
 
         // Remove any HTML added to the container after the SVG (#894, #9087)
         svg = svg.substr(0, split);
 
+        if (useForeignObject) {
+            // Some tags needs to be closed in xhtml (#13726)
+            svg = svg.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />');
+
         // Move HTML into a foreignObject
-        if (options.exporting?.allowHTML) {
-            if (html) {
-                html = '<foreignObject x="0" y="0" ' +
+        } else if (html && options?.exporting?.allowHTML) {
+            html = '<foreignObject x="0" y="0" ' +
                     'width="' + options.chart.width + '" ' +
                     'height="' + options.chart.height + '">' +
-                    '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    // Some tags needs to be closed in xhtml (#13726)
-                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
-                    '</body>' +
-                    '</foreignObject>';
-                svg = svg.replace('</svg>', html + '</svg>');
-            }
+                '<body xmlns="http://www.w3.org/1999/xhtml">' +
+                // Some tags needs to be closed in xhtml (#13726)
+                html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                '</body>' +
+                '</foreignObject>';
+            svg = svg.replace('</svg>', html + '</svg>');
         }
 
         svg = svg
@@ -1438,6 +1446,7 @@ class Exporting {
         if (applyStyleSheets) {
             this.inlineStyles();
         }
+        this.resolveCSSVariables();
         return chart.container.innerHTML;
     }
 
@@ -2287,6 +2296,31 @@ class Exporting {
     }
 
     /**
+     * Resolve CSS variables into hex colors.
+     *
+     * @private
+     * @function Highcharts.Exporting#resolveCSSVariables
+     *
+     * @requires modules/exporting
+     */
+    public resolveCSSVariables(): void {
+        const svgElements = this.chart.container.querySelectorAll('*'),
+            colorAttributes = ['color', 'fill', 'stop-color', 'stroke'];
+
+        Array.from(svgElements).forEach((element: Element): void => {
+            colorAttributes.forEach((attr): void => {
+                const attrValue = element.getAttribute(attr);
+                if (attrValue?.includes('var(')) {
+                    element.setAttribute(
+                        attr,
+                        getComputedStyle(element).getPropertyValue(attr)
+                    );
+                }
+            });
+        });
+    }
+
+    /**
      * Updates the exporting object with the provided exporting options.
      *
      * @private
@@ -2339,6 +2373,10 @@ namespace Exporting {
 
     export interface BeforePrintCallbackFunction {
         (chart: Chart, event: Event): void;
+    }
+
+    export declare interface ChartAdditions {
+        update(options: ExportingOptions, redraw?: boolean): void;
     }
 
     export interface DivElement extends HTMLDOMElement {

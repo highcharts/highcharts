@@ -38,3 +38,49 @@ describe('Caption', () => {
       .should('be.visible');
   });
 });
+
+describe('Data polling restarting', () => {
+  before(() => {
+    cy.visit('dashboards/cypress/connector-polling');
+    cy.toggleEditMode();
+  });
+
+  it('Should restart the connector polling.', () => {
+    cy.board().then(async dashboard => {
+      const connector = await dashboard.dataPool.getConnector('fetched-data');
+      const signal = connector.pollingController.signal;
+      // Component reference should be initially added to the connector.
+      expect(connector.components).not.be.empty;
+      // Expect request not to be aborted.
+      expect(signal.aborted).to.be.false;
+      // Connector polling should be run initially.
+      expect(connector.polling).to.be.true;
+
+      // Destroy the component.
+      const component = dashboard.mountedComponents[0].component;
+      component.destroy();
+
+      // Component reference should be removed from the connector.
+      expect(connector.components).be.undefined;
+      // Expect request to be aborted.
+      expect(signal.aborted).to.be.true;
+      // Connector polling should be stopped.
+      expect(connector.polling).to.be.false;
+
+      // Add a new chart component.
+      cy.grabComponent('chart');
+      cy.dropComponent('#dashboard-col-0');
+    });
+
+    // Wait until all DOM elements are settled from the previous actions.
+    cy.board().then(async dashboard => {
+      const connector = await dashboard.dataPool.getConnector('fetched-data');
+      // Component reference should be added to the connector.
+      expect(connector.components).not.be.empty;
+      // Expect request not to be aborted.
+      expect(connector.pollingController.signal.aborted).to.be.false;
+      // Connector polling should be run again.
+      expect(connector.polling).to.be.true;
+    });
+  });
+});

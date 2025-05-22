@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft, Black Label
+ *  (c) 2009-2025 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *

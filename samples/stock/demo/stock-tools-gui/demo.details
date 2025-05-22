@@ -6,8 +6,10 @@ requiresManualTesting: true
 js_wrap: b
 tags:
   - Highcharts Stock demo
+  - Morningstar
 categories:
   - General:
       priority: 1
 use_png_thumbnail: true
+is_morningstar: true
 ...

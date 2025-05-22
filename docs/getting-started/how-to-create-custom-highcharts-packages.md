@@ -99,7 +99,7 @@ custom package file either as an ES6 module...
     <body>
         <div id="container"></div>
         <script type="module">
-            import Highcharts from './es-modules/masters/custom.src.js';
+            import Highcharts from './esm/custom.js';
             Highcharts.chart('container', {
                 series: [{
                     type: 'line',

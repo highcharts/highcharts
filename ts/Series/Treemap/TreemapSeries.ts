@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2024 Highsoft AS
+ *  (c) 2014-2025 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -891,7 +891,7 @@ class TreemapSeries extends ScatterSeries {
 
                 // Hide labels for shapes that are too small
                 } else {
-                    style.width = '1px';
+                    style.width = `${width}px`;
                     style.visibility = 'hidden';
                 }
             }
@@ -1392,8 +1392,6 @@ class TreemapSeries extends ScatterSeries {
                 'fill': point?.color || this.color
             };
 
-        let opacity: number;
-
         // Hide levels above the current view
         if (className.indexOf('highcharts-above-level') !== -1) {
             attr.fill = 'none';
@@ -1403,17 +1401,16 @@ class TreemapSeries extends ScatterSeries {
         } else if (
             className.indexOf('highcharts-internal-node-interactive') !== -1
         ) {
-            opacity = pick(stateOptions.opacity, options.opacity as any);
-            attr.fill = color(attr.fill).setOpacity(opacity).get();
+            attr['fill-opacity'] = stateOptions.opacity ?? options.opacity ?? 1;
             attr.cursor = 'pointer';
             // Hide nodes that have children
         } else if (className.indexOf('highcharts-internal-node') !== -1) {
             attr.fill = 'none';
 
-        } else if (state) {
+        } else if (state && stateOptions.brightness) {
         // Brighten and hoist the hover nodes
             attr.fill = color(attr.fill)
-                .brighten(stateOptions.brightness as any)
+                .brighten(stateOptions.brightness)
                 .get();
         }
 

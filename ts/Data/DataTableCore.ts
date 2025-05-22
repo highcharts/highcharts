@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -26,6 +26,10 @@
 import type DataEvent from './DataEvent.js';
 import type DataTable from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
+import type { ColumnNamesOptions } from './Connectors/JSONConnectorOptions.js';
+import type { DataModifierTypeOptions } from './Modifiers/DataModifierType.js';
+
+import DataConnector from './Connectors/DataConnector.js';
 
 import ColumnUtils from './ColumnUtils.js';
 const { setLength, splice } = ColumnUtils;
@@ -96,6 +100,11 @@ class DataTableCore {
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
+        this.columnNames = options.columnNames;
+        this.firstRowAsNames = options.firstRowAsNames;
+        this.orientation = options.orientation;
+        this.dataModifier = options.dataModifier;
+        this.beforeParse = options.beforeParse;
 
         let rowCount = 0;
 
@@ -125,6 +134,16 @@ class DataTableCore {
     public rowCount: number;
 
     protected versionTag: string;
+
+    public columnNames?: Array<string>|ColumnNamesOptions;
+
+    public firstRowAsNames?: boolean;
+
+    public orientation?: 'columns'|'rows';
+
+    public dataModifier?: DataModifierTypeOptions;
+
+    public beforeParse?: DataConnector.BeforeParseCallbackFunction;
 
     /* *
      *

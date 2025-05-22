@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -418,15 +418,23 @@ class Board implements Serializable<Board, Board.JSON> {
         const board = this;
 
         // Destroy layouts.
-        for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
-            board.layouts[i].destroy();
+        if (this.guiEnabled) {
+            for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
+                board.layouts[i].destroy();
+            }
+        } else {
+            for (const mountedComponent of board.mountedComponents) {
+                mountedComponent.component.destroy();
+            }
         }
 
         // Remove resizeObserver from the board
         this.resizeObserver?.unobserve(board.container);
 
         // Destroy container.
-        board.container?.remove();
+        if (this.guiEnabled) {
+            board.container?.remove();
+        }
 
         // @ToDo Destroy bindings.
 
@@ -545,7 +553,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * not support converting functions or events into JSON object.
      *
      * @returns
-     * The JSON of boards's options.
+     * Dashboards options.
      */
     public getOptions(): Globals.DeepPartial<Board.Options> {
         const board = this,
@@ -657,7 +665,7 @@ namespace Board {
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options | Datagrid component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | Datagrid component}
          *
          **/
         components?: Array<Partial<ComponentType['options']>>;
