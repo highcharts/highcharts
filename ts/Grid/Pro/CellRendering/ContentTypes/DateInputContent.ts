@@ -55,7 +55,6 @@ class DateInputContent extends CellContentPro implements EditModeContent {
     }
 
     public override add(): HTMLInputElement {
-        const time = this.cell.column.viewport.grid.time;
         const cell = this.cell;
 
         this.input = document.createElement('input');

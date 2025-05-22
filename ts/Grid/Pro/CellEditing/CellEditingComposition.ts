@@ -165,12 +165,16 @@ namespace CellEditingComposition {
             staticRendererTypeName
         ];
 
-        return new CellRendererRegistry.types[
-            staticRendererType.defaultEditingRenderer
-        ](column, (
-            staticRendererType.defaultEditingRenderer ===
-            staticRendererTypeName
-        ) ? column.options.renderer || {} : {});
+        let defRenderer = staticRendererType.defaultEditingRenderer;
+        if (typeof defRenderer !== 'string') {
+            defRenderer = defRenderer[column.dataType];
+        }
+
+        return new CellRendererRegistry.types[defRenderer](
+            column,
+            defRenderer === staticRendererTypeName ?
+                column.options.renderer || {} : {}
+        );
     }
 
     /**

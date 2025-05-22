@@ -580,8 +580,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     text-overflow: ellipsis;
 }
 
-.hcg-table tbody td.hcg-edited-cell,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell {
+.hcg-table tbody td.hcg-edited-cell:not(:has(input[type="checkbox"])),
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell:not(:has(input[type="checkbox"])) {
     padding: 0;
 }
 
@@ -821,10 +821,14 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-left: none;
 }
 
-.hcg-table tbody td.hcg-edited-cell input,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
-.hcg-table tbody td.hcg-edited-cell input:focus,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
+.hcg-table tbody td.hcg-edited-cell input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]),
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]),
+.hcg-table tbody td.hcg-edited-cell input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]):focus,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]):focus,
+.hcg-table tbody td.hcg-edited-cell select,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell select,
+.hcg-table tbody td.hcg-edited-cell select:focus,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell select:focus {
     border-width: 0;
     position: absolute;
     top: 0;
@@ -839,23 +843,22 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     background: #b7d4ff;
 }
 
-.hcg-table tbody td.hcg-edited-cell input[type="checkbox"],
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input[type="checkbox"] {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    bottom: unset;
-    right: unset;
-}
-
-.highcharts-datagrid-table tbody td.hcg-edited-cell-error input,
-.highcharts-datagrid-table tbody td.hcg-edited-cell-error input input:focus,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:focus,
-.hcg-table tbody td.hcg-edited-cell-error input,
-.hcg-table tbody td.hcg-edited-cell-error input input:focus,
-.hcg-tabl tbody td.hcg-edited-cell-error input,
-.hcg-tabl tbody td.hcg-edited-cell-error input:focus {
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]),
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]) input:focus,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]),
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]):focus,
+.hcg-table tbody td.hcg-edited-cell-error input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]),
+.hcg-table tbody td.hcg-edited-cell-error input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]) input:focus,
+.hcg-tabl tbody td.hcg-edited-cell-error input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]),
+.hcg-tabl tbody td.hcg-edited-cell-error input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio" i]):focus,
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error select,
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error select select:focus,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error select,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error select:focus,
+.hcg-table tbody td.hcg-edited-cell-error select,
+.hcg-table tbody td.hcg-edited-cell-error select select:focus,
+.hcg-tabl tbody td.hcg-edited-cell-error select,
+.hcg-tabl tbody td.hcg-edited-cell-error select:focus {
     color: var(--ig-color);
     box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;

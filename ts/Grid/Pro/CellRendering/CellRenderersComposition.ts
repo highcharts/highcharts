@@ -73,8 +73,7 @@ namespace CellRenderersComposition {
      */
     function afterColumnInit(this: Column): void {
         const Constructor = CellRendererRegistry.types[
-            this.options.renderer?.type ||
-            CellRendererRegistry.dataTypeDefaults[this.dataType]
+            this.options.renderer?.type || 'text'
         ];
 
         this.cellRenderer = new Constructor(this, this.options.renderer || {});

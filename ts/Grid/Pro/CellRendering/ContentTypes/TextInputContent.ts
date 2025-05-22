@@ -89,18 +89,19 @@ class TextInputContent extends CellContentPro implements EditModeContent {
     private readonly onChange = (e: Event): void => {
         if (this.changeHandler) {
             this.changeHandler(e);
-        } else {
-            this.cell.setValue(
-                (e.target as HTMLSelectElement).value,
-                true
-            );
+            return;
         }
+
+        this.cell.setValue((e.target as HTMLSelectElement).value, true);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
         if (this.keyDownHandler) {
             this.keyDownHandler(e);
-        } else if (this.input && e.key === 'Escape') {
+            return;
+        }
+        
+        if (e.key === 'Escape') {
             this.input.value = '' + this.cell.value;
         }
     };
