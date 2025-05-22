@@ -1,6 +1,6 @@
 /* *
  *
- *  Text Input Cell Content class
+ *  Date Input Cell Content class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -22,7 +22,7 @@
  * */
 
 import type TableCell from '../../../Core/Table/Body/TableCell.js';
-import type TextInputRenderer from '../Renderers/TextInputRenderer.js';
+import type DateInputRenderer from '../Renderers/DateInputRenderer.js';
 
 import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 import CellContentPro from '../CellContentPro.js';
@@ -36,9 +36,9 @@ import CellContentPro from '../CellContentPro.js';
 /**
  * Represents a text input type of cell content.
  */
-class TextInputContent extends CellContentPro implements EditModeContent {
+class DateInputContent extends CellContentPro implements EditModeContent {
 
-    public finishAfterChange: boolean = true;
+    public finishAfterChange: boolean = false;
 
     public blurHandler?: (e: FocusEvent) => void;
 
@@ -48,16 +48,19 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
     private input: HTMLInputElement;
 
-    constructor(cell: TableCell, renderer: TextInputRenderer) {
+
+    constructor(cell: TableCell, renderer: DateInputRenderer) {
         super(cell, renderer);
         this.input = this.add();
     }
 
     public override add(): HTMLInputElement {
+        const time = this.cell.column.viewport.grid.time;
         const cell = this.cell;
 
         this.input = document.createElement('input');
-        this.input.value = '' + cell.value;
+        this.input.type = 'date';
+        this.input.value = this.getInputAcceptableValue();
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !cell.column.options.cells?.editable;
 
@@ -70,8 +73,8 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
-    public getValue(): string {
-        return this.input?.value || '';
+    public getValue(): number {
+        return new Date(this.input.value).getTime();
     }
 
     public getMainElement(): HTMLInputElement {
@@ -86,27 +89,36 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         this.input?.remove();
     }
 
+    private getInputAcceptableValue(): string {
+        const time = this.cell.column.viewport.grid.time;
+        return time.dateFormat('%Y-%m-%d', Number(this.cell.value || 0));
+    }
+
     private readonly onChange = (e: Event): void => {
-        if (this.changeHandler) {
-            this.changeHandler(e);
-        } else {
-            this.cell.setValue(
-                (e.target as HTMLSelectElement).value,
-                true
-            );
-        }
+        this.changeHandler?.(e);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
         if (this.keyDownHandler) {
             this.keyDownHandler(e);
-        } else if (this.input && e.key === 'Escape') {
-            this.input.value = '' + this.cell.value;
+            return;
+        }
+
+        if (e.key === 'Escape') {
+            this.input.value = this.getInputAcceptableValue();
+            this.cell.htmlElement.focus();
+        } else if (e.key === 'Enter') {
+            this.cell.setValue(this.getValue(), true);
         }
     };
 
     private readonly onBlur = (e: FocusEvent): void => {
-        this.blurHandler?.(e);
+        if (this.blurHandler) {
+            this.blurHandler(e);
+            return;
+        }
+        
+        this.cell.setValue(this.getValue(), true);
     };
 }
 
@@ -117,4 +129,4 @@ class TextInputContent extends CellContentPro implements EditModeContent {
  *
  * */
 
-export default TextInputContent;
+export default DateInputContent;

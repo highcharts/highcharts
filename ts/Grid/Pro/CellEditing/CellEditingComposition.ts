@@ -167,7 +167,10 @@ namespace CellEditingComposition {
 
         return new CellRendererRegistry.types[
             staticRendererType.defaultEditingRenderer
-        ](column, editModeOptions?.renderer || {});
+        ](column, (
+            staticRendererType.defaultEditingRenderer ===
+            staticRendererTypeName
+        ) ? column.options.renderer || {} : {});
     }
 
     /**
@@ -194,8 +197,7 @@ namespace CellEditingComposition {
         if (
             e.originalEvent?.key !== 'Enter' ||
             !this.column.options.cells?.editable ||
-            !this.column.editModeRenderer ||
-            this.column.cellRenderer.options.type !== 'text'
+            !this.column.editModeRenderer
         ) {
             return;
         }
@@ -209,8 +211,7 @@ namespace CellEditingComposition {
     function onCellDblClick(this: TableCell): void {
         if (
             this.column.options.cells?.editable &&
-            this.column.editModeRenderer &&
-            this.column.cellRenderer.options.type === 'text'
+            this.column.editModeRenderer
         ) {
             this.row.viewport.cellEditing?.startEditing(this);
         }

@@ -100,7 +100,7 @@ Grid.grid('container', {
         },
         editMode: {
             renderer: {
-                // type: 'date' // TODO: Implement date picker
+                type: 'dateInput'
             }
         }
     }, {
@@ -110,7 +110,7 @@ Grid.grid('container', {
             format: '{value:%Y-%m-%d}'
         },
         renderer: {
-            // type: 'date' // TODO: Implement date picker
+            type: 'dateInput'
         }
     }]
 });

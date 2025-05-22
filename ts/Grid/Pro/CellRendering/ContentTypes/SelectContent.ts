@@ -1,6 +1,6 @@
 /* *
  *
- *  Select Cell Renderer class
+ *  Select Cell Content class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -113,10 +113,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            this.cell.setValue(
-                (e.target as HTMLInputElement).value,
-                true
-            );
+            this.cell.setValue(this.getValue(), true);
         }
     };
 

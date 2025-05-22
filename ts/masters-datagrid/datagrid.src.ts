@@ -74,6 +74,7 @@ import '../Grid/Pro/CellRendering/Renderers/TextRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SelectRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/TextInputRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/DateInputRenderer.js';
 
 
 /* *
