@@ -180,7 +180,22 @@ const chartPreview = async theme => {
     });
 };
 
-const defaultOptions = Highcharts.merge(Highcharts.defaultOptions);
+const defaultOptions = Highcharts.merge(
+    Highcharts.defaultOptions,
+    {
+        xAxis: {
+            grid: {
+                borderColor: '#cccccc'
+            }
+        },
+        yAxis: {
+            grid: {
+                borderColor: '#cccccc'
+            }
+        }
+    }
+);
+
 
 // Generate a random color scheme using the third-party color-scheme package
 // https://github.com/c0bra/color-scheme-js
@@ -335,12 +350,18 @@ const generate = async () => {
 
 
     // Find colors in default options
-    const findColors = obj => {
+    const findColors = (obj, cssVariables) => {
         const theme = {};
+        const hyphenate = str => {
+            const hyphenized = str
+                .replace(/([a-z])([A-Z])/g, '$1-$2')
+                .replace(/[0-9]+/g, '-$&');
+            return hyphenized.toLowerCase();
+        };
         if (typeof obj === 'object' && !Array.isArray(obj)) {
             for (const [key, value] of Object.entries(obj)) {
                 if (value && typeof value === 'object') {
-                    const children = findColors(value, key);
+                    const children = findColors(value, cssVariables);
                     if (children) {
                         theme[key] = children;
                     }
@@ -360,7 +381,13 @@ const generate = async () => {
                                 `Color missing for ${value} in palette`
                             );
                         }
-                        theme[key] = color;
+
+                        if (cssVariables) {
+                            theme[key] =
+                                `var(--highcharts-${hyphenate(paletteKey)})`;
+                        } else {
+                            theme[key] = color;
+                        }
                     }
                 }
             }
@@ -382,10 +409,43 @@ const generate = async () => {
             maskFill: new Color(palette.highlightColor60)
                 .setOpacity(0.3)
                 .get()
+        },
+        pane: {
+            background: {
+                backgroundColor: {
+                    // Palette helper not good at arrays
+                    stops: [
+                        [0, palette.backgroundColor],
+                        [1, palette.neutralColor10]
+                    ]
+                }
+            }
         }
     });
 
     document.getElementById('js').innerText = JSON.stringify(theme, null, '  ');
+
+    // JavaScript with CSS variables
+    const themeCSSVariables = findColors(defaultOptions, true);
+    Highcharts.merge(true, themeCSSVariables, {
+        pane: {
+            background: {
+                backgroundColor: {
+                    // Palette helper not good at arrays
+                    stops: [
+                        [0, 'var(--highcharts-background-color)'],
+                        [1, 'var(--highcharts-neutral-color-10)']
+                    ]
+                }
+            }
+        }
+    });
+    const seriealizedThemeCSSVariables = JSON
+        .stringify(themeCSSVariables, null, '    ')
+        .replace(/"([a-zA-Z0-9-]+)":/g, '$1:')
+        .replace(/"/g, '\'');
+    document.getElementById('js-css-variables').innerText =
+        seriealizedThemeCSSVariables;
 
     await chartPreview(theme);
 

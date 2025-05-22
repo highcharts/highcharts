@@ -38,8 +38,7 @@
         },
 
         legend: {
-            floating: true,
-            backgroundColor: '#ffffffcc'
+            floating: true
         },
 
         plotOptions: {
@@ -76,8 +75,8 @@
             },
             enableMouseTracking: false,
             showInLegend: false,
-            borderColor: 'blue',
-            opacity: 0.3,
+            borderColor: '#99f',
+            opacity: 0.4,
             borderWidth: 10
         }, {
             allAreas: true,
@@ -92,7 +91,7 @@
             },
             enableMouseTracking: false,
             showInLegend: false,
-            borderColor: 'rgba(0, 0, 0, 0.25)'
+            borderColor: '#8888'
         }, {
             name: 'Coastal',
             color: 'rgb(124, 181, 236)',

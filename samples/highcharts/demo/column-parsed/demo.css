@@ -41,10 +41,26 @@
     background: #f8f8f8;
 }
 
-#datatable tr:hover {
-    background: #f1f7ff;
-}
-
 .highcharts-description {
     margin: 0.3rem 10px;
+}
+
+.highcharts-dark #datatable {
+    border-color: #444;
+}
+
+.highcharts-dark #datatable thead tr,
+.highcharts-dark #datatable tr:nth-child(even) {
+    background: #444;
+}
+
+@media (prefers-color-scheme: dark) {
+    #datatable {
+        border-color: #444;
+    }
+
+    #datatable thead tr,
+    #datatable tr:nth-child(even) {
+        background: #444;
+    }
 }

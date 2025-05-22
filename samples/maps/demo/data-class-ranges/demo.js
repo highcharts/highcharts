@@ -62,11 +62,11 @@
                 floating: true,
                 layout: 'vertical',
                 valueDecimals: 0,
-                backgroundColor: ( // theme
-                    Highcharts.defaultOptions &&
-                    Highcharts.defaultOptions.legend &&
-                    Highcharts.defaultOptions.legend.backgroundColor
-                ) || 'rgba(255, 255, 255, 0.85)',
+                backgroundColor: `color-mix(
+                    in srgb,
+                    var(--highcharts-background-color, white),
+                    transparent 15%
+                )`,
                 symbolRadius: 0,
                 symbolHeight: 14
             },

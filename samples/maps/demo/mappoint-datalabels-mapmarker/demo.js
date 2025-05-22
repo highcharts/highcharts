@@ -397,7 +397,11 @@
                 text: 'Degrees Celsius'
             },
             floating: true,
-            backgroundColor: '#ffffffcc'
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-background-color, white),
+                transparent 15%
+            )`
         },
 
         tooltip: {

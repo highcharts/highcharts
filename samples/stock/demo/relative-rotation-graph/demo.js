@@ -12,9 +12,10 @@ Highcharts.chart('container', {
     chart: {
         type: 'scatter',
         height: '90%',
+        backgroundColor: 'var(--highcharts-neutral-color-3, #f7f7f8)',
+        plotBackgroundColor: '#f7f7f8',
         plotBorderWidth: 10,
-        plotBorderColor: '#ffffff',
-        backgroundColor: '#f7f7f8',
+        plotBorderColor: 'var(--highcharts-background-color, #fff)',
         spacing: [10, 85, 15, 20],
         style: {
             fontFamily: 'IBM Plex Sans'

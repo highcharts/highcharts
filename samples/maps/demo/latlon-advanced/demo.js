@@ -50,14 +50,17 @@
             accessibility: {
                 exposeAsGroupOnly: true
             },
-            borderColor: '#606060',
+            borderColor: '#888',
             nullColor: 'rgba(200, 200, 200, 0.2)',
             showInLegend: false
         }, {
             type: 'mapbubble',
             dataLabels: {
                 enabled: true,
-                format: '{point.capital}'
+                format: '{point.capital}',
+                style: {
+                    color: 'var(--highcharts-neutral-color-100, black)'
+                }
             },
             accessibility: {
                 point: {
