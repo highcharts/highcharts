@@ -16,7 +16,7 @@ The available events are:
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterEdit`        | Triggered after a cell's value is edited.                | `this: Cell`          |
 | `afterRender`      | Triggered after setting a cell's value (init/edit)       | `this: Cell`          |
-| `afterSetValue`    | Deprecated. Use `afterRender` instead.                   | `this: Cell`          |
+| ~~`afterSetValue`~~ | Deprecated. Use `afterRender` instead.                   | `this: Cell`          |
 | `click`            | Triggered after clicking on a cell.                      | `this: Cell`          |
 | `dblClick`         | Triggered after double-clicking on a cell.               | `this: Cell`          |
 | `mouseOver`        | Triggered when the mouse is hovered over a cell.         | `this: Cell`          |
