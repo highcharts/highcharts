@@ -375,6 +375,7 @@ class EditMode {
         addEvent(document, 'keydown', (e: KeyboardEvent): void => {
             if (e.key === 'Escape' && editMode.isActive()) {
                 editMode.hideToolbars(['cell', 'row']);
+                editMode.editCellContext = void 0;
             }
         });
 
