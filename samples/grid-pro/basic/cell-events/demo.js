@@ -1,4 +1,5 @@
-const msg = document.getElementById('msg');
+const msgMouse = document.getElementById('msg-mouse');
+const msgTable = document.getElementById('msg-table');
 
 Grid.grid('container', {
     dataTable: {
@@ -14,34 +15,36 @@ Grid.grid('container', {
         cells: {
             events: {
                 afterEdit: function () {
-                    msg.innerText = `Edited a cell in the ${this.row.index} ` +
-                        ` row and the '${this.column.id}' column.`;
+                    msgTable.innerText = 'Edited a cell in the ' +
+                        ` ${this.row.index} row and the '${this.column.id}' ` +
+                        'column.';
                 },
                 afterRender: function () {
-                    msg.innerText = `Edited a cell in the ${this.row.index} ` +
-                        ` row and the '${this.column.id}' column.`;
+                    msgTable.innerText = 'Rendered a cell in the ' +
+                        ` ${this.row.index} row and the '${this.column.id}' ` +
+                        'column.';
                 },
                 click: function () {
-                    msg.innerText = 'Clicked on a cell with value ' +
+                    msgMouse.innerText = 'Clicked on a cell with value ' +
                         `'${this.value}', in the column '${this.column.id}'.`;
                 },
                 dblClick: function () {
-                    msg.innerText = 'Double clicked on a cell with value ' +
-                        `'${this.value}', in the column '${this.column.id}'.`;
+                    msgMouse.innerText = 'Double clicked on a cell with value' +
+                        ` '${this.value}', in the column '${this.column.id}'.`;
                 },
                 mouseOver: function () {
-                    msg.innerText = 'Hovered a cell with value' +
+                    msgMouse.innerText = 'Hovered a cell with value ' +
                         `'${this.value}', in the column '${this.column.id}'.`;
                 },
                 mouseOut: function () {
-                    msg.innerText = 'Unhovered a cell with value ' +
+                    msgMouse.innerText = 'Unhovered a cell with value ' +
                         `'${this.value}', in the column '${this.column.id}'.`;
                 }
             }
         },
         events: {
             afterResize: function () {
-                msg.innerText = `Resized the column '${this.id}' to ` +
+                msgTable.innerText = `Resized the column '${this.id}' to ` +
                     `${Math.round(this.width * 1000) / 10}%.`;
             },
             afterSorting: function () {
@@ -50,20 +53,20 @@ Grid.grid('container', {
 
                 switch (order) {
                 case 'asc':
-                    msg.innerText += ' Sorted in ascending order.';
+                    msgTable.innerText += ' Sorted in ascending order.';
                     break;
                 case 'desc':
-                    msg.innerText += ' Sorted in descending order.';
+                    msgTable.innerText += ' Sorted in descending order.';
                     break;
                 default:
-                    msg.innerText += ' Unsorted.';
+                    msgTable.innerText += ' Unsorted.';
                 }
             }
         },
         header: {
             events: {
                 click: function () {
-                    msg.innerText =
+                    msgTable.innerText =
                         `Clicked the header of the column '${this.id}'.`;
                 }
             }
