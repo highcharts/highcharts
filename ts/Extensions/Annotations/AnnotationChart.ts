@@ -351,14 +351,13 @@ function onChartAfterInit(
 
     chart.annotations = [];
 
-    if (!isArray(annotationsOption)) {
+    if (!isArray(this.options.annotations)) {
         this.options.annotations = [];
     }
 
     if (
         isObject(annotationsUserOption, true) &&
-        isObject(annotationsOption, true) &&
-        isArray(this.options.annotations)
+        isObject(annotationsOption, true)
     ) {
         this.options.annotations.push(annotationsOption);
     }
