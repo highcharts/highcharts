@@ -1,3 +1,17 @@
+const gridOptions = {
+    type: 'DataGrid',
+    connector: {
+        id: 'vegetables'
+    },
+    sync: {
+        highlight: true
+    },
+    dataGridOptions: {
+        credits: {
+            enabled: false
+        }
+    }
+};
 const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -12,28 +26,18 @@ const board = Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'datagrid'
-                }, {
                     id: 'chart'
+                }]
+            }, {
+                cells: [{
+                    id: 'grid-0'
+                }, {
+                    id: 'grid-1'
                 }]
             }]
         }]
     },
     components: [{
-        type: 'DataGrid',
-        renderTo: 'datagrid',
-        connector: {
-            id: 'vegetables'
-        },
-        sync: {
-            highlight: true
-        },
-        dataGridOptions: {
-            credits: {
-                enabled: false
-            }
-        }
-    }, {
         type: 'Highcharts',
         renderTo: 'chart',
         connector: {
@@ -55,6 +59,14 @@ const board = Dashboards.board('container', {
                 crosshair: true
             }
         }
+    },
+    {
+        renderTo: 'grid-0',
+        ...gridOptions
+    },
+    {
+        renderTo: 'grid-1',
+        ...gridOptions
     }]
 });
 
@@ -67,10 +79,10 @@ const optionsCbx = document.querySelectorAll('.option');
 
 optionsCbx.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
-        const value = checkbox.dataset.value;
-        const { checked } = checkbox;
+        const { checked, dataset } = checkbox;
+        const checkboxDataValue = dataset.value;
 
-        if (value === 'enabled') {
+        if (checkboxDataValue === 'enabled') {
             optionsCbx.forEach(cbx => {
                 if (cbx.dataset.value !== 'enabled') {
                     cbx.disabled = !checked;
@@ -78,12 +90,57 @@ optionsCbx.forEach(checkbox => {
             });
         }
 
-        board.mountedComponents[1].component.update({
-            sync: {
-                highlight: {
-                    [value]: checked
-                }
-            }
+        const componentIndices =
+            checkbox.id === 'cbx-grid-enabled' ? [1, 2] : [0];
+        componentIndices.forEach(index => {
+            board.mountedComponents[index].component.update({
+                ...(checkboxDataValue === 'enabled' && ({
+                    sync: {
+                        highlight: {
+                            enabled: checked
+                        }
+                    }
+                })),
+                ...(checkboxDataValue === 'showTooltip' && ({
+                    chartOptions: {
+                        tooltip: {
+                            enabled: checked
+                        }
+                    }
+                })),
+                ...(checkboxDataValue === 'highlightPoint' && ({
+                    chartOptions: {
+                        plotOptions: {
+                            series: {
+                                ...(!checked && ({
+                                    events: {
+                                        mouseOver() {
+                                            return checked;
+                                        }
+                                    }
+                                })),
+                                marker: {
+                                    states: {
+                                        hover: {
+                                            enabled: checked
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })),
+                ...(checkboxDataValue === 'showCrosshair' && ({
+                    chartOptions: {
+                        xAxis: {
+                            crosshair: checked
+                        },
+                        yAxis: {
+                            crosshair: checked
+                        }
+                    }
+                }))
+            });
         });
     });
 });

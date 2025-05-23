@@ -60,9 +60,10 @@ const syncPair: Sync.SyncPair = {
         }
 
         const { dataCursor: cursor } = board;
+        const table =
+            this.getFirstConnector()?.getTable(component.dataTableKey);
 
         const onCellHover = (e: TableCell.TableCellEvent): void => {
-            const table = this.getFirstConnector()?.table;
             if (table) {
                 const cell = e.target;
 
@@ -76,7 +77,6 @@ const syncPair: Sync.SyncPair = {
         };
 
         const onCellMouseOut = (): void => {
-            const table = this.getFirstConnector()?.table;
             if (table) {
                 cursor.emitCursor(table, {
                     type: 'position',
@@ -121,6 +121,9 @@ const syncPair: Sync.SyncPair = {
             return;
         }
 
+        const table =
+            component.getFirstConnector()?.getTable(component.dataTableKey);
+
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
             if (cursor.type !== 'position') {
@@ -161,7 +164,6 @@ const syncPair: Sync.SyncPair = {
             if (!cursor) {
                 return;
             }
-            const table = component.connectorHandlers?.[0]?.connector?.table;
             if (!table) {
                 return;
             }
@@ -176,14 +178,24 @@ const syncPair: Sync.SyncPair = {
                 'point.mouseOut' + groupKey,
                 handleCursorOut
             );
+            cursor.addListener(
+                table.id,
+                'dataGrid.hoverRow' + groupKey,
+                handleCursor
+            );
+            cursor.addListener(
+                table.id,
+                'dataGrid.hoverOut' + groupKey,
+                handleCursorOut
+            );
         };
 
         const unregisterCursorListeners = (): void => {
-            const cursor = board.dataCursor;
-            const table = component.connectorHandlers?.[0]?.connector?.table;
             if (!table) {
                 return;
             }
+
+            const cursor = board.dataCursor;
 
             cursor.removeListener(
                 table.id,
@@ -193,6 +205,16 @@ const syncPair: Sync.SyncPair = {
             cursor.removeListener(
                 table.id,
                 'point.mouseOut' + groupKey,
+                handleCursorOut
+            );
+            cursor.removeListener(
+                table.id,
+                'dataGrid.hoverRow' + groupKey,
+                handleCursor
+            );
+            cursor.removeListener(
+                table.id,
+                'dataGrid.hoverOut' + groupKey,
                 handleCursorOut
             );
         };
