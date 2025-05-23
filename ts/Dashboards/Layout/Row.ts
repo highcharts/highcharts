@@ -471,10 +471,14 @@ class Row extends GUIElement {
         this.changeVisibility(true, 'flex');
     }
 
-    public setHighlight(): void {
-        const container = this.container;
-
-        container.classList.toggle(EditGlobals.classNames.rowContextHighlight);
+    public setHighlight(remove?: boolean): void {
+        const classList = this.container.classList;
+        const highlightClass = EditGlobals.classNames.rowContextHighlight;
+        if (remove === true) {
+            classList.remove(highlightClass);
+        } else {
+            classList.toggle(highlightClass, !remove);
+        }
     }
 
     // Row can have cells below each others.
