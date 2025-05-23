@@ -1008,7 +1008,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 /* Start Grid Default Theme */
 .hcg-theme-default,
-.highcharts-datagrid-theme-default {
+.highcharts-datagrid-theme-default,
+.highcharts-light .hcg-theme-default,
+.highcharts-light .highcharts-datagrid-theme-default {
     --hcg-font-size: 15px;
     --hcg-color: #333333;
     --hcg-background: #ffffff;
@@ -1042,6 +1044,19 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
         --hcg-cell-hovered-row-background: #2d2f36;
         --hcg-header-column-border-color: #4e4e4e;
     }
+}
+
+.highcharts-dark .hcg-theme-default,
+.highcharts-dark .highcharts-datagrid-theme-default {
+    --hcg-color: #eeeeee;
+    --hcg-background: #292929;
+    --hcg-border-color: #525252;
+    --hcg-row-border-color: #434343;
+    --hcg-header-background: #3d3d3d;
+    --hcg-header-row-border-color: #525252;
+    --hcg-row-even-background: #2e2e2e;
+    --hcg-cell-hovered-row-background: #2d2f36;
+    --hcg-header-column-border-color: #4e4e4e;
 }
 
 /* End Grid Default Theme */
