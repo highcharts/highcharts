@@ -52,6 +52,22 @@ body {
     }
 }
 
+.highcharts-dark {
+    /* Colors for data series and points */
+    --highcharts-color-0: #93cbae;
+    --highcharts-color-5: #c4c4c4;
+
+    /* Extra colors */
+    --gray: #333;
+
+    /* UI colors */
+    --highcharts-background-color: #333;
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
+    --highcharts-neutral-color-0: rgb(0, 0, 0);
+}
+
 #container {
     background-color: var(--highcharts-neutral-color-5);
     padding: 20px 10px;
