@@ -16562,28 +16562,40 @@ highed.DefaultContextMenu = function (chartPreview) {
                 title: highed.getLocalizedStr('exportPNG'),
                 icon: 'file-image-o',
                 click: function () {
-                    chartPreview.data.export({});
+                    (async () => {
+                        await chartPreview.data.export({});
+                    })();
                 }
             },
             {
                 title: highed.getLocalizedStr('exportJPEG'),
                 icon: 'file-image-o',
                 click: function () {
-                    chartPreview.data.export({ type: 'image/jpeg' });
+                    (async () => {
+                        await chartPreview.data.export({ type: 'image/jpeg' });
+                    })();
                 }
             },
             {
                 title: highed.getLocalizedStr('exportSVG'),
                 icon: 'file-image-o',
                 click: function () {
-                    chartPreview.data.export({ type: 'image/svg+xml' });
+                    (async () => {
+                        await chartPreview.data.export({
+                            type: 'image/svg+xml'
+                        });
+                    })();
                 }
             },
             {
                 title: highed.getLocalizedStr('exportPDF'),
                 icon: 'file-pdf-o',
                 click: function () {
-                    chartPreview.data.export({ type: 'application/pdf' });
+                    (async () => {
+                        await chartPreview.data.export({
+                            type: 'application/pdf'
+                        });
+                    })();
                 }
             },
             '-',
@@ -19841,7 +19853,9 @@ highed.ChartPreview = function (parent, attributes) {
 
     function getEmbeddableSVG() {
         return gc(function (chart) {
-            return highed.isFn(chart.getSVG) ? chart.getSVG() : '';
+            return highed.isFn(chart.exporting.getSVG) ?
+                chart.exporting.getSVG() :
+                '';
         });
     }
 
@@ -20077,8 +20091,8 @@ highed.ChartPreview = function (parent, attributes) {
 
 
     function exportChart(options) {
-        gc(function (chart) {
-            chart.exportChart(options, aggregatedOptions);
+        gc(async function (chart) {
+            await chart.exporting.exportChart(options, aggregatedOptions);
         });
     }
 

@@ -27,7 +27,7 @@ QUnit.test(
             ]
         });
 
-        var svg = chart.getSVG(),
+        var svg = chart.exporting.getSVG(),
             urls = svg.match(/url\(.*?\;?\)/g),
             matched = urls.filter(function (url) {
                 return url.match(/\&quot;/);

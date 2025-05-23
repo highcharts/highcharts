@@ -1156,7 +1156,7 @@ class Pointer {
 
         // Show the tooltip and run mouse over events (#977)
         if (
-            !chart.openMenu &&
+            !chart.exporting?.openMenu &&
             (
                 this.inClass(pEvt.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
@@ -2008,8 +2008,7 @@ class Pointer {
                     visiblePlotOnly: true
                 }
             );
-            if (isInside && !chart.openMenu) {
-
+            if (isInside && !chart.exporting?.openMenu) {
                 // Run mouse events and display tooltip etc
                 if (start) {
                     this.runPointActions(e);

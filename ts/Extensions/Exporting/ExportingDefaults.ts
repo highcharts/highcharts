@@ -77,7 +77,7 @@ const exporting: ExportingOptions = {
      *
      * @type      {boolean}
      * @default   false
-     * @since 12.0.0
+     * @since     12.0.0
      * @apioption exporting.applyStyleSheets
      */
 
@@ -205,6 +205,28 @@ const exporting: ExportingOptions = {
      * @since     5.0.0
      * @apioption exporting.libURL
      */
+    libURL: 'https://code.highcharts.com/@product.version@/lib/',
+
+    /**
+     * Whether the chart should be exported using the browser's built-in
+     * capabilities, allowing offline exports without requiring access to the
+     * Highcharts export server, or sent directly to the export server for
+     * processing and downloading.
+     *
+     * This option is different from `exporting.fallbackToExportServer`, which
+     * controls whether the export server should be used as a fallback only if
+     * the local export fails. In contrast, `exporting.local` explicitly defines
+     * which export method to use.
+     *
+     * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
+     *
+     * @type      {boolean}
+     * @default   true
+     * @since     12.2.1
+     * @requires  modules/exporting
+     * @apioption exporting.local
+     */
+    local: true,
 
     /**
      * Analogous to [sourceWidth](#exporting.sourceWidth).
@@ -293,28 +315,28 @@ const exporting: ExportingOptions = {
          * `bold` or `italic` are not defined, the `normal` font will be used
          * for those too.
          *
-         * @type string|undefined
+         * @type string | undefined
          */
         normal: void 0,
 
         /**
          * The TTF font file for bold text.
          *
-         * @type string|undefined
+         * @type string | undefined
          */
         bold: void 0,
 
         /**
          * The TTF font file for bold and italic text.
          *
-         * @type string|undefined
+         * @type string | undefined
          */
         bolditalic: void 0,
 
         /**
          * The TTF font file for italic text.
          *
-         * @type string|undefined
+         * @type string | undefined
          */
         italic: void 0
     },
@@ -427,7 +449,7 @@ const exporting: ExportingOptions = {
              * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
              *         Custom shape as symbol
              *
-             * @type  {Highcharts.SymbolKeyValue|"menu"|"menuball"|string}
+             * @type  {Highcharts.SymbolKeyValue | "menu" | "menuball" | string}
              * @since 2.0
              */
             symbol: 'menu',
@@ -472,6 +494,7 @@ const exporting: ExportingOptions = {
         }
 
     },
+
     /**
      * An object consisting of definitions for the menu items in the context
      * menu. Each key value pair has a `key` that is referenced in the
@@ -508,9 +531,7 @@ const exporting: ExportingOptions = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function (): void {
-                if (this.fullscreen) {
-                    this.fullscreen.toggle();
-                }
+                this.fullscreen?.toggle();
             }
         },
 
@@ -520,7 +541,7 @@ const exporting: ExportingOptions = {
         printChart: {
             textKey: 'printChart',
             onclick: function (): void {
-                this.print();
+                this.exporting?.print();
             }
         },
 
@@ -536,8 +557,8 @@ const exporting: ExportingOptions = {
          */
         downloadPNG: {
             textKey: 'downloadPNG',
-            onclick: function (): void {
-                this.exportChart();
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChart();
             }
         },
 
@@ -546,8 +567,8 @@ const exporting: ExportingOptions = {
          */
         downloadJPEG: {
             textKey: 'downloadJPEG',
-            onclick: function (): void {
-                this.exportChart({
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChart({
                     type: 'image/jpeg'
                 });
             }
@@ -558,8 +579,8 @@ const exporting: ExportingOptions = {
          */
         downloadPDF: {
             textKey: 'downloadPDF',
-            onclick: function (): void {
-                this.exportChart({
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChart({
                     type: 'application/pdf'
                 });
             }
@@ -570,8 +591,8 @@ const exporting: ExportingOptions = {
          */
         downloadSVG: {
             textKey: 'downloadSVG',
-            onclick: function (): void {
-                this.exportChart({
+            onclick: async function (): Promise<void> {
+                await this.exporting?.exportChart({
                     type: 'image/svg+xml'
                 });
             }
@@ -817,7 +838,7 @@ const navigation: NavigationOptions = {
          * @sample highcharts/navigation/buttonoptions-symbolfill/
          *         Blue symbol stroke for one of the buttons
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorString | Highcharts.GradientColorObject | Highcharts.PatternObject}
          * @since 2.0
          */
         symbolFill: Palette.neutralColor60,

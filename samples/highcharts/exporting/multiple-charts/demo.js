@@ -7,7 +7,7 @@ Highcharts.getSVG = function (charts) {
     let width = 0;
 
     const groups = charts.map(chart => {
-        let svg = chart.getSVG();
+        let svg = chart.exporting.getSVG();
         // Get width/height of SVG for export
         const svgWidth = +svg.match(
             /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
@@ -39,13 +39,13 @@ Highcharts.getSVG = function (charts) {
  * Create a global exportCharts method that takes an array of charts as an
  * argument, and exporting options as the second argument
  */
-Highcharts.exportCharts = function (charts, options) {
+Highcharts.exportCharts = async function (charts, options) {
 
     // Merge the options
     options = Highcharts.merge(Highcharts.getOptions().exporting, options);
 
     // Post to export server
-    Highcharts.post(options.url, {
+    await Highcharts.post(options.url, {
         filename: options.filename || 'chart',
         type: options.type,
         width: options.width,
@@ -121,12 +121,12 @@ const chart2 = Highcharts.chart('container2', {
 
 });
 
-document.getElementById('export-png').addEventListener('click', () =>
-    Highcharts.exportCharts([chart1, chart2])
+document.getElementById('export-png').addEventListener('click', async () =>
+    await Highcharts.exportCharts([chart1, chart2])
 );
 
-document.getElementById('export-pdf').addEventListener('click', () =>
-    Highcharts.exportCharts([chart1, chart2], {
+document.getElementById('export-pdf').addEventListener('click', async () =>
+    await Highcharts.exportCharts([chart1, chart2], {
         type: 'application/pdf'
     })
 );

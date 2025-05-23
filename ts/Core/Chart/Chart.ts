@@ -1916,7 +1916,7 @@ class Chart {
         // Width and height checks for display:none. Target is doc in Opera
         // and win in Firefox, Chrome and IE9.
         if (
-            !chart.isPrinting &&
+            !chart.exporting?.isPrinting &&
             !chart.isResizing &&
             oldBox &&
             // When fired by resize observer inside hidden container
