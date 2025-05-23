@@ -21,6 +21,8 @@
  * */
 
 import type { DefaultOptions } from '../../Core/Options';
+import type Fibonacci from '../../Extensions/Annotations/Types/Fibonacci';
+import type Measure from '../../Extensions/Annotations/Types/Measure';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -797,14 +799,6 @@ namespace DynamicDefaultTheme {
                 borderColor: 'var(--highcharts-neutral-color-20)'
             }
         },
-        scrollbar: {
-            barBackgroundColor: 'var(--highcharts-neutral-color-20)',
-            barBorderColor: 'var(--highcharts-neutral-color-20)',
-            buttonArrowColor: 'var(--highcharts-neutral-color-80)',
-            buttonBackgroundColor: 'var(--highcharts-neutral-color-10)',
-            buttonBorderColor: 'var(--highcharts-neutral-color-20)',
-            trackBorderColor: 'var(--highcharts-neutral-color-20)'
-        },
         navigator: {
             handles: {
                 backgroundColor: 'var(--highcharts-neutral-color-5)',
@@ -827,6 +821,14 @@ namespace DynamicDefaultTheme {
             labelStyle: {
                 color: 'var(--highcharts-neutral-color-60)'
             }
+        },
+        scrollbar: {
+            barBackgroundColor: 'var(--highcharts-neutral-color-20)',
+            barBorderColor: 'var(--highcharts-neutral-color-20)',
+            buttonArrowColor: 'var(--highcharts-neutral-color-80)',
+            buttonBackgroundColor: 'var(--highcharts-neutral-color-10)',
+            buttonBorderColor: 'var(--highcharts-neutral-color-20)',
+            trackBorderColor: 'var(--highcharts-neutral-color-20)'
         },
         pane: {
             background: {
@@ -910,6 +912,45 @@ namespace DynamicDefaultTheme {
             },
             activeDataLabelStyle: {
                 color: 'var(--highcharts-highlight-color-100)'
+            }
+        },
+        annotations: {
+            labelOptions: {
+                borderColor: 'var(--highcharts-neutral-color-100)'
+            },
+            controlPointOptions: {
+                style: {
+                    fill: 'var(--highcharts-background-color)',
+                    stroke: 'var(--highcharts-neutral-color-100)'
+                }
+            },
+            types: {
+                fibonacci: {
+                    typeOptions: {
+                        lineColor: 'var(--highcharts-neutral-color-40)'
+                    } as Fibonacci.TypeOptions,
+                    labelOptions: {
+                        style: {
+                            color: 'var(--highcharts-neutral-color-60)'
+                        }
+                    }
+                },
+                fibonacciTimeZones: {
+                    typeOptions: {
+                        line: {
+                            stroke: 'var(--highcharts-neutral-color-80)'
+                        }
+                    }
+                },
+                measure: {
+                    typeOptions: {
+                        label: {
+                            style: {
+                                color: 'var(--highcharts-neutral-color-60)'
+                            }
+                        }
+                    } as Measure.MeasureTypeOptions
+                }
             }
         },
         navigation: {
