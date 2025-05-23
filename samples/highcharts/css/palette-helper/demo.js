@@ -350,7 +350,7 @@ const generate = async () => {
 
 
     // Find colors in default options
-    const findColors = (obj, cssVariables) => {
+    const findColors = (obj, cssVariables, path = '') => {
         const theme = {};
         const hyphenate = str => {
             const hyphenized = str
@@ -360,8 +360,13 @@ const generate = async () => {
         };
         if (typeof obj === 'object' && !Array.isArray(obj)) {
             for (const [key, value] of Object.entries(obj)) {
+                const itemPath = `${path}${key}`;
                 if (value && typeof value === 'object') {
-                    const children = findColors(value, cssVariables);
+                    const children = findColors(
+                        value,
+                        cssVariables,
+                        itemPath + '.'
+                    );
                     if (children) {
                         theme[key] = children;
                     }
@@ -369,16 +374,22 @@ const generate = async () => {
                     // findColors(value, itemPath);
                 } else if (
                     typeof value === 'string' &&
-                    /#[0-9a-f]{6}/.test(value)
+                    (/#[0-9a-f]{6}/.test(value) || /^rgb/.test(value))
                 ) {
                     const paletteKey = colorMap[value];
                     if (!paletteKey) {
-                        console.error(`Palette key missing for ${value}`);
+                        console.error(
+                            'Color missing in palette',
+                            itemPath,
+                            value
+                        );
                     } else {
                         const color = palette[paletteKey];
                         if (!color) {
                             console.error(
-                                `Color missing for ${value} in palette`
+                                'Color missing in palette',
+                                itemPath,
+                                value
                             );
                         }
 
