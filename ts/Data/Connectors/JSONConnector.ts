@@ -22,12 +22,12 @@
 import type DataEvent from '../DataEvent';
 import type Types from '../../Shared/Types';
 import type JSONConnectorOptions from './JSONConnectorOptions';
-import type DataTable from '../DataTable';
+import type DataTableOptions from '../DataTableOptions';
 
 import DataConnector from './DataConnector.js';
 import U from '../../Core/Utilities.js';
 import JSONConverter from '../Converters/JSONConverter.js';
-const { merge } = U;
+const { merge, defined } = U;
 
 /* *
  *
@@ -67,18 +67,19 @@ class JSONConnector extends DataConnector {
      * @param {JSONConnector.UserOptions} [options]
      * Options for the connector and converter.
      *
-     * @param {Array<DataTable>} [dataTables]
+     * @param {Array<DataTableOptions>} [dataTables]
      * Multiple connector data tables options.
      */
     public constructor(
         options?: JSONConnector.UserOptions,
-        dataTables?: Array<DataTable>
+        dataTables?: Array<DataTableOptions>
     ) {
         const mergedOptions = merge(JSONConnector.defaultOptions, options);
 
         super(mergedOptions, dataTables);
 
-        this.options = mergedOptions;
+        this.options = defined(dataTables) ?
+            merge(mergedOptions, { dataTables }) : mergedOptions;
 
         if (mergedOptions.enablePolling) {
             this.startPolling(
@@ -123,7 +124,7 @@ class JSONConnector extends DataConnector {
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
             tables = connector.dataTables,
-            { data, dataUrl, dataModifier } = connector.options;
+            { data, dataUrl, dataModifier, dataTables } = connector.options;
 
         connector.emit<JSONConnector.Event>({
             type: 'load',
@@ -154,23 +155,28 @@ class JSONConnector extends DataConnector {
                 if (data) {
                     this.initConverters<JSONConverter.Data>(
                         data,
-                        (key, table): JSONConverter => {
+                        (key): JSONConverter => {
                             const options = this.options;
+                            const tableOptions = dataTables?.find(
+                                (dataTable): boolean => dataTable.key === key
+                            );
+
                             // Takes over the connector default options.
-                            const dataTableOptions = {
+                            const mergedTableOptions = {
                                 dataTableKey: key,
-                                columnNames: table.columnNames ??
+                                columnNames: tableOptions?.columnNames ??
                                     options.columnNames,
-                                firstRowAsNames: table.firstRowAsNames ??
-                                options.firstRowAsNames,
-                                orientation: table.orientation ??
+                                firstRowAsNames:
+                                    tableOptions?.firstRowAsNames ??
+                                    options.firstRowAsNames,
+                                orientation: tableOptions?.orientation ??
                                     options.orientation,
-                                beforeParse: table.beforeParse ??
+                                beforeParse: tableOptions?.beforeParse ??
                                     options.beforeParse
                             };
 
                             return new JSONConverter(
-                                merge(this.options, dataTableOptions)
+                                merge(this.options, mergedTableOptions)
                             );
                         },
                         (converter, data): void => {
@@ -178,7 +184,7 @@ class JSONConnector extends DataConnector {
                         }
                     );
                 }
-                return connector.setModifierOptions(dataModifier)
+                return connector.setModifierOptions(dataModifier, dataTables)
                     .then((): JSONConverter.Data => data);
             })
             .then((data): this => {

@@ -67,7 +67,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * @param {DataConnector.UserOptions} [options]
      * Options to use in the connector.
      *
-     * @param {Array<DataTable>} [dataTables]
+     * @param {Array<DataTableOptions>} [dataTables]
      * Multiple connector data tables options.
      */
     public constructor(
@@ -318,11 +318,15 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     public async setModifierOptions(
-        modifierOptions?: DataModifierTypeOptions
+        modifierOptions?: DataModifierTypeOptions,
+        tablesOptions?: DataTableOptions[]
     ): Promise<this> {
-        for (const table of Object.values(this.dataTables)) {
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            const tableOptions = tablesOptions?.find(
+                (dataTable): boolean => dataTable.key === key
+            );
             const mergedModifierOptions = merge(
-                table.dataModifier, modifierOptions
+                tableOptions?.dataModifier, modifierOptions
             );
             const ModifierClass = (
                 mergedModifierOptions &&

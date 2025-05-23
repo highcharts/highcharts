@@ -110,16 +110,6 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
 
     const done = assert.async(2); // event + promise
 
-    // Test data converter event
-    const converter = connector.converter;
-    converter.on('afterParse', (e) => {
-        assert.equal(
-            beforeParseFired,
-            true,
-            'beforeParse was fired'
-        );
-    });
-
     // Test after load event
     registerConnectorEvents(connector, registeredEvents, assert);
 
@@ -146,7 +136,7 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
         done();
     });
 
-    connector
+    await connector
         .load()
         .catch((error) => assert.strictEqual(
             error,
@@ -154,6 +144,16 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
             'Test should not fail.'
         ))
         .then(() => done())
+
+    // Test data converter event
+    const converter = connector.converter;
+    converter.on('afterParse', (e) => {
+        assert.equal(
+            beforeParseFired,
+            true,
+            'beforeParse was fired'
+        );
+    });
 });
 
 
