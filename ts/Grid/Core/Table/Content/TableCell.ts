@@ -239,7 +239,7 @@ class TableCell extends Cell {
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
 
-        fireEvent(this, 'afterSetValue', {
+        fireEvent(this, 'afterRender', {
             target: this
         });
 

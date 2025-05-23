@@ -31,10 +31,12 @@ In the example above cell editing is enabled for ALL columns, expect the `firstN
 The `afterEdit` event is called after a cell value is edited, and can be used to e.g. post result to server, generate feedback GUI etc:
 
 ```js
-events: {
-  cell: {
-    afterEdit: function () {
-      console.log(`${this.column.id} for ${this.row.data.firstName} was updated to ${this.value}`);
+columnDefaults: {
+  cells: {
+    events: {
+      afterEdit: function () {
+        console.log(`${this.column.id} for ${this.row.data.firstName} was updated to ${this.value}`);
+      }
     }
   },
 }
