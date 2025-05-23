@@ -38,8 +38,7 @@ import U from '../Core/Utilities.js';
 const {
     fireEvent,
     objectEach,
-    uniqueKey,
-    defined
+    uniqueKey
 } = U;
 
 
@@ -82,22 +81,13 @@ class DataTableCore {
     public constructor(
         options: DataTableOptions = {}
     ) {
-        const {
-            id,
-            columns,
-            columnNames,
-            firstRowAsNames,
-            orientation,
-            dataModifier,
-            beforeParse
-        } = options;
         /**
          * Whether the ID was automatic generated or given in the constructor.
          *
          * @name Highcharts.DataTable#autoId
          * @type {boolean}
          */
-        this.autoId = !id;
+        this.autoId = !options.id;
         this.columns = {};
 
         /**
@@ -106,31 +96,14 @@ class DataTableCore {
          * @name Highcharts.DataTable#id
          * @type {string}
          */
-        this.id = (id || uniqueKey());
+        this.id = (options.id || uniqueKey());
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
 
-        // Set the table options only if defined.
-        if (defined(columnNames)) {
-            this.columnNames = columnNames;
-        }
-        if (defined(firstRowAsNames)) {
-            this.firstRowAsNames = firstRowAsNames;
-        }
-        if (defined(orientation)) {
-            this.orientation = orientation;
-        }
-        if (defined(dataModifier)) {
-            this.dataModifier = dataModifier;
-        }
-        if (defined(beforeParse)) {
-            this.beforeParse = beforeParse;
-        }
-
         let rowCount = 0;
 
-        objectEach(columns || {}, (column, columnName): void => {
+        objectEach(options.columns || {}, (column, columnName): void => {
             this.columns[columnName] = column.slice();
             rowCount = Math.max(rowCount, column.length);
         });
