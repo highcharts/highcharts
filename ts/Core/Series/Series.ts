@@ -1401,7 +1401,11 @@ class Series {
             // all the rest are defined the same way. Although the 'for' loops
             // are similar, they are repeated inside each if-else conditional
             // for max performance.
-            let runTurbo = turboThreshold && dataLength > turboThreshold;
+            let runTurbo = (
+                turboThreshold &&
+                !options.relativeXValue &&
+                dataLength > turboThreshold
+            );
             if (runTurbo) {
 
                 const firstPoint = series.getFirstValidPoint(data),
