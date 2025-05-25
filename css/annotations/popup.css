@@ -304,7 +304,7 @@ input.highcharts-input-search-indicators {
     width: 80%;
     margin: 0 auto;
     float: none;
-    border-color: #949494;
+    border-color: var(--highcharts-neutral-color-40, #999999);
 }
 
 .highcharts-popup a.clear-filter-button {
