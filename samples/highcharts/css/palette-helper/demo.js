@@ -348,6 +348,7 @@ const generate = async () => {
         '#e6e9ff': 'highlightColor10'
     };
 
+    const missingColors = {};
 
     // Find colors in default options
     const findColors = (obj, cssVariables, path = '') => {
@@ -378,19 +379,11 @@ const generate = async () => {
                 ) {
                     const paletteKey = colorMap[value];
                     if (!paletteKey) {
-                        console.error(
-                            'Color missing in palette',
-                            itemPath,
-                            value
-                        );
+                        missingColors[itemPath] = value;
                     } else {
                         const color = palette[paletteKey];
                         if (!color) {
-                            console.error(
-                                'Color missing in palette',
-                                itemPath,
-                                value
-                            );
+                            missingColors[itemPath] = value;
                         }
 
                         if (cssVariables) {
@@ -439,6 +432,18 @@ const generate = async () => {
     // JavaScript with CSS variables
     const themeCSSVariables = findColors(defaultOptions, true);
     Highcharts.merge(true, themeCSSVariables, {
+        annotations: {
+            labelOptions: {
+                backgroundColor: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)'
+            },
+            shapeOptions: {
+                fill: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)',
+                stroke: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)'
+            }
+        },
         pane: {
             background: {
                 backgroundColor: {
@@ -462,6 +467,10 @@ const generate = async () => {
 
     // Only animate the first time
     animation = false;
+
+    Object.entries(missingColors).forEach(([key, value]) => {
+        console.warn('Missing color in palette:', key, value);
+    });
 };
 
 (async () => {

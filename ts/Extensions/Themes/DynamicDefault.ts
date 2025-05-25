@@ -916,7 +916,9 @@ namespace DynamicDefaultTheme {
         },
         annotations: {
             labelOptions: {
-                borderColor: 'var(--highcharts-neutral-color-100)'
+                borderColor: 'var(--highcharts-neutral-color-100)',
+                backgroundColor: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)'
             },
             controlPointOptions: {
                 style: {
@@ -951,6 +953,12 @@ namespace DynamicDefaultTheme {
                         }
                     } as Measure.MeasureTypeOptions
                 }
+            },
+            shapeOptions: {
+                fill: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)',
+                stroke: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)'
             }
         },
         navigation: {
