@@ -26,6 +26,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell.js';
 
 import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 import CellContentPro from '../CellContentPro.js';
+import Globals from '../../../Core/Globals.js';
 
 
 /* *
@@ -65,6 +66,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         this.input.disabled = !cell.column.options.cells?.editable;
 
         this.cell.htmlElement.appendChild(this.input);
+        this.input.classList.add(Globals.classNamePrefix + 'field-auto-width');
 
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);

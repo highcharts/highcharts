@@ -145,6 +145,8 @@ class CellEditing {
             vp.validator.errorCell = void 0;
         }
 
+        // return false;
+
         // Hide notification
         this.viewport.validator.hide();
 
@@ -157,7 +159,7 @@ class CellEditing {
         cell.htmlElement.focus();
 
         // TODO: Add custom parsing callback option!
-        // // Convert to number if possible
+        // Convert to number if possible
         // if (!isNaN(+newValue)) {
         //     newValue = +newValue;
         // }
