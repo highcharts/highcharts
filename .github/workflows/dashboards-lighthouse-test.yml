@@ -7,10 +7,14 @@ on:
       - '.github/workflows/dashboards-lighthouse-test.yml'
       - 'css/dashboards*'
       - 'css/datagrid*'
+      - 'css/grid*'
       - 'samples/dashboards/**'
+      - 'samples/grid-lite/**'
+      - 'samples/grid-pro/**'
       - 'test/cypress/dashboards/performance/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
+      - 'ts/Grid/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
