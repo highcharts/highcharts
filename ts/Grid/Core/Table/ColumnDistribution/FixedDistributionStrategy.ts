@@ -114,7 +114,7 @@ class FixedDistributionStrategy extends DistributionStrategy {
         }
 
         this.columnWidths[column.id] = Math.max(
-        	(resizer.columnStartWidth || 0) + diff,
+            (resizer.columnStartWidth || 0) + diff,
             DistributionStrategy.getMinWidth(column)
         );
         this.columnWidthUnits[column.id] = 0; // Always save in px
