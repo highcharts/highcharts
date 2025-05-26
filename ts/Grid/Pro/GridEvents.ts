@@ -253,21 +253,21 @@ declare module '../Core/Options' {
         /**
          * Events options triggered by the grid elements.
          */
-        events?: CellEvents; 
+        events?: CellEvents;
     }
 
     interface IndividualColumnOptions {
         /**
          * Events options triggered by the grid elements.
          */
-        events?: ColumnEvents; 
+        events?: ColumnEvents;
     }
 
     interface ColumnHeaderOptions {
         /**
          * Events options triggered by the grid elements.
          */
-        events?: HeaderEvents; 
+        events?: HeaderEvents;
     }
 }
 
