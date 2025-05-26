@@ -345,6 +345,11 @@ class Board implements Serializable<Board, Board.JSON> {
                 board.reflow();
             };
 
+
+            const thing = 1;
+            // eslint-ignore-next-line no-console
+            console.log(thing)
+
         if (typeof ResizeObserver === 'function') {
             this.resizeObserver = new ResizeObserver(runReflow);
             this.resizeObserver.observe(board.container);
