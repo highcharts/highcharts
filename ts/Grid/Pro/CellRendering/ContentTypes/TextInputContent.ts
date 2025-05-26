@@ -63,8 +63,6 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
         this.cell.htmlElement.appendChild(this.input);
 
-        console.log(this.input);
-
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);
         this.input.addEventListener('blur', this.onBlur);
