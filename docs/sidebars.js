@@ -237,6 +237,7 @@ module.exports = {
                     'morningstar/risk-score',
                     'morningstar/regulatory-news-announcements',
                     'morningstar/security-details',
+                    'morningstar/security-compare',
                     'morningstar/x-ray',
                     {
                         'Time Series': [
