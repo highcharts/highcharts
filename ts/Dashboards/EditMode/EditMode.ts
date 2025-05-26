@@ -376,6 +376,7 @@ class EditMode {
             if (e.key === 'Escape' && editMode.isActive()) {
                 editMode.hideToolbars(['cell', 'row']);
                 editMode.editCellContext = void 0;
+                editMode.resizer?.disableResizer();
             }
         });
 

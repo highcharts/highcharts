@@ -512,6 +512,7 @@
     display: flex;
     min-width: 100%;
     column-gap: 8px;
+    white-space: nowrap;
 }
 
 .highcharts-dashboards-edit-toggle-wrapper,
