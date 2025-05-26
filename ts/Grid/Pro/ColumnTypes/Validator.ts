@@ -30,8 +30,11 @@ import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
+import U from '../../../Core/Utilities.js';
 
 const { makeDiv } = GridUtils;
+const { defined } = U;
+
 /* *
  *
  *  Class
@@ -341,7 +344,8 @@ namespace Validator {
      */
     export const rulesRegistry: RulesRegistryType = {
         notEmpty: {
-            validate: (value): boolean => !!value,
+            validate: (value): boolean =>
+                defined(value) && value.toString().length > 0,
             notification: 'Value cannot be empty.'
         },
         number: {
