@@ -39,7 +39,7 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
  * */
 
 /**
- * The distribution of the columns in the grid structure.
+ * The resizing strategy of the columns in the grid structure.
  */
 export type ColumnDistributionType = ColumnDistribution.StrategyType;
 
@@ -155,18 +155,8 @@ export interface RenderingSettings {
 
 export interface ColumnsSettings {
     /**
-     * The distribution of the columns. If `full`, the columns will be
-     * distributed so that the first and the last column are at the edges of
-     * the grid. If `fixed`, the columns will have a fixed width in pixels. If
-     * `mixed`, the column widths will be set according to the `width` option
-     * of each column - CSS styles will be ignored then.
-     *
-     * If `undefined`, the default column distribution will be used, which is
-     * `mixed`, if `width` is set for any column, otherwise `full`.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-distribution | Distribution overview}
-     *
-     * @default undefined
+     * @deprecated
+     * Use `resizing` instead.
      */
     distribution?: ColumnDistributionType;
 
@@ -181,6 +171,23 @@ export interface ColumnsSettings {
      * @private
      */
     included?: Array<string>;
+
+    /**
+     * Resizing mode of the columns. If `full`, the columns will be
+     * distributed so that the first and the last column are at the edges of
+     * the grid. If `fixed`, the columns will have a fixed width, only the
+     * resized column will be affected. If `mixed`, resizing will change the
+     * width of the neighboring columns, but the rest will remain in the same
+     * place.
+     *
+     * If `undefined`, the default column rensizing strategy will be used, which
+     * is `mixed`, if `width` is set for any column, otherwise `full`.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-distribution | Resizing overview}
+     *
+     * @default undefined
+     */
+    resizing?: ColumnDistributionType;
 }
 
 export interface RowsSettings {
@@ -308,11 +315,10 @@ export interface ColumnOptions {
      * the table width. If unset, the width is distributed evenly between all
      * columns.
      *
-     * This option works only when the `distribution` option is set to `mixed`.
+     * This option does not work with the `resizing` option set to `full`.
      *
-     * If the `distribution` option is undefined, it is set to `mixed` and the
-     * `width` option is used to set the width of the column. Other distribution
-     * modes work only with CSS-defined column widths.
+     * If the `resizing` option is undefined, it is set to `mixed` and the
+     * `width` option is used to set the width of the column.
      */
     width?: number | string;
 }

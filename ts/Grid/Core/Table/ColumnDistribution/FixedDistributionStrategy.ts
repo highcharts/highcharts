@@ -23,7 +23,8 @@
  * */
 
 import type Column from '../Column.js';
-import ColumnsResizer from '../Actions/ColumnsResizer.js';
+import type ColumnsResizer from '../Actions/ColumnsResizer.js';
+import type Options from '../../Options.js';
 
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 import Globals from '../../Globals.js';
@@ -32,6 +33,11 @@ import GridUtils from '../../GridUtils.js';
 const {
     makeHTMLElement
 } = GridUtils;
+
+import U from '../../../../Core/Utilities.js';
+const {
+    defined
+} = U;
 
 
 /* *
@@ -50,6 +56,13 @@ class FixedDistributionStrategy extends DistributionStrategy {
 
     public override readonly type = 'fixed' as const;
 
+    /**
+     * Array of units for each column width value. Codified as:
+     * - `0` - px
+     * - `1` - %
+     */
+    private columnWidthUnits: Record<string, number> = {};
+
 
     /* *
      *
@@ -58,11 +71,40 @@ class FixedDistributionStrategy extends DistributionStrategy {
      * */
 
     public override loadColumn(column: Column): void {
-        this.columnWidths[column.id] = this.getInitialColumnWidth(column);
+        const raw = column.options.width;
+        if (!raw) {
+            this.columnWidths[column.id] = this.getInitialColumnWidth(column);
+            this.columnWidthUnits[column.id] = 0;
+            return;
+        }
+
+        let value: number;
+        let unitCode: number = 0;
+
+        if (typeof raw === 'number') {
+            value = raw;
+            unitCode = 0;
+        } else {
+            value = parseFloat(raw);
+            unitCode = raw.charAt(raw.length - 1) === '%' ? 1 : 0;
+        }
+
+        this.columnWidthUnits[column.id] = unitCode;
+        this.columnWidths[column.id] = value;
     }
 
     public override getColumnWidth(column: Column): number {
-        return this.columnWidths[column.id];
+        const vp = this.viewport;
+        const widthValue = this.columnWidths[column.id];
+        const minWidth = DistributionStrategy.getMinWidth(column);
+
+        if (this.columnWidthUnits[column.id] === 1) {
+            // If %:
+            return Math.max(vp.getWidthFromRatio(widthValue / 100), minWidth);
+        }
+
+        // If px:
+        return widthValue || 100; // Default to 100px if not defined
     }
 
     public override resize(resizer: ColumnsResizer, diff: number): void {
@@ -72,9 +114,10 @@ class FixedDistributionStrategy extends DistributionStrategy {
         }
 
         this.columnWidths[column.id] = Math.max(
-            (resizer.columnStartWidth || 0) + diff,
+        	(resizer.columnStartWidth || 0) + diff,
             DistributionStrategy.getMinWidth(column)
         );
+        this.columnWidthUnits[column.id] = 0; // Always save in px
     }
 
     /**
@@ -104,6 +147,61 @@ class FixedDistributionStrategy extends DistributionStrategy {
         mock.remove();
 
         return result;
+    }
+
+    public override exportMetadata(): FixedDistributionStrategy.Metadata {
+        return {
+            ...super.exportMetadata(),
+            columnWidthUnits: this.columnWidthUnits
+        };
+    }
+
+    public override importMetadata(
+        metadata: FixedDistributionStrategy.Metadata
+    ): void {
+        super.importMetadata(metadata, (colId): void => {
+            const unit = metadata.columnWidthUnits[colId];
+            if (defined(unit)) {
+                this.columnWidthUnits[colId] = unit;
+            }
+        });
+    }
+
+    public override validateOnUpdate(
+        newOptions: Globals.DeepPartial<Options>
+    ): void {
+        super.validateOnUpdate(newOptions);
+
+        if (
+            !this.invalidated && (
+                Object.hasOwnProperty.call(
+                    newOptions.columnDefaults || {}, 'width'
+                ) ||
+                newOptions.columns?.some(
+                    (col): boolean => Object.hasOwnProperty.call(
+                        col || {},
+                        'width'
+                    )
+                )
+            )
+        ) {
+            this.invalidated = true;
+        }
+    }
+
+}
+
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace FixedDistributionStrategy {
+
+    export interface Metadata extends DistributionStrategy.Metadata {
+        columnWidthUnits: Record<string, number>;
     }
 
 }

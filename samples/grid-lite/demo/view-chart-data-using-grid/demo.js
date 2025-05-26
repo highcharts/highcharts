@@ -139,7 +139,7 @@ function createGrid() {
         },
         rendering: {
             columns: {
-                distribution: 'mixed'
+                resizing: 'mixed'
             },
             theme: 'hcg-theme-default theme-custom'
         },

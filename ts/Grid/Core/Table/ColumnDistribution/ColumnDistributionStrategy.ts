@@ -221,6 +221,13 @@ abstract class ColumnDistributionStrategy {
     public validateOnUpdate(newOptions: Globals.DeepPartial<Options>): void {
         if (
             Object.hasOwnProperty.call(
+                newOptions.rendering?.columns || {}, 'resizing'
+            ) &&
+            newOptions.rendering?.columns?.resizing !== this.type
+        ) {
+            this.invalidated = true;
+        } else if (
+            Object.hasOwnProperty.call(
                 newOptions.rendering?.columns || {}, 'distribution'
             ) &&
             newOptions.rendering?.columns?.distribution !== this.type
