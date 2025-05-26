@@ -1,12 +1,12 @@
 const gridOptions = {
-    type: 'DataGrid',
+    type: 'Grid',
     connector: {
         id: 'vegetables'
     },
     sync: {
         highlight: true
     },
-    dataGridOptions: {
+    gridOptions: {
         credits: {
             enabled: false
         }
@@ -59,12 +59,10 @@ const board = Dashboards.board('container', {
                 crosshair: true
             }
         }
-    },
-    {
+    }, {
         renderTo: 'grid-0',
         ...gridOptions
-    },
-    {
+    }, {
         renderTo: 'grid-1',
         ...gridOptions
     }]
