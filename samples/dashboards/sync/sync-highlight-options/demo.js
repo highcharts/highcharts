@@ -94,52 +94,11 @@ optionsCbx.forEach(checkbox => {
             checkbox.id === 'cbx-grid-enabled' ? [1, 2] : [0];
         componentIndices.forEach(index => {
             board.mountedComponents[index].component.update({
-                ...(checkboxDataValue === 'enabled' && ({
-                    sync: {
-                        highlight: {
-                            enabled: checked
-                        }
+                sync: {
+                    highlight: {
+                        [checkboxDataValue]: checked
                     }
-                })),
-                ...(checkboxDataValue === 'showTooltip' && ({
-                    chartOptions: {
-                        tooltip: {
-                            enabled: checked
-                        }
-                    }
-                })),
-                ...(checkboxDataValue === 'highlightPoint' && ({
-                    chartOptions: {
-                        plotOptions: {
-                            series: {
-                                ...(!checked && ({
-                                    events: {
-                                        mouseOver() {
-                                            return checked;
-                                        }
-                                    }
-                                })),
-                                marker: {
-                                    states: {
-                                        hover: {
-                                            enabled: checked
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                })),
-                ...(checkboxDataValue === 'showCrosshair' && ({
-                    chartOptions: {
-                        xAxis: {
-                            crosshair: checked
-                        },
-                        yAxis: {
-                            crosshair: checked
-                        }
-                    }
-                }))
+                }
             });
         });
     });
