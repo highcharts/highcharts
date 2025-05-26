@@ -10,8 +10,8 @@
  *
  * */
 
-import Exporting from '../Exporting/Exporting';
-import { ExportingButtonsOptions } from '../Exporting/ExportingOptions';
+import Exporting from '../Exporting/Exporting.js';
+import { ExportingButtonsOptions } from '../Exporting/ExportingOptions.js';
 
 /* *
  *

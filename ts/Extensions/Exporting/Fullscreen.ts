@@ -24,7 +24,7 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart.js';
+import type Chart from '../../Core/Chart/Chart';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';

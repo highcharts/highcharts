@@ -44,7 +44,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Chart from '../../Core/Chart/Chart';
+import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;

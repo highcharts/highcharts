@@ -25,16 +25,16 @@
 import type Axis from '../../Core/Axis/Axis';
 import type Exporting from '../Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series.js';
+import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Chart from '../../Core/Chart/Chart';
+import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import DownloadURL from '../DownloadURL.js';
