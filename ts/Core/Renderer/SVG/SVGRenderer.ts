@@ -664,6 +664,10 @@ class SVGRenderer implements SVGRendererLike {
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
     public getContrast(color: ColorString): ColorString {
+
+        if (color === 'transparent') {
+            return '#000000';
+        }
         // #6216, #17273
         const rgba256 = Color.parse(color).rgba,
             // For each rgb channel, compute the luminosity based on all

@@ -235,6 +235,10 @@ abstract class Component {
      */
     public id: string;
     /**
+     * Reference to the specific connector data table.
+     */
+    public dataTableKey?: string;
+    /**
      * An array of options marked as editable by the UI.
      *
      */
@@ -328,6 +332,11 @@ abstract class Component {
                     new ConnectorHandler(this, connectorOptions)
                 );
             }
+
+            // Assign the data table key to define the proper dataTable.
+            this.dataTableKey = isArray(this.options.connector) ?
+                this.options.connector[0].dataTableKey :
+                this.options.connector.dataTableKey;
         }
 
         this.editableOptions =
@@ -684,6 +693,12 @@ abstract class Component {
                 );
             }
             await this.initConnectors();
+        }
+
+        // Assign the data table key to define the proper dataTable.
+        const firstConnectorDataTableKey = connectorOptions[0]?.dataTableKey;
+        if (firstConnectorDataTableKey) {
+            this.dataTableKey = firstConnectorDataTableKey;
         }
 
         if (shouldRerender || eventObject.shouldForceRerender) {

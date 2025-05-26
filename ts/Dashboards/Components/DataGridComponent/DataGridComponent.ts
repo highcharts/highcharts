@@ -345,7 +345,7 @@ class DataGridComponent extends Component {
             throw new Error('Grid not connected.');
         }
 
-        const dataTable = this.getFirstConnector()?.table,
+        const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey),
             options = this.options,
             gridOptions = merge(
                 {},
