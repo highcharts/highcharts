@@ -37,7 +37,6 @@ import CellEditing from './CellEditing.js';
 import CellRendererRegistry from '../CellRendering/CellRendererRegistry.js';
 import GU from '../../Core/GridUtils.js';
 import U from '../../../Core/Utilities.js';
-import SlowStochasticIndicator from '../../../Stock/Indicators/SlowStochastic/SlowStochasticIndicator';
 
 const {
     makeHTMLElement
@@ -98,6 +97,9 @@ namespace CellEditingComposition {
      *
      * @param TableCellClass
      * The class to extend.
+     *
+     * @param ColumnClass
+     * The class to extend.
      */
     export function compose(
         TableClass: typeof Table,
@@ -148,7 +150,7 @@ namespace CellEditingComposition {
 
     /**
      * Creates the edit mode renderer for the column.
-     * 
+     *
      * @param column
      * The column to create the edit mode renderer for.
      */

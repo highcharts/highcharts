@@ -57,7 +57,7 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
         type: 'dateInput'
     };
 
-    
+
     public override options: DateInputRenderer.Options;
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {

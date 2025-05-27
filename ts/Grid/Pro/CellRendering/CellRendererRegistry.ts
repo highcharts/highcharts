@@ -22,7 +22,6 @@
  * */
 
 import type { CellRendererTypeRegistry } from './CellRendererType';
-import type Column from '../../Core/Table/Column';
 
 
 /* *

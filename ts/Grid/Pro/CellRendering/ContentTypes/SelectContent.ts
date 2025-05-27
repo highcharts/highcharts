@@ -51,7 +51,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
     private optionElements: HTMLOptionElement[] = [];
 
-    
+
     public constructor(cell: TableCell, renderer: SelectRenderer) {
         super(cell, renderer);
         this.select = this.add();
@@ -78,7 +78,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.select.appendChild(optionElement);
             this.optionElements.push(optionElement);
         }
-        
+
         this.cell.htmlElement.appendChild(this.select);
 
         this.select.addEventListener('change', this.onChange);
@@ -113,12 +113,12 @@ class SelectContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            this.cell.setValue(this.getValue(), true);
+            void this.cell.setValue(this.getValue(), true);
         }
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
-        this.keyDownHandler?.(e)
+        this.keyDownHandler?.(e);
     };
 
     private readonly onBlur = (e: FocusEvent): void => {

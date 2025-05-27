@@ -32,6 +32,7 @@
     "dlint": "gulp dashboards/lint",
     "gapi": "gulp grid/api-docs && gulp api-server --product Grid",
     "gcode": "gulp scripts --product Grid",
+    "glint": "cd ts/Grid && npx eslint .",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
@@ -165,10 +166,10 @@
       "npm run lint"
     ],
     "./ts/Dashboards/**/*.ts": [
-      "cd ts/Dashboards && npx eslint"
+      "cd ts/Dashboards && npx eslint ."
     ],
     "./ts/Grid/**/*.ts": [
-      "cd ts/Grid && npx eslint --quiet \"./**/*.ts\""
+      "npm run glint"
     ],
     "*.css": [
       "stylelint"

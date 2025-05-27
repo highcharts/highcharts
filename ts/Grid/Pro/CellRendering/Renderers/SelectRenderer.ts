@@ -56,7 +56,6 @@ class SelectRenderer extends CellRenderer implements EditModeRenderer {
         options: []
     };
 
-    
     public override options: SelectRenderer.Options;
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {

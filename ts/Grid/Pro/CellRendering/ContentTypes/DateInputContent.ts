@@ -116,7 +116,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
             this.blurHandler(e);
             return;
         }
-        
+
         void this.cell.setValue(this.getValue(), true);
     };
 }

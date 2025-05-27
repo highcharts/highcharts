@@ -92,7 +92,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        this.cell.setValue((e.target as HTMLSelectElement).value, true);
+        void this.cell.setValue((e.target as HTMLSelectElement).value, true);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
@@ -100,7 +100,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
             this.keyDownHandler(e);
             return;
         }
-        
+
         if (e.key === 'Escape') {
             this.input.value = '' + this.cell.value;
         }

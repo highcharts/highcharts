@@ -65,9 +65,6 @@ class TextContent extends CellContent {
     /**
      * Returns the formatted value of the cell.
      *
-     * @param cell
-     * The cell to format the content for.
-     *
      * @internal
      */
     private format(): string {
@@ -124,7 +121,7 @@ namespace TextContent {
     export const defaultFormatsForDataTypes: Record<Column.DataType, string> = {
         string: '{value}',
         number: '{value}',
-        boolean: '{value}',
+        'boolean': '{value}',
         datetime: '{value:%Y-%m-%d %H:%M:%S}'
     };
 }

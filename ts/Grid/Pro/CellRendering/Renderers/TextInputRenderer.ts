@@ -51,19 +51,18 @@ const {
 class TextInputRenderer extends CellRenderer implements EditModeRenderer {
 
     public static defaultEditingRenderer: Record<
-        Column.DataType, EditModeRendererTypeName
+    Column.DataType, EditModeRendererTypeName
     > = {
-        string: 'textInput',
-        number: 'textInput',
-        boolean: 'checkbox',
-        datetime: 'dateInput'
-    }
+            string: 'textInput',
+            number: 'textInput',
+            'boolean': 'checkbox',
+            datetime: 'dateInput'
+        };
 
     public static defaultOptions: TextInputRenderer.Options = {
         type: 'textInput'
     };
 
-    
     public override options: TextInputRenderer.Options;
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {

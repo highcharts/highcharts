@@ -49,7 +49,9 @@ const {
  */
 class TextRenderer extends CellRenderer {
 
-    public static defaultEditingRenderer: EditModeRendererTypeName = 'textInput';
+    public static defaultEditingRenderer: EditModeRendererTypeName =
+        'textInput';
+
     public static defaultOptions: TextRenderer.Options = {
         type: 'text'
     };
@@ -64,7 +66,7 @@ class TextRenderer extends CellRenderer {
 
         this.options = merge(
             TextRenderer.defaultOptions,
-            this.column.options.renderer || {},
+            this.column.options.renderer || {}
         );
 
         const cellOptions = column.options.cells;
