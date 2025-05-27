@@ -30,7 +30,8 @@ import Globals from '../../Core/Globals.js';
 const {
     addEvent,
     fireEvent,
-    pushUnique
+    pushUnique,
+    merge
 } = U;
 
 
@@ -90,11 +91,17 @@ function compose(
         'mouseOut',
         'dblClick',
         'click',
-        'afterSetValue'
+        'afterRender'
     ] as const).forEach((name): void => {
         addEvent(TableCellClass, name, (e: GridEvent<TableCell>): void => {
             const cell = e.target;
-            cell.row.viewport.grid.options?.events?.cell?.[name]?.call(cell);
+            const cellEvents = merge(
+                // Backward compatibility
+                cell.row.viewport.grid.options?.events?.cell,
+                cell.column.options.cells?.events
+            );
+
+            cellEvents?.[name]?.call(cell);
             propagate['cell_' + name]?.call(cell);
         });
     });
@@ -105,14 +112,24 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(ColumnClass, name, (e: GridEvent<Column>): void => {
             const column = e.target;
-            column.viewport.grid.options?.events?.column?.[name]?.call(column);
+            const columnEvents = merge(
+                // Backward compatibility
+                column.viewport.grid.options?.events?.column,
+                column.options?.events
+            );
+            columnEvents?.[name]?.call(column);
         });
     });
 
     // HeaderCell Events
     addEvent(HeaderCellClass, 'click', (e: GridEvent<Column>): void => {
-        const col = e.target;
-        col.viewport.grid.options?.events?.header?.click?.call(col);
+        const column = e.target;
+        const headerEvents = merge(
+            // Backward compatibility
+            column.viewport.grid.options?.events?.header,
+            column.options?.header?.events
+        );
+        headerEvents?.click?.call(column);
     });
 }
 
@@ -160,8 +177,18 @@ export interface CellEvents {
     /**
      * Callback function to be called after the cell value is set (on init or
      * after editing).
+     *
+     * Use the `afterRender` event instead.
+     *
+     * @deprecated
      */
     afterSetValue?: CellEventCallback;
+
+    /**
+     * Callback function to be called after the cell value is set (on init or
+     * after editing).
+     */
+    afterRender?: CellEventCallback;
 }
 
 /**
@@ -217,11 +244,32 @@ declare module '../Core/Options' {
     interface Options {
         /**
          * Events options triggered by the grid elements.
+         * @deprecated
          */
         events?: GridEvents;
     }
-}
 
+    interface ColumnCellOptions {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        events?: CellEvents;
+    }
+
+    interface IndividualColumnOptions {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        events?: ColumnEvents;
+    }
+
+    interface ColumnHeaderOptions {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        events?: HeaderEvents;
+    }
+}
 
 /* *
  *

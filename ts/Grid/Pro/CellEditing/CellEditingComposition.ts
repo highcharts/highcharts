@@ -115,8 +115,7 @@ namespace CellEditingComposition {
         addEvent(TableClass, 'beforeInit', initTable);
         addEvent(TableCellClass, 'keyDown', onCellKeyDown);
         addEvent(TableCellClass, 'dblClick', onCellDblClick);
-        addEvent(TableCellClass, 'afterSetValue', addEditableCellA11yHint);
-
+        addEvent(TableCellClass, 'afterRender', addEditableCellA11yHint);
         addEvent(TableCellClass, 'startedEditing', function (): void {
             announceA11yUserEditedCell(this, 'started');
         });
@@ -125,9 +124,12 @@ namespace CellEditingComposition {
             TableCellClass,
             'stoppedEditing',
             function (e: AnyRecord): void {
-
-                this.column.viewport.grid.options
-                    ?.events?.cell?.afterEdit?.call(this);
+                const cellEvents = merge(
+                    // Backward compatibility
+                    this.column.viewport.grid.options?.events?.cell,
+                    this.column.options.cells?.events
+                );
+                cellEvents?.afterEdit?.call(this);
 
                 announceA11yUserEditedCell(
                     this,
