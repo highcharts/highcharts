@@ -55,12 +55,13 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
     public override add(): HTMLInputElement {
         const cell = this.cell;
+        const { options } = this.renderer as TextInputRenderer;
 
         this.input = document.createElement('input');
         this.input.tabIndex = -1;
         this.input.value = '' + cell.value;
         this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled = !cell.column.options.cells?.editable;
+        this.input.disabled = !!options.disabled;
 
         this.cell.htmlElement.appendChild(this.input);
 

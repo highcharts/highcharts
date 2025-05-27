@@ -87,6 +87,7 @@ namespace SelectRenderer {
     export interface Options extends CellRenderer.Options {
         type: 'select';
         options: SelectOption[];
+        disabled?: boolean;
     }
 }
 

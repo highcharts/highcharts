@@ -58,13 +58,14 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
 
     protected override add(): HTMLInputElement {
         const cell = this.cell;
+        const { options } = this.renderer as CheckboxRenderer;
 
         this.input = document.createElement('input');
         this.input.tabIndex = -1;
         this.input.type = 'checkbox';
         this.input.checked = !!cell.value;
         this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled = !cell.column.options.cells?.editable;
+        this.input.disabled = !!options.disabled;
 
         this.cell.htmlElement.appendChild(this.input);
         this.input.classList.add(Globals.classNamePrefix + 'field-auto-width');

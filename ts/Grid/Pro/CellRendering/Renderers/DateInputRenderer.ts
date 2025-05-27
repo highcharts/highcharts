@@ -81,6 +81,7 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
 namespace DateInputRenderer {
     export interface Options extends CellRenderer.Options {
         type: 'dateInput';
+        disabled?: boolean;
     }
 }
 

@@ -86,6 +86,7 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
 namespace TextInputRenderer {
     export interface Options extends CellRenderer.Options {
         type: 'textInput';
+        disabled?: boolean;
     }
 }
 

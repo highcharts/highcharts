@@ -59,12 +59,12 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
     protected override add(): HTMLSelectElement {
         const cell = this.cell;
-        const options = this.renderer.options as SelectRenderer.Options;
+        const { options } = this.renderer as SelectRenderer;
 
         this.select = document.createElement('select');
         this.select.tabIndex = -1;
         this.select.name = cell.column.id + '-' + cell.row.id;
-        this.select.disabled = !cell.column.options.cells?.editable;
+        this.select.disabled = !!options.disabled;
 
         for (const option of options.options) {
             const optionElement = document.createElement('option');
