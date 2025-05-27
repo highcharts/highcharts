@@ -37,6 +37,7 @@ import Globals from '../Globals.js';
 import TableCell from './Body/TableCell';
 
 const {
+    defined,
     merge,
     fireEvent
 } = Utils;
@@ -137,6 +138,7 @@ class Column {
         this.loadData();
 
         this.dataType = this.assumeDataType();
+
         this.options = merge(
             grid.options?.columnDefaults ?? {},
             grid.columnOptionsMap?.[id] ?? {}
@@ -187,14 +189,40 @@ class Column {
             return type;
         }
 
-        switch (typeof this.data?.[0]) {
-            case 'number':
-                return 'number';
-            case 'boolean':
-                return 'boolean';
-            default:
-                return 'string';
+        if (!this.data) {
+            return 'string';
         }
+
+        if (!Array.isArray(this.data)) {
+            // Typed array
+            return 'number';
+        }
+
+        for (let i = 0, iEnd = Math.min(this.data.length, 30); i < iEnd; ++i) {
+            if (!defined(this.data[i])) {
+                // If the data is null or undefined, we should look
+                // at the next value to determine the type.
+                continue;
+            }
+
+            switch (typeof this.data[i]) {
+                case 'number':
+                    return 'number';
+                case 'boolean':
+                    return 'boolean';
+                default:
+                    return 'string';
+            }
+        }
+
+        // eslint-disable-next-line no-console
+        console.warn(
+            `Column "${this.id}" contains too few data points with ` +
+            'unambiguous types to correctly determine its dataType. It\'s ' +
+            'recommended to set the `dataType` option for it.'
+        );
+
+        return 'string';
     }
 
     /**

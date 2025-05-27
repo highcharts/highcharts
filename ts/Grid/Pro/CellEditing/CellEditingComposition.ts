@@ -296,7 +296,7 @@ export type EditModeRendererTypeName = EditModeRendererType['options']['type'];
  * The options for the cell edit mode functionality.
  */
 export interface ColumnEditModeOptions {
-    enabled?: boolean; // TODO: Decide what to do with it or with the `editable` option
+    enabled?: boolean;
     renderer?: EditModeRendererType['options'];
 }
 
