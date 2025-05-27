@@ -643,11 +643,6 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 { x, y },
                                 { x, y }
                             ]
-                        },
-                        labelOptions: {
-                            style: {
-                                color: Palette.neutralColor60
-                            }
                         }
                     },
                     navigation.annotationsOptions,
@@ -705,11 +700,6 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 { x, y },
                                 { x, y }
                             ]
-                        },
-                        labelOptions: {
-                            style: {
-                                color: Palette.neutralColor60
-                            }
                         }
                     },
                     navigation.annotationsOptions,
@@ -764,24 +754,15 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             yAxis: coordsY.axis.index,
                             point: { x, y },
                             crosshairX: {
-                                strokeWidth: 1,
-                                stroke: Palette.neutralColor100
+                                strokeWidth: 1
                             },
                             crosshairY: {
                                 enabled: false,
-                                strokeWidth: 0,
-                                stroke: Palette.neutralColor100
+                                strokeWidth: 0
                             },
                             background: {
                                 width: 0,
-                                height: 0,
-                                strokeWidth: 0,
-                                stroke: Palette.backgroundColor
-                            }
-                        },
-                        labelOptions: {
-                            style: {
-                                color: Palette.neutralColor60
+                                height: 0
                             }
                         }
                     },
@@ -834,23 +815,15 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             point: { x, y },
                             crosshairX: {
                                 enabled: false,
-                                strokeWidth: 0,
-                                stroke: Palette.neutralColor100
+                                strokeWidth: 0
                             },
                             crosshairY: {
-                                strokeWidth: 1,
-                                stroke: Palette.neutralColor100
+                                strokeWidth: 1
                             },
                             background: {
                                 width: 0,
                                 height: 0,
-                                strokeWidth: 0,
-                                stroke: Palette.backgroundColor
-                            }
-                        },
-                        labelOptions: {
-                            style: {
-                                color: Palette.neutralColor60
+                                strokeWidth: 0
                             }
                         }
                     },
@@ -904,21 +877,13 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             background: {
                                 width: 0,
                                 height: 0,
-                                strokeWidth: 0,
-                                stroke: Palette.backgroundColor
+                                strokeWidth: 0
                             },
                             crosshairX: {
-                                strokeWidth: 1,
-                                stroke: Palette.neutralColor100
+                                strokeWidth: 1
                             },
                             crosshairY: {
-                                strokeWidth: 1,
-                                stroke: Palette.neutralColor100
-                            }
-                        },
-                        labelOptions: {
-                            style: {
-                                color: Palette.neutralColor60
+                                strokeWidth: 1
                             }
                         }
                     },
@@ -974,11 +939,6 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 { x, y },
                                 { x, y }
                             ]
-                        },
-                        labelOptions: {
-                            style: {
-                                color: Palette.neutralColor60
-                            }
                         }
                     },
                     navigation.annotationsOptions,
@@ -1091,13 +1051,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             },
                             { x, y },
                             { x, y }
-                            ],
-                            innerBackground: {
-                                fill: 'rgba(100, 170, 255, 0.8)'
-                            }
-                        },
-                        shapeOptions: {
-                            strokeWidth: 2
+                            ]
                         }
                     },
                     navigation.annotationsOptions,
@@ -1156,20 +1110,10 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 offset: closestPoint.below ? 40 : -40,
                                 text: this.verticalCounter.toString()
                             }
-                        },
-                        labelOptions: {
-                            style: {
-                                color: Palette.neutralColor60
-                            }
-                        },
-                        shapeOptions: {
-                            stroke: 'rgba(0, 0, 0, 0.75)',
-                            strokeWidth: 1
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any)
-                        .verticalCounter.annotationsOptions
+                    navigation.bindings?.verticalCounter.annotationsOptions
                 ),
                 annotation = this.chart.addAnnotation(options);
 
@@ -1212,12 +1156,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 x: closestPoint.x
                             }, {
                                 x: closestPoint.x
-                            }],
-                            line: {
-                                stroke: 'rgba(0, 0, 0, 0.75)',
-                                fill: 'transparent',
-                                strokeWidth: 2
-                            }
+                            }]
                         }
                     },
                     navigation.annotationsOptions,
@@ -1265,21 +1204,10 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             label: {
                                 offset: closestPoint.below ? 40 : -40
                             }
-                        },
-                        labelOptions: {
-                            style: {
-                                color: Palette.neutralColor60,
-                                fontSize: '0.7em'
-                            }
-                        },
-                        shapeOptions: {
-                            stroke: 'rgba(0, 0, 0, 0.75)',
-                            strokeWidth: 1
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any)
-                        .verticalLabel.annotationsOptions
+                    navigation.bindings?.verticalLabel.annotationsOptions
                 ),
                 annotation = this.chart.addAnnotation(options);
 
@@ -1335,15 +1263,10 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                     Palette.negativeColor :
                                     Palette.positiveColor
                             }
-                        },
-                        shapeOptions: {
-                            stroke: 'rgba(0, 0, 0, 0.75)',
-                            strokeWidth: 1
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any)
-                        .verticalArrow.annotationsOptions
+                    navigation.bindings?.verticalArrow.annotationsOptions
                 ),
                 annotation = this.chart.addAnnotation(options);
 

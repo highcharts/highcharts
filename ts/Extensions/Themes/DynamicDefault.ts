@@ -927,6 +927,13 @@ namespace DynamicDefaultTheme {
                 }
             },
             types: {
+                elliottWave: {
+                    labelOptions: {
+                        style: {
+                            color: 'var(--highcharts-neutral-color-60)'
+                        }
+                    }
+                },
                 fibonacci: {
                     typeOptions: {
                         lineColor: 'var(--highcharts-neutral-color-40)'
@@ -941,6 +948,13 @@ namespace DynamicDefaultTheme {
                     typeOptions: {
                         line: {
                             stroke: 'var(--highcharts-neutral-color-80)'
+                        }
+                    }
+                },
+                verticalLine: {
+                    labelOptions: {
+                        style: {
+                            color: 'var(--highcharts-neutral-color-60)'
                         }
                     }
                 },

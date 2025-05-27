@@ -176,7 +176,7 @@ if (defaultOptions.annotations) {
                  */
                 style: {
                     fontSize: '0.7em',
-                    color: Palette.neutralColor60
+                    color: Palette.neutralColor80
                 },
                 /**
                  * Formatter function for the label text.
