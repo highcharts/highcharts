@@ -122,7 +122,7 @@ namespace OfflineExporting {
                 // Check if PDF export is requested
                 if (exportingOptions?.type === 'application/pdf') {
                     // Prevent the default export behavior
-                    preventDefault && preventDefault();
+                    preventDefault?.();
 
                     // Run the PDF local export
                     try {

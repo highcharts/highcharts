@@ -222,7 +222,7 @@ const exporting: ExportingOptions = {
      *
      * @type      {boolean}
      * @default   true
-     * @since     12.2.1
+     * @since     next
      * @requires  modules/exporting
      * @apioption exporting.local
      */

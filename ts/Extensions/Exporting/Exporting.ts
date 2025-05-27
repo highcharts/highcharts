@@ -1346,7 +1346,7 @@ class Exporting {
         exportingOptions = merge(this.options, exportingOptions);
 
         // If local if expected
-        if (exportingOptions?.local) {
+        if (exportingOptions.local) {
             // Trigger the local export logic
             await this.localExport(
                 exportingOptions,
