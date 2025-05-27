@@ -19,6 +19,6 @@ Grid.grid('container', {
         dataType: 'boolean'
     }, {
         id: 'date',
-        dataType: 'date'
+        dataType: 'datetime'
     }]
 });
