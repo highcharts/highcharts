@@ -123,7 +123,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).segment.annotationsOptions
+                    navigation.bindings?.segment.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -178,7 +178,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).arrowSegment.annotationsOptions
+                    navigation.bindings?.arrowSegment.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -231,7 +231,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).ray.annotationsOptions
+                    navigation.bindings?.ray.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -287,7 +287,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).arrowRay.annotationsOptions
+                    navigation.bindings?.arrowRay.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -339,7 +339,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).infinityLine.annotationsOptions
+                    navigation.bindings?.infinityLine.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -395,7 +395,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).arrowInfinityLine
+                    navigation.bindings?.arrowInfinityLine
                         .annotationsOptions
                 );
 
@@ -443,8 +443,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any)
-                        .horizontalLine.annotationsOptions
+                    navigation.bindings?.horizontalLine.annotationsOptions
                 );
 
             this.chart.addAnnotation(options);
@@ -487,7 +486,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).verticalLine.annotationsOptions
+                    navigation.bindings?.verticalLine.annotationsOptions
                 );
 
             this.chart.addAnnotation(options);
@@ -536,7 +535,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).crooked3.annotationsOptions
+                    navigation.bindings?.crooked3.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -591,7 +590,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).crooked5.annotationsOptions
+                    navigation.bindings?.crooked5.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -652,7 +651,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).elliott3.annotationsOptions
+                    navigation.bindings?.elliott3.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -714,7 +713,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).elliott5.annotationsOptions
+                    navigation.bindings?.elliott5.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -787,7 +786,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).measureX.annotationsOptions
+                    navigation.bindings?.measureX.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -856,7 +855,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).measureY.annotationsOptions
+                    navigation.bindings?.measureY.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -924,7 +923,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).measureXY.annotationsOptions
+                    navigation.bindings?.measureXY.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -983,7 +982,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).fibonacci.annotationsOptions
+                    navigation.bindings?.fibonacci.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -1035,7 +1034,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).parallelChannel
+                    navigation.bindings?.parallelChannel
                         .annotationsOptions
                 );
 
@@ -1102,7 +1101,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).pitchfork.annotationsOptions
+                    navigation.bindings?.pitchfork.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -1160,8 +1159,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         },
                         labelOptions: {
                             style: {
-                                color: Palette.neutralColor60,
-                                fontSize: '0.7em'
+                                color: Palette.neutralColor60
                             }
                         },
                         shapeOptions: {
@@ -1223,7 +1221,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).timeCycles.annotationsOptions
+                    navigation.bindings?.timeCycles.annotationsOptions
                 ),
                 annotation = this.chart.addAnnotation(options);
 
@@ -1390,7 +1388,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).fibonacciTimeZones
+                    navigation.bindings?.fibonacciTimeZones
                         .annotationsOptions
                 );
 
