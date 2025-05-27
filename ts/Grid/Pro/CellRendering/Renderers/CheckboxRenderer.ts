@@ -79,6 +79,7 @@ namespace CheckboxRenderer {
 
     export interface Options extends CellRenderer.Options {
         type: 'checkbox';
+        disabled?: boolean;
     }
 }
 

@@ -105,12 +105,12 @@ class Validator {
         value: DataTable.CellType,
         errors: string[] = []
     ): boolean {
-        const { editMode, dataType } = cell.column.options;
+        const { options } = cell.column;
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
-        let rules = Array.from(editMode?.validationRules || []);
+        let rules = Array.from(options?.cells?.editMode?.validationRules || []);
 
-        if (dataType) {
+        if (options?.dataType) {
             // Remove duplicates in validationRules
             const isArrayString = rules.every(
                 (rule): Boolean => typeof rule === 'string'
@@ -119,7 +119,9 @@ class Validator {
             if (rules.length > 0 && isArrayString) {
                 rules = [...new Set(rules)];
             } else {
-                const predefined = Validator.predefinedRules[dataType] || [];
+                const predefined = Validator.predefinedRules[
+                    options?.dataType
+                ] || [];
 
                 const hasPredefined = rules.some(
                     (rule): Boolean =>
@@ -352,7 +354,7 @@ namespace Validator {
             validate: (value): boolean => !isNaN(Number(value)),
             notification: 'Value has to be a number.'
         },
-        boolean: {
+        'boolean': {
             validate: (value): boolean => (
                 value === 'true' || value === 'false' ||
                 Number(value) === 1 || Number(value) === 0
@@ -366,7 +368,7 @@ namespace Validator {
      */
     export const predefinedRules: Record<Column.DataType, RuleKey[]> = {
         number: ['number'],
-        boolean: ['boolean'],
+        'boolean': ['boolean'],
         string: ['notEmpty'],
         datetime: ['number']
     };

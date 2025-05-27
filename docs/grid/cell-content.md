@@ -14,19 +14,23 @@ For example, setting the type to boolean displays a interactive checkbox based o
 
 ## Disabled interactions 
 
-End users disable the interactivity of form fields by can by setting the `columnDefaults.cells.editable` and/or `columns[].cells.editable` API options:
+End users disable the interactivity of form fields by can by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
 
 ```js
 columnDefaults: {
     cells: {
-      editable: true
+      editMode: {
+        enabled: true
+      }
     }
 }
 columns: [
   {
     id: "columnName",
     cells: {
-      editable: false
+      editMode: {
+        enabled: false
+      }
     }
   }
 ]

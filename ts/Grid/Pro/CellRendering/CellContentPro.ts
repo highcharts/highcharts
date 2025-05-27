@@ -34,21 +34,19 @@ import CellContent from '../../Core/Table/CellContent/CellContent.js';
  * */
 
 abstract class CellContentPro extends CellContent {
-    
     public readonly renderer: CellRenderer;
-    
+
     constructor(cell: TableCell, renderer: CellRenderer) {
         super(cell);
         this.renderer = renderer;
     }
-
 }
 
 
 /* *
  *
  * Default Export
- * 
+ *
  * */
 
 export default CellContentPro;

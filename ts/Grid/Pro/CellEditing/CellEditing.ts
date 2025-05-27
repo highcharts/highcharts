@@ -23,16 +23,13 @@
  *
  * */
 
-import { EditModeContent, EditModeRenderer } from './CellEditMode.js';
+import { EditModeContent } from './CellEditMode.js';
 
-import AST from '../../../Core/Renderer/HTML/AST.js';
 import TableCell from '../../Core/Table/Body/TableCell.js';
-import GridUtils from '../../Core/Table/../GridUtils.js';
 import Table from '../../Core/Table/Table.js';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 
-const { makeHTMLElement } = GridUtils;
 const { fireEvent } = U;
 
 
@@ -131,7 +128,7 @@ class CellEditing {
 
         const { column } = cell;
         const vp = column.viewport;
-        let newValue = emContent.getValue();
+        const newValue = emContent.getValue();
 
         if (submit) {
             const validationErrors: string[] = [];
@@ -144,8 +141,6 @@ class CellEditing {
             vp.validator.hide();
             vp.validator.errorCell = void 0;
         }
-
-        // return false;
 
         // Hide notification
         this.viewport.validator.hide();
@@ -206,6 +201,7 @@ class CellEditing {
      */
     private readonly onInputKeyDown = (e: KeyboardEvent): void => {
         const { key } = e;
+        e.stopPropagation();
 
         // Enter / Escape
         if (key === 'Enter' || key === 'Escape') {

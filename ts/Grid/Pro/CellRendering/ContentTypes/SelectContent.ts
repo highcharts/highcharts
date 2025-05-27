@@ -51,7 +51,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
     private optionElements: HTMLOptionElement[] = [];
 
-    
+
     public constructor(cell: TableCell, renderer: SelectRenderer) {
         super(cell, renderer);
         this.select = this.add();
@@ -59,11 +59,12 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
     protected override add(): HTMLSelectElement {
         const cell = this.cell;
-        const options = this.renderer.options as SelectRenderer.Options;
+        const { options } = this.renderer as SelectRenderer;
 
         this.select = document.createElement('select');
+        this.select.tabIndex = -1;
         this.select.name = cell.column.id + '-' + cell.row.id;
-        this.select.disabled = !cell.column.options.cells?.editable;
+        this.select.disabled = !!options.disabled;
 
         for (const option of options.options) {
             const optionElement = document.createElement('option');
@@ -78,17 +79,22 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.select.appendChild(optionElement);
             this.optionElements.push(optionElement);
         }
-        
+
         this.cell.htmlElement.appendChild(this.select);
 
         this.select.addEventListener('change', this.onChange);
         this.select.addEventListener('keydown', this.onKeyDown);
         this.select.addEventListener('blur', this.onBlur);
+        this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
         return this.select;
     }
 
     public override destroy(): void {
+        this.cell.htmlElement.removeEventListener(
+            'keydown',
+            this.onCellKeyDown
+        );
         this.select?.removeEventListener('blur', this.onBlur);
         this.select?.removeEventListener('keydown', this.onKeyDown);
         this.select?.removeEventListener('change', this.onChange);
@@ -113,16 +119,33 @@ class SelectContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            this.cell.setValue(this.getValue(), true);
+            this.cell.htmlElement.focus();
+            void this.cell.setValue(this.getValue(), true);
         }
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
-        this.keyDownHandler?.(e)
+        e.stopPropagation();
+
+        if (this.keyDownHandler) {
+            this.keyDownHandler?.(e);
+            return;
+        }
+
+        if (e.key === 'Escape' || e.key === 'Enter') {
+            this.cell.htmlElement.focus();
+        }
     };
 
     private readonly onBlur = (e: FocusEvent): void => {
         this.blurHandler?.(e);
+    };
+
+    private readonly onCellKeyDown = (e: KeyboardEvent): void => {
+        if (e.key === ' ') {
+            this.select.focus();
+            e.preventDefault();
+        }
     };
 }
 

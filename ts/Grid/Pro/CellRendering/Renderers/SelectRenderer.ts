@@ -56,7 +56,6 @@ class SelectRenderer extends CellRenderer implements EditModeRenderer {
         options: []
     };
 
-    
     public override options: SelectRenderer.Options;
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
@@ -88,6 +87,7 @@ namespace SelectRenderer {
     export interface Options extends CellRenderer.Options {
         type: 'select';
         options: SelectOption[];
+        disabled?: boolean;
     }
 }
 
