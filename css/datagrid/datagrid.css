@@ -816,9 +816,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-left: none;
 }
 
-.hcg-table tbody td input,
+.hcg-table tbody td input:not(.hcg-field-auto-width),
 .hcg-table tbody td input select,
-.highcharts-datagrid-table tbody td input,
+.highcharts-datagrid-table tbody td input:not(.highcharts-datagrid-field-auto-width),
 .highcharts-datagrid-table tbody td select {
     width: 100%;
 }

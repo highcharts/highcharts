@@ -94,12 +94,12 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            this.cell.setValue(this.getValue(), true);
+            void this.cell.setValue(this.getValue(), true);
         }
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
-        this.keyDownHandler?.(e)
+        this.keyDownHandler?.(e);
     };
 
     private readonly onBlur = (e: FocusEvent): void => {
