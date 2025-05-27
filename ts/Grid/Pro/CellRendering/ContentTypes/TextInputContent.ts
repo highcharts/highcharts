@@ -57,6 +57,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         const cell = this.cell;
 
         this.input = document.createElement('input');
+        this.input.tabIndex = -1;
         this.input.value = '' + cell.value;
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !cell.column.options.cells?.editable;
@@ -66,6 +67,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);
         this.input.addEventListener('blur', this.onBlur);
+        this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
         return this.input;
     }
@@ -79,6 +81,11 @@ class TextInputContent extends CellContentPro implements EditModeContent {
     }
 
     public override destroy(): void {
+        this.cell.htmlElement.removeEventListener(
+            'keydown',
+            this.onCellKeyDown
+        );
+
         this.input?.removeEventListener('blur', this.onBlur);
         this.input?.removeEventListener('keydown', this.onKeyDown);
         this.input?.removeEventListener('change', this.onChange);
@@ -96,6 +103,8 @@ class TextInputContent extends CellContentPro implements EditModeContent {
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
+        e.stopPropagation();
+
         if (this.keyDownHandler) {
             this.keyDownHandler(e);
             return;
@@ -103,11 +112,24 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
         if (e.key === 'Escape') {
             this.input.value = '' + this.cell.value;
+            this.cell.htmlElement.focus();
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            this.cell.htmlElement.focus();
         }
     };
 
     private readonly onBlur = (e: FocusEvent): void => {
         this.blurHandler?.(e);
+    };
+
+    private readonly onCellKeyDown = (e: KeyboardEvent): void => {
+        if (e.key === ' ') {
+            this.input.focus();
+            e.preventDefault();
+        }
     };
 }
 

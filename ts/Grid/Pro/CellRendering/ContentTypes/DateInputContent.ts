@@ -58,6 +58,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         const cell = this.cell;
 
         this.input = document.createElement('input');
+        this.input.tabIndex = -1;
         this.input.type = 'date';
         this.input.value = this.getInputAcceptableValue();
         this.input.name = cell.column.id + '-' + cell.row.id;
@@ -68,6 +69,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);
         this.input.addEventListener('blur', this.onBlur);
+        this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
         return this.input;
     }
@@ -81,6 +83,10 @@ class DateInputContent extends CellContentPro implements EditModeContent {
     }
 
     public override destroy(): void {
+        this.cell.htmlElement.removeEventListener(
+            'keydown',
+            this.onCellKeyDown
+        );
         this.input?.removeEventListener('blur', this.onBlur);
         this.input?.removeEventListener('keydown', this.onKeyDown);
         this.input?.removeEventListener('change', this.onChange);
@@ -98,15 +104,21 @@ class DateInputContent extends CellContentPro implements EditModeContent {
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
+        e.stopPropagation();
+
         if (this.keyDownHandler) {
             this.keyDownHandler(e);
             return;
         }
 
         if (e.key === 'Escape') {
-            this.input.value = this.getInputAcceptableValue();
             this.cell.htmlElement.focus();
-        } else if (e.key === 'Enter') {
+            this.input.value = this.getInputAcceptableValue();
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            this.cell.htmlElement.focus();
             void this.cell.setValue(this.getValue(), true);
         }
     };
@@ -118,6 +130,13 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         }
 
         void this.cell.setValue(this.getValue(), true);
+    };
+
+    private readonly onCellKeyDown = (e: KeyboardEvent): void => {
+        if (e.key === ' ') {
+            this.input.focus();
+            e.preventDefault();
+        }
     };
 }
 

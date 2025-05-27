@@ -201,6 +201,7 @@ class CellEditing {
      */
     private readonly onInputKeyDown = (e: KeyboardEvent): void => {
         const { key } = e;
+        e.stopPropagation();
 
         // Enter / Escape
         if (key === 'Enter' || key === 'Escape') {
