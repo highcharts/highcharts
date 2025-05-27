@@ -1096,65 +1096,59 @@ class Exporting {
     ): void {
         const exporting = this,
             chart = e ? (e.target as unknown as Chart) : exporting.chart,
-            exportSVGElements = exporting?.svgElements,
-            exportDivElements = exporting?.divElements,
-            exportEvents = chart.exporting?.events;
+            { divElements, events, svgElements } = exporting;
         let cacheName;
 
         // Destroy the extra buttons added
-        if (exportSVGElements) {
-            exportSVGElements.forEach((elem, i): void => {
-                // Destroy and null the svg elements
-                if (elem) { // #1822
-                    elem.onclick = elem.ontouchstart = null;
-                    cacheName = 'cache-' + elem.menuClassName;
+        svgElements.forEach((elem, i): void => {
+            // Destroy and null the svg elements
+            if (elem) { // #1822
+                elem.onclick = elem.ontouchstart = null;
+                cacheName = 'cache-' + elem.menuClassName;
 
-                    if ((chart as AnyRecord)[cacheName]) {
-                        delete (chart as AnyRecord)[cacheName];
-                    }
-
-                    exportSVGElements[i] = elem.destroy();
+                if ((chart as AnyRecord)[cacheName]) {
+                    delete (chart as AnyRecord)[cacheName];
                 }
-            });
-            exportSVGElements.length = 0;
-        }
+
+                svgElements[i] = elem.destroy();
+            }
+        });
+        svgElements.length = 0;
 
         // Destroy the exporting group
-        if (exporting?.group) {
+        if (exporting.group) {
             exporting.group.destroy();
             delete exporting.group;
         }
 
         // Destroy the divs for the menu
-        if (exportDivElements) {
-            exportDivElements.forEach(function (
-                elem: (Exporting.DivElement | null),
-                i: number
-            ): void {
-                if (elem) {
-                    // Remove the event handler
-                    clearTimeout(elem.hideTimer); // #5427
-                    removeEvent(elem, 'mouseleave');
+        divElements.forEach(function (
+            elem: (Exporting.DivElement | null),
+            i: number
+        ): void {
+            if (elem) {
+                // Remove the event handler
+                clearTimeout(elem.hideTimer); // #5427
+                removeEvent(elem, 'mouseleave');
 
-                    // Remove inline events
-                    exportDivElements[i] =
-                        elem.onmouseout =
-                        elem.onmouseover =
-                        elem.ontouchstart =
-                        elem.onclick = null;
+                // Remove inline events
+                divElements[i] =
+                    elem.onmouseout =
+                    elem.onmouseover =
+                    elem.ontouchstart =
+                    elem.onclick = null;
 
-                    // Destroy the div by moving to garbage bin
-                    discardElement(elem);
-                }
-            });
-            exportDivElements.length = 0;
-        }
+                // Destroy the div by moving to garbage bin
+                discardElement(elem);
+            }
+        });
+        divElements.length = 0;
 
-        if (exportEvents) {
-            exportEvents.forEach(function (unbind: Function): void {
+        if (events) {
+            events.forEach(function (unbind: Function): void {
                 unbind();
             });
-            exportEvents.length = 0;
+            events.length = 0;
         }
     }
 
@@ -2259,32 +2253,26 @@ class Exporting {
      */
     public render(): void {
         const exporting = this,
-            chart = exporting.chart,
-            exportingOptions = chart.options.exporting,
+            { chart, options } = exporting,
             isDirty = exporting?.isDirty || !exporting?.svgElements.length;
 
-        if (exporting) {
-            if (exporting.isDirty) {
-                exporting.destroy();
-            }
+        if (exporting.isDirty) {
+            exporting.destroy();
+        }
 
-            if (isDirty && exportingOptions?.enabled !== false) {
-                exporting.events = [];
+        if (isDirty && options.enabled !== false) {
+            exporting.events = [];
 
-                if (exporting) {
-                    exporting.group = exporting.group ||
-                        chart.renderer.g('exporting-group').attr({
-                            zIndex: 3 // #4955, // #8392
-                        }).add();
-                }
+            exporting.group ||= chart.renderer.g('exporting-group').attr({
+                zIndex: 3 // #4955, // #8392
+            }).add();
 
-                objectEach(exportingOptions?.buttons, function (
-                    button: ExportingButtonOptions
-                ): void {
-                    exporting?.addButton(button);
-                });
-                exporting.isDirty = false;
-            }
+            objectEach(options?.buttons, function (
+                button: ExportingButtonOptions
+            ): void {
+                exporting.addButton(button);
+            });
+            exporting.isDirty = false;
         }
     }
 
