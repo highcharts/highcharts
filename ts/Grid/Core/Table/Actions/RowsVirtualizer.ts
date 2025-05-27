@@ -151,8 +151,8 @@ class RowsVirtualizer {
         if (this.rowSettings?.virtualization) {
             this.viewport.reflow();
         }
-        this.totalGridHeight = this.viewport.dataTable.getRowCount()
-            * this.defaultRowHeight;
+        this.totalGridHeight = this.viewport.dataTable.getRowCount() *
+            this.defaultRowHeight;
 
         // Load & render rows
         this.renderRows(this.rowCursor);
@@ -453,7 +453,9 @@ class RowsVirtualizer {
             if (row.htmlElement.offsetHeight > defaultH) {
                 const newHeight = Math.floor(
                     cellHeight - (cellHeight - defaultH) * (
-                        tbodyElement.scrollTop / defaultH - cursor
+                        tbodyElement.scrollTop / defaultH - Math.floor(
+                            cursor - this.scrollOffset / defaultH
+                        )
                     )
                 );
 
