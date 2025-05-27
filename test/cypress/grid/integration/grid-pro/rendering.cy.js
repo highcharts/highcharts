@@ -14,6 +14,7 @@ describe('Rendering types.', () => {
         cy.get('tr[data-row-index="2"] td[data-column-id="text_checkbox"]')
             .eq(0)
             .contains('true');
+            
     });
 
     it('Boolean as a checkbox, when renderer is used.', () => {
@@ -24,7 +25,14 @@ describe('Rendering types.', () => {
             .should('exist');
     });
 
-    
+    it('Boolean as a checkbox, when editing.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_checkbox"]')
+            .eq(0)
+            .dblclick()
+            .find('input[type="checkbox"]')
+            .should('be.visible')
+            .should('exist');
+    });
 
     // Text
     it('Text as a string.', () => {
@@ -43,6 +51,14 @@ describe('Rendering types.', () => {
         cy.get('tr[data-row-index="2"] td[data-column-id="textInput_textInput"]')
             .eq(0)
             .should('be.visible')
+            .find('input')
+            .should('exist');
+    });
+
+    it('Text as a input, when editing.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_textInput"]')
+            .eq(0)
+            .dblclick()
             .find('input')
             .should('exist');
     });
@@ -68,7 +84,23 @@ describe('Rendering types.', () => {
             .should('exist');
     });
 
+    it('Date for datetime data type, when editing.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_date"]')
+            .eq(0)
+            .dblclick()
+            .find('input[type="date"]')
+            .should('exist');
+    });
+
     // Select
+    it('Select, when editing.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_select"]')
+            .eq(0)
+            .dblclick()
+            .find('select')
+            .should('exist');
+    });
+
     it('Select type should be selectable.', () => {
         cy.get('tr[data-row-index="2"] td[data-column-id="select_select"]')
             .eq(0)
