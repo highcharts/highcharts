@@ -26,7 +26,7 @@
 
     /* Components */
     --color-title: #000;
-    --component-background: var(--highcharts-neutral-color-0);
+    --component-background: var(--highcharts-background-color);
     --component-background-optional: var(--highcharts-neutral-color-5);
     --component-rounded-corners: 6px;
     --datagrid-border-color: var(--highcharts-neutral-color-20);
