@@ -368,7 +368,7 @@ namespace Validator {
         number: ['number'],
         boolean: ['boolean'],
         string: ['notEmpty'],
-        date: ['number']
+        datetime: ['number']
     };
 }
 

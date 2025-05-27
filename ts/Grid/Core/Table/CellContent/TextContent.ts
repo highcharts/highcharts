@@ -125,7 +125,7 @@ namespace TextContent {
         string: '{value}',
         number: '{value}',
         boolean: '{value}',
-        date: '{value:%Y-%m-%d %H:%M:%S}'
+        datetime: '{value:%Y-%m-%d %H:%M:%S}'
     };
 }
 

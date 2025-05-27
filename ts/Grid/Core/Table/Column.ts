@@ -300,7 +300,7 @@ class Column {
 namespace Column {
     export type Options = Omit<IndividualColumnOptions, 'id'>;
 
-    export type DataType = 'string' | 'number' | 'boolean' | 'date';
+    export type DataType = 'string' | 'number' | 'boolean' | 'datetime';
 }
 
 

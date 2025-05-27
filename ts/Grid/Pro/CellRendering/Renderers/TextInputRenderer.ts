@@ -56,7 +56,7 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
         string: 'textInput',
         number: 'textInput',
         boolean: 'checkbox',
-        date: 'dateInput'
+        datetime: 'dateInput'
     }
 
     public static defaultOptions: TextInputRenderer.Options = {

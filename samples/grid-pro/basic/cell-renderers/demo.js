@@ -94,7 +94,7 @@ Grid.grid('container', {
         }
     }, {
         id: 'text_date',
-        dataType: 'date',
+        dataType: 'datetime',
         cells: {
             format: '{value:%Y-%m-%d}'
         },
@@ -105,7 +105,7 @@ Grid.grid('container', {
         }
     }, {
         id: 'date_date',
-        dataType: 'date',
+        dataType: 'datetime',
         cells: {
             format: '{value:%Y-%m-%d}'
         },
