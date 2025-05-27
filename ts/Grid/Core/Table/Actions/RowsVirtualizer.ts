@@ -91,6 +91,22 @@ class RowsVirtualizer {
      */
     public rowSettings?: RowsSettings;
 
+    /**
+     * The maximum height of a HTML element in most browsers.
+     */
+    private static readonly MAX_ELEMENT_HEIGHT: number = 32000000;
+
+    /**
+     * The total height of the grid, used when the Grid height
+     * exceeds the max element height.
+     */
+    private totalGridHeight: number = 0;
+
+    /**
+     * The scroll offset in pixels used to adjust the row positions when
+     * the Grid height exceeds the max element height.
+     */
+    private scrollOffset: number = 0;
 
     /* *
     *
@@ -135,6 +151,8 @@ class RowsVirtualizer {
         if (this.rowSettings?.virtualization) {
             this.viewport.reflow();
         }
+        this.totalGridHeight = this.viewport.dataTable.getRowCount()
+            * this.defaultRowHeight;
 
         // Load & render rows
         this.renderRows(this.rowCursor);
@@ -193,6 +211,12 @@ class RowsVirtualizer {
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
 
+        const gridHeightOverflow = Math.max(
+            this.totalGridHeight - RowsVirtualizer.MAX_ELEMENT_HEIGHT, 0
+        );
+        const scrollPercentage = lastScrollTop / target.scrollHeight;
+        this.scrollOffset = scrollPercentage * gridHeightOverflow;
+
         if (this.preventScroll) {
             if (lastScrollTop <= target.scrollTop) {
                 this.preventScroll = false;
@@ -202,7 +226,9 @@ class RowsVirtualizer {
         }
 
         // Do vertical virtual scrolling
-        const rowCursor = Math.floor(target.scrollTop / rowHeight);
+        const rowCursor = Math.floor((target.scrollTop / rowHeight)
+            + this.scrollOffset / rowHeight
+        );
         if (this.rowCursor !== rowCursor) {
             this.renderRows(rowCursor);
         }
@@ -285,7 +311,13 @@ class RowsVirtualizer {
             vp.tbodyElement.appendChild(last.htmlElement);
 
             if (isVirtualization) {
-                last.setTranslateY(last.getDefaultTopOffset());
+                // We make sure that tbody is not taller than
+                // the maximum browser element height.
+                const topOffset = Math.min(
+                    last.getDefaultTopOffset(),
+                    RowsVirtualizer.MAX_ELEMENT_HEIGHT
+                );
+                last.setTranslateY(topOffset);
             }
         }
 
@@ -325,7 +357,16 @@ class RowsVirtualizer {
                 rows.push(newRow);
                 newRow.rendered = false;
                 if (isVirtualization) {
-                    newRow.setTranslateY(newRow.getDefaultTopOffset());
+                    // If table is larger than max element height
+                    // we use the max height instead, and get the offset
+                    // from the bottom and up
+                    const topOffset = Math.min(
+                        newRow.getDefaultTopOffset(),
+                        RowsVirtualizer.MAX_ELEMENT_HEIGHT - (
+                            this.defaultRowHeight * (rows.length - i)
+                        )
+                    );
+                    newRow.setTranslateY(topOffset);
                 }
             }
         }
@@ -380,6 +421,7 @@ class RowsVirtualizer {
         const rowsLn = rows.length;
 
         let translateBuffer = rows[0].getDefaultTopOffset();
+        translateBuffer = Math.floor(translateBuffer - this.scrollOffset);
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
