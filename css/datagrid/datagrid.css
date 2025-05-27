@@ -845,10 +845,10 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     background: #b7d4ff;
 }
 
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:not(.highcharts-datagrid-field-auto-width),
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:not(.highcharts-datagrid-field-auto-width):focus,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error select,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error select:focus,
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error input:not(.highcharts-datagrid-field-auto-width),
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error input:not(.highcharts-datagrid-field-auto-width):focus,
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error select,
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error select:focus,
 .hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width),
 .hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width):focus,
 .hcg-table tbody td.hcg-edited-cell-error select,
