@@ -23,6 +23,8 @@
  *
  * */
 
+import { EditModeContent, EditModeRenderer } from './CellEditMode.js';
+
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import TableCell from '../../Core/Table/Body/TableCell.js';
 import GridUtils from '../../Core/Table/../GridUtils.js';
@@ -64,7 +66,7 @@ class CellEditing {
     /**
      * Input element for the cell.
      */
-    private inputElement?: HTMLInputElement;
+    private editModeContent?: EditModeContent;
 
 
     /* *
@@ -103,10 +105,10 @@ class CellEditing {
         this.editedCell = cell;
         const cellElement = cell.htmlElement;
 
-        cellElement.innerHTML = AST.emptyHTML;
+        cell.content?.destroy();
         cellElement.classList.add(Globals.getClassName('editedCell'));
 
-        this.renderInput();
+        this.render();
         fireEvent(cell, 'startedEditing');
     }
 
@@ -121,15 +123,15 @@ class CellEditing {
      */
     public stopEditing(submit = true): boolean {
         const cell = this.editedCell;
-        const input = this.inputElement;
+        const emContent = this.editModeContent;
 
-        if (!cell || !input) {
+        if (!cell || !emContent) {
             return false;
         }
 
         const { column } = cell;
         const vp = column.viewport;
-        let newValue: string | number = input.value;
+        let newValue = emContent.getValue();
 
         if (submit) {
             const validationErrors: string[] = [];
@@ -143,21 +145,24 @@ class CellEditing {
             vp.validator.errorCell = void 0;
         }
 
+        // return false;
+
         // Hide notification
         this.viewport.validator.hide();
 
         // Hide input
-        this.destroyInput();
+        this.destroy();
         cell.htmlElement.classList.remove(
             Globals.getClassName('editedCell')
         );
 
         cell.htmlElement.focus();
 
+        // TODO: Add custom parsing callback option!
         // Convert to number if possible
-        if (!isNaN(+newValue)) {
-            newValue = +newValue;
-        }
+        // if (!isNaN(+newValue)) {
+        //     newValue = +newValue;
+        // }
 
         void cell.setValue(
             submit ? newValue : cell.value,
@@ -174,9 +179,21 @@ class CellEditing {
     /**
      * Handles the blur event on the input field.
      */
-    private onInputBlur = (): void => {
+    private readonly onInputBlur = (): void => {
         if (!this.stopEditing()) {
-            this.inputElement?.focus();
+            this.editModeContent?.getMainElement().focus();
+        }
+    };
+
+    /**
+     * Handles the change event on the input field.
+     */
+    private readonly onInputChange = (): void => {
+        if (
+            this.editModeContent?.finishAfterChange &&
+            !this.stopEditing()
+        ) {
+            this.editModeContent?.getMainElement().focus();
         }
     };
 
@@ -187,13 +204,13 @@ class CellEditing {
      * @param e
      * The keyboard event.
      */
-    private onInputKeyDown = (e: KeyboardEvent): void => {
-        const { keyCode } = e;
+    private readonly onInputKeyDown = (e: KeyboardEvent): void => {
+        const { key } = e;
 
         // Enter / Escape
-        if (keyCode === 13 || keyCode === 27) {
+        if (key === 'Enter' || key === 'Escape') {
             // Cancel editing on escape
-            this.stopEditing(keyCode === 13);
+            this.stopEditing(key === 'Enter');
         }
     };
 
@@ -201,36 +218,30 @@ class CellEditing {
      * Renders the input field for the cell, focuses it and sets up event
      * listeners.
      */
-    private renderInput(): void {
+    private render(): void {
         const cell = this.editedCell;
-        if (!cell) {
+        if (!cell || !cell.column.editModeRenderer) {
             return;
         }
 
-        const cellEl = cell.htmlElement;
-        const input = this.inputElement = makeHTMLElement('input', {}, cellEl);
+        this.editModeContent = cell.column.editModeRenderer?.render(cell);
+        this.editModeContent.getMainElement().focus();
 
-        input.value = '' + cell.value;
-        input.focus();
-
-        input.addEventListener('blur', this.onInputBlur);
-        input.addEventListener('keydown', this.onInputKeyDown);
+        this.editModeContent.blurHandler = this.onInputBlur;
+        this.editModeContent.changeHandler = this.onInputChange;
+        this.editModeContent.keyDownHandler = this.onInputKeyDown;
     }
 
     /**
      * Removes event listeners and the input element.
      */
-    private destroyInput(): void {
-        const input = this.inputElement;
-        if (!input) {
+    private destroy(): void {
+        if (!this.editModeContent) {
             return;
         }
 
-        input.removeEventListener('keydown', this.onInputKeyDown);
-        input.removeEventListener('blur', this.onInputBlur);
-
-        input.remove();
-        delete this.inputElement;
+        this.editModeContent.destroy();
+        delete this.editModeContent;
     }
 }
 

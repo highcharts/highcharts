@@ -24,13 +24,17 @@
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type Column from '../../Core/Table/Column';
+import type DataTable from '../../../Data/DataTable';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
+import U from '../../../Core/Utilities.js';
 
 const { makeDiv } = GridUtils;
+const { defined } = U;
+
 /* *
  *
  *  Class
@@ -98,7 +102,7 @@ class Validator {
      */
     public validate(
         cell: TableCell,
-        value: string,
+        value: DataTable.CellType,
         errors: string[] = []
     ): boolean {
         const { editMode, dataType } = cell.column.options;
@@ -293,14 +297,17 @@ namespace Validator {
     /**
      * Callback function that checks if field is valid.
      */
-    export type ValidateFunction = (this: TableCell, value: string) => boolean;
+    export type ValidateFunction = (
+        this: TableCell,
+        value: DataTable.CellType
+    ) => boolean;
 
     /**
      * Callback function that returns a error message.
      */
     export type ValidationErrorFunction = (
         this: TableCell,
-        value?: string
+        value?: DataTable.CellType
     ) => string;
 
     /**
@@ -337,15 +344,16 @@ namespace Validator {
      */
     export const rulesRegistry: RulesRegistryType = {
         notEmpty: {
-            validate: (value: string): boolean => !!value,
+            validate: (value): boolean =>
+                defined(value) && value.toString().length > 0,
             notification: 'Value cannot be empty.'
         },
         number: {
-            validate: (value: string): boolean => !isNaN(Number(value)),
+            validate: (value): boolean => !isNaN(Number(value)),
             notification: 'Value has to be a number.'
         },
         boolean: {
-            validate: (value: string): boolean => (
+            validate: (value): boolean => (
                 value === 'true' || value === 'false' ||
                 Number(value) === 1 || Number(value) === 0
             ),
@@ -360,7 +368,7 @@ namespace Validator {
         number: ['number'],
         boolean: ['boolean'],
         string: ['notEmpty'],
-        date: ['number']
+        datetime: ['number']
     };
 }
 

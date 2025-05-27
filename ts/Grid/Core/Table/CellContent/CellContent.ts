@@ -22,7 +22,7 @@
  *
  * */
 
-import TableCell from '../Body/TableCell.js';
+import type TableCell from '../Body/TableCell';
 
 
 /* *
@@ -38,18 +38,20 @@ abstract class CellContent {
 
     public readonly cell: TableCell;
 
+    /**
+     * Creates and renders the cell content.
+     *
+     * @param cell
+     * The cell to which the content belongs.
+     */
     public constructor(cell: TableCell) {
         this.cell = cell;
     }
 
     /**
-     * Render the cell content.
-     * 
-     * @param parent
-     * The parent element to which the cell content will be added. If not set,
-     * the cell's main HTML element will be used.
+     * Renders the cell content.
      */
-    public abstract add(parent?: HTMLElement): void;
+    protected abstract add(): void;
 
     /**
      * Destroy the cell content.

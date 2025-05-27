@@ -580,35 +580,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     text-overflow: ellipsis;
 }
 
-.hcg-table tbody td.hcg-edited-cell,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell {
-    padding: 0;
-}
-
 .hcg-table tbody td:focus,
 .highcharts-datagrid-table tbody td:focus,
 .hcg-table thead th:focus-visible,
 .highcharts-datagrid-table thead th:focus-visible {
     outline: none;
     box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
-}
-
-.hcg-table tbody td:focus:has(input, select),
-.highcharts-datagrid-table tbody td:focus:has(input, select),
-.hcg-table thead th:focus-visible:has(input, select),
-.highcharts-datagrid-table thead th:focus-visible:has(input, select) {
-    box-shadow: none;
-}
-
-.hcg-table tbody td:focus input,
-.hcg-table tbody td:focus select,
-.highcharts-datagrid-table tbody td:focus input,
-.highcharts-datagrid-table tbody td:focus select,
-.hcg-table thead th:focus-visible input,
-.hcg-table thead th:focus-visible select,
-.highcharts-datagrid-table thead th:focus-visible input,
-.highcharts-datagrid-table thead th:focus-visible select {
-    outline: 1px solid rgb(117, 124, 199);
 }
 
 /* Header hovered background and color */
@@ -839,10 +816,21 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-left: none;
 }
 
-.hcg-table tbody td.hcg-edited-cell input,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
-.hcg-table tbody td.hcg-edited-cell input:focus,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
+.hcg-table tbody td input,
+.hcg-table tbody td input select,
+.highcharts-datagrid-table tbody td input,
+.highcharts-datagrid-table tbody td select {
+    width: 100%;
+}
+
+.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width),
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:not(.highcharts-datagrid-field-auto-width),
+.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width):focus,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:not(.highcharts-datagrid-field-auto-width):focus,
+.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width),
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell select:not(.highcharts-datagrid-field-auto-width),
+.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width):focus,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell select:not(.highcharts-datagrid-field-auto-width):focus {
     border-width: 0;
     position: absolute;
     top: 0;
@@ -857,14 +845,14 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     background: #b7d4ff;
 }
 
-.highcharts-datagrid-table tbody td.hcg-edited-cell-error input,
-.highcharts-datagrid-table tbody td.hcg-edited-cell-error input input:focus,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:focus,
-.hcg-table tbody td.hcg-edited-cell-error input,
-.hcg-table tbody td.hcg-edited-cell-error input input:focus,
-.hcg-tabl tbody td.hcg-edited-cell-error input,
-.hcg-tabl tbody td.hcg-edited-cell-error input:focus {
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error input:not(.highcharts-datagrid-field-auto-width),
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error input:not(.highcharts-datagrid-field-auto-width):focus,
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error select,
+.highcharts-datagrid-table tbody td.hcg-edited-cell-error select:focus,
+.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width),
+.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width):focus,
+.hcg-table tbody td.hcg-edited-cell-error select,
+.hcg-table tbody td.hcg-edited-cell-error select:focus {
     color: var(--ig-color);
     box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;

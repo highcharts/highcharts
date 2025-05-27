@@ -24,7 +24,6 @@
 import type Column from '../../Core/Table/Column';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type CellContent from '../../Core/Table/CellContent/CellContent';
-import type { CellEventCallback } from '../GridEvents';
 
 /* *
  *

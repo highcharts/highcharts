@@ -32,6 +32,7 @@ const {
 } = GridUtils;
 
 import Utils from '../../../../Core/Utilities.js';
+import TableCell from '../Body/TableCell';
 const {
     defined
 } = Utils;
@@ -48,12 +49,17 @@ const {
  */
 class TextContent extends CellContent {
 
-    public override add(parent: HTMLElement = this.cell.htmlElement): void {
-        setHTMLContent(parent, this.format());
+    constructor(cell: TableCell) {
+        super(cell);
+        this.add();
+    }
+
+    protected override add(): void {
+        setHTMLContent(this.cell.htmlElement, this.format());
     }
 
     public override destroy(): void {
-        // Not needed yet
+        this.cell.htmlElement.innerHTML = AST.emptyHTML;
     }
 
     /**
@@ -119,7 +125,7 @@ namespace TextContent {
         string: '{value}',
         number: '{value}',
         boolean: '{value}',
-        date: '{value:%Y-%m-%d %H:%M:%S}'
+        datetime: '{value:%Y-%m-%d %H:%M:%S}'
     };
 }
 

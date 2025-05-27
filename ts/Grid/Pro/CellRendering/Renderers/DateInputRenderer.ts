@@ -1,6 +1,6 @@
 /* *
  *
- *  Checkbox Cell Renderer class
+ *  Date Input Cell Renderer class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -24,16 +24,16 @@
 
 import type Column from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
+import { EditModeRenderer } from '../../CellEditing/CellEditMode';
 import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
 import CellRenderer from '../CellRenderer.js';
 import CellRendererRegistry from '../CellRendererRegistry.js';
-import CheckboxContent from '../ContentTypes/CheckboxContent.js';
+import DateInputContent from '../ContentTypes/DateInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
-import { EditModeRenderer } from '../../CellEditing/CellEditMode';
 const {
     merge
 } = U;
@@ -46,24 +46,27 @@ const {
  * */
 
 /**
- * Renderer for the Checkbox in a column.
+ * Renderer for the Select in a column..
  */
-class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
+class DateInputRenderer extends CellRenderer implements EditModeRenderer {
 
-    public static defaultEditingRenderer: EditModeRendererTypeName = 'checkbox';
-    public static defaultOptions: CheckboxRenderer.Options = {
-        type: 'checkbox'
+    public static defaultEditingRenderer: EditModeRendererTypeName =
+        'dateInput';
+
+    public static defaultOptions: DateInputRenderer.Options = {
+        type: 'dateInput'
     };
 
-    public override options: CheckboxRenderer.Options;
+    
+    public override options: DateInputRenderer.Options;
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-        this.options = merge(CheckboxRenderer.defaultOptions, options);
+        this.options = merge(DateInputRenderer.defaultOptions, options);
     }
 
-    public override render(cell: TableCell): CheckboxContent {
-        return new CheckboxContent(cell, this);
+    public override render(cell: TableCell): DateInputContent {
+        return new DateInputContent(cell, this);
     }
 
 }
@@ -75,10 +78,9 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
  *
  * */
 
-namespace CheckboxRenderer {
-
+namespace DateInputRenderer {
     export interface Options extends CellRenderer.Options {
-        type: 'checkbox';
+        type: 'dateInput';
     }
 }
 
@@ -91,11 +93,11 @@ namespace CheckboxRenderer {
 
 declare module '../CellRendererType' {
     interface CellRendererTypeRegistry {
-        checkbox: typeof CheckboxRenderer
+        dateInput: typeof DateInputRenderer
     }
 }
 
-CellRendererRegistry.registerRenderer('checkbox', CheckboxRenderer);
+CellRendererRegistry.registerRenderer('dateInput', DateInputRenderer);
 
 
 /* *
@@ -104,4 +106,4 @@ CellRendererRegistry.registerRenderer('checkbox', CheckboxRenderer);
  *
  * */
 
-export default CheckboxRenderer;
+export default DateInputRenderer;

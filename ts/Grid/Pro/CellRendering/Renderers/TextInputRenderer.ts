@@ -24,6 +24,10 @@
 
 import type Column from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
+import { EditModeRenderer } from '../../CellEditing/CellEditMode';
+import type {
+    EditModeRendererTypeName
+} from '../../CellEditing/CellEditingComposition';
 
 import CellRenderer from '../CellRenderer.js';
 import CellRendererRegistry from '../CellRendererRegistry.js';
@@ -44,7 +48,16 @@ const {
 /**
  * Renderer for the Select in a column..
  */
-class TextInputRenderer extends CellRenderer {
+class TextInputRenderer extends CellRenderer implements EditModeRenderer {
+
+    public static defaultEditingRenderer: Record<
+        Column.DataType, EditModeRendererTypeName
+    > = {
+        string: 'textInput',
+        number: 'textInput',
+        boolean: 'checkbox',
+        datetime: 'dateInput'
+    }
 
     public static defaultOptions: TextInputRenderer.Options = {
         type: 'textInput'
@@ -53,17 +66,13 @@ class TextInputRenderer extends CellRenderer {
     
     public override options: TextInputRenderer.Options;
 
-    public constructor(column: Column) {
+    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-
-        this.options = merge(
-            this.column.options.renderer || {},
-            TextInputRenderer.defaultOptions
-        );
+        this.options = merge(TextInputRenderer.defaultOptions, options);
     }
 
     public override render(cell: TableCell): TextInputContent {
-        return new TextInputContent(cell);
+        return new TextInputContent(cell, this);
     }
 
 }

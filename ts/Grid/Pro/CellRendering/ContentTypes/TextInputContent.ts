@@ -1,6 +1,6 @@
 /* *
  *
- *  Select Cell Renderer class
+ *  Text Input Cell Content class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -21,9 +21,11 @@
  *
  * */
 
-import CellContent from '../../../Core/Table/CellContent/CellContent.js';
-import SelectRenderer from '../Renderers/SelectRenderer.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type TextInputRenderer from '../Renderers/TextInputRenderer.js';
 
+import { EditModeContent } from '../../CellEditing/CellEditMode.js';
+import CellContentPro from '../CellContentPro.js';
 
 /* *
  *
@@ -32,14 +34,26 @@ import SelectRenderer from '../Renderers/SelectRenderer.js';
  * */
 
 /**
- * Represents a select type of cell content.
+ * Represents a text input type of cell content.
  */
-class TextInputContent extends CellContent {
+class TextInputContent extends CellContentPro implements EditModeContent {
 
-    private input?: HTMLInputElement;
-    private optionElements: HTMLOptionElement[] = [];
+    public finishAfterChange: boolean = true;
 
-    public override add(parent: HTMLElement = this.cell.htmlElement): void {
+    public blurHandler?: (e: FocusEvent) => void;
+
+    public keyDownHandler?: (e: KeyboardEvent) => void;
+
+    public changeHandler?: (e: Event) => void;
+
+    private input: HTMLInputElement;
+
+    constructor(cell: TableCell, renderer: TextInputRenderer) {
+        super(cell, renderer);
+        this.input = this.add();
+    }
+
+    public override add(): HTMLInputElement {
         const cell = this.cell;
 
         this.input = document.createElement('input');
@@ -47,46 +61,53 @@ class TextInputContent extends CellContent {
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !cell.column.options.cells?.editable;
 
-        parent.appendChild(this.input);
+        this.cell.htmlElement.appendChild(this.input);
 
         this.input.addEventListener('change', this.onChange);
         this.input.addEventListener('keydown', this.onKeyDown);
+        this.input.addEventListener('blur', this.onBlur);
+
+        return this.input;
+    }
+
+    public getValue(): string {
+        return this.input?.value || '';
+    }
+
+    public getMainElement(): HTMLInputElement {
+        return this.input;
     }
 
     public override destroy(): void {
+        this.input?.removeEventListener('blur', this.onBlur);
+        this.input?.removeEventListener('keydown', this.onKeyDown);
         this.input?.removeEventListener('change', this.onChange);
-
-        for (const optionElement of this.optionElements) {
-            optionElement.remove();
-        }
-        this.optionElements.length = 0;
 
         this.input?.remove();
     }
 
-    /**
-     * Handles the change event of the input element.
-     *
-     * @param e
-     * Mouse event object.
-     */
-    public onChange = (e: Event): void => {
-        this.cell.setValue(
-            (e.target as HTMLSelectElement).value,
-            true
-        );
+    private readonly onChange = (e: Event): void => {
+        if (this.changeHandler) {
+            this.changeHandler(e);
+            return;
+        }
+
+        this.cell.setValue((e.target as HTMLSelectElement).value, true);
     };
 
-    /**
-     * Handles the keydown event of the input element.
-     * 
-     * @param e
-     * Keyboard event object.
-     */
-    public onKeyDown = (e: KeyboardEvent): void => {
-        if (this.input && e.key === 'Escape') {
+    private readonly onKeyDown = (e: KeyboardEvent): void => {
+        if (this.keyDownHandler) {
+            this.keyDownHandler(e);
+            return;
+        }
+        
+        if (e.key === 'Escape') {
             this.input.value = '' + this.cell.value;
         }
+    };
+
+    private readonly onBlur = (e: FocusEvent): void => {
+        this.blurHandler?.(e);
     };
 }
 

@@ -55,7 +55,7 @@ class TableCell extends Cell {
     /**
      * The row of the cell.
      */
-    public row: TableRow;
+    public readonly row: TableRow;
 
     /**
      * The column of the cell.
@@ -65,7 +65,7 @@ class TableCell extends Cell {
     /**
      * The cell's content.
      */
-    public readonly content: CellContent;
+    public content: CellContent;
 
 
     /* *
@@ -244,7 +244,7 @@ class TableCell extends Cell {
         // setHTMLContent(this.htmlElement, this.formatCell());
 
         this.content?.destroy();
-        this.content.add();
+        this.content = this.column.createCellContent(this);
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
 

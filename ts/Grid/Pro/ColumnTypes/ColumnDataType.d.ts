@@ -18,7 +18,7 @@
  * Data types of the column cells.
  */
 
-export type ColumnDataType = 'string' | 'number' | 'boolean' | 'date';
+export type ColumnDataType = 'string' | 'number' | 'boolean' | 'datetime';
 
 /* *
 *

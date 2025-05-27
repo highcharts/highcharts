@@ -74,6 +74,7 @@ import '../Grid/Pro/CellRendering/Renderers/TextRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SelectRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/TextInputRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/DateInputRenderer.js';
 
 
 /* *
@@ -168,7 +169,7 @@ G.HeaderCell = G.HeaderCell || HeaderCell;
 G.TableCell = G.TableCell || TableCell;
 
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
-CellEditingComposition.compose(G.Table, G.TableCell);
+CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
 CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 ValidatorComposition.compose(G.Table);
