@@ -65,7 +65,7 @@ class TableCell extends Cell {
     /**
      * The cell's content.
      */
-    public content: CellContent;
+    public content?: CellContent;
 
 
     /* *
@@ -90,7 +90,6 @@ class TableCell extends Cell {
         this.row = row;
 
         this.column.registerCell(this);
-        this.content = this.column.createCellContent(this);
     }
 
 
@@ -304,7 +303,7 @@ class TableCell extends Cell {
      * Destroys the cell.
      */
     public destroy(): void {
-        this.content.destroy();
+        this.content?.destroy();
         super.destroy();
     }
 }
