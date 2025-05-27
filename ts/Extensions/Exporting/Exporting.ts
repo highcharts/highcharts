@@ -47,7 +47,10 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/Defaults.js';
-const { defaultOptions } = D;
+const {
+    defaultOptions,
+    setOptions
+} = D;
 import DownloadURL from '../DownloadURL.js';
 const {
     downloadURL,
@@ -277,176 +280,6 @@ class Exporting {
      *  Static Functions
      *
      * */
-
-    /**
-     * Get data URL to an image of an SVG and call download on it options
-     * object:
-     *
-     * - **filename:** Name of resulting downloaded file without extension.
-     * Default is `chart`.
-     * - **type:** File type of resulting download. Default is `image/png`.
-     * - **scale:** Scaling factor of downloaded image compared to source.
-     * Default is `1`.
-     * - **libURL:** URL pointing to location of dependency scripts to download
-     * on demand. Default is the exporting.libURL option of the global
-     * Highcharts options pointing to our server.
-     *
-     * @static
-     * @async
-     * @function Highcharts.Exporting#downloadSVG
-     *
-     * @param {string} svg
-     * The generated SVG.
-     * @param {Highcharts.ExportingOptions} exportingOptions
-     * The exporting options.
-     * @param {Highcharts.Exporting} [exporting]
-     * The exporting object.
-     *
-     * @requires modules/exporting
-     */
-    // eslint-disable-next-line @typescript-eslint/require-await
-    public static async downloadSVG(
-        svg: string,
-        exportingOptions: ExportingOptions,
-        exporting?: Exporting
-    ): Promise<void> {
-        const eventArgs: Exporting.DownloadSVGEventArgs = {
-            svg,
-            exportingOptions,
-            exporting
-        };
-
-        // Fire a custom event before the export starts
-        fireEvent(
-            this.prototype,
-            'downloadSVG',
-            eventArgs
-        );
-
-        // If the event was prevented, do not proceed with the export
-        if (eventArgs.defaultPrevented) {
-            return;
-        }
-
-        // Get the final image options
-        const {
-            type,
-            filename,
-            scale,
-            libURL
-        } = Exporting.prepareImageOptions(exportingOptions);
-        let svgURL: string;
-
-        // Initiate download depending on file type
-        if (type === 'application/pdf') {
-            // Error in case of offline-exporting module is not loaded
-            throw new Error(
-                'Offline exporting logic for PDF type is not found.'
-            );
-        } else if (type === 'image/svg+xml') {
-            // SVG download. In this case, we want to use Microsoft specific
-            // Blob if available
-            if (typeof win.MSBlobBuilder !== 'undefined') {
-                const blob = new win.MSBlobBuilder();
-                blob.append(svg);
-                svgURL = blob.getBlob('image/svg+xml');
-            } else {
-                svgURL = Exporting.svgToDataURL(svg);
-            }
-            // Download the chart
-            downloadURL(svgURL, filename);
-        } else {
-            // PNG/JPEG download - create bitmap from SVG
-            svgURL = Exporting.svgToDataURL(svg);
-            try {
-                Exporting.objectURLRevoke = true;
-
-                // First, try to get PNG by rendering on canvas
-                const dataURL = await Exporting.imageToDataURL(
-                    svgURL,
-                    scale,
-                    type
-                );
-                downloadURL(dataURL, filename);
-            } catch (error) {
-                // No need for the below logic to run in case no canvas is
-                // found
-                if ((error as Error).message === 'No canvas found!') {
-                    throw error;
-                }
-
-                // Or in case of exceeding the input length
-                if (svg.length > RegexLimits.svgLimit) {
-                    throw new Error('Input too long');
-                }
-
-                // Failed due to tainted canvas
-                // Create new and untainted canvas
-                const canvas = doc.createElement('canvas'),
-                    ctx = canvas.getContext('2d'),
-                    matchedImageWidth = svg.match(
-                        // eslint-disable-next-line max-len
-                        /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
-                    ),
-                    matchedImageHeight = svg.match(
-                        // eslint-disable-next-line max-len
-                        /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
-                    );
-
-                if (
-                    ctx &&
-                    matchedImageWidth &&
-                    matchedImageHeight
-                ) {
-                    const imageWidth =
-                        +matchedImageWidth[1] * scale,
-                        imageHeight =
-                            +matchedImageHeight[1] * scale,
-                        downloadWithCanVG = (): void => {
-                            const v =
-                                win.canvg.Canvg.fromString(
-                                    ctx,
-                                    svg
-                                );
-                            v.start();
-
-                            downloadURL(
-                                win.navigator.msSaveOrOpenBlob ?
-                                    canvas.msToBlob() :
-                                    canvas.toDataURL(type),
-                                filename
-                            );
-                        };
-                    canvas.width = imageWidth;
-                    canvas.height = imageHeight;
-
-                    // Must load canVG first if not found. Don't destroy the
-                    // object URL yet since we are doing things
-                    // asynchronously
-                    if (!win.canvg) {
-                        Exporting.objectURLRevoke = true;
-                        await getScript(libURL + 'canvg.js');
-                    }
-
-                    // Use loaded canvg
-                    downloadWithCanVG();
-                }
-            } finally {
-                if (Exporting.objectURLRevoke) {
-                    try {
-                        domurl.revokeObjectURL(svgURL);
-                    } catch {
-                        // Ignore
-                    }
-                }
-            }
-        }
-
-        if (exporting) {
-            // Trigger the success event
-            fireEvent(exporting, 'downloadSVGSuccess');
-        }
-    }
 
     /**
      * Make hyphenated property names out of camelCase.
@@ -1326,6 +1159,167 @@ class Exporting {
     }
 
     /**
+     * Get data URL to an image of an SVG and call download on it options
+     * object:
+     *
+     * - **filename:** Name of resulting downloaded file without extension.
+     * Default is `chart`.
+     * - **type:** File type of resulting download. Default is `image/png`.
+     * - **scale:** Scaling factor of downloaded image compared to source.
+     * Default is `1`.
+     * - **libURL:** URL pointing to location of dependency scripts to download
+     * on demand. Default is the exporting.libURL option of the global
+     * Highcharts options pointing to our server.
+     *
+     * @async
+     * @function Highcharts.Exporting#downloadSVG
+     *
+     * @param {string} svg
+     * The generated SVG.
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     * The exporting options.
+     *
+     * @requires modules/exporting
+     */
+    // eslint-disable-next-line @typescript-eslint/require-await
+    public async downloadSVG(
+        svg: string,
+        exportingOptions: ExportingOptions
+    ): Promise<void> {
+        const eventArgs: Exporting.DownloadSVGEventArgs = {
+            svg,
+            exportingOptions,
+            exporting: this
+        };
+
+        // Fire a custom event before the export starts
+        fireEvent(
+            Exporting.prototype,
+            'downloadSVG',
+            eventArgs
+        );
+
+        // If the event was prevented, do not proceed with the export
+        if (eventArgs.defaultPrevented) {
+            return;
+        }
+
+        // Get the final image options
+        const {
+            type,
+            filename,
+            scale,
+            libURL
+        } = Exporting.prepareImageOptions(exportingOptions);
+        let svgURL: string;
+
+        // Initiate download depending on file type
+        if (type === 'application/pdf') {
+            // Error in case of offline-exporting module is not loaded
+            throw new Error(
+                'Offline exporting logic for PDF type is not found.'
+            );
+        } else if (type === 'image/svg+xml') {
+            // SVG download. In this case, we want to use Microsoft specific
+            // Blob if available
+            if (typeof win.MSBlobBuilder !== 'undefined') {
+                const blob = new win.MSBlobBuilder();
+                blob.append(svg);
+                svgURL = blob.getBlob('image/svg+xml');
+            } else {
+                svgURL = Exporting.svgToDataURL(svg);
+            }
+            // Download the chart
+            downloadURL(svgURL, filename);
+        } else {
+            // PNG/JPEG download - create bitmap from SVG
+            svgURL = Exporting.svgToDataURL(svg);
+            try {
+                Exporting.objectURLRevoke = true;
+
+                // First, try to get PNG by rendering on canvas
+                const dataURL = await Exporting.imageToDataURL(
+                    svgURL,
+                    scale,
+                    type
+                );
+                downloadURL(dataURL, filename);
+            } catch (error) {
+                // No need for the below logic to run in case no canvas is
+                // found
+                if ((error as Error).message === 'No canvas found!') {
+                    throw error;
+                }
+
+                // Or in case of exceeding the input length
+                if (svg.length > RegexLimits.svgLimit) {
+                    throw new Error('Input too long');
+                }
+
+                // Failed due to tainted canvas
+                // Create new and untainted canvas
+                const canvas = doc.createElement('canvas'),
+                    ctx = canvas.getContext('2d'),
+                    matchedImageWidth = svg.match(
+                        // eslint-disable-next-line max-len
+                        /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                    ),
+                    matchedImageHeight = svg.match(
+                        // eslint-disable-next-line max-len
+                        /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                    );
+
+                if (
+                    ctx &&
+                    matchedImageWidth &&
+                    matchedImageHeight
+                ) {
+                    const imageWidth =
+                        +matchedImageWidth[1] * scale,
+                        imageHeight =
+                            +matchedImageHeight[1] * scale,
+                        downloadWithCanVG = (): void => {
+                            const v =
+                                win.canvg.Canvg.fromString(
+                                    ctx,
+                                    svg
+                                );
+                            v.start();
+
+                            downloadURL(
+                                win.navigator.msSaveOrOpenBlob ?
+                                    canvas.msToBlob() :
+                                    canvas.toDataURL(type),
+                                filename
+                            );
+                        };
+                    canvas.width = imageWidth;
+                    canvas.height = imageHeight;
+
+                    // Must load canVG first if not found. Don't destroy the
+                    // object URL yet since we are doing things
+                    // asynchronously
+                    if (!win.canvg) {
+                        Exporting.objectURLRevoke = true;
+                        await getScript(libURL + 'canvg.js');
+                    }
+
+                    // Use loaded canvg
+                    downloadWithCanVG();
+                }
+            } finally {
+                if (Exporting.objectURLRevoke) {
+                    try {
+                        domurl.revokeObjectURL(svgURL);
+                    } catch {
+                        // Ignore
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Submit an SVG version of the chart along with some parameters for local
      * conversion (PNG, JPEG, and SVG) or conversion on a server (PDF).
      *
@@ -2159,13 +2153,12 @@ class Exporting {
                 );
             } else {
                 // Trigger SVG download
-                await Exporting.downloadSVG(
+                await exporting.downloadSVG(
                     sanitizedSVG,
                     extend(
                         { filename: exporting.getFilename() },
                         exportingOptions
-                    ),
-                    this
+                    )
                 );
             }
 
@@ -2457,9 +2450,6 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        // Add the downloadSVGLocal function to globals
-        G.downloadSVGLocal = Exporting.downloadSVG;
-
         // Check the composition registry for the Exporting
         if (!pushUnique(composed, 'Exporting')) {
             return;
@@ -2532,23 +2522,8 @@ namespace Exporting {
             );
         }
 
-        defaultOptions.exporting = merge(
-            ExportingDefaults.exporting,
-            defaultOptions.exporting
-        );
-
-        defaultOptions.lang = merge(
-            ExportingDefaults.lang,
-            defaultOptions.lang
-        );
-
-        // Buttons and menus are collected in a separate config option set
-        // called 'navigation'. This can be extended later to add control
-        // buttons like zoom and pan right click menus.
-        defaultOptions.navigation = merge(
-            ExportingDefaults.navigation,
-            defaultOptions.navigation
-        );
+        // Update with defaults of the exporting module
+        setOptions(ExportingDefaults);
     }
 
     /**

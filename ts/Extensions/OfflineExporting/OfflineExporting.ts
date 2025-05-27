@@ -14,7 +14,7 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
@@ -29,9 +29,12 @@ import type { PdfFontOptions } from '../Exporting/ExportingOptions';
 import type Options from '../../Core/Options';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Chart from '../../Core/Chart/Chart';
+import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
-const { defaultOptions } = D;
+const {
+    getOptions,
+    setOptions
+} = D;
 import DownloadURL from '../DownloadURL.js';
 const {
     downloadURL,
@@ -50,8 +53,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    fireEvent,
-    merge,
     pushUnique
 } = U;
 
@@ -109,7 +110,7 @@ namespace OfflineExporting {
     export function compose(
         ExportingClass: typeof Exporting
     ): void {
-        // Add the OfflineExporting version of the downloadSVGLocal to globals
+        // Add the downloadSVG event to the Exporting class for local PDF export
         addEvent(
             ExportingClass,
             'downloadSVG',
@@ -123,13 +124,36 @@ namespace OfflineExporting {
                     // Prevent the default export behavior
                     preventDefault && preventDefault();
 
+                    // Run the PDF local export
                     try {
-                        // Run the PDF local export
-                        await OfflineExporting.downloadSVG(
-                            svg,
-                            exportingOptions,
-                            exporting
-                        );
+                        // Get the final image options
+                        const {
+                            type,
+                            filename,
+                            scale,
+                            libURL
+                        } = G.Exporting.prepareImageOptions(exportingOptions);
+
+                        // Local PDF download
+                        if (type === 'application/pdf') {
+                            // Must load pdf libraries first if not found. Don't
+                            // destroy the object URL yet since we are doing
+                            // things asynchronously
+                            if (!win.jspdf?.jsPDF) {
+                                // Get jspdf
+                                await getScript(`${libURL}jspdf.js`);
+                                // Get svg2pdf
+                                await getScript(`${libURL}svg2pdf.js`);
+                            }
+
+                            // Call the PDF download if SVG element found
+                            await downloadPDF(
+                                svg,
+                                scale,
+                                filename,
+                                exportingOptions?.pdfFont
+                            );
+                        }
                     } catch (error) {
                         // Try to fallback to the server
                         await exporting?.fallbackToServer(
@@ -161,8 +185,14 @@ namespace OfflineExporting {
             }
         });
 
-        // Extend the default options to use the local exporter logic
-        merge(true, defaultOptions.exporting, OfflineExportingDefaults);
+        // Update with defaults of the offline exporting module
+        setOptions(OfflineExportingDefaults);
+
+        // Additionaly, extend the menuItems with the offline exporting variants
+        const menuItems =
+            getOptions().exporting?.buttons?.contextButton?.menuItems;
+        menuItems && menuItems.push('downloadPDF');
+
     }
 
     /**
@@ -211,65 +241,6 @@ namespace OfflineExporting {
     }
 
     /**
-     * Get data URL to an image of an SVG and call download on it options
-     * object:
-     *
-     * - **filename:** Name of resulting downloaded file without extension.
-     * Default is `chart`.
-     * - **type:** File type of resulting download. Default is `image/png`.
-     * - **scale:** Scaling factor of downloaded image compared to source.
-     * Default is `1`.
-     * - **libURL:** URL pointing to location of dependency scripts to download
-     * on demand. Default is the exporting.libURL option of the global
-     * Highcharts options pointing to our server.
-     *
-     * @async
-     * @function Highcharts.Exporting#downloadSVG
-     *
-     * @param {string} svg
-     * The generated SVG.
-     * @param {Highcharts.ExportingOptions} exportingOptions
-     * The exporting options.
-     * @param {Highcharts.Exporting} [exporting]
-     * The exporting object.
-     *
-     * @requires modules/exporting
-     * @requires modules/offline-exporting
-     */
-    export async function downloadSVG(
-        svg: string,
-        exportingOptions: ExportingOptions,
-        exporting?: Exporting
-    ): Promise<void> {
-        // Get the final image options
-        const {
-            type,
-            filename,
-            scale,
-            libURL
-        } = G.Exporting.prepareImageOptions(exportingOptions);
-
-        // Local PDF download
-        if (type === 'application/pdf') {
-            // Must load pdf libraries first if not found. Don't destroy the
-            // object URL yet since we are doing things asynchronously
-            if (!win.jspdf?.jsPDF) {
-                // Get jspdf
-                await getScript(`${libURL}jspdf.js`);
-                // Get svg2pdf
-                await getScript(`${libURL}svg2pdf.js`);
-            }
-
-            // Call the PDF download if SVG element found
-            await downloadPDF(svg, scale, filename, exportingOptions?.pdfFont);
-            if (exporting) {
-                // Trigger the success event
-                fireEvent(exporting, 'downloadSVGSuccess');
-            }
-        }
-    }
-
-    /**
      * Loads and registers custom fonts for PDF export if non-ASCII characters
      * are detected in the given SVG element. This function ensures that text
      * content with special characters is properly rendered in the exported PDF.
@@ -301,7 +272,7 @@ namespace OfflineExporting {
 
         // Register an event in order to add the font once jsPDF is initialized
         const addFont = (
-            variant: 'bold' | 'bolditalic' | 'italic' | 'normal',
+            variant: ('bold' | 'bolditalic' | 'italic' | 'normal'),
             base64: string
         ): void => {
             win.jspdf.jsPDF.API.events.push([
@@ -333,7 +304,7 @@ namespace OfflineExporting {
 
         // Shift the first element off the variants and add as a font.
         // Then asynchronously trigger the next variant until variants are empty
-        let normalBase64: string | undefined;
+        let normalBase64: (string | undefined);
         const shiftAndLoadVariant = (): void => {
             const variant = variants.shift();
 
@@ -402,7 +373,7 @@ namespace OfflineExporting {
     function preparePDF(
         svg: string,
         pdfFont?: PdfFontOptions
-    ): SVGSVGElement | null {
+    ): (SVGSVGElement | null) {
         const dummySVGContainer = doc.createElement('div');
         AST.setElementHTML(dummySVGContainer, svg);
         const textElements = dummySVGContainer.getElementsByTagName('text'),
@@ -562,7 +533,7 @@ namespace OfflineExporting {
 
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
 

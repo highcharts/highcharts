@@ -36,7 +36,10 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
-const { setOptions } = D;
+const {
+    getOptions,
+    setOptions
+} = D;
 import DownloadURL from '../DownloadURL.js';
 const { downloadURL } = DownloadURL;
 import ExportDataDefaults from './ExportDataDefaults.js';
@@ -323,6 +326,16 @@ namespace ExportData {
 
             // Update with defaults of the export data module
             setOptions(ExportDataDefaults);
+
+            // Additionaly, extend the menuItems with the export data variants
+            const menuItems =
+                getOptions().exporting?.buttons?.contextButton?.menuItems;
+            menuItems && menuItems.push(
+                'separator',
+                'downloadCSV',
+                'downloadXLS',
+                'viewData'
+            );
 
             const {
                 arearange: AreaRangeSeries,

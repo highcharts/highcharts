@@ -12,7 +12,7 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
@@ -20,29 +20,24 @@ import type ExportingOptions from '../Exporting/ExportingOptions';
 
 /* *
  *
- * Declarations
+ *  API Options
  *
  * */
 
-const OfflineExportingDefaults: ExportingOptions = {
-    // When offline-exporting is loaded, redefine the menu item definitions
-    // related to download (adding local PDF export)
-    menuItemDefinitions: {
-        downloadPDF: {
-            textKey: 'downloadPDF',
-            onclick: async function (): Promise<void> {
-                await this.exporting?.exportChart({
-                    type: 'application/pdf'
-                });
-            }
-        }
-    }
-};
+/**
+ * @optionparent exporting
+ * @private
+ */
+const exporting: ExportingOptions = {};
 
 /* *
  *
  *  Default Export
  *
  * */
+
+const OfflineExportingDefaults = {
+    exporting
+};
 
 export default OfflineExportingDefaults;

@@ -61,7 +61,7 @@ const exporting: ExportingOptions = {
     /**
      * Allows the end user to sort the data table by clicking on column headers.
      *
-     * @since 10.3.3
+     * @since     10.3.3
      * @apioption exporting.allowTableSorting
      */
     allowTableSorting: true,
@@ -187,8 +187,8 @@ const exporting: ExportingOptions = {
      * See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
      * for more information
      *
-     * @type {Object}
-     * @since 11.3.0
+     * @type      {Object}
+     * @since     11.3.0
      * @apioption exporting.fetchOptions
      */
 
@@ -305,7 +305,7 @@ const exporting: ExportingOptions = {
      * @sample {highcharts} highcharts/exporting/offline-download-pdffont/
      *         Download PDF in a language containing non-Latin characters.
      *
-     * @since 10.0.0
+     * @since    10.0.0
      * @requires modules/offline-exporting
      */
     pdfFont: {
@@ -755,6 +755,7 @@ const navigation: NavigationOptions = {
          *
          * @sample highcharts/title/widthadjust
          *         Adjust the spacing when using text button
+         *
          * @since 2.0
          */
         buttonSpacing: 5,
@@ -794,7 +795,7 @@ const navigation: NavigationOptions = {
          *
          * @type      boolean
          * @default   false
-         * @since 10.3.0
+         * @since     10.3.0
          * @apioption navigation.buttonOptions.useHTML
          */
 
@@ -882,7 +883,7 @@ const navigation: NavigationOptions = {
             /**
              * The default fill exists only to capture hover events.
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             fill: Palette.backgroundColor,
 
@@ -894,7 +895,7 @@ const navigation: NavigationOptions = {
             /**
              * Default stroke for the buttons.
              *
-             * @type      {Highcharts.ColorString}
+             * @type {Highcharts.ColorString}
              */
             stroke: 'none',
 

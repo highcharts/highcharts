@@ -75,7 +75,7 @@ const exporting: ExportingOptions = {
          *
          * Options for annotations in the export-data table.
          *
-         * @since 8.2.0
+         * @since    8.2.0
          * @requires modules/export-data
          * @requires modules/annotations
          *
@@ -86,7 +86,7 @@ const exporting: ExportingOptions = {
             * The way to mark the separator for annotations
             * combined in one export-data table cell.
             *
-            * @since 8.2.0
+            * @since    8.2.0
             * @requires modules/annotations
             */
             itemDelimiter: '; ',
@@ -98,7 +98,7 @@ const exporting: ExportingOptions = {
             * @sample highcharts/export-data/join-annotations/
             *         Concatenate point annotations with itemDelimiter set.
             *
-            * @since 8.2.0
+            * @since    8.2.0
             * @requires modules/annotations
             */
             join: false
@@ -190,8 +190,8 @@ const exporting: ExportingOptions = {
      * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      *
-     * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
-     * @default {"downloadCSV": {}, "downloadXLS": {}, "viewData": {}}
+     * @type     {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
+     * @default  {"downloadCSV": {}, "downloadXLS": {}, "viewData": {}}
      * @requires modules/export-data
      */
     menuItemDefinitions: {
@@ -224,56 +224,6 @@ const exporting: ExportingOptions = {
             onclick: function (): void {
                 this.exporting?.wrapLoading(this.exporting.toggleDataTable);
             }
-        }
-
-    },
-
-    /**
-     * Options for the export related buttons, print and export. In addition
-     * to the default buttons listed here, custom buttons can be added.
-     * See [navigation.buttonOptions](#navigation.buttonOptions) for general
-     * options.
-     *
-     * @type     {Highcharts.Dictionary<*>}
-     */
-    buttons: {
-
-        /**
-         * Options for the export button.
-         *
-         * In styled mode, export button styles can be applied with the
-         * `.highcharts-contextbutton` class.
-         *
-         * @declare  Highcharts.ExportingButtonsOptionsObject
-         * @extends  navigation.buttonOptions
-         */
-        contextButton: {
-
-            /**
-             * A collection of strings pointing to config options for the menu
-             * items. The config options are defined in the
-             * `menuItemDefinitions` option.
-             *
-             * By default, there is the "View in full screen" and "Print" menu
-             * items, plus one menu item for each of the available export types.
-             *
-             * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
-             *         Menu item definitions
-             * @sample {highstock} highcharts/exporting/menuitemdefinitions/
-             *         Menu item definitions
-             * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
-             *         Menu item definitions
-             *
-             * @type    {Array<string>}
-             * @default ["separator", "downloadCSV", "downloadXLS", "viewData"]
-             * @requires modules/export-data
-             */
-            menuItems: [
-                'separator',
-                'downloadCSV',
-                'downloadXLS',
-                'viewData'
-            ]
         }
 
     },
@@ -323,7 +273,7 @@ const exporting: ExportingOptions = {
      *
      * The message can be altered by changing [](#lang.exporting.exportInProgress)
      *
-     * @since 11.3.0
+     * @since    11.3.0
      * @requires modules/export-data
      */
     showExportInProgress: true
@@ -354,7 +304,7 @@ const lang: LangOptions = {
     /**
      * The text for exported table.
      *
-     * @since 8.1.0
+     * @since    8.1.0
      * @requires modules/export-data
      */
     exportData: {
@@ -384,14 +334,14 @@ const lang: LangOptions = {
     /**
      * The text for the menu item.
      *
-     * @since 8.2.0
+     * @since    8.2.0
      * @requires modules/export-data
      */
     hideData: 'Hide data table',
     /**
      * Text to show when export is in progress.
      *
-     * @since 11.3.0
+     * @since    11.3.0
      * @requires modules/export-data
      */
     exportInProgress: 'Exporting...'
