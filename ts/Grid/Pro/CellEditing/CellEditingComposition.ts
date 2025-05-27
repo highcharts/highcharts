@@ -80,11 +80,6 @@ namespace CellEditingComposition {
                     }
                 }
             }
-        },
-        columnDefaults: {
-            editMode: {
-                enabled: false
-            }
         }
     };
 
@@ -155,9 +150,10 @@ namespace CellEditingComposition {
      * The column to create the edit mode renderer for.
      */
     function createEditModeRenderer(column: Column): EditModeRendererType {
-        const editModeOptions = column.options.editMode;
+        const editModeOptions = column.options.cells?.editMode;
         const editModeRendererTypeName = editModeOptions?.renderer?.type;
-        const staticRendererTypeName = column.options?.renderer?.type || 'text';
+        const staticRendererTypeName =
+            column.options?.cells?.renderer?.type || 'text';
 
         if (editModeRendererTypeName) {
             return new CellRendererRegistry.types[
@@ -176,8 +172,10 @@ namespace CellEditingComposition {
 
         return new CellRendererRegistry.types[defRenderer](
             column,
-            defRenderer === staticRendererTypeName ?
-                column.options.renderer || {} : {}
+            defRenderer === staticRendererTypeName ? merge(
+                column.options.cells?.renderer,
+                { disabled: false }
+            ) || {} : {}
         );
     }
 
@@ -187,7 +185,10 @@ namespace CellEditingComposition {
     function afterColumnInit(this: Column): void {
         const { options } = this;
 
-        if (options?.editMode?.enabled) {
+        if (
+            options?.cells?.editMode?.enabled ||
+            options?.cells?.editable
+        ) {
             this.editModeRenderer = createEditModeRenderer(this);
         }
     }
@@ -204,7 +205,6 @@ namespace CellEditingComposition {
     ): void {
         if (
             e.originalEvent?.key !== 'Enter' ||
-            !this.column.options.cells?.editable ||
             !this.column.editModeRenderer
         ) {
             return;
@@ -217,10 +217,7 @@ namespace CellEditingComposition {
      * Callback function called when a cell is double clicked.
      */
     function onCellDblClick(this: TableCell): void {
-        if (
-            this.column.options.cells?.editable &&
-            this.column.editModeRenderer
-        ) {
+        if (this.column.editModeRenderer) {
             this.row.viewport.cellEditing?.startEditing(this);
         }
     }
@@ -238,7 +235,10 @@ namespace CellEditingComposition {
             ?.lang?.accessibility?.cellEditing?.editable;
 
         if (
-            !this.column.options.cells?.editable ||
+            (
+                !this.column.options.cells?.editable &&
+                !this.column.options.cells?.editMode?.enabled
+            ) ||
             !editableLang
         ) {
             return;
@@ -382,16 +382,17 @@ declare module '../../Core/Accessibility/A11yOptions' {
 declare module '../../Core/Options' {
     interface ColumnCellOptions {
         /**
-         * Whether to make the column cells editable `true`, or read-only `false`.
-         *
-         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Editable columns disabled}
-         *
-         * @default true
+         * @deprecated
+         * Use `editMode.enabled` instead. This option will be removed in the
+         * next major release.
          */
         editable?: boolean;
-    }
 
-    interface ColumnOptions {
+        /**
+         * Whether to enabled the cell edit mode functionality. It allows to
+         * edit the cell value in a separate input field that is displayed
+         * after double-clicking the cell or pressing the Enter key.
+         */
         editMode?: ColumnEditModeOptions;
     }
 }

@@ -66,7 +66,7 @@ class TextRenderer extends CellRenderer {
 
         this.options = merge(
             TextRenderer.defaultOptions,
-            this.column.options.renderer || {}
+            this.column.options.cells?.renderer || {}
         );
 
         const cellOptions = column.options.cells;
