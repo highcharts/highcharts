@@ -159,6 +159,7 @@ class RowsVirtualizer {
 
         if (this.rowSettings?.virtualization) {
             this.adjustRowHeights();
+            this.adjustRowOffsets();
         }
     }
 
@@ -235,6 +236,7 @@ class RowsVirtualizer {
         this.rowCursor = rowCursor;
 
         this.adjustRowHeights();
+        this.adjustRowOffsets();
         if (
             !this.strictRowHeights &&
             lastScrollTop > target.scrollTop &&
@@ -420,8 +422,6 @@ class RowsVirtualizer {
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
 
-        let translateBuffer = rows[0].getDefaultTopOffset();
-        translateBuffer = Math.floor(translateBuffer - this.scrollOffset);
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
@@ -469,6 +469,14 @@ class RowsVirtualizer {
                 }
             }
         }
+    }
+
+    private adjustRowOffsets(): void {
+        const { rows } = this.viewport;
+        const rowsLn = rows.length;
+
+        let translateBuffer = rows[0].getDefaultTopOffset();
+        translateBuffer = Math.floor(translateBuffer - this.scrollOffset);
 
         rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
@@ -502,6 +510,7 @@ class RowsVirtualizer {
 
         if (this.rowSettings?.virtualization) {
             this.adjustRowHeights();
+            this.adjustRowOffsets();
         }
     }
 
