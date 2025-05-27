@@ -161,14 +161,14 @@
     "*.js": [
       "eslint"
     ],
-    "./ts/!(Dashboards|DataGrid)**/*.ts": [
+    "./ts/!(Dashboards|Grid)**/*.ts": [
       "npm run lint"
     ],
     "./ts/Dashboards/**/*.ts": [
       "cd ts/Dashboards && npx eslint"
     ],
-    "./ts/DataGrid/**/*.ts": [
-      "cd ts/DataGrid && npx eslint"
+    "./ts/Grid/**/*.ts": [
+      "cd ts/Grid && npx eslint --quiet \"./**/*.ts\""
     ],
     "*.css": [
       "stylelint"

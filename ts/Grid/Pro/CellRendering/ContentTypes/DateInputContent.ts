@@ -107,7 +107,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
             this.input.value = this.getInputAcceptableValue();
             this.cell.htmlElement.focus();
         } else if (e.key === 'Enter') {
-            this.cell.setValue(this.getValue(), true);
+            void this.cell.setValue(this.getValue(), true);
         }
     };
 
@@ -117,7 +117,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
             return;
         }
         
-        this.cell.setValue(this.getValue(), true);
+        void this.cell.setValue(this.getValue(), true);
     };
 }
 
