@@ -19,33 +19,38 @@ Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true
-        },
-        editMode: {
-            enabled: true
+            editMode: {
+                enabled: true
+            }
         }
     },
     columns: [{
         id: 'text_checkbox',
-        renderer: {
-            type: 'text'
-        },
-        editMode: {
+        cells: {
+            renderer: {
+                type: 'text'
+            },
+            editMode: {
+                renderer: {
+                    type: 'checkbox'
+                }
+            }
+        }
+    }, {
+        id: 'checkbox_checkbox',
+        cells: {
             renderer: {
                 type: 'checkbox'
             }
         }
     }, {
-        id: 'checkbox_checkbox',
-        renderer: {
-            type: 'checkbox'
-        }
-    }, {
         id: 'text_textInput'
     }, {
         id: 'textInput_textInput',
-        renderer: {
-            type: 'textInput'
+        cells: {
+            renderer: {
+                type: 'textInput'
+            }
         }
     }, {
         id: 'text_select',
@@ -58,9 +63,22 @@ Grid.grid('container', {
                     Y: '🟡'
                 };
                 return map[this.value] || '';
+            },
+            editMode: {
+                renderer: {
+                    type: 'select',
+                    options: [
+                        { value: 'R', label: 'Red' },
+                        { value: 'B', label: 'Blue' },
+                        { value: 'G', label: 'Green' },
+                        { value: 'Y', label: 'Yellow' }
+                    ]
+                }
             }
-        },
-        editMode: {
+        }
+    }, {
+        id: 'select_select',
+        cells: {
             renderer: {
                 type: 'select',
                 options: [
@@ -72,35 +90,24 @@ Grid.grid('container', {
             }
         }
     }, {
-        id: 'select_select',
-        renderer: {
-            type: 'select',
-            options: [
-                { value: 'R', label: 'Red' },
-                { value: 'B', label: 'Blue' },
-                { value: 'G', label: 'Green' },
-                { value: 'Y', label: 'Yellow' }
-            ]
-        }
-    }, {
         id: 'text_date',
         dataType: 'datetime',
         cells: {
-            format: '{value:%Y-%m-%d}'
-        },
-        editMode: {
-            renderer: {
-                type: 'dateInput'
+            format: '{value:%Y-%m-%d}',
+            editMode: {
+                renderer: {
+                    type: 'dateInput'
+                }
             }
         }
     }, {
         id: 'date_date',
         dataType: 'datetime',
         cells: {
-            format: '{value:%Y-%m-%d}'
-        },
-        renderer: {
-            type: 'dateInput'
+            format: '{value:%Y-%m-%d}',
+            renderer: {
+                type: 'dateInput'
+            }
         }
     }]
 });
