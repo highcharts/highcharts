@@ -12,7 +12,9 @@ Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true,
+            editMode: {
+                enabled: true
+            },
             events: {
                 afterRender: function () {
                     changelog.innerHTML +=
@@ -20,9 +22,6 @@ Grid.grid('container', {
                     changelog.scrollTop = changelog.scrollHeight;
                 }
             }
-        },
-        editMode: {
-            enabled: true
         }
     },
     columns: [{
@@ -36,7 +35,9 @@ Grid.grid('container', {
     }, {
         id: 'product',
         cells: {
-            editable: false
+            editMode: {
+                enabled: false
+            }
         }
     }, {
         id: 'country',

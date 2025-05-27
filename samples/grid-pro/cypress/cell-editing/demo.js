@@ -46,90 +46,101 @@ Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true
-        },
-        editMode: {
-            enabled: true
+            editMode: {
+                enabled: true
+            }
         }
     },
     columns: [{
         id: 'product',
         dataType: 'string',
-        editMode: {
-            // Gets default error message text or from lang (if defined)
-            validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+        cells: {
+            editMode: {
+                // Gets default error message text or from lang (if defined)
+                validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+            }
         }
     }, {
         id: 'numbers',
         dataType: 'number',
-        editMode: {
-            validationRules: [{
-                validate: 'notEmpty',
-                notification: function () {
-                    return 'Not empty formatter';
-                }
-            }, {
-                validate: 'number',
-                notification: function (value) {
-                    return `New value <strong>${
-                        value
-                    }</strong> should be number`;
-                }
-            }]
+        cells: {
+            editMode: {
+                validationRules: [{
+                    validate: 'notEmpty',
+                    notification: function () {
+                        return 'Not empty formatter';
+                    }
+                }, {
+                    validate: 'number',
+                    notification: function (value) {
+                        return `New value <strong>${
+                            value
+                        }</strong> should be number`;
+                    }
+                }]
+            }
         }
     }, {
         id: 'price',
         dataType: 'number',
-        editMode: {
-            validationRules: ['notEmpty', {
-                validate: 'number',
-                notification: 'Price should be number'
-            }]
+        cells: {
+            editMode: {
+                validationRules: ['notEmpty', {
+                    validate: 'number',
+                    notification: 'Price should be number'
+                }]
+            }
         }
     }, {
         id: 'booleans',
         dataType: 'boolean',
-        editMode: {
-            validationRules: [{
-                validate: 'notEmpty',
-                notification: function () {
-                    return 'Not empty formatter';
-                }
-            }, {
-                validate: 'boolean',
-                notification: function () {
-                    return 'New value for column: ' +
-                        this.column.id +
-                        ' should be bool';
-                }
-            }]
+        cells: {
+            editMode: {
+                validationRules: [{
+                    validate: 'notEmpty',
+                    notification: function () {
+                        return 'Not empty formatter';
+                    }
+                }, {
+                    validate: 'boolean',
+                    notification: function () {
+                        return 'New value for column: ' +
+                            this.column.id +
+                            ' should be bool';
+                    }
+                }]
+            }
         }
     }, {
         id: 'icon',
-        editMode: {
-            validationRules: ['notEmpty', {
-                validate: function (value) {
-                    return value.indexOf('URL') !== -1;
-                },
-                notification: 'The value must contain "URL"'
-            }]
+        cells: {
+            editMode: {
+                validationRules: ['notEmpty', {
+                    validate: function (value) {
+                        return value.indexOf('URL') !== -1;
+                    },
+                    notification: 'The value must contain "URL"'
+                }]
+            }
         }
     }, {
         id: 'country',
         dataType: 'string',
-        renderer: {
-            type: 'select',
-            options: [
-                { value: 'PL', label: 'Poland' },
-                { value: 'NL', label: 'Netherlands' },
-                { value: 'RO', label: 'Romania' },
-                { value: 'EC', label: 'Ecuador' },
-                { value: 'ES', label: 'Spain' },
-                { value: 'IT', label: 'Italy' },
-                { value: 'DE', label: 'Germany' },
-                { value: 'TR', label: 'Turkey' },
-                { value: 'BR', label: 'Brazil' }
-            ]
+        cells: {
+            renderer: {
+                type: 'select',
+                options: [
+                    { value: 'PL', label: 'Poland' },
+                    { value: 'NL', label: 'Netherlands' },
+                    { value: 'RO', label: 'Romania' },
+                    { value: 'EC', label: 'Ecuador' },
+                    { value: 'ES', label: 'Spain' },
+                    { value: 'IT', label: 'Italy' },
+                    { value: 'DE', label: 'Germany' },
+                    { value: 'TR', label: 'Turkey' },
+                    { value: 'BR', label: 'Brazil' }
+                ]
+            }
         }
     }]
 });

@@ -28,7 +28,9 @@ Some API options have been renamed or removed. For the full list, make sure to c
     },
     columnDefaults: {
         cells: {
-            editable: true,
+            editMode: {
+                enabled: true
+            },
             events: {
                 afterEdit: function () {
                     // Callback action
