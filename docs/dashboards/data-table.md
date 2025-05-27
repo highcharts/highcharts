@@ -92,6 +92,82 @@ const table = new Dashboards.DataTable({
 const tableModified = sortModifier.modifyTable(table.clone());
 ```
 
+## Multiple data tables
+Defining multiple `DataTables` allows you to parse or format data from the same 
+data source in different ways without having to define a separate connector for
+each adjustment.
+
+Each `DataTable` should have a `key` property that will be referenced in the
+component.
+
+Also, you can define connector options (`columnNames`, `firstRowAsNames`,
+`orientation`, `beforeParse`) and use the `DataModifier` service.
+
+```javascript
+dataPool: {
+    connectors: [{
+        id: 'data-connector',
+        type: 'JSON',
+        options: {
+            data: {
+                employees: [
+                    ['Name', 'Age', 'Salary'],
+                    ['John', 30, 50000],
+                    ['Jane', 25, 45000],
+                    ['Bob', 35, 60000],
+                    ['Alice', 28, 52000]
+                ],
+                metrics: {
+                    revenue: 100000,
+                    costs: 75000
+                }
+            }
+        },
+        dataTables: [{
+            key: 'employees',
+            beforeParse: function({ employees }) {
+                return employees;
+            }
+        }, {
+            key: 'metrics',
+            firstRowAsNames: false,
+            columnNames: ['revenue', 'costs'],
+            beforeParse: function({ metrics }) {
+                return [[metrics.revenue, metrics.costs]];
+            },
+            dataModifier: {
+                type: 'Math',
+                columnFormulas: [{
+                    column: 'profit',
+                    formula: 'A1-B1'
+                }]
+            }
+        }]
+    }]
+}
+```
+
+To use a specific `DataTable` in a component, define the `dataTableKey` property
+to indicate the corresponding `key` in the component's connector options:
+
+```javascript
+components: [{
+    renderTo: 'dashboard-col-0',
+    type: 'Grid',
+    connector: [{
+        id: 'data-connector',
+        dataTableKey: 'employees'
+    }]
+}, {
+    renderTo: 'dashboard-col-1',
+    type: 'Grid',
+    connector: [{
+        id: 'data-connector',
+        dataTableKey: 'metrics'
+    }]
+}]
+```
+
 ## Get operations
 The `DataTable` class offers several methods for accessing data. Some of the most common are:
 
