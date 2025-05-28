@@ -30,6 +30,6 @@ describe('Empty board interaction', () => {
 
         // Assert
         cy.get('.highcharts-dashboards-edit-resize-snap-y').should('not.be.visible');
-        // cy.get('.highcharts-dashboards-row').should('not.exist');
+        cy.get('.highcharts-dashboards-row').should('not.exist');
     });
 });

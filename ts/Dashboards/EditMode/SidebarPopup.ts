@@ -70,8 +70,12 @@ class SidebarPopup extends BaseForm {
                         (dropContext as Row)
                 ),
                 board = row.layout.board,
-                newLayoutId = GUIElement.getElementId('layout'),
-                cellId = GUIElement.getElementId('cell'),
+                cellId = GUIElement.getElementId('cell');
+            let layout;
+
+            if (dropContext.getType() === 'cell') {
+                const newLayoutId = GUIElement.getElementId('layout');
+
                 layout = new Layout(board, {
                     id: newLayoutId,
                     copyId: '',
@@ -84,7 +88,6 @@ class SidebarPopup extends BaseForm {
                     style: {}
                 });
 
-            if (layout) {
                 board.layouts.push(layout);
 
                 fireEvent(
@@ -96,6 +99,12 @@ class SidebarPopup extends BaseForm {
                         board
                     }
                 );
+            }   else {
+                layout = (dropContext as Row).layout;
+
+                layout.rows[0].addCell({
+                    id: cellId
+                })
             }
 
             void Bindings.addComponent({
