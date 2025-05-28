@@ -23,6 +23,7 @@
 
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
+import type DataTable from '../../../../Data/DataTable';
 import type SelectRenderer from '../Renderers/SelectRenderer.js';
 
 import CellContentPro from '../CellContentPro.js';
@@ -107,11 +108,17 @@ class SelectContent extends CellContentPro implements EditModeContent {
         this.select?.remove();
     }
 
-    /**
-     * Returns value of input as string.
-     */
-    public getValue(): string {
-        return this.select.value;
+    public getValue(): DataTable.CellType {
+        const val = this.select.value;
+        switch (this.cell.column.dataType) {
+            case 'datetime':
+            case 'number':
+                return +val;
+            case 'boolean':
+                return val;
+            case 'string':
+                return '' + val;
+        }
     }
 
     /**

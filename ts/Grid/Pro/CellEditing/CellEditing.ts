@@ -31,7 +31,6 @@ import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 
 const {
-    defined,
     fireEvent
 } = U;
 
@@ -131,7 +130,7 @@ class CellEditing {
 
         const { column } = cell;
         const vp = column.viewport;
-        let newValue = emContent.getValue();
+        const newValue = emContent.getValue();
 
         if (submit) {
             const validationErrors: string[] = [];
@@ -155,33 +154,6 @@ class CellEditing {
         );
 
         cell.htmlElement.focus();
-
-        // TODO: Add custom parsing callback option!
-        switch (column.dataType) {
-            case 'datetime':
-            case 'number':
-                newValue = defined(newValue) && ![
-                    '', 'null', 'undefined', 'NaN'
-                ].includes('' + newValue) ? +newValue : null;
-                break;
-            case 'boolean':
-                switch (newValue) {
-                    case 'false':
-                    case '0':
-                    case false:
-                        newValue = false;
-                        break;
-                    case void 0:
-                    case null:
-                    case '':
-                        newValue = null;
-                        break;
-                    default:
-                        newValue = true;
-                }
-                break;
-        }
-        // -------
 
         void cell.setValue(
             submit ? newValue : cell.value,
