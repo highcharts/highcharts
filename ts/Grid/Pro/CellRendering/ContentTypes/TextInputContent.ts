@@ -23,9 +23,16 @@
 
 import type TableCell from '../../../Core/Table/Body/TableCell.js';
 import type TextInputRenderer from '../Renderers/TextInputRenderer.js';
+import type DataTable from '../../../../Data/DataTable.js';
 
 import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 import CellContentPro from '../CellContentPro.js';
+import U from '../../../../Core/Utilities.js';
+
+const {
+    defined
+} = U;
+
 
 /* *
  *
@@ -59,7 +66,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
         this.input = document.createElement('input');
         this.input.tabIndex = -1;
-        this.input.value = '' + cell.value;
+        this.input.value = this.getInputAcceptableValue();
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !!options.disabled;
 
@@ -73,8 +80,28 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
-    public getValue(): string {
-        return this.input?.value || '';
+    public getValue(): DataTable.CellType {
+        const val = this.input.value;
+        switch (this.cell.column.dataType) {
+            case 'datetime':
+            case 'number':
+                return val === '' ? null : parseFloat(val);
+            case 'boolean':
+                if (val === 'false' || parseFloat(val) === 0) {
+                    return false;
+                }
+                if (val === '') {
+                    return null;
+                }
+                return true;
+            case 'string':
+                return val;
+        }
+    }
+
+    private getInputAcceptableValue(): string {
+        const val = this.cell.value;
+        return defined(val) ? '' + val : '';
     }
 
     public getMainElement(): HTMLInputElement {
@@ -112,7 +139,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         }
 
         if (e.key === 'Escape') {
-            this.input.value = '' + this.cell.value;
+            this.input.value = this.getInputAcceptableValue();
             this.cell.htmlElement.focus();
             return;
         }

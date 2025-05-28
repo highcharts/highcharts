@@ -32,11 +32,10 @@ import TableCell from '../../Core/Table/Body/TableCell';
  * */
 
 export interface EditModeContent<
-    T extends DataTable.CellType = DataTable.CellType,
     E extends HTMLElement = HTMLElement
 > {
     getMainElement(): E;
-    getValue(): T;
+    getValue(): DataTable.CellType;
     destroy(): void;
     blurHandler?: (e: FocusEvent) => void;
     keyDownHandler?: (e: KeyboardEvent) => void;

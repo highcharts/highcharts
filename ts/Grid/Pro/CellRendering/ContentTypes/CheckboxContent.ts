@@ -23,6 +23,7 @@
 
 import type CheckboxRenderer from '../Renderers/CheckboxRenderer.js';
 import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type DataTable from '../../../../Data/DataTable.js';
 
 import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 import CellContentPro from '../CellContentPro.js';
@@ -78,8 +79,17 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
-    public getValue(): boolean {
-        return this.input.checked;
+    public getValue(): DataTable.CellType {
+        const val = this.input.checked;
+        switch (this.cell.column.dataType) {
+            case 'datetime':
+            case 'number':
+                return +val;
+            case 'boolean':
+                return val;
+            case 'string':
+                return '' + val;
+        }
     }
 
     public getMainElement(): HTMLInputElement {

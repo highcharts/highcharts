@@ -65,7 +65,6 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
     public override render(cell: TableCell): CheckboxContent {
         return new CheckboxContent(cell, this);
     }
-
 }
 
 
