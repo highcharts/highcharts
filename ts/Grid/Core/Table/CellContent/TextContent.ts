@@ -1,6 +1,6 @@
 /* *
  *
- *  Text Cell Renderer class
+ *  Text Cell Content class
  *
  *  (c) 2020-2025 Highsoft AS
  *

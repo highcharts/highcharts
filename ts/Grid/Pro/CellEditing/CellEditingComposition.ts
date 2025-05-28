@@ -296,7 +296,14 @@ export type EditModeRendererTypeName = EditModeRendererType['options']['type'];
  * The options for the cell edit mode functionality.
  */
 export interface ColumnEditModeOptions {
+    /**
+     * Whether to enable the cell edit mode functionality.
+     */
     enabled?: boolean;
+
+    /**
+     * The edit mode renderer for the column.
+     */
     renderer?: EditModeRendererType['options'];
 }
 
@@ -342,12 +349,18 @@ export interface CellEditingLangA11yOptions {
 
 declare module '../../Core/Table/Table' {
     export default interface Table {
+        /**
+         * The cell editing instance for the table.
+         */
         cellEditing?: CellEditing;
     }
 }
 
 declare module '../../Core/Table/Column' {
     export default interface Column {
+        /**
+         * The edit mode renderer for the column.
+         */
         editModeRenderer?: EditModeRendererType;
     }
 }

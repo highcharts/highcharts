@@ -31,22 +31,73 @@ import TableCell from '../../Core/Table/Body/TableCell';
  *
  * */
 
+/**
+ * Interface for the edit mode content in a cell. It can be implemented by
+ * different types of edit mode contents.
+ */
 export interface EditModeContent<
     E extends HTMLElement = HTMLElement
 > {
+    /**
+     * Returns the main element of the edit mode content. In most cases it is an
+     * input element used to edit the cell value.
+     */
     getMainElement(): E;
 
     /**
      * Returns the value of the cell in the edit mode.
      */
     getValue(): DataTable.CellType;
+
+    /**
+     * Destroys the edit mode content, removing all event listeners
+     * and references to the DOM elements.
+     */
     destroy(): void;
+
+    /**
+     * Blur event handler for the edit mode content that can be overwritten in
+     * the Edit Mode Class.
+     *
+     * @param e
+     * The focus event that triggered the blur.
+     */
     blurHandler?: (e: FocusEvent) => void;
+
+    /**
+     * Key down event handler for the edit mode content that can be overwritten
+     * in the Edit Mode Class.
+     *
+     * @param e
+     * The keyboard event that triggered the key down.
+     */
     keyDownHandler?: (e: KeyboardEvent) => void;
+
+    /**
+     * Change event handler for the edit mode content that can be
+     * overwritten in the Edit Mode Class.
+     *
+     * @param e
+     * The event that triggered the change.
+     */
     changeHandler?: (e: Event) => void;
+
+    /**
+     * Indicates whether the edit mode should finish after a change event.
+     */
     finishAfterChange: boolean;
 }
 
+/**
+ * Interface for rendering edit mode content in a cell. It allows the view
+ * renderers to be used in the edit mode of a cell.
+ */
 export interface EditModeRenderer {
-    render(cell: TableCell, parent?: HTMLElement): EditModeContent;
+    /**
+     * Renders the edit mode content for a given cell.
+     *
+     * @param cell
+     * The cell to render the edit mode content for.
+     */
+    render(cell: TableCell): EditModeContent;
 }

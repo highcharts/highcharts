@@ -50,20 +50,39 @@ const {
  */
 class DateInputRenderer extends CellRenderer implements EditModeRenderer {
 
+    /**
+     * The default edit mode renderer type name for this view renderer.
+     */
     public static defaultEditingRenderer: EditModeRendererTypeName =
         'dateInput';
 
+    /**
+     * Default options for the date input renderer.
+     */
     public static defaultOptions: DateInputRenderer.Options = {
         type: 'dateInput'
     };
 
-
     public override options: DateInputRenderer.Options;
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
         this.options = merge(DateInputRenderer.defaultOptions, options);
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     public override render(cell: TableCell): DateInputContent {
         return new DateInputContent(cell, this);
@@ -79,8 +98,16 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
  * */
 
 namespace DateInputRenderer {
+
+    /**
+     * Options to control the date input renderer content.
+     */
     export interface Options extends CellRenderer.Options {
         type: 'dateInput';
+
+        /**
+         * Whether the date input is disabled.
+         */
         disabled?: boolean;
     }
 }

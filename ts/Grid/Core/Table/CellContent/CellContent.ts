@@ -36,6 +36,9 @@ import type TableCell from '../Body/TableCell';
  */
 abstract class CellContent {
 
+    /**
+     * The cell to which the content belongs.
+     */
     public readonly cell: TableCell;
 
     /**

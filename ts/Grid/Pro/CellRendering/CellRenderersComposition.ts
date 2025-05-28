@@ -107,8 +107,7 @@ namespace CellRenderersComposition {
 declare module '../../Core/Options' {
     interface ColumnCellOptions {
         /**
-         * Options to control the cell content rendering. By default type of
-         * content is based on dataType option.
+         * Options to control the cell content rendering.
          */
         renderer?: CellRendererType['options'];
     }
@@ -116,6 +115,9 @@ declare module '../../Core/Options' {
 
 declare module '../../Core/Table/Column' {
     export default interface Column {
+        /**
+         * The cell view renderer instance for the column.
+         */
         cellRenderer: CellRendererType;
     }
 }

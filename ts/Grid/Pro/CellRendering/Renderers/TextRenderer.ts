@@ -49,17 +49,37 @@ const {
  */
 class TextRenderer extends CellRenderer {
 
+    /**
+     * The default edit mode renderer type names for this view renderer.
+     */
     public static defaultEditingRenderer: EditModeRendererTypeName =
         'textInput';
 
+    /**
+     * Default options for the text renderer.
+     */
     public static defaultOptions: TextRenderer.Options = {
         type: 'text'
     };
 
     public override options: TextRenderer.Options;
 
+    /**
+     * The format to use for the text content.
+     */
     public format?: string;
+
+    /**
+     * Formatter function for the text content.
+     */
     public formatter?: (this: TableCell) => string;
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     constructor(column: Column) {
         super(column);
@@ -78,6 +98,13 @@ class TextRenderer extends CellRenderer {
         this.formatter = cellOptions?.formatter;
     }
 
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
+
     public override render(cell: TableCell): TextContent {
         return new TextContent(cell);
     }
@@ -92,6 +119,9 @@ class TextRenderer extends CellRenderer {
 
 namespace TextRenderer {
 
+    /**
+     * Options to control the text renderer content.
+     */
     export interface Options extends CellRenderer.Options {
         type: 'text';
     }

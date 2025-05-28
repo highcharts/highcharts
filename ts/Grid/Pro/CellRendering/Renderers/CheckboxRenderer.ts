@@ -50,17 +50,38 @@ const {
  */
 class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
 
+    /**
+     * The default edit mode renderer type name for this view renderer.
+     */
     public static defaultEditingRenderer: EditModeRendererTypeName = 'checkbox';
+
+    /**
+     * Default options for the checkbox renderer.
+     */
     public static defaultOptions: CheckboxRenderer.Options = {
         type: 'checkbox'
     };
 
     public override options: CheckboxRenderer.Options;
 
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
         this.options = merge(CheckboxRenderer.defaultOptions, options);
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     public override render(cell: TableCell): CheckboxContent {
         return new CheckboxContent(cell, this);
@@ -76,8 +97,15 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
 
 namespace CheckboxRenderer {
 
+    /**
+     * Options to control the checkbox renderer content.
+     */
     export interface Options extends CellRenderer.Options {
         type: 'checkbox';
+
+        /**
+         * Whether the checkbox is disabled.
+         */
         disabled?: boolean;
     }
 }

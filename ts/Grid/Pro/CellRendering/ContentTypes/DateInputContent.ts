@@ -46,6 +46,9 @@ class DateInputContent extends CellContentPro implements EditModeContent {
 
     public changeHandler?: (e: Event) => void;
 
+    /**
+     * The HTML input element representing the date input.
+     */
     private input: HTMLInputElement;
 
 
@@ -61,7 +64,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         this.input = document.createElement('input');
         this.input.tabIndex = -1;
         this.input.type = 'date';
-        this.input.value = this.getInputAcceptableValue();
+        this.input.value = this.convertToInputValue();
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !!options.disabled;
 
@@ -75,17 +78,10 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
-    /**
-     * Returns value of input as number.
-     */
     public getValue(): number {
         return new Date(this.input.value).getTime();
     }
 
-    /**
-     * Returns reference to the HTML input.
-     * @returns
-     */
     public getMainElement(): HTMLInputElement {
         return this.input;
     }
@@ -102,27 +98,18 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         this.input?.remove();
     }
 
-    private getInputAcceptableValue(): string {
+    /**
+     * Converts the cell value to a string for the input.
+     */
+    private convertToInputValue(): string {
         const time = this.cell.column.viewport.grid.time;
         return time.dateFormat('%Y-%m-%d', Number(this.cell.value || 0));
     }
 
-    /**
-     * Handles the change event on the cell.
-     *
-     * @param e
-     * The event object.
-     */
     private readonly onChange = (e: Event): void => {
         this.changeHandler?.(e);
     };
 
-    /**
-     * Handles user keydown on the cell.
-     *
-     * @param e
-     * Keyboard event object.
-     */
     private readonly onKeyDown = (e: KeyboardEvent): void => {
         e.stopPropagation();
 
@@ -133,7 +120,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
 
         if (e.key === 'Escape') {
             this.cell.htmlElement.focus();
-            this.input.value = this.getInputAcceptableValue();
+            this.input.value = this.convertToInputValue();
             return;
         }
 
@@ -143,13 +130,6 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         }
     };
 
-    /**
-     * Handles the blur event on the cell.
-     *
-     * @param e
-     * The event object.
-     *
-     */
     private readonly onBlur = (e: FocusEvent): void => {
         if (this.blurHandler) {
             this.blurHandler(e);
@@ -159,12 +139,6 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         void this.cell.setValue(this.getValue(), true);
     };
 
-    /**
-     * Callback function called when a key is pressed on a cell.
-     *
-     * @param e
-     * The event object.
-     */
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {
         if (e.key === ' ') {
             this.input.focus();

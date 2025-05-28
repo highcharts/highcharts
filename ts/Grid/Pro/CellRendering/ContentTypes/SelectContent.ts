@@ -48,8 +48,14 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
     public changeHandler?: (e: Event) => void;
 
+    /**
+     * The HTML select element representing the select input.
+     */
     private select: HTMLSelectElement;
 
+    /**
+     * The HTML option elements representing the options in the select input.
+     */
     private optionElements: HTMLOptionElement[] = [];
 
 
@@ -121,20 +127,10 @@ class SelectContent extends CellContentPro implements EditModeContent {
         }
     }
 
-    /**
-     * Returns reference to the HTML Select.
-     * @returns
-     */
     public getMainElement(): HTMLSelectElement {
         return this.select;
     }
 
-    /**
-     * Handles the change event on the cell.
-     *
-     * @param e
-     * The event object.
-     */
     private readonly onChange = (e: Event): void => {
         if (this.changeHandler) {
             this.changeHandler(e);
@@ -144,12 +140,6 @@ class SelectContent extends CellContentPro implements EditModeContent {
         }
     };
 
-    /**
-     * Handles user keydown on the cell.
-     *
-     * @param e
-     * Keyboard event object.
-     */
     private readonly onKeyDown = (e: KeyboardEvent): void => {
         e.stopPropagation();
 
@@ -163,23 +153,10 @@ class SelectContent extends CellContentPro implements EditModeContent {
         }
     };
 
-    /**
-     * Handles the blur event on the cell.
-     *
-     * @param e
-     * The event object.
-     *
-     */
     private readonly onBlur = (e: FocusEvent): void => {
         this.blurHandler?.(e);
     };
 
-    /**
-     * Callback function called when a key is pressed on a cell.
-     *
-     * @param e
-     * The event object.
-     */
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {
         if (e.key === ' ') {
             this.select.focus();

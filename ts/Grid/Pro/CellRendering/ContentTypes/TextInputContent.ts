@@ -53,6 +53,9 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
     public changeHandler?: (e: Event) => void;
 
+    /**
+     * The HTML input element representing the text input.
+     */
     private input: HTMLInputElement;
 
     constructor(cell: TableCell, renderer: TextInputRenderer) {
@@ -66,7 +69,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
         this.input = document.createElement('input');
         this.input.tabIndex = -1;
-        this.input.value = this.getInputAcceptableValue();
+        this.input.value = this.convertToInputValue();
         this.input.name = cell.column.id + '-' + cell.row.id;
         this.input.disabled = !!options.disabled;
 
@@ -99,15 +102,14 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         }
     }
 
-    private getInputAcceptableValue(): string {
+    /**
+     * Converts the cell value to a string for the input.
+     */
+    private convertToInputValue(): string {
         const val = this.cell.value;
         return defined(val) ? '' + val : '';
     }
 
-    /**
-     * Returns reference to the HTML input.
-     * @returns
-     */
     public getMainElement(): HTMLInputElement {
         return this.input;
     }
@@ -125,12 +127,6 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         this.input?.remove();
     }
 
-    /**
-     * Handles the change event on the cell.
-     *
-     * @param e
-     * The event object.
-     */
     private readonly onChange = (e: Event): void => {
         if (this.changeHandler) {
             this.changeHandler(e);
@@ -140,12 +136,6 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         void this.cell.setValue((e.target as HTMLSelectElement).value, true);
     };
 
-    /**
-     * Handles user keydown on the cell.
-     *
-     * @param e
-     * Keyboard event object.
-     */
     private readonly onKeyDown = (e: KeyboardEvent): void => {
         e.stopPropagation();
 
@@ -155,7 +145,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         }
 
         if (e.key === 'Escape') {
-            this.input.value = this.getInputAcceptableValue();
+            this.input.value = this.convertToInputValue();
             this.cell.htmlElement.focus();
             return;
         }
@@ -165,23 +155,10 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         }
     };
 
-    /**
-     * Handles the blur event on the cell.
-     *
-     * @param e
-     * The event object.
-     *
-     */
     private readonly onBlur = (e: FocusEvent): void => {
         this.blurHandler?.(e);
     };
 
-    /**
-     * Callback function called when a key is pressed on a cell.
-     *
-     * @param e
-     * The event object.
-     */
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {
         if (e.key === ' ') {
             this.input.focus();

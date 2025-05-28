@@ -50,7 +50,14 @@ const {
  */
 class SelectRenderer extends CellRenderer implements EditModeRenderer {
 
+    /**
+     * The default edit mode renderer type name for this view renderer.
+     */
     public static defaultEditingRenderer: EditModeRendererTypeName = 'select';
+
+    /**
+     * Default options for the select renderer.
+     */
     public static defaultOptions: SelectRenderer.Options = {
         type: 'select',
         options: []
@@ -58,10 +65,24 @@ class SelectRenderer extends CellRenderer implements EditModeRenderer {
 
     public override options: SelectRenderer.Options;
 
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
         this.options = merge(SelectRenderer.defaultOptions, options);
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     public override render(cell: TableCell): SelectContent {
         return new SelectContent(cell, this);
@@ -78,15 +99,41 @@ class SelectRenderer extends CellRenderer implements EditModeRenderer {
 
 namespace SelectRenderer {
 
+    /**
+     * Options to define a single select option.
+     */
     export interface SelectOption {
+        /**
+         * The value of the option.
+         */
         value: string;
+
+        /**
+         * The label of the option.
+         */
         label?: string;
+
+        /**
+         * Whether the option is disabled. If true, the option cannot be
+         * selected.
+         */
         disabled?: boolean;
     }
 
+    /**
+     * Options to control the select renderer content.
+     */
     export interface Options extends CellRenderer.Options {
         type: 'select';
+
+        /**
+         * The options available in the select input.
+         */
         options: SelectOption[];
+
+        /**
+         * Whether the select input is disabled.
+         */
         disabled?: boolean;
     }
 }

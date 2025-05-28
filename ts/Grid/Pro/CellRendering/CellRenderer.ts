@@ -36,8 +36,14 @@ import type CellContent from '../../Core/Table/CellContent/CellContent';
  */
 abstract class CellRenderer {
 
+    /**
+     * Options to control the renderer content.
+     */
     public abstract options: CellRenderer.Options;
 
+    /**
+     * The column to which the specific renderer belongs.
+     */
     public readonly column: Column;
 
     /**
@@ -72,6 +78,15 @@ namespace CellRenderer {
     export interface Options {
         /**
          * The cell content type.
+         *
+         * Can be one of the following: `'text'`, `'checkbox'`, `'select'`,
+         * `'textInput'`, `'dateInput'`.
+         *
+         * You can also create your own custom renderer by extending the
+         * `CellRenderer` class and registering it in the
+         * `CellRendererTypeRegistry`.
+         *
+         * @default 'text'
          */
         type: string;
     }

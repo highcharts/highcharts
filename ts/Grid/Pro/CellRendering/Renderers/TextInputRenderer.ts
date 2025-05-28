@@ -50,6 +50,9 @@ const {
  */
 class TextInputRenderer extends CellRenderer implements EditModeRenderer {
 
+    /**
+     * The default edit mode renderer type names for this view renderer.
+     */
     public static defaultEditingRenderer: Record<
     Column.DataType, EditModeRendererTypeName
     > = {
@@ -59,16 +62,33 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
             datetime: 'dateInput'
         };
 
+    /**
+     * Default options for the text input renderer.
+     */
     public static defaultOptions: TextInputRenderer.Options = {
         type: 'textInput'
     };
 
     public override options: TextInputRenderer.Options;
 
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
         this.options = merge(TextInputRenderer.defaultOptions, options);
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     public override render(cell: TableCell): TextInputContent {
         return new TextInputContent(cell, this);
@@ -84,8 +104,16 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
  * */
 
 namespace TextInputRenderer {
+
+    /**
+     * Options to control the text input renderer content.
+     */
     export interface Options extends CellRenderer.Options {
         type: 'textInput';
+
+        /**
+         * Whether the text input is disabled.
+         */
         disabled?: boolean;
     }
 }
