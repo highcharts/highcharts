@@ -55,10 +55,23 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
     private input: HTMLInputElement;
 
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(cell: TableCell, renderer: CheckboxRenderer) {
         super(cell, renderer);
         this.input = this.add();
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     protected override add(): HTMLInputElement {
         const cell = this.cell;

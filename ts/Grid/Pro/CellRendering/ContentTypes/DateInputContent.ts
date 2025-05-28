@@ -52,10 +52,23 @@ class DateInputContent extends CellContentPro implements EditModeContent {
     private input: HTMLInputElement;
 
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(cell: TableCell, renderer: DateInputRenderer) {
         super(cell, renderer);
         this.input = this.add();
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     public override add(): HTMLInputElement {
         const cell = this.cell;

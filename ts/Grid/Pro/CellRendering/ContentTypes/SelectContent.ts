@@ -59,10 +59,23 @@ class SelectContent extends CellContentPro implements EditModeContent {
     private optionElements: HTMLOptionElement[] = [];
 
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(cell: TableCell, renderer: SelectRenderer) {
         super(cell, renderer);
         this.select = this.add();
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     protected override add(): HTMLSelectElement {
         const cell = this.cell;
