@@ -104,6 +104,10 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         return defined(val) ? '' + val : '';
     }
 
+    /**
+     * Returns reference to the HTML input.
+     * @returns
+     */
     public getMainElement(): HTMLInputElement {
         return this.input;
     }
@@ -121,6 +125,12 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         this.input?.remove();
     }
 
+    /**
+     * Handles the change event on the cell.
+     *
+     * @param e
+     * The event object.
+     */
     private readonly onChange = (e: Event): void => {
         if (this.changeHandler) {
             this.changeHandler(e);
@@ -130,6 +140,12 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         void this.cell.setValue((e.target as HTMLSelectElement).value, true);
     };
 
+    /**
+     * Handles user keydown on the cell.
+     *
+     * @param e
+     * Keyboard event object.
+     */
     private readonly onKeyDown = (e: KeyboardEvent): void => {
         e.stopPropagation();
 
@@ -149,10 +165,23 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         }
     };
 
+    /**
+     * Handles the blur event on the cell.
+     *
+     * @param e
+     * The event object.
+     *
+     */
     private readonly onBlur = (e: FocusEvent): void => {
         this.blurHandler?.(e);
     };
 
+    /**
+     * Callback function called when a key is pressed on a cell.
+     *
+     * @param e
+     * The event object.
+     */
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {
         if (e.key === ' ') {
             this.input.focus();

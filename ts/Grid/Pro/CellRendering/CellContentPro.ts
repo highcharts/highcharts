@@ -33,9 +33,21 @@ import CellContent from '../../Core/Table/CellContent/CellContent.js';
  *
  * */
 
+/**
+ * Represents a cell content in the grid.
+ */
 abstract class CellContentPro extends CellContent {
     public readonly renderer: CellRenderer;
 
+    /**
+     * Creates and renders the cell content.
+     *
+     * @param cell
+     * The cell to which the content belongs.
+     *
+     * @param renderer
+     * Renderer that allows print content (inputs, selects, etc.)
+     */
     constructor(cell: TableCell, renderer: CellRenderer) {
         super(cell);
         this.renderer = renderer;

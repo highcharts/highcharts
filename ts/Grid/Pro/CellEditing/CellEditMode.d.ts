@@ -35,6 +35,10 @@ export interface EditModeContent<
     E extends HTMLElement = HTMLElement
 > {
     getMainElement(): E;
+
+    /**
+     * Returns the value of the cell in the edit mode.
+     */
     getValue(): DataTable.CellType;
     destroy(): void;
     blurHandler?: (e: FocusEvent) => void;

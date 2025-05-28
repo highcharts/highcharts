@@ -34,7 +34,7 @@ import CellContentPro from '../CellContentPro.js';
  * */
 
 /**
- * Represents a text input type of cell content.
+ * Represents a date input type of cell content.
  */
 class DateInputContent extends CellContentPro implements EditModeContent {
 
@@ -75,10 +75,17 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
+    /**
+     * Returns value of input as number.
+     */
     public getValue(): number {
         return new Date(this.input.value).getTime();
     }
 
+    /**
+     * Returns reference to the HTML input.
+     * @returns
+     */
     public getMainElement(): HTMLInputElement {
         return this.input;
     }
@@ -100,10 +107,22 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         return time.dateFormat('%Y-%m-%d', Number(this.cell.value || 0));
     }
 
+    /**
+     * Handles the change event on the cell.
+     *
+     * @param e
+     * The event object.
+     */
     private readonly onChange = (e: Event): void => {
         this.changeHandler?.(e);
     };
 
+    /**
+     * Handles user keydown on the cell.
+     *
+     * @param e
+     * Keyboard event object.
+     */
     private readonly onKeyDown = (e: KeyboardEvent): void => {
         e.stopPropagation();
 
@@ -124,6 +143,13 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         }
     };
 
+    /**
+     * Handles the blur event on the cell.
+     *
+     * @param e
+     * The event object.
+     *
+     */
     private readonly onBlur = (e: FocusEvent): void => {
         if (this.blurHandler) {
             this.blurHandler(e);
@@ -133,6 +159,12 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         void this.cell.setValue(this.getValue(), true);
     };
 
+    /**
+     * Callback function called when a key is pressed on a cell.
+     *
+     * @param e
+     * The event object.
+     */
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {
         if (e.key === ' ') {
             this.input.focus();
