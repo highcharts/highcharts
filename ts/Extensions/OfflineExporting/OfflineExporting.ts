@@ -46,8 +46,6 @@ const {
     doc,
     win
 } = G;
-import HU from '../../Core/HttpUtilities.js';
-const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -265,7 +263,7 @@ namespace OfflineExporting {
         const svgNode = preparePDF(svg, pdfFont);
         if (svgNode) {
             // Loads all required fonts
-            loadPdfFonts(svgNode, pdfFont);
+            await loadPdfFonts(svgNode, pdfFont);
 
             // Transform SVG to PDF
             const pdfData = await svgToPdf(svgNode, 0, scale);
@@ -296,10 +294,10 @@ namespace OfflineExporting {
      * @requires modules/exporting
      * @requires modules/offline-exporting
      */
-    function loadPdfFonts(
+    async function loadPdfFonts(
         svgElement: SVGElement,
         pdfFont?: PdfFontOptions
-    ): void {
+    ): Promise<void> {
         const hasNonASCII = (s: string): boolean => (
             // eslint-disable-next-line no-control-regex
             /[^\u0000-\u007F\u200B]+/.test(s)
@@ -340,46 +338,49 @@ namespace OfflineExporting {
         // Shift the first element off the variants and add as a font.
         // Then asynchronously trigger the next variant until variants are empty
         let normalBase64: (string | undefined);
-        const shiftAndLoadVariant = (): void => {
-            const variant = variants.shift();
 
-            // All variants shifted and possibly loaded, proceed
-            if (!variant) {
-                return;
-            }
-
+        for (const variant of variants) {
             const url = pdfFont?.[variant];
             if (url) {
-                ajax({
-                    url,
-                    responseType: 'blob',
-                    success: (_, xhr): void => {
-                        const reader = new FileReader();
-                        reader.onloadend = function (): void {
-                            if (typeof this.result === 'string') {
-                                const base64 = this.result.split(',')[1];
-                                addFont(variant, base64);
+                try {
+                    const response = await win.fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch font: ${url}`);
+                    }
+                    const blob = await response.blob(),
+                        reader = new FileReader();
 
-                                if (variant === 'normal') {
-                                    normalBase64 = base64;
-                                }
+                    const base64: string = await new Promise((
+                        resolve,
+                        reject
+                    ): void => {
+                        reader.onloadend = (): void => {
+                            if (typeof reader.result === 'string') {
+                                resolve(reader.result.split(',')[1]);
+                            } else {
+                                reject(
+                                    new Error('Failed to read font as base64')
+                                );
                             }
-                            shiftAndLoadVariant();
                         };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    });
+                    addFont(variant, base64);
 
-                        reader.readAsDataURL(xhr.response);
-                    },
-                    error: shiftAndLoadVariant
-                });
+                    if (variant === 'normal') {
+                        normalBase64 = base64;
+                    }
+                } catch (e) {
+                    // If fetch or reading fails, fallback to next variant
+                }
             } else {
                 // For other variants, fall back to normal text weight/style
                 if (normalBase64) {
                     addFont(variant, normalBase64);
                 }
-                shiftAndLoadVariant();
             }
-        };
-        shiftAndLoadVariant();
+        }
     }
 
     /**
