@@ -93,7 +93,8 @@ declare module '../../Series/PointOptions' {
 }
 
 interface AxisBreakObject extends AxisBreakOptions {
-    showPoints: boolean;
+    showPoints?: boolean;
+    maxOffset?: number;
 }
 
 interface GridNode {
@@ -158,25 +159,22 @@ let TickConstructor: (typeof Tick|undefined);
  */
 function getBreakFromNode(
     node: GridNode,
-    max: number
+    axis: Axis
 ): AxisBreakObject {
-    const to = node.collapseEnd || 0;
-
-    let from = node.collapseStart || 0;
-
-    // In broken-axis, the axis.max is minimized until it is not within a
-    // break. Therefore, if break.to is larger than axis.max, the axis.to
-    // should not add the 0.5 axis.tickMarkOffset, to avoid adding a break
-    // larger than axis.max.
-    // TODO consider simplifying broken-axis and this might solve itself
-    if (to >= max) {
-        from -= 0.5;
-    }
+    const to = node.collapseEnd || 0,
+        from = node.collapseStart || 0;
 
     return {
-        from: from,
-        to: to,
-        showPoints: false
+        from,
+        to,
+        showPoints: false,
+        // In broken-axis, the axis.max is minimized until it is not within a
+        // break. Therefore, if break.to is larger than axis.max, the axis.to
+        // should not add the axis.tickmarkOffset, to avoid adding a break
+        // larger than axis.max.
+        // TODO - WiP: this is now broken in a different way...
+        // maxOffset: (typeof axis.max === 'number' && to >= axis.max) ?
+        //     axis.tickmarkOffset : 0
     };
 }
 
@@ -648,8 +646,7 @@ function wrapInit(
         ): void {
             if (e.options.data) {
                 const treeGrid = getTreeGridFromData(
-                    (
-                        e.options.data as any),
+                    e.options.data as any,
                     userOptions.uniqueNames || false,
                     1
                 );
@@ -663,30 +660,28 @@ function wrapInit(
         // Collapse all nodes in axis.treegrid.collapsednodes
         // where collapsed equals true.
         addEvent(axis, 'foundExtremes', function (): void {
-            if (axis.treeGrid.collapsedNodes) {
-                axis.treeGrid.collapsedNodes.forEach(function (
-                    node: GridNode
-                ): void {
-                    const breaks = axis.treeGrid.collapse(node);
+            axis.treeGrid.collapsedNodes?.forEach(function (
+                node: GridNode
+            ): void {
+                const breaks = axis.treeGrid.collapse(node);
 
-                    if (axis.brokenAxis) {
-                        axis.brokenAxis.setBreaks(breaks, false);
+                if (axis.brokenAxis) {
+                    axis.brokenAxis.setBreaks(breaks, false);
 
-                        // Remove the node from the axis collapsedNodes
-                        if (axis.treeGrid.collapsedNodes) {
-                            axis.treeGrid.collapsedNodes = axis.treeGrid
-                                .collapsedNodes
-                                .filter((n): boolean => (
-                                    (
-                                        node.collapseStart !==
-                                        n.collapseStart
-                                    ) ||
-                                    node.collapseEnd !== n.collapseEnd
-                                ));
-                        }
+                    // Remove the node from the axis collapsedNodes
+                    if (axis.treeGrid.collapsedNodes) {
+                        axis.treeGrid.collapsedNodes = axis.treeGrid
+                            .collapsedNodes
+                            .filter((n): boolean => (
+                                (
+                                    node.collapseStart !==
+                                    n.collapseStart
+                                ) ||
+                                node.collapseEnd !== n.collapseEnd
+                            ));
                     }
-                });
-            }
+                }
+            });
         });
 
         // If staticScale is not defined on the yAxis
@@ -958,6 +953,9 @@ class TreeGridAxisAdditions {
     public tree?: TreeNode;
     public collapsedNodes?: GridNode[];
 
+    public collapsedSize: number = 0;
+    public pendingSizeAdjustment: number = 0;
+
     /* *
      *
      *  Functions
@@ -1015,7 +1013,10 @@ class TreeGridAxisAdditions {
     public collapse(node: GridNode): Array<AxisBreakOptions> {
         const axis = this.axis,
             breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis.max);
+            obj = getBreakFromNode(node, axis);
+
+        const brkSize = obj.to - obj.from; // - (obj.maxOffset || 0);
+        axis.treeGrid.collapsedSize += brkSize;
 
         breaks.push(obj);
         // Change the collapsed flag #13838
@@ -1045,8 +1046,10 @@ class TreeGridAxisAdditions {
     public expand(node: GridNode): Array<AxisBreakOptions> {
         const axis = this.axis,
             breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis.max);
+            obj = getBreakFromNode(node, axis);
 
+        const brkSize = obj.to - obj.from; // - (obj.maxOffset || 0);
+        axis.treeGrid.collapsedSize -= brkSize;
         // Change the collapsed flag #13838
         node.collapsed = false;
         axis.treeGrid.setCollapsedStatus(node);
@@ -1117,7 +1120,7 @@ class TreeGridAxisAdditions {
     public isCollapsed(node: GridNode): boolean {
         const axis = this.axis,
             breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis.max);
+            obj = getBreakFromNode(node, axis);
 
         return breaks.some(function (b): boolean {
             return b.from === obj.from && b.to === obj.to;

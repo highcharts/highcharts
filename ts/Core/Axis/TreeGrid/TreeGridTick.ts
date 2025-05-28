@@ -36,6 +36,7 @@ import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
+    correctFloat,
     removeEvent,
     isObject,
     isNumber,
@@ -517,7 +518,7 @@ class TreeGridTickAdditions {
      * Whether to redraw the chart or wait for an explicit call to
      * {@link Highcharts.Chart#redraw}
      */
-    public toggleCollapse(redraw?: boolean): void {
+    public toggleCollapse(redraw: boolean = true): void {
         const tick = this.tick,
             axis = tick.axis,
             brokenAxis = axis.brokenAxis;
@@ -528,9 +529,83 @@ class TreeGridTickAdditions {
         ) {
             const pos = tick.pos,
                 node = axis.treeGrid.mapOfPosToGridNode[pos],
-                breaks = axis.treeGrid.toggleCollapse(node);
+                breaks = axis.treeGrid.toggleCollapse(node),
+                scrollMode = !!axis.scrollbar,
+                maxPx = axis.len + (axis.treeGrid.pendingSizeAdjustment || 0);
+            axis.treeGrid.pendingSizeAdjustment = 0;
 
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
+            brokenAxis.setBreaks(breaks, scrollMode && redraw);
+
+            if (scrollMode) {
+                let newMaxVal = axis.toValue(maxPx) - axis.tickmarkOffset;
+                let newMinVal = axis.userMin ?? axis.min;
+                //console.log('newMaxVal ', newMaxVal);
+                if (newMaxVal > axis.dataMax) {
+                    let missingPx = maxPx - axis.toPixels(axis.dataMax + axis.tickmarkOffset);
+                    newMaxVal = axis.dataMax;
+                    
+                    //console.log('missingPx (+)', missingPx);
+
+                    // Check if room on the min end.
+                    newMinVal = axis.toValue(axis.toPixels((axis.userMin ?? axis.min) - axis.tickmarkOffset) - missingPx) + axis.tickmarkOffset;
+
+                    //console.log('newMinVal ', newMinVal);
+                    if (newMinVal < axis.dataMin) {
+                        missingPx = axis.toPixels(axis.dataMin) - axis.toPixels(newMinVal);
+                        newMinVal = axis.dataMin;
+                        axis.treeGrid.pendingSizeAdjustment = missingPx;
+                    }
+                }
+                console.log('B TTT adjusting from | to ', [axis.userMin ?? axis.min, axis.userMax ?? axis.max],[correctFloat(newMinVal), correctFloat(newMaxVal)]);
+                axis.treeGrid.pendingSizeAdjustment ? console.log('missing ', axis.treeGrid.pendingSizeAdjustment) : 1;
+                axis.setExtremes(correctFloat(newMinVal), correctFloat(newMaxVal), false, false, { trigger: 'toggleCollapse' });
+            }
+            
+            // TODO: maybe based on scrollbar added or a prop?
+            // Way A
+            // console.log('A TTT this is the hidden total: ', axis.treeGrid.collapsedSize);
+            // let toAdjust = correctFloat(axis.treeGrid.collapsedSize - oldCollapsedSize + axis.treeGrid.pendingSizeAdjustment);
+            // if (axis.scrollbar && toAdjust) {
+            //     console.log('TTT adjusting for & corr', toAdjust - axis.treeGrid.pendingSizeAdjustment, axis.treeGrid.pendingSizeAdjustment);
+            //     axis.treeGrid.pendingSizeAdjustment = 0;
+
+            //     let min = axis.userMin ?? axis.min;
+            //     let max = axis.userMax ?? axis.max;
+                
+            //     const maxSurplus = axis.dataMax - max;
+            //     const minSurplus = min - axis.dataMin;
+
+            //     // TODO: problem is that you can't adjust into the hidden/break
+            //     // range.
+            //     if (toAdjust > 0) {
+            //         // add it
+            //         if (maxSurplus < toAdjust) {
+            //             toAdjust -= maxSurplus;
+            //             max = axis.dataMax;
+            //             if (minSurplus < toAdjust) {
+            //                 // the size will be reduced
+            //                 toAdjust -= minSurplus;
+            //                 min = axis.dataMin;
+            //                 console.log('TTT_ ret leftovers ', toAdjust);
+            //                 axis.treeGrid.pendingSizeAdjustment += toAdjust;
+            //             } else {
+            //                 min -= toAdjust;
+            //             }
+            //         } else {
+            //             max += toAdjust;
+            //         }
+            //     } else if (toAdjust < 0) {
+            //         // adjust it (adding negative is subtracting)
+            //         max += toAdjust;
+            //         // TODO: this is overoptimistic - will break on edge cases
+            //     }
+            //     console.log('TTT adjusting from | to ', [axis.userMin ?? axis.min, axis.userMax ?? axis.max],[correctFloat(min), correctFloat(max)]);
+            //     axis.setExtremes(correctFloat(min), correctFloat(max), false, false, { trigger: 'toggleCollapse' });
+            // }
+
+            if (redraw) {
+                axis.chart.redraw();
+            }
         }
     }
 }
