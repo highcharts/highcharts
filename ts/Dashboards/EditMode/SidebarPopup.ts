@@ -64,19 +64,16 @@ class SidebarPopup extends BaseForm {
                 return;
             }
 
-            const row = (
-                    dropContext.getType() === 'cell' ?
-                        (dropContext as Cell).row :
-                        (dropContext as Row)
-                ),
+            const isCellType = dropContext.getType() === 'cell',
+                row = isCellType ? (dropContext as Cell).row :
+                    (dropContext as Row),
                 board = row.layout.board,
                 cellId = GUIElement.getElementId('cell');
-            let layout;
 
-            if (dropContext.getType() === 'cell') {
+            if (isCellType) {
                 const newLayoutId = GUIElement.getElementId('layout');
 
-                layout = new Layout(board, {
+                const layout = new Layout(board, {
                     id: newLayoutId,
                     copyId: '',
                     parentContainerId: board.container.id,
@@ -99,12 +96,10 @@ class SidebarPopup extends BaseForm {
                         board
                     }
                 );
-            }   else {
-                layout = (dropContext as Row).layout;
-
-                layout.rows[0].addCell({
+            } else {
+                (dropContext as Row).layout.rows[0].addCell({
                     id: cellId
-                })
+                });
             }
 
             void Bindings.addComponent({
