@@ -40,6 +40,13 @@ abstract class CellRenderer {
 
     public readonly column: Column;
 
+    /**
+     * Constructs the CellRenderer instance.
+     *
+     * @param column
+     * The column of the cell.
+     *
+     */
     public constructor(column: Column) {
         this.column = column;
     }
@@ -59,6 +66,9 @@ abstract class CellRenderer {
 
 namespace CellRenderer {
 
+    /**
+     * Options to control the renderer content.
+     */
     export interface Options {
         /**
          * The cell content type.
