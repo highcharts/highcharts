@@ -147,8 +147,8 @@ dataPool: {
 }
 ```
 
-To use a specific `DataTable` in a component, define the `dataTableKey` property
-to indicate the corresponding `key` in the component's connector options:
+To use a specific `DataTable` in a component, define the [dataTableKey](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_ConnectorHandler.ConnectorHandler.ConnectorOptions#dataTableKey) property to indicate the
+corresponding `key` in the component's connector options:
 
 ```javascript
 components: [{
