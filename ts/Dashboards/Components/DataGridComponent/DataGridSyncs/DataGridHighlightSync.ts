@@ -71,7 +71,8 @@ const syncPair: Sync.SyncPair = {
                     type: 'position',
                     row: cell.row.id,
                     column: cell.column.id,
-                    state: 'point.mouseOver' + groupKey
+                    state: 'point.mouseOver' + groupKey,
+                    sourceId: this.id
                 });
             }
         };
@@ -84,7 +85,8 @@ const syncPair: Sync.SyncPair = {
                     type: 'position',
                     row: cell.row.id,
                     column: cell.column.id,
-                    state: 'point.mouseOut' + groupKey
+                    state: 'point.mouseOut' + groupKey,
+                    sourceId: this.id
                 });
             }
         };
@@ -130,7 +132,10 @@ const syncPair: Sync.SyncPair = {
 
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
-            if (cursor.type !== 'position') {
+            if (
+                cursor.sourceId === component.id ||
+                cursor.type !== 'position'
+            ) {
                 return;
             }
 
@@ -155,9 +160,9 @@ const syncPair: Sync.SyncPair = {
             grid.syncColumn(column);
         };
 
-        const handleCursorOut = (): void => {
+        const handleCursorOut = (e: DataCursor.Event): void => {
             const { grid } = component;
-            if (grid) {
+            if (grid && e.cursor.sourceId !== component.id) {
                 grid.syncColumn();
                 grid.syncRow();
             }
