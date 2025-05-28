@@ -196,6 +196,41 @@ namespace OfflineExporting {
     }
 
     /**
+     * Get data URL to an image of an SVG and call download on it options
+     * object:
+     * - **filename:** Name of resulting downloaded file without extension.
+     * Default is `chart`.
+     *
+     * - **type:** File type of resulting download. Default is `image/png`.
+     *
+     * - **scale:** Scaling factor of downloaded image compared to source.
+     * Default is `1`.
+     * - **libURL:** URL pointing to location of dependency scripts to download
+     * on demand. Default is the exporting.libURL option of the global
+     * Highcharts options pointing to our server.
+     *
+     * @function Highcharts.downloadSVGLocal
+     * @deprecated
+     *
+     * @param {string} svg
+     * The generated SVG
+     *
+     * @param {Highcharts.ExportingOptions} options
+     * The exporting options
+     *
+     */
+    export async function downloadSVGLocal(
+        svg: string,
+        options: ExportingOptions
+    ): Promise<void> {
+        await G.Exporting.prototype.downloadSVG.call(
+            void 0,
+            svg,
+            options
+        );
+    }
+
+    /**
      * Converts an SVG string into a PDF file and triggers its download. This
      * function processes the SVG, applies necessary font adjustments, converts
      * it to a PDF, and initiates the file download.

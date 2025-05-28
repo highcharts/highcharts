@@ -27,27 +27,29 @@ Highcharts.getSVG = async function (charts, options) {
             svgArr.push(svg);
         },
         exportChart = async function (i) {
-            if (i === charts.length) {
-                return `<svg version="1.1" width="${width}" height="${top}"
-                            viewBox="0 0 ${width} ${top}"
-                            xmlns="http://www.w3.org/2000/svg">
-                        ${svgArr.join('')}
-                    </svg>`;
-            }
-
             try {
-                const svg = await charts[i].exporting.localExport(
-                    options,
-                    {}
-                );
-                addSVG(svg);
-                // Export next only when this SVG is received
-                return exportChart(i + 1);
+                if (charts[i]) {
+                    charts[i].exporting.downloadSVG = () => {
+                        console.log('Single chart export disabled');
+                    };
+                    const svg = await charts[i].exporting.localExport(
+                        options,
+                        {}
+                    );
+                    addSVG(svg);
+                    // Export next only when this SVG is received
+                    return exportChart(i + 1);
+                }
             } catch {
-                console.log('Failed to get SVG');
+                console.log('Failed to get SVG', i);
             }
         };
     await exportChart(0);
+    return `<svg version="1.1" width="${width}" height="${top}"
+            viewBox="0 0 ${width} ${top}"
+            xmlns="http://www.w3.org/2000/svg">
+        ${svgArr.join('')}
+    </svg>`;
 };
 
 /**
