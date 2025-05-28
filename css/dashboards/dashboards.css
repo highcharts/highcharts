@@ -45,6 +45,36 @@
     --highcharts-dashboards-dropdown-box-shadow-color: 34, 34, 34, 0.1;
 }
 
+.highcharts-dashboards,
+.highcharts-dashboards-wrapper {
+    background-color: var(--highcharts-neutral-color-3);
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
+    box-shadow:
+        0 13px 5px 0 rgba(0, 0, 0, 0.01),
+        0 7px 4px 0 rgba(0, 0, 0, 0.02),
+        0 3px 3px 0 rgba(0, 0, 0, 0.05),
+        0 1px 2px 0 rgba(0, 0, 0, 0.1),
+        0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.highcharts-light {
+    .highcharts-dashboards,
+    .highcharts-dashboards-wrapper {
+        background-color: var(--highcharts-neutral-color-3);
+    }
+
+    .highcharts-dashboards-cell > .highcharts-dashboards-component {
+        box-shadow:
+            0 13px 5px 0 rgba(0, 0, 0, 0.01),
+            0 7px 4px 0 rgba(0, 0, 0, 0.02),
+            0 3px 3px 0 rgba(0, 0, 0, 0.05),
+            0 1px 2px 0 rgba(0, 0, 0, 0.1),
+            0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+    }
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         /* UI colors */
@@ -73,6 +103,16 @@
         /* Content color variations */
         --highcharts-dashboards-content-background-color: rgb(214, 214, 214);
         --highcharts-dashboards-content-hover-color: rgb(0, 0, 0);
+    }
+
+    /* Colors and settings not fitting the variable scheme */
+    .highcharts-dashboards,
+    .highcharts-dashboards-wrapper {
+        background-color: #000000;
+    }
+
+    .highcharts-dashboards-cell > .highcharts-dashboards-component {
+        box-shadow: inset 0 1px 0 #ffffff20;
     }
 
     .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn,
@@ -121,6 +161,34 @@
     /* Content color variations */
     --highcharts-dashboards-content-background-color: rgb(214, 214, 214);
     --highcharts-dashboards-content-hover-color: rgb(0, 0, 0);
+
+    /* Colors and settings not fitting the variable scheme */
+    .highcharts-dashboards,
+    .highcharts-dashboards-wrapper {
+        background-color: #000000;
+    }
+
+    .highcharts-dashboards-cell > .highcharts-dashboards-component {
+        box-shadow: inset 0 1px 0 #ffffff20;
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn,
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn,
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
+        filter: invert(1) brightness(1);
+    }
+
+    .highcharts-dashboards-edit-popup-close,
+    .highcharts-dashboards-edit-pointer,
+    .highcharts-dashboards-edit-accordion-header-icon {
+        filter: invert(1);
+    }
+
+    .highcharts-dashboards-edit-sidebar-title,
+    .highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toolbar-item div {
+        filter: brightness(0) invert(1);
+    }
 }
 
 /* stylelint-disable max-line-length */
@@ -177,7 +245,6 @@
 
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
-    background-color: var(--highcharts-neutral-color-5);
     padding: 20px 10px;
     position: relative;
     overflow: hidden;
@@ -269,13 +336,8 @@
     position: relative;
     margin: 5px;
     background-color: var(--highcharts-background-color);
-    box-shadow:
-        0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
-        0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
-        0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
-        0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
     background-clip: border-box;
-    border-radius: 3px;
+    border-radius: 6px;
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component .highcharts-dashboards-component-kpi-chart-container {
