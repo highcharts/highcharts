@@ -198,7 +198,10 @@ export const domurl = win.URL || win.webkitURL || win;
  * */
 
 /**
- * Exporting of a chart.
+ * The Exporting class provides methods for exporting charts to images. If the
+ * exporting module is loaded, this class is instantiated on the chart and
+ * available through the `chart.exporting` property. Read more about the
+ * [exporting module](https://www.highcharts.com/docs/export-module-overview).
  *
  * @class
  * @name Highcharts.Exporting
@@ -1153,19 +1156,20 @@ class Exporting {
     }
 
     /**
-     * Get data URL to an image of an SVG and call download on it options
+     * Get data URL to an image of an SVG and call download on its options
      * object:
      *
      * - **filename:** Name of resulting downloaded file without extension.
-     * Default is `chart`.
+     * Default is based on the chart title.
      * - **type:** File type of resulting download. Default is `image/png`.
      * - **scale:** Scaling factor of downloaded image compared to source.
-     * Default is `1`.
+     * Default is `2`.
      * - **libURL:** URL pointing to location of dependency scripts to download
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
      *
      * @async
+     * @private
      * @function Highcharts.Exporting#downloadSVG
      *
      * @param {string} svg
