@@ -111,20 +111,21 @@ class SelectContent extends CellContentPro implements EditModeContent {
     }
 
     public override destroy(): void {
+        const select = this.select;
         this.cell.htmlElement.removeEventListener(
             'keydown',
             this.onCellKeyDown
         );
-        this.select?.removeEventListener('blur', this.onBlur);
-        this.select?.removeEventListener('keydown', this.onKeyDown);
-        this.select?.removeEventListener('change', this.onChange);
+        select.removeEventListener('blur', this.onBlur);
+        select.removeEventListener('keydown', this.onKeyDown);
+        select.removeEventListener('change', this.onChange);
 
         for (const optionElement of this.optionElements) {
             optionElement.remove();
         }
         this.optionElements.length = 0;
 
-        this.select?.remove();
+        select.remove();
     }
 
     public getValue(): DataTable.CellType {

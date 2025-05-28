@@ -129,16 +129,17 @@ class TextInputContent extends CellContentPro implements EditModeContent {
     }
 
     public override destroy(): void {
+        const input = this.input;
         this.cell.htmlElement.removeEventListener(
             'keydown',
             this.onCellKeyDown
         );
 
-        this.input?.removeEventListener('blur', this.onBlur);
-        this.input?.removeEventListener('keydown', this.onKeyDown);
-        this.input?.removeEventListener('change', this.onChange);
+        input.removeEventListener('blur', this.onBlur);
+        input.removeEventListener('keydown', this.onKeyDown);
+        input.removeEventListener('change', this.onChange);
 
-        this.input?.remove();
+        input.remove();
     }
 
     private readonly onChange = (e: Event): void => {
