@@ -50,12 +50,12 @@ const syncPair: Sync.SyncPair = {
         }
         const component = this as DataGridComponent;
 
-        const { dataGrid, board } = component;
+        const { grid, board } = component;
         const highlightOptions = this.sync.syncConfig.highlight;
         const groupKey = highlightOptions.group ?
             ':' + highlightOptions.group : '';
 
-        if (!board || !dataGrid || !highlightOptions?.enabled) {
+        if (!board || !grid || !highlightOptions?.enabled) {
             return;
         }
 
@@ -71,32 +71,38 @@ const syncPair: Sync.SyncPair = {
                     type: 'position',
                     row: cell.row.id,
                     column: cell.column.id,
-                    state: 'dataGrid.hoverRow' + groupKey
+                    state: 'point.mouseOver' + groupKey,
+                    sourceId: this.id
                 });
             }
         };
 
-        const onCellMouseOut = (): void => {
+        const onCellMouseOut = (e: TableCell.TableCellEvent): void => {
             if (table) {
+                const cell = e.target;
+
                 cursor.emitCursor(table, {
                     type: 'position',
-                    state: 'dataGrid.hoverOut' + groupKey
+                    row: cell.row.id,
+                    column: cell.column.id,
+                    state: 'point.mouseOut' + groupKey,
+                    sourceId: this.id
                 });
             }
         };
 
-        addEvent(dataGrid, 'cellMouseOver', onCellHover);
-        addEvent(dataGrid, 'cellMouseOut', onCellMouseOut);
+        addEvent(grid, 'cellMouseOver', onCellHover);
+        addEvent(grid, 'cellMouseOut', onCellMouseOut);
 
         // Return a function that calls the callbacks
         return function (): void {
             removeEvent(
-                dataGrid.container,
+                grid.container,
                 'cellMouseOver',
                 onCellHover
             );
             removeEvent(
-                dataGrid.container,
+                grid.container,
                 'cellMouseOut',
                 onCellMouseOut
             );
@@ -126,13 +132,16 @@ const syncPair: Sync.SyncPair = {
 
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
-            if (cursor.type !== 'position') {
+            if (
+                cursor.sourceId === component.id ||
+                cursor.type !== 'position'
+            ) {
                 return;
             }
 
             const { row, column } = cursor;
-            const { dataGrid } = component;
-            const viewport = dataGrid?.viewport;
+            const { grid } = component;
+            const viewport = grid?.viewport;
 
             if (row === void 0 || !viewport) {
                 return;
@@ -147,15 +156,15 @@ const syncPair: Sync.SyncPair = {
                 viewport.scrollToRow(rowIndex);
             }
 
-            dataGrid.syncRow(rowIndex);
-            dataGrid.syncColumn(column);
+            grid.syncRow(rowIndex);
+            grid.syncColumn(column);
         };
 
-        const handleCursorOut = (): void => {
-            const { dataGrid } = component;
-            if (dataGrid) {
-                dataGrid.syncColumn();
-                dataGrid.syncRow();
+        const handleCursorOut = (e: DataCursor.Event): void => {
+            const { grid } = component;
+            if (grid && e.cursor.sourceId !== component.id) {
+                grid.syncColumn();
+                grid.syncRow();
             }
         };
 
@@ -178,16 +187,6 @@ const syncPair: Sync.SyncPair = {
                 'point.mouseOut' + groupKey,
                 handleCursorOut
             );
-            cursor.addListener(
-                table.id,
-                'dataGrid.hoverRow' + groupKey,
-                handleCursor
-            );
-            cursor.addListener(
-                table.id,
-                'dataGrid.hoverOut' + groupKey,
-                handleCursorOut
-            );
         };
 
         const unregisterCursorListeners = (): void => {
@@ -205,16 +204,6 @@ const syncPair: Sync.SyncPair = {
             cursor.removeListener(
                 table.id,
                 'point.mouseOut' + groupKey,
-                handleCursorOut
-            );
-            cursor.removeListener(
-                table.id,
-                'dataGrid.hoverRow' + groupKey,
-                handleCursor
-            );
-            cursor.removeListener(
-                table.id,
-                'dataGrid.hoverOut' + groupKey,
                 handleCursorOut
             );
         };
