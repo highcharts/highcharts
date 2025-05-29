@@ -334,9 +334,9 @@ class Board implements Serializable<Board, Board.JSON> {
                 options.events?.afterRender?.call(this);
                 return this;
             });
-        } else {
-            options.events?.afterRender?.call(this);
-        }
+        } 
+
+        options.events?.afterRender?.call(this);
 
         return this;
     }
