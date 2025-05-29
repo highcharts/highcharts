@@ -19,7 +19,7 @@ Dashboards.board('container', {
     },
     events: {
         afterRender: function () {
-            console.log('after render', this, this.mountedComponents.length);
+            console.log('After render');
         }
     },
     gui: {
