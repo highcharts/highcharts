@@ -76,6 +76,30 @@ export default function MyChartComponent(){
 
 **Note:** Setting global options will affect all charts rendered using the Highcharts instance, so use this feature thoughtfully.
 
+## Accessing specific chart instances
+
+If you need to access the specific chart instance, you can use the `ref` prop. The `ref` prop will be
+passed a reference to the chart instance, as well as the chart container element.
+
+```jsx
+import { Chart } from '@highcharts/react';
+
+function RefExample(){
+    const ref = useRef();
+
+    useEffect(() => {
+      if (ref.current?.chart) {
+        // Call chart methods or access properties
+      }
+      if (ref.current?.container) {
+        // Do something with the container element
+      }
+    },[])
+
+    return (<Chart ref={ref} />);
+}
+```
+
 ## Setting a custom Highcharts instance
 If you need to load additional modules or use a specific Highcharts version, you can provide a
 custom Highcharts instance. This can be accomplished via the `setHighcharts` function:

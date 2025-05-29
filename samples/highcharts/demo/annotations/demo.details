@@ -4,6 +4,7 @@ authors:
   - Pawel Lysy
   - Jedrzej Ruta
 js_wrap: b
+requiresManualTesting: true
 alt_text: >-
   Highcharts basic area chart with annotations JavaScript example displays
   stock data of TSLA with annotations highlighting some meaningful events that
@@ -12,6 +13,7 @@ tags:
   - Highcharts demo
   - Annotations
   - Stock Data
+  - Morningstar
 categories:
   - Line charts
 is_morningstar: true

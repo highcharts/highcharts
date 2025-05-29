@@ -25,6 +25,11 @@ import type { DataConnectorTypes } from './DataConnectorType';
 import type { DataConnectorOptions, MetaColumn, Metadata } from './DataConnectorOptions';
 import type DataEvent from '../DataEvent';
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
+import type DataTableOptions from '../DataTableOptions';
+import type { JSONBeforeParseCallbackFunction } from './JSONConnectorOptions';
+import type { CSVBeforeParseCallbackFunction } from './CSVConnectorOptions';
+import type { GoogleSheetsBeforeParseCallbackFunction } from './GoogleSheetsConnectorOptions';
+import type DataConverterType from '../Converters/DataConverterType';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
@@ -61,12 +66,34 @@ abstract class DataConnector implements DataEvent.Emitter {
      *
      * @param {DataConnector.UserOptions} [options]
      * Options to use in the connector.
+     *
+     * @param {Array<DataTableOptions>} [dataTables]
+     * Multiple connector data tables options.
      */
     public constructor(
-        options: DataConnector.UserOptions = {}
+        options: DataConnector.UserOptions = {},
+        dataTables: Array<DataTableOptions> = []
     ) {
-        this.table = new DataTable(options.dataTable);
         this.metadata = options.metadata || { columns: {} };
+
+        // Create a data table for each defined in the dataTables user options.
+        let dataTableIndex = 0;
+        if (dataTables?.length > 0) {
+            for (let i = 0, iEnd = dataTables.length; i < iEnd; ++i) {
+                const dataTable = dataTables[i];
+                const key = dataTable?.key;
+                this.dataTables[key ?? dataTableIndex] =
+                    new DataTable(dataTable);
+
+                if (!key) {
+                    dataTableIndex++;
+                }
+            }
+
+        // If user options dataTables is not defined, generate a default table.
+        } else {
+            this.dataTables[0] = new DataTable(options.dataTable);
+        }
     }
 
     /* *
@@ -79,7 +106,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * The DataConverter responsible for handling conversion of provided data to
      * a DataConnector.
      */
-    public abstract readonly converter: DataConverter;
+    public converter?: DataConverter;
 
     /**
      * Metadata to describe the connector and the content of columns.
@@ -96,16 +123,25 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Table managed by this DataConnector instance.
+     * Gets the first data table.
+     *
+     * @return {DataTable}
+     * The data table instance.
      */
-    public readonly table: DataTable;
+    public get table(): DataTable {
+        return this.getTable();
+    }
+
+    /**
+     * Tables managed by this DataConnector instance.
+     */
+    public dataTables: Record<string, DataTable> = {};
 
     /**
      * The polling controller used to abort the request when data polling stops.
      * It gets assigned when data polling starts.
      */
     public pollingController?: AbortController;
-
 
     /* *
      *
@@ -187,6 +223,23 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
+     * Returns a single data table instance based on the provided key.
+     * Otherwise, returns the first data table.
+     *
+     * @param {string} [key]
+     * The data table key.
+     *
+     * @return {DataTable}
+     * The data table instance.
+     */
+    public getTable(key?: string): DataTable {
+        if (key) {
+            return this.dataTables[key];
+        }
+        return Object.values(this.dataTables)[0];
+    }
+
+    /**
      * Retrieves the columns of the dataTable,
      * applies column order from meta.
      *
@@ -264,21 +317,30 @@ abstract class DataConnector implements DataEvent.Emitter {
         }
     }
 
-    public setModifierOptions(
-        modifierOptions?: DataModifierTypeOptions
+    public async setModifierOptions(
+        modifierOptions?: DataModifierTypeOptions,
+        tablesOptions?: DataTableOptions[]
     ): Promise<this> {
-        const ModifierClass = (
-            modifierOptions &&
-            DataModifier.types[modifierOptions.type]
-        );
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            const tableOptions = tablesOptions?.find(
+                (dataTable): boolean => dataTable.key === key
+            );
+            const mergedModifierOptions = merge(
+                tableOptions?.dataModifier, modifierOptions
+            );
+            const ModifierClass = (
+                mergedModifierOptions &&
+                DataModifier.types[mergedModifierOptions.type]
+            );
 
-        return this.table
-            .setModifier(
+            await table.setModifier(
                 ModifierClass ?
-                    new ModifierClass(modifierOptions as AnyRecord) :
+                    new ModifierClass(mergedModifierOptions as AnyRecord) :
                     void 0
-            )
-            .then((): this => this);
+            );
+        }
+
+        return this;
     }
 
     /**
@@ -291,6 +353,7 @@ abstract class DataConnector implements DataEvent.Emitter {
         refreshTime: number = 1000
     ): void {
         const connector = this;
+        const tables = connector.dataTables;
 
         // Assign a new abort controller.
         this.pollingController = new AbortController();
@@ -304,7 +367,7 @@ abstract class DataConnector implements DataEvent.Emitter {
                     (error): void => connector.emit<DataConnector.ErrorEvent>({
                         type: 'loadError',
                         error,
-                        table: connector.table
+                        tables
                     })
                 )
                 .then((): void => {
@@ -343,6 +406,42 @@ abstract class DataConnector implements DataEvent.Emitter {
         return this.metadata.columns[name];
     }
 
+    /**
+     * Iterates over the dataTables and initiates the corresponding converters.
+     * Updates the dataTables and assigns the first converter.
+     *
+     * @param {T}[data]
+     * Data specific to the corresponding converter.
+     *
+     * @param {DataConnector.CreateConverterFunction}[createConverter]
+     * Creates a specific converter combining the dataTable options.
+     *
+     * @param {DataConnector.ParseDataFunction<T>}[parseData]
+     * Runs the converter parse method with the specific data type.
+     */
+    public initConverters<T>(
+        data: T,
+        createConverter: DataConnector.CreateConverterFunction,
+        parseData: DataConnector.ParseDataFunction<T>
+    ): void {
+        let index = 0;
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            // Create a proper converter and parse its data.
+            const converter = createConverter(key, table);
+            parseData(converter, data);
+
+            // Update the dataTable.
+            table.deleteColumns();
+            table.setColumns(converter.getTable().getColumns());
+
+            // Assign the first converter.
+            if (index === 0) {
+                this.converter = converter;
+            }
+            index++;
+        }
+    }
+
 }
 
 /* *
@@ -371,7 +470,7 @@ namespace DataConnector {
      * The default event object for a DataConnector.
      */
     export interface Event extends DataEvent {
-        readonly table: DataTable;
+        readonly tables: Record<string, DataTable>;
     }
 
     /**
@@ -385,6 +484,30 @@ namespace DataConnector {
      * Option of the DataConnector.
      */
     export type UserOptions = Partial<DataConnectorOptions>;
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     * Supported connectors are: JSON, CSV and Google Google Sheets.
+     */
+    export type BeforeParseCallbackFunction =
+        JSONBeforeParseCallbackFunction
+        | CSVBeforeParseCallbackFunction
+        | GoogleSheetsBeforeParseCallbackFunction;
+
+    /**
+     * Creates a specific converter combining the dataTable options.
+     */
+    export interface CreateConverterFunction {
+        (key: string, table: DataTable): DataConverterType
+    }
+
+    /**
+     * Runs the converter parse method with the specific data type.
+     */
+    export interface ParseDataFunction<T> {
+        (converter: DataConverterType, data: T): void
+    }
 
     /* *
      *
