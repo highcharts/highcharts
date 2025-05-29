@@ -131,6 +131,7 @@ namespace DataCursorHelper {
         column?: string;
         row?: number;
         state: DataCursor.State;
+        sourceId?: string;
         type: 'position';
     }
 
@@ -139,6 +140,7 @@ namespace DataCursorHelper {
         firstRow: number;
         lastRow: number;
         state: DataCursor.State;
+        sourceId?: string;
         type: 'range';
     }
 
