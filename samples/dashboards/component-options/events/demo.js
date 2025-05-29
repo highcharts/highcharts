@@ -17,6 +17,11 @@ Dashboards.board('container', {
             enabled: true
         }
     },
+    events: {
+        afterRender: function () {
+            console.log('after render', this, this.mountedComponents.length);
+        }
+    },
     gui: {
         layouts: [{
             id: 'layout-1',
