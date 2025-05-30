@@ -111,7 +111,7 @@ if (defaultOptions.annotations) {
                 overflow: 'none' as any,
                 shape: 'rect',
                 style: {
-                    color: Palette.neutralColor60
+                    color: Palette.neutralColor80
                 },
                 verticalAlign: 'middle',
                 y: 0

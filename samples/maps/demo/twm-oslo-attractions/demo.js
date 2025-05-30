@@ -48,10 +48,12 @@ Highcharts.mapChart('container', {
         itemStyle: {
             textOutline: '1 1 1px rgba(255,255,255)'
         },
-        backgroundColor: 'rgba(255,255,255,0.8)',
+        backgroundColor: `color-mix(
+            in srgb,
+            var(--highcharts-background-color, white),
+            transparent 15%
+        )`,
         float: true,
-        borderColor: '#e6e6e6',
-        borderWidth: 1,
         borderRadius: 2,
         itemMarginBottom: 5
     },

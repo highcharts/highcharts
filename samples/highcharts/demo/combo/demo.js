@@ -41,7 +41,7 @@ Highcharts.chart('container', {
         marker: {
             lineWidth: 2,
             lineColor: Highcharts.getOptions().colors[3],
-            fillColor: 'white'
+            fillColor: 'var(--highcharts-background-color, white)'
         }
     }, {
         type: 'pie',
@@ -55,7 +55,8 @@ Highcharts.chart('container', {
                 distance: -50,
                 format: '{point.total} M',
                 style: {
-                    fontSize: '15px'
+                    fontSize: '15px',
+                    color: 'var(--highcharts-neutral-color-100, black)'
                 }
             }
         }, {

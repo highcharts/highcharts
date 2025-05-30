@@ -57,8 +57,8 @@ Highcharts.chart('container', {
                 y2: 1
             },
             stops: [
-                [0, '#ff0000'],
-                [1, '#0000ff']
+                [0, '#ff6666'],
+                [1, '#6666ff']
             ]
         }
     }]

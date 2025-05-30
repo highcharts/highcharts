@@ -105,7 +105,7 @@ Highcharts.chart('container', {
         dataLabels: {
             color: 'white'
         },
-        borderColor: 'white',
+        borderColor: 'var(--highcharts-background-color, white)',
         nodeWidth: 'auto'
     }],
     tooltip: {

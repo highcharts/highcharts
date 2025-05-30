@@ -23,7 +23,8 @@ async function task() {
         dataColorsComment = '',
         comment = '',
         commentOpen = false;
-    lines.forEach(line => {
+
+    for (const line of lines) {
 
         // Start of comment
         if (line.indexOf('/*') > -1) {
@@ -77,7 +78,13 @@ async function task() {
                 dataColors.push(val);
             }
         }
-    });
+
+        if (line.indexOf('/* Transparent colors for annotations */') > -1) {
+            // Stop processing when we reach the transparent colors comment,
+            // as the rest is not part of the palette object.
+            break;
+        }
+    }
 
     fs.writeFileSync(
         path.join(__dirname, '../../ts/core/Color/Palettes.ts'),

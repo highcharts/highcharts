@@ -1032,7 +1032,7 @@ Highcharts.getJSON(
                 floating: true,
                 align: 'left',
                 style: {
-                    textOutline: '2px white'
+                    textOutline: '2px contrast'
                 }
             },
 

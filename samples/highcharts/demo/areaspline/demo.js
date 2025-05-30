@@ -17,8 +17,7 @@ Highcharts.chart('container', {
         y: 70,
         floating: true,
         borderWidth: 1,
-        backgroundColor:
-            Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
+        backgroundColor: 'var(--highcharts-background-color, #ffffff)'
     },
     xAxis: {
         // Highlight the last years where moose hunting quickly deminishes
