@@ -153,7 +153,7 @@ class DataPool implements DataEvent.Emitter {
         const connector = this.connectors[connectorId];
 
         // Already loaded
-        if (connector) {
+        if (connector?.loaded) {
             return Promise.resolve(connector);
         }
 
@@ -299,7 +299,7 @@ class DataPool implements DataEvent.Emitter {
                 throw new Error(`Connector type not found. (${options.type})`);
             }
 
-            const connector = new ConnectorClass(
+            const connector = this.connectors[options.id] = new ConnectorClass(
                 options.options,
                 options.dataTables
             );
@@ -307,8 +307,12 @@ class DataPool implements DataEvent.Emitter {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             connector
                 .load()
-                .then((connector): void => {
-                    this.connectors[options.id] = connector;
+                .then(({ converter, dataTables }): void => {
+                    connector.dataTables = dataTables;
+                    if (converter) {
+                        connector.converter = converter;
+                    }
+                    connector.loaded = true;
 
                     this.emit<DataPool.Event>({
                         type: 'afterLoad',
@@ -318,6 +322,16 @@ class DataPool implements DataEvent.Emitter {
                     resolve(connector);
                 })['catch'](reject);
         });
+    }
+
+    /**
+     * Cancels all data connectors pending requests.
+     */
+    public cancelPendingRequests(): void {
+        const { connectors } = this;
+        for (const connectorKey of Object.keys(connectors)) {
+            connectors[connectorKey].stopPolling();
+        }
     }
 
 

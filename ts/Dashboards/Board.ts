@@ -417,6 +417,9 @@ class Board implements Serializable<Board, Board.JSON> {
     public destroy(): void {
         const board = this;
 
+        // Cancel all data connectors pending requests.
+        this.dataPool.cancelPendingRequests();
+
         // Destroy layouts.
         if (this.guiEnabled) {
             for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {

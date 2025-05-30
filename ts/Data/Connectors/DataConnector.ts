@@ -143,6 +143,11 @@ abstract class DataConnector implements DataEvent.Emitter {
      */
     public pollingController?: AbortController;
 
+    /**
+     * Helper flag for detecting whether the data connector is loaded.
+     */
+    public loaded: boolean = false;
+
     /* *
      *
      *  Functions
@@ -380,10 +385,13 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Stops polling data.
+     * Stops polling data. Shouldn't be performed if polling is already stopped.
      */
     public stopPolling(): void {
         const connector = this;
+        if (!connector.polling) {
+            return;
+        }
 
         // Abort the existing request.
         connector?.pollingController?.abort();
