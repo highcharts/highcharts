@@ -98,7 +98,7 @@ class ConnectorHandler {
      * destroyed, used to check and prevent further operations if the connector
      * handler has been destroyed during asynchronous functions.
      *
-     * @private
+     * @internal
      */
     private destroyed?: boolean;
 
