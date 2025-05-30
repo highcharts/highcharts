@@ -1130,7 +1130,8 @@ function seriesRenderCanvas(this: Series): void {
             this.getColumn('x', true)
         ),
         lineWidth = pick(options.lineWidth, 1),
-        nullYSubstitute = options.nullInteraction && yMin;
+        nullYSubstitute = options.nullInteraction && yMin,
+        tooltip = chart.tooltip;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1145,18 +1146,27 @@ function seriesRenderCanvas(this: Series): void {
         return;
     }
 
-    this.points?.forEach((point): void => {
+    this.points?.forEach((point: Point): void => {
         point?.destroyElements?.();
     });
     this.points = [];
 
-    if (chart.hoverPoint?.series === this) {
-        chart.hoverPoint = void 0;
-    }
+    if (tooltip && !tooltip.isHidden) {
+        const isSeriesHovered =
+            chart.hoverPoint?.series === this ||
+            chart.hoverPoints?.some(
+                (point: Point): boolean => point.series === this
+            );
 
-    chart.hoverPoints = chart.hoverPoints?.filter(
-        (point): boolean => point.series !== this
-    ) ?? [];
+        if (isSeriesHovered) {
+            chart.hoverPoint = chart.hoverPoints = void 0;
+            tooltip.hide(0);
+        }
+    } else if (chart.hoverPoints) {
+        chart.hoverPoints = chart.hoverPoints.filter(
+            (point: Point): boolean => point.series !== this
+        );
+    }
 
     // When touch-zooming or mouse-panning, re-rendering the canvas would not
     // perform fast enough. Instead, let the axes redraw, but not the series.
