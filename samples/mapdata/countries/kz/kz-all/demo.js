@@ -8,11 +8,11 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['kz-5085', 10], ['kz-qo', 11], ['kz-ac', 12], ['kz-as', 13],
-        ['kz-qs', 14], ['kz-nk', 15], ['kz-pa', 16], ['kz-am', 17],
-        ['kz-zm', 18], ['kz-ek', 19], ['kz-ar', 20], ['kz-mg', 21],
-        ['kz-aa', 22], ['kz-at', 23], ['kz-wk', 24], ['kz-sk', 25],
-        ['kz-qg', 26]
+        ['kz-23', 10], ['kz-27', 11], ['kz-15', 12], ['kz-47', 13],
+        ['kz-63', 14], ['kz-19', 15], ['kz-31', 16], ['kz-43', 17],
+        ['kz-61', 18], ['kz-11', 19], ['kz-59', 20], ['kz-55', 21],
+        ['kz-35', 22], ['kz-39', 23], ['kz-75', 24], ['kz-71', 25],
+        ['kz-79', 26], ['kz-10', 27], ['kz-33', 28], ['kz-62', 29]
     ];
 
     // Create the chart

@@ -8,15 +8,15 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['in-py', 10], ['in-ld', 11], ['in-wb', 12], ['in-or', 13],
-        ['in-br', 14], ['in-sk', 15], ['in-ct', 16], ['in-tn', 17],
-        ['in-mp', 18], ['in-2984', 19], ['in-ga', 20], ['in-nl', 21],
-        ['in-mn', 22], ['in-ar', 23], ['in-mz', 24], ['in-tr', 25],
-        ['in-3464', 26], ['in-dl', 27], ['in-hr', 28], ['in-ch', 29],
-        ['in-hp', 30], ['in-jk', 31], ['in-kl', 32], ['in-ka', 33],
-        ['in-dn', 34], ['in-mh', 35], ['in-as', 36], ['in-ap', 37],
-        ['in-ml', 38], ['in-pb', 39], ['in-rj', 40], ['in-up', 41],
-        ['in-ut', 42], ['in-jh', 43]
+        ['in-tn', 10], ['in-py', 11], ['in-hp', 12], ['in-sk', 13],
+        ['in-dl', 14], ['in-up', 15], ['in-hr', 16], ['in-pb', 17],
+        ['in-ch', 18], ['in-rj', 19], ['in-jk', 20], ['in-gj', 21],
+        ['in-mp', 22], ['in-mh', 23], ['in-dh', 24], ['in-br', 25],
+        ['in-wb', 26], ['in-jh', 27], ['in-cg', 28], ['in-od', 29],
+        ['in-kl', 30], ['in-ka', 31], ['in-ap', 32], ['in-an', 33],
+        ['in-as', 34], ['in-tr', 35], ['in-ar', 36], ['in-ld', 37],
+        ['in-ml', 38], ['in-mn', 39], ['in-nl', 40], ['in-mz', 41],
+        ['in-ts', 42], ['in-la', 43], ['in-uk', 44], ['in-ga', 45]
     ];
 
     // Create the chart
