@@ -187,6 +187,8 @@ class Validator {
      *
      */
     public initErrorBox(cell: TableCell, errors: string[]): void {
+        const { grid } = this.viewport;
+
         this.errorCell = cell;
 
         // Set error container position
@@ -195,11 +197,15 @@ class Validator {
         // Set width and content
         setHTMLContent(this.notifContainer, errors.join('<br />'));
 
-        // TODO: Handle it fully by the lang options.
-        this.viewport.grid.accessibility?.announce(
-            'Provided value is not valid. ' + errors.join('. '),
-            true
-        );
+        // A11y announcement
+        if (grid.options?.accessibility?.announcements?.cellEditing) {
+            this.viewport.grid.accessibility?.announce(
+                (grid.options?.lang?.accessibility?.cellEditing
+                    ?.announcements?.notValid || ''
+                ) + ' ' + errors.join('. '),
+                true
+            );
+        }
 
         this.show();
     }
