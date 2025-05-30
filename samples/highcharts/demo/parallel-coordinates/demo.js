@@ -28,6 +28,7 @@
         },
         plotOptions: {
             series: {
+                shadow: false,
                 accessibility: {
                     enabled: false
                 },
@@ -55,6 +56,7 @@
             }
         },
         tooltip: {
+            followPointer: true,
             pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                     '{series.name}: <b>{point.formattedValue}</b><br/>'
         },
@@ -99,12 +101,11 @@
         }, {
             categories: ['Before', 'After']
         }],
-        colors: ['rgba(11, 200, 200, 0.1)'],
         series: data.map(function (set, i) {
             return {
                 name: 'Runner ' + i,
                 data: set,
-                shadow: false
+                color: `rgb(128, ${i * (255 / data.length)}, 82)`
             };
         })
     });
