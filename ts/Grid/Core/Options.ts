@@ -156,7 +156,7 @@ export interface RenderingSettings {
 export interface ColumnsSettings {
     /**
      * @deprecated
-     * Use `resizing` instead.
+     * Use `resizeMode` instead.
      */
     distribution?: ColumnDistributionType;
 
@@ -187,7 +187,7 @@ export interface ColumnsSettings {
      *
      * @default undefined
      */
-    resizing?: ColumnDistributionType;
+    resizeMode?: ColumnDistributionType;
 }
 
 export interface RowsSettings {

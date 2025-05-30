@@ -35,7 +35,7 @@ function test_grid() {
         }, 'hidden'],
         rendering: {
             columns: {
-                resizing: 'fixed'
+                resizeMode: 'fixed'
             }
         },
         columns: [{

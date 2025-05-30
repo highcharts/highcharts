@@ -108,7 +108,7 @@ Use the mixed distribution when you want explicit control over individual column
 Grid.grid('container', {
   rendering: {
     columns: {
-      resizing: 'mixed'
+      resizeMode: 'mixed'
     }
   },
   columns: [{

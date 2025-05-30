@@ -10,7 +10,7 @@ Grid.grid('container', {
     },
     rendering: {
         columns: {
-            resizing: 'mixed'
+            resizeMode: 'mixed'
         }
     },
     columns: [{

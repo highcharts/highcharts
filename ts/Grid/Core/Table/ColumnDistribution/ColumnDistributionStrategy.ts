@@ -223,7 +223,7 @@ abstract class ColumnDistributionStrategy {
             Object.hasOwnProperty.call(
                 newOptions.rendering?.columns || {}, 'resizing'
             ) &&
-            newOptions.rendering?.columns?.resizing !== this.type
+            newOptions.rendering?.columns?.resizeMode !== this.type
         ) {
             this.invalidated = true;
         } else if (
