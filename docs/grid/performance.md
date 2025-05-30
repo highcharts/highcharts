@@ -41,7 +41,7 @@ By default, rows adjust their height to fit all content, which can reduce perfor
             enabled: false // default is true
         },
         columns: {
-            distribution: "fixed" // default is "full"
+            resizing: "fixed" // default is "full"
         }
     }
 }
@@ -52,9 +52,9 @@ These options can be used to configure how the table should be rendered.
 
 [`header.enabled: false`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.HeaderSettings#enabled) disables all [column headers](https://www.highcharts.com/docs/grid/header) by not rendering the `thead` element.
 
-[`columns.distribution`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnsSettings#distribution) is used to configure initial column widths.
+[`columns.resizing`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnsSettings#resizing) is used to configure initial column widths.
 
-[`columns.distribution: "full"`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnsSettings#distribution) renders a full width (`width: 100%;`) responsive table with evenly distributed column widths. `columns.distribution:"fixed"` renders a table were columns have a fixed width in pixels. It should be set to support your specific use case.
+[`columns.resizing: "full"`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnsSettings#resizing) renders a full width (`width: 100%;`) responsive table with evenly distributed column widths. `columns.resizing: "fixed"` renders a table were columns have a fixed width in pixels. It should be set to support your specific use case.
 
 
 
