@@ -483,6 +483,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      *
      * @return {boolean}
      * Returns the cell value of the row as a boolean.
+     *
+     * @deprecated
+     *
      */
     public getCellAsBoolean(
         columnName: string,
@@ -520,6 +523,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      *
      * @return {number|null}
      * Returns the cell value of the row as a number.
+     *
+     * @deprecated
+     *
      */
     public getCellAsNumber(
         columnName: string,
@@ -556,6 +562,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      *
      * @return {string}
      * Returns the cell value of the row as a string.
+     *
+     * @deprecated
+     *
      */
     public getCellAsString(
         columnName: string,
@@ -628,6 +637,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      *
      * @return {Array<(number|null)>}
      * A copy of the column, or an empty array if not found.
+     *
+     * @deprecated
+     *
      */
     public getColumnAsNumbers(
         columnName: string,
@@ -667,10 +679,12 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                     }
                 }
                 for (let i = 0; i < columnLength; ++i) {
-                    columnAsNumber.push(table.getCellAsNumber(
-                        columnName,
-                        i
-                    ));
+                    columnAsNumber.push(
+                        table.getCellAsNumber(
+                            columnName,
+                            i
+                        )
+                    );
                 }
             }
         }
