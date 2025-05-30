@@ -32,7 +32,10 @@ import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
 import U from '../../../Core/Utilities.js';
 
-const { makeDiv } = GridUtils;
+const {
+    makeDiv,
+    setHTMLContent
+} = GridUtils;
 const { defined } = U;
 
 /* *
@@ -190,7 +193,7 @@ class Validator {
         this.reflow();
 
         // Set width and content
-        this.notifContainer.innerHTML = errors.join('<br />');
+        setHTMLContent(this.notifContainer, errors.join('<br />'));
 
         this.show();
     }
