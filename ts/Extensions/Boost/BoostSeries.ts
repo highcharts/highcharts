@@ -1141,7 +1141,7 @@ function seriesRenderCanvas(this: Series): void {
         minI: (number|undefined),
         maxI: (number|undefined);
 
-    // Remove k-d-tree mock points after zoom (#20330)
+    // Clear mock points and tooltip after zoom (#20330)
     if (!this.boosted) {
         return;
     }
