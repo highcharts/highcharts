@@ -991,7 +991,7 @@ class EditMode {
             if (!oldContextRow || oldContextRow !== editCellContext.row) {
                 if (oldContextRow) {
                     // Remove highlight from the previous row.
-                    oldContextRow.setHighlight();
+                    oldContextRow.setHighlight(true);
                 }
 
                 // Add highlight to the context row.
