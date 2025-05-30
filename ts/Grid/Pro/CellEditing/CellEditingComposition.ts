@@ -76,7 +76,8 @@ namespace CellEditingComposition {
                     announcements: {
                         started: 'Entered cell editing mode.',
                         edited: 'Edited cell value.',
-                        cancelled: 'Editing canceled.'
+                        cancelled: 'Editing canceled.',
+                        notValid: 'Provided value is not valid.'
                     }
                 }
             }
@@ -344,6 +345,14 @@ export interface CellEditingLangA11yOptions {
          * @default 'Editing cancelled.'
          */
         cancelled?: string;
+
+        /**
+         * The message when the cell value is not valid. It precedes the
+         * error messages.
+         *
+         * @default 'Provided value is not valid.'
+         */
+        notValid?: string;
     }
 }
 
