@@ -331,12 +331,12 @@ class Board implements Serializable<Board, Board.JSON> {
 
         if (async) {
             return Promise.all(componentPromises).then((): Board => {
-                options.events?.afterRender?.call(this);
+                options.events?.mounted?.call(this);
                 return this;
             });
         }
 
-        options.events?.afterRender?.call(this);
+        options.events?.mounted?.call(this);
 
         return this;
     }
@@ -683,7 +683,9 @@ namespace Board {
          * @internal
          **/
         layoutsJSON?: Array<Layout.JSON>;
-
+        /**
+         * Events related to the board.
+         */
         events?: BoardEvents;
     }
 
@@ -747,7 +749,7 @@ namespace Board {
          * Callback function to be called after the board and all components are
          * initialized.
          */
-        afterRender: RenderEventCallback;
+        mounted: MountedEventCallback;
     }
 
     /** @internal */
@@ -765,7 +767,7 @@ namespace Board {
     /**
      * Callback function to be called when a board event is triggered.
      */
-    export type RenderEventCallback = (this: Board) => void;
+    export type MountedEventCallback = (this: Board) => void;
     /* *
      *
      *  Constants

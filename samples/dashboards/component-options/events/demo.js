@@ -18,8 +18,8 @@ Dashboards.board('container', {
         }
     },
     events: {
-        afterRender: function () {
-            console.log('After render');
+        mounted: function () {
+            console.log('Mounted all components');
         }
     },
     gui: {
