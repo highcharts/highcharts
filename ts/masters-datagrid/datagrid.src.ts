@@ -37,14 +37,23 @@ import Utilities from '../Core/Utilities.js';
 import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
-import TableCell from '../Grid/Core/Table/Content/TableCell.js';
+import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import Dash3Compatibility from '../Grid/Pro/Dash3Compatibility.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
+import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
+import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 
-// Fill registries
+
+/* *
+ *
+ *  Registers Imports
+ *
+ * */
+
+// Connectors
 import '../Data/Connectors/CSVConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';
@@ -53,10 +62,20 @@ import '../Data/Modifiers/ChainModifier.js';
 import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
+
+// Compositions
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import '../Grid/Pro/Dash3Compatibility.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
+
+// Cell Renderers
+import '../Grid/Pro/CellRendering/Renderers/TextRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/SelectRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/TextInputRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/DateInputRenderer.js';
+
 
 /* *
  *
@@ -150,9 +169,11 @@ G.HeaderCell = G.HeaderCell || HeaderCell;
 G.TableCell = G.TableCell || TableCell;
 
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
-CellEditingComposition.compose(G.Table, G.TableCell);
+CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
 CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
+ValidatorComposition.compose(G.Table);
+CellRenderersComposition.compose(G.Column);
 
 
 /* *
