@@ -1,3 +1,4 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
@@ -8,6 +9,7 @@
 #output {
     width: 600px;
     height: 300px;
+    border-color: #f2f2f2;
 }
 
 .highcharts-description {
@@ -47,4 +49,18 @@
 
 .highcharts-demo-button:hover {
     background: #e6e6e6;
+}
+
+#dashboard-col-1 .highcharts-color-0 {
+    fill: var(--highcharts-color-2);
+    stroke: var(--highcharts-color-2);
+}
+
+.highcharts-plot-line {
+    stroke-dasharray: 2px;
+    stroke: var(--highcharts-color-3);
+}
+
+.highcharts-plot-line-label {
+    fill: var(--highcharts-color-3);
 }
