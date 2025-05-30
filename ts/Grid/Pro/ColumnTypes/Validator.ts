@@ -195,6 +195,12 @@ class Validator {
         // Set width and content
         setHTMLContent(this.notifContainer, errors.join('<br />'));
 
+        // TODO: Handle it fully by the lang options.
+        this.viewport.grid.accessibility?.announce(
+            'Provided value is not valid. ' + errors.join('. '),
+            true
+        );
+
         this.show();
     }
 
