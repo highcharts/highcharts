@@ -215,9 +215,7 @@ namespace ParallelCoordinates {
             options.chart.parallelCoordinates;
 
         if (chart.hasParallelCoordinates) {
-
             chart.setParallelInfo(options);
-
             // Push empty yAxes in case user did not define them:
             for (;
                 yAxisLength <= (chart.parallelInfo as any).counter;

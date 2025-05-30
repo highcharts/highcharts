@@ -130,6 +130,8 @@ class Pointer {
 
     public hasDragged: number = 0;
 
+    public hasParallel?: boolean;
+
     public hasPinched?: boolean;
 
     public hasPointerCapture?: boolean;
@@ -962,6 +964,8 @@ class Pointer {
 
         this.setDOMEvents();
 
+        this.hasParallel = chart?.hasParallelCoordinates;
+
         fireEvent(this, 'afterInit');
     }
 
@@ -1686,7 +1690,9 @@ class Pointer {
                 hoverSeries.onMouseOver();
             }
 
-            pointer.applyInactiveState(points);
+            if (!this.hasParallel) {
+                pointer.applyInactiveState(points);
+            }
 
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p: Point): void {
