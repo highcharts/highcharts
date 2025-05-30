@@ -1686,7 +1686,9 @@ class Pointer {
                 hoverSeries.onMouseOver();
             }
 
-            pointer.applyInactiveState(points);
+            if (!(chart as any).hasParallelCoordinates) {
+                pointer.applyInactiveState(points);
+            }
 
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p: Point): void {
