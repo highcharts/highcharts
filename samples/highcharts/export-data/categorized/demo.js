@@ -28,4 +28,4 @@ const chart = new Highcharts.Chart({
 
 });
 
-document.getElementById('preview').innerHTML = chart.getCSV();
+document.getElementById('preview').innerHTML = chart.exporting.getCSV();

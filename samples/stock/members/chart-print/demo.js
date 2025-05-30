@@ -16,6 +16,6 @@
     });
 
     document.getElementById('button').addEventListener('click', () => {
-        chart.print();
+        chart.exporting.print();
     });
 })();

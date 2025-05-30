@@ -18,7 +18,7 @@ const chart = Highcharts.chart('container', {
 
 // the button handler
 document.getElementById('button').addEventListener('click', () => {
-    const svg = chart.getSVG()
+    const svg = chart.exporting.getSVG()
         .replace(/</g, '\n&lt;') // make it slightly more readable
         .replace(/>/g, '&gt;');
 

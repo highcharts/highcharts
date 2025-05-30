@@ -1,14 +1,35 @@
 Export module
 =============
 
-The exporting module allows your users to download the chart as PDF, PNG, JPG or SVG vector images. It also allows printing the chart directly without distracting elements from the web page. The downloads can be created on the client side if you use the [offline-exporting.js](https://highcharts.com/docs/export-module/client-side-export) module, otherwise they are generated on Highcharts' featured server or optionally [your own server](https://highcharts.com/docs/export-module/setting-up-the-server).
+The exporting module allows your users to download the chart as PDF, PNG, JPG or
+SVG vector images. It also allows printing the chart directly without
+distracting elements from the web page. The downloads are typically created on the client
+side. PDF exports require the
+[offline-exporting.js](https://highcharts.com/docs/export-module/client-side-export)
+module that loads third party libraries. Otherwise PDFs are generated on Highcharts' featured server or
+optionally [your own
+server](https://highcharts.com/docs/export-module/setting-up-the-server).
 
-**Note:** If you use the public export server at [https://export.highcharts.com](https://export.highcharts.com) you should read our [Terms of use and Fair Usage Policy](https://www.highcharts.com/docs/export-module/privacy-disclaimer-export) to learn more about requirements and limitations.
+Since v12.3, client side exports are the default. This behavior can be changed
+by setting
+[exporting.local](https://api.highcharts.com/highcharts/exporting.local)` to
+false.
 
-Additionally there's the [export data module](https://api.highcharts.com/highcharts/exporting.csv) that enables exporting the chart data to CSV, XLS or HTML table formats.
 
-To enable exporting, the module needs to be included, it can be downloaded from [https://code.highcharts.com/](https://code.highcharts.com/) and included after highcharts.js or highstock.js. The module can also be included directly from [https://code.highcharts.com/](https://code.highcharts.com/) like this:
+**Note:** If you use the public export server at
+[https://export.highcharts.com](https://export.highcharts.com) you should read
+our [Terms of use and Fair Usage
+Policy](https://www.highcharts.com/docs/export-module/privacy-disclaimer-export)
+to learn more about requirements and limitations.
 
+Additionally there's the [export data
+module](https://api.highcharts.com/highcharts/exporting.csv) that enables
+exporting the chart data to CSV, XLS or HTML table formats.
+
+To enable exporting, the module needs to be included, it can be downloaded
+from [https://code.highcharts.com/](https://code.highcharts.com/) and included
+after highcharts.js or highstock.js. The module can also be included directly
+from [https://code.highcharts.com/](https://code.highcharts.com/) like this:
 
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <!-- optional -->
@@ -17,11 +38,20 @@ To enable exporting, the module needs to be included, it can be downloaded from�
 
 ### The button
 
-When enabled, a context button with a menu appears in the top right corner of the chart.
+When enabled, a context button with a menu appears in the top right corner of
+the chart.
 
-The position of the button as well as various styling can be edited using [navigation.buttonOptions](https://api.highcharts.com/highcharts/navigation.buttonOptions) and [exporting.buttons.contextButton](https://api.highcharts.com/highcharts/exporting.buttons.contextButton).
+The position of the button as well as various styling can be edited using
+[navigation.buttonOptions](https://api.highcharts.com/highcharts/navigation.buttonOptions) and
+[exporting.buttons.contextButton](https://api.highcharts.com/highcharts/exporting.buttons.contextButton).
 
-To unleash the full power of HTML5, it is also possible to fully [disregard](https://api.highcharts.com/highcharts/exporting.buttons.contextButton.enabled) our built-in button and menu, and build your own buttons or links that call [Chart.print()](https://api.highcharts.com/highcharts/Chart.print()) or [Chart.exportChart()](https://api.highcharts.com/highcharts/Chart.exportChart()) with parameters.
+To unleash the full power of HTML5, it is also possible to fully
+[disregard](https://api.highcharts.com/highcharts/exporting.buttons.contextButton.enabled)
+our built-in button and menu, and build your own buttons or links that call
+[Chart.print()](https://api.highcharts.com/highcharts/Chart.print()) or
+[Chart.exportChart()](https://api.highcharts.com/highcharts/Chart.exportChart())
+with parameters.
+
 
 ### Controlling the size of the exported image
 

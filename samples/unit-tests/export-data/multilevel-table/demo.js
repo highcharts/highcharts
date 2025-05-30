@@ -100,10 +100,11 @@ QUnit.test('Bullet chart', function (assert) {
             }
         ]
     });
-    chart.viewData();
+    chart.exporting.viewData();
 
     assert.equal(
         chart
+            .exporting
             .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
@@ -245,10 +246,11 @@ target</th>
             useMultiLevelHeaders: false
         }
     });
-    chart.viewData();
+    chart.exporting.viewData();
 
     assert.equal(
         chart
+            .exporting
             .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
@@ -404,10 +406,11 @@ QUnit.test('Pie chart', function (assert) {
             }
         ]
     });
-    chart.viewData();
+    chart.exporting.viewData();
 
     assert.equal(
         chart
+            .exporting
             .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
@@ -504,10 +507,11 @@ QUnit.test('Custom columnHeaderFormatter', function (assert) {
                 }
             ]
         });
-    chart.viewData();
+    chart.exporting.viewData();
 
     assert.equal(
         chart
+            .exporting
             .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
@@ -626,10 +630,11 @@ QUnit.test('Internationalize export-data table words.', function (assert) {
             }
         ]
     });
-    chart.viewData();
+    chart.exporting.viewData();
 
     assert.equal(
         chart
+            .exporting
             .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
@@ -775,6 +780,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
     // Enhancement #12789
     assert.equal(
         chart
+            .exporting
             .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
@@ -852,6 +858,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
     // Enhancement #12789
     assert.equal(
         chart
+            .exporting
             .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
@@ -915,6 +922,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
     // Enhancement #12789
     assert.equal(
         chart
+            .exporting
             .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".

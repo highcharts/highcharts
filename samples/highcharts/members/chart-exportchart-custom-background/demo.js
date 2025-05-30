@@ -31,8 +31,8 @@ const chart = Highcharts.chart('container', {
 });
 
 // the button handler
-document.getElementById('button').addEventListener('click', () => {
-    chart.exportChart(null, {
+document.getElementById('button').addEventListener('click', async () => {
+    await chart.exporting.exportChart(null, {
         chart: {
             backgroundColor: '#FFFFFF'
         }

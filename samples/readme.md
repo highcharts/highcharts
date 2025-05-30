@@ -76,8 +76,8 @@ tests and cover common test scenarios. Details can be found further down.
 * `compareTooltips: true` in auto-visual tests instructs the test runner to open
 a tooltip before capturing the image.
 * `exportInnerHTML: true` in auto-visual tests makes the comparison run on the
-actual innerHTML of the charts. The default is to run `chart.getSVG()` to
-export the chart first.
+actual innerHTML of the charts. The default is to run `chart.exporting.getSVG()`
+to export the chart first.
 * `requiresManualTesting: true` makes the test runner skip the sample and waits
 for manual testing.
 * `skipTest: true` makes the test always pass. Typically used for samples that

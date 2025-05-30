@@ -50,13 +50,13 @@
         }]
     });
 
-    const expScale = scale => {
-        chart.exportChart({
+    const expScale = async scale => {
+        await chart.exporting.exportChart({
             scale: scale
         });
     };
 
-    document.getElementById('scale-1').onclick = () => expScale(1);
-    document.getElementById('scale-2').onclick = () => expScale(2);
+    document.getElementById('scale-1').onclick = async () => await expScale(1);
+    document.getElementById('scale-2').onclick = async () => await  expScale(2);
 
 })();
