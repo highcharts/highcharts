@@ -90,7 +90,7 @@ describe('Data polling stop', () => {
     cy.visit('dashboards/cypress/connector-polling');
   });
 
-  it('Should stop connector polling after the board is destroyed.', () => {
+  it('Connector polling is stopped after the unloaded board is destroyed.', () => {
     cy.board().then(dashboard => {
       const CONNECTOR_ID = 'fetched-data';
       const dataPool = dashboard.dataPool;

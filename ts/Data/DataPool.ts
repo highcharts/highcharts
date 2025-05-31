@@ -309,9 +309,7 @@ class DataPool implements DataEvent.Emitter {
                 .load()
                 .then(({ converter, dataTables }): void => {
                     connector.dataTables = dataTables;
-                    if (converter) {
-                        connector.converter = converter;
-                    }
+                    connector.converter = converter;
                     connector.loaded = true;
 
                     this.emit<DataPool.Event>({
