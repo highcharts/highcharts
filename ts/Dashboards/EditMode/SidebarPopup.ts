@@ -454,7 +454,10 @@ class SidebarPopup extends BaseForm {
                                                         .setEditCellContext(
                                                             newCell
                                                         );
-                                                    sidebar.show(newCell);
+
+                                                    if (this.editMode.options.settings?.enabled) {
+                                                        sidebar.show(newCell);
+                                                    }
                                                     newCell.setHighlight();
 
                                                     unbind();
@@ -465,7 +468,9 @@ class SidebarPopup extends BaseForm {
                                             sidebar.editMode.setEditCellContext(
                                                 newCell
                                             );
-                                            sidebar.show(newCell);
+                                            if (this.editMode.options.settings?.enabled) {
+                                                sidebar.show(newCell);
+                                            }
                                             newCell.setHighlight();
                                             unbindLayoutChanged();
                                         }

@@ -201,5 +201,6 @@ describe('Toolbar settings disabled.', () => {
         cy.grabComponent('chart');
         cy.dropComponent('#dashboard-col-0');
         cy.get('.highcharts-dashboards-edit-overlay-active').should('not.exist');
+        cy.get('.highcharts-dashboards-edit-sidebar').should('not.be.visible');
     });
 });
