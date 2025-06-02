@@ -513,7 +513,11 @@ class SidebarPopup extends BaseForm {
 
         const componentPromise =
             Bindings.addComponent(options, sidebar.editMode.board, newCell);
-        sidebar.editMode.setEditOverlay();
+
+        sidebar.editMode.setEditOverlay(
+            undefined,
+            !this.editMode.options.settings?.enabled
+        );
 
         void (async (): Promise<void> => {
             const component = await componentPromise;

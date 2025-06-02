@@ -196,4 +196,10 @@ describe('Toolbar settings disabled.', () => {
         cy.get('.highcharts-dashboards-edit-toolbar-row').children()
             .should('have.length', 2);
     });
+
+    it('When adding a component, the popup should not be visible.', function () {
+        cy.grabComponent('chart');
+        cy.dropComponent('#dashboard-col-0');
+        cy.get('.highcharts-dashboards-edit-overlay-active').should('not.exist');
+    });
 });
