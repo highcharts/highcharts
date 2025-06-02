@@ -282,34 +282,9 @@ namespace BrokenAxis {
                     axis.min :
                     pick(series.options.threshold, axis.min);
 
-                // Array of breaks that have been "zoomed-out" which means that
-                // they were shown previously, but now after zoom, they are not
-                // (#19885).
-                const breaksOutOfRange = axis?.options?.breaks?.filter(
-                    function (brk): boolean {
-                        let isOut = true;
-
-                        // Iterate to see if "brk" is in axis range
-                        for (let i = 0; i < breaks.length; i++) {
-                            const otherBreak = breaks[i];
-                            if (
-                                otherBreak.from === brk.from &&
-                                otherBreak.to === brk.to
-                            ) {
-                                isOut = false;
-                                break;
-                            }
-                        }
-
-                        return isOut;
-                    }
-                );
-
                 points.forEach(function (point: Point): void {
-                    y = pick(
-                        (point as any)['stack' + key.toUpperCase()],
-                        (point as any)[key]
-                    );
+                    y = (point as any)['stack' + key.toUpperCase()] ??
+                        (point as any)[key];
 
                     breaks.forEach(function (brk: AxisBreakObject): void {
                         if (isNumber(threshold) && isNumber(y)) {
@@ -338,16 +313,6 @@ namespace BrokenAxis {
                             }
                         }
                     });
-
-                    breaksOutOfRange?.forEach(
-                        function (brk: AxisBreakOptions | undefined): void {
-                            fireEvent(
-                                axis,
-                                'pointOutsideOfBreak',
-                                { point, brk }
-                            );
-                        }
-                    );
                 });
             });
         }
@@ -563,7 +528,7 @@ namespace BrokenAxis {
             // Axis min is the anchor point. Above it, break gaps impact the
             // result differently than below.
             if (val > threshold) {
-                for (let brk of breakArray) {
+                for (const brk of breakArray) {
                     if (brk.from > nval) {
                         // Skip all breaks after the nval.
                         break;
@@ -574,7 +539,7 @@ namespace BrokenAxis {
                     }
                 }
             } else if (val < threshold) {
-                for (let brk of breakArray) {
+                for (const brk of breakArray) {
                     if (brk.from > threshold) {
                         // Skip all breaks above the threshold.
                         break;
@@ -610,7 +575,7 @@ namespace BrokenAxis {
             // Axis min is the anchor point. Above it, break gaps impact the
             // result differently than below.
             if (val > threshold) {
-                for (let brk of breakArray) {
+                for (const brk of breakArray) {
                     if (brk.to <= val && brk.to > threshold) {
                         nval -= brk.len;
                     } else if (brk.from > val) {
@@ -622,7 +587,7 @@ namespace BrokenAxis {
                     }
                 }
             } else if (val < threshold) {
-                for (let brk of breakArray) {
+                for (const brk of breakArray) {
                     if (brk.from >= val && brk.from < threshold) {
                         nval += brk.len;
                     } else if (brk.from > threshold) {
@@ -681,8 +646,8 @@ namespace BrokenAxis {
          */
         public findBreakAt(
             x: number,
-            breaks: Array<AxisBreakOptions>
-        ): (AxisBreakOptions|undefined) {
+            breaks: Array<AxisBreakObject>
+        ): (AxisBreakObject|undefined) {
             return find(breaks, function (b): boolean {
                 return b.from < x && x < b.to;
             });
@@ -789,7 +754,8 @@ namespace BrokenAxis {
                 ): void {
                     // If trying to set extremes inside a break, extend min to
                     // after, and max to before the break ( #3857 )
-                    if (brokenAxis.hasBreaks) {
+                    // but not for gantt (#13898);
+                    if (brokenAxis.hasBreaks && !axis.treeGrid?.tree) {
                         const breaks = (this.brokenAxis.breakArray || []);
                         let axisBreak;
 
@@ -801,8 +767,7 @@ namespace BrokenAxis {
                         while (
                             (axisBreak = brokenAxis.findBreakAt(newMax, breaks))
                         ) {
-                            // TODO: is maxOffset needed? Dep. on TreeGrid?
-                            newMax = axisBreak.from - ((axisBreak as any).maxOffset || 0);
+                            newMax = axisBreak.from;
                         }
 
                         // If both min and max is within the same break.
@@ -826,48 +791,53 @@ namespace BrokenAxis {
                     brokenAxis.unitLength = void 0;
                     if (brokenAxis.hasBreaks) {
                         const breaks = axis.options.breaks || [],
-                            // Temporary one:
                             breakArrayTemp: Array<AxisBreakBorderObject> = [],
                             breakArray: Array<AxisBreakObject> = [],
-                            pointRangePadding = pick(axis.pointRangePadding, 0);
-
-                        // Consider if the changes are too breaking:
-                        // use dataMin and dataMax instead of min and max
-                        // if any series has getExtremesFromAll set to true?
-                        const doit = true;
+                            pointRangePadding = axis.pointRangePadding ?? 0;
 
                         let length = 0,
                             inBrk: number,
                             repeat: number,
                             min = axis.userMin ?? axis.min,
                             max = axis.userMax ?? axis.max,
-                            dataMin = doit ? axis.dataMin ?? min : min,
-                            dataMax = doit ? axis.dataMax ?? max : max,
-                            start: (number|null|undefined),
+                            dataMin = axis.dataMin ?? min,
+                            dataMax = axis.dataMax ?? max,
+                            start: (number|undefined),
                             i: number;
 
-                        // Min & max check (#4247)
-                        breaks.forEach(
-                            function (brk): void {
-                                repeat = brk.repeat || Infinity;
-                                if (isNumber(min) && isNumber(max)) {
-                                    if (Additions.isInBreak(brk, min)) {
-                                        min += (
-                                            (brk.to % repeat) -
-                                            (min % repeat)
-                                        );
-                                    }
-                                    if (Additions.isInBreak(brk, max)) {
-                                        max -= (
-                                            (max % repeat) -
-                                            (brk.from % repeat) +
-                                            ((brk as any).maxOffset || 0)
-                                        );
+                        if (isNumber(axis.threshold)) {
+                            dataMin = Math.min(
+                                dataMin ?? axis.threshold,
+                                axis.threshold
+                            );
+                            dataMax = Math.max(
+                                dataMax ?? axis.threshold,
+                                axis.threshold
+                            );
+                        }
+
+                        // Min & max check (#4247) but not for gantt (#13898)
+                        if (!axis.treeGrid?.tree) {
+                            breaks.forEach(
+                                function (brk): void {
+                                    repeat = brk.repeat || Infinity;
+                                    if (isNumber(min) && isNumber(max)) {
+                                        if (Additions.isInBreak(brk, min)) {
+                                            min += (
+                                                (brk.to % repeat) -
+                                                (min % repeat)
+                                            );
+                                        }
+                                        if (Additions.isInBreak(brk, max)) {
+                                            max -= (
+                                                (max % repeat) -
+                                                (brk.from % repeat)
+                                            );
+                                        }
                                     }
                                 }
-                            }
-                        );
-                        // console.log('AA: ex adjsed min max', [axis.min, axis.max], [min, max]);
+                            );
+                        }
 
                         // Construct an array holding all breaks in the axis
                         // for the current data range.
@@ -931,7 +901,7 @@ namespace BrokenAxis {
                                         len: brk.value - start - (brk.size || 0)
                                     });
                                     if (
-                                        isNumber(min) && isNumber(max) && 
+                                        isNumber(min) && isNumber(max) &&
                                         start < max && brk.value > min
                                     ) {
                                         // Sum break gaps in the visible range
@@ -958,10 +928,7 @@ namespace BrokenAxis {
                             brokenAxis.unitLength = max - min - length +
                                 pointRangePadding;
 
-                                // Debug for when turbo-wonky
- // console.log('bA.uL & length', brokenAxis.unitLength, length, min, max);
                             fireEvent(axis, 'afterBreaks');
-
 
                             if (axis.staticScale) {
                                 axis.transA = axis.staticScale;
