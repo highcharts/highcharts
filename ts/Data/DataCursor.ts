@@ -382,6 +382,7 @@ namespace DataCursor {
         column?: string;
         row?: number;
         state: State;
+        sourceId?: string;
     }
 
     export interface Range {
@@ -390,6 +391,7 @@ namespace DataCursor {
         firstRow: number;
         lastRow: number;
         state: State;
+        sourceId?: string;
     }
 
     export interface Event {
