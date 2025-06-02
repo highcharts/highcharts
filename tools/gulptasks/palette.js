@@ -55,7 +55,7 @@ async function task() {
                 .replace(/\s+/ug, ' ');
 
             const parts = line
-                    .replace(/\r/u, '')
+                    .replace(/\r/ug, '')
                     .split(':'),
                 key = parts[0].trim()
                     .replace(/^--highcharts-/u, '')
