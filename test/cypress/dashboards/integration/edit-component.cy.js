@@ -188,19 +188,36 @@ describe('Toolbar settings disabled.', () => {
     });
 
     it('Settings button should not exist in cell toolbars.', function () {
-        cy.get('.highcharts-dashboards-edit-toolbar-cell').children()
-            .should('have.length', 2);
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children().should('have.length', 2);
     });
 
     it('Settings button should not exist in row toolbars.', function () {
-        cy.get('.highcharts-dashboards-edit-toolbar-row').children()
-            .should('have.length', 2);
+        cy.get('.highcharts-dashboards-edit-toolbar-row').children().should('have.length', 2);
     });
 
     it('When adding a component, the popup should not be visible.', function () {
+        // Act
         cy.grabComponent('chart');
         cy.dropComponent('#dashboard-col-0');
+
+        // Assert
         cy.get('.highcharts-dashboards-edit-overlay-active').should('not.exist');
         cy.get('.highcharts-dashboards-edit-sidebar').should('not.be.visible');
+        cy.get('.highcharts-dashboards-edit-toolbar-cell')
+            .parent()
+            .invoke('position')
+            .then((pos) => {
+                const initialX = pos.left;
+
+                // Act
+                cy.get('.highcharts-dashboards-component').first().click();
+
+                // Assert
+                cy.get('.highcharts-dashboards-edit-toolbar-cell')
+                    .parent()
+                    .invoke('position')
+                    .its('left')
+                    .should('be.lt', initialX);
+            });
     });
 });
