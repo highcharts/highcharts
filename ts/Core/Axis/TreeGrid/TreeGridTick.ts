@@ -463,7 +463,7 @@ class TreeGridTickAdditions {
                 node = axis.treeGrid.mapOfPosToGridNode[pos],
                 breaks = axis.treeGrid.collapse(node);
 
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
+            brokenAxis.setBreaks(breaks, redraw ?? true);
         }
     }
 
@@ -501,7 +501,7 @@ class TreeGridTickAdditions {
             const node = posMappedNodes[pos],
                 breaks = treeGrid.expand(node);
 
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
+            brokenAxis.setBreaks(breaks, redraw ?? true);
         }
     }
 
@@ -531,7 +531,9 @@ class TreeGridTickAdditions {
                 node = axis.treeGrid.mapOfPosToGridNode[pos],
                 breaks = axis.treeGrid.toggleCollapse(node),
                 scrollMode = !!axis.scrollbar,
-                maxPx = axis.len + (axis.treeGrid.pendingSizeAdjustment || 0);
+                maxPx = axis.pos + axis.len +
+                    (axis.treeGrid.pendingSizeAdjustment || 0);
+
             axis.treeGrid.pendingSizeAdjustment = 0;
 
             brokenAxis.setBreaks(breaks, scrollMode && redraw);
