@@ -119,16 +119,16 @@ namespace ScrollbarAxis {
             scrollMin: defined(axis.dataMin) ?
                 Math.min(
                     axisMin,
-                    (axis.min ?? Infinity),
+                    axis.min ?? Infinity,
                     axis.dataMin,
-                    (axis.threshold ?? Infinity)
+                    axis.threshold ?? Infinity
                 ) : axisMin,
             scrollMax: defined(axis.dataMax) ?
                 Math.max(
                     axisMax,
-                    (axis.max ?? -Infinity),
+                    axis.max ?? -Infinity,
                     axis.dataMax,
-                    (axis.threshold ?? -Infinity)
+                    axis.threshold ?? -Infinity
                 ) : axisMax
         };
     }
@@ -201,16 +201,19 @@ namespace ScrollbarAxis {
                 } else {
                     // Y-values in browser are reversed, but this also
                     // applies for reversed horizontal axis:
-// ===========================================================================chchch
-                    const minPX = axis.toPixels(unitedMin),
-                        maxPX = axis.toPixels(unitedMax),
-                        rangePX = maxPX - minPX;
 
-                    to = axis.toValue(minPX + rangePX * (1 - (this.from as any)));
-                    from = axis.toValue(minPX + rangePX * (1 - (this.to as any)));
-// ===================================================== or the next 2 lines
-                    // to = unitedMin + range * (1 - this.from);
-                    // from = unitedMin + range * (1 - this.to);
+                    // Experimental change for a pixel-based scrollbar
+                    // const minPX = axis.toPixels(unitedMin),
+                    //     maxPX = axis.toPixels(unitedMax),
+                    //     rangePX = maxPX - minPX;
+                    // to = axis.toValue(minPX +
+                    //     rangePX * (1 - (this.from as any)));
+                    // from = axis.toValue(minPX +
+                    //     rangePX * (1 - (this.to as any)));
+                    // or the next 2 lines
+
+                    to = unitedMin + range * (1 - this.from);
+                    from = unitedMin + range * (1 - this.to);
                 }
 
                 if (this.shouldUpdateExtremes(e.DOMType)) {
@@ -347,13 +350,11 @@ namespace ScrollbarAxis {
                 from = (axis.min - scrollMin) / (scrollMax - scrollMin);
                 to = (axis.max - scrollMin) / (scrollMax - scrollMin);
 
-// ===========================================================================chchch
-// console.log('before:', [from, to]);
-//                 from = (axis.toPixels(axis.min) - axis.toPixels(scrollMin)) / (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
-//                 to = (axis.toPixels(axis.max) - axis.toPixels(scrollMin)) / (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
-                
-// console.log('after: ', [from, to]);
-// ===========================================================================
+                // Experimental change for a pixel-based scrollbar
+                // from = (axis.toPixels(axis.min) - axis.toPixels(scrollMin))
+                //     / (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
+                // to = (axis.toPixels(axis.max) - axis.toPixels(scrollMin))
+                //     / (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
 
                 if (
                     (axis.horiz && !axis.reversed) ||

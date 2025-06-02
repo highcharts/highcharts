@@ -158,8 +158,7 @@ let TickConstructor: (typeof Tick|undefined);
  * @private
  */
 function getBreakFromNode(
-    node: GridNode,
-    axis: Axis
+    node: GridNode
 ): AxisBreakObject {
     const to = node.collapseEnd || 0,
         from = node.collapseStart || 0;
@@ -167,14 +166,7 @@ function getBreakFromNode(
     return {
         from,
         to,
-        showPoints: false,
-        // In broken-axis, the axis.max is minimized until it is not within a
-        // break. Therefore, if break.to is larger than axis.max, the axis.to
-        // should not add the axis.tickmarkOffset, to avoid adding a break
-        // larger than axis.max.
-        // TODO - WiP: this is now broken in a different way...
-        // maxOffset: (typeof axis.max === 'number' && to >= axis.max) ?
-        //     axis.tickmarkOffset : 0
+        showPoints: false
     };
 }
 
@@ -1013,7 +1005,7 @@ class TreeGridAxisAdditions {
     public collapse(node: GridNode): Array<AxisBreakOptions> {
         const axis = this.axis,
             breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis);
+            obj = getBreakFromNode(node);
 
         const brkSize = obj.to - obj.from; // - (obj.maxOffset || 0);
         axis.treeGrid.collapsedSize += brkSize;
@@ -1046,7 +1038,7 @@ class TreeGridAxisAdditions {
     public expand(node: GridNode): Array<AxisBreakOptions> {
         const axis = this.axis,
             breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis);
+            obj = getBreakFromNode(node);
 
         const brkSize = obj.to - obj.from; // - (obj.maxOffset || 0);
         axis.treeGrid.collapsedSize -= brkSize;
@@ -1120,7 +1112,7 @@ class TreeGridAxisAdditions {
     public isCollapsed(node: GridNode): boolean {
         const axis = this.axis,
             breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis);
+            obj = getBreakFromNode(node);
 
         return breaks.some(function (b): boolean {
             return b.from === obj.from && b.to === obj.to;
