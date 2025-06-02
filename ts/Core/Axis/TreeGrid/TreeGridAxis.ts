@@ -155,6 +155,7 @@ let TickConstructor: (typeof Tick|undefined);
  * */
 
 /**
+ * TODO: This could be removed if replaced correctly in code.
  * @private
  */
 function getBreakFromNode(
@@ -945,7 +946,6 @@ class TreeGridAxisAdditions {
     public tree?: TreeNode;
     public collapsedNodes?: GridNode[];
 
-    public collapsedSize: number = 0;
     public pendingSizeAdjustment: number = 0;
 
     /* *
@@ -1004,11 +1004,8 @@ class TreeGridAxisAdditions {
      */
     public collapse(node: GridNode): Array<AxisBreakOptions> {
         const axis = this.axis,
-            breaks = (axis.options.breaks || []),
+            breaks = axis.options.breaks || [],
             obj = getBreakFromNode(node);
-
-        const brkSize = obj.to - obj.from; // - (obj.maxOffset || 0);
-        axis.treeGrid.collapsedSize += brkSize;
 
         breaks.push(obj);
         // Change the collapsed flag #13838
@@ -1037,17 +1034,14 @@ class TreeGridAxisAdditions {
      */
     public expand(node: GridNode): Array<AxisBreakOptions> {
         const axis = this.axis,
-            breaks = (axis.options.breaks || []),
             obj = getBreakFromNode(node);
 
-        const brkSize = obj.to - obj.from; // - (obj.maxOffset || 0);
-        axis.treeGrid.collapsedSize -= brkSize;
         // Change the collapsed flag #13838
         node.collapsed = false;
         axis.treeGrid.setCollapsedStatus(node);
 
         // Remove the break from the axis breaks array.
-        return breaks.reduce(
+        return axis.options.breaks?.reduce(
             function (arr, b): Array<AxisBreakOptions> {
                 if (b.to !== obj.to || b.from !== obj.from) {
                     arr.push(b);
@@ -1055,7 +1049,7 @@ class TreeGridAxisAdditions {
                 return arr;
             },
             [] as Array<AxisBreakOptions>
-        );
+        ) || [];
     }
 
     /**
