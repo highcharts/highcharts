@@ -907,6 +907,12 @@ class BubbleSeries extends ScatterSeries {
                 suppliedBSideCheckEvaluator
             );
         }
+
+        return super.searchKDTree(
+            point,
+            compareX,
+            e
+        );
     }
 }
 
