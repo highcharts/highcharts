@@ -1,0 +1,27 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#container {
+    height: 400px;
+    max-width: 800px;
+    min-width: 320px;
+    margin: 0 auto;
+}
+
+:root {
+    --highcharts-color-0: red;
+    --highcharts-color-1: red;
+    --highcharts-color-2: red;
+    --highcharts-color-3: red;
+    --highcharts-color-4: red;
+    --highcharts-color-5: red;
+    --highcharts-color-6: red;
+    --highcharts-color-7: red;
+    --highcharts-color-8: red;
+    --highcharts-color-9: red;
+    --highcharts-color-10: yellow;
+}
+
+.highcharts-color-10 {
+    fill: var(--highcharts-color-10);
+    stroke: var(--highcharts-color-10);
+}

@@ -150,7 +150,13 @@ The rectangle that appears when mouse-dragging for zooming. Replaces [chart.sel
 
 Colors used for series, or individual points when [colorByPoint](https://api.highcharts.com/highcharts/plotOptions.column.colorByPoint) is set, typically for pie charts etc. Each such color rule sets the fill and stroke to a default color in _highcharts.css_, then these properties may be overridden by more specific rules, for example for a common stroke on pies. The best place to set your own custom colors is by overriding the `--highcharts-color-{n}` variables in `highcharts.css`, otherwise the strokes and fills must be set more specifically. Replaces [colors](https://api.highcharts.com/highcharts/colors).
 
+[Demo of styling series and point colors](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/colors/).
+
 Note that by default, only color indices 0-9 are defined. For color indices above 9, you need to define the corresponding CSS variables and classes:
+
+If you want to use additional `colorIndex` values (e.g. 10, 11, ...), you need to:
+
+1. **Define additional CSS variables**:
 
 ```css
 :root {
@@ -160,7 +166,30 @@ Note that by default, only color indices 0-9 are defined. For color indices abov
 }
 ```
 
-[Demo of styling series and point colors](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/colors/).
+2. **Create corresponding CSS classes**:
+
+```css
+.highcharts-color-10 {
+  stroke: var(--highcharts-color-10);
+  fill: var(--highcharts-color-10);
+}
+.highcharts-color-11 {
+  stroke: var(--highcharts-color-11);
+  fill: var(--highcharts-color-11);
+}
+```
+
+3. **Adjust `chart.colorCount`** in the chart configuration:
+
+```js
+chart: {
+  colorCount: 12 // Extend to match number of defined colors
+}
+```
+
+See a live example of how to [define and use additional `colorIndex` values](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-count/).
+
+**Note:** If you manually assign a `colorIndex` to a series or point in JavaScript, Highcharts will not apply automatic color assignment based on `chart.colorCount`. In that case, you must define the corresponding CSS class and variable yourself.
 
 ```
 .highcharts-crosshair
