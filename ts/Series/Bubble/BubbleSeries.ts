@@ -862,7 +862,10 @@ class BubbleSeries extends ScatterSeries {
         suppliedPointEvaluator: Function = noop,
         suppliedBSideCheckEvaluator: Function = noop
     ): (Point|undefined) {
-        if (!this.chart?.options?.tooltip?.shared) {
+        if (
+            !this.chart?.options?.tooltip?.shared &&
+            H.product !== 'highmaps'
+        ) {
             suppliedPointEvaluator = (
                 p1: Point,
                 p2: Point,
