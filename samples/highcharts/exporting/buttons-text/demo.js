@@ -53,7 +53,7 @@ Highcharts.chart('container', {
             printButton: {
                 text: 'Print',
                 onclick: function () {
-                    this.print();
+                    this.exporting.print();
                 }
             }
         }
