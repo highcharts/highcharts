@@ -109,7 +109,7 @@ class SparklineContent extends CellContentPro {
 
     protected override add(): void {
         const renderer = this.renderer as SparklineRenderer;
-        const { chartOptions: chartOptionsOrCallback } = renderer.options;
+        const { chartOptions } = renderer.options;
         const H = SparklineContent.H;
         if (!H || !defined(this.cell.value)) {
             return;
@@ -121,61 +121,25 @@ class SparklineContent extends CellContentPro {
         // TODO: Use globals instead of hardcoded class name
         this.cell.htmlElement.classList.add('hcg-sparkline-cell');
 
-        const defaultChartOptions = {
-            chart: {
-                height: 40,
-                animation: false,
-                margin: [5, 8, 5, 8],
-                backgroundColor: 'transparent'
-            },
-            tooltip: {
-                enabled: false
-            },
-            title: {
-                text: ''
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                visible: false
-            },
-            yAxis: {
-                visible: false
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    borderWidth: 0,
-                    marker: {
-                        enabled: false
-                    },
-                    animation: false
-                }
-            }
-        };
-
-        let chartOptions: Partial<HighchartsNamespace.Options>;
-        if (typeof chartOptionsOrCallback === 'function') {
-            chartOptions = chartOptionsOrCallback.call(
+        let options: Partial<HighchartsNamespace.Options>;
+        if (typeof chartOptions === 'function') {
+            options = chartOptions.call(
                 this.cell,
                 this.cell.value
             );
         } else {
-            chartOptions = chartOptionsOrCallback || {};
+            options = merge(chartOptions) || {};
         }
 
-        if (!chartOptions.series) {
-            chartOptions.series = [{
+        if (!options.series) {
+            options.series = [{
                 data: JSON.parse('' + this.cell.value)
             }];
         }
 
         this.chart = H.Chart.chart(this.chartContainer, merge(
-            defaultChartOptions,
-            chartOptions
+            SparklineContent.defaultChartOptions,
+            options
         ));
     }
 
