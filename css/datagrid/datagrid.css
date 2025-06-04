@@ -998,6 +998,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 }
 
+/* Cell content */
+.hcg-sparkline-cell {
+    padding: 0 !important;
+}
+
 /* Start CSS Helper Classes */
 .hcg-table thead tr th.hcg-right .hcg-header-cell-content,
 .highcharts-datagrid-table thead tr th.highcharts-datagrid-right .highcharts-datagrid-header-cell-content,
