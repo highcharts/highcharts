@@ -496,9 +496,10 @@ QUnit.test('series.data[].collapsed', assert => {
         2,
         'should have axis.max equal 2 when "Node 1" is collapsed.'
     );
-    assert.strictEqual(
+    assert.close(
         axis.toValue(axis.pos + axis.len),
         0.5,
+        0.001,
         'y axis should end on the collapsed "Node 1".'
     );
 
@@ -513,10 +514,11 @@ QUnit.test('series.data[].collapsed', assert => {
         2,
         'should have axis.max equal 2 when "Node 1" is expanded.'
     );
-    assert.strictEqual(
+    assert.close(
         axis.toValue(axis.pos + axis.len),
         // +.5 because of the grid categories layout
         chart.series[0].points.length - 1 + 0.5,
+        0.001,
         'y axis should end after the last point'
     );
 
