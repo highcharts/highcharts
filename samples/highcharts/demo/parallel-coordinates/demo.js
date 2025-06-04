@@ -11,6 +11,11 @@
             parallelCoordinates: true,
             parallelAxes: {
                 lineWidth: 2
+            },
+            events: {
+                load: function () {
+                    this.pointer.applyInactiveState = () => {};
+                }
             }
         },
         title: {
@@ -40,6 +45,7 @@
                         }
                     }
                 },
+                shadow: false,
                 states: {
                     hover: {
                         halo: {
@@ -55,8 +61,9 @@
             }
         },
         tooltip: {
+            followPointer: true,
             pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-                    '{series.name}: <b>{point.formattedValue}</b><br/>'
+                    'Runner {series.index}: <b>{point.formattedValue}</b><br/>'
         },
         xAxis: {
             categories: [
@@ -100,11 +107,9 @@
             categories: ['Before', 'After']
         }],
         colors: ['rgba(11, 200, 200, 0.1)'],
-        series: data.map(function (set, i) {
+        series: data.map(function (set) {
             return {
-                name: 'Runner ' + i,
-                data: set,
-                shadow: false
+                data: set
             };
         })
     });
