@@ -1325,6 +1325,8 @@ class Exporting {
      * Export with no options
      * @sample highcharts/members/chart-exportchart-filename/
      * PDF type and custom filename
+     * @sample highcharts/exporting/menuitemdefinitions-webp/
+     * Export to WebP
      * @sample highcharts/members/chart-exportchart-custom-background/
      * Different chart background in export
      * @sample stock/members/chart-exportchart/
