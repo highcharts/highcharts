@@ -135,7 +135,6 @@ function compose(
             );
             headerEvents?.[name]?.call(column);
         });
-    
     });
 }
 
