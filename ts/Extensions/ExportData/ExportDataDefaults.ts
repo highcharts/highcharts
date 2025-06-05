@@ -183,12 +183,10 @@ const exporting: ExportingOptions = {
      * Custom text for the "exitFullScreen" can be set only in lang options
      * (it is not a separate button).
      *
-     * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+     * @sample highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
-     * @sample {highstock} highcharts/exporting/menuitemdefinitions/
-     *         Menu item definitions
-     * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
-     *         Menu item definitions
+     * @sample highcharts/exporting/menuitemdefinitions-webp/
+     *         Adding a custom menu item for WebP export
      *
      * @type     {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
      * @default  {"downloadCSV": {}, "downloadXLS": {}, "viewData": {}}

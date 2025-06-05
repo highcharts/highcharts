@@ -472,12 +472,10 @@ const exporting: ExportingOptions = {
              * By default, there is the "View in full screen" and "Print" menu
              * items, plus one menu item for each of the available export types.
              *
-             * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+             * @sample highcharts/exporting/menuitemdefinitions/
              *         Menu item definitions
-             * @sample {highstock} highcharts/exporting/menuitemdefinitions/
-             *         Menu item definitions
-             * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
-             *         Menu item definitions
+             * @sample highcharts/exporting/menuitemdefinitions-webp/
+             *         Adding a custom menu item for WebP export
              *
              * @type    {Array<string>}
              * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadSVG"]
@@ -511,12 +509,10 @@ const exporting: ExportingOptions = {
      * Custom text for the "exitFullScreen" can be set only in lang options
      * (it is not a separate button).
      *
-     * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+     * @sample highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
-     * @sample {highstock} highcharts/exporting/menuitemdefinitions/
-     *         Menu item definitions
-     * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
-     *         Menu item definitions
+     * @sample highcharts/exporting/menuitemdefinitions-webp/
+     *         Adding a custom menu item for WebP export
      *
      *
      * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
