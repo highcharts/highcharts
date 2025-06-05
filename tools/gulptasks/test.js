@@ -353,16 +353,17 @@ specified by config.imageCapture.resultsOutputPath.
 
         logLib.message('Run `gulp test --help` for available options');
 
-        const tests = [];
+        const testArgumentParts = [];
 
         if (Array.isArray(productTests)) {
-            tests.push('--tests');
-            productTests.forEach(testPath => tests.push(`unit-tests/${testPath}/**/demo.js`));
+            testArgumentParts.push('--tests');
+            productTests.forEach(testPath =>
+                testArgumentParts.push(`unit-tests/${testPath}/**/demo.js`));
         }
 
         const result = childProcess.spawnSync('npx', [
             'karma', 'start', KARMA_CONFIG_FILE,
-            ...tests,
+            testArgumentParts.join(' '),
             ...process.argv
         ], {
             cwd: process.cwd(),
