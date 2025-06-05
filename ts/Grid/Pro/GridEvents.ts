@@ -131,6 +131,17 @@ function compose(
         );
         headerEvents?.click?.call(column);
     });
+
+    addEvent(HeaderCellClass, 'afterRender', (e: GridEvent<Column>): void => {
+        const column = e.target;
+        const headerEvents = merge(
+            // Backward compatibility
+            column.viewport.grid.options?.events?.header,
+            column.options?.header?.events
+        );
+
+        headerEvents?.afterRender?.call(column);
+    });
 }
 
 
@@ -212,6 +223,11 @@ export interface HeaderEvents {
      * Callback function to be called when the header is clicked.
      */
     click?: ColumnEventCallback;
+
+    /**
+     * Callback function to be called after the header is initialized.
+     */
+    afterRender?: ColumnEventCallback;
 }
 
 /**
