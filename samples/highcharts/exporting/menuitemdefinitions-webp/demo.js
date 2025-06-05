@@ -45,7 +45,7 @@ Highcharts.chart('container', {
         },
         menuItemDefinitions: {
             downloadWebP: {
-                text: 'Download WebP',
+                text: 'Download WebP Image',
                 onclick: function () {
                     this.exportChart({
                         type: 'image/webp'
