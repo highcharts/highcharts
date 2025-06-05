@@ -97,8 +97,6 @@ class ConnectorHandler {
      * Helper flag for detecting whether the connector handler has been
      * destroyed, used to check and prevent further operations if the connector
      * handler has been destroyed during asynchronous functions.
-     *
-     * @internal
      */
     private destroyed?: boolean;
 
