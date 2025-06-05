@@ -145,6 +145,7 @@ abstract class DataConnector implements DataEvent.Emitter {
 
     /**
      * Helper flag for detecting whether the data connector is loaded.
+     * @internal
      */
     public loaded: boolean = false;
 
