@@ -8,7 +8,9 @@
 
 /*  ==== Start Grid Color Scheme  ==== */
 .hcg-container,
-.highcharts-datagrid-container {
+.highcharts-datagrid-container,
+.highcharts-light .hcg-container,
+.highcharts-light .highcharts-datagrid-container {
     --ig-default-color: #000000;
     --ig-negative-default-border-color: #ff0000;
     --ig-negative-default-background: #ffe5e5;
@@ -29,6 +31,17 @@
         --ig-positive-default-border-color: #008000;
         --ig-positive-default-background: #265a26;
     }
+}
+
+.highcharts-dark .hcg-container,
+.highcharts-dark .highcharts-datagrid-container {
+    --ig-default-color: #ffffff;
+    --ig-negative-default-border-color: #a80000;
+    --ig-negative-default-background: #6b0000;
+    --ig-neutral-default-border-color: #b3b3b3;
+    --ig-neutral-default-background: #636363;
+    --ig-positive-default-border-color: #008000;
+    --ig-positive-default-background: #265a26;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -1011,52 +1024,101 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-theme-default,
 .highcharts-light .hcg-theme-default,
 .highcharts-light .highcharts-datagrid-theme-default {
-    --hcg-font-size: 15px;
-    --hcg-color: #333333;
-    --hcg-background: #ffffff;
-    --hcg-padding: 15px;
+    /* Primary colors */
+    --hcg-color: var(--highcharts-neutral-color-100, #000000);
+    --hcg-background: var(--highcharts-background-color, #ffffff);
+
+    /* Other properties */
     --hcg-border-radius: 5px;
     --hcg-border-width: 1px;
-    --hcg-border-color: #cccccc;
-    --hcg-column-border-width: 0;
-    --hcg-row-border-color: #e8e8e8;
-    --hcg-header-background: #eeeeee;
-    --hcg-header-row-border-color: #cccccc;
-    --hcg-header-vertical-padding: 10px;
-    --hcg-row-even-background: #fbfbfb;
-    --hcg-cell-hovered-row-background: #f3f6fe;
     --hcg-caption-font-size: 18px;
+    --hcg-column-border-width: 0;
     --hcg-credits-padding: 5px;
-    --hcg-header-column-border-color: #dfdfdf;
-    --hcg-header-column-border-width: 1px;
+    --hcg-font-size: 15px;
+    --hcg-header-column-border-width: 0;
+    --hcg-header-vertical-padding: 10px;
+    --hcg-padding: 15px;
 }
 
 @media (prefers-color-scheme: dark) {
     .hcg-theme-default,
     .highcharts-datagrid-theme-default {
-        --hcg-color: #eeeeee;
-        --hcg-background: #292929;
-        --hcg-border-color: #525252;
-        --hcg-row-border-color: #434343;
-        --hcg-header-background: #3d3d3d;
-        --hcg-header-row-border-color: #525252;
-        --hcg-row-even-background: #2e2e2e;
-        --hcg-cell-hovered-row-background: #2d2f36;
-        --hcg-header-column-border-color: #4e4e4e;
+        --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
+        --hcg-background: var(--highcharts-background-color, #141414);
     }
 }
 
 .highcharts-dark .hcg-theme-default,
 .highcharts-dark .highcharts-datagrid-theme-default {
-    --hcg-color: #eeeeee;
-    --hcg-background: #292929;
-    --hcg-border-color: #525252;
-    --hcg-row-border-color: #434343;
-    --hcg-header-background: #3d3d3d;
-    --hcg-header-row-border-color: #525252;
-    --hcg-row-even-background: #2e2e2e;
-    --hcg-cell-hovered-row-background: #2d2f36;
-    --hcg-header-column-border-color: #4e4e4e;
+    --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
+    --hcg-background: var(--highcharts-background-color, #141414);
+}
+
+.hcg-theme-default,
+.highcharts-datagrid-theme-default {
+    --hcg-border-color:
+        var(
+            --highcharts-neutral-color-20,
+            color-mix(
+                in srgb,
+                var(--hcg-color, #000000) 20%,
+                var(--hcg-background, #ffffff)
+            )
+        );
+    --hcg-cell-hovered-row-background:
+        var(
+            --highcharts-neutral-color-5,
+            color-mix(
+                in srgb,
+                var(--hcg-color, #000000) 5%,
+                var(--hcg-background, #ffffff)
+            )
+        );
+    --hcg-header-background:
+        var(
+            --highcharts-neutral-color-5,
+            color-mix(
+                in srgb,
+                var(--hcg-color, #000000) 5%,
+                var(--hcg-background, #ffffff)
+            )
+        );
+    --hcg-header-column-border-color:
+        var(
+            --highcharts-neutral-color-20,
+            color-mix(
+                in srgb,
+                var(--hcg-color, #000000) 20%,
+                var(--hcg-background, #ffffff)
+            )
+        );
+    --hcg-header-row-border-color:
+        var(
+            --highcharts-neutral-color-10,
+            color-mix(
+                in srgb,
+                var(--hcg-color, #000000) 10%,
+                var(--hcg-background, #ffffff)
+            )
+        );
+    --hcg-row-border-color:
+        var(
+            --highcharts-neutral-color-10,
+            color-mix(
+                in srgb,
+                var(--hcg-color, #000000) 10%,
+                var(--hcg-background, #ffffff)
+            )
+        );
+    --hcg-row-even-background:
+        var(
+            --highcharts-neutral-color-3,
+            color-mix(
+                in srgb,
+                var(--hcg-color, #000000) 3%,
+                var(--hcg-background, #ffffff)
+            )
+        );
 }
 
 /* End Grid Default Theme */
