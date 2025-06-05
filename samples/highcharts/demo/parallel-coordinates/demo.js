@@ -106,10 +106,11 @@
         }, {
             categories: ['Before', 'After']
         }],
-        colors: ['rgba(11, 200, 200, 0.1)'],
-        series: data.map(function (set) {
+        // colors: ['rgba(11, 200, 200, 0.1)'],
+        series: data.map(function (set, i) {
             return {
-                data: set
+                data: set,
+                color: `rgba(11, ${i * (255 / data.length)}, 200, 0.1)`
             };
         })
     });
