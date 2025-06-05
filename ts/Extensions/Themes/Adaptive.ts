@@ -21,8 +21,8 @@
  * */
 
 import type { DefaultOptions } from '../../Core/Options';
-import type Fibonacci from '../../Extensions/Annotations/Types/Fibonacci';
-import type Measure from '../../Extensions/Annotations/Types/Measure';
+import type Fibonacci from '../Annotations/Types/Fibonacci';
+import type Measure from '../Annotations/Types/Measure';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
