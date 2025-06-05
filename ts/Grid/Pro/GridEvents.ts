@@ -122,25 +122,20 @@ function compose(
     });
 
     // HeaderCell Events
-    addEvent(HeaderCellClass, 'click', (e: GridEvent<Column>): void => {
-        const column = e.target;
-        const headerEvents = merge(
-            // Backward compatibility
-            column.viewport.grid.options?.events?.header,
-            column.options?.header?.events
-        );
-        headerEvents?.click?.call(column);
-    });
-
-    addEvent(HeaderCellClass, 'afterRender', (e: GridEvent<Column>): void => {
-        const column = e.target;
-        const headerEvents = merge(
-            // Backward compatibility
-            column.viewport.grid.options?.events?.header,
-            column.options?.header?.events
-        );
-
-        headerEvents?.afterRender?.call(column);
+    ([
+        'click',
+        'afterRender'
+    ] as const).forEach((name): void => {
+        addEvent(HeaderCellClass, name, (e: GridEvent<Column>): void => {
+            const column = e.target;
+            const headerEvents = merge(
+                // Backward compatibility
+                column.viewport.grid.options?.events?.header,
+                column.options?.header?.events
+            );
+            headerEvents?.[name]?.call(column);
+        });
+    
     });
 }
 
