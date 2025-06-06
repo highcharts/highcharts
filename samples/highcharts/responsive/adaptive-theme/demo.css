@@ -33,15 +33,15 @@
 /* Extend the Adaptive theme */
 :root,
 .highcharts-light {
-    --highcharts-colors-1: pink;
+    --highcharts-color-0: black;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --highcharts-colors-1: yellow;
+        --highcharts-color-0: white;
     }
 }
 
 .highcharts-dark {
-    --highcharts-colors-1: yellow;
+    --highcharts-color-0: white;
 }
