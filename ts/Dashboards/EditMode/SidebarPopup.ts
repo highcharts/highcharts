@@ -454,8 +454,11 @@ class SidebarPopup extends BaseForm {
                                                         .setEditCellContext(
                                                             newCell
                                                         );
-                                                    sidebar.show(newCell);
-                                                    newCell.setHighlight();
+
+                                                    if (this.editMode.options.settings?.enabled) {
+                                                        sidebar.show(newCell);
+                                                        newCell.setHighlight();
+                                                    }
 
                                                     unbind();
                                                     unbindLayoutChanged();
@@ -465,8 +468,10 @@ class SidebarPopup extends BaseForm {
                                             sidebar.editMode.setEditCellContext(
                                                 newCell
                                             );
-                                            sidebar.show(newCell);
-                                            newCell.setHighlight();
+                                            if (this.editMode.options.settings?.enabled) {
+                                                sidebar.show(newCell);
+                                                newCell.setHighlight();
+                                            }
                                             unbindLayoutChanged();
                                         }
                                     }
@@ -513,7 +518,11 @@ class SidebarPopup extends BaseForm {
 
         const componentPromise =
             Bindings.addComponent(options, sidebar.editMode.board, newCell);
-        sidebar.editMode.setEditOverlay();
+
+        sidebar.editMode.setEditOverlay(
+            undefined,
+            !this.editMode.options.settings?.enabled
+        );
 
         void (async (): Promise<void> => {
             const component = await componentPromise;
