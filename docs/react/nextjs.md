@@ -1,9 +1,10 @@
 # Next.js
 
-## SSR
-Highcharts does not support server environments. In order to use it within recent versions (v13+)
-of Next.js, you will have to add `'use client'` to files containing Highcharts components or modules
-to ensure it is rendered on the client.
+## Server-side rendering
+Highcharts interactive charts can not be generated on the server side, as the interactivity relies on a client environment.
+Static images can be generated using the [Highcharts Export Server](https://www.highcharts.com/docs/export-module/setting-up-the-server).
+In order to use Highcharts within recent versions (v13+) of Next.js, you will have to add `'use client'` to files containing
+Highcharts components or modules to ensure it is rendered on the client.
 
 ```jsx
 'use client';
