@@ -1,0 +1,47 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+.content {
+    padding: 8px;
+}
+
+td {
+    padding: 2px !important;
+}
+
+td input[type="checkbox"] {
+    display: block;
+    margin: auto;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: #66afe9;
+    transition: transform 0.1s ease-in-out;
+}
+
+td input[type="checkbox"]:hover {
+    transform: scale(1.1);
+}
+
+td select,
+td input[type="date"] {
+    width: 100%;
+    height: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: transparent;
+    outline: none;
+    transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+td[data-column-id="category"] select:focus {
+    border-color: #66afe9;
+    background-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .content {
+        background-color: #292929;
+        color: #fff;
+    }
+}
