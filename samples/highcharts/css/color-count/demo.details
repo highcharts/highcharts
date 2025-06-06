@@ -1,0 +1,6 @@
+---
+ name: CSS theming with extra color indices
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+...
