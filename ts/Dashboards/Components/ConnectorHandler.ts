@@ -93,6 +93,12 @@ class ConnectorHandler {
      * @internal
      */
     public presentationTable?: DataTable;
+    /**
+     * Helper flag for detecting whether the connector handler has been
+     * destroyed, used to check and prevent further operations if the connector
+     * handler has been destroyed during asynchronous functions.
+     */
+    private destroyed?: boolean;
 
 
     /* *
@@ -149,7 +155,12 @@ class ConnectorHandler {
             }
 
             const connector = await dataPool.getConnector(connectorId);
-            this.setConnector(connector);
+
+            // The connector shouldn't be set if the handler was destroyed
+            // during its creation.
+            if (!this.destroyed) {
+                this.setConnector(connector);
+            }
         }
 
         return component;
@@ -382,6 +393,7 @@ class ConnectorHandler {
      * @internal
      */
     public destroy(): void {
+        this.destroyed = true;
         this.removeConnectorAssignment();
         this.removeTableEvents();
     }
