@@ -30,8 +30,7 @@ import Globals from '../../Core/Globals.js';
 const {
     addEvent,
     fireEvent,
-    pushUnique,
-    merge
+    pushUnique
 } = U;
 
 
@@ -95,13 +94,12 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(TableCellClass, name, (e: GridEvent<TableCell>): void => {
             const cell = e.target;
-            const cellEvents = merge(
+            const cellEvent =
+                cell.column.options.cells?.events?.[name] ||
                 // Backward compatibility
-                cell.row.viewport.grid.options?.events?.cell,
-                cell.column.options.cells?.events
-            );
+                cell.row.viewport.grid.options?.events?.cell?.[name];
 
-            cellEvents?.[name]?.call(cell);
+            cellEvent?.call(cell);
             propagate['cell_' + name]?.call(cell);
         });
     });
@@ -112,12 +110,12 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(ColumnClass, name, (e: GridEvent<Column>): void => {
             const column = e.target;
-            const columnEvents = merge(
+            const columnEvent =
+                column.options?.events?.[name] ||
                 // Backward compatibility
-                column.viewport.grid.options?.events?.column,
-                column.options?.events
-            );
-            columnEvents?.[name]?.call(column);
+                column.viewport.grid.options?.events?.column?.[name];
+
+            columnEvent?.call(column);
         });
     });
 
@@ -128,12 +126,12 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(HeaderCellClass, name, (e: GridEvent<Column>): void => {
             const column = e.target;
-            const headerEvents = merge(
+            const headerEvent =
+                column.options?.header?.events?.[name] ||
                 // Backward compatibility
-                column.viewport.grid.options?.events?.header,
-                column.options?.header?.events
-            );
-            headerEvents?.[name]?.call(column);
+                column.viewport.grid.options?.events?.header?.[name];
+
+            headerEvent?.call(column);
         });
     });
 }
