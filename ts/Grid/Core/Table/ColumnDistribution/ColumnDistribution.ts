@@ -68,9 +68,8 @@ namespace ColumnDistribution {
      */
     function assumeDistributionType(viewport: Table): StrategyType {
         const { options } = viewport.grid;
-        const result =
-            options?.rendering?.columns?.resizeMode ||
-            options?.rendering?.columns?.distribution;
+        const colRendering = options?.rendering?.columns;
+        const result = colRendering?.resizeMode || colRendering?.distribution;
 
         if (result) {
             return result;
