@@ -39,6 +39,7 @@ Highcharts.setOptions({
 });
 ```
 
+## Media query and class names
 By default, the theme is set to the system default theme through the
 `prefers-color-scheme` media query. You can also force the color scheme by
 setting either the `highcharts-light` or `highcharts-dark` class to the dashboard container.
