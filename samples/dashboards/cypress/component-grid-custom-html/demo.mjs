@@ -76,7 +76,9 @@ Dashboards.board('container', {
                 header: ['Food', 'Vitamin A'],
                 columnDefaults: {
                     cells: {
-                        editable: true
+                        editMode: {
+                            enabled: true
+                        }
                     }
                 },
                 columns: [{
