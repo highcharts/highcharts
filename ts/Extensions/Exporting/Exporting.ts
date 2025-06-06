@@ -1314,6 +1314,10 @@ class Exporting {
         } = Exporting.prepareImageOptions(exportingOptions);
         let svgURL: string;
 
+        if (exportingOptions.inlineFonts) {
+            svg = await Exporting.inlineFonts(svg);
+        }
+
         // Initiate download depending on file type
         if (type === 'application/pdf') {
             // Error in case of offline-exporting module is not loaded
