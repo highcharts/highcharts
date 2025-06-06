@@ -351,6 +351,109 @@ class Exporting {
         }
     }
 
+    private static async fetchCSS(href: string): Promise<CSSStyleSheet> {
+        const content = await fetch(href)
+            .then((res): Promise<string> => res.text());
+
+        const newSheet = new CSSStyleSheet();
+        newSheet.replaceSync(content);
+
+        return newSheet;
+    }
+
+    private static async handleStyleSheet(
+        sheet: CSSStyleSheet,
+        resultArray: string[]
+    ): Promise<void> {
+        try {
+            for (const rule of Array.from(sheet.cssRules)) {
+                if (rule instanceof CSSImportRule) {
+                    const sheet = await Exporting.fetchCSS(rule.href);
+                    await Exporting.handleStyleSheet(sheet, resultArray);
+                }
+
+                if (rule instanceof CSSFontFaceRule) {
+                    // TODO: Resolve relative urls in cssText
+                    resultArray.push(rule.cssText);
+                }
+            }
+        } catch (err) {
+            if (sheet.href) {
+                const newSheet = await Exporting.fetchCSS(sheet.href);
+                await Exporting.handleStyleSheet(newSheet, resultArray);
+            }
+        }
+    }
+
+    private static async fetchStyleSheets(): Promise<string[]> {
+        const cssTexts: string[] = [];
+
+        for (const sheet of Array.from(doc.styleSheets)) {
+            await Exporting.handleStyleSheet(sheet, cssTexts);
+        }
+
+        return cssTexts;
+    }
+
+    public static async inlineFonts(svg: string): Promise<string> {
+        const cssTexts = await Exporting.fetchStyleSheets();
+
+        let cssText = cssTexts.join('\n');
+
+        const urlRegex = /url\(([^)]+)\)/g;
+        const urls: string[] = [];
+        let match;
+        while ((match = urlRegex.exec(cssText))) {
+            const m = match[1].replace(/['"]/g, '');
+            if (!urls.includes(m)) {
+                urls.push(m);
+            }
+        }
+
+        const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        };
+
+        const replacements: Record<string, string> = {};
+        for (const url of urls) {
+            try {
+                const res = await fetch(url);
+                const contentType = res.headers.get('Content-Type') || '';
+                replacements[url] =
+                    `data:${contentType};base64,${arrayBufferToBase64(await res.arrayBuffer())}`;
+            } catch {
+                // eslint-disable-next-line
+            }
+        }
+
+        cssText = cssText.replace(urlRegex, (_, url: string): string => {
+            const strippedUrl = url.replace(/['"]/g, '');
+            return replacements[strippedUrl] ? `url(${replacements[strippedUrl]})` : `url(${strippedUrl})`;
+        });
+
+        const svgDoc = new DOMParser().parseFromString(
+            svg,
+            'image/svg+xml'
+        );
+        const svgElement = svgDoc.querySelector('svg');
+
+        if (svgElement) {
+            const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+            styleEl.textContent = cssText;
+
+            svgElement.insertBefore(styleEl, svgElement.firstChild);
+
+            return svgElement.outerHTML;
+        }
+
+        return svg;
+    }
+
     /**
      * Loads an image from the provided URL.
      *
