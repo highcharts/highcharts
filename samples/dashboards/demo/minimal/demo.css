@@ -94,10 +94,6 @@ h1#title {
     border: none;
 }
 
-.hcg-table thead th, .highcharts-datagrid-table thead th {
-    background: none;
-}
-
 /* LARGE */
 @media (max-width: 1200px) {
     #dashboard-col-0,
