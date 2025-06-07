@@ -167,8 +167,8 @@
                     name: 'Graticule',
                     type: 'mapline',
                     data: getGraticule(),
-                    nullColor: '#e8e8e8',
-                    color: '#e8e8e8'
+                    nullColor: '#aaa6',
+                    color: '#aaa6'
                 }, {
                     data,
                     mapData: topology,
@@ -195,7 +195,7 @@
                                 [-118.24, 34.05] // Los Angeles
                             ]
                         },
-                        color: '#3030d0'
+                        color: '#2caffe'
                     }],
                     lineWidth: 2
                 }, {
@@ -213,7 +213,7 @@
                         },
                         name: 'LA'
                     }],
-                    color: '#3030d0'
+                    color: '#2caffe'
                 }]
             });
             console.timeEnd('@mapChart');
@@ -264,8 +264,8 @@
                         animationLimit: 500,
                         allAreas: true,
                         clip: false,
-                        nullColor: '#e0e0e0',
-                        borderColor: '#ffffff',
+                        nullColor: '#8888',
+                        borderColor: 'var(--highcharts-background-color, #fff)',
                         borderWidth: 0.25
                     },
                     mapline: {
@@ -277,7 +277,7 @@
                     name: 'Graticule',
                     type: 'mapline',
                     data: getGraticule(),
-                    color: '#f8f8f8'
+                    color: '#aaa6'
                 }, {
                     mapData: topology
                 }, {

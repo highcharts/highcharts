@@ -149,8 +149,8 @@ Highcharts.chart('container', {
                 align: 'left',
                 pointFormat: '{point.id}',
                 style: {
-                    color: '#000000',
-                    textOutline: '3px #ffffff',
+                    color: 'var(--highcharts-neutral-color-100, #000)',
+                    textOutline: '3px contrast',
                     whiteSpace: 'nowrap'
                 },
                 x: 24,

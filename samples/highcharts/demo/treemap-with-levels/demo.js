@@ -10,7 +10,6 @@ Highcharts.chart('container', {
                 textOutline: 'none'
             }
         },
-        borderColor: '#ffffff',
         borderRadius: 3,
         nodeSizeBy: 'leaf',
         levels: [{
@@ -23,7 +22,8 @@ Highcharts.chart('container', {
                 style: {
                     fontSize: '0.6em',
                     fontWeight: 'normal',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    color: 'var(--highcharts-neutral-color-100, #000)'
                 }
             },
             borderRadius: 3,

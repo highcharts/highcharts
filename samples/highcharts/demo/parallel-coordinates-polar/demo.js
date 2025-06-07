@@ -14,7 +14,7 @@ Highcharts.chart('container', {
                 style: {
                     opacity: 0.7,
                     fontSize: '11px',
-                    color: '#000'
+                    color: 'var(--highcharts-neutral-color-100, #000)'
                 }
             },
             gridLineWidth: 0,

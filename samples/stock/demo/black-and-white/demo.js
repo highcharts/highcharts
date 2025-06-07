@@ -29,6 +29,9 @@
                     enabled: false
                 },
                 gridLineWidth: 0
+            },
+            series: {
+                color: 'var(--highcharts-neutral-color-100, #000)'
             }
         },
         scrollbar: {
@@ -159,6 +162,7 @@
             type: 'candlestick',
             data: data,
             color: '#000000',
+            upColor: '#ffffff',
             lastPrice: {
                 enabled: true,
                 color: '#c0c0c0',

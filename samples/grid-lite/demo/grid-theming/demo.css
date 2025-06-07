@@ -137,3 +137,33 @@
         border-color: #474747;
     }
 }
+
+.highcharts-dark #container {
+    background-color: #333;
+}
+
+.highcharts-dark .hcg-container {
+    --hcg-caption-color: #eee;
+    --hcg-description-color: #eee;
+}
+
+.highcharts-dark .my-theme {
+    --my-hover-color: #ff5f5f;
+    --hcg-header-background: #001c23;
+    --hcg-color: #eee;
+    --hcg-background: #003947;
+    --hcg-row-even-background: #004556;
+    --hcg-cell-hovered-column-border-color: #4b4b4b;
+}
+
+.highcharts-dark .opacity-theme {
+    /* In dark mode we only need to adjust the custom properties. */
+    --base-color: 0, 0, 0;
+    --gradient-from-color: rgb(102, 20, 140);
+    --gradient-to-color: rgb(50, 13, 144);
+}
+
+.highcharts-dark .hcg-description code {
+    background: #222;
+    border-color: #474747;
+}

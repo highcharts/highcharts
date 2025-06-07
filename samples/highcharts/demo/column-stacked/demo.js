@@ -28,8 +28,7 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 70,
         floating: true,
-        backgroundColor:
-            Highcharts.defaultOptions.legend.backgroundColor || 'white',
+        backgroundColor: 'var(--highcharts-background-color, #ffffff)',
         borderColor: '#CCC',
         borderWidth: 1,
         shadow: false

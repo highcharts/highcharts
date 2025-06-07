@@ -51,7 +51,7 @@
 
 @media (prefers-color-scheme: dark) {
     #container {
-        background: #333;
+        background: #141414;
     }
 
     .my-theme {
@@ -68,4 +68,23 @@
         --hcg-cell-hovered-background: #841857;
         --hcg-cell-hovered-header-background: #4b5297;
     }
+}
+
+.highcharts-dark #container {
+    background: #141414;
+}
+
+.highcharts-dark .my-theme {
+    --hcg-color: #eee;
+    --hcg-background: #292929;
+    --hcg-row-border-color: #434343;
+    --hcg-header-row-border-color: #525252;
+    --hcg-row-even-background: #2e2e2e;
+    --hcg-header-column-border-color: #4e4e4e;
+    --hcg-border-color: #646a9e;
+    --hcg-header-background: #343a6c;
+    --hcg-cell-hovered-column-background: #3d3d3d;
+    --hcg-cell-hovered-row-background: #3d3d3d;
+    --hcg-cell-hovered-background: #841857;
+    --hcg-cell-hovered-header-background: #4b5297;
 }
