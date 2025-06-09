@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
     chart: {
         styledMode: true,
-        // lower this value to see that colors for higher indices
+        // Lower this value to see that colors for higher indices
         // (e.g. .highcharts-color-10) won't be applied
         colorCount: 11
     },
