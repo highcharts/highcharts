@@ -66,6 +66,10 @@ describe('Grid Pro - events.', () => {
         cy.get('#cellAfterRender').should('have.value', '3');
     });
 
+    it('AfterRender header event.', () => {
+        cy.get('#headerAfterRender').should('have.value', 'afterRender');
+    });
+
     it('Cell afterEdit event', () => {
         // ColumnDefaults
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]')

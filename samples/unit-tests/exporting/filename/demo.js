@@ -1,12 +1,12 @@
 QUnit.test('Default file name from title', function (assert) {
     function fn(title) {
-        return Highcharts.Chart.prototype.getFilename.call({
-            options: {
-                exporting: {}
+        return Highcharts.Exporting.prototype.getFilename.call({
+            chart: {
+                userOptions: {
+                    title: title
+                }
             },
-            userOptions: {
-                title: title
-            }
+            options: {}
         });
     }
 
@@ -40,7 +40,7 @@ QUnit.test('Default file name from title', function (assert) {
     );
 });
 
-QUnit.test('POST filename', function (assert) {
+QUnit.test('POST filename', async function (assert) {
     var chart = Highcharts.chart('container', {
         title: {
             text: 'Exports a pdf with name: my-pdf'
@@ -102,7 +102,7 @@ QUnit.test('POST filename', function (assert) {
         };
 
         // Run export width custom file name
-        chart.exportChart({
+        await chart.exporting.exportChart({
             type: 'application/pdf',
             filename: 'my-pdf'
         });
@@ -115,7 +115,7 @@ QUnit.test('POST filename', function (assert) {
         );
 
         // Run export width custom file name
-        chart.exportChart({
+        await chart.exporting.exportChart({
             type: 'application/pdf',
             filename: 'lorem/ipsum'
         });
@@ -142,7 +142,7 @@ QUnit.test('Filename option', assert => {
         });
 
     assert.strictEqual(
-        chart('Medical/Dental office').getFilename(),
+        chart('Medical/Dental office').exporting.getFilename(),
         'Medical-Dental office',
         'Forward slash should be replaced with dash'
     );
