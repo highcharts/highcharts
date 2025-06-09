@@ -21,10 +21,10 @@
  *
  * */
 
-import type { EditModeContent } from '../../CellEditing/CellEditMode';
-import type TableCell from '../../../Core/Table/Body/TableCell';
 import type DataTable from '../../../../Data/DataTable';
-import type SelectRenderer from '../Renderers/SelectRenderer.js';
+import type { EditModeContent } from '../../CellEditing/CellEditMode';
+import type SelectRenderer from '../Renderers/SelectRenderer';
+import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 

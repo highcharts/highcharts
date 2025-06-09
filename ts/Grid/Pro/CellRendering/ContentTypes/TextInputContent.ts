@@ -21,11 +21,11 @@
  *
  * */
 
-import type TableCell from '../../../Core/Table/Body/TableCell.js';
-import type TextInputRenderer from '../Renderers/TextInputRenderer.js';
-import type DataTable from '../../../../Data/DataTable.js';
+import type DataTable from '../../../../Data/DataTable';
+import type { EditModeContent } from '../../CellEditing/CellEditMode';
+import type TableCell from '../../../Core/Table/Body/TableCell';
+import type TextInputRenderer from '../Renderers/TextInputRenderer';
 
-import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 import CellContentPro from '../CellContentPro.js';
 import U from '../../../../Core/Utilities.js';
 

@@ -23,6 +23,7 @@
  * */
 
 import type Column from '../../../Core/Table/Column';
+import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type {
     EditModeRendererTypeName
@@ -33,7 +34,6 @@ import CellRendererRegistry from '../CellRendererRegistry.js';
 import CheckboxContent from '../ContentTypes/CheckboxContent.js';
 
 import U from '../../../../Core/Utilities.js';
-import { EditModeRenderer } from '../../CellEditing/CellEditMode';
 const {
     merge
 } = U;
