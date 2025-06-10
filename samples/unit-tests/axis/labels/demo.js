@@ -990,6 +990,50 @@ QUnit.test('Label reserve space', function (assert) {
         'opposite: true, reserveSpace: true, align: center. - ' +
             'Labels should not overlap plot area'
     );
+
+    // #21172)
+    chart.update({
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            opposite: false
+        },
+        yAxis: [{
+            opposite: false,
+            categories: ['Long label should not be clipped'],
+            labels: {
+                style: {
+                    fontSize: '13px'
+                }
+            }
+        }]
+    }, false);
+
+    chart.redraw();
+
+    const baseBBox = chart.yAxis[0].ticks[0].label.element.getBBox();
+
+    // Compare with opposite
+    chart.update({
+        chart: {
+            marginLeft: 5,
+            spacingLeft: 10
+        },
+        yAxis: [{
+            opposite: true
+        }]
+    }, false);
+
+    chart.redraw();
+
+    const oppositeBBox = chart.yAxis[0].ticks[0].label.element.getBBox();
+
+    assert.ok(
+        oppositeBBox.width >= baseBBox.width * 0.95,
+        `#21172,
+            Opposite yAxis label should not be narrower than normal yAxis label`
+    );
 });
 
 QUnit.test('Label ellipsis', function (assert) {
