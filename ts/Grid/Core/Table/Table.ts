@@ -181,7 +181,14 @@ class Table {
             );
         }
 
-        if (dgOptions?.rendering?.columns?.resizing?.enabled) {
+        // -- Backward compatibility ---
+        let resizingEnabled = dgOptions?.rendering?.columns?.resizing?.enabled;
+        if (!defined(resizingEnabled)) {
+            resizingEnabled = dgOptions?.columnDefaults?.resizing;
+        }
+        // ---
+
+        if (resizingEnabled) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 

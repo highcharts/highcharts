@@ -164,7 +164,7 @@ export interface ColumnsSettings {
     distribution?: ColumnDistributionType;
 
     /**
-     * Columns included in the grid structure- contains the columns IDs.
+     * Columns included in the grid structure - contains the columns IDs.
      * If not set, all columns will be included. Useful when many columns needs
      * to be excluded from the grid.
      *
@@ -188,6 +188,10 @@ export interface ResizingOptions {
     /**
      * Whether the columns resizing is enabled. If `true`, the user can
      * resize the columns by dragging the column header edges.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing-disabled | Column resize disabled}
+     *
+     * @default true
      */
     enabled?: boolean;
 
@@ -321,6 +325,12 @@ export interface ColumnOptions {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
      */
     sorting?: ColumnSortingOptions;
+
+    /**
+     * @deprecated
+     * Use `rendering.columns.resizing.enabled` instead.
+     */
+    resizing?: boolean;
 
     /**
      * The width of the column. It can be set in pixels or as a percentage of
@@ -472,6 +482,14 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
+
+    /**
+     * @internal
+     * @private
+     * @deprecated
+     * It will be removed in the next major release.
+     */
+    resizing?: boolean;
 }
 
 export interface CaptionOptions {
