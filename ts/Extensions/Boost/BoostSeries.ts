@@ -898,7 +898,8 @@ function getPoint(
         return boostPoint as BoostPointComposition;
     }
 
-    const isScatter = series.is('scatter'),
+    const data = seriesOptions.data,
+        isScatter = series.is('scatter'),
         xData = (
             (isScatter && series.getColumn('x', true).length ?
                 series.getColumn('x', true) :
@@ -913,30 +914,32 @@ function getPoint(
             seriesOptions.yData ||
             false
         ),
+        pointIndex = boostPoint.i,
         point = new PointClass(
             series as BoostSeriesComposition,
             (isScatter && xData && yData) ?
-                [xData[boostPoint.i], yData[boostPoint.i]] :
+                [xData[pointIndex], yData[pointIndex]] :
                 (
-                    isArray(seriesOptions.data) ? seriesOptions.data : []
+                    isArray(data) ? data : []
                 )[boostPoint.i],
-            xData ? xData[boostPoint.i] : void 0
+            xData ? xData[pointIndex] : void 0
         ) as BoostPointComposition;
 
     if (
         isScatter &&
         seriesOptions.keys &&
-        seriesOptions.data && (
-            seriesOptions?.keys?.length || 0
+        data && (
+            seriesOptions.keys.length || 0
         ) > 2
     ) {
-        let len = (seriesOptions?.keys?.length || 0) - 1;
+        const keys = seriesOptions.keys;
+        let keysIndex = (keys.length || 0);
 
-        while (len > 1) {
-            (point as any)[(seriesOptions.keys[len] as any)] = (
-                seriesOptions.data[boostPoint.i] as any
-            )[len];
-            len--;
+        // Don't reassign X and Y properties as they're already handled above
+        while (--keysIndex > 1) {
+            (point as any)[(keys[keysIndex] as any)] = (
+                data[pointIndex] as any
+            )[keysIndex];
         }
     }
 
@@ -952,7 +955,7 @@ function getPoint(
     point.distX = boostPoint.distX;
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
-    point.index = boostPoint.i;
+    point.index = pointIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
     return point;
