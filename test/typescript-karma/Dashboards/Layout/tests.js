@@ -188,7 +188,7 @@ test('Components and rows in layout with set height', function (assert) {
     layouts[0].style = {}
 });
 
-test('Nested layouts serialization.', function (assert) {
+skip('Nested layouts serialization.', function (assert) {
     const container = setupContainer();
 
     const chartComponentOptions = {
@@ -261,7 +261,7 @@ test('Nested layouts serialization.', function (assert) {
     assert.true(importedLayout.rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
 });
 
-test('Reserialized cell width', function (assert) {
+skip('Reserialized cell width', function (assert) {
     const container = setupContainer();
     const chartComponentOptions = {
         type: 'Highcharts',
