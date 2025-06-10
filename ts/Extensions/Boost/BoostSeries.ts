@@ -923,6 +923,23 @@ function getPoint(
             xData ? xData[boostPoint.i] : void 0
         ) as BoostPointComposition;
 
+    if (
+        isScatter &&
+        series.options.keys &&
+        series.options.data && (
+            series.options?.keys?.length || 0
+        ) > 2
+    ) {
+        let len = (series.options?.keys?.length || 0) - 1;
+
+        while (len > 1) {
+            (point as any)[(series.options.keys[len] as any)] = (
+                series.options.data[boostPoint.i] as any
+            )[len];
+            len--;
+        }
+    }
+
     point.category = pick(
         xAxis.categories ?
             xAxis.categories[point.x] :
