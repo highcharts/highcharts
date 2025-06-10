@@ -998,8 +998,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 }
 
-/* Cell content */
-.hcg-sparkline-cell {
+/* Helpers */
+.hcg-no-padding,
+.highcharts-datagrid-no-padding {
     padding: 0 !important;
 }
 

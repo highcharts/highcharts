@@ -24,9 +24,9 @@
 import type SparklineRenderer from '../Renderers/SparklineRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type * as HighchartsNamespace from '../../highcharts';
-import type Globals from '../../../Core/Globals';
 
 import CellContentPro from '../CellContentPro.js';
+import Globals from '../../../Core/Globals.js';
 import U from '../../../../Core/Utilities.js';
 const {
     defined,
@@ -118,8 +118,7 @@ class SparklineContent extends CellContentPro {
         this.chartContainer = document.createElement('div');
         this.cell.htmlElement.appendChild(this.chartContainer);
 
-        // TODO: Use globals instead of hardcoded class name
-        this.cell.htmlElement.classList.add('hcg-sparkline-cell');
+        this.cell.htmlElement.classList.add(Globals.getClassName('noPadding'));
 
         let options: Partial<HighchartsNamespace.Options>;
         if (typeof chartOptions === 'function') {
@@ -146,6 +145,9 @@ class SparklineContent extends CellContentPro {
     public destroy(): void {
         this.chart?.destroy();
         this.chartContainer?.remove();
+        this.cell.htmlElement.classList.remove(
+            Globals.getClassName('noPadding')
+        );
     }
 }
 
