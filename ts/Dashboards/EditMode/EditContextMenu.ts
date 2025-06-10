@@ -38,7 +38,7 @@ class EditContextMenu extends Menu {
     * */
     protected static readonly defaultOptions: EditContextMenu.Options = {
         enabled: true,
-        width: 160,
+        width: 150,
         className: EditGlobals.classNames.contextMenu,
         itemsClassName: EditGlobals.classNames.contextMenuItem,
         items: ['editMode']
