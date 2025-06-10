@@ -181,7 +181,7 @@ class Table {
             );
         }
 
-        if (dgOptions?.columnDefaults?.resizing) {
+        if (dgOptions?.rendering?.columns?.resizing?.enabled) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 

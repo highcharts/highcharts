@@ -153,10 +153,13 @@ export interface RenderingSettings {
     theme?: string;
 }
 
+/**
+ * Options to control the columns rendering.
+ */
 export interface ColumnsSettings {
     /**
      * @deprecated
-     * Use `resizeMode` instead.
+     * Use `resizing.mode` instead.
      */
     distribution?: ColumnDistributionType;
 
@@ -173,6 +176,22 @@ export interface ColumnsSettings {
     included?: Array<string>;
 
     /**
+     * Options for the columns resizing.
+     */
+    resizing?: ResizingOptions;
+}
+
+/**
+ * Options to control the columns resizing.
+ */
+export interface ResizingOptions {
+    /**
+     * Whether the columns resizing is enabled. If `true`, the user can
+     * resize the columns by dragging the column header edges.
+     */
+    enabled?: boolean;
+
+    /**
      * Resizing mode of the columns. If `full`, the columns will be
      * distributed so that the first and the last column are at the edges of
      * the grid. If `fixed`, the columns will have a fixed width, only the
@@ -187,9 +206,12 @@ export interface ColumnsSettings {
      *
      * @default undefined
      */
-    resizeMode?: ColumnDistributionType;
+    mode?: ColumnDistributionType;
 }
 
+/**
+ * Options to control the rows rendering.
+ */
 export interface RowsSettings {
     /**
      * Buffer of rows to render outside the visible area from the top and from
@@ -299,16 +321,6 @@ export interface ColumnOptions {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
      */
     sorting?: ColumnSortingOptions;
-
-    /**
-     * Whether the columns should be resizable. It does not affect individual
-     * column settings.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing-disabled | Column resize disabled}
-     *
-     * @default true
-     */
-    resizing?: boolean;
 
     /**
      * The width of the column. It can be set in pixels or as a percentage of
@@ -460,12 +472,6 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
-
-    /**
-     * @internal
-     * @private
-     */
-    resizing?: boolean;
 }
 
 export interface CaptionOptions {

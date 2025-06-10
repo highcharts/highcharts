@@ -70,7 +70,8 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                                 'gridOptions',
                                 'rendering',
                                 'columns',
-                                'resizeMode'
+                                'resizing',
+                                'mode'
                             ],
                         type: 'select',
                         selectOptions: [{
@@ -97,8 +98,10 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath:
                             [
                                 'gridOptions',
-                                'columnDefaults',
-                                'resizing'
+                                'rendering',
+                                'columns',
+                                'resizing',
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {

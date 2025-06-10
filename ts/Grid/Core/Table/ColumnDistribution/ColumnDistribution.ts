@@ -59,7 +59,7 @@ namespace ColumnDistribution {
 
     /**
      * Returns the column distribution of the table according to the options:
-     * 1. If `columns.resizeMode` defined, use it. If not:
+     * 1. If `columns.resizing.mode` defined, use it. If not:
      * 2. If any column has a width defined, use `mixed`. If not:
      * 3. Use `full`.
      *
@@ -69,7 +69,8 @@ namespace ColumnDistribution {
     function assumeDistributionType(viewport: Table): StrategyType {
         const { options } = viewport.grid;
         const colRendering = options?.rendering?.columns;
-        const result = colRendering?.resizeMode || colRendering?.distribution;
+        const result = colRendering?.resizing?.mode ||
+            colRendering?.distribution;
 
         if (result) {
             return result;

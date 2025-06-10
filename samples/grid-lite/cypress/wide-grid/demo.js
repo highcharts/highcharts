@@ -60,7 +60,9 @@ Grid.grid('container', {
     }],
     rendering: {
         columns: {
-            resizeMode: 'fixed'
+            resizing: {
+                mode: 'fixed'
+            }
         },
         rows: {
             strictHeights: true

@@ -71,7 +71,9 @@ Some API options have been renamed or removed. For the full list, make sure to c
     }
     rendering: {
         columns: {
-            resizeMode: 'full'
+            resizing: {
+                mode: 'full'
+            }
         },
         rows: {
             bufferSize: 10,

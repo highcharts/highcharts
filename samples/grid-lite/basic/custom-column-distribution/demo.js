@@ -32,7 +32,9 @@ Grid.grid('container', {
     },
     rendering: {
         columns: {
-            resizeMode: 'custom'
+            resizing: {
+                mode: 'custom'
+            }
         }
     },
     columns: [{
