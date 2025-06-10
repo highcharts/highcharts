@@ -373,8 +373,23 @@ class Exporting {
                 }
 
                 if (rule instanceof CSSFontFaceRule) {
-                    // TODO: Resolve relative urls in cssText
-                    resultArray.push(rule.cssText);
+                    let cssText = rule.cssText;
+
+                    if (sheet.href) {
+                        const baseUrl = sheet.href;
+                        const regexp =
+                        /url\(\s*(['"]?)(?![a-z]+:|\/\/)([^'")]+?)\1\s*\)/gi;
+                        // Replace relative URLs
+                        cssText = cssText.replace(
+                            regexp,
+                            (_, quote: string, relPath: string): string => {
+                                const absolutePath =
+                                    new URL(relPath, baseUrl).href;
+                                return `url(${quote}${absolutePath}${quote})`;
+                            });
+                    }
+
+                    resultArray.push(cssText);
                 }
             }
         } catch (err) {
