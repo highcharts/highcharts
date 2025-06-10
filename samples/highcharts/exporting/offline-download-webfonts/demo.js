@@ -1,6 +1,6 @@
-const chart = Highcharts.chart('container', {
+Highcharts.chart('container', {
     exporting: {
-        inlineFonts: true,
+        inlineFonts: true
     },
     title: {
         text: 'Offline export',
@@ -36,4 +36,3 @@ const chart = Highcharts.chart('container', {
     }]
 
 });
-

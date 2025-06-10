@@ -2,7 +2,7 @@
  name: Highcharts Demo
  applyCSP: false
  authors:
-   - Øystein Moseng
+   - Gøran Slettemark
  requiresManualTesting: true
  js_wrap: b
 ...
