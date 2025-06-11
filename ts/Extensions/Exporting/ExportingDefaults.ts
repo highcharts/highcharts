@@ -194,12 +194,15 @@ const exporting: ExportingOptions = {
 
     /**
      * If set to true, external fonts will be downloaded and included in
-     * exported images.
+     * exported images. If unset, external fonts will not be included in the
+     *  exported image.
      *
      * @type      {boolean}
+     * @default   false
      * @since     next
      * @apioption exporting.inlineFonts
      */
+    inlineFonts: false,
 
     /**
      * Path where Highcharts will look for export module dependencies to
