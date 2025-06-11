@@ -330,8 +330,13 @@ class Board implements Serializable<Board, Board.JSON> {
         this.initEvents();
 
         if (async) {
-            return Promise.all(componentPromises).then((): Board => this);
+            return Promise.all(componentPromises).then((): Board => {
+                options.events?.mounted?.call(this);
+                return this;
+            });
         }
+
+        options.events?.mounted?.call(this);
 
         return this;
     }
@@ -417,16 +422,27 @@ class Board implements Serializable<Board, Board.JSON> {
     public destroy(): void {
         const board = this;
 
+        // Cancel all data connectors pending requests.
+        this.dataPool.cancelPendingRequests();
+
         // Destroy layouts.
-        for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
-            board.layouts[i].destroy();
+        if (this.guiEnabled) {
+            for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
+                board.layouts[i].destroy();
+            }
+        } else {
+            for (const mountedComponent of board.mountedComponents) {
+                mountedComponent.component.destroy();
+            }
         }
 
         // Remove resizeObserver from the board
         this.resizeObserver?.unobserve(board.container);
 
         // Destroy container.
-        board.container?.remove();
+        if (this.guiEnabled) {
+            board.container?.remove();
+        }
 
         // @ToDo Destroy bindings.
 
@@ -670,6 +686,10 @@ namespace Board {
          * @internal
          **/
         layoutsJSON?: Array<Layout.JSON>;
+        /**
+         * Events related to the board.
+         */
+        events?: BoardEvents;
     }
 
     /**
@@ -724,6 +744,17 @@ namespace Board {
         layouts: Array<Layout.Options>;
     }
 
+    /**
+     * Events related to the board.
+     */
+    export interface BoardEvents {
+        /**
+         * Callback function to be called after the board and all components are
+         * initialized.
+         */
+        mounted: MountedEventCallback;
+    }
+
     /** @internal */
     export interface JSON extends Serializable.JSON<'Board'> {
         /**
@@ -736,6 +767,10 @@ namespace Board {
         options: OptionsJSON;
     }
 
+    /**
+     * Callback function to be called when a board event is triggered.
+     */
+    export type MountedEventCallback = (this: Board) => void;
     /* *
      *
      *  Constants

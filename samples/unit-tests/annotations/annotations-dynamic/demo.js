@@ -282,7 +282,7 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     chart.removeAnnotation(textAnnotation);
 
     assert.strictEqual(
-        chart.getSVG().indexOf('text-annotation'),
+        chart.exporting.getSVG().indexOf('text-annotation'),
         -1,
         'Annotation is not visible in exported chart after removing (#21507).'
     );

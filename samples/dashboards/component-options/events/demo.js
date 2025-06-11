@@ -17,6 +17,11 @@ Dashboards.board('container', {
             enabled: true
         }
     },
+    events: {
+        mounted: function () {
+            console.log('Mounted all components');
+        }
+    },
     gui: {
         layouts: [{
             id: 'layout-1',

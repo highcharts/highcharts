@@ -5,6 +5,8 @@
  *
  * Highcharts Drilldown module
  *
+ * (c) 2009-2025 Torstein Honsi
+ *
  * Author: Torstein Honsi
  * License: www.highcharts.com/license
  *

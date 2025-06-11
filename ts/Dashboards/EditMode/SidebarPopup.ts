@@ -64,15 +64,16 @@ class SidebarPopup extends BaseForm {
                 return;
             }
 
-            const row = (
-                    dropContext.getType() === 'cell' ?
-                        (dropContext as Cell).row :
-                        (dropContext as Row)
-                ),
+            const isCellType = dropContext.getType() === 'cell',
+                row = isCellType ? (dropContext as Cell).row :
+                    (dropContext as Row),
                 board = row.layout.board,
-                newLayoutId = GUIElement.getElementId('layout'),
-                cellId = GUIElement.getElementId('cell'),
-                layout = new Layout(board, {
+                cellId = GUIElement.getElementId('cell');
+
+            if (isCellType) {
+                const newLayoutId = GUIElement.getElementId('layout');
+
+                const layout = new Layout(board, {
                     id: newLayoutId,
                     copyId: '',
                     parentContainerId: board.container.id,
@@ -84,7 +85,6 @@ class SidebarPopup extends BaseForm {
                     style: {}
                 });
 
-            if (layout) {
                 board.layouts.push(layout);
 
                 fireEvent(
@@ -96,6 +96,10 @@ class SidebarPopup extends BaseForm {
                         board
                     }
                 );
+            } else {
+                (dropContext as Row).layout.rows[0].addCell({
+                    id: cellId
+                });
             }
 
             void Bindings.addComponent({
@@ -400,6 +404,7 @@ class SidebarPopup extends BaseForm {
                         e as PointerEvent,
                         void 0,
                         (dropContext: Cell|Row): void => {
+
                             // Add component if there is no layout yet.
                             if (this.editMode.board.layouts.length === 0) {
                                 const board = this.editMode.board,
@@ -419,8 +424,9 @@ class SidebarPopup extends BaseForm {
                                 dropContext = layout.rows[0];
                             }
 
-                            if (!dropContext) {
+                            if (!dropContext?.type) {
                                 const layouts = sidebar.editMode.board.layouts;
+
                                 dragDrop.dropContext = dropContext =
                                     layouts[layouts.length - 1].addRow(
                                         {},
@@ -436,10 +442,12 @@ class SidebarPopup extends BaseForm {
                                 'layoutChanged',
                                 (e): void => {
                                     if (newCell && e.type === 'newComponent') {
+                                        const chart =
+                                            newCell.mountedComponent?.chart;
 
-                                        if (newCell.mountedComponent.chart) {
+                                        if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
-                                                newCell.mountedComponent.chart,
+                                                chart,
                                                 'render',
                                                 (): void => {
                                                     sidebar.editMode
@@ -459,8 +467,8 @@ class SidebarPopup extends BaseForm {
                                             );
                                             sidebar.show(newCell);
                                             newCell.setHighlight();
+                                            unbindLayoutChanged();
                                         }
-
                                     }
                                 }
                             );
@@ -543,7 +551,7 @@ class SidebarPopup extends BaseForm {
 
         if (Cell.isCell(editCellContext) && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
-            editCellContext.row.setHighlight();
+            editCellContext.row.setHighlight(true);
             editCellContext.setHighlight(true);
             if (editMode.resizer) {
                 editMode.resizer.setSnapPositions(

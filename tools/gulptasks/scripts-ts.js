@@ -42,7 +42,7 @@ function removeHighcharts(removeFromCode = false) {
     ];
 
     for (const pathToDelete of pathsToDelete) {
-        fsLib.deleteDirectory(fsLib.path(pathToDelete), true);
+        fsLib.deleteDirectory(fsLib.path(pathToDelete));
     }
 }
 
@@ -135,10 +135,10 @@ async function scriptsTS(argv) {
         processLib.isRunning('scripts-ts', true);
 
         if (argv.dashboards) {
-            fsLib.deleteDirectory(dashCfg.bundleTargetFolder, true);
+            fsLib.deleteDirectory(dashCfg.bundleTargetFolder);
         }
 
-        fsLib.deleteDirectory('js', true);
+        fsLib.deleteDirectory('js');
 
         if (product === 'Grid') {
             const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
@@ -233,11 +233,11 @@ async function scriptsTS(argv) {
             removeHighcharts();
 
             // Remove DataGrid
-            fsLib.deleteDirectory(fsLib.path(['js', 'datagrid']), true);
-            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']), true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'datagrid']));
+            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']));
 
             // Remove Grid
-            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']), true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
 
             // Fix masters
             fs.renameSync(
@@ -254,11 +254,11 @@ async function scriptsTS(argv) {
             );
         } else {
             // Remove Dashboards
-            fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']), true);
-            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']), true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']));
+            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']));
 
             // Remove Grid
-            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']), true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
         }
 
         processLib.isRunning('scripts-ts', false);

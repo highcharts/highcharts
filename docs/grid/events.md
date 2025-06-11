@@ -4,7 +4,9 @@ tags: ["grid-pro"]
 
 # Events
 
-The Grid supports event listeners that can be added to the [events](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.IndividualColumnOptions.html#events) object. These listeners will call functions when interacting with the Grid.
+The Grid supports event listeners that can be added to the [columnDefaults.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#columnDefaults) object or a particular column. These listeners will call functions when interacting with the Grid.
+
+Please note that the [events](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.IndividualColumnOptions.html#events) has been deprecated.
 
 The available events are:
 
@@ -13,7 +15,8 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterEdit`        | Triggered after a cell's value is edited.                | `this: Cell`          |
-| `afterSetValue`    | Triggered after setting a cell's value (init/edit).      | `this: Cell`          |
+| `afterRender`      | Triggered after setting a cell's value (init/edit)       | `this: Cell`          |
+| ~~`afterSetValue`~~ | Deprecated. Use `afterRender` instead.                   | `this: Cell`          |
 | `click`            | Triggered after clicking on a cell.                      | `this: Cell`          |
 | `dblClick`         | Triggered after double-clicking on a cell.               | `this: Cell`          |
 | `mouseOver`        | Triggered when the mouse is hovered over a cell.         | `this: Cell`          |
@@ -31,34 +34,15 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `click`            | Triggered after clicking on a column header.             | `this: Column`        |
+| `afterRender`      | Triggered after init of a column header.                 | `this: Column`        |
 
 # Example
 
 Here is a sample code that demonstrates how to use these event callbacks in the `events` object:
 
 ```js
-events: {
-  cell: {
-    afterEdit: function () {
-      console.log('Cell edited:', this);
-    },
-    afterSetValue: function () {
-      console.log('Cell value set:', this);
-    },
-    click: function () {
-      console.log('Cell clicked:', this);
-    },
-    dblClick: function () {
-      console.log('Cell double-clicked:', this);
-    },
-    mouseOver: function () {
-      console.log('Mouse over cell:', this);
-    },
-    mouseOut: function () {
-      console.log('Mouse out of cell:', this);
-    }
-  },
-  column: {
+columnDefaults: {
+  events: {
     afterResize: function () {
       console.log('Column resized:', this);
     },
@@ -66,12 +50,63 @@ events: {
       console.log('Column sorted:', this);
     }
   },
+  cells: {
+    events: {
+      afterEdit: function () {
+        console.log('Cell value set:', this);
+      },
+      afterRender: function () {
+        console.log('Cell value:', this);
+      },
+      click: function () {
+        console.log('Cell clicked:', this);
+      },
+      dblClick: function () {
+        console.log('Cell double-clicked:', this);
+      },
+      mouseOver: function () {
+        console.log('Mouse over cell:', this);
+      },
+      mouseOut: function () {
+        console.log('Mouse out of cell:', this);
+      }
+    }
+  },
   header: {
-    click: function () {
-      console.log('Header clicked:', this);
+    events: {
+      click: function () {
+        console.log('Header clicked:', this);
+      }
     }
   }
 }
+```
+
+You can also declare all events to the dedicated column:
+
+```js
+columns: [{
+  id: 'columnId',
+  events: {
+    afterResize: function () {
+      // callback
+    }
+  }
+  cells: {
+    events: {
+      click: function () {
+        // callback
+      }
+    }
+  },
+  header: {
+    events: {
+      click: function () {
+        // callback
+      }
+    }
+  }
+}]
 ```
 
 Live example:
