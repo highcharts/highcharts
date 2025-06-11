@@ -158,6 +158,10 @@ class SparklineContent extends CellContentPro {
 
         this.chart?.destroy();
         this.chartContainer?.remove();
+
+        delete this.chart;
+        delete this.chartContainer;
+
         this.cell.htmlElement.classList.remove(
             Globals.getClassName('noPadding')
         );
