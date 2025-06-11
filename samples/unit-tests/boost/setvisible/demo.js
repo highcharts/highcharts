@@ -187,7 +187,13 @@ QUnit.test(
 
         assert.deepEqual(
             chart.hoverPoints,
-            [],
+            undefined,
             'Hover points are cleared after zoom'
+        );
+
+        assert.strictEqual(
+            chart.tooltip.isHidden,
+            true,
+            'Tooltip is hidden after zoom'
         );
     });
