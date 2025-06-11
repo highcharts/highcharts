@@ -444,6 +444,8 @@ class SidebarPopup extends BaseForm {
                                     if (newCell && e.type === 'newComponent') {
                                         const chart =
                                             newCell.mountedComponent?.chart;
+                                        const settingsEnabled =
+                                            chart?.options.settings?.enabled;
 
                                         if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
@@ -455,7 +457,7 @@ class SidebarPopup extends BaseForm {
                                                             newCell
                                                         );
 
-                                                    if (this.editMode.options.settings?.enabled) {
+                                                    if (settingsEnabled) {
                                                         sidebar.show(newCell);
                                                         newCell.setHighlight();
                                                     }
@@ -468,7 +470,7 @@ class SidebarPopup extends BaseForm {
                                             sidebar.editMode.setEditCellContext(
                                                 newCell
                                             );
-                                            if (this.editMode.options.settings?.enabled) {
+                                            if (settingsEnabled) {
                                                 sidebar.show(newCell);
                                                 newCell.setHighlight();
                                             }
