@@ -53,7 +53,8 @@ class SparklineContent extends CellContentPro {
                 height: 40,
                 animation: false,
                 margin: [5, 8, 5, 8],
-                backgroundColor: 'transparent'
+                backgroundColor: 'transparent',
+                skipClone: true
             },
             accessibility: {
                 enabled: false
