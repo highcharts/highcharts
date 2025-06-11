@@ -520,7 +520,6 @@ class SidebarPopup extends BaseForm {
             Bindings.addComponent(options, sidebar.editMode.board, newCell);
 
         sidebar.editMode.setEditOverlay(
-            undefined,
             !this.editMode.options.settings?.enabled
         );
 

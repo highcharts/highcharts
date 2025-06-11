@@ -1042,21 +1042,12 @@ class EditMode {
      * @param remove
      * Whether the edit overlay should be removed.
      */
-    public setEditOverlay(
-        remove?: boolean,
-        forceRemove?: boolean
-    ): void {
+    public setEditOverlay(remove?: boolean): void {
         const editMode = this,
             cnt = editMode.editOverlay,
             isSet = cnt?.classList.contains(
                 EditGlobals.classNames.editOverlayActive
             );
-
-        if (forceRemove) {
-            cnt?.classList.remove(EditGlobals.classNames.editOverlayActive);
-            editMode.isEditOverlayActive = false;
-            return;
-        }
 
         if (!remove && !isSet) {
             cnt?.classList.add(EditGlobals.classNames.editOverlayActive);
