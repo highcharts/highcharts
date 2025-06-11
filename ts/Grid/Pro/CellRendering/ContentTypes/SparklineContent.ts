@@ -23,7 +23,7 @@
 
 import type SparklineRenderer from '../Renderers/SparklineRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
-import type * as HighchartsNamespace from '../../highcharts';
+import * as HighchartsNamespace from '../../highcharts';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
@@ -139,9 +139,14 @@ class SparklineContent extends CellContentPro {
             options = merge(chartOptions) || {};
         }
 
+        let trimmedValue = ('' + this.cell.value).trim();
+        if (!trimmedValue.startsWith('[') && !trimmedValue.startsWith('{')) {
+            trimmedValue = `[${trimmedValue}]`;
+        }
+
         if (!options.series) {
             options.series = [{
-                data: JSON.parse('' + this.cell.value)
+                data: JSON.parse(trimmedValue)
             }];
         }
 
