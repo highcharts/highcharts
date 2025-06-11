@@ -376,9 +376,10 @@ class Exporting {
                     let cssText = rule.cssText;
 
                     if (sheet.href) {
-                        const baseUrl = sheet.href;
-                        const regexp =
+                        const baseUrl = sheet.href,
+                            regexp =
                         /url\(\s*(['"]?)(?![a-z]+:|\/\/)([^'")]+?)\1\s*\)/gi;
+
                         // Replace relative URLs
                         cssText = cssText.replace(
                             regexp,
@@ -411,13 +412,13 @@ class Exporting {
     }
 
     public static async inlineFonts(svg: string): Promise<string> {
-        const cssTexts = await Exporting.fetchStyleSheets();
+        const cssTexts = await Exporting.fetchStyleSheets(),
+            urlRegex = /url\(([^)]+)\)/g,
+            urls: string[] = [];
 
-        let cssText = cssTexts.join('\n');
+        let cssText = cssTexts.join('\n'),
+            match;
 
-        const urlRegex = /url\(([^)]+)\)/g;
-        const urls: string[] = [];
-        let match;
         while ((match = urlRegex.exec(cssText))) {
             const m = match[1].replace(/['"]/g, '');
             if (!urls.includes(m)) {
@@ -452,10 +453,10 @@ class Exporting {
         });
 
         const svgDoc = new DOMParser().parseFromString(
-            svg,
-            'image/svg+xml'
-        );
-        const svgElement = svgDoc.querySelector('svg');
+                svg,
+                'image/svg+xml'
+            ),
+            svgElement = svgDoc.querySelector('svg');
 
         if (svgElement) {
             const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
