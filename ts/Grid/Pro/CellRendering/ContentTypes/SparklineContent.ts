@@ -41,7 +41,7 @@ const {
  * */
 
 /**
- * Represents a checkbox type of cell content.
+ * Represents a sparkline type of cell content.
  */
 class SparklineContent extends CellContentPro {
 
@@ -54,6 +54,9 @@ class SparklineContent extends CellContentPro {
                 animation: false,
                 margin: [5, 8, 5, 8],
                 backgroundColor: 'transparent'
+            },
+            accessibility: {
+                enabled: false
             },
             tooltip: {
                 enabled: false
@@ -78,6 +81,11 @@ class SparklineContent extends CellContentPro {
                     borderWidth: 0,
                     marker: {
                         enabled: false
+                    },
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
                     },
                     animation: false
                 }
@@ -140,15 +148,23 @@ class SparklineContent extends CellContentPro {
             SparklineContent.defaultChartOptions,
             options
         ));
+
+        this.chartContainer.addEventListener('click', this.onKeyDown);
     }
 
     public destroy(): void {
+        this.chartContainer?.removeEventListener('keydown', this.onKeyDown);
+
         this.chart?.destroy();
         this.chartContainer?.remove();
         this.cell.htmlElement.classList.remove(
             Globals.getClassName('noPadding')
         );
     }
+
+    private onKeyDown = (): void => {
+        this.cell.htmlElement.focus();
+    };
 }
 
 
