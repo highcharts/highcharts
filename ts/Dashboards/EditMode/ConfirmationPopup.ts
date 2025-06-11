@@ -226,7 +226,7 @@ class ConfirmationPopup extends BaseForm {
         this.contentOptions = options;
         this.showPopup();
         this.renderContent();
-        this.editMode.setEditOverlay(false);
+        this.editMode.setEditOverlay();
     }
 
     /**

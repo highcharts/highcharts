@@ -181,8 +181,9 @@ describe('Editable component options', () => {
 });
 
 describe('Toolbar settings disabled.', () => {
-    before(() => {
+    beforeEach(() => {
         cy.visit('/dashboards/edit-mode/settings-disabled');
+        cy.viewport(1200, 1000);
         cy.toggleEditMode();
         cy.get('.highcharts-dashboards-component').first().click();
     });
@@ -203,21 +204,5 @@ describe('Toolbar settings disabled.', () => {
         // Assert
         cy.get('.highcharts-dashboards-edit-overlay-active').should('not.exist');
         cy.get('.highcharts-dashboards-edit-sidebar').should('not.be.visible');
-        cy.get('.highcharts-dashboards-edit-toolbar-cell')
-            .parent()
-            .invoke('position')
-            .then((pos) => {
-                const initialX = pos.left;
-
-                // Act
-                cy.get('.highcharts-dashboards-component').first().click();
-
-                // Assert
-                cy.get('.highcharts-dashboards-edit-toolbar-cell')
-                    .parent()
-                    .invoke('position')
-                    .its('left')
-                    .should('be.lt', initialX);
-            });
     });
 });

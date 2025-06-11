@@ -437,25 +437,21 @@ class SidebarPopup extends BaseForm {
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
+                            /* eslint-disable max-len */
                             const unbindLayoutChanged = addEvent(
                                 this.editMode,
                                 'layoutChanged',
                                 (e): void => {
                                     if (newCell && e.type === 'newComponent') {
-                                        const chart =
-                                            newCell.mountedComponent?.chart;
-                                        const settingsEnabled =
-                                            chart?.options.settings?.enabled;
+                                        const chart = newCell.mountedComponent?.chart;
+                                        const settingsEnabled = this.editMode.options.settings?.enabled;
 
                                         if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
                                                 chart,
                                                 'render',
                                                 (): void => {
-                                                    sidebar.editMode
-                                                        .setEditCellContext(
-                                                            newCell
-                                                        );
+                                                    sidebar.editMode.setEditCellContext(newCell);
 
                                                     if (settingsEnabled) {
                                                         sidebar.show(newCell);
@@ -467,9 +463,7 @@ class SidebarPopup extends BaseForm {
                                                 }
                                             );
                                         } else {
-                                            sidebar.editMode.setEditCellContext(
-                                                newCell
-                                            );
+                                            sidebar.editMode.setEditCellContext(newCell);
                                             if (settingsEnabled) {
                                                 sidebar.show(newCell);
                                                 newCell.setHighlight();
@@ -479,6 +473,7 @@ class SidebarPopup extends BaseForm {
                                     }
                                 }
                             );
+                            /* eslint-enable max-len */
 
                             // Clean up event listener after drop is complete
                             document.removeEventListener(
