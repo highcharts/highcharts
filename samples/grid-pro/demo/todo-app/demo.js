@@ -14,21 +14,29 @@ const categories = [
 ];
 const priority = [
     { value: '', label: '' },
-    { value: 'L', label: 'Low' },
-    { value: 'H', label: 'High' },
-    { value: 'M', label: 'Medium' }
+    { value: 'Low', label: 'Low' },
+    { value: 'High', label: 'High' },
+    { value: 'Medium', label: 'Medium' }
 ];
 const columns = [{
     id: 'completed',
     dataType: 'boolean',
     width: 120,
     cells: {
-        renderer: {
-            type: 'checkbox'
+        formatter: function () {
+            const map = {
+                false: '❌',
+                true: '✅'
+            };
+            return map[this.value] || '';
         },
         editMode: {
             renderer: {
-                type: 'checkbox'
+                type: 'select',
+                options: [
+                    { value: true, label: 'Yes' },
+                    { value: false, label: 'No' }
+                ]
             }
         }
     }
@@ -37,8 +45,17 @@ const columns = [{
     dataType: 'string',
     cells: {
         renderer: {
-            type: 'select',
-            options: categories
+            type: 'text'
+        },
+        formatter: function () {
+            return categories.find(({ value }) => value === this.value)
+                ?.label || '';
+        },
+        editMode: {
+            renderer: {
+                type: 'select',
+                options: categories
+            }
         }
     }
 }, {
@@ -46,17 +63,21 @@ const columns = [{
     dataType: 'datetime',
     cells: {
         format: '{value:%Y-%m-%d}',
-        renderer: {
-            type: 'dateInput'
+        editMode: {
+            renderer: {
+                type: 'dateInput'
+            }
         }
     }
 }, {
     id: 'priority',
     dataType: 'string',
     cells: {
-        renderer: {
-            type: 'select',
-            options: priority
+        editMode: {
+            renderer: {
+                type: 'select',
+                options: priority
+            }
         }
     }
 }];
@@ -76,7 +97,7 @@ Grid.grid('container', {
                 Date.UTC(2025, 6, 1), Date.UTC(2025, 6, 2),
                 Date.UTC(2025, 6, 3), Date.UTC(2025, 6, 4)
             ],
-            priority: ['L', 'H', 'M', 'L']
+            priority: ['Low', 'High', 'Medium', 'Low']
         }
     },
     columnDefaults: {
@@ -85,11 +106,11 @@ Grid.grid('container', {
                 enabled: true
             },
             events: {
-                afterRender: function () {
+                afterEdit: function () {
                     if (this.column.id === 'completed') {
                         const selected = this.value;
 
-                        if (selected) {
+                        if (selected === 'true') {
                             const dataTable = this.row.viewport.dataTable;
                             const rowIndex = this.row.index;
                             const data = { ...this.row.data, completed: true };
@@ -119,7 +140,7 @@ Grid.grid('container-done', {
                 'Try new pasta recipe', 'Backyard only', 'Check under sink'
             ],
             dueDate: ['2025-06-08', '2025-06-09', '2025-06-10'],
-            priority: ['M', 'L', 'H']
+            priority: ['Medium', 'Low', 'High']
         }
     },
     columnDefaults: {
@@ -128,11 +149,11 @@ Grid.grid('container-done', {
                 enabled: true
             },
             events: {
-                afterRender: function () {
+                afterEdit: function () {
                     if (this.column.id === 'completed') {
                         const selected = this.value;
 
-                        if (selected === false) {
+                        if (selected === 'false') {
                             const dataTable = this.row.viewport.dataTable;
                             const rowIndex = this.row.index;
                             const data = { ...this.row.data, completed: false };

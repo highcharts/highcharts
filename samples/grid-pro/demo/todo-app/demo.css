@@ -4,10 +4,6 @@
     padding: 8px;
 }
 
-td {
-    padding: 2px !important;
-}
-
 td input[type="checkbox"] {
     display: block;
     margin: auto;
