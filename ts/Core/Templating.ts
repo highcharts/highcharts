@@ -16,7 +16,6 @@
  *
  * */
 
-import type Chart from './Chart/Chart';
 import type TimeBase from '../Shared/TimeBase';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
@@ -434,7 +433,7 @@ function format(
  *         The formatted number.
  */
 function numberFormat(
-    this: Chart|Object|void,
+    this: Templating.Owner|void,
     number: number,
     decimals: number,
     decimalPoint?: string,
@@ -447,7 +446,7 @@ function numberFormat(
         fractionDigits: number,
         [mantissa, exp] = number.toString().split('e').map(Number);
 
-    const lang = (this as Chart)?.options?.lang || defaultOptions.lang,
+    const lang = this?.options?.lang || defaultOptions.lang,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
         firstDecimals = decimals,
         options: Intl.NumberFormatOptions = {};
@@ -497,8 +496,7 @@ function numberFormat(
 
     const hasSeparators = thousandsSep || decimalPoint,
         locale = hasSeparators ?
-            'en' :
-            ((this as Chart)?.locale || lang.locale || pageLang),
+            'en' : (this?.locale || lang.locale || pageLang),
         cacheKey = JSON.stringify(options) + locale,
         nf = numberFormatCache[cacheKey] ??=
             new Intl.NumberFormat(locale, options);
@@ -554,7 +552,8 @@ namespace Templating {
     export interface Owner {
         options?: OwnerOptions;
         time?: TimeBase;
-        numberFormatter?: Function
+        numberFormatter?: Function;
+        locale?: string | string[]
     }
 }
 
