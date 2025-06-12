@@ -45,7 +45,6 @@ const {
  */
 class SparklineContent extends CellContentPro {
 
-
     public static defaultChartOptions: Globals.DeepPartial<
     HighchartsNamespace.Options
     > = {
@@ -86,9 +85,19 @@ class SparklineContent extends CellContentPro {
                     states: {
                         hover: {
                             enabled: false
+                        },
+                        inactive: {
+                            enabled: false
                         }
                     },
-                    animation: false
+                    animation: false,
+                    dataLabels: {
+                        enabled: false
+                    }
+                },
+                pie: {
+                    slicedOffset: 0,
+                    borderRadius: 0
                 }
             }
         };
