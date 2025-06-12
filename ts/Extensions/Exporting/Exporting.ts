@@ -411,7 +411,7 @@ class Exporting {
         return cssTexts;
     }
 
-    public static async inlineFonts(svg: string): Promise<string> {
+    public static async inlineFonts(svg: SVGSVGElement): Promise<SVGSVGElement> {
         const cssTexts = await Exporting.fetchStyleSheets(),
             urlRegex = /url\(([^)]+)\)/g,
             urls: string[] = [];
@@ -452,23 +452,16 @@ class Exporting {
             return replacements[strippedUrl] ? `url(${replacements[strippedUrl]})` : `url(${strippedUrl})`;
         });
 
-        const svgDoc = new DOMParser().parseFromString(
-                svg,
-                'image/svg+xml'
-            ),
-            svgElement = svgDoc.querySelector('svg');
 
-        if (svgElement) {
-            const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-            styleEl.textContent = cssText;
+        const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+        styleEl.textContent = cssText;
 
-            svgElement.insertBefore(styleEl, svgElement.firstChild);
-
-            return svgElement.outerHTML;
-        }
+        // Needs to be appended to pass sanitization
+        svg.append(styleEl);
 
         return svg;
     }
+
 
     /**
      * Loads an image from the provided URL.
@@ -1329,10 +1322,6 @@ class Exporting {
             libURL
         } = Exporting.prepareImageOptions(exportingOptions);
         let svgURL: string;
-
-        if (exportingOptions.inlineFonts) {
-            svg = await Exporting.inlineFonts(svg);
-        }
 
         // Initiate download depending on file type
         if (type === 'application/pdf') {
@@ -2255,6 +2244,12 @@ class Exporting {
                 } else {
                     image.parentNode.removeChild(image);
                 }
+            }
+
+            const svgElement = chartCopyContainer?.querySelector('svg');
+
+            if (svgElement && exportingOptions.inlineFonts) {
+                await Exporting.inlineFonts(svgElement);
             }
 
             // Sanitize the SVG
