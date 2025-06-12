@@ -123,13 +123,16 @@ namespace ScrollbarAxis {
                     axis.dataMin,
                     axis.threshold ?? Infinity
                 ) : axisMin,
-            scrollMax: defined(axis.dataMax) ?
-                Math.max(
-                    axisMax,
-                    axis.max ?? -Infinity,
-                    axis.dataMax,
-                    axis.threshold ?? -Infinity
-                ) : axisMax
+            scrollMax: axis.treeGrid?.adjustedMax ?? (
+                defined(axis.dataMax) ?
+                    Math.max(
+                        axisMax,
+                        axis.max ?? -Infinity,
+                        axis.dataMax,
+                        axis.threshold ?? -Infinity
+                    ) :
+                    axisMax
+            )
         };
     }
 
@@ -182,7 +185,9 @@ namespace ScrollbarAxis {
                         scrollMin: unitedMin,
                         scrollMax: unitedMax
                     } = getExtremes(axis),
-                    range = unitedMax - unitedMin;
+                    minPX = axis.toPixels(unitedMin),
+                    maxPX = axis.toPixels(unitedMax),
+                    rangePX = maxPX - minPX;
 
                 let to: number,
                     from: number;
@@ -196,24 +201,29 @@ namespace ScrollbarAxis {
                     (axis.horiz && !axis.reversed) ||
                     (!axis.horiz && axis.reversed)
                 ) {
-                    to = unitedMin + range * this.to;
-                    from = unitedMin + range * this.from;
+                    to = Math.min(
+                        unitedMax,
+                        axis.toValue(Math.round(minPX + rangePX * this.to))
+                    );
+                    from = Math.max(
+                        unitedMin,
+                        axis.toValue(Math.round(minPX + rangePX * this.from))
+                    );
                 } else {
                     // Y-values in browser are reversed, but this also
                     // applies for reversed horizontal axis:
-
-                    // Experimental change for a pixel-based scrollbar
-                    // const minPX = axis.toPixels(unitedMin),
-                    //     maxPX = axis.toPixels(unitedMax),
-                    //     rangePX = maxPX - minPX;
-                    // to = axis.toValue(minPX +
-                    //     rangePX * (1 - (this.from as any)));
-                    // from = axis.toValue(minPX +
-                    //     rangePX * (1 - (this.to as any)));
-                    // or the next 2 lines
-
-                    to = unitedMin + range * (1 - this.from);
-                    from = unitedMin + range * (1 - this.to);
+                    to = Math.min(
+                        unitedMax,
+                        axis.toValue(
+                            Math.round(minPX + rangePX * (1 - this.from))
+                        )
+                    );
+                    from = Math.max(
+                        unitedMin,
+                        axis.toValue(
+                            Math.round(minPX + rangePX * (1 - this.to))
+                        )
+                    );
                 }
 
                 if (this.shouldUpdateExtremes(e.DOMType)) {
@@ -347,14 +357,10 @@ namespace ScrollbarAxis {
 
                 scrollbar.setRange(from, to);
             } else {
-                from = (axis.min - scrollMin) / (scrollMax - scrollMin);
-                to = (axis.max - scrollMin) / (scrollMax - scrollMin);
-
-                // Experimental change for a pixel-based scrollbar
-                // from = (axis.toPixels(axis.min) - axis.toPixels(scrollMin))
-                //     / (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
-                // to = (axis.toPixels(axis.max) - axis.toPixels(scrollMin))
-                //     / (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
+                from = (axis.toPixels(axis.min) - axis.toPixels(scrollMin)) /
+                    (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
+                to = (axis.toPixels(axis.max) - axis.toPixels(scrollMin)) /
+                    (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
 
                 if (
                     (axis.horiz && !axis.reversed) ||

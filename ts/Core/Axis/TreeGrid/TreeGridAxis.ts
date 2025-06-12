@@ -940,13 +940,13 @@ class TreeGridAxisAdditions {
      *
      * */
 
+    public adjustedMax?: number;
     public axis: TreeGridAxisComposition;
+    public collapsedNodes?: GridNode[];
     public mapOfPosToGridNode?: Record<string, GridNode>;
     public mapOptionsToLevel?: Record<string, TreeGridAxisLabelOptions>;
-    public tree?: TreeNode;
-    public collapsedNodes?: GridNode[];
-
     public pendingSizeAdjustment: number = 0;
+    public tree?: TreeNode;
 
     /* *
      *

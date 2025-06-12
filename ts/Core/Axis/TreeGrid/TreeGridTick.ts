@@ -523,10 +523,7 @@ class TreeGridTickAdditions {
             axis = tick.axis,
             brokenAxis = axis.brokenAxis;
 
-        if (
-            brokenAxis &&
-            axis.treeGrid.mapOfPosToGridNode
-        ) {
+        if (brokenAxis && axis.treeGrid.mapOfPosToGridNode) {
             const pos = tick.pos,
                 node = axis.treeGrid.mapOfPosToGridNode[pos],
                 breaks = axis.treeGrid.toggleCollapse(node),
@@ -539,17 +536,23 @@ class TreeGridTickAdditions {
             brokenAxis.setBreaks(breaks, scrollMode && redraw);
 
             if (scrollMode) {
-                let newMaxVal = axis.toValue(maxPx) - axis.tickmarkOffset;
-                let newMinVal = axis.userMin ?? axis.min;
+                const adjustedMax = axis.toValue(axis.toPixels(axis.dataMax));
+                let newMaxVal = axis.toValue(maxPx) - axis.tickmarkOffset,
+                    newMinVal = axis.userMin ?? axis.min;
+
+                // If dataMax is in a break.
+                axis.treeGrid.adjustedMax = adjustedMax !== axis.dataMax ?
+                    adjustedMax - axis.tickmarkOffset :
+                    void 0;
 
                 if (newMaxVal > axis.dataMax) {
                     let missingPx = maxPx -
                         axis.toPixels(axis.dataMax + axis.tickmarkOffset);
-                    newMaxVal = axis.dataMax;
+                    newMaxVal = axis.treeGrid.adjustedMax ?? axis.dataMax;
 
                     // Check if enough space available on the min end.
                     newMinVal = axis.toValue(axis.toPixels(
-                        (axis.userMin ?? axis.min) - axis.tickmarkOffset
+                        newMinVal - axis.tickmarkOffset
                     ) - missingPx) + axis.tickmarkOffset;
 
                     if (newMinVal < axis.dataMin) {
@@ -559,6 +562,7 @@ class TreeGridTickAdditions {
                         axis.treeGrid.pendingSizeAdjustment = missingPx;
                     }
                 }
+
                 axis.setExtremes(
                     correctFloat(newMinVal),
                     correctFloat(newMaxVal),
