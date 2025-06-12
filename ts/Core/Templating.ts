@@ -194,7 +194,7 @@ function format(
         decRegex = /\.(\d)/,
         lang = owner?.options?.lang || defaultOptions.lang,
         time = owner?.time || defaultTime,
-        numberFormatter = owner?.numberFormatter || numberFormat;
+        numberFormatter = owner?.numberFormatter || numberFormat.bind(owner);
 
     /*
      * Get a literal or variable value inside a template expression. May be

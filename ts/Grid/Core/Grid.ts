@@ -549,6 +549,13 @@ class Grid {
         this.viewport?.columnDistribution.validateOnUpdate(options);
         this.querying.loadOptions();
 
+        // Update locale.
+        const locale = options.lang?.locale;
+        if (locale) {
+            this.locale = locale;
+            this.time.update({ locale });
+        }
+
         if (render) {
             await this.querying.proceed(newDataTable);
             this.renderViewport();
