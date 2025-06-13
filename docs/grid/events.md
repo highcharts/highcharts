@@ -34,6 +34,7 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `click`            | Triggered after clicking on a column header.             | `this: Column`        |
+| `afterRender`      | Triggered after init of a column header.                 | `this: Column`        |
 
 # Example
 
