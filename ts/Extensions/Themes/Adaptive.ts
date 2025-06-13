@@ -697,6 +697,14 @@ namespace DynamicDefaultTheme {
                 },
                 borderColor: 'var(--highcharts-neutral-color-10)'
             },
+            sunburst: {
+                states: {
+                    hover: {
+                        borderColor: 'var(--highcharts-neutral-color-40)'
+                    }
+                },
+                borderColor: 'var(--highcharts-neutral-color-10)'
+            },
             treegraph: {
                 states: {
                     hover: {
