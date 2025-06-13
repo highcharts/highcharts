@@ -179,6 +179,7 @@ namespace GridUtils {
         content: string
     ): void {
         if (isHTML(content)) {
+            element.innerHTML = AST.emptyHTML;
             const formattedNodes = new AST(content);
             formattedNodes.addToDOM(element);
         } else {
