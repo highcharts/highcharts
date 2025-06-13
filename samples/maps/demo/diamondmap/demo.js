@@ -47,7 +47,6 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: '',
-        backgroundColor: 'rgba(247,247,247,0.95)',
         pointFormat: '<span style="color: {point.color}">●</span>' +
             '<span style="font-size: 13px; font-weight: bold"> {point.name}' +
             '</span><br>{point.desc}',

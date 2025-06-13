@@ -53,10 +53,7 @@ Highcharts.chart('container', {
     },
     legend: {
         align: 'left',
-        verticalAlign: 'top',
-        backgroundColor:
-            Highcharts.defaultOptions.legend.backgroundColor || // theme
-            'rgba(255,255,255,0.25)'
+        verticalAlign: 'top'
     },
     series: [{
         name: 'Precipitation',

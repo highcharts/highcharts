@@ -172,7 +172,12 @@ Highcharts.chart('container', {
             ['Transportation', 'Energy Services', 5.77]
         ],
         type: 'sankey',
-        name: 'Sankey demo series'
+        name: 'Sankey demo series',
+        dataLabels: {
+            style: {
+                color: 'var(--highcharts-neutral-color-100, #000)'
+            }
+        }
     }]
 
 });

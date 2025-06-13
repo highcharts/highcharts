@@ -77,11 +77,21 @@
         },
 
         legend: {
-            backgroundColor: 'rgba(255,255,255,0.85)',
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-background-color, white),
+                transparent 15%
+            )`,
             align: 'left',
             layout: 'vertical',
             symbolRadius: 0,
             borderRadius: 2,
+            itemStyle: {
+                color: '#333'
+            },
+            itemHoverStyle: {
+                color: '#000'
+            },
             itemHiddenStyle: {
                 color: 'rgba(128,128,128,0.3)'
             },
