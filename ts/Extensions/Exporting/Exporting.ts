@@ -438,10 +438,11 @@ class Exporting {
         const replacements: Record<string, string> = {};
         for (const url of urls) {
             try {
-                const res = await fetch(url);
-                const contentType = res.headers.get('Content-Type') || '';
-                replacements[url] =
-                    `data:${contentType};base64,${arrayBufferToBase64(await res.arrayBuffer())}`;
+                const res = await fetch(url),
+                    contentType = res.headers.get('Content-Type') || '',
+                    b64 = arrayBufferToBase64(await res.arrayBuffer());
+
+                replacements[url] = `data:${contentType};base64,${b64}`;
             } catch {
                 // eslint-disable-next-line
             }
@@ -449,11 +450,14 @@ class Exporting {
 
         cssText = cssText.replace(urlRegex, (_, url: string): string => {
             const strippedUrl = url.replace(/['"]/g, '');
-            return replacements[strippedUrl] ? `url(${replacements[strippedUrl]})` : `url(${strippedUrl})`;
+            return `url(${replacements[strippedUrl] || strippedUrl})`;
         });
 
 
-        const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+        const styleEl = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'style'
+        );
         styleEl.textContent = cssText;
 
         // Needs to be appended to pass sanitization
