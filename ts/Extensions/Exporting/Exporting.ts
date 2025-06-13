@@ -2248,7 +2248,10 @@ class Exporting {
 
             const svgElement = chartCopyContainer?.querySelector('svg');
 
-            if (svgElement && exportingOptions.inlineFonts) {
+            if (
+                svgElement &&
+                !exportingOptions.chartOptions?.chart?.style?.fontFamily
+            ) {
                 await Exporting.inlineFonts(svgElement);
             }
 

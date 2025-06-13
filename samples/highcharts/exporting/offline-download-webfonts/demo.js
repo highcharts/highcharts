@@ -1,7 +1,5 @@
 Highcharts.chart('container', {
-    exporting: {
-        inlineFonts: true
-    },
+    exporting: {},
     title: {
         text: 'Offline export',
         style: {

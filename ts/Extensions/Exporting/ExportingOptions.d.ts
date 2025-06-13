@@ -65,7 +65,6 @@ export interface ExportingOptions {
     fallbackToExportServer?: boolean;
     filename?: string;
     fetchOptions?: RequestInit;
-    inlineFonts?: boolean;
     libURL?: string;
     local?: boolean;
     menuItemDefinitions?: Record<string, Exporting.MenuObject>;
