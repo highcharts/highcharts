@@ -11,9 +11,9 @@ const languages = {
                     }
                 }
             },
-            decimalPoint: '.'
+            locale: 'en'
         },
-        header: ['id', 'productEN', 'weight', 'price'],
+        header: ['id', 'productEN', 'weight', 'price', 'updated'],
         columns: [{
             id: 'productEN',
             header: {
@@ -28,6 +28,11 @@ const languages = {
             id: 'price',
             header: {
                 format: 'Price'
+            }
+        }, {
+            id: 'updated',
+            header: {
+                format: 'Updated'
             }
         }],
         caption: {
@@ -46,9 +51,9 @@ const languages = {
                     }
                 }
             },
-            decimalPoint: ','
+            locale: 'no'
         },
-        header: ['id', 'productNO', 'weight', 'price'],
+        header: ['id', 'productNO', 'weight', 'price', 'updated'],
         columns: [{
             id: 'productNO',
             header: {
@@ -63,6 +68,11 @@ const languages = {
             id: 'price',
             header: {
                 format: 'Pris'
+            }
+        }, {
+            id: 'updated',
+            header: {
+                format: 'Oppdatert'
             }
         }],
         caption: {
@@ -81,9 +91,9 @@ const languages = {
                     }
                 }
             },
-            decimalPoint: ','
+            locale: 'pl'
         },
-        header: ['id', 'productPL', 'weight', 'price'],
+        header: ['id', 'productPL', 'weight', 'price', 'updated'],
         columns: [{
             id: 'productPL',
             header: {
@@ -98,6 +108,11 @@ const languages = {
             id: 'price',
             header: {
                 format: 'Cena'
+            }
+        }, {
+            id: 'updated',
+            header: {
+                format: 'Zaktualizowano'
             }
         }],
         caption: {
@@ -116,9 +131,9 @@ const languages = {
                     }
                 }
             },
-            decimalPoint: '.'
+            locale: 'zh'
         },
-        header: ['id', 'productZH', 'weight', 'price'],
+        header: ['id', 'productZH', 'weight', 'price', 'updated'],
         columns: [{
             id: 'productZH',
             header: {
@@ -133,6 +148,11 @@ const languages = {
             id: 'price',
             header: {
                 format: '价格'
+            }
+        }, {
+            id: 'updated',
+            header: {
+                format: '最新的'
             }
         }],
         caption: {
@@ -153,7 +173,11 @@ const grid = Grid.grid('container', {
             productPL: ['Jabłko', 'Gruszka', 'Śliwka', 'Banan'],
             productZH: ['苹果', '梨', '李子', '香蕉'],
             weight: [100, 60, 30, 200],
-            price: [1.5, 2.53, 5, 4.5]
+            price: [1.5, 2.53, 5, 4.5],
+            updated: [
+                Date.UTC(2025, 2, 15), Date.UTC(2025, 5, 23),
+                Date.UTC(2025, 4, 16), Date.UTC(2025, 6, 5)
+            ]
         }
     },
     columns: [{
@@ -181,6 +205,14 @@ const grid = Grid.grid('container', {
         },
         header: {
             format: 'Price'
+        }
+    }, {
+        id: 'updated',
+        cells: {
+            format: '{value:%[ebY]}'
+        },
+        header: {
+            format: 'Updated'
         }
     }]
 });

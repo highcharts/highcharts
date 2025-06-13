@@ -16,7 +16,6 @@
  *
  * */
 
-import type Chart from './Chart/Chart';
 import type TimeBase from '../Shared/TimeBase';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
@@ -194,7 +193,7 @@ function format(
         decRegex = /\.(\d)/,
         lang = owner?.options?.lang || defaultOptions.lang,
         time = owner?.time || defaultTime,
-        numberFormatter = owner?.numberFormatter || numberFormat;
+        numberFormatter = owner?.numberFormatter || numberFormat.bind(owner);
 
     /*
      * Get a literal or variable value inside a template expression. May be
@@ -373,11 +372,15 @@ function format(
             replacement = resolveProperty(valueAndFormat.shift() || '');
 
             // Format the replacement
-            if (valueAndFormat.length && typeof replacement === 'number') {
+            const isFloat = replacement % 1 !== 0;
+            if (
+                typeof replacement === 'number' &&
+                (valueAndFormat.length || isFloat)
+            ) {
 
                 const segment = valueAndFormat.join(':');
 
-                if (floatRegex.test(segment)) { // Float
+                if (floatRegex.test(segment) || isFloat) { // Float
                     const decimals = parseInt(
                         (segment.match(decRegex) || ['', '-1'])[1],
                         10
@@ -434,7 +437,7 @@ function format(
  *         The formatted number.
  */
 function numberFormat(
-    this: Chart|Object|void,
+    this: Templating.Owner|void,
     number: number,
     decimals: number,
     decimalPoint?: string,
@@ -447,7 +450,7 @@ function numberFormat(
         fractionDigits: number,
         [mantissa, exp] = number.toString().split('e').map(Number);
 
-    const lang = (this as Chart)?.options?.lang || defaultOptions.lang,
+    const lang = this?.options?.lang || defaultOptions.lang,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
         firstDecimals = decimals,
         options: Intl.NumberFormatOptions = {};
@@ -497,8 +500,7 @@ function numberFormat(
 
     const hasSeparators = thousandsSep || decimalPoint,
         locale = hasSeparators ?
-            'en' :
-            ((this as Chart)?.locale || lang.locale || pageLang),
+            'en' : (this?.locale || lang.locale || pageLang),
         cacheKey = JSON.stringify(options) + locale,
         nf = numberFormatCache[cacheKey] ??=
             new Intl.NumberFormat(locale, options);
@@ -554,7 +556,8 @@ namespace Templating {
     export interface Owner {
         options?: OwnerOptions;
         time?: TimeBase;
-        numberFormatter?: Function
+        numberFormatter?: Function;
+        locale?: string | string[]
     }
 }
 
