@@ -1265,7 +1265,7 @@ class Pointer {
      */
     public pinch(e: PointerEvent): void {
         const pointer = this,
-            { chart, hasZoom, lastTouches } = pointer,
+            { chart, lastTouches } = pointer,
             touches = [].map.call(
                 e.touches || [],
                 // Normalize each touch
@@ -1297,8 +1297,6 @@ class Pointer {
         // On touch devices, only proceed to trigger click if a handler is
         // defined
         if (
-            hasZoom &&
-            pointer.initiated &&
             !fireClickEvent &&
             e.cancelable !== false
         ) {
