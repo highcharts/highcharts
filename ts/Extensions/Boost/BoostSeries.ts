@@ -928,21 +928,18 @@ function getPoint(
     if (
         isScatter &&
         seriesOptions.keys &&
-        data && (
-            seriesOptions.keys.length || 0
-        ) > 2
+        seriesOptions.keys.length
     ) {
         const keys = seriesOptions.keys;
 
         // Don't reassign X and Y properties as they're already handled above
         for (
-            let keysIndex = (keys.length || 1) - 1;
+            let keysIndex = keys.length - 1;
             keysIndex > 1;
             keysIndex--
         ) {
-            (point as any)[(keys[keysIndex] as any)] = (
-                data[pointIndex] as any
-            )[keysIndex];
+            (point as any)[keys[keysIndex]] =
+                (data as any)[pointIndex][keysIndex];
         }
     }
 
