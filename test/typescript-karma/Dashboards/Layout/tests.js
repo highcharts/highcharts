@@ -190,7 +190,6 @@ test('Components and rows in layout with set height', function (assert) {
 
 test('Nested layouts serialization.', function (assert) {
     const container = setupContainer();
-
     const chartComponentOptions = {
         type: 'Highcharts',
         chartOptions: {
@@ -204,7 +203,7 @@ test('Nested layouts serialization.', function (assert) {
             }
         }
     };
-        const board = Dashboards.board(container.id, {
+    const board = Dashboards.board(container.id, {
         editMode: {
             enabled: true,
             contextMenu: {
@@ -245,20 +244,16 @@ test('Nested layouts serialization.', function (assert) {
 
     });
     const layoutToExport = board.layouts[0];
-    const exportedLayoutId = layoutToExport.options.id;
     const exportedRows = layoutToExport.rows;
     const exportedRowsLength = layoutToExport.rows.length;
     const exportedCellsLength = exportedRows[0].cells.length;
     const numberOfMountedComponents = board.mountedComponents.length;
-    layoutToExport.exportLocal();
-    layoutToExport.destroy();
-    const importedLayout = board.importLayoutLocal(exportedLayoutId);
+    const serializedOptions = board.getOptions();
 
-
-    assert.equal(importedLayout.rows.length, exportedRowsLength, 'The imported layout has an equal number of rows as exported one.')
-    assert.equal(importedLayout.rows[0].cells.length, exportedCellsLength, 'The imported layout has an equal number of cells as exported one.')
-    assert.equal(numberOfMountedComponents, importedLayout.board.mountedComponents.length, 'The number of mounted components should be the same after importing the layout.')
-    assert.true(importedLayout.rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
+    assert.equal(serializedOptions.gui.layouts[0].rows.length, exportedRowsLength, 'The imported layout has an equal number of rows as exported one.')
+    assert.equal(serializedOptions.gui.layouts[0].rows[0].cells.length, exportedCellsLength, 'The imported layout has an equal number of cells as exported one.')
+    assert.equal(numberOfMountedComponents, serializedOptions.components.length, 'The number of mounted components should be the same after importing the layout.')
+    assert.true(serializedOptions.gui.layouts[0].rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
 });
 
 test('Reserialized cell width', function (assert) {
@@ -324,15 +319,10 @@ test('Reserialized cell width', function (assert) {
         ]
     });
 
-    const layoutToExport = board.layouts[0];
-    const exportedLayoutId = layoutToExport.options.id;
     const widthBeforeExport = board.layouts[0].rows[0].cells.map(
         (cell) => cell.options.width
     );
-
-    layoutToExport.exportLocal();
-    layoutToExport.destroy();
-    board.importLayoutLocal(exportedLayoutId);
+    board.getOptions();
 
     const widthAfterExport = board.layouts[0].rows[0].cells.map(
         (cell) => cell.options.width

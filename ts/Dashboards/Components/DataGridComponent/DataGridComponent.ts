@@ -85,46 +85,6 @@ class DataGridComponent extends Component {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Function to create a Grid Component from JSON.
-     *
-     * @param json
-     * The JSON to create the Grid Component from.
-     *
-     * @param cell
-     * The cell to create the Grid Component in.
-     *
-     * @returns
-     * The Grid Component created from the JSON.
-     */
-    public static fromJSON(
-        json: DataGridComponent.ClassJSON,
-        cell: Cell
-    ): DataGridComponent {
-        const options = json.options;
-        const gridOptions = JSON.parse(
-            (options.gridOptions || options.dataGridOptions) ?? ''
-        );
-
-        const component = new DataGridComponent(
-            cell,
-            merge<Options>(options as any, { gridOptions })
-        );
-
-        component.emit({
-            type: 'fromJSON',
-            json
-        });
-
-        return component;
-    }
-
-    /* *
-     *
      *  Properties
      *
      * */
@@ -384,47 +344,7 @@ namespace DataGridComponent {
     export type ComponentType = DataGridComponent;
 
     /** @private */
-    export type ChartComponentEvents = JSONEvent | Component.EventTypes;
-
-    /** @private */
-    export type JSONEvent = Component.Event<
-    'toJSON' | 'fromJSON',
-    {
-        json: ClassJSON;
-    }
-    >;
-
-    /** @private */
-    export interface ComponentJSONOptions
-        extends Component.ComponentOptionsJSON {
-
-        /** @private */
-        gridOptions?: string;
-
-        /** @private */
-        gridClassName?: string;
-
-        /**
-         * @private
-         * @deprecated
-         **/
-        dataGridOptions?: string;
-
-        /**
-         * @private
-         * @deprecated
-         **/
-        dataGridClassName?: string;
-
-        /** @private */
-        chartID?: string;
-    }
-
-    /** @private */
-    export interface ClassJSON extends Component.JSON {
-        /** @private */
-        options: ComponentJSONOptions;
-    }
+    export type ChartComponentEvents = Component.EventTypes;
 }
 
 /* *
