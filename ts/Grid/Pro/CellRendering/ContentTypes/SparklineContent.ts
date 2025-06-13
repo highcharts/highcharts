@@ -136,8 +136,6 @@ class SparklineContent extends CellContentPro {
         this.cell.htmlElement.classList.add(Globals.getClassName('noPadding'));
         this.cell.htmlElement.appendChild(this.chartContainer);
 
-        this.cell.reflow();
-
         this.chart = H.Chart.chart(this.chartContainer, merge(
             SparklineContent.defaultChartOptions,
             this.getProcessedOptions()
