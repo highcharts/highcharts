@@ -242,7 +242,6 @@ QUnit.test('Scrollbar events', assert => {
     assert.strictEqual(
         scrollbar.scrollbarGroup.translateX,
         scrollbar.width - scrollbar.scrollbar.attr('width'),
-        `Scrollbar should not animate if the global animation is disabled
-        (#17977)`
+        'Scrollbar should not animate if global animation is disabled (#17977)'
     );
 });

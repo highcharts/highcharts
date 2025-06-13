@@ -203,26 +203,22 @@ namespace ScrollbarAxis {
                 ) {
                     to = Math.min(
                         unitedMax,
-                        axis.toValue(Math.round(minPX + rangePX * this.to))
+                        axis.toValue(minPX + rangePX * this.to)
                     );
                     from = Math.max(
                         unitedMin,
-                        axis.toValue(Math.round(minPX + rangePX * this.from))
+                        axis.toValue(minPX + rangePX * this.from)
                     );
                 } else {
                     // Y-values in browser are reversed, but this also
                     // applies for reversed horizontal axis:
                     to = Math.min(
                         unitedMax,
-                        axis.toValue(
-                            Math.round(minPX + rangePX * (1 - this.from))
-                        )
+                        axis.toValue(minPX + rangePX * (1 - this.from))
                     );
                     from = Math.max(
                         unitedMin,
-                        axis.toValue(
-                            Math.round(minPX + rangePX * (1 - this.to))
-                        )
+                        axis.toValue(minPX + rangePX * (1 - this.to))
                     );
                 }
 
