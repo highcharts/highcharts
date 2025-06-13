@@ -933,10 +933,13 @@ function getPoint(
         ) > 2
     ) {
         const keys = seriesOptions.keys;
-        let keysIndex = (keys.length || 0);
 
         // Don't reassign X and Y properties as they're already handled above
-        while (--keysIndex > 1) {
+        for (
+            let keysIndex = (keys.length || 1) - 1;
+            keysIndex > 1;
+            keysIndex--
+        ) {
             (point as any)[(keys[keysIndex] as any)] = (
                 data[pointIndex] as any
             )[keysIndex];
