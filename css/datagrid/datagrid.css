@@ -998,6 +998,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 }
 
+/* Helpers */
+.hcg-no-padding,
+.highcharts-datagrid-no-padding {
+    padding: 0 !important;
+}
+
 /* Start CSS Helper Classes */
 .hcg-table thead tr th.hcg-right .hcg-header-cell-content,
 .highcharts-datagrid-table thead tr th.highcharts-datagrid-right .highcharts-datagrid-header-cell-content,
