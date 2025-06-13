@@ -26,6 +26,11 @@ import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
+import U from '../../../../Core/Utilities.js';
+const {
+    fireEvent
+} = U;
+
 
 /* *
  *
@@ -72,23 +77,31 @@ class DateInputContent extends CellContentPro implements EditModeContent {
 
     public override add(): HTMLInputElement {
         const cell = this.cell;
-        const { options } = this.renderer as DateInputRenderer;
+        const input = this.input = document.createElement('input');
 
-        this.input = document.createElement('input');
-        this.input.tabIndex = -1;
-        this.input.type = 'date';
-        this.input.value = this.convertToInputValue();
-        this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled = !!options.disabled;
+        input.tabIndex = -1;
+        input.type = 'date';
+        input.name = cell.column.id + '-' + cell.row.id;
+
+        this.update();
 
         this.cell.htmlElement.appendChild(this.input);
 
-        this.input.addEventListener('change', this.onChange);
-        this.input.addEventListener('keydown', this.onKeyDown);
-        this.input.addEventListener('blur', this.onBlur);
+        input.addEventListener('change', this.onChange);
+        input.addEventListener('keydown', this.onKeyDown);
+        input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
+        fireEvent(this.cell, 'afterContentCreated', { target: this });
         return this.input;
+    }
+
+    public override update(): void {
+        const input = this.input;
+        const { options } = this.renderer as DateInputRenderer;
+
+        input.value = this.convertToInputValue();
+        input.disabled = !!options.disabled;
     }
 
     public getValue(): number {

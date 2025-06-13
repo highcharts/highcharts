@@ -105,6 +105,8 @@ class CellEditing {
         const cellElement = cell.htmlElement;
 
         cell.content?.destroy();
+        delete cell.content;
+
         cellElement.classList.add(Globals.getClassName('editedCell'));
 
         this.render();

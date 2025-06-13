@@ -28,6 +28,10 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
+import U from '../../../../Core/Utilities.js';
+const {
+    fireEvent
+} = U;
 
 
 /* *
@@ -75,14 +79,13 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
 
     protected override add(): HTMLInputElement {
         const cell = this.cell;
-        const { options } = this.renderer as CheckboxRenderer;
 
         this.input = document.createElement('input');
         this.input.tabIndex = -1;
         this.input.type = 'checkbox';
-        this.input.checked = !!cell.value;
         this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled = !!options.disabled;
+
+        this.update();
 
         this.cell.htmlElement.appendChild(this.input);
         this.input.classList.add(Globals.classNamePrefix + 'field-auto-width');
@@ -92,7 +95,17 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         this.input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
+        fireEvent(this.cell, 'afterContentCreated', { target: this });
         return this.input;
+    }
+
+    public override update(): void {
+        const cell = this.cell;
+        const input = this.input;
+        const { options } = this.renderer as CheckboxRenderer;
+
+        input.checked = !!cell.value;
+        input.disabled = !!options.disabled;
     }
 
     public getValue(): DataTable.CellType {

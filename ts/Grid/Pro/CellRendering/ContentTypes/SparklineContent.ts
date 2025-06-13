@@ -30,6 +30,7 @@ import Globals from '../../../Core/Globals.js';
 import U from '../../../../Core/Utilities.js';
 const {
     defined,
+    fireEvent,
     merge
 } = U;
 
@@ -126,8 +127,6 @@ class SparklineContent extends CellContentPro {
      * */
 
     protected override add(): void {
-        const renderer = this.renderer as SparklineRenderer;
-        const { chartOptions } = renderer.options;
         const H = SparklineContent.H;
         if (!H || !defined(this.cell.value)) {
             return;
@@ -137,6 +136,38 @@ class SparklineContent extends CellContentPro {
         this.cell.htmlElement.appendChild(this.chartContainer);
 
         this.cell.htmlElement.classList.add(Globals.getClassName('noPadding'));
+
+        this.chart = H.Chart.chart(this.chartContainer, merge(
+            SparklineContent.defaultChartOptions,
+            this.getProcessedOptions()
+        ));
+
+        this.chartContainer.addEventListener('click', this.onKeyDown);
+
+        fireEvent(this.cell, 'afterContentCreated', { target: this });
+    }
+
+    public override update(): void {
+        this.chart?.update(this.getProcessedOptions(), true, false);
+    }
+
+    public override destroy(): void {
+        this.chartContainer?.removeEventListener('keydown', this.onKeyDown);
+
+        this.chart?.destroy();
+        this.chartContainer?.remove();
+
+        delete this.chart;
+        delete this.chartContainer;
+
+        this.cell.htmlElement.classList.remove(
+            Globals.getClassName('noPadding')
+        );
+    }
+
+    private getProcessedOptions(): Partial<HighchartsNamespace.Options> {
+        const renderer = this.renderer as SparklineRenderer;
+        const { chartOptions } = renderer.options;
 
         let options: Partial<HighchartsNamespace.Options>;
         if (typeof chartOptions === 'function') {
@@ -159,26 +190,7 @@ class SparklineContent extends CellContentPro {
             }];
         }
 
-        this.chart = H.Chart.chart(this.chartContainer, merge(
-            SparklineContent.defaultChartOptions,
-            options
-        ));
-
-        this.chartContainer.addEventListener('click', this.onKeyDown);
-    }
-
-    public destroy(): void {
-        this.chartContainer?.removeEventListener('keydown', this.onKeyDown);
-
-        this.chart?.destroy();
-        this.chartContainer?.remove();
-
-        delete this.chart;
-        delete this.chartContainer;
-
-        this.cell.htmlElement.classList.remove(
-            Globals.getClassName('noPadding')
-        );
+        return options;
     }
 
     private onKeyDown = (): void => {

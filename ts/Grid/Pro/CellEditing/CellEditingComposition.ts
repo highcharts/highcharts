@@ -112,7 +112,11 @@ namespace CellEditingComposition {
         addEvent(TableClass, 'beforeInit', initTable);
         addEvent(TableCellClass, 'keyDown', onCellKeyDown);
         addEvent(TableCellClass, 'dblClick', onCellDblClick);
-        addEvent(TableCellClass, 'afterRender', addEditableCellA11yHint);
+        addEvent(
+            TableCellClass,
+            'afterContentCreated',
+            addEditableCellA11yHint
+        );
         addEvent(TableCellClass, 'startedEditing', function (): void {
             announceA11yUserEditedCell(this, 'started');
         });
