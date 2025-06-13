@@ -187,7 +187,7 @@ Highcharts.chart('container', {
                 pointFormat: '{point.name}',
                 style: {
                     whiteSpace: 'nowrap',
-                    color: '#000000',
+                    color: 'var(--highcharts-neutral-color-100, #000)',
                     textOutline: '3px contrast'
                 },
                 crop: false

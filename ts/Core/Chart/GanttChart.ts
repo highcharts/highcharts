@@ -150,7 +150,8 @@ class GanttChart extends Chart {
                 // Defaults
                 {
                     grid: {
-                        borderColor: Palette.neutralColor20,
+                        borderColor: defaultOptions.xAxis?.grid?.borderColor ||
+                            Palette.neutralColor20,
                         enabled: true
                     },
                     opposite: defaultOptions.xAxis?.opposite ??
@@ -174,7 +175,8 @@ class GanttChart extends Chart {
             // Defaults
             {
                 grid: {
-                    borderColor: Palette.neutralColor20,
+                    borderColor: defaultOptions.yAxis?.grid?.borderColor ||
+                        Palette.neutralColor20,
                     enabled: true
                 },
 

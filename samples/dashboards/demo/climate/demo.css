@@ -214,7 +214,7 @@
  **/
 
 #kpi-layout .highcharts-dashboards-component {
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
 }
 
@@ -302,7 +302,7 @@
  **/
 
 #time-range-selector .highcharts-background {
-    fill: var(--highcharts-neutral-color-0);
+    fill: var(--highcharts-background-color);
 }
 
 #time-range-selector .highcharts-grid-line {

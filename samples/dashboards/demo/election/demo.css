@@ -7,7 +7,8 @@
  *  Variables
  *
  **/
-:root {
+:root,
+.highcharts-light {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
     --highcharts-color-0-light: #d7e3f3;
@@ -25,7 +26,7 @@
 
     /* Components */
     --color-title: #000;
-    --component-background: var(--highcharts-neutral-color-0);
+    --component-background: var(--highcharts-background-color);
     --component-background-optional: var(--highcharts-neutral-color-5);
     --component-rounded-corners: 6px;
     --datagrid-border-color: var(--highcharts-neutral-color-20);
@@ -79,7 +80,7 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-    /* dark mode */
+    /* auto dark mode */
     :root {
         /* Others */
         --color-link: #cca;
@@ -108,6 +109,36 @@ body {
     #html-control-div {
         color: #f2f1f4;
     }
+}
+
+/* Explicit dark mode */
+.highcharts-dark {
+    /* Others */
+    --color-link: #cca;
+    --container-background: #2f2e38;
+    --color-title: #c8c7d1;
+
+    /* components */
+    --component-background: #e3e3e8;
+    --component-background-optional: #474554;
+    --datagrid-border-color: var(--component-background-optional);
+}
+
+.highcharts-dark #container {
+    background: var(--container-background);
+}
+
+.highcharts-dark #election-grid {
+    --color-hover-background: #252052;
+}
+
+.highcharts-dark #elections-selector-wrapper select {
+    color: #f2f1f4;
+    background-color: var(--component-background-optional);
+}
+
+.highcharts-dark #html-control-div {
+    color: #f2f1f4;
 }
 
 /**

@@ -24,13 +24,9 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.highcharts-description {
-    padding: 0 20px;
-}
-
 @media (prefers-color-scheme: dark) {
     .demo {
-        background-color: #292929;
+        background-color: #141414;
         color: #fff;
     }
 }

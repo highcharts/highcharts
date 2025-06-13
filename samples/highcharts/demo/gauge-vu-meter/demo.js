@@ -47,7 +47,10 @@ Highcharts.chart('container', {
         tickPosition: 'outside',
         labels: {
             rotation: 'auto',
-            distance: 20
+            distance: 20,
+            style: {
+                color: '#333'
+            }
         },
         plotBands: [{
             from: 0,
@@ -68,7 +71,10 @@ Highcharts.chart('container', {
         tickPosition: 'outside',
         labels: {
             rotation: 'auto',
-            distance: 20
+            distance: 20,
+            style: {
+                color: '#333'
+            }
         },
         plotBands: [{
             from: 0,
@@ -90,6 +96,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             dial: {
+                backgroundColor: '#333',
                 radius: '100%'
             }
         }
