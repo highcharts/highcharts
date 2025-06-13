@@ -102,15 +102,17 @@ const intakeConfig = {
     }
 };
 
-// Common chart options for Highcharts components
-const commonChartOptions = {
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    },
     title: {
         text: ''
     },
     legend: {
         enabled: false
     }
-};
+});
 
 
 // HTML component for displaying power plant, reservoir and
@@ -118,12 +120,7 @@ const commonChartOptions = {
 // is available, it is displayed here.
 const infoComponent = {
     type: 'HTML',
-    renderTo: 'el-info',
-    chartOptions: {
-        chart: {
-            styledMode: false
-        }
-    }
+    renderTo: 'el-info'
 };
 
 // Highcharts map with points for power plant, reservoirs and intakes.
@@ -133,9 +130,7 @@ const mapComponent = {
     chartConstructor: 'mapChart',
     title: '',
     chartOptions: {
-        ...commonChartOptions,
         chart: {
-            styledMode: false,
             margin: 0
         },
         mapNavigation: {
@@ -202,10 +197,8 @@ const kpiComponent = {
     type: 'KPI',
     renderTo: 'el-kpi',
     chartOptions: {
-        ...commonChartOptions,
         chart: {
-            type: 'solidgauge',
-            styledMode: true
+            type: 'solidgauge'
         },
         pane: {
             background: {
@@ -263,7 +256,6 @@ const chartComponent = {
         }
     },
     chartOptions: {
-        ...commonChartOptions,
         chart: {
             type: 'spline'
         },
