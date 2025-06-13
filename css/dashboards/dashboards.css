@@ -508,11 +508,9 @@
     border: none;
     color: var(--highcharts-neutral-color-100);
     cursor: pointer;
-    justify-content: space-between;
+    justify-content: space-around;
     display: flex;
-    min-width: 100%;
-    column-gap: 8px;
-    white-space: nowrap;
+    min-width: 100px;
 }
 
 .highcharts-dashboards-edit-toggle-wrapper,

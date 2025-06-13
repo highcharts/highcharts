@@ -54,7 +54,8 @@ Dashboards.board('container', {
             columns: [{
                 id: 'time',
                 cells: {
-                    editable: false
+                    editable: false,
+                    format: '{value:%[ebYHM]}'
                 }
             }]
         }
