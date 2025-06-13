@@ -52,7 +52,6 @@ our built-in button and menu, and build your own buttons or links that call
 [Chart.exportChart()](https://api.highcharts.com/highcharts/Chart.exportChart())
 with parameters.
 
-
 ### Controlling the size of the exported image
 
 Since Highcharts 3.0 and Highcharts Stock 1.3, the size of the exported image is computed based on a few rules:
@@ -62,6 +61,28 @@ Since Highcharts 3.0 and Highcharts Stock 1.3, the size of the exported image is
 *   If a size hasn't been found yet, and the [containing div](https://api.highcharts.com/highcharts/chart.renderTo) has an explicit pixel width or height, that width or height is used. Percentage and other non-pixel widths will not take effect. This prevents a common pitfall in Highcharts 2, where charts with the typical 100% width would look out of proportion in export. 
 *   If a size still hasn't been found, it defaults to 600 by 400 pixels.
 *   After rendering the chart with the above size, and all text sizes in relation to that, the actual image _resolution_ is determined by [exporting.scale](https://api.highcharts.com/highcharts/exporting.scale) which defaults to 2. In practice this means that a 600x400 chart will return an image of 1200x800 pixels by default. The rationale behind this is quite simple - if we used a scale of 1 and just set the sourceWidth to 1200 and sourceHeight to 800, all the text would become too small. And if we didn't scale it up, the resolution would be too small for print. 
+
+### Web fonts in exported charts
+
+Starting from version 12.3, external fonts loaded via `@font-face` rules in CSS are included in exported images.
+This works by separately fetching and parsing external stylesheets during export.
+
+If you want to exclude these fonts, you can override the behavior by explicitly setting a `fontFamily` in the export options:
+```js
+Highcharts.chart('container', {
+    exporting: {
+        chartOptions: {
+            chart: {
+                style: {
+                    fontFamily: 'monospace'
+                }
+            }
+        }
+    }
+});
+```
+
+This disables automatic font inclusion for the exported image.
 
 ### The Highcharts Export Server
 
