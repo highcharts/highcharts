@@ -162,9 +162,10 @@ class RowsVirtualizer {
         // Load & render rows
         this.renderRows(this.rowCursor);
 
-        if (this.rowSettings?.virtualization) {
-            this.adjustRowHeights();
-        }
+        // This is done in the reflow function, so dont think it is needed here
+        // if (this.rowSettings?.virtualization) {
+        //     this.adjustRowHeights();
+        // }
     }
 
     /**
@@ -335,110 +336,90 @@ class RowsVirtualizer {
      * The index of the first visible row.
      */
     private renderRows(rowCursor: number): void {
+        console.time('renderRows');
         const { viewport: vp, buffer } = this;
         const isVirtualization = this.rowSettings?.virtualization;
+        const rowCount = vp.dataTable.getRowCount();
         const rowsPerPage = isVirtualization ? Math.ceil(
             (vp.grid.tableElement?.clientHeight || 0) /
             this.defaultRowHeight
-        ) : Infinity; // Need to be refactored when add pagination
+        ) : Infinity;
 
-        let rows = vp.rows;
-
-        if (!isVirtualization && rows.length > 50) {
-            // eslint-disable-next-line no-console
-            console.warn(
-                'Grid: a large dataset can cause performance issues.'
-            );
-        }
-
-        if (!rows.length) {
-            const last = new TableRow(vp, vp.dataTable.getRowCount() - 1);
-            last.render();
-            rows.push(last);
-            vp.tbodyElement.appendChild(last.htmlElement);
-
-            if (isVirtualization) {
-                // We make sure that tbody is not taller than
-                // the maximum browser element height.
-                const topOffset = Math.min(
-                    last.getDefaultTopOffset(),
-                    RowsVirtualizer.MAX_ELEMENT_HEIGHT
-                );
-                last.setTranslateY(topOffset);
+        // Use a Map for fast lookup
+        const rowMap = new Map<number, TableRow>();
+        let lastRow: TableRow | undefined;
+        for (const row of vp.rows) {
+            if (row.index === rowCount - 1) {
+                lastRow = row;
+            } else {
+                rowMap.set(row.index, row);
             }
         }
 
+        // Always ensure the last row exists for scrollbar purposes
+        if (!lastRow) {
+            lastRow = new TableRow(vp, rowCount - 1);
+            lastRow.render();
+            vp.tbodyElement.appendChild(lastRow.htmlElement);
+            if (isVirtualization) {
+                const topOffset = Math.min(
+                    lastRow.getDefaultTopOffset(),
+                    RowsVirtualizer.MAX_ELEMENT_HEIGHT
+                );
+                lastRow.setTranslateY(topOffset);
+            }
+        }
+
+        // Calculate visible range
         const from = Math.max(0, Math.min(
             rowCursor - buffer,
-            vp.dataTable.getRowCount() - rowsPerPage
+            rowCount - rowsPerPage
         ));
         const to = Math.min(
             rowCursor + rowsPerPage + buffer,
-            rows[rows.length - 1].index - 1
+            rowCount - 2 // exclude the last row from normal rendering
         );
 
-        const alwaysLastRow = rows.pop();
-        const tempRows: TableRow[] = [];
-
-        // Remove rows that are out of the range except the last row.
-        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            const row = rows[i];
-            const rowIndex = row.index;
-
-            if (rowIndex < from || rowIndex > to) {
+        // Remove out-of-range rows
+        for (const [index, row] of rowMap) {
+            if (index < from || index > to) {
                 row.destroy();
-            } else {
-                tempRows.push(row);
+                rowMap.delete(index);
             }
         }
 
-        rows = tempRows;
-        vp.rows = rows;
-
+        // Create missing rows and batch DOM insertions
+        const fragment = document.createDocumentFragment();
         for (let i = from; i <= to; ++i) {
-            const row = rows[i - (rows[0]?.index || 0)];
-
-            // Recreate row when it is destroyed and it is in the range.
+            let row = rowMap.get(i);
             if (!row) {
-                const newRow = new TableRow(vp, i);
-                rows.push(newRow);
-                newRow.rendered = false;
-                if (isVirtualization) {
-                    // If table is larger than max element height
-                    // we use the max height instead, and get the offset
-                    // from the bottom and up
-                    const topOffset = Math.min(
-                        newRow.getDefaultTopOffset(),
-                        RowsVirtualizer.MAX_ELEMENT_HEIGHT - (
-                            this.defaultRowHeight * (rows.length - i)
-                        )
-                    );
-                    newRow.setTranslateY(topOffset);
-                }
+                row = new TableRow(vp, i);
+                row.render();
+                rowMap.set(i, row);
+                fragment.appendChild(row.htmlElement);
             }
         }
 
-        rows.sort((a, b): number => a.index - b.index);
+        // Replace vp.rows with the new visible rows in order, plus the last row
+        const visibleRows = Array.from(rowMap.values()).sort((a, b) => a.index - b.index);
+        visibleRows.push(lastRow);
+        vp.rows = visibleRows;
 
-        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            if (!rows[i].rendered) {
-                rows[i].render();
-                vp.tbodyElement.insertBefore(
-                    rows[i].htmlElement,
-                    vp.tbodyElement.lastChild
-                );
-            }
+        // Batch insert new rows
+        if (fragment.childNodes.length > 0) {
+            // Insert before the last row (spacer)
+            vp.tbodyElement.insertBefore(fragment, lastRow.htmlElement);
         }
 
-        if (alwaysLastRow) {
-            rows.push(alwaysLastRow);
+        // Render the last row if it is in the visible range and not already rendered
+        if (to === rowCount - 2 && lastRow && !lastRow.rendered) {
+            lastRow.render();
         }
 
         // Focus the cell if the focus cursor is set
         if (vp.focusCursor) {
             const [rowIndex, columnIndex] = vp.focusCursor;
-            const row = rows.find((row): boolean => row.index === rowIndex);
-
+            const row = visibleRows.find((row): boolean => row.index === rowIndex);
             if (row) {
                 row.cells[columnIndex]?.htmlElement.focus({
                     preventScroll: true
@@ -448,9 +429,10 @@ class RowsVirtualizer {
 
         // Reset the focus anchor cell
         this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
-        const firstVisibleRow = rows[rowCursor - rows[0].index];
+        const firstVisibleRow = visibleRows[rowCursor - visibleRows[0]?.index];
         this.focusAnchorCell = firstVisibleRow?.cells[0];
         this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '0');
+        console.timeEnd('renderRows');
     }
 
     /**
