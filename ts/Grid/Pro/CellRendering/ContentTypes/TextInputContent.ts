@@ -30,7 +30,8 @@ import CellContentPro from '../CellContentPro.js';
 import U from '../../../../Core/Utilities.js';
 
 const {
-    defined
+    defined,
+    fireEvent
 } = U;
 
 
@@ -79,22 +80,28 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
     public override add(): HTMLInputElement {
         const cell = this.cell;
-        const { options } = this.renderer as TextInputRenderer;
+        const input = this.input = document.createElement('input');
 
-        this.input = document.createElement('input');
-        this.input.tabIndex = -1;
-        this.input.value = this.convertToInputValue();
-        this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled = !!options.disabled;
+        input.tabIndex = -1;
+        input.name = cell.column.id + '-' + cell.row.id;
+
+        this.update();
 
         this.cell.htmlElement.appendChild(this.input);
 
-        this.input.addEventListener('change', this.onChange);
-        this.input.addEventListener('keydown', this.onKeyDown);
-        this.input.addEventListener('blur', this.onBlur);
+        input.addEventListener('change', this.onChange);
+        input.addEventListener('keydown', this.onKeyDown);
+        input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
-        return this.input;
+        fireEvent(this.cell, 'afterContentCreated', { target: this });
+        return input;
+    }
+
+    public override update(): void {
+        const { options } = this.renderer as TextInputRenderer;
+        this.input.value = this.convertToInputValue();
+        this.input.disabled = !!options.disabled;
     }
 
     public getValue(): DataTable.CellType {

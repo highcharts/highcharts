@@ -18,60 +18,12 @@ Grid.grid('container', {
             strictHeights: true
         }
     },
-
-    events: {
-        cell: {
-            afterSetValue: function () {
-                if (this.column.id !== 'd') {
-                    return;
-                }
-                const rowIndex = this.row.index;
-
-                Highcharts.chart(this.htmlElement, {
-                    chart: {
-                        height: 40,
-                        animation: false,
-                        margin: [0, 0, 0, 0],
-                        events: {
-                            load: function () {
-                                console.log('I am loaded', rowIndex);
-                            }
-                        }
-                    },
-                    tooltip: {
-                        outside: true
-                    },
-                    title: {
-                        text: ''
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        visible: false
-                    },
-                    yAxis: {
-                        visible: false
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        series: {
-                            marker: {
-                                enabled: false
-                            },
-                            animation: false
-                        }
-                    },
-                    series: [
-                        {
-                            type: 'spline',
-                            data: this.value
-                        }
-                    ]
-                });
+    columns: [{
+        id: 'd',
+        cells: {
+            renderer: {
+                type: 'sparkline'
             }
         }
-    }
+    }]
 });

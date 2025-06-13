@@ -34,7 +34,8 @@ const {
 
 import Utils from '../../../../Core/Utilities.js';
 const {
-    defined
+    defined,
+    fireEvent
 } = Utils;
 
 
@@ -55,11 +56,16 @@ class TextContent extends CellContent {
     }
 
     protected override add(): void {
-        setHTMLContent(this.cell.htmlElement, this.format());
+        this.update();
     }
 
     public override destroy(): void {
         this.cell.htmlElement.innerHTML = AST.emptyHTML;
+    }
+
+    public override update(): void {
+        setHTMLContent(this.cell.htmlElement, this.format());
+        fireEvent(this.cell, 'afterContentCreated', { target: this });
     }
 
     /**

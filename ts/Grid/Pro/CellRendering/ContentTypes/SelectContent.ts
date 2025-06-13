@@ -27,6 +27,11 @@ import type SelectRenderer from '../Renderers/SelectRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
+import AST from '../../../../Core/Renderer/HTML/AST.js';
+import U from '../../../../Core/Utilities.js';
+const {
+    fireEvent
+} = U;
 
 
 /* *
@@ -79,13 +84,33 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
     protected override add(): HTMLSelectElement {
         const cell = this.cell;
+
+        const select = this.select = document.createElement('select');
+        select.tabIndex = -1;
+        select.name = cell.column.id + '-' + cell.row.id;
+
+        this.update();
+
+        this.cell.htmlElement.appendChild(this.select);
+
+        select.addEventListener('change', this.onChange);
+        select.addEventListener('keydown', this.onKeyDown);
+        select.addEventListener('blur', this.onBlur);
+        this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
+
+        fireEvent(this.cell, 'afterContentCreated', { target: this });
+        return select;
+    }
+
+    public override update(): void {
+        const cell = this.cell;
         const { options } = this.renderer as SelectRenderer;
 
-        this.select = document.createElement('select');
-        this.select.tabIndex = -1;
-        this.select.name = cell.column.id + '-' + cell.row.id;
         this.select.disabled = !!options.disabled;
 
+        // If there will be a need, we can optimize this by not removing all
+        // old options and only updating the ones that need to be updated.
+        this.select.innerHTML = AST.emptyHTML;
         for (const option of options.options) {
             const optionElement = document.createElement('option');
             optionElement.value = option.value;
@@ -99,15 +124,6 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.select.appendChild(optionElement);
             this.optionElements.push(optionElement);
         }
-
-        this.cell.htmlElement.appendChild(this.select);
-
-        this.select.addEventListener('change', this.onChange);
-        this.select.addEventListener('keydown', this.onKeyDown);
-        this.select.addEventListener('blur', this.onBlur);
-        this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
-
-        return this.select;
     }
 
     public override destroy(): void {

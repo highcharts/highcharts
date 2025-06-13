@@ -60,6 +60,11 @@ abstract class CellContent {
      * Destroy the cell content.
      */
     public abstract destroy(): void;
+
+    /**
+     * Updates the cell content without re-rendering it.
+     */
+    public abstract update(): void;
 }
 
 

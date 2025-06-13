@@ -221,6 +221,7 @@ abstract class Cell {
      */
     public render(): void {
         this.row.htmlElement.appendChild(this.htmlElement);
+        this.reflow();
     }
 
     /**

@@ -279,9 +279,9 @@ class RowsVirtualizer {
 
         if (!rows.length) {
             const last = new TableRow(vp, vp.dataTable.getRowCount() - 1);
+            vp.tbodyElement.appendChild(last.htmlElement);
             last.render();
             rows.push(last);
-            vp.tbodyElement.appendChild(last.htmlElement);
 
             if (isVirtualization) {
                 last.setTranslateY(last.getDefaultTopOffset());
@@ -333,11 +333,11 @@ class RowsVirtualizer {
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             if (!rows[i].rendered) {
-                rows[i].render();
                 vp.tbodyElement.insertBefore(
                     rows[i].htmlElement,
                     vp.tbodyElement.lastChild
                 );
+                rows[i].render();
             }
         }
 
@@ -471,9 +471,8 @@ class RowsVirtualizer {
         mockRow.htmlElement.style.position = 'absolute';
         mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
 
-        mockRow.render();
-
         this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
+        mockRow.render();
 
         const defaultRowHeight = mockRow.htmlElement.offsetHeight;
 
