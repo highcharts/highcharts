@@ -553,7 +553,10 @@ class Grid {
         const locale = options.lang?.locale;
         if (locale) {
             this.locale = locale;
-            this.time.update({ locale });
+            this.time.update(extend<TimeBase.TimeOptions>(
+                options.time || {},
+                { locale: this.locale }
+            ));
         }
 
         if (render) {
