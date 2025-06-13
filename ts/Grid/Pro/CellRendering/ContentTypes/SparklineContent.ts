@@ -91,7 +91,7 @@ class SparklineContent extends CellContentPro {
                             enabled: false
                         }
                     },
-                    animation: false,
+                    /// animation: false,
                     dataLabels: {
                         enabled: false
                     }
@@ -148,7 +148,7 @@ class SparklineContent extends CellContentPro {
     }
 
     public override update(): void {
-        this.chart?.update(this.getProcessedOptions(), true, false);
+        this.chart?.update(this.getProcessedOptions(), true, false, true);
     }
 
     public override destroy(): void {
