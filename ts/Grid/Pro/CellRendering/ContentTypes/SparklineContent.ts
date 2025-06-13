@@ -91,7 +91,7 @@ class SparklineContent extends CellContentPro {
                             enabled: false
                         }
                     },
-                    /// animation: false,
+                    animation: false,
                     dataLabels: {
                         enabled: false
                     }
@@ -133,9 +133,10 @@ class SparklineContent extends CellContentPro {
         }
 
         this.chartContainer = document.createElement('div');
+        this.cell.htmlElement.classList.add(Globals.getClassName('noPadding'));
         this.cell.htmlElement.appendChild(this.chartContainer);
 
-        this.cell.htmlElement.classList.add(Globals.getClassName('noPadding'));
+        this.cell.reflow();
 
         this.chart = H.Chart.chart(this.chartContainer, merge(
             SparklineContent.defaultChartOptions,
@@ -148,7 +149,7 @@ class SparklineContent extends CellContentPro {
     }
 
     public override update(): void {
-        this.chart?.update(this.getProcessedOptions(), true, false, true);
+        this.chart?.update(this.getProcessedOptions(), true, false);
     }
 
     public override destroy(): void {
