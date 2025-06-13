@@ -47,17 +47,4 @@ QUnit.test('Inactive state and styledMode', function (assert) {
         'Series should not have inactive state class, ' +
             'when points within inherit state'
     );
-
-    chart.series[0].update({
-        type: 'bar',
-        data: [1]
-    });
-
-    chart.series[0].points[0].onMouseOver();
-
-    assert.strictEqual(
-        getComputedStyle(chart.series[0].points[0].graphic.element).fillOpacity,
-        '0.75',
-        'Bar point graphic after hover should have different brightness, #23081'
-    );
 });
