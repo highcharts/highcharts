@@ -10,6 +10,9 @@
  *
  * */
 
+import Exporting from '../Exporting/Exporting.js';
+import { ExportingButtonsOptions } from '../Exporting/ExportingOptions.js';
+
 /* *
  *
  *  Declarations
@@ -20,7 +23,7 @@ declare module '../Exporting/ExportingOptions' {
     interface ExportingOptions {
         csv?: ExportingCsvOptions;
         showTable?: boolean;
-        tableCaption?: (boolean|string);
+        tableCaption?: (boolean | string);
         showExportInProgress?: boolean;
     }
 }
@@ -60,17 +63,19 @@ export interface ExportDataOptions {
 
 export interface ExportingCsvOptions {
     annotations?: AnnotationInDataTableOptions;
-    columnHeaderFormatter?: (Function|null);
+    columnHeaderFormatter?: (Function | null);
     dateFormat?: string;
-    decimalPoint?: (string|null);
-    itemDelimiter?: (string|null);
+    decimalPoint?: (string | null);
+    itemDelimiter?: (string | null);
     lineDelimiter?: string;
 }
 
 export interface ExportingOptions {
     csv?: ExportingCsvOptions;
+    buttons?: ExportingButtonsOptions;
+    menuItemDefinitions?: Record<string, Exporting.MenuObject>;
     showTable?: boolean;
-    tableCaption?: (boolean|string);
+    tableCaption?: (boolean | string);
     useMultiLevelHeaders?: boolean;
     useRowspanHeaders?: boolean;
     showExportInProgress?: boolean;

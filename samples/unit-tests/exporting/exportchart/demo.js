@@ -1,4 +1,4 @@
-QUnit.test('Testing exportChart', function (assert) {
+QUnit.test('Testing exportChart', async function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             width: 400,
@@ -62,10 +62,12 @@ QUnit.test('Testing exportChart', function (assert) {
         };
 
         // Run export
-        chart.exportChart();
+        await chart.exporting.exportChart({
+            type: 'application/pdf'
+        });
 
         // Assert
-        assert.strictEqual(postData.type, 'image/png', 'Posting for PNG');
+        assert.strictEqual(postData.type, 'application/pdf', 'Posting for PNG');
 
         assert.strictEqual(
             postData.filename,

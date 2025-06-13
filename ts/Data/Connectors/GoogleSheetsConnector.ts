@@ -26,14 +26,15 @@
 import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type Types from '../../Shared/Types';
-import type DataTable from '../DataTable';
+import type DataTableOptions from '../DataTableOptions';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    pick
+    pick,
+    defined
 } = U;
 
 /* *
@@ -110,18 +111,22 @@ class GoogleSheetsConnector extends DataConnector {
      *
      * @param {GoogleSheetsConnector.UserOptions} [options]
      * Options for the connector and converter.
+     *
+     * @param {Array<DataTableOptions>} [dataTables]
+     * Multiple connector data tables options.
+     *
      */
     public constructor(
         options?: GoogleSheetsConnector.UserOptions,
-        dataTables?: Array<DataTable>
+        dataTables?: Array<DataTableOptions>
     ) {
         const mergedOptions =
             merge(GoogleSheetsConnector.defaultOptions, options);
 
         super(mergedOptions, dataTables);
 
-        this.converter = new GoogleSheetsConverter(mergedOptions);
-        this.options = mergedOptions;
+        this.options = defined(dataTables) ?
+            merge(mergedOptions, { dataTables }) : mergedOptions;
     }
 
     /* *
@@ -135,7 +140,7 @@ class GoogleSheetsConnector extends DataConnector {
     /**
      * The attached converter, which can be replaced in the constructor
      */
-    public converter: GoogleSheetsConverter;
+    public converter?: GoogleSheetsConverter;
 
     /* *
      *
@@ -161,7 +166,8 @@ class GoogleSheetsConnector extends DataConnector {
                 dataRefreshRate,
                 enablePolling,
                 googleAPIKey,
-                googleSpreadsheetKey
+                googleSpreadsheetKey,
+                dataTables
             } = connector.options,
             url = GoogleSheetsConnector.buildFetchURL(
                 googleAPIKey,
@@ -193,26 +199,30 @@ class GoogleSheetsConnector extends DataConnector {
 
                 this.initConverters<GoogleSheetsConverter.GoogleSpreadsheetJSON>(
                     json,
-                    (key, table): GoogleSheetsConverter => {
+                    (key): GoogleSheetsConverter => {
                         const options = this.options;
+                        const tableOptions = dataTables?.find(
+                            (dataTable): boolean => dataTable.key === key
+                        );
+
                         // Takes over the connector default options.
-                        const dataTableOptions = {
+                        const mergedTableOptions = {
                             dataTableKey: key,
-                            firstRowAsNames: table.firstRowAsNames ??
+                            firstRowAsNames: tableOptions?.firstRowAsNames ??
                                 options.firstRowAsNames,
-                            beforeParse: table.beforeParse ??
+                            beforeParse: tableOptions?.beforeParse ??
                                 options.beforeParse
                         };
 
                         return new GoogleSheetsConverter(
-                            merge(this.options, dataTableOptions)
+                            merge(this.options, mergedTableOptions)
                         );
                     },
                     (converter, data): void => {
                         converter.parse({ json: data });
                     }
                 );
-                return connector.setModifierOptions(dataModifier);
+                return connector.setModifierOptions(dataModifier, dataTables);
             })
             .then((): this => {
                 connector.emit<GoogleSheetsConnector.Event>({

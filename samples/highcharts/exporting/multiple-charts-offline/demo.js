@@ -1,8 +1,8 @@
 /**
  * Create a global getSVG method that takes an array of charts as an argument.
- * The SVG is returned as an argument in the callback.
+ * The SVG is returned.
  */
-Highcharts.getSVG = function (charts, options, callback) {
+Highcharts.getSVG = async function (charts, options) {
     let top = 0,
         width = 0;
 
@@ -26,40 +26,48 @@ Highcharts.getSVG = function (charts, options, callback) {
             width = Math.max(width, svgWidth);
             svgArr.push(svg);
         },
-        exportChart = function (i) {
-            if (i === charts.length) {
-                return callback(
-                    `<svg version="1.1" width="${width}" height="${top}"
-                            viewBox="0 0 ${width} ${top}"
-                            xmlns="http://www.w3.org/2000/svg">
-                        ${svgArr.join('')}
-                    </svg>`
-                );
+        exportChart = async function (i) {
+            try {
+                if (charts[i]) {
+                    charts[i].exporting.downloadSVG = () => {
+                        console.log('Single chart export disabled');
+                    };
+                    const svg = await charts[i].exporting.localExport(
+                        options,
+                        {}
+                    );
+                    addSVG(svg);
+                    // Export next only when this SVG is received
+                    return exportChart(i + 1);
+                }
+            } catch {
+                console.log('Failed to get SVG', i);
             }
-            charts[i].getSVGForLocalExport(options, {}, function () {
-                console.log('Failed to get SVG');
-            }, function (svg) {
-                addSVG(svg);
-                // Export next only when this SVG is received
-                return exportChart(i + 1);
-            });
         };
-    exportChart(0);
+    await exportChart(0);
+    return `<svg version="1.1" width="${width}" height="${top}"
+            viewBox="0 0 ${width} ${top}"
+            xmlns="http://www.w3.org/2000/svg">
+        ${svgArr.join('')}
+    </svg>`;
 };
 
 /**
  * Create a global exportCharts method that takes an array of charts as an
  * argument, and exporting options as the second argument
  */
-Highcharts.exportCharts = function (charts, options) {
+Highcharts.exportCharts = async function (charts, options) {
     options = Highcharts.merge(Highcharts.getOptions().exporting, options);
 
-    // Get SVG asynchronously and then download the resulting SVG
-    Highcharts.getSVG(charts, options, function (svg) {
-        Highcharts.downloadSVGLocal(svg, options, function () {
-            console.log('Failed to export on client side');
-        });
-    });
+    try {
+        // Get SVG asynchronously
+        const svg = await Highcharts.getSVG(charts, options);
+
+        // Download the resulting SVG
+        await Highcharts.downloadSVGLocal(svg, options);
+    } catch {
+        console.log('Failed to export on client side');
+    }
 };
 
 // Set global default options for all charts
@@ -132,12 +140,12 @@ const chart2 = Highcharts.chart('container2', {
 
 });
 
-document.getElementById('export-png').addEventListener('click', () => {
-    Highcharts.exportCharts([chart1, chart2]);
+document.getElementById('export-png').addEventListener('click', async () => {
+    await Highcharts.exportCharts([chart1, chart2]);
 });
 
-document.getElementById('export-pdf').addEventListener('click', () => {
-    Highcharts.exportCharts([chart1, chart2], {
+document.getElementById('export-pdf').addEventListener('click', async () => {
+    await Highcharts.exportCharts([chart1, chart2], {
         type: 'application/pdf'
     });
 });

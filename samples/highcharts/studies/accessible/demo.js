@@ -4,7 +4,7 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
     const div = document.createElement('div');
 
     chart.container.parentNode.appendChild(div);
-    div.innerHTML = chart.getTable();
+    div.innerHTML = chart.exporting.getTable();
 
     // Set ARIA attributes
     chart.renderTo.setAttribute(

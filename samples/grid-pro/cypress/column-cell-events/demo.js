@@ -53,6 +53,10 @@ Grid.grid('container', {
             events: {
                 click: function () {
                     doc.getElementById('headerClick').value = 'headerClick';
+                },
+                afterRender: function () {
+                    doc.getElementById('headerAfterRender').value =
+                        'afterRender';
                 }
             }
         }
