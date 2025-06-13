@@ -61,13 +61,17 @@ function test_grid() {
         },
         columnDefaults: {
             cells: {
-                editable: true
+                editMode: {
+                    enabled: true
+                }
             }
         },
         columns: [{
             id: 'a',
             cells: {
-                editable: true
+                editMode: {
+                    enabled: true
+                }
             }
         }],
         events: {

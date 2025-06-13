@@ -9,7 +9,9 @@ Grid.grid('container', {
     columnDefaults: {
         cells: {
             className: '{#if (gt value 100)}greater-than-100{/if}',
-            editable: true
+            editMode: {
+                enabled: true
+            }
         },
         header: {
             className: 'header-cell-custom-class-{column.id}'

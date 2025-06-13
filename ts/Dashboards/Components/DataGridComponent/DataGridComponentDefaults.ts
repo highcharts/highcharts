@@ -89,7 +89,8 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                                 'gridOptions',
                                 'columnDefaults',
                                 'cells',
-                                'editable'
+                                'editMode',
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {

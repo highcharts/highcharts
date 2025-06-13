@@ -28,30 +28,31 @@ Read more about [data handling and the DataTable class](https://www.highcharts.c
 {
     columnDefaults: {
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     },
-    columns: [
-        {
-            id: "weight",
-            header: {
-                format: "Weight"
-            },
-            cells: {
-                format: "{value}g"
-                editable: false
-            }
+    columns: [{
+        id: "weight",
+        header: {
+            format: "Weight"
         },
-        {
-            id: "price",
-            header: {
-                format: "Price"
-            },
-            cells: {
-                format: "${value}"
+        cells: {
+            format: "{value}g",
+            editMode: {
+                enabled: false
             }
         }
-    ]
+    }, {
+        id: "price",
+        header: {
+            format: "Price"
+        },
+        cells: {
+            format: "${value}"
+        }
+    }]
 }
 ```
 
