@@ -25,6 +25,8 @@ is recognized by the browser, including CSS variables. See the [CSS
 variables](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/colors-css-variables/)
 demo to see how this can be applied to a themed heatmap with color theming.
 
+See here for [more information about using color indices in Highcharts](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
+
 Linear gradients
 ----------------
 
