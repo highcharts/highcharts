@@ -108,6 +108,11 @@ class RowsVirtualizer {
      */
     private scrollOffset: number = 0;
 
+    /**
+     * The total number of rows in the grid.
+     */
+    private rowCount: number = 0;
+
     /* *
     *
     *  Constructor
@@ -151,8 +156,8 @@ class RowsVirtualizer {
         if (this.rowSettings?.virtualization) {
             this.viewport.reflow();
         }
-        this.totalGridHeight = this.viewport.dataTable.getRowCount()
-            * this.defaultRowHeight;
+        this.rowCount = this.viewport.dataTable.getRowCount();
+        this.totalGridHeight = this.rowCount * this.defaultRowHeight;
 
         // Load & render rows
         this.renderRows(this.rowCursor);
@@ -214,8 +219,6 @@ class RowsVirtualizer {
         const gridHeightOverflow = Math.max(
             this.totalGridHeight - RowsVirtualizer.MAX_ELEMENT_HEIGHT, 0
         );
-        const scrollPercentage = lastScrollTop / target.scrollHeight;
-        this.scrollOffset = scrollPercentage * gridHeightOverflow;
 
         if (this.preventScroll) {
             if (lastScrollTop <= target.scrollTop) {
@@ -225,10 +228,54 @@ class RowsVirtualizer {
             return;
         }
 
-        // Do vertical virtual scrolling
-        const rowCursor = Math.floor((target.scrollTop / rowHeight)
-            + this.scrollOffset / rowHeight
-        );
+        let rowCursor: number;
+
+        // Improved calculation for large datasets that exceed MAX_ELEMENT_HEIGHT
+        if (gridHeightOverflow > 0) {
+            // Calculate the virtual position based on scroll percentage
+            const scrollPercentage = lastScrollTop / target.scrollHeight;
+            this.scrollOffset = scrollPercentage * gridHeightOverflow;
+            
+            // Use a more stable calculation that directly maps scroll percentage to row index
+            // This prevents large jumps when making small scroll adjustments
+            const virtualScrollTop = lastScrollTop + this.scrollOffset;
+            rowCursor = Math.floor(virtualScrollTop / rowHeight);
+            
+            // Add bounds checking to prevent jumping beyond valid row range
+            rowCursor = Math.max(0, Math.min(rowCursor, this.rowCount - 1));
+            
+            // Near the bottom, use a more precise calculation to prevent jumping
+            const bottomThreshold = this.rowCount - Math.ceil(target.clientHeight / rowHeight) - this.buffer;
+            if (rowCursor >= bottomThreshold) {
+                const remainingRows = this.rowCount - rowCursor;
+                const viewportRows = Math.ceil(target.clientHeight / rowHeight);
+                if (this.rowCursor !== 0 && Math.abs(rowCursor - this.rowCursor) > viewportRows) {
+                    const maxJump = Math.ceil(viewportRows / 2);
+                    if (rowCursor > this.rowCursor) {
+                        rowCursor = Math.min(rowCursor, this.rowCursor + maxJump);
+                    } else {
+                        rowCursor = Math.max(rowCursor, this.rowCursor - maxJump);
+                    }
+                }
+            }
+
+            // --- Improved fix: Clamp rowCursor and scrollTop at the bottom ---
+            const viewportRows = Math.ceil(target.clientHeight / rowHeight);
+            const maxRowCursor = this.rowCount - viewportRows;
+            const maxScrollTop = target.scrollHeight - target.clientHeight;
+            if (lastScrollTop >= maxScrollTop - 1) { // allow for rounding error
+                rowCursor = Math.max(0, maxRowCursor);
+                if (target.scrollTop !== maxScrollTop) {
+                    target.scrollTop = maxScrollTop;
+                }
+            }
+            // --- End improved fix ---
+        } else {
+            // Standard calculation for smaller datasets
+            rowCursor = Math.floor(lastScrollTop / rowHeight);
+            this.scrollOffset = 0;
+        }
+
         if (this.rowCursor !== rowCursor) {
             this.renderRows(rowCursor);
         }
