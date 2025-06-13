@@ -219,6 +219,10 @@ class Validator {
     public hide(
         hideErrorBox: boolean = true
     ): void {
+        this.errorCell?.htmlElement.classList.remove(
+            Validator.classNames.editedCellError
+        );
+
         this.notifContainer.classList.remove(
             Validator.classNames.notifError,
             Validator.classNames.notifAnimation

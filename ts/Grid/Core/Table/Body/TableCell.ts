@@ -239,9 +239,6 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
 
-        // Render the table cell element content.
-        // setHTMLContent(this.htmlElement, this.formatCell());
-
         this.content?.destroy();
         this.content = this.column.createCellContent(this);
         this.htmlElement.setAttribute('data-value', this.value + '');
@@ -304,6 +301,8 @@ class TableCell extends Cell {
      */
     public destroy(): void {
         this.content?.destroy();
+        delete this.content;
+
         super.destroy();
     }
 }

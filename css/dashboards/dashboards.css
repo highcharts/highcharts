@@ -390,7 +390,7 @@
     left: 100px;
     min-height: 150px;
     min-width: 300px;
-    z-index: 99999;
+    z-index: 9999;
     display: none;
     cursor: grab;
     pointer-events: none;
@@ -640,7 +640,7 @@
 .highcharts-dashboards-edit-toolbar {
     color: var(--highcharts-neutral-color-60);
     position: absolute;
-    z-index: 9999;
+    z-index: 9998;
     border-radius: 3px;
     box-shadow:
         0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),

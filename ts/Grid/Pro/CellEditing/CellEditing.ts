@@ -199,10 +199,23 @@ class CellEditing {
         const { key } = e;
         e.stopPropagation();
 
-        // Enter / Escape
-        if (key === 'Enter' || key === 'Escape') {
-            // Cancel editing on escape
-            this.stopEditing(key === 'Enter');
+        if (key === 'Escape') {
+            this.stopEditing(false);
+            return;
+        }
+
+        const valueIsDifferent = this.editedCell?.value !==
+            this.editModeContent?.getValue();
+
+        if (key === 'Enter') {
+            if (
+                this.editModeContent?.finishAfterChange && valueIsDifferent
+            ) {
+                this.onInputChange();
+                return;
+            }
+
+            this.stopEditing(valueIsDifferent);
         }
     };
 

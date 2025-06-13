@@ -21,7 +21,7 @@ columns: [
     id: "firstName",
     cells: {
       editMode: {
-        enabled: true
+        enabled: false
       }
     },
   },

@@ -126,7 +126,10 @@ namespace CellEditingComposition {
                     this.column.viewport.grid.options?.events?.cell,
                     this.column.options.cells?.events
                 );
-                cellEvents?.afterEdit?.call(this);
+
+                if (e.submit) {
+                    cellEvents?.afterEdit?.call(this);
+                }
 
                 announceA11yUserEditedCell(
                     this,

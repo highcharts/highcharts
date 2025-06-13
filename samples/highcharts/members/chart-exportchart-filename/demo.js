@@ -25,8 +25,8 @@ const chart = Highcharts.chart('container', {
 });
 
 // the button handler
-document.getElementById('button').addEventListener('click', () => {
-    chart.exportChart({
+document.getElementById('button').addEventListener('click', async () => {
+    await chart.exporting.exportChart({
         type: 'application/pdf',
         filename: 'my-pdf'
     });

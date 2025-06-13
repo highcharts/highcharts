@@ -21,10 +21,10 @@
  *
  * */
 
-import type TableCell from '../../../Core/Table/Body/TableCell.js';
-import type DateInputRenderer from '../Renderers/DateInputRenderer.js';
+import type DateInputRenderer from '../Renderers/DateInputRenderer';
+import type { EditModeContent } from '../../CellEditing/CellEditMode';
+import type TableCell from '../../../Core/Table/Body/TableCell';
 
-import { EditModeContent } from '../../CellEditing/CellEditMode.js';
 import CellContentPro from '../CellContentPro.js';
 
 /* *

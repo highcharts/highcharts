@@ -25,6 +25,7 @@ import type Column from '../Column';
 
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
+import TableCell from '../Body/TableCell';
 
 import GridUtils from '../../GridUtils.js';
 const {
@@ -32,7 +33,6 @@ const {
 } = GridUtils;
 
 import Utils from '../../../../Core/Utilities.js';
-import TableCell from '../Body/TableCell';
 const {
     defined
 } = Utils;

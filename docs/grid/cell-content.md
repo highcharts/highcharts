@@ -40,7 +40,7 @@ columns: [
 
 In the [renderer](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#renderer) API option you can customize content of the cell, based on dataType.
 
-For instance, you can print string data as a select.
+For instance, you can display string data as a select.
 
 ```js
 {
