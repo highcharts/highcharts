@@ -927,8 +927,7 @@ function getPoint(
 
     if (
         isScatter &&
-        seriesOptions.keys &&
-        seriesOptions.keys.length
+        seriesOptions?.keys?.length
     ) {
         const keys = seriesOptions.keys;
 
