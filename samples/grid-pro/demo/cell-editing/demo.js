@@ -27,8 +27,11 @@ Grid.grid('container', {
         id: 'available',
         dataType: 'boolean',
         cells: {
-            renderer: {
-                type: 'checkbox'
+            format: '{#if value}✓{else}✗{/if}',
+            editMode: {
+                renderer: {
+                    type: 'checkbox'
+                }
             }
         }
     }, {
@@ -48,19 +51,37 @@ Grid.grid('container', {
     }, {
         id: 'country',
         dataType: 'string',
-        renderer: {
-            type: 'select',
-            options: [
-                { value: 'PL', label: 'Poland' },
-                { value: 'NL', label: 'Netherlands' },
-                { value: 'RO', label: 'Romania' },
-                { value: 'EC', label: 'Ecuador' },
-                { value: 'ES', label: 'Spain' },
-                { value: 'IT', label: 'Italy' },
-                { value: 'DE', label: 'Germany' },
-                { value: 'TR', label: 'Turkey' },
-                { value: 'BR', label: 'Brazil' }
-            ]
+        cells: {
+            formatter: function () {
+                const countryNames = {
+                    PL: 'Poland',
+                    NL: 'Netherlands',
+                    RO: 'Romania',
+                    EC: 'Ecuador',
+                    ES: 'Spain',
+                    IT: 'Italy',
+                    DE: 'Germany',
+                    TR: 'Turkey',
+                    BR: 'Brazil'
+                };
+                return countryNames[this.value] || this.value;
+            },
+            editMode: {
+                renderer: {
+                    type: 'select',
+                    options: [
+                        { value: 'PL', label: 'Poland' },
+                        { value: 'NL', label: 'Netherlands' },
+                        { value: 'RO', label: 'Romania' },
+                        { value: 'EC', label: 'Ecuador' },
+                        { value: 'ES', label: 'Spain' },
+                        { value: 'IT', label: 'Italy' },
+                        { value: 'DE', label: 'Germany' },
+                        { value: 'TR', label: 'Turkey' },
+                        { value: 'BR', label: 'Brazil' }
+                    ]
+                }
+            }
         }
     }]
 });

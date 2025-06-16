@@ -160,12 +160,15 @@ class CellEditing {
 
         cell.htmlElement.focus();
 
+        const isValueChanged = cell.value !== newValue;
         void cell.setValue(
             submit ? newValue : cell.value,
-            submit && cell.value !== newValue
+            submit && isValueChanged
         );
 
-        fireEvent(cell, 'stoppedEditing', { submit });
+        if (isValueChanged) {
+            fireEvent(cell, 'stoppedEditing', { submit });
+        }
 
         delete this.editedCell;
 
