@@ -107,13 +107,7 @@ Grid.grid('container', {
             editMode: {
                 renderer: {
                     type: 'dateInput'
-                },
-                validationRules: [{
-                    validate: function ({ value, rawValue }) {
-                        console.log(value, rawValue);
-                        return true;
-                    }
-                }]
+                }
             }
         }
     }, {
