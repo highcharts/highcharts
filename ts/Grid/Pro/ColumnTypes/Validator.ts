@@ -21,10 +21,10 @@
  *
  * */
 
+import type Column from '../../Core/Table/Column';
+import type { EditModeContent } from '../CellEditing/CellEditMode';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
-import type Column from '../../Core/Table/Column';
-import type DataTable from '../../../Data/DataTable';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
@@ -91,9 +91,6 @@ class Validator {
      * @param cell
      * Edited cell.
      *
-     * @param value
-     * Value to validate.
-     *
      * @param errors
      * An output array for error messages.
      *
@@ -102,7 +99,6 @@ class Validator {
      */
     public validate(
         cell: TableCell,
-        value: DataTable.CellType,
         errors: string[] = []
     ): boolean {
         const { options } = cell.column;
@@ -159,12 +155,15 @@ class Validator {
                 validateFn = ruleDef.validate as Validator.ValidateFunction;
             }
 
+            const { editModeContent } = cell.column.viewport.cellEditing || {};
+
             if (
                 typeof validateFn === 'function' &&
-                !validateFn.call(cell, value)
+                editModeContent &&
+                !validateFn.call(cell, editModeContent)
             ) {
                 if (typeof ruleDef.notification === 'function') {
-                    err = ruleDef.notification.call(cell, value);
+                    err = ruleDef.notification.call(cell, editModeContent);
                 }
                 errors.push((err || ruleDef.notification) as string);
             }
@@ -305,7 +304,7 @@ namespace Validator {
      */
     export type ValidateFunction = (
         this: TableCell,
-        value: DataTable.CellType
+        content: EditModeContent
     ) => boolean;
 
     /**
@@ -313,7 +312,7 @@ namespace Validator {
      */
     export type ValidationErrorFunction = (
         this: TableCell,
-        value?: DataTable.CellType
+        content?: EditModeContent
     ) => string;
 
     /**
@@ -350,18 +349,19 @@ namespace Validator {
      */
     export const rulesRegistry: RulesRegistryType = {
         notEmpty: {
-            validate: (value): boolean =>
-                defined(value) && value.toString().length > 0,
+            validate: ({ value, rawValue }): boolean => (
+                defined(value) && rawValue.length > 0
+            ),
             notification: 'Value cannot be empty.'
         },
         number: {
-            validate: (value): boolean => !isNaN(Number(value)),
+            validate: ({ rawValue }): boolean => !isNaN(+rawValue),
             notification: 'Value has to be a number.'
         },
         'boolean': {
-            validate: (value): boolean => (
-                value === 'true' || value === 'false' ||
-                Number(value) === 1 || Number(value) === 0
+            validate: ({ rawValue }): boolean => (
+                rawValue === 'true' || rawValue === 'false' ||
+                Number(rawValue) === 1 || Number(rawValue) === 0
             ),
             notification: 'Value has to be a boolean.'
         }
