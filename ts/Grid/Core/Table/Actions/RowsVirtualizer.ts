@@ -91,6 +91,11 @@ class RowsVirtualizer {
      */
     public rowSettings?: RowsSettings;
 
+    /**
+     * If the translation exceeds the max scroll allowed for the browser, the
+     * scroll ratio is used to calculate the scroll position.
+     */
+    public scrollRatio: number = 1;
 
     /* *
     *
@@ -112,6 +117,7 @@ class RowsVirtualizer {
         this.strictRowHeights = this.rowSettings.strictHeights as boolean;
         this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
         this.defaultRowHeight = this.getDefaultRowHeight();
+        this.scrollRatio = this.getScrollRatio();
 
         if (this.strictRowHeights) {
             viewport.tbodyElement.classList.add(
@@ -202,7 +208,7 @@ class RowsVirtualizer {
         }
 
         // Do vertical virtual scrolling
-        const rowCursor = Math.floor(target.scrollTop / rowHeight);
+        const rowCursor = this.getRowCursor();
         if (this.rowCursor !== rowCursor) {
             this.renderRows(rowCursor);
         }
@@ -220,6 +226,18 @@ class RowsVirtualizer {
     }
 
     /**
+     * Calculates the row cursor based on the scroll position.
+     */
+    private getRowCursor(): number {
+        const target = this.viewport.tbodyElement;
+        const rowHeight = this.defaultRowHeight;
+        const scrollRatio = this.scrollRatio;
+        const adjustedScrollTop = target.scrollTop / scrollRatio;
+
+        return Math.floor(adjustedScrollTop / rowHeight);
+    }
+
+    /**
      * Adjusts the visible row heights from the bottom of the viewport.
      */
     private adjustBottomRowHeights(): void {
@@ -234,7 +252,7 @@ class RowsVirtualizer {
         rowTop = rowBottom - newHeight;
 
         lastRow.htmlElement.style.height = newHeight + 'px';
-        lastRow.setTranslateY(rowTop);
+        lastRow.setTranslateY(rowTop, true);
         for (let j = 0, jEnd = lastRow.cells.length; j < jEnd; ++j) {
             lastRow.cells[j].htmlElement.style.transform = '';
         }
@@ -247,7 +265,7 @@ class RowsVirtualizer {
 
             row.htmlElement.style.height = newHeight + 'px';
 
-            row.setTranslateY(rowTop);
+            row.setTranslateY(rowTop, false);
             for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                 row.cells[j].htmlElement.style.transform = '';
             }
@@ -285,7 +303,7 @@ class RowsVirtualizer {
             vp.tbodyElement.appendChild(last.htmlElement);
 
             if (isVirtualization) {
-                last.setTranslateY(last.getDefaultTopOffset());
+                last.setTranslateY(last.getDefaultTopOffset(true), false);
             }
         }
 
@@ -306,7 +324,7 @@ class RowsVirtualizer {
             const row = rows[i];
             const rowIndex = row.index;
 
-            if (rowIndex < from || rowIndex > to) {
+            if (rowIndex < from || rowIndex > to || this.scrollRatio < 1) {
                 row.destroy();
             } else {
                 tempRows.push(row);
@@ -325,7 +343,10 @@ class RowsVirtualizer {
                 rows.push(newRow);
                 newRow.rendered = false;
                 if (isVirtualization) {
-                    newRow.setTranslateY(newRow.getDefaultTopOffset());
+                    newRow.setTranslateY(
+                        newRow.getDefaultTopOffset(),
+                        i === from && this.scrollRatio !== 1
+                    );
                 }
             }
         }
@@ -379,7 +400,7 @@ class RowsVirtualizer {
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
 
-        let translateBuffer = rows[0].getDefaultTopOffset();
+        let translateBuffer = rows[0].getDefaultTopOffset(this.scrollRatio !== 1);
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
@@ -426,18 +447,23 @@ class RowsVirtualizer {
             }
         }
 
-        rows[0].setTranslateY(translateBuffer);
+        rows[0].setTranslateY(translateBuffer, false);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
-            rows[i].setTranslateY(translateBuffer);
+            rows[i].setTranslateY(translateBuffer, false);
         }
 
         // Set the proper offset for the last row
         const lastRow = rows[rowsLn - 1];
         const preLastRow = rows[rowsLn - 2];
-        if (preLastRow && preLastRow.index === lastRow.index - 1) {
+        if (
+            preLastRow && preLastRow.index === lastRow.index - 1 &&
+            /* eslint-disable-next-line max-len */
+            lastRow.htmlElement.offsetHeight !== preLastRow.htmlElement.offsetHeight
+        ) {
             lastRow.setTranslateY(
-                preLastRow.htmlElement.offsetHeight + translateBuffer
+                preLastRow.htmlElement.offsetHeight + translateBuffer,
+                false
             );
         }
     }
@@ -481,6 +507,43 @@ class RowsVirtualizer {
         mockRow.destroy();
 
         return defaultRowHeight;
+    }
+
+    /**
+     * Check the browser and its max scroll allowed. If the translation exceeds
+     * the max scroll allowed for the browser, calculate the scroll ratio.
+     */
+    private getScrollRatio(): number {
+        const maxScrollHeight = this.getMaxScrollHeight();
+        const rowHeight = this.defaultRowHeight;
+        const totalRows = this.viewport.dataTable.getRowCount();
+        const heightNeeded = totalRows * rowHeight;
+
+        if (heightNeeded > maxScrollHeight) {
+            return maxScrollHeight / heightNeeded
+        }
+
+        return 1;
+    }
+
+    /**
+     * Creates a div test element and returns the max scroll height.
+     */
+    private getMaxScrollHeight(): number {
+        const div = document.createElement('div');
+        div.style.position = 'absolute';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.width = '1px';
+        div.style.height = '1px';
+        div.style.overflow = 'scroll';
+        div.style.height = '100000000px';
+
+        document.body.appendChild(div);
+        const maxScroll = div.scrollHeight;
+        document.body.removeChild(div);
+
+        return maxScroll;
     }
 }
 
