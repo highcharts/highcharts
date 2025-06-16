@@ -328,9 +328,10 @@ namespace Validator {
      *  Definition of default validation rules.
      */
     export interface RulesRegistryType {
+        boolean: RuleDefinition;
+        datetime: RuleDefinition;
         notEmpty: RuleDefinition;
         number: RuleDefinition;
-        boolean: RuleDefinition;
     }
 
     /**
@@ -358,6 +359,10 @@ namespace Validator {
             validate: ({ rawValue }): boolean => !isNaN(+rawValue),
             notification: 'Value has to be a number.'
         },
+        datetime: {
+            validate: ({ value }): boolean => !defined(value) || !isNaN(+value),
+            notification: 'Value has to be parsed to a valid timestamp.'
+        },
         'boolean': {
             validate: ({ rawValue }): boolean => (
                 rawValue === 'true' || rawValue === 'false' ||
@@ -374,7 +379,7 @@ namespace Validator {
         number: ['number'],
         'boolean': ['boolean'],
         string: ['notEmpty'],
-        datetime: ['number']
+        datetime: ['datetime']
     };
 }
 
