@@ -75,9 +75,9 @@ Grid.grid('container', {
                     }
                 }, {
                     validate: 'number',
-                    notification: function (value) {
+                    notification: function (content) {
                         return `New value <strong>${
-                            value
+                            content.getStringValue()
                         }</strong> should be number`;
                     }
                 }]
@@ -106,10 +106,7 @@ Grid.grid('container', {
                     type: 'checkbox'
                 },
                 validationRules: [{
-                    validate: 'notEmpty',
-                    notification: function () {
-                        return 'Not empty formatter';
-                    }
+                    validate: 'notEmpty'
                 }, {
                     validate: 'boolean',
                     notification: function () {
@@ -128,8 +125,8 @@ Grid.grid('container', {
             },
             editMode: {
                 validationRules: ['notEmpty', {
-                    validate: function (value) {
-                        return value.indexOf('URL') !== -1;
+                    validate: function (content) {
+                        return content.getStringValue().indexOf('URL') !== -1;
                     },
                     notification: 'The value must contain "URL"'
                 }]

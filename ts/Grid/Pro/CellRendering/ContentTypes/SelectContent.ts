@@ -128,6 +128,10 @@ class SelectContent extends CellContentPro implements EditModeContent {
         select.remove();
     }
 
+    public getStringValue(): string {
+        return this.select.value;
+    }
+
     public getValue(): DataTable.CellType {
         const val = this.select.value;
         switch (this.cell.column.dataType) {

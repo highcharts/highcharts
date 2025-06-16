@@ -45,9 +45,15 @@ export interface EditModeContent<
     getMainElement(): E;
 
     /**
-     * Returns the value of the cell in the edit mode.
+     * Returns the value of the cell in the edit mode, parsed according to the
+     * column type.
      */
     getValue(): DataTable.CellType;
+
+    /**
+     * Returns the raw value of the cell in the edit mode, in a string format.
+     */
+    getStringValue(): string;
 
     /**
      * Destroys the edit mode content, removing all event listeners

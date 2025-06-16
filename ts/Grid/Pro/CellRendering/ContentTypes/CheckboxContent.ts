@@ -95,6 +95,10 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
+    public getStringValue(): string {
+        return this.input.checked ? 'true' : 'false';
+    }
+
     public getValue(): DataTable.CellType {
         const val = this.input.checked;
         switch (this.cell.column.dataType) {

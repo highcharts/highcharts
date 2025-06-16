@@ -63,9 +63,11 @@ class CellEditing {
     public editedCell?: TableCell;
 
     /**
-     * Input element for the cell.
+     * The content of the cell edit mode, which represents a context containing
+     * the input field or similar element for applying changes to the cell
+     * value.
      */
-    private editModeContent?: EditModeContent;
+    public editModeContent?: EditModeContent;
 
 
     /* *
@@ -134,7 +136,7 @@ class CellEditing {
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.validate(cell, newValue, validationErrors)) {
+            if (!vp.validator.validate(cell, validationErrors)) {
                 vp.validator.initErrorBox(cell, validationErrors);
                 vp.validator.show();
                 return false;

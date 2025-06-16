@@ -91,6 +91,10 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
+    public getStringValue(): string {
+        return this.input.value;
+    }
+
     public getValue(): number {
         return new Date(this.input.value).getTime();
     }
