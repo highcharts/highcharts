@@ -231,51 +231,17 @@ class RowsVirtualizer {
 
         let rowCursor: number;
 
-        // Improved calculation for large datasets that exceed MAX_ELEMENT_HEIGHT
-        if (gridHeightOverflow > 0) {
-            // Calculate the virtual position based on scroll percentage
-            const scrollPercentage = lastScrollTop / target.scrollHeight;
-            this.scrollOffset = scrollPercentage * gridHeightOverflow;
-            
-            // Use a more stable calculation that directly maps scroll percentage to row index
-            // This prevents large jumps when making small scroll adjustments
-            const virtualScrollTop = lastScrollTop + this.scrollOffset;
-            rowCursor = Math.floor(virtualScrollTop / rowHeight);
-            
-            // Add bounds checking to prevent jumping beyond valid row range
-            rowCursor = Math.max(0, Math.min(rowCursor, this.rowCount - 1));
-            
-            // Near the bottom, use a more precise calculation to prevent jumping
-            const bottomThreshold = this.rowCount - Math.ceil(target.clientHeight / rowHeight) - this.buffer;
-            if (rowCursor >= bottomThreshold) {
-                const remainingRows = this.rowCount - rowCursor;
-                const viewportRows = Math.ceil(target.clientHeight / rowHeight);
-                if (this.rowCursor !== 0 && Math.abs(rowCursor - this.rowCursor) > viewportRows) {
-                    const maxJump = Math.ceil(viewportRows / 2);
-                    if (rowCursor > this.rowCursor) {
-                        rowCursor = Math.min(rowCursor, this.rowCursor + maxJump);
-                    } else {
-                        rowCursor = Math.max(rowCursor, this.rowCursor - maxJump);
-                    }
-                }
-            }
+        const scrollable = target.scrollHeight - target.clientHeight;  // == maxScrollTop
+        const scrollPercentage = scrollable ? lastScrollTop / scrollable : 0;
 
-            // --- Improved fix: Clamp rowCursor and scrollTop at the bottom ---
-            const viewportRows = Math.ceil(target.clientHeight / rowHeight);
-            const maxRowCursor = this.rowCount - viewportRows;
-            const maxScrollTop = target.scrollHeight - target.clientHeight;
-            if (lastScrollTop >= maxScrollTop - 1) { // allow for rounding error
-                rowCursor = Math.max(0, maxRowCursor);
-                if (target.scrollTop !== maxScrollTop) {
-                    target.scrollTop = maxScrollTop;
-                }
-            }
-            // --- End improved fix ---
-        } else {
-            // Standard calculation for smaller datasets
-            rowCursor = Math.floor(lastScrollTop / rowHeight);
-            this.scrollOffset = 0;
-        }
+        this.scrollOffset = scrollPercentage * gridHeightOverflow;
+
+        const virtualScrollTop = lastScrollTop + this.scrollOffset;
+        rowCursor = Math.floor(virtualScrollTop / rowHeight);
+
+        // keep it in range – this covers both top and bottom
+        const viewportRows = Math.ceil(target.clientHeight / rowHeight);
+        rowCursor = Math.max(0, Math.min(rowCursor, this.rowCount - viewportRows));
 
         if (this.rowCursor !== rowCursor) {
             this.renderRows(rowCursor);
@@ -339,7 +305,6 @@ class RowsVirtualizer {
         console.time('renderRows');
         const { viewport: vp, buffer } = this;
         const isVirtualization = this.rowSettings?.virtualization;
-        const rowCount = vp.dataTable.getRowCount();
         const rowsPerPage = isVirtualization ? Math.ceil(
             (vp.grid.tableElement?.clientHeight || 0) /
             this.defaultRowHeight
@@ -349,7 +314,7 @@ class RowsVirtualizer {
         const rowMap = new Map<number, TableRow>();
         let lastRow: TableRow | undefined;
         for (const row of vp.rows) {
-            if (row.index === rowCount - 1) {
+            if (row.index === this.rowCount - 1) {
                 lastRow = row;
             } else {
                 rowMap.set(row.index, row);
@@ -358,7 +323,7 @@ class RowsVirtualizer {
 
         // Always ensure the last row exists for scrollbar purposes
         if (!lastRow) {
-            lastRow = new TableRow(vp, rowCount - 1);
+            lastRow = new TableRow(vp, this.rowCount - 1);
             lastRow.render();
             vp.tbodyElement.appendChild(lastRow.htmlElement);
             if (isVirtualization) {
@@ -373,11 +338,11 @@ class RowsVirtualizer {
         // Calculate visible range
         const from = Math.max(0, Math.min(
             rowCursor - buffer,
-            rowCount - rowsPerPage
+            this.rowCount - rowsPerPage
         ));
         const to = Math.min(
             rowCursor + rowsPerPage + buffer,
-            rowCount - 2 // exclude the last row from normal rendering
+            this.rowCount - 2 // exclude the last row from normal rendering
         );
 
         // Remove out-of-range rows
@@ -409,11 +374,6 @@ class RowsVirtualizer {
         if (fragment.childNodes.length > 0) {
             // Insert before the last row (spacer)
             vp.tbodyElement.insertBefore(fragment, lastRow.htmlElement);
-        }
-
-        // Render the last row if it is in the visible range and not already rendered
-        if (to === rowCount - 2 && lastRow && !lastRow.rendered) {
-            lastRow.render();
         }
 
         // Focus the cell if the focus cursor is set
@@ -510,6 +470,8 @@ class RowsVirtualizer {
             lastRow.setTranslateY(
                 preLastRow.htmlElement.offsetHeight + translateBuffer
             );
+        } else {
+            lastRow.setTranslateY(RowsVirtualizer.MAX_ELEMENT_HEIGHT);
         }
     }
 
