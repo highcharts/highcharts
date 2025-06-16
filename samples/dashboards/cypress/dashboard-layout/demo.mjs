@@ -7,8 +7,6 @@ import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-let exportedLayoutId;
-
 const chartDemo = {
     type: 'Highcharts',
     chartOptions: {
@@ -37,47 +35,11 @@ Dashboards.board('container', {
             icon: 'https://code.highcharts.com/dashboards/gfx/' +
                 'dashboards-icons/menu.svg',
             items: ['editMode', {
-                id: 'export-dashboard',
-                text: 'Export dashboard',
-                events: {
-                    click: function () {
-                        board.exportLocal();
-                    }
-                }
-            }, {
-                id: 'import-dashboard',
-                text: 'Import saved dashboard',
-                events: {
-                    click: function () {
-                        board = Board.importLocal();
-                    }
-                }
-            }, {
-                id: 'export-layout',
-                text: 'Export 1 layout',
-                events: {
-                    click: function () {
-                        exportedLayoutId = board.layouts[0].options.id;
-                        board.layouts[0].exportLocal();
-                    }
-                }
-            }, {
                 id: 'delete-layout',
                 text: 'Delete 1 layout',
                 events: {
                     click: function () {
                         board.layouts[0].destroy();
-                    }
-                }
-            }, {
-                id: 'import-layout',
-                text: 'Import saved layout',
-                events: {
-                    click: function () {
-                        const layout = board.importLayoutLocal(
-                            exportedLayoutId
-                        );
-                        console.log('Imported layout: ', layout);
                     }
                 }
             }]

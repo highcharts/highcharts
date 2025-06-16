@@ -527,11 +527,13 @@ text.highcharts-data-label {
     stroke: var(--highcharts-background-color);
 }
 
-.highcharts-column-series .highcharts-point {
+.highcharts-column-series .highcharts-point,
+.highcharts-bar-series .highcharts-point {
     transition: fill-opacity 250ms;
 }
 
-.highcharts-column-series .highcharts-point-hover {
+.highcharts-column-series .highcharts-point-hover,
+.highcharts-bar-series .highcharts-point-hover {
     fill-opacity: 0.75;
     transition: fill-opacity 50ms;
 }
