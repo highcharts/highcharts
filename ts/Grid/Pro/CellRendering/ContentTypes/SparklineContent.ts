@@ -113,9 +113,13 @@ class SparklineContent extends CellContentPro {
      *
      * */
 
-    constructor(cell: TableCell, renderer: SparklineRenderer) {
+    constructor(
+        cell: TableCell,
+        renderer: SparklineRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.add();
+        this.add(parentElement);
     }
 
 
@@ -125,15 +129,17 @@ class SparklineContent extends CellContentPro {
      *
      * */
 
-    protected override add(): void {
+    protected override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): void {
         const H = SparklineContent.H;
         if (!H || !defined(this.cell.value)) {
             return;
         }
 
         this.chartContainer = document.createElement('div');
-        this.cell.htmlElement.classList.add(Globals.getClassName('noPadding'));
-        this.cell.htmlElement.appendChild(this.chartContainer);
+        parentElement.classList.add(Globals.getClassName('noPadding'));
+        parentElement.appendChild(this.chartContainer);
 
         this.chart = H.Chart.chart(this.chartContainer, merge(
             SparklineContent.defaultChartOptions,

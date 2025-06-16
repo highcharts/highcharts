@@ -69,6 +69,12 @@ class CellEditing {
      */
     public editModeContent?: EditModeContent;
 
+    /**
+     * The container element for the cell edit mode, which is used to
+     * position the edit mode content correctly within the cell.
+     */
+    private containerElement?: HTMLDivElement;
+
 
     /* *
      *
@@ -225,10 +231,16 @@ class CellEditing {
             return;
         }
 
-        this.editModeContent = cell.column.editModeRenderer?.render(cell);
-        const element = this.editModeContent.getMainElement();
-        element.style.zIndex = '1';
-        element.focus();
+        this.containerElement = this.containerElement ||
+            document.createElement('div');
+        this.containerElement.className =
+            CellEditing.classNames.cellEditingContainer;
+        this.editedCell?.htmlElement.appendChild(this.containerElement);
+
+        this.editModeContent = cell.column.editModeRenderer?.render(
+            cell, this.containerElement
+        );
+        this.editModeContent.getMainElement().focus();
 
         this.editModeContent.blurHandler = this.onInputBlur;
         this.editModeContent.changeHandler = this.onInputChange;
@@ -244,8 +256,23 @@ class CellEditing {
         }
 
         this.editModeContent.destroy();
+        this.containerElement?.remove();
         delete this.editModeContent;
+        delete this.containerElement;
     }
+}
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+namespace CellEditing {
+
+    export const classNames = {
+        cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
+    } as const;
+
 }
 
 

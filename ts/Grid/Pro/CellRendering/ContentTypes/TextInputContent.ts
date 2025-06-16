@@ -65,9 +65,13 @@ class TextInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    constructor(cell: TableCell, renderer: TextInputRenderer) {
+    constructor(
+        cell: TableCell,
+        renderer: TextInputRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.input = this.add();
+        this.input = this.add(parentElement);
     }
 
 
@@ -77,7 +81,9 @@ class TextInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    public override add(): HTMLInputElement {
+    public override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): HTMLInputElement {
         const cell = this.cell;
         const input = this.input = document.createElement('input');
 
@@ -86,7 +92,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
         this.update();
 
-        this.cell.htmlElement.appendChild(this.input);
+        parentElement.appendChild(this.input);
 
         input.addEventListener('change', this.onChange);
         input.addEventListener('keydown', this.onKeyDown);

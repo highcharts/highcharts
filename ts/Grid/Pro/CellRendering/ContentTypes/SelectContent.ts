@@ -66,9 +66,13 @@ class SelectContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    public constructor(cell: TableCell, renderer: SelectRenderer) {
+    public constructor(
+        cell: TableCell,
+        renderer: SelectRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.select = this.add();
+        this.select = this.add(parentElement);
     }
 
 
@@ -78,7 +82,9 @@ class SelectContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    protected override add(): HTMLSelectElement {
+    protected override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): HTMLSelectElement {
         const cell = this.cell;
 
         const select = this.select = document.createElement('select');
@@ -87,7 +93,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
         this.update();
 
-        this.cell.htmlElement.appendChild(this.select);
+        parentElement.appendChild(this.select);
 
         select.addEventListener('change', this.onChange);
         select.addEventListener('keydown', this.onKeyDown);

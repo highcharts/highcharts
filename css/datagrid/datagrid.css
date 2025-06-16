@@ -823,6 +823,17 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     width: 100%;
 }
 
+.highcharts-datagrid-cell-editing-container,
+.hcg-cell-editing-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    padding: inherit;
+    z-index: 1;
+}
+
 .hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width),
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:not(.highcharts-datagrid-field-auto-width),
 .hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width):focus,

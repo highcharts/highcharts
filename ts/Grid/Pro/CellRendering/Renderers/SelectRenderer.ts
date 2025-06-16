@@ -84,8 +84,11 @@ class SelectRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public override render(cell: TableCell): SelectContent {
-        return new SelectContent(cell, this);
+    public override render(
+        cell: TableCell,
+        parentElement?: HTMLElement
+    ): SelectContent {
+        return new SelectContent(cell, this, parentElement);
     }
 
 }

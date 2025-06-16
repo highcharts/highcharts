@@ -61,9 +61,13 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    constructor(cell: TableCell, renderer: CheckboxRenderer) {
+    constructor(
+        cell: TableCell,
+        renderer: CheckboxRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.input = this.add();
+        this.input = this.add(parentElement);
     }
 
 
@@ -73,7 +77,9 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    protected override add(): HTMLInputElement {
+    protected override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): HTMLInputElement {
         const cell = this.cell;
 
         this.input = document.createElement('input');
@@ -83,7 +89,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
 
         this.update();
 
-        this.cell.htmlElement.appendChild(this.input);
+        parentElement.appendChild(this.input);
         this.input.classList.add(Globals.classNamePrefix + 'field-auto-width');
 
         this.input.addEventListener('change', this.onChange);
