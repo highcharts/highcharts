@@ -104,12 +104,7 @@ class CellEditing {
         }
 
         this.editedCell = cell;
-        const cellElement = cell.htmlElement;
-
-        cell.content?.destroy();
-        delete cell.content;
-
-        cellElement.classList.add(Globals.getClassName('editedCell'));
+        cell.htmlElement.classList.add(Globals.getClassName('editedCell'));
 
         this.render();
         fireEvent(cell, 'startedEditing');
@@ -231,7 +226,9 @@ class CellEditing {
         }
 
         this.editModeContent = cell.column.editModeRenderer?.render(cell);
-        this.editModeContent.getMainElement().focus();
+        const element = this.editModeContent.getMainElement();
+        element.style.zIndex = '1';
+        element.focus();
 
         this.editModeContent.blurHandler = this.onInputBlur;
         this.editModeContent.changeHandler = this.onInputChange;

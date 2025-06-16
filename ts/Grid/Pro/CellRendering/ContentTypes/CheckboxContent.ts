@@ -28,10 +28,6 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
-import U from '../../../../Core/Utilities.js';
-const {
-    fireEvent
-} = U;
 
 
 /* *
@@ -95,7 +91,6 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         this.input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
-        fireEvent(this.cell, 'afterContentCreated', { target: this });
         return this.input;
     }
 

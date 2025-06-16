@@ -34,8 +34,7 @@ const {
 
 import Utils from '../../../../Core/Utilities.js';
 const {
-    defined,
-    fireEvent
+    defined
 } = Utils;
 
 
@@ -65,7 +64,6 @@ class TextContent extends CellContent {
 
     public override update(): void {
         setHTMLContent(this.cell.htmlElement, this.format());
-        fireEvent(this.cell, 'afterContentCreated', { target: this });
     }
 
     /**

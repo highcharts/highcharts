@@ -26,10 +26,6 @@ import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
-import U from '../../../../Core/Utilities.js';
-const {
-    fireEvent
-} = U;
 
 
 /* *
@@ -92,7 +88,6 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
-        fireEvent(this.cell, 'afterContentCreated', { target: this });
         return this.input;
     }
 

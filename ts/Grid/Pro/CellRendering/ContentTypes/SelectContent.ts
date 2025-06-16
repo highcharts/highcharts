@@ -28,10 +28,6 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import AST from '../../../../Core/Renderer/HTML/AST.js';
-import U from '../../../../Core/Utilities.js';
-const {
-    fireEvent
-} = U;
 
 
 /* *
@@ -98,7 +94,6 @@ class SelectContent extends CellContentPro implements EditModeContent {
         select.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
-        fireEvent(this.cell, 'afterContentCreated', { target: this });
         return select;
     }
 

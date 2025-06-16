@@ -30,8 +30,7 @@ import CellContentPro from '../CellContentPro.js';
 import U from '../../../../Core/Utilities.js';
 
 const {
-    defined,
-    fireEvent
+    defined
 } = U;
 
 
@@ -94,7 +93,6 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
-        fireEvent(this.cell, 'afterContentCreated', { target: this });
         return input;
     }
 

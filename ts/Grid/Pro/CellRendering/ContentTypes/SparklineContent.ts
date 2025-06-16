@@ -30,7 +30,6 @@ import Globals from '../../../Core/Globals.js';
 import U from '../../../../Core/Utilities.js';
 const {
     defined,
-    fireEvent,
     merge
 } = U;
 
@@ -142,8 +141,6 @@ class SparklineContent extends CellContentPro {
         ));
 
         this.chartContainer.addEventListener('click', this.onKeyDown);
-
-        fireEvent(this.cell, 'afterContentCreated', { target: this });
     }
 
     public override update(): void {
