@@ -611,9 +611,6 @@ class Axis3DAdditions {
                 let sin = Math.sin(alpha);
                 const cos = Math.cos(alpha);
 
-                if (axis.opposite) {
-                    sin = -sin;
-                }
                 if (reverseFlap) {
                     sin = -sin;
                 }
