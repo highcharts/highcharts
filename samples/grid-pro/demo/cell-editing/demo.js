@@ -26,11 +26,18 @@ Grid.grid('container', {
     columns: [{
         id: 'available',
         dataType: 'boolean',
-        renderer: {
-            type: 'checkbox'
+        cells: {
+            renderer: {
+                type: 'checkbox'
+            }
         }
     }, {
-        id: 'weight'
+        id: 'weight',
+        cells: {
+            editMode: {
+                validationRules: ['notEmpty', 'number']
+            }
+        }
     }, {
         id: 'product',
         cells: {
@@ -41,19 +48,21 @@ Grid.grid('container', {
     }, {
         id: 'country',
         dataType: 'string',
-        renderer: {
-            type: 'select',
-            options: [
-                { value: 'PL', label: 'Poland' },
-                { value: 'NL', label: 'Netherlands' },
-                { value: 'RO', label: 'Romania' },
-                { value: 'EC', label: 'Ecuador' },
-                { value: 'ES', label: 'Spain' },
-                { value: 'IT', label: 'Italy' },
-                { value: 'DE', label: 'Germany' },
-                { value: 'TR', label: 'Turkey' },
-                { value: 'BR', label: 'Brazil' }
-            ]
+        cells: {
+            renderer: {
+                type: 'select',
+                options: [
+                    { value: 'PL', label: 'Poland' },
+                    { value: 'NL', label: 'Netherlands' },
+                    { value: 'RO', label: 'Romania' },
+                    { value: 'EC', label: 'Ecuador' },
+                    { value: 'ES', label: 'Spain' },
+                    { value: 'IT', label: 'Italy' },
+                    { value: 'DE', label: 'Germany' },
+                    { value: 'TR', label: 'Turkey' },
+                    { value: 'BR', label: 'Brazil' }
+                ]
+            }
         }
     }]
 });

@@ -99,17 +99,7 @@ Grid.grid('container', {
             editMode: {
                 renderer: {
                     type: 'checkbox'
-                },
-                validationRules: [{
-                    validate: 'notEmpty'
-                }, {
-                    validate: 'boolean',
-                    notification: function () {
-                        return 'New value for column: ' +
-                            this.column.id +
-                            ' should be boolean';
-                    }
-                }]
+                }
             }
         }
     }, {
