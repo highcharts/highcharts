@@ -68,16 +68,11 @@ Grid.grid('container', {
         dataType: 'number',
         cells: {
             editMode: {
-                validationRules: [{
-                    validate: 'notEmpty',
-                    notification: function () {
-                        return 'Not empty formatter';
-                    }
-                }, {
+                validationRules: ['notEmpty', {
                     validate: 'number',
-                    notification: function (content) {
+                    notification: function ({ rawValue }) {
                         return `New value <strong>${
-                            content.getStringValue()
+                            rawValue
                         }</strong> should be number`;
                     }
                 }]
@@ -125,8 +120,8 @@ Grid.grid('container', {
             },
             editMode: {
                 validationRules: ['notEmpty', {
-                    validate: function (content) {
-                        return content.getStringValue().indexOf('URL') !== -1;
+                    validate: function ({ rawValue }) {
+                        return rawValue.indexOf('URL') !== -1;
                     },
                     notification: 'The value must contain "URL"'
                 }]

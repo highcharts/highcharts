@@ -128,11 +128,11 @@ class SelectContent extends CellContentPro implements EditModeContent {
         select.remove();
     }
 
-    public getStringValue(): string {
+    public get rawValue(): string {
         return this.select.value;
     }
 
-    public getValue(): DataTable.CellType {
+    public get value(): DataTable.CellType {
         const val = this.select.value;
         switch (this.cell.column.dataType) {
             case 'datetime':
@@ -154,7 +154,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.changeHandler(e);
         } else {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.getValue(), true);
+            void this.cell.setValue(this.value, true);
         }
     };
 

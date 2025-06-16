@@ -349,26 +349,20 @@ namespace Validator {
      */
     export const rulesRegistry: RulesRegistryType = {
         notEmpty: {
-            validate: (emContent): boolean => (
-                defined(emContent.getValue()) &&
-                emContent.getStringValue().length > 0
+            validate: ({ value, rawValue }): boolean => (
+                defined(value) && rawValue.length > 0
             ),
             notification: 'Value cannot be empty.'
         },
         number: {
-            validate: (emContent): boolean => (
-                !isNaN(+emContent.getStringValue())
-            ),
+            validate: ({ rawValue }): boolean => !isNaN(+rawValue),
             notification: 'Value has to be a number.'
         },
         'boolean': {
-            validate: (emContent): boolean => {
-                const rawValue = emContent.getStringValue();
-                return (
-                    rawValue === 'true' || rawValue === 'false' ||
-                    Number(rawValue) === 1 || Number(rawValue) === 0
-                );
-            },
+            validate: ({ rawValue }): boolean => (
+                rawValue === 'true' || rawValue === 'false' ||
+                Number(rawValue) === 1 || Number(rawValue) === 0
+            ),
             notification: 'Value has to be a boolean.'
         }
     };

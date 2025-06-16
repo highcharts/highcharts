@@ -97,22 +97,22 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
-    public getStringValue(): string {
+    public get rawValue(): string {
         return this.input.value;
     }
 
-    public getValue(): DataTable.CellType {
+    public get value(): DataTable.CellType {
         const val = this.input.value;
         switch (this.cell.column.dataType) {
             case 'datetime':
             case 'number':
                 return val === '' ? null : +val;
             case 'boolean':
-                if (val === 'false' || +val === 0) {
-                    return false;
-                }
                 if (val === '') {
                     return null;
+                }
+                if (val === 'false' || +val === 0) {
+                    return false;
                 }
                 return true;
             case 'string':

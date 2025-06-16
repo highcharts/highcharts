@@ -95,11 +95,11 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
-    public getStringValue(): string {
+    public get rawValue(): string {
         return this.input.checked ? 'true' : 'false';
     }
 
-    public getValue(): DataTable.CellType {
+    public get value(): DataTable.CellType {
         const val = this.input.checked;
         switch (this.cell.column.dataType) {
             case 'datetime':
@@ -134,7 +134,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            void this.cell.setValue(this.getValue(), true);
+            void this.cell.setValue(this.value, true);
         }
     };
 

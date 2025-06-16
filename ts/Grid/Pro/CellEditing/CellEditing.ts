@@ -132,7 +132,7 @@ class CellEditing {
 
         const { column } = cell;
         const vp = column.viewport;
-        const newValue = emContent.getValue();
+        const newValue = emContent.value;
 
         if (submit) {
             const validationErrors: string[] = [];
@@ -206,18 +206,15 @@ class CellEditing {
             return;
         }
 
-        const valueIsDifferent = this.editedCell?.value !==
-            this.editModeContent?.getValue();
-
         if (key === 'Enter') {
             if (
-                this.editModeContent?.finishAfterChange && valueIsDifferent
+                this.editModeContent?.finishAfterChange
             ) {
                 this.onInputChange();
                 return;
             }
 
-            this.stopEditing(valueIsDifferent);
+            this.stopEditing();
         }
     };
 

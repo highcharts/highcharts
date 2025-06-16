@@ -72,9 +72,9 @@ Grid.grid('container', {
                     }
                 }, {
                     validate: 'number',
-                    notification: function (value) {
+                    notification: function ({ rawValue }) {
                         return `New value <strong>${
-                            value
+                            rawValue
                         }</strong> should be number`;
                     }
                 }]
@@ -116,8 +116,8 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 validationRules: ['notEmpty', {
-                    validate: function (value) {
-                        return value.indexOf('URL') !== -1;
+                    validate: function ({ rawValue }) {
+                        return rawValue.indexOf('URL') !== -1;
                     },
                     notification: 'The value must contain "URL"'
                 }]
