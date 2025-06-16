@@ -63,9 +63,11 @@ class CellEditing {
     public editedCell?: TableCell;
 
     /**
-     * Input element for the cell.
+     * The content of the cell edit mode, which represents a context containing
+     * the input field or similar element for applying changes to the cell
+     * value.
      */
-    private editModeContent?: EditModeContent;
+    public editModeContent?: EditModeContent;
 
 
     /* *
@@ -132,11 +134,11 @@ class CellEditing {
 
         const { column } = cell;
         const vp = column.viewport;
-        const newValue = emContent.getValue();
+        const newValue = emContent.value;
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.validate(cell, newValue, validationErrors)) {
+            if (!vp.validator.validate(cell, validationErrors)) {
                 vp.validator.initErrorBox(cell, validationErrors);
                 vp.validator.show();
                 return false;
@@ -206,18 +208,15 @@ class CellEditing {
             return;
         }
 
-        const valueIsDifferent = this.editedCell?.value !==
-            this.editModeContent?.getValue();
-
         if (key === 'Enter') {
             if (
-                this.editModeContent?.finishAfterChange && valueIsDifferent
+                this.editModeContent?.finishAfterChange
             ) {
                 this.onInputChange();
                 return;
             }
 
-            this.stopEditing(valueIsDifferent);
+            this.stopEditing();
         }
     };
 
