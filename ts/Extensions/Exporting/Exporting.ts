@@ -2263,6 +2263,7 @@ class Exporting {
             { chart, options } = exporting,
             isDirty = exporting?.isDirty || !exporting?.svgElements.length;
 
+        exporting.buttonOffset = 0;
         if (exporting.isDirty) {
             exporting.destroy();
         }
