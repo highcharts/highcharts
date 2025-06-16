@@ -471,10 +471,6 @@ class EditMode {
         if (board.options.gui) {
             this.setLayouts(board.options.gui);
         }
-
-        if (board.options.layoutsJSON && !board.layouts.length) {
-            this.setLayoutsFromJSON(board.options.layoutsJSON);
-        }
     }
 
     /**
@@ -498,27 +494,7 @@ class EditMode {
             );
         }
     }
-    /**
-     * Set the layouts from JSON.
-     * @internal
-     *
-     * @param json
-     * An array of layout JSON objects.
-     *
-     */
-    private setLayoutsFromJSON(json: Array<Layout.JSON>): void {
-        const board = this.board;
 
-        let layout;
-
-        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            layout = Layout.fromJSON(json[i], board);
-
-            if (layout) {
-                board.layouts.push(layout);
-            }
-        }
-    }
     /**
      * Set events for the layout.
      * @internal
