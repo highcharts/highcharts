@@ -26,11 +26,18 @@ Grid.grid('container', {
     columns: [{
         id: 'available',
         dataType: 'boolean',
-        renderer: {
-            type: 'checkbox'
+        cells: {
+            renderer: {
+                type: 'checkbox'
+            }
         }
     }, {
-        id: 'weight'
+        id: 'weight',
+        cells: {
+            editMode: {
+                validationRules: ['notEmpty', 'number']
+            }
+        }
     }, {
         id: 'product',
         cells: {
