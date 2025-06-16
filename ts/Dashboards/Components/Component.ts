@@ -27,9 +27,6 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
-import type Serializable from '../Serializable';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
@@ -902,41 +899,6 @@ abstract class Component {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     * @internal
-     *
-     * @returns
-     * Class JSON of this Component instance.
-     *
-     * @internal
-     */
-    public toJSON(): Component.JSON {
-        const dimensions: Record<'width' | 'height', number> = {
-            width: 0,
-            height: 0
-        };
-        objectEach(this.dimensions, function (value, key): void {
-            if (value === null) {
-                return;
-            }
-            dimensions[key] = value;
-        });
-
-        const json: Component.JSON = {
-            $class: this.options.type,
-            options: {
-                renderTo: this.options.renderTo,
-                parentElement: this.parentElement.id,
-                dimensions,
-                id: this.id,
-                type: this.type
-            }
-        };
-
-        return json;
-    }
-
-    /**
      * Get the component's options.
      * @returns
      * The JSON of component's options.
@@ -1025,10 +987,6 @@ namespace Component {
     *  Declarations
     *
     * */
-    /** @internal */
-    export interface JSON extends Serializable.JSON<string> {
-        options: ComponentOptionsJSON;
-    }
 
     /**
      * The basic events
@@ -1041,7 +999,6 @@ namespace Component {
         TableChangedEvent |
         LoadEvent |
         RenderEvent |
-        JSONEvent |
         PresentationModifierEvent;
 
     export type SetConnectorsEvent =
@@ -1064,10 +1021,6 @@ namespace Component {
     /** @internal */
     export type RenderEvent = Event<'render' | 'afterRender', {}>;
 
-    /** @internal */
-    export type JSONEvent = Event<'toJSON' | 'fromJSON', {
-        json: Serializable.JSON<string>;
-    }>;
     /** @internal */
     export type TableChangedEvent = Event<'tableChanged', {}>;
     /** @internal */
@@ -1196,25 +1149,6 @@ namespace Component {
              */
             enabled?: boolean;
         };
-    }
-
-    /**
-     * JSON compatible options for export
-     * @internal
-     *  */
-    export interface ComponentOptionsJSON extends JSON.Object {
-        caption?: string;
-        className?: string;
-        renderTo?: string;
-        editableOptions?: JSON.Array<string>;
-        editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
-        id: string;
-        parentCell?: Cell.JSON;
-        parentElement?: string; // ID?
-        style?: {};
-        sync?: Sync.RawOptionsRecord&JSON.Object;
-        title?: string;
-        type: keyof ComponentTypeRegistry;
     }
 
     /** @internal */

@@ -114,7 +114,6 @@ Grid.grid('container', {
         id: 'date_date',
         dataType: 'datetime',
         cells: {
-            format: '{value:%Y-%m-%d}',
             renderer: {
                 type: 'dateInput'
             }

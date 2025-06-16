@@ -91,7 +91,11 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
-    public getValue(): number {
+    public get rawValue(): string {
+        return this.input.value;
+    }
+
+    public get value(): number {
         return new Date(this.input.value).getTime();
     }
 
@@ -141,7 +145,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
 
         if (e.key === 'Enter') {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.getValue(), true);
+            void this.cell.setValue(this.value, true);
         }
     };
 
@@ -151,7 +155,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        void this.cell.setValue(this.getValue(), true);
+        void this.cell.setValue(this.value, true);
     };
 
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {
