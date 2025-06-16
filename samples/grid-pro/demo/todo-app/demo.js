@@ -1,3 +1,4 @@
+// Constants
 const categories = [
     { value: 'CL', label: 'Cleaning' },
     { value: 'SH', label: 'Shopping' },
@@ -6,20 +7,16 @@ const categories = [
     { value: 'LD', label: 'Laundry' },
     { value: 'MT', label: 'Maintenance' },
     { value: 'OR', label: 'Organization' },
-    { value: 'WL', label: 'Walking the dog' },
-    { value: 'WD', label: 'Window cleaning' },
     { value: 'PT', label: 'Pet care' },
-    { value: 'PL', label: 'Plant care' },
     { value: 'OT', label: 'Other' }
 ];
 const priority = [
-    { value: '', label: '' },
     { value: 'Low', label: 'Low' },
     { value: 'High', label: 'High' },
     { value: 'Medium', label: 'Medium' }
 ];
 const columns = [{
-    id: 'completed',
+    id: 'Completed',
     dataType: 'boolean',
     width: 120,
     cells: {
@@ -41,7 +38,7 @@ const columns = [{
         }
     }
 }, {
-    id: 'category',
+    id: 'Category',
     dataType: 'string',
     cells: {
         renderer: {
@@ -59,7 +56,7 @@ const columns = [{
         }
     }
 }, {
-    id: 'dueDate',
+    id: 'Due date',
     dataType: 'datetime',
     cells: {
         format: '{value:%Y-%m-%d}',
@@ -70,7 +67,7 @@ const columns = [{
         }
     }
 }, {
-    id: 'priority',
+    id: 'Priority',
     dataType: 'string',
     cells: {
         editMode: {
@@ -82,22 +79,25 @@ const columns = [{
     }
 }];
 
+// Grid setup
 Grid.grid('container', {
     dataTable: {
         columns: {
-            completed: [false, false, false, false],
-            category: ['CL', 'SH', 'CL', 'GR'],
-            task: [
-                'Do laundry', 'Buy groceries', 'Clean kitchen', 'Water plants'
+            Completed: [false, false, false, false],
+            Category: ['CL', 'SH', 'CL', 'GR'],
+            Task: [
+                'Do laundry', 'Buy groceries', 'Clean kitchen', 'Water plants '
             ],
-            notes: [
-                'Use gentle cycle', 'Get milk and eggs', '', 'Front yard only'
+            Notes: [
+                'Use gentle cycle', 'Get milk and eggs', '',
+                // eslint-disable-next-line max-len
+                'In the kitchen use 2 cups of water, in the living room use 1 cup, do not water the cactus in the garden'
             ],
-            dueDate: [
+            'Due date': [
                 Date.UTC(2025, 6, 1), Date.UTC(2025, 6, 2),
                 Date.UTC(2025, 6, 3), Date.UTC(2025, 6, 4)
             ],
-            priority: ['Low', 'High', 'Medium', 'Low']
+            Priority: ['Low', 'High', 'Medium', 'Low']
         }
     },
     columnDefaults: {
@@ -107,7 +107,7 @@ Grid.grid('container', {
             },
             events: {
                 afterEdit: function () {
-                    if (this.column.id === 'completed') {
+                    if (this.column.id === 'Completed') {
                         const selected = this.value;
 
                         if (selected === 'true') {
@@ -133,14 +133,14 @@ Grid.grid('container', {
 Grid.grid('container-done', {
     dataTable: {
         columns: {
-            completed: [true, true, true],
-            category: ['CK', 'GR', 'MT'],
-            task: ['Cook dinner', 'Trim hedges', 'Fix leaking tap'],
-            notes: [
+            Completed: [true, true, true],
+            Category: ['CK', 'GR', 'MT'],
+            Task: ['Cook dinner', 'Trim hedges', 'Fix leaking tap'],
+            Notes: [
                 'Try new pasta recipe', 'Backyard only', 'Check under sink'
             ],
-            dueDate: ['2025-06-08', '2025-06-09', '2025-06-10'],
-            priority: ['Medium', 'Low', 'High']
+            'Due date': ['2025-06-08', '2025-06-09', '2025-06-10'],
+            Priority: ['Medium', 'Low', 'High']
         }
     },
     columnDefaults: {
@@ -150,7 +150,7 @@ Grid.grid('container-done', {
             },
             events: {
                 afterEdit: function () {
-                    if (this.column.id === 'completed') {
+                    if (this.column.id === 'Completed') {
                         const selected = this.value;
 
                         if (selected === 'false') {
@@ -171,4 +171,49 @@ Grid.grid('container-done', {
         }
     },
     columns: columns
+});
+
+
+// Modal setup
+const modal = document.getElementById('modal');
+const openModal = document.getElementById('openModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const form = document.getElementById('todoForm');
+const select = document.getElementById('categorySelect');
+const prioritySelect = document.getElementById('prioritySelect');
+
+select.append(new Option('Select a category', '', false, false));
+categories.forEach(({ value, label }) => {
+    select.append(new Option(label, value));
+});
+prioritySelect.append(new Option('Select a priority', '', true, true));
+priority.forEach(({ value, label }) => {
+    prioritySelect.append(new Option(label, value));
+});
+
+openModal.addEventListener('click', () => {
+    modal.style.display = 'flex';
+});
+closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
+
+form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const todoGrid = Grid.grids[0];
+
+    todoGrid.dataTable.setRow({
+        completed: false,
+        category: formData.get('Category'),
+        task: formData.get('task'),
+        notes: formData.get('notes'),
+        dueDate: formData.get('Due date'),
+        priority: formData.get('Priority')
+    });
+    todoGrid.viewport.loadPresentationData();
+
+
+    form.reset();
+    modal.style.display = 'none';
 });

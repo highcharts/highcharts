@@ -1,10 +1,33 @@
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 
 <div class="content">
-    <h4>To Do List</h4>
+    <button id="openModal">Add New Item</button>
     <div id="container"></div>
-
-    <h4>Done List</h4>
     <div id="container-done"></div>
+
+    <div id="modal">
+        <div id="modalContent">
+            <h2>Add New Item</h2>
+            <form id="todoForm">
+                <label
+                    >Category
+                    <select name="category" id="categorySelect" required></select>
+                </label>
+                <label>Task <input type="text" name="task" required /></label>
+                <label>
+                    Notes
+                    <textarea name="notes"></textarea>
+                </label>
+                <label>Due Date <input type="date" name="dueDate" /></label>
+                <label>
+                    Priority
+                    <select name="priority" id="prioritySelect"></select>
+                </label>
+                <button id="addItem">Add</button>
+                <button class="cancel" id="closeModalBtn">Cancel</button>
+            </form>
+        </div>
+    </div>
+
     <p class="highcharts-description">This</p>
 </div>

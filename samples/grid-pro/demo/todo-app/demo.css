@@ -1,38 +1,114 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
+:root {
+    --default-background: #fff;
+    --mask-background: rgba(255, 255, 255, 0.5);
+    --default-color: #000;
+    --shadow: rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --default-background: #292929;
+        --mask-background: rgba(0, 0, 0, 0.7);
+        --default-color: #fff;
+        --shadow: rgba(255, 255, 255, 0.5);
+    }
+}
+
 .content {
     padding: 8px;
 }
 
-td input[type="checkbox"] {
-    display: block;
-    margin: auto;
-    width: 24px;
-    height: 24px;
+td {
+    line-height: unset !important;
+}
+
+#openModal {
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
     cursor: pointer;
-    accent-color: #66afe9;
-    transition: transform 0.1s ease-in-out;
 }
 
-td input[type="checkbox"]:hover {
-    transform: scale(1.1);
-}
-
-td select,
-td input[type="date"] {
+#modal {
+    background-color: var(--mask-background);
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: transparent;
-    outline: none;
-    transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }
 
-td[data-column-id="category"] select:focus {
-    border-color: #66afe9;
-    background-color: #fff;
+#modalContent {
+    background: var(--default-background);
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 2px 2px 10px var(--shadow);
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#modalContent #todoForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#modalContent input[type="text"],
+#modalContent input[type="date"],
+#modalContent select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--default-color);
+    background-color: var(--default-background);
+    color: var(--default-color);
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+#modalContent textarea {
+    resize: none;
+    width: 100%;
+    height: 100px;
+    border: 1px solid var(--default-color);
+    background-color: var(--default-background);
+    color: var(--default-color);
+}
+
+#modalContent #addItem {
+    margin-top: 20px;
+}
+
+#modalContent button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#modalContent .cancel {
+    background: #6c757d;
 }
 
 @media (prefers-color-scheme: dark) {
