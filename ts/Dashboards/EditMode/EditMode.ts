@@ -1027,9 +1027,7 @@ class EditMode {
      * @param remove
      * Whether the edit overlay should be removed.
      */
-    public setEditOverlay(
-        remove?: boolean
-    ): void {
+    public setEditOverlay(remove?: boolean): void {
         const editMode = this,
             cnt = editMode.editOverlay,
             isSet = cnt?.classList.contains(
