@@ -190,7 +190,6 @@ test('Components and rows in layout with set height', function (assert) {
 
 test('Nested layouts serialization.', function (assert) {
     const container = setupContainer();
-
     const chartComponentOptions = {
         type: 'Highcharts',
         chartOptions: {
@@ -204,7 +203,7 @@ test('Nested layouts serialization.', function (assert) {
             }
         }
     };
-        const board = Dashboards.board(container.id, {
+    const board = Dashboards.board(container.id, {
         editMode: {
             enabled: true,
             contextMenu: {
@@ -245,20 +244,16 @@ test('Nested layouts serialization.', function (assert) {
 
     });
     const layoutToExport = board.layouts[0];
-    const exportedLayoutId = layoutToExport.options.id;
     const exportedRows = layoutToExport.rows;
     const exportedRowsLength = layoutToExport.rows.length;
     const exportedCellsLength = exportedRows[0].cells.length;
     const numberOfMountedComponents = board.mountedComponents.length;
-    layoutToExport.exportLocal();
-    layoutToExport.destroy();
-    const importedLayout = board.importLayoutLocal(exportedLayoutId);
+    const serializedOptions = board.getOptions();
 
-
-    assert.equal(importedLayout.rows.length, exportedRowsLength, 'The imported layout has an equal number of rows as exported one.')
-    assert.equal(importedLayout.rows[0].cells.length, exportedCellsLength, 'The imported layout has an equal number of cells as exported one.')
-    assert.equal(numberOfMountedComponents, importedLayout.board.mountedComponents.length, 'The number of mounted components should be the same after importing the layout.')
-    assert.true(importedLayout.rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
+    assert.equal(serializedOptions.gui.layouts[0].rows.length, exportedRowsLength, 'The imported layout has an equal number of rows as exported one.')
+    assert.equal(serializedOptions.gui.layouts[0].rows[0].cells.length, exportedCellsLength, 'The imported layout has an equal number of cells as exported one.')
+    assert.equal(numberOfMountedComponents, serializedOptions.components.length, 'The number of mounted components should be the same after importing the layout.')
+    assert.true(serializedOptions.gui.layouts[0].rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
 });
 
 test('Reserialized cell width', function (assert) {
@@ -324,15 +319,10 @@ test('Reserialized cell width', function (assert) {
         ]
     });
 
-    const layoutToExport = board.layouts[0];
-    const exportedLayoutId = layoutToExport.options.id;
     const widthBeforeExport = board.layouts[0].rows[0].cells.map(
         (cell) => cell.options.width
     );
-
-    layoutToExport.exportLocal();
-    layoutToExport.destroy();
-    board.importLayoutLocal(exportedLayoutId);
+    board.getOptions();
 
     const widthAfterExport = board.layouts[0].rows[0].cells.map(
         (cell) => cell.options.width
@@ -368,3 +358,39 @@ test('IDs of rows, cells and layouts', function (assert) {
     assert.strictEqual(cell.getAttribute('id'), null, 'Cell\'s id should not exist');
     assert.strictEqual(row.getAttribute('id'), null, 'Row\'s id should not exist');
 })
+
+
+test('Board destroy with custom HTML', function (assert) {
+    // Prepare custom HTML for the board.
+    const container = setupContainer();
+    const chartContainer = document.createElement("div")
+    chartContainer.id = "chart-container"
+    document.getElementById("test-container").appendChild(chartContainer)
+
+    const component = {
+        renderTo: "chart-container",
+        type: "Highcharts",
+        chartOptions: {
+          series: [
+            {
+              type: "column",
+              data: [1, 2, 3],
+            },
+          ],
+        },
+    };
+    const board = Dashboards.board(container.id, {
+        components: [component],
+    });
+
+    assert.ok(board.mountedComponents.length === 1, "There should be one mounted component");
+    board.destroy();
+    assert.strictEqual(Object.keys(board).length, 0, "Board should be destroyed and empty");
+    assert.ok(chartContainer, "Chart container (custom HTML) should exist");
+
+    const board2 = Dashboards.board(container.id, {
+        components: [component],
+    });
+    assert.ok(board2.mountedComponents.length === 1, "There should be one mounted component");
+})
+

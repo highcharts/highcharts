@@ -24,7 +24,7 @@ function distClean() {
     return new Promise((resolve, reject) => {
 
         try {
-            fsLib.deleteDirectory('build/dist', true);
+            fsLib.deleteDirectory('build/dist');
             resolve();
         } catch (catchedError) {
             logLib.failure(catchedError);

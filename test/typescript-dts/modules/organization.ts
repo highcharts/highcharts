@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import OrganizationModule from "highcharts/modules/organization";
-
-OrganizationModule(Highcharts);
+import "highcharts/modules/organization";
 
 test_simple();
 

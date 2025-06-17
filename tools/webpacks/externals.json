@@ -50,6 +50,7 @@
         "files": ["Extensions/DownloadURL"],
         "included": [
             "modules/export-data",
+            "modules/exporting",
             "modules/offline-exporting",
             "modules/sonification"
         ],
