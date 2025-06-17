@@ -87,7 +87,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
 
         this.update();
 
-        parentElement.appendChild(this.input);
+        parentElement.appendChild(input);
 
         input.addEventListener('change', this.onChange);
         input.addEventListener('keydown', this.onKeyDown);

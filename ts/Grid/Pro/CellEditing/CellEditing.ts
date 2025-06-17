@@ -270,8 +270,13 @@ class CellEditing {
  *  Namespace
  *
  * */
+
+
 namespace CellEditing {
 
+    /**
+     * The class names used by the CellEditing functionality.
+     */
     export const classNames = {
         cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
     } as const;
