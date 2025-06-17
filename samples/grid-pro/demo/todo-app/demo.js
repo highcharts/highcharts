@@ -12,29 +12,16 @@ const categories = [
 ];
 const priority = [
     { value: 'Low', label: 'Low' },
-    { value: 'High', label: 'High' },
-    { value: 'Medium', label: 'Medium' }
+    { value: 'Medium', label: 'Medium' },
+    { value: 'High', label: 'High' }
 ];
 const columns = [{
     id: 'Completed',
     dataType: 'boolean',
     width: 120,
     cells: {
-        formatter: function () {
-            const map = {
-                false: '❌',
-                true: '✅'
-            };
-            return map[this.value] || '';
-        },
-        editMode: {
-            renderer: {
-                type: 'select',
-                options: [
-                    { value: true, label: 'Yes' },
-                    { value: false, label: 'No' }
-                ]
-            }
+        renderer: {
+            type: 'checkbox'
         }
     }
 }, {
@@ -70,6 +57,14 @@ const columns = [{
     id: 'Priority',
     dataType: 'string',
     cells: {
+        formatter: function () {
+            const map = {
+                High: '🔴',
+                Low: '🟢',
+                Medium: '🟡'
+            };
+            return map[this.value] || '';
+        },
         editMode: {
             renderer: {
                 type: 'select',
@@ -104,32 +99,11 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 enabled: true
-            },
-            events: {
-                afterEdit: function () {
-                    if (this.column.id === 'Completed') {
-                        const selected = this.value;
-
-                        if (selected === 'true') {
-                            const dataTable = this.row.viewport.dataTable;
-                            const rowIndex = this.row.index;
-                            const data = { ...this.row.data, completed: true };
-                            const doneGrid = Grid.grids[1];
-
-                            doneGrid.dataTable.setRow(data);
-                            dataTable.deleteRows(rowIndex);
-
-                            doneGrid.viewport.loadPresentationData();
-                            this.row.viewport.loadPresentationData();
-                        }
-                    }
-                }
             }
         }
     },
     columns: columns
 });
-
 Grid.grid('container-done', {
     dataTable: {
         columns: {
@@ -147,30 +121,52 @@ Grid.grid('container-done', {
         cells: {
             editMode: {
                 enabled: true
-            },
-            events: {
-                afterEdit: function () {
-                    if (this.column.id === 'Completed') {
-                        const selected = this.value;
-
-                        if (selected === 'false') {
-                            const dataTable = this.row.viewport.dataTable;
-                            const rowIndex = this.row.index;
-                            const data = { ...this.row.data, completed: false };
-                            const todoGrid = Grid.grids[0];
-
-                            dataTable.deleteRows(rowIndex);
-                            todoGrid.dataTable.setRow(data);
-
-                            this.row.viewport.loadPresentationData();
-                            todoGrid.viewport.loadPresentationData();
-                        }
-                    }
-                }
             }
         }
     },
     columns: columns
+});
+
+// Custom events
+Grid.grids[0].dataTable.on('afterSetCell', function (e) {
+    if (e.columnName === 'Completed') {
+        const selected = e.cellValue;
+        const todoGrid = Grid.grids[0];
+        const doneGrid = Grid.grids[1];
+
+        if (selected) {
+            const dataTable = e.target;
+            const rowIndex = e.rowIndex;
+            const rowData = dataTable.getRowObject(rowIndex);
+            const data = { ...rowData, Completed: true };
+
+            doneGrid.dataTable.setRow(data);
+            dataTable.deleteRows(rowIndex);
+
+            doneGrid.viewport.loadPresentationData();
+            todoGrid.viewport.loadPresentationData();
+        }
+    }
+});
+Grid.grids[1].dataTable.on('afterSetCell', function (e) {
+    if (e.columnName === 'Completed') {
+        const selected = e.cellValue;
+        const todoGrid = Grid.grids[0];
+        const doneGrid = Grid.grids[1];
+
+        if (!selected) {
+            const dataTable = e.target;
+            const rowIndex = e.rowIndex;
+            const rowData = dataTable.getRowObject(rowIndex);
+            const data = { ...rowData, Completed: false };
+
+            todoGrid.dataTable.setRow(data);
+            dataTable.deleteRows(rowIndex);
+
+            doneGrid.viewport.loadPresentationData();
+            todoGrid.viewport.loadPresentationData();
+        }
+    }
 });
 
 
@@ -204,12 +200,12 @@ form.addEventListener('submit', function (e) {
     const todoGrid = Grid.grids[0];
 
     todoGrid.dataTable.setRow({
-        completed: false,
-        category: formData.get('Category'),
-        task: formData.get('task'),
-        notes: formData.get('notes'),
-        dueDate: formData.get('Due date'),
-        priority: formData.get('Priority')
+        Completed: false,
+        Category: formData.get('category'),
+        Task: formData.get('task'),
+        Notes: formData.get('notes'),
+        'Due date': formData.get('dueDate'),
+        Priority: formData.get('priority')
     });
     todoGrid.viewport.loadPresentationData();
 
