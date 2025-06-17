@@ -201,6 +201,10 @@ class HeaderCell extends Cell {
         }
 
         this.setCustomClassName(options.header?.className);
+
+        fireEvent(this, 'afterRender', {
+            target: column
+        });
     }
 
     public override reflow(): void {

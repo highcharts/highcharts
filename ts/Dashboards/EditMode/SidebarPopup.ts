@@ -437,41 +437,43 @@ class SidebarPopup extends BaseForm {
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
+                            /* eslint-disable max-len */
                             const unbindLayoutChanged = addEvent(
                                 this.editMode,
                                 'layoutChanged',
                                 (e): void => {
                                     if (newCell && e.type === 'newComponent') {
-                                        const chart =
-                                            newCell.mountedComponent?.chart;
+                                        const chart = newCell.mountedComponent?.chart;
+                                        const settingsEnabled = this.editMode.options.settings?.enabled;
 
                                         if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
                                                 chart,
                                                 'render',
                                                 (): void => {
-                                                    sidebar.editMode
-                                                        .setEditCellContext(
-                                                            newCell
-                                                        );
-                                                    sidebar.show(newCell);
-                                                    newCell.setHighlight();
+                                                    sidebar.editMode.setEditCellContext(newCell);
+
+                                                    if (settingsEnabled) {
+                                                        sidebar.show(newCell);
+                                                        newCell.setHighlight();
+                                                    }
 
                                                     unbind();
                                                     unbindLayoutChanged();
                                                 }
                                             );
                                         } else {
-                                            sidebar.editMode.setEditCellContext(
-                                                newCell
-                                            );
-                                            sidebar.show(newCell);
-                                            newCell.setHighlight();
+                                            sidebar.editMode.setEditCellContext(newCell);
+                                            if (settingsEnabled) {
+                                                sidebar.show(newCell);
+                                                newCell.setHighlight();
+                                            }
                                             unbindLayoutChanged();
                                         }
                                     }
                                 }
                             );
+                            /* eslint-enable max-len */
 
                             // Clean up event listener after drop is complete
                             document.removeEventListener(
@@ -513,7 +515,10 @@ class SidebarPopup extends BaseForm {
 
         const componentPromise =
             Bindings.addComponent(options, sidebar.editMode.board, newCell);
-        sidebar.editMode.setEditOverlay();
+
+        sidebar.editMode.setEditOverlay(
+            !this.editMode.options.settings?.enabled
+        );
 
         void (async (): Promise<void> => {
             const component = await componentPromise;
@@ -551,7 +556,7 @@ class SidebarPopup extends BaseForm {
 
         if (Cell.isCell(editCellContext) && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
-            editCellContext.row.setHighlight();
+            editCellContext.row.setHighlight(true);
             editCellContext.setHighlight(true);
             if (editMode.resizer) {
                 editMode.resizer.setSnapPositions(
