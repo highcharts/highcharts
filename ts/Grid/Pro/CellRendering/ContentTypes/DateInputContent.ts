@@ -27,6 +27,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 
+
 /* *
  *
  *  Class
@@ -58,9 +59,13 @@ class DateInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    constructor(cell: TableCell, renderer: DateInputRenderer) {
+    constructor(
+        cell: TableCell,
+        renderer: DateInputRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.input = this.add();
+        this.input = this.add(parentElement);
     }
 
 
@@ -70,28 +75,41 @@ class DateInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    public override add(): HTMLInputElement {
+    public override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): HTMLInputElement {
         const cell = this.cell;
-        const { options } = this.renderer as DateInputRenderer;
+        const input = this.input = document.createElement('input');
 
-        this.input = document.createElement('input');
-        this.input.tabIndex = -1;
-        this.input.type = 'date';
-        this.input.value = this.convertToInputValue();
-        this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled = !!options.disabled;
+        input.tabIndex = -1;
+        input.type = 'date';
+        input.name = cell.column.id + '-' + cell.row.id;
 
-        this.cell.htmlElement.appendChild(this.input);
+        this.update();
 
-        this.input.addEventListener('change', this.onChange);
-        this.input.addEventListener('keydown', this.onKeyDown);
-        this.input.addEventListener('blur', this.onBlur);
+        parentElement.appendChild(input);
+
+        input.addEventListener('change', this.onChange);
+        input.addEventListener('keydown', this.onKeyDown);
+        input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
         return this.input;
     }
 
-    public getValue(): number {
+    public override update(): void {
+        const input = this.input;
+        const { options } = this.renderer as DateInputRenderer;
+
+        input.value = this.convertToInputValue();
+        input.disabled = !!options.disabled;
+    }
+
+    public get rawValue(): string {
+        return this.input.value;
+    }
+
+    public get value(): number {
         return new Date(this.input.value).getTime();
     }
 
@@ -141,7 +159,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
 
         if (e.key === 'Enter') {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.getValue(), true);
+            void this.cell.setValue(this.value, true);
         }
     };
 
@@ -151,7 +169,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        void this.cell.setValue(this.getValue(), true);
+        void this.cell.setValue(this.value, true);
     };
 
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {
