@@ -19,8 +19,6 @@ Supported renderers:
 * select
 * sparkline
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/cell-editing" allow="fullscreen"></iframe>
-
 ## Renderers types
 
 In the [renderer](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#renderer) API option you can customize content of the cell, based on dataType.
@@ -124,6 +122,8 @@ You can configure chart by the `chartOptions` API option, that supports all High
 
 Please note that you should include the `highcharts.js` file.
 
+Go to [Sparkline](https://www.highcharts.com/docs/grid/sparkline) to read more about Grid Sparkline structure and configuration options.
+
 ## Disabled interactions 
 
 End users disable the interactivity of form fields by can by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
@@ -147,3 +147,8 @@ columns: [
   }
 ]
 ```
+
+## View the Result
+An example of grid, based on all available API options.
+
+<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/todo-app" allow="fullscreen"></iframe>
