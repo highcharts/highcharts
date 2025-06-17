@@ -236,6 +236,11 @@
     .highcharts-bindings-wrapper li > button.highcharts-submenu-item-arrow {
         filter: invert(1);
     }
+
+    .highcharts-light .highcharts-bindings-wrapper li > button.highcharts-menu-item-btn,
+    .highcharts-light .highcharts-bindings-wrapper li > button.highcharts-submenu-item-arrow {
+        filter: none;
+    }
 }
 
 .highcharts-submenu-wrapper li > button.highcharts-menu-item-btn {
