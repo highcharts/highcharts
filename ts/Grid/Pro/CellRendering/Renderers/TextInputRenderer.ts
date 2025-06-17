@@ -90,8 +90,11 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public override render(cell: TableCell): TextInputContent {
-        return new TextInputContent(cell, this);
+    public override render(
+        cell: TableCell,
+        parentElement?: HTMLElement
+    ): TextInputContent {
+        return new TextInputContent(cell, this, parentElement);
     }
 
 }

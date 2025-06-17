@@ -239,14 +239,16 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
 
-        this.content?.destroy();
-        this.content = this.column.createCellContent(this);
+        if (this.content) {
+            this.content.update();
+        } else {
+            this.content = this.column.createCellContent(this);
+        }
+
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
 
-        fireEvent(this, 'afterRender', {
-            target: this
-        });
+        fireEvent(this, 'afterRender', { target: this });
 
         if (!updateTable) {
             return;

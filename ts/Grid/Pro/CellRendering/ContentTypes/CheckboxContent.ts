@@ -61,9 +61,13 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    constructor(cell: TableCell, renderer: CheckboxRenderer) {
+    constructor(
+        cell: TableCell,
+        renderer: CheckboxRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.input = this.add();
+        this.input = this.add(parentElement);
     }
 
 
@@ -73,18 +77,19 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    protected override add(): HTMLInputElement {
+    protected override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): HTMLInputElement {
         const cell = this.cell;
-        const { options } = this.renderer as CheckboxRenderer;
 
         this.input = document.createElement('input');
         this.input.tabIndex = -1;
         this.input.type = 'checkbox';
-        this.input.checked = !!cell.value;
         this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled = !!options.disabled;
 
-        this.cell.htmlElement.appendChild(this.input);
+        this.update();
+
+        parentElement.appendChild(this.input);
         this.input.classList.add(Globals.classNamePrefix + 'field-auto-width');
 
         this.input.addEventListener('change', this.onChange);
@@ -93,6 +98,15 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
         return this.input;
+    }
+
+    public override update(): void {
+        const cell = this.cell;
+        const input = this.input;
+        const { options } = this.renderer as CheckboxRenderer;
+
+        input.checked = !!cell.value;
+        input.disabled = !!options.disabled;
     }
 
     public get rawValue(): string {
