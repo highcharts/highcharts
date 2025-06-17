@@ -572,7 +572,18 @@ function parseFormula(
         // Check for a number value
         match = next.match(decimalRegExp);
         if (match) {
-            formula.push(parseFloat(match[0]));
+            let number = parseFloat(match[0]);
+            // If the current value is multiplication-related and the previous
+            // one is a minus sign, set the current value to negative and remove
+            // the minus sign.
+            if (
+                formula[formula.length - 1] === '-' &&
+                formula[formula.length - 2] === '*'
+            ) {
+                formula.pop();
+                number = -number;
+            }
+            formula.push(number);
 
             next = next.substring(match[0].length).trim();
 
