@@ -32,7 +32,10 @@ import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
 import U from '../../../Core/Utilities.js';
 
-const { makeDiv } = GridUtils;
+const {
+    makeDiv,
+    setHTMLContent
+} = GridUtils;
 const { defined } = U;
 
 /* *
@@ -183,13 +186,25 @@ class Validator {
      *
      */
     public initErrorBox(cell: TableCell, errors: string[]): void {
+        const { grid } = this.viewport;
+
         this.errorCell = cell;
 
         // Set error container position
         this.reflow();
 
         // Set width and content
-        this.notifContainer.innerHTML = errors.join('<br />');
+        setHTMLContent(this.notifContainer, errors.join('<br />'));
+
+        // A11y announcement
+        if (grid.options?.accessibility?.announcements?.cellEditing) {
+            this.viewport.grid.accessibility?.announce(
+                (grid.options?.lang?.accessibility?.cellEditing
+                    ?.announcements?.notValid || ''
+                ) + ' ' + errors.join('. '),
+                true
+            );
+        }
 
         this.show();
     }
