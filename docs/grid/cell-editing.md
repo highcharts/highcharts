@@ -20,13 +20,14 @@ columns: [{
     id: "firstName",
     cells: {
         editMode: {
-          enabled: false
+            enabled: false
         }
     }
 }]
 ```
 
 In the example above cell editing is enabled for ALL columns, expect the `firstName` column. The reverse can be achived by not setting `columnDefaults` and `columns[].cells.editMode.enabled: true` instead.
+
 
 ## Validation
 
@@ -107,7 +108,32 @@ columns: [{
 
 This approach allows you to reuse custom validation logic across multiple columns.
 
+
 ## Edit Mode Renderers
+
+Edit mode renderers define how the cell input is displayed and interacted with when editing is enabled. You can use built-in renderers such as text fields, select dropdowns, or implement custom renderers to match your application's requirements. This allows for flexible editing experiences tailored to different data types and use cases.
+
+You can read more about cell renderers in [this article](/docs/grid/cell-content).
+
+```ts
+columns: [{
+    id: "role",
+    cells: {
+        editMode: {
+            enabled: true,
+            renderer: {
+                type: 'select',
+                options: [
+                    { value: 'admin', label: 'Administrator' },
+                    { value: 'editor', label: 'Editor' },
+                    { value: 'viewer', label: 'Viewer' }
+                ]
+            }
+        }
+    }
+}]
+```
+
 
 ## The afterEdit event
 
@@ -115,12 +141,12 @@ The `afterEdit` event is called after a cell value is edited using the edit mode
 
 ```js
 columnDefaults: {
-  cells: {
-    events: {
-      afterEdit: function () {
-        console.log(`${this.column.id} for ${this.row.data.firstName} was updated to ${this.value}`);
-      }
-    }
-  },
+    cells: {
+        events: {
+            afterEdit: function () {
+                console.log(`${this.column.id} for ${this.row.data.firstName} was updated to ${this.value}`);
+            }
+        }
+    },
 }
 ```
