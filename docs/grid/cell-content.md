@@ -120,7 +120,7 @@ You can configure chart by the `chartOptions` API option, that supports all High
 }
 ```
 
-Please note that you should include the `highcharts.js` file.
+Please note that you should include the `highcharts.js` file before including the Grid library. If you do it the other way around, or use ES Modules, you should connect Highcharts manually using: `Grid.CellRendererRegistry.types.sparkline.useHighcharts(Highcharts);`
 
 Go to [Sparkline](https://www.highcharts.com/docs/grid/sparkline) to read more about Grid Sparkline structure and configuration options.
 
