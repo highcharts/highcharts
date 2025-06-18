@@ -62,7 +62,6 @@ Renders a native date input that supports HTML datepicker.
   id: 'date_date', // column id
   dataType: 'datetime',
   cells: {
-    format: '{value:%Y-%m-%d}',
     renderer: {
         type: 'dateInput'
     }
