@@ -126,9 +126,6 @@ Please note that you should include the `highcharts.js` file before including th
 
 Go to [Sparkline](https://www.highcharts.com/docs/grid/sparkline) to read more about Grid Sparkline structure and configuration options.
 
-## Disabled interactions 
-
-End users disable the interactivity of form fields by can by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
 
 ```js
 columnDefaults: {
