@@ -13,15 +13,18 @@ Highcharts Grid supports different cell renderers to provide interactive data pr
 Renderers can be used to control how values are displayed `cells.renderer` and how they behave in edit mode `cells.editMode.renderer`. This allows you to, for example, show plain text by default and present a checkbox or input field when a cell becomes editable.
 
 Supported renderers:
-* text input
-* checkbox
-* date
-* select
-* sparkline
+| Renderer Key | Description | Edit Mode |
+|---|---|---|
+| [`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | ✅ |
+| [`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input element | ✅ |
+| [`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element | ✅ |
+| [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SparklineRenderer.SparklineRenderer-1) | Highcharts minified chart | ❌ |
+| [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer-1) | Common text or custom static html content, default for most data types | ❌ |
+| [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1) | Text input element | ✅ |
 
 ## Renderers types
 
-In the [renderer](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and edit modes. If not specified, it is determined by the `dataType` option.
+In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and edit modes. If not specified, it is determined by the `dataType` option.
 
 ### Text input
 Renders an editable text field for value.
