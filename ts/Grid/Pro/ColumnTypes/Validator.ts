@@ -299,14 +299,14 @@ class Validator {
 namespace Validator {
 
     /**
-     * Global validation CSS classes.
+     * The class names used by the validator functionality.
      */
     export const classNames = {
         notifContainer: Globals.classNamePrefix + 'notification',
         notifError: Globals.classNamePrefix + 'notification-error',
         notifAnimation: Globals.classNamePrefix + 'notification-animation',
         editedCellError: Globals.classNamePrefix + 'edited-cell-error'
-    };
+    } as const;
 
     /* *
      *

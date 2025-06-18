@@ -69,6 +69,12 @@ class CellEditing {
      */
     public editModeContent?: EditModeContent;
 
+    /**
+     * The container element for the cell edit mode, which is used to
+     * position the edit mode content correctly within the cell.
+     */
+    private containerElement?: HTMLDivElement;
+
 
     /* *
      *
@@ -104,10 +110,7 @@ class CellEditing {
         }
 
         this.editedCell = cell;
-        const cellElement = cell.htmlElement;
-
-        cell.content?.destroy();
-        cellElement.classList.add(Globals.getClassName('editedCell'));
+        cell.htmlElement.classList.add(Globals.getClassName('editedCell'));
 
         this.render();
         fireEvent(cell, 'startedEditing');
@@ -156,12 +159,15 @@ class CellEditing {
 
         cell.htmlElement.focus();
 
+        const isValueChanged = cell.value !== newValue;
         void cell.setValue(
             submit ? newValue : cell.value,
-            submit && cell.value !== newValue
+            submit && isValueChanged
         );
 
-        fireEvent(cell, 'stoppedEditing', { submit });
+        if (isValueChanged) {
+            fireEvent(cell, 'stoppedEditing', { submit });
+        }
 
         delete this.editedCell;
 
@@ -227,7 +233,15 @@ class CellEditing {
             return;
         }
 
-        this.editModeContent = cell.column.editModeRenderer?.render(cell);
+        this.containerElement = this.containerElement ||
+            document.createElement('div');
+        this.containerElement.className =
+            CellEditing.classNames.cellEditingContainer;
+        this.editedCell?.htmlElement.appendChild(this.containerElement);
+
+        this.editModeContent = cell.column.editModeRenderer?.render(
+            cell, this.containerElement
+        );
         this.editModeContent.getMainElement().focus();
 
         this.editModeContent.blurHandler = this.onInputBlur;
@@ -244,8 +258,28 @@ class CellEditing {
         }
 
         this.editModeContent.destroy();
+        this.containerElement?.remove();
         delete this.editModeContent;
+        delete this.containerElement;
     }
+}
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+
+namespace CellEditing {
+
+    /**
+     * The class names used by the CellEditing functionality.
+     */
+    export const classNames = {
+        cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
+    } as const;
+
 }
 
 
