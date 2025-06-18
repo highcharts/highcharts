@@ -1,14 +1,14 @@
 // Constants
 const categories = [
-    { value: 'CL', label: 'Cleaning' },
-    { value: 'SH', label: 'Shopping' },
-    { value: 'CK', label: 'Cooking' },
-    { value: 'GR', label: 'Gardening' },
-    { value: 'LD', label: 'Laundry' },
-    { value: 'MT', label: 'Maintenance' },
-    { value: 'OR', label: 'Organization' },
-    { value: 'PT', label: 'Pet care' },
-    { value: 'OT', label: 'Other' }
+    { value: '1', label: 'Cleaning' },
+    { value: '2', label: 'Shopping' },
+    { value: '3', label: 'Cooking' },
+    { value: '4', label: 'Gardening' },
+    { value: '5', label: 'Laundry' },
+    { value: '6', label: 'Maintenance' },
+    { value: '7', label: 'Organization' },
+    { value: '8', label: 'Pet care' },
+    { value: '9', label: 'Other' }
 ];
 const priority = [
     { value: 'Low', label: 'Low' },
@@ -16,9 +16,10 @@ const priority = [
     { value: 'High', label: 'High' }
 ];
 const columns = [{
-    id: 'Completed',
+    id: 'Done',
     dataType: 'boolean',
-    width: 120,
+    showInForm: false,
+    width: 80,
     cells: {
         renderer: {
             type: 'checkbox'
@@ -27,10 +28,8 @@ const columns = [{
 }, {
     id: 'Category',
     dataType: 'string',
+    showInForm: true,
     cells: {
-        renderer: {
-            type: 'text'
-        },
         formatter: function () {
             return categories.find(({ value }) => value === this.value)
                 ?.label || '';
@@ -43,8 +42,15 @@ const columns = [{
         }
     }
 }, {
+    id: 'Task',
+    showInForm: true
+}, {
+    id: 'Notes',
+    showInForm: true
+}, {
     id: 'Due date',
     dataType: 'datetime',
+    showInForm: true,
     cells: {
         format: '{value:%Y-%m-%d}',
         editMode: {
@@ -56,6 +62,8 @@ const columns = [{
 }, {
     id: 'Priority',
     dataType: 'string',
+    showInForm: true,
+    width: 120,
     cells: {
         formatter: function () {
             const map = {
@@ -78,8 +86,8 @@ const columns = [{
 Grid.grid('container', {
     dataTable: {
         columns: {
-            Completed: [false, false, false, false],
-            Category: ['CL', 'SH', 'CL', 'GR'],
+            Done: [false, false, false, false],
+            Category: ['1', '2', '1', '4'],
             Task: [
                 'Do laundry', 'Buy groceries', 'Clean kitchen', 'Water plants '
             ],
@@ -107,8 +115,8 @@ Grid.grid('container', {
 Grid.grid('container-done', {
     dataTable: {
         columns: {
-            Completed: [true, true, true],
-            Category: ['CK', 'GR', 'MT'],
+            Done: [true, true, true],
+            Category: ['3', '4', '6'],
             Task: ['Cook dinner', 'Trim hedges', 'Fix leaking tap'],
             Notes: [
                 'Try new pasta recipe', 'Backyard only', 'Check under sink'
@@ -128,63 +136,82 @@ Grid.grid('container-done', {
 });
 
 // Custom events
-Grid.grids[0].dataTable.on('afterSetCell', function (e) {
-    if (e.columnName === 'Completed') {
-        const selected = e.cellValue;
-        const todoGrid = Grid.grids[0];
-        const doneGrid = Grid.grids[1];
+function addCustomEvents(isTodoGrid) {
+    const sourceGrid = Grid.grids[isTodoGrid ? 0 : 1];
+    const targetGrid = Grid.grids[isTodoGrid ? 1 : 0];
 
-        if (selected) {
+    sourceGrid.dataTable.on('afterSetCell', function (e) {
+        if (e.columnName !== 'Done') {
+            return;
+        }
+
+        const selected = e.cellValue;
+        if ((isTodoGrid && selected) || (!isTodoGrid && !selected)) {
             const dataTable = e.target;
             const rowIndex = e.rowIndex;
             const rowData = dataTable.getRowObject(rowIndex);
-            const data = { ...rowData, Completed: true };
+            const data = { ...rowData, Completed: selected };
 
-            doneGrid.dataTable.setRow(data);
+            targetGrid.dataTable.setRow(data);
             dataTable.deleteRows(rowIndex);
 
-            doneGrid.viewport.loadPresentationData();
-            todoGrid.viewport.loadPresentationData();
+            sourceGrid.viewport.loadPresentationData();
+            targetGrid.viewport.loadPresentationData();
         }
-    }
-});
-Grid.grids[1].dataTable.on('afterSetCell', function (e) {
-    if (e.columnName === 'Completed') {
-        const selected = e.cellValue;
-        const todoGrid = Grid.grids[0];
-        const doneGrid = Grid.grids[1];
+    });
+}
+addCustomEvents(true);
+addCustomEvents(false);
 
-        if (!selected) {
-            const dataTable = e.target;
-            const rowIndex = e.rowIndex;
-            const rowData = dataTable.getRowObject(rowIndex);
-            const data = { ...rowData, Completed: false };
-
-            todoGrid.dataTable.setRow(data);
-            dataTable.deleteRows(rowIndex);
-
-            doneGrid.viewport.loadPresentationData();
-            todoGrid.viewport.loadPresentationData();
-        }
-    }
-});
-
-
-// Modal setup
+// Generate modal
+const container = document.getElementById('formFieldsContainer');
+const form = document.getElementById('todoForm');
 const modal = document.getElementById('modal');
 const openModal = document.getElementById('openModal');
 const closeModalBtn = document.getElementById('closeModalBtn');
-const form = document.getElementById('todoForm');
-const select = document.getElementById('categorySelect');
-const prioritySelect = document.getElementById('prioritySelect');
 
-select.append(new Option('Select a category', '', false, false));
-categories.forEach(({ value, label }) => {
-    select.append(new Option(label, value));
-});
-prioritySelect.append(new Option('Select a priority', '', true, true));
-priority.forEach(({ value, label }) => {
-    prioritySelect.append(new Option(label, value));
+columns.forEach(col => {
+    if (col.showInForm === false) {
+        return;
+    }
+
+    const fieldId = col.id;
+    const renderer = col.cells?.editMode?.renderer;
+
+    const label = document.createElement('label');
+    label.textContent = fieldId;
+    label.htmlFor = fieldId;
+
+    let input;
+
+    if (fieldId === 'Notes') {
+        input = document.createElement('textarea');
+    } else if (renderer?.type === 'checkbox') {
+        input = document.createElement('input');
+        input.type = 'checkbox';
+    } else if (renderer?.type === 'select') {
+        input = document.createElement('select');
+        input.append(new Option(`Select ${fieldId}`, '', true, true));
+        (renderer.options || []).forEach(({ value, label }) => {
+            input.append(new Option(label, value));
+        });
+    } else if (renderer?.type === 'dateInput') {
+        input = document.createElement('input');
+        input.type = 'date';
+    } else {
+        input = document.createElement('input');
+        input.type = 'text';
+    }
+
+    input.name = fieldId;
+    input.id = fieldId;
+
+    if (['Task', 'Category'].includes(fieldId)) {
+        input.required = true;
+    }
+
+    container.appendChild(label);
+    container.appendChild(input);
 });
 
 openModal.addEventListener('click', () => {
@@ -200,15 +227,13 @@ form.addEventListener('submit', function (e) {
     const todoGrid = Grid.grids[0];
 
     todoGrid.dataTable.setRow({
-        Completed: false,
-        Category: formData.get('category'),
-        Task: formData.get('task'),
-        Notes: formData.get('notes'),
-        'Due date': formData.get('dueDate'),
-        Priority: formData.get('priority')
+        Category: formData.get('Category'),
+        Task: formData.get('Task'),
+        Notes: formData.get('Notes'),
+        'Due date': formData.get('Due date'),
+        Priority: formData.get('Priority')
     });
     todoGrid.viewport.loadPresentationData();
-
 
     form.reset();
     modal.style.display = 'none';

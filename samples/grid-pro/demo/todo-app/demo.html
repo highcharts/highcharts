@@ -9,22 +9,11 @@
         <div id="modalContent">
             <h2>Add New Item</h2>
             <form id="todoForm">
-                <label
-                    >Category
-                    <select name="category" id="categorySelect" required></select>
-                </label>
-                <label>Task <input type="text" name="task" required /></label>
-                <label>
-                    Notes
-                    <textarea name="notes"></textarea>
-                </label>
-                <label>Due Date <input type="date" name="dueDate" /></label>
-                <label>
-                    Priority
-                    <select name="priority" id="prioritySelect"></select>
-                </label>
-                <button id="addItem">Add</button>
-                <button class="cancel" id="closeModalBtn">Cancel</button>
+                <div id="formFieldsContainer"></div>
+                <div id="formButtons">
+                    <button type="submit" id="addItem">Add</button>
+                    <button type="button" class="cancel" id="closeModalBtn">Cancel</button>
+                </div>
             </form>
         </div>
     </div>

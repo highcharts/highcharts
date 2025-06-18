@@ -24,6 +24,13 @@ td {
     line-height: unset !important;
 }
 
+th[data-column-id="Priority"] span,
+th[data-column-id="Done"] span,
+td[data-column-id="Done"],
+td[data-column-id="Priority"] {
+    text-align: center !important;
+}
+
 #openModal {
     padding: 10px 16px;
     margin-bottom: 20px;
@@ -61,10 +68,15 @@ td {
     gap: 12px;
 }
 
-#modalContent #todoForm {
+#modalContent #formFieldsContainer {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+#modalContent #formButtons {
+    display: flex;
+    justify-content: flex-end;
 }
 
 #modalContent input[type="text"],
@@ -93,8 +105,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: var(--default-color);
 }
 
-#modalContent #addItem {
-    margin-top: 20px;
+#modalContent #formButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
 }
 
 #modalContent button {
