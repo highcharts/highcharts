@@ -22,7 +22,7 @@
  *
  * */
 
-import type TableRow from './Content/TableRow';
+import type TableRow from './Body/TableRow';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
@@ -233,6 +233,7 @@ class Table {
         // this.footer.render();
 
         this.rowsVirtualizer.initialRender();
+        fireEvent(this, 'afterInit');
     }
 
     /**
@@ -407,7 +408,7 @@ class Table {
     }
 
     /**
-     * Destroys the data grid table.
+     * Destroys the grid table.
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);

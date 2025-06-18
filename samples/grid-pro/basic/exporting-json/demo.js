@@ -16,17 +16,23 @@ const grid = Grid.grid('container', {
     columns: [{
         id: 'product',
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     }, {
         id: 'weight',
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     }, {
         id: 'metaData',
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     }]
 });
