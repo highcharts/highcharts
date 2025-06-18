@@ -8,7 +8,11 @@ Note: Customizing cell content is not part of Highcharts Grid Lite, so refer to 
 
 A sparkline component renders an inline miniature chart (e.g. bar, line) directly within cells in tables. 
 
-The Sparkline component is powered by Highcharts, using all its chart features. It requires `highcharts.js` and a valid **Highcharts Core license**.
+The Sparkline component is powered by Highcharts, using all its chart features. It requires [Highcharts](https://www.highcharts.com/products/highcharts/) and a valid **Highcharts Core license**.
+
+## Setup
+If you’re simply including the `highcharts.js` file, just make sure to load it before `grid-pro.js`. If you’re using ES Modules or importing the bundles in the opposite order, you’ll also need to manually register Highcharts by calling `SparklineRenderer.useHighcharts(Highcharts)` or `Grid.ColumnRendererRegistry.types.sparkline.useHighcharts(Highcharts)`.
+
 
 ## Defaults
 Unlike traditional charts, sparkline are typically rendered without axes, coordinates, or labels, making them ideal for summarizing trends in a small space.
