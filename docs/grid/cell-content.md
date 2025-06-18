@@ -127,25 +127,6 @@ Please note that you should include the `highcharts.js` file before including th
 Go to [Sparkline](https://www.highcharts.com/docs/grid/sparkline) to read more about Grid Sparkline structure and configuration options.
 
 
-```js
-columnDefaults: {
-    cells: {
-      editMode: {
-        enabled: true
-      }
-    }
-}
-columns: [
-  {
-    id: "columnName",
-    cells: {
-      editMode: {
-        enabled: false
-      }
-    }
-  }
-]
-```
 
 ## View the Result
 An example of grid, based on all available API options.
