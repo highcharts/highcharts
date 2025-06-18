@@ -444,6 +444,23 @@ function parseArguments(
     return args;
 }
 
+/**
+ * Checks if there's one of the following operator before the negative number
+ * value: '*', '/' or '^'.
+ *
+ * Used to properly indicate a negative value reference or negate a directly
+ * passed number value.
+ */
+function negativeReference(formula: Formula): boolean {
+    const formulaLength = formula.length;
+    const priorFormula = formula[formulaLength - 2];
+    return formula[formulaLength - 1] === '-' && (
+        priorFormula === '*' ||
+        priorFormula === '/' ||
+        priorFormula === '^'
+    );
+}
+
 
 /**
  * Converts a spreadsheet formula string into a formula array. Throws a
@@ -506,6 +523,11 @@ function parseFormula(
                 reference.rowRelative = true;
             }
 
+            if (negativeReference(formula)) {
+                formula.pop();
+                reference.isNegative = true;
+            }
+
             formula.push(reference);
 
             next = next.substring(match[0].length).trim();
@@ -542,6 +564,11 @@ function parseFormula(
                 reference.rowRelative = true;
             }
 
+            if (negativeReference(formula)) {
+                formula.pop();
+                reference.isNegative = true;
+            }
+
             formula.push(reference);
 
             next = next.substring(match[0].length).trim();
@@ -576,10 +603,7 @@ function parseFormula(
             // If the current value is multiplication-related and the previous
             // one is a minus sign, set the current value to negative and remove
             // the minus sign.
-            if (
-                formula[formula.length - 1] === '-' &&
-                formula[formula.length - 2] === '*'
-            ) {
+            if (negativeReference(formula)) {
                 formula.pop();
                 number = -number;
             }
