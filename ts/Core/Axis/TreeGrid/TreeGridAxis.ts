@@ -56,7 +56,6 @@ const {
     isObject,
     isString,
     merge,
-    pick,
     removeEvent,
     wrap
 } = U;
@@ -155,18 +154,19 @@ let TickConstructor: (typeof Tick|undefined);
  * */
 
 /**
- * TODO: This could be removed if replaced correctly in code.
+ * Creates a break object from a node.
+ *
+ * @param {Object} node
+ * The node to create a break object from.
+ *
  * @private
  */
 function getBreakFromNode(
     node: GridNode
 ): AxisBreakObject {
-    const to = node.collapseEnd || 0,
-        from = node.collapseStart || 0;
-
     return {
-        from,
-        to,
+        from: node.collapseStart || 0,
+        to: node.collapseEnd || 0,
         showPoints: false
     };
 }
@@ -291,10 +291,7 @@ function getTreeGridFromData(
 
             // If one of the points are collapsed, then start the grid node
             // in collapsed state.
-            if (
-                gridNode &&
-                data.collapsed === true
-            ) {
+            if (gridNode && data.collapsed === true) {
                 gridNode.collapsed = true;
             }
 
@@ -390,7 +387,7 @@ function onBeforeRender(
         (axis): boolean => axis.type === 'treegrid'
     ) as Array<TreeGridAxisComposition>).forEach(
         function (axis: TreeGridAxisComposition): void {
-            const options = axis.options || {},
+            const options = axis.options,
                 labelOptions = options.labels,
                 uniqueNames = axis.uniqueNames,
                 max = chart.time.parse(options.max),
@@ -414,7 +411,6 @@ function onBeforeRender(
                 treeGrid: TreeGridObject;
 
             if (isDirty) {
-
                 const seriesHasPrimitivePoints: boolean[] = [];
 
                 // Concatenate data from all series assigned to this axis.
@@ -423,14 +419,10 @@ function onBeforeRender(
                         firstPoint = seriesData[0],
                         // Check if the first point is a simple array of values.
                         // If so we assume that this is the case for all points.
-                        foundPrimitivePoint = (
-                            Array.isArray(firstPoint) &&
-                                !(firstPoint as any).find(
-                                    (value: any): boolean => (
-                                        typeof value === 'object'
-                                    )
-                                )
-                        );
+                        foundPrimitivePoint = Array.isArray(firstPoint) &&
+                            !firstPoint.find(
+                                (value): boolean => (typeof value === 'object')
+                            );
 
                     seriesHasPrimitivePoints.push(foundPrimitivePoint);
 
@@ -455,10 +447,8 @@ function onBeforeRender(
                             if (isObject(pointOptions, true)) {
                                 // Set series index on data. Removed again
                                 // after use.
-                                (pointOptions as PointOptions).seriesIndex = (
-                                    numberOfSeries
-                                );
-                                arr.push(pointOptions as PointOptions);
+                                pointOptions.seriesIndex = numberOfSeries;
+                                arr.push(pointOptions);
                             }
                         });
                         // Increment series index
@@ -504,11 +494,7 @@ function onBeforeRender(
 
                         if (
                             seriesHasPrimitivePoints[index] ||
-                            (
-                                isArray(d) &&
-                                series.options.keys &&
-                                series.options.keys.length
-                            )
+                            (isArray(d) && series.options.keys?.length)
                         ) {
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
@@ -518,7 +504,7 @@ function onBeforeRender(
                                 const toArray = splat(d);
                                 if (
                                     toArray.indexOf(point.x || 0) >= 0 &&
-                                        toArray.indexOf(point.x2 || 0) >= 0
+                                    toArray.indexOf(point.x2 || 0) >= 0
                                 ) {
                                     d = point;
                                 }
@@ -639,7 +625,7 @@ function wrapInit(
         ): void {
             if (e.options.data) {
                 const treeGrid = getTreeGridFromData(
-                    e.options.data as any,
+                    e.options.data as GanttPointOptions[],
                     userOptions.uniqueNames || false,
                     1
                 );
@@ -820,16 +806,10 @@ function wrapSetTickInterval(
             [];
 
         if (linkedParent) {
-
             const linkedParentExtremes = linkedParent.getExtremes();
-            axis.min = pick(
-                linkedParentExtremes.min,
-                linkedParentExtremes.dataMin
-            );
-            axis.max = pick(
-                linkedParentExtremes.max,
-                linkedParentExtremes.dataMax
-            );
+
+            axis.min = linkedParentExtremes.min ?? linkedParentExtremes.dataMin;
+            axis.max = linkedParentExtremes.max ?? linkedParentExtremes.dataMax;
             axis.tickPositions = linkedParent.tickPositions;
         }
         axis.linkedParent = linkedParent;
@@ -972,14 +952,12 @@ class TreeGridAxisAdditions {
         axis.series.forEach(function (series): void {
             const data = series.options.data;
             if (node.id && data) {
-                const point = chart.get(node.id),
-                    dataPoint = data[series.data.indexOf(
-                        point as GanttPoint
-                    )];
+                const point = chart.get(node.id) as GanttPoint,
+                    dataPoint = data[series.data.indexOf(point)];
 
                 if (point && dataPoint) {
-                    (point as GanttPoint).collapsed = node.collapsed;
-                    (dataPoint as GanttPoint).collapsed = node.collapsed;
+                    point.collapsed = node.collapsed;
+                    dataPoint.collapsed = node.collapsed;
                 }
             }
         });
@@ -1082,7 +1060,7 @@ class TreeGridAxisAdditions {
                 }
                 return arr;
             },
-            [] as Array<number>
+            []
         );
     }
 
@@ -1091,14 +1069,8 @@ class TreeGridAxisAdditions {
      *
      * @private
      *
-     * @param {Highcharts.Axis} axis
-     * The axis to check against.
-     *
      * @param {Object} node
      * The node to check if is collapsed.
-     *
-     * @param {number} pos
-     * The tick position to collapse.
      *
      * @return {boolean}
      * Returns true if collapsed, false if expanded.
