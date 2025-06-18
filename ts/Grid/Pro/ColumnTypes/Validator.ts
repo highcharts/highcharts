@@ -376,10 +376,10 @@ namespace Validator {
      * Default validation rules for each dataType.
      */
     export const predefinedRules: Record<Column.DataType, RuleKey[]> = {
-        number: ['number'],
         'boolean': ['boolean'],
-        string: ['notEmpty'],
-        datetime: ['datetime']
+        datetime: ['datetime'],
+        number: ['number'],
+        string: []
     };
 }
 
