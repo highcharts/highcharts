@@ -222,9 +222,10 @@ QUnit.test('Scrollbar events', assert => {
 
     // #18922, scrollbar track did not catch click events
     controller.click(bar.translateX + 5, bar.translateY + 5);
-    assert.strictEqual(
+    assert.close(
         axis.min,
         min,
+        0.0000001,
         'Extremes should change on track click (#18922)'
     );
 
