@@ -21,7 +21,7 @@ Supported renderers:
 
 ## Renderers types
 
-In the [renderer](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#renderer) API option you can customize content of the cell, based on dataType.
+In the [renderer](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and edit modes. If not specified, it is determined by the `dataType` option.
 
 ### Text input
 Renders an editable text field for value.
