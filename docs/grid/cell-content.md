@@ -12,22 +12,24 @@ Highcharts Grid supports different cell renderers to provide interactive data pr
 
 Renderers can be used to control how values are displayed `cells.renderer` and how they behave in edit mode `cells.editMode.renderer`. This allows you to, for example, show plain text by default and present a checkbox or input field when a cell becomes editable.
 
-Supported renderers:
+## Renderers types
+
+In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and edit modes. If not specified, it is determined by the `dataType` option.
+
+Some renderers can be used specifically as cell edit mode renderers, which is recommended because they also support [validation](/docs/grid/cell-editing#validation) in such cases.
+For example, you can render a date as text in view mode, and use the `dateInput` renderer only when the cell is in edit mode.
+
 | Renderer Key | Description | Edit Mode |
 |---|---|---|
 | [`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | ✅ |
 | [`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input element | ✅ |
 | [`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element | ✅ |
 | [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SparklineRenderer.SparklineRenderer-1) | Highcharts minified chart | ❌ |
-| [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer-1) | Common text or custom static html content, default for most data types | ❌ |
+| [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer-1) | Text or custom static html content, default for most data types | ❌ |
 | [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1) | Text input element | ✅ |
 
-## Renderers types
-
-In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and edit modes. If not specified, it is determined by the `dataType` option.
-
 ### Text input
-Renders an editable text field for value.
+Renders an editable text field for the value. It can also render static HTML elements. This is the default renderer for most cases.
 
 ```js
 {
