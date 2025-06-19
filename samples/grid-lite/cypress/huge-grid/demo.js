@@ -10,5 +10,10 @@ Grid.grid('container', {
         cells: {
             format: '{value:,.0f}'
         }
+    },
+    rendering: {
+        rows: {
+            strictHeights: true
+        }
     }
 });
