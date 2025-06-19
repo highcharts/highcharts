@@ -527,7 +527,7 @@ class TreeGridTickAdditions {
             const pos = tick.pos,
                 node = axis.treeGrid.mapOfPosToGridNode[pos],
                 breaks = axis.treeGrid.toggleCollapse(node),
-                scrollMode = !!axis.scrollbar,
+                scrollMode = !!(axis.scrollbar && axis.staticScale),
                 maxPx = axis.pos + axis.len +
                     (axis.treeGrid.pendingSizeAdjustment || 0);
 

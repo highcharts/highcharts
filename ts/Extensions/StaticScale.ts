@@ -76,16 +76,13 @@ function compose(
 function onAxisAfterSetOptions(
     this: Axis
 ): void {
-    const chartOptions = this.chart.options.chart;
+    const chartOptions = this.chart.userOptions.chart;
     if (
         !this.horiz &&
         isNumber(this.options.staticScale) &&
         (
-            !(chartOptions as any).height ||
-            (
-                (chartOptions as any).scrollablePlotArea &&
-                (chartOptions as any).scrollablePlotArea.minHeight
-            )
+            !chartOptions?.height ||
+            chartOptions.scrollablePlotArea?.minHeight
         )
     ) {
         this.staticScale = this.options.staticScale;
