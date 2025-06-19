@@ -1,7 +1,7 @@
-Annotations and fibonacci retracements
+Creating custom annotations
 ===
 
-A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](https://www.investopedia.com/terms/f/fibonacciretracement.asp). For the ready-made technical advanced annotations like this, see [advanced annotations](https://www.highcharts.com/docs/stock/advanced-annotations)
+We will focus on creating a more complex annotation, specifically Fibonacci retracement, a tool used in technical analysis which allows users to identify [reversal levels](https://www.investopedia.com/terms/f/fibonacciretracement.asp). For a broader overview of our built-in advanced annotation tools, see the [advanced annotations](https://www.highcharts.com/docs/stock/advanced-annotations).
 
 <iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/stock/annotations/fibonacci-retracements" allow="fullscreen"></iframe>
 
