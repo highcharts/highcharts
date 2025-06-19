@@ -132,10 +132,9 @@ namespace ColorAxisComposition {
             wrapChartCreateAxis(ChartClass);
 
             addEvent(ChartClass, 'redraw', function (): void {
-
                 for (const colorAxis of this.colorAxis || []) {
                     if (colorAxis.width !== colorAxis.labelRight) {
-                        (colorAxis as any).update(
+                        colorAxis.update(
                             { labelRight: colorAxis.width }
                         );
                     }
