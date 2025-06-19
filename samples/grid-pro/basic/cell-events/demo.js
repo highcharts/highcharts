@@ -78,7 +78,9 @@ Grid.grid('container', {
             format: 'Product (editable)'
         },
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     }, {
         id: 'metaData',

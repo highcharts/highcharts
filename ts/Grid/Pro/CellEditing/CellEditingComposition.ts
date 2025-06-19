@@ -24,13 +24,17 @@
  * */
 
 import type Table from '../../Core/Table/Table';
-import type TableCell from '../../Core/Table/Content/TableCell';
+import type TableCell from '../../Core/Table/Body/TableCell';
+import type Column from '../../Core/Table/Column';
 import type { GridEvent } from '../../Core/GridUtils';
+import type CellRendererType from '../CellRendering/CellRendererType';
+import type { EditModeRenderer } from './CellEditMode';
+import type Options from '../../Core/Options';
 
 import Defaults from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
 import CellEditing from './CellEditing.js';
-
+import CellRendererRegistry from '../CellRendering/CellRendererRegistry.js';
 import GU from '../../Core/GridUtils.js';
 import U from '../../../Core/Utilities.js';
 
@@ -59,7 +63,7 @@ namespace CellEditingComposition {
     /**
      * Default options for the cell editing.
      */
-    const defaultOptions = {
+    const defaultOptions: Globals.DeepPartial<Options> = {
         accessibility: {
             announcements: {
                 cellEditing: true
@@ -72,7 +76,8 @@ namespace CellEditingComposition {
                     announcements: {
                         started: 'Entered cell editing mode.',
                         edited: 'Edited cell value.',
-                        cancelled: 'Editing canceled.'
+                        cancelled: 'Editing canceled.',
+                        notValid: 'Provided value is not valid.'
                     }
                 }
             }
@@ -88,16 +93,22 @@ namespace CellEditingComposition {
      *
      * @param TableCellClass
      * The class to extend.
+     *
+     * @param ColumnClass
+     * The class to extend.
      */
     export function compose(
         TableClass: typeof Table,
-        TableCellClass: typeof TableCell
+        TableCellClass: typeof TableCell,
+        ColumnClass: typeof Column
     ): void {
         if (!pushUnique(Globals.composed, 'CellEditing')) {
             return;
         }
 
         merge(true, Defaults.defaultOptions, defaultOptions);
+
+        addEvent(ColumnClass, 'afterInit', afterColumnInit);
 
         addEvent(TableClass, 'beforeInit', initTable);
         addEvent(TableCellClass, 'keyDown', onCellKeyDown);
@@ -116,7 +127,10 @@ namespace CellEditingComposition {
                     this.column.viewport.grid.options?.events?.cell,
                     this.column.options.cells?.events
                 );
-                cellEvents?.afterEdit?.call(this);
+
+                if (e.submit) {
+                    cellEvents?.afterEdit?.call(this);
+                }
 
                 announceA11yUserEditedCell(
                     this,
@@ -134,6 +148,56 @@ namespace CellEditingComposition {
     }
 
     /**
+     * Creates the edit mode renderer for the column.
+     *
+     * @param column
+     * The column to create the edit mode renderer for.
+     */
+    function createEditModeRenderer(column: Column): EditModeRendererType {
+        const editModeOptions = column.options.cells?.editMode;
+        const editModeRendererTypeName = editModeOptions?.renderer?.type;
+        const staticRendererTypeName =
+            column.options?.cells?.renderer?.type || 'text';
+
+        if (editModeRendererTypeName) {
+            return new CellRendererRegistry.types[
+                editModeRendererTypeName
+            ](column, editModeOptions?.renderer || {});
+        }
+
+        const staticRendererType = CellRendererRegistry.types[
+            staticRendererTypeName
+        ];
+
+        let defRenderer = staticRendererType.defaultEditingRenderer;
+        if (typeof defRenderer !== 'string') {
+            defRenderer = defRenderer[column.dataType];
+        }
+
+        return new CellRendererRegistry.types[defRenderer](
+            column,
+            defRenderer === staticRendererTypeName ? merge(
+                column.options.cells?.renderer,
+                { disabled: false }
+            ) || {} : {}
+        );
+    }
+
+    /**
+     * Callback function called after column initialization.
+     */
+    function afterColumnInit(this: Column): void {
+        const { options } = this;
+
+        if (
+            options?.cells?.editMode?.enabled ||
+            options?.cells?.editable
+        ) {
+            this.editModeRenderer = createEditModeRenderer(this);
+        }
+    }
+
+    /**
      * Callback function called when a key is pressed on a cell.
      *
      * @param e
@@ -145,7 +209,7 @@ namespace CellEditingComposition {
     ): void {
         if (
             e.originalEvent?.key !== 'Enter' ||
-            !this.column.options.cells?.editable
+            !this.column.editModeRenderer
         ) {
             return;
         }
@@ -157,7 +221,7 @@ namespace CellEditingComposition {
      * Callback function called when a cell is double clicked.
      */
     function onCellDblClick(this: TableCell): void {
-        if (this.column.options.cells?.editable) {
+        if (this.column.editModeRenderer) {
             this.row.viewport.cellEditing?.startEditing(this);
         }
     }
@@ -167,7 +231,7 @@ namespace CellEditingComposition {
      */
     function addEditableCellA11yHint(this: TableCell): void {
         const a11y = this.row.viewport.grid.accessibility;
-        if (!a11y) {
+        if (!a11y || this.a11yEditableHint?.isConnected) {
             return;
         }
 
@@ -175,13 +239,17 @@ namespace CellEditingComposition {
             ?.lang?.accessibility?.cellEditing?.editable;
 
         if (
-            !this.column.options.cells?.editable ||
+            (
+                !this.column.options.cells?.editable &&
+                !this.column.options.cells?.editMode?.enabled
+            ) ||
             !editableLang
         ) {
             return;
         }
 
-        makeHTMLElement('span', {
+
+        this.a11yEditableHint = makeHTMLElement('span', {
             className: Globals.getClassName('visuallyHidden'),
             innerText: ', ' + editableLang
         }, this.htmlElement);
@@ -226,6 +294,24 @@ namespace CellEditingComposition {
  *
  * */
 
+export type EditModeRendererType = Extract<CellRendererType, EditModeRenderer>;
+export type EditModeRendererTypeName = EditModeRendererType['options']['type'];
+
+/**
+ * The options for the cell edit mode functionality.
+ */
+export interface ColumnEditModeOptions {
+    /**
+     * Whether to enable the cell edit mode functionality.
+     */
+    enabled?: boolean;
+
+    /**
+     * The edit mode renderer for the column.
+     */
+    renderer?: EditModeRendererType['options'];
+}
+
 /**
  * Accessibility options for the Grid cell editing functionality.
  */
@@ -263,12 +349,41 @@ export interface CellEditingLangA11yOptions {
          * @default 'Editing cancelled.'
          */
         cancelled?: string;
+
+        /**
+         * The message when the cell value is not valid. It precedes the
+         * error messages.
+         *
+         * @default 'Provided value is not valid.'
+         */
+        notValid?: string;
     }
 }
 
 declare module '../../Core/Table/Table' {
     export default interface Table {
+        /**
+         * The cell editing instance for the table.
+         */
         cellEditing?: CellEditing;
+    }
+}
+
+declare module '../../Core/Table/Column' {
+    export default interface Column {
+        /**
+         * The edit mode renderer for the column.
+         */
+        editModeRenderer?: EditModeRendererType;
+    }
+}
+
+declare module '../../Core/Table/Body/TableCell' {
+    export default interface TableCell {
+        /**
+         * The HTML span element that contains the 'editable' hint for the cell.
+         */
+        a11yEditableHint?: HTMLSpanElement;
     }
 }
 
@@ -302,13 +417,18 @@ declare module '../../Core/Accessibility/A11yOptions' {
 declare module '../../Core/Options' {
     interface ColumnCellOptions {
         /**
-         * Whether to make the column cells editable `true`, or read-only `false`.
-         *
-         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Editable columns disabled}
-         *
-         * @default true
+         * @deprecated
+         * Use `editMode.enabled` instead. This option will be removed in the
+         * next major release.
          */
         editable?: boolean;
+
+        /**
+         * Whether to enabled the cell edit mode functionality. It allows to
+         * edit the cell value in a separate input field that is displayed
+         * after double-clicking the cell or pressing the Enter key.
+         */
+        editMode?: ColumnEditModeOptions;
     }
 }
 
@@ -316,7 +436,6 @@ declare module '../../Core/Options' {
  * The possible types of the edit message.
  */
 export type EditMsgType = 'started' | 'edited' | 'cancelled';
-
 
 /* *
  *

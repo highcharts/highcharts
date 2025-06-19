@@ -65,6 +65,11 @@ class CreditsPro extends Credits {
         const contentWrapper = grid.contentWrapper;
         const { position } = this.options;
 
+        // Apply grid-pro class
+        this.containerElement.classList.add(
+            Globals.getClassName('creditsPro')
+        );
+
         if (position === 'top') {
             // Append the credits to the top of the table.
             contentWrapper?.prepend(this.containerElement);
@@ -80,11 +85,6 @@ class CreditsPro extends Credits {
         } else {
             contentWrapper?.appendChild(this.containerElement);
         }
-
-        // Apply grid-pro class
-        this.containerElement.classList.add(
-            Globals.getClassName('creditsPro')
-        );
     }
 
     /**
