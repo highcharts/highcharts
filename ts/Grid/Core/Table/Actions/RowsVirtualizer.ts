@@ -208,6 +208,7 @@ class RowsVirtualizer {
      * is enabled.
      */
     public scroll(): void {
+        console.time('scroll');
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
@@ -215,7 +216,8 @@ class RowsVirtualizer {
         const gridHeightOverflow = Math.max(
             this.totalGridHeight - RowsVirtualizer.MAX_ELEMENT_HEIGHT, 0
         );
-        const scrollPercentage = lastScrollTop / target.scrollHeight;
+        const scrollPercentage = lastScrollTop /
+            (RowsVirtualizer.MAX_ELEMENT_HEIGHT - target.offsetHeight);
         this.scrollOffset = scrollPercentage * gridHeightOverflow;
 
         if (this.preventScroll) {
@@ -245,6 +247,7 @@ class RowsVirtualizer {
             target.scrollTop = lastScrollTop;
             this.preventScroll = true;
         }
+        console.timeEnd('scroll');
     }
 
     /**
@@ -489,7 +492,7 @@ class RowsVirtualizer {
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
             lastRow.setTranslateY(
-                preLastRow.htmlElement.offsetHeight + translateBuffer
+                RowsVirtualizer.MAX_ELEMENT_HEIGHT - (this.defaultRowHeight)
             );
         }
     }
