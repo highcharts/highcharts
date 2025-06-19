@@ -99,8 +99,11 @@ class RowsVirtualizer {
 
     /**
      * The maximum height of a HTML element in most browsers.
+     * Firefox has a lower limit than other browsers.
      */
-    private static readonly MAX_ELEMENT_HEIGHT: number = 32000000;
+    private static readonly MAX_ELEMENT_HEIGHT: number = (
+        /Firefox/.test(navigator.userAgent) ? 6000000 : 31000000
+    );
 
     /**
      * The total height of the grid, used when the Grid height
@@ -345,7 +348,8 @@ class RowsVirtualizer {
                 // Make sure tbody is not taller than max element height.
                 const topOffset = Math.min(
                     lastRow.getDefaultTopOffset(),
-                    RowsVirtualizer.MAX_ELEMENT_HEIGHT - this.defaultRowHeight
+                    RowsVirtualizer.MAX_ELEMENT_HEIGHT -
+                        lastRow.htmlElement.offsetHeight
                 );
                 lastRow.setTranslateY(topOffset);
             }
