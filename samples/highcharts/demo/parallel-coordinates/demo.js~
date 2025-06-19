@@ -11,6 +11,11 @@
             parallelCoordinates: true,
             parallelAxes: {
                 lineWidth: 2
+            },
+            events: {
+                load: function () {
+                    this.pointer.applyInactiveState = () => {};
+                }
             }
         },
         title: {
@@ -42,9 +47,6 @@
                 },
                 shadow: false,
                 states: {
-                    inactive: {
-                        enabled: false
-                    },
                     hover: {
                         halo: {
                             size: 0
@@ -105,7 +107,7 @@
             categories: ['Before', 'After']
         }],
         colors: ['rgba(11, 200, 200, 0.1)'],
-        series: data.map(function (set) {
+        series: data.map(function (set, i) {
             return {
                 data: set
             };
