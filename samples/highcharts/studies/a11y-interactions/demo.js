@@ -691,6 +691,7 @@ Highcharts.Chart.prototype.addProxyEl =
 function (svgEl, elType, content, parent) {
     const container = parent || this.proxyContainer,
         el = this.addPlainA11yEl(elType, content, container),
+        computedStyle = window.getComputedStyle(svgEl),
         setSize = () => {
             const bbox = svgEl.getBoundingClientRect(),
                 containerBBox = container.getBoundingClientRect();
@@ -701,7 +702,7 @@ function (svgEl, elType, content, parent) {
                 width: bbox.width + 'px',
                 height: bbox.height + 'px',
                 overflow: 'hidden',
-                pointerEvents: 'none',
+                cursor: computedStyle.cursor,
                 tabindex: '-1'
             });
         },
@@ -709,6 +710,23 @@ function (svgEl, elType, content, parent) {
 
     resizeObserver.observe(svgEl);
     setSize();
+
+    [
+        'mousedown', 'mouseup', 'mouseenter', 'mouseover', 'mouseout',
+        'mouseleave', 'pointerdown', 'pointerup', 'pointermove',
+        'pointercancel', 'pointerleave', 'pointerenter', 'wheel',
+        'dragstart', 'dragend', 'dragenter', 'dragleave', 'dragover',
+        'drop', 'click', 'touchstart', 'touchend', 'touchmove', 'touchcancel'
+    ].forEach(
+        type => el.addEventListener(
+            type, e => {
+                svgEl.dispatchEvent(new e.constructor(e.type, e));
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        )
+    );
+
     return el;
 };
 
@@ -2929,6 +2947,7 @@ Highcharts.chart('accidents', {
     plotOptions: {
         series: {
             innerSize: '50%',
+            cursor: 'pointer',
             borderWidth: 3,
             dataLabels: {
                 enabled: true,
@@ -2954,6 +2973,9 @@ Highcharts.chart('accidents', {
                         textOutline: 'none',
                         padding: 8
                     }
+                },
+                events: {
+                    click: () => alert('clicked on turbulence encounter')
                 }
             },
             ['Abnormal Runway Contact', 6],
