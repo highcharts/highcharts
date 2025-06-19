@@ -103,6 +103,12 @@ class RowsVirtualizer {
     private totalGridHeight: number = 0;
 
     /**
+     * The overflow height of the grid, used when the Grid height
+     * exceeds the max element height.
+     */
+    private gridHeightOverflow: number = 0;
+
+    /**
      * The scroll offset in pixels used to adjust the row positions when
      * the Grid height exceeds the max element height.
      */
@@ -153,6 +159,10 @@ class RowsVirtualizer {
         }
         this.totalGridHeight = this.viewport.dataTable.getRowCount() *
             this.defaultRowHeight;
+
+        this.gridHeightOverflow = Math.max(
+            this.totalGridHeight - RowsVirtualizer.MAX_ELEMENT_HEIGHT, 0
+        );
 
         // Load & render rows
         this.renderRows(this.rowCursor);
@@ -213,12 +223,10 @@ class RowsVirtualizer {
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
 
-        const gridHeightOverflow = Math.max(
-            this.totalGridHeight - RowsVirtualizer.MAX_ELEMENT_HEIGHT, 0
-        );
         const scrollPercentage = lastScrollTop /
             (RowsVirtualizer.MAX_ELEMENT_HEIGHT - target.offsetHeight);
-        this.scrollOffset = scrollPercentage * gridHeightOverflow;
+
+        this.scrollOffset = scrollPercentage * this.gridHeightOverflow;
 
         if (this.preventScroll) {
             if (lastScrollTop <= target.scrollTop) {
@@ -491,9 +499,15 @@ class RowsVirtualizer {
         const lastRow = rows[rowsLn - 1];
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
-            lastRow.setTranslateY(
-                RowsVirtualizer.MAX_ELEMENT_HEIGHT - (this.defaultRowHeight)
-            );
+            if (this.gridHeightOverflow > 0) {
+                lastRow.setTranslateY(
+                    RowsVirtualizer.MAX_ELEMENT_HEIGHT - (this.defaultRowHeight)
+                );
+            } else {
+                lastRow.setTranslateY(
+                    preLastRow.htmlElement.offsetHeight + translateBuffer
+                );
+            }
         }
     }
 
