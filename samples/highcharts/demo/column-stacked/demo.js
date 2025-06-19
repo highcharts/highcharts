@@ -29,7 +29,7 @@ Highcharts.chart('container', {
         y: 70,
         floating: true,
         backgroundColor: 'var(--highcharts-background-color, #ffffff)',
-        borderColor: '#CCC',
+        borderColor: 'var(--highcharts-neutral-color-20, #cccccc)',
         borderWidth: 1,
         shadow: false
     },
