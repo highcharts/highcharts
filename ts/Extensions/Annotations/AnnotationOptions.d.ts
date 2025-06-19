@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft, Black Label
+ *  (c) 2009-2025 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -60,6 +60,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
     shapes?: Array<ControllableShapeOptions>;
     type?: string;
     typeOptions: AnnotationTypeOptions;
+    types: Record<string, DeepPartial<AnnotationOptions>>;
     visible: boolean;
     zIndex: number;
 }

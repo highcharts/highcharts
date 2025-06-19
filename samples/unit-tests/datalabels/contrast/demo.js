@@ -33,7 +33,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                point.dataLabel.element.childNodes[0].style.color
+                point.dataLabel.element.childNodes[0].style.fill
             ).get(),
             Highcharts.color(chart.renderer.getContrast(point.color)).get(),
             'Contrast color should be used for a justified label on a column.'
@@ -46,10 +46,10 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                point.dataLabel.element.childNodes[0].style.color
+                point.dataLabel.element.childNodes[0].style.fill
             ).get(),
             'rgb(0,0,0)',
-            `Contrast color should not be used when dataLabel does not collide  
+            `Contrast color should not be used when dataLabel does not collide
             with column (#6657).`
         );
 
@@ -61,7 +61,7 @@ QUnit.test(
         });
         assert.strictEqual(
             chart.series[1].points[11].dataLabel.element.childNodes[0].style
-                .color,
+                .fill,
             'red',
             `After updating from contrast color,
             label should have new color (#12500)`
@@ -87,7 +87,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.color
+                points[0].dataLabel.element.childNodes[0].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(255,255,255)'
@@ -104,13 +104,13 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.color
+                points[0].dataLabel.element.childNodes[0].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(0,0,0)'
             ).get(),
             `If background of chart is dark, but plot background color is light
-            dataLabels outside the bar chart should get the contrast (black) 
+            dataLabels outside the bar chart should get the contrast (black)
             color (#17413).`
         );
 
@@ -123,7 +123,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.color
+                points[0].dataLabel.element.childNodes[0].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(255,255,255)'
@@ -141,7 +141,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[1].style.color
+                points[0].dataLabel.element.childNodes[1].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(0, 0, 0)'
@@ -159,13 +159,35 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[1].style.color
+                points[0].dataLabel.element.childNodes[1].style.fill
             ).get(),
             Highcharts.color(
                 'rgb(0, 0, 0)'
             ).get(),
             `When the data label background color is set to 'auto', set the
             data label color by contrast to the point color. (#20007).`
+        );
+
+        chart.update({
+            chart: {
+                backgroundColor: 'transparent'
+            },
+            series: [{
+                data: [1],
+                dataLabels: {
+                    enabled: true
+                }
+            }]
+        });
+
+        const transparentLabelFill = chart.series[0].points[0]
+            .dataLabel.options.style.color;
+
+        assert.strictEqual(
+            Highcharts.color(transparentLabelFill).get(),
+            Highcharts.color('#000000').get(),
+            `When chart background is 'transparent', data label color should
+            fall back to black (#transparent-contrast).`
         );
     }
 );

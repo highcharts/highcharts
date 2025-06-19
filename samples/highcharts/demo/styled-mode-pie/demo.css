@@ -1,5 +1,19 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 .highcharts-pie-series .highcharts-point {
     stroke: #ede;
     stroke-width: 2px;
@@ -46,7 +60,7 @@
 }
 
 .highcharts-data-table thead tr,
-.highcharts-data-table tr:nth-child(even) {
+.highcharts-data-table tbody tr:nth-child(even) {
     background: #f8f8f8;
 }
 

@@ -1,7 +1,7 @@
 Treemap
 ===
 
-<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels allow="fullscreen"></iframe>
+<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels" allow="fullscreen"></iframe>
 
 ### Requirements
 
@@ -16,19 +16,20 @@ The tree automatically has one node at the top representing the root node. If a 
 
 The following is an example of how the tree is built in Highcharts:
 
-
-    data: [{
-        name: 'I have children',
-        id: 'id-1'
-    }, {
-        name: 'I am a child',
-        parent: 'id-1',
-        value: 2
-    }, {
-        name: 'I am a smaller child',
-        parent: 'id-1',
-        value: 1
-    }]
+```js
+data: [{
+    name: 'I have children',
+    id: 'id-1'
+}, {
+    name: 'I am a child',
+    parent: 'id-1',
+    value: 2
+}, {
+    name: 'I am a smaller child',
+    parent: 'id-1',
+    value: 1
+}]
+```
 
 
 ### Algorithms
@@ -81,73 +82,75 @@ The each child which is passed along has the following variables:
 
 A starting point for the function could be the following
 
+```js
+function myFunction(parent, children) {
+    childrenAreas = [];
+    children.forEach(function(child) {
+        // Do some calculations
 
-    function myFunction(parent, children) {
-        childrenAreas = [];
-        children.forEach(function(child) {
-            // Do some calculations
-
-            // These return values are required for each child
-            childrenAreas.push({
-                x: someXValue,
-                y: someYValue,
-                width: someWidth,
-                height: someHeight
-            });
+        // These return values are required for each child
+        childrenAreas.push({
+            x: someXValue,
+            y: someYValue,
+            width: someWidth,
+            height: someHeight
         });
-        return childrenAreas;
-    };
+    });
+    return childrenAreas;
+};
+```
 
 
 After the algorithm function is finished, then we have to add it by extending the treemap prototype with the function
 
-
-    Highcharts.seriesTypes.treemap.prototype.myCustomAlgorithm = myFunction;
+```js
+Highcharts.seriesTypes.treemap.prototype.myCustomAlgorithm = myFunction;
+```
 
 
 Afterwards when you declare the chart options, then specify that the series.layoutAlgorithm should be your new custom algorithm.
 
-
-    const chart = new Highcharts.Chart({
-        ...
-        series: [{
-           layoutAlgorithm: "myCustomAlgorithm",
-           ...
-        }],
-        ...
-    });
-
+```js
+const chart = new Highcharts.Chart({
+    ...
+    series: [{
+       layoutAlgorithm: "myCustomAlgorithm",
+       ...
+    }],
+    ...
+});
+```
 
 ### Work with levels
 
-The levels option gives the ability to set options on a specific level. This comes in handy whenever all points which lies on a certain level in the data tree, should stand out and differ from the rest of the points in the series.
+The levels option gives the ability to set options on a specific level. This comes in handy whenever all points which lie on a certain level in the data tree, should stand out and differ from the rest of the points in the series.
 
 Below is an example where the first level will use the Slice And Dice algorithm, and the rest will use the Squarified algorithm. Also all points on the second level will be colored blue, while the rest will be in the color red.
 
-
-    const chart = new Highcharts.Chart({
-        ...
-        series: [{
-           layoutAlgorithm: 'squarified',
-           color: 'red',
-           levels: [{
-               level: 1,
-               layoutAlgorithm: 'sliceAndDice'
-           }, {
-               level: 2,
-               color: 'blue'
-           }],
-           ...
-        }],
-        ...
-    });
-
+```js
+const chart = new Highcharts.Chart({
+    ...
+    series: [{
+       layoutAlgorithm: 'squarified',
+       color: 'red',
+       levels: [{
+           level: 1,
+           layoutAlgorithm: 'sliceAndDice'
+       }, {
+           level: 2,
+           color: 'blue'
+       }],
+       ...
+    }],
+    ...
+});
+```
 
 ##### Level Is Constant:
 
-levelIsConstant is an option used together with the levels and allowDrillToNode options. By default it is set to true. When set to false the first level visible when drilling is considered to be level one. Otherwise the level will be the same as in the tree structure.
+The `levelIsConstant` option is used together with the levels and `allowTraversingTree` options. By default it is set to true. When set to false the first level visible when drilling is considered to be level one. Otherwise the level will be the same as in the tree structure.
 
-An [example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-large-dataset) where levelIsConstant is set to false.
+An [example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-large-dataset) where `levelIsConstant` is set to false.
 
 ##### Traversing through levels
 
@@ -155,70 +158,91 @@ When the `allowTraversingTree` option is true, clicking on a point will set that
 
 Read more about the breadcrumbs [here](https://www.highcharts.com/docs/advanced-chart-features/breadcrumbs).
 
+### Group headers and data labels
+Data labels can be applied to treemaps just like any other series, and the
+default position for the data level is in the center of the node. Data labels
+can be specified per level.
+
+A special form of data label is the group headers. To enable group headers, set
+the
+[dataLabels.headers](https://api.highcharts.com/highcharts/series.treemap.dataLabels.headers)
+option to true. The most common way of applying headers is to enable them on a
+specific level. By default, headers will take up space within the group node,
+causing the remaining space for leaf nodes to be reduced. This may cause the
+relative size between leaf nodes to be skewed. To prevent that, there's an
+experimental option
+[nodeSizeBy](https://api.highcharts.com/highcharts/series.treemap.dataLabels.nodeSizeBy),
+that can be set to `leaf`.
+
+<iframe style="border: 0; width: 100%; height: 420px;" src="https://www.highcharts.com/samples/embed/highcharts/series-treemap/headers" allow="fullscreen"></iframe>
+
+
+
 ### Use with ColorAxis
 
-<iframe style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-coloraxis allow="fullscreen"></iframe>
+<iframe style="border: 0; width: 100%; height: 420px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/treemap-coloraxis" allow="fullscreen"></iframe>
 
-For use with colorAxis, then the `modules/heatmap.js`must be included as well.
+For use with `colorAxis`, then the `modules/heatmap.js`must be included as well.
 
-After the module is included in your project, a colorAxis object can be defined in the chart options. Read the [API](https://api.highcharts.com/highmaps/colorAxis) for details about its options.
+After the module is included in your project, a `colorAxis` object can be defined in the chart options. Read the [API](https://api.highcharts.com/highmaps/colorAxis) for details about its options.
+
+```js
+const chart = new Highcharts.Chart({
+    ...
+    colorAxis: {
+        minColor: '#FFFFFF',
+        maxColor: Highcharts.getOptions().colors[0]
+    },
+    ...
+});
+```
 
 
-    const chart = new Highcharts.Chart({
+And each point needs its own `colorValue`.
+
+```js
+const chart = new Highcharts.Chart({
+    ...
+    colorAxis: {
         ...
-        colorAxis: {
-            minColor: '#FFFFFF',
-            maxColor: Highcharts.getOptions().colors[0]
-        },
+    },
+    series: [{
         ...
-    });
-
-
-And each point needs its own colorValue.
-
-
-    const chart = new Highcharts.Chart({
-        ...
-        colorAxis: {
-            ...
-        },
-        series: [{
-            ...
-            data: [{
-                name: "Point 1",
-                value: 1,
-                colorValue: 5 // This value decides which color on the scale that the point gets.
-            }],
-            ...
+        data: [{
+            name: "Point 1",
+            value: 1,
+            colorValue: 5 // This value decides which color on the scale that the point gets.
         }],
         ...
-    });
-
+    }],
+    ...
+});
+```
 
 [Full example is found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-coloraxis)
 
-### Treemap grouping
+### Treemap clustering of small points
 
-Treemap series grouping simplifies the visualization of large datasets by organizing data points into larger blocks, enhancing both readability and performance. This approach is particularly useful for presenting vast amounts of information in a compact, easy-to-understand format.
+Treemap clustering simplifies the visualization of large datasets by organizing data points into larger blocks, enhancing both readability and performance. This approach is particularly useful for presenting vast amounts of information in a compact, easy-to-understand format.
 
-To configure treemap series grouping, the `cluster` option is used. Within this option, you can specify `pixelWidth` and `pixelHeight`, which set the minimum pixel size for areas before they are grouped. These thresholds ensure that smaller sections are consolidated into larger, more visible areas for better clarity. The `name` parameter allows you to define a custom label for the grouped nodes, which will appear in tooltips, data labels, and other chart elements. Read the [API](https://api.highcharts.com/highcharts/series.treemap.cluster) for details about its options.
+To configure treemap clustering, the `cluster` option is used. Within this option, you can specify `pixelWidth` and `pixelHeight`, which set the minimum pixel size for areas before they are grouped. These thresholds ensure that smaller sections are consolidated into larger, more visible areas for better clarity. The `name` parameter allows you to define a custom label for the grouped nodes, which will appear in tooltips, data labels, and other chart elements. Read the [API](https://api.highcharts.com/highcharts/series.treemap.cluster) for details about its options.
 
-
-    const chart = new Highcharts.Chart({
+```js
+const chart = new Highcharts.Chart({
+    ...
+    series: [{
         ...
-        series: [{
-            ...
-            type: "treemap",
-            cluster: {
-                enabled: true,
-                pixelHeight: 20,
-                pixelWidth: 10
-            }
-            ...
-        }],
+        type: "treemap",
+        cluster: {
+            enabled: true,
+            pixelHeight: 20,
+            pixelWidth: 10
+        }
         ...
-    });
-
+    }],
+    ...
+});
+```
 
 [Full example is found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/treemap-grouping-advanced)
 

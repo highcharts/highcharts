@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -1905,6 +1905,10 @@ namespace AxisDefaults {
          * overrides the default behaviour of [tickPixelInterval](
          * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
          *
+         * Note: When working with date-time axes, be aware of time zone
+         * handling. See the [documentation on time options](https://www.highcharts.com/docs/chart-concepts/axes#datetime)
+         * for best practices.
+         *
          * @see [tickPositioner](#xAxis.tickPositioner)
          *
          * @sample {highcharts} highcharts/xaxis/tickpositions-tickpositioner/
@@ -2807,7 +2811,7 @@ namespace AxisDefaults {
          * @apioption yAxis.scrollbar.margin
          */
 
-        /* eslint-disable highcharts/doclet-apioption-last */
+        /* eslint-disable @highcharts/highcharts/doclet-apioption-last */
         /**
          * Defines the position of the scrollbar. By default, it is positioned
          * on the opposite of the main axis (right side of the chart).
@@ -2828,7 +2832,7 @@ namespace AxisDefaults {
          * @apioption xAxis.scrollbar.opposite
          *
          */
-        /* eslint-enable highcharts/doclet-apioption-last */
+        /* eslint-enable @highcharts/highcharts/doclet-apioption-last */
 
         /**
          * Whether to show the scrollbar when it is fully zoomed out at max
@@ -3056,17 +3060,18 @@ namespace AxisDefaults {
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
-             * `text` option to `undefined`.
+             * `text` option to `undefined`. The default value is overriden by
+             * the `lang.yAxisTitle` language option.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/
              *         Custom HTML
              *
-             * @type    {string|null}
+             * @type    {string|undefined}
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
+             * @apioption yAxis.title.text
              */
-            text: 'Values'
         },
 
         /**

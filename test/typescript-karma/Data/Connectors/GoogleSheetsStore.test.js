@@ -17,6 +17,7 @@ test('GoogleDataConnector', (assert) => {
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
+        const eventTable = Object.values(e.tables)[0];
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
@@ -24,12 +25,12 @@ test('GoogleDataConnector', (assert) => {
         );
 
         assert.deepEqual(
-            e.table.getRow(1).map(cellValue => typeof cellValue),
+            eventTable.getRow(1).map(cellValue => typeof cellValue),
             ['string', 'number', 'number', 'number'],
             'The connector table has the correct data types'
         );
 
-        const columnNames = e.table.getColumnNames();
+        const columnNames = eventTable.getColumnNames();
 
         assert.notOk(
             columnNames.includes('null'),
@@ -37,10 +38,10 @@ test('GoogleDataConnector', (assert) => {
             'should be assigned an unique name'
         );
 
-        e.table.renameColumn(columnNames[0], 'null');
+        eventTable.renameColumn(columnNames[0], 'null');
 
         assert.ok(
-            e.table.getColumnNames().includes('null'),
+            eventTable.getColumnNames().includes('null'),
             'A string value of `null` is ok'
         );
 
@@ -109,16 +110,6 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
 
     const done = assert.async(2); // event + promise
 
-    // Test data converter event
-    const converter = connector.converter;
-    converter.on('afterParse', (e) => {
-        assert.equal(
-            beforeParseFired,
-            true,
-            'beforeParse was fired'
-        );
-    });
-
     // Test after load event
     registerConnectorEvents(connector, registeredEvents, assert);
 
@@ -135,7 +126,7 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
             'beforeParse was fired'
         );
 
-        const columnNames = e.table.getColumnNames();
+        const columnNames = Object.values(e.tables)[0].getColumnNames();
         assert.deepEqual(
             columnNames,
             ['Test0', 'Test1', 'Test2', 'Test3'],
@@ -145,7 +136,7 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
         done();
     });
 
-    connector
+    await connector
         .load()
         .catch((error) => assert.strictEqual(
             error,
@@ -153,6 +144,16 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
             'Test should not fail.'
         ))
         .then(() => done())
+
+    // Test data converter event
+    const converter = connector.converter;
+    converter.on('afterParse', (e) => {
+        assert.equal(
+            beforeParseFired,
+            true,
+            'beforeParse was fired'
+        );
+    });
 });
 
 
@@ -172,20 +173,21 @@ test('GoogleDataConnector, worksheet 1', async (assert) => {
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
+        const eventTable = Object.values(e.tables)[0];
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
             'Events are fired in the correct order'
         );
 
-        const columnNames = e.table.getColumnNames();
+        const columnNames = eventTable.getColumnNames();
         assert.deepEqual(
             columnNames,
             ['0', 'John', 'Jane', 'Joe'],
             'Column names are correct'
         );
 
-        const firstColumn = e.table.getColumn('0');
+        const firstColumn = eventTable.getColumn('0');
         assert.deepEqual(
             firstColumn,
             ['Apples', 'Oranges', 'Pears', 'Bananas'],
@@ -222,20 +224,21 @@ test('GoogleDataConnector, worksheet 2', async (assert) => {
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
+        const eventTable = Object.values(e.tables)[0];
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
             'Events are fired in the correct order'
         );
 
-        const columnNames = e.table.getColumnNames();
+        const columnNames = eventTable.getColumnNames();
         assert.deepEqual(
             columnNames,
             ['0', 'John', 'Jane', 'Joe'],
             'Column names are correct'
         );
 
-        const firstColumn = e.table.getColumn('0');
+        const firstColumn = eventTable.getColumn('0');
         assert.deepEqual(
             firstColumn,
             ['Apricots', 'Melons', 'Papayas', 'Kiwis'],

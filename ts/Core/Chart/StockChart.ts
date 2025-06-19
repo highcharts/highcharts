@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -140,9 +140,7 @@ function getDefaultAxisOptions(
                 options.type === 'category'
             ),
             title: {
-                text: defaultOptions.title?.text !== 'Values' ?
-                    defaultOptions.title?.text :
-                    null
+                text: void 0
             }
         };
     }
@@ -821,7 +819,7 @@ namespace StockChart {
 
                         x1 = axis2.pos;
                         x2 = x1 + axis2.len;
-                        y1 = y2 = Math.round(axisTop + axis.height - transVal);
+                        y1 = y2 = axisTop + axis.height - transVal;
 
                         // Outside plot area
                         if (

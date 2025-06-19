@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -201,7 +201,7 @@ class TimeBase {
         this.dTLCache = {};
         this.options = options = merge(true, this.options, options);
 
-        const { timezoneOffset, useUTC } = options;
+        const { timezoneOffset, useUTC, locale } = options;
 
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
@@ -228,6 +228,11 @@ class TimeBase {
             timezone?.indexOf('Etc/GMT') !== 0;
 
         this.timezone = timezone;
+
+        // Update locale.
+        if (this.lang && locale) {
+            this.lang.locale = locale;
+        }
 
         // Assign default time formats from locale strings
         (
@@ -300,8 +305,12 @@ class TimeBase {
             minute: 'numeric',
             second: 'numeric'
         }, timestamp, 'es')
-            .split(/(?:, |\/|:)/g);
-
+            // The ', ' splitter is for all modern browsers:
+            //      L, 6/3/2023, 14:30:00
+            // The ' ' splitter is for legacy Safari with no comma between date
+            // and time (#22445):
+            //      L, 6/3/2023 14:30:00
+            .split(/(?:, | |\/|:)/g);
         return [
             year,
             +month - 1,
@@ -493,7 +502,8 @@ class TimeBase {
         // Check if the string has time zone information
         const hasTimezone = s.indexOf('Z') > -1 ||
                 /([+-][0-9]{2}):?[0-9]{2}$/.test(s),
-            isYYYYMMDD = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s);
+            // YYYY-MM-DD and YYYY-MM are always UTC
+            isYYYYMMDD = /^[0-9]{4}-[0-9]{2}(-[0-9]{2}|)$/.test(s);
 
         if (!hasTimezone && !isYYYYMMDD) {
             s += 'Z';
@@ -575,6 +585,7 @@ class TimeBase {
      * | `%d` | Two digit day of the month, 01 to 31         |       |
      * | `%e` | Day of the month, 1 through 31               |       |
      * | `%w` | Day of the week, 0 through 6                 | N/A   |
+     * | `%v` | The prefix "week from", read from `lang.weekFrom` | N/A |
      * | `%b` | Short month, like 'Jan'                      |       |
      * | `%B` | Long month, like 'January'                   |       |
      * | `%m` | Two digit month number, 01 through 12        |       |
@@ -720,6 +731,7 @@ class TimeBase {
 
                         // Week (none implemented)
                         // 'W': weekNumber(),
+                        v: lang?.weekFrom ?? '',
 
                         // Month
                         // Short month, like 'Jan'

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -571,7 +571,7 @@ const NavigatorDefaults: NavigatorOptions = {
         crosshair: false,
 
         title: {
-            text: null
+            text: void 0
         },
 
         tickLength: 0,

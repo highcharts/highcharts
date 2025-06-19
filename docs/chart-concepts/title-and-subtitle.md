@@ -7,13 +7,14 @@ The title is by default displayed at the top of the chart, and an optional subti
 
 The title and subtitle can be set as shown in the example below.
 
-
-    title: {
-        text: 'My custom title'
-    },
-    subtitle: {
-        text: 'My custom subtitle'
-    }
+```js
+title: {
+    text: 'My custom title'
+},
+subtitle: {
+    text: 'My custom subtitle'
+}
+```
 
 By default, since version 12, the title and subtitle have adaptive alignment to best fit the length of the text and the width of the chart. The following rules apply:
 * The title is aligned to the center for short text.

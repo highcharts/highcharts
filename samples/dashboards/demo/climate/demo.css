@@ -2,6 +2,20 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 /**
  *
  *  Colors
@@ -274,21 +288,11 @@
  *
  **/
 
-#selection-grid .highcharts-dashboards-component {
-    background-color: var(--color-background);
-}
-
-#selection-grid .highcharts-datagrid-table thead {
-    font-size: 12px;
-}
-
-#selection-grid .highcharts-datagrid-hovered-row {
-    background-color: var(--color-hover-background);
-    color: var(--color-hover-text);
-}
-
-#selection-grid .highcharts-datagrid-hovered-column {
-    background: none;
+.hcg-theme-default {
+    --hcg-font-size: 0.95em;
+    --hcg-padding: 8px 10px;
+    --hcg-header-padding: 15px;
+    --hcg-cell-hovered-row-background: var(--color-hover-background);
 }
 
 /**

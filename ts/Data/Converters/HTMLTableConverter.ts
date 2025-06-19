@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -318,7 +318,7 @@ class HTMLTableConverter extends DataConverter {
             curColspan = 0,
             rowspan;
 
-        // Clean up multiple table headers. Chart.getDataRows() returns two
+        // Clean up multiple table headers. Exporting.getDataRows() returns two
         // levels of headers when using multilevel, not merged. We need to
         // merge identical headers, remove redundant headers, and keep it
         // all marked up nicely.

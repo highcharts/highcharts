@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -96,51 +96,6 @@ class HighchartsComponent extends Component {
         Component.defaultOptions,
         HighchartsComponentDefaults
     );
-
-    /* *
-     *
-     *  Static functions
-     *
-     * */
-
-    /**
-     * Creates component from JSON.
-     *
-     * @param json
-     * Set of component options, used for creating the Highcharts component.
-     *
-     * @returns
-     * Highcharts component based on config from JSON.
-     *
-     * @private
-     */
-    public static fromJSON(
-        json: HighchartsComponent.ClassJSON,
-        cell: Cell
-    ): HighchartsComponent {
-        const options = json.options;
-        const chartOptions = JSON.parse(json.options.chartOptions || '{}');
-        /// const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
-
-        const component = new HighchartsComponent(
-            cell,
-            merge<Options>(
-                options as any,
-                {
-                    chartOptions
-                    // Highcharts, // TODO: Find a solution
-                    // store: store instanceof DataConnector ? store : void 0,
-                }
-            )
-        );
-
-        component.emit({
-            type: 'fromJSON',
-            json
-        });
-
-        return component;
-    }
 
     /* *
      *
@@ -244,9 +199,17 @@ class HighchartsComponent extends Component {
             const connector = connectorHandler.connector;
             if (connector) {
                 connector.on('afterLoad', (e: DataConnector.Event): void => {
-                    if (e.table) {
-                        connector.table.setColumns(e.table.getColumns());
+                    const eventTables = e.tables;
+                    let eventTable;
+
+                    if (this.dataTableKey) {
+                        eventTable = eventTables[this.dataTableKey];
+                    } else {
+                        eventTable = Object.values(eventTables)[0];
                     }
+
+                    const table = connector.getTable(this.dataTableKey);
+                    table.setColumns(eventTable.getColumns());
                 });
             }
         }
@@ -359,7 +322,7 @@ class HighchartsComponent extends Component {
         point: Point,
         connectorHandler: HighchartsComponent.HCConnectorHandler
     ): void {
-        const table = connectorHandler.connector?.table;
+        const table = connectorHandler.connector?.getTable(this.dataTableKey);
         const columnAssignment = connectorHandler.columnAssignment;
         const seriesId = point.series.options.id;
         const converter = new DataConverter();
@@ -451,6 +414,13 @@ class HighchartsComponent extends Component {
         for (const connectorHandler of connectorHandlers) {
             const options: ConnectorOptions = connectorHandler.options;
             let columnAssignment = options.columnAssignment;
+
+            // Set the new data table based on the data table key.
+            const connector = connectorHandler.connector;
+            const dataTableKey = this.dataTableKey;
+            if (connector && dataTableKey) {
+                connectorHandler.setTable(connector.dataTables[dataTableKey]);
+            }
 
             if (!columnAssignment && connectorHandler.presentationTable) {
                 columnAssignment = this.getDefaultColumnAssignment(
@@ -786,44 +756,11 @@ class HighchartsComponent extends Component {
         return options;
     }
 
-    /**
-     * Converts the class instance to a class JSON.
-     *
-     * @returns
-     * Class JSON of this Component instance.
-     *
-     * @private
-     */
-    public toJSON(): HighchartsComponent.ClassJSON {
-        const chartOptions = JSON.stringify(this.options.chartOptions),
-            chartConstructor = this.options.chartConstructor || 'chart';
-
-        this.registerChartEvents();
-
-        const base = super.toJSON();
-
-        const json: HighchartsComponent.ClassJSON = {
-            ...base,
-            type: 'Highcharts',
-            options: {
-                ...base.options,
-                chartOptions,
-                chartConstructor,
-                // TODO: may need to handle callback functions
-                // Maybe have a sync.toJSON()
-                type: 'Highcharts',
-                sync: {}
-            }
-        };
-
-        this.emit({ type: 'toJSON', json });
-        return json;
-    }
 
     /**
      * Get the HighchartsComponent component's options.
      * @returns
-     * The JSON of HighchartsComponent component's options.
+     * HighchartsComponent component's options.
      *
      * @internal
      *
@@ -901,33 +838,12 @@ namespace HighchartsComponent {
     export type ComponentType = HighchartsComponent;
 
     /** @private */
-    export type ChartComponentEvents =
-        JSONEvent |
-        Component.EventTypes;
-
-    /** @private */
-    export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
-        json: ClassJSON;
-    }>;
+    export type ChartComponentEvents = Component.EventTypes;
 
     /** @private */
     export interface HCConnectorHandler extends ConnectorHandler {
         columnAssignment?: ColumnAssignmentOptions[];
     }
-
-    /** @private */
-    export interface OptionsJSON extends Component.ComponentOptionsJSON {
-        chartOptions?: string;
-        chartClassName?: string;
-        chartID?: string;
-        chartConstructor: ConstructorType;
-        type: 'Highcharts'
-    }
-    /** @private */
-    export interface ClassJSON extends Component.JSON {
-        options: OptionsJSON;
-    }
-
 }
 
 /* *

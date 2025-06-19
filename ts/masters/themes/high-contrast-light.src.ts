@@ -3,7 +3,7 @@
  * @module highcharts/themes/high-contrast-light
  * @requires highcharts
  *
- * (c) 2009-2024 Highsoft AS
+ * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -82,42 +82,6 @@ class NavigatorComponent extends Component {
      * Predefined sync configuration for the Navigator component.
      */
     public static predefinedSyncConfig = NavigatorSyncs;
-
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Creates component from JSON.
-     *
-     * @param json
-     * Set of component options, used for creating the Highcharts component.
-     *
-     * @returns
-     * Highcharts component based on config from JSON.
-     *
-     * @private
-     */
-    public static fromJSON(
-        json: Component.JSON,
-        cell: Cell
-    ): NavigatorComponent {
-        const options = json.options,
-            component = new NavigatorComponent(
-                cell,
-                options as unknown as Options
-            );
-
-        component.emit({
-            type: 'fromJSON',
-            json
-        });
-
-        return component;
-    }
 
     /* *
      *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -175,6 +175,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
     public modified: DataTable;
 
     private originalRowIndexes?: Array<number|undefined>;
+
 
     /* *
      *

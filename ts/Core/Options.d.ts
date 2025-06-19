@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -33,14 +33,19 @@ export interface LabelsItemsOptions {
 }
 
 export interface LangOptions extends LangOptionsCore {
+    chartTitle: string;
     loading: string;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
+    pieSliceName: string;
     resetZoom: string;
     resetZoomTitle: string;
+    seriesName: string;
+    yAxisTitle: string;
     zoomIn?: string;
     zoomOut?: string;
 }
+
 export interface LoadingOptions {
     hideDuration?: number;
     labelStyle?: CSSObject;

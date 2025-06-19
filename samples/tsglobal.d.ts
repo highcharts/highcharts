@@ -1,6 +1,4 @@
 /// <reference path="../code/highcharts.src.d.ts" />
-/// <reference path="../code/dashboard.src.d.ts" />
-/// <reference path="../code/datagrid.src.d.ts" />
 /// <reference path="../node_modules/@types/jquery/index.d.ts" />
 /// <reference path="../node_modules/@types/qunit/index.d.ts" />
 /// <reference path="../test/test-controller.d.ts" />

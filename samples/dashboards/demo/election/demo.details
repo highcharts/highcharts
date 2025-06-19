@@ -6,7 +6,7 @@ requiresManualTesting: true
 js_wrap: b
 new_until: 2024-05-11
 tags:
-- Highcharts Dashboards demo
+  - Highcharts Dashboards demo
 categories:
   - Advanced:
         priority: 30

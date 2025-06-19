@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -395,7 +395,6 @@ class Pointer {
 
             // Make a selection
             if (
-                (chart.hasCartesianSeries || chart.mapView) &&
                 this.hasZoom &&
                 clickedInside &&
                 !panKeyPressed
@@ -819,8 +818,14 @@ class Pointer {
 
                 // Get all points with the same x value as the hoverPoint
                 searchSeries.forEach(function (s): any {
+                    const nullInteraction = s.options?.nullInteraction;
                     let point = find(s.points, function (p: Point): boolean {
-                        return p.x === hoverPoint.x && !p.isNull;
+                        return (
+                            p.x === hoverPoint.x && (
+                                !p.isNull ||
+                                !!nullInteraction
+                            )
+                        );
                     });
 
                     if (isObject(point)) {
@@ -1151,7 +1156,7 @@ class Pointer {
 
         // Show the tooltip and run mouse over events (#977)
         if (
-            !chart.openMenu &&
+            !chart.exporting?.openMenu &&
             (
                 this.inClass(pEvt.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
@@ -2003,8 +2008,7 @@ class Pointer {
                     visiblePlotOnly: true
                 }
             );
-            if (isInside && !chart.openMenu) {
-
+            if (isInside && !chart.exporting?.openMenu) {
                 // Run mouse events and display tooltip etc
                 if (start) {
                     this.runPointActions(e);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -24,14 +24,9 @@
 
 import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';
-import type Serializable from '../Serializable';
 
-import Bindings from '../Actions/Bindings.js';
-const { componentFromJSON } = Bindings;
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
@@ -51,45 +46,6 @@ const {
  * @internal
  **/
 class Cell extends GUIElement {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    /** @internal */
-    public static fromJSON(
-        json: Cell.JSON,
-        row?: Row
-    ): (Cell|undefined) {
-        if (row) {
-            const options = json.options;
-
-            let id = options.containerId;
-
-            if (row.layout.copyId) {
-                id = id + '_' + row.layout.copyId;
-            }
-
-            return new Cell(
-                row,
-                {
-                    id: id,
-                    parentContainerId: (row.container && row.container.id) ||
-                        options.parentContainerId,
-                    mountedComponentJSON: options.mountedComponentJSON,
-                    style: options.style,
-                    layoutJSON: options.layoutJSON,
-                    width: options.width,
-                    height: options.height
-                }
-            );
-        }
-
-        return void 0;
-    }
-
     /* *
      *
      *  Constructor
@@ -159,29 +115,9 @@ class Cell extends GUIElement {
             )
         });
 
-        // Mount component from JSON.
-        if (this.options.mountedComponentJSON) {
-            this.mountComponentFromJSON(this.options.mountedComponentJSON);
-        }
-
         // Nested layout
         if (this.options.layout) {
             this.setNestedLayout();
-        }
-        if (this.options.layoutJSON) {
-            const layout = this.row.layout,
-                board = layout.board,
-                layoutFromJSON = (
-                    layout.constructor as typeof LayoutType
-                ).fromJSON;
-
-            this.nestedLayout = layoutFromJSON(
-                merge(this.options.layoutJSON, {
-                    parentContainerId: this.options.id
-                }),
-                board,
-                this
-            );
         }
     }
 
@@ -258,35 +194,6 @@ class Cell extends GUIElement {
             this
         );
     }
-    /**
-     * Mount component from JSON.
-     * @internal
-     *
-     * @param {Component.JSON} [json]
-     * Component JSON.
-     *
-     * @return {boolean}
-     * Returns true, if the component created from JSON is mounted,
-     * otherwise false.
-     */
-    public mountComponentFromJSON(
-        json: Component.JSON
-    ): boolean {
-        const cell = this;
-
-        if (cell.id !== json.options.parentElement) {
-            json.options.parentElement = cell.id;
-        }
-
-        const component = componentFromJSON(json);
-
-        if (component) {
-            cell.mountedComponent = component;
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      * Destroy the element, its container, event hooks
@@ -310,32 +217,6 @@ class Cell extends GUIElement {
         if (destroyRow) {
             row.destroy();
         }
-    }
-
-    /**
-     * Converts the class instance to a class JSON.
-     * @internal
-     *
-     * @return {Cell.JSON}
-     * Class JSON of this Cell instance.
-     */
-    public toJSON(): Cell.JSON {
-        const cell = this,
-            rowContainerId = (cell.row.container || {}).id || '';
-
-        return {
-            $class: 'Dashboards.Layout.Cell',
-            options: {
-                containerId: (cell.container as HTMLElement).id,
-                parentContainerId: rowContainerId,
-                width: cell.options.width,
-                height: cell.options.height,
-                mountedComponentJSON:
-                    cell.mountedComponent && cell.mountedComponent.toJSON(),
-                style: cell.options.style,
-                layoutJSON: cell.nestedLayout && cell.nestedLayout.toJSON()
-            }
-        };
     }
 
     /**
@@ -487,7 +368,7 @@ class Cell extends GUIElement {
 
     public setHighlight(remove?: boolean): void {
         const cell = this,
-            editMode = cell.row.layout.board.editMode;
+            editMode = cell.row?.layout.board.editMode;
 
         if (cell.container && editMode) {
             const cnt = cell.container,
@@ -595,13 +476,6 @@ namespace Cell {
     }
 
     /**
-     * @internal
-     **/
-    export interface JSON extends Serializable.JSON<'Dashboards.Layout.Cell'> {
-        options: OptionsJSON;
-    }
-
-    /**
      * Options for each cell.
      **/
     export interface Options {
@@ -664,10 +538,6 @@ namespace Cell {
          **/
         parentContainerId?: string;
         /**
-         * @internal
-         **/
-        mountedComponentJSON?: Component.JSON;
-        /**
          * To create a nested layout, add a layout object to a cell.
          *
          * Try it:
@@ -676,28 +546,11 @@ namespace Cell {
          **/
         layout?: LayoutType.Options;
         /**
-         * To create nested layout from JSON config.
-         */
-        layoutJSON?: LayoutType.JSON;
-        /**
          * Options for responsive design.
          *
          * @deprecated
          **/
         responsive?: Record<string, CellResponsiveOptions>;
-    }
-
-    /**
-     * @internal
-     **/
-    export interface OptionsJSON extends JSON.Object {
-        width?: (string|number);
-        height?: (string|number);
-        containerId: string;
-        parentContainerId: string;
-        mountedComponentJSON?: Component.JSON;
-        style?: CSSJSONObject;
-        layoutJSON?: LayoutType.JSON;
     }
 }
 

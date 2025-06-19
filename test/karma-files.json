@@ -15,6 +15,7 @@
     "code/modules/map.src.js",
     "code/modules/gantt.src.js",
 
+    "code/modules/datagrouping.src.js",
     "code/modules/exporting.src.js",
     "code/modules/parallel-coordinates.src.js",
     "code/modules/accessibility.src.js",
@@ -41,7 +42,7 @@
     "code/modules/geoheatmap.src.js",
     "code/modules/pyramid3d.src.js",
     "code/modules/networkgraph.src.js",
-    "code/modules/overlapping-datalabels.src.js",
+    "code/modules/non-cartesian-zoom.src.js",
     "code/modules/pareto.src.js",
     "code/modules/pattern-fill.src.js",
     "code/modules/pictorial.src.js",

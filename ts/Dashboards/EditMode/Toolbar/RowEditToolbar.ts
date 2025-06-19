@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -231,6 +231,7 @@ class RowEditToolbar extends EditToolbar {
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
+            toolbar.editMode.resizer?.disableResizer();
 
             fireEvent(toolbar.editMode, 'layoutChanged', {
                 type: 'rowDestroyed',

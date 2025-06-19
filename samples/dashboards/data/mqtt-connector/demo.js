@@ -33,6 +33,12 @@ const topicMap = {
     }
 };
 
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
+
 // Options for chart
 const chartOptions = {
     chart: {

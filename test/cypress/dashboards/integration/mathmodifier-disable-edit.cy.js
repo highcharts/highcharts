@@ -1,6 +1,6 @@
 describe('MathModifier created columns and interaction.', () => {
     before(() => {
-        cy.visit('/dashboards/cypress/datagrid-mathmodifier/');
+        cy.visit('/dashboards/cypress/grid-mathmodifier/');
     })
 
     it('DataGrid and HC component should disable changing the mathmodifier column.', () => {
@@ -13,7 +13,9 @@ describe('MathModifier created columns and interaction.', () => {
                 [{
                     id: 'USD',
                     cells: {
-                        editable: false
+                        editMode: {
+                            enabled: false
+                        }
                     }
                 }],
                 'USD column is not editable'

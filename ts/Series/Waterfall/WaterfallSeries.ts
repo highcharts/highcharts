@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -288,7 +288,7 @@ class WaterfallSeries extends ColumnSeries {
                 continue;
             }
 
-            const prevStack = yAxis.waterfall.stacks[this.stackKey],
+            const prevStack = yAxis.waterfall?.stacks[this.stackKey],
                 isPos = prevY > 0 ? -prevBox.height : 0;
 
             if (prevStack && prevBox && box) {
@@ -541,16 +541,14 @@ class WaterfallSeries extends ColumnSeries {
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
     public getExtremes(): DataExtremesObject {
-        const stacking = this.options.stacking;
+        const stacking = this.options.stacking,
+            yAxis = this.yAxis,
+            waterfallStacks = yAxis.waterfall?.stacks;
 
-        let yAxis,
-            waterfallStacks,
-            stackedYNeg,
+        let stackedYNeg,
             stackedYPos;
 
-        if (stacking) {
-            yAxis = this.yAxis;
-            waterfallStacks = yAxis.waterfall.stacks;
+        if (stacking && waterfallStacks) {
             stackedYNeg = this.stackedYNeg = [];
             stackedYPos = this.stackedYPos = [];
 
@@ -617,7 +615,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         halfMinPointLength = minPointLength / 2,
         threshold = options.threshold || 0,
         stacking = options.stacking,
-        actualStack = yAxis.waterfall.stacks[series.stackKey],
+        actualStack = yAxis.waterfall?.stacks[series.stackKey],
         processedYData = series.getColumn('y', true);
 
     let previousIntermediate = threshold,
@@ -735,7 +733,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                     )
                 );
 
-                const dummyStackItem = yAxis.waterfall.dummyStackItem;
+                const dummyStackItem = yAxis.waterfall?.dummyStackItem;
                 if (dummyStackItem) {
                     dummyStackItem.x = i;
                     dummyStackItem.label = actualStack[i].label;
