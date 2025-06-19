@@ -328,7 +328,7 @@ class RowsVirtualizer {
                 // the maximum browser element height.
                 const topOffset = Math.min(
                     last.getDefaultTopOffset(),
-                    RowsVirtualizer.MAX_ELEMENT_HEIGHT
+                    RowsVirtualizer.MAX_ELEMENT_HEIGHT - this.defaultRowHeight
                 );
                 last.setTranslateY(topOffset);
             }
@@ -370,9 +370,6 @@ class RowsVirtualizer {
                 rows.push(newRow);
                 newRow.rendered = false;
                 if (isVirtualization) {
-                    // If table is larger than max element height
-                    // we use the max height instead, and get the offset
-                    // from the bottom and up
                     const topOffset = Math.min(
                         newRow.getDefaultTopOffset(),
                         RowsVirtualizer.MAX_ELEMENT_HEIGHT - (
@@ -499,11 +496,7 @@ class RowsVirtualizer {
         const lastRow = rows[rowsLn - 1];
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
-            if (this.gridHeightOverflow > 0) {
-                lastRow.setTranslateY(
-                    RowsVirtualizer.MAX_ELEMENT_HEIGHT - (this.defaultRowHeight)
-                );
-            } else {
+            if (this.gridHeightOverflow <= 0) {
                 lastRow.setTranslateY(
                     preLastRow.htmlElement.offsetHeight + translateBuffer
                 );
