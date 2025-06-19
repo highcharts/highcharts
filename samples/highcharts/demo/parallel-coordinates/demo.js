@@ -4,7 +4,6 @@
         'https://www.highcharts.com/samples/data/marathon.json'
     ).then(response => response.json());
 
-
     Highcharts.chart('container', {
         chart: {
             type: 'spline',
