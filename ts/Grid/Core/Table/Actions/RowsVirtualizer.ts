@@ -26,7 +26,7 @@ import type { RowsSettings } from '../../Options';
 import type Cell from '../Cell';
 
 import Table from '../Table.js';
-import TableRow from '../Content/TableRow.js';
+import TableRow from '../Body/TableRow.js';
 import Globals from '../../Globals.js';
 
 
@@ -247,14 +247,13 @@ class RowsVirtualizer {
         }
 
         // Do vertical virtual scrolling
-        let rowCursor = Math.floor((target.scrollTop / rowHeight)
-            + this.scrollOffset / rowHeight
+        let rowCursor = Math.floor(
+            (target.scrollTop / rowHeight) +
+                (this.scrollOffset / rowHeight)
         );
-        
         // Ensure row cursor doesn't exceed the available rows
         const maxRowCursor = Math.max(0, this.rowCount - 1);
         rowCursor = Math.min(rowCursor, maxRowCursor);
-        
         if (this.rowCursor !== rowCursor) {
             this.renderRows(rowCursor);
         }
@@ -387,7 +386,8 @@ class RowsVirtualizer {
                 if (isVirtualization) {
                     const topOffset = Math.min(
                         row.getDefaultTopOffset(),
-                        RowsVirtualizer.MAX_ELEMENT_HEIGHT - this.defaultRowHeight
+                        RowsVirtualizer.MAX_ELEMENT_HEIGHT -
+                            row.htmlElement.offsetHeight
                     );
                     row.setTranslateY(topOffset);
                 }
@@ -395,7 +395,9 @@ class RowsVirtualizer {
         }
 
         if (fragment.childNodes.length) {
-            vp.tbodyElement.insertBefore(fragment, lastRow?.htmlElement || null);
+            vp.tbodyElement.insertBefore(
+                fragment, lastRow?.htmlElement || null
+            );
         }
 
         // Update viewport's rows array, sorted by index.

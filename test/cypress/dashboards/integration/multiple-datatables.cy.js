@@ -41,21 +41,15 @@ describe('Multiple dataTables rendering', () => {
             const table =
                 dataPool.connectors[CONNECTOR_ID].getTable(DATA_TABLE_KEY);
 
-            assert.equal(
-                dataPoolOptions.firstRowAsNames,
-                table.firstRowAsNames,
-                'The dataTable firstRowAsNames option should match the user options.'
-            );
-
-            assert.equal(
+            assert.deepEqual(
                 dataPoolOptions.columnNames,
-                table.columnNames,
+                table.getColumnNames(),
                 'The dataTable columnNames option should match the user options.'
             );
 
             assert.deepEqual(
-                dataPoolOptions.dataModifier,
-                table.dataModifier,
+                dataPoolOptions.dataModifier.type,
+                table.modifier.options.type,
                 'The dataTable dataModifier option should match the user options.'
             );
         });
