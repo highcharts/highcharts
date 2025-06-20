@@ -32,7 +32,8 @@ Highcharts.chart('container', {
         },
         opposite: 'true',
         reversed: false,
-        crosshair: true
+        crosshair: true,
+        tickInterval: 200
     },
     yAxis: {
         title: {
@@ -45,7 +46,7 @@ Highcharts.chart('container', {
     },
     tooltip: {
         shared: true,
-        headerFormat: '<table>',
+        headerFormat: 'At {point.x} km:<table>',
         pointFormat: `<tr>
             <td><span style="color:{series.color};">\u2b24</span></td>
             <td>{series.name}</td>
