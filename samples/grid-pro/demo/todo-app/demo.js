@@ -36,11 +36,17 @@ const columns = [{
             renderer: {
                 type: 'select',
                 options: categories
-            }
+            },
+            validationRules: ['notEmpty']
         }
     }
 }, {
-    id: 'Task'
+    id: 'Task',
+    cells: {
+        editMode: {
+            validationRules: ['notEmpty']
+        }
+    }
 }, {
     id: 'Notes'
 }, {
@@ -197,7 +203,7 @@ columns.forEach(col => {
     input.name = fieldId;
     input.id = fieldId;
 
-    if (['Task', 'Category'].includes(fieldId)) {
+    if (col.cells?.editMode?.validationRules?.includes('notEmpty')) {
         input.required = true;
     }
 
