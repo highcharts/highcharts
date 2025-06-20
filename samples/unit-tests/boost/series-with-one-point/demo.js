@@ -54,10 +54,10 @@ QUnit.test('No points in series with single point (#21897)', function (assert) {
         // Boost should render scatter with single point (#21897)
         series: [{
             type: 'scatter',
-            keys: ['x', 'y', 'z'],
+            keys: ['x', 'j', 'y'],
             tooltip: {
                 pointFormatter: function () {
-                    return `${this.z}`;
+                    return `${this.j}`;
                 }
             },
             data: [[1, 1, 1]]
