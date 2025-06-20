@@ -16,7 +16,7 @@ Renderers can be used to control how values are displayed `cells.renderer` and h
 
 In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and edit modes. If not specified, it is determined by the `dataType` option.
 
-Some renderers can be used specifically as cell edit mode renderers, which is recommended because they also support [validation](/docs/grid/cell-editing#validation) in such cases.
+Some renderers can be used specifically as cell edit mode renderers, which is recommended because they also support [validation](https://www.highcharts.com/docs/grid/cell-editing#validation) in such cases.
 For example, you can render a date as text in view mode, and use the `dateInput` renderer only when the cell is in edit mode.
 
 | Renderer Key | Description | Edit Mode |
