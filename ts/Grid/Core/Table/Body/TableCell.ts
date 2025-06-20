@@ -23,16 +23,14 @@
  * */
 
 import type DataTable from '../../../../Data/DataTable';
+import type Column from '../Column';
+import type TableRow from './TableRow';
 
 import Cell from '../Cell.js';
-import Column from '../Column';
-import TableRow from './TableRow';
-import Utils from '../../../../Core/Utilities.js';
-import GridUtils from '../../GridUtils.js';
+import CellContent from '../CellContent/CellContent.js';
 
-const { setHTMLContent } = GridUtils;
+import Utils from '../../../../Core/Utilities.js';
 const {
-    defined,
     fireEvent
 } = Utils;
 
@@ -57,9 +55,17 @@ class TableCell extends Cell {
     /**
      * The row of the cell.
      */
-    public row: TableRow;
+    public readonly row: TableRow;
 
+    /**
+     * The column of the cell.
+     */
     public override column: Column;
+
+    /**
+     * The cell's content.
+     */
+    public content?: CellContent;
 
 
     /* *
@@ -233,15 +239,16 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
 
-        // Render the table cell element content.
-        setHTMLContent(this.htmlElement, this.formatCell());
+        if (this.content) {
+            this.content.update();
+        } else {
+            this.content = this.column.createCellContent(this);
+        }
 
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
 
-        fireEvent(this, 'afterRender', {
-            target: this
-        });
+        fireEvent(this, 'afterRender', { target: this });
 
         if (!updateTable) {
             return;
@@ -292,44 +299,12 @@ class TableCell extends Cell {
     }
 
     /**
-     * Handle the formatting content of the cell.
-     *
-     * @internal
-     */
-    public formatCell(): string {
-        const cellsDefaults =
-            this.row.viewport.grid.options?.columnDefaults?.cells || {};
-        const options = this.column.options.cells || {};
-        const { format, formatter } = options;
-        const isDefaultFormat = cellsDefaults.format === format;
-        const isDefaultFormatter = cellsDefaults.formatter === formatter;
-
-        let value = this.value;
-        if (!defined(value)) {
-            value = '';
-        }
-
-        let cellContent = '';
-
-        if (isDefaultFormat && isDefaultFormatter) {
-            cellContent = formatter ?
-                formatter.call(this).toString() :
-                (
-                    format ? this.format(format) : value + ''
-                );
-        } else if (isDefaultFormat) {
-            cellContent = formatter?.call(this).toString() || value + '';
-        } else if (isDefaultFormatter) {
-            cellContent = format ? this.format(format) : value + '';
-        }
-
-        return cellContent;
-    }
-
-    /**
      * Destroys the cell.
      */
     public destroy(): void {
+        this.content?.destroy();
+        delete this.content;
+
         super.destroy();
     }
 }

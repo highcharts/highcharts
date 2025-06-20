@@ -6,25 +6,29 @@ tags: ["grid-pro"]
 
 Note: cell editing is not part of Highcharts Grid Lite, so refer to [install instructions](https://www.highcharts.com/docs/dashboards/grid-standalone) for the full version to enable this functionality.
 
-End users can edit data in cells if cell editing is enabled by setting the `columnDefaults.cells.editable` and/or `columns[].cells.editable` API options:
+End users can edit data in cells if cell edit mode is enabled by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
 
 ```js
 columnDefaults: {
     cells: {
-      editable: true,
+      editMode: {
+        enabled: true
+      }
     },
 },
 columns: [
   {
     id: "firstName",
     cells: {
-      editable: false,
+      editMode: {
+        enabled: false
+      }
     },
   },
 ],
 ```
 
-In the example above cell editing is enabled for ALL columns, expect the `firstName` column. The reverse can be achived by not setting `columnDefaults` and `columns[].cells.editable: true` instead.
+In the example above cell editing is enabled for ALL columns, expect the `firstName` column. The reverse can be achived by not setting `columnDefaults` and `columns[].cells.editMode.enabled: true` instead.
 
 ## The afterEdit event
 
