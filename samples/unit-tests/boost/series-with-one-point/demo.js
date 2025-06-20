@@ -60,7 +60,7 @@ QUnit.test('No points in series with single point (#21897)', function (assert) {
                     return `${this.j}`;
                 }
             },
-            data: [[1, 1, 1]]
+            data: [[0, 1, 0]]
         }]
     });
     const series = chart.series[0];
