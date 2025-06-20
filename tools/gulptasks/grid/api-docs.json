@@ -33,11 +33,34 @@
         "../../../ts/Grid/Core/Table/ColumnDistribution/FullDistributionStrategy.ts",
         "../../../ts/Grid/Core/Table/ColumnDistribution/MixedDistributionStrategy.ts",
 
+        "../../../ts/Grid/Core/Table/CellContent/CellContent.ts",
+        "../../../ts/Grid/Core/Table/CellContent/TextContent.ts",
+
         "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
+        "../../../ts/Grid/Pro/CellEditing/CellEditMode.d.ts",
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
 
-        "../../../ts/Grid/Pro/ColumnTypes/Validator.ts"
+        "../../../ts/Grid/Pro/ColumnTypes/Validator.ts",
+        "../../../ts/Grid/Pro/ColumnTypes/ColumnDataType.d.ts",
+
+        "../../../ts/Grid/Pro/CellRendering/CellRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/CellRendererType.d.ts",
+        "../../../ts/Grid/Pro/CellRendering/CellRendererRegistry.ts",
+        "../../../ts/Grid/Pro/CellRendering/CellContentPro.ts",
+
+        "../../../ts/Grid/Pro/CellRendering/Renderers/CheckboxRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/DateInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/SelectRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/SparklineRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/TextInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/TextRenderer.ts",
+
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/CheckboxContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/DateInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/SelectContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/SparklineContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/TextInputContent.ts",
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,
