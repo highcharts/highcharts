@@ -283,11 +283,8 @@ class Exporting {
      *  Static Functions
      *
      * */
-
     /**
-     * Make hyphenated property names out of camelCase.
-     *
-     * @private
+     * Clean up after printing a chart.
      * @static
      * @function Highcharts.Exporting#hyphenate
      *
