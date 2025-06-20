@@ -181,19 +181,28 @@ describe('Editable component options', () => {
 });
 
 describe('Toolbar settings disabled.', () => {
-    before(() => {
+    beforeEach(() => {
         cy.visit('/dashboards/edit-mode/settings-disabled');
+        cy.viewport(1200, 1000);
         cy.toggleEditMode();
         cy.get('.highcharts-dashboards-component').first().click();
     });
 
     it('Settings button should not exist in cell toolbars.', function () {
-        cy.get('.highcharts-dashboards-edit-toolbar-cell').children()
-            .should('have.length', 2);
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children().should('have.length', 2);
     });
 
     it('Settings button should not exist in row toolbars.', function () {
-        cy.get('.highcharts-dashboards-edit-toolbar-row').children()
-            .should('have.length', 2);
+        cy.get('.highcharts-dashboards-edit-toolbar-row').children().should('have.length', 2);
+    });
+
+    it('When adding a component, the popup should not be visible.', function () {
+        // Act
+        cy.grabComponent('chart');
+        cy.dropComponent('#dashboard-col-0');
+
+        // Assert
+        cy.get('.highcharts-dashboards-edit-overlay-active').should('not.exist');
+        cy.get('.highcharts-dashboards-edit-sidebar').should('not.be.visible');
     });
 });

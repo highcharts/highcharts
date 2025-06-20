@@ -28,10 +28,47 @@ Some API options have been renamed or removed. For the full list, make sure to c
     },
     columnDefaults: {
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            },
+            events: {
+                afterEdit: function () {
+                    // Callback action
+                },
+                afterRender: function () {
+                    // Callback action
+                },
+                click: function () {
+                    // Callback action
+                },
+                dblClick: function () {
+                    // Callback action
+                },
+                mouseOver: function () {
+                    // Callback action
+                },
+                mouseOut: function () {
+                    // Callback action
+                }
+            }
         }
         sorting: {
             sortable: false
+        },
+        events: {
+            afterSorting: function () {
+                // Callback action
+            },
+            afterResize: function () {
+                // Callback action
+            }
+        },
+        header: {
+            events: {
+                click: function () {
+                    // Callback action
+                }
+            }
         }
     }
     rendering: {
@@ -48,38 +85,11 @@ Some API options have been renamed or removed. For the full list, make sure to c
         className: 'custom-column-class-name',
         cells: {
             format: 'V:{value}';
-            }
         }
     }, {
         id: 'metaData',
         enabled: false
-    }],
-    events: {
-        cell: {
-            click: function () {
-                // Callback action
-            },
-            dblClick: function() {
-                // Callback action
-            },
-            afterEdit: function () {
-                // Callback action
-            }
-        },
-        column: {
-            afterSorting: function () {
-                // Callback action
-            },
-            afterResize: function () {
-                // Callback action
-            }
-        },
-        header: {
-            click: function () {
-                // Callback action
-            }
-        }
-    }
+    }]
 ```
 
 ## Recommended reading

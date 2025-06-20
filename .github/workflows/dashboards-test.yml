@@ -13,10 +13,14 @@ on:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
       - 'css/datagrid*'
+      - 'css/grid*'
       - 'samples/dashboards/**'
+      - 'samples/grid-lite/**'
+      - 'samples/grid-pro/**'
       - 'test/cypress/dashboards/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
+      - 'ts/Grid/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -31,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

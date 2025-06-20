@@ -58,7 +58,7 @@ QUnit.test('Symbol tests', function (assert) {
                     // With explicit size
                     symbol2 = ren
                         .symbol(
-                            url.replace(')', '?' + Date.now() + ')'),
+                            url.replace(')', '?svgr_' + Date.now() + ')'),
                             200,
                             100,
                             null,

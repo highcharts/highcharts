@@ -261,8 +261,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const component = this;
 
         this.initRegionsDefinitions();
-
-        this.addEvent(chart, 'aftergetTableAST', function (
+        this.addEvent(chart, 'afterGetTableAST', function (
             e: { tree: AST.Node }
         ): void {
             component.onDataTableCreated(e);
@@ -550,7 +549,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 yAxisDescription: axesDesc.yAxis,
                 playAsSoundButton: shouldHaveSonifyBtn ?
                     this.getSonifyButtonText(sonifyButtonId) : '',
-                viewTableButton: chart.getCSV as any ?
+                viewTableButton: chart.exporting?.getCSV ?
                     this.getDataTableButtonText(dataTableButtonId) : '',
                 annotationsTitle: annotationsList ? annotationsTitleStr : '',
                 annotationsList: annotationsList
@@ -808,7 +807,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
             el.onclick = chart.options.accessibility
                 .screenReaderSection.onViewDataTableClick ||
                 function (): void {
-                    chart.viewData();
+                    chart.exporting?.viewData();
                 };
         }
     }

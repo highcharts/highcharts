@@ -38,7 +38,7 @@ function getProperties() {
             let lines = fs.readFileSync(
                 './git-ignore-me.properties', 'utf8'
             );
-            lines.split('\n').forEach(function (line) {
+            lines.split(/\r?\n/).forEach(function (line) {
                 line = line.split('=');
                 if (line[0]) {
                     properties[line[0]] = line[1];
