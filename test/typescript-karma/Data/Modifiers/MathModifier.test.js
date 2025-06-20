@@ -60,6 +60,9 @@ QUnit.test('MathModifier column formula', function (assert) {
         }, {
             column: 'Fahrenheit',
             formula: '= A1 * 1.8 - 459.67'
+        }, {
+            column: 'Celsius_Opposite',
+            formula: 'B1 * -1'
         }]
     }));
 
@@ -75,4 +78,9 @@ QUnit.test('MathModifier column formula', function (assert) {
         'Fahrenheit should be calculated without endless decimals.'
     );
 
+    assert.strictEqual(
+        table.modified.getCell('Celsius_Opposite', 1),
+        -10,
+        'Opposite celsius is a negative value.'
+    );
 });
