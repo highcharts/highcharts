@@ -429,7 +429,8 @@
             dataLabels: {
                 enabled: false
             },
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            borderColor: 'var(--highcharts-neutral-color-20, #ccc)'
         }, {
             name: 'Capitals of Europe',
             keys: ['id', 'lat', 'lon', 'name', 'y'],
