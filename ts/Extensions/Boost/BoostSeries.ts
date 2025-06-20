@@ -934,8 +934,8 @@ function getPoint(
         // Don't reassign X and Y properties as they're already handled above
         for (
             let keysIndex = keys.length - 1;
-            keysIndex > 1;
-            keysIndex--
+            keysIndex > 0;
+            --keysIndex
         ) {
             (point as any)[keys[keysIndex]] =
                 (data as any)[pointIndex][keysIndex];
