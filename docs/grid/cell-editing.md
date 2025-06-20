@@ -113,7 +113,7 @@ This approach allows you to reuse custom validation logic across multiple column
 
 Edit mode renderers define how the cell input is displayed and interacted with when editing is enabled. You can use built-in renderers such as text fields, select dropdowns, or implement custom renderers to match your application's requirements. This allows for flexible editing experiences tailored to different data types and use cases.
 
-You can read more about cell renderers in [this article](/docs/grid/cell-content).
+You can read more about cell renderers in [this article](https://www.highcharts.com/docs/grid/cell-content).
 
 ```ts
 columns: [{

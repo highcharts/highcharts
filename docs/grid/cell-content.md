@@ -6,11 +6,11 @@ tags: ["grid-pro"]
 
 The data type determines how the cell content is rendered.
 
-Note: Customizing cell content is not part of Highcharts Grid Lite, so refer to [install instructions](/docs/dashboards/grid-standalone) for the full version to enable this functionality.
+Note: Customizing cell content is not part of Highcharts Grid Lite, so refer to [install instructions](https://www.highcharts.com/docs/dashboards/grid-standalone) for the full version to enable this functionality.
 
 Highcharts Grid supports different cell renderers to provide interactive data presentation inside table cells. You can define the renderer property for each column in the `columns[].cells` configuration object to specify how each cell should be displayed or interacted with.
 
-Renderers can be used to control how values are displayed `cells.renderer` and how they behave in [edit mode](/docs/grid/cell-editing) `cells.editMode.renderer`. This allows you to, for example, show plain text by default and present a checkbox or input field when a cell becomes editable.
+Renderers can be used to control how values are displayed `cells.renderer` and how they behave in [edit mode](https://www.highcharts.com/docs/grid/cell-editing) `cells.editMode.renderer`. This allows you to, for example, show plain text by default and present a checkbox or input field when a cell becomes editable.
 
 ## Renderers types
 
@@ -131,6 +131,4 @@ Go to [Sparkline](https://www.highcharts.com/docs/grid/sparkline) to read more a
 
 
 ## View the Result
-An example of grid, based on all available API options.
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/todo-app" allow="fullscreen"></iframe>
