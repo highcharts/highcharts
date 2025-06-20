@@ -1,19 +1,19 @@
 // Constants
 const categories = [
-    { value: '1', label: 'Cleaning' },
-    { value: '2', label: 'Shopping' },
-    { value: '3', label: 'Cooking' },
-    { value: '4', label: 'Gardening' },
-    { value: '5', label: 'Laundry' },
-    { value: '6', label: 'Maintenance' },
-    { value: '7', label: 'Organization' },
-    { value: '8', label: 'Pet care' },
-    { value: '9', label: 'Other' }
+    { value: 'CL', label: 'Cleaning' },
+    { value: 'SH', label: 'Shopping' },
+    { value: 'CK', label: 'Cooking' },
+    { value: 'GR', label: 'Gardening' },
+    { value: 'LD', label: 'Laundry' },
+    { value: 'MT', label: 'Maintenance' },
+    { value: 'OR', label: 'Organization' },
+    { value: 'PT', label: 'Pet care' },
+    { value: 'OT', label: 'Other' }
 ];
 const priority = [
-    { value: 'Low', label: 'Low' },
-    { value: 'Medium', label: 'Medium' },
-    { value: 'High', label: 'High' }
+    { value: '1', label: 'Low' },
+    { value: '2', label: 'Medium' },
+    { value: '3', label: 'High' }
 ];
 const columns = [{
     id: 'Done',
@@ -27,8 +27,6 @@ const columns = [{
     }
 }, {
     id: 'Category',
-    dataType: 'string',
-    showInForm: true,
     cells: {
         formatter: function () {
             return categories.find(({ value }) => value === this.value)
@@ -42,15 +40,12 @@ const columns = [{
         }
     }
 }, {
-    id: 'Task',
-    showInForm: true
+    id: 'Task'
 }, {
-    id: 'Notes',
-    showInForm: true
+    id: 'Notes'
 }, {
     id: 'Due date',
     dataType: 'datetime',
-    showInForm: true,
     cells: {
         format: '{value:%Y-%m-%d}',
         editMode: {
@@ -61,15 +56,13 @@ const columns = [{
     }
 }, {
     id: 'Priority',
-    dataType: 'string',
-    showInForm: true,
     width: 120,
     cells: {
         formatter: function () {
             const map = {
-                High: '🔴',
-                Low: '🟢',
-                Medium: '🟡'
+                1: '🟢',
+                2: '🟡',
+                3: '🔴'
             };
             return map[this.value] || '';
         },
@@ -87,7 +80,7 @@ Grid.grid('container', {
     dataTable: {
         columns: {
             Done: [false, false, false, false],
-            Category: ['1', '2', '1', '4'],
+            Category: ['CL', 'SH', 'CL', 'GR'],
             Task: [
                 'Do laundry', 'Buy groceries', 'Clean kitchen', 'Water plants '
             ],
@@ -100,7 +93,7 @@ Grid.grid('container', {
                 Date.UTC(2025, 6, 1), Date.UTC(2025, 6, 2),
                 Date.UTC(2025, 6, 3), Date.UTC(2025, 6, 4)
             ],
-            Priority: ['Low', 'High', 'Medium', 'Low']
+            Priority: ['1', '3', '2', '1']
         }
     },
     columnDefaults: {
@@ -116,13 +109,13 @@ Grid.grid('container-done', {
     dataTable: {
         columns: {
             Done: [true, true, true],
-            Category: ['3', '4', '6'],
+            Category: ['CK', 'GR', 'MT'],
             Task: ['Cook dinner', 'Trim hedges', 'Fix leaking tap'],
             Notes: [
                 'Try new pasta recipe', 'Backyard only', 'Check under sink'
             ],
             'Due date': ['2025-06-08', '2025-06-09', '2025-06-10'],
-            Priority: ['Medium', 'Low', 'High']
+            Priority: ['2', '1', '3']
         }
     },
     columnDefaults: {
@@ -184,9 +177,7 @@ columns.forEach(col => {
 
     let input;
 
-    if (fieldId === 'Notes') {
-        input = document.createElement('textarea');
-    } else if (renderer?.type === 'checkbox') {
+    if (renderer?.type === 'checkbox') {
         input = document.createElement('input');
         input.type = 'checkbox';
     } else if (renderer?.type === 'select') {

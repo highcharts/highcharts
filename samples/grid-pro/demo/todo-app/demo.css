@@ -96,15 +96,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
 }
 
-#modalContent textarea {
-    resize: none;
-    width: 100%;
-    height: 100px;
-    border: 1px solid var(--default-color);
-    background-color: var(--default-background);
-    color: var(--default-color);
-}
-
 #modalContent #formButtons {
     display: flex;
     flex-direction: column;
