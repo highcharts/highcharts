@@ -36,7 +36,8 @@ import H from './Globals.js';
 const {
     charts,
     composed,
-    isTouchDevice
+    isTouchDevice,
+    userAgent
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
@@ -1294,11 +1295,19 @@ class Pointer {
             pointer.initiated = false;
         }
 
+        const isIOS = ['ipad', 'iphone'].some(
+            (device:string): boolean =>
+                userAgent.toLowerCase().includes(device)
+        ) || userAgent.toLowerCase().includes('macintosh') &&
+            navigator.maxTouchPoints > 1;
+
         // On touch devices, only proceed to trigger click if a handler is
         // defined
         if (
-            hasZoom &&
-            pointer.initiated &&
+            isIOS || (
+                hasZoom &&
+                pointer.initiated
+            ) &&
             !fireClickEvent &&
             e.cancelable !== false
         ) {
