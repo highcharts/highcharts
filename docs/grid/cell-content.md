@@ -98,7 +98,7 @@ Renders a dropdown select menu for predefined options.
 ### Sparkline
 Renders an inline miniature chart (e.g. bar, line) inside a cell using Highcharts.
 
-You can configure chart by the `chartOptions` API option, that supports all Highcharts options.
+You can configure chart by the `chartOptions` API option, that supports all Highcharts configurations.
 
 ```js
 {
