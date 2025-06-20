@@ -113,9 +113,13 @@ class SparklineContent extends CellContentPro {
      *
      * */
 
-    constructor(cell: TableCell, renderer: SparklineRenderer) {
+    constructor(
+        cell: TableCell,
+        renderer: SparklineRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.add();
+        this.add(parentElement);
     }
 
 
@@ -125,18 +129,47 @@ class SparklineContent extends CellContentPro {
      *
      * */
 
-    protected override add(): void {
-        const renderer = this.renderer as SparklineRenderer;
-        const { chartOptions } = renderer.options;
+    protected override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): void {
         const H = SparklineContent.H;
         if (!H || !defined(this.cell.value)) {
             return;
         }
 
         this.chartContainer = document.createElement('div');
-        this.cell.htmlElement.appendChild(this.chartContainer);
+        parentElement.classList.add(Globals.getClassName('noPadding'));
+        parentElement.appendChild(this.chartContainer);
 
-        this.cell.htmlElement.classList.add(Globals.getClassName('noPadding'));
+        this.chart = H.Chart.chart(this.chartContainer, merge(
+            SparklineContent.defaultChartOptions,
+            this.getProcessedOptions()
+        ));
+
+        this.chartContainer.addEventListener('click', this.onKeyDown);
+    }
+
+    public override update(): void {
+        this.chart?.update(this.getProcessedOptions(), true, false);
+    }
+
+    public override destroy(): void {
+        this.chartContainer?.removeEventListener('keydown', this.onKeyDown);
+
+        this.chart?.destroy();
+        this.chartContainer?.remove();
+
+        delete this.chart;
+        delete this.chartContainer;
+
+        this.cell.htmlElement.classList.remove(
+            Globals.getClassName('noPadding')
+        );
+    }
+
+    private getProcessedOptions(): Partial<HighchartsNamespace.Options> {
+        const renderer = this.renderer as SparklineRenderer;
+        const { chartOptions } = renderer.options;
 
         let options: Partial<HighchartsNamespace.Options>;
         if (typeof chartOptions === 'function') {
@@ -159,26 +192,7 @@ class SparklineContent extends CellContentPro {
             }];
         }
 
-        this.chart = H.Chart.chart(this.chartContainer, merge(
-            SparklineContent.defaultChartOptions,
-            options
-        ));
-
-        this.chartContainer.addEventListener('click', this.onKeyDown);
-    }
-
-    public destroy(): void {
-        this.chartContainer?.removeEventListener('keydown', this.onKeyDown);
-
-        this.chart?.destroy();
-        this.chartContainer?.remove();
-
-        delete this.chart;
-        delete this.chartContainer;
-
-        this.cell.htmlElement.classList.remove(
-            Globals.getClassName('noPadding')
-        );
+        return options;
     }
 
     private onKeyDown = (): void => {

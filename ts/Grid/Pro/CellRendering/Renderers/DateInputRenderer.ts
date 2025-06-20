@@ -84,8 +84,11 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public override render(cell: TableCell): DateInputContent {
-        return new DateInputContent(cell, this);
+    public override render(
+        cell: TableCell,
+        parentElement?: HTMLElement
+    ): DateInputContent {
+        return new DateInputContent(cell, this, parentElement);
     }
 
 }

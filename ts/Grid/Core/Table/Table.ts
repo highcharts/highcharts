@@ -188,6 +188,7 @@ class Table {
         if (customClassName) {
             tableElement.classList.add(...customClassName.split(/\s+/g));
         }
+        tableElement.classList.add(Globals.getClassName('scrollableContent'));
 
         // Load columns
         this.loadColumns();
@@ -201,8 +202,6 @@ class Table {
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
-
-        tableElement.classList.add(Globals.getClassName('scrollableContent'));
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);

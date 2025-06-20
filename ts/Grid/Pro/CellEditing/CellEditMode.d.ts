@@ -103,6 +103,10 @@ export interface EditModeRenderer {
      *
      * @param cell
      * The cell to render the edit mode content for.
+     *
+     * @param parent
+     * Optional parent element to append the rendered content to. If not
+     * provided, the content will be rendered in the cell's main element.
      */
-    render(cell: TableCell): EditModeContent;
+    render(cell: TableCell, parent?: HTMLElement): EditModeContent;
 }

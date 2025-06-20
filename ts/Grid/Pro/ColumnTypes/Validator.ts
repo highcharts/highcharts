@@ -32,7 +32,10 @@ import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
 import U from '../../../Core/Utilities.js';
 
-const { makeDiv } = GridUtils;
+const {
+    makeDiv,
+    setHTMLContent
+} = GridUtils;
 const { defined } = U;
 
 /* *
@@ -183,13 +186,25 @@ class Validator {
      *
      */
     public initErrorBox(cell: TableCell, errors: string[]): void {
+        const { grid } = this.viewport;
+
         this.errorCell = cell;
 
         // Set error container position
         this.reflow();
 
         // Set width and content
-        this.notifContainer.innerHTML = errors.join('<br />');
+        setHTMLContent(this.notifContainer, errors.join('<br />'));
+
+        // A11y announcement
+        if (grid.options?.accessibility?.announcements?.cellEditing) {
+            this.viewport.grid.accessibility?.announce(
+                (grid.options?.lang?.accessibility?.cellEditing
+                    ?.announcements?.notValid || ''
+                ) + ' ' + errors.join('. '),
+                true
+            );
+        }
 
         this.show();
     }
@@ -284,14 +299,14 @@ class Validator {
 namespace Validator {
 
     /**
-     * Global validation CSS classes.
+     * The class names used by the validator functionality.
      */
     export const classNames = {
         notifContainer: Globals.classNamePrefix + 'notification',
         notifError: Globals.classNamePrefix + 'notification-error',
         notifAnimation: Globals.classNamePrefix + 'notification-animation',
         editedCellError: Globals.classNamePrefix + 'edited-cell-error'
-    };
+    } as const;
 
     /* *
      *
@@ -376,10 +391,10 @@ namespace Validator {
      * Default validation rules for each dataType.
      */
     export const predefinedRules: Record<Column.DataType, RuleKey[]> = {
-        number: ['number'],
         'boolean': ['boolean'],
-        string: ['notEmpty'],
-        datetime: ['datetime']
+        datetime: ['datetime'],
+        number: ['number'],
+        string: []
     };
 }
 

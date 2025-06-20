@@ -65,9 +65,13 @@ class TextInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    constructor(cell: TableCell, renderer: TextInputRenderer) {
+    constructor(
+        cell: TableCell,
+        renderer: TextInputRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.input = this.add();
+        this.input = this.add(parentElement);
     }
 
 
@@ -77,24 +81,31 @@ class TextInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    public override add(): HTMLInputElement {
+    public override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): HTMLInputElement {
         const cell = this.cell;
-        const { options } = this.renderer as TextInputRenderer;
+        const input = this.input = document.createElement('input');
 
-        this.input = document.createElement('input');
-        this.input.tabIndex = -1;
-        this.input.value = this.convertToInputValue();
-        this.input.name = cell.column.id + '-' + cell.row.id;
-        this.input.disabled = !!options.disabled;
+        input.tabIndex = -1;
+        input.name = cell.column.id + '-' + cell.row.id;
 
-        this.cell.htmlElement.appendChild(this.input);
+        this.update();
 
-        this.input.addEventListener('change', this.onChange);
-        this.input.addEventListener('keydown', this.onKeyDown);
-        this.input.addEventListener('blur', this.onBlur);
+        parentElement.appendChild(this.input);
+
+        input.addEventListener('change', this.onChange);
+        input.addEventListener('keydown', this.onKeyDown);
+        input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
-        return this.input;
+        return input;
+    }
+
+    public override update(): void {
+        const { options } = this.renderer as TextInputRenderer;
+        this.input.value = this.convertToInputValue();
+        this.input.disabled = !!options.disabled;
     }
 
     public get rawValue(): string {
