@@ -222,14 +222,19 @@ form.addEventListener('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const todoGrid = Grid.grids[0];
+    const rowData = {};
 
-    todoGrid.dataTable.setRow({
-        Category: formData.get('Category'),
-        Task: formData.get('Task'),
-        Notes: formData.get('Notes'),
-        'Due date': formData.get('Due date'),
-        Priority: formData.get('Priority')
-    });
+    for (const column of columns) {
+        if (column.showInForm === false) {
+            continue;
+        }
+
+        const key = column.id;
+        const value = formData.get(key);
+        rowData[key] = value;
+    }
+
+    todoGrid.dataTable.setRow(rowData);
     todoGrid.viewport.loadPresentationData();
 
     form.reset();
