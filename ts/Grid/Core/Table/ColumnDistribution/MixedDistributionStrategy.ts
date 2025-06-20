@@ -64,20 +64,20 @@ class MixedDistributionStrategy extends DistributionStrategy {
      * */
 
     public override loadColumn(column: Column): void {
-        const raw = column.options.width;
-        if (!raw) {
+        const rawWidth = column.options.width;
+        if (!rawWidth) {
             return;
         }
 
         let value: number;
         let unitCode: number = 0;
 
-        if (typeof raw === 'number') {
-            value = raw;
+        if (typeof rawWidth === 'number') {
+            value = rawWidth;
             unitCode = 0;
         } else {
-            value = parseFloat(raw);
-            unitCode = raw.charAt(raw.length - 1) === '%' ? 1 : 0;
+            value = parseFloat(rawWidth);
+            unitCode = rawWidth.charAt(rawWidth.length - 1) === '%' ? 1 : 0;
         }
 
         this.columnWidthUnits[column.id] = unitCode;

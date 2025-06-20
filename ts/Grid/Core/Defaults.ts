@@ -74,13 +74,17 @@ namespace Defaults {
             header: {
                 enabled: true
             },
+            columns: {
+                resizing: {
+                    enabled: true
+                }
+            },
             theme: 'hcg-theme-default'
         },
         columnDefaults: {
             sorting: {
                 sortable: true
-            },
-            resizing: true
+            }
         }
     };
 

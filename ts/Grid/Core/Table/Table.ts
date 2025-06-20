@@ -181,7 +181,10 @@ class Table {
             );
         }
 
-        if (dgOptions?.columnDefaults?.resizing) {
+        if (!(
+            dgOptions?.rendering?.columns?.resizing?.enabled === false ||
+            dgOptions?.columnDefaults?.resizing === false
+        )) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 

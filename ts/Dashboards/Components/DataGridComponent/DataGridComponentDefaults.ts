@@ -64,13 +64,14 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath: ['gridOptions', 'caption', 'text'],
                         type: 'input'
                     }, {
-                        name: 'Columns distribution',
+                        name: 'Columns resizing mode',
                         propertyPath:
                             [
                                 'gridOptions',
                                 'rendering',
                                 'columns',
-                                'distribution'
+                                'resizing',
+                                'mode'
                             ],
                         type: 'select',
                         selectOptions: [{
@@ -98,8 +99,10 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath:
                             [
                                 'gridOptions',
-                                'columnDefaults',
-                                'resizing'
+                                'rendering',
+                                'columns',
+                                'resizing',
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {
