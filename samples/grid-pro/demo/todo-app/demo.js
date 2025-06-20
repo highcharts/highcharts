@@ -19,11 +19,15 @@ const columns = [{
     id: 'Done',
     dataType: 'boolean',
     showInForm: false,
+    className: 'centered',
     width: 80,
     cells: {
         renderer: {
             type: 'checkbox'
         }
+    },
+    header: {
+        className: 'centered-header'
     }
 }, {
     id: 'Category',
@@ -62,6 +66,7 @@ const columns = [{
     }
 }, {
     id: 'Priority',
+    className: 'centered',
     width: 120,
     cells: {
         formatter: function () {
@@ -78,6 +83,9 @@ const columns = [{
                 options: priority
             }
         }
+    },
+    header: {
+        className: 'centered-header'
     }
 }];
 

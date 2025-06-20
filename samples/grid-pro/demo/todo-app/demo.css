@@ -24,10 +24,8 @@ td {
     line-height: unset !important;
 }
 
-th[data-column-id="Priority"] span,
-th[data-column-id="Done"] span,
-td[data-column-id="Done"],
-td[data-column-id="Priority"] {
+.centered,
+.centered-header > * {
     text-align: center !important;
 }
 
