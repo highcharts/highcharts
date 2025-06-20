@@ -229,7 +229,6 @@ class RowsVirtualizer {
      * is enabled.
      */
     public scroll(): void {
-        console.time('scroll');
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
@@ -248,9 +247,14 @@ class RowsVirtualizer {
         }
 
         // Do vertical virtual scrolling
-        const rowCursor = Math.floor((target.scrollTop / rowHeight)
+        let rowCursor = Math.floor((target.scrollTop / rowHeight)
             + this.scrollOffset / rowHeight
         );
+        
+        // Ensure row cursor doesn't exceed the available rows
+        const maxRowCursor = Math.max(0, this.rowCount - 1);
+        rowCursor = Math.min(rowCursor, maxRowCursor);
+        
         if (this.rowCursor !== rowCursor) {
             this.renderRows(rowCursor);
         }
@@ -266,7 +270,6 @@ class RowsVirtualizer {
             target.scrollTop = lastScrollTop;
             this.preventScroll = true;
         }
-        console.timeEnd('scroll');
     }
 
     /**
