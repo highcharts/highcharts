@@ -104,6 +104,3 @@ You can configure embedded charts by the `chartOptions` API option, that support
 Sparkline supports all standard Highcharts chart options and is optimized for speed, including virtual scrolling for large datasets.
 
 ## View the Result
-With the configuration above, your Grid should look like this:
-
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/sparkline" allow="fullscreen"></iframe>

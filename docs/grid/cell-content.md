@@ -6,17 +6,17 @@ tags: ["grid-pro"]
 
 The data type determines how the cell content is rendered.
 
-Note: Customizing cell content is not part of Highcharts Grid Lite, so refer to [install instructions](/docs/dashboards/grid-standalone) for the full version to enable this functionality.
+Note: Customizing cell content is not part of Highcharts Grid Lite, so refer to [install instructions](https://www.highcharts.com/docs/dashboards/grid-standalone) for the full version to enable this functionality.
 
 Highcharts Grid supports different cell renderers to provide interactive data presentation inside table cells. You can define the renderer property for each column in the `columns[].cells` configuration object to specify how each cell should be displayed or interacted with.
 
-Renderers can be used to control how values are displayed `cells.renderer` and how they behave in [edit mode](/docs/grid/cell-editing) `cells.editMode.renderer`. This allows you to, for example, show plain text by default and present a checkbox or input field when a cell becomes editable.
+Renderers can be used to control how values are displayed `cells.renderer` and how they behave in [edit mode](https://www.highcharts.com/docs/grid/cell-editing) `cells.editMode.renderer`. This allows you to, for example, show plain text by default and present a checkbox or input field when a cell becomes editable.
 
 ## Renderers types
 
 In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and edit modes. If not specified, it is determined by the `dataType` option.
 
-Some renderers can be used specifically as cell edit mode renderers, which is recommended because they also support [validation](/docs/grid/cell-editing#validation) in such cases.
+Some renderers can be used specifically as cell edit mode renderers, which is recommended because they also support [validation](https://www.highcharts.com/docs/grid/cell-editing#validation) in such cases.
 For example, you can render a date as text in view mode, and use the `dateInput` renderer only when the cell is in edit mode.
 
 | Renderer Key | Description | Edit Mode |
@@ -131,6 +131,4 @@ Go to [Sparkline](https://www.highcharts.com/docs/grid/sparkline) to read more a
 
 
 ## View the Result
-An example of grid, based on all available API options.
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/todo-app" allow="fullscreen"></iframe>
