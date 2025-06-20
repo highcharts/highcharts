@@ -32,7 +32,10 @@ Highcharts.chart('container', {
         },
         opposite: 'true',
         reversed: false,
-        crosshair: true,
+        crosshair: {
+            width: 2,
+            zIndex: 3
+        },
         tickInterval: 200
     },
     yAxis: {
@@ -56,6 +59,11 @@ Highcharts.chart('container', {
         useHTML: true
     },
     plotOptions: {
+        series: {
+            marker: {
+                enabled: false
+            }
+        },
         areaspline: {
             stacking: 'percent',
             lineColor: '#666666',
@@ -66,7 +74,12 @@ Highcharts.chart('container', {
                 symbol: 'circle',
                 fillColor: '#666666',
                 lineColor: '#666666',
-                radius: 1
+                radius: 1,
+                states: {
+                    hover: {
+                        enabled: false
+                    }
+                }
             },
             label: {
                 style: {
