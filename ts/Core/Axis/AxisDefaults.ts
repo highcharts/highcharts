@@ -498,6 +498,11 @@ namespace AxisDefaults {
          * on midnight and `hour` unit be used for intermediate values on the
          * same axis.
          *
+         * Note:
+         * Axis date/time formatting uses custom values from `lang.months`,
+         * `lang.weekdays`, etc. only when `lang.locale` is explicitly set
+         * to `null`. Otherwise, names from the active locale apply.
+         *
          * For an overview of the string or object configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
