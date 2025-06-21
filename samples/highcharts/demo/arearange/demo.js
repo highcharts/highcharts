@@ -39,6 +39,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
+        fixed: true,
         crosshairs: true,
         shared: true,
         valueSuffix: '°C',
