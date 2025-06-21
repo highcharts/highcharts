@@ -912,6 +912,7 @@ namespace ColorAxis {
         legend?: LegendOptions;
         marker?: MarkerOptions;
         showInLegend?: boolean;
+        labelRight?: number;
     }
 
 }
