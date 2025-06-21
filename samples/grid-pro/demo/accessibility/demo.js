@@ -14,7 +14,9 @@ const grid = Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     },
     credits: {
@@ -29,7 +31,9 @@ const grid = Grid.grid('container', {
             format: 'ID'
         },
         cells: {
-            editable: false
+            editMode: {
+                enabled: false
+            }
         }
     }, {
         id: 'product',
