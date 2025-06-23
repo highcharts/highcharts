@@ -100,6 +100,57 @@ You can configure embedded charts by the `chartOptions` API option, that support
 }
 ```
 
+### Data modifiers
+Data modifiers allow manipulation of data provided to connectors to be placed in a modified version, e.g. in the **Grid Pro**.
+
+There are different types of data modifiers:
+* `Chain` - A chain of modifiers executed in a fixed order.
+* `Invert` - The invert modifier reverses the order of displayed rows.
+* `Range` - Range modifiers allow selecting rows to be displayed based on specific ranges regarding data from specific columns.
+* `Sort` - Sort modifiers allow the display order of rows to be set based on the result of sorting the data in specific columns.
+* `Math` - Math modifiers allow the creation of additional columns with data mathematically transformed from another column.
+
+1. Init the dataTable with data.
+```js
+const data = new Highcharts.DataTable({
+  columns: dataSource
+});
+```
+
+2. Define the formula.
+```js
+// Define modifier / formula calculation
+const mathModifier = new Highcharts.DataModifier.types.Math({
+  columnFormulas: [{
+    column: 'Sum',
+    formula: 'C1+D1'
+  }]
+});
+```
+
+3. Add modifier result to dataTable.
+```js
+// Add modified data to initial data source
+await data.setModifier(mathModifier);
+```
+
+4. Init Grid
+```js
+Grid.grid('container', {
+  dataTable: data,
+  ... // other Grid Options
+});
+```
+
+In this example, a column named `Sum` is created with data that is the sum of the numbers in the previous columns in the row.
+
+Note that you also need to import modules to use the appropriate modifiers. For example:
+```html
+<script src="https://code.highcharts.com/modules/data-tools.js"></script>
+```
+
+You can read more in the [MathModifier Article](https://www.highcharts.com/docs/dashboards/mathmodifier-module).
+
 ## Performance
 Sparkline supports all standard Highcharts chart options and is optimized for speed, including virtual scrolling for large datasets.
 
