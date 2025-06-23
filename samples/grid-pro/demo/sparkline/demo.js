@@ -172,7 +172,7 @@ const initGrid = data => {
         }, {
             id: 'dollarRate',
             header: {
-                format: 'Dollar exchange ratio'
+                format: 'USD exchange ratio'
             }
         }, {
             id: 'dollarPrice',
