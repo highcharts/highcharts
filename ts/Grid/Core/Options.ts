@@ -29,6 +29,7 @@ import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistributi
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
+import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 
 
@@ -72,7 +73,7 @@ export interface Options {
 
     /**
      * Default options for all the columns in the grid. Can be overridden
-     * by individual column options.
+     * by the `dataTypeColumnDefaults` and individual column options.
      */
     columnDefaults?: ColumnOptions;
 
@@ -280,6 +281,15 @@ export interface ColumnOptions {
      * Options for all cells in the column.
      */
     cells?: ColumnCellOptions;
+
+    /**
+     * The data type of the column. Can be one of `string`, `number`,
+     * `boolean` or `date`.
+     *
+     * If not set, the data type is inferred from the first cell in the
+     * column.
+     */
+    dataType?: Column.DataType;
 
     /**
      * Options for all the header cells in the column.

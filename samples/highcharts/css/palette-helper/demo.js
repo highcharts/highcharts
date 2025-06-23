@@ -180,7 +180,22 @@ const chartPreview = async theme => {
     });
 };
 
-const defaultOptions = Highcharts.merge(Highcharts.defaultOptions);
+const defaultOptions = Highcharts.merge(
+    Highcharts.defaultOptions,
+    {
+        xAxis: {
+            grid: {
+                borderColor: '#cccccc'
+            }
+        },
+        yAxis: {
+            grid: {
+                borderColor: '#cccccc'
+            }
+        }
+    }
+);
+
 
 // Generate a random color scheme using the third-party color-scheme package
 // https://github.com/c0bra/color-scheme-js
@@ -333,14 +348,26 @@ const generate = async () => {
         '#e6e9ff': 'highlightColor10'
     };
 
+    const missingColors = {};
 
     // Find colors in default options
-    const findColors = obj => {
+    const findColors = (obj, cssVariables, path = '') => {
         const theme = {};
+        const hyphenate = str => {
+            const hyphenized = str
+                .replace(/([a-z])([A-Z])/g, '$1-$2')
+                .replace(/[0-9]+/g, '-$&');
+            return hyphenized.toLowerCase();
+        };
         if (typeof obj === 'object' && !Array.isArray(obj)) {
             for (const [key, value] of Object.entries(obj)) {
+                const itemPath = `${path}${key}`;
                 if (value && typeof value === 'object') {
-                    const children = findColors(value, key);
+                    const children = findColors(
+                        value,
+                        cssVariables,
+                        itemPath + '.'
+                    );
                     if (children) {
                         theme[key] = children;
                     }
@@ -348,19 +375,23 @@ const generate = async () => {
                     // findColors(value, itemPath);
                 } else if (
                     typeof value === 'string' &&
-                    /#[0-9a-f]{6}/.test(value)
+                    (/#[0-9a-f]{6}/.test(value) || /^rgb/.test(value))
                 ) {
                     const paletteKey = colorMap[value];
                     if (!paletteKey) {
-                        console.error(`Palette key missing for ${value}`);
+                        missingColors[itemPath] = value;
                     } else {
                         const color = palette[paletteKey];
                         if (!color) {
-                            console.error(
-                                `Color missing for ${value} in palette`
-                            );
+                            missingColors[itemPath] = value;
                         }
-                        theme[key] = color;
+
+                        if (cssVariables) {
+                            theme[key] =
+                                `var(--highcharts-${hyphenate(paletteKey)})`;
+                        } else {
+                            theme[key] = color;
+                        }
                     }
                 }
             }
@@ -382,15 +413,64 @@ const generate = async () => {
             maskFill: new Color(palette.highlightColor60)
                 .setOpacity(0.3)
                 .get()
+        },
+        pane: {
+            background: {
+                backgroundColor: {
+                    // Palette helper not good at arrays
+                    stops: [
+                        [0, palette.backgroundColor],
+                        [1, palette.neutralColor10]
+                    ]
+                }
+            }
         }
     });
 
     document.getElementById('js').innerText = JSON.stringify(theme, null, '  ');
 
+    // JavaScript with CSS variables
+    const themeCSSVariables = findColors(defaultOptions, true);
+    Highcharts.merge(true, themeCSSVariables, {
+        annotations: {
+            labelOptions: {
+                backgroundColor: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)'
+            },
+            shapeOptions: {
+                fill: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)',
+                stroke: 'color-mix(in srgb, ' +
+                    'var(--highcharts-neutral-color-100) 75%, transparent)'
+            }
+        },
+        pane: {
+            background: {
+                backgroundColor: {
+                    // Palette helper not good at arrays
+                    stops: [
+                        [0, 'var(--highcharts-background-color)'],
+                        [1, 'var(--highcharts-neutral-color-10)']
+                    ]
+                }
+            }
+        }
+    });
+    const seriealizedThemeCSSVariables = JSON
+        .stringify(themeCSSVariables, null, '    ')
+        .replace(/"([a-zA-Z0-9-]+)":/g, '$1:')
+        .replace(/"/g, '\'');
+    document.getElementById('js-css-variables').innerText =
+        seriealizedThemeCSSVariables;
+
     await chartPreview(theme);
 
     // Only animate the first time
     animation = false;
+
+    Object.entries(missingColors).forEach(([key, value]) => {
+        console.warn('Missing color in palette:', key, value);
+    });
 };
 
 (async () => {

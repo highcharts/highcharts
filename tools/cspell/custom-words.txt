@@ -201,3 +201,4 @@ Dataviz
 KIIDs
 SFDR
 Segoe
+sparkline
