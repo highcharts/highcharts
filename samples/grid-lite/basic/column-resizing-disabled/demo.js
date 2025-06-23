@@ -8,7 +8,11 @@ Grid.grid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    columnDefaults: {
-        resizing: false
+    rendering: {
+        columns: {
+            resizing: {
+                enabled: false
+            }
+        }
     }
 });
