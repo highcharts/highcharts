@@ -7,6 +7,8 @@ js_wrap: b
 tags:
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 9
   - Heat and tree maps:
       priority: 1
 ...

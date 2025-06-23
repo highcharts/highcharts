@@ -9,6 +9,8 @@ alt_text: >-
 tags:
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 2
   - Column and bar charts:
       priority: 2
 ...

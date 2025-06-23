@@ -9,6 +9,8 @@ alt_text: >-
 tags:
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 8
   - Scatter and bubble charts:
       priority: 1
 ...

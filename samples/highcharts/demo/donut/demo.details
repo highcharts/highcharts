@@ -1,0 +1,11 @@
+---
+name: Donut chart
+authors:
+  - Øystein Moseng
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Basics:
+      priority: 5
+...
