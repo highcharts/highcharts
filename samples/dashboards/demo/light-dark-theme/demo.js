@@ -1,8 +1,3 @@
-Highcharts.setOptions({
-    chart: {
-        styledMode: true
-    }
-});
 const data = [
     ['Food', 'Vitamin A'],
     ['Beef Liver', 6421],
@@ -120,10 +115,12 @@ Dashboards.board('container', {
     }]
 }, true);
 
+// Override theme from demo page
+document.body.className = '';
 [...document.querySelectorAll('input[name="color-mode"]')]
     .forEach(input => {
         input.addEventListener('click', e => {
-            document.getElementById('container').className =
+            document.body.className =
                 e.target.value === 'none' ? '' : `highcharts-${e.target.value}`;
         });
     });

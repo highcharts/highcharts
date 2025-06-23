@@ -40,11 +40,11 @@
                 layout: 'vertical',
                 align: 'right',
                 margin: 0,
-                backgroundColor: ( // theme
-                    Highcharts.defaultOptions &&
-                            Highcharts.defaultOptions.legend &&
-                            Highcharts.defaultOptions.legend.backgroundColor
-                ) || 'rgba(255, 255, 255, 0.85)'
+                backgroundColor: `color-mix(
+                    in srgb,
+                    var(--highcharts-background-color, white),
+                    transparent 15%
+                )`
             },
 
             mapNavigation: {

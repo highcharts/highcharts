@@ -17,7 +17,8 @@ fieldset {
     padding: 1em;
 }
 
-#demo-content {
+#demo-content,
+.demo-content {
     box-shadow: none;
     background: none;
     max-width: 1200px;
