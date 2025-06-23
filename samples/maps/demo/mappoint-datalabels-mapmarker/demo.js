@@ -397,7 +397,11 @@
                 text: 'Degrees Celsius'
             },
             floating: true,
-            backgroundColor: '#ffffffcc'
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-background-color, white),
+                transparent 15%
+            )`
         },
 
         tooltip: {
@@ -425,7 +429,8 @@
             dataLabels: {
                 enabled: false
             },
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            borderColor: 'var(--highcharts-neutral-color-20, #ccc)'
         }, {
             name: 'Capitals of Europe',
             keys: ['id', 'lat', 'lon', 'name', 'y'],
