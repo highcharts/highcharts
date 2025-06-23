@@ -7,7 +7,13 @@ Highcharts.chart('container', {
         text: 'Support requests'
     },
 
-    colors: ['#1b998b', '#d7bea8', '#776885', '#5f1a37', '#04030f'],
+    colors: [
+        '#1b998b',
+        '#d7bea8',
+        '#776885',
+        '#5f1a37',
+        'var(--highcharts-neutral-color-100, #04030f)'
+    ],
 
     tooltip: {
         valueSuffix: '%'

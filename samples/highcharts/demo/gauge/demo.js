@@ -65,7 +65,7 @@ Highcharts.chart('container', {
         // The dial pointer can be heavily customized
         dial: {
             radius: '72%', // Matching the plot band thickness
-            backgroundColor: '#222',
+            backgroundColor: 'var(--highcharts-neutral-color-80, #333)',
             baseWidth: 12,
             baseLength: '85%',
             rearLength: '-85%'
