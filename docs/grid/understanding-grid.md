@@ -23,6 +23,11 @@ The `dataTable` object is the only required option for proper rendering of Grid,
 
 Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
 
+### Data modifiers
+You can also use a reference to a DataTable, which can be modified by using a Data Modifier from the Highcharts Dashboards for example, by adding a new column with the MathModifier.
+
+You can read more in the [MathModifier Article](https://www.highcharts.com/docs/dashboards/mathmodifier-module).
+
 ## columnDefaults and columns[]
 ```js
 {
