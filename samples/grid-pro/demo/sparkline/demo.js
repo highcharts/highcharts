@@ -180,7 +180,7 @@ const initGrid = data => {
                 format: 'Price of Big Mac (USD)'
             },
             cells: {
-                format: '{value} $'
+                format: '${value}'
             }
         }, {
             id: 'dollarValuation',
