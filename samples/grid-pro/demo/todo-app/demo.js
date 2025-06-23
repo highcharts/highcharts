@@ -117,7 +117,10 @@ Grid.grid('container', {
             }
         }
     },
-    columns: columns
+    columns: columns,
+    credits: {
+        enabled: false
+    }
 });
 Grid.grid('container-done', {
     dataTable: {
@@ -139,7 +142,10 @@ Grid.grid('container-done', {
             }
         }
     },
-    columns: columns
+    columns: columns,
+    credits: {
+        enabled: false
+    }
 });
 
 // Custom events
