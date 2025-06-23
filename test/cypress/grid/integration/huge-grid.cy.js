@@ -7,18 +7,12 @@ describe('Scrolling in 10 million row grid', () => {
     it('scrolls to the bottom of the 10 million row grid and verifies the last rows', () => {
         cy.get('#grid-1 tbody').scrollTo(0, '100%');
 
-        // Wait until virtualization updates the rows (the placeholder value "20" disappears)
-        cy.get('#grid-1 tbody tr')
-            .eq(-2)
-            .find('td')
-            .last()
-            .should($td => {
-                expect($td.attr('data-value')).to.not.equal('20');
-            });
+        cy.get('#grid-1 tbody tr').eq(-2).find('td').last().should($td => {
+            expect($td.attr('data-value')).to.not.equal('20');
+        });
 
         // Verify last row value
-        cy.get('#grid-1 tbody tr')
-            .last()
+        cy.get('#grid-1 tbody tr[data-row-index="9999999"]')
             .find('td')
             .last()
             .invoke('attr', 'data-value')
@@ -27,8 +21,7 @@ describe('Scrolling in 10 million row grid', () => {
             });
 
         // Verify second-to-last row value
-        cy.get('#grid-1 tbody tr')
-            .eq(-2)
+        cy.get('#grid-1 tbody tr[data-row-index="9999998"]')
             .find('td')
             .last()
             .invoke('attr', 'data-value')
@@ -48,17 +41,12 @@ describe('Scrolling in 1 million row grid', () => {
         cy.get('#grid-2 tbody').scrollTo(0, '100%');
 
         // Wait until virtualization updates the rows (the placeholder value "20" disappears)
-        cy.get('#grid-2 tbody tr')
-            .eq(-2)
-            .find('td')
-            .last()
-            .should($td => {
-                expect($td.attr('data-value')).to.not.equal('20');
-            });
+        cy.get('#grid-2 tbody tr').eq(-2).find('td').last().should($td => {
+            expect($td.attr('data-value')).to.not.equal('20');
+        });
 
         // Verify last row value
-        cy.get('#grid-2 tbody tr')
-            .last()
+        cy.get('#grid-2 tbody tr[data-row-index="999999"]')
             .find('td')
             .last()
             .invoke('attr', 'data-value')
@@ -67,8 +55,7 @@ describe('Scrolling in 1 million row grid', () => {
             });
 
         // Verify second-to-last row value
-        cy.get('#grid-2 tbody tr')
-            .eq(-2)
+        cy.get('#grid-2 tbody tr[data-row-index="999998"]')
             .find('td')
             .last()
             .invoke('attr', 'data-value')
