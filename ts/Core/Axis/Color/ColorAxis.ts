@@ -361,12 +361,11 @@ class ColorAxis extends Axis implements AxisLike {
 
             // First time only
             if (!axis.added) {
-
                 axis.added = true;
-
-                axis.labelLeft = 0;
-                axis.labelRight = axis.width;
             }
+
+            axis.labelLeft = 0;
+            axis.labelRight = axis.width;
             // Reset it to avoid color axis reserving space
             axis.chart.axisOffset[axis.side] = sideOffset;
         }
