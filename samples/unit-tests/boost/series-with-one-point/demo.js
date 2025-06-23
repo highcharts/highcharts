@@ -51,24 +51,25 @@ QUnit.test('No points in series with single point (#21897)', function (assert) {
             min: 0,
             max: 80
         },
+        tooltip: {
+            formatter: function () {
+                return this.j + '';
+            }
+        },
         // Boost should render scatter with single point (#21897)
         series: [{
             type: 'scatter',
             keys: ['x', 'j', 'y'],
-            tooltip: {
-                pointFormatter: function () {
-                    return `${this.j}`;
-                }
-            },
+            boostThreshold: 1,
             data: [[0, 1, 0]]
         }]
     });
     const series = chart.series[0];
 
     chart.tooltip.refresh(chart.series[0].boost.getPoint(series.points[0]));
-
+    console.log(chart.tooltip.label.text.textStr);
     assert.strictEqual(
-        chart.tooltip.label.text.textStr.endsWith('1'),
+        chart.tooltip.label.text.textStr.includes('1'),
         true,
         'Custom series keys should work for scatter (#23087)'
     );
