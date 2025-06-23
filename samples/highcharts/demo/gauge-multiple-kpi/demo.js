@@ -35,7 +35,7 @@ function renderIcons() {
 }
 
 const trackColors = Highcharts.getOptions().colors.map(color =>
-    new Highcharts.Color(color).setOpacity(0.3).get()
+    `color-mix(in srgb, ${color} 30%, transparent)`
 );
 
 Highcharts.chart('container', {
