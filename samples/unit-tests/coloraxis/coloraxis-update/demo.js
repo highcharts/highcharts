@@ -77,13 +77,14 @@ QUnit.test('Color axis updates', function (assert) {
             width: 600
         }
     });
+
     assert.ok(
         colorAxis.visible,
         '#16053: Color axis should be visible after showing legend again'
     );
 
     assert.strictEqual(
-        colorAxis.labelGroup.element.getBoundingClientRect().width > 600,
+        colorAxis.width >= 600,
         true,
         'Color axis width follows chart width, even after updating (#22850)'
     );
