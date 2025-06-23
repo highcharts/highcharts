@@ -15,14 +15,14 @@ Highcharts.chart('container', {
             'Q1 2019', 'Q2 2019', 'Q3 2019', 'Q4 2019', 'Q1 2020', 'Q2 2020',
             'Q3 2020', 'Q4 2020', 'Q1 2021', 'Q2 2021', 'Q3 2021'
         ],
-        lineColor: 'transparent'
+        lineWidth: 0
     },
     yAxis: {
         title: {
             text: 'TWh'
         },
         plotLines: [{
-            color: 'black',
+            color: 'var(--highcharts-neutral-color-100, black)',
             value: 0,
             width: 2
         }]
