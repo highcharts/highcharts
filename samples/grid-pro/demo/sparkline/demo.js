@@ -185,7 +185,7 @@ const initGrid = data => {
         }, {
             id: 'dollarValuation',
             header: {
-                format: 'Currency is undervalued / overvalued by %'
+                format: 'Undervalued / overvalued'
             },
             width: 350,
             cells: {
