@@ -42,6 +42,7 @@ Highcharts.chart('container', {
     },
 
     colorAxis: {
+        reversed: false,
         min: 0,
         minColor: 'var(--highcharts-background-color, #FFFFFF)',
         maxColor: Highcharts.getOptions().colors[0]
