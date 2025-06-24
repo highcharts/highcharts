@@ -824,7 +824,7 @@ function onSeriesDestroy(
         chart.boost &&
         chart.boost.markerGroup === series.markerGroup
     ) {
-        series.markerGroup = null as any;
+        series.markerGroup = void 0;
     }
 
     if (chart.hoverPoints) {
@@ -836,7 +836,7 @@ function onSeriesDestroy(
     }
 
     if (chart.hoverPoint && chart.hoverPoint.series === series) {
-        chart.hoverPoint = null as any;
+        chart.hoverPoint = void 0;
     }
 }
 
@@ -1130,7 +1130,8 @@ function seriesRenderCanvas(this: Series): void {
             this.getColumn('x', true)
         ),
         lineWidth = pick(options.lineWidth, 1),
-        nullYSubstitute = options.nullInteraction && yMin;
+        nullYSubstitute = options.nullInteraction && yMin,
+        tooltip = chart.tooltip;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1140,6 +1141,32 @@ function seriesRenderCanvas(this: Series): void {
         minI: (number|undefined),
         maxI: (number|undefined);
 
+    // Clear mock points and tooltip after zoom (#20330)
+    if (!this.boosted) {
+        return;
+    }
+
+    this.points?.forEach((point: Point): void => {
+        point?.destroyElements?.();
+    });
+    this.points = [];
+
+    if (tooltip && !tooltip.isHidden) {
+        const isSeriesHovered =
+            chart.hoverPoint?.series === this ||
+            chart.hoverPoints?.some(
+                (point: Point): boolean => point.series === this
+            );
+
+        if (isSeriesHovered) {
+            chart.hoverPoint = chart.hoverPoints = void 0;
+            tooltip.hide(0);
+        }
+    } else if (chart.hoverPoints) {
+        chart.hoverPoints = chart.hoverPoints.filter(
+            (point: Point): boolean => point.series !== this
+        );
+    }
 
     // When touch-zooming or mouse-panning, re-rendering the canvas would not
     // perform fast enough. Instead, let the axes redraw, but not the series.

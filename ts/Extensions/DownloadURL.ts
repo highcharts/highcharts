@@ -24,8 +24,9 @@ const {
     win,
     win: { document: doc }
 } = H;
-
 import RegexLimits from './RegexLimits.js';
+import U from '../Core/Utilities.js';
+const { error } = U;
 
 /* *
  *
@@ -75,20 +76,22 @@ const domurl = win.URL || win.webkitURL || win;
 
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
+ *
  * @private
  * @function Highcharts.dataURLtoBlob
+ *
  * @param {string} dataURL
- *        URL to convert
- * @return {string|undefined}
- *         Blob
+ * URL to convert.
+ *
+ * @return {string | undefined}
+ * Blob.
  */
 function dataURLtoBlob(
     dataURL: string
-): (string|undefined) {
+): (string | undefined) {
     const parts = dataURL
         .replace(/filename=.*;/, '')
         .match(/data:([^;]*)(;base64)?,([A-Z+\d\/]+)/i);
-
 
     if (
         parts &&
@@ -118,14 +121,14 @@ function dataURLtoBlob(
  *
  * @private
  * @function Highcharts.downloadURL
- * @param {string|global.URL} dataURL
- *        The dataURL/Blob to download
+ *
+ * @param {string | global.URL} dataURL
+ * The dataURL/Blob to download.
  * @param {string} filename
- *        The name of the resulting file (w/extension)
- * @return {void}
+ * The name of the resulting file (w/extension).
  */
 function downloadURL(
-    dataURL: (string|URL),
+    dataURL: (string | URL),
     filename: string
 ): void {
     const nav = win.navigator,
@@ -141,7 +144,6 @@ function downloadURL(
         nav.msSaveOrOpenBlob(dataURL, filename);
         return;
     }
-
     dataURL = '' + dataURL;
 
     if (nav.userAgent.length > RegexLimits.shortLimit) {
@@ -185,6 +187,41 @@ function downloadURL(
     }
 }
 
+/**
+ * Asynchronously downloads a script from a provided location.
+ *
+ * @private
+ * @function Highcharts.getScript
+ *
+ * @param {string} scriptLocation
+ * The location for the script to fetch.
+ */
+export function getScript(
+    scriptLocation: string
+): Promise<void> {
+    return new Promise((resolve, reject): void => {
+        const head = doc.getElementsByTagName('head')[0],
+            script = doc.createElement('script');
+
+        // Set type and location for the script
+        script.type = 'text/javascript';
+        script.src = scriptLocation;
+
+        // Resolve in case of a succesful script fetching
+        script.onload = (): void => {
+            resolve();
+        };
+
+        // Reject in case of fail
+        script.onerror = (): void => {
+            reject(error(`Error loading script ${scriptLocation}`));
+        };
+
+        // Append the newly created script
+        head.appendChild(script);
+    });
+}
+
 /* *
  *
  *  Default Export
@@ -193,7 +230,8 @@ function downloadURL(
 
 const DownloadURL = {
     dataURLtoBlob,
-    downloadURL
+    downloadURL,
+    getScript
 };
 
 export default DownloadURL;

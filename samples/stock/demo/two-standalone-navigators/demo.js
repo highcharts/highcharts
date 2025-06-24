@@ -35,15 +35,13 @@ const AMDPriceConnector =
 
     const firstNav = Highcharts.navigator('navigator-container', {
         series: [{
-            data: price,
-            color: '#0F0F0F'
+            data: price
         }]
     });
 
     const secondNav = Highcharts.navigator('second-navigator-container', {
         series: [{
-            data: price,
-            color: '#0F0F0F'
+            data: price
         }]
     });
 

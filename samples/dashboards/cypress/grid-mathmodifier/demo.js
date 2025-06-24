@@ -88,13 +88,17 @@ Dashboards.board('container', {
             gridOptions: {
                 columnDefaults: {
                     cells: {
-                        editable: true
+                        editMode: {
+                            enabled: true
+                        }
                     }
                 },
                 columns: [{
                     id: 'USD',
                     cells: {
-                        editable: false
+                        editMode: {
+                            enabled: false
+                        }
                     }
                 }]
             },

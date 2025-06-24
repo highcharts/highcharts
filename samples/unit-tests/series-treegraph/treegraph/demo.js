@@ -193,7 +193,7 @@ QUnit.test(
             'Multiple nodes should collapse simultaneously (#19552).'
         );
 
-        const exportedSVG = chart.getSVGForExport(),
+        const exportedSVG = chart.exporting.getSVGForExport(),
             selector = '#container .highcharts-series-1' +
                 ' .highcharts-level-group-3 path',
             inChartPos = +document.querySelectorAll(selector)[0]

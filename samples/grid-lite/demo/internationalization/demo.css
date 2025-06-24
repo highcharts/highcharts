@@ -1,5 +1,19 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
 
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 .lang-options {
     display: flex;
     justify-content: end;
@@ -10,13 +24,9 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.highcharts-description {
-    padding: 0 20px;
-}
-
 @media (prefers-color-scheme: dark) {
     .demo {
-        background-color: #292929;
+        background-color: #141414;
         color: #fff;
     }
 }

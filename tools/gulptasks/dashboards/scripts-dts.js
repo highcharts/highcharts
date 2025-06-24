@@ -34,7 +34,7 @@ const DTS_FILES = [
 const DTS_FOLDERS = [
     'Dashboards/',
     'Data/',
-    'DataGrid/'
+    'Grid/'
 ].map(fsLib.path);
 
 

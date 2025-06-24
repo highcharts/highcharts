@@ -1596,9 +1596,10 @@ QUnit.test('defaultOptions.borderWidth', function (assert) {
     axis.chart = {
         options: {
             chart: {}
-        }
+        },
+        // Mock with correct inernal type requirements.
+        userOptions: {}
     };
-
     /**
      * grid.borderWidth should default to 1
      */

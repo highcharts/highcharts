@@ -67,7 +67,6 @@ function indexTemplate(options) {
             }
             ul.nav > li {
                 list-style: none;
-                display: black
             }
             div > ul > li {
                 padding-bottom: 0.5em;
@@ -90,6 +89,18 @@ function indexTemplate(options) {
             }
             li a:hover {
                 text-decoration: underline;
+            }
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background-color: #141414;
+                    color: #ddd;
+                }
+                li a {
+                    color: #2caffe;
+                }
+                button span {
+                    color: #fff
+                }
             }
         </style>
     </head>

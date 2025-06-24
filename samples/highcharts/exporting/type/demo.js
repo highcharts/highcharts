@@ -29,6 +29,6 @@ const chart = Highcharts.chart('container', {
 });
 
 // button handler
-document.getElementById('button').addEventListener('click', () => {
-    chart.exportChart();
+document.getElementById('button').addEventListener('click', async () => {
+    await chart.exporting.exportChart();
 });

@@ -13,13 +13,12 @@
 }
 
 .highcharts-figure {
-    margin: 0;
+    max-width: 580px;
+    margin: 0 auto;
 }
 
 #container {
     height: 400px;
-    max-width: 580px;
-    margin: 0 auto;
 }
 
 .highcharts-description {

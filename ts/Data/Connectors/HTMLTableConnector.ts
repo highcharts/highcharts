@@ -94,7 +94,7 @@ class HTMLTableConnector extends DataConnector {
     /**
      * The attached parser, which can be replaced in the constructor
      */
-    public readonly converter: HTMLTableConverter;
+    public converter: HTMLTableConverter;
 
     /**
      * The table element to create the connector from. Is either supplied

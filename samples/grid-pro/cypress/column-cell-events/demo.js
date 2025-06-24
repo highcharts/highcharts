@@ -19,7 +19,9 @@ Grid.grid('container', {
             }
         },
         cells: {
-            editable: true,
+            editMode: {
+                enabled: true
+            },
             events: {
                 click: function () {
                     doc.getElementById('cellClick').value = 'cellClick';
@@ -51,6 +53,10 @@ Grid.grid('container', {
             events: {
                 click: function () {
                     doc.getElementById('headerClick').value = 'headerClick';
+                },
+                afterRender: function () {
+                    doc.getElementById('headerAfterRender').value =
+                        'afterRender';
                 }
             }
         }
@@ -68,7 +74,9 @@ Grid.grid('container', {
             }
         },
         cells: {
-            editable: true,
+            editMode: {
+                enabled: true
+            },
             events: {
                 click: function () {
                     doc.getElementById('cellClick').value =

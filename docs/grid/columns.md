@@ -58,22 +58,22 @@ You can exclude the column, including its header, from the Grid by setting `enab
 
 ```js
 {
-  columns: [
-    {
-      id: "price",
-      cells: {
-        className: "custom_cell_class",
-        format: "${value}",
-        editable: true
+  columns: [{
+    id: "price",
+    cells: {
+      className: "custom_cell_class",
+      format: "${value}",
+      editMode: {
+        enabled: true
       }
     }
-  ]
+  }]
 }
 ```
 
 The `columns[].cells` option can configure the cells in individual columns. If needed, you can set defaults for all columns in `columnDefaults.cells`.
 
-The end user can edit each cell in a column directly by setting the `editable` option to true. Read more in the [Cell editing](https://www.highcharts.com/docs/grid/cell-editing) article.
+The end user can edit each cell in a column directly by setting the `editMode.enabled` option to true. Read more in the [Cell editing](https://www.highcharts.com/docs/grid/cell-editing) article.
 
 Note that `className` and `format` support templating as described in [Templating](https://www.highcharts.com/docs/chart-concepts/templating), and `{value}` references the cell value.
 
@@ -108,7 +108,9 @@ Use the mixed distribution when you want explicit control over individual column
 Grid.grid('container', {
   rendering: {
     columns: {
-      distribution: 'mixed'
+      resizing: {
+        mode: 'mixed'
+      }
     }
   },
   columns: [{
@@ -242,3 +244,15 @@ columns: [
     }
     ...
 ]
+```
+
+## Data type
+
+The [dataType](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#dataType) specifies the type of the column (`string`, `number`, `boolean` or `date`).
+The data type determines how the cell content is rendered. For example, setting the type to boolean displays a check or cross symbol based on the value.
+
+If this property is not defined, the data type is automatically inferred from the first cell in the column.
+
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-data-type" allow="fullscreen"></iframe>
+
+For more details on customizing cell content, refer to the [cell content section](https://www.highcharts.com/docs/grid/cell-content).

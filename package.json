@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "12.2.0",
+  "version": "12.3.0",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "esm/highcharts.js",
@@ -32,6 +32,7 @@
     "dlint": "gulp dashboards/lint",
     "gapi": "gulp grid/api-docs && gulp api-server --product Grid",
     "gcode": "gulp scripts --product Grid",
+    "glint": "cd ts/Grid && npx eslint .",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
@@ -161,14 +162,14 @@
     "*.js": [
       "eslint"
     ],
-    "./ts/!(Dashboards|DataGrid)**/*.ts": [
+    "./ts/!(Dashboards|Grid)**/*.ts": [
       "npm run lint"
     ],
     "./ts/Dashboards/**/*.ts": [
-      "cd ts/Dashboards && npx eslint"
+      "cd ts/Dashboards && npx eslint ."
     ],
-    "./ts/DataGrid/**/*.ts": [
-      "cd ts/DataGrid && npx eslint"
+    "./ts/Grid/**/*.ts": [
+      "npm run glint"
     ],
     "*.css": [
       "stylelint"

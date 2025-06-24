@@ -20,7 +20,7 @@
  * */
 
 import type Column from '../Core/Table/Column';
-import type TableCell from '../Core/Table/Content/TableCell';
+import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 
@@ -30,8 +30,7 @@ import Globals from '../../Core/Globals.js';
 const {
     addEvent,
     fireEvent,
-    pushUnique,
-    merge
+    pushUnique
 } = U;
 
 
@@ -95,13 +94,12 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(TableCellClass, name, (e: GridEvent<TableCell>): void => {
             const cell = e.target;
-            const cellEvents = merge(
+            const cellEvent =
+                cell.column.options.cells?.events?.[name] ||
                 // Backward compatibility
-                cell.row.viewport.grid.options?.events?.cell,
-                cell.column.options.cells?.events
-            );
+                cell.row.viewport.grid.options?.events?.cell?.[name];
 
-            cellEvents?.[name]?.call(cell);
+            cellEvent?.call(cell);
             propagate['cell_' + name]?.call(cell);
         });
     });
@@ -112,24 +110,29 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(ColumnClass, name, (e: GridEvent<Column>): void => {
             const column = e.target;
-            const columnEvents = merge(
+            const columnEvent =
+                column.options?.events?.[name] ||
                 // Backward compatibility
-                column.viewport.grid.options?.events?.column,
-                column.options?.events
-            );
-            columnEvents?.[name]?.call(column);
+                column.viewport.grid.options?.events?.column?.[name];
+
+            columnEvent?.call(column);
         });
     });
 
     // HeaderCell Events
-    addEvent(HeaderCellClass, 'click', (e: GridEvent<Column>): void => {
-        const column = e.target;
-        const headerEvents = merge(
-            // Backward compatibility
-            column.viewport.grid.options?.events?.header,
-            column.options?.header?.events
-        );
-        headerEvents?.click?.call(column);
+    ([
+        'click',
+        'afterRender'
+    ] as const).forEach((name): void => {
+        addEvent(HeaderCellClass, name, (e: GridEvent<Column>): void => {
+            const column = e.target;
+            const headerEvent =
+                column.options?.header?.events?.[name] ||
+                // Backward compatibility
+                column.viewport.grid.options?.events?.header?.[name];
+
+            headerEvent?.call(column);
+        });
     });
 }
 
@@ -212,6 +215,11 @@ export interface HeaderEvents {
      * Callback function to be called when the header is clicked.
      */
     click?: ColumnEventCallback;
+
+    /**
+     * Callback function to be called after the header is initialized.
+     */
+    afterRender?: ColumnEventCallback;
 }
 
 /**

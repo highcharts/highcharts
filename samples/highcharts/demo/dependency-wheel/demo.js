@@ -65,7 +65,7 @@ Highcharts.chart('container', {
         type: 'dependencywheel',
         name: 'Dependency wheel series',
         dataLabels: {
-            color: '#333',
+            color: 'var(--highcharts-neutral-color-80, #333)',
             style: {
                 textOutline: 'none'
             },
