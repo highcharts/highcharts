@@ -758,15 +758,6 @@ namespace AxisDefaults {
          */
 
         /**
-         * An event fired when a point is outside a break after zoom.
-         *
-         * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
-         * @product   highcharts highstock gantt
-         * @context   Highcharts.Axis
-         * @apioption xAxis.events.pointBreakOut
-         */
-
-        /**
          * Fires when the minimum and maximum is set for the axis, either by
          * calling the `.setExtremes()` method or by selecting an area in the
          * chart. One parameter, `event`, is passed to the function,
@@ -1904,6 +1895,10 @@ namespace AxisDefaults {
          * An array defining where the ticks are laid out on the axis. This
          * overrides the default behaviour of [tickPixelInterval](
          * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
+         *
+         * Note: When working with date-time axes, be aware of time zone
+         * handling. See the [documentation on time options](https://www.highcharts.com/docs/chart-concepts/axes#datetime)
+         * for best practices.
          *
          * @see [tickPositioner](#xAxis.tickPositioner)
          *
@@ -3066,6 +3061,7 @@ namespace AxisDefaults {
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
+             * @apioption yAxis.title.text
              */
         },
 

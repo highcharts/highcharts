@@ -20,7 +20,7 @@
  * */
 
 import type Column from '../Core/Table/Column';
-import type TableCell from '../Core/Table/Content/TableCell';
+import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 
@@ -90,11 +90,16 @@ function compose(
         'mouseOut',
         'dblClick',
         'click',
-        'afterSetValue'
+        'afterRender'
     ] as const).forEach((name): void => {
         addEvent(TableCellClass, name, (e: GridEvent<TableCell>): void => {
             const cell = e.target;
-            cell.row.viewport.grid.options?.events?.cell?.[name]?.call(cell);
+            const cellEvent =
+                cell.column.options.cells?.events?.[name] ||
+                // Backward compatibility
+                cell.row.viewport.grid.options?.events?.cell?.[name];
+
+            cellEvent?.call(cell);
             propagate['cell_' + name]?.call(cell);
         });
     });
@@ -105,14 +110,29 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(ColumnClass, name, (e: GridEvent<Column>): void => {
             const column = e.target;
-            column.viewport.grid.options?.events?.column?.[name]?.call(column);
+            const columnEvent =
+                column.options?.events?.[name] ||
+                // Backward compatibility
+                column.viewport.grid.options?.events?.column?.[name];
+
+            columnEvent?.call(column);
         });
     });
 
     // HeaderCell Events
-    addEvent(HeaderCellClass, 'click', (e: GridEvent<Column>): void => {
-        const col = e.target;
-        col.viewport.grid.options?.events?.header?.click?.call(col);
+    ([
+        'click',
+        'afterRender'
+    ] as const).forEach((name): void => {
+        addEvent(HeaderCellClass, name, (e: GridEvent<Column>): void => {
+            const column = e.target;
+            const headerEvent =
+                column.options?.header?.events?.[name] ||
+                // Backward compatibility
+                column.viewport.grid.options?.events?.header?.[name];
+
+            headerEvent?.call(column);
+        });
     });
 }
 
@@ -160,8 +180,18 @@ export interface CellEvents {
     /**
      * Callback function to be called after the cell value is set (on init or
      * after editing).
+     *
+     * Use the `afterRender` event instead.
+     *
+     * @deprecated
      */
     afterSetValue?: CellEventCallback;
+
+    /**
+     * Callback function to be called after the cell value is set (on init or
+     * after editing).
+     */
+    afterRender?: CellEventCallback;
 }
 
 /**
@@ -185,6 +215,11 @@ export interface HeaderEvents {
      * Callback function to be called when the header is clicked.
      */
     click?: ColumnEventCallback;
+
+    /**
+     * Callback function to be called after the header is initialized.
+     */
+    afterRender?: ColumnEventCallback;
 }
 
 /**
@@ -217,11 +252,32 @@ declare module '../Core/Options' {
     interface Options {
         /**
          * Events options triggered by the grid elements.
+         * @deprecated
          */
         events?: GridEvents;
     }
-}
 
+    interface ColumnCellOptions {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        events?: CellEvents;
+    }
+
+    interface IndividualColumnOptions {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        events?: ColumnEvents;
+    }
+
+    interface ColumnHeaderOptions {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        events?: HeaderEvents;
+    }
+}
 
 /* *
  *

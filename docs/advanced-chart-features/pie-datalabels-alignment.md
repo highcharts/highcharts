@@ -25,22 +25,24 @@ Alignment method for data labels. Possible values are:
 **Demo with connectors**
 
 
+```js
     dataLabels: {
         alignTo: 'connectors'
     }
+```
 
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-connectors allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-connectors" allow="fullscreen"></iframe>
 
 **Demo with plotEdges**
 
-
+```js
     dataLabels: {
         alignTo: 'plotEdges'
     }
+```
 
-
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-plotedges allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-plotedges" allow="fullscreen"></iframe>
 
 ### dataLabels.connectorShape
 
@@ -48,35 +50,35 @@ Specifies the method that is used to generate the connector path. Highcharts pro
 
 **fixedOffset (default):**
 
-
+```js
     dataLabels: {
         connectorShape: 'fixedOffset'
     }
+```
 
-
-<iframe width="100%" height="550" style="null" src=https://www.highcharts.com/samples/embed/highcharts/coloraxis/coloraxis-with-pie allow="fullscreen"></iframe>
+<iframe width="100%" height="550" style="null" src="https://www.highcharts.com/samples/embed/highcharts/coloraxis/coloraxis-with-pie" allow="fullscreen"></iframe>
 
 **straight:**
 
-
-    dataLabels: {
-        connectorShape: 'straight',
-        crookDistance: '70%'
-    }
-
+```js
+dataLabels: {
+    connectorShape: 'straight',
+    crookDistance: '70%'
+}
+```
 
 **crookedLine**
 
 This option can be used with the `crookDistance` parameter. It defines how far from the vertical plot edge the connector path should be crooked. Using `crookedLine` makes the most sense (in most cases) when `alignTo` is set.
 
+```js
+dataLabels: {
+    connectorShape: 'crookedLine',
+    crookDistance: '70%'
+}
+```
 
-    dataLabels: {
-        connectorShape: 'crookedLine',
-        crookDistance: '70%'
-    }
-
-
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-crookdistance allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-crookdistance" allow="fullscreen"></iframe>
 
 Users can provide their own method by passing a callback function instead of a String. Three arguments are passed to the callback:
 
@@ -112,7 +114,7 @@ connectorShape: function(labelPosition, connectorPosition, options) {
 }
 ```
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-connectorshape-function allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-connectorshape-function" allow="fullscreen"></iframe>
 
 API documents
 -------------

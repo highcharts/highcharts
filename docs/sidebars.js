@@ -1,6 +1,8 @@
 module.exports = {
     docs: {
-        Highcharts: ['index'],
+        Highcharts: [
+            'public-index'
+        ],
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
@@ -124,6 +126,8 @@ module.exports = {
             'grid/columns',
             'grid/header',
             'grid/cell-editing',
+            'grid/cell-content',
+            'grid/sparkline',
             'grid/events',
             {
                 'Theming': [
@@ -198,7 +202,7 @@ module.exports = {
         'Advanced chart features': [
             'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
-            'advanced-chart-features/annotations-and-fibonacci-retracements',
+            'advanced-chart-features/creating-advanced-annotations',
             'advanced-chart-features/annotations-gui',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/breadcrumbs',
@@ -235,6 +239,7 @@ module.exports = {
                     'morningstar/risk-score',
                     'morningstar/regulatory-news-announcements',
                     'morningstar/security-details',
+                    'morningstar/security-compare',
                     'morningstar/x-ray',
                     {
                         'Time Series': [
@@ -291,6 +296,14 @@ module.exports = {
         ],
         'Flutter': [
             'flutter/getting-started'
+        ],
+        'React integration (beta)': [
+            'react/getting-started',
+            'react/series-and-chart-types',
+            'react/options',
+            'react/options-component-format',
+            'react/nextjs',
+            'react/component-children'
         ]
     }
 };

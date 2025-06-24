@@ -497,7 +497,8 @@ namespace DataLabel {
             'dataLabelsGroup',
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
-            (this.options.dataLabels as any).zIndex || 6
+            (this.options.dataLabels as any).zIndex || 6,
+            this.chart.dataLabelsGroup
         );
     }
 
@@ -600,8 +601,8 @@ namespace DataLabel {
                             style = {}
                         } = labelOptions;
 
-                    let formatString,
-                        labelText,
+                    let formatString: string|undefined,
+                        labelText: string|undefined,
                         rotation,
                         attr: SVGAttributes = {},
                         dataLabel: SVGElement|undefined =
@@ -728,7 +729,11 @@ namespace DataLabel {
                     // Individual labels are disabled if the are explicitly
                     // disabled in the point options, or if they fall outside
                     // the plot area.
-                    if (labelEnabled && defined(labelText)) {
+                    if (
+                        labelEnabled &&
+                        defined(labelText) &&
+                        labelText !== ''
+                    ) {
                         if (!dataLabel) {
                             // Create new label element
                             dataLabel = renderer.label(

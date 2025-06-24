@@ -55,10 +55,10 @@ Highcharts.chart('container', {
         innerSize: '42%',
         size: '95%',
         background: [{
-            backgroundColor: '#f7f7f7',
+            backgroundColor: 'var(--highcharts-neutral-color-3, #f7f7f7)',
             borderWidth: 0
         }, {
-            backgroundColor: '#fff',
+            backgroundColor: 'var(--highcharts-background-color, #fff)',
             borderWidth: 0,
             outerRadius: '42%'
         }]
@@ -85,7 +85,6 @@ Highcharts.chart('container', {
     },
     tooltip: {
         borderWidth: 1,
-        backgroundColor: '#fff',
         shadow: false,
         outside: true,
         hideDelay: 20,
@@ -270,7 +269,7 @@ function fillCenter(percentage, decade, chart, customLabel) {
             labelText, 0, 0, void 0, void 0,
             void 0, true
         ).css({
-            color: '#000',
+            color: 'var(--highcharts-neutral-color-100, #000)',
             pointerEvents: 'none'
         }).add();
     } else {

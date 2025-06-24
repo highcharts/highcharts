@@ -24,18 +24,23 @@
 
 import type { IndividualColumnOptions } from '../Options';
 import type Cell from './Cell';
+import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
 import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
-import GridUtils from '../GridUtils.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import Templating from '../../../Core/Templating.js';
+import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
+import TableCell from './Body/TableCell';
 
-const { merge } = Utils;
-const { makeHTMLElement } = GridUtils;
+const {
+    defined,
+    merge,
+    fireEvent
+} = Utils;
 
 
 /* *
@@ -51,19 +56,6 @@ class Column {
 
     /* *
     *
-    *  Static Properties
-    *
-    * */
-
-    /**
-     * The minimum width of a column.
-     * @internal
-     */
-    public static readonly MIN_COLUMN_WIDTH = 20;
-
-
-    /* *
-    *
     *  Properties
     *
     * */
@@ -74,12 +66,9 @@ class Column {
     public readonly viewport: Table;
 
     /**
-     * The width of the column in the viewport. The interpretation of the
-     * value depends on the `columns.distribution` option:
-     * - `full`: The width is a ratio of the viewport width.
-     * - `fixed`: The width is a fixed number of pixels.
+     * Type of the data in the column.
      */
-    public width: number;
+    public readonly dataType: Column.DataType;
 
     /**
      * The cells of the column.
@@ -140,17 +129,22 @@ class Column {
         id: string,
         index: number
     ) {
-        this.options = merge(
-            viewport.grid.options?.columnDefaults ?? {},
-            viewport.grid.columnOptionsMap?.[id] ?? {}
-        );
+        const { grid } = viewport;
 
         this.id = id;
         this.index = index;
         this.viewport = viewport;
-        this.width = this.getInitialWidth();
 
         this.loadData();
+
+        this.dataType = this.assumeDataType();
+
+        this.options = merge(
+            grid.options?.columnDefaults ?? {},
+            grid.columnOptionsMap?.[id] ?? {}
+        );
+
+        fireEvent(this, 'afterInit');
     }
 
 
@@ -165,6 +159,66 @@ class Column {
      */
     public loadData(): void {
         this.data = this.viewport.dataTable.getColumn(this.id, true);
+    }
+
+    /**
+     * Creates a cell content instance.
+     *
+     * @param cell
+     * The cell that is to be edited.
+     *
+     */
+    public createCellContent(cell: TableCell): CellContent {
+        return new TextContent(cell);
+    }
+
+    /**
+     * Assumes the data type of the column based on the options or data in the
+     * column if not specified.
+     */
+    private assumeDataType(): Column.DataType {
+        const { grid } = this.viewport;
+
+        const type = grid.columnOptionsMap?.[this.id]?.dataType ??
+            grid.options?.columnDefaults?.dataType;
+        if (type) {
+            return type;
+        }
+
+        if (!this.data) {
+            return 'string';
+        }
+
+        if (!Array.isArray(this.data)) {
+            // Typed array
+            return 'number';
+        }
+
+        for (let i = 0, iEnd = Math.min(this.data.length, 30); i < iEnd; ++i) {
+            if (!defined(this.data[i])) {
+                // If the data is null or undefined, we should look
+                // at the next value to determine the type.
+                continue;
+            }
+
+            switch (typeof this.data[i]) {
+                case 'number':
+                    return 'number';
+                case 'boolean':
+                    return 'boolean';
+                default:
+                    return 'string';
+            }
+        }
+
+        // eslint-disable-next-line no-console
+        console.warn(
+            `Column "${this.id}" contains too few data points with ` +
+            'unambiguous types to correctly determine its dataType. It\'s ' +
+            'recommended to set the `dataType` option for it.'
+        );
+
+        return 'string';
     }
 
     /**
@@ -205,13 +259,8 @@ class Column {
      * Returns the width of the column in pixels.
      */
     public getWidth(): number {
-        const vp = this.viewport;
-
-        return vp.columnDistribution === 'full' ?
-            vp.getWidthFromRatio(this.width) :
-            this.width;
+        return this.viewport.columnDistribution.getColumnWidth(this);
     }
-
 
     /**
      * Adds or removes the hovered CSS class to the column element
@@ -252,72 +301,6 @@ class Column {
     }
 
     /**
-     * Creates a mock element to measure the width of the column from the CSS.
-     * The element is appended to the viewport container and then removed.
-     * It should be called only once for each column.
-     *
-     * @returns The initial width of the column.
-     */
-    private getInitialWidth(): number {
-        let result: number;
-        const { viewport } = this;
-
-        // Set the initial width of the column.
-        const mock = makeHTMLElement('div', {
-            className: Globals.getClassName('columnElement')
-        }, viewport.grid.container);
-
-        mock.setAttribute('data-column-id', this.id);
-        if (this.options.className) {
-            mock.classList.add(...this.options.className.split(/\s+/g));
-        }
-
-        if (viewport.columnDistribution === 'full') {
-            result = this.getInitialFullDistWidth(mock);
-        } else {
-            result = mock.offsetWidth || 100;
-        }
-        mock.remove();
-
-        return result;
-    }
-
-    /**
-     * The initial width of the column in the full distribution mode. The last
-     * column in the viewport will have to fill the remaining space.
-     *
-     * @param mock
-     * The mock element to measure the width.
-     */
-    private getInitialFullDistWidth(mock: HTMLElement): number {
-        const vp = this.viewport;
-        const columnsCount = vp.grid.enabledColumns?.length ?? 0;
-
-        if (this.index < columnsCount - 1) {
-            return vp.getRatioFromWidth(mock.offsetWidth) || 1 / columnsCount;
-        }
-
-        let allPreviousWidths = 0;
-        for (let i = 0, iEnd = columnsCount - 1; i < iEnd; i++) {
-            allPreviousWidths += vp.columns[i].width;
-        }
-
-        const result = 1 - allPreviousWidths;
-
-        if (result < 0) {
-            // eslint-disable-next-line no-console
-            console.warn(
-                'The sum of the columns\' widths exceeds the ' +
-                'viewport width. It may cause unexpected behavior in the ' +
-                'full distribution mode. Check the CSS styles of the ' +
-                'columns. Corrections may be needed.'
-            );
-        }
-
-        return result;
-    }
-
-    /**
      * Returns the formatted string where the templating context is the column.
      *
      * @param template
@@ -340,6 +323,8 @@ class Column {
 
 namespace Column {
     export type Options = Omit<IndividualColumnOptions, 'id'>;
+
+    export type DataType = 'string' | 'number' | 'boolean' | 'datetime';
 }
 
 

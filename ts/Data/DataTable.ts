@@ -176,6 +176,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
 
     private originalRowIndexes?: Array<number|undefined>;
 
+
     /* *
      *
      *  Functions

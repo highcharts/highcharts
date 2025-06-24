@@ -45,7 +45,8 @@ export interface CSSObject {
     '-webkit-transform'?: string;
     background?: string;
     backgroundColor?: ColorString;
-    borderRadius?: number|string;
+    backgroundImage?: string;
+    borderRadius?: string;
     borderWidth?: number;
     border?: string|0;
     'border-radius'?: string;

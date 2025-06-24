@@ -27,6 +27,48 @@ var demoHTML = document.createElement('div');
 demoHTML.setAttribute('id', 'demo-html');
 document.body.appendChild(demoHTML);
 
+// Deep clone function to save and restore the default options
+function deepClone(obj, seen = new WeakMap()) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj; // Return primitives as-is
+    }
+
+    if (seen.has(obj)) {
+        return seen.get(obj); // Handle circular references
+    }
+
+    if (Array.isArray(obj)) {
+        const arr = [];
+        seen.set(obj, arr);
+        for (let i = 0; i < obj.length; i++) {
+            arr[i] = deepClone(obj[i], seen);
+        }
+        return arr;
+    }
+
+    const clone = {};
+    seen.set(obj, clone);
+
+    for (const key of Object.keys(obj)) {
+        const val = obj[key];
+        if (typeof val === 'function') {
+            clone[key] = val; // Copy functions by reference
+        } else {
+            clone[key] = deepClone(val, seen);
+        }
+    }
+
+    // Preserve explicitly undefined properties that are enumerable
+    const allKeys = Reflect.ownKeys(obj);
+    for (const key of allKeys) {
+        if (!clone.hasOwnProperty(key) && Object.prototype.hasOwnProperty.call(obj, key)) {
+            clone[key] = obj[key];
+        }
+    }
+
+    return clone;
+};
+
 
 var currentTests = [];
 
@@ -100,59 +142,7 @@ Highcharts.setOptions({
     }
 
 });
-// Save default functions from the default options, as they are not stringified
-// to JSON
-/*
-function handleDefaultOptionsFunctions(save) {
-    var defaultOptionsFunctions = {};
-    function saveDefaultOptionsFunctions(original, path) {
-        Highcharts.objectEach(original, function (value, key) {
-            if (
-                Highcharts.isObject(value, true) &&
-                !Highcharts.isClass(value) &&
-                !Highcharts.isDOMElement(value)
-            ) {
-                // Recurse
-                saveDefaultOptionsFunctions(original[key], (path ? path + '.' : '') + key);
-
-            } else if (save && typeof value === 'function') {
-                defaultOptionsFunctions[path + '.' + key] = value;
-
-            } else if ( // restore
-                !save &&
-                typeof value === 'function'
-            ) {
-                console.log('restore', path + '.' + key)
-                original[key] = defaultOptionsFunctions[path + '.' + key];
-            }
-        });
-    }
-    saveDefaultOptionsFunctions(Highcharts.defaultOptions, '');
-}
-handleDefaultOptionsFunctions(true);
-*/
-const getUndefinedRecursive = (result, obj) => {
-    for (const [key, value] of Object.entries(obj)) {
-          if (value === void 0) {
-            result[key] = void 0;
-        }
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-            result[key] = {};
-            getUndefinedRecursive(result[key], value);
-            if (!Object.keys(result[key]).length) {
-                delete result[key];
-            }
-        }
-    }
-    return result;
-};
-Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
-// Some options are undefined by default, we need to save them because JSON
-// doesn't serialize undefined values.
-Highcharts.explicitUndefineds = getUndefinedRecursive(
-    {},
-    Highcharts.defaultOptions
-);
+Highcharts.clonedDefaultOptions = deepClone(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 Highcharts.radialDefaultOptionsRaw =
     JSON.stringify(Highcharts.RadialAxis.radialDefaultOptions);
@@ -213,7 +203,9 @@ if (window.Promise) {
 
 function resetDefaultOptions(testName) {
 
-    var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
+    var defaultOptionsClonedFromOriginal = deepClone(
+        Highcharts.clonedDefaultOptions
+    );
 
     // Before running setOptions, delete properties that are undefined by
     // default. For example, in `highcharts/members/setoptions`, properties like
@@ -239,15 +231,17 @@ function resetDefaultOptions(testName) {
         });
     }
 
-    deleteAddedProperties(Highcharts.defaultOptions, defaultOptionsRaw);
+    deleteAddedProperties(
+        Highcharts.defaultOptions,
+        defaultOptionsClonedFromOriginal
+    );
 
     // Delete functions (not automated as they are not serialized in JSON)
     delete Highcharts.defaultOptions.global.getTimezoneOffset;
     delete Highcharts.defaultOptions.time.getTimezoneOffset;
 
     Highcharts.setOptions(Highcharts.merge(
-        defaultOptionsRaw,
-        Highcharts.explicitUndefineds
+        defaultOptionsClonedFromOriginal
     ));
 
     // Restore radial axis defaults
@@ -551,7 +545,7 @@ Highcharts.prepareShot = function (chart) {
 
         while (i--) {
             if (
-                points[i] &&
+                points[i]?.visible &&
                 !points[i].isNull &&
                 !( // Map point with no extent, like Aruba
                     points[i].shapeArgs &&

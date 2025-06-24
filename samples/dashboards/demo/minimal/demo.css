@@ -2,6 +2,20 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 h1#title {
     padding-top: 10px;
     margin: 0;
@@ -74,6 +88,10 @@ h1#title {
 #kpi-iron {
     flex: 1 1 100%;
     height: 205px;
+}
+
+.highcharts-datagrid-table {
+    border: none;
 }
 
 /* LARGE */

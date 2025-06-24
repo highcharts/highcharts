@@ -11,9 +11,10 @@ const path = require('path');
  *
  * */
 
-const TARGET_DIRECTORIES = [
+const PATHS_TO_DELETE = [
     'build',
-    'code'
+    'code',
+    'webpack.log'
 ];
 
 /* *
@@ -35,9 +36,13 @@ function task() {
 
     return new Promise((resolve, reject) => {
         try {
-            for (const directory of TARGET_DIRECTORIES) {
-                log.message('Cleaning', directory, '...');
-                fs.deleteDirectory(directory, true);
+            for (const ptd of PATHS_TO_DELETE) {
+                log.message('Cleaning', ptd, '...');
+                if (fs.isDirectory(ptd)) {
+                    fs.deleteDirectory(ptd);
+                } else {
+                    fs.deleteFile(ptd);
+                }
             }
             log.success('Cleaned');
             resolve();

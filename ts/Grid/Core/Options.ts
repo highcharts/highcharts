@@ -25,9 +25,11 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
+import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistribution';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
+import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 
 
@@ -38,9 +40,9 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
  * */
 
 /**
- * The distribution of the columns in the grid structure.
+ * The resizing strategy of the columns in the grid structure.
  */
-export type ColumnDistribution = 'full' | 'fixed';
+export type ColumnDistributionType = ColumnDistribution.StrategyType;
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -71,7 +73,7 @@ export interface Options {
 
     /**
      * Default options for all the columns in the grid. Can be overridden
-     * by individual column options.
+     * by the `dataTypeColumnDefaults` and individual column options.
      */
     columnDefaults?: ColumnOptions;
 
@@ -152,20 +154,18 @@ export interface RenderingSettings {
     theme?: string;
 }
 
+/**
+ * Options to control the columns rendering.
+ */
 export interface ColumnsSettings {
     /**
-     * The distribution of the columns. If `full`, the columns will be
-     * distributed so that the first and the last column are at the edges of
-     * the grid. If `fixed`, the columns will have a fixed width in pixels.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/fixed-distribution | Fixed distribution}
-     *
-     * @default 'full'
+     * @deprecated
+     * Use `resizing.mode` instead.
      */
-    distribution?: ColumnDistribution;
+    distribution?: ColumnDistributionType;
 
     /**
-     * Columns included in the grid structure- contains the columns IDs.
+     * Columns included in the grid structure - contains the columns IDs.
      * If not set, all columns will be included. Useful when many columns needs
      * to be excluded from the grid.
      *
@@ -175,8 +175,48 @@ export interface ColumnsSettings {
      * @private
      */
     included?: Array<string>;
+
+    /**
+     * Options for the columns resizing.
+     */
+    resizing?: ResizingOptions;
 }
 
+/**
+ * Options to control the columns resizing.
+ */
+export interface ResizingOptions {
+    /**
+     * Whether the columns resizing is enabled. If `true`, the user can
+     * resize the columns by dragging the column header edges.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing-disabled | Column resize disabled}
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * Resizing mode of the columns. If `full`, the columns will be
+     * distributed so that the first and the last column are at the edges of
+     * the grid. If `fixed`, the columns will have a fixed width, only the
+     * resized column will be affected. If `mixed`, resizing will change the
+     * width of the neighboring columns, but the rest will remain in the same
+     * place.
+     *
+     * If `undefined`, the default column rensizing strategy will be used, which
+     * is `mixed`, if `width` is set for any column, otherwise `full`.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-distribution | Resizing overview}
+     *
+     * @default undefined
+     */
+    mode?: ColumnDistributionType;
+}
+
+/**
+ * Options to control the rows rendering.
+ */
 export interface RowsSettings {
     /**
      * Buffer of rows to render outside the visible area from the top and from
@@ -276,6 +316,15 @@ export interface ColumnOptions {
     cells?: ColumnCellOptions;
 
     /**
+     * The data type of the column. Can be one of `string`, `number`,
+     * `boolean` or `date`.
+     *
+     * If not set, the data type is inferred from the first cell in the
+     * column.
+     */
+    dataType?: Column.DataType;
+
+    /**
      * Options for all the header cells in the column.
      */
     header?: ColumnHeaderOptions;
@@ -288,14 +337,22 @@ export interface ColumnOptions {
     sorting?: ColumnSortingOptions;
 
     /**
-     * Whether the columns should be resizable. It does not affect individual
-     * column settings.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing-disabled | Column resize disabled}
-     *
-     * @default true
+     * @deprecated
+     * Use `rendering.columns.resizing.enabled` instead.
      */
     resizing?: boolean;
+
+    /**
+     * The width of the column. It can be set in pixels or as a percentage of
+     * the table width. If unset, the width is distributed evenly between all
+     * columns.
+     *
+     * This option does not work with the `resizing` option set to `full`.
+     *
+     * If the `resizing` option is undefined, it is set to `mixed` and the
+     * `width` option is used to set the width of the column.
+     */
+    width?: number | string;
 }
 
 /**
@@ -439,6 +496,8 @@ export interface IndividualColumnOptions extends ColumnOptions {
     /**
      * @internal
      * @private
+     * @deprecated
+     * It will be removed in the next major release.
      */
     resizing?: boolean;
 }

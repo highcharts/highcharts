@@ -220,16 +220,22 @@ class Pointer {
                 );
             }
         });
-        // Now loop over all series, filtering out active series
-        this.chart.series.forEach((series): void => {
+
+        for (const series of this.chart.series) {
+            const seriesOptions = series.options;
+
+            if (seriesOptions.states?.inactive?.enabled === false) {
+                continue;
+            }
+
             if (activeSeries.indexOf(series) === -1) {
                 // Inactive series
                 series.setState('inactive', true);
-            } else if (series.options.inactiveOtherPoints) {
+            } else if (seriesOptions.inactiveOtherPoints) {
                 // Active series, but other points should be inactivated
                 series.setAllPointsToState('inactive');
             }
-        });
+        }
     }
 
     /**
@@ -395,7 +401,6 @@ class Pointer {
 
             // Make a selection
             if (
-                (chart.hasCartesianSeries || chart.mapView) &&
                 this.hasZoom &&
                 clickedInside &&
                 !panKeyPressed
@@ -1157,7 +1162,7 @@ class Pointer {
 
         // Show the tooltip and run mouse over events (#977)
         if (
-            !chart.openMenu &&
+            !chart.exporting?.openMenu &&
             (
                 this.inClass(pEvt.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
@@ -2009,8 +2014,7 @@ class Pointer {
                     visiblePlotOnly: true
                 }
             );
-            if (isInside && !chart.openMenu) {
-
+            if (isInside && !chart.exporting?.openMenu) {
                 // Run mouse events and display tooltip etc
                 if (start) {
                     this.runPointActions(e);

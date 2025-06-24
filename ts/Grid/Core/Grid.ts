@@ -546,7 +546,18 @@ class Grid {
             this.initVirtualization();
         }
 
+        this.viewport?.columnDistribution.validateOnUpdate(options);
         this.querying.loadOptions();
+
+        // Update locale.
+        const locale = options.lang?.locale;
+        if (locale) {
+            this.locale = locale;
+            this.time.update(extend<TimeBase.TimeOptions>(
+                options.time || {},
+                { locale: this.locale }
+            ));
+        }
 
         if (render) {
             await this.querying.proceed(newDataTable);
@@ -805,11 +816,9 @@ class Grid {
 
         this.accessibility?.setA11yOptions();
 
-        if (this.viewport?.virtualRows) {
-            this.viewport.reflow();
-        }
-
         fireEvent(this, 'afterRenderViewport');
+
+        this.viewport?.reflow();
     }
 
     /**
