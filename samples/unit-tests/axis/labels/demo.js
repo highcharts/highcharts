@@ -1008,9 +1008,7 @@ QUnit.test('Label reserve space', function (assert) {
                 }
             }
         }]
-    }, false);
-
-    chart.redraw();
+    });
 
     const baseBBox = chart.yAxis[0].ticks[0].label.element.getBBox();
 
@@ -1023,9 +1021,7 @@ QUnit.test('Label reserve space', function (assert) {
         yAxis: [{
             opposite: true
         }]
-    }, false);
-
-    chart.redraw();
+    });
 
     const oppositeBBox = chart.yAxis[0].ticks[0].label.element.getBBox();
 
