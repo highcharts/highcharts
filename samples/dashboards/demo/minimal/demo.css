@@ -16,12 +16,10 @@
         sans-serif;
 }
 
-h1#title {
-    padding-top: 10px;
-    margin: 0;
-    background-color: #3d3d3d;
-    text-align: center;
-    color: #fff;
+.minimal-theme {
+    --hcg-header-background: var(--highcharts-neutral-color-5);
+    --hcg-row-background: var(--highcharts-neutral-color-0);
+    --hcg-row-even-background: var(--highcharts-neutral-color-0);
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-title::before,
@@ -80,7 +78,8 @@ h1#title {
     fill: var(--highcharts-color-3);
 }
 
-.highcharts-description {
+.highcharts-description
+{
     padding: 0 20px;
 }
 

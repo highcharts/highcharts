@@ -35,6 +35,7 @@
     /* General */
     --highcharts-background-color: #ffffff;
     --highcharts-dashboards-shadow-color: 4, 9, 20;
+    --highcharts-dashboards-border-radius: 15px;
 
     /* Edit row */
     --highcharts-dashboards-edit-row-color: #7bb343;
@@ -51,12 +52,7 @@
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
-    box-shadow:
-        0 13px 5px 0 rgba(0, 0, 0, 0.01),
-        0 7px 4px 0 rgba(0, 0, 0, 0.02),
-        0 3px 3px 0 rgba(0, 0, 0, 0.05),
-        0 1px 2px 0 rgba(0, 0, 0, 0.1),
-        0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
 .highcharts-light {
@@ -66,12 +62,7 @@
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
-        box-shadow:
-            0 13px 5px 0 rgba(0, 0, 0, 0.01),
-            0 7px 4px 0 rgba(0, 0, 0, 0.02),
-            0 3px 3px 0 rgba(0, 0, 0, 0.05),
-            0 1px 2px 0 rgba(0, 0, 0, 0.1),
-            0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
     }
 }
 
@@ -337,7 +328,9 @@
     margin: 5px;
     background-color: var(--highcharts-background-color);
     background-clip: border-box;
-    border-radius: 6px;
+    border-radius: var(--highcharts-dashboards-border-radius);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    overflow: hidden;
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component .highcharts-dashboards-component-kpi-chart-container {
