@@ -24,10 +24,6 @@ td {
     line-height: unset !important;
 }
 
-td input[type="checkbox"] {
-    cursor: pointer;
-}
-
 .centered,
 .centered-header > * {
     text-align: center !important;
@@ -79,6 +75,10 @@ td input[type="checkbox"] {
 #modalContent #formButtons {
     display: flex;
     justify-content: flex-end;
+}
+
+#modalContent select {
+    cursor: pointer;
 }
 
 #modalContent input[type="text"],
