@@ -223,7 +223,7 @@ class ColorAxis extends Axis implements AxisLike {
                 legend.layout !== 'vertical';
 
         axis.side = userOptions.side || horiz ? 2 : 1;
-        axis.reversed = userOptions.reversed || !horiz;
+        axis.reversed = userOptions.reversed || false;
         axis.opposite = !horiz;
 
         super.init(chart, userOptions, 'colorAxis');
