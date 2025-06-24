@@ -25,7 +25,22 @@ let board = Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            enabled: true
+            enabled: true,
+            items: ['editMode', {
+                id: 'export-dashboard',
+                text: 'Export dashboard',
+                type: 'button',
+                events: {
+                    click: function () {
+                        document.querySelectorAll('#output')[0].value =
+                            JSON.stringify(
+                                this.menu.editMode.board.getOptions(),
+                                null,
+                                2
+                            );
+                    }
+                }
+            }]
         }
     },
     gui: {
