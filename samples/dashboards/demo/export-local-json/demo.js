@@ -1,10 +1,59 @@
+let board;
+
+/**
+ * Demo UI section
+ */
+const statusSpan = document.getElementById('ls-status-content');
+const exportBtn = document.getElementById('export');
+const importBtn = document.getElementById('import');
+const destroyBtn = document.getElementById('destroy');
+
+const saveOptionsInLocalStorage = () => {
+    const config = JSON.stringify(board.getOptions(), null, 2);
+
+    // Add config to preview box
+    document.querySelectorAll('#output')[0].value = config;
+
+    localStorage.setItem('highcharts-dashboards-config', config);
+    destroyBtn.disabled = false;
+    statusSpan.innerHTML = 'saved dashboards options in the local storage';
+    statusSpan.style.color = '#191';
+};
+
+// Save dashboards options in local storage
+exportBtn.addEventListener('click', saveOptionsInLocalStorage);
+
+// Destroy dashboard
+destroyBtn.addEventListener('click', () => {
+    board.destroy();
+    importBtn.disabled = false;
+    exportBtn.disabled = destroyBtn.disabled = true;
+    statusSpan.innerHTML = 'destroyed existing dashboards';
+    statusSpan.style.color = '#971';
+});
+
+// Create dashboard
+importBtn.addEventListener('click', () => {
+    const dashboardsConfig =
+        localStorage.getItem('highcharts-dashboards-config');
+    board = Dashboards.board('container', JSON.parse(dashboardsConfig));
+    exportBtn.disabled = destroyBtn.disabled = false;
+    importBtn.disabled = true;
+    statusSpan.innerHTML =
+        'created new dashboards using the options from the local storage';
+    statusSpan.style.color = '#179';
+});
+
+/**
+ * Dashboard
+ */
 Highcharts.setOptions({
     chart: {
         styledMode: true
     }
 });
 
-let board = Dashboards.board('container', {
+board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'micro-element',
@@ -31,14 +80,7 @@ let board = Dashboards.board('container', {
                 text: 'Export dashboard',
                 type: 'button',
                 events: {
-                    click: function () {
-                        document.querySelectorAll('#output')[0].value =
-                            JSON.stringify(
-                                this.menu.editMode.board.getOptions(),
-                                null,
-                                2
-                            );
-                    }
+                    click: saveOptionsInLocalStorage
                 }
             }]
         }
@@ -225,62 +267,15 @@ let board = Dashboards.board('container', {
         connector: {
             id: 'micro-element'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         sync: {
             highlight: true,
             visibility: true
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             }
         }
     }]
-});
-
-
-/**
- * Demo UI section
- */
-
-const exportBtn = document.getElementById('export');
-const importBtn = document.getElementById('import');
-const destroyBtn = document.getElementById('destroy');
-const statusSpan = document.getElementById('ls-status-content');
-
-exportBtn.addEventListener('click', () => {
-    const config = JSON.stringify(
-        board.getOptions(),
-        null,
-        2
-    );
-
-    localStorage.setItem(
-        'highcharts-dashboards-config',
-        config
-    );
-    destroyBtn.disabled = false;
-    statusSpan.innerHTML = 'saved dashboards options in the local storage';
-    statusSpan.style.color = '#191';
-
-    document.querySelectorAll('#output')[0].value = config;
-});
-
-destroyBtn.addEventListener('click', () => {
-    board.destroy();
-    importBtn.disabled = false;
-    exportBtn.disabled = destroyBtn.disabled = true;
-    statusSpan.innerHTML = 'destroyed existing dashboards';
-    statusSpan.style.color = '#971';
-});
-
-importBtn.addEventListener('click', () => {
-    const dashboardsConfig =
-        localStorage.getItem('highcharts-dashboards-config');
-    board = Dashboards.board('container', JSON.parse(dashboardsConfig));
-    exportBtn.disabled = destroyBtn.disabled = false;
-    importBtn.disabled = true;
-    statusSpan.innerHTML =
-        'created new dashboards using the options from the local storage';
-    statusSpan.style.color = '#179';
 });

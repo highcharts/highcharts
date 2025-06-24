@@ -7,24 +7,22 @@
 <div id="container"></div>
 <div class="buttons-wrapper">
   <div class="highcharts-description">
-    The demo shows how to export a Dashboards configuration to JSON. For demo purposes it's saved to local storage, but could e.g. be saved to a database and retrieved at a later stage.<br><br>
-
-    Click the "Export dashboard" button below the dashboard or in the top right dropdown menu, and the JSON configuration object will be saved to local storage.<br><br>
-
-    Click the "Destroy dashboard" button to destroy the current dashboard.<br><br>
-
-    Click the "Import dashboard" button to create a new dashboard from the configuration saved in local storage.
+    The demo shows how to export a Dashboards configuration to JSON. For demo purposes it's saved to local storage, but could e.g. be saved to a database and retrieved at a later stage.
+    <ul>
+      <li>Click the <strong>Export dashboard</strong> button below the dashboard or in the top right dropdown menu, and the JSON configuration object will be saved to local storage.</li>
+      <li>Click the <strong>Destroy dashboard</strong> button to destroy the current dashboard.</li>
+      <li>Click the <strong>Import dashboard</strong> button to create a new dashboard from the configuration saved in local storage.</li>
+    </ul>
   </div>
-
   <div class="button-row">
     <button id="export" class="highcharts-demo-button">Export dashboard</button>
     <button id="destroy" disabled class="highcharts-demo-button">Destroy dashboard</button>
     <button id="import" disabled class="highcharts-demo-button">Create dashboard</button>
   </div>
-  <h3>Dashboards JSON preview</h3>
-  <textarea id="output"></textarea>
   <div class="ls-status">Status:
-    <span id="ls-status-content">the local storage is empty</span>.
+    <span id="ls-status-content">the local storage is empty</span>
   </div>
+  <h3>Dashboards configuration preview</h3>
+  <textarea id="output"></textarea>
 </div>
 

@@ -32,7 +32,7 @@
 }
 
 .button-row {
-    margin: 0 -10px;
+    margin: 10px -10px;
 }
 
 .highcharts-demo-button {
@@ -63,4 +63,17 @@
 
 .highcharts-plot-line-label {
     fill: var(--highcharts-color-3);
+}
+
+.highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toggle-container {
+    padding: 0;
+}
+
+.highcharts-dashboards-edit-menu .highcharts-dashboards-edit-label-text {
+    margin-right: 10px;
+}
+
+.highcharts-dashboards-edit-menu .highcharts-dashboards-edit-button {
+    border: 1px solid #ccc;
+    padding: 5px;
 }
