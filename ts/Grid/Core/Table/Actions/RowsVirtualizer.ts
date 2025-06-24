@@ -262,6 +262,13 @@ class RowsVirtualizer {
      */
     private renderRows(rowCursor: number): void {
         const { viewport: vp, buffer } = this;
+        const rowCount = vp.dataTable.getRowCount();
+
+        // Stop rendering if there are no rows to render.
+        if (rowCount === 0) {
+            return;
+        }
+
         const isVirtualization = this.rowSettings?.virtualization;
         const rowsPerPage = isVirtualization ? Math.ceil(
             (vp.grid.tableElement?.clientHeight || 0) /
@@ -278,7 +285,7 @@ class RowsVirtualizer {
         }
 
         if (!rows.length) {
-            const last = new TableRow(vp, vp.dataTable.getRowCount() - 1);
+            const last = new TableRow(vp, rowCount - 1);
             vp.tbodyElement.appendChild(last.htmlElement);
             last.render();
             rows.push(last);
@@ -290,7 +297,7 @@ class RowsVirtualizer {
 
         const from = Math.max(0, Math.min(
             rowCursor - buffer,
-            vp.dataTable.getRowCount() - rowsPerPage
+            rowCount - rowsPerPage
         ));
         const to = Math.min(
             rowCursor + rowsPerPage + buffer,
