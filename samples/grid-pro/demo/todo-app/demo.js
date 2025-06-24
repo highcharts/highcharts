@@ -57,7 +57,14 @@ const columns = [{
     id: 'Due date',
     dataType: 'datetime',
     cells: {
-        format: '{value:%Y-%m-%d}',
+        formatter: function () {
+            return this.value ?
+                new Date(this.value).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric'
+                }) : '';
+        },
         editMode: {
             renderer: {
                 type: 'dateInput'

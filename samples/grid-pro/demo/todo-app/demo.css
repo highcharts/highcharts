@@ -24,6 +24,10 @@ td {
     line-height: unset !important;
 }
 
+td input[type="checkbox"] {
+    cursor: pointer;
+}
+
 .centered,
 .centered-header > * {
     text-align: center !important;
