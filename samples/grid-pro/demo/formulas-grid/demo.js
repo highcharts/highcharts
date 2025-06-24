@@ -225,12 +225,12 @@ const initGrid = data => {
 // Init
 (async () => {
     // Setup data
-    const dataTable = new Highcharts.DataTable({
+    const dataTable = new Dashboards.DataTable({
         columns: dataSource
     });
 
     // Define modifier / formula calculation for sparkline
-    const mathModifier = new Highcharts.DataModifier.types.Math({
+    const mathModifier = new Dashboards.DataModifier.types.Math({
         columnFormulas: [{
             column: 'impliedRate',
             formula: 'D1-C1' // C1 = dollarEx, D1 = dollarPPP
