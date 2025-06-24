@@ -9,7 +9,8 @@
 #output {
     width: 600px;
     height: 300px;
-    border-color: #f2f2f2;
+    border-color: var(--highcharts-neutral-color-5);
+    background: var(--highcharts-neutral-color-3);
 }
 
 .highcharts-description {
@@ -18,7 +19,7 @@
 
 .buttons-wrapper {
     padding: 12px;
-    background-color: white;
+    background-color: var(--highcharts-background-color);
     box-shadow: none;
     margin: 1em;
 }
@@ -28,7 +29,7 @@
 }
 
 #ls-status-content {
-    color: red;
+    color: var(--highcharts-color-7);
 }
 
 .button-row {
@@ -36,7 +37,7 @@
 }
 
 .highcharts-demo-button {
-    background: #f2f2f2;
+    background: var(--highcharts-neutral-color-5);
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -48,7 +49,7 @@
 }
 
 .highcharts-demo-button:hover {
-    background: #e6e6e6;
+    background: var(--highcharts-neutral-color-10);
 }
 
 #dashboard-col-1 .highcharts-color-0 {
@@ -74,6 +75,12 @@
 }
 
 .highcharts-dashboards-edit-menu .highcharts-dashboards-edit-button {
-    border: 1px solid #ccc;
+    border: 1px solid var(--highcharts-neutral-color-20);
     padding: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .highcharts-demo-button {
+        background-color: var(--highcharts-neutral-color-80);
+    }
 }
