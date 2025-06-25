@@ -16,7 +16,7 @@ const saveOptionsInLocalStorage = () => {
 
     localStorage.setItem('highcharts-dashboards-config', config);
     destroyBtn.disabled = false;
-    statusSpan.innerHTML = 'saved dashboards options in the local storage';
+    statusSpan.innerHTML = 'saved dashboard configuration in local storage';
     statusSpan.style.color = '#191';
 };
 
