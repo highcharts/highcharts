@@ -60,21 +60,21 @@ Highcharts.chart('container', {
         dataClasses: [{
             from: 0,
             to: 1000000,
-            color: '#F9EDB3',
+            color: 'rgba(59, 82, 139, 1)',
             name: '< 1M'
         }, {
             from: 1000000,
             to: 5000000,
-            color: '#FFC428',
+            color: 'rgba(33, 145, 140, 1)',
             name: '1M - 5M'
         }, {
             from: 5000000,
             to: 20000000,
-            color: '#FF7987',
+            color: 'rgba(94, 201, 98, 1)',
             name: '5M - 20M'
         }, {
             from: 20000000,
-            color: '#FF2371',
+            color: 'rgba(253, 231, 37, 1)',
             name: '> 20M'
         }]
     },
@@ -90,7 +90,6 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '{point.hc-a2}',
-                color: '#000000',
                 style: {
                     textOutline: false
                 }
