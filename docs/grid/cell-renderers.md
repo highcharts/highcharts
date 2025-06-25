@@ -2,7 +2,7 @@
 tags: ["grid-pro"]
 ---
 
-# Cell content
+# Cell renderers
 
 The data type determines how the cell content is rendered.
 
