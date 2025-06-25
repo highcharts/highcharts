@@ -40,7 +40,7 @@ importBtn.addEventListener('click', () => {
     exportBtn.disabled = destroyBtn.disabled = false;
     importBtn.disabled = true;
     statusSpan.innerHTML =
-        'created new dashboards using the options from the local storage';
+        'created new dashboard using the configuration from local storage';
     statusSpan.style.color = '#179';
 });
 
