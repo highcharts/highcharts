@@ -265,7 +265,7 @@ class RowsVirtualizer {
         const rowCount = vp.dataTable.getRowCount();
 
         // Stop rendering if there are no rows to render.
-        if (rowCount === 0) {
+        if (rowCount < 1) {
             return;
         }
 
