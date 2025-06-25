@@ -35,7 +35,7 @@
     /* General */
     --highcharts-background-color: #ffffff;
     --highcharts-dashboards-shadow-color: 4, 9, 20;
-    --highcharts-dashboards-border-radius: 15px;
+    --highcharts-dashboards-border-radius: 6px;
 
     /* Edit row */
     --highcharts-dashboards-edit-row-color: #7bb343;
@@ -52,7 +52,12 @@
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    box-shadow:
+        0 13px 5px 0 rgba(0, 0, 0, 0.01),
+        0 7px 4px 0 rgba(0, 0, 0, 0.02),
+        0 3px 3px 0 rgba(0, 0, 0, 0.05),
+        0 1px 2px 0 rgba(0, 0, 0, 0.1),
+        0 -1px 1px 0 rgba(0, 0, 0, 0.05);
 }
 
 .highcharts-light {
@@ -62,7 +67,12 @@
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        box-shadow:
+            0 13px 5px 0 rgba(0, 0, 0, 0.01),
+            0 7px 4px 0 rgba(0, 0, 0, 0.02),
+            0 3px 3px 0 rgba(0, 0, 0, 0.05),
+            0 1px 2px 0 rgba(0, 0, 0, 0.1),
+            0 -1px 1px 0 rgba(0, 0, 0, 0.05);
     }
 }
 
@@ -189,6 +199,7 @@
 .highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
     filter: invert(1) brightness(1);
 }
+
 /* stylelint-enable max-line-length */
 
 .highcharts-dark .highcharts-dashboards-edit-popup-close,
@@ -209,6 +220,7 @@
 .highcharts-light .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
     filter: none;
 }
+
 /* stylelint-enable max-line-length */
 
 .highcharts-light .highcharts-dashboards-edit-popup-close,
@@ -232,6 +244,7 @@
     background-color: var(--highcharts-dashboards-content-hover-color);
     color: var(--highcharts-neutral-color-100);
 }
+
 /* stylelint-enable max-line-length */
 
 .highcharts-dashboards,
@@ -329,7 +342,6 @@
     background-color: var(--highcharts-background-color);
     background-clip: border-box;
     border-radius: var(--highcharts-dashboards-border-radius);
-    border: 1px solid var(--highcharts-neutral-color-20);
     overflow: hidden;
 }
 
@@ -773,7 +785,7 @@
 .highcharts-dashboards-edit-sidebar {
     position: fixed;
     top: 0;
-    left: -340px; /* width + paddings */
+    left: -340px;
     transition: 0.5s;
     width: 300px;
     background-color: var(--highcharts-background-color);

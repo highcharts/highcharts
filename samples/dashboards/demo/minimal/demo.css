@@ -16,10 +16,16 @@
         sans-serif;
 }
 
+#title {
+    text-align: center;
+    padding: 10px 0;
+    margin: 0;
+    background-color: var(--highcharts-neutral-color-3);
+}
+
 .minimal-theme {
     --hcg-header-background: var(--highcharts-neutral-color-5);
-    --hcg-row-background: var(--highcharts-neutral-color-0);
-    --hcg-row-even-background: var(--highcharts-neutral-color-0);
+    --hcg-cell-hovered-row-background: #f3f6fe;
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-title::before,
@@ -78,8 +84,7 @@
     fill: var(--highcharts-color-3);
 }
 
-.highcharts-description
-{
+.highcharts-description {
     padding: 0 20px;
 }
 
@@ -87,10 +92,6 @@
 #kpi-iron {
     flex: 1 1 100%;
     height: 205px;
-}
-
-.highcharts-datagrid-table {
-    border: none;
 }
 
 /* LARGE */
