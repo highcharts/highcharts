@@ -1,0 +1,9 @@
+---
+name: Grid Sparkline
+authors:
+  - Dawid Dragula
+js_wrap: b
+tags:
+  - Highcharts Grid demo
+use_png_thumbnail: true
+...
