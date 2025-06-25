@@ -31,6 +31,10 @@ import type {
     Reference,
     Value
 } from './FormulaTypes.js';
+import U from '../../Core/Utilities.js';
+const {
+    isString
+} = U;
 
 
 /* *
@@ -454,10 +458,10 @@ function parseArguments(
 function negativeReference(formula: Formula): boolean {
     const formulaLength = formula.length;
     const priorFormula = formula[formulaLength - 2];
-    return formula[formulaLength - 1] === '-' && (
-        priorFormula === '*' ||
-        priorFormula === '/' ||
-        priorFormula === '^'
+    return (
+        formula[formulaLength - 1] === '-' &&
+        isString(priorFormula) &&
+        !!priorFormula.match(/\*|\/|\^/)
     );
 }
 

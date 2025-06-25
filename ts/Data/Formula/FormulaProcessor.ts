@@ -46,6 +46,11 @@ const {
     isValue
 } = FormulaTypes;
 
+import U from '../../Core/Utilities.js';
+const {
+    defined
+} = U;
+
 
 /* *
  *
@@ -440,7 +445,7 @@ function getReferenceValue(
 }
 
 /**
- * Calcualtes a value based on the two top values and the related operator.
+ * Calculates a value based on the two top values and the related operator.
  *
  * Used to properly process the formula's values based on its operators.
  *
@@ -462,11 +467,7 @@ function applyOperator(values: Array<Value>, operators: Array<Operator>): void {
     const firstValue = values.pop();
     const operator = operators.pop();
 
-    if (
-        typeof secondValue === 'undefined' ||
-        typeof firstValue === 'undefined' ||
-        typeof operator === 'undefined'
-    ) {
+    if (!defined(secondValue) || !defined(firstValue) || !defined(operator)) {
         values.push(NaN);
     } else {
         values.push(basicOperation(operator, firstValue, secondValue));
