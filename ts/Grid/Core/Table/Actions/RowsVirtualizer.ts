@@ -273,7 +273,9 @@ class RowsVirtualizer {
         if (!isVirtualization && rows.length > 50) {
             // eslint-disable-next-line no-console
             console.warn(
-                'Grid: a large dataset can cause performance issues.'
+                'Grid: a large dataset can cause performance issues when ' +
+                'virtualization is not enabled. Consider enabling ' +
+                'virtualization in the rows settings.'
             );
         }
 
