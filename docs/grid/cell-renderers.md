@@ -10,12 +10,17 @@ Highcharts Grid Pro supports different cell renderers to provide interactive dat
 
 Cell renderers are also available in [edit mode](https://www.highcharts.com/docs/grid/cell-editing) by setting `columns[].cells.editMode.renderer`. This allows you to e.g. show plain text by default and present a checkbox or input field when a cell becomes editable.
 
-## Renderers types
+## Default renderer
 
-In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and edit modes. If not specified, it is determined by the `dataType` option.
+Unless specified the default renderer is [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer-1), and [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1) in `editMode`. This can be plain text, and HTML markup is also supported. If needed the text/markup can be formatted using `formatter` or `format`, and Grid Pro users can also use the built-in renderers as described below.
 
-Some renderers can be used specifically as cell edit mode renderers, which is recommended because they also support [validation](https://www.highcharts.com/docs/grid/cell-editing#validation) in such cases.
-For example, you can render a date as text in view mode, and use the `dateInput` renderer only when the cell is in edit mode.
+## Input renderers
+
+Using specific input types is preferable to relying on complex validation logic for plain text inputs because it leverages built-in browser behavior to enforce correct data formats. This reduces the need for custom code, minimizes validation errors, and improves performance. If more spesific validation is needed, for e.g. string validation, please [refer to `validationRules`](https://www.highcharts.com/docs/grid/cell-editing#validation).
+
+From a user experience perspective, typed inputs provide clearer intent, better accessibility, and context-appropriate interfaces
+
+In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and `editMode`. If not specified, it is determined by the `dataType` option.
 
 | Renderer Key | Description | Edit Mode |
 |---|---|---|
@@ -26,20 +31,27 @@ For example, you can render a date as text in view mode, and use the `dateInput`
 | [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer-1) | Text or custom static html content, default for most data types | ❌ |
 | [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1) | Text input element | ✅ |
 
+| renderer | Description | dataType |
+|---|---|---|
+|[`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1)| Text or custom static html content, default for most data types | string / number |
+|[`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input element | datetime |
+|[`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | boolean |
+|[`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element | |
+
+
+
 ### Text input
-Renders an editable text field for the value. It can also render static HTML elements. This is the default renderer for most cases.
+Renders an editable text field for the value in editMode, and plain text/HTML when not in editMode. No specific configuration is needed since this is the default:
 
 ```js
-{
-    id: 'username', // column id
-    dataType: 'string',
-    cells: {
-        renderer: {
-            type: 'input'
-        },
-        editable: true
+columns: [
+    {
+        id: 'whatever', // column id
+        cells: {
+            editable: true
+        }
     }
-}
+]
 ```
 
 ### Checkbox input
