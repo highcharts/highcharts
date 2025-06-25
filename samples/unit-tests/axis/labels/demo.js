@@ -156,42 +156,37 @@ QUnit.test('Ellipsis (#3941)', function (assert) {
 });
 
 QUnit.test('Respect reversed-flag of linked axis (#7911)', function (assert) {
-    TestTemplate.test(
-        'highcharts/bar',
-        {
-            chart: {
-                type: 'bar'
-            },
-            xAxis: [
-                {
-                    categories: ['c1', 'c2', 'c3'],
-                    reversed: false
-                },
-                {
-                    categories: ['c1', 'c2', 'c3'],
-                    linkedTo: 0
-                }
-            ],
-            series: [
-                {
-                    data: [1, 2, 3]
-                },
-                {
-                    data: [1, 2, 3]
-                }
-            ]
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar'
         },
-        function (template) {
-            var chart = template.chart,
-                axis1 = chart.axes[0],
-                axis2 = chart.axes[1];
+        xAxis: [
+            {
+                categories: ['c1', 'c2', 'c3'],
+                reversed: false
+            },
+            {
+                categories: ['c1', 'c2', 'c3'],
+                linkedTo: 0
+            }
+        ],
+        series: [
+            {
+                data: [1, 2, 3]
+            },
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
 
-            assert.equal(
-                axis1.ticks[0].label.xy.y,
-                axis2.ticks[0].label.xy.y,
-                'Axes should share the same reversed y offset (#7911)'
-            );
-        }
+    const axis1 = chart.axes[0],
+        axis2 = chart.axes[1];
+
+    assert.equal(
+        axis1.ticks[0].label.xy.y,
+        axis2.ticks[0].label.xy.y,
+        'Axes should share the same reversed y offset (#7911)'
     );
 });
 
@@ -2306,3 +2301,36 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('connectorWidth updates properly (#23062)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        plotOptions: {
+            dataLabels: {
+                enabled: true
+            }
+        },
+        series: [
+            {
+                type: 'pie',
+                dataLabels: {
+                    connectorWidth: 1
+                },
+                data: [1, 2, 3, 4]
+            }
+        ]
+    });
+
+    const point = chart.series[0].points[0],
+        initialWidth = point.dataLabel.connector.attr('stroke-width');
+
+    chart.series[0].update({
+        dataLabels: {
+            connectorWidth: 0
+        }
+    });
+
+    const updatedWidth = point.dataLabel.connector.attr('stroke-width');
+
+    assert.notEqual(initialWidth, updatedWidth, 'connectorWidth has changed');
+    assert.strictEqual(updatedWidth, 0, 'connectorWidth updated to 0');
+});
