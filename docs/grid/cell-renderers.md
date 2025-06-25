@@ -4,13 +4,11 @@ tags: ["grid-pro"]
 
 # Cell renderers
 
-The data type determines how the cell content is rendered.
+**Note:** Cell renderers are only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone). Highcharts Grid Lite users can as an alternative use `formatter` and `format`to control [how data is rendered inside cells](https://www.highcharts.com/docs/grid/columns#cells).
 
-Note: Customizing cell content is not part of Highcharts Grid Lite, so refer to [install instructions](https://www.highcharts.com/docs/dashboards/grid-standalone) for the full version to enable this functionality.
+Highcharts Grid Pro supports different cell renderers to provide interactive data presentation inside table cells. You can do this by setting the `columns[].cells.renderer` property for each column. This lets you control how each cell is displayed and interacted with, by e.g. turning a static value into an editable input field or a dropdown selector.
 
-Highcharts Grid supports different cell renderers to provide interactive data presentation inside table cells. You can define the renderer property for each column in the `columns[].cells` configuration object to specify how each cell should be displayed or interacted with.
-
-Renderers can be used to control how values are displayed `cells.renderer` and how they behave in [edit mode](https://www.highcharts.com/docs/grid/cell-editing) `cells.editMode.renderer`. This allows you to, for example, show plain text by default and present a checkbox or input field when a cell becomes editable.
+Cell renderers are also available in [edit mode](https://www.highcharts.com/docs/grid/cell-editing) by setting `columns[].cells.editMode.renderer`. This allows you to e.g. show plain text by default and present a checkbox or input field when a cell becomes editable.
 
 ## Renderers types
 
