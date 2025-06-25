@@ -20,7 +20,7 @@ Using specific input types is preferable to relying on complex validation logic 
 
 From a user experience perspective, typed inputs provide clearer intent, better accessibility, and context-appropriate interfaces
 
-In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the default cell renderer for view and `editMode`. If not specified, it is determined by the `dataType` option.
+In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the cell renderer for view and `editMode`. If not specified, the renderer for `editMode` is determined by `dataType`. When not in editMode it defaults to `text`. 
 
 | Renderer Key | Description | Edit Mode |
 |---|---|---|
@@ -33,14 +33,14 @@ In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.
 
 | renderer | Description | dataType |
 |---|---|---|
-|[`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1)| Text or custom static html content, default for most data types | string / number |
-|[`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input element | datetime |
+|[`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1)| Text input that supports text/number and HTML | string / number |
+|[`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input with datepicker | datetime |
 |[`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | boolean |
-|[`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element | |
+|[`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element. Note that `options` are required. | |
 
 
 
-### Text input
+### Text
 Renders an editable text field for the value in editMode, and plain text/HTML when not in editMode. No specific configuration is needed since this is the default:
 
 ```js
@@ -48,25 +48,30 @@ columns: [
     {
         id: 'whatever', // column id
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     }
 ]
 ```
 
-### Checkbox input
+### Checkbox in editMode
 Renders a native checkbox input element.
 
 ```js
-{
-    id: 'active', // column id
-    dataType: 'boolean',
-    cells: {
-        renderer: {
-            type: 'checkbox'
+columns: [
+    {
+        id: 'whatever', // column id
+        dataType: 'boolean',
+        cells: {
+            format: '{#if value}✓{else}✗{/if}'
+            editMode: {
+                enabled: true
+            }
         }
     }
-}
+]
 ```
 
 ### Date input
