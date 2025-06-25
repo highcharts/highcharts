@@ -28,7 +28,7 @@ destroyBtn.addEventListener('click', () => {
     board.destroy();
     importBtn.disabled = false;
     exportBtn.disabled = destroyBtn.disabled = true;
-    statusSpan.innerHTML = 'destroyed existing dashboards';
+    statusSpan.innerHTML = 'destroyed existing dashboard';
     statusSpan.style.color = '#971';
 });
 
