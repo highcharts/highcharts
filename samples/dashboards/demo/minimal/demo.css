@@ -20,12 +20,7 @@
     text-align: center;
     padding: 10px 0;
     margin: 0;
-    background-color: var(--highcharts-neutral-color-3);
-}
-
-.minimal-theme {
-    --hcg-header-background: var(--highcharts-neutral-color-5);
-    --hcg-cell-hovered-row-background: #f3f6fe;
+    background-color: var(--highcharts-neutral-color-0);
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-title::before,

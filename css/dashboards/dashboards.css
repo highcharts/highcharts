@@ -76,6 +76,11 @@
     }
 }
 
+.highcharts-datagrid-container {
+    --ig-border-width: 0;
+    --ig-row-border-width: 1px;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         /* UI colors */
@@ -93,6 +98,7 @@
         --highcharts-neutral-color-10: #2c2c2c;
         --highcharts-neutral-color-5: #202020;
         --highcharts-neutral-color-3: #1b1b1b;
+        --highcharts-neutral-color-0: #000000;
 
         /* Highlight color variations */
         --highcharts-highlight-color-100: #2caffe;
@@ -109,7 +115,7 @@
     /* Colors and settings not fitting the variable scheme */
     .highcharts-dashboards,
     .highcharts-dashboards-wrapper {
-        background-color: #000000;
+        background-color: var(--highcharts-neutral-color-3);
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
@@ -151,6 +157,7 @@
     --highcharts-neutral-color-10: #2c2c2c;
     --highcharts-neutral-color-5: #202020;
     --highcharts-neutral-color-3: #1b1b1b;
+    --highcharts-neutral-color-0: #000000;
 
     /* Highlight color variations */
     --highcharts-highlight-color-100: #2caffe;
@@ -166,7 +173,7 @@
     /* Colors and settings not fitting the variable scheme */
     .highcharts-dashboards,
     .highcharts-dashboards-wrapper {
-        background-color: #000000;
+        background-color: var(--highcharts-neutral-color-0);
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
