@@ -39,6 +39,6 @@ QUnit.test('Updating no-data element.', assert => {
 
     assert.ok(
         chart.noDataLabel && chart.noDataLabel.textStr === 'No data',
-        '`noData` label should be shown for hidden pie data'
+        '`noData` label should be shown for hidden pie data (#23235)'
     );
 });
