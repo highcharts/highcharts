@@ -5,5 +5,8 @@ authors:
 js_wrap: b
 tags:
   - Highcharts Grid demo
+categories:
+  - General:
+        priority: 70
 use_png_thumbnail: true
 ...
