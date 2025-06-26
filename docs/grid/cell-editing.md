@@ -62,7 +62,7 @@ columns: [{
 
 Each column has a specific `dataType`, which can be set explicitly or inferred from the data. All data types can accept `null` values by default. Each `dataType` comes with its own set of predefined validation rules, and e.g. columns with `dataType: 'number'` will automatically reject `NaN` values.
 
-In addition to `dataType` you can override (or use instead) a selection of predefined validation rules:
+In addition to `dataType` you can extend a selection of predefined validation rules:
 
 - `notEmpty`
 - `boolean`
