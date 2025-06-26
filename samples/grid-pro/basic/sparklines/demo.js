@@ -190,7 +190,7 @@ Grid.grid('container', {
             const arr = cell.value.split(',').map(Number);
             arr.shift();
             arr.push(Math.round(Math.random() * 10));
-            cell.setValue(arr.join(','));
+            cell.setValue(arr.join(','), true);
         },
         default: cell => {
             const arr = JSON.parse(cell.value);
@@ -206,7 +206,7 @@ Grid.grid('container', {
             }
 
             arr.push(cachedPoint);
-            cell.setValue(JSON.stringify(arr));
+            cell.setValue(JSON.stringify(arr), true);
         },
         pieA: cell => {
             // For the pie charts that are composed of data from multiple
@@ -226,7 +226,7 @@ Grid.grid('container', {
             // For the single bar chart, we just set a random value
             // between -10 and 10. `setValue` is a method that updates the
             // cell value and re-renders the cell content at once.
-            cell.setValue(Math.round(Math.random() * 20 - 10));
+            cell.setValue(Math.round(Math.random() * 20 - 10), true);
         }
     };
 
