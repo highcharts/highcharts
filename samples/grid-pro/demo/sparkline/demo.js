@@ -114,6 +114,9 @@ Grid.grid('container', {
                     const rowData = this.row.data;
                     return {
                         chart: {
+                            // Take note that the animation is disabled by
+                            // default for sparkline charts, but we can enable
+                            // it if we want to.
                             animation: true
                         },
                         series: [{
