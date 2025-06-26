@@ -79,7 +79,6 @@ declare module './Chart/ChartLike' {
 declare module './Series/PointLike' {
     interface PointLike {
         isHeader?: boolean;
-        tooltipPos?: Array<number>;
     }
 }
 
