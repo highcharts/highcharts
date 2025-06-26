@@ -80,7 +80,8 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 y: 20,
-                verticalAlign: 'bottom'
+                verticalAlign: 'bottom',
+                color: 'var(--highcharts-neutral-color-100, black)'
             },
             color: 'rgb(255, 7, 77)',
             negativeColor: 'rgb(1, 127, 250)',

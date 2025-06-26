@@ -16,9 +16,8 @@ Grid.grid('container', {
                 enabled: true
             },
             events: {
-                afterRender: function () {
-                    changelog.innerHTML +=
-                        `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
+                afterEdit: function () {
+                    changelog.innerHTML += `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
                     changelog.scrollTop = changelog.scrollHeight;
                 }
             }
@@ -27,11 +26,21 @@ Grid.grid('container', {
     columns: [{
         id: 'available',
         dataType: 'boolean',
-        renderer: {
-            type: 'checkbox'
+        cells: {
+            format: '{#if value}✓{else}✗{/if}',
+            editMode: {
+                renderer: {
+                    type: 'checkbox'
+                }
+            }
         }
     }, {
-        id: 'weight'
+        id: 'weight',
+        cells: {
+            editMode: {
+                validationRules: ['notEmpty', 'number']
+            }
+        }
     }, {
         id: 'product',
         cells: {
@@ -42,19 +51,37 @@ Grid.grid('container', {
     }, {
         id: 'country',
         dataType: 'string',
-        renderer: {
-            type: 'select',
-            options: [
-                { value: 'PL', label: 'Poland' },
-                { value: 'NL', label: 'Netherlands' },
-                { value: 'RO', label: 'Romania' },
-                { value: 'EC', label: 'Ecuador' },
-                { value: 'ES', label: 'Spain' },
-                { value: 'IT', label: 'Italy' },
-                { value: 'DE', label: 'Germany' },
-                { value: 'TR', label: 'Turkey' },
-                { value: 'BR', label: 'Brazil' }
-            ]
+        cells: {
+            formatter: function () {
+                const countryNames = {
+                    PL: 'Poland',
+                    NL: 'Netherlands',
+                    RO: 'Romania',
+                    EC: 'Ecuador',
+                    ES: 'Spain',
+                    IT: 'Italy',
+                    DE: 'Germany',
+                    TR: 'Turkey',
+                    BR: 'Brazil'
+                };
+                return countryNames[this.value] || this.value;
+            },
+            editMode: {
+                renderer: {
+                    type: 'select',
+                    options: [
+                        { value: 'PL', label: 'Poland' },
+                        { value: 'NL', label: 'Netherlands' },
+                        { value: 'RO', label: 'Romania' },
+                        { value: 'EC', label: 'Ecuador' },
+                        { value: 'ES', label: 'Spain' },
+                        { value: 'IT', label: 'Italy' },
+                        { value: 'DE', label: 'Germany' },
+                        { value: 'TR', label: 'Turkey' },
+                        { value: 'BR', label: 'Brazil' }
+                    ]
+                }
+            }
         }
     }]
 });

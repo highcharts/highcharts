@@ -146,7 +146,6 @@
         // Default options for the pies
         plotOptions: {
             pie: {
-                borderColor: 'rgba(255,255,255,0.4)',
                 borderWidth: 1,
                 clip: true,
                 dataLabels: {
@@ -183,7 +182,7 @@
                     }
                 }
             },
-            borderColor: '#FFF',
+            borderColor: 'var(--highcharts-background-color, white)',
             joinBy: ['name', 'id'],
             keys: [
                 'id', 'demVotes', 'repVotes', 'libVotes', 'grnVotes',

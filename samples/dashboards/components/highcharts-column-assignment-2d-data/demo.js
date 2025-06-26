@@ -58,7 +58,8 @@ Dashboards.board('container', {
                 cells: {
                     editMode: {
                         enabled: false
-                    }
+                    },
+                    format: '{value:%[ebYHM]}'
                 }
             }]
         }

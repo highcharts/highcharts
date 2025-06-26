@@ -53,14 +53,8 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * The default edit mode renderer type names for this view renderer.
      */
-    public static defaultEditingRenderer: Record<
-    Column.DataType, EditModeRendererTypeName
-    > = {
-            string: 'textInput',
-            number: 'textInput',
-            'boolean': 'checkbox',
-            datetime: 'dateInput'
-        };
+    public static defaultEditingRenderer: EditModeRendererTypeName =
+        'textInput';
 
     /**
      * Default options for the text input renderer.
@@ -90,8 +84,11 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public override render(cell: TableCell): TextInputContent {
-        return new TextInputContent(cell, this);
+    public override render(
+        cell: TableCell,
+        parentElement?: HTMLElement
+    ): TextInputContent {
+        return new TextInputContent(cell, this, parentElement);
     }
 
 }

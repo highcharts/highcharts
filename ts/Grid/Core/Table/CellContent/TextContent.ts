@@ -25,6 +25,7 @@ import type Column from '../Column';
 
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
+import TableCell from '../Body/TableCell';
 
 import GridUtils from '../../GridUtils.js';
 const {
@@ -32,7 +33,6 @@ const {
 } = GridUtils;
 
 import Utils from '../../../../Core/Utilities.js';
-import TableCell from '../Body/TableCell';
 const {
     defined
 } = Utils;
@@ -55,11 +55,15 @@ class TextContent extends CellContent {
     }
 
     protected override add(): void {
-        setHTMLContent(this.cell.htmlElement, this.format());
+        this.update();
     }
 
     public override destroy(): void {
         this.cell.htmlElement.innerHTML = AST.emptyHTML;
+    }
+
+    public override update(): void {
+        setHTMLContent(this.cell.htmlElement, this.format());
     }
 
     /**

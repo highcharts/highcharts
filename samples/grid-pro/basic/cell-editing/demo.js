@@ -68,16 +68,11 @@ Grid.grid('container', {
         dataType: 'number',
         cells: {
             editMode: {
-                validationRules: [{
-                    validate: 'notEmpty',
-                    notification: function () {
-                        return 'Not empty formatter';
-                    }
-                }, {
+                validationRules: ['notEmpty', {
                     validate: 'number',
-                    notification: function (value) {
+                    notification: function ({ rawValue }) {
                         return `New value <strong>${
-                            value
+                            rawValue
                         }</strong> should be number`;
                     }
                 }]
@@ -104,20 +99,7 @@ Grid.grid('container', {
             editMode: {
                 renderer: {
                     type: 'checkbox'
-                },
-                validationRules: [{
-                    validate: 'notEmpty',
-                    notification: function () {
-                        return 'Not empty formatter';
-                    }
-                }, {
-                    validate: 'boolean',
-                    notification: function () {
-                        return 'New value for column: ' +
-                            this.column.id +
-                            ' should be boolean';
-                    }
-                }]
+                }
             }
         }
     }, {
@@ -128,8 +110,8 @@ Grid.grid('container', {
             },
             editMode: {
                 validationRules: ['notEmpty', {
-                    validate: function (value) {
-                        return value.indexOf('URL') !== -1;
+                    validate: function ({ rawValue }) {
+                        return rawValue.indexOf('URL') !== -1;
                     },
                     notification: 'The value must contain "URL"'
                 }]

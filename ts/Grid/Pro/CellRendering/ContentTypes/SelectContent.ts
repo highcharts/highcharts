@@ -21,12 +21,13 @@
  *
  * */
 
-import type { EditModeContent } from '../../CellEditing/CellEditMode';
-import type TableCell from '../../../Core/Table/Body/TableCell';
 import type DataTable from '../../../../Data/DataTable';
-import type SelectRenderer from '../Renderers/SelectRenderer.js';
+import type { EditModeContent } from '../../CellEditing/CellEditMode';
+import type SelectRenderer from '../Renderers/SelectRenderer';
+import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
+import AST from '../../../../Core/Renderer/HTML/AST.js';
 
 
 /* *
@@ -65,9 +66,13 @@ class SelectContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    public constructor(cell: TableCell, renderer: SelectRenderer) {
+    public constructor(
+        cell: TableCell,
+        renderer: SelectRenderer,
+        parentElement?: HTMLElement
+    ) {
         super(cell, renderer);
-        this.select = this.add();
+        this.select = this.add(parentElement);
     }
 
 
@@ -77,15 +82,36 @@ class SelectContent extends CellContentPro implements EditModeContent {
      *
      * */
 
-    protected override add(): HTMLSelectElement {
+    protected override add(
+        parentElement: HTMLElement = this.cell.htmlElement
+    ): HTMLSelectElement {
+        const cell = this.cell;
+
+        const select = this.select = document.createElement('select');
+        select.tabIndex = -1;
+        select.name = cell.column.id + '-' + cell.row.id;
+
+        this.update();
+
+        parentElement.appendChild(this.select);
+
+        select.addEventListener('change', this.onChange);
+        select.addEventListener('keydown', this.onKeyDown);
+        select.addEventListener('blur', this.onBlur);
+        this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
+
+        return select;
+    }
+
+    public override update(): void {
         const cell = this.cell;
         const { options } = this.renderer as SelectRenderer;
 
-        this.select = document.createElement('select');
-        this.select.tabIndex = -1;
-        this.select.name = cell.column.id + '-' + cell.row.id;
         this.select.disabled = !!options.disabled;
 
+        // If there will be a need, we can optimize this by not removing all
+        // old options and only updating the ones that need to be updated.
+        this.select.innerHTML = AST.emptyHTML;
         for (const option of options.options) {
             const optionElement = document.createElement('option');
             optionElement.value = option.value;
@@ -99,15 +125,6 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.select.appendChild(optionElement);
             this.optionElements.push(optionElement);
         }
-
-        this.cell.htmlElement.appendChild(this.select);
-
-        this.select.addEventListener('change', this.onChange);
-        this.select.addEventListener('keydown', this.onKeyDown);
-        this.select.addEventListener('blur', this.onBlur);
-        this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
-
-        return this.select;
     }
 
     public override destroy(): void {
@@ -128,7 +145,11 @@ class SelectContent extends CellContentPro implements EditModeContent {
         select.remove();
     }
 
-    public getValue(): DataTable.CellType {
+    public get rawValue(): string {
+        return this.select.value;
+    }
+
+    public get value(): DataTable.CellType {
         const val = this.select.value;
         switch (this.cell.column.dataType) {
             case 'datetime':
@@ -150,7 +171,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.changeHandler(e);
         } else {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.getValue(), true);
+            void this.cell.setValue(this.value, true);
         }
     };
 

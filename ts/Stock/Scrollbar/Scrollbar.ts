@@ -779,18 +779,18 @@ class Scrollbar {
             return;
         }
 
-        const toPX = (fullWidth as any) * Math.min(to, 1);
+        const toPX = fullWidth * Math.min(to, 1);
 
         let fromPX,
             newSize: number;
 
         from = Math.max(from, 0);
-        fromPX = Math.ceil((fullWidth as any) * from);
+        fromPX = Math.ceil(fullWidth * from);
         scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
 
         // We need to recalculate position, if minWidth is used
         if (newSize < (minWidth as any)) {
-            fromPX = ((fullWidth as any) - (minWidth as any) + newSize) * from;
+            fromPX = (fullWidth - (minWidth as any) + newSize) * from;
             newSize = minWidth as any;
         }
         const newPos = Math.floor(

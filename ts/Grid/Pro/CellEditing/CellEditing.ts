@@ -63,9 +63,17 @@ class CellEditing {
     public editedCell?: TableCell;
 
     /**
-     * Input element for the cell.
+     * The content of the cell edit mode, which represents a context containing
+     * the input field or similar element for applying changes to the cell
+     * value.
      */
-    private editModeContent?: EditModeContent;
+    public editModeContent?: EditModeContent;
+
+    /**
+     * The container element for the cell edit mode, which is used to
+     * position the edit mode content correctly within the cell.
+     */
+    private containerElement?: HTMLDivElement;
 
 
     /* *
@@ -102,10 +110,7 @@ class CellEditing {
         }
 
         this.editedCell = cell;
-        const cellElement = cell.htmlElement;
-
-        cell.content?.destroy();
-        cellElement.classList.add(Globals.getClassName('editedCell'));
+        cell.htmlElement.classList.add(Globals.getClassName('editedCell'));
 
         this.render();
         fireEvent(cell, 'startedEditing');
@@ -130,13 +135,12 @@ class CellEditing {
 
         const { column } = cell;
         const vp = column.viewport;
-        const newValue = emContent.getValue();
+        const newValue = emContent.value;
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.validate(cell, newValue, validationErrors)) {
+            if (!vp.validator.validate(cell, validationErrors)) {
                 vp.validator.initErrorBox(cell, validationErrors);
-                vp.validator.show();
                 return false;
             }
 
@@ -155,12 +159,15 @@ class CellEditing {
 
         cell.htmlElement.focus();
 
+        const isValueChanged = cell.value !== newValue;
         void cell.setValue(
             submit ? newValue : cell.value,
-            submit && cell.value !== newValue
+            submit && isValueChanged
         );
 
-        fireEvent(cell, 'stoppedEditing', { submit });
+        if (isValueChanged) {
+            fireEvent(cell, 'stoppedEditing', { submit });
+        }
 
         delete this.editedCell;
 
@@ -199,10 +206,20 @@ class CellEditing {
         const { key } = e;
         e.stopPropagation();
 
-        // Enter / Escape
-        if (key === 'Enter' || key === 'Escape') {
-            // Cancel editing on escape
-            this.stopEditing(key === 'Enter');
+        if (key === 'Escape') {
+            this.stopEditing(false);
+            return;
+        }
+
+        if (key === 'Enter') {
+            if (
+                this.editModeContent?.finishAfterChange
+            ) {
+                this.onInputChange();
+                return;
+            }
+
+            this.stopEditing();
         }
     };
 
@@ -216,7 +233,15 @@ class CellEditing {
             return;
         }
 
-        this.editModeContent = cell.column.editModeRenderer?.render(cell);
+        this.containerElement = this.containerElement ||
+            document.createElement('div');
+        this.containerElement.className =
+            CellEditing.classNames.cellEditingContainer;
+        this.editedCell?.htmlElement.appendChild(this.containerElement);
+
+        this.editModeContent = cell.column.editModeRenderer?.render(
+            cell, this.containerElement
+        );
         this.editModeContent.getMainElement().focus();
 
         this.editModeContent.blurHandler = this.onInputBlur;
@@ -233,8 +258,28 @@ class CellEditing {
         }
 
         this.editModeContent.destroy();
+        this.containerElement?.remove();
         delete this.editModeContent;
+        delete this.containerElement;
     }
+}
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+
+namespace CellEditing {
+
+    /**
+     * The class names used by the CellEditing functionality.
+     */
+    export const classNames = {
+        cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
+    } as const;
+
 }
 
 

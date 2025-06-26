@@ -179,12 +179,8 @@ class Column {
     private assumeDataType(): Column.DataType {
         const { grid } = this.viewport;
 
-        let type = grid.columnOptionsMap?.[this.id]?.dataType;
-        if (type) {
-            return type;
-        }
-
-        type = grid.options?.columnDefaults?.dataType;
+        const type = grid.columnOptionsMap?.[this.id]?.dataType ??
+            grid.options?.columnDefaults?.dataType;
         if (type) {
             return type;
         }

@@ -17,7 +17,8 @@
  *
  * */
 
-import type _Options from '../Grid/Core/Options.ts';
+import type _Options from '../Grid/Core/Options';
+import type * as H from '../Grid/Pro/highcharts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
@@ -45,6 +46,7 @@ import Dash3Compatibility from '../Grid/Pro/Dash3Compatibility.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
+import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
 
 
 /* *
@@ -75,6 +77,7 @@ import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SelectRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/TextInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/DateInputRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 
 
 /* *
@@ -121,6 +124,7 @@ declare global {
         TableCell: typeof TableCell;
         Templating: typeof Templating;
         merge: typeof Utilities.merge;
+        CellRendererRegistry: typeof CellRendererRegistry;
     }
     interface Window {
         /**
@@ -128,6 +132,7 @@ declare global {
          */
         DataGrid: DataGridNamespace;
         Grid: DataGridNamespace;
+        Highcharts?: typeof H;
     }
 }
 
@@ -175,6 +180,8 @@ Dash3Compatibility.compose(G.Table);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 
+G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
+
 
 /* *
  *
@@ -200,6 +207,10 @@ if (!G.win.DataGrid) {
 
 if (!G.win.Grid) {
     G.win.Grid = G;
+}
+
+if (G.win.Highcharts) {
+    G.CellRendererRegistry.types.sparkline.useHighcharts(G.win.Highcharts);
 }
 
 

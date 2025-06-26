@@ -31,5 +31,5 @@ const chart = new Highcharts.StockChart({
 });
 
 document.getElementById('getcsv').addEventListener('click', function () {
-    alert(chart.getCSV());
+    alert(chart.exporting.getCSV());
 });

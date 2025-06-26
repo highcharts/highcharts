@@ -45,9 +45,14 @@ export interface EditModeContent<
     getMainElement(): E;
 
     /**
-     * Returns the value of the cell in the edit mode.
+     * Value of the edit mode cell content, parsed according to the column type.
      */
-    getValue(): DataTable.CellType;
+    readonly value: DataTable.CellType;
+
+    /**
+     * Raw value of the edit mode cell content, in a string format.
+     */
+    readonly rawValue: string;
 
     /**
      * Destroys the edit mode content, removing all event listeners
@@ -85,7 +90,7 @@ export interface EditModeContent<
     /**
      * Indicates whether the edit mode should finish after a change event.
      */
-    finishAfterChange: boolean;
+    readonly finishAfterChange: boolean;
 }
 
 /**
@@ -98,6 +103,10 @@ export interface EditModeRenderer {
      *
      * @param cell
      * The cell to render the edit mode content for.
+     *
+     * @param parent
+     * Optional parent element to append the rendered content to. If not
+     * provided, the content will be rendered in the cell's main element.
      */
-    render(cell: TableCell): EditModeContent;
+    render(cell: TableCell, parent?: HTMLElement): EditModeContent;
 }

@@ -76,7 +76,8 @@ namespace CellEditingComposition {
                     announcements: {
                         started: 'Entered cell editing mode.',
                         edited: 'Edited cell value.',
-                        cancelled: 'Editing canceled.'
+                        cancelled: 'Editing canceled.',
+                        notValid: 'Provided value is not valid.'
                     }
                 }
             }
@@ -126,7 +127,10 @@ namespace CellEditingComposition {
                     this.column.viewport.grid.options?.events?.cell,
                     this.column.options.cells?.events
                 );
-                cellEvents?.afterEdit?.call(this);
+
+                if (e.submit) {
+                    cellEvents?.afterEdit?.call(this);
+                }
 
                 announceA11yUserEditedCell(
                     this,
@@ -227,7 +231,7 @@ namespace CellEditingComposition {
      */
     function addEditableCellA11yHint(this: TableCell): void {
         const a11y = this.row.viewport.grid.accessibility;
-        if (!a11y) {
+        if (!a11y || this.a11yEditableHint?.isConnected) {
             return;
         }
 
@@ -244,7 +248,8 @@ namespace CellEditingComposition {
             return;
         }
 
-        makeHTMLElement('span', {
+
+        this.a11yEditableHint = makeHTMLElement('span', {
             className: Globals.getClassName('visuallyHidden'),
             innerText: ', ' + editableLang
         }, this.htmlElement);
@@ -344,6 +349,14 @@ export interface CellEditingLangA11yOptions {
          * @default 'Editing cancelled.'
          */
         cancelled?: string;
+
+        /**
+         * The message when the cell value is not valid. It precedes the
+         * error messages.
+         *
+         * @default 'Provided value is not valid.'
+         */
+        notValid?: string;
     }
 }
 
@@ -362,6 +375,15 @@ declare module '../../Core/Table/Column' {
          * The edit mode renderer for the column.
          */
         editModeRenderer?: EditModeRendererType;
+    }
+}
+
+declare module '../../Core/Table/Body/TableCell' {
+    export default interface TableCell {
+        /**
+         * The HTML span element that contains the 'editable' hint for the cell.
+         */
+        a11yEditableHint?: HTMLSpanElement;
     }
 }
 

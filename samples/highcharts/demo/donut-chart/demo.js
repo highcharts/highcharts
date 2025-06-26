@@ -15,7 +15,8 @@ Highcharts.chart('container', {
                             '<strong>2 877 820</strong>'
                         )
                             .css({
-                                color: '#000',
+                                color:
+                                    'var(--highcharts-neutral-color-100, #000)',
                                 textAnchor: 'middle'
                             })
                             .add();

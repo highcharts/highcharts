@@ -21,10 +21,10 @@
  *
  * */
 
+import type Column from '../../Core/Table/Column';
+import type { EditModeContent } from '../CellEditing/CellEditMode';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
-import type Column from '../../Core/Table/Column';
-import type DataTable from '../../../Data/DataTable';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
@@ -32,7 +32,10 @@ import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
 import U from '../../../Core/Utilities.js';
 
-const { makeDiv } = GridUtils;
+const {
+    makeDiv,
+    setHTMLContent
+} = GridUtils;
 const { defined } = U;
 
 /* *
@@ -91,9 +94,6 @@ class Validator {
      * @param cell
      * Edited cell.
      *
-     * @param value
-     * Value to validate.
-     *
      * @param errors
      * An output array for error messages.
      *
@@ -102,37 +102,32 @@ class Validator {
      */
     public validate(
         cell: TableCell,
-        value: DataTable.CellType,
         errors: string[] = []
     ): boolean {
-        const { options } = cell.column;
+        const { options, dataType } = cell.column;
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
         let rules = Array.from(options?.cells?.editMode?.validationRules || []);
 
-        if (options?.dataType) {
-            // Remove duplicates in validationRules
-            const isArrayString = rules.every(
-                (rule): Boolean => typeof rule === 'string'
+        // Remove duplicates in validationRules
+        const isArrayString = rules.every(
+            (rule): Boolean => typeof rule === 'string'
+        );
+
+        if (rules.length > 0 && isArrayString) {
+            rules = [...new Set(rules)];
+        } else {
+            const predefined = Validator.predefinedRules[dataType] || [];
+
+            const hasPredefined = rules.some(
+                (rule): Boolean =>
+                    typeof rule !== 'string' &&
+                    typeof rule.validate === 'string' &&
+                    predefined.includes(rule.validate)
             );
 
-            if (rules.length > 0 && isArrayString) {
-                rules = [...new Set(rules)];
-            } else {
-                const predefined = Validator.predefinedRules[
-                    options?.dataType
-                ] || [];
-
-                const hasPredefined = rules.some(
-                    (rule): Boolean =>
-                        typeof rule !== 'string' &&
-                        typeof rule.validate === 'string' &&
-                        predefined.includes(rule.validate)
-                );
-
-                if (!hasPredefined) {
-                    rules.push(...predefined);
-                }
+            if (!hasPredefined) {
+                rules.push(...predefined);
             }
         }
 
@@ -159,12 +154,15 @@ class Validator {
                 validateFn = ruleDef.validate as Validator.ValidateFunction;
             }
 
+            const { editModeContent } = cell.column.viewport.cellEditing || {};
+
             if (
                 typeof validateFn === 'function' &&
-                !validateFn.call(cell, value)
+                editModeContent &&
+                !validateFn.call(cell, editModeContent)
             ) {
                 if (typeof ruleDef.notification === 'function') {
-                    err = ruleDef.notification.call(cell, value);
+                    err = ruleDef.notification.call(cell, editModeContent);
                 }
                 errors.push((err || ruleDef.notification) as string);
             }
@@ -184,13 +182,25 @@ class Validator {
      *
      */
     public initErrorBox(cell: TableCell, errors: string[]): void {
+        const { grid } = this.viewport;
+
         this.errorCell = cell;
 
         // Set error container position
         this.reflow();
 
         // Set width and content
-        this.notifContainer.innerHTML = errors.join('<br />');
+        setHTMLContent(this.notifContainer, errors.join('<br />'));
+
+        // A11y announcement
+        if (grid.options?.accessibility?.announcements?.cellEditing) {
+            this.viewport.grid.accessibility?.announce(
+                (grid.options?.lang?.accessibility?.cellEditing
+                    ?.announcements?.notValid || ''
+                ) + ' ' + errors.join('. '),
+                true
+            );
+        }
 
         this.show();
     }
@@ -219,6 +229,10 @@ class Validator {
     public hide(
         hideErrorBox: boolean = true
     ): void {
+        this.errorCell?.htmlElement.classList.remove(
+            Validator.classNames.editedCellError
+        );
+
         this.notifContainer.classList.remove(
             Validator.classNames.notifError,
             Validator.classNames.notifAnimation
@@ -281,14 +295,14 @@ class Validator {
 namespace Validator {
 
     /**
-     * Global validation CSS classes.
+     * The class names used by the validator functionality.
      */
     export const classNames = {
         notifContainer: Globals.classNamePrefix + 'notification',
         notifError: Globals.classNamePrefix + 'notification-error',
         notifAnimation: Globals.classNamePrefix + 'notification-animation',
         editedCellError: Globals.classNamePrefix + 'edited-cell-error'
-    };
+    } as const;
 
     /* *
      *
@@ -301,7 +315,7 @@ namespace Validator {
      */
     export type ValidateFunction = (
         this: TableCell,
-        value: DataTable.CellType
+        content: EditModeContent
     ) => boolean;
 
     /**
@@ -309,7 +323,7 @@ namespace Validator {
      */
     export type ValidationErrorFunction = (
         this: TableCell,
-        value?: DataTable.CellType
+        content?: EditModeContent
     ) => string;
 
     /**
@@ -325,9 +339,10 @@ namespace Validator {
      *  Definition of default validation rules.
      */
     export interface RulesRegistryType {
+        boolean: RuleDefinition;
+        datetime: RuleDefinition;
         notEmpty: RuleDefinition;
         number: RuleDefinition;
-        boolean: RuleDefinition;
     }
 
     /**
@@ -346,18 +361,23 @@ namespace Validator {
      */
     export const rulesRegistry: RulesRegistryType = {
         notEmpty: {
-            validate: (value): boolean =>
-                defined(value) && value.toString().length > 0,
+            validate: ({ value, rawValue }): boolean => (
+                defined(value) && rawValue.length > 0
+            ),
             notification: 'Value cannot be empty.'
         },
         number: {
-            validate: (value): boolean => !isNaN(Number(value)),
+            validate: ({ rawValue }): boolean => !isNaN(+rawValue),
             notification: 'Value has to be a number.'
         },
+        datetime: {
+            validate: ({ value }): boolean => !defined(value) || !isNaN(+value),
+            notification: 'Value has to be parsed to a valid timestamp.'
+        },
         'boolean': {
-            validate: (value): boolean => (
-                value === 'true' || value === 'false' ||
-                Number(value) === 1 || Number(value) === 0
+            validate: ({ rawValue }): boolean => (
+                rawValue === 'true' || rawValue === 'false' ||
+                Number(rawValue) === 1 || Number(rawValue) === 0
             ),
             notification: 'Value has to be a boolean.'
         }
@@ -367,10 +387,10 @@ namespace Validator {
      * Default validation rules for each dataType.
      */
     export const predefinedRules: Record<Column.DataType, RuleKey[]> = {
-        number: ['number'],
         'boolean': ['boolean'],
-        string: ['notEmpty'],
-        datetime: ['number']
+        datetime: ['datetime'],
+        number: ['number'],
+        string: []
     };
 }
 

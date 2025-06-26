@@ -72,11 +72,18 @@ namespace CellRenderersComposition {
      * Current column.
      */
     function afterColumnInit(this: Column): void {
-        const Constructor = CellRendererRegistry.types[
-            this.options.cells?.renderer?.type || 'text'
-        ];
+        const rendererType = this.options.cells?.renderer?.type || 'text';
+        let Renderer = CellRendererRegistry.types[rendererType];
 
-        this.cellRenderer = new Constructor(
+        if (!Renderer) {
+            // eslint-disable-next-line no-console
+            console.warn(`The cell renderer of type "${
+                rendererType
+            }" is not registered. Using default text renderer instead.`);
+            Renderer = CellRendererRegistry.types.text;
+        }
+
+        this.cellRenderer = new Renderer(
             this,
             this.options.cells?.renderer || {}
         );
