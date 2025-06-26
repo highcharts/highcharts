@@ -22,14 +22,7 @@ From a user experience perspective, typed inputs provide clearer intent, better 
 
 In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the cell renderer for view and `editMode`. If not specified, the renderer for `editMode` is determined by `dataType`. When not in editMode it defaults to `text`. 
 
-| Renderer Key | Description | Edit Mode |
-|---|---|---|
-| [`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | ✅ |
-| [`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input element | ✅ |
-| [`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element | ✅ |
-| [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SparklineRenderer.SparklineRenderer-1) | Highcharts minified chart | ❌ |
-| [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer-1) | Text or custom static html content, default for most data types | ❌ |
-| [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1) | Text input element | ✅ |
+Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for how to implement renderers and read more below.
 
 | renderer | Description | dataType |
 |---|---|---|
@@ -37,8 +30,6 @@ In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.
 |[`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input with datepicker | datetime |
 |[`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | boolean |
 |[`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element. Note that `options` are required. | |
-
-Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for how to implement renderers and read more below.
 
 ### Text
 Renders an editable text field for the value in editMode, and plain text/HTML when not in editMode. No specific configuration is needed since this is the default:
@@ -50,6 +41,23 @@ columns: [
         cells: {
             editMode: {
                 enabled: true
+            }
+        }
+    }
+]
+```
+
+### Date
+Always renders a native date input. In `editMode` due to `dataType: 'datetime'`and is explicitly defined using `renderer` when not:
+
+```js
+columns: [
+    {
+        id: 'date', // column id
+        dataType: 'datetime',
+        cells: {
+            renderer: {
+                type: 'dateInput'
             }
         }
     }
@@ -71,23 +79,6 @@ columns: [
                 renderer: {
                     type: 'checkbox'
                 }
-            }
-        }
-    }
-]
-```
-
-### Date
-Always renders a native date input. In `editMode` due to `dataType: 'datetime'`and is explicitly defined using `renderer` when not:
-
-```js
-columns: [
-    {
-        id: 'date', // column id
-        dataType: 'datetime',
-        cells: {
-            renderer: {
-                type: 'dateInput'
             }
         }
     }
