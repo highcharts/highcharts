@@ -54,6 +54,7 @@ td {
 }
 
 #modalContent {
+    position: relative;
     background: var(--default-background);
     padding: 24px;
     width: 100%;
@@ -64,6 +65,17 @@ td {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+#modalContent #close-popup {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    background: var(--default-background);
+    color: var(--default-color);
+    border: none;
+    cursor: pointer;
 }
 
 #modalContent #formFieldsContainer {

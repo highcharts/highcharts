@@ -264,3 +264,7 @@ form.addEventListener('submit', function (e) {
     form.reset();
     modal.style.display = 'none';
 });
+
+document.getElementById('close-popup').addEventListener('click', () => {
+    modal.style.display = 'none';
+});
