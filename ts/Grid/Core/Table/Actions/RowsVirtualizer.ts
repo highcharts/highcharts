@@ -102,7 +102,8 @@ class RowsVirtualizer {
      * Firefox has a lower limit than other browsers.
      */
     private static readonly MAX_ELEMENT_HEIGHT: number = (
-        /Firefox/.test(navigator.userAgent) ? 6000000 : 31000000
+        (/Firefox/.test(navigator.userAgent) ? 6000000 : 31000000) /
+        (window.devicePixelRatio || 1)
     );
 
     /**
