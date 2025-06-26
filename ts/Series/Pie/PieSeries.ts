@@ -278,7 +278,7 @@ class PieSeries extends Series {
      * @private
      */
     public hasData(): boolean {
-        return !!this.dataTable.rowCount;
+        return this.points.some((point): boolean => point.visible !== false);
     }
 
     /**
