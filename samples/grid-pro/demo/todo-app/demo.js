@@ -11,9 +11,9 @@ const categories = [
     { value: 'OT', label: 'Other' }
 ];
 const priority = [
-    { value: '1', label: 'Low' },
-    { value: '2', label: 'Medium' },
-    { value: '3', label: 'High' }
+    { value: 1, label: 'Low' },
+    { value: 2, label: 'Medium' },
+    { value: 3, label: 'High' }
 ];
 const columns = [{
     id: 'Done',
@@ -58,12 +58,9 @@ const columns = [{
     dataType: 'datetime',
     cells: {
         formatter: function () {
-            return this.value ?
-                new Date(this.value).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric'
-                }) : '';
+            return this.value ? new Date(this.value).toLocaleDateString(
+                navigator.language
+            ) : '';
         },
         editMode: {
             renderer: {
@@ -98,6 +95,9 @@ const columns = [{
 
 // Grid setup
 Grid.grid('container', {
+    time: {
+        locale: ''
+    },
     dataTable: {
         columns: {
             Done: [false, false, false, false],
@@ -111,10 +111,12 @@ Grid.grid('container', {
                 'In the kitchen use 2 cups of water, in the living room use 1 cup, do not water the cactus in the garden'
             ],
             'Due date': [
-                Date.UTC(2025, 6, 1), Date.UTC(2025, 6, 2),
-                Date.UTC(2025, 6, 3), Date.UTC(2025, 6, 4)
+                Date.UTC(2025, 6, 1),
+                Date.UTC(2025, 6, 2),
+                Date.UTC(2025, 6, 3),
+                Date.UTC(2025, 6, 4)
             ],
-            Priority: ['1', '3', '2', '1']
+            Priority: [1, 3, 2, 1]
         }
     },
     columnDefaults: {
@@ -138,8 +140,12 @@ Grid.grid('container-done', {
             Notes: [
                 'Try new pasta recipe', 'Backyard only', 'Check under sink'
             ],
-            'Due date': ['2025-06-08', '2025-06-09', '2025-06-10'],
-            Priority: ['2', '1', '3']
+            'Due date': [
+                Date.UTC(2025, 6, 8),
+                Date.UTC(2025, 6, 9),
+                Date.UTC(2025, 6, 10)
+            ],
+            Priority: [2, 1, 3]
         }
     },
     columnDefaults: {
@@ -149,10 +155,7 @@ Grid.grid('container-done', {
             }
         }
     },
-    columns: columns,
-    credits: {
-        enabled: false
-    }
+    columns: columns
 });
 
 // Custom events
