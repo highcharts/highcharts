@@ -38,7 +38,7 @@ In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.
 |[`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | boolean |
 |[`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element. Note that `options` are required. | |
 
-
+Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for how to implement renderers and read more below.
 
 ### Text
 Renders an editable text field for the value in editMode, and plain text/HTML when not in editMode. No specific configuration is needed since this is the default:
@@ -56,95 +56,121 @@ columns: [
 ]
 ```
 
-### Checkbox in editMode
-Renders a native checkbox input element.
+### Checkbox
+Renders a checkbox input element in `editMode` and uses `format` to display icons when not:
 
 ```js
 columns: [
     {
-        id: 'whatever', // column id
-        dataType: 'boolean',
+        id: 'done', // column id
         cells: {
-            format: '{#if value}✓{else}✗{/if}'
+            dataType: 'datetime',
+            format: '{#if value}✓{else}✗{/if}',
             editMode: {
                 enabled: true
+                renderer: {
+                    type: 'checkbox'
+                }
             }
         }
     }
 ]
 ```
 
-### Date input
-Renders a native date input that supports HTML datepicker.
+### Date
+Always renders a native date input. In `editMode` due to `dataType: 'datetime'`and is explicitly defined using `renderer` when not:
 
 ```js
-{
-    id: 'date_date', // column id
-    dataType: 'datetime',
-    cells: {
-        renderer: {
-            type: 'dateInput'
+columns: [
+    {
+        id: 'date', // column id
+        dataType: 'datetime',
+        cells: {
+            renderer: {
+                type: 'dateInput'
+            }
         }
     }
-}
+]
 ```
 
 ### Select
-Renders a dropdown select menu for predefined options.
+Renders a select element for predefined options in `editMode`. When not in `editMode` plain text is rendered:
 
 ```js
-{
-    id: 'country', // column id
-    dataType: 'string',
-    cells: {
-        renderer: {
-            type: 'select',
-            options: [
-                { value: 'NO', label: 'Norway' },
-                { value: 'NL', label: 'Netherlands' },
-                { value: 'PL', label: 'Poland' },
-                { value: 'EC', label: 'Ecuador' }
-            ]
-        }
-    }
-}
-```
-
-### Sparkline
-Renders an inline miniature chart (e.g. bar, line) inside a cell using Highcharts.
-
-You can configure chart by the `chartOptions` API option, that supports all Highcharts configurations.
-
-```js
-{
-    id: 'trend', // column id
-    cells: {
-        renderer: {
-            type: 'sparkline',
-            chartOptions: {
-                chart: {
-                    type: 'bar'
-                },
-                plotOptions: {
-                    series: {
-                        dataLabels: {
-                            enabled: true
-                        },
-                        negativeColor: "#f00"
-                    }
+columns: [
+    {
+        id: 'country', // column id
+        dataType: 'string',
+        cells: {
+            editMode: {
+                renderer: {
+                    type: 'select',
+                    options: [
+                        { value: 'NO', label: 'Norway' },
+                        { value: 'NL', label: 'Netherlands' },
+                        { value: 'PL', label: 'Poland' },
+                        { value: 'EC', label: 'Ecuador' }
+                    ]
                 }
             }
         }
     }
-}
+]
 ```
 
-Please note that you should include the `highcharts.js` file before including the Grid library. If you do it the other way around, or use ES Modules, you should connect Highcharts manually using: `Grid.CellRendererRegistry.types.sparkline.useHighcharts(Highcharts);`
+### Mixed
+Renders a select element for predefined options when not in `editMode`. When in `editMode` a text input is used. `dataType: 'number'` is set to make sure number and not string is written to `DataTable` on updates, and `validationRules` is also applied to provide user feedback:
 
-Go to [Sparkline](https://www.highcharts.com/docs/grid/sparkline) to read more about Grid Sparkline structure and configuration options.
+```js
+columns: [
+    {
+        id: 'size', // column id
+        dataType: 'number',
+        cells: {
+            renderer: {
+                type: 'select',
+                options: [
+                    { value: 1, label: 1 },
+                    { value: 2, label: 2 },
+                    { value: 3, label: 3 }
+                ]
+            },
+            editMode: {
+                renderer: {
+                    type: 'textInput'
+                },
+                validationRules: ['notEmpty', 'number']
+            }
+        }
+    }
+]
+```
 
+## Sparkline renderer
 
-## Writing custom renderers
+A [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SparklineRenderer.SparklineRenderer-1) is a small, inline chart, typically a line, bar, or area chart, embedded within a cell to visually represent trends or patterns in data at a glance. Unlike full-size charts, sparklines are minimal and non-intrusive, making them ideal for showing changes over time or comparing values directly within rows of a grid, without leaving the context of the table.
+
+In its simplest form, given that cell data is an array of numbers, a line sparkline can be rendered using:
+
+```js
+columns: [
+    {
+        id: 'trend', // column id
+        cells: {
+            renderer: {
+                type: 'sparkline',
+            }
+        }
+    }
+]
+```
+
+Line, bar, column, area and pie are preconfigured as generic, minimalistic sparklines in Highcharts Grid Pro, but you can use `chartConfig` to configure these further or use other chart types. All chart types and configuration options from the [Highcharts Core](https://www.highcharts.com/products/highcharts/) charting library are available. 
+
+Go to the [Sparkline documentation article](https://www.highcharts.com/docs/grid/sparkline) to read more about sparklines and configuration options.
+
+## Custom renderers
 
 You can also write a custom renderer. To do so, define:
 
