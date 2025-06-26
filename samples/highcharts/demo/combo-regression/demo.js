@@ -1,3 +1,64 @@
+function generateChart(dataset) {
+    Highcharts.chart('container', {
+        title: {
+            text: 'Scatter plot with trend line'
+        },
+        xAxis: {
+            min: -3.5,
+            max: 5.5
+        },
+        yAxis: {
+            min: 0
+        },
+        series: [{
+            type: 'scatter',
+            name: 'Observations',
+            data: dataset,
+            marker: {
+                radius: 4
+            }
+        }, {
+            type: 'spline',
+            name: '1st degree regression line',
+            data: generateLineData(linearRegression(dataset, 1), -3, 5, 10),
+            marker: {
+                enabled: false
+            },
+            states: {
+                hover: {
+                    lineWidth: 0
+                }
+            },
+            enableMouseTracking: false
+        }, {
+            type: 'spline',
+            name: '2nd degree regression line',
+            data: generateLineData(linearRegression(dataset, 2), -3, 5, 10),
+            marker: {
+                enabled: false
+            },
+            states: {
+                hover: {
+                    lineWidth: 0
+                }
+            },
+            enableMouseTracking: false
+        }, {
+            type: 'spline',
+            name: '3rd degree regression line',
+            data: generateLineData(linearRegression(dataset, 3), -3, 5, 10),
+            marker: {
+                enabled: false
+            },
+            states: {
+                hover: {
+                    lineWidth: 0
+                }
+            },
+            enableMouseTracking: false
+        }]
+    });
+}
 const dataset = [
     [4.648, 2.013],
     [4.583, 1.354],
@@ -101,73 +162,42 @@ const dataset = [
     [2.736, 0.766]
 ];
 
-function getTrendLine(data) {
-    const n = data.length;
+// Matrix calculations to calculate the variables for least square regression.
+// Utilizing the mathjs library for matrix operations
 
-    let sumX = 0,
-        sumY = 0,
-        sumXY = 0,
-        sumX2 = 0;
+function linearRegression(dataset, nDegrees) {
 
-    // Calculate the sums needed for linear regression
-    for (let i = 0; i < n; i++) {
-        const [x, y] = data[i];
-        sumX += x;
-        sumY += y;
-        sumXY += x * y;
-        sumX2 += x ** 2;
+    // Split the dataset into x and y
+    const x = dataset.map(val => val[0]);
+    const y = dataset.map(val => val[1]);
+    const X = [];
+
+    // Create n-dimensional X-matrix
+    for (let i = 0; i <= nDegrees; i++) {
+        X.push(x.map(num => num ** i));
     }
 
-    // Calculate the slope of the trend line
-    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX ** 2);
+    // Calculate least square variables
+    const Xt = window.math.transpose(X);
+    const XtX = window.math.multiply(X, Xt);
+    const invXtX = window.math.inv(XtX);
+    const Xty = window.math.multiply(y, Xt);
+    const b = window.math.multiply(Xty, invXtX);
 
-    // Calculate the intercept of the trend line
-    const intercept = (sumY - slope * sumX) / n;
-
-    const trendline = []; // Array to store the trend line data points
-
-    // Find the minimum and maximum x-values from the scatter plot data
-    const minX = Math.min(...data.map(([x]) => x));
-    const maxX = Math.max(...data.map(([x]) => x));
-
-    // Calculate the corresponding y-values for the trend line using the slope
-    // and intercept
-    trendline.push([minX, minX * slope + intercept]);
-    trendline.push([maxX, maxX * slope + intercept]);
-
-    return trendline;
+    // return variables [a, b, c, ...], to be applied as a + b*x + c*x^2 + ...
+    return b;
 }
 
-Highcharts.chart('container', {
-    title: {
-        text: 'Scatter plot with trend line'
-    },
-    xAxis: {
-        min: -0.5,
-        max: 5.5
-    },
-    yAxis: {
-        min: 0
-    },
-    series: [{
-        type: 'line',
-        name: 'Trend Line',
-        data: getTrendLine(dataset),
-        marker: {
-            enabled: false
-        },
-        states: {
-            hover: {
-                lineWidth: 0
-            }
-        },
-        enableMouseTracking: false
-    }, {
-        type: 'scatter',
-        name: 'Observations',
-        data: dataset,
-        marker: {
-            radius: 4
+function generateLineData(constants, start, end, resolution) {
+    const outData = [];
+    for (let x = start; x <= end; x += 1 / resolution) {
+        let y = 0;
+        for (let j = 0; j < constants.length; j++) {
+            y += constants[j] * (x ** j);
         }
-    }]
-});
+        outData.push([x, y]);
+    }
+    return outData;
+}
+
+generateChart(dataset);
