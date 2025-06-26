@@ -60,7 +60,7 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
-                // To change the chart type, we need to specify it in the
+                // To change the chart type, we need to specify it in
                 // chartOptions
                 chartOptions: {
                     chart: {
