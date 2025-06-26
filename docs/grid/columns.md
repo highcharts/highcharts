@@ -255,4 +255,4 @@ If this property is not defined, the data type is automatically inferred from th
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-data-type" allow="fullscreen"></iframe>
 
-For more details on customizing cell content, refer to the [cell content section](https://www.highcharts.com/docs/grid/cell-content).
+For more details on customizing cell content, refer to the [cell content section](https://www.highcharts.com/docs/grid/cell-renderers).

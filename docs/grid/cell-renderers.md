@@ -16,7 +16,7 @@ Unless specified the default renderer is [`text`](https://api.highcharts.com/gri
 
 ## Input renderers
 
-Using specific input types is preferable to relying on complex validation logic for plain text inputs because it leverages built-in browser behavior to enforce correct data formats. This reduces the need for custom code, minimizes validation errors, and improves performance. If more spesific validation is needed, for e.g. string validation, please [refer to `validationRules`](https://www.highcharts.com/docs/grid/cell-editing#validation).
+Using specific input types is preferable to relying on complex validation logic for plain text inputs because it leverages built-in browser behavior to enforce correct data formats. This reduces the need for custom code, minimizes validation errors, and improves performance. If more specific validation is needed, for e.g. string validation, please [refer to `validationRules`](https://www.highcharts.com/docs/grid/cell-editing#validation).
 
 From a user experience perspective, typed inputs provide clearer intent, better accessibility, and context-appropriate interfaces
 
@@ -159,7 +159,7 @@ columns: [
 
 Line, bar, column, area and pie are preconfigured as generic, minimalistic sparklines in Highcharts Grid Pro, but you can use `chartConfig` to configure these further or use other chart types. All chart types and configuration options from the [Highcharts Core](https://www.highcharts.com/products/highcharts/) charting library are available. 
 
-Go to the [Sparkline documentation article](https://www.highcharts.com/docs/grid/sparkline) to read more about sparklines and configuration options.
+Go to the [Sparkline documentation article](https://www.highcharts.com/docs/grid/sparklines) to read more about sparklines and configuration options.
 
 ## Custom renderers
 

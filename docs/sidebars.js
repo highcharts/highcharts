@@ -127,7 +127,7 @@ module.exports = {
             'grid/header',
             'grid/cell-editing',
             'grid/cell-renderers',
-            'grid/sparkline',
+            'grid/sparklines',
             'grid/events',
             {
                 'Theming': [
