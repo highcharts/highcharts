@@ -1,6 +1,9 @@
 Grid.grid('container', {
     dataTable: {
         columns: {
+            // Data for the sparkline charts is stored in the Data Table
+            // as JSON strings. The sparkline renderer will parse the JSON
+            // and render the chart based on the data.
             line: [
                 '[1, 5, 2, 4, 3, 6]',
                 '[5, 2, 3, 4, 7, 2]',
@@ -29,9 +32,12 @@ Grid.grid('container', {
                 '[5, 2, 3, 5, 6, 4, 5, 5]',
                 '[1, 2, 1, 3, 2, 4, 5, 2]'
             ],
+            // Data can be provided differently, even in separate columns, but
+            // then it needs to be handled correctly in the renderer.
             pieA: [20, 10, 1, 25, 5],
             pieB: [50, 50, 90, 25, 85],
             pieC: [30, 40, 9, 50, 10],
+            // Data can be provided as a single value for a single bar chart.
             singleBar: [-5, 10, 4, -8, 9]
         }
     },
@@ -42,6 +48,7 @@ Grid.grid('container', {
         },
         cells: {
             renderer: {
+                // Default chart type is 'line', so it can be omitted
                 type: 'sparkline'
             }
         }
@@ -53,6 +60,8 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
+                // To change the chart type, we need to specify it in the
+                // chartOptions
                 chartOptions: {
                     chart: {
                         type: 'area'
@@ -98,6 +107,9 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
+                // The chartOptions can be a function that returns the options.
+                // The context of the function is the cell, the first argument
+                // is the raw cell value (not used in this case).
                 chartOptions: function () {
                     const rowData = this.row.data;
                     return {
@@ -119,6 +131,7 @@ Grid.grid('container', {
         width: 70
     }, {
         id: 'pieB',
+        // The rest of the columns storing pie data can be hidden
         enabled: false
     }, {
         id: 'pieC',
@@ -131,6 +144,8 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
+                // You can of course specify more complex chart options
+                // for the sparkline, like in the common Highcharts charts.
                 chartOptions: {
                     chart: {
                         type: 'bar'
@@ -152,17 +167,29 @@ Grid.grid('container', {
         }
     }]
 }, true).then(grid => {
+
+    // Schedule updates for the specific columns' cells. The updaters are
+    // functions that modify the cell value and update its content.
     const updaters = {
+        singleBar: cell => {
+            // For the single bar chart, we just set a random value
+            // between -10 and 10. `setValue` is a method that updates the
+            // cell value and re-renders the cell content at once.
+            cell.setValue(Math.round(Math.random() * 20 - 10));
+        },
         pieA: cell => {
+            // For the pie charts that are composed of data from multiple
+            // columns, we need to update the values directly in the Data Table
+            // and then call `loadData` to update the row data.
             ['pieA', 'pieB', 'pieC'].forEach(colId => {
                 const value = Math.round(Math.random() * 100);
                 grid.dataTable.setCell(colId, cell.row.id, value);
             });
             cell.row.loadData();
+
+            // After updating the row data, we need to update the cell content
+            // to reflect the changes in the pie chart.
             cell.content.update();
-        },
-        singleBar: cell => {
-            cell.setValue(Math.round(Math.random() * 20 - 10));
         },
         default: cell => {
             const arr = JSON.parse(cell.value);
