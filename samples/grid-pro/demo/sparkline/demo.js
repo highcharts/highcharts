@@ -170,7 +170,7 @@ Grid.grid('container', {
         }
     }]
 }, true).then(grid => {
-
+// The following is for demo purposes only.
     // Schedule updates for the specific columns' cells. The updaters are
     // functions that modify the cell value and update its content.
     const updaters = {
