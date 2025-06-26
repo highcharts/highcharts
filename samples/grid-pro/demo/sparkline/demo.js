@@ -107,7 +107,7 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
-                // The chartOptions can be a function that returns the options.
+                // chartOptions can be an object, or a function that returns the options.
                 // The context of the function is the cell, the first argument
                 // is the raw cell value (not used in this case).
                 chartOptions: function () {
