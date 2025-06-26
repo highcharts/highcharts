@@ -203,7 +203,6 @@ SFDR
 Segoe
 sparkline
 sparklines
-sparklines
 preconfigured
 datepicker
 specific
