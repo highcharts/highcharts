@@ -14,21 +14,28 @@
         sans-serif;
 }
 
-code {
-    font-style: italic;
-}
-
 .content {
     padding: 8px;
 }
 
-@media (prefers-color-scheme: dark) {
-    .content {
-        background-color: #292929;
-        color: #fff;
-    }
+#container {
+    height: 364px;
+}
 
-    .highcharts-data-label > span {
-        color: #fff !important;
-    }
+.status {
+    border-radius: 10px;
+    padding: 4px 8px;
+    width: min-content;
+}
+
+.running {
+    background-color: #4caf5080;
+}
+
+.stopped {
+    background-color: #f4433680;
+}
+
+.spark-label {
+    color: var(--hcg-color);
 }
