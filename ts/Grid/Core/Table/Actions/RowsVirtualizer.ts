@@ -316,6 +316,12 @@ class RowsVirtualizer {
      */
     private renderRows(rowCursor: number): void {
         const { viewport: vp, buffer, rowCount } = this;
+
+        // Stop rendering if there are no rows to render.
+        if (rowCount < 1) {
+            return;
+        }
+
         const isVirtualization = this.rowSettings?.virtualization;
         const rowsPerPage = isVirtualization ? Math.ceil(
             (vp.grid.tableElement?.clientHeight || 0) /
@@ -325,7 +331,9 @@ class RowsVirtualizer {
         if (!isVirtualization && rowCount > 50) {
             // eslint-disable-next-line no-console
             console.warn(
-                'Grid: a large dataset can cause performance issues.'
+                'Grid: a large dataset can cause performance issues when ' +
+                'virtualization is disabled. Consider enabling ' +
+                'virtualization in the rows settings.'
             );
         }
 

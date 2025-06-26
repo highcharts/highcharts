@@ -33,14 +33,14 @@ Renders an editable text field for the value. It can also render static HTML ele
 
 ```js
 {
-  id: 'username', // column id
-  dataType: 'string',
-  cells: {
-    renderer: {
-      type: 'input'
-    },
-    editable: true
-  }
+    id: 'username', // column id
+    dataType: 'string',
+    cells: {
+        renderer: {
+            type: 'input'
+        },
+        editable: true
+    }
 }
 ```
 
@@ -49,13 +49,13 @@ Renders a native checkbox input element.
 
 ```js
 {
-  id: 'active', // column id
-  dataType: 'boolean',
-  cells: {
-    renderer: {
-      type: 'checkbox'
+    id: 'active', // column id
+    dataType: 'boolean',
+    cells: {
+        renderer: {
+            type: 'checkbox'
+        }
     }
-  }
 }
 ```
 
@@ -64,13 +64,13 @@ Renders a native date input that supports HTML datepicker.
 
 ```js
 {
-  id: 'date_date', // column id
-  dataType: 'datetime',
-  cells: {
-    renderer: {
-        type: 'dateInput'
+    id: 'date_date', // column id
+    dataType: 'datetime',
+    cells: {
+        renderer: {
+            type: 'dateInput'
+        }
     }
-  }
 }
 ```
 
@@ -79,19 +79,19 @@ Renders a dropdown select menu for predefined options.
 
 ```js
 {
-  id: 'country', // column id
-  dataType: 'string',
-  cells: {
-    renderer: {
-      type: 'select',
-      options: [
-        { value: 'NO', label: 'Norway' },
-        { value: 'NL', label: 'Netherlands' },
-        { value: 'PL', label: 'Poland' },
-        { value: 'EC', label: 'Ecuador' }
-      ]
+    id: 'country', // column id
+    dataType: 'string',
+    cells: {
+        renderer: {
+            type: 'select',
+            options: [
+                { value: 'NO', label: 'Norway' },
+                { value: 'NL', label: 'Netherlands' },
+                { value: 'PL', label: 'Poland' },
+                { value: 'EC', label: 'Ecuador' }
+            ]
+        }
     }
-  }
 }
 ```
 
@@ -102,25 +102,25 @@ You can configure chart by the `chartOptions` API option, that supports all High
 
 ```js
 {
-  id: 'trend', // column id
-  cells: {
-    renderer: {
-      type: 'sparkline',
-      chartOptions: {
-        chart: {
-          type: 'bar'
-        },
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true
-            },
-            negativeColor: "#f00"
-          }
+    id: 'trend', // column id
+    cells: {
+        renderer: {
+            type: 'sparkline',
+            chartOptions: {
+                chart: {
+                    type: 'bar'
+                },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        negativeColor: "#f00"
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 ```
 
@@ -129,6 +129,72 @@ Please note that you should include the `highcharts.js` file before including th
 Go to [Sparkline](https://www.highcharts.com/docs/grid/sparkline) to read more about Grid Sparkline structure and configuration options.
 
 
+## Writing custom renderers
 
-## View the Result
+You can also write a custom renderer. To do so, define:
 
+1. A class for the specific Cell Content (it should extend the abstract [`CellContent`](https://api.highcharts.com/grid/#classes/Grid_Core_Table_CellContent_CellContent.CellContent) or [`CellContentPro`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellContentPro.CellContentPro) class). It must implement lifecycle methods: `add`, `update`, `delete`.
+
+    ```ts
+    class CustomCellContent extends CellContentPro {
+
+        constructor(cell: TableCell, renderer: CustomCellRenderer) {
+            super(cell, renderer);
+            this.add();
+        }
+
+        protected override add(): void {
+            // create your content here
+        }
+
+        public override update(): void {
+            // update your content here, when the cell value has changed
+        }
+
+        public override dalete(): void {
+            // remove the element from DOM, clear event listeners, etc.
+        }
+
+    }
+    ```
+
+2. A class representing your Renderer, which inherits from the abstract [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) class. It should implement:
+    - `options` – an abstract property holding the renderer’s unique configuration options
+    - `render` – a method that creates and returns a new instance of CellContent
+
+    ```ts
+    export interface CustomRendererOptions extends CellRenderer.Options {
+        type: 'customRenderer';
+        additionalOptions: unknown;
+    }
+
+    class CustomRenderer extends CellRenderer {
+
+        public options: CustomRendererOptions;
+
+        constructor(column: Column, options: CustomRendererOptions) {
+            super(column);
+            this.options = options;
+        }
+
+        public render(cell: TableCell): CustomCellContent {
+            return new CustomCellContent(cell, this);
+        }
+    }
+    ```
+
+3. Add the renderer type to [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) so it can be used in Grid Options.
+
+    ```ts
+    declare module 'highcharts/datagrid/es-modules/Grid/Pro/CellRendering/CellRendererType' {
+        interface CellRendererTypeRegistry {
+            customRenderer: typeof CustomRenderer;
+        }
+    }
+
+    CellRendererRegistry.registerRenderer('customRenderer', CustomRenderer);
+    ```
+
+If you want your custom renderer to be usable in cell edit mode, you need to implement additionally the following interfaces:
+- [`EditModeContent`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeContent) - it should extend the custom cell content class.
+- [`EditModeRenderer`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeRenderer) - it should extend the custom cell renderer class.

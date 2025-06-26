@@ -19,7 +19,7 @@ files](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-s
 Dark mode in Highcharts, the Adaptive theme
 -------------------------------------------
 Highcharts ships with an adaptive theme, `/themes/adaptive.js`, that uses CSS
-variables for responsively adhering to the user's preferred color scheme (since v12.4). It
+variables for responsively adhering to the user's preferred color scheme (since v12.3). It
 operates in three modes:
 1. **System**. Unless otherwise specified by the implementer, the Adaptive theme
 uses the color scheme as per the
