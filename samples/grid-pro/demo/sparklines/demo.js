@@ -134,7 +134,7 @@ const grid = Grid.grid('container', {
                     // to the end of the series isntead of updating the existing
                     // points, we need to update also the x values of the
                     // points. It can be done in the dataset directly, or
-                    // calculating it here, in the chart options callback.
+                    // calculated here, in the `chartOptions` callback.
                     const firstX = (
                         this.content?.chart?.series?.[0].points?.[0]?.x ?? -1
                     ) + 1;
