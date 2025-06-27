@@ -1,12 +1,12 @@
 ---
-name: Generate charts from Grid
+name: Grid Sparklines
 authors:
-  - Mikkel Espolin Birkeland
+  - Dawid Dragula
 js_wrap: b
 tags:
   - Highcharts Grid demo
 categories:
   - General:
-        priority: 110
+        priority: 70
 use_png_thumbnail: true
 ...

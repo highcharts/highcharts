@@ -150,7 +150,13 @@ class SparklineContent extends CellContentPro {
     }
 
     public override update(): void {
-        this.chart?.update(this.getProcessedOptions(), true, false);
+        const chartOptions = this.getProcessedOptions();
+        this.chart?.update(
+            chartOptions,
+            true,
+            false,
+            chartOptions.chart?.animation
+        );
     }
 
     public override destroy(): void {
