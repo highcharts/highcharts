@@ -48,7 +48,7 @@
 
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
-    background-color: var(--highcharts-neutral-color-3);
+    background-color: var(--highcharts-neutral-color-0);
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
@@ -63,7 +63,7 @@
 .highcharts-light {
     .highcharts-dashboards,
     .highcharts-dashboards-wrapper {
-        background-color: var(--highcharts-neutral-color-3);
+        background-color: var(--highcharts-neutral-color-0);
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
@@ -115,7 +115,7 @@
     /* Colors and settings not fitting the variable scheme */
     .highcharts-dashboards,
     .highcharts-dashboards-wrapper {
-        background-color: var(--highcharts-neutral-color-3);
+        background-color: var(--highcharts-neutral-color-0);
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
