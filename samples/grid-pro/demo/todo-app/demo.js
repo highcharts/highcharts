@@ -107,8 +107,7 @@ Grid.grid('container', {
             ],
             Notes: [
                 'Use gentle cycle', 'Get milk and eggs', '',
-                // eslint-disable-next-line max-len
-                'In the kitchen use 2 cups of water, in the living room use 1 cup, do not water the cactus in the garden'
+                'In the kitchen use 2 cups of water'
             ],
             'Due date': [
                 Date.UTC(2025, 6, 1),

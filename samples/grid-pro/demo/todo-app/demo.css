@@ -1,5 +1,19 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 :root {
     --default-background: #fff;
     --mask-background: rgba(255, 255, 255, 0.5);
@@ -22,6 +36,10 @@
 
 td {
     line-height: unset !important;
+}
+
+td[data-column-id="Priority"] {
+    cursor: default;
 }
 
 .centered,
