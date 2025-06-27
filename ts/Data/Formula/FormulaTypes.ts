@@ -81,6 +81,7 @@ export interface Reference {
     row: number;
     rowRelative?: true;
     type: 'reference';
+    isNegative?: boolean;
 }
 
 
