@@ -1,5 +1,5 @@
 ---
-name: Scatter with trend line
+name: Scatter with regression lines
 authors:
   - Tord Vikestad
 js_wrap: b

@@ -1,14 +1,11 @@
 function generateChart(dataset) {
     Highcharts.chart('container', {
         title: {
-            text: 'Scatter plot with trend line'
+            text: 'Scatter plot with regression lines'
         },
         xAxis: {
-            min: -3.5,
-            max: 5.5
-        },
-        yAxis: {
-            min: 0
+            minPadding: 0.1,
+            maxPadding: 0.1
         },
         series: [{
             type: 'scatter',
