@@ -60,21 +60,21 @@ Highcharts.chart('container', {
         dataClasses: [{
             from: 0,
             to: 1000000,
-            color: 'rgba(59, 82, 139, 1)',
+            color: 'rgb(59, 82, 139)',
             name: '< 1M'
         }, {
             from: 1000000,
             to: 5000000,
-            color: 'rgba(33, 145, 140, 1)',
+            color: 'rgb(33, 145, 140)',
             name: '1M - 5M'
         }, {
             from: 5000000,
             to: 20000000,
-            color: 'rgba(94, 201, 98, 1)',
+            color: 'rgb(94, 201, 98)',
             name: '5M - 20M'
         }, {
             from: 20000000,
-            color: 'rgba(253, 231, 37, 1)',
+            color: 'rgb(253, 231, 37)',
             name: '> 20M'
         }]
     },
