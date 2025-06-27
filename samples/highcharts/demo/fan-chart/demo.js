@@ -51,8 +51,7 @@ Highcharts.chart('container', {
     tooltip: {
         crosshairs: true,
         shared: true,
-        valueSuffix: '%',
-        valuePrefix: '+'
+        valueSuffix: 'm NOK'
     },
     responsive: {
         rules: [{
@@ -90,7 +89,7 @@ Highcharts.chart('container', {
         enabled: false
     },
     series: [{
-        name: 'EU GDP',
+        name: 'Net Income',
         type: 'line',
         data: [
             ['2023',    18.4],
