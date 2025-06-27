@@ -124,7 +124,8 @@ const grid = Grid.grid('container', {
                 chartOptions: {
                     chart: {
                         // You can use any chart type for a sparkline.
-                        type: 'column'
+                        type: 'column',
+                        animation: true
                     },
                     yAxis: {
                         min: 0,
@@ -168,7 +169,8 @@ const grid = Grid.grid('container', {
                     return {
                         chart: {
                             type: 'bar',
-                            marginLeft: 35
+                            marginLeft: 35,
+                            animation: true
                         },
                         yAxis: {
                             min: 0,
@@ -190,13 +192,11 @@ const grid = Grid.grid('container', {
                             }
                         },
                         series: [{
-                            data: [{
-                                y: this.row.data.diskOperationsIn,
-                                color: '#2caffe'
-                            }, {
-                                y: this.row.data.diskOperationsOut,
-                                color: '#544fc5'
-                            }],
+                            colorByPoint: true,
+                            data: [
+                                this.row.data.diskOperationsIn,
+                                this.row.data.diskOperationsOut
+                            ],
                             dataLabels: {
                                 enabled: true,
                                 allowOverlap: true,
