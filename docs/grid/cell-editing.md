@@ -4,9 +4,11 @@ tags: ["grid-pro"]
 
 # Cell editing
 
-Note: cell editing is not part of Highcharts Grid Lite, so refer to [install instructions](https://www.highcharts.com/docs/dashboards/grid-standalone) for the full version to enable this functionality.
+**Note:** Cell editing is only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone).
 
-End users can edit data in cells if cell edit mode is enabled by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
+## Enable editMode
+
+End users can edit data in cells if `editMode` is enabled by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
 
 ```js
 columnDefaults: {
@@ -17,7 +19,7 @@ columnDefaults: {
     }
 },
 columns: [{
-    id: "firstName",
+    id: "whatever",
     cells: {
         editMode: {
             enabled: false
@@ -28,18 +30,44 @@ columns: [{
 
 In the example above cell editing is enabled for ALL columns, expect the `firstName` column. The reverse can be achived by not setting `columnDefaults` and `columns[].cells.editMode.enabled: true` instead.
 
+## Cell renderers
+
+Cell renderers define how the cell input is displayed and interacted with when editing is enabled. You can use built-in renderers such as text fields, checkboxes and select dropdowns, or implement custom renderers to match your application's requirements. This allows for flexible editing experiences tailored to different data types and use cases. Unless specified the default input element is a regular text input.
+
+You can read more about cell renderers in the [article on cell renderers](https://www.highcharts.com/docs/grid/cell-renderers).
+
+```ts
+columns: [{
+    id: "role",
+    cells: {
+        editMode: {
+            enabled: true,
+            renderer: {
+                type: 'select',
+                options: [
+                    { value: 'admin', label: 'Administrator' },
+                    { value: 'editor', label: 'Editor' },
+                    { value: 'viewer', label: 'Viewer' }
+                ]
+            }
+        }
+    }
+}]
+```
+
 
 ## Validation
 
 ### Predefined Validation Rules
 
-The following validation rules are available out of the box:
+Each column has a specific `dataType`, which can be set explicitly or inferred from the data. All data types can accept `null` values by default. Each `dataType` comes with its own set of predefined validation rules, and e.g. columns with `dataType: 'number'` will automatically reject `NaN` values.
+
+In addition to `dataType` you can extend a selection of predefined validation rules:
+
 - `notEmpty`
 - `boolean`
 - `number`
 - `datetime`
-
-Each column has a specific `dataType`, which can be set explicitly by the user or inferred from the data. All data types can accept `null` values by default. Each `dataType` comes with its own set of predefined validation rules, for example, columns with the `number` type will automatically reject `NaN` values.
 
 To prevent users from entering `null` or empty string values in any column, add the `notEmpty` validation rule:
 
@@ -53,6 +81,21 @@ columns: [{
         }
     }
 }]
+```
+
+Custom error messages for each validation rule can be set using the root `lang` API option:
+
+```js
+lang: {
+    validationErrors: {
+        notEmpty: {
+            notification: 'Custom error message for empty cells'
+        },
+        number: {
+            notification: 'Custom error message for NaN'
+        }
+    }
+}
 ```
 
 ### Custom Validation Rules
@@ -107,33 +150,6 @@ columns: [{
 ```
 
 This approach allows you to reuse custom validation logic across multiple columns.
-
-
-## Edit Mode Renderers
-
-Edit mode renderers define how the cell input is displayed and interacted with when editing is enabled. You can use built-in renderers such as text fields, select dropdowns, or implement custom renderers to match your application's requirements. This allows for flexible editing experiences tailored to different data types and use cases.
-
-You can read more about cell renderers in [this article](https://www.highcharts.com/docs/grid/cell-content).
-
-```ts
-columns: [{
-    id: "role",
-    cells: {
-        editMode: {
-            enabled: true,
-            renderer: {
-                type: 'select',
-                options: [
-                    { value: 'admin', label: 'Administrator' },
-                    { value: 'editor', label: 'Editor' },
-                    { value: 'viewer', label: 'Viewer' }
-                ]
-            }
-        }
-    }
-}]
-```
-
 
 ## The afterEdit event
 
