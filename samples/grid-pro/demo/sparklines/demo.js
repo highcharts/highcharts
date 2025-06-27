@@ -8,6 +8,9 @@ const data = new Grid.DataTable({
         running: [
             true, true, true, true, true, false, true, true, false, true
         ],
+        // Common way of representing sparkline data is as a string with
+        // comma-separated values, but more complex JSON structures can be
+        // used as well.
         cpuUtilization: [
             '15, 18, 29, 48, 56, 54, 34, 28, 23, 13, 8, 5, 9, 15, 25',
             '99, 96, 82, 53, 33, 22, 29, 38, 52, 73, 84, 91, 97, 89, 70',
@@ -38,8 +41,12 @@ const data = new Grid.DataTable({
             '10.123.456.94', '203.123.456.95', '198.123.456.96',
             '172.123.456.97'
         ],
+        // Disk operations sparkline data is represented in two columns. It's
+        // possible to use it in a single column with a `chartOptions` set
+        // as a callback function.
         diskOperationsIn: [10, 20, 1, 30, 40, 0, 25, 60, 0, 70],
         diskOperationsOut: [80, 70, 36, 60, 50, 0, 36, 30, 0, 20],
+        // Single-point sparkline data can be represented as a single number.
         diskUsage: [4, 9, 80, 30, 95, 0, 15, 8, 0, 90]
     }
 });
@@ -50,15 +57,12 @@ const percentageZones = [{
     color: '#9998'
 }, {
     value: 60,
-    color: '#4CAF50'
+    color: '#4caf50'
 }, {
-    value: 70,
-    color: '#DDEB3B'
+    value: 85,
+    color: '#ebcb3b'
 }, {
-    value: 90,
-    color: '#FFAA00'
-}, {
-    color: '#F44336'
+    color: '#f44336'
 }];
 
 // Create the grid with the data table and configure the columns.
@@ -119,6 +123,7 @@ const grid = Grid.grid('container', {
                 type: 'sparkline',
                 chartOptions: {
                     chart: {
+                        // You can use any chart type for a sparkline.
                         type: 'column'
                     },
                     yAxis: {
@@ -128,6 +133,10 @@ const grid = Grid.grid('container', {
                     plotOptions: {
                         column: {
                             borderRadius: 0,
+                            // Columns rendered on a sparkline are usually
+                            // very thin, so crisp edges make the spaces between
+                            // points irregular. Turning crisp off makes them
+                            // evenly spaced, but with slightly blurred edges.
                             crisp: false,
                             zones: percentageZones
                         }
@@ -149,6 +158,12 @@ const grid = Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
+                // This sparkline uses two columns of data to render a bar chart
+                // with two bars, one for disk operations in and one for disk
+                // operations out. That's why the `chartOptions` is a
+                // function that returns the options based on the row data.
+                // The context of the function is the cell, so we can
+                // access the row data using `this.row.data`.
                 chartOptions: function () {
                     return {
                         chart: {
@@ -160,6 +175,8 @@ const grid = Grid.grid('container', {
                             max: 100
                         },
                         xAxis: {
+                            // Axes are not rendered on sparklines, by default,
+                            // but we can turn them on in the chart options.
                             visible: true,
                             categories: ['in', 'out'],
                             lineColor: '#999',
@@ -193,6 +210,8 @@ const grid = Grid.grid('container', {
         }
     }, {
         id: 'diskOperationsOut',
+        // This column is not rendered, but it is used by the
+        // `diskOperationsIn` column to render the sparkline.
         enabled: false
     }, {
         id: 'diskUsage',
@@ -203,6 +222,9 @@ const grid = Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
+                // The first argument of the `chartOptions` function is the
+                // raw data value of the cell, so we can use it to set the
+                // chart options based on the value.
                 chartOptions: function (data) {
                     return {
                         chart: {
@@ -237,10 +259,12 @@ function scheduleUpdate(rowIndex) {
     }, delay);
 }
 
+// Schedule updates for all rows in the data table.
 for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
     scheduleUpdate(i);
 }
 
+// Function to generate a new dummy sparkline data array based on the old one.
 function generateArrayFlow(stringArray) {
     const r = Math.random() * 2 - 1;
     const change = Math.floor(r * r * r * 30);
@@ -254,6 +278,8 @@ function generateArrayFlow(stringArray) {
     return array.join(', ');
 }
 
+// Function to update the instance status in the data table and refresh the
+// cells. It updates the data even if the cells are not rendered in the grid.
 function updateInstanceStatus(rowIndex) {
     const running = data.getCell('running', rowIndex);
     if (!running) {
@@ -263,30 +289,28 @@ function updateInstanceStatus(rowIndex) {
     const cpuUtilization = data.getCell('cpuUtilization', rowIndex);
     const memoryUtilization = data.getCell('memoryUtilization', rowIndex);
 
+    // Data Table cells can be updated directly, even if the cells are not
+    // rendered in the grid.
     data.setCell(
         'cpuUtilization',
         rowIndex,
         generateArrayFlow(cpuUtilization)
     );
-
     data.setCell(
         'memoryUtilization',
         rowIndex,
         generateArrayFlow(memoryUtilization)
     );
-
     data.setCell(
         'diskOperationsIn',
         rowIndex,
         Math.round(Math.random() * 100)
     );
-
     data.setCell(
         'diskOperationsOut',
         rowIndex,
         Math.round(Math.random() * 100)
     );
-
     data.setCell(
         'diskUsage',
         rowIndex,
@@ -298,8 +322,15 @@ function updateInstanceStatus(rowIndex) {
         return;
     }
 
+    // row.loadData() is used to fetch the data from the data table into the
+    // `row.data` object, because unlike the `column.data`, the `row.data`
+    // is not a direct reference to the data table, but a copy of the data
+    // for the row.
     row.loadData();
+
     row.cells.forEach(cell => {
+        // `cell.setValue()` without arguments will refresh the cell with
+        // the current value from the data table.
         cell.setValue();
     });
 }

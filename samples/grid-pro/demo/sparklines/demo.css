@@ -26,6 +26,9 @@
     border-radius: 10px;
     padding: 4px 8px;
     width: min-content;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    color: #fff;
 }
 
 .running {
