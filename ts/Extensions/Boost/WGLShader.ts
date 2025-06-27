@@ -98,6 +98,7 @@ const vertexShader = [
 
     'uniform float xAxisTrans;',
     'uniform float xAxisMin;',
+    'uniform float xAxisMax;',
     'uniform float xAxisMinPad;',
     'uniform float xAxisPointRange;',
     'uniform float xAxisLen;',
@@ -111,6 +112,7 @@ const vertexShader = [
 
     'uniform float yAxisTrans;',
     'uniform float yAxisMin;',
+    'uniform float yAxisMax;',
     'uniform float yAxisMinPad;',
     'uniform float yAxisPointRange;',
     'uniform float yAxisLen;',
@@ -122,6 +124,7 @@ const vertexShader = [
     'uniform bool  yAxisIsLog;',
     'uniform bool  yAxisReversed;',
 
+    'uniform bool  isCircle;',
     'uniform bool  isBubble;',
     'uniform bool  bubbleSizeByArea;',
     'uniform float bubbleZMin;',
@@ -218,6 +221,19 @@ const vertexShader = [
     '}',
 
     'void main(void) {',
+        // It's not working correctly on useGPUTranslations off, because we
+        // operate on pixel values then, not on axis values. Maybe we should
+        // just skip outer points before pushing them to the vertex buffer?
+        'if (!skipTranslation && isCircle && (',
+            'aVertexPosition.x < xAxisMin ||',
+            'aVertexPosition.x > xAxisMax ||',
+            'aVertexPosition.y < yAxisMin ||',
+            'aVertexPosition.y > yAxisMax',
+        ')) {',
+            'gl_Position = vec4(2.0, 2.0, 2.0, 1.0);',
+            'return;',
+        '}',
+
         'if (isBubble){',
             'gl_PointSize = bubbleRadius();',
         '} else {',
