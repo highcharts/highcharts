@@ -16,6 +16,7 @@
     --ig-neutral-default-background: #d1d1d1;
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #e0ebe0;
+    --ig-highlight-color-5: #f3f6fe;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,6 +28,7 @@
         --ig-neutral-default-background: #636363;
         --ig-positive-default-border-color: #008000;
         --ig-positive-default-background: #265a26;
+        --ig-highlight-color-5: #2d2e36;
     }
 }
 
@@ -38,6 +40,7 @@
     --ig-neutral-default-background: #636363;
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #265a26;
+    --ig-highlight-color-5: #2d2e36;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -942,7 +945,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         );
     --hcg-cell-hovered-row-background:
         var(
-            --highcharts-neutral-color-5,
+            --ig-highlight-color-5,
             color-mix(
                 in srgb,
                 var(--hcg-color, #000000) 5%,
