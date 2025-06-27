@@ -101,6 +101,12 @@ const grid = Grid.grid('container', {
             renderer: {
                 type: 'sparkline',
                 chartOptions: {
+                    chart: {
+                        // Take note that the animation is enabled by
+                        // default for sparkline charts, but we can disable
+                        // it if we want to.
+                        animation: false
+                    },
                     yAxis: {
                         min: 0,
                         max: 100.1
@@ -121,27 +127,36 @@ const grid = Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
-                chartOptions: {
-                    chart: {
-                        // You can use any chart type for a sparkline.
-                        type: 'column',
-                        animation: true
-                    },
-                    yAxis: {
-                        min: 0,
-                        max: 100
-                    },
-                    plotOptions: {
-                        column: {
+                chartOptions: function (data) {
+                    const yData = data.split(',').map(Number);
+
+                    // To make the sparkline animate like the points are added
+                    // to the end of the series isntead of updating the existing
+                    // points, we need to update also the x values of the
+                    // points. It can be done in the dataset directly, or
+                    // calculating it here, in the chart options callback.
+                    const firstX = (
+                        this.content?.chart?.series?.[0].points?.[0]?.x ?? -1
+                    ) + 1;
+
+                    return {
+                        yAxis: {
+                            min: 0,
+                            max: 100
+                        },
+                        series: [{
+                            type: 'column',
+                            data: yData.map((y, i) => ([firstX + i, y])),
                             borderRadius: 0,
                             // Columns rendered on a sparkline are usually
-                            // very thin, so crisp edges make the spaces between
-                            // points irregular. Turning crisp off makes them
-                            // evenly spaced, but with slightly blurred edges.
+                            // very thin, so crisp edges make the spaces
+                            // between points irregular. Turning crisp off
+                            // makes them evenly spaced, but with slightly
+                            // blurred edges.
                             crisp: false,
                             zones: percentageZones
-                        }
-                    }
+                        }]
+                    };
                 }
             }
         }
@@ -169,8 +184,7 @@ const grid = Grid.grid('container', {
                     return {
                         chart: {
                             type: 'bar',
-                            marginLeft: 35,
-                            animation: true
+                            marginLeft: 35
                         },
                         yAxis: {
                             min: 0,
@@ -228,8 +242,7 @@ const grid = Grid.grid('container', {
                 chartOptions: function (data) {
                     return {
                         chart: {
-                            type: 'pie',
-                            animation: true
+                            type: 'pie'
                         },
                         series: [{
                             data: [{

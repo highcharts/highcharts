@@ -22,19 +22,19 @@ Grid.grid('container', {
             ],
             // But it can also be provided as JSON array of objects.
             bar: [
-                '[{ "y": 1, "color": "#91C8E4" }, { "y": 4, "color": "#749BC2" }, { "y": 2, "color": "#4682A9" }]',
-                '[{ "y": 1, "color": "#91C8E4" }, { "y": 1, "color": "#749BC2" }, { "y": 1, "color": "#4682A9" }]',
-                '[{ "y": 2, "color": "#91C8E4" }, { "y": 1, "color": "#749BC2" }, { "y": 5, "color": "#4682A9" }]',
-                '[{ "y": 10, "color": "#91C8E4" }, { "y": 1, "color": "#749BC2" }, { "y": 10, "color": "#4682A9" }]',
-                '[{ "y": 10, "color": "#91C8E4" }, { "y": 1, "color": "#749BC2" }, { "y": 10, "color": "#4682A9" }]'
+                '[{ "x": 0, "y": 1, "color": "#91C8E4" }, { "x": 1, "y": 4, "color": "#749BC2" }, { "x": 2, "y": 2, "color": "#4682A9" }]',
+                '[{ "x": 0, "y": 1, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 1, "color": "#4682A9" }]',
+                '[{ "x": 0, "y": 2, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 5, "color": "#4682A9" }]',
+                '[{ "x": 0, "y": 10, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 10, "color": "#4682A9" }]',
+                '[{ "x": 0, "y": 10, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 10, "color": "#4682A9" }]'
             ],
             // Or 2D arrays, which can be interpreted using series.keys.
             column: [
-                '[[1, "#EAA64D"], [1, "#0D5EA6"], [2, "#EAA64D"], [2, "#0D5EA6"], [3, "#EAA64D"], [3, "#0D5EA6"], [4, "#EAA64D"], [4, "#0D5EA6"]]',
-                '[[5, "#EAA64D"], [3, "#0D5EA6"], [4, "#EAA64D"], [5, "#0D5EA6"], [5, "#EAA64D"], [4, "#0D5EA6"], [3, "#EAA64D"], [5, "#0D5EA6"]]',
-                '[[1, "#EAA64D"], [1, "#0D5EA6"], [6, "#EAA64D"], [2, "#0D5EA6"], [1, "#EAA64D"], [1, "#0D5EA6"], [5, "#EAA64D"], [2, "#0D5EA6"]]',
-                '[[5, "#EAA64D"], [2, "#0D5EA6"], [3, "#EAA64D"], [5, "#0D5EA6"], [6, "#EAA64D"], [4, "#0D5EA6"], [5, "#EAA64D"], [5, "#0D5EA6"]]',
-                '[[1, "#EAA64D"], [2, "#0D5EA6"], [1, "#EAA64D"], [3, "#0D5EA6"], [2, "#EAA64D"], [4, "#0D5EA6"], [5, "#EAA64D"], [2, "#0D5EA6"]]'
+                '[[0, 1, "#EAA64D"], [1, 1, "#0D5EA6"], [2, 2, "#EAA64D"], [3, 2, "#0D5EA6"], [4, 3, "#EAA64D"], [5, 3, "#0D5EA6"], [6, 4, "#EAA64D"], [7, 4, "#0D5EA6"]]',
+                '[[0, 5, "#EAA64D"], [1, 3, "#0D5EA6"], [2, 4, "#EAA64D"], [3, 5, "#0D5EA6"], [4, 5, "#EAA64D"], [5, 4, "#0D5EA6"], [6, 3, "#EAA64D"], [7, 5, "#0D5EA6"]]',
+                '[[0, 1, "#EAA64D"], [1, 1, "#0D5EA6"], [2, 6, "#EAA64D"], [3, 2, "#0D5EA6"], [4, 1, "#EAA64D"], [5, 1, "#0D5EA6"], [6, 5, "#EAA64D"], [7, 2, "#0D5EA6"]]',
+                '[[0, 5, "#EAA64D"], [1, 2, "#0D5EA6"], [2, 3, "#EAA64D"], [3, 5, "#0D5EA6"], [4, 6, "#EAA64D"], [5, 4, "#0D5EA6"], [6, 5, "#EAA64D"], [7, 5, "#0D5EA6"]]',
+                '[[0, 1, "#EAA64D"], [1, 2, "#0D5EA6"], [2, 1, "#EAA64D"], [3, 3, "#0D5EA6"], [4, 2, "#EAA64D"], [5, 4, "#0D5EA6"], [6, 5, "#EAA64D"], [7, 2, "#0D5EA6"]]'
             ],
             // Data can be provided differently, even in separate columns, but
             // then it needs to be handled correctly in the renderer.
@@ -68,7 +68,11 @@ Grid.grid('container', {
                 // chartOptions
                 chartOptions: {
                     chart: {
-                        type: 'area'
+                        type: 'area',
+                        // Take note that the animation is enabled by
+                        // default for sparkline charts, but we can disable
+                        // it if we want to.
+                        animation: false
                     }
                 }
             }
@@ -102,7 +106,7 @@ Grid.grid('container', {
                     },
                     plotOptions: {
                         column: {
-                            keys: ['y', 'color']
+                            keys: ['x', 'y', 'color']
                         }
                     }
                 }
@@ -122,12 +126,6 @@ Grid.grid('container', {
                 chartOptions: function () {
                     const rowData = this.row.data;
                     return {
-                        chart: {
-                            // Take note that the animation is disabled by
-                            // default for sparkline charts, but we can enable
-                            // it if we want to.
-                            animation: true
-                        },
                         series: [{
                             type: 'pie',
                             data: [
@@ -195,14 +193,20 @@ Grid.grid('container', {
         default: cell => {
             const arr = JSON.parse(cell.value);
             const rnd = Math.round(Math.random() * 10);
+            const lastPoint = arr[arr.length - 1];
             let cachedPoint = arr.shift();
 
             if (typeof cachedPoint === 'number') {
                 cachedPoint = rnd;
             } else if (Array.isArray(cachedPoint)) {
-                cachedPoint[0] = rnd;
+                cachedPoint[1] = rnd;
+                cachedPoint[0] = lastPoint[0] + 1;
             } else if (Object.hasOwn(cachedPoint, 'y')) {
                 cachedPoint.y = rnd;
+
+                if (Object.hasOwn(lastPoint, 'x')) {
+                    cachedPoint.x = lastPoint.x + 1;
+                }
             }
 
             arr.push(cachedPoint);
