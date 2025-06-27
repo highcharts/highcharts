@@ -35,107 +35,97 @@ Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for
 Renders an editable text field for the value in editMode, and plain text/HTML when not in editMode. No specific configuration is needed since this is the default:
 
 ```js
-columns: [
-    {
-        id: 'whatever', // column id
-        cells: {
-            editMode: {
-                enabled: true
-            }
+columns: [{
+    id: 'whatever', // column id
+    cells: {
+        editMode: {
+            enabled: true
         }
     }
-]
+}]
 ```
 
 ### Date
 Always renders a native date input. In `editMode` due to `dataType: 'datetime'`and is explicitly defined using `renderer` when not:
 
 ```js
-columns: [
-    {
-        id: 'date', // column id
-        dataType: 'datetime',
-        cells: {
-            renderer: {
-                type: 'dateInput'
-            }
+columns: [{
+    id: 'date', // column id
+    dataType: 'datetime',
+    cells: {
+        renderer: {
+            type: 'dateInput'
         }
     }
-]
+}]
 ```
 
 ### Checkbox
 Renders a checkbox input element in `editMode` and uses `format` to display icons when not:
 
 ```js
-columns: [
-    {
-        id: 'done', // column id
-        cells: {
-            dataType: 'datetime',
-            format: '{#if value}✓{else}✗{/if}',
-            editMode: {
-                enabled: true
-                renderer: {
-                    type: 'checkbox'
-                }
+columns: [{
+    id: 'done', // column id
+    cells: {
+        dataType: 'datetime',
+        format: '{#if value}✓{else}✗{/if}',
+        editMode: {
+            enabled: true
+            renderer: {
+                type: 'checkbox'
             }
         }
     }
-]
+}]
 ```
 
 ### Select
 Renders a select element for predefined options in `editMode`. When not in `editMode` plain text is rendered:
 
 ```js
-columns: [
-    {
-        id: 'country', // column id
-        dataType: 'string',
-        cells: {
-            editMode: {
-                renderer: {
-                    type: 'select',
-                    options: [
-                        { value: 'NO', label: 'Norway' },
-                        { value: 'NL', label: 'Netherlands' },
-                        { value: 'PL', label: 'Poland' },
-                        { value: 'EC', label: 'Ecuador' }
-                    ]
-                }
+columns: [{
+    id: 'country', // column id
+    dataType: 'string',
+    cells: {
+        editMode: {
+            renderer: {
+                type: 'select',
+                options: [
+                    { value: 'NO', label: 'Norway' },
+                    { value: 'NL', label: 'Netherlands' },
+                    { value: 'PL', label: 'Poland' },
+                    { value: 'EC', label: 'Ecuador' }
+                ]
             }
         }
     }
-]
+}]
 ```
 
 ### Mixed
 Renders a select element for predefined options when not in `editMode`. When in `editMode` a text input is used. `dataType: 'number'` is set to make sure number and not string is written to `DataTable` on updates, and `validationRules` is also applied to provide user feedback:
 
 ```js
-columns: [
-    {
-        id: 'size', // column id
-        dataType: 'number',
-        cells: {
+columns: [{
+    id: 'size', // column id
+    dataType: 'number',
+    cells: {
+        renderer: {
+            type: 'select',
+            options: [
+                { value: 1, label: 1 },
+                { value: 2, label: 2 },
+                { value: 3, label: 3 }
+            ]
+        },
+        editMode: {
             renderer: {
-                type: 'select',
-                options: [
-                    { value: 1, label: 1 },
-                    { value: 2, label: 2 },
-                    { value: 3, label: 3 }
-                ]
+                type: 'textInput'
             },
-            editMode: {
-                renderer: {
-                    type: 'textInput'
-                },
-                validationRules: ['notEmpty', 'number']
-            }
+            validationRules: ['notEmpty', 'number']
         }
     }
-]
+}]
 ```
 
 ## Sparkline renderer
@@ -145,16 +135,14 @@ A [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_
 In its simplest form, given that cell data is an array of numbers, a line sparkline can be rendered using:
 
 ```js
-columns: [
-    {
-        id: 'trend', // column id
-        cells: {
-            renderer: {
-                type: 'sparkline',
-            }
+columns: [{
+    id: 'trend', // column id
+    cells: {
+        renderer: {
+            type: 'sparkline',
         }
     }
-]
+}]
 ```
 
 Line, bar, column, area and pie are preconfigured as generic, minimalistic sparklines in Highcharts Grid Pro, but you can use `chartConfig` to configure these further or use other chart types. All chart types and configuration options from the [Highcharts Core](https://www.highcharts.com/products/highcharts/) charting library are available. 

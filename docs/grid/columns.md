@@ -213,18 +213,15 @@ Grid.setOptions({
 To properly format the time use one of [the supported formats](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat)
 For example:
 ```js
-columns: [
-    {
-        id: 'date',
-        header: {
-            format: 'Date of purchase'
-        },
-        cells: {
-            format: '{value:%[dbY]}'
-        }
+columns: [{
+    id: 'date',
+    header: {
+        format: 'Date of purchase'
+    },
+    cells: {
+        format: '{value:%[dbY]}'
     }
-    ...
-]
+}, ...]
 ```
 
 For more advanced formatting the formatter callback function can be used.
@@ -234,16 +231,13 @@ For more advanced formatting the formatter callback function can be used.
 The number formatting is handled by [the template engine](https://www.highcharts.com/docs/chart-concepts/templating). The following example shows how to format numbers with thousands separators:
 
 ```js
-columns: [
-    {
-        id: 'weight',
-        className: 'custom-column-class-name',
-        cells: {
-            format: '{value:,.1f} kg'
-        }
+columns: [{
+    id: 'weight',
+    className: 'custom-column-class-name',
+    cells: {
+        format: '{value:,.1f} kg'
     }
-    ...
-]
+}, ...]
 ```
 
 ## Data type

@@ -24,16 +24,14 @@ Check out the [sparklines demo](https://www.highcharts.com/demo/grid/sparklines)
 In its simplest form, given that cell data is an array of numbers, a line sparkline can be rendered using:
 
 ```js
-columns: [
-    {
-        id: 'trend', // column id
-        cells: {
-            renderer: {
-                type: 'sparkline',
-            }
+columns: [{
+    id: 'trend', // column id
+    cells: {
+        renderer: {
+            type: 'sparkline',
         }
     }
-]
+}]
 ```
 
 ## Defaults
@@ -41,58 +39,58 @@ Unlike traditional charts, sparklines are typically rendered without axes, coord
 
 ```js
 {
-  chart: {
-    height: 40,
-    animation: false,
-    margin: [5, 8, 5, 8],
-    backgroundColor: 'transparent',
-    skipClone: true
-  },
-  accessibility: {
-    enabled: false
-  },
-  tooltip: {
-    enabled: false
-  },
-  title: {
-    text: ''
-  },
-  credits: {
-    enabled: false
-  },
-  xAxis: {
-    visible: false
-  },
-  yAxis: {
-    visible: false
-  },
-  legend: {
-    enabled: false
-  },
-  plotOptions: {
-    series: {
-      borderWidth: 0,
-      marker: {
-        enabled: false
-      },
-      states: {
-        hover: {
-          enabled: false
-        },
-        inactive: {
-          enabled: false
-        }
-      },
-      animation: false,
-      dataLabels: {
-        enabled: false
-      }
+    chart: {
+        height: 40,
+        animation: false,
+        margin: [5, 8, 5, 8],
+        backgroundColor: 'transparent',
+        skipClone: true
     },
-    pie: {
-      slicedOffset: 0,
-      borderRadius: 0
+    accessibility: {
+        enabled: false
+    },
+    tooltip: {
+        enabled: false
+    },
+    title: {
+        text: ''
+    },
+    credits: {
+        enabled: false
+    },
+    xAxis: {
+        visible: false
+    },
+    yAxis: {
+        visible: false
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        series: {
+            borderWidth: 0,
+            marker: {
+                enabled: false
+            },
+            states: {
+                hover: {
+                    enabled: false
+                },
+                inactive: {
+                    enabled: false
+                }
+            },
+            animation: false,
+            dataLabels: {
+                enabled: false
+            }
+        },
+        pie: {
+            slicedOffset: 0,
+            borderRadius: 0
+        }
     }
-  }
 }
 ```
 
@@ -101,26 +99,29 @@ You can configure the sparkline using the `chartOptions` API option, that suppor
 
 ```js
 {
-  id: 'trend', // column id
-  cells: {
-    renderer: {
-      type: 'sparkline',
-      chartOptions: {
-        chart: {
-          type: 'bar'
-        },
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true
+    id: 'trend', // column id
+    cells: {
+        renderer: {
+            type: 'sparkline',
+            chartOptions: {
+                chart: {
+                    type: 'bar'
+                },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     }
-  }
 }
 ```
 
 ## Performance
 Sparkline supports all standard Highcharts chart options and is optimized for speed, including virtual scrolling for large datasets.
+
+<iframe src="https://www.highcharts.com/samples/embed/grid-pro/basic/sparklines" allow="fullscreen"></iframe>
+
