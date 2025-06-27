@@ -30,12 +30,6 @@ Highcharts.setOptions({
     }
 });
 
-const customColors = {
-    high: 'rgb(128, 128, 128, 0.1)',
-    med: 'rgb(128, 128, 128, 0.2)',
-    low: 'rgb(128, 128, 128, 0.3)'
-};
-
 Highcharts.chart('container1', {
     chart: {
         marginTop: 40
@@ -53,15 +47,15 @@ Highcharts.chart('container1', {
         plotBands: [{
             from: 0,
             to: 150,
-            color: customColors.low
+            color: 'rgb(128, 128, 128, 0.3)'
         }, {
             from: 150,
             to: 225,
-            color: customColors.med
+            color: 'rgb(128, 128, 128, 0.2)'
         }, {
             from: 225,
             to: 9e9,
-            color: customColors.high
+            color: 'rgb(128, 128, 128, 0.1)'
         }],
         title: null
     },
@@ -85,15 +79,15 @@ Highcharts.chart('container2', {
         plotBands: [{
             from: 0,
             to: 20,
-            color: customColors.low
+            color: 'rgb(128, 128, 128, 0.3)'
         }, {
             from: 20,
             to: 25,
-            color: customColors.med
+            color: 'rgb(128, 128, 128, 0.2)'
         }, {
             from: 25,
             to: 100,
-            color: customColors.high
+            color: 'rgb(128, 128, 128, 0.1)'
         }],
         labels: {
             format: '{value}%'
@@ -124,15 +118,15 @@ Highcharts.chart('container3', {
         plotBands: [{
             from: 0,
             to: 1400,
-            color: customColors.low
+            color: 'rgb(128, 128, 128, 0.3)'
         }, {
             from: 1400,
             to: 2000,
-            color: customColors.med
+            color: 'rgb(128, 128, 128, 0.2)'
         }, {
             from: 2000,
             to: 9e9,
-            color: customColors.high
+            color: 'rgb(128, 128, 128, 0.1)'
         }],
         labels: {
             format: '{value}'
