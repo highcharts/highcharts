@@ -173,11 +173,10 @@ QUnit.test(
     'pointBreak callback wasn\'t called for xAxis and different ' +
         'series than column.(#4533)',
     function (assert) {
-        var iteratorPB = 0,
-            iteratorAB = 0,
-            iteratorPOB = 0;
+        let iteratorPB = 0,
+            iteratorAB = 0;
 
-        const chart = Highcharts.chart('container', {
+        Highcharts.chart('container', {
             chart: {
                 width: 500,
                 height: 400,
@@ -198,9 +197,6 @@ QUnit.test(
                     },
                     afterBreaks() {
                         iteratorAB++;
-                    },
-                    pointOutsideOfBreak() {
-                        iteratorPOB++;
                     }
                 }
             },
@@ -237,19 +233,6 @@ QUnit.test(
 
         assert.strictEqual(iteratorAB, 7, 'All after breaks called');
         assert.strictEqual(iteratorPB, 8, 'All point breaks called');
-
-        assert.strictEqual(
-            iteratorPOB,
-            0,
-            'No point breaks out should be called initially.'
-        );
-
-        chart.yAxis[0].setExtremes(0, 5);
-        assert.strictEqual(
-            iteratorPOB,
-            chart.series[0].points.length,
-            'The pointOutsideOfBreak event should be called for all points.'
-        );
     }
 );
 

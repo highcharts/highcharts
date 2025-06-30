@@ -3,8 +3,9 @@
 ## Server-side rendering
 Highcharts interactive charts can not be generated on the server side, as the interactivity relies on a client environment.
 Static images can be generated using the [Highcharts Export Server](https://www.highcharts.com/docs/export-module/setting-up-the-server).
-In order to use Highcharts within recent versions (v13+) of Next.js, you will have to add `'use client'` to files containing
-Highcharts components or modules to ensure it is rendered on the client.
+In order to use Highcharts within recent versions (v13+) of Next.js using the app router,
+you will have to add `'use client'` to files containing Highcharts components or
+modules to ensure it is rendered on the client.
 
 ```jsx
 'use client';
@@ -22,6 +23,13 @@ export default function ChartPage() {
   );
 }
 ```
+
+## Pages router
+
+If you’re using the pages router in Next.js, Highcharts can still be used easily as long as rendering is limited to the client side.
+The main considerations are:
+* Avoid using Highcharts directly in `getServerSideProps` or `getStaticProps`, since it requires a DOM environment.
+* Components importing and rendering Highcharts should be standard React components, and will work as usual in pages under /pages.
 
 ## Streaming data from the server
 
