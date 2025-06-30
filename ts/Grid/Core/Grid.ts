@@ -390,9 +390,9 @@ class Grid {
 
         if (newOptions.columns) {
             if (oneToOne) {
-                this.loadColumnOptionsOneToOne(newOptions.columns);
+                this.setColumnOptionsOneToOne(newOptions.columns);
             } else {
-                this.loadColumnOptions(newOptions.columns);
+                this.setColumnOptions(newOptions.columns);
             }
             delete newOptions.columns;
         }
@@ -416,7 +416,7 @@ class Grid {
     }
 
     /**
-     * Loads the new column options to the userOptions field.
+     * Sets the new column options to the userOptions field.
      *
      * @param newColumnOptions
      * The new column options that should be loaded.
@@ -425,7 +425,7 @@ class Grid {
      * Whether to overwrite the existing column options with the new ones.
      * Default is `false`.
      */
-    private loadColumnOptions(
+    private setColumnOptions(
         newColumnOptions: IndividualColumnOptions[],
         overwrite = false
     ): void {
@@ -473,7 +473,7 @@ class Grid {
      * @param newColumnOptions
      * The new column options that should be loaded.
      */
-    private loadColumnOptionsOneToOne(
+    private setColumnOptionsOneToOne(
         newColumnOptions: IndividualColumnOptions[]
     ): void {
         const prevColumnOptions = this.userOptions.columns;
@@ -546,7 +546,6 @@ class Grid {
             this.initVirtualization();
         }
 
-        this.viewport?.columnDistribution.validateOnUpdate(options);
         this.querying.loadOptions();
 
         // Update locale.
@@ -570,14 +569,14 @@ class Grid {
         options: Omit<IndividualColumnOptions, 'id'>,
         render?: boolean,
         overwrite?: boolean
-    ): void;
+    ): Promise<void>;
 
     public updateColumn(
         columnId: string,
         options: Omit<IndividualColumnOptions, 'id'>,
-        render: true,
+        render?: false,
         overwrite?: boolean
-    ): Promise<void>;
+    ): void;
 
     /**
      * Updates the column of the Grid with new options.
@@ -602,7 +601,7 @@ class Grid {
         render: boolean = true,
         overwrite = false
     ): Promise<void> {
-        this.loadColumnOptions([{
+        this.setColumnOptions([{
             id: columnId,
             ...options
         }], overwrite);

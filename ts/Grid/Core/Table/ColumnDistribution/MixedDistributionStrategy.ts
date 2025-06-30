@@ -28,8 +28,6 @@ import type ColumnsResizer from '../Actions/ColumnsResizer';
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 
 import U from '../../../../Core/Utilities.js';
-import Globals from '../../Globals.js';
-import Options from '../../Options.js';
 const { defined } = U;
 
 
@@ -124,13 +122,15 @@ class MixedDistributionStrategy extends DistributionStrategy {
 
         this.columnWidths[column.id] = newW;
         this.columnWidthUnits[column.id] = 0; // Always save in px
+        column.update({ width: newW }, false);
 
         if (nextCol) {
-            this.columnWidths[nextCol.id] = Math.max(
+            const newNextW = this.columnWidths[nextCol.id] = Math.max(
                 (resizer.nextColumnStartWidth ?? 0) + colW - newW,
                 minWidth
             );
             this.columnWidthUnits[nextCol.id] = 0; // Always save in px
+            nextCol.update({ width: newNextW }, false);
         }
     }
 
@@ -159,61 +159,6 @@ class MixedDistributionStrategy extends DistributionStrategy {
         }
 
         return occupiedWidth;
-    }
-
-    public override exportMetadata(): MixedDistributionStrategy.Metadata {
-        return {
-            ...super.exportMetadata(),
-            columnWidthUnits: this.columnWidthUnits
-        };
-    }
-
-    public override importMetadata(
-        metadata: MixedDistributionStrategy.Metadata
-    ): void {
-        super.importMetadata(metadata, (colId): void => {
-            const unit = metadata.columnWidthUnits[colId];
-            if (defined(unit)) {
-                this.columnWidthUnits[colId] = unit;
-            }
-        });
-    }
-
-    public override validateOnUpdate(
-        newOptions: Globals.DeepPartial<Options>
-    ): void {
-        super.validateOnUpdate(newOptions);
-
-        if (
-            !this.invalidated && (
-                Object.hasOwnProperty.call(
-                    newOptions.columnDefaults || {}, 'width'
-                ) ||
-                newOptions.columns?.some(
-                    (col): boolean => Object.hasOwnProperty.call(
-                        col || {},
-                        'width'
-                    )
-                )
-            )
-        ) {
-            this.invalidated = true;
-        }
-    }
-
-}
-
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace MixedDistributionStrategy {
-
-    export interface Metadata extends DistributionStrategy.Metadata {
-        columnWidthUnits: Record<string, number>;
     }
 
 }
