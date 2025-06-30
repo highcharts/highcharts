@@ -127,7 +127,7 @@ The optional `sorting` object consists of three configuration options:
 
 - **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). Only the last one will be considered if `order` is defined in multiple columns.
 
-- **`compare`**: Custom compare function to sort the column values. It overrides the default sorting behavior. If not set, the default sorting behavior is used. It should return a number indicating whether the first value (`a`) is less than (`-1`), equal to (`0`), or greater than (`1`) the second value (`b`).
+- **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a number indicating whether the first value (`a`) is less than (`-1`), equal to (`0`), or greater than (`1`) the second value (`b`).
 
 See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 
