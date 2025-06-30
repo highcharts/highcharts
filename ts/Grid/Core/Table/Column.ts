@@ -141,7 +141,7 @@ class Column {
 
         this.options = merge(
             grid.options?.columnDefaults ?? {},
-            grid.columnOptionsMap?.[id] ?? {}
+            grid.columnOptionsMap?.[id]?.options ?? {}
         );
 
         fireEvent(this, 'afterInit');
@@ -179,7 +179,7 @@ class Column {
     private assumeDataType(): Column.DataType {
         const { grid } = this.viewport;
 
-        const type = grid.columnOptionsMap?.[this.id]?.dataType ??
+        const type = grid.columnOptionsMap?.[this.id]?.options.dataType ??
             grid.options?.columnDefaults?.dataType;
         if (type) {
             return type;

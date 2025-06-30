@@ -107,10 +107,10 @@ class FixedDistributionStrategy extends DistributionStrategy {
             return;
         }
 
-        const width = this.columnWidths[column.id] = Math.max(
+        const width = this.columnWidths[column.id] = Math.round(Math.max(
             (resizer.columnStartWidth || 0) + diff,
             DistributionStrategy.getMinWidth(column)
-        );
+        ) * 10) / 10;
         this.columnWidthUnits[column.id] = 0; // Always save in px
 
         column.update({ width }, false);

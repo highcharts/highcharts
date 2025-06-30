@@ -154,7 +154,7 @@ class Grid {
      * column options.
      * @internal
      */
-    public columnOptionsMap: Record<string, Column.Options> = {};
+    public columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
 
     /**
      * The container of the grid.
@@ -408,11 +408,14 @@ class Grid {
         if (!columnOptionsArray) {
             return;
         }
-        const columnOptionsObj: Record<string, Column.Options> = {};
+        const columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
         for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
-            columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
+            columnOptionsMap[columnOptionsArray[i].id] = {
+                index: i,
+                options: columnOptionsArray[i]
+            };
         }
-        this.columnOptionsMap = columnOptionsObj;
+        this.columnOptionsMap = columnOptionsMap;
     }
 
     /**
@@ -436,27 +439,23 @@ class Grid {
 
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
             const newOptions = newColumnOptions[i];
-            const indexInPrevOptions = columnOptions.findIndex(
-                (prev): boolean => prev.id === newOptions.id
-            );
+            const colOptionsIndex =
+                this.columnOptionsMap?.[newOptions.id]?.index ?? -1;
 
             // If the new column options contain only the id.
             if (Object.keys(newOptions).length < 2) {
-                if (overwrite && indexInPrevOptions !== -1) {
-                    columnOptions.splice(indexInPrevOptions, 1);
+                if (overwrite && colOptionsIndex !== -1) {
+                    columnOptions.splice(colOptionsIndex, 1);
                 }
                 continue;
             }
 
-            if (indexInPrevOptions === -1) {
+            if (colOptionsIndex === -1) {
                 columnOptions.push(newOptions);
             } else if (overwrite) {
-                columnOptions[indexInPrevOptions] = newOptions;
+                columnOptions[colOptionsIndex] = newOptions;
             } else {
-                columnOptions[indexInPrevOptions] = merge(
-                    columnOptions[indexInPrevOptions],
-                    newOptions
-                );
+                merge(true, columnOptions[colOptionsIndex], newOptions);
             }
         }
 
@@ -566,14 +565,14 @@ class Grid {
 
     public updateColumn(
         columnId: string,
-        options: Omit<IndividualColumnOptions, 'id'>,
+        options: Column.Options,
         render?: boolean,
         overwrite?: boolean
     ): Promise<void>;
 
     public updateColumn(
         columnId: string,
-        options: Omit<IndividualColumnOptions, 'id'>,
+        options: Column.Options,
         render?: false,
         overwrite?: boolean
     ): void;
@@ -597,7 +596,7 @@ class Grid {
      */
     public async updateColumn(
         columnId: string,
-        options: Omit<IndividualColumnOptions, 'id'>,
+        options: Column.Options,
         render: boolean = true,
         overwrite = false
     ): Promise<void> {
@@ -869,7 +868,7 @@ class Grid {
         const result: string[] = [];
         for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
             columnName = columnsIncluded[i];
-            if (columnOptionsMap?.[columnName]?.enabled !== false) {
+            if (columnOptionsMap?.[columnName]?.options?.enabled !== false) {
                 result.push(columnName);
             }
         }
@@ -1110,8 +1109,18 @@ class Grid {
 namespace Grid {
     /**
      * @internal
+     * Callback that is called after the Grid is loaded.
      */
     export type AfterLoadCallback = (grid: Grid) => void;
+
+    /**
+     * @internal
+     * An item in the column options map.
+     */
+    export interface ColumnOptionsMapItem {
+        index: number;
+        options: Column.Options
+    }
 }
 
 
