@@ -15,22 +15,24 @@ Highcharts.chart('container', {
                 'relationships. Unlike Venn diagrams, which show all ' +
                 'possible relations ' +
                 'between different sets, the Euler diagram shows only ' +
-                'relevant ' +
+                'the existing ' +
                 'relationships.'
         }, {
             sets: ['B'],
-            value: 1,
+            value: 4,
             name: 'Venn diagrams',
             longDescription: 'In Venn diagrams the curves are overlapped in ' +
                 'every possible way, ' +
-                'showing all possible relations between the sets. They are ' +
-                'thus a ' +
-                'special case of Euler diagrams, which do not necessarily ' +
-                'show all ' +
-                'relations'
+                'showing all possible relations between the sets. Unlike the ' +
+                'Euler diagram, Venn diagrams can show impossible, non ' +
+                'existant, or theoretical relationships.'
         }, {
             sets: ['A', 'B'],
-            value: 1
+            value: 1,
+            name: 'Venn diagrams that are also Euler diagrams',
+            longDescription: 'In some cases, when all existing relationships ' +
+                'describe all possible relationships, the Euler diagram will ' +
+                'be identical to the Venn diagram.'
         }]
     }],
     tooltip: {
