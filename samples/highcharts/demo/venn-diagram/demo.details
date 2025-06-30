@@ -1,5 +1,5 @@
 ---
-name: Venn diagram
+name: Euler diagram
 authors:
   - Jon Arild Nygård
 js_wrap: b
