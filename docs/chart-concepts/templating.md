@@ -19,6 +19,12 @@ Expressions in format strings are enclosed by `{single brackets}`. They can be s
 *   Full date: `{value:%Y-%m-%d}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
 *   Locale-aware full date: `{value:%[Ymd]}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
 
+_Note: Locale-aware formatting means that names like months and
+weekdays follow the active locale. This locale is determined by
+`lang.locale`, the `<html lang>` attribute, or the browser's default.
+To use custom names from `lang.months` or `lang.weekdays`, set
+`lang.locale` to `null`._
+
 ## Helpers
 Helpers define either a conditional block or a function to be used in an expression. Highcharts includes a number of [built-in helpers](#built-in-helpers), and allows custom helpers to be added.
 
