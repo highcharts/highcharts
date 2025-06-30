@@ -414,7 +414,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/synchronized-charts/demo.js',
 
             // Visual test fails due to external library used
-            'samples/highcharts/demo/combo-regression',
+            'samples/highcharts/demo/combo-regression/demo.js',
         ],
         reporters: ['progress'],
         port: 9876,  // karma web server port
