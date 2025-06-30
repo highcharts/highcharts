@@ -1205,22 +1205,14 @@ class Legend {
                 .shadow(options.shadow);
         }
 
-        let w = legendWidth;
-
-        if (
-            options.maxWidth &&
-            legend.maxLegendWidth &&
-            legend.maxItemWidth
-        ) {
-            w = legend.maxLegendWidth + legend.maxItemWidth;
-        }
-
         if (legendWidth > 0 && legendHeight > 0) {
             box[box.placed ? 'animate' : 'attr'](
                 box.crisp.call({}, { // #7260
                     x: 0,
                     y: 0,
-                    width: w,
+                    width: (options.maxWidth) ?
+                        legend.maxLegendWidth + legend.maxItemWidth :
+                        legendWidth,
                     height: legendHeight
                 }, box.strokeWidth())
             );
