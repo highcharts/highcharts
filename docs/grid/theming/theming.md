@@ -20,12 +20,12 @@ In the example below, a custom theme renders a 3px solid black border around the
 
 ```css
 .theme-custom {
-  --hcg-border-width: 3px;
-  --hcg-border-style: solid;
-  --hcg-border-color: #000;
+    --hcg-border-width: 3px;
+    --hcg-border-style: solid;
+    --hcg-border-color: #000;
 
-  --hcg-row-border-width: 1px;
-  --hcg-row-border-style: dashed;
+    --hcg-row-border-width: 1px;
+    --hcg-row-border-style: dashed;
 }
 ```
 
@@ -39,12 +39,12 @@ In the example below, a base theme defines a custom font and font size. The exte
 
 ```css
 .theme-brand {
-  --hcg-font-family: "Brand Font", Arial, sans-serif;
-  --hcg-font-size: 12px;
+    --hcg-font-family: "Brand Font", Arial, sans-serif;
+    --hcg-font-size: 12px;
 }
 
 .theme-brand-big {
-  --hcg-font-size: 16px;
+    --hcg-font-size: 16px;
 }
 ```
 
@@ -56,9 +56,9 @@ Once you’ve created your custom theme(s) in CSS, you can apply them using the 
 
 ```js
 {
-  rendering: {
-    theme: "hcg-theme-default theme-custom";
-  }
+    rendering: {
+        theme: "hcg-theme-default theme-custom";
+    }
 }
 ```
 
@@ -66,9 +66,9 @@ To create a custom theme from scratch, exclude the default theme:
 
 ```js
 {
-  rendering: {
-    theme: "theme-custom";
-  }
+    rendering: {
+        theme: "theme-custom";
+    }
 }
 ```
 
@@ -82,15 +82,15 @@ If you create a theme from scratch or modify color variables in the default, you
 
 ```css
 .theme-custom {
-  --hcg-border-width: 3px;
-  --hcg-border-style: solid;
-  --hcg-border-color: #000;
+    --hcg-border-width: 3px;
+    --hcg-border-style: solid;
+    --hcg-border-color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
-  .theme-custom {
-    --hcg-border-color: #fff;
-  }
+    .theme-custom {
+        --hcg-border-color: #fff;
+    }
 }
 ```
 
@@ -99,3 +99,4 @@ Variable inheritance applies here too, so you only need to override variables th
 By following these practices, you can create flexible, maintainable themes that enhance your grid’s appearance while ensuring proper functionality and backward compatibility.
 
 Now check out the article on [theming variables](https://www.highcharts.com/docs/grid/theming/theming-variables) to get a full overview of all available variables and our [theming demo](https://www.highcharts.com/grid/demo/grid/theming/theming) to see it in practice.
+

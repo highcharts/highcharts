@@ -232,11 +232,8 @@ const initGrid = data => {
     // Define modifier / formula calculation for sparkline
     const mathModifier = new Dashboards.DataModifier.types.Math({
         columnFormulas: [{
-            column: 'impliedRate',
-            formula: 'D1-C1' // C1 = dollarEx, D1 = dollarPPP
-        }, {
             column: 'dollarValuation',
-            formula: 'G1/C1*100' // G1 = impliedRate, C1 = dollarEx
+            formula: '(D1-C1)/C1*100' // C1 = dollarEx, D1 = dollarPPP
         }]
     });
 

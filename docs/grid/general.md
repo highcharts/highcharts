@@ -21,26 +21,26 @@ Let's dive right in with a bare minimum example of a fully functional **Grid Lit
 ```html
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>My First Grid</title>
-    <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
-  </head>
-  <body>
-    <div id="container"></div>
-    <script type="text/javascript">
-      Grid.grid("container", {
-        dataTable: {
-          columns: {
-            product: ["Apple", "Pear", "Plum", "Banana"],
-            weight: [100, 40, 0.5, 200],
-            price: [1.5, 2.53, 5, 4.5],
-          },
-        },
-      });
-    </script>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <title>My First Grid</title>
+        <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript">
+            Grid.grid("container", {
+                dataTable: {
+                    columns: {
+                        product: ["Apple", "Pear", "Plum", "Banana"],
+                        weight: [100, 40, 0.5, 200],
+                        price: [1.5, 2.53, 5, 4.5],
+                    },
+                },
+            });
+        </script>
+    </body>
 </html>
 ```
 
@@ -59,13 +59,13 @@ The CSS includes the necessary styles for the grid to function correctly and the
 
 ```js
 Grid.grid("container", {
-  dataTable: {
-    columns: {
-      product: ["Apple", "Pear", "Plum", "Banana"],
-      weight: [100, 40, 0.5, 200],
-      price: [1.5, 2.53, 5, 4.5],
+    dataTable: {
+        columns: {
+            product: ["Apple", "Pear", "Plum", "Banana"],
+            weight: [100, 40, 0.5, 200],
+            price: [1.5, 2.53, 5, 4.5],
+        },
     },
-  },
 });
 ```
 
