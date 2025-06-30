@@ -7,5 +7,7 @@ use_png_thumbnail: true
 tags:
   - Highcharts Maps demo
 categories:
+  - Basics:
+      priority: 12
   - General
 ...

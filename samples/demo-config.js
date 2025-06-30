@@ -9,6 +9,7 @@
 module.exports = {
     Highcharts: {
         categories: [
+            'Basics',
             'Line charts',
             'Area charts',
             'Column and bar charts',
