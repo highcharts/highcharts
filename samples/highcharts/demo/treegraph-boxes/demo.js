@@ -58,7 +58,7 @@ const data = [
     {
         id: '2.4',
         parent: '1.1',
-        name: 'South America'
+        name: 'South Africa'
     },
 
     /* America */
