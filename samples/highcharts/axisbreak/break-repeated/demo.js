@@ -19,7 +19,7 @@ Highcharts.chart('container', {
         gapSize: 1,
         data: (function () {
             const data = [];
-            for (let i = 0; i < 30; i = i + 1) {
+            for (let i = 0; i <= 30; i++) {
                 data.push(i);
             }
             return data;

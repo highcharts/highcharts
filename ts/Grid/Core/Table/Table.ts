@@ -22,7 +22,7 @@
  *
  * */
 
-import type TableRow from './Content/TableRow';
+import type TableRow from './Body/TableRow';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
@@ -181,13 +181,17 @@ class Table {
             );
         }
 
-        if (dgOptions?.columnDefaults?.resizing) {
+        if (!(
+            dgOptions?.rendering?.columns?.resizing?.enabled === false ||
+            dgOptions?.columnDefaults?.resizing === false
+        )) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
         if (customClassName) {
             tableElement.classList.add(...customClassName.split(/\s+/g));
         }
+        tableElement.classList.add(Globals.getClassName('scrollableContent'));
 
         // Load columns
         this.loadColumns();
@@ -201,8 +205,6 @@ class Table {
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
-
-        tableElement.classList.add(Globals.getClassName('scrollableContent'));
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
@@ -233,6 +235,7 @@ class Table {
         // this.footer.render();
 
         this.rowsVirtualizer.initialRender();
+        fireEvent(this, 'afterInit');
     }
 
     /**
@@ -407,7 +410,7 @@ class Table {
     }
 
     /**
-     * Destroys the data grid table.
+     * Destroys the grid table.
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
@@ -490,6 +493,9 @@ class Table {
      * The ID of the row.
      */
     public getRow(id: number): TableRow | undefined {
+        // TODO: Change `find` to a method using `vp.dataTable.getLocalRowIndex`
+        // and rows[presentationRowIndex - firstRowIndex]. Needs more testing,
+        // but it should be faster.
         return this.rows.find((row): boolean => row.id === id);
     }
 }

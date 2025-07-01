@@ -241,7 +241,7 @@ class Tick {
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(
                     (options.dateTimeLabelFormats as any)[
                         (
-                            !options.grid &&
+                            !options.grid?.enabled &&
                             tickPositionInfo.higherRanks[pos]
                         ) ||
                         tickPositionInfo.unitName

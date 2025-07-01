@@ -1894,6 +1894,10 @@ const defaultOptions: DefaultOptions = {
                 /**
                  * @ignore
                  */
+                color: Palette.neutralColor80,
+                /**
+                 * @ignore
+                 */
                 fontSize: '0.8em',
                 /**
                  * @ignore

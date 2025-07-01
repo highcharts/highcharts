@@ -176,7 +176,7 @@
     content: "";
     width: 18px;
     height: 18px;
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-background-color);
     border-radius: 50%;
     position: absolute;
     top: 1px;
@@ -244,7 +244,7 @@
  * */
 
 #kpi-layout .highcharts-dashboards-component {
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
     cursor: pointer;
 }
@@ -343,7 +343,7 @@
  * */
 
 #time-range-selector .highcharts-background {
-    fill: var(--highcharts-neutral-color-0);
+    fill: var(--highcharts-background-color);
 }
 
 #time-range-selector .highcharts-grid-line {

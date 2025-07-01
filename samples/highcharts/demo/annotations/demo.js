@@ -241,13 +241,12 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
         series: [
             {
                 data,
-                lineColor: '#cc0000',
                 color: '#cc0000',
                 fillColor: {
                     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
                     stops: [
-                        [0, '#818181'],
-                        [1, '#fafafa']
+                        [0, 'var(--highcharts-neutral-color-40, #999999)'],
+                        [1, 'var(--highcharts-neutral-color-3, #f7f7f7)']
                     ]
                 },
                 fillOpacity: 0.5,

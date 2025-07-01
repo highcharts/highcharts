@@ -54,6 +54,7 @@ const {
     pick,
     pushUnique,
     relativeLength,
+    splat,
     wrap
 } = U;
 
@@ -627,10 +628,9 @@ namespace RadialAxis {
             chart = this.chart,
             inverted = chart.inverted,
             reverse = options.reverse,
-
-            background = this.pane.options.background ?
-                (this.pane.options.background[0] ||
-                    this.pane.options.background) :
+            backgroundOption = this.pane.options.background,
+            background = backgroundOption ?
+                splat(backgroundOption)[0] :
                 {},
             innerRadius = background.innerRadius || '0%',
             outerRadius = background.outerRadius || '100%',

@@ -16,3 +16,15 @@ describe('Remove the dashboard.', () => {
         cy.get('tbody tr').eq(1).should('have.class', 'highcharts-datagrid-row-even');
     });
 });
+
+describe('Grid rows removal.', () => {
+    before(() => {
+        cy.visit('/grid-lite/basic/destroy-grid');
+    });
+
+    it('Remove all grid rows.', () => {
+        cy.get('#delete-rows-btn').click();
+        // All grid rows should be removed.
+        cy.get('tbody').should('be.empty');
+    });
+});
