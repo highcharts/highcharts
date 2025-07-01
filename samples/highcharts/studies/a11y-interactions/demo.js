@@ -716,7 +716,7 @@ function (svgEl, elType, content, parent) {
         'mouseleave', 'pointerdown', 'pointerup', 'pointermove',
         'pointercancel', 'pointerleave', 'pointerenter', 'wheel',
         'dragstart', 'dragend', 'dragenter', 'dragleave', 'dragover',
-        'drop', 'click', 'touchstart', 'touchend', 'touchmove', 'touchcancel'
+        'drop', 'click'
     ].forEach(
         type => el.addEventListener(
             type, e => {
