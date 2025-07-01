@@ -129,7 +129,7 @@ function compose(
             const headerEvent =
                 column.options?.header?.events?.[name] ||
                 // Backward compatibility
-                column.viewport.grid.options?.events?.header?.[name];
+                column.viewport?.grid?.options?.events?.header?.[name];
 
             headerEvent?.call(column);
         });

@@ -493,6 +493,9 @@ class Table {
      * The ID of the row.
      */
     public getRow(id: number): TableRow | undefined {
+        // TODO: Change `find` to a method using `vp.dataTable.getLocalRowIndex`
+        // and rows[presentationRowIndex - firstRowIndex]. Needs more testing,
+        // but it should be faster.
         return this.rows.find((row): boolean => row.id === id);
     }
 }
