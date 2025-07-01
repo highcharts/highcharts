@@ -4,7 +4,7 @@ With Highcharts Flutter included in your app (See [getting started](https://www.
 
 We will start off by creating a simple bar chart.
 
-1. Add a HighchartsChart widget in your app.
+1. Add a `HighchartsChart` widget in your app.
 
    Give it a title and set a specific width and or height for your chart.
 
@@ -49,7 +49,7 @@ We will start off by creating a simple bar chart.
     }
    ```
 
-2. In this step we add two series with data to the HighchartsChart widget.
+2. In this step we add two series with data to the `HighchartsChart` widget.
 
    You can provide each data point as a list of axes values.
 
