@@ -7,10 +7,3 @@
 #container {
     height: 250px;
 }
-
-@media (prefers-color-scheme: dark) {
-    #demo {
-        background-color: #292929;
-        color: #fff;
-    }
-}

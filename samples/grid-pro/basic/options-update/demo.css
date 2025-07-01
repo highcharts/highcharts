@@ -19,10 +19,3 @@
     min-width: 400px;
     margin: 4px 0;
 }
-
-@media (prefers-color-scheme: dark) {
-    #demo {
-        background-color: #292929;
-        color: #fff;
-    }
-}

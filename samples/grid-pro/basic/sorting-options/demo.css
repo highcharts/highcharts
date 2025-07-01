@@ -7,10 +7,3 @@
 #custom-options {
     margin-top: 5px;
 }
-
-@media (prefers-color-scheme: dark) {
-    #demo {
-        background-color: #292929;
-        color: #fff;
-    }
-}

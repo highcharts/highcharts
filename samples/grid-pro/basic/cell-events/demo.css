@@ -11,10 +11,3 @@
 #msg-container p {
     margin: 0.5em auto;
 }
-
-@media (prefers-color-scheme: dark) {
-    .content {
-        background-color: #292929;
-        color: #fff;
-    }
-}
