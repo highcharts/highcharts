@@ -169,7 +169,8 @@
                         },
                         tooltip: {
                             pointFormatter: function () {
-                                return Math.abs(this.value) + ' %';
+                                return this.name + ': ' +
+                                Math.abs(this.value) + ' %';
                             }
                         },
                         cursor: 'pointer'
