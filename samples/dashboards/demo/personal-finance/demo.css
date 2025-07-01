@@ -31,7 +31,6 @@
 
 /* Rows and cells */
 .highcharts-dashboards-row#row-1 {
-    background-color: var(--highcharts-neutral-color-5);
     border-radius: 20px;
     padding: 10px;
 }

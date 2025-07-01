@@ -39,14 +39,22 @@ Highcharts.chart('container', {
             'series'
     },
     colorAxis: {
-        min: 0,
-        max: 12,
-        stops: [
-            [0, colors[0]],
-            [1 / 3, colors[1]],
-            [2 / 3, colors[2]],
-            [1, colors[3]]
-        ]
+        dataClasses: [{
+            from: 1990,
+            to: 2000,
+            color: colors[0]
+        }, {
+            from: 2000,
+            to: 2010,
+            color: colors[1]
+        }, {
+            from: 2010,
+            to: 2020,
+            color: colors[2]
+        }, {
+            from: 2020,
+            color: colors[3]
+        }]
     },
     legend: {
         enabled: false
@@ -115,7 +123,7 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        colorKey: 'custom.stellarMagnitude',
+        colorKey: 'custom.discoveryDate',
         maxSize: 14,
         minSize: 3,
         tooltip: {
