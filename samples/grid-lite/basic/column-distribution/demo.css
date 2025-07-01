@@ -2,15 +2,10 @@
 
 .hcg-theme-default {
     --hcg-column-border-width: 1px;
+    --hcg-header-column-border-width: 1px;
 }
 
 #container {
     height: 250px;
     padding: 8px;
-}
-
-@media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #292929;
-    }
 }

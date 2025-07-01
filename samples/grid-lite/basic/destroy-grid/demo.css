@@ -3,9 +3,3 @@
 .demo {
     padding: 8px;
 }
-
-@media (prefers-color-scheme: dark) {
-    .demo {
-        background-color: #292929;
-    }
-}

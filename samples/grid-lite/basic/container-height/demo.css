@@ -1,12 +1,9 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
 
-#container {
-    border: 2px solid red;
+.content {
+    margin: 8px;
 }
 
-@media (prefers-color-scheme: dark) {
-    .content {
-        background-color: #292929;
-        color: #fff;
-    }
+#container {
+    border: 2px solid red;
 }

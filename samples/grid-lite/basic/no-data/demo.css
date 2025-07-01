@@ -5,10 +5,3 @@
     padding: 8px;
     height: 100px;
 }
-
-@media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #292929;
-        color: #fff;
-    }
-}

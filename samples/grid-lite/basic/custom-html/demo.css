@@ -3,13 +3,3 @@
 #container {
     padding: 8px;
 }
-
-.hcg-container tbody td {
-    height: 90px;
-}
-
-@media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #292929;
-    }
-}

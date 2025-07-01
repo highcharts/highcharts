@@ -8,9 +8,3 @@
 .hcg-table tbody tr td[data-column-id="b"]:hover {
     text-decoration: underline;
 }
-
-@media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #292929;
-    }
-}

@@ -29,10 +29,3 @@
 .custom-caption-class {
     text-decoration: underline;
 }
-
-@media (prefers-color-scheme: dark) {
-    #demo {
-        background-color: #292929;
-        color: #fff;
-    }
-}
