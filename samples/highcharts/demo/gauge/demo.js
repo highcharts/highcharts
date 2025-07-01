@@ -1,9 +1,7 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'gauge',
-        height: 300,
-        spacingBottom: -150
+        height: '100%'
     },
 
     title: {
@@ -14,6 +12,8 @@ Highcharts.chart('container', {
     pane: {
         startAngle: -90,
         endAngle: 90,
+        size: '100%',
+        center: ['50%', '75%'],
         background: null
     },
 

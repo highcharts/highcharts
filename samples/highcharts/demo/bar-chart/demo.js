@@ -47,7 +47,8 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         x: -20,
         y: 80,
-        floating: true
+        floating: true,
+        backgroundColor: 'var(--highcharts-background-color, #ffffff)'
     },
 
     credits: {

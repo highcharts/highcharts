@@ -30,6 +30,7 @@ Highcharts.chart('container', {
             format: '{point.percentage:.0f}%',
             distance: -30, // Placing the label inside
             style: {
+                fontSize: '0.9em',
                 textOutline: 'none'
             }
         }],

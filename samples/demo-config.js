@@ -7,9 +7,12 @@
  * title
  */
 module.exports = {
+    Overview: {
+        categories: ['Basics'],
+        path: '/'
+    },
     Highcharts: {
         categories: [
-            'Basics',
             'Line charts',
             'Area charts',
             'Column and bar charts',
