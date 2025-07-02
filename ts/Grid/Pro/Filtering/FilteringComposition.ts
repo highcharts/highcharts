@@ -73,8 +73,10 @@ namespace FilteringComposition {
      * Reference to columns's header.
      */
     function renderFilteringInput(this: HeaderCell): void {
+        const grid = this.row.viewport.grid;
+        const column = this.column;
 
-        if (!this.column || !this.headerContent) {
+        if (!column || !this.headerContent) {
             return;
         }
 
@@ -86,7 +88,8 @@ namespace FilteringComposition {
         this.headerContent.style.paddingBottom =
             this.filterInput.offsetHeight + this.filterInput.offsetTop + 'px';
 
-        addEvent(this.filterInput, 'keyup', (): void => {
+        addEvent(this.filterInput, 'keyup', (e): void => {
+            grid.filterRows(e.target.value, column.id);
         });
     }
 }
