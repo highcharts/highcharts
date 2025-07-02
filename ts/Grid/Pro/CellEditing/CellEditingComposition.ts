@@ -166,12 +166,12 @@ namespace CellEditingComposition {
             ](column, editModeOptions?.renderer || {});
         }
 
-        const StaticRendererType =
+        const ViewRendererType =
             CellRendererRegistry.types[viewRendererTypeName] ||
             CellRendererRegistry.types.text;
 
         let editModeRendererTypeName =
-            StaticRendererType.defaultEditingRenderer;
+            ViewRendererType.defaultEditingRenderer;
         if (typeof editModeRendererTypeName !== 'string') {
             editModeRendererTypeName =
                 editModeRendererTypeName[column.dataType] || 'textInput';
