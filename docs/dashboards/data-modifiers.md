@@ -75,7 +75,7 @@ dataModifier: {
     }
 }
 ```
-[API documentation](https://api.highcharts.comdashboards/#interfaces/Data_Modifiers_FilterModifierOptions.FilterModifierOptions-1)
+[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Modifiers_FilterModifierOptions.FilterModifierOptions-1)
 
 
 ### Invert
