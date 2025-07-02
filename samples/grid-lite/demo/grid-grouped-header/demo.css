@@ -23,7 +23,8 @@
     padding: 0 20px;
 }
 
-.my-theme {
+.my-theme,
+.highcharts-light .my-theme {
     --hcg-color: #333;
     --hcg-background: #fff;
     --hcg-border-radius: 5px;
@@ -33,6 +34,7 @@
     --hcg-row-even-background: #fbfbfb;
     --hcg-caption-font-size: 18px;
     --hcg-header-column-border-color: #dfdfdf;
+    --hcg-header-row-border-color: #dfdfdf;
     --hcg-padding: 15px;
     --hcg-font-size: 14px;
     --hcg-border-color: #e5e5e5;
@@ -50,10 +52,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    #container {
-        background: #141414;
-    }
-
     .my-theme {
         --hcg-color: #eee;
         --hcg-background: #292929;
@@ -68,10 +66,6 @@
         --hcg-cell-hovered-background: #841857;
         --hcg-cell-hovered-header-background: #4b5297;
     }
-}
-
-.highcharts-dark #container {
-    background: #141414;
 }
 
 .highcharts-dark .my-theme {
