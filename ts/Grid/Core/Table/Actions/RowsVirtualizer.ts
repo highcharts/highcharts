@@ -102,7 +102,7 @@ class RowsVirtualizer {
      * Firefox has a lower limit than other browsers.
      */
     private static readonly MAX_ELEMENT_HEIGHT: number = (
-        (/Firefox/.test(navigator.userAgent) ? 6000000 : 31000000) /
+        (navigator.userAgent.indexOf('Firefox') > -1 ? 6000000 : 31000000) /
         (window.devicePixelRatio || 1)
     );
 
@@ -168,8 +168,7 @@ class RowsVirtualizer {
         if (this.rowSettings?.virtualization) {
             this.viewport.reflow();
         }
-        this.totalGridHeight = this.viewport.dataTable.getRowCount() *
-            this.defaultRowHeight;
+        this.totalGridHeight = this.rowCount * this.defaultRowHeight;
 
         this.gridHeightOverflow = Math.max(
             this.totalGridHeight - RowsVirtualizer.MAX_ELEMENT_HEIGHT, 0
