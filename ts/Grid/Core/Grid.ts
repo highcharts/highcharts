@@ -1100,6 +1100,32 @@ class Grid {
         this.options.rendering.rows.virtualization =
             defined(virtualization) ? virtualization : rowCount >= threshold;
     }
+
+    /**
+     * PoC method that filters the rows of the Grid based on the provided
+     * string and column ID. It does not support advanced filtering options yet.
+     *
+     * @param contains
+     * The string that should be contained in the filtered rows.
+     *
+     * @param columnId
+     * The ID of the column that should be filtered.
+     */
+    public async filterRows(
+        contains?: string,
+        columnId?: string
+    ) : Promise<void> {
+        const { viewport, querying } = this;
+
+        if (contains) {
+            querying.filtering.setFiltering(contains, columnId);
+        } else {
+            querying.filtering.clearFiltering();
+        }
+
+        await querying.proceed();
+        viewport?.loadPresentationData();
+    }
 }
 
 

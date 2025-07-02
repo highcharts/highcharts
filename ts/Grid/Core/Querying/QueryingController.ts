@@ -25,6 +25,7 @@
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import Grid from '../Grid.js';
 import SortingController from './SortingController.js';
+import FilteringController from './FilteringController.js';
 
 /* *
  *
@@ -50,9 +51,14 @@ class QueryingController {
     private grid: Grid;
 
     /**
-     * Sorting controller instance
+     * Sorting controller instance.
      */
     public sorting: SortingController;
+
+    /**
+     * Filtering controller instance.
+     */
+    public filtering: FilteringController;
 
 
     /* *
@@ -64,7 +70,7 @@ class QueryingController {
     constructor(grid: Grid) {
         this.grid = grid;
         this.sorting = new SortingController(grid);
-        /// this.filtering = new FilteringController(grid);
+        this.filtering = new FilteringController();
     }
 
 
@@ -84,8 +90,8 @@ class QueryingController {
     public async proceed(force: boolean = false): Promise<void> {
         if (
             force ||
-            this.sorting.shouldBeUpdated // ||
-            // this.filtering.shouldBeUpdated
+            this.sorting.shouldBeUpdated ||
+            this.filtering.shouldBeUpdated
         ) {
             await this.modifyData();
         }
@@ -103,8 +109,8 @@ class QueryingController {
      */
     public willNotModify(): boolean {
         return (
-            !this.sorting.modifier
-            // && !this.filtering.modifier
+            !this.sorting.modifier &&
+            !this.filtering.modifier
         );
     }
 
@@ -119,10 +125,9 @@ class QueryingController {
 
         const modifiers = [];
 
-        // TODO: Implement filtering
-        // if (this.filtering.modifier) {
-        //     modifiers.push(this.filtering.modifier);
-        // }
+        if (this.filtering.modifier) {
+            modifiers.push(this.filtering.modifier);
+        }
 
         if (this.sorting.modifier) {
             modifiers.push(this.sorting.modifier);
