@@ -36,8 +36,7 @@ import H from './Globals.js';
 const {
     charts,
     composed,
-    isTouchDevice,
-    userAgent
+    isTouchDevice
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
@@ -1263,6 +1262,12 @@ class Pointer {
         charts[pick(Pointer.hoverChartIndex, -1)]
             ?.pointer
             ?.drop(e);
+
+        // #17852, IOS devices sometimes reverts back to previous point when
+        // dragging between points
+        if (e?.touches) {
+            e?.preventDefault?.();
+        }
     }
 
     /**
@@ -1301,16 +1306,10 @@ class Pointer {
             pointer.initiated = false;
         }
 
-        const isIOS = ['ipad', 'iphone'].some(
-            (device:string): boolean =>
-                userAgent.toLowerCase().includes(device)
-        ) || userAgent.toLowerCase().includes('macintosh') &&
-            navigator.maxTouchPoints > 1;
-
         // On touch devices, only proceed to trigger click if a handler is
         // defined
         if (
-            isIOS || (
+            (
                 hasZoom &&
                 pointer.initiated
             ) &&
