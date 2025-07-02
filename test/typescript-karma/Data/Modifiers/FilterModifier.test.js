@@ -38,7 +38,11 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
 
         // x < 4
         table = new DataTable({ columns: { x: base.slice() } });
-        modifier = new FilterModifier({ operator: 'lt', columnName: 'x', value: 4 });
+        modifier = new FilterModifier({
+            condition:{
+                operator: 'lt', columnName: 'x', value: 4
+            }
+        });
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
@@ -101,20 +105,22 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
         // (x >= 0 or z <= 500) and not(x == 5)
         table = new DataTable({ columns: rows });
         modifier = new FilterModifier({
-            operator: 'and',
-            conditions: [
-                {
-                    operator: 'or',
-                    conditions: [
-                        { operator: 'ge', columnName: 'x', value: 0 },
-                        { operator: 'le', columnName: 'z', value: 500 }
-                    ]
-                },
-                {
-                    operator: 'not',
-                    condition: { operator: 'eq', columnName: 'x', value: 5 }
-                }
-            ]
+            condition: {
+                operator: 'and',
+                conditions: [
+                    {
+                        operator: 'or',
+                        conditions: [
+                            { operator: 'ge', columnName: 'x', value: 0 },
+                            { operator: 'le', columnName: 'z', value: 500 }
+                        ]
+                    },
+                    {
+                        operator: 'not',
+                        condition: { operator: 'eq', columnName: 'x', value: 5 }
+                    }
+                ]
+            }
         });
 
         await modifier.modify(table);
@@ -136,17 +142,19 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
         };
         const table = new DataTable({ columns: rows });
         const modifier = new FilterModifier({
-            operator: 'and',
-            conditions: [
-                { operator: 'ge', columnName: 'age', value: 18 },
-                {
-                    operator: 'or',
-                    conditions: [
-                        { operator: 'eq', columnName: 'country', value: 'US' },
-                        { operator: 'eq', columnName: 'country', value: 'CA' }
-                    ]
-                }
-            ]
+            condition: {
+                operator: 'and',
+                conditions: [
+                    { operator: 'ge', columnName: 'age', value: 18 },
+                    {
+                        operator: 'or',
+                        conditions: [
+                            { operator: 'eq', columnName: 'country', value: 'US' },
+                            { operator: 'eq', columnName: 'country', value: 'CA' }
+                        ]
+                    }
+                ]
+            }
         });
         await modifier.modify(table);
         assert.deepEqual(
