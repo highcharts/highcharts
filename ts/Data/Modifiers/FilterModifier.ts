@@ -198,16 +198,16 @@ class FilterModifier extends DataModifier {
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         const { condition } = modifier.options;
-
         if (!condition) {
+            // If no condition is set, return the unmodified table.
             return table;
         }
 
-        const compiledCondition = FilterModifier.compile(condition);
+        const matchRow = FilterModifier.compile(condition);
 
-        // This is not an ideal solution, but let's follow the convention of the
-        // other modifiers for now.
+        // This line should be investigated further when reworking Data Layer.
         const modified = table.modified;
+
         const rows: DataTable.RowObject[] = [];
         const indexes: Array<number|undefined> = [];
 
@@ -222,7 +222,7 @@ class FilterModifier extends DataModifier {
                 continue;
             }
 
-            if (compiledCondition(row, table, i)) {
+            if (matchRow(row, table, i)) {
                 rows.push(row);
                 indexes.push(modified.getOriginalRowIndex(i));
             }
