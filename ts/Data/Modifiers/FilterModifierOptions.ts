@@ -34,8 +34,26 @@ import type DataTable from '../DataTable';
  * Condition that uses an universal comparison operators.
  */
 export interface ComparisonCondition {
+    /**
+     * Type of the operator used in the condition, comparing the value of the
+     * cell with the provided value.
+     * - `eq` - equal
+     * - `ne` - not equal
+     * - `gt` - greater than
+     * - `ge` - greater than or equal
+     * - `lt` - less than
+     * - `le` - less than or equal
+     */
     operator: 'eq' | 'ne' | 'gt' | 'ge' | 'lt' | 'le';
+
+    /**
+     * Name of the column to compare the value of the cell with.
+     */
     columnName: string;
+
+    /**
+     * Value to compare the cell with.
+     */
     value: DataTable.CellType;
 }
 
@@ -43,9 +61,27 @@ export interface ComparisonCondition {
  * Condition that uses string comparison operators.
  */
 export interface StringCondition {
+    /**
+     * Type of the operator used in the condition, comparing the value of the
+     * cell with the provided value. Non-string values are converted to
+     * strings before comparison.
+     */
     operator: 'contains' | 'startsWith' | 'endsWith';
+
+    /**
+     * Name of the column to compare the value of the cell with.
+     */
     columnName: string;
+
+    /**
+     * Whether the comparison should ignore case.
+     * @default false
+     */
     ignoreCase?: boolean;
+
+    /**
+     * Value to compare the cell with.
+     */
     value: string;
 }
 
@@ -53,7 +89,14 @@ export interface StringCondition {
  * Condition that combines multiple conditions with logical operators.
  */
 export interface LogicalMultipleCondition {
+    /**
+     * Type of the operator used to combine the conditions.
+     */
     operator: 'and' | 'or';
+
+    /**
+     * Array of conditions that are combined with the logical operator.
+     */
     conditions: FilterCondition[]
 }
 
@@ -61,7 +104,14 @@ export interface LogicalMultipleCondition {
  * Condition that transforms a single condition with a logical operator.
  */
 export interface LogicalSingleCondition {
+    /**
+     * Type of the operator used to transform the condition.
+     */
     operator: 'not';
+
+    /**
+     * Condition that is transformed by the logical operator.
+     */
     condition: FilterCondition;
 }
 
