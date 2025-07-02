@@ -125,12 +125,6 @@ const defaultOptions: DefaultOptions = {
      * });
      * ```
      *
-     * Note:
-     * Some options, such as `months`, `weekdays`, `shortMonths`, and
-     * `shortWeekdays`, only apply when `lang.locale` is set to `null`
-     * and `dateTimeLabelFormats` is defined. Otherwise, values are
-     * taken from the active locale.
-     *
      * @optionparent lang
      */
     lang: {
@@ -154,15 +148,6 @@ const defaultOptions: DefaultOptions = {
          * Use `en-GB`, British English, for approximate consistency with
          * Highcharts v < 12.
          *
-         * Note:
-         * Custom values for `lang.months`, `weekdays`, `shortMonths`,
-         * and `shortWeekdays` are used only when `lang.locale` is set to
-         * `null` and `dateTimeLabelFormats` is defined.
-         * Otherwise, names from the active locale are applied.
-         * If the document includes `<html lang="...">`, it may override
-         * `locale: null` unless cleared via
-         * `document.documentElement.lang = ''`.
-         *
          * @sample highcharts/lang/locale/
          *         Set the locale using the `lang.locale` option
          * @sample highcharts/lang/locale-attribute/
@@ -183,9 +168,9 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * An array containing the months names. Corresponds to the `%B` format
-         * in `Highcharts.dateFormat()`.
-         * Defaults to `undefined`. Only used when `lang.locale` is `null`;
-         * otherwise locale-based names apply.
+         * in `Highcharts.dateFormat()`. Defaults to 'undefined',
+         * meaning the default month names are used according to the
+         * `lang.locale` setting.
          *
          * @type    {Array<string>}
          */
@@ -200,29 +185,27 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * An array containing the months names in abbreviated form. Corresponds
-         * to the `%b` format in `Highcharts.dateFormat()`.
-         * Defaults to `undefined`. Only used when `lang.locale` is `null`;
-         * otherwise locale-based names apply.
+         * to the `%b` format in `Highcharts.dateFormat()`. Defaults to
+         * 'undefined', meaning the default short month names are used according
+         * to the `lang.locale` setting.
          *
          * @type    {Array<string>}
          */
         shortMonths: void 0,
 
         /**
-         * An array containing the weekday names. Corresponds to the `%A`
-         * format in `Highcharts.dateFormat()`.
-         * Defaults to `undefined`. Only used when `lang.locale` is `null`;
-         * otherwise locale-based names apply.
+         * An array containing the weekday names. Defaults to 'undefined',
+         * meaning the default weekday names are used according to the
+         * `lang.locale` setting.
          *
          * @type    {Array<string>}
          */
         weekdays: void 0,
 
         /**
-         * Short weekday names, starting Sunday. Used with the `%a` token in
-         * `Highcharts.dateFormat()`.
-         * Defaults to `undefined`. Only used when `lang.locale` is `null`;
-         * otherwise locale-based names apply.
+         * Short week days, starting Sunday. Defaults to 'undefined', meaning
+         * the default short weekday names are used according to the
+         * `lang.locale` setting.
          *
          * @sample highcharts/lang/shortweekdays/
          *         Finnish two-letter abbreviations
