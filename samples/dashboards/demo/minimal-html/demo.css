@@ -58,11 +58,9 @@
 }
 
 h1#title {
-    padding-top: 10px;
     margin: 0;
-    background-color: #3d3d3d;
+    padding: 10px 0;
     text-align: center;
-    color: #fff;
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-title::before,
