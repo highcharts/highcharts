@@ -116,7 +116,7 @@ const defaultOptions: DefaultOptions = {
      * An object containing language-related strings and settings. A typical
      * setup uses `Highcharts.setOptions` to make the options apply to all
      * charts in the same page.
-     * 
+     *
      * Some language options, like `months` and `weekdays`, are only used
      * with non-locale-aware date formats.
      *
