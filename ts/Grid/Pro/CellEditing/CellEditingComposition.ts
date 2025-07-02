@@ -156,7 +156,7 @@ namespace CellEditingComposition {
     function createEditModeRenderer(column: Column): EditModeRendererType {
         const editModeOptions = column.options.cells?.editMode;
         const editModeRendererTypeName = editModeOptions?.renderer?.type;
-        let staticRendererTypeName =
+        const staticRendererTypeName =
             column.options?.cells?.renderer?.type || 'text';
 
         if (editModeRendererTypeName) {
@@ -165,25 +165,13 @@ namespace CellEditingComposition {
             ](column, editModeOptions?.renderer || {});
         }
 
-        if (!CellRendererRegistry.types[staticRendererTypeName]) {
-            staticRendererTypeName = 'text';
-        }
-
-        const staticRendererType = CellRendererRegistry.types[
-            staticRendererTypeName
-        ];
+        const StaticRendererType =
+            CellRendererRegistry.types[staticRendererTypeName] ||
+            CellRendererRegistry.types.text;
 
         let defRenderer = staticRendererType.defaultEditingRenderer;
         if (typeof defRenderer !== 'string') {
-            let renderer = defRenderer[column.dataType];
-
-            if (!renderer) {
-                // eslint-disable-next-line no-console, max-len
-                console.warn(`The cell data type "${column.dataType}" is not registered. Using default string renderer instead.`);
-                renderer = defRenderer.string;
-            }
-
-            defRenderer = renderer;
+            defRenderer = defRenderer[column.dataType] || 'textInput';
         }
 
         return new CellRendererRegistry.types[defRenderer](
