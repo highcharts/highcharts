@@ -26,8 +26,9 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
 
         // x != 3
         table = new DataTable({ columns: { x: base.slice() } });
-        modifier = new FilterModifier();
-        modifier.options.condition = { operator: 'ne', columnName: 'x', value: 3 };
+        modifier = new FilterModifier({
+            condition: { operator: 'ne', columnName: 'x', value: 3 }
+        });
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
@@ -37,8 +38,7 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
 
         // x < 4
         table = new DataTable({ columns: { x: base.slice() } });
-        modifier = new FilterModifier();
-        modifier.options.condition = { operator: 'lt', columnName: 'x', value: 4 };
+        modifier = new FilterModifier({ operator: 'lt', columnName: 'x', value: 4 });
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
@@ -51,13 +51,14 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
     {
         const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
         const table = new DataTable({ columns: { name: data } });
-        const modifier = new FilterModifier();
-        modifier.options.condition = {
-            operator: 'contains',
-            columnName: 'name',
-            value: 'ap',
-            ignoreCase: true
-        };
+        const modifier = new FilterModifier({
+            condition:{
+                operator: 'contains',
+                columnName: 'name',
+                value: 'ap',
+                ignoreCase: true
+            }
+        });
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
@@ -86,6 +87,7 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
                 ]
             }
         };
+
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
@@ -98,8 +100,7 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
 
         // (x >= 0 or z <= 500) and not(x == 5)
         table = new DataTable({ columns: rows });
-        modifier = new FilterModifier();
-        modifier.options.condition = {
+        modifier = new FilterModifier({
             operator: 'and',
             conditions: [
                 {
@@ -114,7 +115,8 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
                     condition: { operator: 'eq', columnName: 'x', value: 5 }
                 }
             ]
-        };
+        });
+
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
@@ -133,8 +135,7 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
             country: ['US', 'FR', 'CA', 'US']
         };
         const table = new DataTable({ columns: rows });
-        const modifier = new FilterModifier();
-        modifier.options.condition = {
+        const modifier = new FilterModifier({
             operator: 'and',
             conditions: [
                 { operator: 'ge', columnName: 'age', value: 18 },
@@ -146,7 +147,7 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
                     ]
                 }
             ]
-        };
+        });
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
