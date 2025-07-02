@@ -1,16 +1,16 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import FilterModifier from '/base/code/es-modules/Data/Modifiers/FilterModifier.js';
 
-QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
+QUnit.test('FilterModifier queries', async function (assert) {
     // Case 1: no condition leaves table intact
     {
         const table = new DataTable({
-                columns: {
-                    x: [1, 2, 3],
-                    name: ['A', 'B', 'C']
-                }
-            }),
-            modifier = new FilterModifier();
+            columns: {
+                x: [1, 2, 3],
+                name: ['A', 'B', 'C']
+            }
+        }),
+        modifier = new FilterModifier();
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
@@ -25,9 +25,17 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
         let table, modifier;
 
         // x != 3
-        table = new DataTable({ columns: { x: base.slice() } });
+        table = new DataTable({
+            columns: {
+                x: base.slice()
+            }
+        });
         modifier = new FilterModifier({
-            condition: { operator: 'ne', columnName: 'x', value: 3 }
+            condition: {
+                operator: 'ne',
+                columnName: 'x',
+                value: 3
+            }
         });
         await modifier.modify(table);
         assert.deepEqual(
@@ -39,8 +47,10 @@ QUnit.test('FilterModifier streamlined scenarios', async function (assert) {
         // x < 4
         table = new DataTable({ columns: { x: base.slice() } });
         modifier = new FilterModifier({
-            condition:{
-                operator: 'lt', columnName: 'x', value: 4
+            condition: {
+                operator: 'lt',
+                columnName: 'x',
+                value: 4
             }
         });
         await modifier.modify(table);
