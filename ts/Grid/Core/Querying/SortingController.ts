@@ -189,13 +189,14 @@ class SortingController {
         }
 
         const { columnId, order } = this.currentSorting;
-        if (!order) {
+        if (!order || !columnId) {
             return;
         }
 
         return new SortModifier({
             orderByColumn: columnId,
-            direction: order
+            direction: order,
+            compare: this.grid.columnOptionsMap?.[columnId]?.sorting?.compare
         });
     }
 
