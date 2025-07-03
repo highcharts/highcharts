@@ -2917,7 +2917,7 @@ class Chart {
      */
     public warnIfA11yModuleNotLoaded(): void {
         const { options, title } = this;
-        if (options && !this.accessibility) {
+        if (options && !this.a11y && !this.accessibility) {
             // Make chart behave as an image with the title as alt text
             this.renderer.boxWrapper.attr({
                 role: 'img',
@@ -2927,14 +2927,15 @@ class Chart {
                 ).replace(/</g, '&lt;')
             });
 
-            if (!(
-                options.accessibility && options.accessibility.enabled === false
-            )) {
+            if (
+                options.a11y?.enabled !== false &&
+                options.accessibility?.enabled !== false
+            ) {
                 error(
                     'Highcharts warning: Consider including the ' +
-                    '"accessibility.js" module to make your chart more ' +
+                    '"a11y.js" module to make your chart more ' +
                     'usable for people with disabilities. Set the ' +
-                    '"accessibility.enabled" option to false to remove this ' +
+                    '"a11y.enabled" option to false to remove this ' +
                     'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
                     false, this
                 );

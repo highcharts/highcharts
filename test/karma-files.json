@@ -18,7 +18,7 @@
     "code/modules/datagrouping.src.js",
     "code/modules/exporting.src.js",
     "code/modules/parallel-coordinates.src.js",
-    "code/modules/accessibility.src.js",
+    "code/modules/a11y.src.js",
     "code/modules/annotations-advanced.src.js",
     "code/modules/boost-canvas.src.js",
     "code/modules/boost.src.js",

@@ -191,6 +191,7 @@ declare module '../../Core/Legend/LegendOptions' {
 
 declare module '../../Core/Options'{
     interface Options {
+        /** @deprecated */
         accessibility?: AccessibilityOptions;
     }
 }

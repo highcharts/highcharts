@@ -18,9 +18,7 @@ QUnit.test('Load map from TopoJSON', assert => {
                 }]
             }]
         }),
-        point = chart.get('nevada'),
-        screenReaderInfo = chart.accessibility.components
-            .infoRegions.screenReaderSections.before.element.textContent;
+        point = chart.get('nevada');
 
     const controller = new TestController(chart);
 
@@ -49,10 +47,6 @@ QUnit.test('Load map from TopoJSON', assert => {
     assert.ok(
         point.name === 'Nevada' && point.value === 1,
         'TopoJSON should correctly load map and contain data.'
-    );
-    assert.ok(
-        screenReaderInfo.indexOf('America') > 0,
-        'TopoJSON title should be accessible with a11y module loaded.'
     );
 
     // Zoom to inset point

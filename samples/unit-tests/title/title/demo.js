@@ -111,14 +111,6 @@ QUnit.test('Title alignment', function (assert) {
         );
     }
 
-    const ariaValue = document.getElementById('container')
-        .getAttribute('aria-label');
-
-    assert.ok(
-        /\</g.test(ariaValue),
-        '"<" can be included in aria-label if not for export (#17753, #19002)'
-    );
-
     chart.update({
         title: {
             align: 'center',

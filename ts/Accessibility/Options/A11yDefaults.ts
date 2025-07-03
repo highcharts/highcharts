@@ -102,12 +102,17 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const Options: DeepPartial<A11yOptions> = {
 
     /**
+     * **Note:** This module is deprecated and will be removed in the future.
+     * It has been replaced by the new [A11y module](https://code.highcharts.com/modules/a11y.js),
+     * which offers more functionality and better performance.
+     *
      * Options for configuring accessibility for the chart. Requires the
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
      * to be loaded. For a description of the module and information
      * on its features, see
      * [Highcharts Accessibility](https://www.highcharts.com/docs/accessibility/accessibility-module).
      *
+     * @deprecated
      * @since        5.0.0
      * @requires     modules/accessibility
      * @optionparent accessibility

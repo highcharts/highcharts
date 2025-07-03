@@ -89,6 +89,7 @@ declare module '../Core/Chart/ChartLike' {
 /**
  * The Accessibility class
  *
+ * @deprecated
  * @private
  * @requires modules/accessibility
  *
