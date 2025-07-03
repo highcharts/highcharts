@@ -147,12 +147,12 @@ const chart = Highcharts.chart('container', {
     // Custom option for templates
     countries,
     title: {
-        text: 'Summer Olympics 2020 - Top 5 countries by Gold medals',
+        text: 'Summer Olympics 2024 - Top 5 countries by Gold medals',
         align: 'left'
     },
     subtitle: {
-        text: 'Comparing to results from Summer Olympics 2016 - Source: <a ' +
-            'href="https://olympics.com/en/olympic-games/tokyo-2020/medals"' +
+        text: 'Comparing to results from Summer Olympics 2020 - Source: <a ' +
+            'href="https://olympics.com/en/olympic-games/paris-2024/medals"' +
             'target="_blank">Olympics</a>',
         align: 'left'
     },
@@ -203,9 +203,9 @@ const chart = Highcharts.chart('container', {
         pointPlacement: -0.2,
         linkedTo: 'main',
         data: data[2020].slice(),
-        name: '2016'
+        name: '2020'
     }, {
-        name: '2020',
+        name: '2024',
         id: 'main',
         dataSorting: {
             enabled: true,
