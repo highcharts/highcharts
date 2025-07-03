@@ -295,9 +295,31 @@ class Table {
     }
 
     /**
-     * Loads the modified data from the data table and renders the rows.
+     * Updates the rows of the table with the latest data from the data table.
+     * It will not redraw the rows, but will efficiently update the
+     * existing rows with the latest data.
      */
-    public loadPresentationData(): void {
+    public updateRows(): void {
+        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+            this.rows[i].update();
+        }
+    }
+
+    /**
+     * Redraws the rows of the table. If the data table is modified, it will
+     * proceed with the querying process to update the data.
+     */
+    public async redrawRows(): Promise<void> {
+        const vp = this;
+        let focusedRowId: number | undefined;
+        if (vp.focusCursor) {
+            focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
+        }
+
+        if (vp.grid.querying.shouldBeUpdated) {
+            await vp.grid.querying.proceed(true);
+        }
+
         this.dataTable = this.grid.presentationTable as DataTable;
 
         for (const column of this.columns) {
@@ -306,6 +328,15 @@ class Table {
 
         this.updateVirtualization();
         this.rowsVirtualizer.rerender();
+
+        if (focusedRowId !== void 0 && vp.focusCursor) {
+            const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
+            if (newRowIndex !== void 0) {
+                vp.rows[
+                    newRowIndex - vp.rows[0].index
+                ]?.cells[vp.focusCursor[1]].htmlElement.focus();
+            }
+        }
     }
 
     /**

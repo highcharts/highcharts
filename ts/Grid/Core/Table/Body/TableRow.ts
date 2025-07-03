@@ -117,6 +117,20 @@ class TableRow extends Row {
     }
 
     /**
+     * Updates the row data and its cells with the latest values from the data
+     * table.
+     */
+    public update(): void {
+        this.loadData();
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            const cell = this.cells[i] as TableCell;
+            cell.value = this.data[cell.column.id] ?? null;
+            cell.content?.update();
+        }
+    }
+
+    /**
      * Adds or removes the hovered CSS class to the row element.
      *
      * @param hovered
