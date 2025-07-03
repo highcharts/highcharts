@@ -76,7 +76,11 @@ namespace FilteringComposition {
         const grid = this.row.viewport.grid;
         const column = this.column;
 
-        if (!column || !this.headerContent) {
+        if (
+            !column ||
+            !this.headerContent ||
+            !column.options?.filtering?.enabled
+        ) {
             return;
         }
 
@@ -106,6 +110,18 @@ declare module '../../Core/Table/Header/HeaderCell' {
     }
 }
 
+declare module '../../Core/Options' {
+    interface IndividualColumnOptions {
+        /**
+         * Events options triggered by the grid elements.
+         */
+        filtering?: FilteringOptions;
+    }
+
+    interface FilteringOptions {
+        enabled: boolean;
+    }
+}
 /* *
  *
  *  Default Export

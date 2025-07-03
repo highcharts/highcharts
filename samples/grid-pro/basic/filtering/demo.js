@@ -9,6 +9,11 @@ Grid.grid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
+    columnDefaults: {
+        filtering: {
+            enabled: true
+        }
+    },
     header: [
         'id',
         {
@@ -38,4 +43,10 @@ Grid.grid('container', {
             }]
         }
     ]
+    // columns: [{
+    //     id: 'icon',
+    //     filtering: {
+    //         enabled: true
+    //     }
+    // }]
 });
