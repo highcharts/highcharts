@@ -108,7 +108,7 @@ class TableCell extends Cell {
     }
 
     /**
-     * Sets the value & updating content of the cell.
+     * Sets the cell value and updates its content with it.
      *
      * @param value
      * The raw value to set. If not provided, it will use the value from the
@@ -145,8 +145,8 @@ class TableCell extends Cell {
      * the grid.
      *
      * @returns
-     * A promise that resolves to `true` if the cell triggered the whole
-     * viewport rows to be redrawn, or `false` if the only change should be
+     * A promise that resolves to `true` if the cell triggered all the whole
+     * viewport rows to be updated, or `false` if the only change should be
      * the cell's content.
      */
     private async updateDataTable(): Promise<boolean> {
@@ -178,7 +178,7 @@ class TableCell extends Cell {
             return false;
         }
 
-        await vp.redrawRows();
+        await vp.updateRows();
         return true;
     }
 
