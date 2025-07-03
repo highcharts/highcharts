@@ -39,10 +39,6 @@ hcCSS.replaceSync(`
         }
     }
 
-    .hc-hidden {
-        display: none;
-    }
-
     .hc-a11y-sr-only {
         position: absolute;
         width: 1px;

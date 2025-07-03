@@ -17,12 +17,12 @@ import type Chart from '../Core/Chart/Chart';
 import type { Options } from '../Core/Options';
 
 // Imports
-import { getChartInfo, type ChartInfo, type A11yModel } from './ChartInfoProvider';
+import { getChartInfo, type ChartInfo, type A11yModel } from './ChartInfo.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import defaultOptionsA11y from './A11yDefaults.js';
-import H from '../Core/Globals.js';
-const { composed } = H;
+import G from '../Core/Globals.js';
+const { composed } = G;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -46,6 +46,9 @@ declare module '../Core/Chart/ChartLike' {
  * @internal
  */
 class A11y {
+    private chartInfo!: ChartInfo;
+    private model?: A11yModel;
+
 
     constructor(public chart: Chart) {
 
@@ -53,8 +56,6 @@ class A11y {
         // Proxy, announcer, heading, subtitle, desc, hint, ...
     }
 
-    private chartInfo!: ChartInfo;
-    private model?: A11yModel;
 
     /**
      * Update accessibility functionality for the chart.
@@ -62,18 +63,7 @@ class A11y {
      */
     public update(): void {
         const chart = this.chart,
-            curModel = ((): A11yModel => {
-                if (chart.options.a11y?.model) {
-                    return chart.options.a11y.model;
-                }
-                if (chart.pointCount < 4) {
-                    return 'summary';
-                }
-                if (chart.pointCount < 16) {
-                    return 'list';
-                }
-                return 'application';
-            })();
+            curModel = this.getChartModel(chart);
 
         // If we change model, we should just re-init the module
         if (this.model && curModel !== this.model) {
@@ -94,7 +84,7 @@ class A11y {
         // Keyboard nav
 
         // Todo
-        console.log('A11y module update placeholder', this.chartInfo.title, Math.random().toFixed(5)); // eslint-disable-line no-console
+        console.log('A11y module update placeholder'); // eslint-disable-line no-console
 
         fireEvent(chart, 'afterA11yUpdate', {
             a11y: this,
@@ -102,14 +92,41 @@ class A11y {
         });
     }
 
+
     /**
-     * Remove traces of the a11y module.
+     * Helper function to determine the correct interaction model for the chart.
+     */
+    private getChartModel(chart: Chart): A11yModel {
+        if (chart.options.a11y?.model) {
+            return chart.options.a11y.model;
+        }
+        if (
+            chart.pointCount < 4 &&
+            (
+                chart.options.tooltip?.enabled === false ||
+                chart.series.every((s): boolean =>
+                    s.options.enableMouseTracking === false
+                )
+            )
+        ) {
+            return 'summary';
+        }
+        if (chart.pointCount < 16) {
+            return 'list';
+        }
+        return 'application';
+    }
+
+
+    /**
+     * Destructor - remove traces of the a11y module
+     * (e.g. HTML elements, event handlers).
      */
     public destroy(): void {
         delete this.chart.a11y;
         this.chart.renderer?.boxWrapper.attr({
             role: 'img',
-            'aria-label': this.chartInfo.title.replace(/</g, '&lt;')
+            'aria-label': this.chartInfo.chartTitle.replace(/</g, '&lt;')
         });
     }
 }
@@ -139,9 +156,9 @@ namespace A11y {
                     // Handle legacy module
                     if (this.a11yDirty) {
                         error(
-                            'The accessibility.js module has been replaced ' +
-                            'by the a11y.js module. These should not be used ' +
-                            'together.', false, this
+                            'The "accessibility.js" module has been replaced ' +
+                            'by the "a11y.js" module. These should not be ' +
+                            'used together.', false, this
                         );
                         return;
                     }

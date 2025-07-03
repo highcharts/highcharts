@@ -1,5 +1,8 @@
 QUnit.test('Model choice', function (assert) {
     const chart = Highcharts.chart('container', {
+        tooltip: {
+            enabled: false
+        },
         series: [{
             data: [1, 2, 3]
         }]

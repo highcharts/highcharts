@@ -12,14 +12,32 @@
 
 'use strict';
 
-const Options = {
+import type { Options } from '../Core/Options.js';
+
+const Options: DeepPartial<Options> = {
     a11y: {
-        enabled: true
+        enabled: true,
+        order: [
+            'breadcrumbs', 'data', 'mapNavigation',
+            'navigator', 'legend', 'menu'
+        ],
+        chartDescriptionSection: {
+            chartTitleFormat: '<{headingLevel}>{chartTitle}</{headingLevel}>',
+            chartSubtitleFormat: '<p>{chartSubtitle}</p>',
+            linkedDescription: '*[data-highcharts-chart="{index}"] + .highcharts-description', // eslint-disable-line max-len
+            chartDescriptionFormat: '<p>{#if linkedDescription}{linkedDescription}{else}{caption}{/if}</p>', // eslint-disable-line max-len
+            chartAutoDescriptionFormat: '<div>{chartAutoDescription}</div>'
+        },
+        dataDescriptions: {
+            // ...
+        }
     },
 
     lang: {
         a11y: {
-            defaultChartTitle: 'Chart'
+            defaultChartTitle: 'Chart',
+            chartInteractionHint: 'Chart has {#if chart.sonification}' +
+                'audio features and {/if}additional interactive tools.'
         }
     }
 };
