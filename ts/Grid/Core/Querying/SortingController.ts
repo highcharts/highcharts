@@ -196,7 +196,8 @@ class SortingController {
         return new SortModifier({
             orderByColumn: columnId,
             direction: order,
-            compare: this.grid.columnOptionsMap?.[columnId]?.sorting?.compare
+            compare: this.grid.columnOptionsMap?.[columnId]
+                ?.options?.sorting?.compare
         });
     }
 
