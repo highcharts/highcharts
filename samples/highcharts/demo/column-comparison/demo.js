@@ -1,4 +1,15 @@
 const dataPrev = {
+    2024: [
+        ['kr', 6],
+        ['jp', 27],
+        ['au', 17],
+        ['de', 10],
+        ['ru', 20],
+        ['cn', 38],
+        ['gb', 22],
+        ['us', 39],
+        ['fr', 10]
+    ],
     2020: [
         ['kr', 9],
         ['jp', 12],
@@ -7,7 +18,8 @@ const dataPrev = {
         ['ru', 19],
         ['cn', 26],
         ['gb', 27],
-        ['us', 46]
+        ['us', 46],
+        ['fr', 10]
     ],
     2016: [
         ['kr', 13],
@@ -17,7 +29,8 @@ const dataPrev = {
         ['ru', 20],
         ['cn', 38],
         ['gb', 29],
-        ['us', 47]
+        ['us', 47],
+        ['fr', 11]
     ],
     2012: [
         ['kr', 13],
@@ -27,7 +40,8 @@ const dataPrev = {
         ['ru', 24],
         ['cn', 48],
         ['gb', 19],
-        ['us', 36]
+        ['us', 36],
+        ['fr',  7]
     ],
     2008: [
         ['kr', 9],
@@ -37,7 +51,8 @@ const dataPrev = {
         ['ru', 29],
         ['cn', 33],
         ['gb', 9],
-        ['us', 37]
+        ['us', 37],
+        ['fr', 11]
     ],
     2004: [
         ['kr', 8],
@@ -47,7 +62,8 @@ const dataPrev = {
         ['ru', 32],
         ['cn', 28],
         ['gb', 11],
-        ['us', 37]
+        ['us', 37],
+        ['fr', 13]
     ],
     2000: [
         ['kr', 7],
@@ -57,11 +73,23 @@ const dataPrev = {
         ['ru', 26],
         ['cn', 16],
         ['gb', 1],
-        ['us', 44]
+        ['us', 44],
+        ['fr', 15]
     ]
 };
 
 const data = {
+    2024: [
+        ['kr', 13],
+        ['jp', 20],
+        ['au', 18],
+        ['de', 12],
+        ['ru',  0],
+        ['cn', 40],
+        ['gb', 14],
+        ['us', 40],
+        ['fr', 16]
+    ],
     2020: [
         ['kr', 6],
         ['jp', 27],
@@ -70,7 +98,8 @@ const data = {
         ['ru', 20],
         ['cn', 38],
         ['gb', 22],
-        ['us', 39]
+        ['us', 39],
+        ['fr', 10]
     ],
     2016: [
         ['kr', 9],
@@ -80,7 +109,8 @@ const data = {
         ['ru', 19],
         ['cn', 26],
         ['gb', 27],
-        ['us', 46]
+        ['us', 46],
+        ['fr', 10]
     ],
     2012: [
         ['kr', 13],
@@ -90,7 +120,8 @@ const data = {
         ['ru', 20],
         ['cn', 38],
         ['gb', 29],
-        ['us', 47]
+        ['us', 47],
+        ['fr', 11]
     ],
     2008: [
         ['kr', 13],
@@ -100,7 +131,8 @@ const data = {
         ['ru', 24],
         ['cn', 48],
         ['gb', 19],
-        ['us', 36]
+        ['us', 36],
+        ['fr', 7]
     ],
     2004: [
         ['kr', 9],
@@ -110,7 +142,8 @@ const data = {
         ['ru', 29],
         ['cn', 33],
         ['gb', 9],
-        ['us', 37]
+        ['us', 37],
+        ['fr', 11]
     ],
     2000: [
         ['kr', 8],
@@ -120,7 +153,8 @@ const data = {
         ['ru', 32],
         ['cn', 28],
         ['gb', 11],
-        ['us', 37]
+        ['us', 37],
+        ['fr', 13]
     ]
 };
 
@@ -156,6 +190,10 @@ const countries = {
     us: {
         name: 'United States',
         color: '#D568FB'
+    },
+    fr: {
+        name: 'France',
+        color: '#D10816'
     }
 };
 
@@ -233,7 +271,7 @@ const chart = Highcharts.chart('container', {
         color: 'rgba(158, 159, 163, 0.5)',
         pointPlacement: -0.2,
         linkedTo: 'main',
-        data: dataPrev[2020].slice(),
+        data: dataPrev[2024].slice(),
         name: '2016'
     }, {
         name: '2020',
@@ -249,7 +287,7 @@ const chart = Highcharts.chart('container', {
                 fontSize: '16px'
             }
         }],
-        data: getData(data[2020]).slice()
+        data: getData(data[2024]).slice()
     }],
     exporting: {
         allowHTML: true
@@ -258,6 +296,9 @@ const chart = Highcharts.chart('container', {
 
 const locations = [
     {
+        city: 'Paris',
+        year: 2024
+    }, {
         city: 'Tokyo',
         year: 2020
     }, {
