@@ -42,7 +42,7 @@
 }
 
 .highcharts-button {
-    fill: var(--highcharts-neutral-color-3);
+    fill: var(--highcharts-neutral-color-3, #f7f7f7);
 }
 
 .highcharts-stocktools-popup {
@@ -66,7 +66,7 @@
     z-index: 10;
     left: 0;
     top: 0;
-    background: #ffffff;
+    background: var(--highcharts-background-color, #ffffff);
     width: 40px;
 }
 
@@ -190,7 +190,8 @@
     height: 40px;
     cursor: pointer;
     position: relative;
-    background-color: var(--highcharts-neutral-color-3);
+    background-color: var(--highcharts-neutral-color-3, #f7f7f7);
+    transition: background-color 250ms;
 }
 
 .highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn {
@@ -202,7 +203,7 @@
 }
 
 .highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn.highcharts-active {
-    background: var(--highcharts-neutral-color-3);
+    background: var(--highcharts-neutral-color-3, #f7f7f7);
 }
 
 .highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn .highcharts-menu-item-btn:hover {
@@ -223,6 +224,23 @@
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 32px 32px;
+}
+
+.highcharts-dark .highcharts-bindings-wrapper li > button.highcharts-menu-item-btn,
+.highcharts-dark .highcharts-bindings-wrapper li > button.highcharts-submenu-item-arrow {
+    filter: invert(1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .highcharts-bindings-wrapper li > button.highcharts-menu-item-btn,
+    .highcharts-bindings-wrapper li > button.highcharts-submenu-item-arrow {
+        filter: invert(1);
+    }
+
+    .highcharts-light .highcharts-bindings-wrapper li > button.highcharts-menu-item-btn,
+    .highcharts-light .highcharts-bindings-wrapper li > button.highcharts-submenu-item-arrow {
+        filter: none;
+    }
 }
 
 .highcharts-submenu-wrapper li > button.highcharts-menu-item-btn {
@@ -256,12 +274,11 @@
     width: 100%;
 }
 
-.highcharts-bindings-wrapper li.highcharts-active > button.highcharts-menu-item-btn,
-.highcharts-bindings-wrapper li > button.highcharts-menu-item-btn:hover,
-.highcharts-bindings-wrapper .highcharts-arrow-wrapper > div:hover,
 .highcharts-bindings-wrapper li.highcharts-active,
+.highcharts-bindings-wrapper li:hover,
+.highcharts-bindings-wrapper .highcharts-arrow-wrapper > div:hover,
 .highcharts-toggle-toolbar:hover {
-    background-color: var(--highcharts-neutral-color-10);
+    background-color: var(--highcharts-neutral-color-10, #e6e6e6);
     transition: background-color 100ms;
 }
 
@@ -270,7 +287,7 @@
     cursor: pointer;
     width: 10px;
     height: 10px;
-    background-color: var(--highcharts-neutral-color-3);
+    background-color: var(--highcharts-neutral-color-3, #f7f7f7);
     background-size: cover;
 }
 
@@ -280,7 +297,7 @@
 
 .highcharts-bindings-wrapper li:hover,
 .highcharts-submenu-item-arrow:hover {
-    background-color: var(--highcharts-button-hover-color);
+    background-color: var(--highcharts-neutral-color-20, #cccccc);
 }
 
 .highcharts-bindings-wrapper .highcharts-arrow-down,
@@ -292,5 +309,5 @@
 
 li.highcharts-disabled-btn:hover,
 .highcharts-disabled-btn .highcharts-submenu-item-arrow:hover {
-    background-color: var(--highcharts-neutral-color-3);
+    background-color: var(--highcharts-neutral-color-3, #f7f7f7);
 }

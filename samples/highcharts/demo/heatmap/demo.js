@@ -43,7 +43,7 @@ Highcharts.chart('container', {
 
     colorAxis: {
         min: 0,
-        minColor: '#FFFFFF',
+        minColor: 'var(--highcharts-background-color, #FFFFFF)',
         maxColor: Highcharts.getOptions().colors[0]
     },
 
@@ -79,7 +79,7 @@ Highcharts.chart('container', {
         ],
         dataLabels: {
             enabled: true,
-            color: '#000000'
+            color: 'contrast'
         }
     }],
 

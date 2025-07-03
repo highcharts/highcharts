@@ -22,30 +22,22 @@ Highcharts.chart('container', {
     }],
     yAxis: [{ // Primary yAxis
         labels: {
-            format: '{value}°C',
-            style: {
-                color: Highcharts.getOptions().colors[1]
-            }
+            format: '{value}°C'
         },
         title: {
-            text: 'Temperature',
-            style: {
-                color: Highcharts.getOptions().colors[1]
-            }
-        }
+            text: 'Temperature'
+        },
+        lineColor: Highcharts.getOptions().colors[1],
+        lineWidth: 2
     }, { // Secondary yAxis
         title: {
-            text: 'Precipitation',
-            style: {
-                color: Highcharts.getOptions().colors[0]
-            }
+            text: 'Precipitation'
         },
         labels: {
-            format: '{value} mm',
-            style: {
-                color: Highcharts.getOptions().colors[0]
-            }
+            format: '{value} mm'
         },
+        lineColor: Highcharts.getOptions().colors[0],
+        lineWidth: 2,
         opposite: true
     }],
     tooltip: {
@@ -53,10 +45,7 @@ Highcharts.chart('container', {
     },
     legend: {
         align: 'left',
-        verticalAlign: 'top',
-        backgroundColor:
-            Highcharts.defaultOptions.legend.backgroundColor || // theme
-            'rgba(255,255,255,0.25)'
+        verticalAlign: 'top'
     },
     series: [{
         name: 'Precipitation',

@@ -5,24 +5,19 @@
     height: 250px;
 }
 
-.highcharts-datagrid-column {
-    width: 15%;
-}
-
 .custom-column-class-name {
-    color: #f00;
-    width: 40%;
+    color: #f00 !important;
 }
 
 .greater-than-100 {
     text-decoration: underline;
-    color: #0f0;
+    color: #0f0 !important;
 }
 
 .header-cell-custom-class-price {
-    color: #f0f;
+    color: #f0f !important;
 }
 
 .custom-table-class-name {
-    border: 10px solid #533;
+    border: 10px solid #533 !important;
 }

@@ -34,8 +34,6 @@ Highcharts.ganttChart('container', {
         type: 'category',
         grid: {
             enabled: true,
-            borderColor: 'rgba(0,0,0,0.3)',
-            borderWidth: 1,
             columns: [{
                 title: {
                     text: 'Project'

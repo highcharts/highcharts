@@ -15,17 +15,16 @@
 }
 
 .highcharts-figure {
-    margin: 0;
+    max-width: 1000px;
+    margin: 1em auto;
 }
 
 #play-controls {
-    max-width: 1000px;
     margin: 1em auto;
 }
 
 #container {
     height: 900px;
-    max-width: 1000px;
     margin: 0 auto;
 }
 

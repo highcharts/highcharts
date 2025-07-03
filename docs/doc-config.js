@@ -40,6 +40,8 @@ module.exports = {
         { from: 'datagrid/datagrid-with-vue', to: 'grid/wrappers/grid-with-vue' },
         { from: 'dashboards/dashboards-with-angular', to: 'dashboards/wrappers/dashboards-with-angular' },
         { from: 'dashboards/dashboards-with-react', to: 'dashboards/wrappers/dashboards-with-react' },
-        { from: 'dashboards/dashboards-with-vue', to: 'dashboards/wrappers/dashboards-with-vue' }
+        { from: 'dashboards/dashboards-with-vue', to: 'dashboards/wrappers/dashboards-with-vue' },
+        // Special case for xmlns schema in Map Collection
+        { from: 'mc', to: 'maps/map-collection#map-properties' }
     ]
 };

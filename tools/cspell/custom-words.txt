@@ -201,3 +201,8 @@ Dataviz
 KIIDs
 SFDR
 Segoe
+sparkline
+sparklines
+preconfigured
+datepicker
+specific

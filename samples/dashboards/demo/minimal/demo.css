@@ -16,12 +16,11 @@
         sans-serif;
 }
 
-h1#title {
-    padding-top: 10px;
-    margin: 0;
-    background-color: #3d3d3d;
+#title {
     text-align: center;
-    color: #fff;
+    padding: 10px 0;
+    margin: 0;
+    background-color: var(--highcharts-neutral-color-0);
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-title::before,

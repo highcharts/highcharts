@@ -30,7 +30,8 @@ import type {
 import type ExportingLike from './ExportingLike';
 import type {
     DOMElementType,
-    HTMLDOMElement
+    HTMLDOMElement,
+    SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type GradientColor from '../../Core/Color/GradientColor';
 import type { LangOptions } from '../../Core/Options';
@@ -912,9 +913,9 @@ class Exporting {
             // Presentational CSS
             if (!chart.styledMode) {
                 css(innerMenu, extend<CSSObject>({
-                    MozBoxShadow: '3px 3px 10px #888',
-                    WebkitBoxShadow: '3px 3px 10px #888',
-                    boxShadow: '3px 3px 10px #888'
+                    MozBoxShadow: '3px 3px 10px #0008',
+                    WebkitBoxShadow: '3px 3px 10px #0008',
+                    boxShadow: '3px 3px 10px #0008'
                 }, navOptions?.menuStyle || {}));
             }
 
@@ -2262,6 +2263,7 @@ class Exporting {
             { chart, options } = exporting,
             isDirty = exporting?.isDirty || !exporting?.svgElements.length;
 
+        exporting.buttonOffset = 0;
         if (exporting.isDirty) {
             exporting.destroy();
         }
@@ -2291,17 +2293,24 @@ class Exporting {
      * @requires modules/exporting
      */
     public resolveCSSVariables(): void {
-        const svgElements = this.chart.container.querySelectorAll('*'),
-            colorAttributes = ['color', 'fill', 'stop-color', 'stroke'];
-
-        Array.from(svgElements).forEach((element: Element): void => {
-            colorAttributes.forEach((attr): void => {
-                const attrValue = element.getAttribute(attr);
+        Array.from(
+            this.chart.container.querySelectorAll(
+                '*'
+            ) as NodeListOf<SVGDOMElement>
+        ).forEach((element): void => {
+            ['color', 'fill', 'stop-color', 'stroke'].forEach((prop): void => {
+                const attrValue = element.getAttribute(prop);
                 if (attrValue?.includes('var(')) {
                     element.setAttribute(
-                        attr,
-                        getComputedStyle(element).getPropertyValue(attr)
+                        prop,
+                        getComputedStyle(element).getPropertyValue(prop)
                     );
+                }
+
+                const styleValue = element.style?.[prop as any];
+                if (styleValue?.includes('var(')) {
+                    element.style[prop as any] =
+                        getComputedStyle(element).getPropertyValue(prop);
                 }
             });
         });

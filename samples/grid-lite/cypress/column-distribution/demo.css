@@ -12,10 +12,3 @@
     padding: 8px;
     font-family: sans-serif;
 }
-
-@media (prefers-color-scheme: dark) {
-    .demo {
-        background-color: #292929;
-        color: #eee;
-    }
-}

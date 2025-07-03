@@ -1,15 +1,3 @@
-/* Colors, using same names and values as in highcharts.css */
-:root {
-    --highcharts-background-color: #ffffff;
-    --highcharts-neutral-color-100: #000000;
-    --highcharts-neutral-color-80: #333333;
-    --highcharts-neutral-color-60: #666666;
-    --highcharts-neutral-color-20: #cccccc;
-    --highcharts-neutral-color-10: #e6e6e6;
-    --highcharts-neutral-color-3: #f7f7f7;
-    --highcharts-highlight-color-80: #335cad;
-}
-
 .highcharts-popup.highcharts-annotation-toolbar {
     right: 10%;
     left: auto;
@@ -23,7 +11,7 @@
 .highcharts-annotation-toolbar button {
     margin-top: 0;
     cursor: pointer;
-    background-color: var(--highcharts-neutral-color-3);
+    background-color: var(--highcharts-neutral-color-3, #f7f7f7);
 }
 
 .highcharts-popup.highcharts-annotation-toolbar > p {
@@ -45,8 +33,9 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
-    background-color: var(--highcharts-background-color);
-    color: var(--highcharts-neutral-color-60);
+    background-color: var(--highcharts-background-color, #ffffff);
+    border-radius: 4px;
+    color: var(--highcharts-neutral-color-60, #666666);
     display: none;
     font-size: 0.9em;
     max-height: 90%;
@@ -59,9 +48,9 @@
     max-width: 600px;
     position: absolute;
     z-index: 100;
-    -webkit-box-shadow: 0 0 8px 0 rgba(61, 61, 61, 0.3);
-    -moz-box-shadow: 0 0 8px 0 rgba(61, 61, 61, 0.3);
-    box-shadow: 0 0 8px 0 rgba(61, 61, 61, 0.3);
+    -webkit-box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
 }
 
 .highcharts-popup div,
@@ -79,8 +68,14 @@
     box-sizing: border-box;
 }
 
+.highcharts-popup input,
+.highcharts-popup select {
+    background: var(--highcharts-neutral-color-3, #f7f7f7);
+    color: var(--highcharts-neutral-color-100, #000000);
+}
+
 .highcharts-popup input {
-    border: 1px solid var(--highcharts-neutral-color-10);
+    border: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
     border-radius: 0.3rem;
     padding: 5px;
     width: 100%;
@@ -109,7 +104,7 @@
 .highcharts-popup-lhs-col {
     clear: both;
     width: 30%;
-    border-right: 1px solid var(--highcharts-neutral-color-10);
+    border-right: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
 }
 
 .highcharts-popup-bottom-row {
@@ -117,7 +112,13 @@
     padding: 0 20px;
     padding-bottom: 12px;
     width: 100%;
-    border-top: 1px solid var(--highcharts-neutral-color-10);
+    border-top: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
+}
+
+.highcharts-popup .highcharts-popup-bottom-row > button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 4px;
 }
 
 .highcharts-popup-rhs-col {
@@ -139,7 +140,7 @@
 .highcharts-bindings-wrapper ul.highcharts-indicator-list,
 .highcharts-indicator-list {
     float: left;
-    color: var(--highcharts-neutral-color-60);
+    color: var(--highcharts-neutral-color-60, #666666);
     height: calc(100% - 150px);
     width: 100%;
     overflow-x: hidden;
@@ -155,7 +156,8 @@ button.highcharts-indicator-list-item {
     overflow: hidden;
     word-break: break-all;
     box-sizing: border-box;
-    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100, #000000);
+    background-color: var(--highcharts-background-color, #ffffff);
     text-align: left;
 }
 
@@ -167,7 +169,8 @@ button.highcharts-indicator-list-item {
 
 .highcharts-popup > button.highcharts-tab-item {
     margin: 0;
-    background-color: var(--highcharts-neutral-color-3);
+    color: var(--highcharts-neutral-color-100, #000000);
+    background-color: var(--highcharts-neutral-color-3, #f7f7f7);
     cursor: pointer;
     display: block;
     float: left;
@@ -177,7 +180,7 @@ button.highcharts-indicator-list-item {
 }
 
 button.highcharts-tab-item.highcharts-tab-item-active {
-    background-color: var(--highcharts-neutral-color-10);
+    background-color: var(--highcharts-neutral-color-10, #e6e6e6);
 }
 
 .highcharts-tab-item-content {
@@ -186,7 +189,7 @@ button.highcharts-tab-item.highcharts-tab-item-active {
     height: 100%;
     overflow: hidden;
     width: 100%;
-    border-top: 1px solid var(--highcharts-neutral-color-10);
+    border-top: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
 }
 
 .highcharts-tab-item-show {
@@ -195,9 +198,7 @@ button.highcharts-tab-item.highcharts-tab-item-active {
 
 .highcharts-popup > .highcharts-popup-close {
     margin: 0;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-color: var(--highcharts-background-color);
+    background-color: var(--highcharts-background-color, #ffffff);
     width: 40px;
     height: 40px;
     cursor: pointer;
@@ -205,18 +206,60 @@ button.highcharts-tab-item.highcharts-tab-item-active {
     padding: 10px;
     top: 0%;
     right: 0%;
-    color: var(--highcharts-neutral-color-80);
+    color: var(--highcharts-neutral-color-80, #333333);
+}
+
+.highcharts-popup .highcharts-icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+
+.highcharts-dark .highcharts-popup {
+    color-scheme: dark;
+    border: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
+}
+
+.highcharts-dark .highcharts-popup .highcharts-icon {
+    filter: invert(1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .highcharts-popup {
+        color-scheme: dark;
+        border: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
+    }
+
+    .highcharts-popup .highcharts-icon {
+        filter: invert(1);
+    }
+
+    .highcharts-light .highcharts-popup {
+        color-scheme: light;
+        border: none;
+    }
+
+    .highcharts-light .highcharts-popup .highcharts-icon {
+        filter: none;
+    }
 }
 
 .highcharts-popup-close:hover,
 .highcharts-popup button:hover,
 .highcharts-popup button.highcharts-annotation-edit-button:hover,
 .highcharts-popup button.highcharts-annotation-remove-button:hover {
-    background-color: var(--highcharts-neutral-color-10);
+    background-color: var(--highcharts-neutral-color-10, #e6e6e6);
 }
 
 div.highcharts-popup-rhs-col > button {
     float: right;
+    padding: 5px 10px;
+    border-radius: 4px;
 }
 
 .highcharts-popup button {
@@ -225,11 +268,11 @@ div.highcharts-popup-rhs-col > button {
 }
 
 button.highcharts-tab-item.highcharts-tab-disabled {
-    color: var(--highcharts-neutral-color-20);
+    color: var(--highcharts-neutral-color-20, #cccccc);
 }
 
 button.highcharts-tab-item.highcharts-tab-disabled:hover {
-    background-color: var(--highcharts-neutral-color-3);
+    background-color: var(--highcharts-neutral-color-3, #f7f7f7);
 }
 
 /* annotation edit small popup */
@@ -241,14 +284,12 @@ button.highcharts-tab-item.highcharts-tab-disabled:hover {
 }
 
 .highcharts-popup button.highcharts-annotation-edit-button {
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
+    position: relative;
     text-indent: -9999px;
 }
 
 .highcharts-popup button.highcharts-annotation-remove-button {
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
+    position: relative;
     text-indent: -9999px;
 }
 
@@ -262,7 +303,7 @@ button.highcharts-tab-item.highcharts-tab-disabled:hover {
 }
 
 .highcharts-popup .highcharts-popup-main-title {
-    border-bottom: 1px solid var(--highcharts-neutral-color-10);
+    border-bottom: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
     margin: 0;
     padding: 8px 0 6px 20px;
 }
@@ -283,7 +324,7 @@ button.highcharts-tab-item.highcharts-tab-disabled:hover {
 .highcharts-input-search-indicators-label {
     text-align: center;
     font-weight: bold;
-    color: var(--highcharts-neutral-color-100);
+    color: var(--highcharts-neutral-color-100, #000000);
     margin-top: 0.5rem;
 }
 
@@ -291,20 +332,20 @@ input.highcharts-input-search-indicators {
     width: 80%;
     margin: 0 auto;
     float: none;
-    border-color: #949494;
+    border-color: var(--highcharts-neutral-color-40, #999999);
 }
 
 .highcharts-popup a.clear-filter-button {
     margin: 0 auto;
     display: none;
-    color: var(--highcharts-highlight-color-80);
-    background-color: var(--highcharts-background-color);
-    border: 1px solid var(--highcharts-highlight-color-80);
+    color: var(--highcharts-highlight-color-80, #335cad);
+    background-color: var(--highcharts-background-color, #ffffff);
+    border: 1px solid var(--highcharts-highlight-color-80, #335cad);
     margin-top: 10px;
 }
 
 .highcharts-popup a.clear-filter-button:hover {
-    color: var(--highcharts-background-color);
-    background-color: var(--highcharts-highlight-color-80);
+    color: var(--highcharts-background-color, #ffffff);
+    background-color: var(--highcharts-highlight-color-80, #335cad);
     cursor: pointer;
 }

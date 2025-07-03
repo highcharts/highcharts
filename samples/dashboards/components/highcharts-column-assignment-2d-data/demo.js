@@ -48,13 +48,17 @@ Dashboards.board('container', {
         dataGridOptions: {
             columnDefaults: {
                 cells: {
-                    editable: true
+                    editMode: {
+                        enabled: true
+                    }
                 }
             },
             columns: [{
                 id: 'time',
                 cells: {
-                    editable: false,
+                    editMode: {
+                        enabled: false
+                    },
                     format: '{value:%[ebYHM]}'
                 }
             }]

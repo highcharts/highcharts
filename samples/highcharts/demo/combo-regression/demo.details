@@ -1,7 +1,7 @@
 ---
-name: Scatter with trend line
+name: Scatter with regression lines
 authors:
-  - Torstein Hønsi
+  - Tord Vikestad
 js_wrap: b
 tags:
   - Highcharts demo

@@ -22,6 +22,12 @@ describe('Column distribution strategies.', () => {
         cy.get('@cell').invoke('width').should('be.lessThan', 100);
     });
 
+    it('Resize should change column width in options', () => {
+        cy.grid().then(grid => {
+            expect(grid.viewport.columns[0].options.width).to.be.lessThan(100);
+        });
+    });
+
     it('Remove widths from options should change strategy to full.', () => {
         cy.get('#btn-remove-widths').click();
 

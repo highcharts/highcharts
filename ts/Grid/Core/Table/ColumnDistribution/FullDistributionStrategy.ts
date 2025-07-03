@@ -40,6 +40,10 @@ const {
  *
  * */
 
+/**
+ * @deprecated
+ * This strategy is deprecated and will be removed in the future.
+ */
 class FullDistributionStrategy extends DistributionStrategy {
 
     /* *
@@ -101,8 +105,14 @@ class FullDistributionStrategy extends DistributionStrategy {
             newLeftW = leftColW + rightColW - minWidth;
         }
 
-        this.columnWidths[column.id] = vp.getRatioFromWidth(newLeftW);
-        this.columnWidths[nextColumn.id] = vp.getRatioFromWidth(newRightW);
+        const leftW = this.columnWidths[column.id] =
+            vp.getRatioFromWidth(newLeftW);
+
+        const rightW = this.columnWidths[nextColumn.id] =
+            vp.getRatioFromWidth(newRightW);
+
+        column.update({ width: (leftW * 100).toFixed(4) + '%' }, false);
+        nextColumn.update({ width: (rightW * 100).toFixed(4) + '%' }, false);
     }
 
     /**
@@ -165,19 +175,6 @@ class FullDistributionStrategy extends DistributionStrategy {
         mock.remove();
 
         return result;
-    }
-
-    public override importMetadata(
-        metadata: DistributionStrategy.Metadata
-    ): void {
-        if (
-            Object.keys(metadata.columnWidths).length !==
-            this.viewport.grid.enabledColumns?.length
-        ) {
-            return;
-        }
-
-        super.importMetadata(metadata);
     }
 
 }

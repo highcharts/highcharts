@@ -60,6 +60,9 @@ QUnit.test('MathModifier column formula', function (assert) {
         }, {
             column: 'Fahrenheit',
             formula: '= A1 * 1.8 - 459.67'
+        }, {
+            column: 'Celsius_Opposite',
+            formula: 'B1 * -1'
         }]
     }));
 
@@ -75,4 +78,41 @@ QUnit.test('MathModifier column formula', function (assert) {
         'Fahrenheit should be calculated without endless decimals.'
     );
 
+    assert.strictEqual(
+        table.modified.getCell('Celsius_Opposite', 1),
+        -10,
+        'Opposite celsius is a negative value.'
+    );
+});
+
+QUnit.test('MathModifier advanced formulas', function (assert) {
+    const table = new DataTable({
+        columns: {
+            ColumnA: [10, 20, -30, 40, 50],
+            ColumnB: [-20, 50, -20, 10, 40],
+            ColumnC: [40, -10, -50, 30, -20]
+        }
+    });
+
+    table.setModifier(new MathModifier({
+        columnFormulas: [{
+            column: 'ColumnD',
+            formula: '-1 * (B1 + -(A1 - -C1 * B1 / -10) ^ 2) - (A1 + B1) / -1'
+        }, {
+            column: 'ColumnE',
+            formula: '(PRODUCT(A1:A2) / -A1 + SUM(C1:C5) * C1) ^ 2 - (AVERAGE(B1:B5) * -MEDIAN(A1:A5))'
+        }]
+    }));
+
+    assert.deepEqual(
+        table.modified.getColumn('ColumnD'),
+        [8110, 4920, 16870, 140, 16950],
+        'The advanced basic operators formula is properly calculated.'
+    );
+
+    assert.deepEqual(
+        table.modified.getColumn('ColumnE'),
+        [176040, 281000, 3842000, 63625, 161201],
+        'The advanced aggregate functions formula is properly calculated.'
+    );
 });

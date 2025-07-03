@@ -91,6 +91,15 @@ Highcharts.chart('container', {
         }
     },
 
+    plotOptions: {
+        series: {
+            dataSorting: {
+                enabled: true,
+                sortKey: 'low'
+            }
+        }
+    },
+
     series: [{
         name: 'Life expectancy change',
         data: data

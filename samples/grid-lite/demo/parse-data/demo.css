@@ -19,7 +19,7 @@
 }
 
 .highcharts-description {
-    padding: 0 20px;
+    padding: 0 10px;
 }
 
 .hcg-table td.text-center,
@@ -30,10 +30,4 @@
 td img {
     width: 16px;
     height: 16px;
-}
-
-@media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #292929;
-    }
 }

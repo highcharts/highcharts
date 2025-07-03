@@ -12,6 +12,10 @@
         sans-serif;
 }
 
+.highcharts-figure {
+    margin: 0;
+}
+
 #container {
     height: 400px;
     min-width: 310px;

@@ -26,8 +26,8 @@
             buttonsEnabled: true,
             height: 14,
             margin: 0,
-            rifleColor: '#333',
-            trackBackgroundColor: '#f2f2f2',
+            rifleColor: 'var(--highcharts-neutral-color-80, #333)',
+            trackBackgroundColor: 'var(--highcharts-neutral-color-5, #f2f2f2)',
             trackBorderRadius: 0
         },
 

@@ -101,6 +101,27 @@ class SortModifier extends DataModifier {
         );
     }
 
+    private static compareFactory(
+        direction: 'asc'|'desc',
+        customCompare?: (a: DataTable.CellType, b: DataTable.CellType) => number
+    ): ((a: DataTable.CellType, b: DataTable.CellType) => number) {
+        if (customCompare) {
+            if (direction === 'desc') {
+                return (
+                    a: DataTable.CellType,
+                    b: DataTable.CellType
+                ): number => -customCompare(a, b);
+            }
+            return customCompare;
+        }
+
+        return (
+            direction === 'asc' ?
+                SortModifier.ascending :
+                SortModifier.descending
+        );
+    }
+
     /* *
      *
      *  Constructor
@@ -356,13 +377,10 @@ class SortModifier extends DataModifier {
             {
                 direction,
                 orderByColumn,
-                orderInColumn
+                orderInColumn,
+                compare: customCompare
             } = modifier.options,
-            compare = (
-                direction === 'asc' ?
-                    SortModifier.ascending :
-                    SortModifier.descending
-            ),
+            compare = SortModifier.compareFactory(direction, customCompare),
             orderByColumnIndex = columnNames.indexOf(orderByColumn),
             modified = table.modified;
 

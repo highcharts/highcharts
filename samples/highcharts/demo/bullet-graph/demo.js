@@ -17,7 +17,6 @@ Highcharts.setOptions({
         series: {
             pointPadding: 0.25,
             borderWidth: 0,
-            color: '#000',
             targetOptions: {
                 width: '200%'
             }
@@ -48,15 +47,15 @@ Highcharts.chart('container1', {
         plotBands: [{
             from: 0,
             to: 150,
-            color: '#666'
+            color: 'rgb(128, 128, 128, 0.3)'
         }, {
             from: 150,
             to: 225,
-            color: '#999'
+            color: 'rgb(128, 128, 128, 0.2)'
         }, {
             from: 225,
             to: 9e9,
-            color: '#bbb'
+            color: 'rgb(128, 128, 128, 0.1)'
         }],
         title: null
     },
@@ -64,7 +63,8 @@ Highcharts.chart('container1', {
         data: [{
             y: 275,
             target: 250
-        }]
+        }],
+        color: '#66f'
     }],
     tooltip: {
         pointFormat: '<b>{point.y}</b> (with target at {point.target})'
@@ -79,15 +79,15 @@ Highcharts.chart('container2', {
         plotBands: [{
             from: 0,
             to: 20,
-            color: '#666'
+            color: 'rgb(128, 128, 128, 0.3)'
         }, {
             from: 20,
             to: 25,
-            color: '#999'
+            color: 'rgb(128, 128, 128, 0.2)'
         }, {
             from: 25,
             to: 100,
-            color: '#bbb'
+            color: 'rgb(128, 128, 128, 0.1)'
         }],
         labels: {
             format: '{value}%'
@@ -98,7 +98,8 @@ Highcharts.chart('container2', {
         data: [{
             y: 22,
             target: 27
-        }]
+        }],
+        color: '#F06D00'
     }],
     tooltip: {
         pointFormat: '<b>{point.y}</b> (with target at {point.target})'
@@ -117,15 +118,15 @@ Highcharts.chart('container3', {
         plotBands: [{
             from: 0,
             to: 1400,
-            color: '#666'
+            color: 'rgb(128, 128, 128, 0.3)'
         }, {
             from: 1400,
             to: 2000,
-            color: '#999'
+            color: 'rgb(128, 128, 128, 0.2)'
         }, {
             from: 2000,
             to: 9e9,
-            color: '#bbb'
+            color: 'rgb(128, 128, 128, 0.1)'
         }],
         labels: {
             format: '{value}'
@@ -136,7 +137,8 @@ Highcharts.chart('container3', {
         data: [{
             y: 1650,
             target: 2100
-        }]
+        }],
+        color: '#F06D00'
     }],
     tooltip: {
         pointFormat: '<b>{point.y}</b> (with target at {point.target})'

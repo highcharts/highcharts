@@ -57,27 +57,20 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        type: 'windbarb',
-        data: data,
-        name: 'Wind',
-        color: Highcharts.getOptions().colors[1],
-        showInLegend: false,
-        tooltip: {
-            valueSuffix: ' m/s'
-        }
-    }, {
         type: 'area',
         keys: ['y'], // wind direction is not used here
         data: data,
-        color: Highcharts.getOptions().colors[0],
         fillColor: {
             linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
             stops: [
-                [0, Highcharts.getOptions().colors[0]],
+                [0, 'var(--highcharts-color-0, #2caffe)'],
                 [
                     1,
-                    Highcharts.color(Highcharts.getOptions().colors[0])
-                        .setOpacity(0.25).get()
+                    `color-mix(
+                        in srgb,
+                        var(--highcharts-color-0, #2caffe) 25%,
+                        transparent
+                    )`
                 ]
             ]
         },
@@ -89,6 +82,14 @@ Highcharts.chart('container', {
             inactive: {
                 opacity: 1
             }
+        }
+    }, {
+        type: 'windbarb',
+        data: data,
+        name: 'Wind',
+        showInLegend: false,
+        tooltip: {
+            valueSuffix: ' m/s'
         }
     }]
 

@@ -51,12 +51,28 @@ QUnit.test('No points in series with single point (#21897)', function (assert) {
             min: 0,
             max: 80
         },
+        tooltip: {
+            formatter: function () {
+                return this.j + '';
+            }
+        },
         // Boost should render scatter with single point (#21897)
         series: [{
             type: 'scatter',
-            data: [[1, 1]]
+            keys: ['x', 'j', 'y'],
+            boostThreshold: 1,
+            data: [[0, 1, 0]]
         }]
     });
+    const series = chart.series[0];
+
+    chart.tooltip.refresh(chart.series[0].boost.getPoint(series.points[0]));
+    console.log(chart.tooltip.label.text.textStr);
+    assert.strictEqual(
+        chart.tooltip.label.text.textStr.includes('1'),
+        true,
+        'Custom series keys should work for scatter (#23087)'
+    );
 
     chart.update({
         // Boost should draw column with single point outside plot area (#22194)
