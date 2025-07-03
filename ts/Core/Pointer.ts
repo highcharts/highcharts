@@ -2165,15 +2165,6 @@ namespace Pointer {
 
         if (pushUnique(composed, 'Core.Pointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
-                /**
-                 * The Pointer that keeps track of mouse and touch
-                 * interaction.
-                 *
-                 * @memberof Highcharts.Chart
-                 * @name pointer
-                 * @type {Highcharts.Pointer}
-                 * @instance
-                 */
                 this.pointer = new Pointer(this, this.options);
             });
         }

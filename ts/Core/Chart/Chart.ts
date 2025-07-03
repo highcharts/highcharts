@@ -308,18 +308,46 @@ class Chart {
 
     /** @internal */
     public _cursor?: (CursorValue|null);
-    /** @internal */
+
+    /**
+     * All the axes in the chart.
+     *
+     * @see  Highcharts.Chart.xAxis
+     * @see  Highcharts.Chart.yAxis
+     *
+     * @name Highcharts.Chart#axes
+     * @type {Array<Highcharts.Axis>}
+     */
     public axes!: Array<AxisType>;
-    /** @internal */
+
+    /**
+     * An array of offsets in the format: `[top, right, bottom, left]`.
+     *
+     * @internal
+     */
     public axisOffset!: Array<number>;
+
     /** @internal */
     public callback?: Chart.CallbackFunction;
     /** @internal */
     public chartBackground?: SVGElement;
-    /** @internal */
+
+    /**
+     * The current pixel height of the chart.
+     *
+     * @name Highcharts.Chart#chartHeight
+     * @type {number}
+     */
     public chartHeight!: number;
-    /** @internal */
+
+    /**
+     * The current pixel width of the chart.
+     *
+     * @name Highcharts.Chart#chartWidth
+     * @type {number}
+     */
     public chartWidth!: number;
+
     /** @internal */
     public clipBox!: BBoxObject;
     /** @internal */
@@ -332,8 +360,17 @@ class Chart {
     public container!: globalThis.HTMLElement;
     /** @internal */
     public containerBox?: { height: number, width: number };
-    /** @internal */
+
+    /**
+     * The chart's credits label. The label has an `update` method that
+     * allows setting new options as per the
+     * [credits options set](https://api.highcharts.com/highcharts/credits).
+     *
+     * @name Highcharts.Chart#credits
+     * @type {Highcharts.SVGElement}
+     */
     public credits?: SVGElement;
+
     /** @internal */
     public caption?: SVGElement;
     /** @internal */
@@ -346,8 +383,17 @@ class Chart {
     public hasLoaded?: boolean;
     /** @internal */
     public hasRendered?: boolean;
-    /** @internal */
+
+    /**
+     * Index position of the chart in the {@link Highcharts#charts}
+     * property.
+     *
+     * @name Highcharts.Chart#index
+     * @type {number}
+     * @readonly
+     */
     public index!: number;
+
     /** @internal */
     public isDirtyBox?: boolean;
     /** @internal */
@@ -368,14 +414,32 @@ class Chart {
     public margin!: Array<number>;
     /** @internal */
     public marginBottom?: number;
-    /** @internal */
+
+    /**
+     * Callback function to override the default function that formats
+     * all the numbers in the chart. Returns a string with the formatted
+     * number.
+     *
+     * @name Highcharts.Chart#numberFormatter
+     * @type {Highcharts.NumberFormatterCallbackFunction}
+     */
     public numberFormatter!: NumberFormatterCallbackFunction;
+
     /** @internal */
     public oldChartHeight?: number;
     /** @internal */
     public oldChartWidth?: number;
-    /** @internal */
+
+    /**
+     * The options structure for the chart after merging
+     * {@link #defaultOptions} and {@link #userOptions}. It contains
+     * members for the sub elements like series, legend, tooltip etc.
+     *
+     * @name Highcharts.Chart#options
+     * @type {Highcharts.Options}
+     */
     public options!: Options;
+
     /** @internal */
     public plotBackground?: SVGElement;
     /** @internal */
@@ -386,30 +450,81 @@ class Chart {
     public plotBorderWidth?: number;
     /** @internal */
     public plotBox!: BBoxObject;
-    /** @internal */
+
+    /**
+     * The current height of the plot area in pixels.
+     *
+     * @name Highcharts.Chart#plotHeight
+     * @type {number}
+     */
     public plotHeight!: number;
-    /** @internal */
+
+    /**
+     * The current left position of the plot area in pixels.
+     *
+     * @name Highcharts.Chart#plotLeft
+     * @type {number}
+     */
     public plotLeft!: number;
+
     /** @internal */
     public plotSizeX?: number;
     /** @internal */
     public plotSizeY?: number;
-    /** @internal */
+
+    /**
+     * The current top position of the plot area in pixels.
+     *
+     * @name Highcharts.Chart#plotTop
+     * @type {number}
+     */
     public plotTop!: number;
-    /** @internal */
+
+    /**
+     * The current width of the plot area in pixels.
+     *
+     * @name Highcharts.Chart#plotWidth
+     * @type {number}
+     */
     public plotWidth!: number;
+
     /** @internal */
     public pointCount!: number;
-    /** @internal */
+
+    /**
+     * The Pointer that keeps track of mouse and touch
+     * interaction.
+     *
+     * @memberof Highcharts.Chart
+     * @name pointer
+     * @type {Highcharts.Pointer}
+     * @instance
+     */
     public pointer?: Pointer;
+
     /** @internal */
     public reflowTimeout?: number;
-    /** @internal */
+
+    /**
+     * The renderer instance of the chart. Each chart instance has only one
+     * associated renderer.
+     *
+     * @name Highcharts.Chart#renderer
+     * @type {Highcharts.SVGRenderer}
+     */
     public renderer!: Chart.Renderer;
+
     /** @internal */
     public renderTo!: globalThis.HTMLElement;
-    /** @internal */
+
+    /**
+     * All the current series in the chart.
+     *
+     * @name Highcharts.Chart#series
+     * @type {Array<Highcharts.Series>}
+     */
     public series!: Array<Series>;
+
     /** @internal */
     public seriesGroup?: SVGElement;
     /** @internal */
@@ -418,24 +533,90 @@ class Chart {
     public spacing!: Array<number>;
     /** @internal */
     public spacingBox!: BBoxObject;
-    /** @internal */
+
+    /**
+     * Whether the chart is in styled mode, meaning all presentational
+     * attributes are avoided.
+     *
+     * @name Highcharts.Chart#styledMode
+     * @type {boolean}
+     */
     public styledMode?: boolean;
-    /** @internal */
+
+    /**
+     * The chart subtitle. The subtitle has an `update` method that
+     * allows modifying the options directly or indirectly via
+     * `chart.update`.
+     *
+     * @name Highcharts.Chart#subtitle
+     * @type {Highcharts.SubtitleObject}
+     */
     public subtitle?: SVGElement;
+
     /** @internal */
     public symbolCounter!: number;
-    /** @internal */
+
+    /**
+     * The `Time` object associated with the chart. Since v6.0.5,
+     * time settings can be applied individually for each chart. If
+     * no individual settings apply, the `Time` object is shared by
+     * all instances.
+     *
+     * @name Highcharts.Chart#time
+     * @type {Highcharts.Time}
+     */
     public time!: Time;
-    /** @internal */
+
+    /**
+     * The chart title. The title has an `update` method that allows
+     * modifying the options directly or indirectly via
+     * `chart.update`.
+     *
+     * @sample highcharts/members/title-update/
+     *         Updating titles
+     *
+     * @name Highcharts.Chart#title
+     * @type {Highcharts.TitleObject}
+     */
     public title?: SVGElement;
+
     /** @internal */
     public titleOffset!: Array<number>;
-    /** @internal */
+
+    /**
+     * The original options given to the constructor or a chart factory
+     * like {@link Highcharts.chart} and {@link Highcharts.stockChart}.
+     * The original options are shallow copied to avoid mutation. The
+     * copy, `chart.userOptions`, may later be mutated to reflect
+     * updated options throughout the lifetime of the chart.
+     *
+     * For collections, like `series`, `xAxis` and `yAxis`, the chart
+     * user options should always be reflected by the item user option,
+     * so for example the following should always be true:
+     *
+     * `chart.xAxis[0].userOptions === chart.userOptions.xAxis[0]`
+     *
+     * @name Highcharts.Chart#userOptions
+     * @type {Highcharts.Options}
+     */
     public userOptions!: Partial<Options>;
-    /** @internal */
+
+    /**
+     * A collection of the X axes in the chart.
+     *
+     * @name Highcharts.Chart#xAxis
+     * @type {Array<Highcharts.Axis>}
+     */
     public xAxis!: Array<AxisType>;
-    /** @internal */
+
+    /**
+     * A collection of the Y axes in the chart.
+     *
+     * @name Highcharts.Chart#yAxis
+     * @type {Array<Highcharts.Axis>}
+     */
     public yAxis!: Array<AxisType>;
+
     /** @internal */
     public zooming!: ChartZoomingOptions;
     /** @internal */
@@ -451,7 +632,6 @@ class Chart {
      * Function setting zoom options after chart init and after chart update.
      * Offers support for deprecated options.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#setZoomOptions
      */
@@ -506,22 +686,6 @@ class Chart {
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
 
-            /**
-             * The original options given to the constructor or a chart factory
-             * like {@link Highcharts.chart} and {@link Highcharts.stockChart}.
-             * The original options are shallow copied to avoid mutation. The
-             * copy, `chart.userOptions`, may later be mutated to reflect
-             * updated options throughout the lifetime of the chart.
-             *
-             * For collections, like `series`, `xAxis` and `yAxis`, the chart
-             * user options should always be reflected by the item user option,
-             * so for example the following should always be true:
-             *
-             * `chart.xAxis[0].userOptions === chart.userOptions.xAxis[0]`
-             *
-             * @name Highcharts.Chart#userOptions
-             * @type {Highcharts.Options}
-             */
             this.userOptions = extend<Partial<Options>>({}, userOptions);
 
             if (!(
@@ -544,48 +708,13 @@ class Chart {
 
             this.callback = callback;
             this.isResizing = 0;
-
-            /**
-             * The options structure for the chart after merging
-             * {@link #defaultOptions} and {@link #userOptions}. It contains
-             * members for the sub elements like series, legend, tooltip etc.
-             *
-             * @name Highcharts.Chart#options
-             * @type {Highcharts.Options}
-             */
             this.options = options;
-
-            /**
-             * All the axes in the chart.
-             *
-             * @see  Highcharts.Chart.xAxis
-             * @see  Highcharts.Chart.yAxis
-             *
-             * @name Highcharts.Chart#axes
-             * @type {Array<Highcharts.Axis>}
-             */
             this.axes = [];
-
-            /**
-             * All the current series in the chart.
-             *
-             * @name Highcharts.Chart#series
-             * @type {Array<Highcharts.Series>}
-             */
             this.series = [];
 
             this.locale = options.lang.locale ??
                 (this.renderTo.closest('[lang]') as HTMLDOMElement|null)?.lang;
 
-            /**
-             * The `Time` object associated with the chart. Since v6.0.5,
-             * time settings can be applied individually for each chart. If
-             * no individual settings apply, the `Time` object is shared by
-             * all instances.
-             *
-             * @name Highcharts.Chart#time
-             * @type {Highcharts.Time}
-             */
             this.time = new Time(
                 extend(
                     options.time || {},
@@ -597,38 +726,15 @@ class Chart {
             );
             options.time = this.time.options;
 
-            /**
-             * Callback function to override the default function that formats
-             * all the numbers in the chart. Returns a string with the formatted
-             * number.
-             *
-             * @name Highcharts.Chart#numberFormatter
-             * @type {Highcharts.NumberFormatterCallbackFunction}
-             */
             this.numberFormatter = (
                 optionsChart.numberFormatter || numberFormat
             ).bind(this);
 
-            /**
-             * Whether the chart is in styled mode, meaning all presentational
-             * attributes are avoided.
-             *
-             * @name Highcharts.Chart#styledMode
-             * @type {boolean}
-             */
             this.styledMode = optionsChart.styledMode;
             this.hasCartesianSeries = optionsChart.showAxes;
 
             const chart = this;
 
-            /**
-             * Index position of the chart in the {@link Highcharts#charts}
-             * property.
-             *
-             * @name Highcharts.Chart#index
-             * @type {number}
-             * @readonly
-             */
             chart.index = charts.length; // Add the chart to the global lookup
 
             charts.push(chart);
@@ -637,23 +743,7 @@ class Chart {
             // Chart event handlers
             registerEventOptions(this, optionsChart);
 
-            /**
-             * A collection of the X axes in the chart.
-             *
-             * @name Highcharts.Chart#xAxis
-             * @type {Array<Highcharts.Axis>}
-             */
             chart.xAxis = [];
-
-            /**
-             * A collection of the Y axes in the chart.
-             *
-             * @name Highcharts.Chart#yAxis
-             * @type {Array<Highcharts.Axis>}
-             *
-             * @todo
-             * Make events official: Fire the event `afterInit`.
-             */
             chart.yAxis = [];
 
             chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
@@ -671,7 +761,6 @@ class Chart {
     /**
      * Internal function to unitialize an individual series.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#initSeries
      */
@@ -700,7 +789,6 @@ class Chart {
     /**
      * Internal function to set data for all series with enabled sorting.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#setSortedData
      */
@@ -717,7 +805,6 @@ class Chart {
      * Sort and return chart series in order depending on the number of linked
      * series.
      *
-     * @private
      * @internal
      * @function Highcharts.Series#getSeriesOrderByLinks
      */
@@ -736,7 +823,6 @@ class Chart {
      * (#248, #1123, #2456, #6112). This function is called on series and axis
      * initialization and destroy.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#orderItems
      * @param {string} coll The collection name
@@ -793,7 +879,6 @@ class Chart {
      * Get the clipping for a series. Could be called for a series to initialate
      * animating the clip or to set the final clip (only width and x).
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#getClipBox
      */
@@ -1117,9 +1202,7 @@ class Chart {
         });
 
         // Move tooltip or reset
-        if (pointer) {
-            pointer.reset(true);
-        }
+        pointer?.reset(true);
 
         // Redraw if canvas
         renderer.draw();
@@ -1156,14 +1239,10 @@ class Chart {
     public get(id: string): (Axis|Series|Point|undefined) {
         const series = this.series;
 
-        /**
-         * @private
-         * @internal
-         */
-        function itemById(item: (Axis|Series)): boolean {
+        function itemById(item: (Axis|Series|Point)): boolean {
             return (
                 (item as Series).id === id ||
-                (item.options && item.options.id === id)
+                item.options?.id === id
             );
         }
 
@@ -1176,7 +1255,7 @@ class Chart {
 
         // Search points
         for (let i = 0; !ret && i < series.length; i++) {
-            ret = find((series[i].points as any) || [], itemById);
+            ret = find(series[i].points || [], itemById);
         }
 
         return ret;
@@ -1185,7 +1264,6 @@ class Chart {
     /**
      * Create the Axis instances based on the config options.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#createAxes
      * @emits Highcharts.Chart#event:afterCreateAxes
@@ -1301,12 +1379,13 @@ class Chart {
     /**
      * Apply a title, subtitle or caption for the chart
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#applyDescription
-     * @param key {string}
+     *
+     * @param {Chart.DescriptionKey} key
      * Either title, subtitle or caption
-     * @param {Highcharts.TitleOptions|Highcharts.SubtitleOptions|Highcharts.CaptionOptions|undefined} explicitOptions
+     *
+     * @param {Chart.DescriptionOptionsType|undefined} explicitOptions
      * The options to set, will be merged with default options.
      */
     public applyDescription(
@@ -1369,26 +1448,6 @@ class Chart {
             elem.textPxLength = elem.getBBox().width;
             elem.css({ whiteSpace: options.style?.whiteSpace });
 
-            /**
-             * The chart title. The title has an `update` method that allows
-             * modifying the options directly or indirectly via
-             * `chart.update`.
-             *
-             * @sample highcharts/members/title-update/
-             *         Updating titles
-             *
-             * @name Highcharts.Chart#title
-             * @type {Highcharts.TitleObject}
-             */
-
-            /**
-             * The chart subtitle. The subtitle has an `update` method that
-             * allows modifying the options directly or indirectly via
-             * `chart.update`.
-             *
-             * @name Highcharts.Chart#subtitle
-             * @type {Highcharts.SubtitleObject}
-             */
             this[key] = elem;
         }
 
@@ -1399,7 +1458,6 @@ class Chart {
      * cache the full offset height for use in `getMargins`. The result is
      * stored in `this.titleOffset`.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#layOutTitles
      *
@@ -1559,7 +1617,6 @@ class Chart {
     /**
      * Internal function to get the available size of the container element
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#getContainerBox
      */
@@ -1595,7 +1652,6 @@ class Chart {
      * and container size. Sets {@link Chart.chartWidth} and
      * {@link Chart.chartHeight}.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#getChartSize
      */
@@ -1610,22 +1666,12 @@ class Chart {
                     !chart.renderTo.parentElement?.style.height &&
                     chart.renderTo.style.height === '100%'
                 );
-        /**
-         * The current pixel width of the chart.
-         *
-         * @name Highcharts.Chart#chartWidth
-         * @type {number}
-         */
+
         chart.chartWidth = Math.max( // #1393
             0,
             widthOption || containerBox.width || 600 // #1460
         );
-        /**
-         * The current pixel height of the chart.
-         *
-         * @name Highcharts.Chart#chartHeight
-         * @type {number}
-         */
+
         chart.chartHeight = Math.max(
             0,
             relativeLength(
@@ -1644,7 +1690,6 @@ class Chart {
      * parents, then save the original display properties, and when the true
      * size is retrieved, reset them. Used on first render and on redraws.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#temporaryDisplay
      *
@@ -1729,7 +1774,6 @@ class Chart {
      * Get the containing element, determine the size and create the inner
      * container div to hold the chart.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#afterGetContainer
      * @emits Highcharts.Chart#event:afterGetContainer
@@ -1840,13 +1884,6 @@ class Chart {
             RendererRegistry.getRendererType(optionsChart.renderer) :
             SVGRenderer;
 
-        /**
-         * The renderer instance of the chart. Each chart instance has only one
-         * associated renderer.
-         *
-         * @name Highcharts.Chart#renderer
-         * @type {Highcharts.SVGRenderer}
-         */
         chart.renderer = new Renderer(
             container,
             chartWidth,
@@ -1882,7 +1919,6 @@ class Chart {
      * Title, subtitle and legend have already been rendered at this stage, but
      * will be moved into their final positions.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#getMargins
      * @emits Highcharts.Chart#event:getMargins
@@ -1920,13 +1956,11 @@ class Chart {
     }
 
     /**
-     * @private
      * @internal
      * @function Highcharts.Chart#getAxisMargins
      */
     public getAxisMargins(): void {
         const chart = this,
-            // [top, right, bottom, left]
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
             colorAxis = chart.colorAxis,
             margin = chart.margin,
@@ -2028,7 +2062,6 @@ class Chart {
      * Toggle the event handlers necessary for auto resizing, depending on the
      * `chart.reflow` option.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#setReflow
      */
@@ -2171,7 +2204,6 @@ class Chart {
      * Set the public chart properties. This is done before and after the
      * pre-render to determine margin sizes.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#setChartSize
      * @emits Highcharts.Chart#event:afterSetChartSize
@@ -2193,39 +2225,14 @@ class Chart {
             plotWidth,
             plotHeight;
 
-        /**
-         * The current left position of the plot area in pixels.
-         *
-         * @name Highcharts.Chart#plotLeft
-         * @type {number}
-         */
         chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
-
-        /**
-         * The current top position of the plot area in pixels.
-         *
-         * @name Highcharts.Chart#plotTop
-         * @type {number}
-         */
         chart.plotTop = plotTop = Math.round(chart.plotTop);
 
-        /**
-         * The current width of the plot area in pixels.
-         *
-         * @name Highcharts.Chart#plotWidth
-         * @type {number}
-         */
         chart.plotWidth = plotWidth = Math.max(
             0,
             Math.round(chartWidth - plotLeft - (chart.marginRight ?? 0))
         );
 
-        /**
-         * The current height of the plot area in pixels.
-         *
-         * @name Highcharts.Chart#plotHeight
-         * @type {number}
-         */
         chart.plotHeight = plotHeight = Math.max(
             0,
             Math.round(chartHeight - plotTop - (chart.marginBottom ?? 0))
@@ -2277,7 +2284,6 @@ class Chart {
     /**
      * Initial margins before auto size margins are applied.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#resetMargins
      */
@@ -2315,7 +2321,7 @@ class Chart {
         marginNames.forEach(function (m: string, side: number): void {
             (chart as any)[m] = pick(chart.margin[side], chart.spacing[side]);
         });
-        chart.axisOffset = [0, 0, 0, 0]; // Top, right, bottom, left
+        chart.axisOffset = [0, 0, 0, 0];
         chart.clipOffset = [
             halfWidth,
             halfWidth,
@@ -2330,7 +2336,6 @@ class Chart {
      * Internal function to draw or redraw the borders and backgrounds for chart
      * and plot area.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#drawChartBox
      * @emits Highcharts.Chart#event:afterDrawChartBox
@@ -2485,7 +2490,6 @@ class Chart {
      * options and series. This mainly applies to the chart.inverted property,
      * and in extensions to the chart.angular and chart.polar properties.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#propFromSeries
      */
@@ -2539,7 +2543,6 @@ class Chart {
      * `linkedTo` option. This is done from `Chart.render`, and after
      * `Chart.addSeries` and `Series.remove`.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#linkSeries
      * @emits Highcharts.Chart#event:afterLinkSeries
@@ -2600,7 +2603,6 @@ class Chart {
     /**
      * Render series for the chart.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#renderSeries
      */
@@ -2614,7 +2616,6 @@ class Chart {
     /**
      * Render all graphics for the chart. Runs internally on initialization.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#render
      */
@@ -2783,14 +2784,6 @@ class Chart {
             );
         if (creds.enabled && !this.credits) {
 
-            /**
-             * The chart's credits label. The label has an `update` method that
-             * allows setting new options as per the
-             * [credits options set](https://api.highcharts.com/highcharts/credits).
-             *
-             * @name Highcharts.Chart#credits
-             * @type {Highcharts.SVGElement}
-             */
             this.credits = this.renderer.text(
                 creds.text + (this.mapCredits || ''),
                 0,
@@ -2911,7 +2904,6 @@ class Chart {
     /**
      * Prepare for first rendering after all data are loaded.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#firstRender
      * @emits Highcharts.Chart#event:beforeRender
@@ -2970,7 +2962,6 @@ class Chart {
      * in the chart. Runs the callbacks and triggers the `load` and `render`
      * events.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#onload
      * @emits Highcharts.Chart#event:load
@@ -3006,7 +2997,7 @@ class Chart {
 
     /**
      * Emit console warning if the a11y module is not loaded.
-     * @private
+     *
      * @internal
      */
     public warnIfA11yModuleNotLoaded(): void {
@@ -3188,7 +3179,6 @@ class Chart {
     /**
      * Factory for creating different axis types.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#createAxis
      *
@@ -3725,10 +3715,6 @@ class Chart {
                     'plotBox'
             );
 
-        /**
-         * @private
-         * @internal
-         */
         function zoomOut(): void {
             chart.zoomOut();
         }
@@ -3776,7 +3762,6 @@ class Chart {
      * called on mouse move, and the distance to pan is computed from chartX
      * compared to the first chartX position in the dragging operation.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#pan
      * @param {Highcharts.PointerEventObject} event
@@ -3838,7 +3823,6 @@ class Chart {
      * - In a mousewheel zoom, the `to` rectangle is a 10x10 px square,
      *   while the `to` rectangle reflects the scale around that.
      *
-     * @private
      * @internal
      * @function Highcharts.Chart#transform
      */
@@ -4149,7 +4133,6 @@ extend(Chart.prototype, {
      * Note: We need to define these references after initializers are bound to
      * chart's prototype.
      *
-     * @private
      * @internal
      */
     collectionsWithInit: {
@@ -4162,7 +4145,7 @@ extend(Chart.prototype, {
     /**
      * These collections (arrays) implement update() methods with support for
      * one-to-one option.
-     * @private
+     *
      * @internal
      */
     collectionsWithUpdate: [
@@ -4174,7 +4157,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause isDirtyBox to be set to true when updating. Can be
      * extended from plugins.
-     * @private
+     *
      * @internal
      */
     propsRequireDirtyBox: [
@@ -4193,7 +4176,7 @@ extend(Chart.prototype, {
     /**
      * These properties require a full reflow of chart elements, best
      * implemented through running `Chart.setSize` internally (#8190).
-     * @private
+     *
      * @internal
      */
     propsRequireReflow: [
@@ -4212,7 +4195,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause all series to be updated when updating. Can be
      * extended from plugins.
-     * @private
+     *
      * @internal
      */
     propsRequireUpdateSeries: [
@@ -4235,19 +4218,16 @@ extend(Chart.prototype, {
 
 namespace Chart {
 
-    /** @internal */
     export interface AfterUpdateEventObject {
         animation: (boolean|Partial<AnimationOptions>);
         options: Options;
         redraw: boolean;
     }
 
-    /** @internal */
     export interface CallbackFunction {
         (this: Chart, chart: Chart): void;
     }
 
-    /** @internal */
     export interface CaptionOptions {
         align?: AlignValue;
         floating?: boolean;
@@ -4262,7 +4242,6 @@ namespace Chart {
         zIndex?: number;
     }
 
-    /** @internal */
     export interface ChartTransformParams {
         axes?: Array<Axis>;
         event?: PointerEvent;
@@ -4274,14 +4253,12 @@ namespace Chart {
         hasZoomed?: boolean;
     }
 
-    /** @internal */
     export interface CreateAxisOptionsObject {
         animation: (undefined|boolean|Partial<AnimationOptions>);
         axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxis.Options>);
         redraw: (undefined|boolean);
     }
 
-    /** @internal */
     export interface CreditsOptions {
         enabled?: boolean;
         href?: string;
@@ -4292,15 +4269,12 @@ namespace Chart {
         text?: string;
     }
 
-    /** @internal */
     export type DescriptionOptionsType = (
         TitleOptions|SubtitleOptions|CaptionOptions
     );
 
-    /** @internal */
     export type DescriptionKey = 'title'|'subtitle'|'caption';
 
-    /** @internal */
     export interface IsInsideOptionsObject {
         axis?: Axis;
         ignoreX?: boolean;
@@ -4311,25 +4285,21 @@ namespace Chart {
         visiblePlotOnly?: boolean;
     }
 
-    /** @internal */
     export interface LabelCollectorFunction {
         (): (Array<(SVGElement|undefined)>|undefined);
     }
 
-    /** @internal */
     export interface LayoutTitleEventObject {
         alignTo: BBoxObject;
         key: Chart.DescriptionKey;
         textPxLength: number;
     }
 
-    /** @internal */
     export interface Renderer extends SVGRenderer {
         plotBox: BBoxObject;
         spacingBox: BBoxObject;
     }
 
-    /** @internal */
     export interface SubtitleOptions {
         align?: AlignValue;
         floating?: boolean;
@@ -4343,7 +4313,6 @@ namespace Chart {
         zIndex?: number;
     }
 
-    /** @internal */
     export interface TitleOptions {
         align?: AlignValue;
         floating?: boolean;
