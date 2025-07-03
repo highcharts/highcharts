@@ -306,72 +306,139 @@ class Chart {
      *
      * */
 
+    /** @internal */
     public _cursor?: (CursorValue|null);
+    /** @internal */
     public axes!: Array<AxisType>;
+    /** @internal */
     public axisOffset!: Array<number>;
+    /** @internal */
     public callback?: Chart.CallbackFunction;
+    /** @internal */
     public chartBackground?: SVGElement;
+    /** @internal */
     public chartHeight!: number;
+    /** @internal */
     public chartWidth!: number;
+    /** @internal */
     public clipBox!: BBoxObject;
+    /** @internal */
     public clipOffset?: [number, number, number, number];
+    /** @internal */
     public clipRect?: SVGElement;
+    /** @internal */
     public colorCounter!: number;
+    /** @internal */
     public container!: globalThis.HTMLElement;
+    /** @internal */
     public containerBox?: { height: number, width: number };
+    /** @internal */
     public credits?: SVGElement;
+    /** @internal */
     public caption?: SVGElement;
+    /** @internal */
     public dataLabelsGroup?: SVGElement;
+    /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
+    /** @internal */
     public hasCartesianSeries?: boolean;
+    /** @internal */
     public hasLoaded?: boolean;
+    /** @internal */
     public hasRendered?: boolean;
+    /** @internal */
     public index!: number;
+    /** @internal */
     public isDirtyBox?: boolean;
+    /** @internal */
     public isDirtyLegend?: boolean;
+    /** @internal */
     public isResizing!: number;
+    /** @internal */
     public labelCollectors!: Array<Chart.LabelCollectorFunction>;
+    /** @internal */
     public loadingDiv?: HTMLDOMElement;
+    /** @internal */
     public loadingShown?: boolean;
+    /** @internal */
     public loadingSpan?: HTMLDOMElement;
+    /** @internal */
     public locale?: string|Array<string>;
+    /** @internal */
     public margin!: Array<number>;
+    /** @internal */
     public marginBottom?: number;
+    /** @internal */
     public numberFormatter!: NumberFormatterCallbackFunction;
+    /** @internal */
     public oldChartHeight?: number;
+    /** @internal */
     public oldChartWidth?: number;
+    /** @internal */
     public options!: Options;
+    /** @internal */
     public plotBackground?: SVGElement;
+    /** @internal */
     public plotBGImage?: SVGElement;
+    /** @internal */
     public plotBorder?: SVGElement;
+    /** @internal */
     public plotBorderWidth?: number;
+    /** @internal */
     public plotBox!: BBoxObject;
+    /** @internal */
     public plotHeight!: number;
+    /** @internal */
     public plotLeft!: number;
+    /** @internal */
     public plotSizeX?: number;
+    /** @internal */
     public plotSizeY?: number;
+    /** @internal */
     public plotTop!: number;
+    /** @internal */
     public plotWidth!: number;
+    /** @internal */
     public pointCount!: number;
+    /** @internal */
     public pointer?: Pointer;
+    /** @internal */
     public reflowTimeout?: number;
+    /** @internal */
     public renderer!: Chart.Renderer;
+    /** @internal */
     public renderTo!: globalThis.HTMLElement;
+    /** @internal */
     public series!: Array<Series>;
+    /** @internal */
     public seriesGroup?: SVGElement;
+    /** @internal */
     public sharedClips: Record<string, (SVGElement|undefined)> = {};
+    /** @internal */
     public spacing!: Array<number>;
+    /** @internal */
     public spacingBox!: BBoxObject;
+    /** @internal */
     public styledMode?: boolean;
+    /** @internal */
     public subtitle?: SVGElement;
+    /** @internal */
     public symbolCounter!: number;
+    /** @internal */
     public time!: Time;
+    /** @internal */
     public title?: SVGElement;
+    /** @internal */
     public titleOffset!: Array<number>;
+    /** @internal */
     public userOptions!: Partial<Options>;
+    /** @internal */
     public xAxis!: Array<AxisType>;
+    /** @internal */
     public yAxis!: Array<AxisType>;
+    /** @internal */
     public zooming!: ChartZoomingOptions;
+    /** @internal */
     public zoomClipRect?: SVGElement;
 
     /* *
@@ -385,6 +452,7 @@ class Chart {
      * Offers support for deprecated options.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#setZoomOptions
      */
     public setZoomOptions(): void {
@@ -604,6 +672,7 @@ class Chart {
      * Internal function to unitialize an individual series.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#initSeries
      */
     public initSeries(options: SeriesOptions): Series {
@@ -632,6 +701,7 @@ class Chart {
      * Internal function to set data for all series with enabled sorting.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#setSortedData
      */
     public setSortedData(): void {
@@ -648,6 +718,7 @@ class Chart {
      * series.
      *
      * @private
+     * @internal
      * @function Highcharts.Series#getSeriesOrderByLinks
      */
     public getSeriesOrderByLinks(): Array<Series> {
@@ -666,6 +737,7 @@ class Chart {
      * initialization and destroy.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#orderItems
      * @param {string} coll The collection name
      * @param {number} [fromIndex=0]
@@ -722,6 +794,7 @@ class Chart {
      * animating the clip or to set the final clip (only width and x).
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#getClipBox
      */
     public getClipBox(series?: Series, chartCoords?: boolean): BBoxObject {
@@ -1085,6 +1158,7 @@ class Chart {
 
         /**
          * @private
+         * @internal
          */
         function itemById(item: (Axis|Series)): boolean {
             return (
@@ -1112,6 +1186,7 @@ class Chart {
      * Create the Axis instances based on the config options.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#createAxes
      * @emits Highcharts.Chart#event:afterCreateAxes
      * @emits Highcharts.Chart#event:createAxes
@@ -1227,6 +1302,7 @@ class Chart {
      * Apply a title, subtitle or caption for the chart
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#applyDescription
      * @param key {string}
      * Either title, subtitle or caption
@@ -1324,6 +1400,7 @@ class Chart {
      * stored in `this.titleOffset`.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#layOutTitles
      *
      * @param {boolean} [redraw=true]
@@ -1483,6 +1560,7 @@ class Chart {
      * Internal function to get the available size of the container element
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#getContainerBox
      */
     public getContainerBox(): { width: number, height: number } {
@@ -1518,6 +1596,7 @@ class Chart {
      * {@link Chart.chartHeight}.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#getChartSize
      */
     public getChartSize(): void {
@@ -1566,6 +1645,7 @@ class Chart {
      * size is retrieved, reset them. Used on first render and on redraws.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#temporaryDisplay
      *
      * @param {boolean} [revert]
@@ -1650,6 +1730,7 @@ class Chart {
      * container div to hold the chart.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#afterGetContainer
      * @emits Highcharts.Chart#event:afterGetContainer
      */
@@ -1802,6 +1883,7 @@ class Chart {
      * will be moved into their final positions.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#getMargins
      * @emits Highcharts.Chart#event:getMargins
      */
@@ -1839,6 +1921,7 @@ class Chart {
 
     /**
      * @private
+     * @internal
      * @function Highcharts.Chart#getAxisMargins
      */
     public getAxisMargins(): void {
@@ -1946,6 +2029,7 @@ class Chart {
      * `chart.reflow` option.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#setReflow
      */
     public setReflow(): void {
@@ -2088,6 +2172,7 @@ class Chart {
      * pre-render to determine margin sizes.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#setChartSize
      * @emits Highcharts.Chart#event:afterSetChartSize
      */
@@ -2193,6 +2278,7 @@ class Chart {
      * Initial margins before auto size margins are applied.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#resetMargins
      */
     public resetMargins(): void {
@@ -2245,6 +2331,7 @@ class Chart {
      * and plot area.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#drawChartBox
      * @emits Highcharts.Chart#event:afterDrawChartBox
      */
@@ -2399,6 +2486,7 @@ class Chart {
      * and in extensions to the chart.angular and chart.polar properties.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#propFromSeries
      */
     public propFromSeries(): void {
@@ -2452,6 +2540,7 @@ class Chart {
      * `Chart.addSeries` and `Series.remove`.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#linkSeries
      * @emits Highcharts.Chart#event:afterLinkSeries
      */
@@ -2512,6 +2601,7 @@ class Chart {
      * Render series for the chart.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#renderSeries
      */
     public renderSeries(): void {
@@ -2525,6 +2615,7 @@ class Chart {
      * Render all graphics for the chart. Runs internally on initialization.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#render
      */
     public render(): void {
@@ -2821,6 +2912,7 @@ class Chart {
      * Prepare for first rendering after all data are loaded.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#firstRender
      * @emits Highcharts.Chart#event:beforeRender
      */
@@ -2879,6 +2971,7 @@ class Chart {
      * events.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#onload
      * @emits Highcharts.Chart#event:load
      * @emits Highcharts.Chart#event:render
@@ -2914,6 +3007,7 @@ class Chart {
     /**
      * Emit console warning if the a11y module is not loaded.
      * @private
+     * @internal
      */
     public warnIfA11yModuleNotLoaded(): void {
         const { options, title } = this;
@@ -3095,6 +3189,7 @@ class Chart {
      * Factory for creating different axis types.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#createAxis
      *
      * @param {string} coll
@@ -3632,6 +3727,7 @@ class Chart {
 
         /**
          * @private
+         * @internal
          */
         function zoomOut(): void {
             chart.zoomOut();
@@ -3681,6 +3777,7 @@ class Chart {
      * compared to the first chartX position in the dragging operation.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#pan
      * @param {Highcharts.PointerEventObject} event
      * @param {string} panning
@@ -3742,6 +3839,7 @@ class Chart {
      *   while the `to` rectangle reflects the scale around that.
      *
      * @private
+     * @internal
      * @function Highcharts.Chart#transform
      */
     public transform(params: Chart.ChartTransformParams): boolean {
@@ -4052,6 +4150,7 @@ extend(Chart.prototype, {
      * chart's prototype.
      *
      * @private
+     * @internal
      */
     collectionsWithInit: {
         // CollectionName: [ initializingMethod, [extraArguments] ]
@@ -4064,6 +4163,7 @@ extend(Chart.prototype, {
      * These collections (arrays) implement update() methods with support for
      * one-to-one option.
      * @private
+     * @internal
      */
     collectionsWithUpdate: [
         'xAxis',
@@ -4075,6 +4175,7 @@ extend(Chart.prototype, {
      * These properties cause isDirtyBox to be set to true when updating. Can be
      * extended from plugins.
      * @private
+     * @internal
      */
     propsRequireDirtyBox: [
         'backgroundColor',
@@ -4093,6 +4194,7 @@ extend(Chart.prototype, {
      * These properties require a full reflow of chart elements, best
      * implemented through running `Chart.setSize` internally (#8190).
      * @private
+     * @internal
      */
     propsRequireReflow: [
         'margin',
@@ -4111,6 +4213,7 @@ extend(Chart.prototype, {
      * These properties cause all series to be updated when updating. Can be
      * extended from plugins.
      * @private
+     * @internal
      */
     propsRequireUpdateSeries: [
         'chart.inverted',
@@ -4132,16 +4235,19 @@ extend(Chart.prototype, {
 
 namespace Chart {
 
+    /** @internal */
     export interface AfterUpdateEventObject {
         animation: (boolean|Partial<AnimationOptions>);
         options: Options;
         redraw: boolean;
     }
 
+    /** @internal */
     export interface CallbackFunction {
         (this: Chart, chart: Chart): void;
     }
 
+    /** @internal */
     export interface CaptionOptions {
         align?: AlignValue;
         floating?: boolean;
@@ -4156,6 +4262,7 @@ namespace Chart {
         zIndex?: number;
     }
 
+    /** @internal */
     export interface ChartTransformParams {
         axes?: Array<Axis>;
         event?: PointerEvent;
@@ -4167,12 +4274,14 @@ namespace Chart {
         hasZoomed?: boolean;
     }
 
+    /** @internal */
     export interface CreateAxisOptionsObject {
         animation: (undefined|boolean|Partial<AnimationOptions>);
         axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxis.Options>);
         redraw: (undefined|boolean);
     }
 
+    /** @internal */
     export interface CreditsOptions {
         enabled?: boolean;
         href?: string;
@@ -4183,12 +4292,15 @@ namespace Chart {
         text?: string;
     }
 
+    /** @internal */
     export type DescriptionOptionsType = (
         TitleOptions|SubtitleOptions|CaptionOptions
     );
 
+    /** @internal */
     export type DescriptionKey = 'title'|'subtitle'|'caption';
 
+    /** @internal */
     export interface IsInsideOptionsObject {
         axis?: Axis;
         ignoreX?: boolean;
@@ -4199,20 +4311,25 @@ namespace Chart {
         visiblePlotOnly?: boolean;
     }
 
+    /** @internal */
     export interface LabelCollectorFunction {
         (): (Array<(SVGElement|undefined)>|undefined);
     }
 
+    /** @internal */
     export interface LayoutTitleEventObject {
         alignTo: BBoxObject;
         key: Chart.DescriptionKey;
         textPxLength: number;
     }
+
+    /** @internal */
     export interface Renderer extends SVGRenderer {
         plotBox: BBoxObject;
         spacingBox: BBoxObject;
     }
 
+    /** @internal */
     export interface SubtitleOptions {
         align?: AlignValue;
         floating?: boolean;
@@ -4226,6 +4343,7 @@ namespace Chart {
         zIndex?: number;
     }
 
+    /** @internal */
     export interface TitleOptions {
         align?: AlignValue;
         floating?: boolean;
