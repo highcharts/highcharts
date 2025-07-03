@@ -327,9 +327,18 @@ class Table {
         if (focusedRowId !== void 0 && vp.focusCursor) {
             const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
             if (newRowIndex !== void 0) {
-                vp.rows[
-                    newRowIndex - vp.rows[0].index
-                ]?.cells[vp.focusCursor[1]].htmlElement.focus();
+                // Scroll to the focused row.
+                vp.scrollToRow(newRowIndex);
+
+                // Focus the cell that was focused before the update.
+                setTimeout((): void => {
+                    if (!defined(vp.focusCursor?.[1])) {
+                        return;
+                    }
+                    vp.rows[
+                        newRowIndex - vp.rows[0].index
+                    ]?.cells[vp.focusCursor[1]].htmlElement.focus();
+                });
             }
         }
     }
