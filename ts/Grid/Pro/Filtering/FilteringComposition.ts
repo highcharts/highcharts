@@ -26,6 +26,7 @@ import type HeaderCell from '../../Core/Table/Header/HeaderCell';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 import GU from '../../Core/GridUtils.js';
+import ColumnFiltering from './ColumnFiltering.js';
 
 const {
     addEvent,
@@ -73,7 +74,6 @@ namespace FilteringComposition {
      * Reference to columns's header.
      */
     function renderFilteringInput(this: HeaderCell): void {
-        const grid = this.row.viewport.grid;
         const column = this.column;
 
         if (
@@ -84,6 +84,8 @@ namespace FilteringComposition {
             return;
         }
 
+        column.filtering = new ColumnFiltering(column);
+
         const inputWrapper = makeHTMLElement('div', {
             className: FilteringComposition.classNames.colFilterWrapper
         }, this.htmlElement);
@@ -93,7 +95,7 @@ namespace FilteringComposition {
             this.filterInput.offsetHeight + this.filterInput.offsetTop + 'px';
 
         addEvent(this.filterInput, 'keyup', (e): void => {
-            grid.filterRows(e.target.value, column.id);
+            void column.filtering?.filterContaining(e.target.value);
         });
     }
 }
@@ -107,6 +109,15 @@ namespace FilteringComposition {
 declare module '../../Core/Table/Header/HeaderCell' {
     export default interface HeaderCell {
         filterInput: HTMLInputElement
+    }
+}
+
+declare module '../../Core/Table/Column' {
+    export default interface Column {
+        /**
+         * The filtering controller for the column.
+         */
+        filtering?: ColumnFiltering;
     }
 }
 

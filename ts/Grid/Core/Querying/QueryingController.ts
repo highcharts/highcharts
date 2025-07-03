@@ -143,7 +143,7 @@ class QueryingController {
         }
 
         this.sorting.shouldBeUpdated = false;
-        /// this.filtering.shouldBeUpdated = false;
+        this.filtering.shouldBeUpdated = false;
     }
 }
 

@@ -15,15 +15,19 @@
 
 'use strict';
 
+
 /* *
  *
  *  Imports
  *
  * */
 
-import type FilterModifierOptions from '../../../Data/Modifiers/FilterModifierOptions.js';
+import type {
+    StringCondition
+} from '../../../Data/Modifiers/FilterModifierOptions.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
+
 
 /* *
  *
@@ -41,22 +45,34 @@ class FilteringController {
     *  Properties
     *
     * */
-
     /**
-     * The current filtering options.
+     * The simple conditions that are used in simple filtering.
      */
-    public currentFiltering?: Partial<FilterModifierOptions>;
+    private simpleConditions: StringCondition[];
 
-    /**
-     * The modifier that is applied to the data table.
-     */
-    public modifier?: FilterModifier;
+    private _modifier: FilterModifier;
 
     /**
      * The flag that indicates if the data should be updated because of the
      * change in the filtering options.
      */
     public shouldBeUpdated: boolean = false;
+
+    /* *
+    *
+    *  Properties
+    *
+    * */
+
+    constructor() {
+        this.simpleConditions = [];
+        this._modifier = new FilterModifier({
+            condition: {
+                operator: 'and',
+                conditions: this.simpleConditions
+            }
+        });
+    }
 
 
     /* *
@@ -65,44 +81,64 @@ class FilteringController {
     *
     * */
 
+    public get modifier(): FilterModifier | undefined {
+        if (this.simpleConditions.length === 0) {
+            return;
+        }
+
+        return this._modifier;
+    }
+
     /**
-     * Sets the filtering state.
+     * Adds a new simple string `contains` condition to the filtering options.
+     * If the condition already exists, it will be updated. If the `contains`
+     * parameter is not provided or empty string, the condition will be removed.
+     *
+     * @param columnId
+     * The column ID to filter in.
      *
      * @param contains
      * The string to filter by.
-     *
-     * @param columnId
-     * The column ID to filter in. If not provided, the filtering will be
-     * applied to all columns.
      */
-    public setFiltering(contains: string, columnId?: string): void {
-        if (
-            this.currentFiltering?.contains !== contains ||
-            this.currentFiltering?.filterIn !== columnId
-        ) {
-            this.shouldBeUpdated = true;
+    public addSimpleCondition(columnId: string, contains?: string): void {
+        const conditions = this.simpleConditions;
+        const condition: StringCondition = {
+            columnName: columnId,
+            operator: 'contains',
+            value: contains || ''
+        };
+
+        const index = conditions.findIndex(
+            (c): boolean => c.columnName === columnId
+        );
+
+        if (index > -1) {
+            if (contains) {
+                // If the condition already exists, update it.
+                conditions[index] = condition;
+            } else {
+                // If the condition is empty, remove it.
+                conditions.splice(index, 1);
+            }
+        } else if (contains) {
+            // If the condition does not exist, add it.
+            conditions.push(condition);
         }
 
-        this.modifier = new FilterModifier({
-            contains,
-            filterIn: columnId
-        });
+        this.shouldBeUpdated = true;
     }
 
+    /**
+     * Clears all the meaningful filtering options.
+     */
     public clearFiltering(): void {
-        delete this.modifier;
+        if (this.simpleConditions.length < 1) {
+            return;
+        }
+
+        this.simpleConditions.length = 0;
+        this.shouldBeUpdated = true;
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace FilteringController {
-
 }
 
 
