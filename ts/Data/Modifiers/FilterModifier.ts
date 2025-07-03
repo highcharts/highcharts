@@ -56,7 +56,7 @@ class FilterModifier extends DataModifier {
      * */
 
     /**
-     * Default options for the range modifier.
+     * Default options for the filter modifier.
      */
     public static readonly defaultOptions: FilterModifierOptions = {
         type: 'Filter'
@@ -142,10 +142,10 @@ class FilterModifier extends DataModifier {
      * */
 
     /**
-     * Constructs an instance of the range modifier.
+     * Constructs an instance of the filter modifier.
      *
      * @param {Partial<FilterModifier.Options>} [options]
-     * Options to configure the range modifier.
+     * Options to configure the filter modifier.
      */
     public constructor(
         options?: Partial<FilterModifierOptions>
@@ -163,7 +163,7 @@ class FilterModifier extends DataModifier {
      * */
 
     /**
-     * Options of the range modifier.
+     * Options of the filter modifier.
      */
     public readonly options: FilterModifierOptions;
 
