@@ -1,83 +1,3 @@
-const dataPrev = {
-    2024: [
-        ['kr', 6],
-        ['jp', 27],
-        ['au', 17],
-        ['de', 10],
-        ['ru', 20],
-        ['cn', 38],
-        ['gb', 22],
-        ['us', 39],
-        ['fr', 10]
-    ],
-    2020: [
-        ['kr', 9],
-        ['jp', 12],
-        ['au', 8],
-        ['de', 17],
-        ['ru', 19],
-        ['cn', 26],
-        ['gb', 27],
-        ['us', 46],
-        ['fr', 10]
-    ],
-    2016: [
-        ['kr', 13],
-        ['jp', 7],
-        ['au', 8],
-        ['de', 11],
-        ['ru', 20],
-        ['cn', 38],
-        ['gb', 29],
-        ['us', 47],
-        ['fr', 11]
-    ],
-    2012: [
-        ['kr', 13],
-        ['jp', 9],
-        ['au', 14],
-        ['de', 16],
-        ['ru', 24],
-        ['cn', 48],
-        ['gb', 19],
-        ['us', 36],
-        ['fr',  7]
-    ],
-    2008: [
-        ['kr', 9],
-        ['jp', 17],
-        ['au', 18],
-        ['de', 13],
-        ['ru', 29],
-        ['cn', 33],
-        ['gb', 9],
-        ['us', 37],
-        ['fr', 11]
-    ],
-    2004: [
-        ['kr', 8],
-        ['jp', 5],
-        ['au', 16],
-        ['de', 13],
-        ['ru', 32],
-        ['cn', 28],
-        ['gb', 11],
-        ['us', 37],
-        ['fr', 13]
-    ],
-    2000: [
-        ['kr', 7],
-        ['jp', 3],
-        ['au', 9],
-        ['de', 20],
-        ['ru', 26],
-        ['cn', 16],
-        ['gb', 1],
-        ['us', 44],
-        ['fr', 15]
-    ]
-};
-
 const data = {
     2024: [
         ['kr', 13],
@@ -155,6 +75,17 @@ const data = {
         ['gb', 11],
         ['us', 37],
         ['fr', 13]
+    ],
+    1996: [
+        ['kr', 7],
+        ['jp', 3],
+        ['au', 9],
+        ['de', 20],
+        ['ru', 26],
+        ['cn', 16],
+        ['gb', 1],
+        ['us', 44],
+        ['fr', 15]
     ]
 };
 
@@ -271,7 +202,7 @@ const chart = Highcharts.chart('container', {
         color: 'rgba(158, 159, 163, 0.5)',
         pointPlacement: -0.2,
         linkedTo: 'main',
-        data: dataPrev[2024].slice(),
+        data: data[2020].slice(),
         name: '2016'
     }, {
         name: '2020',
@@ -345,7 +276,7 @@ locations.forEach(location => {
             },
             series: [{
                 name: location.year - 4,
-                data: dataPrev[location.year].slice()
+                data: data[location.year - 4].slice()
             }, {
                 name: location.year,
                 data: getData(data[location.year]).slice()
