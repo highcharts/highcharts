@@ -75,7 +75,7 @@ export interface StringCondition {
 
     /**
      * Whether the comparison should ignore case.
-     * @default false
+     * @default true
      */
     ignoreCase?: boolean;
 

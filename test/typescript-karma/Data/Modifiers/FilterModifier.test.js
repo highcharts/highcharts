@@ -2,7 +2,7 @@ import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import FilterModifier from '/base/code/es-modules/Data/Modifiers/FilterModifier.js';
 
 QUnit.test('FilterModifier queries', async function (assert) {
-    // Case 1: no condition leaves table intact
+    // No condition leaves table intact
     {
         const table = new DataTable({
             columns: {
@@ -19,7 +19,7 @@ QUnit.test('FilterModifier queries', async function (assert) {
         );
     }
 
-    // Case 2: numeric comparisons (ne, lt)
+    // Numeric comparisons (ne, lt)
     {
         const base = [1, 2, 3, 4, 5];
         let table, modifier;
@@ -61,7 +61,7 @@ QUnit.test('FilterModifier queries', async function (assert) {
         );
     }
 
-    // Case 3: string comparison (contains with ignoreCase)
+    // String comparison (contains with ignoreCase: false)
     {
         const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
         const table = new DataTable({ columns: { name: data } });
@@ -70,18 +70,37 @@ QUnit.test('FilterModifier queries', async function (assert) {
                 operator: 'contains',
                 columnName: 'name',
                 value: 'ap',
-                ignoreCase: true
+                ignoreCase: false
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: ['apricot'] },
+            'contains "ap" (ignoreCase false) matches only apricot.'
+        );
+    }
+
+    // String comparison (contains with default ignoreCase - true)
+    {
+        const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition:{
+                operator: 'contains',
+                columnName: 'name',
+                value: 'ap'
             }
         });
         await modifier.modify(table);
         assert.deepEqual(
             table.modified.getColumns(),
             { name: ['Apple', 'apricot'] },
-            'contains "ap" (ignoreCase) matches Apple & apricot.'
+            'contains "ap" (ignoreCase true) matches Apple & apricot.'
         );
     }
 
-    // Case 4: nested logical and not conditions
+    // Nested logical and not conditions
     {
         const rows = {
             x: [-5, -1, 0, 5],
@@ -144,7 +163,7 @@ QUnit.test('FilterModifier queries', async function (assert) {
         );
     }
 
-    // Case 5: complex mix of and/or
+    // Complex mix of and/or
     {
         const rows = {
             age: [17, 18, 30, 45],

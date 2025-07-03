@@ -123,16 +123,14 @@ class FilterModifier extends DataModifier {
         const { ignoreCase } = condition;
         const str = (val: DataTable.CellType): string => {
             const s = '' + val;
-            return ignoreCase ? s.toLowerCase() : s;
+            return (ignoreCase ?? true) ? s.toLowerCase() : s;
         };
 
         switch (op) {
             case 'contains':
                 return (row): boolean => str(row[col]).includes(str(value));
-            case 'startsWith':
-                return (row): boolean => str(row[col]).startsWith(str(value));
-            case 'endsWith':
-                return (row): boolean => str(row[col]).endsWith(str(value));
+            default:
+                return (row): boolean => str(row[col])[op](str(value));
         }
     }
 
