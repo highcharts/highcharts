@@ -107,7 +107,7 @@ class TableRow extends Row {
     /**
      * Loads the row data from the data table.
      */
-    private loadData(): void {
+    public loadData(): void {
         const data = this.viewport.dataTable.getRowObject(this.index);
         if (!data) {
             return;

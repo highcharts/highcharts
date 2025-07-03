@@ -237,6 +237,11 @@ class TableCell extends Cell {
         value: DataTable.CellType = this.column.data?.[this.row.index],
         updateTable: boolean = false
     ): Promise<void> {
+        if (this.value === value) {
+            // If the value is the same, do not update the cell.
+            return;
+        }
+
         this.value = value;
 
         const vp = this.column.viewport;

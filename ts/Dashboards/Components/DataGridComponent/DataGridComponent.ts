@@ -199,10 +199,37 @@ class DataGridComponent extends Component {
         this.grid?.viewport?.reflow();
     }
 
-    public override onTableChanged(): void {
-        this.grid?.update({
-            dataTable: this.getFirstConnector()?.table?.modified
-        });
+    public override async onTableChanged(): Promise<void> {
+        const { grid } = this;
+        if (!grid || !grid.viewport || !grid.presentationTable) {
+            return;
+        }
+
+        const oldColumnNames = grid.viewport.dataTable.getColumnNames();
+        const newColumnNames = grid.presentationTable.getColumnNames();
+        const dataTable = this.getFirstConnector()?.table?.modified;
+
+        // If the number of columns has changed, re-render the whole grid.
+        if (oldColumnNames.length !== newColumnNames.length) {
+            grid.update({ dataTable });
+            return;
+        }
+
+        // If the column order has changed, re-render the whole grid.
+        for (let i = 0, iEnd = oldColumnNames.length; i < iEnd; ++i) {
+            if (oldColumnNames[i] !== newColumnNames[i]) {
+                grid.update({ dataTable });
+                return;
+            }
+        }
+
+        // If the columns are the same, we can update the grid more efficiently.
+
+        if (!grid.querying?.willNotModify()) {
+            await grid.querying?.proceed(true);
+        }
+
+        grid.viewport.loadPresentationData();
     }
 
     public getEditableOptions(): Options {

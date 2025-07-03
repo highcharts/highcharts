@@ -23,6 +23,7 @@
  * */
 
 import type TableRow from './Body/TableRow';
+import type TableCell from './Body/TableCell';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
@@ -295,7 +296,8 @@ class Table {
     }
 
     /**
-     * Loads the modified data from the data table and renders the rows.
+     * Loads the modified data from the data table and renders the rows. It
+     * assumes that the columns are already loaded and rendered and not changed.
      */
     public loadPresentationData(): void {
         this.dataTable = this.grid.presentationTable as DataTable;
@@ -304,8 +306,23 @@ class Table {
             column.loadData();
         }
 
-        this.updateVirtualization();
-        this.rowsVirtualizer.rerender();
+        const oldRowsCount = (this.rows[this.rows.length - 1]?.index || -1) + 1;
+        const newRowsCount = this.dataTable.rowCount;
+
+        if (oldRowsCount !== newRowsCount) {
+            // If the number of rows has changed, re-render the rows. It needs
+            // to be optimized in the future.
+            this.updateVirtualization();
+            this.rowsVirtualizer.rerender();
+            return;
+        }
+
+        for (const row of this.rows) {
+            for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
+                const cell = row.cells[i] as TableCell;
+                void cell.setValue();
+            }
+        }
     }
 
     /**
