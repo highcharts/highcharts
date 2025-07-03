@@ -7,7 +7,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Sophie Bremer
  *  - Dawid Dragula
  *
  * */
@@ -24,7 +23,11 @@
 
 
 import type DataEvent from '../DataEvent';
-import type { FilterModifierOptions } from './FilterModifierOptions';
+import type {
+    CallbackCondition,
+    FilterCondition,
+    FilterModifierOptions
+} from './FilterModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -42,18 +45,15 @@ const {
 
 
 /**
- * Filters out table rows with a specific query.
- *
+ * Filters out table rows matching a given condition.
  */
 class FilterModifier extends DataModifier {
-
 
     /* *
      *
      *  Static Properties
      *
      * */
-
 
     /**
      * Default options for the range modifier.
@@ -65,10 +65,81 @@ class FilterModifier extends DataModifier {
 
     /* *
      *
-     *  Constructor
+     *  Static Functions
      *
      * */
 
+    /**
+     * Compiles a filter condition into a callback function.
+     *
+     * @param {FilterCondition} condition
+     * Condition to compile.
+     */
+    private static compile(condition: FilterCondition): CallbackCondition {
+        if (typeof condition === 'function') {
+            return condition;
+        }
+
+        const op = condition.operator;
+        switch (op) {
+            case 'and': {
+                const subs = condition.conditions.map(
+                    (c): CallbackCondition => this.compile(c)
+                );
+                return (row, table, i): boolean => subs.every(
+                    (cond): boolean => cond(row, table, i)
+                );
+            }
+            case 'or': {
+                const subs = condition.conditions.map(
+                    (c): CallbackCondition => this.compile(c)
+                );
+                return (row, table, i): boolean => subs.some(
+                    (cond): boolean => cond(row, table, i)
+                );
+            }
+            case 'not': {
+                const sub = this.compile(condition.condition);
+                return (row, table, i): boolean => !sub(row, table, i);
+            }
+        }
+
+        const { columnName: col, value } = condition;
+        switch (op) {
+            case 'eq':
+                return (row): boolean => row[col] === value;
+            case 'ne':
+                return (row): boolean => row[col] !== value;
+            case 'gt':
+                return (row): boolean => (row[col] || 0) > (value || 0);
+            case 'ge':
+                return (row): boolean => (row[col] || 0) >= (value || 0);
+            case 'lt':
+                return (row): boolean => (row[col] || 0) < (value || 0);
+            case 'le':
+                return (row): boolean => (row[col] || 0) <= (value || 0);
+        }
+
+        const { ignoreCase } = condition;
+        const str = (val: DataTable.CellType): string => {
+            const s = '' + val;
+            return (ignoreCase ?? true) ? s.toLowerCase() : s;
+        };
+
+        switch (op) {
+            case 'contains':
+                return (row): boolean => str(row[col]).includes(str(value));
+            default:
+                return (row): boolean => str(row[col])[op](str(value));
+        }
+    }
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     /**
      * Constructs an instance of the range modifier.
@@ -91,7 +162,6 @@ class FilterModifier extends DataModifier {
      *
      * */
 
-
     /**
      * Options of the range modifier.
      */
@@ -103,7 +173,6 @@ class FilterModifier extends DataModifier {
      *  Functions
      *
      * */
-
 
     /**
      * Replaces table rows with filtered rows.
@@ -125,54 +194,33 @@ class FilterModifier extends DataModifier {
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        const { filterIn, contains } = modifier.options;
-
-        if (!contains) {
+        const { condition } = modifier.options;
+        if (!condition) {
+            // If no condition is set, return the unmodified table.
             return table;
         }
 
-        let columnNames: string[];
-        if (typeof filterIn === 'string') {
-            columnNames = [filterIn];
-        } else if (Array.isArray(filterIn)) {
-            columnNames = filterIn;
-        } else {
-            columnNames = table.getColumnNames();
-        }
+        const matchRow = FilterModifier.compile(condition);
 
-        // This is not an ideal solution, but let's follow the convention of the
-        // other modifiers for now.
+        // This line should be investigated further when reworking Data Layer.
         const modified = table.modified;
-        const rows = [];
+
+        const rows: DataTable.RowObject[] = [];
         const indexes: Array<number|undefined> = [];
 
         for (
             let i = 0,
-                iEnd = table.getRowCount(),
-                jEnd = columnNames.length,
-                match: boolean,
-                cell: string;
+                iEnd = table.getRowCount();
             i < iEnd;
             ++i
         ) {
-            const row = table.getRow(i, columnNames);
+            const row = table.getRowObject(i);
             if (!row) {
                 continue;
             }
 
-            match = false;
-
-            for (let j = 0; j < jEnd; ++j) {
-                cell = '' + row[j];
-
-                if (cell.includes(contains)) {
-                    match = true;
-                    break;
-                }
-            }
-
-            if (match) {
-                rows.push(table.getRow(i) || []);
+            if (matchRow(row, table, i)) {
+                rows.push(row);
                 indexes.push(modified.getOriginalRowIndex(i));
             }
         }
