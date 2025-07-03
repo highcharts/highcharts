@@ -155,28 +155,31 @@ namespace CellEditingComposition {
      */
     function createEditModeRenderer(column: Column): EditModeRendererType {
         const editModeOptions = column.options.cells?.editMode;
-        const editModeRendererTypeName = editModeOptions?.renderer?.type;
-        const staticRendererTypeName =
+        const selectedEditModeRendererTypeName =
+            editModeOptions?.renderer?.type;
+        const viewRendererTypeName =
             column.options?.cells?.renderer?.type || 'text';
 
-        if (editModeRendererTypeName) {
+        if (selectedEditModeRendererTypeName) {
             return new CellRendererRegistry.types[
-                editModeRendererTypeName
+                selectedEditModeRendererTypeName
             ](column, editModeOptions?.renderer || {});
         }
 
-        const staticRendererType = CellRendererRegistry.types[
-            staticRendererTypeName
-        ];
+        const ViewRendererType =
+            CellRendererRegistry.types[viewRendererTypeName] ||
+            CellRendererRegistry.types.text;
 
-        let defRenderer = staticRendererType.defaultEditingRenderer;
-        if (typeof defRenderer !== 'string') {
-            defRenderer = defRenderer[column.dataType];
+        let editModeRendererTypeName =
+            ViewRendererType.defaultEditingRenderer;
+        if (typeof editModeRendererTypeName !== 'string') {
+            editModeRendererTypeName =
+                editModeRendererTypeName[column.dataType] || 'textInput';
         }
 
-        return new CellRendererRegistry.types[defRenderer](
+        return new CellRendererRegistry.types[editModeRendererTypeName](
             column,
-            defRenderer === staticRendererTypeName ? merge(
+            editModeRendererTypeName === viewRendererTypeName ? merge(
                 column.options.cells?.renderer,
                 { disabled: false }
             ) || {} : {}
