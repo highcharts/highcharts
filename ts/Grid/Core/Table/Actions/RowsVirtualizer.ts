@@ -249,7 +249,7 @@ class RowsVirtualizer {
         // Do vertical virtual scrolling
         let rowCursor = Math.floor(
             (target.scrollTop / rowHeight) +
-                (this.scrollOffset / rowHeight)
+            (this.scrollOffset / rowHeight)
         );
         // Ensure row cursor doesn't exceed the available rows
         const maxRowCursor = Math.max(0, this.rowCount - 1);
@@ -258,7 +258,6 @@ class RowsVirtualizer {
             this.renderRows(rowCursor);
         }
         this.rowCursor = rowCursor;
-
         this.adjustRowHeights();
         this.adjustRowOffsets();
         if (
@@ -359,7 +358,7 @@ class RowsVirtualizer {
                 const topOffset = Math.min(
                     lastRow.getDefaultTopOffset(),
                     RowsVirtualizer.MAX_ELEMENT_HEIGHT -
-                        lastRow.htmlElement.offsetHeight
+                    lastRow.htmlElement.offsetHeight
                 );
                 lastRow.setTranslateY(topOffset);
             }
@@ -395,7 +394,7 @@ class RowsVirtualizer {
                     const topOffset = Math.min(
                         row.getDefaultTopOffset(),
                         RowsVirtualizer.MAX_ELEMENT_HEIGHT -
-                            row.htmlElement.offsetHeight
+                        row.htmlElement.offsetHeight
                     );
                     row.setTranslateY(topOffset);
                 }
@@ -486,9 +485,8 @@ class RowsVirtualizer {
 
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                     const cell = row.cells[j];
-                    cell.htmlElement.style.transform = `translateY(${
-                        newHeight - cellHeight
-                    }px)`;
+                    cell.htmlElement.style.transform =
+                        `translateY(${newHeight - cellHeight}px)`;
                 }
             }
         }
@@ -497,25 +495,46 @@ class RowsVirtualizer {
     private adjustRowOffsets(): void {
         const { rows } = this.viewport;
         const rowsLn = rows.length;
+        const lastRow = rows[rowsLn - 1];
+        const preLastRow = rows[rowsLn - 2];
+        const isSecondToLastRowVisible = preLastRow &&
+            preLastRow.index === lastRow.index - 1;
 
         let translateBuffer = rows[0].getDefaultTopOffset();
         translateBuffer = Math.floor(translateBuffer - this.scrollOffset);
+
+        // We build the rows from the bottom up, so the last goes into
+        // the max element height, but if there is no overflow, we don't need
+        // to do anything.
+        if (isSecondToLastRowVisible && this.gridHeightOverflow > 0) {
+            // Position last row at the bottom of max element height
+            lastRow.setTranslateY(
+                RowsVirtualizer.MAX_ELEMENT_HEIGHT -
+                lastRow.htmlElement.offsetHeight
+            );
+
+            // Build positions from bottom to top
+            let bottomOffset = RowsVirtualizer.MAX_ELEMENT_HEIGHT -
+                lastRow.htmlElement.offsetHeight;
+
+            // Position all rows from second-to-last up to first
+            for (let i = rowsLn - 2; i >= 0; i--) {
+                bottomOffset -= rows[i].htmlElement.offsetHeight;
+                rows[i].setTranslateY(bottomOffset);
+            }
+
+            return;
+        }
 
         rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
             rows[i].setTranslateY(translateBuffer);
         }
-
-        // Set the proper offset for the last row
-        const lastRow = rows[rowsLn - 1];
-        const preLastRow = rows[rowsLn - 2];
-        if (preLastRow && preLastRow.index === lastRow.index - 1) {
-            if (this.gridHeightOverflow <= 0) {
-                lastRow.setTranslateY(
-                    preLastRow.htmlElement.offsetHeight + translateBuffer
-                );
-            }
+        if (this.gridHeightOverflow > 0) {
+            lastRow.setTranslateY(
+                RowsVirtualizer.MAX_ELEMENT_HEIGHT
+            );
         }
     }
 
