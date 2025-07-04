@@ -177,8 +177,8 @@ function addCustomEvents(isTodoGrid) {
             targetGrid.dataTable.setRow(data);
             dataTable.deleteRows(rowIndex);
 
-            sourceGrid.viewport.loadPresentationData();
-            targetGrid.viewport.loadPresentationData();
+            sourceGrid.viewport.updateRows();
+            targetGrid.viewport.updateRows();
         }
     });
 }
@@ -258,7 +258,7 @@ form.addEventListener('submit', function (e) {
     }
 
     todoGrid.dataTable.setRow(rowData);
-    todoGrid.viewport.loadPresentationData();
+    todoGrid.viewport.updateRows();
 
     form.reset();
     modal.style.display = 'none';

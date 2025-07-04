@@ -104,9 +104,82 @@ class TableCell extends Cell {
      */
     public override render(): void {
         super.render();
-
-        // It may happen that `await` will be needed here in the future.
         void this.setValue();
+    }
+
+    /**
+     * Sets the cell value and updates its content with it.
+     *
+     * @param value
+     * The raw value to set. If not provided, it will use the value from the
+     * data table for the current row and column.
+     *
+     * @param updateTable
+     * Whether to update the table after setting the content. Defaults to
+     * `false`, meaning the table will not be updated.
+     */
+    public async setValue(
+        value: DataTable.CellType = this.column.data?.[this.row.index],
+        updateTable: boolean = false
+    ): Promise<void> {
+        this.value = value;
+
+        if (updateTable && await this.updateDataTable()) {
+            return;
+        }
+
+        if (this.content) {
+            this.content.update();
+        } else {
+            this.content = this.column.createCellContent(this);
+        }
+
+        this.htmlElement.setAttribute('data-value', this.value + '');
+        this.setCustomClassName(this.column.options.cells?.className);
+
+        fireEvent(this, 'afterRender', { target: this });
+    }
+
+    /**
+     * Updates the the data table so that it reflects the current state of
+     * the grid.
+     *
+     * @returns
+     * A promise that resolves to `true` if the cell triggered all the whole
+     * viewport rows to be updated, or `false` if the only change should be
+     * the cell's content.
+     */
+    private async updateDataTable(): Promise<boolean> {
+        if (this.column.data?.[this.row.index] === this.value) {
+            // Abort if the value is the same as in the data table.
+            return false;
+        }
+
+        const vp = this.column.viewport;
+        const { dataTable: originalDataTable } = vp.grid;
+
+        const rowTableIndex =
+            this.row.id &&
+            originalDataTable?.getLocalRowIndex(this.row.id);
+
+        if (!originalDataTable || rowTableIndex === void 0) {
+            return false;
+        }
+
+        this.row.data[this.column.id] = this.value;
+        originalDataTable.setCell(
+            this.column.id,
+            rowTableIndex,
+            this.value
+        );
+        vp.grid.querying.shouldBeUpdated = true;
+
+        if (vp.grid.querying.getModifiers().length < 1) {
+            return false;
+        }
+
+        await vp.updateRows();
+        return true;
     }
 
     public override initEvents(): void {
@@ -220,84 +293,6 @@ class TableCell extends Cell {
         });
 
         super.onKeyDown(e);
-    }
-
-    /**
-     * Sets the value & updating content of the cell.
-     *
-     * @param value
-     * The raw value to set. If not provided, it will use the value from the
-     * data table for the current row and column.
-     *
-     * @param updateTable
-     * Whether to update the table after setting the content. Defaults to
-     * `false`, meaning the table will not be updated.
-     */
-    public async setValue(
-        value: DataTable.CellType = this.column.data?.[this.row.index],
-        updateTable: boolean = false
-    ): Promise<void> {
-        this.value = value;
-
-        const vp = this.column.viewport;
-
-        if (this.content) {
-            this.content.update();
-        } else {
-            this.content = this.column.createCellContent(this);
-        }
-
-        this.htmlElement.setAttribute('data-value', this.value + '');
-        this.setCustomClassName(this.column.options.cells?.className);
-
-        fireEvent(this, 'afterRender', { target: this });
-
-        if (!updateTable) {
-            return;
-        }
-
-        const { dataTable: originalDataTable } = vp.grid;
-
-        // Taken the local row index of the original grid data table, but
-        // in the future it should affect the globally original data table.
-        // (To be done after the DataLayer refinement)
-        const rowTableIndex =
-            this.row.id && originalDataTable?.getLocalRowIndex(this.row.id);
-
-        if (!originalDataTable || rowTableIndex === void 0) {
-            return;
-        }
-
-        this.row.data[this.column.id] = this.value;
-        originalDataTable.setCell(
-            this.column.id,
-            rowTableIndex,
-            this.value
-        );
-
-        if (vp.grid.querying.willNotModify()) {
-            // If the data table does not need to be modified, skip the
-            // data modification and don't update the whole table. It checks
-            // if the modifiers are globally set. Can be changed in the future
-            // to check if the modifiers are set for the specific columns.
-            return;
-        }
-
-        let focusedRowId: number | undefined;
-        if (vp.focusCursor) {
-            focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
-        }
-
-        await vp.grid.querying.proceed(true);
-        vp.loadPresentationData();
-
-        if (focusedRowId !== void 0 && vp.focusCursor) {
-            const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
-            if (newRowIndex !== void 0) {
-                vp.rows[newRowIndex - vp.rows[0].index]
-                    ?.cells[vp.focusCursor[1]].htmlElement.focus();
-            }
-        }
     }
 
     /**

@@ -295,17 +295,52 @@ class Table {
     }
 
     /**
-     * Loads the modified data from the data table and renders the rows.
+     * Updates the rows of the table.
      */
-    public loadPresentationData(): void {
-        this.dataTable = this.grid.presentationTable as DataTable;
+    public async updateRows(): Promise<void> {
+        const vp = this;
+        let focusedRowId: number | undefined;
+        if (vp.focusCursor) {
+            focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
+        }
 
+        const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
+
+        if (vp.grid.querying.shouldBeUpdated) {
+            await vp.grid.querying.proceed(true);
+        }
+
+        this.dataTable = this.grid.presentationTable as DataTable;
         for (const column of this.columns) {
             column.loadData();
         }
 
-        this.updateVirtualization();
-        this.rowsVirtualizer.rerender();
+        if (oldRowsCount !== vp.dataTable.rowCount) {
+            this.updateVirtualization();
+            this.rowsVirtualizer.rerender();
+        } else {
+            for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+                this.rows[i].update();
+            }
+        }
+
+        if (focusedRowId !== void 0 && vp.focusCursor) {
+            const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
+            if (newRowIndex !== void 0) {
+                // Scroll to the focused row.
+                vp.scrollToRow(newRowIndex);
+
+                // Focus the cell that was focused before the update.
+                setTimeout((): void => {
+                    if (!defined(vp.focusCursor?.[1])) {
+                        return;
+                    }
+                    vp.rows[
+                        newRowIndex - vp.rows[0].index
+                    ]?.cells[vp.focusCursor[1]].htmlElement.focus();
+                });
+            }
+        }
     }
 
     /**
