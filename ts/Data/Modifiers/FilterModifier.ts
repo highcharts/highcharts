@@ -33,6 +33,7 @@ import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
+    isFunction,
     merge
 } = U;
 
@@ -76,7 +77,7 @@ class FilterModifier extends DataModifier {
      * Condition to compile.
      */
     private static compile(condition: FilterCondition): CallbackCondition {
-        if (typeof condition === 'function') {
+        if (isFunction(condition)) {
             return condition;
         }
 

@@ -60,15 +60,15 @@ dataModifier: {
     condition: {
         operator: 'and', // combine multiple checks
         conditions: [{
-                operator: 'gt', // numeric “greater than”
-                columnName: 'score',
-                value: 50
-            }, {
-                operator: 'contains', // text “contains”
-                columnName: 'name',
-                value: 'smith',
-                ignoreCase: true
-            }]
+            operator: 'gt', // numeric “greater than”
+            columnName: 'score',
+            value: 50
+        }, {
+            operator: 'contains', // text “contains”
+            columnName: 'name',
+            value: 'smith',
+            ignoreCase: true
+        }]
     }
 }
 ```
