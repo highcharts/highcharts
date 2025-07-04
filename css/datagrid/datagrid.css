@@ -401,6 +401,7 @@
     text-overflow: ellipsis;
     margin: 0;
     padding: 0;
+    position: relative;
     user-select: none; /* Standard syntax */
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
@@ -1026,6 +1027,24 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     to {
         transform: rotate(360deg);
     }
+}
+
+/* Filtering */
+.hcg-col-filter-wrapper,
+.highcharts-datagrid-col-filter-wrapper {
+    bottom: 0;
+    left: 0;
+    padding: var(--ig-header-padding);
+    position: absolute;
+    width: 100%;
+}
+
+.hcg-col-filter-wrapper input,
+.highcharts-datagrid-col-filter-wrapper input {
+    border: 1px solid var(--ig-header-row-border-color);
+    border-radius: var(--hcg-border-radius);
+    padding: var(--ig-header-padding);
+    width: 100%;
 }
 
 /* Helpers */
