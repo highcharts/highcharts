@@ -73,6 +73,7 @@ import '../Grid/Pro/Dash3Compatibility.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
 
 // Cell Renderers
+import '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import '../Grid/Pro/CellRendering/Renderers/TextRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SelectRenderer.js';
