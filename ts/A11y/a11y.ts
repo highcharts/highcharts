@@ -17,7 +17,14 @@ import type Chart from '../Core/Chart/Chart';
 import type { Options } from '../Core/Options';
 
 // Imports
-import { getChartInfo, type ChartInfo, type A11yModel } from './ChartInfo.js';
+import {
+    getChartDescriptionInfo,
+    getChartDetailedInfo,
+    type ChartDescriptionInfo,
+    type ChartDetailedInfo,
+    type A11yModel
+} from './ChartInfo.js';
+import { ProxyProvider } from './ProxyProvider.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import defaultOptionsA11y from './A11yDefaults.js';
@@ -26,6 +33,7 @@ const { composed } = G;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    attr,
     error,
     fireEvent,
     merge,
@@ -46,14 +54,63 @@ declare module '../Core/Chart/ChartLike' {
  * @internal
  */
 class A11y {
-    private chartInfo!: ChartInfo;
+    private chartDescriptionInfo!: ChartDescriptionInfo;
+    private chartDetailedInfo?: ChartDetailedInfo;
     private model?: A11yModel;
+    private proxyProvider!: ProxyProvider;
+    private autoDescEl!: HTMLElement;
 
 
+    /**
+     * Init the class. Called on chart init, and on chart updates.
+     *
+     * Chart option updates, or data changes that cause model changes, will
+     * cause re-init of the class. Regular data changes will not (so we can
+     * support live data without messing up focus etc).
+     */
     constructor(public chart: Chart) {
+        // Hide chart
+        attr(chart.container, {
+            role: 'presentation',
+            'aria-hidden': true
+        });
+        chart.renderer.box.removeAttribute('role');
+        chart.renderer.box.removeAttribute('aria-label');
 
-        // Setup containers & structure (one time setup)
-        // Proxy, announcer, heading, subtitle, desc, hint, ...
+        // Create basic description container & content
+        const i = this.chartDescriptionInfo = getChartDescriptionInfo(chart);
+        this.proxyProvider = new ProxyProvider(chart);
+        this.proxyProvider.addGroup('description');
+        this.proxyProvider.addTouchableProxy(
+            'description',
+            chart.title?.element, i.headingLevel, i.chartTitle
+        );
+        this.proxyProvider.addTouchableProxy(
+            'description',
+            chart.subtitle?.element, 'p', i.chartSubtitle
+        );
+        this.proxyProvider.addSROnly('description', 'p', i.description);
+
+        // ^ Need tests for the above. Check that options work.
+
+        // The auto description contents will need to change on render, the
+        // rest of desc can stay the same. Handle whole thing here, and just
+        // update the desc content on every render.
+
+
+        // Handle container order
+
+        // Menu can probably be handled here, should not change unless options
+        // are updated?
+
+        // Role="app" container should be created here, but contents (data)
+        // should be handled in update().
+
+        // Legend, zoom etc should be put here, but update on the specific
+        // legend/zoom render/update events since the elements may change on
+        // scroll/drilldown etc.
+
+        // Handle announcer here too
     }
 
 
@@ -75,21 +132,24 @@ class A11y {
         this.model = curModel;
 
         // Compute chart information for this update
-        this.chartInfo = getChartInfo(chart, curModel);
+        this.chartDetailedInfo = getChartDetailedInfo(chart, curModel);
+        const eventContext = {
+            chartDescriptionInfo: this.chartDescriptionInfo,
+            chartDetailedInfo: this.chartDetailedInfo
+        };
 
-        fireEvent(chart, 'beforeA11yUpdate', { chartInfo: this.chartInfo });
+        fireEvent(chart, 'beforeA11yUpdate', eventContext);
 
-        // Overlay container contents
         // Role="application" yes/no
         // Keyboard nav
 
-        // Todo
-        console.log('A11y module update placeholder'); // eslint-disable-line no-console
+        // Data container contents should be updated here, but don't delete the
+        // role="app", keep focus.
 
-        fireEvent(chart, 'afterA11yUpdate', {
-            a11y: this,
-            chartInfo: this.chartInfo
-        });
+        // Update sizes etc for proxy elements.
+        // Also for series.animateFinished.
+
+        fireEvent(chart, 'afterA11yUpdate', eventContext);
     }
 
 
@@ -123,11 +183,18 @@ class A11y {
      * (e.g. HTML elements, event handlers).
      */
     public destroy(): void {
-        delete this.chart.a11y;
-        this.chart.renderer?.boxWrapper.attr({
+        const chart = this.chart;
+        this.proxyProvider?.destroy();
+        delete chart.a11y;
+
+        // Unhide chart SVG
+        chart.renderer?.boxWrapper.attr({
             role: 'img',
-            'aria-label': this.chartInfo.chartTitle.replace(/</g, '&lt;')
+            'aria-label': this.chartDescriptionInfo
+                .chartTitle.replace(/</g, '&lt;')
         });
+        chart.container.removeAttribute('role');
+        chart.container.removeAttribute('aria-hidden');
     }
 }
 
@@ -171,15 +238,16 @@ namespace A11y {
                 this.a11y?.update();
             });
 
+            // Re-init module on all chart updates
             addEvent(ChartClass, 'update', function (
                 e: { options: Options }
             ): void {
                 const newOptions = e.options.a11y;
                 if (newOptions) {
                     merge(true, this.options.a11y, newOptions);
-                    this.a11y?.destroy();
-                    this.needsA11yStatusCheck = true;
                 }
+                this.a11y?.destroy();
+                this.needsA11yStatusCheck = true;
             });
 
             addEvent(ChartClass, 'destroy', function (): void {

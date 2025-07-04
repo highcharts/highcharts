@@ -25,10 +25,8 @@ export interface A11yChartDescriptionSectionOptions {
     /**
      * The format for the chart title in the description section.
      *
-     * `{headingLevel}` is replaced with the heading level for the chart,
-     * as handled by the [a11y.headingLevel](#a11y.headingLevel) option.
-     *
-     * `{chartTitle}` is replaced with the chart title.
+     * `{chartTitle}` is replaced with the chart title, or default chart title
+     * if none is visible in the chart.
      *
      * The chart context is available as `{chart}`, and can be used to access other
      * information. See [Templating](https://www.highcharts.com/docs/chart-concepts/templating)
@@ -174,6 +172,8 @@ export interface A11yTopLevelOptions {
      * By default, the chart attempts to determine the correct heading level,
      * but in many cases this is ambiguous and not possible. In those cases,
      * the heading level will default to `h6`.
+     *
+     * Can also be set to `p` to use a paragraph instead of a heading.
      */
     headingLevel?: A11yHeadingLevel;
 

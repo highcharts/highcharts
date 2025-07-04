@@ -7,9 +7,10 @@ QUnit.test('Model choice', function (assert) {
             data: [1, 2, 3]
         }]
     });
+    let a11yInstance = chart.a11y;
 
     assert.strictEqual(
-        chart.a11y.model,
+        a11yInstance.model,
         'summary',
         'Default summary model is chosen for simple chart'
     );
@@ -20,6 +21,12 @@ QUnit.test('Model choice', function (assert) {
         chart.a11y.model,
         'list',
         'Default model is adapted to new data'
+    );
+
+    assert.notStrictEqual(
+        a11yInstance,
+        chart.a11y,
+        'A11y module was re-initialized on model change'
     );
 
     chart.addSeries({
@@ -42,5 +49,16 @@ QUnit.test('Model choice', function (assert) {
         chart.a11y.model,
         'summary',
         'Model is hardcoded'
+    );
+
+    a11yInstance = chart.a11y;
+    chart.addSeries({
+        data: [1, 2, 4]
+    });
+
+    assert.strictEqual(
+        a11yInstance,
+        chart.a11y,
+        'A11y module was not re-initialized on data change without model change'
     );
 });

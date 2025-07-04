@@ -13,7 +13,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
-import type { LangOptions } from '../Core/Options';
+import type { A11yChartDescriptionSectionOptions, LangA11yOptions } from './A11yOptions';
 
 import T from '../Core/Templating.js';
 const { format } = T;
@@ -24,14 +24,28 @@ export type A11yModel = undefined | 'summary' | 'list' | 'application';
 
 /**
  * Information about the chart, to be injected in the right place by the
- * accessibility module.
+ * accessibility module. This is information that does not change with
+ * the model or chart data.
  *
  * @internal
  */
-export interface ChartInfo {
-    headingLevel: string;
+export interface ChartDescriptionInfo {
+    headingLevel: keyof HTMLElementTagNameMap;
     chartTitle: string;
     chartSubtitle: string;
+    description: string;
+}
+
+/**
+ * Information about the chart, to be injected in the right place by the
+ * accessibility module. This is information that may change with the model
+ * or chart data, and should be computed on every chart render.
+ *
+ * @internal
+ */
+export interface ChartDetailedInfo {
+    chartAutoDescription: string;
+    extra?: string;
 }
 
 
@@ -47,14 +61,18 @@ export interface ChartInfo {
  *
  * @internal
  */
-function getHeadingLevel(chart: Chart): string {
+function getHeadingLevel(chart: Chart): keyof HTMLElementTagNameMap {
     if (chart.options.a11y?.headingLevel) {
         return chart.options.a11y.headingLevel;
     }
-    const getHeadingFromEl = (el: HTMLElement|null): string|undefined => {
+    const getHeadingFromEl = (
+        el: HTMLElement|null
+    ): keyof HTMLElementTagNameMap|undefined => {
         const tagName = el?.tagName || '';
         if (/^H[1-6]$/i.test(tagName)) {
-            return 'h' + Math.min(6, +tagName.slice(1) + 1);
+            return (
+                'h' + Math.min(6, +tagName.slice(1) + 1)
+            ) as keyof HTMLElementTagNameMap;
         }
     };
     let el: HTMLElement | null = chart.container;
@@ -100,36 +118,64 @@ function getLinkedDescription(chart: Chart): string {
 
 
 /**
- * Build a ChartInfo object for the given chart. The model helps determine the
- * detail level of the information.
+ * Build a ChartDescriptionInfo object for the given chart. This is information
+ * that does not change with the model, or the data in the chart, and can be
+ * computed once on init only.
  *
  * @internal
  */
-export function getChartInfo(chart: Chart, model: A11yModel): ChartInfo {
+export function getChartDescriptionInfo(chart: Chart): ChartDescriptionInfo {
     const o = chart.options,
+        descriptionOpts = o.a11y
+            ?.chartDescriptionSection as Required<A11yChartDescriptionSectionOptions>,
+        langOpts = o.lang?.a11y as Required<LangA11yOptions>,
+        defaultTitle = format(langOpts.defaultChartTitle, { chart }, chart);
+    return {
+        headingLevel: getHeadingLevel(chart),
+        chartTitle: format(
+            descriptionOpts.chartTitleFormat,
+            {
+                chart,
+                chartTitle: o.title?.text || defaultTitle
+            },
+            chart
+        ),
+        chartSubtitle: format(
+            descriptionOpts.chartSubtitleFormat,
+            {
+                chart,
+                chartSubtitle: o.subtitle?.text || ''
+            },
+            chart
+        ),
+        description: format(
+            descriptionOpts.chartDescriptionFormat,
+            {
+                chart,
+                linkedDescription: getLinkedDescription(chart),
+                caption: o.caption?.text || ''
+            },
+            chart
+        )
+    };
+}
 
-        // Format function helper to easily get string from lang options
-        f = (langKey: string, ctx: AnyRecord = chart): string => {
-            const keys = langKey.split('.');
-            let formatString: unknown|string|LangOptions = o.lang,
-                i = 0;
-            for (; i < keys.length; ++i) {
-                formatString = formatString &&
-                    (formatString as LangOptions)[keys[i] as keyof LangOptions];
-            }
-            return typeof formatString === 'string' ?
-                format(formatString, ctx, chart) : '';
-        },
 
-        // Get first pass of info
-        info = {
-            headingLevel: getHeadingLevel(chart),
-            chartTitle: o.title?.text || f('a11y.defaultChartTitle'),
-            chartSubtitle: o.subtitle?.text || '',
-            linkedDescription: getLinkedDescription(chart),
-            caption: o.caption?.text || '',
-            chartAutoDescription: 'placeholder auto description'
-        };
+/**
+ * Build a ChartDetailedInfo object for the given chart. This is information
+ * that may change with the model, or the data in the chart, and should be
+ * computed on every chart render.
+ *
+ * @internal
+ */
+export function getChartDetailedInfo(
+    chart: Chart,
+    model: A11yModel
+): ChartDetailedInfo {
+    // Get first pass of info
+    const info = {
+        chartAutoDescription: 'placeholder auto description'
+    };
 
     // Additional information for more complex models
     if (model === 'list' || model === 'application') {

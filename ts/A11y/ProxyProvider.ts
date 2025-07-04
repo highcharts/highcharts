@@ -35,7 +35,7 @@ function addPlainA11yEl(
     content = ''
 ): HTMLElement {
     const el = new AST(
-        `<${elType} class="${className}" position="absolute" style="margin: 0; padding: 0; border: 0;">${content}</${elType}>`
+        `<${elType} class="${className}" style="margin: 0; padding: 0; border: 0;">${content}</${elType}>`
     );
     return el.addToDOM(parent) as HTMLElement;
 }
@@ -57,16 +57,9 @@ interface ProxyGroup {
  *
  * @internal
  */
-class ProxyProvider {
+export class ProxyProvider {
     private stylesheet: CSSStyleSheet;
     private groups: Record<string, ProxyGroup> = {};
-
-    /*
-        Todo:
-
-        Add to a11y class. Remember destroy().
-            Series animate finished = updatePositions().
-    */
 
     constructor(public chart: Chart) {
         // Insert the stylesheet
@@ -106,17 +99,24 @@ class ProxyProvider {
 
     /**
      * Add a new group to contain proxy elements.
-     * Inserted after the specified group, or at the end if not found.
+     *
+     * If insertAfter is specified, the group is inserted after the
+     * specified group, or at the end if the group is not found.
+     *
+     * If insertAfter is not specified, the group is inserted as the
+     * first child of the chart's renderTo element.
      */
     public addGroup(groupName: string, insertAfter?: string): void {
         this.removeGroup(groupName);
-        const refNode = insertAfter ?
+        const container = this.chart.renderTo,
+            refNode = insertAfter ?
                 this.groups[insertAfter].containerEl.nextSibling :
-                null,
+                container.firstChild,
             el = addPlainA11yEl(
-                'div', this.chart.container, 'hc-a11y-proxy-container'
+                'div', container,
+                `hc-a11y-proxy-container hc-group-${groupName}`
             );
-        this.chart.container.insertBefore(el, refNode);
+        container.insertBefore(el, refNode);
         this.groups[groupName] = {
             containerEl: el,
             eventRemovers: [],
@@ -165,12 +165,18 @@ class ProxyProvider {
      */
     public addTouchableProxy(
         groupName: string,
-        svgEl: SVGElement,
+        svgEl: HTMLElement|SVGElement|undefined,
         proxyElType: keyof HTMLElementTagNameMap,
         content: string,
         attrs?: HTMLAttributes,
         parent?: HTMLElement
     ): HTMLElement {
+        // Fallback if we are trying to proxy something that doesn't exist.
+        // Put the content in, but don't overlay anything.
+        if (!svgEl) {
+            return this.addSROnly(groupName, proxyElType, content, parent);
+        }
+
         const group = this.groups[groupName],
             container = parent || group.containerEl,
             el = addPlainA11yEl(proxyElType, container, '', content),
@@ -190,6 +196,7 @@ class ProxyProvider {
             },
             resizeObserver = new ResizeObserver(setSize);
 
+        el.style.position = 'absolute';
         if (attrs) {
             attr(el, attrs);
         }
