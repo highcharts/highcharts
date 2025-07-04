@@ -161,14 +161,17 @@
                                 textTransform: 'uppercase'
                             }
                         },
-                        name: 'Republicans margin',
+                        name: 'Margin',
                         point: {
                             events: {
                                 click: pointClick
                             }
                         },
                         tooltip: {
-                            ySuffix: ' %'
+                            pointFormatter: function () {
+                                return this.name + ': ' +
+                                Math.abs(this.value) + ' %';
+                            }
                         },
                         cursor: 'pointer'
                     }, {
