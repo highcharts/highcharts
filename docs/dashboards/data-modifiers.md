@@ -59,19 +59,16 @@ dataModifier: {
     // Single serializable condition, callback function or nested logic:
     condition: {
         operator: 'and', // combine multiple checks
-        conditions: [
-            {
+        conditions: [{
                 operator: 'gt', // numeric “greater than”
                 columnName: 'score',
                 value: 50
-            },
-            {
+            }, {
                 operator: 'contains', // text “contains”
                 columnName: 'name',
                 value: 'smith',
                 ignoreCase: true
-            }
-        ]
+            }]
     }
 }
 ```
