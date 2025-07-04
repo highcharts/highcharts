@@ -200,9 +200,35 @@ class DataGridComponent extends Component {
     }
 
     public override onTableChanged(): void {
-        this.grid?.update({
-            dataTable: this.getFirstConnector()?.table?.modified
-        });
+        const { grid } = this;
+        if (!grid) {
+            return;
+        }
+
+        const oldColumnNames = grid.viewport?.dataTable?.getColumnNames() || [];
+        const newColumnNames = grid.presentationTable?.getColumnNames() || [];
+        const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey);
+
+        // If the number of columns has changed, re-render the whole grid.
+        if (oldColumnNames.length !== newColumnNames.length) {
+            grid.update({ dataTable });
+            return;
+        }
+
+        // If the column order has changed, re-render the whole grid.
+        for (let i = 0, iEnd = oldColumnNames.length; i < iEnd; ++i) {
+            if (oldColumnNames[i] !== newColumnNames[i]) {
+                grid.update({ dataTable });
+                return;
+            }
+        }
+
+        // Data has changed and the whole grid is not re-rendered, so mark in
+        // the querying that data table was modified.
+        grid.querying.shouldBeUpdated = true;
+
+        // If the column names have not changed, just update the rows.
+        grid.viewport?.updateRows();
     }
 
     public getEditableOptions(): Options {
