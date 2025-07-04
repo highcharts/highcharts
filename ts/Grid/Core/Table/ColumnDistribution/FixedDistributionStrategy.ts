@@ -24,7 +24,6 @@
 
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer.js';
-import type Options from '../../Options.js';
 
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 import Globals from '../../Globals.js';
@@ -33,11 +32,6 @@ import GridUtils from '../../GridUtils.js';
 const {
     makeHTMLElement
 } = GridUtils;
-
-import U from '../../../../Core/Utilities.js';
-const {
-    defined
-} = U;
 
 
 /* *
@@ -113,11 +107,13 @@ class FixedDistributionStrategy extends DistributionStrategy {
             return;
         }
 
-        this.columnWidths[column.id] = Math.max(
+        const width = this.columnWidths[column.id] = Math.round(Math.max(
             (resizer.columnStartWidth || 0) + diff,
             DistributionStrategy.getMinWidth(column)
-        );
+        ) * 10) / 10;
         this.columnWidthUnits[column.id] = 0; // Always save in px
+
+        column.update({ width }, false);
     }
 
     /**
@@ -147,61 +143,6 @@ class FixedDistributionStrategy extends DistributionStrategy {
         mock.remove();
 
         return result;
-    }
-
-    public override exportMetadata(): FixedDistributionStrategy.Metadata {
-        return {
-            ...super.exportMetadata(),
-            columnWidthUnits: this.columnWidthUnits
-        };
-    }
-
-    public override importMetadata(
-        metadata: FixedDistributionStrategy.Metadata
-    ): void {
-        super.importMetadata(metadata, (colId): void => {
-            const unit = metadata.columnWidthUnits[colId];
-            if (defined(unit)) {
-                this.columnWidthUnits[colId] = unit;
-            }
-        });
-    }
-
-    public override validateOnUpdate(
-        newOptions: Globals.DeepPartial<Options>
-    ): void {
-        super.validateOnUpdate(newOptions);
-
-        if (
-            !this.invalidated && (
-                Object.hasOwnProperty.call(
-                    newOptions.columnDefaults || {}, 'width'
-                ) ||
-                newOptions.columns?.some(
-                    (col): boolean => Object.hasOwnProperty.call(
-                        col || {},
-                        'width'
-                    )
-                )
-            )
-        ) {
-            this.invalidated = true;
-        }
-    }
-
-}
-
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace FixedDistributionStrategy {
-
-    export interface Metadata extends DistributionStrategy.Metadata {
-        columnWidthUnits: Record<string, number>;
     }
 
 }
