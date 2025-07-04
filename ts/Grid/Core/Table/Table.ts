@@ -454,11 +454,6 @@ class Table {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
 
-        if (!meta.columnDistribution.invalidated) {
-            const colDistMeta = meta.columnDistribution.exportMetadata();
-            this.columnDistribution.importMetadata(colDistMeta);
-        }
-
         if (meta.focusCursor) {
             const [rowIndex, columnIndex] = meta.focusCursor;
             const row = this.rows[rowIndex - this.rows[0].index];
