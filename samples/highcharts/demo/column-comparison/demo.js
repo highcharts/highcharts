@@ -1,3 +1,127 @@
+function generateChart(countries, data, getData, locations) {
+    const chart =  Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        // Custom option for templates
+        countries,
+        title: {
+            text: 'Summer Olympics 2024 - Top 5 countries by Gold medals',
+            align: 'left'
+        },
+        subtitle: {
+            text: 'Comparing to results from Summer Olympics 2020 - Source: ' +
+                '<a href="https://olympics.com/en/olympic-games/paris-2024/medals"' +
+                'target="_blank">Olympics</a>',
+            align: 'left'
+        },
+        plotOptions: {
+            series: {
+                grouping: false,
+                borderWidth: 0
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            shared: true,
+            headerFormat: '<span style="font-size: 15px">' +
+                '{series.chart.options.countries.(point.key).name}' +
+                '</span><br/>',
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y} medals</b><br/>'
+        },
+        xAxis: {
+            type: 'category',
+            accessibility: {
+                description: 'Countries'
+            },
+            max: 4,
+            labels: {
+                useHTML: true,
+                animate: true,
+                format: '{chart.options.countries.(value).ucCode}<br>' +
+                    '<span class="f32">' +
+                    '<span style="display:inline-block;height:32px;' +
+                    'vertical-align:text-top;" class="flag {value}">' +
+                    '</span></span>',
+                style: {
+                    textAlign: 'center'
+                }
+            }
+        },
+        yAxis: [{
+            title: {
+                text: 'Gold medals'
+            },
+            showFirstLabel: false
+        }],
+        series: [{
+            color: 'rgba(158, 159, 163, 0.5)',
+            pointPlacement: -0.2,
+            linkedTo: 'main',
+            data: data[2020].slice(),
+            name: '2020'
+        }, {
+            name: '2024',
+            id: 'main',
+            dataSorting: {
+                enabled: true,
+                matchByName: true
+            },
+            dataLabels: [{
+                enabled: true,
+                inside: true,
+                style: {
+                    fontSize: '16px'
+                }
+            }],
+            data: getData(data[2024]).slice()
+        }],
+        exporting: {
+            allowHTML: true
+        }
+    });
+
+    locations.forEach(location => {
+        const btn = document.getElementById(location.year);
+
+        btn.addEventListener('click', () => {
+
+            document.querySelectorAll('.buttons button.active')
+                .forEach(active => {
+                    active.className = '';
+                });
+            btn.className = 'active';
+
+            chart.update({
+                title: {
+                    text: 'Summer Olympics ' + location.year +
+                        ' - Top 5 countries by Gold medals'
+                },
+                subtitle: {
+                    text: 'Comparing to results from Summer Olympics ' +
+                        (location.year - 4) +
+                        ' - Source: <a href="https://olympics.com/en/olympic-games/' +
+                        (location.city.toLowerCase()) +
+                        '-' + (location.year) +
+                        '/medals" target="_blank">Olympics</a>'
+                },
+                series: [{
+                    name: location.year - 4,
+                    data: data[location.year - 4].slice()
+                }, {
+                    name: location.year,
+                    data: getData(data[location.year]).slice()
+                }]
+            }, true, false, {
+                duration: 800
+            });
+        });
+    });
+}
+
 const data = {
     2024: [
         ['kr', 13],
@@ -140,91 +264,6 @@ const getData = data => data.map(point => ({
     color: countries[point[0]].color
 }));
 
-const chart = Highcharts.chart('container', {
-    chart: {
-        type: 'column'
-    },
-    // Custom option for templates
-    countries,
-    title: {
-        text: 'Summer Olympics 2024 - Top 5 countries by Gold medals',
-        align: 'left'
-    },
-    subtitle: {
-        text: 'Comparing to results from Summer Olympics 2020 - Source: <a ' +
-            'href="https://olympics.com/en/olympic-games/paris-2024/medals"' +
-            'target="_blank">Olympics</a>',
-        align: 'left'
-    },
-    plotOptions: {
-        series: {
-            grouping: false,
-            borderWidth: 0
-        }
-    },
-    legend: {
-        enabled: false
-    },
-    tooltip: {
-        shared: true,
-        headerFormat: '<span style="font-size: 15px">' +
-            '{series.chart.options.countries.(point.key).name}' +
-            '</span><br/>',
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '{series.name}: <b>{point.y} medals</b><br/>'
-    },
-    xAxis: {
-        type: 'category',
-        accessibility: {
-            description: 'Countries'
-        },
-        max: 4,
-        labels: {
-            useHTML: true,
-            animate: true,
-            format: '{chart.options.countries.(value).ucCode}<br>' +
-                '<span class="f32">' +
-                '<span style="display:inline-block;height:32px;' +
-                'vertical-align:text-top;" class="flag {value}">' +
-                '</span></span>',
-            style: {
-                textAlign: 'center'
-            }
-        }
-    },
-    yAxis: [{
-        title: {
-            text: 'Gold medals'
-        },
-        showFirstLabel: false
-    }],
-    series: [{
-        color: 'rgba(158, 159, 163, 0.5)',
-        pointPlacement: -0.2,
-        linkedTo: 'main',
-        data: data[2020].slice(),
-        name: '2020'
-    }, {
-        name: '2024',
-        id: 'main',
-        dataSorting: {
-            enabled: true,
-            matchByName: true
-        },
-        dataLabels: [{
-            enabled: true,
-            inside: true,
-            style: {
-                fontSize: '16px'
-            }
-        }],
-        data: getData(data[2024]).slice()
-    }],
-    exporting: {
-        allowHTML: true
-    }
-});
-
 const locations = [
     {
         city: 'Paris',
@@ -250,39 +289,4 @@ const locations = [
     }
 ];
 
-locations.forEach(location => {
-    const btn = document.getElementById(location.year);
-
-    btn.addEventListener('click', () => {
-
-        document.querySelectorAll('.buttons button.active')
-            .forEach(active => {
-                active.className = '';
-            });
-        btn.className = 'active';
-
-        chart.update({
-            title: {
-                text: 'Summer Olympics ' + location.year +
-                    ' - Top 5 countries by Gold medals'
-            },
-            subtitle: {
-                text: 'Comparing to results from Summer Olympics ' +
-                    (location.year - 4) +
-                    ' - Source: <a href="https://olympics.com/en/olympic-games/' +
-                    (location.city.toLowerCase()) +
-                    '-' + (location.year) +
-                    '/medals" target="_blank">Olympics</a>'
-            },
-            series: [{
-                name: location.year - 4,
-                data: data[location.year - 4].slice()
-            }, {
-                name: location.year,
-                data: getData(data[location.year]).slice()
-            }]
-        }, true, false, {
-            duration: 800
-        });
-    });
-});
+generateChart(countries, data, getData, locations);
