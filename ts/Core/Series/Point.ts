@@ -307,12 +307,17 @@ class Point {
      * @param {number} [x]
      *        Optionally, the x value.
      *
+     * @param {boolean} [isMock]
+     *        If true, the point is not a real instance, but a mock object
+     *        created for handling data. Avoid some logic.
+     *
      * @return {Highcharts.Point}
      *         The Point instance.
      */
     public applyOptions(
         options: (PointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): Point {
         const point = this,
             series = point.series,
@@ -327,15 +332,6 @@ class Point {
             extend(point.options, options as any) :
             options;
 
-        // Since options are copied into the Point instance, some accidental
-        // options must be shielded (#5681)
-        if ((options as any).group) {
-            delete (point as any).group;
-        }
-        if (options.dataLabels) {
-            delete point.dataLabels;
-        }
-
         /**
          * The y value of the point.
          * @name Highcharts.Point#y
@@ -348,11 +344,6 @@ class Point {
                 point,
                 pointValKey
             ) as (number|null|undefined);
-        }
-
-        // The point is initially selected by options (#5777)
-        if (point.selected) {
-            point.state = 'select';
         }
 
         /**
@@ -384,9 +375,26 @@ class Point {
             }
         }
 
-        point.isNull = this.isValid && !this.isValid();
+        if (!isMock) {
+            // The point is initially selected by options (#5777)
+            if (point.selected) {
+                point.state = 'select';
+            }
 
-        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
+            // Since options are copied into the Point instance, some accidental
+            // options must be shielded (#5681)
+            if ((options as any).group) {
+                delete (point as any).group;
+            }
+            if (options.dataLabels) {
+                delete point.dataLabels;
+            }
+
+            point.isNull = this.isValid && !this.isValid();
+
+            // #9233, #10874
+            point.formatPrefix = point.isNull ? 'null' : 'point';
+        }
 
         return point;
     }
@@ -771,7 +779,7 @@ class Point {
                     if (series.xAxis?.dateTime) {
                         ret.x = series.chart.time.parse(options[0]);
                     } else {
-                        ret.name = options[0];
+                        ret[series.tupleKey || 'name'] = options[0];
                     }
                 } else if (firstItemType === 'number') {
                     ret.x = options[0];
@@ -1055,7 +1063,8 @@ class Point {
             series = point.series,
             graphic = point.graphic,
             chart = series.chart,
-            seriesOptions = series.options;
+            seriesOptions = series.options,
+            dataOptions = seriesOptions.data;
         let i: number;
         redraw = pick(redraw, true);
 
@@ -1097,7 +1106,7 @@ class Point {
             // Record changes in the data table
             i = point.index;
             const row: DataTable.RowObject = {};
-            for (const key of series.dataColumnKeys()) {
+            for (const key of series.getDataColumnKeys()) {
                 row[key] = (point as any)[key];
             }
             series.dataTable.setRow(row, i);
@@ -1105,12 +1114,14 @@ class Point {
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
-            (seriesOptions.data as any)[i] = (
-                isObject((seriesOptions.data as any)[i], true) ||
+            if (dataOptions) {
+                dataOptions[i] = (
+                    isObject(dataOptions[i], true) ||
                     isObject(options, true)
-            ) ?
-                point.options :
-                pick(options, (seriesOptions.data as any)[i]);
+                ) ?
+                    point.options :
+                    options ?? dataOptions[i];
+            }
 
             // Redraw
             series.isDirty = series.isDirtyData = true;
@@ -1226,8 +1237,10 @@ class Point {
                  * @type {boolean}
                  */
                 point.selected = point.options.selected = selected;
-                (series.options.data as any)[series.data.indexOf(point)] =
-                    point.options;
+                if (series.options.data) {
+                    series.options.data[series.data.indexOf(point)] =
+                        point.options;
+                }
 
                 point.setState((selected as any) && 'select');
 
@@ -1236,21 +1249,24 @@ class Point {
                     chart.getSelectedPoints().forEach(function (
                         loopPoint: Point
                     ): void {
-                        const loopSeries = loopPoint.series;
+                        const loopSeries = loopPoint.series,
+                            loopSeriesOptions = loopSeries.options;
 
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
-                            (loopSeries.options.data as any)[
-                                loopSeries.data.indexOf(loopPoint)
-                            ] = loopPoint.options;
+                            if (loopSeriesOptions.data) {
+                                loopSeriesOptions.data[
+                                    loopSeries.data.indexOf(loopPoint)
+                                ] = loopPoint.options;
+                            }
 
                             // Programmatically selecting a point should restore
                             // normal state, but when click happened on other
                             // point, set inactive state to match other points
                             loopPoint.setState(
                                 chart.hoverPoints &&
-                                    loopSeries.options.inactiveOtherPoints ?
+                                    loopSeriesOptions.inactiveOtherPoints ?
                                     'inactive' : ''
                             );
                             loopPoint.firePointEvent('unselect');
