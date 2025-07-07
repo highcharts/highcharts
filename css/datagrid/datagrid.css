@@ -1069,7 +1069,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-light .highcharts-datagrid-theme-default {
     /* Primary colors */
     --hcg-color: var(--highcharts-neutral-color-100, #000000);
-    --hcg-background: var(--highcharts-neutral-color-5, #ffffff);
+    --hcg-background: var(--highcharts-background-color, #ffffff);
 
     /* Other properties */
     --hcg-border-radius: 5px;
