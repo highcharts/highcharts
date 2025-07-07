@@ -381,6 +381,10 @@
     display: block;
 }
 
+.highcharts-datagrid-table thead {
+    background-color: var(--ig-header-background);
+}
+
 .hcg-table thead th,
 .highcharts-datagrid-table thead th {
     position: relative;
@@ -1065,7 +1069,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-light .highcharts-datagrid-theme-default {
     /* Primary colors */
     --hcg-color: var(--highcharts-neutral-color-100, #000000);
-    --hcg-background: var(--highcharts-background-color, #ffffff);
+    --hcg-background: var(--highcharts-neutral-color-5, #ffffff);
 
     /* Other properties */
     --hcg-border-radius: 5px;
