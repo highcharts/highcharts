@@ -107,13 +107,24 @@ export const config = {
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
     services: [
-         ['static-server', {
-             port: 3131,
+        ['static-server', {
+            port: 3131,
             folders: [
                 { mount: '/', path: './tests/html' },
             ]
         }],
-         ['devtools'],        // so that browser.mock() is available
+        // ['devtools'],        // so that browser.mock() is available
+        ['image-comparison', {
+            // where to store your golden images from the reference branch
+            baselineFolder: './test/visual/baseline/',
+            // where diffs & new captures go
+            formatImageName: '{tag}-{browserName}-{width}x{height}',
+            screenshotPath: './test/visual/current/',
+            savePerInstance: true,
+            autoSaveBaseline: process.env.UPDATE_BASELINE === 'true',
+            blockOutStatusBar: true,
+            blockOutToolBar: true,
+        }]
     ],
     before: async function () {
         await registerHighchartsHelpers();
