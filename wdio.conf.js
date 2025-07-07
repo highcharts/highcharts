@@ -1,3 +1,5 @@
+import { registerHighchartsHelpers } from "./tests/wdio/helpers.mjs";
+
 export const config = {
     //
     // ====================
@@ -110,8 +112,12 @@ export const config = {
             folders: [
                 { mount: '/', path: './tests/html' },
             ]
-        }]
+        }],
+         ['devtools'],        // so that browser.mock() is available
     ],
+    before: async function () {
+        await registerHighchartsHelpers();
+    },
     //
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber

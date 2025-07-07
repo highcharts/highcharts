@@ -163,3 +163,18 @@ describe('Highcharts hover lineWidth and lineWidthPlus', () => {
     expect(strokeWidthHover).toBe('6');
   });
 });
+
+describe('using loadSample', () => {
+  it('should render the U.S Solar Employment Growth chart', async () => {
+    // load the demo and apply test options
+    await browser.loadSample('samples/highcharts/demo/line-chart');
+    await browser.setTestingOptions();
+
+    // locate the chart by its aria-label, then the title text
+    const chart = await $('[aria-label="Interactive chart"]');
+    const title = await chart.$('//*[normalize-space()="U.S Solar Employment Growth"]');
+
+    // assert it's visible
+    await expect(title).toBeDisplayed();
+  });
+});
