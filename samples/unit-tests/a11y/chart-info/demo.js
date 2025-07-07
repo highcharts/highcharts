@@ -38,4 +38,18 @@ QUnit.test('Titles', function (assert) {
         chart.a11y,
         'A11y module was re-initialized on chart update'
     );
+
+    chart.update({
+        a11y: {
+            chartDescriptionSection: {
+                chartTitleFormat: '{chartTitle} hello'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.a11y.chartDescriptionInfo.chartTitle,
+        'My chart<br>with special chars hello',
+        'Title format is applied'
+    );
 });

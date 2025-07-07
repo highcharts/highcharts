@@ -31,8 +31,8 @@ const { addEvent, attr } = U;
 function addPlainA11yEl(
     elType: keyof HTMLElementTagNameMap,
     parent: HTMLElement,
-    className = '',
-    content = ''
+    content = '',
+    className = ''
 ): HTMLElement {
     const el = new AST(
         `<${elType} class="${className}" style="margin: 0; padding: 0; border: 0;">${content}</${elType}>`
@@ -113,7 +113,7 @@ export class ProxyProvider {
                 this.groups[insertAfter].containerEl.nextSibling :
                 container.firstChild,
             el = addPlainA11yEl(
-                'div', container,
+                'div', container, '',
                 `hc-a11y-proxy-container hc-group-${groupName}`
             );
         container.insertBefore(el, refNode);
@@ -150,11 +150,12 @@ export class ProxyProvider {
         groupName: string,
         elType: keyof HTMLElementTagNameMap,
         content = '',
+        className = '',
         parent?: HTMLElement
     ): HTMLElement {
         return addPlainA11yEl(
             elType, parent || this.groups[groupName].containerEl,
-            'hc-a11y-sr-only', content
+            content, `hc-a11y-sr-only ${className}`
         );
     }
 
@@ -165,44 +166,59 @@ export class ProxyProvider {
      */
     public addTouchableProxy(
         groupName: string,
-        svgEl: HTMLElement|SVGElement|undefined,
+        targetEl: HTMLElement|SVGElement|undefined,
         proxyElType: keyof HTMLElementTagNameMap,
         content: string,
+        className = '',
         attrs?: HTMLAttributes,
         parent?: HTMLElement
     ): HTMLElement {
         // Fallback if we are trying to proxy something that doesn't exist.
         // Put the content in, but don't overlay anything.
-        if (!svgEl) {
-            return this.addSROnly(groupName, proxyElType, content, parent);
+        if (
+            !targetEl ||
+            targetEl.tagName.toUpperCase() === 'TEXT' && !targetEl.textContent
+        ) {
+            return this.addSROnly(
+                groupName, proxyElType,
+                content, className, parent
+            );
         }
 
         const group = this.groups[groupName],
             container = parent || group.containerEl,
-            el = addPlainA11yEl(proxyElType, container, '', content),
-            computedStyle = win.getComputedStyle(svgEl),
+            el = addPlainA11yEl(proxyElType, container, content, className),
+            computedStyle = win.getComputedStyle(targetEl),
             setSize = (): void => {
-                const bbox = svgEl.getBoundingClientRect(),
+                const bbox = targetEl.getBoundingClientRect(),
                     containerBBox = container.getBoundingClientRect();
                 Object.assign(el.style, {
                     left: bbox.x - containerBBox.x + 'px',
                     top: bbox.y - containerBBox.y + 'px',
                     width: bbox.width + 'px',
-                    height: bbox.height + 'px',
-                    overflow: 'hidden',
-                    cursor: computedStyle.cursor,
-                    tabindex: '-1'
+                    height: bbox.height + 'px'
                 });
             },
             resizeObserver = new ResizeObserver(setSize);
 
-        el.style.position = 'absolute';
+        Object.assign(el.style, {
+            position: 'absolute',
+            overflow: 'hidden',
+            cursor: computedStyle.cursor,
+            font: computedStyle.font,
+            lineHeight: computedStyle.lineHeight,
+            letterSpacing: computedStyle.letterSpacing,
+            wordSpacing: computedStyle.wordSpacing,
+            textTransform: computedStyle.textTransform,
+            textAlign: computedStyle.textAlign,
+            tabindex: '-1'
+        });
         if (attrs) {
             attr(el, attrs);
         }
         group.resizeObservers.push(resizeObserver);
         group.sizeUpdaters.push(setSize);
-        resizeObserver.observe(svgEl);
+        resizeObserver.observe(targetEl);
 
         [
             'mousedown', 'mouseup', 'mouseenter', 'mouseover', 'mouseout',
@@ -213,7 +229,7 @@ export class ProxyProvider {
         ].forEach(
             (type): unknown => group.eventRemovers.push(
                 addEvent(el, type, (e): void => {
-                    svgEl.dispatchEvent(new (
+                    targetEl.dispatchEvent(new (
                         e.constructor as typeof Event)(e.type, e)
                     );
                     e.stopPropagation();

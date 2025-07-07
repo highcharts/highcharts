@@ -80,23 +80,30 @@ class A11y {
         // Create basic description container & content
         const i = this.chartDescriptionInfo = getChartDescriptionInfo(chart);
         this.proxyProvider = new ProxyProvider(chart);
+
+        // Add description container & contents
         this.proxyProvider.addGroup('description');
         this.proxyProvider.addTouchableProxy(
             'description',
-            chart.title?.element, i.headingLevel, i.chartTitle
+            chart.title?.element, i.headingLevel, i.chartTitle, 'hc-title'
         );
-        this.proxyProvider.addTouchableProxy(
-            'description',
-            chart.subtitle?.element, 'p', i.chartSubtitle
-        );
-        this.proxyProvider.addSROnly('description', 'p', i.description);
+        if (i.chartSubtitle) {
+            this.proxyProvider.addTouchableProxy(
+                'description',
+                chart.subtitle?.element, 'p', i.chartSubtitle, 'hc-subtitle'
+            );
+        }
+        if (i.description) {
+            this.proxyProvider.addSROnly(
+                'description', 'p', i.description, 'hc-author-description'
+            );
+        }
 
-        // ^ Need tests for the above. Check that options work.
+        // Fix damn link clicks in proxies etc.
 
         // The auto description contents will need to change on render, the
         // rest of desc can stay the same. Handle whole thing here, and just
         // update the desc content on every render.
-
 
         // Handle container order
 
@@ -109,6 +116,8 @@ class A11y {
         // Legend, zoom etc should be put here, but update on the specific
         // legend/zoom render/update events since the elements may change on
         // scroll/drilldown etc.
+
+        // Credits here. How do we handle the link in regards to AST filtering?
 
         // Handle announcer here too
     }
@@ -140,15 +149,20 @@ class A11y {
 
         fireEvent(chart, 'beforeA11yUpdate', eventContext);
 
+
         // Role="application" yes/no
         // Keyboard nav
+        // Clip path proxies etc? Make the proxy shape = the data shape.
 
         // Data container contents should be updated here, but don't delete the
         // role="app", keep focus.
+        // What if drilldown -> less data -> different model?
+        // Keep existing model?
 
-        // Update sizes etc for proxy elements.
-        // Also for series.animateFinished.
 
+        // Todo: Also update positions for series.animateFinished.
+
+        this.proxyProvider.updatePositions();
         fireEvent(chart, 'afterA11yUpdate', eventContext);
     }
 
