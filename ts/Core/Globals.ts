@@ -26,6 +26,27 @@ import type GlobalsLike from './GlobalsLike';
  *
  * */
 
+/**
+ * Makes all properties of T deeply optional.
+ *
+ * Handles:
+ * - Objects: recurses into each property.
+ * - Arrays: recurses into the array element type.
+ * - Functions and primitives: left as is to avoid infinite recursion.
+ *
+ * Without the special handling for arrays and functions,
+ * TypeScript may hit excessive instantiation depth or produce incorrect types.
+ */
+export type DeeplyPartial<T> = {
+    [K in keyof T]?: T[K] extends Array<infer U> ?
+        Array<DeeplyPartial<U>> :
+        T[K] extends ReadonlyArray<infer U> ?
+            ReadonlyArray<DeeplyPartial<U>> :
+            T[K] extends object ?
+                T[K] extends Function ? T[K] : DeeplyPartial<T[K]> :
+                T[K];
+};
+
 declare global {
 
     type AnyRecord = Record<string, any>;

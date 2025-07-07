@@ -41,6 +41,7 @@ import type {
     ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
+import type { DeeplyPartial } from '../Globals';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
@@ -2003,7 +2004,7 @@ class Chart {
      *
      * @since 11.1.0
      */
-    public getOptions(): DeepPartial<Options> {
+    public getOptions(): DeeplyPartial<Options> {
         return diffObjects(this.userOptions, defaultOptions);
     }
 
@@ -3128,7 +3129,7 @@ class Chart {
      *         The newly generated Axis object.
      */
     public addAxis(
-        options: DeepPartial<AxisOptions>,
+        options: DeeplyPartial<AxisOptions>,
         isX?: boolean,
         redraw?: boolean,
         animation?: boolean
@@ -4255,7 +4256,7 @@ namespace Chart {
 
     export interface CreateAxisOptionsObject {
         animation: (undefined|boolean|Partial<AnimationOptions>);
-        axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxis.Options>);
+        axis: (DeeplyPartial<AxisOptions>|DeeplyPartial<ColorAxis.Options>);
         redraw: (undefined|boolean);
     }
 
