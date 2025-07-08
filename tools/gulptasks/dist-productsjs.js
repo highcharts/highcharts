@@ -23,8 +23,8 @@ const PRODUCT_NAMES = {
     ],
     Dashboards: ['Highcharts Dashboards'],
     Grid: [
-        'Highcharts Grid Lite'
-        // 'Highcharts Grid Pro'
+        'Highcharts Grid Lite',
+        'Highcharts Grid Pro'
     ]
 };
 

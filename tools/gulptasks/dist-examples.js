@@ -326,11 +326,11 @@ function distExamples() {
                 'grid-lite': {
                     path: ['grid', 'demo'],
                     title: 'Highcharts Grid Lite'
-                }/* ,
+                },
                 'grid-pro': {
                     path: ['grid', 'demo'],
                     title: 'Highcharts Grid Pro'
-                }*/
+                }
             };
         }
 

@@ -197,7 +197,7 @@ const VENDOR_FILTER = [
  */
 const PRODUCTS = {
     Highcharts: ['highcharts', 'highstock', 'highmaps', 'gantt'],
-    Grid: ['grid-lite'/* , 'grid-pro'*/]
+    Grid: ['grid-lite', 'grid-pro']
 };
 
 /* *

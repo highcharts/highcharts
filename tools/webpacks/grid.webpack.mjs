@@ -33,7 +33,8 @@ const buildProps = FSLib.getFile(
 
 const namespace = 'Grid';
 const productMasters = [
-    'grid-lite'
+    'grid-lite',
+    'grid-pro'
 ];
 
 /* *

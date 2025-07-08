@@ -55,8 +55,11 @@ function removeHighcharts(removeFromCode = false) {
  * @param {string} productName
  * Official product name to replace with.
  *
- * @param {string} version
- * Version string to replace with.
+ * @param {string} productVersion
+ * Product version string to replace with.
+ *
+ * @param {Date} productDate
+ * Product date to replace with.
  *
  * @return {Promise<void>}
  * Promise to keep.
@@ -153,6 +156,11 @@ async function scriptsTS(argv) {
             fsLib.copyFile(
                 codeGridFolder + 'grid-lite.src.d.ts',
                 codeGridFolder + 'grid-lite.d.ts'
+            );
+
+            fsLib.copyFile(
+                codeGridFolder + 'grid-pro.src.d.ts',
+                codeGridFolder + 'grid-pro.d.ts'
             );
 
             logLib.success('Copied stand-alone DTS for Grid');

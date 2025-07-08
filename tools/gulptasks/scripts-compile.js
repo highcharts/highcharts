@@ -43,9 +43,6 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     } else if (product === 'dashboards') {
         esModulesFolder = config.esModulesFolder;
         targetFolder = config.bundleTargetFolder;
-    } else if (product === 'datagrid') {
-        esModulesFolder = config.esModulesFolderDataGrid;
-        targetFolder = config.bundleTargetFolderDataGrid;
     }
 
 
