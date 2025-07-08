@@ -75,10 +75,11 @@ jobs:
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
         with:
-          start: node utils/server --localOnly
+          start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
           browser: chrome
-          config-file: highcharts/test/cypress/highcharts/config.mjs
+          working-directory: highcharts
+          config-file: test/cypress/highcharts/config.mjs
           install: false
 
   ### HEADLESS LINUX ###
