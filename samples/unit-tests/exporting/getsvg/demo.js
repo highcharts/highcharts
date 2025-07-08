@@ -1,6 +1,6 @@
 QUnit.test('getSVG', function (assert) {
     var chart = Highcharts.chart('container', {
-        accessibility: {
+        a11y: {
             enabled: false // Adds DOM elements to container
         },
 

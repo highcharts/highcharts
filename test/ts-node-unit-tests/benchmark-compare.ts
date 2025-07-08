@@ -167,7 +167,7 @@ async function compare (base: BenchResults, actual: BenchResults){
             min: 0,
             softMax: 1
         },
-        accessibility: {
+        a11y: {
             enabled: false
         }
     });

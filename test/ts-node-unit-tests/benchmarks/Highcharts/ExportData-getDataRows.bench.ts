@@ -31,7 +31,7 @@ export default async function benchmarkTest(
   require(join(CODE_PATH, '/modules/export-data.src.js'))(hc);
 
   const chart = hc.chart(el, {
-      accessibility:  {
+      a11y:  {
         enabled: false
       },
       series: [{

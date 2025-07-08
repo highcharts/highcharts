@@ -31,7 +31,7 @@ function benchmarkTest(
             height: 400,
             width: 800
         },
-        accessibility: {
+        a11y: {
             enabled: false
         },
         annotations: [

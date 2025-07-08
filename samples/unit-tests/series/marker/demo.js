@@ -90,9 +90,6 @@ QUnit.test('Marker size and position', function (assert) {
                 }
             }
         },
-        accessibility: {
-            enabled: false // A11y forces markers
-        },
         series: [
             {
                 data: [1, 2, 3],
@@ -244,10 +241,6 @@ QUnit.test('visibility', assert => {
         series: [series1, series2],
         yAxis: [, /* yAxis1 */ yAxis2]
     } = Highcharts.stockChart('container', {
-        // NOTE: Disable a11y, because it affects stateMarkerGraphic in Karma.
-        accessibility: {
-            enabled: false
-        },
         chart: {
             height: axisHeight * 3
         },

@@ -805,7 +805,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     // Initialize the chart
     const chart = Highcharts.mapChart('container', {
-        accessibility: {
+        a11y: {
             enabled: false
         },
 

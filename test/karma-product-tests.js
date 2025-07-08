@@ -1,7 +1,7 @@
 // Map of products to subfolders of unit-tests to run
 module.exports = {
     always: [
-        'accessibility'
+        'a11y'
     ],
     Core: [
         'axis',
@@ -36,5 +36,5 @@ module.exports = {
     ],
     Dashboards: [],
     Grid: [],
-    Accessibility: [] // a11y tests already in always, but need the key to work as a "product"
+    A11y: [] // a11y tests already in always, but need the key to work as a "product"
 };

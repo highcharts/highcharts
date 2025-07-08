@@ -187,9 +187,6 @@ QUnit.test('Solid gauge: defaults & legend', function (assert) {
 
 QUnit.test('Solid gauge null point (#10630)', function (assert) {
     const chart = Highcharts.chart('container', {
-        accessibility: {
-            enabled: false
-        },
         chart: {
             type: 'solidgauge'
         },

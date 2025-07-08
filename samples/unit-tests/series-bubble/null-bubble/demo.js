@@ -1,10 +1,6 @@
 QUnit.test('Bubble with null(#4543)', function (assert) {
     var chart = $('#container')
         .highcharts({
-            accessibility: {
-                enabled: false
-            },
-
             chart: {
                 type: 'bubble'
             },

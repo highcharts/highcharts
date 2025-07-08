@@ -6,7 +6,7 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
             type: 'column',
             inverted: true
         },
-        accessibility: {
+        a11y: {
             enabled: false // A11y module adds DOM elements => different
             // childNodes in container
         },

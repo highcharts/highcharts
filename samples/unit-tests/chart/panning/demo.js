@@ -89,7 +89,7 @@ QUnit.test('Panning inverted chart(#4077)', function (assert) {
     // Zoom
     controller.mouseMove(
         200,
-        50, { shiftKey: true }
+        100, { shiftKey: true }
     );
     controller.mouseUp();
     assert.strictEqual(chart.xAxis[0].min > firstZoom.min, true, 'Has panned');

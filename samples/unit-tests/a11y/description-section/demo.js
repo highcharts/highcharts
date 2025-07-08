@@ -9,7 +9,9 @@ QUnit.test('Section elements', function (assert) {
     assert.ok(el, 'Has description section');
 
     const heading = el.firstChild;
-    assert.strictEqual(heading.tagName, 'H6', 'Has H6 as first child');
+    assert.strictEqual(
+        heading.firstChild.tagName, 'H6', 'Has H6 as first child'
+    );
 
     const headingbBox = heading.getBoundingClientRect(),
         titleBBox = chart.title.element.getBoundingClientRect(),
@@ -90,7 +92,7 @@ QUnit.test('Interactive elements', function (assert) {
         title: {
             useHTML: true,
             text: '<span class="custom-title">Custom title: ' +
-                '<a href="www.google.com">Google</a></span>'
+                '<a href="//www.google.com">Google</a></span>'
         },
         series: [{
             data: [1, 2, 3]

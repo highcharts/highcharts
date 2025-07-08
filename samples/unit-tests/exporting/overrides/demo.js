@@ -13,7 +13,7 @@ QUnit.test('Exported SVG characteristics', async function (assert) {
         credits: {
             enabled: false
         },
-        accessibility: {
+        a11y: {
             enabled: false
         },
         xAxis: {

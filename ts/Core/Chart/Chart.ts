@@ -2917,7 +2917,7 @@ class Chart {
      */
     public warnIfA11yModuleNotLoaded(): void {
         const { options, title } = this;
-        if (options && !this.a11y && !this.accessibility) {
+        if (options && !(this as AnyRecord).a11y && !this.accessibility) {
             // Make chart behave as an image with the title as alt text
             this.renderer.boxWrapper.attr({
                 role: 'img',
@@ -2928,7 +2928,7 @@ class Chart {
             });
 
             if (
-                options.a11y?.enabled !== false &&
+                (options as AnyRecord).a11y?.enabled !== false &&
                 options.accessibility?.enabled !== false
             ) {
                 error(

@@ -18,6 +18,8 @@
         ]
     },
     "exclude": [
+        "../A11y/**/*.ts",
+        "../masters/modules/a11y.*ts",
         "../Dashboards/**/*.ts",
         "../Grid/**/*.ts",
         "../masters-dashboards/**/*.ts",

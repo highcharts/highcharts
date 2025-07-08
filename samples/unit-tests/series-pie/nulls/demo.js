@@ -39,9 +39,6 @@ QUnit.test('Pie with zeroes(#4246)', function (assert) {
 QUnit.test('Pie with nulls', function (assert) {
     var chart = $('#container')
         .highcharts({
-            accessibility: {
-                enabled: false
-            },
             series: [
                 {
                     type: 'pie',
