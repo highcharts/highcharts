@@ -138,7 +138,7 @@ class SortingController {
         let foundColumnId: string | undefined;
         for (let i = columnIDs.length - 1; i > -1; --i) {
             const columnId = columnIDs[i];
-            const columnOptions = columnOptionsMap[columnId];
+            const columnOptions = columnOptionsMap[columnId]?.options || {};
             const order = columnOptions.sorting?.order;
 
             if (order) {
@@ -189,13 +189,15 @@ class SortingController {
         }
 
         const { columnId, order } = this.currentSorting;
-        if (!order) {
+        if (!order || !columnId) {
             return;
         }
 
         return new SortModifier({
             orderByColumn: columnId,
-            direction: order
+            direction: order,
+            compare: this.grid.columnOptionsMap?.[columnId]
+                ?.options?.sorting?.compare
         });
     }
 

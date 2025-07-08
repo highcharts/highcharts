@@ -36,7 +36,7 @@ Highcharts.chart('container', {
         series: {
             marker: {
                 symbol: 'circle',
-                fillColor: '#FFFFFF',
+                fillColor: 'var(--highcharts-background-color, #ffffff)',
                 enabled: true,
                 radius: 2.5,
                 lineWidth: 1,

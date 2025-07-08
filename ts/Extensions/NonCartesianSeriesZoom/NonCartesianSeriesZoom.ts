@@ -459,7 +459,7 @@ export default NonCartesianSeriesZoom;
  * Note: This option works only for non-cartesian series.
  *
  * @type      {boolean}
- * @since     next
+ * @since 12.3.0
  * @apioption plotOptions.series.zoomEnabled
  */
 
@@ -471,7 +471,7 @@ export default NonCartesianSeriesZoom;
  * Note: This option works only for non-cartesian series.
  *
  * @type      {boolean}
- * @since     next
+ * @since 12.3.0
  * @apioption series.zoomEnabled
  */
 

@@ -44,7 +44,7 @@ For an asynchronous approach, one needs to use the ESM variants, which can be fo
   import 'https://code.highcharts.com/esm/highcharts-more.js';
   import 'https://code.highcharts.com/esm/modules/exporting.js';
   import 'https://code.highcharts.com/esm/modules/accessibility.js';
-  </scripts>
+  </script>
   ```
 
 * Node.js Example:

@@ -181,7 +181,10 @@ class Table {
             );
         }
 
-        if (dgOptions?.columnDefaults?.resizing) {
+        if (!(
+            dgOptions?.rendering?.columns?.resizing?.enabled === false ||
+            dgOptions?.columnDefaults?.resizing === false
+        )) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
@@ -451,11 +454,6 @@ class Table {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
 
-        if (!meta.columnDistribution.invalidated) {
-            const colDistMeta = meta.columnDistribution.exportMetadata();
-            this.columnDistribution.importMetadata(colDistMeta);
-        }
-
         if (meta.focusCursor) {
             const [rowIndex, columnIndex] = meta.focusCursor;
             const row = this.rows[rowIndex - this.rows[0].index];
@@ -490,6 +488,9 @@ class Table {
      * The ID of the row.
      */
     public getRow(id: number): TableRow | undefined {
+        // TODO: Change `find` to a method using `vp.dataTable.getLocalRowIndex`
+        // and rows[presentationRowIndex - firstRowIndex]. Needs more testing,
+        // but it should be faster.
         return this.rows.find((row): boolean => row.id === id);
     }
 }

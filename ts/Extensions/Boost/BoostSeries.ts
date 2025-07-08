@@ -898,7 +898,8 @@ function getPoint(
         return boostPoint as BoostPointComposition;
     }
 
-    const isScatter = series.is('scatter'),
+    const data = seriesOptions.data,
+        isScatter = series.is('scatter'),
         xData = (
             (isScatter && series.getColumn('x', true).length ?
                 series.getColumn('x', true) :
@@ -913,15 +914,33 @@ function getPoint(
             seriesOptions.yData ||
             false
         ),
+        pointIndex = boostPoint.i,
         point = new PointClass(
             series as BoostSeriesComposition,
             (isScatter && xData && yData) ?
-                [xData[boostPoint.i], yData[boostPoint.i]] :
+                [xData[pointIndex], yData[pointIndex]] :
                 (
-                    isArray(series.options.data) ? series.options.data : []
+                    isArray(data) ? data : []
                 )[boostPoint.i],
-            xData ? xData[boostPoint.i] : void 0
+            xData ? xData[pointIndex] : void 0
         ) as BoostPointComposition;
+
+    if (
+        isScatter &&
+        seriesOptions?.keys?.length
+    ) {
+        const keys = seriesOptions.keys;
+
+        // Don't reassign X and Y properties as they're already handled above
+        for (
+            let keysIndex = keys.length - 1;
+            keysIndex > -1;
+            keysIndex--
+        ) {
+            (point as any)[keys[keysIndex]] =
+                (data as any)[pointIndex][keysIndex];
+        }
+    }
 
     point.category = pick(
         xAxis.categories ?
@@ -935,7 +954,7 @@ function getPoint(
     point.distX = boostPoint.distX;
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
-    point.index = boostPoint.i;
+    point.index = pointIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
     return point;
