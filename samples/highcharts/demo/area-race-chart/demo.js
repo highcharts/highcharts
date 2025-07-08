@@ -30,11 +30,6 @@ const chart = Highcharts.chart('container', {
                     .graphic.attr({
                         rotation: -20
                     });
-                labels
-                    .find(a => a.options.id === 'cassettes-label')
-                    .graphic.attr({
-                        rotation: 20
-                    });
             }
         },
         type: 'area',
@@ -143,7 +138,7 @@ const chart = Highcharts.chart('container', {
                     point: {
                         x: 1987,
                         xAxis: 0,
-                        y: 2.6,
+                        y: 2,
                         yAxis: 0
                     },
                     style: {
