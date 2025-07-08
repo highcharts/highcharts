@@ -76,6 +76,5 @@ jobs:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           browser: chrome
-          working-directory: highcharts
           config-file: test/cypress/dashboards/config.mjs
           install: false
