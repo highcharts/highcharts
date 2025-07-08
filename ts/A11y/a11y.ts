@@ -29,7 +29,7 @@ import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import defaultOptionsA11y from './A11yDefaults.js';
 import G from '../Core/Globals.js';
-const { composed } = G;
+const { composed, doc } = G;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -58,6 +58,10 @@ class A11y {
     private chartDetailedInfo?: ChartDetailedInfo;
     private model?: A11yModel;
     private proxyProvider!: ProxyProvider;
+    private eventRemovers: Array<Function> = [];
+    private focusIndicator: HTMLElement;
+    private showFocus = false;
+    private removeFocusResizer?: Function;
     private autoDescEl!: HTMLElement;
 
 
@@ -76,6 +80,17 @@ class A11y {
         });
         chart.renderer.box.removeAttribute('role');
         chart.renderer.box.removeAttribute('aria-label');
+
+        // Init focus indicator
+        this.focusIndicator = doc.createElement('div');
+        this.focusIndicator.className = 'hc-a11y-focus-indicator';
+        chart.renderTo.appendChild(this.focusIndicator);
+
+        // Visually show focus only when keyboard navigating
+        this.eventRemovers.push(
+            addEvent(doc, 'keydown', (): unknown => (this.showFocus = true)),
+            addEvent(doc, 'mousedown', (): unknown => (this.showFocus = false))
+        );
 
         // Create basic description container & content
         const i = this.chartDescriptionInfo = getChartDescriptionInfo(chart);
@@ -99,7 +114,9 @@ class A11y {
             );
         }
 
-        // Fix damn link clicks in proxies etc.
+        // Tests for proxy interactive content.
+        // Tests for focus indicator.
+        // Test, stylesheet is only there once per page.
 
         // The auto description contents will need to change on render, the
         // rest of desc can stay the same. Handle whole thing here, and just
@@ -168,6 +185,41 @@ class A11y {
 
 
     /**
+     * Set the focus indicator to a given element, making it clear that this
+     * element is focused.
+     */
+    public setFocusIndicator(el: SVGElement | HTMLElement): void {
+        if (this.removeFocusResizer) {
+            this.removeFocusResizer();
+        }
+        const setSize = (): void => {
+                const bbox = el.getBoundingClientRect(),
+                    bodyOffset = document.body.getBoundingClientRect(),
+                    margin = 2;
+                Object.assign(this.focusIndicator.style, {
+                    left: bbox.x - bodyOffset.x - margin + 'px',
+                    top: bbox.y - bodyOffset.y - margin + 'px',
+                    width: bbox.width + 2 * margin + 'px',
+                    height: bbox.height + 2 * margin + 'px'
+                });
+            },
+            resizeObserver = new ResizeObserver(setSize);
+        resizeObserver.observe(el);
+        setSize();
+        this.removeFocusResizer = (): void => resizeObserver.disconnect();
+        this.focusIndicator.style.display = this.showFocus ? 'block' : 'none';
+    }
+
+
+    /**
+     * Make sure the focus indicator is hidden.
+     */
+    public hideFocus(): void {
+        this.focusIndicator.style.display = 'none';
+    }
+
+
+    /**
      * Helper function to determine the correct interaction model for the chart.
      */
     private getChartModel(chart: Chart): A11yModel {
@@ -200,6 +252,9 @@ class A11y {
         const chart = this.chart;
         this.proxyProvider?.destroy();
         delete chart.a11y;
+
+        // Remove event handlers
+        this.eventRemovers.forEach((remover): void => remover());
 
         // Unhide chart SVG
         chart.renderer?.boxWrapper.attr({
@@ -267,6 +322,46 @@ namespace A11y {
             addEvent(ChartClass, 'destroy', function (): void {
                 this.a11y?.destroy();
             });
+
+            // Add stylesheet (only once per page)
+            const css = new CSSStyleSheet();
+            css.replaceSync(`
+            .hc-a11y-focus-indicator {
+                position: absolute;
+                display: none;
+                z-index: 1;
+                pointer-events: none;
+                border: 2px solid #000;
+                border-radius: 3px;
+                outline: 2px solid #fff;
+            }
+            .hc-a11y-proxy-container {
+                position: relative;
+                top: 0;
+                left: 0;
+                z-index: 20;
+                padding: 0;
+                margin: -1px;
+                width: 1px;
+                height: 1px;
+                white-space: nowrap;
+                opacity: 0;
+                border: 0;
+                ol, ul, li {
+                    list-style-type: none;
+                }
+            }
+            .hc-a11y-sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                white-space: nowrap;
+                clip: rect(0 0 0 0);
+                clip-path: inset(50%);
+            }`);
+            doc.adoptedStyleSheets.push(css);
         }
     }
 }

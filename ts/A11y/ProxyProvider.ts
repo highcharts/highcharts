@@ -21,6 +21,27 @@ const { doc, win } = G;
 import U from '../Core/Utilities.js';
 const { addEvent, attr } = U;
 
+/**
+ * Get focusable children of an element, as an array.
+ *
+ * @internal
+ */
+const focusableChildren = (el: HTMLElement): Array<HTMLElement> => Array.from(
+    el.querySelectorAll(`
+        a[href],
+        area[href],
+        input:not([disabled]),
+        select:not([disabled]),
+        textarea:not([disabled]),
+        button:not([disabled]),
+        iframe,
+        object,
+        embed,
+        [contenteditable],
+        [tabindex]:not([tabindex="-1"])
+    `)
+);
+
 
 /**
  * Utility function to add a plain, basic HTML element to the DOM.
@@ -58,42 +79,16 @@ interface ProxyGroup {
  * @internal
  */
 export class ProxyProvider {
-    private stylesheet: CSSStyleSheet;
     private groups: Record<string, ProxyGroup> = {};
+    private outerContainerEl: HTMLElement;
 
     constructor(public chart: Chart) {
-        // Insert the stylesheet
-        this.stylesheet = new CSSStyleSheet();
-        this.stylesheet.replaceSync(`
-        .hc-a11y-proxy-container {
-            position: relative;
-            top: 0;
-            left: 0;
-            z-index: 20;
-            padding: 0;
-            margin: -1px;
-            width: 1px;
-            height: 1px;
-            white-space: nowrap;
-            opacity: 0;
-            border: 0;
-
-            ol, ul, li {
-                list-style-type: none;
-            }
-        }
-        .hc-a11y-sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            margin: -1px;
-            overflow: hidden;
-            white-space: nowrap;
-            clip: rect(0 0 0 0);
-            clip-path: inset(50%);
-        }
-        `);
-        doc.adoptedStyleSheets.push(this.stylesheet);
+        this.outerContainerEl = doc.createElement('div');
+        this.outerContainerEl.className = 'hc-a11y-proxy-outer-container';
+        this.outerContainerEl.style.position = 'absolute';
+        chart.renderTo.insertBefore(
+            this.outerContainerEl, chart.renderTo.firstChild
+        );
     }
 
 
@@ -104,11 +99,11 @@ export class ProxyProvider {
      * specified group, or at the end if the group is not found.
      *
      * If insertAfter is not specified, the group is inserted as the
-     * first child of the chart's renderTo element.
+     * first child of the proxy outer container.
      */
     public addGroup(groupName: string, insertAfter?: string): void {
         this.removeGroup(groupName);
-        const container = this.chart.renderTo,
+        const container = this.outerContainerEl,
             refNode = insertAfter ?
                 this.groups[insertAfter].containerEl.nextSibling :
                 container.firstChild,
@@ -177,7 +172,7 @@ export class ProxyProvider {
         // Put the content in, but don't overlay anything.
         if (
             !targetEl ||
-            targetEl.tagName.toUpperCase() === 'TEXT' && !targetEl.textContent
+            targetEl?.tagName.toUpperCase() === 'TEXT' && !targetEl?.textContent
         ) {
             return this.addSROnly(
                 groupName, proxyElType,
@@ -187,12 +182,13 @@ export class ProxyProvider {
 
         const group = this.groups[groupName],
             container = parent || group.containerEl,
-            el = addPlainA11yEl(proxyElType, container, content, className),
-            computedStyle = win.getComputedStyle(targetEl),
+            touchableEl = addPlainA11yEl(
+                'div', container, '', 'hc-a11y-touchable-container'
+            ),
             setSize = (): void => {
                 const bbox = targetEl.getBoundingClientRect(),
                     containerBBox = container.getBoundingClientRect();
-                Object.assign(el.style, {
+                Object.assign(touchableEl.style, {
                     left: bbox.x - containerBBox.x + 'px',
                     top: bbox.y - containerBBox.y + 'px',
                     width: bbox.width + 'px',
@@ -201,43 +197,93 @@ export class ProxyProvider {
             },
             resizeObserver = new ResizeObserver(setSize);
 
-        Object.assign(el.style, {
+        Object.assign(touchableEl.style, {
             position: 'absolute',
             overflow: 'hidden',
-            cursor: computedStyle.cursor,
-            font: computedStyle.font,
-            lineHeight: computedStyle.lineHeight,
-            letterSpacing: computedStyle.letterSpacing,
-            wordSpacing: computedStyle.wordSpacing,
-            textTransform: computedStyle.textTransform,
-            textAlign: computedStyle.textAlign,
             tabindex: '-1'
         });
         if (attrs) {
-            attr(el, attrs);
+            attr(touchableEl, attrs);
         }
         group.resizeObservers.push(resizeObserver);
         group.sizeUpdaters.push(setSize);
         resizeObserver.observe(targetEl);
 
+        // Add content as visually hidden
+        const contentEl = this.addSROnly(
+            groupName, proxyElType, content, className, touchableEl
+        );
+
+        // Loop through focusable children and map to focusable children in the
+        // target element. On focus => set focus highlight.
+        // Needed so that we can do keyboard navigation in the proxy elements.
+        const focusableMap = new WeakMap<HTMLElement, HTMLElement>();
+        if (targetEl instanceof HTMLElement && targetEl.childElementCount > 0) {
+            const srcFocusable = focusableChildren(contentEl),
+                targetFocusable = focusableChildren(targetEl);
+            if (srcFocusable.length === targetFocusable.length) {
+                srcFocusable.forEach((srcEl, i): void => {
+                    const focusTarget = targetFocusable[i];
+                    focusTarget.tabIndex = -1;
+                    group.eventRemovers.push(
+                        addEvent(srcEl, 'focus', (): void =>
+                            this.chart.a11y?.setFocusIndicator(focusTarget)
+                        ),
+                        addEvent(srcEl, 'blur', (): void =>
+                            this.chart.a11y?.hideFocus()
+                        )
+                    );
+                    focusableMap.set(srcEl, focusTarget);
+                });
+            }
+        }
+
+        // Proxy events down to the target
         [
             'mousedown', 'mouseup', 'mouseenter', 'mouseover', 'mouseout',
-            'mouseleave', 'pointerdown', 'pointerup', 'pointermove',
-            'pointercancel', 'pointerleave', 'pointerenter', 'wheel',
-            'dragstart', 'dragend', 'dragenter', 'dragleave', 'dragover',
-            'drop', 'click'
+            'mouseleave', 'mousemove', 'pointerdown', 'pointerup',
+            'pointermove', 'pointercancel', 'pointerleave', 'pointerenter',
+            'wheel', 'dragstart', 'dragend', 'dragenter', 'dragleave',
+            'dragover', 'drop', 'click'
         ].forEach(
             (type): unknown => group.eventRemovers.push(
-                addEvent(el, type, (e): void => {
-                    targetEl.dispatchEvent(new (
+                addEvent(touchableEl, type, (e): void => {
+                    // If the element is focusable and has been mapped to a
+                    // focusable child target element within the targetEl,
+                    // use that one as the target.
+                    let realEl = e.target && focusableMap.get(e.target);
+                    if (!realEl) {
+                        // Not in map, try to find underlying element
+                        // (can be a child of target)
+                        touchableEl.style.pointerEvents = 'none';
+                        const x = (e instanceof MouseEvent) ? e.clientX :
+                                (e as TouchEvent)?.changedTouches
+                                    ?.[0]?.clientX ?? null,
+                            y = (e instanceof MouseEvent) ? e.clientY :
+                                (e as TouchEvent)?.changedTouches
+                                    ?.[0]?.clientY ?? null;
+                        realEl = x !== null && y !== null &&
+                            doc.elementFromPoint(x, y) || targetEl;
+                        touchableEl.style.pointerEvents = '';
+                    }
+
+                    // Proxy the cursor style if relevant
+                    if (type !== 'wheel') {
+                        const targetStye = win.getComputedStyle(realEl);
+                        touchableEl.style.cursor = targetStye.cursor;
+                    }
+
+                    // Proxy event to the underlying element
+                    realEl.dispatchEvent(new (
                         e.constructor as typeof Event)(e.type, e)
                     );
                     e.stopPropagation();
                     e.preventDefault();
-                })
+                }, { passive: false })
             )
         );
-        return el;
+
+        return touchableEl;
     }
 
 
@@ -257,15 +303,12 @@ export class ProxyProvider {
      * Remove traces of the proxy provider.
      */
     public destroy(): void {
-        // Remove the stylesheet
-        const index = doc.adoptedStyleSheets.indexOf(this.stylesheet);
-        if (index !== -1) {
-            doc.adoptedStyleSheets.splice(index, 1);
-        }
         // Remove all groups
         Object.keys(this.groups).forEach(
             (groupName): void => this.removeGroup(groupName)
         );
+
+        this.outerContainerEl.remove();
     }
 }
 
