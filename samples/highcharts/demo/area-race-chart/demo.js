@@ -1,7 +1,7 @@
 const btn = document.getElementById('play-pause-button'),
     input = document.getElementById('play-range'),
     startYear = 1973,
-    endYear = 2021;
+    endYear = 2024;
 
 // General helper functions
 const arrToAssociative = arr => {
