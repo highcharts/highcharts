@@ -151,9 +151,9 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('.highcharts/.github/scripts/commentOnPR');
+            const { createOrUpdateComment } = require('highcharts/.github/scripts/commentOnPR');
             const { readFileSync } = require('node:fs')
 
-            const markdown = readFileSync('.highcharts/tmp/lighthousetable.md');
+            const markdown = readFileSync('highcharts/tmp/lighthousetable.md');
 
             await createOrUpdateComment(github, context, 'Lighthouse report', markdown || 'No table to show');
