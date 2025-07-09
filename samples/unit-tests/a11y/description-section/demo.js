@@ -87,19 +87,66 @@ QUnit.test('Section elements', function (assert) {
 
 
 QUnit.test('Interactive elements', function (assert) {
-    Highcharts.AST.bypassHTMLFiltering = true;
     const chart = Highcharts.chart('container', {
-        title: {
-            useHTML: true,
-            text: '<span class="custom-title">Custom title: ' +
-                '<a href="//www.google.com">Google</a></span>'
-        },
-        series: [{
-            data: [1, 2, 3]
-        }]
+            title: {
+                useHTML: true,
+                text: '<span class="custom-title">Custom title: ' +
+                    '<button>click me</button></span>'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }),
+        el = chart.title.element.querySelector('button'),
+        bBox = el.getBoundingClientRect(),
+        chartBBox = chart.container.getBoundingClientRect(),
+        x = bBox.left - chartBBox.left + bBox.width / 2,
+        y = bBox.top - chartBBox.top + bBox.height / 2,
+        test = new TestController(chart);
+
+    let clicked = false;
+    el.onclick = () => (clicked = true);
+    test.click(x, y);
+    assert.ok(clicked, 'Able to click the button in the title');
+
+    const proxyUnderCursor = test.elementFromPoint(x, y);
+    assert.strictEqual(
+        proxyUnderCursor.className,
+        'hc-a11y-touchable-container',
+        'Element under cursor is the proxy element'
+    );
+
+    // Hack the internal state to force showing focus visually
+    chart.a11y.showFocus = true;
+    proxyUnderCursor.querySelector('button').focus();
+
+    chart.update({
+        a11y: {
+            chartDescriptionSection: {
+                positionOnChart: false
+            }
+        }
     });
 
-    assert.ok(chart, 'Placeholder');
+    const elUnderCursor = test.elementFromPoint(x, y);
+    assert.strictEqual(
+        elUnderCursor, el,
+        'Element under cursor is now the actual button'
+    );
 
-    Highcharts.AST.bypassHTMLFiltering = false;
+    const rect = chart.renderer.rect(10, 10, 100, 100)
+        .attr({ fill: 'red' }).add();
+
+    chart.a11y.showFocus = true;
+    chart.a11y.setFocusIndicator(rect.element);
+
+    const focusBBox = chart.a11y.focusIndicator.getBoundingClientRect(),
+        rectBBox = rect.element.getBoundingClientRect();
+
+    ['left', 'right', 'top', 'bottom'].forEach((prop, i) =>
+        assert.strictEqual(
+            Math.round(focusBBox[prop]) + (i % 2 ? -4 : 4),
+            Math.round(rectBBox[prop]),
+            `Focus indicator ${prop} is correct`
+        ));
 });

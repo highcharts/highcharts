@@ -105,6 +105,17 @@ export interface A11yChartDescriptionSectionOptions {
      * for more information.
      */
     chartAutoDescriptionFormat?: string;
+
+    /**
+     * By default, the chart description elements are positioned on top of the
+     * corresponding visual elements, which in particular benefits screen reader
+     * users - especially on touch devices.
+     *
+     * In some edge cases, for example where you rely on CSS hover styles, or
+     * have very complex interactivity on these elements, you may need to turn
+     * this behavior off for optimal results.
+     */
+    positionOnChart?: boolean;
 }
 
 

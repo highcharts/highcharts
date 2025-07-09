@@ -81,10 +81,14 @@ class A11y {
         chart.renderer.box.removeAttribute('role');
         chart.renderer.box.removeAttribute('aria-label');
 
+        this.proxyProvider = new ProxyProvider(chart);
+
         // Init focus indicator
+        const focusGroup = this.proxyProvider.addGroup('focus-indicator');
+        focusGroup.style.opacity = '1';
         this.focusIndicator = doc.createElement('div');
         this.focusIndicator.className = 'hc-a11y-focus-indicator';
-        chart.renderTo.appendChild(this.focusIndicator);
+        focusGroup.appendChild(this.focusIndicator);
 
         // Visually show focus only when keyboard navigating
         this.eventRemovers.push(
@@ -93,28 +97,37 @@ class A11y {
         );
 
         // Create basic description container & content
-        const i = this.chartDescriptionInfo = getChartDescriptionInfo(chart);
-        this.proxyProvider = new ProxyProvider(chart);
+        const i = this.chartDescriptionInfo = getChartDescriptionInfo(chart),
+            overlayElements = chart.options.a11y?.chartDescriptionSection
+                ?.positionOnChart,
+            addDescContent = (
+                proxyElType: keyof HTMLElementTagNameMap, className: string,
+                content?: string, targetEl?: HTMLElement|SVGElement
+            ): void => {
+                if (!content) {
+                    return;
+                }
+                if (overlayElements && targetEl) {
+                    this.proxyProvider.addTouchableProxy(
+                        'description', targetEl, proxyElType, content, className
+                    );
+                } else {
+                    this.proxyProvider.addSROnly(
+                        'description', proxyElType, content, className
+                    );
+                }
+            };
 
         // Add description container & contents
         this.proxyProvider.addGroup('description');
-        this.proxyProvider.addTouchableProxy(
-            'description',
-            chart.title?.element, i.headingLevel, i.chartTitle, 'hc-title'
+        addDescContent(
+            i.headingLevel, 'hc-title', i.chartTitle, chart.title?.element
         );
-        if (i.chartSubtitle) {
-            this.proxyProvider.addTouchableProxy(
-                'description',
-                chart.subtitle?.element, 'p', i.chartSubtitle, 'hc-subtitle'
-            );
-        }
-        if (i.description) {
-            this.proxyProvider.addSROnly(
-                'description', 'p', i.description, 'hc-author-description'
-            );
-        }
+        addDescContent(
+            'p', 'hc-subtitle', i.chartSubtitle, chart.subtitle?.element
+        );
+        addDescContent('p', 'hc-author-description', i.description);
 
-        // Tests for proxy interactive content.
         // Tests for focus indicator.
         // Test, stylesheet is only there once per page.
 
@@ -187,6 +200,8 @@ class A11y {
     /**
      * Set the focus indicator to a given element, making it clear that this
      * element is focused.
+     *
+     * Styles can be overridden by CSS.
      */
     public setFocusIndicator(el: SVGElement | HTMLElement): void {
         if (this.removeFocusResizer) {
@@ -194,20 +209,23 @@ class A11y {
         }
         const setSize = (): void => {
                 const bbox = el.getBoundingClientRect(),
-                    bodyOffset = document.body.getBoundingClientRect(),
-                    margin = 2;
-                Object.assign(this.focusIndicator.style, {
-                    left: bbox.x - bodyOffset.x - margin + 'px',
-                    top: bbox.y - bodyOffset.y - margin + 'px',
-                    width: bbox.width + 2 * margin + 'px',
-                    height: bbox.height + 2 * margin + 'px'
-                });
+                    offsetEl = this.focusIndicator
+                        .parentElement?.getBoundingClientRect(),
+                    margin = 4; // Accounting for border & outline + some space
+                if (offsetEl) {
+                    Object.assign(this.focusIndicator.style, {
+                        left: bbox.x - offsetEl.x - margin + 'px',
+                        top: bbox.y - offsetEl.y - margin + 'px',
+                        width: bbox.width + 2 * margin + 'px',
+                        height: bbox.height + 2 * margin + 'px'
+                    });
+                }
             },
             resizeObserver = new ResizeObserver(setSize);
         resizeObserver.observe(el);
-        setSize();
         this.removeFocusResizer = (): void => resizeObserver.disconnect();
         this.focusIndicator.style.display = this.showFocus ? 'block' : 'none';
+        setSize();
     }
 
 
@@ -250,6 +268,8 @@ class A11y {
      */
     public destroy(): void {
         const chart = this.chart;
+        this.removeFocusResizer?.();
+        this.focusIndicator?.remove();
         this.proxyProvider?.destroy();
         delete chart.a11y;
 
@@ -329,11 +349,18 @@ namespace A11y {
             .hc-a11y-focus-indicator {
                 position: absolute;
                 display: none;
-                z-index: 1;
+                z-index: 1000;
                 pointer-events: none;
                 border: 2px solid #000;
                 border-radius: 3px;
                 outline: 2px solid #fff;
+                box-sizing: border-box;
+            }
+            .hc-a11y-proxy-outer-container {
+                position: absolute;
+                margin: 0;
+                padding: 0;
+                border: 0;
             }
             .hc-a11y-proxy-container {
                 position: relative;

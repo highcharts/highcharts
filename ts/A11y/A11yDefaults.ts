@@ -26,7 +26,8 @@ const Options: DeepPartial<Options> = {
             chartSubtitleFormat: '{chartSubtitle}',
             linkedDescription: '*[data-highcharts-chart="{index}"] + .highcharts-description', // eslint-disable-line max-len
             chartDescriptionFormat: '{#if linkedDescription}{linkedDescription}{else}{caption}{/if}', // eslint-disable-line max-len
-            chartAutoDescriptionFormat: '{chartAutoDescription}'
+            chartAutoDescriptionFormat: '{chartAutoDescription}',
+            positionOnChart: true
         },
         dataDescriptions: {
             // ...

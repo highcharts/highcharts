@@ -56,7 +56,7 @@ function addPlainA11yEl(
     className = ''
 ): HTMLElement {
     const el = new AST(
-        `<${elType} class="${className}" style="margin: 0; padding: 0; border: 0;">${content}</${elType}>`
+        `<${elType} class="${className}" style="padding: 0; border: 0;">${content}</${elType}>`
     );
     return el.addToDOM(parent) as HTMLElement;
 }
@@ -85,7 +85,6 @@ export class ProxyProvider {
     constructor(public chart: Chart) {
         this.outerContainerEl = doc.createElement('div');
         this.outerContainerEl.className = 'hc-a11y-proxy-outer-container';
-        this.outerContainerEl.style.position = 'absolute';
         chart.renderTo.insertBefore(
             this.outerContainerEl, chart.renderTo.firstChild
         );
@@ -101,7 +100,7 @@ export class ProxyProvider {
      * If insertAfter is not specified, the group is inserted as the
      * first child of the proxy outer container.
      */
-    public addGroup(groupName: string, insertAfter?: string): void {
+    public addGroup(groupName: string, insertAfter?: string): HTMLElement {
         this.removeGroup(groupName);
         const container = this.outerContainerEl,
             refNode = insertAfter ?
@@ -118,6 +117,7 @@ export class ProxyProvider {
             sizeUpdaters: [],
             resizeObservers: []
         };
+        return el;
     }
 
 
@@ -256,14 +256,11 @@ export class ProxyProvider {
                         // Not in map, try to find underlying element
                         // (can be a child of target)
                         touchableEl.style.pointerEvents = 'none';
-                        const x = (e instanceof MouseEvent) ? e.clientX :
-                                (e as TouchEvent)?.changedTouches
-                                    ?.[0]?.clientX ?? null,
-                            y = (e instanceof MouseEvent) ? e.clientY :
-                                (e as TouchEvent)?.changedTouches
-                                    ?.[0]?.clientY ?? null;
-                        realEl = x !== null && y !== null &&
-                            doc.elementFromPoint(x, y) || targetEl;
+                        const p = (e as TouchEvent).changedTouches?.[0] ?? e,
+                            x = p.clientX ?? (p.pageX ?? NaN) - win.pageXOffset,
+                            y = p.clientY ?? (p.pageY ?? NaN) - win.pageYOffset;
+                        realEl = Number.isFinite(x) && Number.isFinite(y) ?
+                            doc.elementFromPoint(x, y) ?? targetEl : targetEl;
                         touchableEl.style.pointerEvents = '';
                     }
 
