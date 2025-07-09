@@ -122,10 +122,10 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
             const { readFile } = require('node:fs/promises')
 
-            const jsonFile = await readFile('highcharts/tmp/dashboards-visual-results.json')
+            const jsonFile = await readFile('./highcharts/tmp/dashboards-visual-results.json')
               .catch(() => null);
             const commentTitle = 'Dashboard visual diffs';
 
