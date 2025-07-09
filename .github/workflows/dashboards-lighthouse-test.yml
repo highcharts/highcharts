@@ -93,7 +93,8 @@ jobs:
       - name: Checkout current branch
         uses: actions/checkout@v4
         with:
-           clean: false # do not remove files from previous run
+          path: highcharts
+          clean: false # do not remove files from previous run
 
       - name: Install Highcharts dependencies
         run: |
