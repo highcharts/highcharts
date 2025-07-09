@@ -454,7 +454,7 @@ class WGLRenderer {
             low: number|undefined|null,
             nextInside = false,
             prevInside = false,
-            pcolor: Color.RGBA | false = false,
+            pcolor: Color.RGBA | undefined = void 0,
             isXInside = false,
             isYInside = true,
             firstPoint = true,
@@ -1067,7 +1067,7 @@ class WGLRenderer {
                 }
 
                 // Need to add an extra point here
-                vertice(x, minVal as any, false, 0, pcolor ? pcolor : void 0);
+                vertice(x, minVal as any, false, 0, pcolor);
             }
 
             // Do step line if enabled.
@@ -1080,7 +1080,7 @@ class WGLRenderer {
                     lastY,
                     false,
                     2,
-                    pcolor ? pcolor : void 0
+                    pcolor
                 );
             }
 
@@ -1089,7 +1089,7 @@ class WGLRenderer {
                 y,
                 false,
                 series.type === 'bubble' ? (z || 1) : 2,
-                pcolor ? pcolor : void 0
+                pcolor
             );
 
             // Uncomment this to support color axis.
