@@ -32,7 +32,7 @@ QUnit.test('FilterModifier queries', async function (assert) {
         });
         modifier = new FilterModifier({
             condition: {
-                operator: 'ne',
+                operator: '!==',
                 columnName: 'x',
                 value: 3
             }
@@ -48,7 +48,7 @@ QUnit.test('FilterModifier queries', async function (assert) {
         table = new DataTable({ columns: { x: base.slice() } });
         modifier = new FilterModifier({
             condition: {
-                operator: 'lt',
+                operator: '<',
                 columnName: 'x',
                 value: 4
             }
@@ -115,8 +115,8 @@ QUnit.test('FilterModifier queries', async function (assert) {
             condition: {
                 operator: 'and',
                 conditions: [
-                    { operator: 'lt', columnName: 'x', value: 0 },
-                    { operator: 'gt', columnName: 'z', value: 1000 }
+                    { operator: '<', columnName: 'x', value: 0 },
+                    { operator: '>', columnName: 'z', value: 1000 }
                 ]
             }
         };
@@ -136,19 +136,16 @@ QUnit.test('FilterModifier queries', async function (assert) {
         modifier = new FilterModifier({
             condition: {
                 operator: 'and',
-                conditions: [
-                    {
-                        operator: 'or',
-                        conditions: [
-                            { operator: 'ge', columnName: 'x', value: 0 },
-                            { operator: 'le', columnName: 'z', value: 500 }
-                        ]
-                    },
-                    {
-                        operator: 'not',
-                        condition: { operator: 'eq', columnName: 'x', value: 5 }
-                    }
-                ]
+                conditions: [{
+                    operator: 'or',
+                    conditions: [
+                        { operator: '>=', columnName: 'x', value: 0 },
+                        { operator: '<=', columnName: 'z', value: 500 }
+                    ]
+                }, {
+                    operator: 'not',
+                    condition: { operator: '===', columnName: 'x', value: 5 }
+                }]
             }
         });
 
@@ -174,12 +171,12 @@ QUnit.test('FilterModifier queries', async function (assert) {
             condition: {
                 operator: 'and',
                 conditions: [
-                    { operator: 'ge', columnName: 'age', value: 18 },
+                    { operator: '>=', columnName: 'age', value: 18 },
                     {
                         operator: 'or',
                         conditions: [
-                            { operator: 'eq', columnName: 'country', value: 'US' },
-                            { operator: 'eq', columnName: 'country', value: 'CA' }
+                            { operator: '===', columnName: 'country', value: 'US' },
+                            { operator: '===', columnName: 'country', value: 'CA' }
                         ]
                     }
                 ]
@@ -204,7 +201,7 @@ QUnit.test('FilterModifier index mappings', async function (assert) {
             }
         }),
         modifier = new FilterModifier({
-            condition: { operator: 'gt', columnName: 'x', value: 25 }
+            condition: { operator: '>', columnName: 'x', value: 25 }
         });
 
     await modifier.modify(table);
