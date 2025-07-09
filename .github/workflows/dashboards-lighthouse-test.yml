@@ -151,7 +151,7 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('highcharts/.github/scripts/commentOnPR');
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
             const { readFileSync } = require('node:fs')
 
             const markdown = readFileSync('highcharts/tmp/lighthousetable.md');
