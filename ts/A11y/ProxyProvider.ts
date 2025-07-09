@@ -21,26 +21,38 @@ const { doc, win } = G;
 import U from '../Core/Utilities.js';
 const { addEvent, attr } = U;
 
+const focusableSelector = `
+    a[href],
+    area[href],
+    input:not([disabled]),
+    select:not([disabled]),
+    textarea:not([disabled]),
+    button:not([disabled]),
+    iframe,
+    object,
+    embed,
+    [contenteditable],
+    [tabindex]:not([tabindex="-1"])
+`;
+
+
 /**
  * Get focusable children of an element, as an array.
  *
  * @internal
  */
-const focusableChildren = (el: HTMLElement): Array<HTMLElement> => Array.from(
-    el.querySelectorAll(`
-        a[href],
-        area[href],
-        input:not([disabled]),
-        select:not([disabled]),
-        textarea:not([disabled]),
-        button:not([disabled]),
-        iframe,
-        object,
-        embed,
-        [contenteditable],
-        [tabindex]:not([tabindex="-1"])
-    `)
+const focusableChildren = (el: HTMLElement|SVGElement): Array<HTMLElement|SVGElement> => Array.from(
+    el.querySelectorAll(focusableSelector)
 );
+
+
+/**
+ * Is a given element focusable?
+ *
+ * @internal
+ */
+const isFocusable = (el: HTMLElement|SVGElement): boolean =>
+    el.matches(focusableSelector);
 
 
 /**
@@ -92,25 +104,17 @@ export class ProxyProvider {
 
 
     /**
-     * Add a new group to contain proxy elements.
-     *
-     * If insertAfter is specified, the group is inserted after the
-     * specified group, or at the end if the group is not found.
-     *
-     * If insertAfter is not specified, the group is inserted as the
-     * first child of the proxy outer container.
+     * Add a new group to contain proxy elements. Added to the end of the
+     * proxy outer container.
      */
-    public addGroup(groupName: string, insertAfter?: string): HTMLElement {
+    public addGroup(groupName: string): HTMLElement {
         this.removeGroup(groupName);
         const container = this.outerContainerEl,
-            refNode = insertAfter ?
-                this.groups[insertAfter].containerEl.nextSibling :
-                container.firstChild,
             el = addPlainA11yEl(
                 'div', container, '',
                 `hc-a11y-proxy-container hc-group-${groupName}`
             );
-        container.insertBefore(el, refNode);
+        container.appendChild(el);
         this.groups[groupName] = {
             containerEl: el,
             eventRemovers: [],
@@ -158,6 +162,12 @@ export class ProxyProvider {
     /**
      * Proxy an existing element. Will overlay the element once updatePositions
      * is called (or stuff is resized).
+     *
+     * The touchable proxy element is a `div` that overlays the target. Events on
+     * this `div` are proxied to the relevant target child element (or parent).
+     * Within the proxy element `div`, we add visually hidden content. This content
+     * may or may not receive focus, and if it does, the focus is highlighted on
+     * the relevant target child element (or parent).
      */
     public addTouchableProxy(
         groupName: string,
@@ -202,9 +212,7 @@ export class ProxyProvider {
             overflow: 'hidden',
             tabindex: '-1'
         });
-        if (attrs) {
-            attr(touchableEl, attrs);
-        }
+
         group.resizeObservers.push(resizeObserver);
         group.sizeUpdaters.push(setSize);
         resizeObserver.observe(targetEl);
@@ -213,30 +221,35 @@ export class ProxyProvider {
         const contentEl = this.addSROnly(
             groupName, proxyElType, content, className, touchableEl
         );
+        if (attrs) {
+            attr(contentEl, attrs);
+        }
 
         // Loop through focusable children and map to focusable children in the
         // target element. On focus => set focus highlight.
         // Needed so that we can do keyboard navigation in the proxy elements.
-        const focusableMap = new WeakMap<HTMLElement, HTMLElement>();
-        if (targetEl instanceof HTMLElement && targetEl.childElementCount > 0) {
-            const srcFocusable = focusableChildren(contentEl),
-                targetFocusable = focusableChildren(targetEl);
-            if (srcFocusable.length === targetFocusable.length) {
-                srcFocusable.forEach((srcEl, i): void => {
-                    const focusTarget = targetFocusable[i];
-                    focusTarget.tabIndex = -1;
-                    group.eventRemovers.push(
-                        addEvent(srcEl, 'focus', (): void =>
-                            this.chart.a11y?.setFocusIndicator(focusTarget)
-                        ),
-                        addEvent(srcEl, 'blur', (): void =>
-                            this.chart.a11y?.hideFocus()
-                        )
-                    );
-                    focusableMap.set(srcEl, focusTarget);
-                });
-            }
-        }
+        const focusableMap = new WeakMap<HTMLElement|SVGElement, HTMLElement|SVGElement>(),
+            srcFocusable = isFocusable(contentEl) ? [contentEl] :
+                focusableChildren(contentEl),
+            targetFocusable = isFocusable(targetEl) ? [targetEl] :
+                focusableChildren(targetEl),
+            matchFocusArrays = targetFocusable.length ===
+                srcFocusable.length;
+
+        srcFocusable.forEach((srcEl, i): void => {
+            const focusTarget = matchFocusArrays ? targetFocusable[i] :
+                targetEl;
+            focusTarget.tabIndex = -1;
+            group.eventRemovers.push(
+                addEvent(srcEl, 'focus', (): void =>
+                    this.chart.a11y?.setFocusIndicator(focusTarget)
+                ),
+                addEvent(srcEl, 'blur', (): void =>
+                    this.chart.a11y?.hideFocus()
+                )
+            );
+            focusableMap.set(srcEl, focusTarget);
+        });
 
         // Proxy events down to the target
         [

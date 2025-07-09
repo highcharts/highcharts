@@ -19,7 +19,7 @@ const Options: DeepPartial<Options> = {
         enabled: true,
         order: [
             'breadcrumbs', 'data', 'mapNavigation',
-            'navigator', 'legend', 'menu'
+            'navigator', 'legend', 'menu', 'credits'
         ],
         chartDescriptionSection: {
             chartTitleFormat: '{chartTitle}',

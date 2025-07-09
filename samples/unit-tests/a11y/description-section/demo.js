@@ -1,5 +1,10 @@
 QUnit.test('Section elements', function (assert) {
     const chart = Highcharts.chart('container', {
+        a11y: {
+            chartDescriptionSection: {
+                chartAutoDescriptionFormat: ''
+            }
+        },
         series: [{
             data: [1, 2, 3]
         }]
@@ -14,14 +19,12 @@ QUnit.test('Section elements', function (assert) {
     );
 
     const headingbBox = heading.getBoundingClientRect(),
-        titleBBox = chart.title.element.getBoundingClientRect(),
-        compare = ['left', 'top', 'width', 'height'];
-    compare.forEach(prop => {
+        titleBBox = chart.title.element.getBoundingClientRect();
+    ['left', 'top', 'width', 'height'].forEach(prop =>
         assert.strictEqual(
             Math.round(headingbBox[prop]), Math.round(titleBBox[prop]),
             `Heading ${prop} is aligned with chart title`
-        );
-    });
+        ));
 
     assert.strictEqual(
         heading, el.lastChild, 'Heading is only child of section'
@@ -48,14 +51,18 @@ QUnit.test('Section elements', function (assert) {
     chart.update({
         a11y: {
             chartDescriptionSection: {
-                chartSubtitleFormat: 'Custom subtitle'
+                chartSubtitleFormat: 'Custom subtitle',
+                chartAutoDescriptionFormat: '{chartAutoDescription}'
             }
         }
     });
 
     const subtitleEl = chart.renderTo.querySelector(
-        '.hc-group-description .hc-subtitle'
-    );
+            '.hc-group-description .hc-subtitle'
+        ),
+        autoDescEl = chart.renderTo.querySelector(
+            '.hc-group-description .hc-auto-description'
+        );
     assert.strictEqual(
         subtitleEl.textContent,
         'Custom subtitle',
@@ -64,6 +71,10 @@ QUnit.test('Section elements', function (assert) {
     assert.ok(
         subtitleEl.classList.contains('hc-a11y-sr-only'),
         'Subtitle is visually hidden, not touchable'
+    );
+    assert.ok(
+        autoDescEl.textContent.length > 10,
+        'There is some auto description in the description section'
     );
 
     chart.update({

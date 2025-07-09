@@ -134,19 +134,11 @@ export function getChartDescriptionInfo(chart: Chart): ChartDescriptionInfo {
         headingLevel: getHeadingLevel(chart),
         chartTitle: format(
             descriptionOpts.chartTitleFormat,
-            {
-                chart,
-                chartTitle: o.title?.text || defaultTitle
-            },
-            chart
+            { chart, chartTitle: o.title?.text || defaultTitle }, chart
         ),
         chartSubtitle: format(
             descriptionOpts.chartSubtitleFormat,
-            {
-                chart,
-                chartSubtitle: o.subtitle?.text || ''
-            },
-            chart
+            { chart, chartSubtitle: o.subtitle?.text || '' }, chart
         ),
         description: format(
             descriptionOpts.chartDescriptionFormat,
@@ -172,9 +164,17 @@ export function getChartDetailedInfo(
     chart: Chart,
     model: A11yModel
 ): ChartDetailedInfo {
+    const o = chart.options,
+        descriptionOpts = o.a11y
+            ?.chartDescriptionSection as Required<A11yChartDescriptionSectionOptions>,
+        chartAutoDescription = 'placeholder description';
+
     // Get first pass of info
     const info = {
-        chartAutoDescription: 'placeholder auto description'
+        chartAutoDescription: format(
+            descriptionOpts.chartAutoDescriptionFormat,
+            { chart, chartAutoDescription }, chart
+        )
     };
 
     // Additional information for more complex models

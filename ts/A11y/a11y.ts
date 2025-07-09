@@ -15,6 +15,7 @@
 // Types
 import type Chart from '../Core/Chart/Chart';
 import type { Options } from '../Core/Options';
+import type { A11yTopLevelOptions } from './A11yOptions';
 
 // Imports
 import {
@@ -28,9 +29,11 @@ import { ProxyProvider } from './ProxyProvider.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import defaultOptionsA11y from './A11yDefaults.js';
+import AST from '../Core/Renderer/HTML/AST.js';
 import G from '../Core/Globals.js';
 const { composed, doc } = G;
 import U from '../Core/Utilities.js';
+
 const {
     addEvent,
     attr,
@@ -62,7 +65,7 @@ class A11y {
     private focusIndicator: HTMLElement;
     private showFocus = false;
     private removeFocusResizer?: Function;
-    private autoDescEl!: HTMLElement;
+    private autoDescEl?: HTMLElement;
 
 
     /**
@@ -73,7 +76,9 @@ class A11y {
      * support live data without messing up focus etc).
      */
     constructor(public chart: Chart) {
-        // Hide chart
+        const a11yOptions = chart.options.a11y as A11yTopLevelOptions;
+
+        // Hide chart graphics from assistive tech
         attr(chart.container, {
             role: 'presentation',
             'aria-hidden': true
@@ -98,27 +103,26 @@ class A11y {
 
         // Create basic description container & content
         const i = this.chartDescriptionInfo = getChartDescriptionInfo(chart),
-            overlayElements = chart.options.a11y?.chartDescriptionSection
+            overlayElements = a11yOptions.chartDescriptionSection
                 ?.positionOnChart,
+            // Utility function to add content in description group
             addDescContent = (
                 proxyElType: keyof HTMLElementTagNameMap, className: string,
                 content?: string, targetEl?: HTMLElement|SVGElement
-            ): void => {
+            ): HTMLElement|undefined => {
                 if (!content) {
                     return;
                 }
                 if (overlayElements && targetEl) {
-                    this.proxyProvider.addTouchableProxy(
+                    return this.proxyProvider.addTouchableProxy(
                         'description', targetEl, proxyElType, content, className
                     );
-                } else {
-                    this.proxyProvider.addSROnly(
-                        'description', proxyElType, content, className
-                    );
                 }
+                return this.proxyProvider.addSROnly(
+                    'description', proxyElType, content, className
+                );
             };
 
-        // Add description container & contents
         this.proxyProvider.addGroup('description');
         addDescContent(
             i.headingLevel, 'hc-title', i.chartTitle, chart.title?.element
@@ -127,12 +131,33 @@ class A11y {
             'p', 'hc-subtitle', i.chartSubtitle, chart.subtitle?.element
         );
         addDescContent('p', 'hc-author-description', i.description);
+        // Placeholder auto desc to be updated on render
+        this.autoDescEl = addDescContent('p', 'hc-auto-description', '...');
 
-        // The auto description contents will need to change on render, the
-        // rest of desc can stay the same. Handle whole thing here, and just
-        // update the desc content on every render.
+        // Add further proxy groups based on the order
+        (a11yOptions.order || []).forEach((groupName): void => {
+            const action = {
 
-        // Handle container order
+                credits: (): void => {
+                    const credOptions = chart.options.credits;
+                    if (credOptions?.enabled && credOptions?.text) {
+                        this.proxyProvider.addGroup('credits');
+                        const href = credOptions.href;
+                        this.proxyProvider.addTouchableProxy(
+                            'credits', chart.credits?.element, href ? 'a' : 'p',
+                            credOptions.text, 'hc-a11y-credits',
+                            href ? { href } : void 0
+                        );
+                    }
+                }
+
+            }[groupName as string];
+            if (action) {
+                action();
+            } else {
+                error(`Unsupported value "${groupName}" in option "a11y.order"`, false, chart);
+            }
+        });
 
         // Menu can probably be handled here, should not change unless options
         // are updated?
@@ -144,9 +169,9 @@ class A11y {
         // legend/zoom render/update events since the elements may change on
         // scroll/drilldown etc.
 
-        // Credits here. How do we handle the link in regards to AST filtering?
-
         // Handle announcer here too
+
+        // Setup keyboard nav
     }
 
 
@@ -158,7 +183,7 @@ class A11y {
         const chart = this.chart,
             curModel = this.getChartModel(chart);
 
-        // If we change model, we should just re-init the module
+        // If we change model, we should just re-init the whole a11y module
         if (this.model && curModel !== this.model) {
             this.destroy();
             this.chart.a11y = new A11y(chart);
@@ -176,16 +201,25 @@ class A11y {
 
         fireEvent(chart, 'beforeA11yUpdate', eventContext);
 
+        // Update auto desc
+        const autoDesc = this.chartDetailedInfo.chartAutoDescription;
+        if (autoDesc && this.autoDescEl) {
+            while (this.autoDescEl.firstChild) {
+                this.autoDescEl.lastChild?.remove();
+            }
+            new AST(autoDesc).addToDOM(this.autoDescEl);
+        } else {
+            this.autoDescEl?.remove();
+        }
 
         // Role="application" yes/no
-        // Keyboard nav
-        // Clip path proxies etc? Make the proxy shape = the data shape.
-
         // Data container contents should be updated here, but don't delete the
         // role="app", keep focus.
-        // What if drilldown -> less data -> different model?
-        // Keep existing model?
 
+        // Clip path proxies etc? Make the proxy shape = the data shape.
+
+        // What if drilldown -> less data -> different model?
+        // Always complex model with drilldown (unless forced through options)?
 
         // Todo: Also update positions for series.animateFinished.
 

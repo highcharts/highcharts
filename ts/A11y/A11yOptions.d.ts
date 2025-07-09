@@ -17,7 +17,7 @@ export type A11yHeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
 
 export type A11yOrder = (
     'breadcrumbs' | 'data' | 'mapNavigation' |
-    'navigator' | 'legend' | 'menu'
+    'navigator' | 'legend' | 'menu' | 'credits'
 )[];
 
 
