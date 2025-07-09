@@ -32,7 +32,7 @@ import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import U from '../../../../Core/Utilities.js';
 
-const { Range: RangeModifier } = DataModifier.types;
+const { Filter: FilterModifier } = DataModifier.types;
 const { addEvent } = U;
 
 
@@ -66,20 +66,27 @@ const syncPair: Sync.SyncPair = {
 
                 let modifier = table.getModifier();
 
-                if (modifier instanceof RangeModifier) {
+                if (modifier instanceof FilterModifier) {
                     NavigatorSyncUtils.setRangeOptions(
-                        modifier.options.ranges,
+                        modifier.options,
                         filterColumn,
                         min,
                         max
                     );
                 } else {
-                    modifier = new RangeModifier({
-                        ranges: [{
-                            column: filterColumn,
-                            maxValue: max,
-                            minValue: min
-                        }]
+                    modifier = new FilterModifier({
+                        condition: {
+                            operator: 'and',
+                            conditions: [{
+                                columnName: filterColumn,
+                                operator: 'ge',
+                                value: min
+                            }, {
+                                columnName: filterColumn,
+                                operator: 'le',
+                                value: max
+                            }]
+                        }
                     });
                 }
 
@@ -116,7 +123,9 @@ const syncPair: Sync.SyncPair = {
             'afterSetExtremes',
             function (extremes: Axis.ExtremesObject): void {
                 clearTimeout(delay);
-                delay = setTimeout(afterSetExtremes, 50, this, extremes);
+                delay = setTimeout((): void => {
+                    void afterSetExtremes(extremes);
+                }, 50);
             }
         );
     },
@@ -129,4 +138,5 @@ const syncPair: Sync.SyncPair = {
 *  Default export
 *
 * */
+
 export default { defaultOptions, syncPair };
