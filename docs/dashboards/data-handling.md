@@ -121,4 +121,4 @@ This can be, for example, highlights, markers, or selections. It
 supports multiple tables and statuses simultaneously. Each dashboard has a `DataCursor`
 accessible via the `Board.dataCursor` property.
 
-<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/datacursor-sync" allow="fullscreen"></iframe>
+The `DataCursor` is used under the hood in the syncing system of the dashboards- see [synchronization article](https://www.highcharts.com/docs/dashboards/synchronize-components) for more information.
