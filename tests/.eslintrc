@@ -1,0 +1,16 @@
+{
+  "overrides": [
+    {
+      "files": ["*.mts", "*.ts"],
+      "parserOptions": {
+        "sourceType": "module"
+      },
+      "plugins": ["node"],
+      "rules": {
+        "node/no-unsupported-features/es-syntax": "off",
+        "node/no-unpublished-import": "off",
+        "no-undef": "off"
+      }
+    }
+  ]
+}

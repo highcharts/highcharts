@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["./window.d.ts", "../node_modules/@types"]
+  },
+  "include": ["types", "tests"] // or wherever your tests live
+}
