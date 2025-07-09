@@ -121,6 +121,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          working-directory: highcharts
           script: |
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
             const { readFile } = require('node:fs/promises')
