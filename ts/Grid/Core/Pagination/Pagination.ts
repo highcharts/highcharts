@@ -52,6 +52,17 @@ class Pagination {
     *  Properties
     *
     * */
+
+    /**
+     * The row in tfoot
+     */
+    private row?: HTMLElement;
+
+    /**
+     * The cell of the row in the tfoot
+     */
+    private cell?: HTMLElement;
+
     /**
      * The Grid Table instance which the pagination belongs to.
      */
@@ -68,16 +79,6 @@ class Pagination {
     public contentWrapper?: HTMLElement;
 
     /**
-     * The row in tfoot
-     */
-    public row?: HTMLElement;
-
-    /**
-     * The cell of the row in the tfoot
-     */
-    public cell?: HTMLElement;
-
-    /**
      * Navigation next button
      */
     public nextButton?: HTMLElement;
@@ -86,6 +87,11 @@ class Pagination {
      * Navigation prev button
      */
     public prevButton?: HTMLElement;
+
+    /**
+     * Current page
+     */
+    public currentPage: number = 1;
 
     /* *
     *
