@@ -36,6 +36,7 @@ import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
+import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
@@ -143,6 +144,11 @@ class Grid {
      * The accessibility controller.
      */
     public accessibility?: Accessibility;
+
+    /**
+     * The Pagination controller.
+     */
+    public pagination?: Pagination;
 
     /**
      * The caption element of the Grid.
@@ -299,6 +305,7 @@ class Grid {
 
         this.initContainers(renderTo);
         this.initAccessibility();
+        this.initPagination();
         this.loadDataTable(this.options?.dataTable);
         this.initVirtualization();
 
@@ -336,6 +343,17 @@ class Grid {
 
         if (this.options?.accessibility?.enabled) {
             this.accessibility = new Accessibility(this);
+        }
+    }
+
+    /*
+     * Initializes the pagination.
+     */
+    private initPagination(): void {
+        const paginationOptions = this.options?.pagination;
+
+        if (paginationOptions?.enabled) {
+            this.pagination = new Pagination(this, paginationOptions);
         }
     }
 
@@ -813,6 +831,7 @@ class Grid {
         this.renderDescription();
 
         this.accessibility?.setA11yOptions();
+        this.pagination?.render();
 
         fireEvent(this, 'afterRenderViewport');
 
