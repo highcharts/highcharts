@@ -1,7 +1,8 @@
 const btn = document.getElementById('play-pause-button'),
     input = document.getElementById('play-range'),
     startYear = 1973,
-    endYear = 2024;
+    endYear = 2024,
+    animationDuration = 400;
 
 // General helper functions
 const arrToAssociative = arr => {
@@ -35,7 +36,7 @@ const chart = Highcharts.chart('container', {
         type: 'area',
         marginTop: 100,
         animation: {
-            duration: 700,
+            duration: animationDuration,
             easing: t => t
         }
     },
@@ -67,6 +68,7 @@ const chart = Highcharts.chart('container', {
     },
     yAxis: {
         reversedStacks: false,
+        max: 20,
         title: {
             text: 'Revenue in the U.S.'
         },
@@ -235,7 +237,7 @@ function pause(button) {
     chart.sequenceTimer = undefined;
 }
 
-function update() {
+function update(sliderClicked) {
     chart.update(
         {
             subtitle: {
@@ -284,7 +286,11 @@ function update() {
             });
     });
 
-    chart.redraw();
+    if (sliderClicked) {
+        chart.redraw(false);
+    } else {
+        chart.redraw();
+    }
 
     input.value = parseInt(input.value, 10) + 1;
 
@@ -302,8 +308,8 @@ function play(button) {
     button.title = 'pause';
     button.className = 'fa fa-pause';
     chart.sequenceTimer = setInterval(function () {
-        update();
-    }, 700);
+        update(false);
+    }, animationDuration);
 }
 
 btn.addEventListener('click', function () {
@@ -317,4 +323,10 @@ btn.addEventListener('click', function () {
 play(btn);
 
 // Trigger the update on the range bar click.
-input.addEventListener('input', update);
+input.addEventListener('click', function () {
+    update(true);
+});
+// Stop animation when clicking and dragging range bar
+input.addEventListener('input', function () {
+    pause(btn);
+});
