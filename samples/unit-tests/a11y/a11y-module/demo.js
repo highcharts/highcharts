@@ -1,12 +1,14 @@
 QUnit.test('A11y is enabled', function (assert) {
     const chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 2]
-        }]
-    });
+            series: [{
+                data: [1, 2]
+            }]
+        }),
+        originalA11y = chart.a11y,
+        originalNumStylesheets = document.styleSheets.length;
 
     assert.ok(
-        chart.a11y,
+        originalA11y,
         'There is an accessibility module instance'
     );
 
@@ -14,6 +16,20 @@ QUnit.test('A11y is enabled', function (assert) {
         chart.container.getAttribute('role'),
         'presentation',
         'The chart container has role="presentation"'
+    );
+
+    chart.update({});
+
+    assert.notStrictEqual(
+        chart.a11y,
+        originalA11y,
+        'The chart a11y instance is updated on chart update'
+    );
+
+    assert.strictEqual(
+        document.styleSheets.length,
+        originalNumStylesheets,
+        'Number of stylesheets on page is unchanged after update'
     );
 });
 

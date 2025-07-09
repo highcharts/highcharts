@@ -128,9 +128,6 @@ class A11y {
         );
         addDescContent('p', 'hc-author-description', i.description);
 
-        // Tests for focus indicator.
-        // Test, stylesheet is only there once per page.
-
         // The auto description contents will need to change on render, the
         // rest of desc can stay the same. Handle whole thing here, and just
         // update the desc content on every render.
