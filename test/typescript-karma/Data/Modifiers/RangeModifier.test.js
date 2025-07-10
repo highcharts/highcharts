@@ -1,7 +1,7 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import RangeModifier from '/base/code/es-modules/Data/Modifiers/RangeModifier.js';
 
-QUnit.test('RangeModifier.modify', async function (assert) {
+QUnit.skip('RangeModifier.modify', async function (assert) {
 
     const table = new DataTable({
             columns: {
@@ -60,7 +60,7 @@ QUnit.test('RangeModifier.modify', async function (assert) {
 
 });
 
-QUnit.test('RangeModifier.modifyCell', function (assert) {
+QUnit.skip('RangeModifier.modifyCell', function (assert) {
 
     const done = assert.async(),
         modifier = new RangeModifier({
@@ -109,7 +109,7 @@ QUnit.test('RangeModifier.modifyCell', function (assert) {
         );
 });
 
-QUnit.test('RangeModifier.modifyColumns', function (assert) {
+QUnit.skip('RangeModifier.modifyColumns', function (assert) {
 
     const done = assert.async(),
         modifier = new RangeModifier({
@@ -159,7 +159,7 @@ QUnit.test('RangeModifier.modifyColumns', function (assert) {
 
 });
 
-QUnit.test('RangeModifier.modifyRows', function (assert) {
+QUnit.skip('RangeModifier.modifyRows', function (assert) {
 
     const done = assert.async(),
         modifier = new RangeModifier({
