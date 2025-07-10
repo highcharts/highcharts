@@ -26,6 +26,7 @@ import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import Grid from '../Grid.js';
 import SortingController from './SortingController.js';
+import PaginationController from './PaginationController.js';
 
 /* *
  *
@@ -61,6 +62,11 @@ class QueryingController {
      */
     public shouldBeUpdated: boolean = false;
 
+    /**
+     * Pagination controller instance
+     */
+    public pagination: PaginationController;
+
 
     /* *
     *
@@ -71,6 +77,7 @@ class QueryingController {
     constructor(grid: Grid) {
         this.grid = grid;
         this.sorting = new SortingController(this);
+        this.pagination = new PaginationController(this);
     }
 
 
@@ -108,6 +115,10 @@ class QueryingController {
 
         if (this.sorting.modifier) {
             modifiers.push(this.sorting.modifier);
+        }
+
+        if (this.pagination.modifier) {
+            modifiers.push(this.pagination.modifier);
         }
 
         return modifiers;
