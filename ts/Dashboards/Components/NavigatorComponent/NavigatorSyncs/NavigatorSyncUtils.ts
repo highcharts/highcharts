@@ -77,13 +77,13 @@ namespace NavigatorSyncUtils {
             if (
                 !condition ||
                 typeof condition !== 'object' ||
-                !(condition.operator === 'le' || condition.operator === 'ge') ||
+                !(condition.operator === '<=' || condition.operator === '>=') ||
                 condition.columnName !== column
             ) {
                 continue;
             }
 
-            if (condition.operator === 'le') {
+            if (condition.operator === '<=') {
                 condition.value = maxValue;
                 changedMax = true;
             } else {
@@ -98,7 +98,7 @@ namespace NavigatorSyncUtils {
 
         if (!changedMax) {
             conditions.push({
-                operator: 'le',
+                operator: '<=',
                 columnName: column,
                 value: maxValue
             });
@@ -106,7 +106,7 @@ namespace NavigatorSyncUtils {
 
         if (!changedMin) {
             conditions.push({
-                operator: 'ge',
+                operator: '>=',
                 columnName: column,
                 value: minValue
             });
@@ -139,7 +139,7 @@ namespace NavigatorSyncUtils {
             if (
                 !condition ||
                 typeof condition !== 'object' ||
-                !(condition.operator === 'le' || condition.operator === 'ge') ||
+                !(condition.operator === '<=' || condition.operator === '>=') ||
                 condition.columnName !== column
             ) {
                 continue;
@@ -174,7 +174,7 @@ namespace NavigatorSyncUtils {
             if (
                 !condition ||
                 typeof condition !== 'object' ||
-                !(condition.operator === 'le' || condition.operator === 'ge') ||
+                !(condition.operator === '<=' || condition.operator === '>=') ||
                 typeof condition.columnName !== 'string' ||
                 !defined(condition.value)
             ) {
@@ -190,7 +190,7 @@ namespace NavigatorSyncUtils {
                 };
             }
 
-            if (condition.operator === 'le') {
+            if (condition.operator === '<=') {
                 rangesMap[colName].maxValue = condition.value;
             } else {
                 rangesMap[colName].minValue = condition.value;
