@@ -50,5 +50,26 @@ test('Redirects are applied for code', async ({ page }) => {
         type: 'redirect',
         description: 'https://code.highcharts.com/esm/highcharts-gantt.js --> code/esm/highcharts-gantt.src.js'
     });
+});
+
+test('Redirects for data', async ({ page }) => {
+    const template = `<html>
+    <head>
+    </head>
+    <body>
+        <script type="module">
+            await fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=64.128288&lon=-21.827774')
+        </script>
+    </body>
+    </html>`;
+
+    await page.setContent(template, { waitUntil: 'networkidle' });
+
+    const { annotations } = test.info();
+
+    expect(annotations).toContainEqual({
+        type: 'redirect',
+        description: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=64.128288&lon=-21.827774 --> ../samples/data/json-sources/weather-forecast.json'
+    });
 
 });
