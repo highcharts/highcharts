@@ -8,29 +8,46 @@ const form = document.getElementById('filter');
     const csv = new CSVConnector({
         csv: document.querySelector('noscript').innerText,
         dataModifier: {
-            type: 'Range',
-            ranges: [{
-                column: 'City',
-                minValue: 'Aa',
-                maxValue: 'Zz'
-            }, {
-                column: 'Elevation',
-                minValue: 1,
-                maxValue: 3490
-            }, {
-                column: 'Longitude',
-                minValue: -180,
-                maxValue: +180
-            }]
+            type: 'Filter',
+            condition: {
+                operator: 'and',
+                conditions: [{
+                    columnName: 'City',
+                    operator: '>=',
+                    value: 'Aa'
+                }, {
+                    columnName: 'City',
+                    operator: '<=',
+                    value: 'Zz'
+                }, {
+                    columnName: 'Elevation',
+                    operator: '>=',
+                    value: 1
+                }, {
+                    columnName: 'Elevation',
+                    operator: '<=',
+                    value: 3490
+                }, {
+                    columnName: 'Longitude',
+                    operator: '>=',
+                    value: -180
+                }, {
+                    columnName: 'Longitude',
+                    operator: '<=',
+                    value: +180
+                }]
+            }
         }
     });
 
     await csv.load();
 
+    console.log(csv);
+
     renderTable(container, csv.table.modified);
 
     form.querySelectorAll('input').forEach(input => {
-        input.onchange = () => updateRange(csv.table, input.parentElement);
+        input.onchange = () => updateRange(csv.table, input);
     });
 
     console.log(csv.table);
@@ -39,26 +56,19 @@ const form = document.getElementById('filter');
 
 // Updates Range
 
-async function updateRange(table, fieldset) {
-    const inputs = fieldset.querySelectorAll('input');
-    const legend = fieldset.querySelector('legend').innerText;
+async function updateRange(table, input) {
     const modifier = table.getModifier();
-    const range = [
-        'City Filter',
-        'Elevation Filter',
-        'Longitude Filter'
-    ].indexOf(legend);
+    const inputIndex = [
+        'filter-city-min',
+        'filter-city-max',
+        'filter-elevation-min',
+        'filter-elevation-max',
+        'filter-lon-min',
+        'filter-lon-max'
+    ].indexOf(input.id);
 
-    let min = inputs[0].value;
-    let max = inputs[1].value;
-
-    if (range > 0) {
-        min = parseInt(min, 10);
-        max = parseInt(max, 10);
-    }
-
-    modifier.options.ranges[range].maxValue = max;
-    modifier.options.ranges[range].minValue = min;
+    const v = input.value;
+    modifier.options.condition.conditions[inputIndex].value = isNaN(v) ? v : +v;
 
     await table.setModifier(modifier);
 
