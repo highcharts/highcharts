@@ -1,4 +1,10 @@
-import type { Page } from '@playwright/test';
+import type { Page, Route } from '@playwright/test';
+
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path';
+
+import { test as base } from '@playwright/test';
+
 
 export async function setTestingOptions(page: Page){
     await page.evaluate(() => {
