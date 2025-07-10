@@ -7,7 +7,7 @@
     },
     "Highcharts Grid Pro": {
       "cdnpath": null,
-      "distpath": "/grid-lite"
+      "distpath": "/grid-pro"
     }
   }
 }
