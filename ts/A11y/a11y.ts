@@ -194,10 +194,18 @@ class A11y {
 
                 stockTools: (): void => {
                     /* Placeholder */
+
                     // Stock tools should not be proxied, so just verify that we
                     // can make it accessible outside the chart container.
                     // Should not have to do much in the a11y module, maybe make
                     // changes directly in stock tools module?
+
+                    // Same discussion with the new menu. Perhaps we should
+                    // create two outer proxy containers: One for the
+                    // description, and one for the ordered items (data, legend
+                    // etc)? Then StockTools and other modules can add their
+                    // accessible containers either before or after the ordered
+                    // items - within chart.renderTo, not chart.container.
                 }
 
             }[groupName as string];
@@ -209,6 +217,7 @@ class A11y {
         });
 
         // Other TODO:
+        // Menu tests: kbd nav, menu open, able to click item, esc close
         // Anything else need a proxy group, or is it all a part of data?
         // Set up an announcer
         // Setup keyboard nav
