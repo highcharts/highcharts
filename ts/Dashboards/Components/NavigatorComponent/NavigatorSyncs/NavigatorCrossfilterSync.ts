@@ -79,11 +79,11 @@ const syncPair: Sync.SyncPair = {
                             operator: 'and',
                             conditions: [{
                                 columnName: filterColumn,
-                                operator: 'ge',
+                                operator: '>=',
                                 value: min
                             }, {
                                 columnName: filterColumn,
-                                operator: 'le',
+                                operator: '<=',
                                 value: max
                             }]
                         }
