@@ -60,7 +60,7 @@ dataModifier: {
     condition: {
         operator: 'and', // combine multiple checks
         conditions: [{
-            operator: 'gt', // numeric “greater than”
+            operator: '>', // numeric “greater than”
             columnName: 'score',
             value: 50
         }, {
