@@ -16,8 +16,8 @@ import type { A11yModel } from './ChartInfo';
 export type A11yHeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
 
 export type A11yOrder = (
-    'breadcrumbs' | 'data' | 'mapNavigation' |
-    'navigator' | 'legend' | 'menu' | 'credits'
+    'breadcrumbs' | 'rangeSelector' | 'data' | 'zoom' |
+    'navigator' | 'legend' | 'menu' | 'credits' | 'stockTools'
 )[];
 
 

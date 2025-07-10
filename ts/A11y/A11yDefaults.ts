@@ -18,8 +18,8 @@ const Options: DeepPartial<Options> = {
     a11y: {
         enabled: true,
         order: [
-            'breadcrumbs', 'data', 'mapNavigation',
-            'navigator', 'legend', 'menu', 'credits'
+            'breadcrumbs', 'rangeSelector', 'data', 'zoom',
+            'navigator', 'legend', 'menu', 'credits', 'stockTools'
         ],
         chartDescriptionSection: {
             chartTitleFormat: '{chartTitle}',

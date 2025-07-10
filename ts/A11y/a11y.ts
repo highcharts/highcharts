@@ -33,7 +33,7 @@ import T from '../Core/Templating.js';
 const { format } = T;
 import AST from '../Core/Renderer/HTML/AST.js';
 import G from '../Core/Globals.js';
-const { composed, doc } = G;
+const { composed, doc, win } = G;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -339,7 +339,8 @@ class A11y {
             menuOptions = chart.options.exporting,
             group = chart.exporting?.group;
         if (menuOptions?.enabled && group) {
-            const menuGroup = this.proxyProvider.addGroup('menu'),
+            const localEventRemovers: Function[] = [],
+                menuGroup = this.proxyProvider.addGroup('menu'),
                 // The actual menu button
                 menuBtn = this.proxyProvider.addTouchableProxy(
                     'menu', (group.element.querySelector(
@@ -357,11 +358,12 @@ class A11y {
 
             this.eventRemovers.push(
                 addEvent(chart, 'exportMenuShown', (): void => {
+                    const contextMenuEl = chart.exporting?.contextMenuEl;
                     attr(menuBtn, 'aria-expanded', 'true');
                     ulProxy.style.display = 'block';
+                    localEventRemovers.forEach((remover): void => remover());
                     clearElement(ulProxy);
-                    (chart.exporting
-                        ?.contextMenuEl?.querySelectorAll('li') || [])
+                    (contextMenuEl?.querySelectorAll('li') || [])
                         .forEach((li): void => {
                             const container = createElement(
                                 'li', void 0, void 0, ulProxy, true
@@ -371,6 +373,35 @@ class A11y {
                                 'hc-a11y-menu-item', void 0, container
                             );
                         });
+                    localEventRemovers.push(
+                        addEvent(ulProxy, 'mouseenter', (): void =>
+                            contextMenuEl &&
+                            clearTimeout(contextMenuEl.hideTimer)
+                        ),
+                        addEvent(ulProxy, 'mouseleave', (): unknown =>
+                            contextMenuEl && (contextMenuEl.hideTimer =
+                                win.setTimeout(contextMenuEl.hideMenu, 500))
+                        ),
+                        // Auto hide menu when tabbing out of it
+                        addEvent(
+                            ulProxy, 'focusout', (e: FocusEvent): unknown =>
+                                e.relatedTarget && !ulProxy
+                                    .contains(e.relatedTarget as HTMLElement) &&
+                                contextMenuEl?.hideMenu()
+                        ),
+                        // ESC: close menu, set focus to button (if was in menu)
+                        addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
+                            if (
+                                e.key === 'Escape' && chart.exporting?.openMenu
+                            ) {
+                                const f = menuGroup.contains(doc.activeElement);
+                                contextMenuEl?.hideMenu();
+                                if (f) {
+                                    menuBtn.focus();
+                                }
+                            }
+                        })
+                    );
                 }),
                 addEvent(chart, 'exportMenuHidden', (): void => {
                     attr(menuBtn, 'aria-expanded', 'false');

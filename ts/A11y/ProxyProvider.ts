@@ -277,6 +277,14 @@ export class ProxyProvider {
                         touchableEl.style.pointerEvents = '';
                     }
 
+                    // If we found a touchable proxy underneath, we fall
+                    // back to our targetEl to avoid circular proxying.
+                    if (
+                        realEl.classList.contains('hc-a11y-touchable-container')
+                    ) {
+                        realEl = targetEl;
+                    }
+
                     // Proxy the cursor style if relevant
                     if (type !== 'wheel') {
                         const targetStye = win.getComputedStyle(realEl);

@@ -636,6 +636,13 @@ class Exporting {
                 if (e) {
                     e.stopPropagation();
                 }
+                // Hide on 2nd button click if already open.
+                // Can happen with kbd navigation
+                if (exporting.openMenu) {
+                    exporting.contextMenuEl?.hideMenu();
+                    return;
+                }
+                // Show or create menu
                 exporting.contextMenu(
                     button.menuClassName,
                     menuItems,
