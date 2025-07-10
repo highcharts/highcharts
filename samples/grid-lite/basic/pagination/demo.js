@@ -22,11 +22,11 @@ function generateRandomData(rows) {
 
 Grid.grid('container', {
     dataTable: {
-        columns: generateRandomData(100)
+        columns: generateRandomData(10)
     },
     pagination: {
         enabled: true,
-        itemsPerPage: 5,
+        itemsPerPage: 6,
         events: {
             beforePageChange: function () {
                 console.log('beforePageChange');

@@ -25,6 +25,7 @@ import type Grid from '../Grid';
 
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
+import RangeModifier from '../../../Data/Modifiers/RangeModifier.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -44,7 +45,8 @@ class Pagination {
      * Default options of the credits.
      */
     public static defaultOptions: Pagination.Options = {
-        enabled: false
+        enabled: false,
+        itemsPerPage: 10
     };
 
     /* *
@@ -128,8 +130,8 @@ class Pagination {
     // }
 
     public render(): void {
-        const paginationContainer = this.grid.viewport?.tfootElement;
-        this.row = makeHTMLElement('tr', {}, paginationContainer);
+        const pgContainer = this.grid.viewport?.tfootElement;
+        this.row = makeHTMLElement('tr', {}, pgContainer);
         this.cell = makeHTMLElement('td', {}, this.row);
         this.cell.setAttribute(
             'colSpan',
@@ -145,6 +147,8 @@ class Pagination {
     }
 
     public renderNavButtons(): void {
+        const pg = this;
+
         this.prevButton = makeHTMLElement(
             'button',
             {
@@ -153,6 +157,12 @@ class Pagination {
             this.contentWrapper
         );
         this.prevButton.setAttribute('disabled', true);
+        this.prevButton.addEventListener(
+            'click',
+            function (): void {
+                pg.updatePage(false);
+            }
+        );
 
         this.nextButton = makeHTMLElement(
             'button',
@@ -161,7 +171,63 @@ class Pagination {
             },
             this.contentWrapper
         );
-        this.nextButton.setAttribute('disabled', true);
+        this.nextButton.addEventListener(
+            'click',
+            function (): void {
+                pg.updatePage();
+            }
+        );
+    }
+
+    /**
+     * Call modifier to replace items with new ones.
+     *
+     * @param isNext
+     * Declare prev or next action triggered by button.
+     * @returns
+     */
+    public async updatePage(isNext: boolean = true): Promise<void> {
+        const pg = this;
+        const grid = pg.grid;
+        const pgOptions = pg.options;
+        const originalDataTable = grid.dataTable;
+
+        if (!originalDataTable) {
+            return;
+        }
+
+        if (!isNext) {
+            pg.currentPage--;
+        }
+
+        const start = pg.currentPage * pgOptions.itemsPerPage;
+        const rangeModifier = new RangeModifier({
+            start: isNext ? start : start - pgOptions.itemsPerPage,
+            end: start + (isNext ? pgOptions.itemsPerPage : 0)
+        });
+        const dataTableCopy = originalDataTable.clone();
+        await rangeModifier.modify(dataTableCopy.modified);
+        grid.presentationTable = dataTableCopy.modified;
+
+        if (isNext) {
+            pg.currentPage++;
+        }
+
+        if (
+            (pg.grid.presentationTable?.rowCount || 0) < pgOptions.itemsPerPage
+        ) {
+            pg.nextButton?.setAttribute('disabled', true);
+        } else {
+            pg.nextButton?.removeAttribute('disabled');
+        }
+
+        if (pg.currentPage > 1) {
+            pg.prevButton?.removeAttribute('disabled');
+        } else {
+            pg.prevButton?.setAttribute('disabled', true);
+        }
+
+        grid.viewport?.updateRows();
     }
 
     /**
@@ -187,6 +253,11 @@ namespace Pagination {
          * @default false
          */
         enabled: boolean;
+
+        /**
+         * Displayed items per page.
+         */
+        itemsPerPage: number;
     }
 }
 
