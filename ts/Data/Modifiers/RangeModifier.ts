@@ -42,7 +42,7 @@ const {
 
 
 /**
- * Slices the table rows based on the specified ranges.
+ * Slices the table rows based on the specified range.
  */
 class RangeModifier extends DataModifier {
 

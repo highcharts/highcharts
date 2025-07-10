@@ -138,5 +138,5 @@ You can check the modifiers in action with the following demos:
 ### Grid with MathModifier
 <iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/grid-mathmodifier" allow="fullscreen"></iframe>
 
-### CSV data with RangeModifier
+### CSV data with FilterModifier
 <iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/csv-modifiers" allow="fullscreen"></iframe>
