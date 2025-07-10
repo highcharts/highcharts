@@ -17,6 +17,7 @@ import "./es-modules/Data/Modifiers/ChainModifier";
 import "./es-modules/Data/Modifiers/InvertModifier";
 import "./es-modules/Data/Modifiers/RangeModifier";
 import "./es-modules/Data/Modifiers/SortModifier";
+import "./es-modules/Data/Modifiers/FilterModifier";
 
 export { default as AST } from './es-modules/Core/Renderer/HTML/AST'
 export { default as Board } from "./es-modules/Dashboards/Board";

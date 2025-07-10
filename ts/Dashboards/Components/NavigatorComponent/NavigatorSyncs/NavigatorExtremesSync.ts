@@ -30,7 +30,7 @@ import NavigatorComponent from '../NavigatorComponent.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import U from '../../../../Core/Utilities.js';
 
-const { Range: RangeModifier } = DataModifier.types;
+const { Filter: FilterModifier } = DataModifier.types;
 const { addEvent, pick, defined } = U;
 
 
@@ -138,23 +138,20 @@ const syncPair: Sync.SyncPair = {
 
             if (
                 typeof extremesColumn === 'string' &&
-                modifier instanceof RangeModifier
+                modifier instanceof FilterModifier
             ) {
-                const ranges = modifier.options.ranges,
-                    min = table.getCell(extremesColumn, minIndex),
-                    max = table.getCell(extremesColumn, maxIndex);
+                const min = table.getCell(extremesColumn, minIndex);
+                const max = table.getCell(extremesColumn, maxIndex);
 
                 if (defined(max) && defined(min)) {
-                    NavigatorSyncUtils.unsetRangeOptions(
-                        ranges, extremesColumn
+                    NavigatorSyncUtils.setRangeOptions(
+                        modifier.options,
+                        extremesColumn,
+                        min,
+                        max
                     );
 
-                    ranges.unshift({
-                        column: extremesColumn,
-                        maxValue: max,
-                        minValue: min
-                    });
-                    table.setModifier(modifier);
+                    void table.setModifier(modifier);
                 }
             }
         };

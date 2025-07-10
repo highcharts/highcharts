@@ -44,7 +44,7 @@ The Navigator component can be synced with other components in **Dashboards**. T
 
 
 Alternatively, the `NavigatorComponent` can synchronize extremes in a shared `crossfilter`. The crossfilter is managed by 
-a `RangeModifier`, which sources the connector's data table. All components must
+a `FilterModifier`, which sources the connector's data table. All components must
 share the same connector and table to make the `crossfilter` work.
 
 For `crossfilter` sync, the `affectNavigators` option must be enabled, which

@@ -129,10 +129,10 @@ class SortModifier extends DataModifier {
      * */
 
     /**
-     * Constructs an instance of the range modifier.
+     * Constructs an instance of the sort modifier.
      *
-     * @param {Partial<RangeDataModifier.Options>} [options]
-     * Options to configure the range modifier.
+     * @param {Partial<SortDataModifier.Options>} [options]
+     * Options to configure the sort modifier.
      */
     public constructor(
         options?: Partial<SortModifierOptions>
