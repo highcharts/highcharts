@@ -1,7 +1,7 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import RangeModifier from '/base/code/es-modules/Data/Modifiers/RangeModifier.js';
 
-QUnit.skip('RangeModifier.modify', async function (assert) {
+QUnit.test('RangeModifier.modify', async function (assert) {
 
     const table = new DataTable({
             columns: {
@@ -11,8 +11,6 @@ QUnit.skip('RangeModifier.modify', async function (assert) {
             }
         }),
         modifier = new RangeModifier();
-        // Ranges are static but not cleared in constructor
-        modifier.options.ranges.length = 0;
 
     await modifier.modify(table);
 
@@ -22,189 +20,34 @@ QUnit.skip('RangeModifier.modify', async function (assert) {
         'Filtered table should contain same rows.'
     );
 
-    modifier.options.ranges.push({
-        column: 'y',
-        minValue: 'A',
-        maxValue: 'b'
-    });
+    modifier.options.start = 1;
+    modifier.options.end = 3;
 
     await modifier.modify(table);
 
     assert.deepEqual(
         table.modified.getColumns(),
         {
-            x: [ -2, -1 ],
-            y: [ 'a', 'b' ],
-            z: [ 10, 100 ]
+            x: [ -1, -0 ],
+            y: [ 'b', 'c' ],
+            z: [ 1e2, 1e3 ]
         },
         'Filtered table should contain reduced number of rows.'
     );
 
-    modifier.options.ranges.push({
-        column: 'z',
-        minValue: 50,
-        maxValue: 100
-    });
+    modifier.options.start = 4;
+    modifier.options.end = void 0;
 
     await modifier.modify(table);
 
     assert.deepEqual(
         table.modified.getColumns(),
         {
-            x: [ -1 ],
-            y: [ 'b' ],
-            z: [ 100 ]
+            x: [ 2 ],
+            y: [ 'e' ],
+            z: [ 1e5 ]
         },
         'Filtered table should contain intersective reduction of rows.'
     );
-
-});
-
-QUnit.skip('RangeModifier.modifyCell', function (assert) {
-
-    const done = assert.async(),
-        modifier = new RangeModifier({
-            additive: true,
-            ranges: [{
-                column: 'x',
-                minValue: -10,
-                maxValue: -2
-            }, {
-                column: 'y',
-                minValue: 'e',
-                maxValue: 'z'
-            }]
-        }),
-        table = new DataTable({
-            columns: {
-                x: [ -2, -1, 0, 1, 2 ],
-                y: [ 'a', 'b', 'c', 'd', 'e' ]
-            }
-        });
-
-    table
-        .setModifier(modifier)
-        .then((table) => {
-
-            assert.deepEqual(
-                table.modified.getRowObjects(),
-                [{ x: -2, y: 'a' }, { x: 2, y: 'e' }],
-                'Modified table should contain two rows.'
-            );
-
-            table.setCell('x', 0, -1.5);
-
-            assert.deepEqual(
-                table.modified.getRowObjects(),
-                [{ x: 2, y: 'e' }],
-                'Modified table should contain one row.'
-            );
-
-        })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-});
-
-QUnit.skip('RangeModifier.modifyColumns', function (assert) {
-
-    const done = assert.async(),
-        modifier = new RangeModifier({
-            additive: true,
-            ranges: [{
-                column: 'x',
-                minValue: -10,
-                maxValue: -2
-            }, {
-                column: 'y',
-                minValue: 'e',
-                maxValue: 'z'
-            }]
-        }),
-        table = new DataTable({
-            columns: {
-                x: [ -2, -1, 0, 1, 2 ],
-                y: [ 'a', 'b', 'c', 'd', 'e' ]
-            }
-        });
-
-    table
-        .setModifier(modifier)
-        .then((table) => {
-
-            assert.deepEqual(
-                table.modified.getRowObjects(),
-                [{ x: -2, y: 'a' }, { x: 2, y: 'e' }],
-                'Modified table should contain two rows.'
-            );
-
-            table.setColumns({ x: [-3, -2, 0] });
-
-            assert.deepEqual(
-                table.modified.getRowObjects(),
-                [{ x: -3, y: 'a' }, { x: -2, y: 'b' }],
-                'Modified table should contain two rows with valid values.'
-            );
-
-        })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
-});
-
-QUnit.skip('RangeModifier.modifyRows', function (assert) {
-
-    const done = assert.async(),
-        modifier = new RangeModifier({
-            additive: true,
-            ranges: [{
-                column: 'x',
-                minValue: -10,
-                maxValue: -2
-            }, {
-                column: 'y',
-                minValue: 'e',
-                maxValue: 'z'
-            }]
-        }),
-        table = new DataTable({
-            columns: {
-                x: [ -2, -1, 0, 1, 2 ],
-                y: [ 'a', 'b', 'c', 'd', 'e' ]
-            }
-        });
-
-    table
-        .setModifier(modifier)
-        .then((table) => {
-
-            assert.deepEqual(
-                table.modified.getRowObjects(),
-                [{ x: -2, y: 'a' }, { x: 2, y: 'e' }],
-                'Modified table should contain two rows.'
-            );
-
-            table.setRows([{ x: -1.5 }], 0);
-
-            assert.deepEqual(
-                table.modified.getRowObjects(),
-                [{ x: 2, y: 'e' }],
-                'Modified table should contain one row.'
-            );
-
-        })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
 
 });

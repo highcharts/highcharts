@@ -1,6 +1,6 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import ChainModifier from '/base/code/es-modules/Data/Modifiers/ChainModifier.js';
-import FilterModifier from '/base/code/es-modules/Data/Modifiers/FilterModifier';
+import FilterModifier from '/base/code/es-modules/Data/Modifiers/FilterModifier.js';
 import SortModifier from '/base/code/es-modules/Data/Modifiers/SortModifier.js';
 
 QUnit.test('ChainModifier.benchmark', function (assert) {
@@ -8,16 +8,18 @@ QUnit.test('ChainModifier.benchmark', function (assert) {
     const modifier = new ChainModifier(
             {},
             new FilterModifier({
-                condition: 'and',
-                conditions: [{
-                    columnName: 'value',
-                    operator: '>=',
-                    value: 'A'
-                }, {
-                    columnName: 'value',
-                    operator: '<=',
-                    value: 'b'
-                }]
+                condition: {
+                    operator: 'and',
+                    conditions: [{
+                        columnName: 'value',
+                        operator: '>=',
+                        value: 'A'
+                    }, {
+                        columnName: 'value',
+                        operator: '<=',
+                        value: 'b'
+                    }]
+                }
             })
         ),
         table = new DataTable();
@@ -59,12 +61,19 @@ QUnit.test('ChainModifier.modify', function (assert) {
     const done = assert.async(),
         modifier = new ChainModifier({
             chain: [{
-                type: 'Range',
-                ranges: [{
-                    column: 'y',
-                    minValue: 'A',
-                    maxValue: 'b'
-                }]
+                type: 'Filter',
+                condition: {
+                    operator: 'and',
+                    conditions: [{
+                        columnName: 'y',
+                        operator: '>=',
+                        value: 'A'
+                    }, {
+                        columnName: 'y',
+                        operator: '<=',
+                        value: 'b'
+                    }]
+                }
             }]
         }),
         table = new DataTable({
@@ -128,16 +137,18 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
         .setModifier(new ChainModifier(
             {},
             new FilterModifier({
-                condition: 'and',
-                conditions: [{
-                    columnName: 'x',
-                    operator: '>=',
-                    value: 2
-                }, {
-                    columnName: 'x',
-                    operator: '<=',
-                    value: 5
-                }]
+                condition: {
+                    operator: 'and',
+                    conditions: [{
+                        columnName: 'x',
+                        operator: '>=',
+                        value: 2
+                    }, {
+                        columnName: 'x',
+                        operator: '<=',
+                        value: 5
+                    }]
+                }
             }),
             new SortModifier({
                 direction: 'desc',
@@ -223,16 +234,18 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
         .setModifier(new ChainModifier(
             {},
             new FilterModifier({
-                condition: 'and',
-                conditions: [{
-                    columnName: 'x',
-                    operator: '>=',
-                    value: 2
-                }, {
-                    columnName: 'x',
-                    operator: '<=',
-                    value: 5
-                }]
+                condition: {
+                    operator: 'and',
+                    conditions: [{
+                        columnName: 'x',
+                        operator: '>=',
+                        value: 2
+                    }, {
+                        columnName: 'x',
+                        operator: '<=',
+                        value: 5
+                    }]
+                }
             }),
             new SortModifier({
                 direction: 'desc',
@@ -304,16 +317,18 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
         .setModifier(new ChainModifier(
             {},
             new FilterModifier({
-                condition: 'and',
-                conditions: [{
-                    columnName: 'x',
-                    operator: '>=',
-                    value: 2
-                }, {
-                    columnName: 'x',
-                    operator: '<=',
-                    value: 5
-                }]
+                condition: {
+                    operator: 'and',
+                    conditions: [{
+                        columnName: 'x',
+                        operator: '>=',
+                        value: 2
+                    }, {
+                        columnName: 'x',
+                        operator: '<=',
+                        value: 5
+                    }]
+                }
             }),
             new SortModifier({
                 direction: 'asc',
