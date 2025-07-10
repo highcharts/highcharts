@@ -305,11 +305,7 @@ class Table {
         }
 
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
-
-        if (vp.grid.querying.shouldBeUpdated) {
-            await vp.grid.querying.proceed(true);
-        }
-
+        await vp.grid.querying.proceed();
         this.dataTable = this.grid.presentationTable as DataTable;
         for (const column of this.columns) {
             column.loadData();

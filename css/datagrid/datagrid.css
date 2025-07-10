@@ -381,6 +381,11 @@
     display: block;
 }
 
+.hcg-table thead,
+.highcharts-datagrid-table thead {
+    background-color: var(--ig-header-background);
+}
+
 .hcg-table thead th,
 .highcharts-datagrid-table thead th {
     position: relative;
