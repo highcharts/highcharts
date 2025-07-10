@@ -10,7 +10,7 @@ QUnit.test('Section elements', function (assert) {
         }]
     });
 
-    const el = chart.renderTo.querySelector('.hc-group-description');
+    const el = chart.renderTo.querySelector('.hc-a11y-group-description');
     assert.ok(el, 'Has description section');
 
     const heading = el.firstChild;
@@ -42,7 +42,7 @@ QUnit.test('Section elements', function (assert) {
 
     assert.strictEqual(
         chart.renderTo.querySelector(
-            '.hc-group-description .hc-author-description'
+            '.hc-a11y-group-description .hc-author-description'
         ).textContent,
         'This is a linked description',
         'Linked description is added to the description section'
@@ -58,10 +58,10 @@ QUnit.test('Section elements', function (assert) {
     });
 
     const subtitleEl = chart.renderTo.querySelector(
-            '.hc-group-description .hc-subtitle'
+            '.hc-a11y-group-description .hc-subtitle'
         ),
         autoDescEl = chart.renderTo.querySelector(
-            '.hc-group-description .hc-auto-description'
+            '.hc-a11y-group-description .hc-auto-description'
         );
     assert.strictEqual(
         subtitleEl.textContent,
@@ -146,7 +146,7 @@ QUnit.test('Interactive elements', function (assert) {
     );
 
     const rect = chart.renderer.rect(10, 10, 100, 100)
-        .attr({ fill: 'red' }).add();
+        .attr({ fill: 'blue' }).add();
 
     chart.a11y.showFocus = true;
     chart.a11y.setFocusIndicator(rect.element);

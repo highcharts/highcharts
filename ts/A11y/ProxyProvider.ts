@@ -112,7 +112,7 @@ export class ProxyProvider {
         const container = this.outerContainerEl,
             el = addPlainA11yEl(
                 'div', container, '',
-                `hc-a11y-proxy-container hc-group-${groupName}`
+                `hc-a11y-proxy-container hc-a11y-group-${groupName}`
             );
         container.appendChild(el);
         this.groups[groupName] = {

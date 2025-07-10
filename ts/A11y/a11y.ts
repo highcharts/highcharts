@@ -29,14 +29,16 @@ import { ProxyProvider } from './ProxyProvider.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import defaultOptionsA11y from './A11yDefaults.js';
+import T from '../Core/Templating.js';
+const { format } = T;
 import AST from '../Core/Renderer/HTML/AST.js';
 import G from '../Core/Globals.js';
 const { composed, doc } = G;
 import U from '../Core/Utilities.js';
-
 const {
     addEvent,
     attr,
+    createElement,
     error,
     fireEvent,
     merge,
@@ -48,6 +50,16 @@ declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         a11y?: A11y;
         needsA11yStatusCheck?: boolean;
+    }
+}
+
+/**
+ * Efficiently remove all child elements of a given element.
+ * @internal
+ */
+function clearElement(el: HTMLElement): void {
+    while (el.firstChild) {
+        el.lastChild?.remove();
     }
 }
 
@@ -149,6 +161,43 @@ class A11y {
                             href ? { href } : void 0
                         );
                     }
+                },
+
+                menu: this.addMenuProxy.bind(this),
+
+                data: (): void => {
+                    /* Placeholder */
+                    // Set up the container - delete it in update() if it's a
+                    // summary model. Otherwise in update(), add the content.
+                },
+
+                legend: (): void => {
+                    /* Placeholder */
+                    // Remember scrollable legend. Proxies must maybe update
+                    // positions on scroll? Check if built in ResizeObserver
+                    // already handles it when making touchable proxies.
+                },
+
+                breadcrumbs: (): void => { /* Placeholder */ },
+
+                zoom: (): void => {
+                    /* Placeholder */
+                    // map zoom buttons, reset zoom button
+                },
+
+                navigator: (): void => {
+                    /* Placeholder */
+                    // Needs kbd nav for the buttons, or maybe sliders?
+                },
+
+                rangeSelector: (): void => { /* Placeholder */ },
+
+                stockTools: (): void => {
+                    /* Placeholder */
+                    // Stock tools should not be proxied, so just verify that we
+                    // can make it accessible outside the chart container.
+                    // Should not have to do much in the a11y module, maybe make
+                    // changes directly in stock tools module?
                 }
 
             }[groupName as string];
@@ -159,18 +208,9 @@ class A11y {
             }
         });
 
-        // Menu can probably be handled here, should not change unless options
-        // are updated?
-
-        // Role="app" container should be created here, but contents (data)
-        // should be handled in update().
-
-        // Legend, zoom etc should be put here, but update on the specific
-        // legend/zoom render/update events since the elements may change on
-        // scroll/drilldown etc.
-
-        // Handle announcer here too
-
+        // Other TODO:
+        // Anything else need a proxy group, or is it all a part of data?
+        // Set up an announcer
         // Setup keyboard nav
     }
 
@@ -201,12 +241,10 @@ class A11y {
 
         fireEvent(chart, 'beforeA11yUpdate', eventContext);
 
-        // Update auto desc
+        // Update auto desc content from chartDetailedInfo
         const autoDesc = this.chartDetailedInfo.chartAutoDescription;
         if (autoDesc && this.autoDescEl) {
-            while (this.autoDescEl.firstChild) {
-                this.autoDescEl.lastChild?.remove();
-            }
+            clearElement(this.autoDescEl);
             new AST(autoDesc).addToDOM(this.autoDescEl);
         } else {
             this.autoDescEl?.remove();
@@ -294,6 +332,56 @@ class A11y {
 
 
     /**
+     * Add the menu proxy group.
+     */
+    private addMenuProxy(): void {
+        const chart = this.chart,
+            menuOptions = chart.options.exporting,
+            group = chart.exporting?.group;
+        if (menuOptions?.enabled && group) {
+            const menuGroup = this.proxyProvider.addGroup('menu'),
+                // The actual menu button
+                menuBtn = this.proxyProvider.addTouchableProxy(
+                    'menu', (group.element.querySelector(
+                        '.highcharts-contextbutton'
+                    ) || group.element) as SVGElement, 'button',
+                    menuOptions.buttons?.contextButton.text ||
+                    format(chart.options.lang.contextButtonTitle, chart, chart),
+                    'hc-a11y-menu-button', { 'aria-expanded': false }
+                ).firstChild as HTMLButtonElement,
+                // Make a new list element within the proxy group for the items
+                ulProxy = createElement(
+                    'ul', { role: 'list' },
+                    { display: 'none', listStyle: 'none' }, menuGroup, true
+                );
+
+            this.eventRemovers.push(
+                addEvent(chart, 'exportMenuShown', (): void => {
+                    attr(menuBtn, 'aria-expanded', 'true');
+                    ulProxy.style.display = 'block';
+                    clearElement(ulProxy);
+                    (chart.exporting
+                        ?.contextMenuEl?.querySelectorAll('li') || [])
+                        .forEach((li): void => {
+                            const container = createElement(
+                                'li', void 0, void 0, ulProxy, true
+                            );
+                            this.proxyProvider.addTouchableProxy(
+                                'menu', li, 'button', li.textContent || '',
+                                'hc-a11y-menu-item', void 0, container
+                            );
+                        });
+                }),
+                addEvent(chart, 'exportMenuHidden', (): void => {
+                    attr(menuBtn, 'aria-expanded', 'false');
+                    ulProxy.style.display = 'none';
+                })
+            );
+        }
+    }
+
+
+    /**
      * Destructor - remove traces of the a11y module
      * (e.g. HTML elements, event handlers).
      */
@@ -349,7 +437,10 @@ namespace A11y {
                         );
                         return;
                     }
-                    if (this.options.a11y?.enabled === false) {
+                    if (
+                        this.options.a11y?.enabled === false ||
+                        this.renderer.forExport
+                    ) {
                         this.a11y?.destroy();
                     } else {
                         this.a11y = this.a11y || new A11y(this);

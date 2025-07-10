@@ -9,7 +9,7 @@ QUnit.test('Credits', function (assert) {
     });
 
     assert.notOk(
-        chart.renderTo.querySelector('.hc-group-credits'),
+        chart.renderTo.querySelector('.hc-a11y-group-credits'),
         'There is no credits element when starting'
     );
 
@@ -21,7 +21,7 @@ QUnit.test('Credits', function (assert) {
         }
     });
 
-    const group = chart.renderTo.querySelector('.hc-group-credits'),
+    const group = chart.renderTo.querySelector('.hc-a11y-group-credits'),
         proxy = group.querySelector('.hc-a11y-credits');
     assert.strictEqual(
         proxy.tagName,
@@ -41,7 +41,7 @@ QUnit.test('Credits', function (assert) {
     });
 
     const aContainer = chart.renderTo.querySelector(
-            '.hc-group-credits .hc-a11y-touchable-container'
+            '.hc-a11y-group-credits .hc-a11y-touchable-container'
         ),
         aProxy = aContainer.firstChild;
     assert.strictEqual(
@@ -71,7 +71,7 @@ QUnit.test('Credits', function (assert) {
     });
 
     assert.notOk(
-        chart.renderTo.querySelector('.hc-group-credits'),
+        chart.renderTo.querySelector('.hc-a11y-group-credits'),
         'There is no credits element after disabling it in a11y order'
     );
 });
