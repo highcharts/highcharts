@@ -51,6 +51,15 @@ class PaginationController {
      */
     public modifier?: RangeModifier;
 
+    /**
+     * The current page.
+     */
+    public currentPage?: number;
+
+    /**
+     * Whether the next button is pressed.
+     */
+    public isNext?: boolean = false;
 
     /* *
     *
@@ -78,8 +87,16 @@ class PaginationController {
     /**
      * Sets the range options.
      *
+     * @param currentPage
+     * The current page.
+     *
+     * @param isNext
+     * Whether the next button is pressed.
      */
-    public setRange(): void {
+    public setRange(currentPage: number, isNext: boolean): void {
+        this.currentPage = currentPage;
+        this.isNext = isNext;
+        this.querying.shouldBeUpdated = true;
         this.modifier = this.createModifier();
     }
 
@@ -87,18 +104,36 @@ class PaginationController {
      * Loads range options from the grid options.
      */
     public loadOptions(): void {
-        this.setRange();
+        const pagination = this.querying.grid.pagination;
+
+        if (pagination && this.currentPage !== pagination.currentPage) {
+            this.currentPage = pagination.currentPage;
+            this.isNext = pagination.isNext;
+            this.setRange(this.currentPage, this.isNext);
+        }
     }
 
     /**
      * Returns the range modifier.
      */
     private createModifier(): RangeModifier | undefined {
+        const isNext = this.isNext;
+        const currentPage = this.currentPage || 0;
+        const itemsPerPage =
+            this.querying.grid.pagination?.options.itemsPerPage;
+
+        if (!itemsPerPage) {
+            return;
+        }
+
+        const start = currentPage * itemsPerPage;
+
         return new RangeModifier({
-            // start: isNext ? start : start - pgOptions.itemsPerPage,
-            // end: start + (isNext ? pgOptions.itemsPerPage : 0)
+            start: isNext ? start : start - itemsPerPage,
+            end: start + (isNext ? itemsPerPage : 0)
         });
     }
+
 }
 
 

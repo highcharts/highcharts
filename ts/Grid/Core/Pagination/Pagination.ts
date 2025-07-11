@@ -25,10 +25,12 @@ import type Grid from '../Grid';
 
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
-import RangeModifier from '../../../Data/Modifiers/RangeModifier.js';
+import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-
+const {
+    fireEvent
+} = Utilities;
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -95,6 +97,11 @@ class Pagination {
      */
     public currentPage: number = 1;
 
+    /**
+     * Whether the next button is pressed.
+     */
+    public isNext: boolean = false;
+
     /* *
     *
     *  Constructor
@@ -125,10 +132,9 @@ class Pagination {
     *
     * */
 
-    // public init(): HTMLElement {
-    //     return makeHTMLElement('tfoot', this.grid.tableElement);
-    // }
-
+    /**
+     * Render the pagination container.
+     */
     public render(): void {
         const pgContainer = this.grid.viewport?.tfootElement;
         this.row = makeHTMLElement('tr', {}, pgContainer);
@@ -146,8 +152,13 @@ class Pagination {
         this.renderNavButtons();
     }
 
+    /**
+     * Render the navigation buttons.
+     */
     public renderNavButtons(): void {
         const pg = this;
+        const grid = pg.grid;
+        const originalDataTable = grid.dataTable;
 
         this.prevButton = makeHTMLElement(
             'button',
@@ -156,7 +167,12 @@ class Pagination {
             },
             this.contentWrapper
         );
-        this.prevButton.setAttribute('disabled', true);
+
+        this.setButtonState(
+            this.prevButton,
+            true
+        );
+
         this.prevButton.addEventListener(
             'click',
             function (): void {
@@ -171,11 +187,17 @@ class Pagination {
             },
             this.contentWrapper
         );
+
         this.nextButton.addEventListener(
             'click',
             function (): void {
                 pg.updatePage();
             }
+        );
+
+        this.setButtonState(
+            this.nextButton,
+            (originalDataTable?.rowCount || 0) < this.options.itemsPerPage
         );
     }
 
@@ -189,10 +211,10 @@ class Pagination {
     public async updatePage(isNext: boolean = true): Promise<void> {
         const pg = this;
         const grid = pg.grid;
-        const pgOptions = pg.options;
         const originalDataTable = grid.dataTable;
+        const { beforePageChange, afterPageChange } = this.options.events || {};
 
-        if (!originalDataTable) {
+        if (!originalDataTable || !this.prevButton || !this.nextButton) {
             return;
         }
 
@@ -200,36 +222,69 @@ class Pagination {
             pg.currentPage--;
         }
 
-        const start = pg.currentPage * pgOptions.itemsPerPage;
-        const rangeModifier = new RangeModifier({
-            start: isNext ? start : start - pgOptions.itemsPerPage,
-            end: start + (isNext ? pgOptions.itemsPerPage : 0)
-        });
-        const dataTableCopy = originalDataTable.clone();
-        await rangeModifier.modify(dataTableCopy.modified);
-        grid.presentationTable = dataTableCopy.modified;
+        // Event trigger before page change, defined by user
+        if (beforePageChange) {
+            fireEvent(
+                this,
+                'beforePageChange',
+                {
+                    currentPage: pg.currentPage
+                },
+                beforePageChange
+            );
+        }
+
+        // Set the range of the pagination
+        this.grid.querying.pagination.setRange(pg.currentPage, isNext);
 
         if (isNext) {
             pg.currentPage++;
         }
 
-        if (
-            (pg.grid.presentationTable?.rowCount || 0) < pgOptions.itemsPerPage
-        ) {
-            pg.nextButton?.setAttribute('disabled', true);
-        } else {
-            pg.nextButton?.removeAttribute('disabled');
-        }
+        pg.isNext = isNext;
 
-        if (pg.currentPage > 1) {
-            pg.prevButton?.removeAttribute('disabled');
-        } else {
-            pg.prevButton?.setAttribute('disabled', true);
-        }
+        this.setButtonState(this.prevButton, pg.currentPage === 1);
+        this.setButtonState(
+            this.nextButton,
+            Math.ceil(
+                originalDataTable.rowCount / this.options.itemsPerPage
+            ) === pg.currentPage
+        );
 
-        grid.viewport?.updateRows();
+        await grid.viewport?.updateRows();
+
+        // Event trigger after page change, defined by user
+        if (afterPageChange) {
+            fireEvent(
+                this,
+                'afterPageChange',
+                {
+                    currentPage: pg.currentPage
+                },
+                afterPageChange
+            );
+        }
     }
 
+    /**
+     * Set the state of the button.
+     *
+     * @param button
+     * The button to set the state of.
+     * @param disabled
+     * Whether the button should be disabled.
+     */
+    public setButtonState(button: HTMLElement, disabled?: boolean): void {
+        if (!button || disabled === void 0) {
+            return;
+        }
+
+        if (disabled) {
+            button.setAttribute('disabled', true);
+        } else {
+            button.removeAttribute('disabled');
+        }
+    }
     /**
      * Destroy the pagination controller.
      */
@@ -258,6 +313,16 @@ namespace Pagination {
          * Displayed items per page.
          */
         itemsPerPage: number;
+
+        /**
+         * Events for the pagination.
+         */
+        events?: Pagination.Events;
+    }
+
+    export interface Events {
+        beforePageChange: (currentPage: number) => void;
+        afterPageChange: (currentPage: number) => void;
     }
 }
 

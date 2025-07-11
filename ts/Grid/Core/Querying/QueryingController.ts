@@ -105,6 +105,7 @@ class QueryingController {
      */
     public loadOptions(): void {
         this.sorting.loadOptions();
+        this.pagination.loadOptions();
     }
 
     /**
