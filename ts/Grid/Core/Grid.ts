@@ -563,6 +563,8 @@ class Grid {
             this.initVirtualization();
         }
 
+        this.initPagination();
+
         this.querying.loadOptions();
 
         // Update locale.
@@ -576,7 +578,10 @@ class Grid {
         }
 
         if (render) {
-            await this.querying.proceed(newDataTable);
+            await this.querying.proceed(
+                newDataTable ||
+                this.pagination?.options.enabled
+            );
             this.renderViewport();
         }
     }

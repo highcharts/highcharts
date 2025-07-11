@@ -105,7 +105,10 @@ class QueryingController {
      */
     public loadOptions(): void {
         this.sorting.loadOptions();
-        this.pagination.loadOptions();
+
+        if (this.grid.pagination?.options.enabled) {
+            this.pagination.loadOptions();
+        }
     }
 
     /**
@@ -118,7 +121,10 @@ class QueryingController {
             modifiers.push(this.sorting.modifier);
         }
 
-        if (this.pagination.modifier) {
+        if (
+            this.grid.getOptions().pagination?.enabled &&
+            this.pagination.modifier
+        ) {
             modifiers.push(this.pagination.modifier);
         }
 
