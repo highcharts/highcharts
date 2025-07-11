@@ -205,23 +205,38 @@ class DataGridComponent extends Component {
             return;
         }
 
-        const oldColumnNames = grid.viewport?.dataTable?.getColumnNames() || [];
-        const newColumnNames = grid.presentationTable?.getColumnNames() || [];
         const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey);
-
-        // If the number of columns has changed, re-render the whole grid.
-        if (oldColumnNames.length !== newColumnNames.length) {
-            grid.update({ dataTable });
+        if (!dataTable?.modified) {
+            grid.update({ dataTable: void 0 });
             return;
         }
 
-        // If the column order has changed, re-render the whole grid.
-        for (let i = 0, iEnd = oldColumnNames.length; i < iEnd; ++i) {
-            if (oldColumnNames[i] !== newColumnNames[i]) {
-                grid.update({ dataTable });
-                return;
+        if (!grid.options?.header) {
+            // If the header is not defined, we need to check if the column
+            // names have changed, so we can update the whole grid. If they
+            // have not changed, we can just update the rows (more efficient).
+
+            const newColumnNames = dataTable.modified.getColumnNames();
+            const { columnOptionsMap, enabledColumns } = grid;
+
+            let index = 0;
+            for (const newColumn of newColumnNames) {
+                if (columnOptionsMap[newColumn]?.options?.enabled === false) {
+                    continue;
+                }
+
+                if (enabledColumns?.[index] !== newColumn) {
+                    // If the visible columns have changed,
+                    // update the whole grid.
+                    grid.update({ dataTable: dataTable.modified });
+                    return;
+                }
+
+                index++;
             }
         }
+
+        grid.dataTable = dataTable?.modified;
 
         // Data has changed and the whole grid is not re-rendered, so mark in
         // the querying that data table was modified.
