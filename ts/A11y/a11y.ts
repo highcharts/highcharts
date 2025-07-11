@@ -98,10 +98,13 @@ class A11y {
         chart.renderer.box.removeAttribute('role');
         chart.renderer.box.removeAttribute('aria-label');
 
-        this.proxyProvider = new ProxyProvider(chart);
+        this.proxyProvider = new ProxyProvider(
+            chart, ['first', 'ordered']);
 
         // Init focus indicator
-        const focusGroup = this.proxyProvider.addGroup('focus-indicator');
+        const focusGroup = this.proxyProvider.addGroup(
+            'focus-indicator', 'first'
+        );
         focusGroup.style.opacity = '1';
         this.focusIndicator = doc.createElement('div');
         this.focusIndicator.className = 'hc-a11y-focus-indicator';
@@ -136,7 +139,7 @@ class A11y {
                 );
             };
 
-        this.proxyProvider.addGroup('description');
+        this.proxyProvider.addGroup('description', 'first');
         addDescContent(
             i.headingLevel, 'hc-title', i.chartTitle, chart.title?.element
         );
@@ -154,7 +157,7 @@ class A11y {
                 credits: (): void => {
                     const credOptions = chart.options.credits;
                     if (credOptions?.enabled && credOptions?.text) {
-                        this.proxyProvider.addGroup('credits');
+                        this.proxyProvider.addGroup('credits', 'ordered');
                         const href = credOptions.href;
                         this.proxyProvider.addTouchableProxy(
                             'credits', chart.credits?.element, href ? 'a' : 'p',
@@ -200,13 +203,8 @@ class A11y {
                     // can make it accessible outside the chart container.
                     // Should not have to do much in the a11y module, maybe make
                     // changes directly in stock tools module?
-
-                    // Same discussion with the new menu. Perhaps we should
-                    // create two outer proxy containers: One for the
-                    // description, and one for the ordered items (data, legend
-                    // etc)? Then StockTools and other modules can add their
-                    // accessible containers either before or after the ordered
-                    // items - within chart.renderTo, not chart.container.
+                    // Can probably add before or after the ordered proxy
+                    // section.
                 }
 
             }[groupName as string];
@@ -218,6 +216,7 @@ class A11y {
         });
 
         // Other TODO:
+        // Scrollable plot area - does it work?
         // Anything else need a proxy group, or is it all a part of data?
         // Set up an announcer
         // Setup keyboard nav
@@ -349,7 +348,7 @@ class A11y {
             group = chart.exporting?.group;
         if (menuOptions?.enabled && group) {
             const localEventRemovers: Function[] = [],
-                menuGroup = this.proxyProvider.addGroup('menu'),
+                menuGroup = this.proxyProvider.addGroup('menu', 'ordered'),
                 // The actual menu button
                 menuBtn = this.proxyProvider.addTouchableProxy(
                     'menu', (group.element.querySelector(
@@ -518,7 +517,7 @@ namespace A11y {
                 outline: 2px solid #fff;
                 box-sizing: border-box;
             }
-            .hc-a11y-proxy-outer-container {
+            .hc-a11y-proxy-section {
                 position: absolute;
                 margin: 0;
                 padding: 0;

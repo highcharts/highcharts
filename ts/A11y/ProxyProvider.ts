@@ -91,30 +91,39 @@ interface ProxyGroup {
  * @internal
  */
 export class ProxyProvider {
+    private sections: Record<string, HTMLElement>;
     private groups: Record<string, ProxyGroup> = {};
-    private outerContainerEl: HTMLElement;
 
-    constructor(public chart: Chart) {
-        this.outerContainerEl = doc.createElement('div');
-        this.outerContainerEl.className = 'hc-a11y-proxy-outer-container';
-        chart.renderTo.insertBefore(
-            this.outerContainerEl, chart.renderTo.firstChild
-        );
+    /**
+     * Create a new ProxyProvider instance.
+     *
+     * Specify a list of section names to create. Proxy groups can be
+     * added to these sections later.
+     */
+    constructor(public chart: Chart, sectionNames: Array<string>) {
+        const refEl = chart.renderTo.firstChild;
+        this.sections = sectionNames.reduce(
+            (record, sectionName): Record<string, HTMLElement> => {
+                const el = record[sectionName] = doc.createElement('div');
+                el.className = `hc-a11y-proxy-section hc-a11y-section-${sectionName}`;
+                chart.renderTo.insertBefore(el, refEl);
+                return record;
+            }, {} as Record<string, HTMLElement>);
     }
 
 
     /**
      * Add a new group to contain proxy elements. Added to the end of the
-     * proxy outer container.
+     * specified section.
      */
-    public addGroup(groupName: string): HTMLElement {
+    public addGroup(groupName: string, sectionName: string): HTMLElement {
         this.removeGroup(groupName);
-        const container = this.outerContainerEl,
+        const section = this.sections[sectionName],
             el = addPlainA11yEl(
-                'div', container, '',
+                'div', section, '',
                 `hc-a11y-proxy-container hc-a11y-group-${groupName}`
             );
-        container.appendChild(el);
+        section.appendChild(el);
         this.groups[groupName] = {
             containerEl: el,
             eventRemovers: [],
@@ -356,7 +365,7 @@ export class ProxyProvider {
             (groupName): void => this.removeGroup(groupName)
         );
 
-        this.outerContainerEl.remove();
+        Object.values(this.sections).forEach((c): void => c.remove());
     }
 }
 
