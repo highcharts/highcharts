@@ -82,6 +82,7 @@
         // "emitBOM": true,                                  /* Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files. */
         // "newLine": "crlf",                                /* Set the newline character for emitting files. */
         // "stripInternal": true,                            /* Disable emitting declarations that have '@internal' in their JSDoc comments. */
+        "stripInternal": true,
         // "noEmitHelpers": true,                            /* Disable generating custom helper functions like '__extends' in compiled output. */
         // "noEmitOnError": true,                            /* Disable emitting files if any type checking errors are reported. */
         "noEmitOnError": true,
