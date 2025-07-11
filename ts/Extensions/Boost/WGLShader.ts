@@ -221,6 +221,14 @@ const vertexShader = [
     '}',
 
     'void main(void) {',
+        'if (isBubble){',
+            'gl_PointSize = bubbleRadius();',
+        '} else {',
+            'gl_PointSize = pSize;',
+        '}',
+        // 'gl_PointSize = 10.0;',
+        'vColor = aColor;',
+
         // It's not working correctly on useGPUTranslations off, because we
         // operate on pixel values then, not on axis values. Maybe we should
         // just skip outer points before pushing them to the vertex buffer?
@@ -230,19 +238,8 @@ const vertexShader = [
             'aVertexPosition.y < yAxisMin ||',
             'aVertexPosition.y > yAxisMax',
         ')) {',
-            'gl_Position = vec4(2.0, 2.0, 2.0, 1.0);',
-            'return;',
-        '}',
-
-        'if (isBubble){',
-            'gl_PointSize = bubbleRadius();',
-        '} else {',
-            'gl_PointSize = pSize;',
-        '}',
-        // 'gl_PointSize = 10.0;',
-        'vColor = aColor;',
-
-        'if (skipTranslation && isInverted) {',
+            'gl_Position = uPMatrix * vec4(2.0, 2.0, 2.0, 1.0);',
+        '} else if (skipTranslation && isInverted) {',
             // If we get translated values from JS, just swap them (x, y)
             'gl_Position = uPMatrix * vec4(aVertexPosition.y + yAxisPos, aVertexPosition.x + xAxisPos, 0.0, 1.0);',
         '} else if (isInverted) {',
