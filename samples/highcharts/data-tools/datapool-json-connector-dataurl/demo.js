@@ -3,11 +3,9 @@ Dashboards.board('container', {
         connectors: [{
             type: 'JSON',
             id: 'fetched-data',
-            options: {
-                firstRowAsNames: false,
-                columnNames: ['time', 'open', 'high', 'low', 'close', 'volume'],
-                dataUrl: 'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
-            }
+            firstRowAsNames: false,
+            columnNames: ['time', 'open', 'high', 'low', 'close', 'volume'],
+            dataUrl: 'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
         }]
 
     },

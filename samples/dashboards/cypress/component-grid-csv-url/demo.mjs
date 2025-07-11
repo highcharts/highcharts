@@ -20,9 +20,7 @@ Dashboards.board(
                 {
                     id: 'data',
                     type: 'CSV',
-                    options: {
-                        csvURL: 'https://demo-live-data.highcharts.com/updating-set.csv'
-                    }
+                    csvURL: 'https://demo-live-data.highcharts.com/updating-set.csv'
                 }
             ]
         },

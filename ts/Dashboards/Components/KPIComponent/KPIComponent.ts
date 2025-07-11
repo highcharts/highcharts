@@ -455,7 +455,7 @@ class KPIComponent extends Component {
                 column = table.getColumn(this.options.columnName),
                 length = column?.length || 0;
 
-            return table.getCellAsString(this.options.columnName, length - 1);
+            return String(table.getCell(this.options.columnName, length - 1));
         }
     }
 

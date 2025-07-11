@@ -66,12 +66,10 @@ function climate() {
                 }, {
                     id: 'Cities',
                     type: 'CSV',
-                    options: {
-                        csvURL: (
-                            'https://www.highcharts.com/samples/data/' +
+                    csvURL: (
+                        'https://www.highcharts.com/samples/data/' +
                             'climate-cities.csv'
-                        )
-                    }
+                    )
                 }]
             },
             editMode: {
@@ -327,9 +325,7 @@ function climate() {
             dataPool.setConnectorOptions({
                 id: row.city,
                 type: 'CSV',
-                options: {
-                    csvURL: row.csv
-                }
+                csvURL: row.csv
             });
         }
 
@@ -556,9 +552,7 @@ function minimal() {
             connectors: [{
                 id: 'Vitamin',
                 type: 'CSV',
-                options: {
-                    csv: csvData
-                }
+                csv: csvData
             }]
         },
         editMode: {
@@ -810,10 +804,8 @@ function extremes() {
             connectors: [{
                 id: 'Population',
                 type: 'CSV',
-                options: {
-                    csv,
-                    firstRowAsNames: true
-                }
+                csv,
+                firstRowAsNames: true
             }]
         },
         gui: {

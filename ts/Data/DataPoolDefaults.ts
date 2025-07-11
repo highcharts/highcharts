@@ -19,7 +19,7 @@
  *
  * */
 
-import type DataPoolOptions from './DataPoolOptions.js';
+import type DataPool from './DataPool.js';
 
 /* *
  *
@@ -27,7 +27,7 @@ import type DataPoolOptions from './DataPoolOptions.js';
  *
  * */
 
-const DataPoolDefaults: DataPoolOptions = {
+const DataPoolDefaults: DataPool.Options = {
     connectors: []
 };
 

@@ -31,14 +31,12 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Population',
             type: 'JSON',
-            options: {
-                columnNames: [
-                    'City', 'Population (mln)', 'Metro Area (km²)',
-                    'Highest Elevation (m)'
-                ],
-                firstRowAsNames: false,
-                data
-            }
+            columnNames: [
+                'City', 'Population (mln)', 'Metro Area (km²)',
+                'Highest Elevation (m)'
+            ],
+            firstRowAsNames: false,
+            data
         }]
     },
     gui: {

@@ -182,10 +182,8 @@ async function setupDashboard() {
                 {
                     id: 'Stations',
                     type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        data: weatherStationConfig.location.points
-                    }
+                    firstRowAsNames: true,
+                    data: weatherStationConfig.location.points
                 }
             ]
         },
@@ -698,41 +696,39 @@ async function setupDashboard() {
         dataPool.setConnectorOptions({
             id: station,
             type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                dataUrl: url,
-                // Pre-parsing for filtering incoming data
-                beforeParse: function (data) {
-                    const retData = [];
-                    const forecastData = data.properties.timeseries;
+            firstRowAsNames: false,
+            dataUrl: url,
+            // Pre-parsing for filtering incoming data
+            beforeParse: function (data) {
+                const retData = [];
+                const forecastData = data.properties.timeseries;
 
-                    // Get the time difference for the current station
-                    const timeDifference = getTimeDifference(station);
+                // Get the time difference for the current station
+                const timeDifference = getTimeDifference(station);
 
-                    for (let i = 0; i < rangeConfig.hours; i++) {
-                        const item = forecastData[i];
+                for (let i = 0; i < rangeConfig.hours; i++) {
+                    const item = forecastData[i];
 
-                        // Instant data
-                        const instantData = item.data.instant.details;
+                    // Instant data
+                    const instantData = item.data.instant.details;
 
-                        // Data for the next hour
-                        const hourSpan = item.data.next_1_hours.details;
+                    // Data for the next hour
+                    const hourSpan = item.data.next_1_hours.details;
 
-                        // Convert UTC time to local time
-                        const localTime = new Date(item.time).getTime() -
+                    // Convert UTC time to local time
+                    const localTime = new Date(item.time).getTime() -
                             timeDifference * 3600000;
 
-                        // Picks the parameters this application uses
-                        retData.push({
-                            time: localTime,
-                            temperature: instantData.air_temperature,
-                            precipitation: hourSpan.precipitation_amount,
-                            wind: instantData.wind_speed,
-                            windDir: instantData.wind_from_direction
-                        });
-                    }
-                    return retData;
+                    // Picks the parameters this application uses
+                    retData.push({
+                        time: localTime,
+                        temperature: instantData.air_temperature,
+                        precipitation: hourSpan.precipitation_amount,
+                        wind: instantData.wind_speed,
+                        windDir: instantData.wind_from_direction
+                    });
                 }
+                return retData;
             }
         });
     }

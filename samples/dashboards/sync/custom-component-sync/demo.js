@@ -139,9 +139,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv').innerHTML
-            }
+            csv: document.getElementById('csv').innerHTML
         }]
     },
     components: [{

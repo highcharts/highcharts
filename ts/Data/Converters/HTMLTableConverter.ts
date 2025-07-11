@@ -11,6 +11,7 @@
  *  - Gøran Slettemark
  *  - Wojciech Chmiel
  *  - Sophie Bremer
+ *  - Kamil Kubik
  *
  * */
 
@@ -24,9 +25,11 @@
 
 import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
+import type HTMLTableConverterOptions from './HTMLTableConverterOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
+import DataConverterUtils from './DataConverterUtils.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -40,8 +43,8 @@ const { merge } = U;
  * Row equal
  */
 function isRowEqual(
-    row1: Array<(number|string|undefined)>,
-    row2: Array<(number|string|undefined)>
+    row1: (number | string | undefined)[],
+    row2: (number | string | undefined)[]
 ): boolean {
     let i = row1.length;
 
@@ -80,7 +83,7 @@ class HTMLTableConverter extends DataConverter {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: HTMLTableConverter.Options = {
+    protected static readonly defaultOptions: HTMLTableConverterOptions = {
         ...DataConverter.defaultOptions,
         useRowspanHeaders: true,
         useMultiLevelHeaders: true
@@ -95,12 +98,10 @@ class HTMLTableConverter extends DataConverter {
     /**
      * Constructs an instance of the HTMLTableConverter.
      *
-     * @param {HTMLTableConverter.UserOptions} [options]
+     * @param {Partial<HTMLTableConverterOptions>} [options]
      * Options for the HTMLTableConverter.
      */
-    constructor(
-        options?: HTMLTableConverter.UserOptions
-    ) {
+    constructor(options?: Partial<HTMLTableConverterOptions>) {
         const mergedOptions = merge(HTMLTableConverter.defaultOptions, options);
 
         super(mergedOptions);
@@ -127,7 +128,7 @@ class HTMLTableConverter extends DataConverter {
     /**
      * Options for the DataConverter.
      */
-    public readonly options: HTMLTableConverter.Options;
+    public readonly options: HTMLTableConverterOptions;
 
     public tableElement?: HTMLElement;
     public tableElementID?: string;
@@ -153,24 +154,23 @@ class HTMLTableConverter extends DataConverter {
      */
     public export(
         connector: DataConnector,
-        options: HTMLTableConverter.Options = this.options
+        options: Partial<HTMLTableConverterOptions> = this.options
     ): string {
         const exportNames = (options.firstRowAsNames !== false),
             useMultiLevelHeaders = options.useMultiLevelHeaders;
 
-        const columns =
-                connector.getSortedColumns(options.usePresentationOrder),
+        const columns = connector.getSortedColumns(),
             columnNames = Object.keys(columns),
-            htmlRows: Array<string> = [],
+            htmlRows: string[] = [],
             columnsCount = columnNames.length;
 
-        const rowArray: Array<DataTable.Row> = [];
+        const rowArray: DataTable.Row[] = [];
 
         let tableHead = '';
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            const subcategories: (string|undefined)[] = [];
+            const subcategories: (string | undefined)[] = [];
 
             // If using multilevel headers, the first value
             // of each column is a subcategory
@@ -216,8 +216,6 @@ class HTMLTableConverter extends DataConverter {
                     rowArray[rowIndex] = [];
                 }
 
-                // Alternative: Datatype from HTML attribute with
-                // connector.whatIs(columnName)
                 if (
                     !(
                         typeof cellValue === 'string' ||
@@ -273,9 +271,9 @@ class HTMLTableConverter extends DataConverter {
      */
     private getCellHTMLFromValue(
         tag: string,
-        classes: (string|null),
+        classes: string | null,
         attrs: string,
-        value: (number|string|undefined),
+        value?: number | string,
         decimalPoint?: string
     ): string {
         let val = value,
@@ -301,9 +299,9 @@ class HTMLTableConverter extends DataConverter {
      * Get table header markup from row data.
      */
     private getTableHeaderHTML(
-        topheaders: Array<(number|string)> = [],
-        subheaders: Array<(number|string|undefined)> = [],
-        options: HTMLTableConverter.Options = this.options
+        topheaders: (number | string)[] = [],
+        subheaders: (number | string | undefined)[] = [],
+        options: Partial<HTMLTableConverterOptions> = this.options
     ): string {
         const {
             useMultiLevelHeaders,
@@ -392,7 +390,7 @@ class HTMLTableConverter extends DataConverter {
     /**
      * Initiates the parsing of the HTML table
      *
-     * @param {HTMLTableConverter.UserOptions}[options]
+     * @param {Partial<HTMLTableConverterOptions>}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -403,11 +401,11 @@ class HTMLTableConverter extends DataConverter {
      * @emits HTMLTableParser#parseError
      */
     public parse(
-        options: HTMLTableConverter.UserOptions,
+        options: Partial<HTMLTableConverterOptions>,
         eventDetail?: DataEvent.Detail
     ): void {
         const converter = this,
-            columns: Array<DataTable.BasicColumn> = [],
+            columns: DataTable.BasicColumn[] = [],
             headers: string[] = [],
             parseOptions = merge(converter.options, options),
             {
@@ -420,7 +418,7 @@ class HTMLTableConverter extends DataConverter {
 
 
         if (!(tableHTML instanceof HTMLElement)) {
-            converter.emit<DataConverter.Event>({
+            converter.emit({
                 type: 'parseError',
                 columns,
                 detail: eventDetail,
@@ -432,7 +430,7 @@ class HTMLTableConverter extends DataConverter {
         converter.tableElement = tableHTML;
         converter.tableElementID = tableHTML.id;
 
-        this.emit<DataConverter.Event>({
+        this.emit({
             type: 'parse',
             columns: converter.columns,
             detail: eventDetail,
@@ -494,7 +492,7 @@ class HTMLTableConverter extends DataConverter {
                             columns[relativeColumnIndex] = [];
                         }
 
-                        let cellValue = converter.asGuessedType(item.innerHTML);
+                        let cellValue = converter.convertByType(item.innerHTML);
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }
@@ -523,7 +521,7 @@ class HTMLTableConverter extends DataConverter {
         this.columns = columns;
         this.headers = headers;
 
-        this.emit<DataConverter.Event>({
+        this.emit({
             type: 'afterParse',
             columns,
             detail: eventDetail,
@@ -538,43 +536,9 @@ class HTMLTableConverter extends DataConverter {
      * Table from the parsed HTML table
      */
     public getTable(): DataTable {
-        return DataConverter.getTableFromColumns(this.columns, this.headers);
+        const { columns, headers } = this;
+        return DataConverterUtils.getTableFromColumns(columns, headers);
     }
-
-}
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace HTMLTableConverter {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Options for the parser compatible with ClassJSON
-     */
-    export interface Options extends DataConverter.Options {
-        decimalPoint?: string;
-        exportIDColumn?: boolean;
-        tableCaption?: string;
-        tableElement?: (HTMLElement|null);
-        useLocalDecimalPoint?: boolean;
-        useMultiLevelHeaders?: boolean;
-        useRowspanHeaders?: boolean;
-        usePresentationOrder?: boolean;
-    }
-
-    /**
-     * Available options of the HTMLTableConverter.
-     */
-    export type UserOptions = Partial<Options>;
 
 }
 

@@ -20,9 +20,9 @@
  * */
 
 import type Globals from '../Globals';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type HTMLTableConnectorOptions from '../../Data/Connectors/HTMLTableConnectorOptions';
+import type HTMLTableConverterOptions from '../../Data/Converters/HTMLTableConverterOptions';
 
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
@@ -107,7 +107,8 @@ namespace HTMLTableConnectorHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (JSON.Object&HTMLTableConnectorOptions);
+    export type OptionsJSON =
+        JSON.Object & HTMLTableConnectorOptions & HTMLTableConverterOptions;
 
 }
 

@@ -29,8 +29,11 @@ import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
 import type Types from '../Shared/Types';
 
-import CU from './ColumnUtils.js';
 import DataTableCore from './DataTableCore.js';
+
+import ColumnUtils from './ColumnUtils.js';
+const { splice, setLength } = ColumnUtils;
+
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -60,7 +63,7 @@ const {
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
  */
-class DataTable extends DataTableCore implements DataEvent.Emitter {
+class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Event> {
 
 
     /* *
@@ -385,7 +388,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                 columnName = columnNames[i];
                 column = columns[columnName];
 
-                const result = CU.splice(column, rowIndex, rowCount);
+                const result = splice(column, rowIndex, rowCount);
 
                 deletedCells = result.removed;
                 columns[columnName] = column = result.array;
@@ -431,7 +434,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      * @param {DataTable.Event} e
      * Event object with event information.
      */
-    public emit<E extends DataEvent>(e: E): void {
+    public emit(e: DataTable.Event): void {
         if ([
             'afterDeleteColumns',
             'afterDeleteRows',
@@ -470,102 +473,20 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
         }
     }
 
-    /**
-     * Fetches a cell value for the given row as a boolean.
-     *
-     * @function Highcharts.DataTable#getCellAsBoolean
-     *
-     * @param {string} columnName
-     * Column name to fetch.
-     *
-     * @param {number} rowIndex
-     * Row index to fetch.
-     *
-     * @return {boolean}
-     * Returns the cell value of the row as a boolean.
-     */
-    public getCellAsBoolean(
-        columnName: string,
-        rowIndex: number
-    ): boolean {
-        const table = this;
-        const column = table.columns[columnName];
-
-        return !!(column && column[rowIndex]);
-    }
-
-    public getCellAsNumber(
-        columnName: string,
-        rowIndex: number,
-        useNaN: true
-    ): number;
-    public getCellAsNumber(
-        columnName: string,
-        rowIndex: number,
-        useNaN?: false
-    ): (number | null);
-    /**
-     * Fetches a cell value for the given row as a number.
-     *
-     * @function Highcharts.DataTable#getCellAsNumber
-     *
-     * @param {string} columnName
-     * Column name or to fetch.
-     *
-     * @param {number} rowIndex
-     * Row index to fetch.
-     *
-     * @param {boolean} [useNaN]
-     * Whether to return NaN instead of `null` and `undefined`.
-     *
-     * @return {number|null}
-     * Returns the cell value of the row as a number.
-     */
-    public getCellAsNumber(
-        columnName: string,
-        rowIndex: number,
+    public convertToNumber(
+        value: DataTable.CellType | undefined,
         useNaN?: boolean
-    ): (number | null) {
-        const table = this;
-        const column = table.columns[columnName];
-
-        let cellValue = (column && column[rowIndex]);
-
-        switch (typeof cellValue) {
+    ): number | null {
+        switch (typeof value) {
             case 'boolean':
-                return (cellValue ? 1 : 0);
+                return (value ? 1 : 0);
             case 'number':
-                return (isNaN(cellValue) && !useNaN ? null : cellValue);
+                return (isNaN(value) && !useNaN ? null : value);
         }
 
-        cellValue = parseFloat(`${cellValue ?? ''}`);
+        value = parseFloat(`${value ?? ''}`);
 
-        return (isNaN(cellValue) && !useNaN ? null : cellValue);
-    }
-
-    /**
-     * Fetches a cell value for the given row as a string.
-     *
-     * @function Highcharts.DataTable#getCellAsString
-     *
-     * @param {string} columnName
-     * Column name to fetch.
-     *
-     * @param {number} rowIndex
-     * Row index to fetch.
-     *
-     * @return {string}
-     * Returns the cell value of the row as a string.
-     */
-    public getCellAsString(
-        columnName: string,
-        rowIndex: number
-    ): string {
-        const table = this;
-        const column = table.columns[columnName];
-
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        return `${(column && column[rowIndex])}`;
+        return (isNaN(value) && !useNaN ? null : value);
     }
 
     public getColumn(
@@ -599,83 +520,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             [columnName],
             asReference
         )[columnName];
-    }
-
-    public getColumnAsNumbers(
-        columnName: string,
-        useNaN: true
-    ): Array<number>;
-    public getColumnAsNumbers(
-        columnName: string,
-        useNaN?: false
-    ): Array<(number | null)>;
-    /**
-     * Fetches the given column by the canonical column name, and
-     * validates the type of the first few cells. If the first defined cell is
-     * of type number, it assumes for performance reasons, that all cells are of
-     * type number or `null`. Otherwise it will convert all cells to number
-     * type, except `null`.
-     *
-     * @deprecated
-     *
-     * @function Highcharts.DataTable#getColumnAsNumbers
-     *
-     * @param {string} columnName
-     * Name of the column to get.
-     *
-     * @param {boolean} [useNaN]
-     * Whether to use NaN instead of `null` and `undefined`.
-     *
-     * @return {Array<(number|null)>}
-     * A copy of the column, or an empty array if not found.
-     */
-    public getColumnAsNumbers(
-        columnName: string,
-        useNaN?: boolean
-    ): Array<(number | null)> {
-        const table = this,
-            columns = table.columns;
-        const column = columns[columnName],
-            columnAsNumber: Array<(number | null)> = [];
-
-        if (column) {
-            const columnLength = column.length;
-
-            if (useNaN) {
-                for (let i = 0; i < columnLength; ++i) {
-                    columnAsNumber.push(
-                        table.getCellAsNumber(columnName, i, true)
-                    );
-                }
-            } else {
-                for (
-                    let i = 0,
-                        cellValue: DataTable.CellType;
-                    i < columnLength;
-                    ++i
-                ) {
-                    cellValue = column[i];
-                    if (typeof cellValue === 'number') {
-                        // Assume unmixed data for performance reasons
-                        return column.slice() as Array<(number | null)>;
-                    }
-                    if (
-                        cellValue !== null &&
-                        typeof cellValue !== 'undefined'
-                    ) {
-                        break;
-                    }
-                }
-                for (let i = 0; i < columnLength; ++i) {
-                    columnAsNumber.push(table.getCellAsNumber(
-                        columnName,
-                        i
-                    ));
-                }
-            }
-        }
-
-        return columnAsNumber;
     }
 
     /**
@@ -1111,9 +955,11 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on<E extends DataEvent>(
-        type: E['type'],
-        callback: DataEvent.Callback<this, E>
+    public on<T extends DataTable.Event['type']>(
+        type: T,
+        callback: DataEvent.Callback<this, Extract<DataTable.Event, {
+            type: T
+        }>>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -1517,7 +1363,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                     const column = columns[columnNames[j]];
 
                     if (insert) {
-                        columns[columnNames[j]] = CU.splice(
+                        columns[columnNames[j]] = splice(
                             column, i2, 0, true, [null]
                         ).array;
                     } else {
@@ -1540,7 +1386,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             table.rowCount = indexRowCount;
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
                 const columnName = columnNames[i];
-                columns[columnName] = CU.setLength(
+                columns[columnName] = setLength(
                     columns[columnName],
                     indexRowCount
                 );

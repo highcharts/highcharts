@@ -43,7 +43,7 @@ const {
  * Abstract class to provide an interface for modifying a table.
  *
  */
-abstract class DataModifier implements DataEvent.Emitter {
+abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
 
     /* *
      *

@@ -93,15 +93,14 @@ class DataTablesConnector extends Dashboards.DataConnector {
      * and particular dataTable options.
      */
     async load(eventDetail) {
-        const connector = this,
-            tables = connector.dataTables,
-            { data, dataUrl, dataModifier } = connector.options;
+        const connector = this;
+        const options = connector.options;
+        const { data, dataUrl } = options;
 
         connector.emit({
             type: 'load',
-            data,
             detail: eventDetail,
-            tables
+            data
         });
 
         return Promise
@@ -113,8 +112,7 @@ class DataTablesConnector extends Dashboards.DataConnector {
                         connector.emit({
                             type: 'loadError',
                             detail: eventDetail,
-                            error,
-                            tables
+                            error
                         });
                         console.warn(`Unable to fetch data from ${dataUrl}.`);
                     })
@@ -124,7 +122,6 @@ class DataTablesConnector extends Dashboards.DataConnector {
                     this.initConverters(
                         data,
                         (key, table) => {
-                            const options = this.options;
                             const dataTableOptions = {
                                 dataTableKey: key,
                                 beforeParse: table.beforeParse,
@@ -141,23 +138,20 @@ class DataTablesConnector extends Dashboards.DataConnector {
                         }
                     );
                 }
-                return connector.setModifierOptions(dataModifier)
-                    .then(() => data);
+                return connector.applyTableModifiers().then(() => data);
             })
             .then(data => {
                 connector.emit({
                     type: 'afterLoad',
-                    data,
                     detail: eventDetail,
-                    tables
+                    data
                 });
                 return connector;
             }).catch(error => {
                 connector.emit({
                     type: 'loadError',
                     detail: eventDetail,
-                    error,
-                    tables
+                    error
                 });
                 throw error;
             });

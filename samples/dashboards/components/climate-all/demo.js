@@ -52,20 +52,16 @@ async function setupBoard() {
             connectors: [{
                 id: 'Range Selection',
                 type: 'CSV',
-                options: {
-                    dataModifier: {
-                        type: 'Range'
-                    }
+                dataModifier: {
+                    type: 'Range'
                 }
             }, {
                 id: 'Cities',
                 type: 'CSV',
-                options: {
-                    csvURL: (
-                        'https://www.highcharts.com/samples/data/' +
+                csvURL: (
+                    'https://www.highcharts.com/samples/data/' +
                         'climate-cities.csv'
-                    )
-                }
+                )
             }]
         },
         editMode: {
@@ -801,9 +797,7 @@ async function setupBoard() {
         dataPool.setConnectorOptions({
             id: cityRows[i].city,
             type: 'CSV',
-            options: {
-                csvURL: cityRows[i].csv
-            }
+            csvURL: cityRows[i].csv
         });
     }
 
