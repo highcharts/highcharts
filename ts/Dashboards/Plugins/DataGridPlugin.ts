@@ -20,7 +20,7 @@
  *
  * */
 
-import type { DataGridNamespace, GridNamespace } from './DataGridTypes';
+import type { GridNamespace } from './DataGridTypes';
 import type PluginHandler from '../PluginHandler';
 
 import GridComponent from '../Components/DataGridComponent/DataGridComponent.js';
@@ -50,20 +50,7 @@ declare module '../Components/ComponentType' {
  * */
 
 /**
- * Connects DataGrid with the Dashboard plugin.
- *
- * @param DataGridNS
- * DataGrid core to connect.
- *
- * @deprecated
- * DataGrid will be removed in behalf of Grid in the next major version.
- */
-function connectDataGrid(DataGridNS: DataGridNamespace): void {
-    connectGrid(DataGridNS);
-}
-
-/**
- * Connects DataGrid with the Dashboard plugin.
+ * Connects Grid with the Dashboard plugin.
  *
  * @param GridNS
  * Grid core to connect.
@@ -95,7 +82,7 @@ function onRegister(
 function onUnregister(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     e: PluginHandler.Event
-): void {}
+): void { }
 
 /* *
  *
@@ -103,16 +90,15 @@ function onUnregister(
  *
  * */
 
-const DataGridCustom = {
-    connectDataGrid,
+const GridCustom = {
     connectGrid
 };
 
-const DataGridPlugin: PluginHandler.DashboardsPlugin<typeof DataGridCustom> = {
-    custom: DataGridCustom,
-    name: 'DataGrid.DashboardsPlugin',
+const GridPlugin: PluginHandler.DashboardsPlugin<typeof GridCustom> = {
+    custom: GridCustom,
+    name: 'Grid.DashboardsPlugin',
     onRegister,
     onUnregister
 };
 
-export default DataGridPlugin;
+export default GridPlugin;

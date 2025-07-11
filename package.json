@@ -27,7 +27,7 @@
     "dbuild": "gulp dashboards/dist",
     "dcode": "gulp dashboards/scripts",
     "dgulp": "gulp dashboards/scripts-watch",
-    "dlintcss": "npx stylelint --config ./css/.stylelintrc.json 'css/datagrid/*.css' && npx stylelint --config ./css/.stylelintrc.json 'css/dashboards/*.css'",
+    "dlintcss": "npx stylelint --config ./css/.stylelintrc.json && npx stylelint --config ./css/.stylelintrc.json 'css/dashboards/*.css'",
     "dtest": "gulp dashboards/test",
     "dlint": "gulp dashboards/lint",
     "gapi": "gulp grid/api-docs && gulp api-server --product Grid",

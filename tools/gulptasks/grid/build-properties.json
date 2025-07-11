@@ -4,6 +4,10 @@
     "Highcharts Grid Lite": {
       "cdnpath": null,
       "distpath": "/grid-lite"
+    },
+    "Highcharts Grid Pro": {
+      "cdnpath": null,
+      "distpath": "/grid-pro"
     }
   }
 }

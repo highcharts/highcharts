@@ -1,17 +1,19 @@
-//@ts-check
-import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
+// @ts-ignore
+import '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+// @ts-ignore
+import '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+// UMD modules register themselves as globals
+window.Dashboards.GridPlugin.custom.connectGrid(window.Grid);
+window.Dashboards.PluginHandler.addPlugin(window.Dashboards.GridPlugin);
 
-const { test, skip } = QUnit;
+const { test } = QUnit;
 
 test('DataGrid component with dataTable', async function (assert) {
     const container = document.createElement('div');
     container.id = 'container';
 
-    const { DataTable } = DataGrid;
+    const { DataTable } = window.Grid;
 
     const columns = {
         product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -20,7 +22,7 @@ test('DataGrid component with dataTable', async function (assert) {
         metaData: ['a', 'b', 'c', 'd']
     };
 
-    const dashboard = await Dashboards.board('container', {
+    const dashboard = await window.Dashboards.board('container', {
         gui: {
             layouts: [
                 {
@@ -53,11 +55,15 @@ test('DataGrid component with dataTable', async function (assert) {
     const dataGridComponent = dashboard.mountedComponents[0].component;
 
     // Disconnect the resize observer to avoid errors in the test
-    dataGridComponent.dataGrid.viewport.resizeObserver.disconnect();
+    if (dataGridComponent && 'dataGrid' in dataGridComponent) {
+        dataGridComponent.dataGrid.viewport.resizeObserver.disconnect();
 
-    assert.ok(
-        // @ts-ignore
-        dataGridComponent.dataGrid.dataTable.columns.product,
-        'DataGrid component should have a dataTable with columns.'
-    );
+        assert.ok(
+            // @ts-ignore
+            dataGridComponent.dataGrid.dataTable.columns.product,
+            'DataGrid component should have a dataTable with columns.'
+        );
+    } else {
+        assert.ok(false, 'DataGrid component not found or invalid type');
+    }
 });

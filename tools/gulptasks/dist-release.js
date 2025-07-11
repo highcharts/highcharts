@@ -18,8 +18,8 @@ const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.j
 const releaseRepos = {
     Highcharts: 'highcharts-dist',
     Grid: {
-        lite: 'grid-lite-dist'
-        // pro: 'grid-pro-dist'
+        lite: 'grid-lite-dist',
+        pro: 'grid-pro-dist'
     }
 };
 
@@ -272,11 +272,11 @@ function copyGridFiles() {
         {
             from: join('build', 'dist', 'grid-lite', 'code'),
             to: join('..', releaseRepos.Grid.lite)
+        },
+        {
+            from: join('build', 'dist', 'grid-pro', 'code'),
+            to: join('..', releaseRepos.Grid.pro)
         }
-        // {
-        //     from: join('build', 'dist', 'grid-pro', 'code'),
-        //     to: join('..', releaseRepos.Grid.pro)
-        // }
     ];
 
     const filesToIgnore = [

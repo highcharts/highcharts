@@ -272,7 +272,7 @@ function distCopy() {
             directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
 
             // Copy all the CSS files to /code
-            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid', 'grid']
+            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'grid']
                 .some(name => fileName.includes(`${name}.css`)));
 
             FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);

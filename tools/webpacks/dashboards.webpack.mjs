@@ -5,8 +5,6 @@
  * */
 
 
-// eslint-disable-next-line node/no-unpublished-import
-// import BundleDeclarationsWebpackPlugin from 'bundle-declarations-webpack-plugin';
 import * as Path from 'node:path';
 import FSLib from '../libs/fs.js';
 
@@ -22,19 +20,18 @@ import { loadExternalsJSON, resolveExternals } from './externals.mjs';
  *
  * */
 
-const sourceFolder = Path.join('code', 'grid', 'es-modules');
-const mastersFolder = Path.join(sourceFolder, 'masters');
-const targetFolder = Path.join('code', 'grid');
-
-const buildProps = FSLib.getFile(
-    Path.join('tools', 'gulptasks', 'grid', 'build-properties.json'),
+const dashboardsCfg = FSLib.getFile(
+    Path.join('tools', 'gulptasks', 'dashboards', '_config.json'),
     true
 );
 
-const namespace = 'Grid';
+const sourceFolder = Path.join('code', 'dashboards', 'es-modules');
+const mastersFolder = Path.join('js', 'masters');
+const targetFolder = Path.join('code', 'dashboards');
+
+const namespace = 'Dashboards';
 const productMasters = [
-    'grid-lite',
-    'grid-pro'
+    'dashboards'
 ];
 
 loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
@@ -71,14 +68,14 @@ const webpacks = FSLib
                     name: (
                         productMasters.includes(masterName) ?
                             {
-                                amd: `grid/${masterName}`,
-                                commonjs: `grid/${masterName}`,
+                                amd: `dashboards/${masterName}`,
+                                commonjs: `dashboards/${masterName}`,
                                 root: namespace
                             } :
                             {
-                                amd: `grid/${masterName}`,
-                                commonjs: `grid/${masterName}`,
-                                root: ['Grid', masterName.replace('grid-', '')]
+                                amd: `dashboards/${masterName}`,
+                                commonjs: `dashboards/${masterName}`,
+                                root: [namespace, masterName.replace('dashboards-', '')]
                             }
                     ),
                     type: 'umd',
@@ -96,8 +93,8 @@ const webpacks = FSLib
                     productBundles: productMasters.map(pm => `${pm}.src.js`)
                 }),
                 new ProductMetaPlugin({
-                    productName: 'Grid',
-                    productVersion: buildProps.version
+                    productName: dashboardsCfg.product,
+                    productVersion: process.env.DASH_RELEASE || dashboardsCfg.version
                 }),
                 new UMDExtensionPlugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)
@@ -115,7 +112,7 @@ const webpacks = FSLib
                     masterName,
                     sourceFolder,
                     namespace,
-                    productMasters[0], // grid-lite as default product
+                    productMasters[0], // dashboards as default product
                     'umd'
                 )
             ];

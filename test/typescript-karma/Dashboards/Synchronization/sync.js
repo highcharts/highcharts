@@ -1,16 +1,16 @@
 //@ts-check
-import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
-import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
+import '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
+import '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
-Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+// Access the globals created by the UMD modules
+const Dashboards = window.Dashboards;
+const Grid = window.Grid;
 
-Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+Dashboards.GridPlugin.custom.connectGrid(Grid);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 
-const { test } = QUnit;
+const { test, skip } = QUnit;
 
 
 test('Sync events leak in updated components', async function (assert) {

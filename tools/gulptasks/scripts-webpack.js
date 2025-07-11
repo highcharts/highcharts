@@ -34,6 +34,10 @@ async function scriptsWebpack() {
         configs = {
             Grid: 'grid.webpack.mjs'
         };
+    } else if (argv.dashboards) {
+        configs = {
+            Dashboards: 'dashboards.webpack.mjs'
+        };
     } else {
         configs = {
             Highcharts: 'highcharts.webpack.mjs',

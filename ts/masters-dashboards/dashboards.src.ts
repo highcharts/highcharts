@@ -77,8 +77,6 @@ declare global {
         DataModifier: typeof DataModifier;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
-        /** @deprecated DataGrid will be removed in behalf of Grid in the next major version. */
-        DataGridPlugin: typeof GridPlugin;
         GridPlugin: typeof GridPlugin;
         HighchartsPlugin: typeof HighchartsPlugin;
         PluginHandler: typeof PluginHandler;
@@ -87,8 +85,6 @@ declare global {
     interface Window {
         Dashboards: Dashboards;
         Highcharts?: H;
-        /** @deprecated DataGrid will be removed in behalf of Grid in the next major version. */
-        DataGrid?: D;
         Grid?: D;
     }
     let Dashboards: Dashboards;
@@ -120,7 +116,6 @@ G.DataCursor = DataCursor;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
-G.DataGridPlugin = GridPlugin;
 G.GridPlugin = GridPlugin;
 G.HighchartsPlugin = HighchartsPlugin;
 G.PluginHandler = PluginHandler;

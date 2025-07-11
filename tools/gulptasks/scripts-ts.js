@@ -177,9 +177,6 @@ async function scriptsTS(argv) {
         if (argv.dashboards) {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
-        } else if (argv.datagrid) {
-            await processLib
-                .exec(`npx tsc -p ${dashCfg.typeScriptFolderDatagrid} --outDir js`);
         } else if (product === 'Grid') {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
@@ -219,10 +216,7 @@ async function scriptsTS(argv) {
                 fsLib.getFilePaths(fsLib.path(['code', 'es-modules']), true);
 
             for (const file of esmFiles) {
-                if (
-                    file.includes('dashboards') ||
-                    file.includes('datagrid')
-                ) {
+                if (file.includes('dashboards')) {
                     continue;
                 }
                 await replaceProductPlaceholders(
@@ -240,10 +234,6 @@ async function scriptsTS(argv) {
         if (argv.dashboards) {
             removeHighcharts();
 
-            // Remove DataGrid
-            fsLib.deleteDirectory(fsLib.path(['js', 'datagrid']));
-            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']));
-
             // Remove Grid
             fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
 
@@ -252,18 +242,9 @@ async function scriptsTS(argv) {
                 fsLib.path(['js', 'masters-dashboards']),
                 fsLib.path(['js', 'masters'])
             );
-        } else if (argv.datagrid) { // Should be completely replaced by grid
-            removeHighcharts();
-
-            // Fix masters
-            fs.renameSync(
-                fsLib.path(['js', 'masters-datagrid']),
-                fsLib.path(['js', 'masters'])
-            );
         } else {
             // Remove Dashboards
             fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']));
-            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']));
 
             // Remove Grid
             fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
@@ -278,7 +259,6 @@ async function scriptsTS(argv) {
 scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
     '--dashboards': 'Build dashboards files only',
-    '--datagrid': 'Build datagrid files only',
     '--product': 'The project to build: Highcharts (default), Grid'
 };
 gulp.task(
