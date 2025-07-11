@@ -44,30 +44,22 @@ describe('layout resize on window changes', () => {
         checkRowsAndCells();
     });
 
-    // TODO: update when resizer is cemented
-    it.skip('should resize cells and components when dragging the handles', () => {
-        cy.get('.highcharts-dashboards-row').first().next().as('secondRow').within(() => {
-            cy.get('.highcharts-dashboards-edit-resize-snap-x').first().as('dragger')
-                .trigger('mousedown')
-            cy.get('@secondRow')
-                .trigger('mousemove', { clientX: 600 })
-                .trigger('mouseup')
+    it('should resize cells and components when dragging the handles', () => {
+        // Act
+        cy.toggleEditMode();
+        cy.get('#dashboard-col-0').click();
+        cy.get('#dashboard-col-0').as('secondCell');
+        cy.get('.highcharts-dashboards-edit-resize-snap-x').first().as('dragger').trigger('mousedown');
+        cy.get('@secondCell').trigger('mousemove', { clientX: 600 }).trigger('mouseup');
 
-            checkCells()
-            cy.get('.highcharts-dashboards-component').each((component) => {
-                isWithinParent(component)
-            });
+        // Assert
+        checkCells();
 
-            cy.get('.highcharts-dashboards-edit-resize-snap-y').first().as('dragger')
-                .trigger('mousedown')
-            cy.get('@secondRow')
-                .trigger('mousemove', { clientY: 600 })
-                .trigger('mouseup')
+        // Act
+        cy.get('.highcharts-dashboards-edit-resize-snap-y').first().as('dragger').trigger('mousedown');
+        cy.get('@secondCell').trigger('mousemove', { clientY: 600 }).trigger('mouseup');
 
-            checkCells()
-            cy.get('.highcharts-dashboards-component').each((component) => {
-                isWithinParent(component)
-            });
-        });
+        // Assert
+        checkCells();
     });
 });

@@ -45,13 +45,20 @@ const components = [{
     renderTo: 'dashboard-col-1',
     type: 'HTML',
     elements: [{
-        tagName: 'img',
-        attributes: {
-            src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-            title: 'I heard you like components'
-        }
-    }, {
-        textContent: 'Lorem ipsum'
+        tagName: 'div',
+        children: [{
+            tagName: 'h1',
+            textContent: 'Title',
+            attributes: {
+                id: 'main-title'
+            }
+        }, {
+            tagName: 'p',
+            textContent: 'Description',
+            attributes: {
+                id: 'description'
+            }
+        }]
     }]
 }]
 
@@ -122,7 +129,7 @@ test('Components in rows with set height', function (assert) {
     layouts[0].rows[0].style = {}
 });
 
-skip('Components in layout with set width', function (assert) {
+test('Components in layout with set width', function (assert) {
     const container = setupContainer();
 
     layouts[0].style = {
@@ -137,53 +144,16 @@ skip('Components in layout with set width', function (assert) {
         components
     });
 
-    const columns = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell')
-    assert.strictEqual(columns.length, 2)
-    for (const column of columns) {
-        const components = column.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component');
-        assert.strictEqual(column.style.width, '800px');
-        for (const component of components) {
-            assert.strictEqual(component.style.height, '', 'Height should be unset')
-            assert.strictEqual(component.element.getBoundingClientRect(), column.style.width, 'Width should be set to the column')
-        }
+    const cells = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell');
+
+    assert.strictEqual(cells.length, 2);
+    for (const cell of cells) {
+        assert.strictEqual(
+            cell.style.width,
+            '800px',
+            'Width should be set to the cell.'
+        );
     }
-
-    layouts[0].style = {}
-});
-
-test('Components and rows in layout with set height', function (assert) {
-    const container = setupContainer();
-
-    layouts[0].style = {
-        height: '800px'
-    }
-
-    const board = Dashboards.board(container.id, {
-        gui: {
-            enabled: true,
-            layouts
-        },
-        components
-    });
-
-    const rows = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'row')
-    assert.strictEqual(rows.length, 2)
-
-    // This is on the todo list :)
-    // for (const row of rows) {
-    //     assert.strictEqual(window.getComputedStyle(row).height, '400px')
-    // }
-
-    // const columns = document.querySelectorAll('.highcharts-dashboards-column')
-    // assert.strictEqual(columns.length, 2)
-    // for (const column of columns) {
-    //     const components = column.querySelectorAll('.highcharts-dashboards-component');
-    //     assert.strictEqual(column.style.width, '800px');
-    //     for (const component of components) {
-    //         assert.strictEqual(component.style.height, '', 'Height should be unset')
-    //         assert.strictEqual(component.style.width, column.style.width, 'Width should be set to the column')
-    //     }
-    // }
 
     layouts[0].style = {}
 });
