@@ -91,7 +91,7 @@ class A11y {
         const a11yOptions = chart.options.a11y as A11yTopLevelOptions;
 
         // Hide chart graphics from assistive tech
-        attr(chart.container, {
+        attr(chart.scrollablePlotArea?.parentDiv || chart.container, {
             role: 'presentation',
             'aria-hidden': true
         });
@@ -203,8 +203,8 @@ class A11y {
                     // can make it accessible outside the chart container.
                     // Should not have to do much in the a11y module, maybe make
                     // changes directly in stock tools module?
-                    // Can probably add before or after the ordered proxy
-                    // section.
+                    // Can probably add the HTML before or after the ordered
+                    // proxy section.
                 }
 
             }[groupName as string];
@@ -216,7 +216,6 @@ class A11y {
         });
 
         // Other TODO:
-        // Scrollable plot area - does it work?
         // Anything else need a proxy group, or is it all a part of data?
         // Set up an announcer
         // Setup keyboard nav
@@ -346,15 +345,17 @@ class A11y {
         const chart = this.chart,
             menuOptions = chart.options.exporting,
             group = chart.exporting?.group;
-        if (menuOptions?.enabled && group) {
+
+        if (menuOptions?.enabled !== false && group) {
             const localEventRemovers: Function[] = [],
                 menuGroup = this.proxyProvider.addGroup('menu', 'ordered'),
                 // The actual menu button
                 menuBtn = this.proxyProvider.addTouchableProxy(
-                    'menu', (group.element.querySelector(
-                        '.highcharts-contextbutton'
-                    ) || group.element) as SVGElement, 'button',
-                    menuOptions.buttons?.contextButton.text ||
+                    'menu', (
+                        (chart.scrollablePlotArea?.fixedDiv || group.element)
+                            .querySelector('.highcharts-contextbutton') ||
+                        group.element) as SVGElement, 'button',
+                    menuOptions?.buttons?.contextButton.text ||
                     format(chart.options.lang.contextButtonTitle, chart, chart),
                     'hc-a11y-menu-button', { 'aria-expanded': false }
                 ).firstChild as HTMLButtonElement,
@@ -440,8 +441,10 @@ class A11y {
             'aria-label': this.chartDescriptionInfo
                 .chartTitle.replace(/</g, '&lt;')
         });
-        chart.container.removeAttribute('role');
-        chart.container.removeAttribute('aria-hidden');
+        const container = chart.scrollablePlotArea?.parentDiv ||
+            chart.container;
+        container.removeAttribute('role');
+        container.removeAttribute('aria-hidden');
     }
 }
 
