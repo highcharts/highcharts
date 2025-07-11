@@ -131,7 +131,8 @@ class A11y {
                     );
                 }
                 return this.proxyProvider.addSROnly(
-                    'description', proxyElType, content, className
+                    'description', proxyElType, content, className, void 0,
+                    targetEl
                 );
             };
 

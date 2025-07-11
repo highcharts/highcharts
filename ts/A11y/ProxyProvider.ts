@@ -143,19 +143,27 @@ export class ProxyProvider {
 
     /**
      * Add a visually hidden element to the group. This element is not
-     * touchable, and does not proxy for a different element.
+     * touchable, and does not necessarily proxy for a different element.
+     *
+     * If `targetEl` is provided, the focus highlight will be mapped to
+     * that element, but no other proxying is done.
      */
     public addSROnly(
         groupName: string,
         elType: keyof HTMLElementTagNameMap,
         content = '',
         className = '',
-        parent?: HTMLElement
+        parent?: HTMLElement,
+        targetEl?: HTMLElement|SVGElement
     ): HTMLElement {
-        return addPlainA11yEl(
+        const el = addPlainA11yEl(
             elType, parent || this.groups[groupName].containerEl,
             content, `hc-a11y-sr-only ${className}`
         );
+        if (targetEl) {
+            this.mapFocusHighlightToTarget(groupName, el, targetEl);
+        }
+        return el;
     }
 
 
@@ -185,8 +193,7 @@ export class ProxyProvider {
             targetEl?.tagName.toUpperCase() === 'TEXT' && !targetEl?.textContent
         ) {
             return this.addSROnly(
-                groupName, proxyElType,
-                content, className, parent
+                groupName, proxyElType, content, className, parent, targetEl
             );
         }
 
@@ -225,31 +232,11 @@ export class ProxyProvider {
             attr(contentEl, attrs);
         }
 
-        // Loop through focusable children and map to focusable children in the
-        // target element. On focus => set focus highlight.
-        // Needed so that we can do keyboard navigation in the proxy elements.
-        const focusableMap = new WeakMap<HTMLElement|SVGElement, HTMLElement|SVGElement>(),
-            srcFocusable = isFocusable(contentEl) ? [contentEl] :
-                focusableChildren(contentEl),
-            targetFocusable = isFocusable(targetEl) ? [targetEl] :
-                focusableChildren(targetEl),
-            matchFocusArrays = targetFocusable.length ===
-                srcFocusable.length;
-
-        srcFocusable.forEach((srcEl, i): void => {
-            const focusTarget = matchFocusArrays ? targetFocusable[i] :
-                targetEl;
-            focusTarget.tabIndex = -1;
-            group.eventRemovers.push(
-                addEvent(srcEl, 'focus', (): void =>
-                    this.chart.a11y?.setFocusIndicator(focusTarget)
-                ),
-                addEvent(srcEl, 'blur', (): void =>
-                    this.chart.a11y?.hideFocus()
-                )
-            );
-            focusableMap.set(srcEl, focusTarget);
-        });
+        // Map focus highlight to target elements. Doing this outside
+        // of addSROnly, as we need to keep track of the mapping.
+        const focusableMap = this.mapFocusHighlightToTarget(
+            groupName, contentEl, targetEl
+        );
 
         // Proxy events down to the target
         [
@@ -314,6 +301,49 @@ export class ProxyProvider {
                 (updater): void => updater()
             )
         );
+    }
+
+
+    /**
+     * Map focusable elements in src to focusable elements in target,
+     * in terms of highlighting focus.
+     *
+     * Focus highlight is set to the appropriate element in target if
+     * src receives focus. If target does not have focusable children,
+     * or the amount of focusable children in src and target do not match,
+     * the focus highlight is set to the target element itself.
+     *
+     * Returns the mapping of elements (focusable in src to focusable in
+     * target).
+     */
+    private mapFocusHighlightToTarget(
+        groupName: string,
+        srcEl: HTMLElement|SVGElement,
+        targetEl: HTMLElement|SVGElement
+    ): WeakMap<HTMLElement|SVGElement, HTMLElement|SVGElement> {
+        const focusableMap = new WeakMap<HTMLElement|SVGElement, HTMLElement|SVGElement>(),
+            srcFocusable = isFocusable(srcEl) ? [srcEl] :
+                focusableChildren(srcEl),
+            targetFocusable = isFocusable(targetEl) ? [targetEl] :
+                focusableChildren(targetEl),
+            matchFocusArrays = targetFocusable.length ===
+                srcFocusable.length;
+
+        srcFocusable.forEach((srcEl, i): void => {
+            const focusTarget = matchFocusArrays ? targetFocusable[i] :
+                targetEl;
+            focusTarget.tabIndex = -1;
+            this.groups[groupName].eventRemovers.push(
+                addEvent(srcEl, 'focus', (): void =>
+                    this.chart.a11y?.setFocusIndicator(focusTarget)
+                ),
+                addEvent(srcEl, 'blur', (): void =>
+                    this.chart.a11y?.hideFocus()
+                )
+            );
+            focusableMap.set(srcEl, focusTarget);
+        });
+        return focusableMap;
     }
 
 
