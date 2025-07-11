@@ -106,7 +106,11 @@ class PaginationController {
     public loadOptions(): void {
         const pagination = this.querying.grid.pagination;
 
-        if (pagination && this.currentPage !== pagination.currentPage) {
+        if (
+            pagination &&
+            pagination.options.enabled &&
+            this.currentPage !== pagination.currentPage
+        ) {
             this.currentPage = pagination.currentPage;
             this.isNext = pagination.isNext;
             this.setRange(this.currentPage, this.isNext);

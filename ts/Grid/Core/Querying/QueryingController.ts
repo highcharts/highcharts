@@ -105,10 +105,7 @@ class QueryingController {
      */
     public loadOptions(): void {
         this.sorting.loadOptions();
-
-        if (this.grid.pagination?.options.enabled) {
-            this.pagination.loadOptions();
-        }
+        this.pagination.loadOptions();
     }
 
     /**
