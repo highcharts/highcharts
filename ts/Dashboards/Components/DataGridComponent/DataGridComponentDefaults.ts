@@ -164,7 +164,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         const converter = new DataConverter();
 
                         let valueToSet = converter
-                            .asGuessedType(inputElement.value);
+                            .convertByType(inputElement.value);
 
                         if (valueToSet instanceof Date) {
                             valueToSet = valueToSet.toString();

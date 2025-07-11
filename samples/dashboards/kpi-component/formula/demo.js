@@ -3,8 +3,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'values',
             type: 'CSV',
-            options: {
-                csv: `Value
+            csv: `Value
                 30
                 NaN
                 10
@@ -12,7 +11,6 @@ Dashboards.board('container', {
                 NaN
                 50
                 20`
-            }
         }]
     },
     components: [{

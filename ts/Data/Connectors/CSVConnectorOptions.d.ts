@@ -18,7 +18,7 @@
  * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
-import type DataTableOptions from '../DataTableOptions';
+import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 
 /* *
@@ -31,6 +31,10 @@ import type DataTableOptions from '../DataTableOptions';
  * Options of the CSVConnector.
  */
 export interface CSVConnectorOptions extends DataConnectorOptions {
+    /**
+     * The corresponding connector type.
+     */
+    type: 'CSV';
     /**
      * Data in CSV format passed directly to connector as a string.
      */
@@ -119,7 +123,7 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: Array<DataTableOptions>;
+    dataTables?: DataTableConnectorOptions[];
 }
 
 /**

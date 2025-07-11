@@ -157,17 +157,13 @@ test('Board with data connectors and HighchartsComponent update', async function
                 {
                     id: 'connector-1',
                     type: 'CSV',
-                    options: {
-                        csv: '1,2,3',
-                        firstRowAsNames: false
-                    }
+                    csv: '1,2,3',
+                    firstRowAsNames: false
                 }, {
                     id: 'connector-2',
                     type: 'CSV',
-                    options: {
-                        csv: '4,5,6',
-                        firstRowAsNames: false
-                    }
+                    csv: '4,5,6',
+                    firstRowAsNames: false
                 }
             ]
         },
@@ -302,18 +298,15 @@ test('Data columnAssignment', async function (assert) {
             connectors: [{
                 id: 'EUR-USD',
                 type: 'JSON',
-                options: {
                 data: [
                     ['Day', 'EUR', 'Rate'],
                     [1691971200000, 11, 1.0930],
                     [1692057600000, 23, 1.0926],
                     [1692144000000, 15, 1.0916]
                 ]
-                }
             }, {
                 id: 'micro-element',
                 type: 'JSON',
-                options: {
                 firstRowAsNames: false,
                 columnNames: ['x', 'myOpen', 'myHigh', 'myLow', 'myClose', 'mySeries1', 'mySeries2'],
                 data: [
@@ -321,7 +314,6 @@ test('Data columnAssignment', async function (assert) {
                     [1699494920314, 2, 6, 2, 5, 7, 9],
                     [1699534920314, 1, 9, 5, 3, 8, 8]
                 ]
-                }
             }]
         },
         gui: {
@@ -701,9 +693,8 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
     const dashboard = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
-            id: 'micro-element',
-            type: 'JSON',
-            options: {
+                id: 'micro-element',
+                type: 'JSON',
                 firstRowAsNames: false,
                 columnNames: {
                     InstanceType: ['InstanceType'],
@@ -712,7 +703,6 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
                 },
                 // @ts-ignore
                 data
-            }
             }]
         },
         gui: {
@@ -779,18 +769,16 @@ test('Crossfilter with string values', async function (assert) {
             connectors: [{
                 id: 'data',
                 type: 'JSON',
-                options: {
-                    data: [
-                        ['Product Name', 'Quantity', 'Revenue', 'Category'],
-                        ['Laptop', 100, 2000, 'Electronics'],
-                        ['Smartphone', 150, 3300, 'Electronics'],
-                        ['Desk Chair', 120, 2160, 'Furniture'],
-                        ['Coffee Maker', 90, 1890, 'Appliances'],
-                        ['Headphones', 200, 3200, 'Electronics'],
-                        ['Dining Table', 130, 2470, 'Furniture'],
-                        ['Refrigerator', 170, 2890, 'Appliances']
-                    ]
-                }
+                data: [
+                    ['Product Name', 'Quantity', 'Revenue', 'Category'],
+                    ['Laptop', 100, 2000, 'Electronics'],
+                    ['Smartphone', 150, 3300, 'Electronics'],
+                    ['Desk Chair', 120, 2160, 'Furniture'],
+                    ['Coffee Maker', 90, 1890, 'Appliances'],
+                    ['Headphones', 200, 3200, 'Electronics'],
+                    ['Dining Table', 130, 2470, 'Furniture'],
+                    ['Refrigerator', 170, 2890, 'Appliances']
+                ]
             }]
         },
         gui: {
@@ -870,7 +858,7 @@ test('Crossfilter with string values', async function (assert) {
 
     const done = assert.async();
     numbersNavigator.on('tableChanged', e => {
-        const table = e.connector.table;
+        const table = e.connector?.table;
 
         // Assert only on the last event
         if (table?.modifier?.options?.ranges?.length > 1) {

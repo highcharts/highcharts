@@ -4,10 +4,11 @@ import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js'
 import '/base/code/es-modules/Data/Connectors/GoogleSheetsConnector.js';
 import '/base/code/es-modules/Data/Connectors/HTMLTableConnector.js';
 
-const { test, only } = QUnit;
+const { test } = QUnit;
 
 test('DataConnector metadata', function (assert) {
     const connector = new CSVConnector();
+    const columns = connector.metadata.columns;
 
     connector.describeColumns({
         'column1': {
@@ -17,7 +18,7 @@ test('DataConnector metadata', function (assert) {
         }
     });
 
-    const description = connector.whatIs('column1');
+    const description = columns['column1'];
     const metadata = connector.metadata;
 
     assert.ok(description, 'Managed to get `column1`');
@@ -25,7 +26,7 @@ test('DataConnector metadata', function (assert) {
     connector.describeColumns(metadata.columns)
 
     assert.deepEqual(
-        connector.whatIs('column1',),
+        columns['column1'],
         description,
         'Importing exported metadata gives same result'
     );
@@ -34,15 +35,12 @@ test('DataConnector metadata', function (assert) {
         'columnX',
         { title: 'Column X', dataType: 'number', defaultValue: -5 }
     );
-    assert.ok(connector.whatIs('columnX'), 'ColumnX was added');
-    assert.ok(connector.whatIs('column1'), 'Column1 is still there');
+    assert.ok(columns['columnX'], 'ColumnX was added');
+    assert.ok(columns['column1'], 'Column1 is still there');
 
     connector.setColumnOrder(['columnX', 'column1']);
     assert.deepEqual(
-        [
-            connector.whatIs('columnX').index,
-            connector.whatIs('column1').index
-        ],
+        [columns['columnX'].index, columns['column1'].index],
         [0, 1],
         'ColumnX should come before column1.'
     );
@@ -55,10 +53,6 @@ test('DataConnector metadata', function (assert) {
 });
 
 test('DataConnector registry', function (assert) {
-    // Todo: maybe empty the registry
-    // before adding the connectors back
-    // DataConnector.registry = {};
-
     const connectors = [
         'CSV',
         'HTMLTable',

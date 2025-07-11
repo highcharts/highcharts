@@ -388,46 +388,36 @@ const createBoard = async () => {
             connectors: [{
                 id: 'horizon',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: horizon.elevationProfile
-                }
+                firstRowAsNames: false,
+                data: horizon.elevationProfile
             }, {
                 id: 'sun-trajectory-data',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: getTrajectory('sun', horizon.elevationProfile)
-                }
+                firstRowAsNames: false,
+                data: getTrajectory('sun', horizon.elevationProfile)
             }, {
                 id: 'moon-trajectory-data',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: getTrajectory('moon', horizon.elevationProfile)
-                }
+                firstRowAsNames: false,
+                data: getTrajectory('moon', horizon.elevationProfile)
             }, {
                 id: 'contours-data',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: horizon.contours?.reduce((data, contourLine) => {
-                        if (data.length) {
-                            data.push([null, null]); // Gap
-                        }
-                        [].push.apply(data, contourLine.map(p => [
-                            p.azimuth, p.angle
-                        ]));
-                        return data;
-                    }, [])
-                }
+                firstRowAsNames: false,
+                data: horizon.contours?.reduce((data, contourLine) => {
+                    if (data.length) {
+                        data.push([null, null]); // Gap
+                    }
+                    [].push.apply(data, contourLine.map(p => [
+                        p.azimuth, p.angle
+                    ]));
+                    return data;
+                }, [])
             }, {
                 id: 'times',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: getTimes(date)
-                }
+                firstRowAsNames: false,
+                data: getTimes(date)
             }]
         },
         gui: {

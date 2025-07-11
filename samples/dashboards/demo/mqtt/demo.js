@@ -430,50 +430,48 @@ async function createDashboard() {
         return {
             id: connId,
             type: 'MQTT',
-            options: {
-                ...mqttLinkConfig,
-                topic: topic,
-                autoConnect: true,
-                autoSubscribe: true,
-                autoReset: true, // Clear data table on subscribe
-                maxRows: 24, // Maximum number of rows in the data table
+            ...mqttLinkConfig,
+            topic: topic,
+            autoConnect: true,
+            autoSubscribe: true,
+            autoReset: true, // Clear data table on subscribe
+            maxRows: 24, // Maximum number of rows in the data table
 
-                columnNames: ['time', 'power'],
-                beforeParse: data => dataParser(data),
-                connectEvent: event => {
-                    const { connected, host, port } = event.detail;
-                    controlBar.setConnectState(connected);
-                    if (connected) {
-                        controlBar.showStatus(`${host}:${port}`);
-                    } else {
-                        controlBar.showStatus('');
-                    }
-                    // eslint-disable-next-line max-len
-                    printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
-                },
-                subscribeEvent: event => {
-                    const { subscribed, topic } = event.detail;
-                    printLog(
-                        // eslint-disable-next-line max-len
-                        `Client ${subscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
-                    );
-                },
-                packetEvent: async event => {
-                    const { topic, count } = event.detail;
-                    printLog(`Packet #${count} received: ${topic}`);
-
-                    if (count === 1) {
-                        // First packet received, make dashboard visible
-                        setVisibility(true);
-                    }
-                    await dashboardUpdate(event.data, connId, count);
-                },
-                errorEvent: event => {
-                    const { code, message } = event.detail;
-                    printLog(`${message} (error code #${code})`);
-                    controlBar.showError(message);
-                    controlBar.setConnectState(false);
+            columnNames: ['time', 'power'],
+            beforeParse: data => dataParser(data),
+            connectEvent: event => {
+                const { connected, host, port } = event.detail;
+                controlBar.setConnectState(connected);
+                if (connected) {
+                    controlBar.showStatus(`${host}:${port}`);
+                } else {
+                    controlBar.showStatus('');
                 }
+                // eslint-disable-next-line max-len
+                printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
+            },
+            subscribeEvent: event => {
+                const { subscribed, topic } = event.detail;
+                printLog(
+                    // eslint-disable-next-line max-len
+                    `Client ${subscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
+                );
+            },
+            packetEvent: async event => {
+                const { topic, count } = event.detail;
+                printLog(`Packet #${count} received: ${topic}`);
+
+                if (count === 1) {
+                    // First packet received, make dashboard visible
+                    setVisibility(true);
+                }
+                await dashboardUpdate(event.data, connId, count);
+            },
+            errorEvent: event => {
+                const { code, message } = event.detail;
+                printLog(`${message} (error code #${code})`);
+                controlBar.showError(message);
+                controlBar.setConnectState(false);
             }
         };
     }

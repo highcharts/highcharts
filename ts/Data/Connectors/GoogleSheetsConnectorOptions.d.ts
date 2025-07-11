@@ -19,7 +19,7 @@
 
 import type DataConnectorOptions from './DataConnectorOptions';
 import type DataTable from '../DataTable';
-import type DataTableOptions from '../DataTableOptions';
+import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 /* *
  *
@@ -31,6 +31,10 @@ import type DataTableOptions from '../DataTableOptions';
  * Options of the GoogleSheetsConnector.
  */
 export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
+    /**
+     * The corresponding connector type.
+     */
+    type: 'GoogleSheets';
     /**
      * The rate in seconds for polling for live data.
      * Note that polling requires the option `enablePolling` to be true.
@@ -136,7 +140,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: Array<DataTableOptions>;
+    dataTables?: DataTableConnectorOptions[];
 }
 
 /**

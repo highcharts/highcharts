@@ -605,10 +605,8 @@ async function setupDashboard() {
                 {
                     id: 'votes' + year,
                     type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        data: electionData[year].data
-                    }
+                    firstRowAsNames: true,
+                    data: electionData[year].data
                 }
             );
         });

@@ -3,16 +3,14 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                data: [
-                    ['First Column', 'Second Column'],
-                    [1, 5],
-                    [4, 2],
-                    [3, 3],
-                    [2, 4],
-                    [5, 1]
-                ]
-            }
+            data: [
+                ['First Column', 'Second Column'],
+                [1, 5],
+                [4, 2],
+                [3, 3],
+                [2, 4],
+                [5, 1]
+            ]
         }]
     },
     gui: {

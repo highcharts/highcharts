@@ -162,17 +162,13 @@ async function createDashboard() {
             connectors: [{
                 type: 'MQTT',
                 id: 'mqtt-data-1',
-                options: {
-                    topic: Object.keys(topicMap)[0],
-                    ...connConfig
-                }
+                topic: Object.keys(topicMap)[0],
+                ...connConfig
             }, {
                 type: 'MQTT',
                 id: 'mqtt-data-2',
-                options: {
-                    topic: Object.keys(topicMap)[1],
-                    ...connConfig
-                }
+                topic: Object.keys(topicMap)[1],
+                ...connConfig
             }]
         },
         components: [{

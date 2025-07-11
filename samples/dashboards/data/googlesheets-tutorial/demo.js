@@ -48,19 +48,15 @@ const board = Dashboards.board('container', {
         connectors: [{
             id: 'conn-orig',
             type: 'GoogleSheets',
-            options: {
-                googleAPIKey: googleApiKey,
-                googleSpreadsheetKey: googleSpreadsheetKey
-            }
+            googleAPIKey: googleApiKey,
+            googleSpreadsheetKey: googleSpreadsheetKey
         }, {
             id: 'conn-mod',
             type: 'GoogleSheets',
-            options: {
-                googleAPIKey: googleApiKey,
-                googleSpreadsheetKey: googleSpreadsheetKey,
-                beforeParse: data =>
-                    beforeParseFunction[beforeParseSelector](data)
-            }
+            googleAPIKey: googleApiKey,
+            googleSpreadsheetKey: googleSpreadsheetKey,
+            beforeParse: data =>
+                beforeParseFunction[beforeParseSelector](data)
         }]
     },
     components: [{

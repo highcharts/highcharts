@@ -44,15 +44,14 @@ import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOption
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 
 import Component from '../Component.js';
-import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataTable from '../../../Data/DataTable.js';
 import Globals from '../../Globals.js';
 import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
-import DU from '../../Utilities.js';
-import U from '../../../Core/Utilities.js';
 import ConnectorHandler from '../../Components/ConnectorHandler';
+import DataConverterUtils from '../../../Data/Converters/DataConverterUtils.js';
+import U from '../../../Core/Utilities.js';
 const {
     createElement,
     diffObjects,
@@ -60,6 +59,7 @@ const {
     merge,
     splat
 } = U;
+import DU from '../../Utilities.js';
 const { deepClone } = DU;
 
 /* *
@@ -195,25 +195,6 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        for (const connectorHandler of this.connectorHandlers) {
-            const connector = connectorHandler.connector;
-            if (connector) {
-                connector.on('afterLoad', (e: DataConnector.Event): void => {
-                    const eventTables = e.tables;
-                    let eventTable;
-
-                    if (this.dataTableKey) {
-                        eventTable = eventTables[this.dataTableKey];
-                    } else {
-                        eventTable = Object.values(eventTables)[0];
-                    }
-
-                    const table = connector.getTable(this.dataTableKey);
-                    table.setColumns(eventTable.getColumns());
-                });
-            }
-        }
-
         this.innerResizeTimeouts = [];
     }
 
@@ -326,7 +307,8 @@ class HighchartsComponent extends Component {
         const columnAssignment = connectorHandler.columnAssignment;
         const seriesId = point.series.options.id;
         const converter = new DataConverter();
-        const valueToSet = converter.asNumber(point.y);
+        const valueToSet =
+            DataConverterUtils.asNumber(point.y, converter.decimalRegExp);
 
         if (!table) {
             return;

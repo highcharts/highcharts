@@ -1,7 +1,7 @@
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
-import { registerConnectorEvents, testExportedDataTable } from './utils.js';
+import { registerConnectorEvents } from './utils.js';
 
-const { test, only, skip } = QUnit;
+const { test, skip } = QUnit;
 
 const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "#TriBall",0.7199,  20.41,    0.60,15.24,     1 #this is a comment
@@ -45,11 +45,6 @@ test('CSVConnector from string', async (assert) => {
         csv.split('\n')[0].split(',').length,
         'DataTable has correct amount of columns.'
     );
-
-    // const dataConnectorFromJSON = CSVConnector.fromJSON(connector.toJSON());
-    // dataConnectorFromJSON.load();
-
-    // testExportedDataTable(connector.table, dataConnectorFromJSON.table, assert);
 
     const foundComment = connector.table
         .getRow(1)
@@ -156,14 +151,6 @@ test('CSV with ""s', async (assert) => {
         '\"12\"',
         'The first value (12) should be quoted when exported to csv, if dataType is set to string'
     )
-
-    // Not quite here yet
-
-    // assert.strictEqual(
-    //     connector.save(),
-    //     csv,
-    //     'Output should be same as input'
-    // )
 });
 
 test('CSVConnector from URL', async (assert) => {
@@ -182,15 +169,15 @@ test('CSVConnector from URL', async (assert) => {
     const doneLoading = assert.async(3);
 
     connector.on('afterLoad', (e) => {
-        const eventTable = Object.values(e.tables)[0];
+        const table = connector.table;
         assert.ok(
-            eventTable.getRowCount() > 1,
+            table.getRowCount() > 1,
             'DataConnector should have rows.'
         );
 
         // Check that the connector is updated
         // with the new dataset when polling
-        states[pollNumber] = eventTable.clone();
+        states[pollNumber] = table.clone();
 
         if (pollNumber > 0 && states[pollNumber]) {
             assert.strictEqual(
@@ -199,8 +186,8 @@ test('CSVConnector from URL', async (assert) => {
                 'Should have the same amount of rows'
             )
 
-            const currentValue = states[pollNumber].getCellAsNumber('X', 1, true);
-            const previousValue = states[pollNumber - 1].getCellAsNumber('X', 1, true);
+            const currentValue = table.convertToNumber(states[pollNumber].getCell('X', 1), true);
+            const previousValue = table.convertToNumber(states[pollNumber - 1].getCell('X', 1), true);
             assert.notStrictEqual(
                 currentValue,
                 previousValue,
@@ -234,10 +221,6 @@ test('CSVConnector from URL', async (assert) => {
         assert.ok(!!e.csv, 'AfterLoad event has CSV attached')
 
         doneLoading();
-    });
-
-    connector.on('load', (e) => {
-        assert.deepEqual(Object.values(e.tables)[0], connector.table, 'DataTable from event is same as DataTable from connector')
     });
 
     connector.on('loadError', (e) => {

@@ -208,12 +208,10 @@ Dashboards.board('container', {
         connectors: [{
             id: 'population-growth',
             type: 'CSV',
-            options: {
-                csv: csvData,
-                firstRowAsNames: true,
-                dataModifier: dataModifier,
-                beforeParse: beforeParse
-            }
+            csv: csvData,
+            firstRowAsNames: true,
+            dataModifier: dataModifier,
+            beforeParse
         }]
     },
     gui: {

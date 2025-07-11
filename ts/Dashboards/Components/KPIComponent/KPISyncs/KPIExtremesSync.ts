@@ -58,11 +58,10 @@ const syncPair: Sync.SyncPair = {
                 component.connectorHandlers?.[0]?.connector &&
                 !defined(component.options.value)
             ) {
-                const value = component.connectorHandlers[0].connector
-                    .table.modified.getCellAsString(
-                        cursor.column,
-                        cursor.row
-                    );
+                const value = String(
+                    component.connectorHandlers[0].connector.table.modified
+                        .getCell(cursor.column, cursor.row)
+                );
 
                 component.setValue(value);
             }
