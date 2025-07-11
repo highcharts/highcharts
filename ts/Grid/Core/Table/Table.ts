@@ -295,7 +295,59 @@ class Table {
     }
 
     /**
-     * Loads the modified data from the data table and renders the rows.
+     * Updates the rows of the table.
+     */
+    public async updateRows(): Promise<void> {
+        const vp = this;
+        let focusedRowId: number | undefined;
+        if (vp.focusCursor) {
+            focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
+        }
+
+        const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
+        await vp.grid.querying.proceed();
+        this.dataTable = this.grid.presentationTable as DataTable;
+        for (const column of this.columns) {
+            column.loadData();
+        }
+
+        if (oldRowsCount !== vp.dataTable.rowCount) {
+            this.updateVirtualization();
+            this.rowsVirtualizer.rerender();
+        } else {
+            for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+                this.rows[i].update();
+            }
+            this.rowsVirtualizer.adjustRowHeights();
+        }
+
+        if (focusedRowId !== void 0 && vp.focusCursor) {
+            const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
+            if (newRowIndex !== void 0) {
+                // Scroll to the focused row.
+                vp.scrollToRow(newRowIndex);
+
+                // Focus the cell that was focused before the update.
+                setTimeout((): void => {
+                    if (!defined(vp.focusCursor?.[1])) {
+                        return;
+                    }
+                    vp.rows[
+                        newRowIndex - vp.rows[0].index
+                    ]?.cells[vp.focusCursor[1]].htmlElement.focus();
+                });
+            }
+        }
+    }
+
+    /**
+     * Loads the modified data from the data table and renders the rows. Always
+     * removes all rows and re-renders them, so it's better to use `updateRows`
+     * instead, because it is more performant in some cases.
+     *
+     * @deprecated
+     * Use `updateRows` instead. This method is kept for backward compatibility
+     * reasons, but it will be removed in the next major version.
      */
     public loadPresentationData(): void {
         this.dataTable = this.grid.presentationTable as DataTable;
@@ -453,11 +505,6 @@ class Table {
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
-
-        if (!meta.columnDistribution.invalidated) {
-            const colDistMeta = meta.columnDistribution.exportMetadata();
-            this.columnDistribution.importMetadata(colDistMeta);
-        }
 
         if (meta.focusCursor) {
             const [rowIndex, columnIndex] = meta.focusCursor;
