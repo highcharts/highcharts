@@ -29,6 +29,12 @@ QUnit.test('Menu', function (assert) {
     );
 
     assert.strictEqual(
+        menuGroup.querySelector('ul').style.display,
+        'none',
+        'Menu list is not visible before opening the menu'
+    );
+
+    assert.strictEqual(
         menuGroup.querySelector('.hc-a11y-menu-button').textContent,
         'My button title',
         'Menu button has correct text from lang options'
@@ -59,8 +65,8 @@ QUnit.test('Menu', function (assert) {
 
     // Simulate opening the menu
     const test = new TestController(chart),
-        bBox = chart.renderTo
-            .querySelector('.hc-a11y-group-menu .hc-a11y-touchable-container')
+        group = chart.renderTo.querySelector('.hc-a11y-group-menu'),
+        bBox = group.querySelector('.hc-a11y-touchable-container')
             .getBoundingClientRect(),
         chartBBox = chart.container.getBoundingClientRect();
     test.click(
@@ -73,6 +79,34 @@ QUnit.test('Menu', function (assert) {
         'true',
         'Menu button has aria-expanded="true" when opened'
     );
+
+    const ul = group.querySelector('ul');
+
+    assert.strictEqual(
+        ul.style.display, 'block', 'Menu list is displayed when opened'
+    );
+
+    assert.strictEqual(
+        ul.firstChild.tagName, 'LI',
+        'Menu list has list items'
+    );
+
+    // Force position update
+    chart.a11y.proxyProvider.updatePositions();
+
+    const menuItemProxy = ul.firstChild
+            .querySelector('.hc-a11y-touchable-container'),
+        itemBBox = menuItemProxy.getBoundingClientRect(),
+        actualItem = chart.exporting.contextMenuEl.querySelector('li'),
+        actualBBox = actualItem.getBoundingClientRect();
+
+    ['top', 'left', 'width', 'height'].forEach(function (prop) {
+        assert.strictEqual(
+            Math.round(itemBBox[prop]),
+            Math.round(actualBBox[prop]),
+            `The touchable container has ${prop} set correctly`
+        );
+    });
 
     test.click(0, 0); // Click outside to close the menu
 

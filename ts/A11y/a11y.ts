@@ -217,7 +217,6 @@ class A11y {
         });
 
         // Other TODO:
-        // Menu tests: kbd nav, menu open, able to click item, esc close
         // Anything else need a proxy group, or is it all a part of data?
         // Set up an announcer
         // Setup keyboard nav
