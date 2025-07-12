@@ -1,0 +1,9 @@
+---
+name: Highcharts React available options
+authors:
+  - Gøran Slettemark
+js_wrap: b
+alt_text: >-
+  Highcharts React sample showing a chart that compares the fruit collections of
+  Ola, Kari, and Espen.
+...
