@@ -98,9 +98,14 @@ class Pagination {
     public currentPage: number = 1;
 
     /**
+     * Items per page
+     */
+    public itemsPerPage: number;
+
+    /**
      * Whether the next button is pressed.
      */
-    public isNext: boolean = false;
+    public isNextPage: boolean = false;
 
     /* *
     *
@@ -123,6 +128,8 @@ class Pagination {
     ) {
         this.grid = grid;
         this.options = options ?? Pagination.defaultOptions;
+        this.itemsPerPage = this.options.itemsPerPage ||
+            Pagination.defaultOptions.itemsPerPage as number;
     }
 
 
@@ -143,7 +150,7 @@ class Pagination {
             'colSpan',
             (this.grid.enabledColumns || []).length
         );
-        this.cell.style.width = this.grid.tableElement?.offsetWidth + 'px';
+        this.reflow();
 
         this.contentWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('paginationWrapper')
@@ -197,18 +204,18 @@ class Pagination {
 
         this.setButtonState(
             this.nextButton,
-            (originalDataTable?.rowCount || 0) < this.options.itemsPerPage
+            (originalDataTable?.rowCount || 0) <= this.itemsPerPage
         );
     }
 
     /**
      * Call modifier to replace items with new ones.
      *
-     * @param isNext
+     * @param isNextPage
      * Declare prev or next action triggered by button.
      * @returns
      */
-    public async updatePage(isNext: boolean = true): Promise<void> {
+    public async updatePage(isNextPage: boolean = true): Promise<void> {
         const pg = this;
         const grid = pg.grid;
         const originalDataTable = grid.dataTable;
@@ -230,24 +237,24 @@ class Pagination {
             );
         }
 
-        if (!isNext) {
+        if (!isNextPage) {
             pg.currentPage--;
         }
 
         // Set the range of the pagination
-        this.grid.querying.pagination.setRange(pg.currentPage, isNext);
+        this.grid.querying.pagination.setRange(pg.currentPage, isNextPage);
 
-        if (isNext) {
+        if (isNextPage) {
             pg.currentPage++;
         }
 
-        pg.isNext = isNext;
+        pg.isNextPage = isNextPage;
 
         this.setButtonState(this.prevButton, pg.currentPage === 1);
         this.setButtonState(
             this.nextButton,
             Math.ceil(
-                originalDataTable.rowCount / this.options.itemsPerPage
+                originalDataTable.rowCount / this.itemsPerPage
             ) === pg.currentPage
         );
 
@@ -285,11 +292,24 @@ class Pagination {
             button.removeAttribute('disabled');
         }
     }
+
     /**
-     * Destroy the pagination controller.
+     * Reflow the pagination container.
+     */
+    public reflow(): void {
+        if (!this.cell) {
+            return;
+        }
+
+        this.cell.style.width = this.grid.tableElement?.offsetWidth + 'px';
+    }
+
+    /**
+     * The pagination will be removed from the container.
      */
     public destroy(): void {
         this.row?.remove();
+        this.grid.querying.pagination.destroy();
     }
 }
 
@@ -312,7 +332,7 @@ namespace Pagination {
         /**
          * Displayed items per page.
          */
-        itemsPerPage: number;
+        itemsPerPage?: number;
 
         /**
          * Events for the pagination.

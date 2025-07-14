@@ -350,6 +350,9 @@ class Grid {
      * Initializes the pagination.
      */
     private initPagination(): void {
+        this.pagination?.destroy();
+        delete this.pagination;
+
         const paginationOptions = this.options?.pagination;
 
         if (paginationOptions?.enabled) {
@@ -578,10 +581,7 @@ class Grid {
         }
 
         if (render) {
-            await this.querying.proceed(
-                newDataTable ||
-                this.pagination?.options.enabled
-            );
+            await this.querying.proceed(newDataTable);
             this.renderViewport();
         }
     }

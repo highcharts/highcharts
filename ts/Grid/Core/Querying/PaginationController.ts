@@ -59,7 +59,7 @@ class PaginationController {
     /**
      * Whether the next button is pressed.
      */
-    public isNext?: boolean = false;
+    public isNextPage?: boolean = false;
 
     /* *
     *
@@ -90,12 +90,12 @@ class PaginationController {
      * @param currentPage
      * The current page.
      *
-     * @param isNext
+     * @param isNextPage
      * Whether the next button is pressed.
      */
-    public setRange(currentPage: number, isNext: boolean): void {
+    public setRange(currentPage: number, isNextPage: boolean): void {
         this.currentPage = currentPage;
-        this.isNext = isNext;
+        this.isNextPage = isNextPage;
         this.querying.shouldBeUpdated = true;
         this.modifier = this.createModifier();
     }
@@ -112,8 +112,8 @@ class PaginationController {
             this.currentPage !== pagination.currentPage
         ) {
             this.currentPage = pagination.currentPage;
-            this.isNext = pagination.isNext;
-            this.setRange(this.currentPage, this.isNext);
+            this.isNextPage = pagination.isNextPage;
+            this.setRange(this.currentPage, this.isNextPage);
         }
     }
 
@@ -121,7 +121,7 @@ class PaginationController {
      * Returns the range modifier.
      */
     private createModifier(): RangeModifier | undefined {
-        const isNext = this.isNext;
+        const isNextPage = this.isNextPage;
         const currentPage = this.currentPage || 0;
         const itemsPerPage =
             this.querying.grid.pagination?.options.itemsPerPage;
@@ -133,11 +133,19 @@ class PaginationController {
         const start = currentPage * itemsPerPage;
 
         return new RangeModifier({
-            start: isNext ? start : start - itemsPerPage,
-            end: start + (isNext ? itemsPerPage : 0)
+            start: isNextPage ? start : start - itemsPerPage,
+            end: start + (isNextPage ? itemsPerPage : 0)
         });
     }
 
+    /**
+     * Destroys the pagination controller.
+     */
+    public destroy(): void {
+        this.modifier = void 0;
+        this.currentPage = void 0;
+        this.isNextPage = void 0;
+    }
 }
 
 
