@@ -515,7 +515,14 @@ function createAndAttachRenderer(
             box.width === chart.clipBox.width &&
             box.height === chart.clipBox.height
         ) {
-            targetGroup?.clip(boost.clipRect);
+            targetGroup?.clip(chart.renderer.clipRect(
+                box.x - 4,
+                box.y,
+                box.width + 4,
+                box.height + 4
+            )); // #9799
+        } else {
+            (boost.targetFo || boost.target).clip(boost.clipRect);
         }
     }
 
