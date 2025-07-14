@@ -52,4 +52,24 @@ QUnit.test('Titles', function (assert) {
         'My chart<br>with special chars hello',
         'Title format is applied'
     );
+
+    assert.strictEqual(
+        chart.a11y.chartDescriptionInfo.headingLevel,
+        'h6',
+        'Uses default h6 when no heading tag is set'
+    );
+
+    chart.update({
+        a11y: {
+            chartDescriptionSection: {
+                chartTitleFormat: '<h1>{chartTitle}</h1>'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.a11y.chartDescriptionInfo.headingLevel,
+        'h1',
+        'Parses h1 from chartTitleFormat when heading tag is set'
+    );
 });

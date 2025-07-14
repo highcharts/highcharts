@@ -62,9 +62,18 @@ export interface ChartDetailedInfo {
  * @internal
  */
 function getHeadingLevel(chart: Chart): keyof HTMLElementTagNameMap {
-    if (chart.options.a11y?.headingLevel) {
-        return chart.options.a11y.headingLevel;
+    const a11yOptions = chart.options.a11y;
+    const chartTitle = a11yOptions?.chartDescriptionSection?.chartTitleFormat;
+
+    const headingRegex = /<h([1-6])[^>]*>.*?<\/h\1>/i;
+    const chartTitleFormat = chartTitle?.match(headingRegex);
+
+    // If the chartTitleFormat is set, we can parse the heading level from it
+    if (chartTitleFormat) {
+        const headingTag = `h${chartTitleFormat[1]}` as keyof HTMLElementTagNameMap;
+        return headingTag;
     }
+
     const getHeadingFromEl = (
         el: HTMLElement|null
     ): keyof HTMLElementTagNameMap|undefined => {
@@ -94,6 +103,15 @@ function getHeadingLevel(chart: Chart): keyof HTMLElementTagNameMap {
         }
     }
     return 'h6';
+}
+
+/**
+ * Strip heading tags from a string, leaving the text content.
+ *
+ * @internal
+ */
+function stripHeadingTags(input: string): string {
+    return input.replace(/<\/?h[1-6][^>]*>/gi, '').trim();
 }
 
 
@@ -132,10 +150,11 @@ export function getChartDescriptionInfo(chart: Chart): ChartDescriptionInfo {
         defaultTitle = format(langOpts.defaultChartTitle, { chart }, chart);
     return {
         headingLevel: getHeadingLevel(chart),
-        chartTitle: format(
+        chartTitle: stripHeadingTags(format(
             descriptionOpts.chartTitleFormat,
-            { chart, chartTitle: o.title?.text || defaultTitle }, chart
-        ),
+            { chart, chartTitle: o.title?.text || defaultTitle },
+            chart
+        )),
         chartSubtitle: format(
             descriptionOpts.chartSubtitleFormat,
             { chart, chartSubtitle: o.subtitle?.text || '' }, chart
