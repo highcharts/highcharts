@@ -25,6 +25,15 @@ Grid.grid('container', {
         columns: generateRandomData(10)
     },
     pagination: {
-        enabled: true
+        enabled: true,
+        itemsPerPage: 6,
+        events: {
+            beforePageChange: function (pg) {
+                console.log('beforePageChange', pg.currentPage);
+            },
+            afterPageChange: function (pg) {
+                console.log('afterPageChange', pg.currentPage);
+            }
+        }
     }
 });

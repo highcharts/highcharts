@@ -124,7 +124,7 @@ class PaginationController {
         const isNextPage = this.isNextPage;
         const currentPage = this.currentPage || 0;
         const itemsPerPage =
-            this.querying.grid.pagination?.options.itemsPerPage;
+            this.querying.grid.pagination?.itemsPerPage;
 
         if (!itemsPerPage) {
             return;
@@ -142,9 +142,10 @@ class PaginationController {
      * Destroys the pagination controller.
      */
     public destroy(): void {
-        this.modifier = void 0;
-        this.currentPage = void 0;
-        this.isNextPage = void 0;
+        delete this.modifier;
+        delete this.currentPage;
+        delete this.isNextPage;
+        this.querying.shouldBeUpdated = true;
     }
 }
 
