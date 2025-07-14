@@ -137,10 +137,7 @@ class RowsVirtualizer {
 
         // Load & render rows
         this.renderRows(this.rowCursor);
-
-        if (this.rowSettings?.virtualization) {
-            this.adjustRowHeights();
-        }
+        this.adjustRowHeights();
     }
 
     /**
@@ -379,7 +376,10 @@ class RowsVirtualizer {
      * the default height.
      */
     public adjustRowHeights(): void {
-        if (this.strictRowHeights) {
+        if (
+            this.strictRowHeights ||
+            !this.rowSettings?.virtualization
+        ) {
             return;
         }
 
@@ -464,9 +464,7 @@ class RowsVirtualizer {
             rows[i].reflow();
         }
 
-        if (this.rowSettings?.virtualization) {
-            this.adjustRowHeights();
-        }
+        this.adjustRowHeights();
     }
 
     /**

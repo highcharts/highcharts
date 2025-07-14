@@ -107,17 +107,23 @@ class FilterModifier extends DataModifier {
 
         const { columnName: col, value } = condition;
         switch (op) {
-            case 'eq':
+            case '==':
+                // eslint-disable-next-line eqeqeq
+                return (row): boolean => row[col] == value;
+            case '===':
                 return (row): boolean => row[col] === value;
-            case 'ne':
+            case '!=':
+                // eslint-disable-next-line eqeqeq
+                return (row): boolean => row[col] != value;
+            case '!==':
                 return (row): boolean => row[col] !== value;
-            case 'gt':
+            case '>':
                 return (row): boolean => (row[col] || 0) > (value || 0);
-            case 'ge':
+            case '>=':
                 return (row): boolean => (row[col] || 0) >= (value || 0);
-            case 'lt':
+            case '<':
                 return (row): boolean => (row[col] || 0) < (value || 0);
-            case 'le':
+            case '<=':
                 return (row): boolean => (row[col] || 0) <= (value || 0);
         }
 

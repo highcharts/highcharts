@@ -37,14 +37,8 @@ export interface ComparisonCondition {
     /**
      * Type of the operator used in the condition, comparing the value of the
      * cell with the provided value.
-     * - `eq` - equal
-     * - `ne` - not equal
-     * - `gt` - greater than
-     * - `ge` - greater than or equal
-     * - `lt` - less than
-     * - `le` - less than or equal
      */
-    operator: 'eq' | 'ne' | 'gt' | 'ge' | 'lt' | 'le';
+    operator: '==' | '!=' | '===' | '!==' | '>' | '>=' | '<' | '<=';
 
     /**
      * Name of the column to compare the value of the cell with.
