@@ -52,8 +52,9 @@ test('Redirects are applied for code', async ({ page }) => {
     });
 });
 
-test('Redirects for data', async ({ page }) => {
-    const template = `<html>
+test.describe('Redirects for data', () => {
+    test('jsonSources', async ({ page }) => {
+        const template = `<html>
     <head>
     </head>
     <body>
@@ -63,13 +64,56 @@ test('Redirects for data', async ({ page }) => {
     </body>
     </html>`;
 
-    await page.setContent(template, { waitUntil: 'networkidle' });
+        await page.setContent(template, { waitUntil: 'networkidle' });
 
-    const { annotations } = test.info();
+        const { annotations } = test.info();
 
-    expect(annotations).toContainEqual({
-        type: 'redirect',
-        description: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=64.128288&lon=-21.827774 --> ../samples/data/json-sources/weather-forecast.json'
+        expect(annotations).toContainEqual({
+            type: 'redirect',
+            description: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=64.128288&lon=-21.827774 --> samples/data/json-sources/weather-forecast.json'
+        });
+
     });
 
+    test('jsDelivr', async ({ page }) => {
+        const template = `<html>
+    <head>
+    </head>
+    <body>
+        <script type="module">
+            await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/samples/data/aapl-c.json')
+        </script>
+    </body>
+    </html>`;
+
+        await page.setContent(template, { waitUntil: 'networkidle' });
+
+        const { annotations } = test.info();
+
+        expect(annotations).toContainEqual({
+            type: 'redirect',
+            description: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/samples/data/aapl-c.json --> samples/data/aapl-c.json'
+        });
+    });
+
+    test('highcharts.com sample data', async ({ page }) => {
+        const template = `<html>
+    <head>
+    </head>
+    <body>
+        <script type="module">
+            await fetch('https://www.highcharts.com/samples/data/aapl-c.json')
+        </script>
+    </body>
+    </html>`;
+
+        await page.setContent(template, { waitUntil: 'networkidle' });
+
+        const { annotations } = test.info();
+
+        expect(annotations).toContainEqual({
+            type: 'redirect',
+            description: 'https://www.highcharts.com/samples/data/aapl-c.json --> samples/data/aapl-c.json'
+        });
+    });
 });
