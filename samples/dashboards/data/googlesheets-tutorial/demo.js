@@ -173,7 +173,7 @@ const sortModifier = new SortModifier({
     order: 'asc'
 });
 
-const rangeModifier = new FilterModifier({
+const filterModifier = new FilterModifier({
     condition: {
         operator: 'and',
         conditions: [{
@@ -189,7 +189,7 @@ const rangeModifier = new FilterModifier({
 });
 
 // DataModifier lookup, the order must reflect the dropdown in demo.html
-const dataModifiers = [null, mathModifier, sortModifier, rangeModifier];
+const dataModifiers = [null, mathModifier, sortModifier, filterModifier];
 
 async function applyDataModifier(idx) {
     const connector = board.dataPool.connectors['conn-mod'];
