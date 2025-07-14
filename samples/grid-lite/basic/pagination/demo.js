@@ -28,11 +28,11 @@ Grid.grid('container', {
         enabled: true,
         itemsPerPage: 6,
         events: {
-            beforePageChange: function (currentPage) {
-                console.log('beforePageChange', currentPage);
+            beforePageChange: function (pg) {
+                console.log('beforePageChange', pg.currentPage);
             },
-            afterPageChange: function (currentPage) {
-                console.log('afterPageChange', currentPage);
+            afterPageChange: function (pg) {
+                console.log('afterPageChange', pg.currentPage);
             }
         }
     }

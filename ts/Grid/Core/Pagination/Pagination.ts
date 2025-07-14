@@ -218,10 +218,6 @@ class Pagination {
             return;
         }
 
-        if (!isNext) {
-            pg.currentPage--;
-        }
-
         // Event trigger before page change, defined by user
         if (beforePageChange) {
             fireEvent(
@@ -232,6 +228,10 @@ class Pagination {
                 },
                 beforePageChange
             );
+        }
+
+        if (!isNext) {
+            pg.currentPage--;
         }
 
         // Set the range of the pagination
