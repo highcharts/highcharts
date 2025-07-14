@@ -64,11 +64,11 @@ async function getJSONSources(): Promise<RouteType[]>{
             handler: async (route) => {
                 try {
                     const localPath = join(
-                        '../samples/data/json-sources',
+                        'samples/data/json-sources',
                         source.filename
                     );
 
-                    const body = await readFile(join(__dirname, localPath));
+                    const body = await readFile(join(__dirname, '../', localPath));
 
                     test.info().annotations.push({
                         type: 'redirect',
@@ -91,17 +91,49 @@ async function getJSONSources(): Promise<RouteType[]>{
     return routes;
 }
 
+export async function replaceSampleData(route: Route){
+    const url = route.request().url();
+    const match = url.match(/samples\/data\/(.+\.*)/);
+
+    if (match?.length) {
+        const [_all, filename] = match;
+        try {
+            const samplePath = join('samples/data', filename);
+            const filePath = join(__dirname, '..', samplePath);
+            const data = await readFile(filePath, 'utf8');
+
+            test.info().annotations.push({
+                type: 'redirect',
+                description: `${url} --> ${samplePath}`
+            });
+
+            return route.fulfill({
+                status: 200,
+                contentType: contentTypes[extname(filename)] ?? 'text/plain',
+                body: data,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    await route.abort();
+    throw new Error('Failed to find a matching dataset')
+}
 
 export const test = base.extend<{}>({
     page: async ({ page }, use) => {
         if (!process.env.NO_REWRITES) {
             // TODO: mapdata
-            // TODO: jsdelivr
             // TODO: demo-live-data
             const routes: RouteType[] = [
                 {
                     pattern: '**/code.highcharts.com/**',
                     handler: replaceHCCode
+                },
+                {
+                    pattern: '**/**/samples/data/**',
+                    handler: replaceSampleData
                 },
                 ...(await getJSONSources())
             ]
