@@ -554,6 +554,7 @@ class Grid {
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
         this.initAccessibility();
+        this.initPagination();
 
         let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
