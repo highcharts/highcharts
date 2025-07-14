@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures.ts';
+import { test, expect } from '../fixtures.ts';
 
 test('Chart creation', async ({ page }) => {
     await page.setContent('<div id="container"></container>');
@@ -114,6 +114,27 @@ test.describe('Redirects for data', () => {
         expect(annotations).toContainEqual({
             type: 'redirect',
             description: 'https://www.highcharts.com/samples/data/aapl-c.json --> samples/data/aapl-c.json'
+        });
+    });
+
+    test('demo-live-data sample data', async ({ page }) => {
+        const template = `<html>
+    <head>
+    </head>
+    <body>
+        <script type="module">
+            await fetch('https://demo-live-data.highcharts.com/aapl-c.json')
+        </script>
+    </body>
+    </html>`;
+
+        await page.setContent(template, { waitUntil: 'networkidle' });
+
+        const { annotations } = test.info();
+
+        expect(annotations).toContainEqual({
+            type: 'redirect',
+            description: 'https://demo-live-data.highcharts.com/aapl-c.json --> samples/data/aapl-c.json'
         });
     });
 
