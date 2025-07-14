@@ -24,7 +24,8 @@ const chart = Highcharts.chart('container', {
 });
 chart.series[0].remove(); // test boost refresh after empty series array
 chart.addSeries({
-    data: [1, 0, 0, 4, 5, 3]
+    data: [1, 0, 0, 4, 5, 3],
+    type: 'scatter'
 });
 chart.addSeries({
     data: [6, 5, 7, 6, 8, 4]
