@@ -116,4 +116,27 @@ test.describe('Redirects for data', () => {
             description: 'https://www.highcharts.com/samples/data/aapl-c.json --> samples/data/aapl-c.json'
         });
     });
+
+
+    // 'https://code.highcharts.com/mapdata/custom/asia.topo.json'
+    test('highcharts.com mapdata', async ({ page }) => {
+        const template = `<html>
+    <head>
+    </head>
+    <body>
+        <script type="module">
+            await fetch('https://code.highcharts.com/mapdata/custom/asia.topo.json')
+        </script>
+    </body>
+    </html>`;
+
+        await page.setContent(template, { waitUntil: 'networkidle' });
+
+        const { annotations } = test.info();
+
+        expect(annotations).toContainEqual({
+            type: 'redirect',
+            description: 'https://code.highcharts.com/mapdata/custom/asia.topo.json --> node_modules/@highcharts/map-collection/custom/asia.topo.json'
+        });
+    });
 });
