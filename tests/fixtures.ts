@@ -123,7 +123,7 @@ async function replaceMapData(route: Route) {
 
 export async function replaceSampleData(route: Route){
     const url = route.request().url();
-    const match = url.match(/samples\/data\/(.+\.*)/);
+    const match = url.match(/(?:samples\/data\/|demo-live-data.+\/)(.+\.*)/);
 
     if (match?.length) {
         const [_all, filename] = match;
@@ -154,7 +154,6 @@ export async function replaceSampleData(route: Route){
 export const test = base.extend<{}>({
     page: async ({ page }, use) => {
         if (!process.env.NO_REWRITES) {
-            // TODO: mapdata
             // TODO: demo-live-data
             const routes: RouteType[] = [
                 {
@@ -162,7 +161,11 @@ export const test = base.extend<{}>({
                     handler: replaceHCCode
                 },
                 {
-                    pattern: '**/**/samples/data/**',
+                    pattern: '**/**/{samples/data}/**',
+                    handler: replaceSampleData
+                },
+                {
+                    pattern: 'https://demo-live-data.highcharts.com/**',
                     handler: replaceSampleData
                 },
                 {
