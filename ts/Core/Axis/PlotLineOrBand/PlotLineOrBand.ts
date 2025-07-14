@@ -259,7 +259,7 @@ class PlotLineOrBand {
         // Common for lines and bands. Add events only if they were not added
         // before.
         if (!this.eventsAdded && events) {
-            objectEach(events, (event, eventType): void => {
+            objectEach(events, (_event, eventType): void => {
                 svgElem?.on(
                     eventType,
                     (e: any): void => {
