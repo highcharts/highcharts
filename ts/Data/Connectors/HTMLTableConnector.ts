@@ -68,11 +68,11 @@ class HTMLTableConnector extends DataConnector {
     /**
      * Constructs an instance of HTMLTableConnector.
      *
-     * @param {Partial<HTMLTableConnectorOptions> & HTMLTableConverterOptions} [options]
+     * @param {HTMLTableConnector.CombinedHTMLTableConnectorOptions} [options]
      * Options for the connector and converter.
      */
     public constructor(
-        options?: Partial<HTMLTableConnectorOptions> & HTMLTableConverterOptions
+        options?: HTMLTableConnector.CombinedHTMLTableConnectorOptions
     ) {
         const mergedOptions = merge(HTMLTableConnector.defaultOptions, options);
 
@@ -207,6 +207,12 @@ namespace HTMLTableConnector {
         useMultiLevelHeaders?: boolean;
         useRowspanHeaders?: boolean;
     }
+
+    /**
+     * Options of the HTMLTable connector and converter.
+     */
+    export type CombinedHTMLTableConnectorOptions =
+        Partial<HTMLTableConnectorOptions> & HTMLTableConverterOptions;
 
 }
 
