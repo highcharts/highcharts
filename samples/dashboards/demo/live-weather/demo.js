@@ -127,6 +127,19 @@ const weatherStationConfig = {
     }
 };
 
+// Convert a cell value to a number.
+function convertToNumber(value, useNaN) {
+    switch (typeof value) {
+    case 'boolean':
+        return value ? 1 : 0;
+    case 'number':
+        return (isNaN(value) && !useNaN ? null : value);
+    default:
+        value = parseFloat(`${value ?? ''}`);
+        return (isNaN(value) && !useNaN ? null : value);
+    }
+}
+
 // Common options for KPI charts
 // - Adapted from https://www.highcharts.com/demo/dashboards/climate
 const kpiGaugeOptions = {
@@ -901,9 +914,9 @@ async function updateBoard(
             // Forecast for station
             const station = mapPoints[i].name;
             const forecastTable = await dataPool.getConnectorTable(station);
-            const elevation = stationsTable.getCellAsNumber(
+            const elevation = convertToNumber(stationsTable.getCell(
                 'elevation', stationsTable.getRowIndexBy('station', station)
-            );
+            ));
 
             mapPoints[i].update({
                 y: getObservation(forecastTable, paramName),
@@ -950,7 +963,8 @@ async function updateBoard(
         const geoInfo = html.children[1].children;
         for (let i = 0; i < geoInfo.length; i++) {
             const attr = geoInfo[i].attributes;
-            const value = stationsTable.getCellAsNumber(attr.id, stationRow);
+            const value =
+                convertToNumber(stationsTable.getCell(attr.id, stationRow));
             const unit = attr.id === 'elevation' ? 'm.' : 'degr.';
 
             geoInfo[i].textContent = `${attr.name}: ${value} ${unit}`;

@@ -35,6 +35,19 @@ const colorStopsTemperature = [
     [0.7, '#DD2323']
 ];
 
+// Convert a cell value to a number.
+function convertToNumber(value, useNaN) {
+    switch (typeof value) {
+    case 'boolean':
+        return value ? 1 : 0;
+    case 'number':
+        return (isNaN(value) && !useNaN ? null : value);
+    default:
+        value = parseFloat(`${value ?? ''}`);
+        return (isNaN(value) && !useNaN ? null : value);
+    }
+}
+
 setupBoard();
 
 async function setupBoard() {
@@ -861,10 +874,10 @@ async function setupCity(board, city, column, scale) {
         citiesTable.getRowIndexBy('city', city)
     );
 
-    const pointValue = cityTable.modified.getCellAsNumber(
+    const pointValue = convertToNumber(cityTable.modified.getCell(
         column,
         cityTable.modified.getRowIndexBy('time', latestTime)
-    );
+    ));
 
     // Add city to world map
     worldMap.addPoint({
@@ -943,7 +956,7 @@ async function updateBoard(board, city, column, scale, newData) {
 
     // Update world map
     const mapPoints = worldMap.chart.series[1].data;
-    const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
+    const lastTime = convertToNumber(rangeTable.getCell('time', rangeEnd));
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
         // Get elevation of city
@@ -959,10 +972,10 @@ async function updateBoard(board, city, column, scale, newData) {
                 elevation: cityInfo.elevation,
                 yScale: scale
             },
-            y: pointTable.modified.getCellAsNumber(
+            y: convertToNumber(pointTable.modified.getCell(
                 column,
                 pointTable.modified.getRowIndexBy('time', lastTime)
-            )
+            ))
         }, false);
     }
     worldMap.chart.update({
@@ -977,22 +990,37 @@ async function updateBoard(board, city, column, scale, newData) {
     if (newData) {
         await kpiData.update({
             title: city,
-            value: citiesTable.getCellAsNumber(
+            value: convertToNumber(citiesTable.getCell(
                 'elevation',
                 citiesTable.getRowIndexBy('city', city)
-            ) || '--'
+            )) || '--'
         });
     }
     kpiTemperature.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('TN' + scale, rangeEnd) || 0);
+        .update(convertToNumber(rangeTable.getCell(
+            'TN' + scale,
+            rangeEnd
+        )) || 0);
     kpiMaxTemperature.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('TX' + scale, rangeEnd) || 0);
+        .update(convertToNumber(rangeTable.getCell(
+            'TX' + scale,
+            rangeEnd
+        )) || 0);
     kpiRain.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('RR1', rangeEnd) || 0);
+        .update(convertToNumber(rangeTable.getCell(
+            'RR1',
+            rangeEnd
+        )) || 0);
     kpiIce.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('ID', rangeEnd) || 0);
+        .update(convertToNumber(rangeTable.getCell(
+            'ID',
+            rangeEnd
+        )) || 0);
     kpiFrost.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('FD', rangeEnd) || 0);
+        .update(convertToNumber(rangeTable.getCell(
+            'FD',
+            rangeEnd
+        )) || 0);
 
     // Update data grid and city chart
     if (newData) {

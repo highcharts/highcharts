@@ -27,6 +27,18 @@ const electionYears = ['2020', '2016', '2012', '2008'];
 // Election data loaded from CSV and converted to JSON
 let electionData;
 
+// Convert a cell value to a number.
+function convertToNumber(value, useNaN) {
+    switch (typeof value) {
+    case 'boolean':
+        return value ? 1 : 0;
+    case 'number':
+        return (isNaN(value) && !useNaN ? null : value);
+    default:
+        value = parseFloat(`${value ?? ''}`);
+        return (isNaN(value) && !useNaN ? null : value);
+    }
+}
 
 // Launches the Dashboards application
 async function setupDashboard() {
@@ -692,13 +704,17 @@ async function updateResultComponent(electionTable, year) {
 
     // Candidate percentages/electors
     const row = electionTable.getRowIndexBy('postal-code', 'US');
-    const demColVotes = electionTable.getCellAsNumber('demColVotes', row);
-    const repColVotes = electionTable.getCellAsNumber('repColVotes', row);
+    const demColVotes =
+        convertToNumber(electionTable.getCell('demColVotes', row));
+    const repColVotes =
+        convertToNumber(electionTable.getCell('repColVotes', row));
     const totalColVotes = demColVotes + repColVotes;
-    const demVotes = electionTable.getCellAsNumber('demVotes', row);
-    const repVotes = electionTable.getCellAsNumber('repVotes', row);
-    const demPercent = electionTable.getCellAsNumber('demPercent', row);
-    const repPercent = electionTable.getCellAsNumber('repPercent', row);
+    const demVotes = convertToNumber(electionTable.getCell('demVotes', row));
+    const repVotes = convertToNumber(electionTable.getCell('repVotes', row));
+    const demPercent =
+        convertToNumber(electionTable.getCell('demPercent', row));
+    const repPercent =
+        convertToNumber(electionTable.getCell('repPercent', row));
 
     // Grab auxiliary data about the election (photos, description, etc.)
     const yearEl = document.querySelector('elections year#ei_' + year);
@@ -762,8 +778,10 @@ async function updateMapComponent(component, electionTable, year) {
 
     voteSeries.forEach(async function (usState) {
         const row = electionTable.getRowIndexBy('postal-code', usState['postal-code']);
-        const percentRep = electionTable.getCellAsNumber('repPercent', row);
-        const percentDem = electionTable.getCellAsNumber('demPercent', row);
+        const percentRep =
+            convertToNumber(electionTable.getCell('repPercent', row));
+        const percentDem =
+            convertToNumber(electionTable.getCell('demPercent', row));
 
         usState.update({
             // Determine color
@@ -771,11 +789,14 @@ async function updateMapComponent(component, electionTable, year) {
             // For use in tooltip
             custom: {
                 winner: percentRep > percentDem ? electionData[year].candRep : electionData[year].candDem,
-                elVotesDem: electionTable.getCellAsNumber('demColVotes', row),
-                elVotesRep: electionTable.getCellAsNumber('repColVotes', row),
+                elVotesDem:
+                    convertToNumber(electionTable.getCell('demColVotes', row)),
+                elVotesRep:
+                    convertToNumber(electionTable.getCell('repColVotes', row)) || 0,
                 votesDem: electionTable.getCell('demVoteSummary', row),
                 votesRep: electionTable.getCell('repVoteSummary', row),
-                totalVotes: electionTable.getCellAsNumber('totalVotes', row)
+                totalVotes:
+                    convertToNumber(electionTable.getCell('totalVotes', row)) || 0
             }
         }, false); // No redraw at point level
     });

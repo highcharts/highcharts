@@ -473,22 +473,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         }
     }
 
-    public convertToNumber(
-        value: DataTable.CellType | undefined,
-        useNaN?: boolean
-    ): number | null {
-        switch (typeof value) {
-            case 'boolean':
-                return (value ? 1 : 0);
-            case 'number':
-                return (isNaN(value) && !useNaN ? null : value);
-        }
-
-        value = parseFloat(`${value ?? ''}`);
-
-        return (isNaN(value) && !useNaN ? null : value);
-    }
-
     public getColumn(
         columnName: string,
         asReference?: boolean

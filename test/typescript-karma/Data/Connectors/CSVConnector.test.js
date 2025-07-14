@@ -1,4 +1,8 @@
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
+import ColumnUtils from '/base/code/es-modules/Data/ColumnUtils.js';
+const {
+    convertToNumber
+} = ColumnUtils;
 import { registerConnectorEvents } from './utils.js';
 
 const { test, skip } = QUnit;
@@ -186,8 +190,10 @@ test('CSVConnector from URL', async (assert) => {
                 'Should have the same amount of rows'
             )
 
-            const currentValue = table.convertToNumber(states[pollNumber].getCell('X', 1), true);
-            const previousValue = table.convertToNumber(states[pollNumber - 1].getCell('X', 1), true);
+            const currentValue = 
+                convertToNumber(states[pollNumber].getCell('X', 1), true);
+            const previousValue = 
+                convertToNumber(states[pollNumber - 1].getCell('X', 1), true);
             assert.notStrictEqual(
                 currentValue,
                 previousValue,

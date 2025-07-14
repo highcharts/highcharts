@@ -16,6 +16,19 @@ if (chartArray.length > 1) {
     chartToShow = chartArray[1];
 }
 
+// Convert a cell value to a number.
+function convertToNumber(value, useNaN) {
+    switch (typeof value) {
+    case 'boolean':
+        return value ? 1 : 0;
+    case 'number':
+        return (isNaN(value) && !useNaN ? null : value);
+    default:
+        value = parseFloat(`${value ?? ''}`);
+        return (isNaN(value) && !useNaN ? null : value);
+    }
+}
+
 function climate() {
     const MathModifier = Dashboards.DataModifier.types.Math;
     const RangeModifier = Dashboards.DataModifier.types.Range;
@@ -392,10 +405,10 @@ function climate() {
             lat: cityInfo.lat,
             lon: cityInfo.lon,
             name: cityInfo.city,
-            y: cityTable.modified.getCellAsNumber(
+            y: convertToNumber(cityTable.modified.getCell(
                 column,
                 cityTable.getRowIndexBy('time', time)
-            ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
+            )) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
         });
 
     }
@@ -456,8 +469,9 @@ function climate() {
         });
         (async () => {
             const dataPoints = worldMap.chart.series[1].data;
-            const lastTime = rangeTable
-                .getCellAsNumber('time', rangeTable.getRowCount() - 1);
+            const lastTime = convertToNumber(
+                rangeTable.getCell('time', rangeTable.getRowCount() - 1)
+            );
 
             for (const point of dataPoints) {
                 const pointTable = await dataPool.getConnectorTable(point.name);
@@ -466,10 +480,10 @@ function climate() {
                     custom: {
                         yScale: scale
                     },
-                    y: pointTable.modified.getCellAsNumber(
+                    y: convertToNumber(pointTable.modified.getCell(
                         column,
                         pointTable.getRowIndexBy('time', lastTime)
-                    )
+                    ))
                 });
             }
         })();
