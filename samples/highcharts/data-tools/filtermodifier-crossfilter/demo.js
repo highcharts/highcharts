@@ -42,8 +42,6 @@ const form = document.getElementById('filter');
 
     await csv.load();
 
-    console.log(csv);
-
     renderTable(container, csv.table.modified);
 
     form.querySelectorAll('input').forEach(input => {

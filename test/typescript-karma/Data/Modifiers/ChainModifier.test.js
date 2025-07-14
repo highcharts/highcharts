@@ -74,6 +74,9 @@ QUnit.test('ChainModifier.modify', function (assert) {
                         value: 'b'
                     }]
                 }
+            }, {
+                type: 'Range',
+                start: 1
             }]
         }),
         table = new DataTable({
@@ -89,28 +92,28 @@ QUnit.test('ChainModifier.modify', function (assert) {
 
             assert.equal(
                 table.modified.getRowCount(),
-                4,
-                'Modified table should contain four rows.'
+                3,
+                'Modified table should contain three rows.'
             );
 
             assert.deepEqual(
                 table.modified.getColumns(),
                 {
-                    x: [1, 2, 3, 4],
-                    y: ['a', 'a', 'b', 'b']
+                    x: [2, 3, 4],
+                    y: ['a', 'b', 'b']
                 },
-                'Modified table should have expected structure of four rows.'
+                'Modified table should have expected structure of three rows.'
             );
 
             assert.deepEqual(
                 table.modified.localRowIndexes,
-                [0, 1, 2, 3],
+                [void 0, 0, 1, 2],
                 'Modified table should have expected local row indexes.'
             );
 
             assert.deepEqual(
                 table.modified.originalRowIndexes,
-                [0, 1, 2, 3],
+                [1, 2, 3],
                 'Modified table should have expected original row indexes.'
             );
 

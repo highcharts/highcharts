@@ -136,7 +136,7 @@ class RangeModifier extends DataModifier {
         modified.setRows(table.getRows(start, length));
         modified.setOriginalRowIndexes(Array.from(
             { length },
-            (_, i): number => i + start
+            (_, i): number | undefined => table.getOriginalRowIndex(start + i)
         ));
 
         modifier.emit({ type: 'afterModify', detail: eventDetail, table });

@@ -406,7 +406,7 @@ class SortModifier extends DataModifier {
                 rowReference = rowReferences[i];
 
                 originalIndexes.push(
-                    modified.getOriginalRowIndex(rowReference.index)
+                    table.getOriginalRowIndex(rowReference.index)
                 );
                 rows.push(rowReference.row);
             }

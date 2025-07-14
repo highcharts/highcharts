@@ -50,4 +50,16 @@ QUnit.test('RangeModifier.modify', async function (assert) {
         'Filtered table should contain intersective reduction of rows.'
     );
 
+    assert.deepEqual(
+        table.modified.localRowIndexes,
+        [ void 0, void 0, void 0, void 0, 0 ],
+        'Local row indexes should be set correctly.'
+    )
+
+    assert.deepEqual(
+        table.modified.originalRowIndexes,
+        [4],
+        'Original row indexes should be set correctly.'
+    );
+
 });
