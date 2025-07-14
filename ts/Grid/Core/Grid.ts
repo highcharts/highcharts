@@ -553,19 +553,23 @@ class Grid {
         oneToOne = false
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
-        this.initAccessibility();
-        this.initPagination();
 
-        let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
             this.userOptions.dataTable = options.dataTable;
             (this.options ?? {}).dataTable = options.dataTable;
 
             this.loadDataTable(this.options?.dataTable);
-            newDataTable = true;
+            this.querying.shouldBeUpdated = true;
 
             this.initVirtualization();
         }
+
+        if (!render) {
+            return;
+        }
+
+        this.initAccessibility();
+        this.initPagination();
 
         this.querying.loadOptions();
 
@@ -579,10 +583,8 @@ class Grid {
             ));
         }
 
-        if (render) {
-            await this.querying.proceed(newDataTable);
-            this.renderViewport();
-        }
+        await this.querying.proceed();
+        this.renderViewport();
     }
 
     public updateColumn(
