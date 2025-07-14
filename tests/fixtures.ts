@@ -91,6 +91,36 @@ async function getJSONSources(): Promise<RouteType[]>{
     return routes;
 }
 
+async function replaceMapData(route: Route) {
+    const url = route.request().url();
+    const match = url.match(/mapdata\/(.+\.*)/);
+
+    if (match?.length) {
+        const [_all, filename] = match;
+        try {
+            const mapPath = join('@highcharts/map-collection', filename);
+            const filePath = require.resolve(mapPath);
+            const data = await readFile(filePath, 'utf8');
+
+            test.info().annotations.push({
+                type: 'redirect',
+                description: `${url} --> node_modules/${mapPath}`
+            });
+
+            return route.fulfill({
+                status: 200,
+                contentType: contentTypes[extname(filename)] ?? 'text/plain',
+                body: data,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    await route.abort();
+    throw new Error('Failed to find a matching map data');
+}
+
 export async function replaceSampleData(route: Route){
     const url = route.request().url();
     const match = url.match(/samples\/data\/(.+\.*)/);
@@ -134,6 +164,10 @@ export const test = base.extend<{}>({
                 {
                     pattern: '**/**/samples/data/**',
                     handler: replaceSampleData
+                },
+                {
+                    pattern: '**/**/mapdata/**',
+                    handler: replaceMapData
                 },
                 ...(await getJSONSources())
             ]
