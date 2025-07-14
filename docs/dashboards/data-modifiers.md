@@ -21,12 +21,10 @@ To add the modifier, specify it in the connector options.
 connector: {
     type: 'CSV',
     id: 'connector-id',
-    options: {
-        //... other options
-        dataModifier: {
-            type: 'Math' // or 'Invert'|'Math' etc,
-            // additional modifier options
-        }
+    //... other options
+    dataModifier: {
+        type: 'Math' // or 'Invert'|'Math' etc,
+        // additional modifier options
     }
 }
 ```

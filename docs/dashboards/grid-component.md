@@ -55,14 +55,12 @@ dataPool: {
     connectors: [{
         id: 'data',
         type: 'CSV',
-        options: {
-            csv: `Food,Vitamin A,Iron
-            Beef Liver,6421,6.5
-            Lamb Liver,2122,6.5
-            Cod Liver Oil,1350,0.9
-            Mackerel,388,1
-            Tuna,214,0.6`
-        }
+        csv: `Food,Vitamin A,Iron
+        Beef Liver,6421,6.5
+        Lamb Liver,2122,6.5
+        Cod Liver Oil,1350,0.9
+        Mackerel,388,1
+        Tuna,214,0.6`
     }]
 }
 ```
@@ -89,14 +87,12 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'CSV',
-            options: {
-                csv: `Food,Vitamin A,Iron
-                Beef Liver,6421,6.5
-                Lamb Liver,2122,6.5
-                Cod Liver Oil,1350,0.9
-                Mackerel,388,1
-                Tuna,214,0.6`
-            }
+            csv: `Food,Vitamin A,Iron
+            Beef Liver,6421,6.5
+            Lamb Liver,2122,6.5
+            Cod Liver Oil,1350,0.9
+            Mackerel,388,1
+            Tuna,214,0.6`
         }]
     },
     gui: {
@@ -140,18 +136,16 @@ The [`dataModifier`](https://api.highcharts.com/dashboards/#interfaces/Data_Conn
 connectors: [{
     id: 'data',
     type: 'CSV',
-    options: {
-        csv: `A,B
-        1,3
-        20,2
-        100,2`,
-        dataModifier: {
-            type: 'Math',
-            columnFormulas: [{
-                column: 'Sum',
-                formula: 'A1+B1'
-            }]
-        }
+    csv: `A,B
+    1,3
+    20,2
+    100,2`,
+    dataModifier: {
+        type: 'Math',
+        columnFormulas: [{
+            column: 'Sum',
+            formula: 'A1+B1'
+        }]
     }
 }]
 ```

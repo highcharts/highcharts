@@ -101,14 +101,12 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Vitamin',
             type: 'CSV',
-            options: {
-                csv: `Food,Vitamin A,Iron
-                Beef Liver,6421,6.5
-                Lamb Liver,2122,6.5
-                Cod Liver Oil,1350,0.9
-                Mackerel,388,1
-                Tuna,214,0.6`,
-            },
+            csv: `Food,Vitamin A,Iron
+            Beef Liver,6421,6.5
+            Lamb Liver,2122,6.5
+            Cod Liver Oil,1350,0.9
+            Mackerel,388,1
+            Tuna,214,0.6`,
         }]
     },
     gui: {

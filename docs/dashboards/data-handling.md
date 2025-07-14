@@ -39,7 +39,7 @@ the `DataTable` with new data from the source.
 | [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html) | `'HTMLTable'` |
 
 Each of those types has its specific options. For example, the [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html)
-has two data input options. Directly as a string - `options.csv`, or as a URL from which the CSV file is fetched - `options.csvURL`.
+has two data input options. Directly as a string - `csv`, or as a URL from which the CSV file is fetched - `csvURL`.
 
 ### Examples
 ```js
@@ -47,9 +47,7 @@ dataPool: {
     connectors: [{
         id: 'my-csv-connector',
         type: 'CSV',
-        options: {
-            csvURL: 'https://demo-live-data.highcharts.com/updating-set.csv'
-        }
+        csvURL: 'https://demo-live-data.highcharts.com/updating-set.csv'
     }]
 }
 ```
@@ -59,9 +57,7 @@ dataPool: {
     connectors: [{
         id: 'my-json-connector',
         type: 'JSON',
-        options: {
-            dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
-        }
+        dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
     }]
 }
 ```
@@ -71,10 +67,8 @@ dataPool: {
     connectors: [{
         id: 'my-google-sheets-connector',
             type: 'GoogleSheets',
-            options: {
-                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-                googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
-            }
+            googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+            googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
     }]
 }
 ```
@@ -84,9 +78,7 @@ dataPool: {
     connectors: [{
         id: 'my-html-table-connector',
         type: 'HTMLTable',
-        options: {
-            table: 'table-element-id',
-        }
+        table: 'table-element-id',
     }]
 }
 ```

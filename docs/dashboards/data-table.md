@@ -19,9 +19,7 @@ Dashboards.board('container', {
         connectors: [{
             type: 'CSV',
             id: 'my-connector',
-            options: {
-                csvURL: 'https://example.com/data.csv'
-            }
+            csvURL: 'https://example.com/data.csv'
         }]
         ...
 ```
@@ -34,9 +32,7 @@ const dataPool = new DataPool();
 dataPool.setConnectorOptions({
     type: 'CSV',
     id: 'my-connector',
-    options: {
-        csvURL: 'https://example.com/data.csv'
-    }
+    csvURL: 'https://example.com/data.csv'
 });
 
 const dataTable = await dataPool.getConnectorTable('my-connector');
@@ -108,19 +104,17 @@ dataPool: {
     connectors: [{
         id: 'data-connector',
         type: 'JSON',
-        options: {
-            data: {
-                employees: [
-                    ['Name', 'Age', 'Salary'],
-                    ['John', 30, 50000],
-                    ['Jane', 25, 45000],
-                    ['Bob', 35, 60000],
-                    ['Alice', 28, 52000]
-                ],
-                metrics: {
-                    revenue: 100000,
-                    costs: 75000
-                }
+        data: {
+            employees: [
+                ['Name', 'Age', 'Salary'],
+                ['John', 30, 50000],
+                ['Jane', 25, 45000],
+                ['Bob', 35, 60000],
+                ['Alice', 28, 52000]
+            ],
+            metrics: {
+                revenue: 100000,
+                costs: 75000
             }
         },
         dataTables: [{

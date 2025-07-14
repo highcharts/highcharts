@@ -104,9 +104,9 @@ Dashboards.board('container', {
             enabled: false
         },
         chartOptions: {
-        series: [{
-            data: [734, 244, 685, 250, 920, 320, 200, 150]
-        }]
+            series: [{
+                data: [734, 244, 685, 250, 920, 320, 200, 150]
+            }]
         }
     }]
 });
@@ -127,13 +127,11 @@ Dashboards.board('container', {
         connectors: [{
             id: 'value',
             type: 'CSV',
-            options: {
-                csv: `Date,Value
-                2019-01-01,100
-                2019-01-02,200
-                2019-01-03,300
-                2019-01-04,400`
-            }
+            csv: `Date,Value
+            2019-01-01,100
+            2019-01-02,200
+            2019-01-03,300
+            2019-01-04,400`
         }]
     },
     components: [{

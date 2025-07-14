@@ -291,18 +291,14 @@ const dataPool = new DataPool({
     connectors: [{
         id: 'my-google-spreadsheet',
         type: 'GoogleSheets',
-        options: {
-            googleAPIKey: 'XXXXX',
-            googleSpreadsheetKey: 'XXXXX',
-        }
+        googleAPIKey: 'XXXXX',
+        googleSpreadsheetKey: 'XXXXX',
     }]
 });
 dataPool.setConnectorOptions({
     name: 'my-csv',
     type: 'CSV',
-    options: {
-        csvURL: 'https://domain.example/data.csv'
-    }
+    csvURL: 'https://domain.example/data.csv'
 });
 const googleConnector = await dataPool.getConnector('my-google-spreadsheet');
 const csvTable = await dataPool.getConnectorTable('my-csv');
