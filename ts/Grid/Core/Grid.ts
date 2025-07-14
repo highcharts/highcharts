@@ -567,8 +567,6 @@ class Grid {
             this.initVirtualization();
         }
 
-        this.initPagination();
-
         this.querying.loadOptions();
 
         // Update locale.
