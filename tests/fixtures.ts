@@ -88,6 +88,24 @@ async function getJSONSources(): Promise<RouteType[]>{
         })
     }
 
+    routes.push({
+        // From typescript-karma/karma-fetch.js
+        pattern: '**/data/sine-data.csv',
+        handler: (route: Route) => {
+            const csv = [[ 'X', 'sin(n)', 'sin(-n)' ]];
+
+            for (let i = 0, iEnd = 10, x; i < iEnd; ++i) {
+                x = 3184606 + Math.random();
+                csv.push([x, Math.sin(x), Math.sin(-x)]);
+            }
+
+            return route.fulfill({
+                body: csv.map(line => line.join(',')).join('\n'),
+                    contentType: contentTypes.csv
+            });
+        }
+    });
+
     return routes;
 }
 
@@ -154,7 +172,6 @@ export async function replaceSampleData(route: Route){
 export const test = base.extend<{}>({
     page: async ({ page }, use) => {
         if (!process.env.NO_REWRITES) {
-            // TODO: demo-live-data
             const routes: RouteType[] = [
                 {
                     pattern: '**/code.highcharts.com/**',
@@ -172,7 +189,7 @@ export const test = base.extend<{}>({
                     pattern: '**/**/mapdata/**',
                     handler: replaceMapData
                 },
-                ...(await getJSONSources())
+                ...(await getJSONSources()),
             ]
 
             for (const route of routes) {

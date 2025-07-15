@@ -19,4 +19,16 @@
 }, {
     "url": "https://cdn.jsdelivr.net/gh/datasets/s-and-p-500-companies-financials@9f63bc5/data/constituents-financials.csv",
     "filename": "constituents-financials-current.csv"
+}, {
+    "url": "https://sheets.googleapis.com/v4/spreadsheets/thisisnotaworkingspreadsheet/values/A1:ZZ?alt=json&dateTimeRenderOption=FORMATTED_STRING&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&prettyPrint=false&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk",
+    "filename": "gsheet-denied.json"
+}, {
+    "url": "https://sheets.googleapis.com/v4/spreadsheets/1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw/values/A1:ZZ?alt=json&dateTimeRenderOption=FORMATTED_STRING&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&prettyPrint=false&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk",
+    "filename": "gsheet-fruits.json"
+}, {
+    "url": "https://sheets.googleapis.com/v4/spreadsheets/1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA/values/Sheet1?alt=json&dateTimeRenderOption=FORMATTED_STRING&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&prettyPrint=false&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk",
+    "filename": "gsheet-fruits-sheet1.json"
+}, {
+    "url": "https://sheets.googleapis.com/v4/spreadsheets/1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA/values/Sheet2?alt=json&dateTimeRenderOption=FORMATTED_STRING&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&prettyPrint=false&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk",
+    "filename": "gsheet-fruits-sheet2.json"
 }]
