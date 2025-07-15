@@ -208,7 +208,7 @@ class Table {
         this.init();
 
         // Init pagination container
-        if (dgOptions?.pagination?.enabled) {
+        if (this.grid.pagination) {
             this.tfootElement = makeHTMLElement('tfoot', {}, tableElement);
         }
 
