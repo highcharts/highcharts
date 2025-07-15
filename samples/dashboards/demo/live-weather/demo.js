@@ -140,6 +140,13 @@ function convertToNumber(value, useNaN) {
     }
 }
 
+// Retrieve a connector data table.
+async function getConnectorTable(dataPool, connectorId) {
+    return dataPool
+        .getConnector(connectorId)
+        .then(connector => connector.table);
+}
+
 // Common options for KPI charts
 // - Adapted from https://www.highcharts.com/demo/dashboards/climate
 const kpiGaugeOptions = {
@@ -694,7 +701,7 @@ async function setupDashboard() {
     }, true);
 
     const dataPool = board.dataPool;
-    const stationsTable = await dataPool.getConnectorTable('Stations');
+    const stationsTable = await getConnectorTable(dataPool, 'Stations');
     const stationRows = stationsTable.getRowObjects();
 
     // Add weather station sources
@@ -786,7 +793,7 @@ async function setupDashboard() {
 
 // Add weather station to map
 async function addStationToMap(board, stationsTable, stationMap, station) {
-    const forecastTable = await board.dataPool.getConnectorTable(station);
+    const forecastTable = await getConnectorTable(board.dataPool, station);
     const stationInfo = stationsTable.getRowObject(
         stationsTable.getRowIndexBy('station', station)
     );
@@ -829,7 +836,7 @@ async function updateBoard(
     const dataPool = board.dataPool;
 
     // Geographical information
-    const stationsTable = await dataPool.getConnectorTable('Stations');
+    const stationsTable = await getConnectorTable(dataPool, 'Stations');
 
     const [
         // The order here must be the same as in the component
@@ -884,7 +891,7 @@ async function updateBoard(
 
     if (isWind) {
         // Add Windbarb series
-        const forecastTable = await dataPool.getConnectorTable(station);
+        const forecastTable = await getConnectorTable(dataPool, station);
 
         // Create series data
         const data = [];
@@ -913,7 +920,7 @@ async function updateBoard(
         for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
             // Forecast for station
             const station = mapPoints[i].name;
-            const forecastTable = await dataPool.getConnectorTable(station);
+            const forecastTable = await getConnectorTable(dataPool, station);
             const elevation = convertToNumber(stationsTable.getCell(
                 'elevation', stationsTable.getRowIndexBy('station', station)
             ));
@@ -939,7 +946,7 @@ async function updateBoard(
     if (stationChanged) {
         // Weather station changed: e.g. New York -> Winnipeg
         // Affects: KPIs and grid.
-        const forecastTable = await dataPool.getConnectorTable(station);
+        const forecastTable = await getConnectorTable(dataPool, station);
 
         await kpiTemperature.update({
             value: getObservation(forecastTable, 'temperature')

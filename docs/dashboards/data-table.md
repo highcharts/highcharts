@@ -35,7 +35,9 @@ dataPool.setConnectorOptions({
     csvURL: 'https://example.com/data.csv'
 });
 
-const dataTable = await dataPool.getConnectorTable('my-connector');
+const dataTable = await dataPool
+    .getConnector('my-connector')
+    .then((connector) => connector.table);
 ```
 
 ### 2. From a data connector

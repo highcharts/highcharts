@@ -699,7 +699,9 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
     const aggInfo = mqttData.aggs[idx];
 
     // Get data from connector
-    const dataTable = await dashboard.dataPool.getConnectorTable(connId);
+    const dataTable = await dashboard.dataPool
+        .getConnector(connId)
+        .then(connector => connector.table);
     const rowCount = await dataTable.getRowCount();
     if (rowCount === 0) {
         return;

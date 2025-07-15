@@ -301,7 +301,8 @@ dataPool.setConnectorOptions({
     csvURL: 'https://domain.example/data.csv'
 });
 const googleConnector = await dataPool.getConnector('my-google-spreadsheet');
-const csvTable = await dataPool.getConnectorTable('my-csv');
+const csvTable =
+    await dataPool.getConnector('my-csv').then(connector => connector.table);
 ```
 
 DataPool can be used to coordinate and share connectors and their

@@ -382,6 +382,13 @@ Highcharts.setOptions({
     }
 });
 
+// Retrieve a connector data table.
+async function getConnectorTable(dataPool, connectorId) {
+    return dataPool
+        .getConnector(connectorId)
+        .then(connector => connector.table);
+}
+
 const createBoard = async () => {
     board = await Dashboards.board('container', {
         dataPool: {
@@ -452,7 +459,8 @@ const createBoard = async () => {
                     // @todo Is it possible to apply multiple connectors to one
                     // chart through config?
                     const dataPool = this.board.dataPool,
-                        sunTrajectoryTable = await dataPool.getConnectorTable(
+                        sunTrajectoryTable = await getConnectorTable(
+                            dataPool,
                             'sun-trajectory-data'
                         ),
                         sunData = sunTrajectoryTable.getRowObjects(),
@@ -461,7 +469,8 @@ const createBoard = async () => {
                                 x: p.x,
                                 title: p.flag
                             })),
-                        moonTrajectoryTable = await dataPool.getConnectorTable(
+                        moonTrajectoryTable = await getConnectorTable(
+                            dataPool,
                             'moon-trajectory-data'
                         ),
                         moonData = moonTrajectoryTable.getRowObjects(),
@@ -470,7 +479,8 @@ const createBoard = async () => {
                                 x: p.x,
                                 title: p.flag
                             })),
-                        contoursTable = await dataPool.getConnectorTable(
+                        contoursTable = await getConnectorTable(
+                            dataPool,
                             'contours-data'
                         );
 
@@ -877,7 +887,8 @@ const createBoard = async () => {
                         // programmatically connected in the mount event.
                         /*
                         const sunTrajectory = await this.board.dataPool
-                            .getConnectorTable('sun-trajectory-data');
+                            .getConnector('sun-trajectory-data')
+                            .then(connector => connector.table);
                         sunTrajectory.setRows(sunTrajectoryData, 0);
                         */
                         chart.get('sun-trajectory').setData(

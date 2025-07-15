@@ -29,6 +29,13 @@ function convertToNumber(value, useNaN) {
     }
 }
 
+// Retrieve a connector data table.
+async function getConnectorTable(dataPool, connectorId) {
+    return dataPool
+        .getConnector(connectorId)
+        .then(connector => connector.table);
+}
+
 function climate() {
     const MathModifier = Dashboards.DataModifier.types.Math;
     const RangeModifier = Dashboards.DataModifier.types.Range;
@@ -331,7 +338,7 @@ function climate() {
             ]
         }, true);
         const dataPool = board.dataPool;
-        const citiesTable = await dataPool.getConnectorTable('Cities');
+        const citiesTable = await getConnectorTable(dataPool, 'Cities');
 
         // Add city sources
         for (const row of citiesTable.getRowObjects()) {
@@ -359,8 +366,8 @@ function climate() {
 
     async function setupCity(board, city, column, scale) {
         const dataPool = board.dataPool;
-        const citiesTable = await dataPool.getConnectorTable('Cities');
-        const cityTable = await dataPool.getConnectorTable(city);
+        const citiesTable = await getConnectorTable(dataPool, 'Cities');
+        const cityTable = await getConnectorTable(dataPool, city);
         const time = board.mountedComponents[0].component.chart.axes[0].min;
         const worldMap = board.mountedComponents[1].component.chart.series[1];
 
@@ -415,7 +422,6 @@ function climate() {
 
     async function updateBoard(board, city, column, scale, newData) {
         const dataPool = board.dataPool;
-        // const citiesTable = await dataPool.getConnectorTable('Cities');
         const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
         const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
         const colorStops = (
@@ -423,7 +429,8 @@ function climate() {
                 colorStopsDays :
                 colorStopsTemperature
         );
-        const selectionTable = await dataPool.getConnectorTable(
+        const selectionTable = await getConnectorTable(
+            dataPool,
             'Range ' +
             'Selection'
         );
@@ -434,7 +441,7 @@ function climate() {
 
         column = (column[0] === 'T' ? column + scale : column);
 
-        const cityTable = await dataPool.getConnectorTable(city);
+        const cityTable = await getConnectorTable(dataPool, city);
 
         if (newData) {
             // Update time range selector
@@ -474,7 +481,8 @@ function climate() {
             );
 
             for (const point of dataPoints) {
-                const pointTable = await dataPool.getConnectorTable(point.name);
+                const pointTable =
+                    await getConnectorTable(dataPool, point.name);
 
                 point.update({
                     custom: {

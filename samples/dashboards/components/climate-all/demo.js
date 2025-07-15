@@ -48,6 +48,13 @@ function convertToNumber(value, useNaN) {
     }
 }
 
+// Retrieve a connector data table.
+async function getConnectorTable(dataPool, connectorId) {
+    return dataPool
+        .getConnector(connectorId)
+        .then(connector => connector.table);
+}
+
 setupBoard();
 
 async function setupBoard() {
@@ -802,7 +809,7 @@ async function setupBoard() {
         }]
     }, true);
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities');
+    const citiesTable = await getConnectorTable(dataPool, 'Cities');
     const cityRows = citiesTable.getRowObjects();
 
     // Add city sources
@@ -837,8 +844,8 @@ async function setupBoard() {
 
 async function setupCity(board, city, column, scale) {
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities');
-    const cityTable = await dataPool.getConnectorTable(city);
+    const citiesTable = await getConnectorTable(dataPool, 'Cities');
+    const cityTable = await getConnectorTable(dataPool, city);
     const latestTime = board.mountedComponents[0].component.chart.axes[0].max;
     const worldMap = board.mountedComponents[1].component.chart.series[1];
 
@@ -901,10 +908,10 @@ async function updateBoard(board, city, column, scale, newData) {
             colorStopsDays :
             colorStopsTemperature
     );
-    const selectionTable = await dataPool.getConnectorTable('Range Selection');
-    const cityTable = await dataPool.getConnectorTable(city);
+    const selectionTable = await getConnectorTable(dataPool, 'Range Selection');
+    const cityTable = await getConnectorTable(dataPool, city);
     // Geographical data
-    const citiesTable = await dataPool.getConnectorTable('Cities');
+    const citiesTable = await getConnectorTable(dataPool, 'Cities');
 
     const [
         timeRangeSelector,
@@ -965,7 +972,7 @@ async function updateBoard(board, city, column, scale, newData) {
             citiesTable.getRowIndexBy('city', cityName)
         );
 
-        const pointTable = await dataPool.getConnectorTable(cityName);
+        const pointTable = await getConnectorTable(dataPool, cityName);
 
         mapPoints[i].update({
             custom: {
