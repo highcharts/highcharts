@@ -19,8 +19,10 @@ the Time Series Connector options.
 
 ```js
 const ratingConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     series: {
         type: 'Rating'
