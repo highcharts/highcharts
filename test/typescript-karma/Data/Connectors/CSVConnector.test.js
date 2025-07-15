@@ -1,11 +1,11 @@
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
+import { registerConnectorEvents } from './utils.js';
 import ColumnUtils from '/base/code/es-modules/Data/ColumnUtils.js';
 const {
     convertToNumber
 } = ColumnUtils;
-import { registerConnectorEvents } from './utils.js';
 
-const { test, skip } = QUnit;
+const { test } = QUnit;
 
 const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "#TriBall",0.7199,  20.41,    0.60,15.24,     1 #this is a comment
@@ -41,7 +41,8 @@ test('CSVConnector from string', async (assert) => {
 
     assert.strictEqual(
         // names are not loaded as data unless firstRowAsNames = false
-        connector.table.getRowCount(), csv.split('\n').length - 1,
+        connector.table.getRowCount(),
+        csv.split('\n').length - 1,
         'DataTable has correct amount of rows.'
     );
     assert.strictEqual(
@@ -239,23 +240,3 @@ test('CSVConnector from URL', async (assert) => {
     await connector.load();
 
 })
-
-// TODO: test amount of retries, event orders
-skip('CSVConnector error', async (assert) => {
-    const connector = new CSVConnector({
-        csvURL: ''
-    });
-
-    const afterError = assert.async();
-
-    connector.on('load', (e) =>{
-        // console.log('Attempting to load');
-    })
-
-    connector.on('loadError', (e)=>{
-        assert.ok(true);
-        afterError();
-    })
-
-    await connector.load();
-});
