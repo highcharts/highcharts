@@ -22,6 +22,7 @@
  * */
 
 import type Grid from '../Grid';
+import type { PaginationOptions } from './PaginationOptions';
 
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
@@ -46,7 +47,7 @@ class Pagination {
     /**
      * Default options of the credits.
      */
-    public static defaultOptions: Pagination.Options = {
+    public static defaultOptions: PaginationOptions = {
         enabled: false,
         itemsPerPage: 10
     };
@@ -75,7 +76,7 @@ class Pagination {
     /**
      * The options for the pagination.
      */
-    public options: Pagination.Options;
+    public options: PaginationOptions;
 
     /**
      * The content container of the Pagination.
@@ -124,7 +125,7 @@ class Pagination {
      */
     constructor(
         grid: Grid,
-        options: Pagination.Options
+        options: PaginationOptions
     ) {
         this.grid = grid;
         this.options = options ?? Pagination.defaultOptions;
@@ -309,40 +310,7 @@ class Pagination {
      */
     public destroy(): void {
         this.row?.remove();
-        this.grid.querying.pagination.destroy();
-    }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Pagination {
-    export interface Options {
-        /**
-         * Whether the pagination should be rendered.
-         *
-         * @default false
-         */
-        enabled: boolean;
-
-        /**
-         * Displayed items per page.
-         */
-        itemsPerPage?: number;
-
-        /**
-         * Events for the pagination.
-         */
-        events?: Pagination.Events;
-    }
-
-    export interface Events {
-        beforePageChange: (currentPage: number) => void;
-        afterPageChange: (currentPage: number) => void;
+        this.grid.querying.pagination.reset();
     }
 }
 

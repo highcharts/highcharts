@@ -25,13 +25,13 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
+import type { PaginationOptions } from './Pagination/PaginationOptions';
 import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistribution';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
-import type Pagination from './Pagination/Pagination';
 
 
 /* *
@@ -70,7 +70,7 @@ export interface Options {
     /**
      * Pagination options for the grid.
      */
-    pagination?: Pagination.Options;
+    pagination?: PaginationOptions;
 
     /**
      * Options for the table caption.

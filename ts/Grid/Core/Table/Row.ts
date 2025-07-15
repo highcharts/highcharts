@@ -184,18 +184,6 @@ abstract class Row {
     }
 }
 
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Row {
-
-}
-
-
 /* *
  *
  *  Default Export

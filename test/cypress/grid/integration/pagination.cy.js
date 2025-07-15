@@ -1,4 +1,4 @@
-describe('Remove the dashboard.', () => {
+describe('Pagination.', () => {
     before(() => {
         cy.visit('/grid-lite/cypress/pagination');
     });

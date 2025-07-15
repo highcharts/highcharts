@@ -138,9 +138,9 @@ class PaginationController {
     }
 
     /**
-     * Destroys the pagination controller.
+     * Reset the pagination controller.
      */
-    public destroy(): void {
+    public reset(): void {
         delete this.modifier;
         delete this.currentPage;
         delete this.isNextPage;

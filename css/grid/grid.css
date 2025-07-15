@@ -839,8 +839,11 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-table tfoot .hcg-pagination-wrapper button {
-    cursor: pointer;
     font-size: 1.25em;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled) {
+    cursor: pointer;
 }
 
 .hcg-table tfoot .hcg-pagination-wrapper button:first-child {

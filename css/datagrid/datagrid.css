@@ -1048,8 +1048,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .hcg-table tfoot .hcg-pagination-wrapper button,
 .highcharts-datagrid-table tfoot .hcg-pagination-wrapper button {
-    cursor: pointer;
     font-size: 1.25em;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled),
+.highcharts-datagrid-table tfoot .hcg-pagination-wrapper button:not(:disabled) {
+    cursor: pointer;
 }
 
 .hcg-table tfoot .hcg-pagination-wrapper button:first-child,
