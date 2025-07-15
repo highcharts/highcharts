@@ -39,6 +39,7 @@ export interface DataConnectorOptions {
     id: string;
     type: string;
     dataTables?: DataTableConnectorOptions[];
+    dataModifier?: DataModifierTypeOptions;
     metadata?: Metadata;
 }
 

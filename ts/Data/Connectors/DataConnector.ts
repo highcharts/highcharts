@@ -273,18 +273,21 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
         const tableOptionsArray = this.options?.dataTables;
 
         for (const [key, table] of Object.entries(this.dataTables)) {
-            const tableOptions = tableOptionsArray?.find(
+            // Take data modifier options from the corresponsing data table
+            // options, otherwise take the data modifier options from the
+            // connector options.
+            const dataModifierOptions = tableOptionsArray?.find(
                 (dataTable): boolean => dataTable.key === key
-            );
+            )?.dataModifier ?? this.options?.dataModifier;
 
             const ModifierClass = (
-                tableOptions?.dataModifier &&
-                DataModifier.types[tableOptions.dataModifier.type]
+                dataModifierOptions &&
+                DataModifier.types[dataModifierOptions.type]
             );
 
             await table.setModifier(
                 ModifierClass ?
-                    new ModifierClass(tableOptions.dataModifier as AnyRecord) :
+                    new ModifierClass(dataModifierOptions as AnyRecord) :
                     void 0
             );
         }
@@ -396,7 +399,7 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
         let index = 0;
         for (const [key, table] of Object.entries(this.dataTables)) {
             // Create a proper converter and parse its data.
-            const converter = createConverter(key, table);
+            const converter = createConverter(key);
             parseData(converter, data);
 
             // Update the dataTable.
@@ -439,7 +442,7 @@ namespace DataConnector {
      * Creates a specific converter combining the dataTable options.
      */
     export interface CreateConverterFunction {
-        (key: string, table: DataTable): DataConverterType
+        (key: string): DataConverterType
     }
 
     /**

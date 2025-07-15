@@ -81,9 +81,11 @@ const columnNames = ['time', 'open', 'high', 'low', 'close', 'volume'];
 class DataTablesConnector extends Dashboards.DataConnector {
     constructor(options) {
         const mergedOptions = Dashboards.merge(
-            DataTablesConnector.defaultOptions, options
+            DataTablesConnector.defaultOptions,
+            { dataTables: dataTablesOptions },
+            options
         );
-        super(mergedOptions, dataTablesOptions);
+        super(mergedOptions);
         this.options = mergedOptions;
     }
 
@@ -95,7 +97,7 @@ class DataTablesConnector extends Dashboards.DataConnector {
     async load(eventDetail) {
         const connector = this;
         const options = connector.options;
-        const { data, dataUrl } = options;
+        const { data, dataUrl, dataTables } = options;
 
         connector.emit({
             type: 'load',
@@ -121,11 +123,15 @@ class DataTablesConnector extends Dashboards.DataConnector {
                 if (data) {
                     this.initConverters(
                         data,
-                        (key, table) => {
+                        key => {
+                            const tableOptions = dataTables?.find(
+                                dataTable => dataTable.key === key
+                            );
+
                             const dataTableOptions = {
                                 dataTableKey: key,
-                                beforeParse: table.beforeParse,
-                                columnNames: table.columnNames ??
+                                beforeParse: tableOptions?.beforeParse,
+                                columnNames: tableOptions?.columnNames ??
                                     options.columnNames
                             };
 
