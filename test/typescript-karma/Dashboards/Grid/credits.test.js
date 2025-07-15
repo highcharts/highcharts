@@ -19,7 +19,6 @@ test('Grid update methods', async function (assert) {
             }
         }
     }, true);
-    grid.viewport?.resizeObserver?.disconnect();
 
     assert.ok(grid.credits, 'Credits should be initialized.');
 
@@ -58,7 +57,6 @@ test('Grid update methods', async function (assert) {
             enabled: true
         }
     });
-    grid.viewport?.resizeObserver?.disconnect();
 
     assert.ok(grid.credits, 'Credits should be able to be enabled.');
 });

@@ -86,6 +86,11 @@ class Table {
     public readonly tbodyElement: HTMLElement;
 
     /**
+     * The HTML element of the table footer.
+     */
+    public readonly tfootElement?: HTMLElement;
+
+    /**
      * The head of the table.
      */
     public header?: TableHeader;
@@ -201,6 +206,11 @@ class Table {
 
         // Init Table
         this.init();
+
+        // Init pagination container
+        if (this.grid.pagination) {
+            this.tfootElement = makeHTMLElement('tfoot', {}, tableElement);
+        }
 
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
@@ -370,6 +380,9 @@ class Table {
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
+
+        // Reflow the pagination
+        this.grid.pagination?.reflow();
     }
 
     /**

@@ -1033,6 +1033,34 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 }
 
+/* Pagination */
+.hcg-table tfoot td,
+.highcharts-datagrid-table tfoot td {
+    border-top: var(--ig-header-row-border);
+    background: var(--ig-header-background);
+    padding: var(--ig-header-padding);
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper,
+.highcharts-datagrid-table tfoot .hcg-pagination-wrapper {
+    text-align: right;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button,
+.highcharts-datagrid-table tfoot .hcg-pagination-wrapper button {
+    font-size: 1.25em;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled),
+.highcharts-datagrid-table tfoot .hcg-pagination-wrapper button:not(:disabled) {
+    cursor: pointer;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:first-child,
+.highcharts-datagrid-table tfoot .hcg-pagination-wrapper button:first-child {
+    margin-right: 5px;
+}
+
 /* Helpers */
 .hcg-no-padding,
 .highcharts-datagrid-no-padding {

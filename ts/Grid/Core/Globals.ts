@@ -93,7 +93,8 @@ namespace Globals {
         lastHeaderCellInRow: 'last-header-cell-in-row',
         loadingWrapper: 'loading-wrapper',
         loadingSpinner: 'spinner',
-        loadingMessage: 'loading-message'
+        loadingMessage: 'loading-message',
+        paginationWrapper: 'pagination-wrapper'
     } as const;
 
     export const win = window;

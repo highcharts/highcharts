@@ -36,6 +36,7 @@ import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
+import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
@@ -143,6 +144,11 @@ class Grid {
      * The accessibility controller.
      */
     public accessibility?: Accessibility;
+
+    /**
+     * The Pagination controller.
+     */
+    public pagination?: Pagination;
 
     /**
      * The caption element of the Grid.
@@ -299,6 +305,7 @@ class Grid {
 
         this.initContainers(renderTo);
         this.initAccessibility();
+        this.initPagination();
         this.loadDataTable(this.options?.dataTable);
         this.initVirtualization();
 
@@ -336,6 +343,20 @@ class Grid {
 
         if (this.options?.accessibility?.enabled) {
             this.accessibility = new Accessibility(this);
+        }
+    }
+
+    /*
+     * Initializes the pagination.
+     */
+    private initPagination(): void {
+        this.pagination?.destroy();
+        delete this.pagination;
+
+        const paginationOptions = this.options?.pagination;
+
+        if (paginationOptions?.enabled) {
+            this.pagination = new Pagination(this, paginationOptions);
         }
     }
 
@@ -532,18 +553,23 @@ class Grid {
         oneToOne = false
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
-        this.initAccessibility();
 
-        let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
             this.userOptions.dataTable = options.dataTable;
             (this.options ?? {}).dataTable = options.dataTable;
 
             this.loadDataTable(this.options?.dataTable);
-            newDataTable = true;
+            this.querying.shouldBeUpdated = true;
 
             this.initVirtualization();
         }
+
+        if (!render) {
+            return;
+        }
+
+        this.initAccessibility();
+        this.initPagination();
 
         this.querying.loadOptions();
 
@@ -557,10 +583,8 @@ class Grid {
             ));
         }
 
-        if (render) {
-            await this.querying.proceed(newDataTable);
-            this.renderViewport();
-        }
+        await this.querying.proceed();
+        this.renderViewport();
     }
 
     public updateColumn(
@@ -813,6 +837,7 @@ class Grid {
         this.renderDescription();
 
         this.accessibility?.setA11yOptions();
+        this.pagination?.render();
 
         fireEvent(this, 'afterRenderViewport');
 

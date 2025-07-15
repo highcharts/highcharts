@@ -827,6 +827,29 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
+/* Pagination */
+.hcg-table tfoot td {
+    border-top: var(--ig-header-row-border);
+    background: var(--ig-header-background);
+    padding: var(--ig-header-padding);
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper {
+    text-align: right;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button {
+    font-size: 1.25em;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled) {
+    cursor: pointer;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:first-child {
+    margin-right: 5px;
+}
+
 /* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
 .hcg-table tbody tr:has(.hcg-negative-row) td::before,
