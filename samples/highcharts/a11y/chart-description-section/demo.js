@@ -3,6 +3,9 @@ Highcharts.chart('container', {
         type: 'column'
     },
     a11y: {
+        chartDescriptionSection: {
+            chartTitleFormat: '<h1>{chartTitle}</h1>'
+        },
         headingLevel: 'h3'
     },
     title: {

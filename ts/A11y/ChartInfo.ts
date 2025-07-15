@@ -65,6 +65,11 @@ function getHeadingLevel(chart: Chart): keyof HTMLElementTagNameMap {
     const a11yOptions = chart.options.a11y;
     const chartTitle = a11yOptions?.chartDescriptionSection?.chartTitleFormat;
 
+    // I assume setting a11y.headingLevel takes precedence over chartTitleFormat
+    if (a11yOptions?.headingLevel) {
+        return a11yOptions.headingLevel;
+    }
+
     const headingRegex = /<h([1-6])[^>]*>.*?<\/h\1>/i;
     const chartTitleFormat = chartTitle?.match(headingRegex);
 

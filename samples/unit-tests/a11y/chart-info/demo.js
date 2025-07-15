@@ -72,4 +72,15 @@ QUnit.test('Titles', function (assert) {
         'h1',
         'Parses h1 from chartTitleFormat when heading tag is set'
     );
+
+    chart.update({
+        a11y: {
+            headingLevel: 'h3'
+        }
+    });
+    assert.strictEqual(
+        chart.a11y.chartDescriptionInfo.headingLevel,
+        'h3',
+        'Using a11y.headingLevel overrides chartTitleFormat heading level'
+    );
 });
