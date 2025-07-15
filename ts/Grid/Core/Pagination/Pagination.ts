@@ -93,7 +93,7 @@ class Pagination {
     public prevButton?: HTMLElement;
 
     /**
-     * Current page
+     * Current page number, starting from 1.
      */
     public currentPage: number = 1;
 
