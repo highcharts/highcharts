@@ -118,10 +118,7 @@ class QueryingController {
             modifiers.push(this.sorting.modifier);
         }
 
-        if (
-            this.grid.getOptions().pagination?.enabled &&
-            this.pagination.modifier
-        ) {
+        if (this.pagination.modifier) {
             modifiers.push(this.pagination.modifier);
         }
 
