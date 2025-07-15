@@ -260,6 +260,7 @@ class Pagination {
         );
 
         await grid.viewport?.updateRows();
+        grid.viewport?.header?.reflow();
 
         // Event trigger after page change, defined by user
         if (afterPageChange) {
