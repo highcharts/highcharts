@@ -2,6 +2,8 @@
 
 With Highcharts Flutter included in your app (See [getting started](https://www.highcharts.com/docs/flutter/getting-started)) you are ready to create your first chart.
 
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/_6wvHENjpwk?si=lqFcVHcxPOF0dGoi&amp;start=127" title="YouTube: Getting started with Highcharts for Flutter: Build your first chart" frameborder="0" allow="encrypted-media; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 We will start off by creating a simple bar chart.
 
 1. Add a `HighchartsChart` widget in your app.
