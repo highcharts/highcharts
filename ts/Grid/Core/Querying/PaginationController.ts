@@ -107,8 +107,7 @@ class PaginationController {
         const pagination = this.querying.grid.pagination;
 
         if (
-            pagination &&
-            pagination.options.enabled &&
+            pagination?.options.enabled &&
             this.currentPage !== pagination.currentPage
         ) {
             this.currentPage = pagination.currentPage;
