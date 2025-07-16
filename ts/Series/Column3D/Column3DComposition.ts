@@ -651,7 +651,7 @@ function wrapSeriesAlignDataLabel(
 function wrapSeriesJustifyDataLabel(
     this: ColumnSeries,
     proceed: Function
-): void | boolean {
+): boolean | undefined {
     return (
         !(arguments[2].outside3dPlot) ?
             proceed.apply(this, [].slice.call(arguments, 1)) :

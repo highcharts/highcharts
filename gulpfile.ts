@@ -119,7 +119,7 @@ Gulp.registry(new GulpForwardReference());
  *
  * */
 
-(function (tasks) {
+(function (tasks: Record<string, string>) {
     Object
         .keys(tasks)
         .forEach(alias => Gulp.task(alias, Gulp.series(tasks[alias])));
@@ -134,4 +134,4 @@ Gulp.registry(new GulpForwardReference());
     'examples': 'dist-examples',
     'start-api-server': 'jsdoc-server',
     'styles': 'scripts-css'
-}));
+} as Record<string, string>));
