@@ -18,7 +18,7 @@ const chart = Highcharts.chart('container', {
     },
 
     series: [{
-        data: [11, 10, 12, 11, 10, 13],
+        data: [0, 10, 12, 11, 10, 13],
         type: 'scatter'
     }]
 
