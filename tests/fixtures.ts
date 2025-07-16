@@ -1,7 +1,7 @@
 import type { Route, Request } from '@playwright/test';
 
 import { readFile } from 'node:fs/promises';
-import { join, extname } from 'node:path';
+import { join, extname } from 'node:path/posix';
 
 import { test as base } from '@playwright/test';
 
