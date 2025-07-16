@@ -16,23 +16,37 @@ export default defineConfig({
 
     projects: [
         {
-            name: 'setup',
-            testMatch: 'setup.ts',
-        },
-        {
             name: 'internal',
             testDir: './tests/internal',
             use: { ...devices['Desktop Chrome'] },
         },
         {
-            name: 'default',
-            testIgnore: ['**/internal/**'],
+            name: 'setup-highcharts',
+            testMatch: 'setup-highcharts.ts',
+        },
+        {
+            name: 'highcharts',
+            testDir: './tests/highcharts',
             use: {
                 ...devices['Desktop Chrome'],
                 ...devices['Desktop Firefox'],
                 ...devices['Desktop safari']
             },
-            dependencies: ['setup'],
+            dependencies: ['setup-highcharts'],
+        },
+        {
+            name: 'setup-dashboards',
+            testMatch: 'setup-dashboards.ts',
+        },
+        {
+            name: 'dashboards',
+            testDir: './tests/dashboards',
+            use: {
+                ...devices['Desktop Chrome'],
+                ...devices['Desktop Firefox'],
+                ...devices['Desktop safari']
+            },
+            dependencies: ['setup-dashboards'],
         },
     ],
 });
