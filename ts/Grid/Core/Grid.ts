@@ -268,6 +268,12 @@ class Grid {
      */
     public id: string;
 
+    /**
+     * Functions that unregister events attached to the parts of the grid,
+     * that need to be removed when the grid is destroyed.
+     */
+    private eventDestructors: Function[] = [];
+
 
     /* *
     *
@@ -885,8 +891,22 @@ class Grid {
             return;
         }
 
-        this.dataTable = this.presentationTable =
+        const dt = this.dataTable = this.presentationTable =
             new DataTable(tableOptions as DataTableOptions);
+
+        // If the data table is modified, mark the querying controller to be
+        // updated on the next proceed.
+        ([
+            'afterDeleteColumns',
+            'afterDeleteRows',
+            'afterSetCell',
+            'afterSetColumns',
+            'afterSetRows'
+        ] as const).forEach((eventName): void => {
+            this.eventDestructors.push(dt.on(eventName, (): void => {
+                this.querying.shouldBeUpdated = true;
+            }));
+        });
     }
 
     /**
@@ -936,6 +956,7 @@ class Grid {
             (dg): boolean => dg === this
         );
 
+        this.eventDestructors.forEach((fn): void => fn());
         this.viewport?.destroy();
 
         if (this.container) {
