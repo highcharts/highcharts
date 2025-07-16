@@ -275,10 +275,10 @@ class Grid {
     public id: string;
 
     /**
-     * Functions that unregister events attached to the parts of the grid,
+     * Functions that unregister events attached to the grid's data table,
      * that need to be removed when the grid is destroyed.
      */
-    private eventDestructors: Function[] = [];
+    private dataTableEventDestructors: Function[] = [];
 
 
     /* *
@@ -907,11 +907,22 @@ class Grid {
         return result;
     }
 
+    /**
+     * Loads the data table of the Grid. If the data table is passed as a
+     * reference, it should be used instead of creating a new one.
+     *
+     * @param tableOptions
+     * The data table to load. If not provided, a new data table will be
+     * created.
+     */
     private loadDataTable(tableOptions?: DataTable | DataTableOptions): void {
+        // Unregister all events attached to the previous data table.
+        this.dataTableEventDestructors.forEach((fn): void => fn());
+
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
-        if (tableOptions?.id) {
-            this.dataTable = tableOptions as DataTable;
+        if (tableOptions instanceof DataTable) {
+            this.dataTable = tableOptions;
             this.presentationTable = this.dataTable.modified;
             return;
         }
@@ -928,7 +939,7 @@ class Grid {
             'afterSetColumns',
             'afterSetRows'
         ] as const).forEach((eventName): void => {
-            this.eventDestructors.push(dt.on(eventName, (): void => {
+            this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
                 this.querying.shouldBeUpdated = true;
             }));
         });
@@ -981,7 +992,7 @@ class Grid {
             (dg): boolean => dg === this
         );
 
-        this.eventDestructors.forEach((fn): void => fn());
+        this.dataTableEventDestructors.forEach((fn): void => fn());
         this.viewport?.destroy();
 
         if (this.container) {
