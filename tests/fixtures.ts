@@ -1,35 +1,35 @@
 import type { Route, Request } from '@playwright/test';
 
-import { readFile } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path';
 
 import { test as base } from '@playwright/test';
 
 const contentTypes = {
- 'js': 'application/javascript',
- 'css': 'text/css',
- 'csv': 'text/csv'
+    js: 'application/javascript',
+    css: 'text/css',
+    csv: 'text/csv'
 };
 
 async function replaceHCCode(route: Route) {
     const url = route.request().url();
     let relativePath = url.split('/code.highcharts.com/')[1]
-        .replace(/^(stock|maps|gantt|grid)\//, '');
+        .replace(/^(stock|maps|gantt|grid)\//u, '');
 
     if (relativePath.endsWith('.js') && !relativePath.endsWith('.src.js')) {
         relativePath = relativePath.replace('.js', '.src.js');
     }
 
-    let localPath = join(
+    const localPath = join(
         __dirname,
-        '../code' ,
+        '../code',
         relativePath
     );
 
     test.info().annotations.push({
         type: 'redirect',
         description: `${url} --> ${join('code', relativePath)}`
-    })
+    });
 
     try {
         const body = await readFile(localPath);
@@ -40,7 +40,7 @@ async function replaceHCCode(route: Route) {
                 'Content-Type': contentTypes[extname(localPath)]
             }
         });
-    } catch (err) {
+    } catch (_err) {
         await route.abort();
         throw new Error(`Missing local file for ${relativePath}`);
     }
@@ -48,20 +48,20 @@ async function replaceHCCode(route: Route) {
 
 type RouteType = {
     pattern: string | RegExp | ((url: URL) => boolean);
-    handler: (route: Route, request: Request ) => any;
+    handler: (route: Route, request: Request) => any;
 }
 
-async function getJSONSources(): Promise<RouteType[]>{
-    let routes: RouteType[] = []
+async function getJSONSources(): Promise<RouteType[]> {
+    const routes: RouteType[] = [];
     const { default: sources } = await import(
         '../samples/data/json-sources/index.json',
-        { with: { type: 'json'} }
+        { with: { type: 'json' } }
     );
 
-    for (const source of sources){
+    for (const source of sources) {
         routes.push({
             pattern: source.url,
-            handler: async (route) => {
+            handler: async route => {
                 try {
                     const localPath = join(
                         'samples/data/json-sources',
@@ -78,30 +78,34 @@ async function getJSONSources(): Promise<RouteType[]>{
                     await route.fulfill({
                         status: 200,
                         body,
-                        contentType: contentTypes[extname(source.filename)],
+                        contentType: contentTypes[extname(source.filename)]
                     });
                 } catch {
                     await route.abort();
-                    throw new Error(`Unable to resolve local JSON source for ${source.url}`)
+                    throw new Error(`Unable to resolve local JSON source for ${source.url}`);
                 }
             }
-        })
+        });
     }
 
     routes.push({
         // From typescript-karma/karma-fetch.js
         pattern: '**/data/sine-data.csv',
         handler: (route: Route) => {
-            const csv = [[ 'X', 'sin(n)', 'sin(-n)' ]];
+            const csv = [['X', 'sin(n)', 'sin(-n)']];
 
-            for (let i = 0, iEnd = 10, x; i < iEnd; ++i) {
+            for (let i = 0, iEnd = 10, x: number; i < iEnd; ++i) {
                 x = 3184606 + Math.random();
-                csv.push([x, Math.sin(x), Math.sin(-x)]);
+                csv.push([
+                    x.toString(),
+                    Math.sin(x).toString(),
+                    Math.sin(-x).toString()
+                ]);
             }
 
             return route.fulfill({
                 body: csv.map(line => line.join(',')).join('\n'),
-                    contentType: contentTypes.csv
+                contentType: contentTypes.csv
             });
         }
     });
@@ -111,7 +115,7 @@ async function getJSONSources(): Promise<RouteType[]>{
 
 async function replaceMapData(route: Route) {
     const url = route.request().url();
-    const match = url.match(/mapdata\/(.+\.*)/);
+    const match = url.match(/mapdata\/(.+\.*)/u);
 
     if (match?.length) {
         const [_all, filename] = match;
@@ -128,7 +132,7 @@ async function replaceMapData(route: Route) {
             return route.fulfill({
                 status: 200,
                 contentType: contentTypes[extname(filename)] ?? 'text/plain',
-                body: data,
+                body: data
             });
         } catch (error) {
             console.error(error);
@@ -139,9 +143,9 @@ async function replaceMapData(route: Route) {
     throw new Error('Failed to find a matching map data');
 }
 
-export async function replaceSampleData(route: Route){
+export async function replaceSampleData(route: Route) {
     const url = route.request().url();
-    const match = url.match(/(?:samples\/data\/|demo-live-data.+\/)(.+\.*)/);
+    const match = url.match(/(?:samples\/data\/|demo-live-data.+\/)(.+\.*)/u);
 
     if (match?.length) {
         const [_all, filename] = match;
@@ -158,7 +162,7 @@ export async function replaceSampleData(route: Route){
             return route.fulfill({
                 status: 200,
                 contentType: contentTypes[extname(filename)] ?? 'text/plain',
-                body: data,
+                body: data
             });
         } catch (error) {
             console.error(error);
@@ -166,7 +170,7 @@ export async function replaceSampleData(route: Route){
     }
 
     await route.abort();
-    throw new Error('Failed to find a matching dataset')
+    throw new Error('Failed to find a matching dataset');
 }
 
 export const test = base.extend<{}>({
@@ -189,8 +193,8 @@ export const test = base.extend<{}>({
                     pattern: '**/**/mapdata/**',
                     handler: replaceMapData
                 },
-                ...(await getJSONSources()),
-            ]
+                ...(await getJSONSources())
+            ];
 
             for (const route of routes) {
                 await page.route(route.pattern, route.handler);

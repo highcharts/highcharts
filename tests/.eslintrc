@@ -1,19 +1,22 @@
 {
-  "overrides": [
-    {
-      "files": ["*.mts", "*.ts"],
-      "parser": "@typescript-eslint/parser",
-      "parserOptions": {
-        "sourceType": "module",
-        "ecmaVersion": "latest"
-      },
-      "plugins": ["node"],
-      "rules": {
-        "node/no-unsupported-features/es-syntax": "off",
-        "node/no-unpublished-import": "off",
-        "no-undef": "off",
-        "consistent-return": "off"
-      }
-    }
-  ]
+    "overrides": [
+        {
+            "files": ["*.mts", "*.ts"],
+            "parser": "@typescript-eslint/parser",
+            "parserOptions": {
+                "sourceType": "module",
+                "ecmaVersion": "latest"
+            },
+            "plugins": ["node"],
+            "rules": {
+                "node/no-unsupported-features/es-syntax": "off",
+                "node/no-unpublished-import": "off",
+                "no-undef": "off",
+                "consistent-return": "off",
+                "no-use-before-define": "off",
+                "no-console": "off",
+                "no-unused-vars": "off"
+            }
+        }
+    ]
 }
