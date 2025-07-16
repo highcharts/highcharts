@@ -5,7 +5,7 @@ test('Grid update methods', async ({ page }) => {
     await page.setContent(`
         <html>
             <head>
-                <script src="https://code.highcharts.com/datagrid/datagrid.src.js"></script>
+                <script src="https://code.highcharts.com/dashboards/datagrid.src.js"></script>
                 <link rel="stylesheet" href="https://code.highcharts.com/dashboards/css/datagrid.css"></link>
             </head>
             <body>

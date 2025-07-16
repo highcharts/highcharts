@@ -16,13 +16,8 @@ export default defineConfig({
 
     projects: [
         {
-            name: 'internal',
-            testDir: './tests/internal',
-            use: { ...devices['Desktop Chrome'] },
-        },
-        {
             name: 'setup-highcharts',
-            testMatch: 'setup-highcharts.ts',
+            testMatch: 'setup-highcharts.mts',
         },
         {
             name: 'highcharts',
@@ -36,7 +31,7 @@ export default defineConfig({
         },
         {
             name: 'setup-dashboards',
-            testMatch: 'setup-dashboards.ts',
+            testMatch: 'setup-dashboards.mts',
         },
         {
             name: 'dashboards',
@@ -47,6 +42,16 @@ export default defineConfig({
                 ...devices['Desktop safari']
             },
             dependencies: ['setup-dashboards'],
+        },
+        {
+            // tests for mocking and utils and other playwright behaviour
+            name: 'internal',
+            testDir: './tests/internal',
+            use: { ...devices['Desktop Chrome'] },
+            dependencies: [
+                'setup-dashboards',
+                'setup-highcharts'
+            ],
         },
     ],
 });
