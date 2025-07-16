@@ -1,6 +1,3 @@
-import type Chart from '../../ts/Core/Chart/Chart.ts';
-import type ChartOptions from '../../ts/Core/Chart/ChartOptions.d.ts';
-
 import { test, expect } from '../fixtures.ts';
 
 test.describe('unit-tests/chart/renderto equivalent', () => {
@@ -91,10 +88,10 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
             return Highcharts.chart({
                 chart: {
                     renderTo: c
-                } as unknown as ChartOptions,
+                },
                 title: {
                     text: 'The height of the chart is set to 200px'
-                } as Chart.TitleOptions,
+                },
                 xAxis: {
                     categories: [
                         'Jan',
@@ -113,6 +110,7 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
                 },
                 series: [
                     {
+                        type: 'line',
                         data: [
                             29.9,
                             71.5,
@@ -136,10 +134,10 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
 
         await chart.evaluate(prevChart => (
             Highcharts.chart({
-                chart: { renderTo: prevChart.container } as ChartOptions,
+                chart: { renderTo: prevChart.container },
                 title: {
                     text: 'The second chart in the same container'
-                } as Chart.TitleOptions,
+                },
                 xAxis: {
                     categories: [
                         'Jan',
