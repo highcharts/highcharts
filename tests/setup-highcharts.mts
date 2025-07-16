@@ -6,4 +6,4 @@ import '../tools/gulptasks/scripts-webpack.js';
 import '../tools/gulptasks/scripts-code.js';
 import '../tools/gulptasks/scripts-ts.js';
 
-run('scripts');
+await run('scripts');

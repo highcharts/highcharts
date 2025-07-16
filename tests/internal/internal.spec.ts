@@ -19,6 +19,9 @@ test('Redirects are applied for code', async ({ page }) => {
         <script src="https://code.highcharts.com/maps/highmaps.js"></script>
 
         <script src="https://code.highcharts.com/esm/highcharts-gantt.js"></script>
+
+        <script src="https://code.highcharts.com/dashboards/datagrid.src.js"></script>
+        <script src="https://code.highcharts.com/dashboards/css/datagrid.css"></script>
     </head>
     <body>
         <div id="container"></container>
@@ -49,6 +52,16 @@ test('Redirects are applied for code', async ({ page }) => {
     expect(annotations).toContainEqual({
         type: 'redirect',
         description: 'https://code.highcharts.com/esm/highcharts-gantt.js --> code/esm/highcharts-gantt.src.js'
+    });
+
+    expect(annotations).toContainEqual({
+        type: 'redirect',
+        description: 'https://code.highcharts.com/dashboards/datagrid.src.js --> code/dashboards/datagrid.src.js'
+    });
+
+    expect(annotations).toContainEqual({
+        type: 'redirect',
+        description: 'https://code.highcharts.com/dashboards/css/datagrid.css --> code/dashboards/css/datagrid.css'
     });
 });
 
