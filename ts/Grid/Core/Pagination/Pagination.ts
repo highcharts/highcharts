@@ -262,6 +262,12 @@ class Pagination {
         await grid.viewport?.updateRows();
         grid.viewport?.header?.reflow();
 
+        // Scroll tbody to top of table after page change
+        const tBody = grid.viewport?.tbodyElement;
+        if (tBody) {
+            tBody.scrollTop = 0;
+        }
+
         // Event trigger after page change, defined by user
         if (afterPageChange) {
             fireEvent(
