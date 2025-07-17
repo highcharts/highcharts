@@ -347,7 +347,7 @@ Dashboards.board('container', {
         incompleteTaskKPI = dashboard.mountedComponents[1].component,
         taskByStatusChart = dashboard.mountedComponents[2].component,
         connectors = dashboard.dataPool.connectors,
-        cumulativeData = connectors.cumulativeData.table.columns,
+        cumulativeData = connectors.cumulativeData.getTable().columns,
         completedTask = cumulativeData.Done[5] - cumulativeData.Done[4],
         planedTask = cumulativeData['To Do'][4] - cumulativeData['To Do'][5],
         blockedTask = cumulativeData.Blocked[5] - cumulativeData.Blocked[4],

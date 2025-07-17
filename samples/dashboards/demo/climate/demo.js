@@ -42,7 +42,7 @@ function convertToNumber(value, useNaN) {
 async function getConnectorTable(dataPool, connectorId) {
     return dataPool
         .getConnector(connectorId)
-        .then(connector => connector.table);
+        .then(connector => connector.getTable());
 }
 
 setupBoard();

@@ -121,7 +121,7 @@ class HTMLTableConnector extends DataConnector {
         const connector = this;
         const options = connector.options;
         const converter = connector.converter;
-        const table = connector.table;
+        const table = connector.getTable();
         const tableHTML = options.table;
 
         connector.emit({

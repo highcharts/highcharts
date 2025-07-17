@@ -386,7 +386,7 @@ Highcharts.setOptions({
 async function getConnectorTable(dataPool, connectorId) {
     return dataPool
         .getConnector(connectorId)
-        .then(connector => connector.table);
+        .then(connector => connector.getTable());
 }
 
 const createBoard = async () => {
@@ -888,7 +888,7 @@ const createBoard = async () => {
                         /*
                         const sunTrajectory = await this.board.dataPool
                             .getConnector('sun-trajectory-data')
-                            .then(connector => connector.table);
+                            .then(connector => connector.getTable());
                         sunTrajectory.setRows(sunTrajectoryData, 0);
                         */
                         chart.get('sun-trajectory').setData(
@@ -921,7 +921,7 @@ const createBoard = async () => {
                         const dataTable = this.board.dataPool
                             .connectors
                             .times
-                            .table;
+                            .getTable();
                         const rows = getTimes(date);
                         dataTable.setRows(rows, 0);
                     };

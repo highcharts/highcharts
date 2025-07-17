@@ -151,10 +151,10 @@ class DataGridComponent extends Component {
 
             if (
                 this.grid?.viewport?.dataTable?.id !==
-                this.getFirstConnector()?.table?.id
+                this.getFirstConnector()?.getTable()?.id
             ) {
                 this.grid.update({
-                    dataTable: this.getFirstConnector()?.table?.modified
+                    dataTable: this.getFirstConnector()?.getTable()?.modified
                 }, false);
             }
 

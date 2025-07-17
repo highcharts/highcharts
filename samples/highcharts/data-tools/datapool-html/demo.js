@@ -66,7 +66,7 @@ getConnectorButton.addEventListener('click', async () => {
 
     const table = await dataPool
         .getConnector(getConnectorSelect.value)
-        .then(connector => connector.table);
+        .then(connector => connector.getTable());
 
     const timeDelta = (new Date().getTime() - timeStamp);
     log.innerText += timeDelta + 'ms Connector loaded.\n';

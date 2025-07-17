@@ -858,7 +858,7 @@ test('Crossfilter with string values', async function (assert) {
 
     const done = assert.async();
     numbersNavigator.on('tableChanged', e => {
-        const table = e.connector?.table;
+        const table = e.connector?.getTable();
 
         // Assert only on the last event
         if (table?.modifier?.options?.ranges?.length > 1) {

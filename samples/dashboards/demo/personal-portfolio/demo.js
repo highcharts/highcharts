@@ -95,7 +95,7 @@ const getCurrentTotal = arrOfArr => {
 
 
     const { Date: dates, ...companies } =
-        timeSeriesConnector.table.getColumns();
+        timeSeriesConnector.getTable().getColumns();
 
     const processedData = Object.fromEntries(
         Object.entries(companies).map(([key, values]) => [

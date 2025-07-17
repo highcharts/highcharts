@@ -20,12 +20,12 @@ test('JSONConnector from rows', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getRowCount(),
+        connector.getTable().getRowCount(),
         rows.length - 1,
         'Should have the same amount of rows'
     );
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnNames(),
         rows[0],
         'Should have correct column Names'
     );
@@ -41,12 +41,12 @@ test('JSONConnector from columns', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getRowCount(),
+        connector.getTable().getRowCount(),
         columns[0].length,
         'Should have the same amount of rows'
     );
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnNames(),
         columnNames,
         'Should have correct column Names'
     );
@@ -77,12 +77,12 @@ test('JSONConnector from objects', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getRowCount(),
+        connector.getTable().getRowCount(),
         data.length,
         'Should have the same amount of rows'
     );
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnNames(),
         columnNames,
         'Should have correct column Names'
     );
@@ -119,12 +119,12 @@ test('JSONConnector with beforeParse', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getRowCount(),
+        connector.getTable().getRowCount(),
         data.length ,
         'Should have the same amount of rows.'
     );
     assert.deepEqual(
-        connector.table.getRowCount(),
+        connector.getTable().getRowCount(),
         4,
         'There should be an extra column added.'
     );

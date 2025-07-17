@@ -50,7 +50,7 @@ const syncPair: Sync.SyncPair = {
 
         const { chart, board } = component;
         const connector = component.connectorHandlers?.[0]?.connector;
-        const table = connector && connector.table;
+        const table = connector && connector.getTable();
         const syncOptions = this.sync.syncConfig.extremes;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
@@ -288,7 +288,7 @@ const syncPair: Sync.SyncPair = {
                         component.connectorHandlers?.[0]?.connector;
 
                     if (connector) {
-                        const { table } = connector;
+                        const table = connector.getTable();
                         cursor.addListener(
                             table.id,
                             `${dimension}.extremes.min${groupKey}`,

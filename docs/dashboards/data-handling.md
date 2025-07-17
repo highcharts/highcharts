@@ -26,7 +26,7 @@ delivery service brings new products to the warehouse for storage.
 
 Each `DataConnector` loads data from a source and sometimes also saves data
 changes. All connectors manage the data in a `DataTable`, which is accessible via
-`DataConnector.table` property. Some connectors support source polling to update
+`DataConnector.getTable()` method. Some connectors support source polling to update
 the `DataTable` with new data from the source.
 
 **Dashboards** provides several types of `DataConnector`, depending on the data source.

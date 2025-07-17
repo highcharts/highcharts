@@ -399,7 +399,7 @@ class KPIComponent extends Component {
     private getFormulaValue(): string|number|undefined {
         const formula = this.options.formula;
         const connector = this.getFirstConnector();
-        const table = connector?.table.modified;
+        const table = connector?.getTable().modified;
         const column = table?.getColumn(this.options.columnName);
 
         if (!column || !formula) {
@@ -451,7 +451,7 @@ class KPIComponent extends Component {
                 return this.getFormulaValue();
             }
 
-            const table = connector.table.modified,
+            const table = connector.getTable().modified,
                 column = table.getColumn(this.options.columnName),
                 length = column?.length || 0;
 

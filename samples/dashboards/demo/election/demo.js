@@ -695,7 +695,7 @@ function getHistoricalElectionSeries(state, year) {
 async function getElectionTable(board, year) {
     return await board.dataPool
         .getConnector('votes' + year)
-        .then(connector => connector.table);
+        .then(connector => connector.getTable());
 }
 
 

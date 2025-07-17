@@ -26,14 +26,13 @@ const form = document.getElementById('filter');
     });
 
     await csv.load();
+    const table = csv.getTable();
 
-    renderTable(container, csv.table.modified);
+    renderTable(container, table.modified);
 
     form.querySelectorAll('input').forEach(input => {
-        input.onchange = () => updateRange(csv.table, input.parentElement);
+        input.onchange = () => updateRange(table, input.parentElement);
     });
-
-    console.log(csv.table);
 
 })();
 

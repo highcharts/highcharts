@@ -89,7 +89,7 @@ class Slider extends Component {
 
         const mainConnectorHandler = this.connectorHandlers[0] || {};
         const table = mainConnectorHandler.connector &&
-            mainConnectorHandler.connector.table;
+            mainConnectorHandler.connector.getTable();
         const valuesColumnName = mainConnectorHandler.options &&
             mainConnectorHandler.options.valuesColumn;
 
@@ -169,7 +169,7 @@ Dashboards.board('container', {
 
                     return this.on('sliderValueChanged', e => {
                         const connector = this.getFirstConnector();
-                        const table = connector && connector.table;
+                        const table = connector && connector.getTable();
 
                         if (table) {
                             // Emit cursor event when slider value changes
@@ -253,7 +253,7 @@ Dashboards.board('container', {
                     const connectorHandler = this.connectorHandlers[0];
                     const table = connectorHandler &&
                         connectorHandler.connector &&
-                        connectorHandler.connector.table;
+                        connectorHandler.connector.getTable();
                     const chart = this.chart;
                     const syncedColumnName =
                         this.sync.syncConfig.customSync.syncedColumn;

@@ -79,7 +79,7 @@ function toJSON(
 ): JSONConnectorHelper.JSON {
     const options = merge(obj.options) as JSONConnectorHelper.OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.JSONConnector',

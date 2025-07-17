@@ -37,13 +37,13 @@ dataPool.setConnectorOptions({
 
 const dataTable = await dataPool
     .getConnector('my-connector')
-    .then((connector) => connector.table);
+    .then((connector) => connector.getTable());
 ```
 
 ### 2. From a data connector
 A `DataConnector` is a service that retrieves data from an external source and creates a `DataTable` to store the imported data.
 
-The `DataTable` is accessible via the `DataConnector.table`
+The `DataTable` is accessible via the `DataConnector.getTable()` method.
 
 ```javascript
 async function loadData() {
@@ -53,7 +53,7 @@ async function loadData() {
 
     await connector.load();
 
-    const dataTable = connector.table;
+    const dataTable = connector.getTable();
 }
 ```
 

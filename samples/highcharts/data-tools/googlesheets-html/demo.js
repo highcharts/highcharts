@@ -18,7 +18,7 @@ document.querySelector('#load-button').addEventListener('click', () => {
 
     connector
         .load()
-        .then(connector => renderTable(container, connector.table))
+        .then(connector => renderTable(container, connector.getTable()))
         .catch(alert);
 });
 

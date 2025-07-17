@@ -701,7 +701,7 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
     // Get data from connector
     const dataTable = await dashboard.dataPool
         .getConnector(connId)
-        .then(connector => connector.table);
+        .then(connector => connector.getTable());
     const rowCount = await dataTable.getRowCount();
     if (rowCount === 0) {
         return;
@@ -1238,7 +1238,7 @@ class MQTTConnector extends DataConnector {
      */
     async reset() {
         const connector = this,
-            table = connector.table;
+            table = connector.getTable();
 
         connector.packetCount = 0;
         await table.deleteColumns();
@@ -1360,7 +1360,7 @@ class MQTTConnector extends DataConnector {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
-            connTable = connector.table;
+            connTable = connector.getTable();
 
         // Parse the packets
         let data;

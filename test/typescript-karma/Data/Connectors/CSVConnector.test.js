@@ -41,17 +41,17 @@ test('CSVConnector from string', async (assert) => {
 
     assert.strictEqual(
         // names are not loaded as data unless firstRowAsNames = false
-        connector.table.getRowCount(),
+        connector.getTable().getRowCount(),
         csv.split('\n').length - 1,
         'DataTable has correct amount of rows.'
     );
     assert.strictEqual(
-        connector.table.getColumnNames().length,
+        connector.getTable().getColumnNames().length,
         csv.split('\n')[0].split(',').length,
         'DataTable has correct amount of columns.'
     );
 
-    const foundComment = connector.table
+    const foundComment = connector.getTable()
         .getRow(1)
         .some((col) => ('' + col).includes('#this is a comment'));
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
@@ -65,7 +65,7 @@ test('CSVConnector from string, spaces in header', async (assert) =>{
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnNames(),
         ['Number', 'Letter', 'Color'],
         'DataTable headers are trimmed of whitespace'
     );
@@ -79,7 +79,7 @@ test('CSVConnector from string, quoted spaces in header', async (assert) =>{
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnNames(),
         [' Number', ' Letter', ' Color'],
         'Quoted DataTable headers are not trimmed of whitespace'
     );
@@ -93,11 +93,11 @@ test('CSVConnector from string, with decimalpoint option', async (assert) => {
     await connector.load();
 
     assert.strictEqual(
-        connector.table.getRowCount(),
+        connector.getTable().getRowCount(),
         3
     );
     assert.strictEqual(
-        typeof connector.table.getCell('Value', 2),
+        typeof connector.getTable().getCell('Value', 2),
         'number',
         'The converter should be able to guess this decimalpoint'
     )
@@ -107,7 +107,7 @@ test('CSVConnector from string, with decimalpoint option', async (assert) => {
     await connector.load();
 
     assert.strictEqual(
-        typeof connector.table.getCell('Value', 2),
+        typeof connector.getTable().getCell('Value', 2),
         'string',
         'Converter should respect given decimal point in options and not convert to number.'
     );
@@ -124,7 +124,7 @@ test('CSVConnector, negative values', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getColumns(['Values'])['Values'],
+        connector.getTable().getColumns(['Values'])['Values'],
         array
     );
 
@@ -142,7 +142,7 @@ test('CSV with ""s', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnNames(),
         ['test', 'test2'],
         'Headers should not contain ""s'
     )
@@ -174,7 +174,7 @@ test('CSVConnector from URL', async (assert) => {
     const doneLoading = assert.async(3);
 
     connector.on('afterLoad', (e) => {
-        const table = connector.table;
+        const table = connector.getTable();
         assert.ok(
             table.getRowCount() > 1,
             'DataConnector should have rows.'

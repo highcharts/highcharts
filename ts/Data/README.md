@@ -156,7 +156,7 @@ const dataGrid = new DataGrid('container', {
         }
     }
 });
-dataGrid.dataTable.getRow(dataGrid.table.getRowIndexBy('', 2));
+dataGrid.dataTable.getRow(dataGrid.getTable().getRowIndexBy('', 2));
 ```
 
 
@@ -207,7 +207,7 @@ const connector = new CSVConnector({
     csv: 'a;b\n1,2;3,4\n5,6;7,8'
 });
 await connector.load();
-connector.table.getRowCount() === 2;
+connector.getTable().getRowCount() === 2;
 ```
 
 
@@ -220,10 +220,10 @@ provide a table with existing data.
 
 ```TypeScript
 const connector = new CSVConnector();
-connector.table.getRowCount() === 0;
+connector.getTable().getRowCount() === 0;
 const table = new DataTable({ columns: { column: [1, 2, 3] } });
 const connector2 = new CSVConnector(table);
-connector.table.getRowCount() === 3;
+connector.getTable().getRowCount() === 3;
 ```
 
 Depending on the connector type you have to provide different mandatory options
@@ -240,7 +240,7 @@ try {
 catch (error) {
     console.error(error);
 }
-connector.table.getRowCount() > 0;
+connector.getTable().getRowCount() > 0;
 ```
 
 
@@ -302,7 +302,9 @@ dataPool.setConnectorOptions({
 });
 const googleConnector = await dataPool.getConnector('my-google-spreadsheet');
 const csvTable =
-    await dataPool.getConnector('my-csv').then(connector => connector.table);
+    await dataPool
+        .getConnector('my-csv')
+        .then(connector => connector.getTable());
 ```
 
 DataPool can be used to coordinate and share connectors and their

@@ -185,7 +185,7 @@ const dataModifiers = [null, mathModifier, sortModifier, rangeModifier];
 
 async function applyDataModifier(idx) {
     const connector = board.dataPool.connectors['conn-mod'];
-    await connector.table.setModifier(dataModifiers[idx]);
+    await connector.getTable().setModifier(dataModifiers[idx]);
 }
 
 dataModifierSelect.addEventListener('input', async e => {

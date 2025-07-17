@@ -94,16 +94,6 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
     }
 
     /**
-     * Gets the first data table.
-     *
-     * @return {DataTable}
-     * The data table instance.
-     */
-    public get table(): DataTable {
-        return this.getTable();
-    }
-
-    /**
      * The polling controller used to abort the request when data polling stops.
      * It gets assigned when data polling starts.
      */
@@ -235,7 +225,7 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
      * An object with the properties `columnNames` and `columnValues`
      */
     public getSortedColumns(): DataTable.ColumnCollection {
-        return this.table.getColumns(this.getColumnOrder());
+        return this.getTable().getColumns(this.getColumnOrder());
     }
 
     /**

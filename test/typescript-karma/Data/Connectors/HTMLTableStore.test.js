@@ -331,7 +331,7 @@ test('Export as HTML', async (assert) => {
 
     const connector = new HTMLTableConnector({
             dataTables: [{
-                columns: csvconnector.table.getColumns()
+                columns: csvconnector.getTable().getColumns()
             }]
         }),
         converter = connector.converter;
