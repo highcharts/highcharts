@@ -90,17 +90,15 @@ dataPool: {
     connectors: [{
         id: 'micro-element',
         type: 'JSON',
-        options: {
-            firstRowAsNames: false,
-            columnNames: ['Food', 'Vitamin A',  'Iron'],
-            data: [
-                ['Beef Liver', 6421, 6.5],
-                ['Lamb Liver', 2122, 6.5],
-                ['Cod Liver Oil', 1350, 0.9],
-                ['Mackerel', 388, 1],
-                ['Tuna', 214, 0.6]
-            ]
-        }
+        firstRowAsNames: false,
+        columnNames: ['Food', 'Vitamin A',  'Iron'],
+        data: [
+            ['Beef Liver', 6421, 6.5],
+            ['Lamb Liver', 2122, 6.5],
+            ['Cod Liver Oil', 1350, 0.9],
+            ['Mackerel', 388, 1],
+            ['Tuna', 214, 0.6]
+        ]
     }]
 },
 components: [
@@ -169,18 +167,16 @@ dataPool: {
     connectors: [{
         id: 'data',
         type: 'JSON',
-        options: {
-            data: [
-                ['Product Name', 'Quantity', 'Revenue', 'Category'],
-                ['Laptop', 100, 2000, 'Electronics'],
-                ['Smartphone', 150, 3300, 'Electronics'],
-                ['Desk Chair', 120, 2160, 'Furniture'],
-                ['Coffee Maker', 90, 1890, 'Appliances'],
-                ['Headphones', 200, 3200, 'Electronics'],
-                ['Dining Table', 130, 2470, 'Furniture'],
-                ['Refrigerator', 170, 2890, 'Appliances']
-            ]
-        }
+        data: [
+            ['Product Name', 'Quantity', 'Revenue', 'Category'],
+            ['Laptop', 100, 2000, 'Electronics'],
+            ['Smartphone', 150, 3300, 'Electronics'],
+            ['Desk Chair', 120, 2160, 'Furniture'],
+            ['Coffee Maker', 90, 1890, 'Appliances'],
+            ['Headphones', 200, 3200, 'Electronics'],
+            ['Dining Table', 130, 2470, 'Furniture'],
+            ['Refrigerator', 170, 2890, 'Appliances']
+        ]
     }]
 },
 {

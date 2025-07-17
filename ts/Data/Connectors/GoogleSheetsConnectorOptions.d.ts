@@ -19,7 +19,7 @@
 
 import type DataConnectorOptions from './DataConnectorOptions';
 import type DataTable from '../DataTable';
-import type DataTableOptions from '../DataTableOptions';
+import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 /* *
  *
@@ -31,6 +31,10 @@ import type DataTableOptions from '../DataTableOptions';
  * Options of the GoogleSheetsConnector.
  */
 export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
+    /**
+     * The corresponding connector type.
+     */
+    type: 'GoogleSheets';
     /**
      * The rate in seconds for polling for live data.
      * Note that polling requires the option `enablePolling` to be true.
@@ -98,13 +102,11 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      *     connectors: [{
      *         id: 'data-connector',
      *         type: 'JSON',
-     *         options: {
-     *             data: {
-     *                 kpis: { a: 1, b: 2 },
-     *                 more: {
-     *                     alpha: [1, 2, 3, 4, 5],
-     *                     beta: [10, 20, 30, 40, 50]
-     *                 }
+     *         data: {
+     *             kpis: { a: 1, b: 2 },
+     *             more: {
+     *                 alpha: [1, 2, 3, 4, 5],
+     *                 beta: [10, 20, 30, 40, 50]
      *             }
      *         },
      *         dataTables: [{
@@ -136,7 +138,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: Array<DataTableOptions>;
+    dataTables?: DataTableConnectorOptions[];
 }
 
 /**

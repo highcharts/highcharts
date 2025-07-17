@@ -12,9 +12,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'sample',
             type: 'JSON',
-            options: {
-                data
-            }
+            data
         }]
     },
     gui: {

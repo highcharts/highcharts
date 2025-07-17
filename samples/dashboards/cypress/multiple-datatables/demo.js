@@ -4,13 +4,11 @@ Dashboards.board('container', {
             {
                 id: 'data-connector',
                 type: 'JSON',
-                options: {
-                    data: {
-                        kpis: { a: 1, b: 2 },
-                        more: {
-                            alpha: [1, 2, 3, 4, 5],
-                            beta: [10, 20, 30, 40, 50]
-                        }
+                data: {
+                    kpis: { a: 1, b: 2 },
+                    more: {
+                        alpha: [1, 2, 3, 4, 5],
+                        beta: [10, 20, 30, 40, 50]
                     }
                 },
                 dataTables: [{

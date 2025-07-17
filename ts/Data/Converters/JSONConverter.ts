@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Pawel Lysy
+ *  - Kamil Kubik
  *
  * */
 
@@ -20,10 +21,8 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type {
-    JSONBeforeParseCallbackFunction,
-    ColumnNamesOptions
-} from '../Connectors/JSONConnectorOptions';
+import type { ColumnNamesOptions } from '../Connectors/JSONConnectorOptions';
+import type JSONConverterOptions from './JSONConverterOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -51,7 +50,7 @@ class JSONConverter extends DataConverter {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: JSONConverter.Options = {
+    protected static readonly defaultOptions: JSONConverterOptions = {
         ...DataConverter.defaultOptions,
         data: [],
         orientation: 'rows'
@@ -66,12 +65,10 @@ class JSONConverter extends DataConverter {
     /**
      * Constructs an instance of the JSON parser.
      *
-     * @param {JSONConverter.UserOptions} [options]
+     * @param {Partial<JSONConverterOptions>} [options]
      * Options for the JSON parser.
      */
-    public constructor(
-        options?: JSONConverter.UserOptions
-    ) {
+    public constructor(options?: Partial<JSONConverterOptions>) {
         const mergedOptions = merge(JSONConverter.defaultOptions, options);
 
         super(mergedOptions);
@@ -86,13 +83,13 @@ class JSONConverter extends DataConverter {
      *
      * */
 
-    private columns: Array<DataTable.BasicColumn> = [];
-    private headers: Array<string>|ColumnNamesOptions = [];
+    private columns: DataTable.BasicColumn[] = [];
+    private headers: string[] | ColumnNamesOptions = [];
 
     /**
      * Options for the DataConverter.
      */
-    public readonly options: JSONConverter.Options;
+    public readonly options: JSONConverterOptions;
 
     private table: DataTable;
 
@@ -105,7 +102,7 @@ class JSONConverter extends DataConverter {
     /**
      * Initiates parsing of JSON structure.
      *
-     * @param {JSONConverter.UserOptions}[options]
+     * @param {Partial<JSONConverterOptions>}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -115,7 +112,7 @@ class JSONConverter extends DataConverter {
      * @emits JSONConverter#afterParse
      */
     public parse(
-        options: JSONConverter.UserOptions,
+        options: Partial<JSONConverterOptions>,
         eventDetail?: DataEvent.Detail
     ): void {
         const converter = this;
@@ -136,7 +133,7 @@ class JSONConverter extends DataConverter {
 
         converter.columns = [];
 
-        converter.emit<DataConverter.Event>({
+        converter.emit({
             type: 'parse',
             columns: converter.columns,
             detail: eventDetail,
@@ -177,7 +174,7 @@ class JSONConverter extends DataConverter {
             }
         } else if (orientation === 'rows') {
             if (firstRowAsNames) {
-                converter.headers = data.shift() as Array<string>;
+                converter.headers = data.shift() as string[];
             } else if (columnNames) {
                 converter.headers = columnNames;
             }
@@ -218,13 +215,16 @@ class JSONConverter extends DataConverter {
                     const columnNames = converter.headers;
 
                     if (columnNames && !(columnNames instanceof Array)) {
-                        const newRow = {} as Record<string, string|number>;
+                        const newRow = {} as Record<string, string | number>;
 
                         objectEach(
                             columnNames,
-                            (arrayWithPath: Array<string|number>, name): void => {
+                            (
+                                arrayWithPath: (string | number)[],
+                                name
+                            ): void => {
                                 newRow[name] = arrayWithPath.reduce(
-                                    (acc: any, key: string|number): any =>
+                                    (acc: any, key: string | number): any =>
                                         acc[key], row
                                 );
                             });
@@ -237,7 +237,7 @@ class JSONConverter extends DataConverter {
             }
         }
 
-        converter.emit<DataConverter.Event>({
+        converter.emit({
             type: 'afterParse',
             columns: converter.columns,
             detail: eventDetail,
@@ -254,45 +254,6 @@ class JSONConverter extends DataConverter {
     public getTable(): DataTable {
         return this.table;
     }
-
-}
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace JSONConverter {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Options for the JSON parser that are compatible with ClassJSON
-     */
-    export interface Options extends DataConverter.Options {
-        columnNames?: Array<string>|ColumnNamesOptions;
-        data: Data;
-        orientation: 'columns'|'rows';
-    }
-
-    export type Data = Array<Array<number|string>|Record<string, number|string>>;
-
-    /**
-     * Options that are not compatible with ClassJSON
-     */
-    export interface SpecialOptions {
-        beforeParse?: JSONBeforeParseCallbackFunction;
-    }
-
-    /**
-     * Available options of the JSONConverter.
-     */
-    export type UserOptions = Partial<(Options&SpecialOptions)>;
 
 }
 

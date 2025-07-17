@@ -70,7 +70,7 @@ const syncPair: Sync.SyncPair = {
             const seriesId = series.options.id ?? '';
             const connectorHandler: HCComponent.HCConnectorHandler =
                 component.seriesFromConnector[seriesId];
-            const table = connectorHandler?.connector?.table;
+            const table = connectorHandler?.connector?.getTable();
             let columnName: string | undefined;
 
             if (!table) {
@@ -188,7 +188,7 @@ const syncPair: Sync.SyncPair = {
                         const connectorHandler: HCComponent.HCConnectorHandler =
                                 component.seriesFromConnector[seriesId];
 
-                        if (connectorHandler?.connector?.table !== table) {
+                        if (connectorHandler?.connector?.getTable() !== table) {
                             continue;
                         }
 
@@ -394,7 +394,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.table;
+                const table = connectorHandlers[i]?.connector?.getTable();
                 if (!table) {
                     continue;
                 }
@@ -416,7 +416,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.table;
+                const table = connectorHandlers[i]?.connector?.getTable();
                 if (!table) {
                     continue;
                 }

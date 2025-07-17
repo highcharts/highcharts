@@ -158,13 +158,13 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                     dataTableRowIndex !== void 0 &&
                     columnName !== void 0
                 ) {
-                    const table = connector.table;
+                    const table = connector.getTable();
 
                     if (table) {
                         const converter = new DataConverter();
 
                         let valueToSet = converter
-                            .asGuessedType(inputElement.value);
+                            .convertByType(inputElement.value);
 
                         if (valueToSet instanceof Date) {
                             valueToSet = valueToSet.toString();

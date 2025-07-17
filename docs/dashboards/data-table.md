@@ -19,9 +19,7 @@ Dashboards.board('container', {
         connectors: [{
             type: 'CSV',
             id: 'my-connector',
-            options: {
-                csvURL: 'https://example.com/data.csv'
-            }
+            csvURL: 'https://example.com/data.csv'
         }]
         ...
 ```
@@ -34,18 +32,18 @@ const dataPool = new DataPool();
 dataPool.setConnectorOptions({
     type: 'CSV',
     id: 'my-connector',
-    options: {
-        csvURL: 'https://example.com/data.csv'
-    }
+    csvURL: 'https://example.com/data.csv'
 });
 
-const dataTable = await dataPool.getConnectorTable('my-connector');
+const dataTable = await dataPool
+    .getConnector('my-connector')
+    .then((connector) => connector.getTable());
 ```
 
 ### 2. From a data connector
 A `DataConnector` is a service that retrieves data from an external source and creates a `DataTable` to store the imported data.
 
-The `DataTable` is accessible via the `DataConnector.table`
+The `DataTable` is accessible via the `DataConnector.getTable()` method.
 
 ```javascript
 async function loadData() {
@@ -55,7 +53,7 @@ async function loadData() {
 
     await connector.load();
 
-    const dataTable = connector.table;
+    const dataTable = connector.getTable();
 }
 ```
 
@@ -108,19 +106,17 @@ dataPool: {
     connectors: [{
         id: 'data-connector',
         type: 'JSON',
-        options: {
-            data: {
-                employees: [
-                    ['Name', 'Age', 'Salary'],
-                    ['John', 30, 50000],
-                    ['Jane', 25, 45000],
-                    ['Bob', 35, 60000],
-                    ['Alice', 28, 52000]
-                ],
-                metrics: {
-                    revenue: 100000,
-                    costs: 75000
-                }
+        data: {
+            employees: [
+                ['Name', 'Age', 'Salary'],
+                ['John', 30, 50000],
+                ['Jane', 25, 45000],
+                ['Bob', 35, 60000],
+                ['Alice', 28, 52000]
+            ],
+            metrics: {
+                revenue: 100000,
+                costs: 75000
             }
         },
         dataTables: [{

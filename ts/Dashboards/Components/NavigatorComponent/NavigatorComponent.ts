@@ -237,7 +237,7 @@ class NavigatorComponent extends Component {
         const connector = this.getFirstConnector();
 
         if (connector) {
-            const columns = connector.table.getColumnNames();
+            const columns = connector.getTable().getColumnNames();
 
             if (columns.length) {
                 return [columns[0], 'y'];
@@ -348,7 +348,7 @@ class NavigatorComponent extends Component {
         const connector = this.getFirstConnector();
 
         if (connector) {
-            const table = connector.table,
+            const table = connector.getTable(),
                 column = this.getColumnAssignment(),
                 columnValues = table.getColumn(column[0], true) || [];
 
@@ -380,7 +380,7 @@ class NavigatorComponent extends Component {
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
             this.sync.syncConfig.crossfilter as CrossfilterSyncOptions;
-        const table = this.getFirstConnector()?.table;
+        const table = this.getFirstConnector()?.getTable();
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];

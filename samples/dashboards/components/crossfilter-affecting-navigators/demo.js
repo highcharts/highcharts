@@ -12,11 +12,9 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Economy',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv').innerHTML,
-                decimalPoint: '.',
-                itemDelimiter: ','
-            }
+            csv: document.getElementById('csv').innerHTML,
+            decimalPoint: '.',
+            itemDelimiter: ','
         }]
     },
     editMode: {

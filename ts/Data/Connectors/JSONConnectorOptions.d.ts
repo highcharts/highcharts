@@ -15,11 +15,11 @@
  *
  *  Imports
  *
-* */
+ * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
-import type JSONConverter from '../Converters/JSONConverter';
-import type DataTableOptions from '../DataTableOptions';
+import type { DataTableConnectorOptions } from './DataConnectorOptions';
+import type { JSONData } from '../Converters/JSONConverterOptions';
 
 /* *
  *
@@ -31,6 +31,10 @@ import type DataTableOptions from '../DataTableOptions';
  * Options of the JSONConnector.
  */
 export interface JSONConnectorOptions extends DataConnectorOptions {
+    /**
+     * The corresponding connector type.
+     */
+    type: 'JSON';
     /**
      * If JSON data is row oriented, these options define keys for the columns.
      * In column oriented case this is handled automatically unless the
@@ -48,7 +52,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
     /**
      * Data in JSON format.
      */
-    data?: JSONConverter.Data;
+    data?: JSONData;
 
     /**
      * Data refresh rate in seconds.
@@ -91,13 +95,11 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *     connectors: [{
      *         id: 'data-connector',
      *         type: 'JSON',
-     *         options: {
-     *             data: {
-     *                 kpis: { a: 1, b: 2 },
-     *                 more: {
-     *                     alpha: [1, 2, 3, 4, 5],
-     *                     beta: [10, 20, 30, 40, 50]
-     *                 }
+     *         data: {
+     *             kpis: { a: 1, b: 2 },
+     *             more: {
+     *                 alpha: [1, 2, 3, 4, 5],
+     *                 beta: [10, 20, 30, 40, 50]
      *             }
      *         },
      *         dataTables: [{
@@ -129,7 +131,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: Array<DataTableOptions>;
+    dataTables?: DataTableConnectorOptions[];
 
     /**
      * A custom callback function that parses the data before it's being parsed
@@ -161,7 +163,7 @@ export interface ColumnNamesOptions {
  * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-enable-polling/ | JSON Connector with beforeParse and enablePolling }
  */
 export interface JSONBeforeParseCallbackFunction {
-    (data: JSONConverter.Data): JSONConverter.Data;
+    (data: JSONData): JSONData;
 }
 
 /* *
