@@ -12,6 +12,14 @@ describe('Credits.', () => {
                 }
             });
 
+        cy.grid().then((grid) => {
+            grid.update({
+            credits: {
+                    enabled: false
+                }
+            });
+        });
+
         cy.get('a.hcg-credits')
             .should('have.attr', 'href', 'https://www.highcharts.com')
             .should('exist');
