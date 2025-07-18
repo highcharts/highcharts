@@ -1,11 +1,11 @@
-import type { Route, Request } from '@playwright/test';
+import type { Route, Request, Page, JSHandle } from '@playwright/test';
 
 import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path/posix';
 
 import { test as base } from '@playwright/test';
 
-const contentTypes = {
+const contentTypes: Record<string, string> = {
     js: 'application/javascript',
     css: 'text/css',
     csv: 'text/csv'
@@ -40,7 +40,7 @@ async function replaceHCCode(route: Route) {
                 'Content-Type': contentTypes[extname(localPath)]
             }
         });
-    } catch (_err) {
+    } catch {
         await route.abort();
         throw new Error(`Missing local file for ${relativePath}`);
     }
@@ -48,7 +48,7 @@ async function replaceHCCode(route: Route) {
 
 type RouteType = {
     pattern: string | RegExp | ((url: URL) => boolean);
-    handler: (route: Route, request: Request) => any;
+    handler: (route: Route, request: Request) => Promise<void>;
 }
 
 async function getJSONSources(): Promise<RouteType[]> {
@@ -58,7 +58,7 @@ async function getJSONSources(): Promise<RouteType[]> {
         { with: { type: 'json' } }
     );
 
-    for (const source of sources) {
+    for (const source of sources as {url: string, filename: string}[]) {
         routes.push({
             pattern: source.url,
             handler: async route => {
@@ -118,7 +118,7 @@ async function replaceMapData(route: Route) {
     const match = url.match(/mapdata\/(.+\.*)/u);
 
     if (match?.length) {
-        const [_all, filename] = match;
+        const filename = match[1];
         try {
             const mapPath = join('@highcharts/map-collection', filename);
             const filePath = require.resolve(mapPath);
@@ -148,7 +148,7 @@ export async function replaceSampleData(route: Route) {
     const match = url.match(/(?:samples\/data\/|demo-live-data.+\/)(.+\.*)/u);
 
     if (match?.length) {
-        const [_all, filename] = match;
+        const filename = match[1];
         try {
             const samplePath = join('samples/data', filename);
             const filePath = join(__dirname, '..', samplePath);
@@ -173,7 +173,7 @@ export async function replaceSampleData(route: Route) {
     throw new Error('Failed to find a matching dataset');
 }
 
-export const test = base.extend<{}>({
+export const test = base.extend<object>({
     page: async ({ page }, use) => {
         if (!process.env.NO_REWRITES) {
             const routes: RouteType[] = [
@@ -204,5 +204,61 @@ export const test = base.extend<{}>({
         await use(page);
     }
 });
+
+export type CreateChartConfig = {
+    container?: string | HTMLElement;
+    scriptType?: 'module';
+    modules?: string[];
+    chartConstructor?: 'chart' | 'stockChart' | 'ganttChart' | 'mapChart';
+}
+
+const defaultCreateChartConfig = {
+    container: 'container',
+    scriptType: void 0,
+    modules: [],
+    chartConstructor: 'chart'
+};
+
+export async function createChart(
+    page: Page,
+    chartConfig: typeof Highcharts,
+    createChartConfig: CreateChartConfig
+): Promise<JSHandle<ReturnType<typeof Highcharts.chart>>> {
+
+    const ccc = {
+        ...defaultCreateChartConfig,
+        ...createChartConfig
+    };
+
+    function template({ container }: CreateChartConfig) {
+        return `<html>
+            <head>
+                <script src="https://code.highcharts.com/highcharts.src.js"></script>
+            </head>
+            <body>
+            <div id="${typeof container === 'string' ? container : ''}"></div>
+            </body>
+    </html>`;
+    }
+
+    await page.setContent(template(createChartConfig));
+    await page.waitForFunction(() => !!window.Highcharts);
+
+
+    const handle = await page.evaluateHandle(
+        ([{ chartConstructor, container }, cc]) =>
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+            Highcharts[chartConstructor](container, cc),
+        [
+            ccc,
+            chartConfig
+        ] as [CreateChartConfig, object]
+    );
+
+    await page.waitForFunction(() => !!window.Highcharts.charts.length);
+
+    return handle;
+
+}
 
 export { expect } from '@playwright/test';
