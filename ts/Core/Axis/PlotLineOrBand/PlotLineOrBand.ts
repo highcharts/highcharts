@@ -360,7 +360,7 @@ class PlotLineOrBand {
                     // default options for plot lines and bands, default to the
                     // title color. If we expose the palette, we should use that
                     // instead.
-                    color: axis.chart.options.title?.style.color,
+                    color: axis.chart.options.title?.style?.color,
                     fontSize: '0.8em',
                     textOverflow: (isBand && !inside) ? '' : 'ellipsis'
                 }, optionsLabel.style));
