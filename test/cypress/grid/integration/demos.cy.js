@@ -3,7 +3,7 @@ const gridLiteDir = '/grid-lite/';
 const gridProDir = '/grid-pro/';
 
 describe('Grid Lite demos', () => {
-    gridLitePaths.forEach((demoPath) => {
+    (gridLitePaths || []).forEach((demoPath) => {
         it(`should not have console errors in ${demoPath}`, () => {
             let errorMessages = [];
             cy.on('window:before:load', (win) => {
@@ -29,7 +29,7 @@ describe('Grid Lite demos', () => {
 });
 
 describe('Grid Pro demos', () => {
-    gridProPaths.forEach((demoPath) => {
+    (gridProPaths || []).forEach((demoPath) => {
         it(`should not have console errors in ${demoPath}`, () => {
             let errorMessages = [];
             cy.on('window:before:load', (win) => {
