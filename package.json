@@ -71,7 +71,6 @@
     "@highcharts/highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.5",
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
-    "@playwright/test": "^1.53.2",
     "@swc/core": "^1.9.2",
     "@types/jquery": "^3.5.30",
     "@types/node": "^24.0.12",
@@ -147,7 +146,8 @@
     "yargs": "^17.7.2"
   },
   "workspaces": [
-    "tools/docs-preview"
+    "tools/docs-preview",
+    "tests/"
   ],
   "overrides": {
     "gulp-jsdoc3": {
@@ -178,6 +178,9 @@
     ],
     "./docs/**/*.md": [
       "npx cspell -c ./tools/cspell/cspell.json"
+    ],
+    "./tests/**": [
+      "npx --workspace tests eslint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"

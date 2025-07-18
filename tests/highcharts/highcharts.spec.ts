@@ -41,22 +41,22 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
 
     test('Container initially hidden (#6693)', async ({ page }) => {
         const height = await page.evaluate(() => {
-            var outerOuter = document.createElement('div');
+            const outerOuter = document.createElement('div');
             outerOuter.style.visibility = 'hidden';
             outerOuter.style.display = 'none';
             document.body.appendChild(outerOuter);
 
-            var outer = document.createElement('div');
+            const outer = document.createElement('div');
             outer.style.visibility = 'hidden';
             outerOuter.appendChild(outer);
 
-            var container = document.createElement('div');
+            const container = document.createElement('div');
             container.style.display = 'none';
             container.style.width = '300px';
             container.style.height = '300px';
             outer.appendChild(container);
 
-            var chart = Highcharts.chart(container, {
+            const chart = Highcharts.chart(container, {
                 series: [
                     {
                         type: 'column',

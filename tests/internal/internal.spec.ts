@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures.ts';
+import { test, expect, createChart } from '../fixtures.ts';
 
 test('Chart creation', async ({ page }) => {
     await page.setContent('<div id="container"></container>');
@@ -173,4 +173,30 @@ test.describe('Redirects for data', () => {
             description: 'https://code.highcharts.com/mapdata/custom/asia.topo.json --> node_modules/@highcharts/map-collection/custom/asia.topo.json'
         });
     });
+});
+
+test.describe.fixme('createChart', () => {
+    test('can create a chart', async ({ page }) => {
+        const chart = await createChart(
+            page,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            {
+                title: {
+                    text: 'CUSTOM CHART'
+                }
+            // ...more chart options
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any,
+            {
+                container: 'test', // default: "container"? Or uuid? If a HTMLElement, only passes it
+                // chartConstructor: 'stockChart', // Default: chart
+                modules: [] // default: should load main module of chartconstructor?
+            }
+        );
+
+        expect(await chart.evaluate(c => c.options.title)).toHaveProperty('text', 'CUSTOM CHART');
+        await expect(page.locator('#test')).toBeVisible();
+    });
+
+
 });
