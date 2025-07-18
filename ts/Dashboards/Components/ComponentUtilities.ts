@@ -74,7 +74,7 @@ namespace ComponentUtilities {
     ): string[] {
         const elementStyles = window.getComputedStyle(element);
         return styles.map(
-            (style: string): string => elementStyles[style as any]
+            (style): string => elementStyles[style as any]
         ); // Cannot use getPropertyValue?
     }
 

@@ -16,7 +16,7 @@
  *
  * */
 
-import type Series from './Series.js';
+import Series from './Series.js';
 import type { SeriesTypeRegistry } from './SeriesType';
 
 import H from '../Globals.js';
@@ -119,7 +119,7 @@ namespace SeriesRegistry {
      * derivatives.
      */
     export function seriesType<T extends typeof Series>(
-        type: keyof SeriesTypeRegistry,
+        type: Extract<keyof SeriesTypeRegistry, string>,
         parent: (keyof SeriesTypeRegistry|undefined),
         options: T['prototype']['options'],
         seriesProto?: DeepPartial<T['prototype']>,
@@ -137,10 +137,11 @@ namespace SeriesRegistry {
 
         // Create the class
         delete seriesTypes[type];
-        registerSeriesType(type, extendClass(
-            seriesTypes[parent] as any || function (): void {},
-            seriesProto
-        ) as any);
+        const parentClass = seriesTypes[parent] as typeof Series || Series,
+            childClass =
+                extendClass(parentClass, seriesProto) as typeof Series;
+
+        registerSeriesType(type, childClass);
         seriesTypes[type].prototype.type = type;
 
         // Create the point class if needed

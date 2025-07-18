@@ -1452,7 +1452,7 @@ class Navigator {
                 navigatorAxis: {
                     fake: true
                 },
-                translate: function (value: number, reverse?: boolean): void {
+                translate: function (value: number, reverse?: boolean): number {
                     const axis = chart.xAxis[0],
                         ext = axis.getExtremes(),
                         scrollTrackWidth = axis.len - 2 * scrollButtonSize,
