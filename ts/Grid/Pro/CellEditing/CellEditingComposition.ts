@@ -172,6 +172,8 @@ namespace CellEditingComposition {
 
         let editModeRendererTypeName =
             ViewRendererType.defaultEditingRenderer;
+
+
         if (typeof editModeRendererTypeName !== 'string') {
             editModeRendererTypeName =
                 editModeRendererTypeName[column.dataType] || 'textInput';
