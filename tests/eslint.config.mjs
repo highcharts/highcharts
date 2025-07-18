@@ -14,7 +14,13 @@ export default tseslint.config(
         files: ['**/*.spec.*'],
         rules: {
             ...playwright.configs['flat/recommended'].rules,
-            "playwright/no-networkidle": "off"
+            "playwright/no-networkidle": "off",
+            // Disabling some rules that makes tests cumbersome to write
+            "@typescript-eslint/no-unsafe-member-access": "off",
+            "@typescript-eslint/no-unsafe-assignment": "off",
+            "@typescript-eslint/no-unsafe-call": "off",
+            "@typescript-eslint/no-unsafe-return": "off",
+            "@typescript-eslint/no-explicit-any": "off",
         },
     },
     {

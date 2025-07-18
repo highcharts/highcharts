@@ -185,7 +185,6 @@ test.describe.fixme('createChart', () => {
                     text: 'CUSTOM CHART'
                 }
             // ...more chart options
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any,
             {
                 container: 'test', // default: "container"? Or uuid? If a HTMLElement, only passes it

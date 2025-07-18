@@ -177,3 +177,77 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
         ));
     });
 });
+
+
+test.describe('samples/unit-tests/polar/polar-zoom equivalent', () => {
+    test('Arc shape', async ({ page }) => {
+        await page.setContent(
+            `<html>
+                <head>
+                    <script src="https://code.highcharts.com/highcharts.js"></script>
+                    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+                </head>
+                <body>
+                    <div id="outer-outer">
+                        <div id="outer">
+                            <div id="container"></div>
+                        </div>
+                    </div>
+                </body>
+            </html>`,
+            { waitUntil: 'networkidle' }
+        );
+
+        const handle = await page.evaluateHandle(() => {
+            const createdChart = Highcharts.chart('container', {
+                chart: {
+                    zooming: {
+                        type: 'xy'
+                    },
+                    polar: true,
+                    events: {
+                        selection() {
+                            if (!createdChart.custom) {
+                                createdChart.custom = {
+                                    selectionShape: ''
+                                };
+                            }
+
+                            createdChart.custom.selectionShape =
+                                (this.pointer as any).selectionMarker.element.getAttribute(
+                                    'd'
+                            ) as string;
+
+                            return true;
+                        }
+                    }
+                },
+                series: [{
+                    type: 'column',
+                    data: [8, 7, 6, 5, 4, 3, 2, 1]
+                }]
+            });
+
+            return createdChart;
+        });
+
+
+        const createdChart = await handle.jsonValue();
+        expect(createdChart).toHaveProperty('polar', true);
+
+        let [centerX, centerY] = (createdChart as any)
+            .pane[0].center as [number, number];
+
+        centerX += createdChart.plotLeft;
+        centerY += createdChart.plotTop;
+
+        await page.mouse.move(centerX - 50, centerY);
+        await page.mouse.down();
+        await page.mouse.move(centerX + 100, centerY);
+        await page.mouse.up();
+
+        const shape = await handle.evaluate(h => h.custom.selectionShape)
+
+        expect(shape).toMatch(/\sA|a\s/gu);
+    });
+});
