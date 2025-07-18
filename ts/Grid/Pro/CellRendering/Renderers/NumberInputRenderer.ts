@@ -9,7 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -112,6 +112,11 @@ namespace NumberInputRenderer {
          * Whether the number input is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the number input.
+         */
+        attributes?: Record<string, string>;
     }
 }
 

@@ -69,7 +69,12 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 renderer: {
-                    type: 'numberInput'
+                    type: 'numberInput',
+                    attributes: {
+                        step: '1',
+                        min: '0',
+                        max: '10'
+                    }
                 }
             }
         }
@@ -78,7 +83,12 @@ Grid.grid('container', {
         dataType: 'number',
         cells: {
             renderer: {
-                type: 'numberInput'
+                type: 'numberInput',
+                attributes: {
+                    step: '0.5',
+                    min: '0',
+                    max: '10'
+                }
             },
             editMode: {
                 renderer: {
