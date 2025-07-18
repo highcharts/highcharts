@@ -2,7 +2,7 @@
 
 The KPI component allows you to visualize *key performance indicators*.
 
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/component-kpi" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/component-kpi?force-light-theme" allow="fullscreen"></iframe>
 
 ## How to start
 

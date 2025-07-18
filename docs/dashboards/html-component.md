@@ -2,7 +2,7 @@
 
 The HTML Component serves as a fundamental building block in dashboards. It offers the versatility to incorporate diverse HTML content. It is a simple yet potent tool for constructing dashboards with dynamic content. The configuration structure resembles an Abstract Syntax Tree (AST), enabling definition of tag names, attributes, and nested elements or can be defined as a string representing the HTML code.
 
-<iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/component-html' allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/component-html?force-light-theme' allow="fullscreen"></iframe>
 
 ## Using the HTML component
 
