@@ -9,8 +9,6 @@ window.grid = Grid.grid('container', {
     },
     credits: {
         enabled: true,
-        position: 'top',
-        text: 'overwriteText',
-        href: 'https://customurl.com'
+        position: 'top'
     }
 });
