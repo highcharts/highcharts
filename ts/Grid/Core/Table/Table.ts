@@ -318,6 +318,7 @@ class Table {
             for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
                 this.rows[i].update();
             }
+            this.rowsVirtualizer.adjustRowHeights();
         }
 
         if (focusedRowId !== void 0 && vp.focusCursor) {

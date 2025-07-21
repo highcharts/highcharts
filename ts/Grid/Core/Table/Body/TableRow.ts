@@ -130,6 +130,8 @@ class TableRow extends Row {
             const cell = this.cells[i] as TableCell;
             void cell.setValue();
         }
+
+        this.reflow();
     }
 
     /**
