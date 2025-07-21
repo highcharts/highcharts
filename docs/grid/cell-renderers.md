@@ -33,7 +33,18 @@ Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for
 |[`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element. Note that `options` are required. | |
 
 You can further customize input renderers by using the `attributes` option. This allows you to pass additional HTML attributes to the underlying input element, such as `min`, `max`, `step`, `placeholder`, or any other valid attribute.
-This is especially useful for number and date inputs, where you may want to restrict the allowed range or provide hints to users.
+This is especially useful for number and date inputs, where you may want to restrict the allowed range or provide hints to users. For example:
+
+```js
+renderer: {
+    type: 'numberInput',
+    attributes: {
+        min: 0,
+        max: 100,
+        step: 1
+    }
+}
+```
 
 ### Text
 Renders an editable text field for the value in editMode, and plain text/HTML when not in editMode. No specific configuration is needed since this is the default:
