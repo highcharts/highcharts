@@ -104,6 +104,38 @@ Highcharts.chart('container', {
 });
 ```
 
+Alternatively, you can pass all rows from the DataTable directly to the chart
+and use the [series.keys] option to define which fields should be used,
+typically `x`, `name`, and `y`. This approach is especially useful when
+additional columns are needed elsewhere, such as in a detailed tooltip.
+
+```js
+Highcharts.chart('container', {
+    title: {
+        text: 'Aviva Investors UK Listed Equity Unconstrained Fund 2 GBP Acc'
+    },
+    series: [{
+        type: 'column',
+        name: 'F0GBR050DD',
+        keys: [
+            'name', // 'Nav_DayEnd_TimePeriod'
+            'Nav_DayEnd_Date',
+            'y', // 'Nav_DayEnd_Value'
+            'GbPostTax_DayEnd_TimePeriod',
+            'GbPostTax_DayEnd_Date',
+            'GbPostTax_DayEnd_Value',
+            'ItPostTax_DayEnd_TimePeriod',
+            'ItPostTax_DayEnd_Date',
+            'ItPostTax_DayEnd_Value'
+        ],
+        data: connector.dataTables.TrailingPerformance.getRows()
+    }],
+    xAxis: {
+        type: 'category'
+    }
+});
+```
+
 ## Relevant demo
 
 You will find examples of how to use SecurityDetailsConnector in our demos.
@@ -111,3 +143,5 @@ You will find examples of how to use SecurityDetailsConnector in our demos.
 [Morningstar’s Security Details API]: https://developer.morningstar.com/direct-web-services/documentation/api-reference/security-details/overview
 
 [Getting View IDs]: https://developer.morningstar.com/direct-web-services/documentation/direct-web-services/security-details/investment-details#get-views
+
+[series.keys]: https://api.highcharts.com/highcharts/plotOptions.series.keys
