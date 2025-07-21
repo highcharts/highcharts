@@ -263,4 +263,24 @@ test.describe('createChart', () => {
         ).toHaveProperty('highchartsChart', '0');
     });
 
+    test('modules are loaded', async ({ page }) => {
+        await createChart(
+            page,
+            {},
+            {
+                modules: [
+                    'modules/venn.src.js',
+                    'modules/histogram-bellcurve.src.js',
+                ]
+            }
+        );
+
+        const seriesTypes = await page.evaluate(
+            () => Object.keys((Highcharts as any).SeriesRegistry.seriesTypes));
+
+        ['venn', 'histogram', 'bellcurve'].forEach(seriesType => {
+            expect(seriesTypes).toContain(seriesType);
+        });
+    });
+
 });

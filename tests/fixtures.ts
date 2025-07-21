@@ -228,7 +228,7 @@ const defaultCreateChartConfig: CreateChartConfig = {
 export async function createChart(
     page: Page,
     chartConfig: DeepPartial<typeof Highcharts>,
-    createChartConfig: Partial<CreateChartConfig>
+    createChartConfig?: Partial<CreateChartConfig>
 ): Promise<JSHandle<ReturnType<typeof Highcharts.chart>>> {
 
     const ccc: CreateChartConfig = {
@@ -257,7 +257,10 @@ export async function createChart(
         ]);
 
         const moduleString = Array.from(moduleSet)
-            .map(m => `<script src="https://code.highcharts.com/${m}"></script>`)
+            .map(m => {
+                const url = new URL(m, 'https://code.highcharts.com');
+                return `<script src="${url.href}"></script>`;
+            })
             .join('\n');
 
         return `<html>
