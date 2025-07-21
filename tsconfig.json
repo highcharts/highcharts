@@ -1,7 +1,7 @@
 {
-    "ts-node": {
-        "compilerOptions": {
-            "module": "CommonJS"
-        }
-    }
+    "compilerOptions": {
+        "module": "Node16",
+        "moduleResolution": "Node16",
+        "target": "ES2020"
+    },
 }
