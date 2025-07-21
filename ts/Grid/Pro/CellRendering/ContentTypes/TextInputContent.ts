@@ -86,9 +86,16 @@ class TextInputContent extends CellContentPro implements EditModeContent {
     ): HTMLInputElement {
         const cell = this.cell;
         const input = this.input = document.createElement('input');
+        const { options } = this.renderer as TextInputRenderer;
 
         input.tabIndex = -1;
         input.name = cell.column.id + '-' + cell.row.id;
+
+        if (options.attributes) {
+            Object.entries(options.attributes).forEach(([key, value]):void => {
+                input.setAttribute(key, value);
+            });
+        }
 
         this.update();
 

@@ -112,6 +112,11 @@ namespace TextInputRenderer {
          * Whether the text input is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the text input.
+         */
+        attributes?: Record<string, string>;
     }
 }
 

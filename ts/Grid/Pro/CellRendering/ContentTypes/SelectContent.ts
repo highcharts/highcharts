@@ -86,10 +86,17 @@ class SelectContent extends CellContentPro implements EditModeContent {
         parentElement: HTMLElement = this.cell.htmlElement
     ): HTMLSelectElement {
         const cell = this.cell;
-
+        const { options } = this.renderer as SelectRenderer;
         const select = this.select = document.createElement('select');
+
         select.tabIndex = -1;
         select.name = cell.column.id + '-' + cell.row.id;
+
+        if (options.attributes) {
+            Object.entries(options.attributes).forEach(([key, value]):void => {
+                select.setAttribute(key, value);
+            });
+        }
 
         this.update();
 

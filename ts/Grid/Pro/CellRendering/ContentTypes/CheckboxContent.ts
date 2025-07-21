@@ -81,11 +81,18 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         parentElement: HTMLElement = this.cell.htmlElement
     ): HTMLInputElement {
         const cell = this.cell;
+        const { options } = this.renderer as CheckboxRenderer;
+        const input = this.input = document.createElement('input');
 
-        this.input = document.createElement('input');
         this.input.tabIndex = -1;
         this.input.type = 'checkbox';
         this.input.name = cell.column.id + '-' + cell.row.id;
+
+        if (options.attributes) {
+            Object.entries(options.attributes).forEach(([key, value]):void => {
+                input.setAttribute(key, value);
+            });
+        }
 
         this.update();
 

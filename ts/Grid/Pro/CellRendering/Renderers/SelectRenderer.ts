@@ -138,6 +138,11 @@ namespace SelectRenderer {
          * Whether the select input is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the number input.
+         */
+        attributes?: Record<string, string>;
     }
 }
 

@@ -112,6 +112,11 @@ namespace DateInputRenderer {
          * Whether the date input is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the date input.
+         */
+        attributes?: Record<string, string>;
     }
 }
 

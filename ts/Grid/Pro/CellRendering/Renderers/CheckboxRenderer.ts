@@ -110,6 +110,11 @@ namespace CheckboxRenderer {
          * Whether the checkbox is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the checkbox.
+         */
+        attributes?: Record<string, string>;
     }
 }
 

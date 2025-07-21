@@ -61,7 +61,10 @@ Grid.grid('container', {
         id: 'textInput_textInput',
         cells: {
             renderer: {
-                type: 'text'
+                type: 'text',
+                attributes: {
+                    placeholder: 'Enter text'
+                }
             }
         }
     }, {
