@@ -19,7 +19,7 @@ async function checkDocsConsistency() {
         let rewrite;
 
         if (sample.startsWith('grid/')) {
-            rewrite = sample.replace(/^grid\//, 'grid-lite/');
+            rewrite = sample.replace(/^grid\//, 'grid*/');
         }
         const files = glob.globSync(`samples/${rewrite ?? sample}/demo.{js,mjs,ts}`);
         if (files.length < 1) {

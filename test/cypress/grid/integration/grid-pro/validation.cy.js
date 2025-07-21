@@ -4,7 +4,6 @@ describe('Grid Pro - validation.', () => {
     });
 
     it('Notification position.', () => {
-
         // Bottom position
         const topCell = 'tr[data-row-index="2"] td[data-column-id="numbers"]';
         cy.get(topCell)
@@ -21,7 +20,7 @@ describe('Grid Pro - validation.', () => {
 
         cy.get(topCell)
             .type('4{enter}');
-        
+
         // Top position
         const bottomCell =
             'tr[data-row-index="2"] td[data-column-id="numbers"]';
@@ -66,11 +65,11 @@ describe('Grid Pro - validation.', () => {
             .find('input')
             .clear()
             .type('{enter}');
-        
+
         cy.get('.hcg-notification-error').eq(0)
             .should('be.visible')
             .should('contain', 'New value') // Lang rule
-        
+
          cy.get(boolCell)
             .type('true{enter}');
     });
@@ -105,5 +104,9 @@ describe('Grid Pro - validation.', () => {
 
         cy.get(priceCell)
             .type('5{enter}');
+    });
+
+    it('In case of wrong renderer type or dataType, it should default to string.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="wrongName"]').should('exist');
     });
 });

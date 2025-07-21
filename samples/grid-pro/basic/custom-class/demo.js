@@ -19,6 +19,7 @@ Grid.grid('container', {
     },
     columns: [{
         id: 'weight',
-        className: 'custom-column-class-name'
+        className: 'custom-column-class-name',
+        width: '50%'
     }]
 });

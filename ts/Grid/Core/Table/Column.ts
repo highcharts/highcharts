@@ -141,7 +141,7 @@ class Column {
 
         this.options = merge(
             grid.options?.columnDefaults ?? {},
-            grid.columnOptionsMap?.[id] ?? {}
+            grid.columnOptionsMap?.[id]?.options ?? {}
         );
 
         fireEvent(this, 'afterInit');
@@ -179,7 +179,7 @@ class Column {
     private assumeDataType(): Column.DataType {
         const { grid } = this.viewport;
 
-        const type = grid.columnOptionsMap?.[this.id]?.dataType ??
+        const type = grid.columnOptionsMap?.[this.id]?.options.dataType ??
             grid.options?.columnDefaults?.dataType;
         if (type) {
             return type;
@@ -311,6 +311,27 @@ class Column {
      */
     public format(template: string): string {
         return Templating.format(template, this, this.viewport.grid);
+    }
+
+    public update(options: Column.Options, render?: boolean): void;
+
+    public update(options: Column.Options, render?: true): Promise<void>;
+
+    /**
+     * Updates the column with new options.
+     *
+     * @param newOptions
+     * The new options for the column.
+     *
+     * @param render
+     * Whether to re-render after the update. If `false`, the update will just
+     * extend the options object. Defaults to `true`.
+     */
+    public async update(
+        newOptions: Column.Options,
+        render: boolean = true
+    ): Promise<void> {
+        await this.viewport.grid.updateColumn(this.id, newOptions, render);
     }
 }
 
