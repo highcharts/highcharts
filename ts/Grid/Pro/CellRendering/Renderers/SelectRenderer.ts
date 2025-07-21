@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -140,7 +141,7 @@ namespace SelectRenderer {
         disabled?: boolean;
 
         /**
-         * Attributes to control the number input.
+         * Attributes to control the select input.
          */
         attributes?: Record<string, string>;
     }
