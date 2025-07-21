@@ -214,9 +214,10 @@ test.describe('samples/unit-tests/polar/polar-zoom equivalent', () => {
                             }
 
                             createdChart.custom.selectionShape =
-                                (this.pointer as any).selectionMarker.element.getAttribute(
-                                    'd'
-                            ) as string;
+                                (this.pointer as any)
+                                    .selectionMarker.element.getAttribute(
+                                        'd'
+                                    ) as string;
 
                             return true;
                         }
@@ -246,7 +247,7 @@ test.describe('samples/unit-tests/polar/polar-zoom equivalent', () => {
         await page.mouse.move(centerX + 100, centerY);
         await page.mouse.up();
 
-        const shape = await handle.evaluate(h => h.custom.selectionShape)
+        const shape = await handle.evaluate(h => h.custom.selectionShape);
 
         expect(shape).toMatch(/\sA|a\s/gu);
     });
