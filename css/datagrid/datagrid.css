@@ -993,15 +993,30 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     height: 20px;
     background-size: contain;
     background-repeat: no-repeat;
-    background-image: url("https://assets.highcharts.com/grid/logo_light.png");
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_light.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_lightx2.png") 2x
+        );
 }
 
 .highcharts-light .highcharts-datagrid-credits:empty {
-    background-image: url("https://assets.highcharts.com/grid/logo_light.png");
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_light.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_lightx2.png") 2x
+        );
 }
 
 .highcharts-dark .highcharts-datagrid-credits:empty {
-    background-image: url("https://assets.highcharts.com/grid/logo_dark.png");
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
+        );
 }
 
 .hcg-credits-container.hcg-credits-pro,
@@ -1108,7 +1123,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 
     .highcharts-datagrid-credits:empty {
-        background-image: url("https://assets.highcharts.com/grid/logo_dark.png");
+        background-image:
+            image-set(
+                /* stylelint-disable-next-line function-comma-newline-after */
+                url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
+                url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
+            );
     }
 }
 
