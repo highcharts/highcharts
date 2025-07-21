@@ -14,7 +14,7 @@ let grid = Grid.grid('container', options);
 document.getElementById('delete-rows-btn').addEventListener('click', () => {
     if (grid.dataTable) {
         grid.dataTable.deleteRows(0, 4);
-        grid.viewport.loadPresentationData();
+        grid.viewport.updateRows();
     }
     console.log('deleted rows:', grid.dataTable);
 });

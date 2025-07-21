@@ -200,9 +200,50 @@ class DataGridComponent extends Component {
     }
 
     public override onTableChanged(): void {
-        this.grid?.update({
-            dataTable: this.getFirstConnector()?.table?.modified
-        });
+        const { grid } = this;
+        if (!grid) {
+            return;
+        }
+
+        const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey);
+        if (!dataTable?.modified) {
+            grid.update({ dataTable: void 0 });
+            return;
+        }
+
+        if (!grid.options?.header) {
+            // If the header is not defined, we need to check if the column
+            // names have changed, so we can update the whole grid. If they
+            // have not changed, we can just update the rows (more efficient).
+
+            const newColumnNames = dataTable.modified.getColumnNames();
+            const { columnOptionsMap, enabledColumns } = grid;
+
+            let index = 0;
+            for (const newColumn of newColumnNames) {
+                if (columnOptionsMap[newColumn]?.options?.enabled === false) {
+                    continue;
+                }
+
+                if (enabledColumns?.[index] !== newColumn) {
+                    // If the visible columns have changed,
+                    // update the whole grid.
+                    grid.update({ dataTable: dataTable.modified });
+                    return;
+                }
+
+                index++;
+            }
+        }
+
+        grid.dataTable = dataTable?.modified;
+
+        // Data has changed and the whole grid is not re-rendered, so mark in
+        // the querying that data table was modified.
+        grid.querying.shouldBeUpdated = true;
+
+        // If the column names have not changed, just update the rows.
+        grid.viewport?.updateRows();
     }
 
     public getEditableOptions(): Options {

@@ -348,6 +348,10 @@
     display: block;
 }
 
+.hcg-table thead {
+    background-color: var(--ig-header-background);
+}
+
 .hcg-table thead th {
     position: relative;
     border-right: var(--ig-header-column-border);
