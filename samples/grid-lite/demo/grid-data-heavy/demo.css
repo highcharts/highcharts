@@ -22,9 +22,3 @@
 .highcharts-description {
     padding: 0 10px;
 }
-
-@media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #292929;
-    }
-}
