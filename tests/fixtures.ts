@@ -1,4 +1,10 @@
-import type { Route, Request, Page, JSHandle } from '@playwright/test';
+import type {
+    Route,
+    Request,
+    Page,
+    JSHandle,
+    ElementHandle
+} from '@playwright/test';
 
 import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path/posix';
@@ -49,7 +55,7 @@ async function replaceHCCode(route: Route) {
 type RouteType = {
     pattern: string | RegExp | ((url: URL) => boolean);
     handler: (route: Route, request: Request) => Promise<void>;
-}
+};
 
 async function getJSONSources(): Promise<RouteType[]> {
     const routes: RouteType[] = [];
@@ -206,13 +212,13 @@ export const test = base.extend<object>({
 });
 
 export type CreateChartConfig = {
-    container?: string | HTMLElement;
-    scriptType?: 'module';
-    modules?: string[];
-    chartConstructor?: 'chart' | 'stockChart' | 'ganttChart' | 'mapChart';
-}
+    container: string | ElementHandle<HTMLElement | SVGElement>;
+    scriptType: 'module';
+    modules: string[];
+    chartConstructor: 'chart' | 'stockChart' | 'ganttChart' | 'mapChart';
+};
 
-const defaultCreateChartConfig = {
+const defaultCreateChartConfig: CreateChartConfig = {
     container: 'container',
     scriptType: void 0,
     modules: [],
@@ -221,29 +227,51 @@ const defaultCreateChartConfig = {
 
 export async function createChart(
     page: Page,
-    chartConfig: typeof Highcharts,
-    createChartConfig: CreateChartConfig
+    chartConfig: DeepPartial<typeof Highcharts>,
+    createChartConfig: Partial<CreateChartConfig>
 ): Promise<JSHandle<ReturnType<typeof Highcharts.chart>>> {
 
-    const ccc = {
+    const ccc: CreateChartConfig = {
         ...defaultCreateChartConfig,
         ...createChartConfig
     };
 
-    function template({ container }: CreateChartConfig) {
+    const constructorToModule: Record<CreateChartConfig['chartConstructor'], string> = {
+        'chart': 'highcharts.src.js',
+        'stockChart': 'stock/highstock.src.js',
+        'ganttChart': 'gantt/highcharts-gantt.src.js',
+        'mapChart': 'maps/highmaps.src.js'
+    };
+
+
+    function template({
+        container,
+        modules,
+        chartConstructor
+    }: CreateChartConfig): string {
+        const isIdContainer = !!(typeof container === 'string');
+
+        const moduleSet = new Set<string>([
+            constructorToModule[chartConstructor],
+            ...modules
+        ]);
+
+        const moduleString = Array.from(moduleSet)
+            .map(m => `<script src="https://code.highcharts.com/${m}"></script>`)
+            .join('\n');
+
         return `<html>
             <head>
-                <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                ${moduleString}
             </head>
             <body>
-            <div id="${typeof container === 'string' ? container : ''}"></div>
+                ${isIdContainer ? `<div id="${container}"></div>` : ''}
             </body>
-    </html>`;
+        </html>`;
     }
 
-    await page.setContent(template(createChartConfig));
+    await page.setContent(template(ccc));
     await page.waitForFunction(() => !!window.Highcharts);
-
 
     const handle = await page.evaluateHandle(
         ([{ chartConstructor, container }, cc]) =>

@@ -151,8 +151,6 @@ test.describe('Redirects for data', () => {
         });
     });
 
-
-    // 'https://code.highcharts.com/mapdata/custom/asia.topo.json'
     test('highcharts.com mapdata', async ({ page }) => {
         const template = `<html>
     <head>
@@ -175,27 +173,94 @@ test.describe('Redirects for data', () => {
     });
 });
 
-test.describe.fixme('createChart', () => {
+test.describe('createChart', () => {
     test('can create a chart', async ({ page }) => {
         const chart = await createChart(
             page,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             {
                 title: {
                     text: 'CUSTOM CHART'
                 }
-            // ...more chart options
             } as any,
             {
-                container: 'test', // default: "container"? Or uuid? If a HTMLElement, only passes it
-                // chartConstructor: 'stockChart', // Default: chart
-                modules: [] // default: should load main module of chartconstructor?
+                container: 'test',
             }
         );
 
-        expect(await chart.evaluate(c => c.options.title)).toHaveProperty('text', 'CUSTOM CHART');
+        expect(
+            await chart.evaluate(c => c.options.title)
+        ).toHaveProperty('text', 'CUSTOM CHART');
         await expect(page.locator('#test')).toBeVisible();
     });
 
+    test('can create a stock chart', async ({ page }) => {
+        const chart = await createChart(
+            page, {}, { chartConstructor: 'stockChart' }
+        );
+        expect(
+            await chart.evaluate(c => c.options)
+
+        ).toHaveProperty('isStock', true);
+    });
+
+    test('can create a gantt chart', async ({ page }) => {
+        const chart = await createChart(
+            page, {}, { chartConstructor: 'ganttChart' }
+        );
+        expect(
+            await chart.evaluate(c => c.options)
+        ).toHaveProperty('isGantt', true);
+    });
+
+    test('can create a map chart', async ({ page }) => {
+        const chart = await createChart(
+            page, {}, { chartConstructor: 'mapChart' }
+        );
+        expect(await chart.evaluate(c => c.options)).toHaveProperty('mapView');
+    });
+
+
+    test('elementHandle container from locator', async ({ page }) => {
+        await page.setContent('<div class="test">Test</div>');
+
+        const chart = await createChart(
+            page,
+            {
+                title: {
+                    text: 'LOCATOR CHART'
+                }
+            } as any,
+            {
+                container: await page.locator('.test').elementHandle()
+            }
+        );
+
+        expect(
+            await chart.evaluate(c => c.options.title)
+        ).toHaveProperty('text', 'LOCATOR CHART');
+    });
+
+    test('elementHandle container from evaluate', async ({ page }) => {
+        const container = await page.evaluateHandle(() =>
+            document.body.appendChild(document.createElement('div'))
+        );
+
+        const chart = await createChart(
+            page,
+            {
+                title: {
+                    text: 'LOCATOR CHART'
+                }
+            } as any,
+            { container }
+        );
+
+        expect(
+            await chart.evaluate(c => c.options.title)
+        ).toHaveProperty('text', 'LOCATOR CHART');
+        expect(
+            await container.evaluate(c => c.dataset)
+        ).toHaveProperty('highchartsChart', '0');
+    });
 
 });
