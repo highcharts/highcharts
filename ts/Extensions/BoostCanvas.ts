@@ -429,7 +429,8 @@ namespace BoostCanvas {
             };
 
             boost.clipRect = chart.renderer.clipRect();
-            boost.target.clip(boost.clipRect);
+            // Debugging:
+            // boost.target.clip(boost.clipRect);
 
         } else if (!(target instanceof ChartConstructor)) {
             ///  ctx.clearRect(0, 0, width, height);
