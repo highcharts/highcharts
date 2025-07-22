@@ -68,7 +68,7 @@ Grid.grid('container', {
             }
         }
     }, {
-        id: 'number_numberInput',
+        id: 'text_numberInput',
         cells: {
             editMode: {
                 renderer: {
