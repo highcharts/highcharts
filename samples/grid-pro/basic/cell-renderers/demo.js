@@ -11,7 +11,7 @@ Grid.grid('container', {
             textInput_textInput: [
                 'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta'
             ],
-            number_numberInput: [1, 2, 3, 4, 5, 6, 7],
+            text_numberInput: [1, 2, 3, 4, 5, 6, 7],
             numberInput_numberInput: [1, 2, 3, 4, 5, 6, 7],
             text_select: ['R', 'B', 'G', 'B', 'G', 'R', 'B'],
             select_select: ['R', 'B', 'G', 'B', 'G', 'R', 'B'],
