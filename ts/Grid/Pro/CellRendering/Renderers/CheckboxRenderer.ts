@@ -115,7 +115,14 @@ namespace CheckboxRenderer {
         /**
          * Attributes to control the checkbox.
          */
-        attributes?: Record<string, string>;
+        attributes?: CheckboxAttributes;
+    }
+
+    /**
+     * Attributes to control the checkbox.
+     */
+    export interface CheckboxAttributes {
+        checked?: boolean;
     }
 }
 

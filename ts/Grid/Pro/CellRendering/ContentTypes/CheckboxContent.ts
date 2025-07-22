@@ -85,9 +85,9 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         const { options } = this.renderer as CheckboxRenderer;
         const input = this.input = document.createElement('input');
 
-        this.input.tabIndex = -1;
-        this.input.type = 'checkbox';
-        this.input.name = cell.column.id + '-' + cell.row.id;
+        input.tabIndex = -1;
+        input.type = 'checkbox';
+        input.name = cell.column.id + '-' + cell.row.id;
 
         if (options.attributes) {
             Object.entries(options.attributes).forEach(([key, value]):void => {
@@ -98,11 +98,11 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         this.update();
 
         parentElement.appendChild(this.input);
-        this.input.classList.add(Globals.classNamePrefix + 'field-auto-width');
+        input.classList.add(Globals.classNamePrefix + 'field-auto-width');
 
-        this.input.addEventListener('change', this.onChange);
-        this.input.addEventListener('keydown', this.onKeyDown);
-        this.input.addEventListener('blur', this.onBlur);
+        input.addEventListener('change', this.onChange);
+        input.addEventListener('keydown', this.onKeyDown);
+        input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
         return this.input;

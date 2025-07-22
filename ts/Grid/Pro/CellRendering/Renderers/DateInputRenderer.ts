@@ -117,7 +117,16 @@ namespace DateInputRenderer {
         /**
          * Attributes to control the date input.
          */
-        attributes?: Record<string, string>;
+        attributes?: DateInputAttributes;
+    }
+
+    /**
+     * Attributes to control the date input.
+     */
+    export interface DateInputAttributes {
+        min?: string;
+        max?: string;
+        step?: string;
     }
 }
 

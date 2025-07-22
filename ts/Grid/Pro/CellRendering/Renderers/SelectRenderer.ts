@@ -143,7 +143,16 @@ namespace SelectRenderer {
         /**
          * Attributes to control the select input.
          */
-        attributes?: Record<string, string>;
+        attributes?: SelectAttributes;
+    }
+
+    /**
+     * Attributes to control the select input.
+     */
+    export interface SelectAttributes {
+        multiple?: boolean;
+        autofocus?: boolean;
+        size?: number;
     }
 }
 

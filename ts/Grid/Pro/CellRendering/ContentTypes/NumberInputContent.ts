@@ -44,6 +44,9 @@ const {
  */
 class NumberInputContent extends CellContentPro implements EditModeContent {
 
+    /**
+     * Whether to finish the edit after a change.
+     */
     public finishAfterChange: boolean = false;
 
     public blurHandler?: (e: FocusEvent) => void;
@@ -80,6 +83,11 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
+    /**
+     * Adds the input element to the parent element.
+     * @param parentElement The parent element to add the input element to.
+     * @returns The input element.
+     */
     public override add(
         parentElement: HTMLElement = this.cell.htmlElement
     ): HTMLInputElement {
@@ -110,16 +118,25 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
         return input;
     }
 
+    /**
+     * Updates the input element.
+     */
     public override update(): void {
         const { options } = this.renderer as NumberInputRenderer;
         this.input.value = this.convertToInputValue();
         this.input.disabled = !!options.disabled;
     }
 
+    /**
+     * Gets the raw value of the input element.
+     */
     public get rawValue(): string {
         return this.input.value;
     }
 
+    /**
+     * Gets the number value of the input element.
+     */
     public get value(): number {
         return +this.input.value;
     }
@@ -137,10 +154,17 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
         return defined(val) ? '' + val : '';
     }
 
+    /**
+     * Gets the main element (input) of the content.
+     * @returns The input element.
+     */
     public getMainElement(): HTMLInputElement {
         return this.input;
     }
 
+    /**
+     * Destroys the content.
+     */
     public override destroy(): void {
         const input = this.input;
         this.cell.htmlElement.removeEventListener(

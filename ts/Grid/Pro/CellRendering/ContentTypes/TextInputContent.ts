@@ -46,6 +46,9 @@ const {
  */
 class TextInputContent extends CellContentPro implements EditModeContent {
 
+    /**
+     * Whether to finish the edit after a change.
+     */
     public finishAfterChange: boolean = true;
 
     public blurHandler?: (e: FocusEvent) => void;
@@ -82,6 +85,11 @@ class TextInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
+    /**
+     * Adds the input element to the parent element.
+     * @param parentElement The parent element to add the input element to.
+     * @returns The input element.
+     */
     public override add(
         parentElement: HTMLElement = this.cell.htmlElement
     ): HTMLInputElement {
@@ -110,16 +118,25 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         return input;
     }
 
+    /**
+     * Updates the input element.
+     */
     public override update(): void {
         const { options } = this.renderer as TextInputRenderer;
         this.input.value = this.convertToInputValue();
         this.input.disabled = !!options.disabled;
     }
 
+    /**
+     * Gets the raw value of the input element.
+     */
     public get rawValue(): string {
         return this.input.value;
     }
 
+    /**
+     * Gets the value of the input element.
+     */
     public get value(): DataTable.CellType {
         const val = this.input.value;
         switch (this.cell.column.dataType) {
@@ -147,10 +164,17 @@ class TextInputContent extends CellContentPro implements EditModeContent {
         return defined(val) ? '' + val : '';
     }
 
+    /**
+     * Gets the main element (input) of the content.
+     * @returns The input element.
+     */
     public getMainElement(): HTMLInputElement {
         return this.input;
     }
 
+    /**
+     * Destroys the content.
+     */
     public override destroy(): void {
         const input = this.input;
         this.cell.htmlElement.removeEventListener(

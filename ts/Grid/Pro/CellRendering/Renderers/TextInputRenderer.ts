@@ -117,7 +117,18 @@ namespace TextInputRenderer {
         /**
          * Attributes to control the text input.
          */
-        attributes?: Record<string, string>;
+        attributes?:TextInputAttributes;
+    }
+
+    /**
+     * Attributes to control the text input.
+     */
+    export interface TextInputAttributes {
+        minlength?: number;
+        maxlength?: number;
+        pattern?: string;
+        placeholder?: string;
+        size?: number;
     }
 }
 

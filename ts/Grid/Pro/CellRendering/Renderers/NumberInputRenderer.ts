@@ -116,7 +116,16 @@ namespace NumberInputRenderer {
         /**
          * Attributes to control the number input.
          */
-        attributes?: Record<string, string>;
+        attributes?: NumberInputAttributes;
+    }
+
+    /**
+     * Attributes to control the number input.
+     */
+    export interface NumberInputAttributes {
+        min?: number;
+        max?: number;
+        step?: number;
     }
 }
 

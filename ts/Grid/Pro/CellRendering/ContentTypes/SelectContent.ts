@@ -42,6 +42,9 @@ import AST from '../../../../Core/Renderer/HTML/AST.js';
  */
 class SelectContent extends CellContentPro implements EditModeContent {
 
+    /**
+     * Whether to finish the edit after a change.
+     */
     public finishAfterChange: boolean = true;
 
     public blurHandler?: (e: FocusEvent) => void;
@@ -83,6 +86,11 @@ class SelectContent extends CellContentPro implements EditModeContent {
      *
      * */
 
+    /**
+     * Adds the select element to the parent element.
+     * @param parentElement The parent element to add the select element to.
+     * @returns The select element.
+     */
     protected override add(
         parentElement: HTMLElement = this.cell.htmlElement
     ): HTMLSelectElement {
@@ -111,6 +119,9 @@ class SelectContent extends CellContentPro implements EditModeContent {
         return select;
     }
 
+    /**
+     * Updates the select element.
+     */
     public override update(): void {
         const cell = this.cell;
         const { options } = this.renderer as SelectRenderer;
@@ -135,6 +146,9 @@ class SelectContent extends CellContentPro implements EditModeContent {
         }
     }
 
+    /**
+     * Destroys the content.
+     */
     public override destroy(): void {
         const select = this.select;
         this.cell.htmlElement.removeEventListener(
@@ -153,10 +167,16 @@ class SelectContent extends CellContentPro implements EditModeContent {
         select.remove();
     }
 
+    /**
+     * Gets the raw value of the select element.
+     */
     public get rawValue(): string {
         return this.select.value;
     }
 
+    /**
+     * Gets the value of the select element.
+     */
     public get value(): DataTable.CellType {
         const val = this.select.value;
         switch (this.cell.column.dataType) {
@@ -170,6 +190,10 @@ class SelectContent extends CellContentPro implements EditModeContent {
         }
     }
 
+    /**
+     * Gets the main element (select) of the content.
+     * @returns The select element.
+     */
     public getMainElement(): HTMLSelectElement {
         return this.select;
     }
