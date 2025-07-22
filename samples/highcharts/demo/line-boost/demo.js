@@ -75,7 +75,8 @@ Highcharts.chart('container', {
     series: [{
         data: data,
         lineWidth: 0.5,
-        name: 'Hourly data points'
+        name: 'Hourly data points',
+        color: '#2caffe'
     }]
 
 });

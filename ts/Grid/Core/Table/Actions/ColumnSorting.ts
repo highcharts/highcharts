@@ -157,9 +157,7 @@ class ColumnSorting {
         const a11y = viewport.grid.accessibility;
 
         sortingController.setSorting(order, this.column.id);
-        await querying.proceed();
-
-        viewport.loadPresentationData();
+        await viewport.updateRows();
 
         for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();
@@ -179,6 +177,11 @@ class ColumnSorting {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const sortingController = querying.sorting;
+
+        // Do not call sorting when cell is currently edited and validated.
+        if (viewport.validator?.errorCell) {
+            return;
+        }
 
         const currentOrder = (
             sortingController.currentSorting?.columnId === this.column.id ?

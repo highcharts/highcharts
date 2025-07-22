@@ -53,7 +53,7 @@ declare class AnnotationChart extends Chart {
     plotBoxClip: SVGElement;
     series: Array<AnnotationSeries>;
     addAnnotation(
-        userOptions: AnnotationOptions,
+        userOptions: DeepPartial<AnnotationOptions>,
         redraw?: boolean
     ): Annotation;
     drawAnnotations(): void;

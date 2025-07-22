@@ -19,4 +19,17 @@ describe('Empty board interaction', () => {
 
         cy.get('.highcharts-dashboards-edit-sidebar').should('be.visible');
     });
+
+    it('Removing row should remove all components and elements from it.', () => {
+        // Act
+        cy.grabComponent('Row');
+        cy.dropComponent('#container');
+        cy.get('.highcharts-dashboards-component-placeholder').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-row').find('.highcharts-dashboards-edit-menu-destroy').click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click({ force: true });
+
+        // Assert
+        cy.get('.highcharts-dashboards-edit-resize-snap-y').should('not.be.visible');
+        cy.get('.highcharts-dashboards-row').should('not.exist');
+    });
 });

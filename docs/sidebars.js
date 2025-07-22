@@ -126,6 +126,8 @@ module.exports = {
             'grid/columns',
             'grid/header',
             'grid/cell-editing',
+            'grid/cell-renderers',
+            'grid/sparklines',
             'grid/events',
             {
                 'Theming': [
@@ -200,7 +202,7 @@ module.exports = {
         'Advanced chart features': [
             'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
-            'advanced-chart-features/annotations-and-fibonacci-retracements',
+            'advanced-chart-features/creating-advanced-annotations',
             'advanced-chart-features/annotations-gui',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/breadcrumbs',
@@ -300,7 +302,8 @@ module.exports = {
             'react/series-and-chart-types',
             'react/options',
             'react/options-component-format',
-            'react/component-children',
+            'react/nextjs',
+            'react/component-children'
         ]
     }
 };

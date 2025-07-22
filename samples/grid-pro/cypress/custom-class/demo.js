@@ -14,7 +14,9 @@ Grid.grid('container', {
     columnDefaults: {
         cells: {
             className: '{#if (gt value 100)}greater-than-100 second-class{/if}',
-            editable: true
+            editMode: {
+                enabled: true
+            }
         },
         header: {
             className: 'header-cell-custom-class-{column.id}'
@@ -22,7 +24,8 @@ Grid.grid('container', {
     },
     columns: [{
         id: 'weight',
-        className: 'custom-column-class-name'
+        className: 'custom-column-class-name',
+        width: '15%'
     }]
 }, true).then(dg => {
     window.grid = dg;

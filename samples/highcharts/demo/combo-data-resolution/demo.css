@@ -23,7 +23,7 @@
 }
 
 pre {
-    visibility: hidden;
+    display: none;
 }
 
 .highcharts-description {

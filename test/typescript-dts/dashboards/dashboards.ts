@@ -57,17 +57,49 @@ function test_grid() {
         dataTable: {
             columns: {
                 a: new Float32Array([1, 2, 3]),
+                sparklines: [
+                    '1, 3, 2',
+                    '2, 1, 3',
+                    '3, 2, 1'
+                ]
             }
         },
         columnDefaults: {
             cells: {
-                editable: true
+                editMode: {
+                    enabled: true
+                }
             }
+        },
+        credits: {
+            enabled: false
         },
         columns: [{
             id: 'a',
             cells: {
-                editable: true
+                editMode: {
+                    enabled: true
+                }
+            }
+        }, {
+            id: 'sparklines',
+            dataType: 'string',
+            cells: {
+                renderer: {
+                    type: 'sparkline',
+                    chartOptions: {
+                        chart: {
+                            type: 'line'
+                        }
+                    }
+                },
+                editMode: {
+                    renderer: {
+                        type: 'textInput',
+                        disabled: true
+                    },
+                    validationRules: ['notEmpty']
+                }
             }
         }],
         events: {

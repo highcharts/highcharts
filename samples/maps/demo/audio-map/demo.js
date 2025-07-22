@@ -26,7 +26,11 @@
         },
         legend: {
             layout: 'vertical',
-            backgroundColor: 'rgba(255,255,255,0.85)',
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-background-color, white),
+                transparent 15%
+            )`,
             floating: true,
             verticalAlign: 'bottom',
             align: 'left',
@@ -37,10 +41,11 @@
             max: 1000,
             type: 'logarithmic',
             stops: [
-                [0, '#0B4C63'],
-                [0.5, '#7350BB'],
-                [0.7, '#3CD391'],
-                [0.9, '#4AA0FF']
+                [0, 'rgba(68, 1, 84, 1)'],
+                [0.225, 'rgba(59, 82, 139, 1)'],
+                [0.45, 'rgba(33, 145, 140, 1)'],
+                [0.675, 'rgba(94, 201, 98, 1)'],
+                [0.9, 'rgba(253, 231, 37, 1)']
             ],
             marker: {
                 color: '#343'
