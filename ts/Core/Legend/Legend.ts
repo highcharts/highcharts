@@ -1276,8 +1276,9 @@ class Legend {
             // colorAxis label layout
             this.group.placed = false;
         }
+
         this.group.align(merge(options, {
-            width: this.legendWidth,
+            width: this.maxLegendWidth || this.legendWidth,
             height: this.legendHeight,
             verticalAlign: this.proximate ? 'top' : options.verticalAlign
         }), true, alignTo);
