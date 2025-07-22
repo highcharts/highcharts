@@ -921,8 +921,8 @@ class Grid {
 
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
-        if (tableOptions instanceof DataTable) {
-            this.dataTable = tableOptions;
+        if ((tableOptions as DataTable)?.clone) {
+            this.dataTable = tableOptions as DataTable;
             this.presentationTable = this.dataTable.modified;
             return;
         }

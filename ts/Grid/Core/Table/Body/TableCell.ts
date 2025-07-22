@@ -172,6 +172,7 @@ class TableCell extends Cell {
             rowTableIndex,
             this.value
         );
+        vp.grid.querying.shouldBeUpdated = true;
 
         if (vp.grid.querying.getModifiers().length < 1) {
             return false;
