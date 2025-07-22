@@ -283,4 +283,33 @@ test.describe('createChart', () => {
         });
     });
 
+    test('Custom Highcharts instance', async ({ page }) => {
+        const HC = await page.evaluateHandle<typeof Highcharts>(async () => {
+            // @ts-expect-error cannot find import
+            const esmHC = (await import('https://code.highcharts.com/esm/highcharts.js')).default;
+
+            esmHC.setOptions({
+                title: {
+                    text: 'CUSTOM DEFAULT TEXT'
+                }
+            });
+
+            return esmHC;
+        });
+
+        const chart = await createChart(page, {}, { HC });
+
+        expect(
+            await chart.evaluate(c => c.options.title)
+        ).toHaveProperty('text', 'CUSTOM DEFAULT TEXT');
+    });
+
+    test('css property', async ({ page }) => {
+        await createChart(page, {}, { css: 'body { background-color: orange; }' });
+
+        const bgColor = await page.locator('body')
+            .evaluate(el => window.getComputedStyle(el).backgroundColor);
+
+        expect(bgColor).toBe('rgb(255, 165, 0)');
+    });
 });
