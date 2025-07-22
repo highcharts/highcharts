@@ -112,13 +112,13 @@ describe('Rendering types.', () => {
 
     // Number
     it('Number as a string.', () => {
-        cy.get('tr[data-row-index="2"] td[data-column-id="number_numberInput"]')
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_numberInput"]')
             .eq(0)
             .should('be.visible')
             .find('input')
             .should('not.exist');
 
-        cy.get('tr[data-row-index="2"] td[data-column-id="number_numberInput"]')
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_numberInput"]')
             .eq(0)
             .contains('3');
     });
@@ -131,11 +131,22 @@ describe('Rendering types.', () => {
             .should('exist');
     });
 
-    it('Numbet as a input, when editing.', () => {
-        cy.get('tr[data-row-index="2"] td[data-column-id="number_numberInput"]')
+    it('Number as a input, when editing.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_numberInput"]')
             .eq(0)
             .dblclick()
             .find('input')
             .should('exist');
+    });
+
+    it('Number input attributes.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_numberInput"]')
+            .eq(0)
+            .dblclick()
+            .find('input')
+            .should('exist')
+            .should('have.attr', 'step', '1')
+            .should('have.attr', 'min', '0')
+            .should('have.attr', 'max', '10');
     });
 });
