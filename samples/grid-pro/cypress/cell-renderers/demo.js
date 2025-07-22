@@ -7,7 +7,7 @@ Grid.grid('container', {
             checkbox_checkbox: [true, false, true],
             text_textInput: ['Alpha', 'Beta', 'Gamma'],
             textInput_textInput: ['Alpha', 'Beta', 'Gamma'],
-            number_numberInput: [1, 2, 3],
+            text_numberInput: [1, 2, 3],
             numberInput_numberInput: [1, 2, 3],
             text_select: ['R', 'B', 'G'],
             select_select: ['R', 'B', 'G'],
