@@ -92,7 +92,7 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
         input.name = cell.column.id + '-' + cell.row.id;
 
         if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]):void => {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
                 input.setAttribute(key, value);
             });
         }
