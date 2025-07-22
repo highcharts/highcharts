@@ -203,10 +203,15 @@ export interface ResizingOptions {
     enabled?: boolean;
 
     /**
-     * Resizing mode of the column widths. If `adjacent`, resizing will change
-     * the width of the neighboring columns, but the rest will remain in the
-     * same place. If `independent`, the columns will have a fixed width, only
-     * the resized column will be affected.
+     * Determines how column widths are adjusted when resizing.
+     * - `'adjacent'`: Resizing a column will also adjust the width of its
+     *   immediate neighbor, keeping the rest of the columns in the same place.
+     *   This is the default mode.
+     * - `'independent'`: Only the resized column is changed; all columns to
+     *   its right retain their current pixel widths, effectively "freezing"
+     *   their widths.
+     * - `'distributed'`: Only the resized column is affected; other column
+     *   width settings will not be changed.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing-mode | Resizing overview}
      *

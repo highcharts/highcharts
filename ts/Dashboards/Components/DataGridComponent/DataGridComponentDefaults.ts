@@ -77,6 +77,8 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         selectOptions: [{
                             name: 'adjacent'
                         }, {
+                            name: 'distributed'
+                        }, {
                             name: 'independent'
                         }]
                     }, {

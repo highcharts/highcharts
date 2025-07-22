@@ -27,6 +27,7 @@ import type Table from '../Table';
 import ResizingMode from './ResizingMode.js';
 import AdjacentResizingMode from './AdjacentResizingMode.js';
 import IndependentResizingMode from './IndependentResizingMode.js';
+import DistributedResizingMode from './DistributedResizingMode.js';
 
 
 /* *
@@ -47,6 +48,7 @@ namespace ColumnResizing {
      */
     export const types = {
         adjacent: AdjacentResizingMode,
+        distributed: DistributedResizingMode,
         independent: IndependentResizingMode
     };
 
