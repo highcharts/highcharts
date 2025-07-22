@@ -128,15 +128,7 @@ class ColumnsResizer {
     public renderColumnDragHandles(column: Column, cell: Cell): void {
         const vp = column.viewport;
 
-        if (
-            vp.columnsResizer && (
-                vp.columnDistribution.type !== 'full' ||
-                (
-                    vp.grid.enabledColumns &&
-                    column.index < vp.grid.enabledColumns.length - 1
-                )
-            )
-        ) {
+        if (vp.columnsResizer) {
             const handle = makeHTMLElement('div', {
                 className: Globals.getClassName('resizerHandles')
             }, cell.htmlElement);

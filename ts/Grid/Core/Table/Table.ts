@@ -28,7 +28,7 @@ import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
 import DataTable from '../../../Data/DataTable.js';
 import ColumnDistribution from './ColumnDistribution/ColumnDistribution.js';
-import ColumnDistributionStrategy from './ColumnDistribution/ColumnDistributionStrategy.js';
+import ResizingMode from './ColumnDistribution/ResizingMode.js';
 import Column from './Column.js';
 import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
@@ -121,7 +121,7 @@ class Table {
     /**
      * The column distribution.
      */
-    public readonly columnDistribution: ColumnDistributionStrategy;
+    public readonly columnDistribution: ResizingMode;
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
@@ -569,7 +569,7 @@ namespace Table {
     export interface ViewportStateMetadata {
         scrollTop: number;
         scrollLeft: number;
-        columnDistribution: ColumnDistributionStrategy;
+        columnDistribution: ResizingMode;
         focusCursor?: [number, number];
     }
 }

@@ -1,6 +1,6 @@
 /* *
  *
- *  Column Distribution Strategy abstract class
+ *  Resizing Mode abstract class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -28,7 +28,10 @@ import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
 
 import U from '../../../../Core/Utilities.js';
-const { getStyle } = U;
+const {
+    getStyle,
+    defined
+} = U;
 
 
 /* *
@@ -40,7 +43,7 @@ const { getStyle } = U;
 /**
  * Represents a column distribution strategy.
  */
-abstract class ColumnDistributionStrategy {
+abstract class ResizingMode {
 
     /* *
     *
@@ -77,6 +80,13 @@ abstract class ColumnDistributionStrategy {
     public columnWidths: Record<string, number> = {};
 
     /**
+     * Array of units for each column width value. Codified as:
+     * - `0` - px
+     * - `1` - %
+     */
+    public columnWidthUnits: Record<string, number> = {};
+
+    /**
      * Whether the column distribution strategy is invalidated. This flag is
      * used to determine whether the column distribution strategy metadata
      * should be maintained when the table is destroyed and recreated.
@@ -108,19 +118,6 @@ abstract class ColumnDistributionStrategy {
     * */
 
     /**
-     * Performs important calculations when the column is loaded.
-     *
-     * @param column
-     * The column that is loaded.
-     */
-    protected abstract loadColumn(column: Column): void;
-
-    /**
-     * Returns the column's current width in pixels.
-     */
-    public abstract getColumnWidth(column: Column): number;
-
-    /**
      * Resizes the column by the given diff of pixels.
      *
      * @param resizer
@@ -130,6 +127,67 @@ abstract class ColumnDistributionStrategy {
      * The X position difference in pixels.
      */
     public abstract resize(resizer: ColumnsResizer, diff: number): void;
+
+    /**
+     * Returns the column's current width in pixels.
+     *
+     * @param column
+     * The column to get the width for.
+     *
+     * @returns
+     * The column's current width in pixels.
+     */
+    public getColumnWidth(column: Column): number {
+        const vp = this.viewport;
+        const widthValue = this.columnWidths[column.id];
+        const minWidth = ResizingMode.getMinWidth(column);
+
+        if (!defined(widthValue)) {
+            const freeWidth =
+                vp.tbodyElement.clientWidth - this.calculateOccupiedWidth();
+            const freeColumns =
+                (vp.grid.enabledColumns?.length || 0) -
+                Object.keys(this.columnWidths).length;
+
+            // If undefined width:
+            return Math.max(freeWidth / freeColumns, minWidth);
+        }
+
+        if (this.columnWidthUnits[column.id] === 0) {
+            // If px:
+            return widthValue;
+        }
+
+        // If %:
+        return Math.max(vp.getWidthFromRatio(widthValue / 100), minWidth);
+    }
+
+    /**
+     * Performs important calculations when the column is loaded.
+     *
+     * @param column
+     * The column that is loaded.
+     */
+    public loadColumn(column: Column): void {
+        const rawWidth = column.options.width;
+        if (!rawWidth) {
+            return;
+        }
+
+        let value: number;
+        let unitCode: number = 0;
+
+        if (typeof rawWidth === 'number') {
+            value = rawWidth;
+            unitCode = 0;
+        } else {
+            value = parseFloat(rawWidth);
+            unitCode = rawWidth.charAt(rawWidth.length - 1) === '%' ? 1 : 0;
+        }
+
+        this.columnWidthUnits[column.id] = unitCode;
+        this.columnWidths[column.id] = value;
+    }
 
     /**
      * Loads the column to the distribution strategy. Should be called before
@@ -146,10 +204,6 @@ abstract class ColumnDistributionStrategy {
      * Recaulculates the changing dimentions of the table.
      */
     public reflow(): void {
-        if (this.type === 'full') {
-            return;
-        }
-
         const vp = this.viewport;
 
         let rowsWidth = 0;
@@ -187,7 +241,7 @@ abstract class ColumnDistributionStrategy {
             (getStyle(el, 'border-right', true) || 0)
         );
 
-        let result = ColumnDistributionStrategy.MIN_COLUMN_WIDTH;
+        let result = ResizingMode.MIN_COLUMN_WIDTH;
         if (tableColumnEl) {
             result = Math.max(result, getElPaddings(tableColumnEl));
         }
@@ -197,6 +251,32 @@ abstract class ColumnDistributionStrategy {
         return result;
     }
 
+    /**
+     * Calculates defined (px and %) widths of all columns with non-undefined
+     * widths in the grid. Total in px.
+     */
+    private calculateOccupiedWidth(): number {
+        const vp = this.viewport;
+        let occupiedWidth = 0;
+        let unit: number, width: number;
+
+        const columnIds = Object.keys(this.columnWidths);
+        let columnId: string;
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            columnId = columnIds[i];
+            unit = this.columnWidthUnits[columnId];
+
+            if (unit === 0) {
+                occupiedWidth += this.columnWidths[columnId];
+                continue;
+            }
+
+            width = this.columnWidths[columnId];
+            occupiedWidth += vp.getWidthFromRatio(width / 100);
+        }
+
+        return occupiedWidth;
+    }
 }
 
 
@@ -206,4 +286,4 @@ abstract class ColumnDistributionStrategy {
  *
  * */
 
-export default ColumnDistributionStrategy;
+export default ResizingMode;

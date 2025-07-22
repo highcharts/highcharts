@@ -24,13 +24,9 @@
 
 import type Table from '../Table';
 
-import DistributionStrategy from './ColumnDistributionStrategy.js';
-import MixedDistributionStrategy from './MixedDistributionStrategy.js';
-import FixedDistributionStrategy from './FixedDistributionStrategy.js';
-import FullDistributionStrategy from './FullDistributionStrategy.js';
-
-import U from '../../../../Core/Utilities.js';
-const { defined } = U;
+import ResizingMode from './ResizingMode.js';
+import AdjacentResizingMode from './AdjacentResizingMode.js';
+import IndependentResizingMode from './IndependentResizingMode.js';
 
 
 /* *
@@ -44,48 +40,17 @@ namespace ColumnDistribution {
     /**
      * Abstract class representing a column distribution strategy.
      */
-    export const AbstractStrategy = DistributionStrategy;
+    export const AbstractStrategy = ResizingMode;
 
     /**
      * Registry of column distribution strategies.
      */
     export const types = {
-        mixed: MixedDistributionStrategy,
-        fixed: FixedDistributionStrategy,
-        full: FullDistributionStrategy
+        adjacent: AdjacentResizingMode,
+        independent: IndependentResizingMode
     };
 
     export type StrategyType = keyof typeof types;
-
-    /**
-     * Returns the column distribution of the table according to the options:
-     * 1. If `columns.resizing.mode` defined, use it. If not:
-     * 2. If any column has a width defined, use `mixed`. If not:
-     * 3. Use `full`.
-     *
-     * @param viewport
-     * The table that the column distribution strategy is applied to.
-     */
-    function assumeDistributionType(viewport: Table): StrategyType {
-        const { options } = viewport.grid;
-        const colRendering = options?.rendering?.columns;
-        const result = colRendering?.resizing?.mode ||
-            colRendering?.distribution;
-
-        if (result) {
-            return result;
-        }
-
-        if (
-            options?.columns?.some(
-                (column): boolean => defined(column.width)
-            ) || defined(options?.columnDefaults?.width)
-        ) {
-            return 'mixed';
-        }
-
-        return 'full';
-    }
 
     /**
      * Creates a new column distribution strategy instance based on the
@@ -97,8 +62,11 @@ namespace ColumnDistribution {
      * @returns
      * The proper column distribution strategy.
      */
-    export function initStrategy(viewport: Table): DistributionStrategy {
-        return new types[assumeDistributionType(viewport)](viewport);
+    export function initStrategy(viewport: Table): ResizingMode {
+        return new types[
+            viewport.grid.options?.rendering?.columns?.resizing?.mode ||
+            'adjacent'
+        ](viewport);
     }
 
 }
