@@ -92,11 +92,6 @@ Grid.grid('container', {
                     min: '0',
                     max: '10'
                 }
-            },
-            editMode: {
-                renderer: {
-                    type: 'numberInput'
-                }
             }
         }
     }, {
