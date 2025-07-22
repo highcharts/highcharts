@@ -782,7 +782,6 @@ class Legend {
                     ) - itemExtraWidth,
                     legend.maxLegendWidth
                 ) + 'px'
-
             });
         }
 
