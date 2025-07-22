@@ -12,9 +12,10 @@ import { join, extname } from 'node:path/posix';
 import { test as base } from '@playwright/test';
 
 const contentTypes: Record<string, string> = {
-    js: 'application/javascript',
-    css: 'text/css',
-    csv: 'text/csv'
+    '.js': 'application/javascript',
+    '.json': 'application/json',
+    '.css': 'text/css',
+    '.csv': 'text/csv'
 };
 
 async function replaceHCCode(route: Route) {
@@ -42,9 +43,7 @@ async function replaceHCCode(route: Route) {
         await route.fulfill({
             status: 200,
             body,
-            headers: {
-                'Content-Type': contentTypes[extname(localPath)]
-            }
+            contentType: contentTypes[extname(localPath)]
         });
     } catch {
         await route.abort();
