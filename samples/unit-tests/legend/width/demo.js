@@ -3,13 +3,11 @@ QUnit.test('Legend width', function (assert) {
             chart: {
                 width: 400
             },
-
             legend: {
                 align: 'right',
                 verticalAlign: 'middle',
                 borderWidth: 1
             },
-
             series: [
                 {
                     data: [6, 4, 2],
