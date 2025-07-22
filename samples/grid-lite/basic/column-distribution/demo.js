@@ -11,7 +11,7 @@ Grid.grid('container', {
     rendering: {
         columns: {
             resizing: {
-                mode: 'independent'
+                mode: 'adjacent'
             }
         }
     },

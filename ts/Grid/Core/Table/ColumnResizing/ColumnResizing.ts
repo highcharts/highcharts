@@ -35,7 +35,7 @@ import IndependentResizingMode from './IndependentResizingMode.js';
  *
  * */
 
-namespace ColumnDistribution {
+namespace ColumnResizing {
 
     /**
      * Abstract class representing a column distribution strategy.
@@ -50,7 +50,7 @@ namespace ColumnDistribution {
         independent: IndependentResizingMode
     };
 
-    export type StrategyType = keyof typeof types;
+    export type ModeType = keyof typeof types;
 
     /**
      * Creates a new column distribution strategy instance based on the
@@ -78,4 +78,4 @@ namespace ColumnDistribution {
  *
  * */
 
-export default ColumnDistribution;
+export default ColumnResizing;

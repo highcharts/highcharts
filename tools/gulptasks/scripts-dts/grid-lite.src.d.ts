@@ -10,7 +10,7 @@ import Defaults from "./es-modules/Grid/Core/Defaults";
 
 export { default as Grid } from './es-modules/Grid/Core/Grid.js';
 export { default as Column } from './es-modules/Grid/Core/Table/Column.js';
-export { default as ColumnDistribution } from "./es-modules/Grid/Core/Table/ColumnDistribution/ColumnDistribution";
+export { default as ColumnResizing } from "./es-modules/Grid/Core/Table/ColumnResizing/ColumnResizing";
 export { default as TableRow } from './es-modules/Grid/Core/Table/Body/TableRow.js';
 export { default as TableCell } from './es-modules/Grid/Core/Table/Body/TableCell.js';
 export { default as Options } from './es-modules/Grid/Core/Options.js';

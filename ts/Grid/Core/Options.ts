@@ -26,7 +26,7 @@ import type {
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
 import type { PaginationOptions } from './Pagination/PaginationOptions';
-import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistribution';
+import type ColumnResizing from './Table/ColumnResizing/ColumnResizing';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
@@ -43,7 +43,7 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 /**
  * The resizing strategy of the columns in the grid structure.
  */
-export type ColumnDistributionType = ColumnDistribution.StrategyType;
+export type ColumnResizingMode = ColumnResizing.ModeType;
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -168,7 +168,7 @@ export interface ColumnsSettings {
      * @deprecated
      * Use `resizing.mode` instead.
      */
-    distribution?: ColumnDistributionType;
+    distribution?: ColumnResizingMode;
 
     /**
      * Columns included in the grid structure - contains the columns IDs.
@@ -217,7 +217,7 @@ export interface ResizingOptions {
      *
      * @default undefined
      */
-    mode?: ColumnDistributionType;
+    mode?: ColumnResizingMode;
 }
 
 /**

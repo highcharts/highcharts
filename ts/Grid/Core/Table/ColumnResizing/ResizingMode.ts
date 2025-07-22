@@ -22,7 +22,7 @@
  *
  * */
 
-import type { ColumnDistributionType } from '../../Options';
+import type { ColumnResizingMode } from '../../Options';
 import type Table from '../Table';
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
@@ -67,7 +67,7 @@ abstract class ResizingMode {
     /**
      * The type of the column distribution strategy.
      */
-    public abstract readonly type: ColumnDistributionType;
+    public abstract readonly type: ColumnResizingMode;
 
     /**
      * The table that the column distribution strategy is applied to.

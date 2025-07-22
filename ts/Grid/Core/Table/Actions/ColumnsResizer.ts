@@ -157,7 +157,7 @@ class ColumnsResizer {
         const diff = e.pageX - (this.dragStartX || 0);
         const vp = this.viewport;
 
-        vp.columnDistribution.resize(this, diff);
+        vp.columnResizing.resize(this, diff);
 
         vp.reflow();
         vp.rowsVirtualizer.adjustRowHeights();
