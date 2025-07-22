@@ -63,10 +63,21 @@ namespace ColumnResizing {
      * The proper column distribution strategy.
      */
     export function initStrategy(viewport: Table): ResizingMode {
-        return new types[
+        const strategyName =
             viewport.grid.options?.rendering?.columns?.resizing?.mode ||
-            'adjacent'
-        ](viewport);
+            'adjacent';
+        let StrategyConstructor = types[strategyName];
+
+        if (!StrategyConstructor) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                `Unknown column resizing mode: '${strategyName}'. Applied ` +
+                'default \'adjacent\' mode.'
+            );
+            StrategyConstructor = types.adjacent;
+        }
+
+        return new StrategyConstructor(viewport);
     }
 
 }

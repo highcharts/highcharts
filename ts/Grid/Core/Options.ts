@@ -203,19 +203,14 @@ export interface ResizingOptions {
     enabled?: boolean;
 
     /**
-     * Resizing mode of the columns. If `full`, the columns will be
-     * distributed so that the first and the last column are at the edges of
-     * the grid. If `fixed`, the columns will have a fixed width, only the
-     * resized column will be affected. If `mixed`, resizing will change the
-     * width of the neighboring columns, but the rest will remain in the same
-     * place.
+     * Resizing mode of the column widths. If `adjacent`, resizing will change
+     * the width of the neighboring columns, but the rest will remain in the
+     * same place. If `independent`, the columns will have a fixed width, only
+     * the resized column will be affected.
      *
-     * If `undefined`, the default column rensizing strategy will be used, which
-     * is `mixed`, if `width` is set for any column, otherwise `full`.
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing-mode | Resizing overview}
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-distribution | Resizing overview}
-     *
-     * @default undefined
+     * @default 'adjacent'
      */
     mode?: ColumnResizingMode;
 }

@@ -1,25 +1,3 @@
-class CustomDistributionStrategy extends Grid.ColumnDistribution.types.mixed {
-    constructor(viewport) {
-        super(viewport);
-        this.type = 'custom';
-    }
-
-    resize(resizer, diff) {
-        const column = resizer.draggedColumn;
-        if (!column) {
-            return;
-        }
-
-        this.columnWidths[column.id] = Math.max(
-            (resizer.columnStartWidth || 0) + diff,
-            CustomDistributionStrategy.getMinWidth(column)
-        );
-        this.columnWidthUnits[column.id] = 0; // Always save in px
-    }
-}
-
-Grid.ColumnDistribution.types.custom = CustomDistributionStrategy;
-
 Grid.grid('container', {
     dataTable: {
         columns: {
@@ -33,7 +11,7 @@ Grid.grid('container', {
     rendering: {
         columns: {
             resizing: {
-                mode: 'custom'
+                mode: 'independent'
             }
         }
     },

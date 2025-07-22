@@ -1,5 +1,5 @@
 ---
- name: Column distribution Demo
+ name: Column resizing mode Demo
  authors:
    - Dawid Dragula
    - Sebastian Bochan

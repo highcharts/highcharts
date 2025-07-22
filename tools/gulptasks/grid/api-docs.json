@@ -27,11 +27,10 @@
         "../../../ts/Grid/Core/GridUtils.ts",
         "../../../ts/Grid/Core/Options.ts",
 
-        "../../../ts/Grid/Core/Table/ColumnDistribution/ColumnDistribution.ts",
-        "../../../ts/Grid/Core/Table/ColumnDistribution/ColumnDistributionStrategy.ts",
-        "../../../ts/Grid/Core/Table/ColumnDistribution/FixedDistributionStrategy.ts",
-        "../../../ts/Grid/Core/Table/ColumnDistribution/FullDistributionStrategy.ts",
-        "../../../ts/Grid/Core/Table/ColumnDistribution/MixedDistributionStrategy.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/ColumnResizing.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/ResizingMode.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/AdjacentResizingMode.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/IndependentResizingMode.ts",
 
         "../../../ts/Grid/Core/Table/CellContent/CellContent.ts",
         "../../../ts/Grid/Core/Table/CellContent/TextContent.ts",
