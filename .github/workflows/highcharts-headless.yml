@@ -114,6 +114,8 @@ jobs:
         with:
           firefox-version: latest-esr
       - uses: browser-actions/setup-geckodriver@latest
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Display
         run: |
           chromedriver --url-base=/wd/hub &
