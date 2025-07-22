@@ -55,7 +55,7 @@ Read more about components synchronization [here](https://www.highcharts.com/doc
 
 ### Crossfilter Example
 
-<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/crossfilter" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/crossfilter?force-light-theme" allow="fullscreen"></iframe>
 
 In the [crossfilter demo](https://highcharts.com/demo/dashboards/crossfilter)
 you see the setup to limit the amount of data points. You have to define column
