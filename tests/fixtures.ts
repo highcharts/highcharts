@@ -215,26 +215,27 @@ export type CreateChartConfig = {
     scriptType: 'module';
     modules: string[];
     chartConstructor: 'chart' | 'stockChart' | 'ganttChart' | 'mapChart';
+    HC: JSHandle<typeof Highcharts> | undefined,
+    css: string;
 };
 
 const defaultCreateChartConfig: CreateChartConfig = {
     container: 'container',
     scriptType: void 0,
     modules: [],
-    chartConstructor: 'chart'
+    chartConstructor: 'chart',
+    HC: undefined,
+    css: ''
 };
 
-export async function createChart(
-    page: Page,
-    chartConfig: DeepPartial<typeof Highcharts>,
-    createChartConfig?: Partial<CreateChartConfig>
-): Promise<JSHandle<ReturnType<typeof Highcharts.chart>>> {
 
-    const ccc: CreateChartConfig = {
-        ...defaultCreateChartConfig,
-        ...createChartConfig
-    };
-
+export function chartTemplate({
+    container,
+    modules,
+    chartConstructor,
+    HC,
+    css
+}: CreateChartConfig): string {
     const constructorToModule: Record<CreateChartConfig['chartConstructor'], string> = {
         'chart': 'highcharts.src.js',
         'stockChart': 'stock/highstock.src.js',
@@ -242,53 +243,64 @@ export async function createChart(
         'mapChart': 'maps/highmaps.src.js'
     };
 
+    const isIdContainer =  !!(typeof container === 'string');
 
-    function template({
-        container,
-        modules,
-        chartConstructor
-    }: CreateChartConfig): string {
-        const isIdContainer = !!(typeof container === 'string');
+    const moduleSet = new Set<string>([
+        HC ?  undefined : constructorToModule[chartConstructor],
+        ...modules
+    ]);
 
-        const moduleSet = new Set<string>([
-            constructorToModule[chartConstructor],
-            ...modules
-        ]);
+    const moduleString = Array.from(moduleSet)
+        .map(m => {
+            if(!m) return '';
 
-        const moduleString = Array.from(moduleSet)
-            .map(m => {
-                const url = new URL(m, 'https://code.highcharts.com');
-                return `<script src="${url.href}"></script>`;
-            })
-            .join('\n');
+            const url = new URL(m, 'https://code.highcharts.com');
+            return `<script src="${url.href}"></script>`;
+        })
+        .join('\n');
 
-        return `<html>
-            <head>
-                ${moduleString}
-            </head>
-            <body>
-                ${isIdContainer ? `<div id="${container}"></div>` : ''}
-            </body>
-        </html>`;
+    return `<html>
+    <head>
+        ${moduleString}
+        <style>
+            ${css}
+        </style
+    </head>
+    <body>
+        ${isIdContainer ? `<div id="${container}"></div>` : ''}
+    </body>
+</html>`;
+}
+
+export async function createChart(
+    page: Page,
+    chartConfig: Partial<Highcharts.Options>,
+    createChartConfig?: Partial<CreateChartConfig>
+): Promise<JSHandle<ReturnType<typeof Highcharts.chart>>> {
+    const ccc: CreateChartConfig = {
+        ...defaultCreateChartConfig,
+        ...createChartConfig
+    };
+
+    await page.setContent(chartTemplate(ccc));
+
+    if(!ccc.HC){
+        await page.waitForFunction(() => !!window.Highcharts);
     }
 
-    await page.setContent(template(ccc));
-    await page.waitForFunction(() => !!window.Highcharts);
-
     const handle = await page.evaluateHandle(
-        ([{ chartConstructor, container }, cc]) =>
+        ([{ chartConstructor, container, HC }, cc]) =>{
+            const HCInstance = HC ?? Highcharts;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-            Highcharts[chartConstructor](container, cc),
+            return HCInstance[chartConstructor](container, cc);
+        },
         [
             ccc,
             chartConfig
         ] as [CreateChartConfig, object]
     );
 
-    await page.waitForFunction(() => !!window.Highcharts.charts.length);
-
     return handle;
-
 }
 
 export { expect } from '@playwright/test';
