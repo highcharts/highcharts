@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures.ts';
+import { test, expect, createChart } from '../fixtures.ts';
 
 test.describe('unit-tests/chart/renderto equivalent', () => {
     test.beforeEach(async ({ page }) => {
@@ -34,8 +34,7 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
                         </div>
                     </div>
                 </body>
-            </html>`,
-            { waitUntil: 'networkidle' }
+            </html>`
         );
     });
 
@@ -181,57 +180,24 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
 
 test.describe('samples/unit-tests/polar/polar-zoom equivalent', () => {
     test('Arc shape', async ({ page }) => {
-        await page.setContent(
-            `<html>
-                <head>
-                    <script src="https://code.highcharts.com/highcharts.js"></script>
-                    <script src="https://code.highcharts.com/highcharts-more.js"></script>
-                </head>
-                <body>
-                    <div id="outer-outer">
-                        <div id="outer">
-                            <div id="container"></div>
-                        </div>
-                    </div>
-                </body>
-            </html>`,
-            { waitUntil: 'networkidle' }
-        );
-
-        const handle = await page.evaluateHandle(() => {
-            const createdChart = Highcharts.chart('container', {
+        const handle = await createChart(
+            page,
+            {
                 chart: {
                     zooming: {
                         type: 'xy'
                     },
                     polar: true,
-                    events: {
-                        selection() {
-                            if (!createdChart.custom) {
-                                createdChart.custom = {
-                                    selectionShape: ''
-                                };
-                            }
-
-                            createdChart.custom.selectionShape =
-                                (this.pointer as any)
-                                    .selectionMarker.element.getAttribute(
-                                        'd'
-                                    ) as string;
-
-                            return true;
-                        }
-                    }
                 },
                 series: [{
                     type: 'column',
                     data: [8, 7, 6, 5, 4, 3, 2, 1]
                 }]
-            });
-
-            return createdChart;
-        });
-
+            },
+            {
+                modules: ['highcharts-more.src.js']
+            }
+        );
 
         const createdChart = await handle.jsonValue();
         expect(createdChart).toHaveProperty('polar', true);
@@ -245,10 +211,11 @@ test.describe('samples/unit-tests/polar/polar-zoom equivalent', () => {
         await page.mouse.move(centerX - 50, centerY);
         await page.mouse.down();
         await page.mouse.move(centerX + 100, centerY);
-        await page.mouse.up();
 
-        const shape = await handle.evaluate(h => h.custom.selectionShape);
+        await expect(
+            page.locator('.highcharts-selection-marker')
+        ).toHaveAttribute('d', /\sA|a\s/gu) ;
 
-        expect(shape).toMatch(/\sA|a\s/gu);
+        await page.mouse.up(); // Not strictly neccessary, but keeping for now
     });
 });
