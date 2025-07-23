@@ -1,7 +1,23 @@
+import type { Page } from '@playwright/test';
 import { test, expect, createChart } from '../fixtures.ts';
 
 test.describe('unit-tests/chart/renderto equivalent', () => {
-    test.beforeEach(async ({ page }) => {
+    test.describe.configure({ mode: 'serial'});
+
+    // Set up page in advance to share browser between tests
+    // which saves setup time for each test
+    let page: Page;
+
+    test.beforeAll(async ({ browser }) => {
+        const context = await browser.newContext();
+        page = await context.newPage();
+    });
+
+    test.afterAll(async ({ browser }) => {
+        await browser.close();
+    });
+
+    test.beforeEach(async () => {
         const css = `
         #container {
             display: none;
@@ -38,7 +54,7 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
         );
     });
 
-    test('Container initially hidden (#6693)', async ({ page }) => {
+    test('Container initially hidden (#6693)', async () => {
         const height = await page.evaluate(() => {
             const outerOuter = document.createElement('div');
             outerOuter.style.visibility = 'hidden';
@@ -76,7 +92,7 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
         expect(height).toStrictEqual(300);
     });
 
-    test('Container originally detached (#5783)', async ({ page }) => {
+    test('Container originally detached (#5783)', async () => {
         const chart = await page.evaluateHandle(() => {
             const c = document.createElement('div');
             document.getElementById('container')?.appendChild(c);
