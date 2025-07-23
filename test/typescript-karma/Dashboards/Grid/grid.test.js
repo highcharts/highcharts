@@ -207,8 +207,6 @@ test('Grid custom sorting', async function (assert) {
     }, true);
     grid.viewport?.resizeObserver?.disconnect();
 
-    grid.viewport?.resizeObserver?.disconnect();
-
     await grid.viewport?.getColumn('weight')?.sorting?.setOrder('asc');
 
     assert.deepEqual(
