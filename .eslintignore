@@ -19,3 +19,4 @@ tools/jsdoc/storage/**/*.js
 tools/move-doclets.mjs
 ts/**/*.js
 vendor/**/*
+playwright.config.ts
