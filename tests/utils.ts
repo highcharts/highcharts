@@ -1,8 +1,10 @@
-import type { Page } from '@playwright/test';
+import type { JSHandle, Page } from '@playwright/test';
 
-export async function setTestingOptions(page: Page){
-    await page.evaluate(() => {
-        window.Highcharts.setOptions({
+export async function setTestingOptions(
+    page: Page, HC: JSHandle<typeof Highcharts> | undefined = undefined
+){
+    await page.evaluate(({ HC }) => {
+        (HC ?? window.Highcharts).setOptions({
             chart: {
                 animation: false
             },
@@ -67,5 +69,5 @@ export async function setTestingOptions(page: Page){
                 animation: false
             }
         });
-    })
+    }, { HC });
 }

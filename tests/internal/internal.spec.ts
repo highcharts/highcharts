@@ -229,7 +229,7 @@ test.describe('createChart', () => {
                 title: {
                     text: 'LOCATOR CHART'
                 }
-            } as any,
+            },
             {
                 container: await page.locator('.test').elementHandle()
             }
@@ -311,5 +311,57 @@ test.describe('createChart', () => {
             .evaluate(el => window.getComputedStyle(el).backgroundColor);
 
         expect(bgColor).toBe('rgb(255, 165, 0)');
+    });
+
+
+    test('most options combined', async ({ page }) => {
+        const HC = await page.evaluateHandle<typeof Highcharts>(async () => {
+            // @ts-expect-error cannot find import
+            await import('https://code.highcharts.com/esm/modules/stock-tools.src.js');
+            // @ts-expect-error cannot find import
+            return (await import('https://code.highcharts.com/esm/indicators/indicators-all.src.js')).default;
+        });
+
+        const chart = await createChart(
+            page,
+            {
+                chart: {
+                    styledMode: true
+                },
+                series: [
+                    {
+                        type: 'line',
+                        data: [1, 2, 3, 4]
+                    }
+                ]
+            },
+            {
+                HC,
+                modules: [], // cannot be combined with HC
+                css: `
+                        @import url("https://code.highcharts.com/css/highcharts.css");
+                        @import url("https://code.highcharts.com/css/stocktools/gui.css");
+                        @import url("https://code.highcharts.com/css/annotations/popup.css");
+
+                        #stock-container {
+                            height: 500px;
+                        }
+                    `,
+                chartConstructor: 'stockChart',
+                container: 'stock-container',
+                applyTestOptions: false
+            }
+        );
+
+
+        expect(
+            await chart.evaluate(c => c.options)
+        ).toHaveProperty('stockTools');
+
+        await page.getByRole('listitem', { name: 'Simple shapes' })
+            .getByRole('button').nth(1).click();
+
+        await expect(page.getByRole('listitem', { name: 'Label', exact: true }))
+            .toBeVisible();
     });
 });
