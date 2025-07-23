@@ -10,12 +10,14 @@ import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path/posix';
 
 import { test as base } from '@playwright/test';
+import { setTestingOptions } from './utils';
 
 const contentTypes: Record<string, string> = {
     '.js': 'application/javascript',
     '.json': 'application/json',
     '.css': 'text/css',
-    '.csv': 'text/csv'
+    '.csv': 'text/csv',
+    '.svg': 'image/svg+xml'
 };
 
 async function replaceHCCode(route: Route) {
@@ -27,9 +29,20 @@ async function replaceHCCode(route: Route) {
         relativePath = relativePath.replace('.js', '.src.js');
     }
 
+    let rootPath = 'code';
+
+    if (relativePath.includes('gfx')) {
+        rootPath = '';
+        const { preceding } =
+            relativePath.match(/(?<preceding>^.+)\/gfx/).groups;
+
+        relativePath = relativePath.replace(preceding, '');
+    }
+
     const localPath = join(
         __dirname,
-        '../code',
+        '..',
+        rootPath,
         relativePath
     );
 
@@ -211,23 +224,83 @@ export const test = base.extend<object>({
 });
 
 export type CreateChartConfig = {
+    /**
+     * The chart container. Can be a string or an `ElementHandle`
+     * If a string is given, the container will be created.
+     *
+     * @defaultValue `'container'`
+     *
+     * @example
+     * Providing an element:
+     * ```ts
+     *   await page.setContent('<div class="test">Test</div>');
+     *
+     *   const chart = await createChart(
+     *       page,
+     *       {},
+     *       {
+     *           container: await page.locator('.test').elementHandle()
+     *       }
+     *   );
+     * ```
+     */
     container: string | ElementHandle<HTMLElement | SVGElement>;
-    scriptType: 'module';
+    /**
+     * Highcharts modules to load.
+     * Only compatible with Highcharts loaded via `<script>`.
+     *
+     * @remarks
+     *
+     * @example
+     * Loading the accessibility module:
+     * ```js
+     * ['modules/accessibility.js']
+     * ```
+     */
     modules: string[];
+    /**
+     * The method called when creating the chart, i.e. `Highcharts.stockChart`.
+     * @defaultValue `'chart'`
+     */
     chartConstructor: 'chart' | 'stockChart' | 'ganttChart' | 'mapChart';
+    /**
+     * A custom Highcharts instance to use. If not provided, the
+     * Highcharts bundle will be determined from the `chartConstructor` option
+     * and loaded as a classic script.
+     *
+     * @example
+     * Setting up a chart using esm modules:
+     * ```ts
+     * const HC = await page.evaluateHandle<typeof Highcharts>(async () => {
+     *    await import('https://code.highcharts.com/esm/modules/stock-tools.src.js');
+     *    return (await import('https://code.highcharts.com/esm/indicators/indicators-all.src.js')).default;
+     * });
+     *
+     * const chart = await createChart(page, {}, { HC });
+     * ```
+     */
     HC: JSHandle<typeof Highcharts> | undefined,
+    /**
+     * CSS to append to the HTML body.
+     */
     css: string;
+    /**
+     *  Whether to apply global Highcharts options that disables animations and
+     *  certain features.
+     *
+     *  @defaultValue `true`
+     */
+    applyTestOptions: boolean;
 };
 
 const defaultCreateChartConfig: CreateChartConfig = {
     container: 'container',
-    scriptType: void 0,
     modules: [],
     chartConstructor: 'chart',
     HC: undefined,
-    css: ''
+    css: '',
+    applyTestOptions: true
 };
-
 
 export function chartTemplate({
     container,
@@ -250,8 +323,8 @@ export function chartTemplate({
         ...modules
     ]);
 
-    const moduleString = Array.from(moduleSet)
-        .map(m => {
+    const scriptString = Array.from(moduleSet)
+        .map((m: string) => {
             if(!m) return '';
 
             const url = new URL(m, 'https://code.highcharts.com');
@@ -261,7 +334,7 @@ export function chartTemplate({
 
     return `<html>
     <head>
-        ${moduleString}
+        ${scriptString}
         <style>
             ${css}
         </style
@@ -282,10 +355,19 @@ export async function createChart(
         ...createChartConfig
     };
 
+    if (ccc.modules.length && ccc.HC) {
+        throw new Error('Combining `modules` and `HC` option is not allowed (yet)');
+    }
+
     await page.setContent(chartTemplate(ccc));
 
-    if(!ccc.HC){
+
+    if (!ccc.HC) {
         await page.waitForFunction(() => !!window.Highcharts);
+    }
+
+    if (ccc.applyTestOptions) {
+        await setTestingOptions(page, ccc.HC);
     }
 
     const handle = await page.evaluateHandle(
