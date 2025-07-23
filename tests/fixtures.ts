@@ -361,7 +361,6 @@ export async function createChart(
 
     await page.setContent(chartTemplate(ccc));
 
-
     if (!ccc.HC) {
         await page.waitForFunction(() => !!window.Highcharts);
     }
