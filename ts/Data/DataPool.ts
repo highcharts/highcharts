@@ -25,6 +25,14 @@ import type DataEvent from './DataEvent';
 import type DataConnectorType from './Connectors/DataConnectorType';
 import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* API docs */
+import type CSVConnectorOptions from './Connectors/CSVConnectorOptions';
+import type GoogleSheetsConnectorOptions from './Connectors/GoogleSheetsConnectorOptions';
+import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptions';
+import type JSONConnectorOptions from './Connectors/JSONConnectorOptions';
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
 import DataConnector from './Connectors/DataConnector.js';
 import U from '../Core/Utilities.js';
 const {
