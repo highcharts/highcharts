@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { test, expect, createChart } from '../fixtures.ts';
+import { test, expect, createChart, setupRoutes } from '../fixtures.ts';
 
 test.describe('unit-tests/chart/renderto equivalent', () => {
     test.describe.configure({ mode: 'serial'});
@@ -11,6 +11,7 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
     test.beforeAll(async ({ browser }) => {
         const context = await browser.newContext();
         page = await context.newPage();
+        await setupRoutes(page); // need to setup routes separately
     });
 
     test.afterAll(async ({ browser }) => {

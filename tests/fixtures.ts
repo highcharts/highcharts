@@ -3,7 +3,7 @@ import type {
     Request,
     Page,
     JSHandle,
-    ElementHandle
+    ElementHandle,
 } from '@playwright/test';
 
 import { readFile } from 'node:fs/promises';
@@ -191,34 +191,38 @@ export async function replaceSampleData(route: Route) {
     throw new Error('Failed to find a matching dataset');
 }
 
-export const test = base.extend<object>({
-    page: async ({ page }, use) => {
-        if (!process.env.NO_REWRITES) {
-            const routes: RouteType[] = [
-                {
-                    pattern: '**/code.highcharts.com/**',
-                    handler: replaceHCCode
-                },
-                {
-                    pattern: '**/**/{samples/data}/**',
-                    handler: replaceSampleData
-                },
-                {
-                    pattern: 'https://demo-live-data.highcharts.com/**',
-                    handler: replaceSampleData
-                },
-                {
-                    pattern: '**/**/mapdata/**',
-                    handler: replaceMapData
-                },
-                ...(await getJSONSources())
-            ];
+export async function setupRoutes(page: Page){
+    if (!process.env.NO_REWRITES) {
+        const routes: RouteType[] = [
+            {
+                pattern: '**/code.highcharts.com/**',
+                handler: replaceHCCode
+            },
+            {
+                pattern: '**/**/{samples/data}/**',
+                handler: replaceSampleData
+            },
+            {
+                pattern: 'https://demo-live-data.highcharts.com/**',
+                handler: replaceSampleData
+            },
+            {
+                pattern: '**/**/mapdata/**',
+                handler: replaceMapData
+            },
+            ...(await getJSONSources())
+        ];
 
-            for (const route of routes) {
-                await page.route(route.pattern, route.handler);
-            }
+        for (const route of routes) {
+            await page.route(route.pattern, route.handler);
         }
+    }
+}
 
+
+export const test = base.extend({
+    page: async ({ page }, use) => {
+        await setupRoutes(page);
         await use(page);
     }
 });
