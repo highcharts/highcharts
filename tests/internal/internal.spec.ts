@@ -37,29 +37,27 @@ test('Redirects are applied for code', async ({ page }) => {
     await expect(page.locator('#container'))
         .toHaveAttribute('data-highcharts-chart', '0');
 
-    const { annotations } = test.info();
-
-    expect(annotations).toContainEqual({
+    await expect.poll(()=> test.info().annotations).toContainEqual({
         type: 'redirect',
         description: 'https://code.highcharts.com/highcharts.src.js --> code/highcharts.src.js'
     });
 
-    expect(annotations).toContainEqual({
+    await expect.poll(()=> test.info().annotations).toContainEqual({
         type: 'redirect',
         description: 'https://code.highcharts.com/maps/highmaps.js --> code/highmaps.src.js'
     });
 
-    expect(annotations).toContainEqual({
+    await expect.poll(()=> test.info().annotations).toContainEqual({
         type: 'redirect',
         description: 'https://code.highcharts.com/esm/highcharts-gantt.js --> code/esm/highcharts-gantt.src.js'
     });
 
-    expect(annotations).toContainEqual({
+    await expect.poll(()=> test.info().annotations).toContainEqual({
         type: 'redirect',
         description: 'https://code.highcharts.com/dashboards/datagrid.src.js --> code/dashboards/datagrid.src.js'
     });
 
-    expect(annotations).toContainEqual({
+    await expect.poll(()=> test.info().annotations).toContainEqual({
         type: 'redirect',
         description: 'https://code.highcharts.com/dashboards/css/datagrid.css --> code/dashboards/css/datagrid.css'
     });
@@ -77,11 +75,9 @@ test.describe('Redirects for data', () => {
     </body>
     </html>`;
 
-        await page.setContent(template, { waitUntil: 'networkidle' });
+        await page.setContent(template);
 
-        const { annotations } = test.info();
-
-        expect(annotations).toContainEqual({
+        await expect.poll(()=> test.info().annotations).toContainEqual({
             type: 'redirect',
             description: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=64.128288&lon=-21.827774 --> samples/data/json-sources/weather-forecast.json'
         });
@@ -99,11 +95,9 @@ test.describe('Redirects for data', () => {
     </body>
     </html>`;
 
-        await page.setContent(template, { waitUntil: 'networkidle' });
+        await page.setContent(template);
 
-        const { annotations } = test.info();
-
-        expect(annotations).toContainEqual({
+        await expect.poll(()=> test.info().annotations).toContainEqual({
             type: 'redirect',
             description: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/samples/data/aapl-c.json --> samples/data/aapl-c.json'
         });
@@ -119,12 +113,9 @@ test.describe('Redirects for data', () => {
         </script>
     </body>
     </html>`;
+        await page.setContent(template);
 
-        await page.setContent(template, { waitUntil: 'networkidle' });
-
-        const { annotations } = test.info();
-
-        expect(annotations).toContainEqual({
+        await expect.poll(()=> test.info().annotations).toContainEqual({
             type: 'redirect',
             description: 'https://www.highcharts.com/samples/data/aapl-c.json --> samples/data/aapl-c.json'
         });
@@ -141,11 +132,9 @@ test.describe('Redirects for data', () => {
     </body>
     </html>`;
 
-        await page.setContent(template, { waitUntil: 'networkidle' });
+        await page.setContent(template);
 
-        const { annotations } = test.info();
-
-        expect(annotations).toContainEqual({
+        await expect.poll(() => test.info().annotations).toContainEqual({
             type: 'redirect',
             description: 'https://demo-live-data.highcharts.com/aapl-c.json --> samples/data/aapl-c.json'
         });
@@ -162,11 +151,9 @@ test.describe('Redirects for data', () => {
     </body>
     </html>`;
 
-        await page.setContent(template, { waitUntil: 'networkidle' });
+        await page.setContent(template);
 
-        const { annotations } = test.info();
-
-        expect(annotations).toContainEqual({
+        await expect.poll(() => test.info().annotations).toContainEqual({
             type: 'redirect',
             description: 'https://code.highcharts.com/mapdata/custom/asia.topo.json --> node_modules/@highcharts/map-collection/custom/asia.topo.json'
         });
