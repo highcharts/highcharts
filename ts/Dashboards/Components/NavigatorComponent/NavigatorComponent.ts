@@ -237,7 +237,7 @@ class NavigatorComponent extends Component {
         const connector = this.getFirstConnector();
 
         if (connector) {
-            const columns = connector.getTable().getColumnNames();
+            const columns = connector.getTable().getColumnIds();
 
             if (columns.length) {
                 return [columns[0], 'y'];

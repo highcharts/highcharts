@@ -117,7 +117,7 @@ By default, the KPI value is synchronized with the Y value of the first point in
 You can also use this option to change the point to be synchronized with the value, setting its index and the index of the series it belongs to.
 
 ## Working with data
-You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The KPIComponent reflects the last value from the column (declared by `columnName` param) as a value itself.
+You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The KPIComponent reflects the last value from the column (declared by `columnId` param) as a value itself.
 
 Here is an [example](https://www.highcharts.com/samples/embed/dashboards/components/kpi-with-connector) that uses as connector.
 
@@ -138,7 +138,7 @@ Dashboards.board('container', {
         renderTo: 'kpi',
         type: 'KPI',
         title: 'Last day\'s value',
-        columnName: 'Value',
+        columnId: 'Value',
         connector: {
             id: 'value'
         }

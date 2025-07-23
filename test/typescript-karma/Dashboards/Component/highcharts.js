@@ -308,7 +308,7 @@ test('Data columnAssignment', async function (assert) {
                 id: 'micro-element',
                 type: 'JSON',
                 firstRowAsNames: false,
-                columnNames: ['x', 'myOpen', 'myHigh', 'myLow', 'myClose', 'mySeries1', 'mySeries2'],
+                columnIds: ['x', 'myOpen', 'myHigh', 'myLow', 'myClose', 'mySeries1', 'mySeries2'],
                 data: [
                     [1699434920314, 6, 5, 4, 1, 6, 9],
                     [1699494920314, 2, 6, 2, 5, 7, 9],
@@ -620,7 +620,7 @@ test('Data columnAssignment', async function (assert) {
 });
 
 
-test('JSON data with columnNames and columnAssignment.', async function (assert) {
+test('JSON data with columnIds and columnAssignment.', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
@@ -696,7 +696,7 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
                 id: 'micro-element',
                 type: 'JSON',
                 firstRowAsNames: false,
-                columnNames: {
+                columnIds: {
                     InstanceType: ['InstanceType'],
                     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
                     ReadOps: ['DiskOperations', 0, 'ReadOps']

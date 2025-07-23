@@ -27,7 +27,7 @@
 
 import type { DataConverterTypes } from './DataConverterType';
 import type DataEvent from '../DataEvent';
-import type { ColumnNamesOptions } from '../Connectors/JSONConnectorOptions';
+import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
 
 import DataTable from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
@@ -492,7 +492,7 @@ namespace DataConverter {
         );
         readonly columns: DataTable.Column[];
         readonly error?: string | Error;
-        readonly headers: string[] | ColumnNamesOptions;
+        readonly headers: string[] | ColumnIdsOptions;
     }
 
     export interface DateFormatCallbackFunction {

@@ -41,7 +41,7 @@ Dashboards.board('container', {
             type: 'JSON',
             firstRowAsNames: false,
             orientation: 'columns',
-            columnNames: [
+            columnIds: [
                 'Decade',
                 'Global Avg Temperature Increase',
                 'CO2 Concentration',

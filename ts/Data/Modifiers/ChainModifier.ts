@@ -238,8 +238,8 @@ class ChainModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Modified table.
      *
-     * @param {string} columnName
-     * Column name of changed cell.
+     * @param {string} columnId
+     * Column id of changed cell.
      *
      * @param {number|undefined} rowIndex
      * Row index of changed cell.
@@ -255,7 +255,7 @@ class ChainModifier extends DataModifier {
      */
     public modifyCell<T extends DataTable>(
         table: T,
-        columnName: string,
+        columnId: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
@@ -272,7 +272,7 @@ class ChainModifier extends DataModifier {
             for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
                 modifiers[i].modifyCell(
                     clone,
-                    columnName,
+                    columnId,
                     rowIndex,
                     cellValue,
                     eventDetail

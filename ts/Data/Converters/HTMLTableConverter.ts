@@ -160,9 +160,9 @@ class HTMLTableConverter extends DataConverter {
             useMultiLevelHeaders = options.useMultiLevelHeaders;
 
         const columns = connector.getSortedColumns(),
-            columnNames = Object.keys(columns),
+            columnIds = Object.keys(columns),
             htmlRows: string[] = [],
-            columnsCount = columnNames.length;
+            columnsCount = columnIds.length;
 
         const rowArray: DataTable.Row[] = [];
 
@@ -175,8 +175,8 @@ class HTMLTableConverter extends DataConverter {
             // If using multilevel headers, the first value
             // of each column is a subcategory
             if (useMultiLevelHeaders) {
-                for (const name of columnNames) {
-                    let column = columns[name];
+                for (const columnId of columnIds) {
+                    let column = columns[columnId];
 
                     if (!Array.isArray(column)) {
                         // Convert to conventional array from typed array
@@ -185,28 +185,28 @@ class HTMLTableConverter extends DataConverter {
                     }
 
                     const subhead = (column.shift() || '').toString();
-                    columns[name] = column;
+                    columns[columnId] = column;
 
                     subcategories.push(subhead);
                 }
 
                 tableHead = this.getTableHeaderHTML(
-                    columnNames,
+                    columnIds,
                     subcategories,
                     options
                 );
             } else {
                 tableHead = this.getTableHeaderHTML(
                     void 0,
-                    columnNames,
+                    columnIds,
                     options
                 );
             }
         }
 
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-            const columnName = columnNames[columnIndex],
-                column = columns[columnName],
+            const columnId = columnIds[columnIndex],
+                column = columns[columnId],
                 columnLength = column.length;
 
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {

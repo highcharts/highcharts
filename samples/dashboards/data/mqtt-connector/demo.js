@@ -100,7 +100,7 @@ const dataGridOptions = {
 const connConfig = {
     autoSubscribe: true,
     maxRows: 10,
-    columnNames: [
+    columnIds: [
         'time',
         'value'
     ],

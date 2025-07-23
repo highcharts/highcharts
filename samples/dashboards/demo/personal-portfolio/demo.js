@@ -368,7 +368,7 @@ const getCurrentTotal = arrOfArr => {
             }, {
                 id: 'stock-grid',
                 type: 'JSON',
-                columnNames: ['Name', 'ISIN', 'Percentage'],
+                columnIds: ['Name', 'ISIN', 'Percentage'],
                 firstRowAsNames: false,
                 data: dataGridData
             }, {
@@ -498,7 +498,7 @@ const getCurrentTotal = arrOfArr => {
             connector: {
                 id: 'risk-score'
             },
-            columnName: 'PersonalPortfolio_RiskScore',
+            columnId: 'PersonalPortfolio_RiskScore',
             chartOptions: riskScoreKPIOptions
         }, {
             type: 'KPI',

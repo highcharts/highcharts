@@ -25,7 +25,7 @@ Dashboards.board('container', {
                 }, {
                     key: 'kpis',
                     firstRowAsNames: false,
-                    columnNames: ['a', 'b'],
+                    columnIds: ['a', 'b'],
                     beforeParse: function ({ kpis }) {
                         return [[kpis.a, kpis.b]];
                     },

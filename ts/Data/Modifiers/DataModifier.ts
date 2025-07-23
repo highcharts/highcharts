@@ -183,8 +183,8 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @param {Highcharts.DataTable} table
      * Modified table.
      *
-     * @param {string} columnName
-     * Column name of changed cell.
+     * @param {string} columnId
+     * Column id of changed cell.
      *
      * @param {number|undefined} rowIndex
      * Row index of changed cell.
@@ -201,7 +201,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
     public modifyCell<T extends DataTable>(
         table: T,
         /* eslint-disable @typescript-eslint/no-unused-vars */
-        columnName: string,
+        columnId: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail

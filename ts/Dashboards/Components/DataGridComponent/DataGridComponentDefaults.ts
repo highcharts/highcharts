@@ -152,11 +152,11 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 cell instanceof HTMLElement
             ) {
                 const dataTableRowIndex = parentRow.dataset.rowIndex;
-                const { columnName } = cell.dataset;
+                const { columnId } = cell.dataset;
 
                 if (
                     dataTableRowIndex !== void 0 &&
-                    columnName !== void 0
+                    columnId !== void 0
                 ) {
                     const table = connector.getTable();
 
@@ -171,7 +171,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         }
 
                         table.setCell(
-                            columnName,
+                            columnId,
                             Number(dataTableRowIndex),
                             valueToSet
                         );

@@ -29,18 +29,18 @@ test('GoogleDataConnector', (assert) => {
             'The connector table has the correct data types'
         );
 
-        const columnNames = table.getColumnNames();
+        const columnIds = table.getColumnIds();
 
         assert.notOk(
-            columnNames.includes('null'),
+            columnIds.includes('null'),
             'Columns where the first value is of type `null`, ' +
             'should be assigned an unique name'
         );
 
-        table.renameColumn(columnNames[0], 'null');
+        table.changeColumnId(columnIds[0], 'null');
 
         assert.ok(
-            table.getColumnNames().includes('null'),
+            table.getColumnIds().includes('null'),
             'A string value of `null` is ok'
         );
 
@@ -125,9 +125,9 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
             'beforeParse was fired'
         );
 
-        const columnNames = connector.getTable().getColumnNames();
+        const columnIds = connector.getTable().getColumnIds();
         assert.deepEqual(
-            columnNames,
+            columnIds,
             ['Test0', 'Test1', 'Test2', 'Test3'],
             'The column names have been changed by the beforeParse function'
         );
@@ -178,9 +178,9 @@ test('GoogleDataConnector, worksheet 1', async (assert) => {
             'Events are fired in the correct order'
         );
 
-        const columnNames = table.getColumnNames();
+        const columnIds = table.getColumnIds();
         assert.deepEqual(
-            columnNames,
+            columnIds,
             ['0', 'John', 'Jane', 'Joe'],
             'Column names are correct'
         );
@@ -229,9 +229,9 @@ test('GoogleDataConnector, worksheet 2', async (assert) => {
             'Events are fired in the correct order'
         );
 
-        const columnNames = table.getColumnNames();
+        const columnIds = table.getColumnIds();
         assert.deepEqual(
-            columnNames,
+            columnIds,
             ['0', 'John', 'Jane', 'Joe'],
             'Column names are correct'
         );

@@ -46,7 +46,7 @@ Dashboards.board('container', {
             type: 'JSON',
             id: 'no-first-names',
             firstRowAsNames: false,
-            columnNames: [
+            columnIds: [
                 'random name', 'second random name', 'third random name'
             ],
             data: [

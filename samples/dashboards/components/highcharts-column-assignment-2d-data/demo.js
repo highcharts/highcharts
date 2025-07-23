@@ -4,7 +4,7 @@ Dashboards.board('container', {
             id: 'data',
             type: 'JSON',
             firstRowAsNames: false,
-            columnNames: ['time', 'open', 'high', 'low', 'close'],
+            columnIds: ['time', 'open', 'high', 'low', 'close'],
             dataUrl: 'https://www.highcharts.com/samples/data/new-intraday.json'
         }]
     },

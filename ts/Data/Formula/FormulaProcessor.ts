@@ -362,19 +362,19 @@ function getRangeValues(
     range: Range,
     table: DataTable
 ): Array<Value> {
-    const columnNames = table
-            .getColumnNames()
+    const columnIds = table
+            .getColumnIds()
             .slice(range.beginColumn, range.endColumn + 1),
         values: Array<Value> = [];
 
     for (
         let i = 0,
-            iEnd = columnNames.length,
+            iEnd = columnIds.length,
             cell: DataTable.CellType;
         i < iEnd;
         ++i
     ) {
-        const cells = table.getColumn(columnNames[i], true) || [];
+        const cells = table.getColumn(columnIds[i], true) || [];
 
         for (
             let j = range.beginRow,
@@ -390,7 +390,7 @@ function getRangeValues(
                 table !== table.modified
             ) {
                 // Look in the modified table for formula result
-                cell = table.modified.getCell(columnNames[i], j);
+                cell = table.modified.getCell(columnIds[i], j);
             }
 
             values.push(isValue(cell) ? cell : NaN);
@@ -419,10 +419,10 @@ function getReferenceValue(
     reference: Reference,
     table: DataTable
 ): Value {
-    const columnName = table.getColumnNames()[reference.column];
+    const columnId = table.getColumnIds()[reference.column];
 
-    if (columnName) {
-        const cell = table.getCell(columnName, reference.row);
+    if (columnId) {
+        const cell = table.getCell(columnId, reference.row);
 
         if (
             typeof cell === 'string' &&
@@ -430,7 +430,7 @@ function getReferenceValue(
             table !== table.modified
         ) {
             // Look in the modified table for formula result
-            const result = table.modified.getCell(columnName, reference.row);
+            const result = table.modified.getCell(columnId, reference.row);
             return isValue(result) ? result : NaN;
         }
 

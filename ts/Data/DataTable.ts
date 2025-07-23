@@ -138,12 +138,12 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                 }
             }
         } else {
-            const columnNames = Object.keys(row);
-            if (!columnNames.length) {
+            const columnIds = Object.keys(row);
+            if (!columnIds.length) {
                 return false;
             }
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                if (row[columnNames[i]] !== null) {
+            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+                if (row[columnIds[i]] !== null) {
                     return false;
                 }
             }
@@ -157,12 +157,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * */
 
-    public constructor(
-        options: DataTableOptions = {}
-    ) {
+    public constructor(options: DataTableOptions = {}) {
         super(options);
         this.modified = this;
-
     }
 
     /* *
@@ -245,7 +242,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * @function Highcharts.DataTable#deleteColumns
      *
-     * @param {Array<string>} [columnNames]
+     * @param {Array<string>} [columnIds]
      * Names of columns to delete. If no array is provided, all
      * columns will be deleted.
      *
@@ -259,7 +256,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * @emits #afterDeleteColumns
      */
     public deleteColumns(
-        columnNames?: Array<string>,
+        columnIds?: Array<string>,
         eventDetail?: DataEvent.Detail
     ): (DataTable.ColumnCollection | undefined) {
         const table = this,
@@ -269,30 +266,30 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             modifier = table.modifier,
             rowCount = table.rowCount;
 
-        columnNames = (columnNames || Object.keys(columns));
+        columnIds = (columnIds || Object.keys(columns));
 
-        if (columnNames.length) {
+        if (columnIds.length) {
             table.emit({
                 type: 'deleteColumns',
-                columnNames,
+                columnIds,
                 detail: eventDetail
             });
 
             for (
                 let i = 0,
-                    iEnd = columnNames.length,
+                    iEnd = columnIds.length,
                     column: DataTable.Column,
-                    columnName: string;
+                    columnId: string;
                 i < iEnd;
                 ++i
             ) {
-                columnName = columnNames[i];
-                column = columns[columnName];
+                columnId = columnIds[i];
+                column = columns[columnId];
                 if (column) {
-                    deletedColumns[columnName] = column;
-                    modifiedColumns[columnName] = new Array(rowCount);
+                    deletedColumns[columnId] = column;
+                    modifiedColumns[columnId] = new Array(rowCount);
                 }
-                delete columns[columnName];
+                delete columns[columnId];
             }
 
             if (!Object.keys(columns).length) {
@@ -307,7 +304,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             table.emit({
                 type: 'afterDeleteColumns',
                 columns: deletedColumns,
-                columnNames,
+                columnIds,
                 detail: eventDetail
             });
 
@@ -374,24 +371,24 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
         if (rowCount > 0 && rowIndex < table.rowCount) {
             const columns = table.columns,
-                columnNames = Object.keys(columns);
+                columnIds = Object.keys(columns);
 
             for (
                 let i = 0,
-                    iEnd = columnNames.length,
+                    iEnd = columnIds.length,
                     column: DataTable.Column,
                     deletedCells: DataTable.Column,
-                    columnName: string;
+                    columnId: string;
                 i < iEnd;
                 ++i
             ) {
-                columnName = columnNames[i];
-                column = columns[columnName];
+                columnId = columnIds[i];
+                column = columns[columnId];
 
                 const result = splice(column, rowIndex, rowCount);
 
                 deletedCells = result.removed;
-                columns[columnName] = column = result.array;
+                columns[columnId] = column = result.array;
 
                 if (!i) {
                     table.rowCount = column.length;
@@ -452,7 +449,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * @function Highcharts.DataTable#getCell
      *
-     * @param {string} columnName
+     * @param {string} columnId
      * Column name of the cell to retrieve.
      *
      * @param {number} rowIndex
@@ -462,11 +459,11 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * Returns the cell value or `undefined`.
      */
     public getCell(
-        columnName: string,
+        columnId: string,
         rowIndex: number
     ): (DataTable.CellType | undefined) {
         const table = this;
-        const column = table.columns[columnName];
+        const column = table.columns[columnId];
 
         if (column) {
             return column[rowIndex];
@@ -474,11 +471,11 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     public getColumn(
-        columnName: string,
+        columnId: string,
         asReference?: boolean
     ): (DataTable.Column | undefined);
     public getColumn(
-        columnName: string,
+        columnId: string,
         asReference: true
     ): (DataTable.Column | undefined);
     /**
@@ -487,7 +484,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * @function Highcharts.DataTable#getColumn
      *
-     * @param {string} columnName
+     * @param {string} columnId
      * Name of the column to get.
      *
      * @param {boolean} [asReference]
@@ -497,37 +494,37 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * A copy of the column, or `undefined` if not found.
      */
     public getColumn(
-        columnName: string,
+        columnId: string,
         asReference?: boolean
     ): (DataTable.Column | undefined) {
         return this.getColumns(
-            [columnName],
+            [columnId],
             asReference
-        )[columnName];
+        )[columnId];
     }
 
     /**
      * Fetches all column names.
      *
-     * @function Highcharts.DataTable#getColumnNames
+     * @function Highcharts.DataTable#getColumnIds
      *
      * @return {Array<string>}
      * Returns all column names.
      */
-    public getColumnNames(): Array<string> {
+    public getColumnIds(): Array<string> {
         return Object.keys(this.columns);
     }
 
     public getColumns(
-        columnNames?: Array<string>,
+        columnIds?: Array<string>,
         asReference?: boolean,
     ): DataTable.ColumnCollection;
     public getColumns(
-        columnNames: (Array<string> | undefined),
+        columnIds: (Array<string> | undefined),
         asReference: true
     ): Record<string, DataTable.Column>;
     public getColumns(
-        columnNames: (Array<string> | undefined),
+        columnIds: (Array<string> | undefined),
         asReference: false,
         asBasicColumns: true
     ): Record<string, DataTable.BasicColumn>;
@@ -536,7 +533,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * @function Highcharts.DataTable#getColumns
      *
-     * @param {Array<string>} [columnNames]
+     * @param {Array<string>} [columnIds]
      * Column names to retrieve.
      *
      * @param {boolean} [asReference]
@@ -550,7 +547,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * `undefined`.
      */
     public getColumns(
-        columnNames?: Array<string>,
+        columnIds?: Array<string>,
         asReference?: boolean,
         asBasicColumns?: boolean
     ): DataTable.ColumnCollection {
@@ -558,28 +555,28 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             tableColumns = table.columns,
             columns: DataTable.ColumnCollection = {};
 
-        columnNames = (
-            columnNames || Object.keys(tableColumns)
+        columnIds = (
+            columnIds || Object.keys(tableColumns)
         );
 
         for (
             let i = 0,
-                iEnd = columnNames.length,
+                iEnd = columnIds.length,
                 column: DataTable.Column,
-                columnName: string;
+                columnId: string;
             i < iEnd;
             ++i
         ) {
-            columnName = columnNames[i];
-            column = tableColumns[columnName];
+            columnId = columnIds[i];
+            column = tableColumns[columnId];
 
             if (column) {
                 if (asReference) {
-                    columns[columnName] = column;
+                    columns[columnId] = column;
                 } else if (asBasicColumns && !Array.isArray(column)) {
-                    columns[columnName] = Array.from(column);
+                    columns[columnId] = Array.from(column);
                 } else {
-                    columns[columnName] = column.slice();
+                    columns[columnId] = column.slice();
                 }
             }
         }
@@ -651,7 +648,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * @param {number} rowIndex
      * Row index to retrieve. First row has index 0.
      *
-     * @param {Array<string>} [columnNames]
+     * @param {Array<string>} [columnIds]
      * Column names in order to retrieve.
      *
      * @return {Highcharts.DataTableRow}
@@ -659,9 +656,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      */
     public getRow(
         rowIndex: number,
-        columnNames?: Array<string>
+        columnIds?: Array<string>
     ): (DataTable.Row | undefined) {
-        return this.getRows(rowIndex, 1, columnNames)[0];
+        return this.getRows(rowIndex, 1, columnIds)[0];
     }
 
     /**
@@ -682,7 +679,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * @function Highcharts.DataTable#getRowIndexBy
      *
-     * @param {string} columnName
+     * @param {string} columnId
      * Column to search in.
      *
      * @param {Highcharts.DataTableCellType} cellValue
@@ -695,12 +692,12 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * Index of the first row matching the cell value.
      */
     public getRowIndexBy(
-        columnName: string,
+        columnId: string,
         cellValue: DataTable.CellType,
         rowIndexOffset?: number
     ): (number | undefined) {
         const table = this;
-        const column = table.columns[columnName];
+        const column = table.columns[columnId];
 
         if (column) {
             let rowIndex = -1;
@@ -728,7 +725,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * @param {number} rowIndex
      * Row index.
      *
-     * @param {Array<string>} [columnNames]
+     * @param {Array<string>} [columnIds]
      * Column names and their order to retrieve.
      *
      * @return {Highcharts.DataTableRowObject}
@@ -736,9 +733,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      */
     public getRowObject(
         rowIndex: number,
-        columnNames?: Array<string>
+        columnIds?: Array<string>
     ): (DataTable.RowObject | undefined) {
-        return this.getRowObjects(rowIndex, 1, columnNames)[0];
+        return this.getRowObjects(rowIndex, 1, columnIds)[0];
     }
 
     /**
@@ -752,7 +749,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * @param {number} [rowCount]
      * Number of rows to fetch. Defaults to maximal number of rows.
      *
-     * @param {Array<string>} [columnNames]
+     * @param {Array<string>} [columnIds]
      * Column names and their order to retrieve.
      *
      * @return {Highcharts.DataTableRowObject}
@@ -761,13 +758,13 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     public getRowObjects(
         rowIndex: number = 0,
         rowCount: number = (this.rowCount - rowIndex),
-        columnNames?: Array<string>
+        columnIds?: Array<string>
     ): (Array<DataTable.RowObject>) {
         const table = this,
             columns = table.columns,
             rows: Array<DataTable.RowObject> = new Array(rowCount);
 
-        columnNames = (columnNames || Object.keys(columns));
+        columnIds = (columnIds || Object.keys(columns));
 
         for (
             let i = rowIndex,
@@ -784,9 +781,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         ) {
             row = rows[i2] = {};
 
-            for (const columnName of columnNames) {
-                column = columns[columnName];
-                row[columnName] = (column ? column[i] : void 0);
+            for (const columnId of columnIds) {
+                column = columns[columnId];
+                row[columnId] = (column ? column[i] : void 0);
             }
         }
 
@@ -804,7 +801,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * @param {number} [rowCount]
      * Number of rows to fetch. Defaults to maximal number of rows.
      *
-     * @param {Array<string>} [columnNames]
+     * @param {Array<string>} [columnIds]
      * Column names and their order to retrieve.
      *
      * @return {Highcharts.DataTableRow}
@@ -813,13 +810,13 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     public getRows(
         rowIndex: number = 0,
         rowCount: number = (this.rowCount - rowIndex),
-        columnNames?: Array<string>
+        columnIds?: Array<string>
     ): (Array<DataTable.Row>) {
         const table = this,
             columns = table.columns,
             rows: Array<DataTable.Row> = new Array(rowCount);
 
-        columnNames = (columnNames || Object.keys(columns));
+        columnIds = (columnIds || Object.keys(columns));
 
         for (
             let i = rowIndex,
@@ -836,8 +833,8 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         ) {
             row = rows[i2] = [];
 
-            for (const columnName of columnNames) {
-                column = columns[columnName];
+            for (const columnId of columnIds) {
+                column = columns[columnId];
                 row.push(column ? column[i] : void 0);
             }
         }
@@ -862,25 +859,25 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * @function Highcharts.DataTable#hasColumns
      *
-     * @param {Array<string>} columnNames
+     * @param {Array<string>} columnIds
      * Column names to check.
      *
      * @return {boolean}
      * Returns `true` if all columns have been found, otherwise `false`.
      */
-    public hasColumns(columnNames: Array<string>): boolean {
+    public hasColumns(columnIds: Array<string>): boolean {
         const table = this,
             columns = table.columns;
 
         for (
             let i = 0,
-                iEnd = columnNames.length,
-                columnName: string;
+                iEnd = columnIds.length,
+                columnId: string;
             i < iEnd;
             ++i
         ) {
-            columnName = columnNames[i];
-            if (!columns[columnName]) {
+            columnId = columnIds[i];
+            if (!columns[columnId]) {
                 return false;
             }
         }
@@ -893,7 +890,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * @function Highcharts.DataTable#hasRowWith
      *
-     * @param {string} columnName
+     * @param {string} columnId
      * Column to search in.
      *
      * @param {Highcharts.DataTableCellType} cellValue
@@ -903,11 +900,11 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * True, if a row has been found, otherwise false.
      */
     public hasRowWith(
-        columnName: string,
+        columnId: string,
         cellValue: DataTable.CellType
     ): boolean {
         const table = this;
-        const column = table.columns[columnName];
+        const column = table.columns[columnId];
 
         // Normal array
         if (Array.isArray(column)) {
@@ -946,31 +943,30 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Renames a column of cell values.
+     * Replaces the old column by its id with a new one.
      *
-     * @function Highcharts.DataTable#renameColumn
+     * @function Highcharts.DataTable#changeColumnId
      *
-     * @param {string} columnName
-     * Name of the column to be renamed.
+     * @param {string} columnId
+     * Id of the column to be changed.
      *
-     * @param {string} newColumnName
-     * New name of the column. An existing column with the same name will be
-     * replaced.
+     * @param {string} newColumnId
+     * New id of the column.
      *
      * @return {boolean}
      * Returns `true` if successful, `false` if the column was not found.
      */
-    public renameColumn(
-        columnName: string,
-        newColumnName: string
+    public changeColumnId(
+        columnId: string,
+        newColumnId: string
     ): boolean {
         const table = this,
             columns = table.columns;
 
-        if (columns[columnName]) {
-            if (columnName !== newColumnName) {
-                columns[newColumnName] = columns[columnName];
-                delete columns[columnName];
+        if (columns[columnId]) {
+            if (columnId !== newColumnId) {
+                columns[newColumnId] = columns[columnId];
+                delete columns[columnId];
             }
 
             return true;
@@ -985,7 +981,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * @function Highcharts.DataTable#setCell
      *
-     * @param {string} columnName
+     * @param {string} columnId
      * Column name to set.
      *
      * @param {number|undefined} rowIndex
@@ -1001,7 +997,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * @emits #afterSetCell
      */
     public setCell(
-        columnName: string,
+        columnId: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
@@ -1010,7 +1006,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             columns = table.columns,
             modifier = table.modifier;
 
-        let column = columns[columnName];
+        let column = columns[columnId];
 
         if (column && column[rowIndex] === cellValue) {
             return;
@@ -1019,13 +1015,13 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         table.emit({
             type: 'setCell',
             cellValue,
-            columnName: columnName,
+            columnId: columnId,
             detail: eventDetail,
             rowIndex
         });
 
         if (!column) {
-            column = columns[columnName] = new Array(table.rowCount);
+            column = columns[columnId] = new Array(table.rowCount);
         }
 
         if (rowIndex >= table.rowCount) {
@@ -1035,13 +1031,13 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         column[rowIndex] = cellValue;
 
         if (modifier) {
-            modifier.modifyCell(table, columnName, rowIndex, cellValue);
+            modifier.modifyCell(table, columnId, rowIndex, cellValue);
         }
 
         table.emit({
             type: 'afterSetCell',
             cellValue,
-            columnName: columnName,
+            columnId: columnId,
             detail: eventDetail,
             rowIndex
         });
@@ -1080,14 +1076,14 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
-            columnNames = Object.keys(columns);
+            columnIds = Object.keys(columns);
 
         let rowCount = table.rowCount;
 
         table.emit({
             type: 'setColumns',
             columns,
-            columnNames,
+            columnIds,
             detail: eventDetail,
             rowIndex
         });
@@ -1101,10 +1097,10 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         } else {
             for (
                 let i = 0,
-                    iEnd = columnNames.length,
+                    iEnd = columnIds.length,
                     column: DataTable.Column,
                     tableColumn: DataTable.Column,
-                    columnName: string,
+                    columnId: string,
                     ArrayConstructor: (
                         Types.TypedArrayConstructor|
                         ArrayConstructor
@@ -1112,9 +1108,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                 i < iEnd;
                 ++i
             ) {
-                columnName = columnNames[i];
-                column = columns[columnName];
-                tableColumn = tableColumns[columnName];
+                columnId = columnIds[i];
+                column = columns[columnId];
+                tableColumn = tableColumns[columnId];
 
                 ArrayConstructor = Object.getPrototypeOf(
                     (tableColumn && typeAsOriginal) ? tableColumn : column
@@ -1130,10 +1126,10 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     tableColumn =
                         new ArrayConstructor(rowCount) as Types.TypedArray;
                     tableColumn.set(
-                        tableColumns[columnName] as ArrayLike<number>
+                        tableColumns[columnId] as ArrayLike<number>
                     );
                 }
-                tableColumns[columnName] = tableColumn;
+                tableColumns[columnId] = tableColumn;
 
                 for (
                     let i = (rowIndex || 0),
@@ -1157,7 +1153,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         table.emit({
             type: 'afterSetColumns',
             columns,
-            columnNames,
+            columnIds,
             detail: eventDetail,
             rowIndex
         });
@@ -1319,7 +1315,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     ): void {
         const table = this,
             columns = table.columns,
-            columnNames = Object.keys(columns),
+            columnIds = Object.keys(columns),
             modifier = table.modifier,
             rowCount = rows.length;
 
@@ -1340,11 +1336,11 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         ) {
             row = rows[i];
             if (row === DataTable.NULL) {
-                for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
-                    const column = columns[columnNames[j]];
+                for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
+                    const column = columns[columnIds[j]];
 
                     if (insert) {
-                        columns[columnNames[j]] = splice(
+                        columns[columnIds[j]] = splice(
                             column, i2, 0, true, [null]
                         ).array;
                     } else {
@@ -1352,8 +1348,8 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     }
                 }
             } else if (row instanceof Array) {
-                for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
-                    columns[columnNames[j]][i2] = row[j];
+                for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
+                    columns[columnIds[j]][i2] = row[j];
                 }
             } else {
                 super.setRow(row, i2, void 0, { silent: true });
@@ -1365,10 +1361,10 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             rowIndex + rowCount;
         if (indexRowCount > table.rowCount) {
             table.rowCount = indexRowCount;
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                const columnName = columnNames[i];
-                columns[columnName] = setLength(
-                    columns[columnName],
+            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+                const columnId = columnIds[i];
+                columns[columnId] = setLength(
+                    columns[columnId],
                     indexRowCount
                 );
             }
@@ -1429,7 +1425,7 @@ namespace DataTable {
      * the value is an array of column values.
      */
     export interface ColumnCollection {
-        [columnName: string]: Column;
+        [columnId: string]: Column;
     }
 
     /**
@@ -1440,7 +1436,7 @@ namespace DataTable {
             'setCell' | 'afterSetCell'
         );
         readonly cellValue: DataTable.CellType;
-        readonly columnName: string;
+        readonly columnId: string;
         readonly rowIndex: number;
     }
 
@@ -1463,7 +1459,7 @@ namespace DataTable {
             'setColumns'|'afterSetColumns'
         );
         readonly columns?: ColumnCollection;
-        readonly columnNames: Array<string>;
+        readonly columnIds: Array<string>;
         readonly rowIndex?: number;
     }
 

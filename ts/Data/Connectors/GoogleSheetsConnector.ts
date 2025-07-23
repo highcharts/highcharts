@@ -274,7 +274,7 @@ namespace GoogleSheetsConnector {
     }
 
     export interface FetchURLOptions {
-        onlyColumnNames?: boolean;
+        onlyColumnIds?: boolean;
     }
 
     /* *
@@ -302,14 +302,14 @@ namespace GoogleSheetsConnector {
     ): string {
         const url = new URL(`https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/`);
 
-        const range = options.onlyColumnNames ?
+        const range = options.onlyColumnIds ?
             'A1:Z1' : buildQueryRange(options);
         url.pathname += range;
 
         const searchParams = url.searchParams;
         searchParams.set('alt', 'json');
 
-        if (!options.onlyColumnNames) {
+        if (!options.onlyColumnIds) {
             searchParams.set('dateTimeRenderOption', 'FORMATTED_STRING');
             searchParams.set('majorDimension', 'COLUMNS');
             searchParams.set('valueRenderOption', 'UNFORMATTED_VALUE');

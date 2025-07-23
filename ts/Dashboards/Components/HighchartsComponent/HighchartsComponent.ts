@@ -314,26 +314,26 @@ class HighchartsComponent extends Component {
             return;
         }
 
-        let columnName: string | undefined;
+        let columnId: string | undefined;
         if (columnAssignment && seriesId) {
             const data = columnAssignment.find(
                 (s): boolean => s.seriesId === seriesId
             )?.data;
 
             if (isString(data)) {
-                columnName = data;
+                columnId = data;
             } else if (Array.isArray(data)) {
-                columnName = data[1];
+                columnId = data[1];
             } else if (data) {
-                columnName = data.y ?? data.value;
+                columnId = data.y ?? data.value;
             }
         }
 
-        if (!columnName) {
-            columnName = seriesId ?? point.series.name;
+        if (!columnId) {
+            columnId = seriesId ?? point.series.name;
         }
 
-        table.setCell(columnName, point.index, valueToSet);
+        table.setCell(columnId, point.index, valueToSet);
     }
 
     /**
@@ -406,7 +406,7 @@ class HighchartsComponent extends Component {
 
             if (!columnAssignment && connectorHandler.presentationTable) {
                 columnAssignment = this.getDefaultColumnAssignment(
-                    connectorHandler.presentationTable.getColumnNames(),
+                    connectorHandler.presentationTable.getColumnIds(),
                     connectorHandler.presentationTable
                 );
             }
@@ -504,8 +504,8 @@ class HighchartsComponent extends Component {
                     seriesOptions.data = column.slice() as [];
                 }
 
-                adjustDraggableOptions((columnName): boolean => (
-                    columnName === dataStructure
+                adjustDraggableOptions((columnId): boolean => (
+                    columnId === dataStructure
                 ));
             } else if (Array.isArray(dataStructure)) {
                 const seriesTable = new DataTable({
@@ -513,25 +513,25 @@ class HighchartsComponent extends Component {
                 });
                 seriesOptions.data = seriesTable.getRows() as [][];
 
-                adjustDraggableOptions((columnName): boolean => (
-                    dataStructure.some((name): boolean => name === columnName)
+                adjustDraggableOptions((columnId): boolean => (
+                    dataStructure.some((name): boolean => name === columnId)
                 ));
             } else {
                 const keys = Object.keys(dataStructure);
-                const columnNames: string[] = [];
+                const columnIds: string[] = [];
                 for (let j = 0, jEnd = keys.length; j < jEnd; ++j) {
-                    columnNames.push(dataStructure[keys[j]]);
+                    columnIds.push(dataStructure[keys[j]]);
                 }
 
                 const seriesTable = new DataTable({
-                    columns: table.getColumns(columnNames)
+                    columns: table.getColumns(columnIds)
                 });
 
                 seriesOptions.keys = keys;
                 seriesOptions.data = seriesTable.getRows() as [][];
 
-                adjustDraggableOptions((columnName): boolean => (
-                    columnNames.some((name): boolean => name === columnName)
+                adjustDraggableOptions((columnId): boolean => (
+                    columnIds.some((name): boolean => name === columnId)
                 ));
             }
 
@@ -573,7 +573,7 @@ class HighchartsComponent extends Component {
 
     /**
      * Creates default mapping when columnAssignment is not declared.
-     * @param  { Array<string>} columnNames all columns returned from dataTable.
+     * @param  { Array<string>} columnIds all columns returned from dataTable.
      *
      * @returns
      * The record of mapping
@@ -582,27 +582,27 @@ class HighchartsComponent extends Component {
      *
      */
     private getDefaultColumnAssignment(
-        columnNames: Array<string> = [],
+        columnIds: Array<string> = [],
         presentationTable: DataTable
     ): ColumnAssignmentOptions[] {
         const result: ColumnAssignmentOptions[] = [];
 
-        const firstColumn = presentationTable.getColumn(columnNames[0]);
+        const firstColumn = presentationTable.getColumn(columnIds[0]);
 
         if (firstColumn && isString(firstColumn[0])) {
-            for (let i = 1, iEnd = columnNames.length; i < iEnd; ++i) {
+            for (let i = 1, iEnd = columnIds.length; i < iEnd; ++i) {
                 result.push({
-                    seriesId: columnNames[i],
-                    data: [columnNames[0], columnNames[i]]
+                    seriesId: columnIds[i],
+                    data: [columnIds[0], columnIds[i]]
                 });
             }
             return result;
         }
 
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
             result.push({
-                seriesId: columnNames[i],
-                data: columnNames[i]
+                seriesId: columnIds[i],
+                data: columnIds[i]
             });
         }
         return result;

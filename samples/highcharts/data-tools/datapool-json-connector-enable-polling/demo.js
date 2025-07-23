@@ -6,7 +6,7 @@ Dashboards.board('container', {
             firstRowAsNames: false,
             dataRefreshRate: 2,
             enablePolling: true,
-            columnNames: ['time', 'value', 'rounded'],
+            columnIds: ['time', 'value', 'rounded'],
             dataUrl: 'https://demo-live-data.highcharts.com/time-rows.json',
             beforeParse: function (data) {
                 data.map(el => el.push(Math.round(el[1])));

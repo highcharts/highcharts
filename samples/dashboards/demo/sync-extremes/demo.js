@@ -31,7 +31,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Population',
             type: 'JSON',
-            columnNames: [
+            columnIds: [
                 'City', 'Population (mln)', 'Metro Area (km²)',
                 'Highest Elevation (m)'
             ],

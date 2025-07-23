@@ -62,7 +62,7 @@ Dashboards.board('container', {
             dataUrl: 'https://www.highcharts.com/samples/data/activity.json',
             firstRowAsNames: false,
             orientation: 'columns',
-            columnNames: ['x', 'Speed', 'Elevation', 'Heart rate']
+            columnIds: ['x', 'Speed', 'Elevation', 'Heart rate']
         }]
     },
     components: [{

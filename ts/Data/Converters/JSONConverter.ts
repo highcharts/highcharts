@@ -21,7 +21,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type { ColumnNamesOptions } from '../Connectors/JSONConnectorOptions';
+import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
 import type JSONConverterOptions from './JSONConverterOptions';
 
 import DataConverter from './DataConverter.js';
@@ -84,7 +84,7 @@ class JSONConverter extends DataConverter {
      * */
 
     private columns: DataTable.BasicColumn[] = [];
-    private headers: string[] | ColumnNamesOptions = [];
+    private headers: string[] | ColumnIdsOptions = [];
 
     /**
      * Options for the DataConverter.
@@ -123,7 +123,7 @@ class JSONConverter extends DataConverter {
             beforeParse,
             orientation,
             firstRowAsNames,
-            columnNames
+            columnIds
         } = options;
         let data = options.data;
 
@@ -157,8 +157,8 @@ class JSONConverter extends DataConverter {
                 if (converter.headers instanceof Array) {
                     if (firstRowAsNames) {
                         converter.headers.push(`${item.shift()}`);
-                    } else if (columnNames && columnNames instanceof Array) {
-                        converter.headers.push(columnNames[i]);
+                    } else if (columnIds && columnIds instanceof Array) {
+                        converter.headers.push(columnIds[i]);
                     }
 
                     converter.table.setColumn(
@@ -167,7 +167,7 @@ class JSONConverter extends DataConverter {
                     );
                 } else {
                     error(
-                        'JSONConverter: Invalid `columnNames` option.',
+                        'JSONConverter: Invalid `columnIds` option.',
                         false
                     );
                 }
@@ -175,8 +175,8 @@ class JSONConverter extends DataConverter {
         } else if (orientation === 'rows') {
             if (firstRowAsNames) {
                 converter.headers = data.shift() as string[];
-            } else if (columnNames) {
-                converter.headers = columnNames;
+            } else if (columnIds) {
+                converter.headers = columnIds;
             }
 
             for (
@@ -206,19 +206,19 @@ class JSONConverter extends DataConverter {
                             );
                         } else {
                             error(
-                                'JSONConverter: Invalid `columnNames` option.',
+                                'JSONConverter: Invalid `columnIds` option.',
                                 false
                             );
                         }
                     }
                 } else {
-                    const columnNames = converter.headers;
+                    const columnIds = converter.headers;
 
-                    if (columnNames && !(columnNames instanceof Array)) {
+                    if (columnIds && !(columnIds instanceof Array)) {
                         const newRow = {} as Record<string, string | number>;
 
                         objectEach(
-                            columnNames,
+                            columnIds,
                             (
                                 arrayWithPath: (string | number)[],
                                 name

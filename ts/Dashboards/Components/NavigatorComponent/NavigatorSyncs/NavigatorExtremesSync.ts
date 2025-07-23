@@ -116,7 +116,7 @@ const syncPair: Sync.SyncPair = {
             const table = component.connectorHandlers[0].connector.getTable();
 
             // Assume first column with unique keys as fallback
-            let extremesColumn = table.getColumnNames()[0],
+            let extremesColumn = table.getColumnIds()[0],
                 maxIndex = table.getRowCount(),
                 minIndex = 0;
 

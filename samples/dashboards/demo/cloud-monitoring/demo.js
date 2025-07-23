@@ -71,7 +71,7 @@ const setupDashboard = instanceId => {
                 id: 'charts',
                 type: 'JSON',
                 firstRowAsNames: false,
-                columnNames: [
+                columnIds: [
                     'timestamp', 'readOpt', 'writeOpt', 'networkIn',
                     'networkOut', 'cpuUtilization'
                 ],
@@ -89,7 +89,7 @@ const setupDashboard = instanceId => {
                 type: 'JSON',
                 firstRowAsNames: false,
                 orientantion: 'columns',
-                columnNames: [
+                columnIds: [
                     'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB',
                     'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB',
                     'Documents', 'Downloads'
@@ -370,7 +370,7 @@ const setupDashboard = instanceId => {
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'CPUUtilization',
+            columnId: 'CPUUtilization',
             chartOptions: {
                 ...KPIOptions,
                 plotOptions: {
@@ -416,7 +416,7 @@ const setupDashboard = instanceId => {
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'MemoryUsage',
+            columnId: 'MemoryUsage',
             chartOptions: {
                 ...KPIOptions,
                 yAxis: {
@@ -483,7 +483,7 @@ const setupDashboard = instanceId => {
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'DiskUsedGB',
+            columnId: 'DiskUsedGB',
             chartOptions: {
                 ...KPIOptions,
                 plotOptions: {

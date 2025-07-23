@@ -24,7 +24,7 @@ import CSVConverterOptions from '../Converters/CSVConverterOptions';
 import GoogleSheetsConverterOptions from '../Converters/GoogleSheetsConverterOptions';
 import JSONConverterOptions from '../Converters/JSONConverterOptions';
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
-import type { ColumnNamesOptions } from './JSONConnectorOptions';
+import type { ColumnIdsOptions } from './JSONConnectorOptions';
 
 /* *
  *
@@ -46,7 +46,7 @@ export interface DataConnectorOptions {
 export interface DataTableConnectorOptions {
     key?: string;
     dataModifier?: DataModifierTypeOptions;
-    columnNames?: string[] | ColumnNamesOptions;
+    columnIds?: string[] | ColumnIdsOptions;
     firstRowAsNames?: boolean;
     orientation?: 'columns' | 'rows';
     beforeParse?: (

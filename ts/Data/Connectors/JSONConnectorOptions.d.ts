@@ -38,16 +38,16 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
     /**
      * If JSON data is row oriented, these options define keys for the columns.
      * In column oriented case this is handled automatically unless the
-     * `firstRowAsNames` set to false, then the `columnNames` can be used.
+     * `firstRowAsNames` set to false, then the `columnIds` can be used.
      *
-     * In case of complex JSON structure, use the `ColumnNamesOptions` to define
+     * In case of complex JSON structure, use the `ColumnIdsOptions` to define
      * the key and path to the data.
      *
      * If you have more complex data, you can adjust it by  the `beforeParse`
      * callback function to manually parse the rows into valid JSON. However,
      * the resulting JSON will still be converted into a proper table structure.
      */
-    columnNames?: Array<string>|ColumnNamesOptions;
+    columnIds?: Array<string>|ColumnIdsOptions;
 
     /**
      * Data in JSON format.
@@ -116,7 +116,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *         }, {
      *             key: 'kpis',
      *             firstRowAsNames: false,
-     *             columnNames: ['a', 'b'],
+     *             columnIds: ['a', 'b'],
      *             beforeParse: function ({ kpis }) {
      *                 return [[kpis.a, kpis.b]];
      *             },
@@ -146,13 +146,13 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
  * an array of keys that are used to access the data.
  *
  * @example
- * columnNames: {
+ * columnIds: {
  *     InstanceType: ['InstanceType'],
  *     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
  *     ReadOps: ['DiskOperations', 0, 'ReadOps']
  * },
  */
-export interface ColumnNamesOptions {
+export interface ColumnIdsOptions {
     [key: string]: Array<string|number>;
 }
 

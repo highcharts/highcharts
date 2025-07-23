@@ -116,23 +116,23 @@ class MathModifier extends DataModifier {
         const alternativeSeparators = modifier.options.alternativeSeparators,
             formulaColumns = (
                 modifier.options.formulaColumns ||
-                table.getColumnNames()
+                table.getColumnIds()
             ),
             modified = table.modified;
 
         for (
             let i = 0,
                 iEnd = formulaColumns.length,
-                columnName: string;
+                columnId: string;
             i < iEnd;
             ++i
         ) {
-            columnName = formulaColumns[i];
+            columnId = formulaColumns[i];
 
-            if (formulaColumns.indexOf(columnName) >= 0) {
+            if (formulaColumns.indexOf(columnId) >= 0) {
                 modified.setColumn(
-                    columnName,
-                    modifier.processColumn(table, columnName)
+                    columnId,
+                    modifier.processColumn(table, columnId)
                 );
             }
         }
@@ -177,8 +177,8 @@ class MathModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table to extract column from and use as reference.
      *
-     * @param {string} columnName
-     * Name of column to process.
+     * @param {string} columnId
+     * Id of column to process.
      *
      * @param {number} rowIndex
      * Row index to start the replacing process from.
@@ -188,11 +188,11 @@ class MathModifier extends DataModifier {
      */
     protected processColumn(
         table: DataTable,
-        columnName: string,
+        columnId: string,
         rowIndex: number = 0
     ): DataTable.Column {
         const alternativeSeparators = this.options.alternativeSeparators,
-            column = (table.getColumn(columnName, true) || [])
+            column = (table.getColumn(columnId, true) || [])
                 .slice(rowIndex > 0 ? rowIndex : 0);
 
         for (

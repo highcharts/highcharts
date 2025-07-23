@@ -4,7 +4,7 @@ Dashboards.board('container', {
             id: 'conn-id',
             type: 'JSON',
             firstRowAsNames: false,
-            columnNames: ['Col-A', 'Col-B', 'Col-C'],
+            columnIds: ['Col-A', 'Col-B', 'Col-C'],
             data: [
                 ['Row-1', 1349, 5],
                 ['Row-2', 1960, 4],

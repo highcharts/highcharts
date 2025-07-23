@@ -404,7 +404,7 @@ async function setupDashboard() {
             {
                 cell: 'kpi-temperature',
                 type: 'KPI',
-                columnName: 'temperature',
+                columnId: 'temperature',
                 chartOptions: {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,
@@ -455,7 +455,7 @@ async function setupDashboard() {
             }, {
                 cell: 'kpi-wind',
                 type: 'KPI',
-                columnName: 'wind',
+                columnId: 'wind',
                 chartOptions: {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,
@@ -500,7 +500,7 @@ async function setupDashboard() {
             }, {
                 cell: 'kpi-precipitation',
                 type: 'KPI',
-                columnName: 'precipitation',
+                columnId: 'precipitation',
                 chartOptions: {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,

@@ -90,11 +90,11 @@ class Slider extends Component {
         const mainConnectorHandler = this.connectorHandlers[0] || {};
         const table = mainConnectorHandler.connector &&
             mainConnectorHandler.connector.getTable();
-        const valuesColumnName = mainConnectorHandler.options &&
+        const valuesColumnId = mainConnectorHandler.options &&
             mainConnectorHandler.options.valuesColumn;
 
-        if (table && valuesColumnName) {
-            this.xColumn = table.columns[valuesColumnName] || [];
+        if (table && valuesColumnId) {
+            this.xColumn = table.columns[valuesColumnId] || [];
         }
 
         this.cell.setLoadingState(false);
@@ -255,7 +255,7 @@ Dashboards.board('container', {
                         connectorHandler.connector &&
                         connectorHandler.connector.getTable();
                     const chart = this.chart;
-                    const syncedColumnName =
+                    const syncedColumnId =
                         this.sync.syncConfig.customSync.syncedColumn;
 
                     if (
@@ -340,7 +340,7 @@ Dashboards.board('container', {
                     const handleCursor = e => {
                         const target = e.cursor.target;
                         const rowIndex = e.cursor.row;
-                        const yColumn = e.table.columns[syncedColumnName];
+                        const yColumn = e.table.columns[syncedColumnId];
 
                         const averages = [
                             yColumn.slice(0, rowIndex + 1),

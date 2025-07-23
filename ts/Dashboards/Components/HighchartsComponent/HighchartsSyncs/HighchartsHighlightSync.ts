@@ -71,7 +71,7 @@ const syncPair: Sync.SyncPair = {
             const connectorHandler: HCComponent.HCConnectorHandler =
                 component.seriesFromConnector[seriesId];
             const table = connectorHandler?.connector?.getTable();
-            let columnName: string | undefined;
+            let columnId: string | undefined;
 
             if (!table) {
                 continue;
@@ -85,15 +85,15 @@ const syncPair: Sync.SyncPair = {
             if (colAssignment) {
                 const { data } = colAssignment;
                 if (typeof data === 'string') {
-                    columnName = data;
+                    columnId = data;
                 } else if (Array.isArray(data)) {
-                    columnName = data[1];
+                    columnId = data[1];
                 } else {
-                    columnName = data.y ?? data.value;
+                    columnId = data.y ?? data.value;
                 }
             }
-            if (!columnName) {
-                columnName = series.name;
+            if (!columnId) {
+                columnId = series.name;
             }
 
             series.update({
@@ -104,7 +104,7 @@ const syncPair: Sync.SyncPair = {
                             cursor.emitCursor(table, {
                                 type: 'position',
                                 row: presTable.getOriginalRowIndex(this.index),
-                                column: columnName,
+                                column: columnId,
                                 state: 'point.mouseOver' + groupKey,
                                 sourceId: component.id
                             });
@@ -113,7 +113,7 @@ const syncPair: Sync.SyncPair = {
                             cursor.emitCursor(table, {
                                 type: 'position',
                                 row: presTable.getOriginalRowIndex(this.index),
-                                column: columnName,
+                                column: columnId,
                                 state: 'point.mouseOut' + groupKey,
                                 sourceId: component.id
                             });

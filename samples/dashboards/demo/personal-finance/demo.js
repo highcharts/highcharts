@@ -9,7 +9,7 @@ Dashboards.board('container', {
             id: 'transactions',
             type: 'JSON',
             firstRowAsNames: false,
-            columnNames: ['id', 'Receiver', 'Amount', 'Balance'],
+            columnIds: ['id', 'Receiver', 'Amount', 'Balance'],
             data: [
                 ['rsf934fds', 'John Doe', 100, 1000],
                 ['f0efnakr', 'Anna Smith', 200, 800],

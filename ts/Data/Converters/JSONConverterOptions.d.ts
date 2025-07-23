@@ -18,7 +18,7 @@
  * */
 
 import type {
-    ColumnNamesOptions,
+    ColumnIdsOptions,
     JSONBeforeParseCallbackFunction
 } from '../Connectors/JSONConnectorOptions';
 
@@ -36,7 +36,7 @@ import DataConverter from './DataConverter';
 export interface JSONConverterOptions extends DataConverter.Options {
     data: JSONData;
     orientation: 'columns' | 'rows';
-    columnNames?: string[] | ColumnNamesOptions;
+    columnIds?: string[] | ColumnIdsOptions;
     beforeParse?: JSONBeforeParseCallbackFunction;
 }
 

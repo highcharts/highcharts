@@ -98,8 +98,8 @@ class InvertModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Modified table.
      *
-     * @param {string} columnName
-     * Column name of changed cell.
+     * @param {string} columnId
+     * Column id of changed cell.
      *
      * @param {number|undefined} rowIndex
      * Row index of changed cell.
@@ -115,16 +115,13 @@ class InvertModifier extends DataModifier {
      */
     public modifyCell<T extends DataTable>(
         table: T,
-        columnName: string,
+        columnId: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
     ): T {
         const modified = table.modified,
-            modifiedRowIndex = modified.getRowIndexBy(
-                'columnNames',
-                columnName
-            );
+            modifiedRowIndex = modified.getRowIndexBy('columnIds', columnId);
 
         if (typeof modifiedRowIndex === 'undefined') {
             modified.setColumns(
@@ -170,14 +167,14 @@ class InvertModifier extends DataModifier {
         eventDetail?: DataEvent.Detail
     ): T {
         const modified = table.modified,
-            modifiedColumnNames = (modified.getColumn('columnNames') || []);
+            modifiedColumnIds = (modified.getColumn('columnIds') || []);
 
-        let columnNames = table.getColumnNames(),
-            reset = (table.getRowCount() !== modifiedColumnNames.length);
+        let columnIds = table.getColumnIds(),
+            reset = (table.getRowCount() !== modifiedColumnIds.length);
 
         if (!reset) {
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                if (columnNames[i] !== modifiedColumnNames[i]) {
+            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+                if (columnIds[i] !== modifiedColumnIds[i]) {
                     reset = true;
                     break;
                 }
@@ -188,21 +185,21 @@ class InvertModifier extends DataModifier {
             return this.modifyTable(table, eventDetail);
         }
 
-        columnNames = Object.keys(columns);
+        columnIds = Object.keys(columns);
 
         for (
             let i = 0,
-                iEnd = columnNames.length,
+                iEnd = columnIds.length,
                 column: DataTable.Column,
-                columnName: string,
+                columnId: string,
                 modifiedRowIndex: (number|undefined);
             i < iEnd;
             ++i
         ) {
-            columnName = columnNames[i];
-            column = columns[columnName];
+            columnId = columnIds[i];
+            column = columns[columnId];
             modifiedRowIndex = (
-                modified.getRowIndexBy('columnNames', columnName) ||
+                modified.getRowIndexBy('columnIds', columnId) ||
                 modified.getRowCount()
             );
 
@@ -250,15 +247,15 @@ class InvertModifier extends DataModifier {
         rowIndex: number,
         eventDetail?: DataEvent.Detail
     ): T {
-        const columnNames = table.getColumnNames(),
+        const columnIds = table.getColumnIds(),
             modified = table.modified,
-            modifiedColumnNames = (modified.getColumn('columnNames') || []);
+            modifiedColumnIds = (modified.getColumn('columnIds') || []);
 
-        let reset = (table.getRowCount() !== modifiedColumnNames.length);
+        let reset = (table.getRowCount() !== modifiedColumnIds.length);
 
         if (!reset) {
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                if (columnNames[i] !== modifiedColumnNames[i]) {
+            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+                if (columnIds[i] !== modifiedColumnIds[i]) {
                     reset = true;
                     break;
                 }
@@ -282,11 +279,11 @@ class InvertModifier extends DataModifier {
             if (row instanceof Array) {
                 modified.setColumn(`${i2}`, row);
             } else {
-                for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
+                for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
                     modified.setCell(
                         `${i2}`,
                         j,
-                        row[columnNames[j]],
+                        row[columnIds[j]],
                         eventDetail
                     );
                 }
@@ -318,16 +315,16 @@ class InvertModifier extends DataModifier {
 
         const modified = table.modified;
 
-        if (table.hasColumns(['columnNames'])) { // Inverted table
-            const columnNamesColumn = (
-                    (table.deleteColumns(['columnNames']) || {})
-                        .columnNames || []
+        if (table.hasColumns(['columnIds'])) { // Inverted table
+            const columnIdsColumn = (
+                    (table.deleteColumns(['columnIds']) || {})
+                        .columnIds || []
                 ),
                 columns: DataTable.ColumnCollection = {},
-                columnNames: Array<string> = [];
+                columnIds: Array<string> = [];
 
-            for (let i = 0, iEnd = columnNamesColumn.length; i < iEnd; ++i) {
-                columnNames.push('' + columnNamesColumn[i]);
+            for (let i = 0, iEnd = columnIdsColumn.length; i < iEnd; ++i) {
+                columnIds.push('' + columnIdsColumn[i]);
             }
 
             for (
@@ -339,7 +336,7 @@ class InvertModifier extends DataModifier {
             ) {
                 row = table.getRow(i);
                 if (row) {
-                    columns[columnNames[i]] = row;
+                    columns[columnIds[i]] = row;
                 }
             }
 
@@ -361,7 +358,7 @@ class InvertModifier extends DataModifier {
                     columns[`${i}`] = row;
                 }
             }
-            columns.columnNames = table.getColumnNames();
+            columns.columnIds = table.getColumnIds();
 
             modified.deleteColumns();
             modified.setColumns(columns);

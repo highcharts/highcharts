@@ -190,12 +190,12 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
      */
     public describeColumns(columns: Record<string, MetaColumn>): void {
         const connector = this;
-        const columnNames = Object.keys(columns);
+        const columnIds = Object.keys(columns);
 
-        let columnName: (string|undefined);
+        let columnId: (string|undefined);
 
-        while (typeof (columnName = columnNames.pop()) === 'string') {
-            connector.describeColumn(columnName, columns[columnName]);
+        while (typeof (columnId = columnIds.pop()) === 'string') {
+            connector.describeColumn(columnId, columns[columnId]);
         }
     }
 
@@ -222,7 +222,7 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
      * applies column order from meta.
      *
      * @return {Highcharts.DataTableColumnCollection}
-     * An object with the properties `columnNames` and `columnValues`
+     * An object with the properties `columnIds` and `columnValues`
      */
     public getSortedColumns(): DataTable.ColumnCollection {
         return this.getTable().getColumns(this.getColumnOrder());
@@ -231,14 +231,14 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
     /**
      * Sets the index and order of columns.
      *
-     * @param {Array<string>} columnNames
+     * @param {Array<string>} columnIds
      * Order of columns.
      */
-    public setColumnOrder(columnNames: Array<string>): void {
+    public setColumnOrder(columnIds: Array<string>): void {
         const connector = this;
 
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            connector.describeColumn(columnNames[i], { index: i });
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            connector.describeColumn(columnIds[i], { index: i });
         }
     }
 

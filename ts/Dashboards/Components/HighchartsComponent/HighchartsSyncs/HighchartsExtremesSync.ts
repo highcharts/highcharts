@@ -97,7 +97,7 @@ const syncPair: Sync.SyncPair = {
                             axis.coll === 'xAxis' &&
                             visiblePoints.length
                         ) {
-                            let columnName: string | undefined;
+                            let columnId: string | undefined;
                             const columnAssignment = (
                                 component.connectorHandlers[0]
                                     ?.options as ConnectorOptions
@@ -114,28 +114,28 @@ const syncPair: Sync.SyncPair = {
                                 if (assignment) {
                                     const data = assignment.data;
                                     if (isString(data)) {
-                                        columnName = data;
+                                        columnId = data;
                                     } else if (Array.isArray(data)) {
-                                        columnName = data[data.length - 1];
+                                        columnId = data[data.length - 1];
                                     } else {
-                                        columnName = data.y;
+                                        columnId = data.y;
                                     }
                                 }
                             }
 
-                            if (!columnName) {
-                                columnName = axis.dateTime && (
+                            if (!columnId) {
+                                columnId = axis.dateTime && (
                                     table.hasColumns(['x']) ? 'x' :
                                         series.options.id ?? series.name
                                 );
                             }
 
                             minCursorData.row = visiblePoints[0].index;
-                            minCursorData.column = columnName;
+                            minCursorData.column = columnId;
 
                             maxCursorData.row =
                                 visiblePoints[visiblePoints.length - 1].index;
-                            maxCursorData.column = columnName;
+                            maxCursorData.column = columnId;
                         }
 
                         // Emit as lasting cursors

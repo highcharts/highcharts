@@ -46,7 +46,7 @@ test('CSVConnector from string', async (assert) => {
         'DataTable has correct amount of rows.'
     );
     assert.strictEqual(
-        connector.getTable().getColumnNames().length,
+        connector.getTable().getColumnIds().length,
         csv.split('\n')[0].split(',').length,
         'DataTable has correct amount of columns.'
     );
@@ -65,7 +65,7 @@ test('CSVConnector from string, spaces in header', async (assert) =>{
     await connector.load();
 
     assert.deepEqual(
-        connector.getTable().getColumnNames(),
+        connector.getTable().getColumnIds(),
         ['Number', 'Letter', 'Color'],
         'DataTable headers are trimmed of whitespace'
     );
@@ -79,7 +79,7 @@ test('CSVConnector from string, quoted spaces in header', async (assert) =>{
     await connector.load();
 
     assert.deepEqual(
-        connector.getTable().getColumnNames(),
+        connector.getTable().getColumnIds(),
         [' Number', ' Letter', ' Color'],
         'Quoted DataTable headers are not trimmed of whitespace'
     );
@@ -142,7 +142,7 @@ test('CSV with ""s', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.getTable().getColumnNames(),
+        connector.getTable().getColumnIds(),
         ['test', 'test2'],
         'Headers should not contain ""s'
     )

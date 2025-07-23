@@ -13,8 +13,8 @@ const dataModifier = {
 };
 
 
-function createColumnAssignment(columnNames) {
-    return columnNames.map(function (column) {
+function createColumnAssignment(columnIds) {
+    return columnIds.map(function (column) {
         return {
             seriesId: column,
             data: ['Year', column]

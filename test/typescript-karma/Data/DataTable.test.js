@@ -51,7 +51,7 @@ QUnit.test('DataTable Column Rename', function (assert) {
 
     // Move
     assert.ok(
-        table.renameColumn('column1', 'newColumn'),
+        table.changeColumnId('column1', 'newColumn'),
         'Table should move cells of a column to a new column.'
     );
     assert.deepEqual(
@@ -62,7 +62,7 @@ QUnit.test('DataTable Column Rename', function (assert) {
 
     // Force move
     assert.ok(
-        table.renameColumn('newColumn', 'existingColumn'),
+        table.changeColumnId('newColumn', 'existingColumn'),
         'Table should move cell of a column to an existing column (with force).'
     );
     assert.deepEqual(
@@ -74,7 +74,7 @@ QUnit.test('DataTable Column Rename', function (assert) {
     table.setColumn('existingColumn', [ true ])
 
     assert.notOk(
-        table.renameColumn('nonexistant', 'existingColumn'),
+        table.changeColumnId('nonexistant', 'existingColumn'),
         'Table should fail when trying to move a non-existant column.'
     );
 

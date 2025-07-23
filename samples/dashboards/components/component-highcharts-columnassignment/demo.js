@@ -4,7 +4,7 @@ Dashboards.board('container', {
             id: 'data',
             type: 'JSON',
             firstRowAsNames: false,
-            columnNames: ['x', 'myLow', 'myHigh', 'mySeries'],
+            columnIds: ['x', 'myLow', 'myHigh', 'mySeries'],
             data: [
                 [1699434920314, 6, 5, 4, 1, 6, 9],
                 [1699494920314, 2, 6, 2, 5, 7, 9],

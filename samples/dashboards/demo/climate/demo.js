@@ -386,7 +386,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnName: 'TN' + activeScale,
+            columnId: 'TN' + activeScale,
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -415,7 +415,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnName: 'TX' + activeScale,
+            columnId: 'TX' + activeScale,
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -444,7 +444,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnName: 'RR1',
+            columnId: 'RR1',
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -842,10 +842,10 @@ async function updateBoard(board, city, column, scale, newData) {
         }
     });
     kpiTemperature.update({
-        columnName: 'TN' + scale
+        columnId: 'TN' + scale
     });
     kpiMaxTemperature.update({
-        columnName: 'TX' + scale
+        columnId: 'TX' + scale
     });
 
     if (newData) {

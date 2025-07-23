@@ -130,7 +130,7 @@ class JSONConnector extends DataConnector {
         const connector = this;
         const options = connector.options;
         const {
-            columnNames,
+            columnIds,
             data,
             dataUrl,
             firstRowAsNames,
@@ -174,8 +174,7 @@ class JSONConnector extends DataConnector {
                             // Takes over the connector default options.
                             const mergedTableOptions = {
                                 dataTableKey: key,
-                                columnNames: tableOptions?.columnNames ??
-                                    columnNames,
+                                columnIds: tableOptions?.columnIds ?? columnIds,
                                 firstRowAsNames:
                                     tableOptions?.firstRowAsNames ??
                                     firstRowAsNames,

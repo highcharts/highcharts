@@ -98,7 +98,7 @@ each adjustment.
 Each `DataTable` should have a `key` property that will be referenced in the
 component.
 
-Also, you can define connector options (`columnNames`, `firstRowAsNames`,
+Also, you can define connector options (`columnIds`, `firstRowAsNames`,
 `orientation`, `beforeParse`) and use the `DataModifier` service.
 
 ```javascript
@@ -127,7 +127,7 @@ dataPool: {
         }, {
             key: 'metrics',
             firstRowAsNames: false,
-            columnNames: ['revenue', 'costs'],
+            columnIds: ['revenue', 'costs'],
             beforeParse: function({ metrics }) {
                 return [[metrics.revenue, metrics.costs]];
             },

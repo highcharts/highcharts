@@ -1022,12 +1022,12 @@ class Series {
      * @function Highcharts.Series#getColumn
      */
     public getColumn(
-        columnName: string,
+        columnId: string,
         modified?: boolean
     ): Array<number> {
         return (
             (modified ? this.dataTable.modified : this.dataTable)
-                .getColumn(columnName, true) as Array<number>
+                .getColumn(columnId, true) as Array<number>
         ) || [];
     }
 
@@ -1452,9 +1452,9 @@ class Series {
                         }
 
                         table.setColumns(dataColumnKeys.reduce(
-                            (columns, columnName, i):
+                            (columns, columnId, i):
                             DataTable.ColumnCollection => {
-                                columns[columnName] = colArray[i];
+                                columns[columnId] = colArray[i];
                                 return columns;
                             }, {} as DataTable.ColumnCollection));
 
@@ -1499,9 +1499,9 @@ class Series {
 
             if (!runTurbo) {
                 const columns = dataColumnKeys.reduce(
-                    (columns, columnName):
+                    (columns, columnId):
                     DataTable.ColumnCollection => {
-                        columns[columnName] = [];
+                        columns[columnId] = [];
                         return columns;
                     }, {} as DataTable.ColumnCollection);
                 for (i = 0; i < dataLength; i++) {

@@ -13,7 +13,7 @@ const rows = [
         [3, 4, 3, 4],
         [3, 4, 3, 4]
     ],
-    columnNames = ['id', 'weight', 'age'];
+    columnIds = ['id', 'weight', 'age'];
 
 test('JSONConnector from rows', async (assert) => {
     const connector = new JSONConnector({ data: rows });
@@ -25,7 +25,7 @@ test('JSONConnector from rows', async (assert) => {
         'Should have the same amount of rows'
     );
     assert.deepEqual(
-        connector.getTable().getColumnNames(),
+        connector.getTable().getColumnIds(),
         rows[0],
         'Should have correct column Names'
     );
@@ -34,7 +34,7 @@ test('JSONConnector from rows', async (assert) => {
 test('JSONConnector from columns', async (assert) => {
     const connector = new JSONConnector({
         orientation: 'columns',
-        columnNames: ['id', 'weight', 'age'],
+        columnIds: ['id', 'weight', 'age'],
         firstRowAsNames: false,
         data: columns
     });
@@ -46,8 +46,8 @@ test('JSONConnector from columns', async (assert) => {
         'Should have the same amount of rows'
     );
     assert.deepEqual(
-        connector.getTable().getColumnNames(),
-        columnNames,
+        connector.getTable().getColumnIds(),
+        columnIds,
         'Should have correct column Names'
     );
 });
@@ -82,8 +82,8 @@ test('JSONConnector from objects', async (assert) => {
         'Should have the same amount of rows'
     );
     assert.deepEqual(
-        connector.getTable().getColumnNames(),
-        columnNames,
+        connector.getTable().getColumnIds(),
+        columnIds,
         'Should have correct column Names'
     );
 });

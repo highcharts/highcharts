@@ -136,25 +136,25 @@ class CSVConverter extends DataConverter {
         }
 
         const columns = connector.getSortedColumns(),
-            columnNames = Object.keys(columns),
+            columnIds = Object.keys(columns),
             csvRows: string[] = [],
-            columnsCount = columnNames.length;
+            columnsCount = columnIds.length;
 
         const rowArray: DataTable.Row[] = [];
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            csvRows.push(columnNames.map(
-                (columnName): string => `"${columnName}"`
+            csvRows.push(columnIds.map(
+                (columnId): string => `"${columnId}"`
             ).join(itemDelimiter));
         }
 
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-            const columnName = columnNames[columnIndex],
-                column = columns[columnName],
+            const columnId = columnIds[columnIndex],
+                column = columns[columnId],
                 columnLength = column.length;
 
-            const columnMeta = connector.metadata.columns[columnName];
+            const columnMeta = connector.metadata.columns[columnId];
             let columnDataType;
 
             if (columnMeta) {

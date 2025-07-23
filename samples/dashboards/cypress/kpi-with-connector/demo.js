@@ -10,7 +10,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-2',
         type: 'KPI',
         title: 'Mixed values',
-        columnName: 'Value',
+        columnId: 'Value',
         sync: {
             extremes: true
         },
@@ -22,7 +22,7 @@ Dashboards.board('container', {
         renderTo: 'kpi',
         type: 'KPI',
         title: 'Last day\'s value',
-        columnName: 'Value',
+        columnId: 'Value',
         sync: {
             extremes: true
         },

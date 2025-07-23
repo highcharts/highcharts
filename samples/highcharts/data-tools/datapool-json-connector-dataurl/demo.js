@@ -4,7 +4,7 @@ Dashboards.board('container', {
             type: 'JSON',
             id: 'fetched-data',
             firstRowAsNames: false,
-            columnNames: ['time', 'open', 'high', 'low', 'close', 'volume'],
+            columnIds: ['time', 'open', 'high', 'low', 'close', 'volume'],
             dataUrl: 'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
         }]
 

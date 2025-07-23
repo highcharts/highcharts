@@ -9,7 +9,7 @@ Dashboards.board('container', {
             id: 'micro-element',
             type: 'JSON',
             firstRowAsNames: false,
-            columnNames: ['Food', 'Vitamin A',  'Iron'],
+            columnIds: ['Food', 'Vitamin A',  'Iron'],
             data: [
                 ['Beef Liver', 6421, 6.5],
                 ['Lamb Liver', 2122, 6.5],

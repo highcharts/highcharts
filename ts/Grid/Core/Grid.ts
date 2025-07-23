@@ -853,7 +853,7 @@ class Grid {
         const headerColumns = this.getColumnIds(header || [], false);
         const columnsIncluded = this.options?.rendering?.columns?.included || (
             headerColumns && headerColumns.length > 0 ?
-                headerColumns : this.dataTable?.getColumnNames()
+                headerColumns : this.dataTable?.getColumnIds()
         );
 
         if (!columnsIncluded?.length) {
@@ -864,12 +864,12 @@ class Grid {
             return columnsIncluded;
         }
 
-        let columnName: string;
+        let columnId: string;
         const result: string[] = [];
         for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
-            columnName = columnsIncluded[i];
-            if (columnOptionsMap?.[columnName]?.options?.enabled !== false) {
-                result.push(columnName);
+            columnId = columnsIncluded[i];
+            if (columnOptionsMap?.[columnId]?.options?.enabled !== false) {
+                result.push(columnId);
             }
         }
 

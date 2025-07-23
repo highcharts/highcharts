@@ -59,11 +59,11 @@ dataModifier: {
         operator: 'and', // combine multiple checks
         conditions: [{
             operator: '>', // numeric “greater than”
-            columnName: 'score',
+            columnId: 'score',
             value: 50
         }, {
             operator: 'contains', // text “contains”
-            columnName: 'name',
+            columnId: 'name',
             value: 'smith',
             ignoreCase: true
         }]

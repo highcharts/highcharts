@@ -17,7 +17,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-sum',
         type: 'KPI',
         title: 'KPI sum',
-        columnName: 'Value',
+        columnId: 'Value',
         formula: 'SUM',
         connector: {
             id: 'values'
@@ -26,7 +26,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-average',
         type: 'KPI',
         title: 'KPI average',
-        columnName: 'Value',
+        columnId: 'Value',
         formula: 'AVERAGE',
         connector: {
             id: 'values'
@@ -35,7 +35,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-median',
         type: 'KPI',
         title: 'KPI median',
-        columnName: 'Value',
+        columnId: 'Value',
         formula: 'MEDIAN',
         connector: {
             id: 'values'
@@ -44,7 +44,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-range',
         type: 'KPI',
         title: 'KPI range (callback)',
-        columnName: 'Value',
+        columnId: 'Value',
         formula: function (column) {
             const filteredColumn =
                 column.slice().map(Number).filter(v => !isNaN(v));
@@ -60,7 +60,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-min',
         type: 'KPI',
         title: 'KPI min',
-        columnName: 'Value',
+        columnId: 'Value',
         formula: 'MIN',
         connector: {
             id: 'values'
@@ -69,7 +69,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-max',
         type: 'KPI',
         title: 'KPI max',
-        columnName: 'Value',
+        columnId: 'Value',
         formula: 'MAX',
         connector: {
             id: 'values'
@@ -78,7 +78,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-count',
         type: 'KPI',
         title: 'KPI count',
-        columnName: 'Value',
+        columnId: 'Value',
         formula: 'COUNT',
         connector: {
             id: 'values'
@@ -87,7 +87,7 @@ Dashboards.board('container', {
         renderTo: 'kpi-product',
         type: 'KPI',
         title: 'KPI product',
-        columnName: 'Value',
+        columnId: 'Value',
         formula: 'PRODUCT',
         connector: {
             id: 'values'

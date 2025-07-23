@@ -64,14 +64,14 @@ const dataTablesOptions = [
     })),
     {
         key: 'dataset-4',
-        columnNames: ['name', 'value'],
+        columnIds: ['name', 'value'],
         beforeParse: function (data) {
             return Object.entries(calculateStatistics(data));
         }
     }
 ];
 
-const columnNames = ['time', 'open', 'high', 'low', 'close', 'volume'];
+const columnIds = ['time', 'open', 'high', 'low', 'close', 'volume'];
 
 /**
  *
@@ -131,8 +131,8 @@ class DataTablesConnector extends Dashboards.DataConnector {
                             const dataTableOptions = {
                                 dataTableKey: key,
                                 beforeParse: tableOptions?.beforeParse,
-                                columnNames: tableOptions?.columnNames ??
-                                    options.columnNames
+                                columnIds: tableOptions?.columnIds ??
+                                    options.columnIds
                             };
 
                             return new Dashboards.DataConverter.types.JSON(
@@ -175,7 +175,7 @@ DataTablesConnector.defaultOptions = {
     dataRefreshRate: 0,
     firstRowAsNames: false,
     orientation: 'rows',
-    columnNames
+    columnIds
 };
 
 /**
@@ -270,7 +270,7 @@ Dashboards.board('container', {
                 dataTableKey: `dataset-${index}`,
                 columnAssignment: [{
                     seriesId: `2024 Q${index + 1}`,
-                    data: columnNames
+                    data: columnIds
                 }]
             }],
             chartOptions: {
