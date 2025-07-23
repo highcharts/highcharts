@@ -173,7 +173,7 @@ class Table {
         const dgOptions = grid.options;
         const customClassName = dgOptions?.rendering?.table?.className;
 
-        this.columnResizing = ColumnResizing.initStrategy(this);
+        this.columnResizing = ColumnResizing.initMode(this);
         this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
 
         if (dgOptions?.rendering?.header?.enabled) {

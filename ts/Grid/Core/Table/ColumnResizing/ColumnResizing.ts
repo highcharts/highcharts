@@ -1,6 +1,6 @@
 /* *
  *
- *  Column Distribution namespace
+ *  Column Resizing namespace
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -39,12 +39,12 @@ import DistributedResizingMode from './DistributedResizingMode.js';
 namespace ColumnResizing {
 
     /**
-     * Abstract class representing a column distribution strategy.
+     * Abstract class representing a column resizing mode.
      */
     export const AbstractStrategy = ResizingMode;
 
     /**
-     * Registry of column distribution strategies.
+     * Registry of column resizing modes.
      */
     export const types = {
         adjacent: AdjacentResizingMode,
@@ -55,31 +55,31 @@ namespace ColumnResizing {
     export type ModeType = keyof typeof types;
 
     /**
-     * Creates a new column distribution strategy instance based on the
+     * Creates a new column resizing mode instance based on the
      * viewport's options.
      *
      * @param viewport
-     * The table that the column distribution strategy is applied to.
+     * The table that the column resizing mode is applied to.
      *
      * @returns
-     * The proper column distribution strategy.
+     * The proper column resizing mode.
      */
-    export function initStrategy(viewport: Table): ResizingMode {
-        const strategyName =
+    export function initMode(viewport: Table): ResizingMode {
+        const modeName =
             viewport.grid.options?.rendering?.columns?.resizing?.mode ||
             'adjacent';
-        let StrategyConstructor = types[strategyName];
+        let ModeConstructor = types[modeName];
 
-        if (!StrategyConstructor) {
+        if (!ModeConstructor) {
             // eslint-disable-next-line no-console
             console.warn(
-                `Unknown column resizing mode: '${strategyName}'. Applied ` +
+                `Unknown column resizing mode: '${modeName}'. Applied ` +
                 'default \'adjacent\' mode.'
             );
-            StrategyConstructor = types.adjacent;
+            ModeConstructor = types.adjacent;
         }
 
-        return new StrategyConstructor(viewport);
+        return new ModeConstructor(viewport);
     }
 
 }

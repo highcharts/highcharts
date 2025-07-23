@@ -1,6 +1,6 @@
 /* *
  *
- *  Mixed Distribution Strategy class
+ *  Adjacent Resizing Mode class
  *
  *  (c) 2020-2025 Highsoft AS
  *
