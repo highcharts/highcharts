@@ -1,8 +1,8 @@
 const btn = document.getElementById('play-pause-button'),
     input = document.getElementById('play-range'),
-    startYear = 1973,
-    endYear = 2024,
-    animationDuration = 400;
+    startRound = 0,
+    endRound = 20,
+    animationDuration = 1000;
 
 // General helper functions
 const arrToAssociative = arr => {
@@ -14,68 +14,54 @@ const arrToAssociative = arr => {
     return tmp;
 };
 
-function getSubtitle() {
-    return `<span style='font-size: 60px'>${input.value}</span>`;
-}
-
-const formatRevenue = [];
+const formatPoints = [];
 
 const chart = Highcharts.chart('container', {
     chart: {
         type: 'line',
         marginTop: 100,
+        marginRight: 50,
         animation: {
             duration: animationDuration,
             easing: t => t
         }
     },
     title: {
-        text: 'Music revenue race chart'
-    },
-    subtitle: {
-        text: getSubtitle(),
-        floating: true,
-        align: 'right',
-        verticalAlign: 'middle',
-        x: -100,
-        y: -110
+        text: 'F1 2012 Top Ten Drivers'
     },
     data: {
         csv: document.getElementById('csv').innerHTML,
         itemDelimiter: '\t',
         complete: function (options) {
             for (let i = 0; i < options.series.length; i++) {
-                formatRevenue[i] = arrToAssociative(options.series[i].data);
+                formatPoints[i] = arrToAssociative(options.series[i].data);
                 options.series[i].data = null;
             }
         }
     },
     xAxis: {
         allowDecimals: false,
-        min: startYear,
-        max: endYear
+        min: startRound,
+        max: endRound
     },
     yAxis: {
         reversedStacks: false,
-        max: 20,
+        max: 300,
         title: {
-            text: 'Revenue in the U.S.'
-        },
-        labels: {
-            format: '${text} B'
+            text: 'Points'
         }
     },
     tooltip: {
         split: true,
         headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
         pointFormat:
-            '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
+            '{series.name}: {point.y} Points',
         crosshairs: true
     },
     plotOptions: {
         line: {
             animation: false,
-            pointStart: startYear,
+            pointStart: startRound,
             marker: {
                 enabled: false
             }
@@ -88,6 +74,7 @@ const chart = Highcharts.chart('container', {
                 backgroundColor: undefined,
                 verticalAlign: 'middle',
                 allowOverlap: false,
+                crop: false,
                 style: {
                     pointerEvents: 'none',
                     opacity: 1
@@ -95,58 +82,94 @@ const chart = Highcharts.chart('container', {
             },
             labels: [
                 {
+                    text: 0,
                     point: {
                         x: 0,
                         xAxis: 0,
                         y: 0,
                         yAxis: 0
-                    },
-                    id: 'vinyl-label'
+                    }
                 },
                 {
+                    text: 0,
                     point: {
                         x: 0,
                         xAxis: 0,
                         y: 0,
                         yAxis: 0
-                    },
-                    id: 'lpep-label'
+                    }
                 },
                 {
+                    text: 0,
                     point: {
                         x: 0,
                         xAxis: 0,
                         y: 0,
                         yAxis: 0
-                    },
-                    id: 'cassettes-label'
+                    }
                 },
                 {
+                    text: 0,
                     point: {
                         x: 0,
                         xAxis: 0,
                         y: 0,
                         yAxis: 0
-                    },
-                    id: 'cd-label'
+                    }
                 },
                 {
+                    text: 0,
                     point: {
                         x: 0,
                         xAxis: 0,
                         y: 0,
                         yAxis: 0
-                    },
-                    id: 'dl-label'
+                    }
                 },
                 {
+                    text: 0,
                     point: {
                         x: 0,
                         xAxis: 0,
                         y: 0,
                         yAxis: 0
-                    },
-                    id: 'streams-label'
+                    }
+                },
+                {
+                    text: 0,
+                    point: {
+                        x: 0,
+                        xAxis: 0,
+                        y: 0,
+                        yAxis: 0
+                    }
+                },
+                {
+                    text: 0,
+                    point: {
+                        x: 0,
+                        xAxis: 0,
+                        y: 0,
+                        yAxis: 0
+                    }
+                },
+                {
+                    text: 0,
+                    point: {
+                        x: 0,
+                        xAxis: 0,
+                        y: 0,
+                        yAxis: 0
+                    }
+                },
+                {
+                    text: 0,
+                    point: {
+                        x: 0,
+                        xAxis: 0,
+                        y: 0,
+                        yAxis: 0
+                    }
                 }
             ]
         }
@@ -195,20 +218,10 @@ function pause(button) {
 }
 
 function update(sliderClicked) {
-    chart.update(
-        {
-            subtitle: {
-                text: getSubtitle()
-            }
-        },
-        false,
-        false,
-        false
-    );
 
     const series = chart.series,
         labels = chart.annotations[0].labels,
-        yearIndex = input.value - startYear,
+        yearIndex = input.value - startRound,
         dataLength = series[0].options.data.length;
 
     // If slider moved back in time
@@ -224,23 +237,75 @@ function update(sliderClicked) {
         const remainingYears = yearIndex - dataLength;
         for (let i = 0; i < series.length; i++) {
             for (let j = input.value - remainingYears; j < input.value; j++) {
-                series[i].addPoint([formatRevenue[i][j]], false);
+                series[i].addPoint([formatPoints[i][j]], false);
             }
         }
     }
 
-    // Add current year, and update labels
+    const nextnums = [];
+    // Add current year if applicable, and update labels
     for (let i = 0; i < series.length; i++) {
-        const newY = formatRevenue[i][input.value];
-        series[i].addPoint([newY], false);
-        console.log(labels[i]);
-        labels[i].options.point.x = yearIndex + 1973;
-        labels[i].options.point.y = newY;
-        // labels[i].options.style = {
-        //     '--num': (newY * 1000)
-        // };
-        // labels[i].options.text = (newY * 1000).toString();
+        const newY = formatPoints[i][input.value];
+        labels[i].options.point.x = Math.min(yearIndex + 0.3, endRound);
+        labels[i].options.point.y = Math.max(newY - 10, 0);
+        nextnums.push(newY);
+        if (series[i].options.data.length <= yearIndex) {
+            series[i].addPoint([newY], false);
+        }
     }
+
+
+    const ease = {
+        linear: t => t,
+        inOutQuad: t => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t)
+        // https://gist.github.com/gre/1650294
+    };
+
+    // https://stackoverflow.com/questions/70746105/animate-counter-from-start-to-end-value
+
+    const counter = EL => {
+
+
+        let start = parseInt(EL.textContent, 10); // Get start and end values
+        let end = nextnums.pop();
+        if (isNaN(start)) {
+            start = 0;
+        }
+        if (isNaN(end)) {
+            end = 0;
+        }
+
+        // If equal values, stop here.
+        if (start === end) {
+            return;
+        }
+
+        const range = end - start; // Get the range
+        let curr = start; // Set current at start position
+
+        const timeStart = Date.now();
+
+        const loop = () => {
+            let elaps = Date.now() - timeStart;
+            // Stop the loop
+            if (elaps > animationDuration) {
+                elaps = animationDuration;
+            }
+            // normalised value + easing
+            const norm = ease.linear(elaps / animationDuration);
+            const step = norm * range; // Calculate the value step
+            curr = start + step; // Increment or Decrement current value
+            EL.textContent = Math.trunc(curr); // Apply to UI as integer
+            if (elaps < animationDuration) {
+                requestAnimationFrame(loop);
+            } // Loop
+        };
+
+        requestAnimationFrame(loop); // Start the loop
+    };
+
+    document.querySelectorAll('g.highcharts-annotation-label > text')
+        .forEach(counter);
 
     if (sliderClicked) {
         chart.redraw(false);
@@ -250,7 +315,7 @@ function update(sliderClicked) {
 
     input.value = parseInt(input.value, 10) + 1;
 
-    if (input.value > endYear) {
+    if (input.value > endRound) {
         // Auto-pause
         pause(btn);
     }
@@ -258,8 +323,8 @@ function update(sliderClicked) {
 
 function play(button) {
     // Reset slider at the end
-    if (input.value > endYear) {
-        input.value = startYear;
+    if (input.value > endRound) {
+        input.value = startRound;
     }
     button.title = 'pause';
     button.className = 'fa fa-pause';
