@@ -14,7 +14,9 @@ Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     },
     columns: [{

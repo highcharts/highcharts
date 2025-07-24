@@ -84,3 +84,25 @@ describe('Data polling restarting', () => {
     });
   });
 });
+
+describe('Data polling stop', () => {
+  before(() => {
+    cy.visit('dashboards/cypress/connector-polling');
+  });
+
+  it('Connector polling is stopped after the unloaded board is destroyed.', () => {
+    cy.board().then(dashboard => {
+      const CONNECTOR_ID = 'fetched-data';
+      const dataPool = dashboard.dataPool;
+
+      // Let the connector to load synchronously.
+      dataPool.getConnector(CONNECTOR_ID);
+      // Destroy the dashboard before the connector gets loaded.
+      dashboard.destroy();
+      // Expect request to be aborted.
+      expect(
+        dataPool.connectors[CONNECTOR_ID].pollingController.signal.aborted
+      ).to.be.true;
+    });
+  });
+});

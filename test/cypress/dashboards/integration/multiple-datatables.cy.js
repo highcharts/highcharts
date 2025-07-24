@@ -41,11 +41,9 @@ describe('Multiple dataTables rendering', () => {
             const table =
                 dataPool.connectors[CONNECTOR_ID].getTable(DATA_TABLE_KEY);
 
-            console.log(table);
-
             assert.deepEqual(
                 dataPoolOptions.columnNames,
-                Object.keys(table.columns),
+                table.getColumnNames(),
                 'The dataTable columnNames option should match the user options.'
             );
 

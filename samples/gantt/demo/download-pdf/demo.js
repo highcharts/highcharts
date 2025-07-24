@@ -66,8 +66,8 @@ Highcharts.ganttChart('container', {
 });
 
 // Activate the custom button
-document.getElementById('pdf').addEventListener('click', function () {
-    Highcharts.charts[0].exportChart({
+document.getElementById('pdf').addEventListener('click', async function () {
+    await Highcharts.charts[0].exporting.exportChart({
         type: 'application/pdf'
     });
 });

@@ -285,5 +285,15 @@ Highcharts.chart('container', {
                 ]
             }
         ]
+    },
+
+    navigation: {
+        breadcrumbs: {
+            buttonTheme: {
+                style: {
+                    color: 'var(--highcharts-highlight-color-100)'
+                }
+            }
+        }
     }
 });

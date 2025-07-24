@@ -101,6 +101,27 @@ class SortModifier extends DataModifier {
         );
     }
 
+    private static compareFactory(
+        direction: 'asc'|'desc',
+        customCompare?: (a: DataTable.CellType, b: DataTable.CellType) => number
+    ): ((a: DataTable.CellType, b: DataTable.CellType) => number) {
+        if (customCompare) {
+            if (direction === 'desc') {
+                return (
+                    a: DataTable.CellType,
+                    b: DataTable.CellType
+                ): number => -customCompare(a, b);
+            }
+            return customCompare;
+        }
+
+        return (
+            direction === 'asc' ?
+                SortModifier.ascending :
+                SortModifier.descending
+        );
+    }
+
     /* *
      *
      *  Constructor
@@ -108,10 +129,10 @@ class SortModifier extends DataModifier {
      * */
 
     /**
-     * Constructs an instance of the range modifier.
+     * Constructs an instance of the sort modifier.
      *
-     * @param {Partial<RangeDataModifier.Options>} [options]
-     * Options to configure the range modifier.
+     * @param {Partial<SortDataModifier.Options>} [options]
+     * Options to configure the sort modifier.
      */
     public constructor(
         options?: Partial<SortModifierOptions>
@@ -356,13 +377,10 @@ class SortModifier extends DataModifier {
             {
                 direction,
                 orderByColumn,
-                orderInColumn
+                orderInColumn,
+                compare: customCompare
             } = modifier.options,
-            compare = (
-                direction === 'asc' ?
-                    SortModifier.ascending :
-                    SortModifier.descending
-            ),
+            compare = SortModifier.compareFactory(direction, customCompare),
             orderByColumnIndex = columnNames.indexOf(orderByColumn),
             modified = table.modified;
 
@@ -388,7 +406,7 @@ class SortModifier extends DataModifier {
                 rowReference = rowReferences[i];
 
                 originalIndexes.push(
-                    modified.getOriginalRowIndex(rowReference.index)
+                    table.getOriginalRowIndex(rowReference.index)
                 );
                 rows.push(rowReference.row);
             }

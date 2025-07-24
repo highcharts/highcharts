@@ -36,6 +36,7 @@ import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
+import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
@@ -145,6 +146,11 @@ class Grid {
     public accessibility?: Accessibility;
 
     /**
+     * The Pagination controller.
+     */
+    public pagination?: Pagination;
+
+    /**
      * The caption element of the Grid.
      */
     public captionElement?: HTMLElement;
@@ -154,7 +160,7 @@ class Grid {
      * column options.
      * @internal
      */
-    public columnOptionsMap: Record<string, Column.Options> = {};
+    public columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
 
     /**
      * The container of the grid.
@@ -268,6 +274,12 @@ class Grid {
      */
     public id: string;
 
+    /**
+     * Functions that unregister events attached to the grid's data table,
+     * that need to be removed when the grid is destroyed.
+     */
+    private dataTableEventDestructors: Function[] = [];
+
 
     /* *
     *
@@ -299,6 +311,7 @@ class Grid {
 
         this.initContainers(renderTo);
         this.initAccessibility();
+        this.initPagination();
         this.loadDataTable(this.options?.dataTable);
         this.initVirtualization();
 
@@ -336,6 +349,20 @@ class Grid {
 
         if (this.options?.accessibility?.enabled) {
             this.accessibility = new Accessibility(this);
+        }
+    }
+
+    /*
+     * Initializes the pagination.
+     */
+    private initPagination(): void {
+        this.pagination?.destroy();
+        delete this.pagination;
+
+        const paginationOptions = this.options?.pagination;
+
+        if (paginationOptions?.enabled) {
+            this.pagination = new Pagination(this, paginationOptions);
         }
     }
 
@@ -390,9 +417,9 @@ class Grid {
 
         if (newOptions.columns) {
             if (oneToOne) {
-                this.loadColumnOptionsOneToOne(newOptions.columns);
+                this.setColumnOptionsOneToOne(newOptions.columns);
             } else {
-                this.loadColumnOptions(newOptions.columns);
+                this.setColumnOptions(newOptions.columns);
             }
             delete newOptions.columns;
         }
@@ -408,15 +435,18 @@ class Grid {
         if (!columnOptionsArray) {
             return;
         }
-        const columnOptionsObj: Record<string, Column.Options> = {};
+        const columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
         for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
-            columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
+            columnOptionsMap[columnOptionsArray[i].id] = {
+                index: i,
+                options: columnOptionsArray[i]
+            };
         }
-        this.columnOptionsMap = columnOptionsObj;
+        this.columnOptionsMap = columnOptionsMap;
     }
 
     /**
-     * Loads the new column options to the userOptions field.
+     * Sets the new column options to the userOptions field.
      *
      * @param newColumnOptions
      * The new column options that should be loaded.
@@ -425,7 +455,7 @@ class Grid {
      * Whether to overwrite the existing column options with the new ones.
      * Default is `false`.
      */
-    private loadColumnOptions(
+    private setColumnOptions(
         newColumnOptions: IndividualColumnOptions[],
         overwrite = false
     ): void {
@@ -436,27 +466,23 @@ class Grid {
 
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
             const newOptions = newColumnOptions[i];
-            const indexInPrevOptions = columnOptions.findIndex(
-                (prev): boolean => prev.id === newOptions.id
-            );
+            const colOptionsIndex =
+                this.columnOptionsMap?.[newOptions.id]?.index ?? -1;
 
             // If the new column options contain only the id.
             if (Object.keys(newOptions).length < 2) {
-                if (overwrite && indexInPrevOptions !== -1) {
-                    columnOptions.splice(indexInPrevOptions, 1);
+                if (overwrite && colOptionsIndex !== -1) {
+                    columnOptions.splice(colOptionsIndex, 1);
                 }
                 continue;
             }
 
-            if (indexInPrevOptions === -1) {
+            if (colOptionsIndex === -1) {
                 columnOptions.push(newOptions);
             } else if (overwrite) {
-                columnOptions[indexInPrevOptions] = newOptions;
+                columnOptions[colOptionsIndex] = newOptions;
             } else {
-                columnOptions[indexInPrevOptions] = merge(
-                    columnOptions[indexInPrevOptions],
-                    newOptions
-                );
+                merge(true, columnOptions[colOptionsIndex], newOptions);
             }
         }
 
@@ -473,7 +499,7 @@ class Grid {
      * @param newColumnOptions
      * The new column options that should be loaded.
      */
-    private loadColumnOptionsOneToOne(
+    private setColumnOptionsOneToOne(
         newColumnOptions: IndividualColumnOptions[]
     ): void {
         const prevColumnOptions = this.userOptions.columns;
@@ -533,41 +559,53 @@ class Grid {
         oneToOne = false
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
-        this.initAccessibility();
 
-        let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
             this.userOptions.dataTable = options.dataTable;
             (this.options ?? {}).dataTable = options.dataTable;
 
             this.loadDataTable(this.options?.dataTable);
-            newDataTable = true;
+            this.querying.shouldBeUpdated = true;
 
             this.initVirtualization();
         }
 
-        this.viewport?.columnDistribution.validateOnUpdate(options);
+        if (!render) {
+            return;
+        }
+
+        this.initAccessibility();
+        this.initPagination();
+
         this.querying.loadOptions();
 
-        if (render) {
-            await this.querying.proceed(newDataTable);
-            this.renderViewport();
+        // Update locale.
+        const locale = options.lang?.locale;
+        if (locale) {
+            this.locale = locale;
+            this.time.update(extend<TimeBase.TimeOptions>(
+                options.time || {},
+                { locale: this.locale }
+            ));
         }
+
+        await this.querying.proceed();
+        this.renderViewport();
     }
 
     public updateColumn(
         columnId: string,
-        options: Omit<IndividualColumnOptions, 'id'>,
+        options: Column.Options,
         render?: boolean,
         overwrite?: boolean
-    ): void;
+    ): Promise<void>;
 
     public updateColumn(
         columnId: string,
-        options: Omit<IndividualColumnOptions, 'id'>,
-        render: true,
+        options: Column.Options,
+        render?: false,
         overwrite?: boolean
-    ): Promise<void>;
+    ): void;
 
     /**
      * Updates the column of the Grid with new options.
@@ -588,11 +626,11 @@ class Grid {
      */
     public async updateColumn(
         columnId: string,
-        options: Omit<IndividualColumnOptions, 'id'>,
+        options: Column.Options,
         render: boolean = true,
         overwrite = false
     ): Promise<void> {
-        this.loadColumnOptions([{
+        this.setColumnOptions([{
             id: columnId,
             ...options
         }], overwrite);
@@ -805,6 +843,7 @@ class Grid {
         this.renderDescription();
 
         this.accessibility?.setA11yOptions();
+        this.pagination?.render();
 
         fireEvent(this, 'afterRenderViewport');
 
@@ -860,7 +899,7 @@ class Grid {
         const result: string[] = [];
         for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
             columnName = columnsIncluded[i];
-            if (columnOptionsMap?.[columnName]?.enabled !== false) {
+            if (columnOptionsMap?.[columnName]?.options?.enabled !== false) {
                 result.push(columnName);
             }
         }
@@ -868,17 +907,42 @@ class Grid {
         return result;
     }
 
+    /**
+     * Loads the data table of the Grid. If the data table is passed as a
+     * reference, it should be used instead of creating a new one.
+     *
+     * @param tableOptions
+     * The data table to load. If not provided, a new data table will be
+     * created.
+     */
     private loadDataTable(tableOptions?: DataTable | DataTableOptions): void {
+        // Unregister all events attached to the previous data table.
+        this.dataTableEventDestructors.forEach((fn): void => fn());
+
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
-        if (tableOptions?.id) {
+        if ((tableOptions as DataTable)?.clone) {
             this.dataTable = tableOptions as DataTable;
             this.presentationTable = this.dataTable.modified;
             return;
         }
 
-        this.dataTable = this.presentationTable =
+        const dt = this.dataTable = this.presentationTable =
             new DataTable(tableOptions as DataTableOptions);
+
+        // If the data table is modified, mark the querying controller to be
+        // updated on the next proceed.
+        ([
+            'afterDeleteColumns',
+            'afterDeleteRows',
+            'afterSetCell',
+            'afterSetColumns',
+            'afterSetRows'
+        ] as const).forEach((eventName): void => {
+            this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
+                this.querying.shouldBeUpdated = true;
+            }));
+        });
     }
 
     /**
@@ -928,6 +992,7 @@ class Grid {
             (dg): boolean => dg === this
         );
 
+        this.dataTableEventDestructors.forEach((fn): void => fn());
         this.viewport?.destroy();
 
         if (this.container) {
@@ -1101,8 +1166,18 @@ class Grid {
 namespace Grid {
     /**
      * @internal
+     * Callback that is called after the Grid is loaded.
      */
     export type AfterLoadCallback = (grid: Grid) => void;
+
+    /**
+     * @internal
+     * An item in the column options map.
+     */
+    export interface ColumnOptionsMapItem {
+        index: number;
+        options: Column.Options
+    }
 }
 
 

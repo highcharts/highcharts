@@ -9,9 +9,10 @@ The modifier is attached to the connector defined in the [dataPool](https://www.
 The types of modifiers that are available are:
 
 * Chain
-* Range
+* Filter
 * Invert
 * Math
+* Range
 * Sort
 
 ## How to add the modifier?
@@ -34,6 +35,7 @@ The modifier modifies the `table.modified` property of the connector, leaving th
 ## What does each of the modifiers do?
 
 Here is a brief description of each of the modifiers:
+
 ### Chain
 Allows the combination of multiple modifiers in the same connector. This is useful if you need to perform multiple operations on the same dataset. In the `chain` property, you can define the order and configuration objects of the modifiers that should be applied to the modifier. Here is an example usage of this modifier:
 ```js
@@ -48,19 +50,30 @@ dataModifier: {
 ```
 [API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_ChainModifierOptions.ChainModifierOptions-1.html)
 
-### Range
-Can filter the data by minimal and maximal values. It works both for numbers and alphanumerical values. The `column` option specifies from which column the values should be used to perform filtering, and the `minValue` and `maxValue` specify the range limits. Here is an example:
+### Filter
+Filters rows based on arbitrary conditions - numeric comparisons, text matching, logical combinations or non-serializable JavaScript function. Keeps only the rows for which the condition returns true. 
+
 ```js
 dataModifier: {
-    type: 'Range',
-    ranges: [{
-        column: 'year',
-        minValue: '1961',
-        maxValue: '2021'
-    }]
+    type: 'Filter',
+    // Single serializable condition, callback function or nested logic:
+    condition: {
+        operator: 'and', // combine multiple checks
+        conditions: [{
+            operator: '>', // numeric “greater than”
+            columnName: 'score',
+            value: 50
+        }, {
+            operator: 'contains', // text “contains”
+            columnName: 'name',
+            value: 'smith',
+            ignoreCase: true
+        }]
+    }
 }
 ```
-[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_RangeModifierOptions.RangeModifierOptions-1.html)
+[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Modifiers_FilterModifierOptions.FilterModifierOptions-1)
+
 
 ### Invert
 Allows flipping the data and replacing the columns with rows. This is handy when rows structure your data, and you want to present it by columns. No other options need to be specified here. Example:
@@ -83,6 +96,18 @@ dataModifier: {
 }
 ```
 [API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_MathModifierOptions.MathModifierOptions-1.html)
+
+### Range
+Allows on slicing rows of the original table based on a specified range of indices. Option `start` specifies the index at which the slice begins; option `end` specifies the index at which it ends (excluding the row at the end index), analogous to JavaScript’s slice method. Here is an example:
+```js
+dataModifier: {
+    type: 'Range',
+    start: 5,
+    end: 100
+}
+```
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_RangeModifierOptions.RangeModifierOptions-1.html)
+
 
 ### Sort
 This modifier rearranges the order of the rows based on the content of any selected column. The sorting order is either ascending or descending.
@@ -108,7 +133,7 @@ Every modified table contains two methods that allow you to manage the relations
 You can check the modifiers in action with the following demos:
 
 ### Grid with MathModifier
-<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/grid-mathmodifier" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/grid-mathmodifier?force-light-theme" allow="fullscreen"></iframe>
 
-### CSV data with RangeModifier
-<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/csv-modifiers" allow="fullscreen"></iframe>
+### CSV data with FilterModifier
+<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/csv-modifiers?force-light-theme" allow="fullscreen"></iframe>

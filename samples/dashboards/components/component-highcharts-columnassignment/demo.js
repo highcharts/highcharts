@@ -39,6 +39,9 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Example chart'
+            },
+            xAxis: {
+                type: 'datetime'
             }
         }
     }, {
@@ -69,7 +72,10 @@ Dashboards.board('container', {
             }, {
                 name: 'mySeries',
                 id: 'myLineSeries'
-            }]
+            }],
+            xAxis: {
+                type: 'datetime'
+            }
         }
     }]
 });

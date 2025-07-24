@@ -1,7 +1,7 @@
 import HTMLTableConnector from '/base/code/es-modules/Data/Connectors/HTMLTableConnector.js'
 import HTMLTableConverter from '/base/code/es-modules/Data/Converters/HTMLTableConverter.js'
 import U from '/base/code/es-modules/Core/Utilities.js';
-import { registerConnectorEvents, testExportedDataTable } from './utils.js'
+import { registerConnectorEvents } from './utils.js'
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
 const { test, only } = QUnit;
 const { createElement } = U;
@@ -293,11 +293,6 @@ test('HTMLTableConnector from HTML element', function (assert) {
             tableElement.querySelectorAll('tr').length - 1,
             'Connector loaded from HTML element has same amount of rows minus the column names'
         )
-
-        // const connectorFromJSON = HTMLTableConnector.fromJSON(connector.toJSON());
-        // connectorFromJSON.load();
-
-        // testExportedDataTable(eventTable, connectorFromJSON.table, assert);
 
         doneLoading();
     });

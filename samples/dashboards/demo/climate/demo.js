@@ -87,7 +87,7 @@ async function setupBoard() {
                 type: 'CSV',
                 options: {
                     dataModifier: {
-                        type: 'Range'
+                        type: 'Filter'
                     }
                 }
             }, {
@@ -782,15 +782,24 @@ async function updateBoard(board, city, column, scale, newData) {
 
     if (
         newData ||
-        !selectionModifier.options.ranges[0] ||
-        selectionModifier.options.ranges[0].maxValue !== timeRangeMax ||
-        selectionModifier.options.ranges[0].minValue !== timeRangeMin
+        !selectionModifier.options.condition?.operator !== 'and' ||
+        selectionModifier.options.condition
+            ?.conditions[0].value !== timeRangeMax ||
+        selectionModifier.options.condition
+            ?.conditions[1].value !== timeRangeMin
     ) {
-        selectionModifier.options.ranges = [{
-            column: 'time',
-            maxValue: timeRangeMax,
-            minValue: timeRangeMin
-        }];
+        selectionModifier.options.condition = {
+            operator: 'and',
+            conditions: [{
+                columnName: 'time',
+                operator: '>=',
+                value: timeRangeMin
+            }, {
+                columnName: 'time',
+                operator: '<=',
+                value: timeRangeMax
+            }]
+        };
         await selectionTable.setModifier(selectionModifier);
     }
 

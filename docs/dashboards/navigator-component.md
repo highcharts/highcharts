@@ -44,7 +44,7 @@ The Navigator component can be synced with other components in **Dashboards**. T
 
 
 Alternatively, the `NavigatorComponent` can synchronize extremes in a shared `crossfilter`. The crossfilter is managed by 
-a `RangeModifier`, which sources the connector's data table. All components must
+a `FilterModifier`, which sources the connector's data table. All components must
 share the same connector and table to make the `crossfilter` work.
 
 For `crossfilter` sync, the `affectNavigators` option must be enabled, which
@@ -55,7 +55,7 @@ Read more about components synchronization [here](https://www.highcharts.com/doc
 
 ### Crossfilter Example
 
-<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/crossfilter" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/crossfilter?force-light-theme" allow="fullscreen"></iframe>
 
 In the [crossfilter demo](https://highcharts.com/demo/dashboards/crossfilter)
 you see the setup to limit the amount of data points. You have to define column

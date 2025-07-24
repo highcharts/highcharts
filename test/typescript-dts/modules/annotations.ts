@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import AnnotationsModule from "highcharts/modules/annotations";
-
-AnnotationsModule(Highcharts);
+import "highcharts/modules/annotations";
 
 test_basic();
 test_advanced();

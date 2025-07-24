@@ -11,57 +11,84 @@ import colors from 'colors';
 import { promises } from 'fs'
 import { glob } from 'glob';
 
+const tableStyles = `
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: var(--highcharts-neutral-color-60, #666);
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tbody tr:nth-child(even) {
+    background: var(--highcharts-neutral-color-3, #f7f7f7);
+}
+`;
+
+
 const fs = promises;
-const matches = await glob('samples/**/demo.js');
+const matches = await glob('samples/**/demo.css');
 let i = 0;
 for (const file of matches) {
-    if (file.includes('dashboards') || file.includes('unit-tests')) {
-        continue;
-    }
-    const js = await (await fs.readFile(file)).toString();
+    const css = await (await fs.readFile(file)).toString();
 
-    let count = 0;
-    const modifiedJs = js.replace(
-        // /Date\.UTC\((\d{4}),\s?(\d{1,2}),\s?(\d{1,2})\)/ug,
-        /Date\.UTC\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})(?:,\s*(\d{1,2}))?\)/ug,
-        (match, year, month, day, hour) => {
-            const formattedDate = [
-                year,
-                (Number(month) + 1).toString().padStart(2, '0'),
-                day.padStart(2, '0')
-            ];
-            count++;
+    const hasTableStyles = css.includes('.highcharts-data-table');
 
-            let s = formattedDate.join('-');
-            if (hour) {
-                s += ` ${hour.padStart(2, '0')}:00`;
+    let modified = false;
+    let modifiedCSS = css;
+
+    if (hasTableStyles) {
+
+        const html = await (await fs.readFile(file.replace('.css', '.html'))).toString();
+
+        const hasExportData = html.indexOf('export-data') > -1;
+
+        i++;
+
+        if (!hasExportData) {
+            if (!css.includes(tableStyles)) {
+                console.log(colors.red('Different table styles in', file)); // eslint-disable-line
             }
 
-            return `'${s}'`;
+            modifiedCSS = modifiedCSS
+                .replace(tableStyles, '')
+                .replace(`.highcharts-figure,
+.highcharts-data-table table {`, '.highcharts-figure {');
+            modified = true
         }
-    );
-
-    const remaining = modifiedJs.match(
-        /Date\.UTC\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/ug
-    );
-
-
-    //*
-    if (modifiedJs !== js) {
-        console.log('Modified', count, file); // eslint-disable-line
-        await fs.writeFile(file, modifiedJs, 'utf-8');
     }
-    // */
 
-    if (remaining) {
-        console.log('  - Remaining'.red, remaining.length, file); // eslint-disable-line
+
+    if (modified) {
+        console.log('Modified', file); // eslint-disable-line
+        await fs.writeFile(file, modifiedCSS, 'utf-8');
     }
+
 
     //*
     if (i > 100) {
         // break;
     }
-    i++;
     // */
 
 }

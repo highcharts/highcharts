@@ -201,6 +201,8 @@ class HeaderCell extends Cell {
         }
 
         this.setCustomClassName(options.header?.className);
+
+        fireEvent(this, 'afterRender', { column });
     }
 
     public override reflow(): void {
@@ -254,7 +256,7 @@ class HeaderCell extends Cell {
 
         fireEvent(this, 'click', {
             originalEvent: e,
-            target: this.column
+            column: this.column
         });
     }
 

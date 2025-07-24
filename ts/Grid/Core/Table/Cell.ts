@@ -23,7 +23,7 @@
  * */
 
 import type DataTable from '../../../Data/DataTable';
-import type TableRow from './Content/TableRow';
+import type TableRow from './Body/TableRow';
 
 import Column from './Column';
 import Row from './Row';
@@ -114,7 +114,7 @@ abstract class Cell {
      * Init element.
      * @internal
      */
-    public init(): HTMLTableCellElement {
+    protected init(): HTMLTableCellElement {
         return document.createElement('td', {});
     }
 
@@ -221,6 +221,7 @@ abstract class Cell {
      */
     public render(): void {
         this.row.htmlElement.appendChild(this.htmlElement);
+        this.reflow();
     }
 
     /**
@@ -290,17 +291,6 @@ abstract class Cell {
         this.row.unregisterCell(this);
         this.htmlElement.remove();
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Cell {
-
 }
 
 

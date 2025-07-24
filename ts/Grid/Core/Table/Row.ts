@@ -111,7 +111,6 @@ abstract class Row {
             const cell = this.createCell(columns[i]);
             cell.render();
         }
-
         this.rendered = true;
 
         if (this.viewport.grid.options?.rendering?.rows?.virtualization) {
@@ -184,18 +183,6 @@ abstract class Row {
         }
     }
 }
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Row {
-
-}
-
 
 /* *
  *
