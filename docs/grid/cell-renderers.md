@@ -118,7 +118,7 @@ columns: [{
 ```
 
 ### Number
-Renders an editable number field for the value in editMode, and plain text when not in editMode. No specific configuration is needed since this is the default:
+Renders an editable number field for the value in editMode, and plain text when not in editMode.
 
 ```js
 columns: [{
