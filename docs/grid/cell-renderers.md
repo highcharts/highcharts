@@ -82,7 +82,7 @@ Renders a checkbox input element in `editMode` and uses `format` to display icon
 columns: [{
     id: 'done', // column id
     cells: {
-        dataType: 'datetime',
+        dataType: 'boolean',
         format: '{#if value}✓{else}✗{/if}',
         editMode: {
             enabled: true
