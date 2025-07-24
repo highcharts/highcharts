@@ -105,7 +105,7 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'bottom',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'Economy'
         },

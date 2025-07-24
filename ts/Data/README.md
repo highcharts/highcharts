@@ -88,13 +88,19 @@ table will also result in changes in the second table, unless the modifier
 explicitly dismisses incoming changes.
 
 ```TypeScript
-table.setModifier(new RangeModifier({
-    ranges: [{
-        column: 'year',
-        minValue: 1980,
-        maxValue: 1989,
-    }],
-    strict: true
+table.setModifier(new FilterModifier({
+    condition: {
+        operator: 'and',
+        conditions: [{
+            operator: '>=',
+            columnName: 'year',
+            value: 1980
+        }, {
+            operator: '<=',
+            columnName: 'year',
+            value: 1989
+        }]
+    }
 });
 table.getRowCount() === 2;
 table.modified.getRowCount() === 1;

@@ -1,6 +1,12 @@
 Highcharts.setOptions({
     chart: {
-        styledMode: true
+        styledMode: true,
+        animation: false
+    },
+    plotOptions: {
+        series: {
+            animation: false
+        }
     }
 });
 
@@ -72,8 +78,10 @@ async function setupBoard() {
             connectors: [{
                 id: 'Range Selection',
                 type: 'CSV',
-                dataModifier: {
-                    type: 'Range'
+                options: {
+                    dataModifier: {
+                        type: 'Filter'
+                    }
                 }
             }, {
                 id: 'Cities',
@@ -671,14 +679,14 @@ async function setupBoard() {
             }
         }, {
             renderTo: 'selection-grid',
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'Range Selection'
             },
             sync: {
                 highlight: true
             },
-            dataGridOptions: {
+            gridOptions: {
                 credits: {
                     enabled: false
                 },
@@ -946,15 +954,24 @@ async function updateBoard(board, city, column, scale, newData) {
 
     if (
         newData ||
-        !selectionModifier.options.ranges[0] ||
-        selectionModifier.options.ranges[0].maxValue !== timeRangeMax ||
-        selectionModifier.options.ranges[0].minValue !== timeRangeMin
+        !selectionModifier.options.condition?.operator !== 'and' ||
+        selectionModifier.options.condition
+            ?.conditions?.[0]?.value !== timeRangeMax ||
+        selectionModifier.options.condition
+            ?.conditions?.[1]?.value !== timeRangeMin
     ) {
-        selectionModifier.options.ranges = [{
-            column: 'time',
-            maxValue: timeRangeMax,
-            minValue: timeRangeMin
-        }];
+        selectionModifier.options.condition = {
+            operator: 'and',
+            conditions: [{
+                columnName: 'time',
+                operator: '<=',
+                value: timeRangeMax
+            }, {
+                columnName: 'time',
+                operator: '>=',
+                value: timeRangeMin
+            }]
+        };
         await selectionTable.setModifier(selectionModifier);
     }
 

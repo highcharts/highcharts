@@ -88,11 +88,21 @@ QUnit.test('DataPool promises', async function (assert) {
                 chain: [{
                     type: 'Chain',
                     chain: [{
-                        type: 'Range',
-                        ranges: [{
-                            column: 'a',
-                            minValue: 1,
-                            maxValue: 7
+                        type: 'Chain',
+                        chain: [{
+                            type: 'Range',
+                            condition: {
+                                operator: 'and',
+                                conditions: [{
+                                    column: 'a',
+                                    operator: '>=',
+                                    value: 1
+                                }, {
+                                    column: 'a',
+                                    operator: '<=',
+                                    value: 7
+                                }]
+                            }
                         }]
                     }]
                 }]
