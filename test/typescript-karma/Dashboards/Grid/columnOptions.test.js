@@ -29,6 +29,7 @@ test('Grid formatter options', async function (assert) {
             }
         }
     }, true);
+    grid.viewport?.resizeObserver?.disconnect();
 
     assert.ok(grid, 'Formatter returns the wrong type, but it can be stringified without causing an error.');
 });
