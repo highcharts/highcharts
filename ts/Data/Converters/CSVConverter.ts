@@ -385,14 +385,19 @@ class CSVConverter extends DataConverter {
                 const parsedNumber = parseFloat(token);
                 const isNumber = !isNaN(parsedNumber) && isFinite(parsedNumber);
 
-                if (isNumber) {
-                    token = parsedNumber;
-                    pushType('number');
-                } else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//g, '-');
-                    pushType('date');
-                } else {
+                if (decimalPoint) {
+                    token = token.replace(decimalPoint, '.');
                     pushType('string');
+                } else {
+                    if (isNumber) {
+                        token = parsedNumber;
+                        pushType('number');
+                    } else if (!isNaN(Date.parse(token))) {
+                        token = token.replace(/\//g, '-');
+                        pushType('date');
+                    } else {
+                        pushType('string');
+                    }
                 }
             } else {
                 pushType('number');
@@ -400,22 +405,6 @@ class CSVConverter extends DataConverter {
 
             if (columns.length < column + 1) {
                 columns.push([]);
-            }
-
-            // Try to apply the decimal point, and check if the token then is a
-            // number. If not, reapply the initial value
-            if (
-                typeof token !== 'number' &&
-                DataConverterUtils.guessType(token, converter) !== 'number' &&
-                decimalPoint
-            ) {
-                const initialValue = token;
-                token = token.replace(decimalPoint, '.');
-                if (
-                    DataConverterUtils.guessType(token, converter) !== 'number'
-                ) {
-                    token = initialValue;
-                }
             }
 
             columns[column][rowNumber] = token;
