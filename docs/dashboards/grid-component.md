@@ -2,7 +2,7 @@
 
 **Highcharts Grid Pro** can be placed as a component inside a dashboard's cell to allow users to visualize the data a tabular format.
 
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/grid-component/grid-options" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/grid-component/grid-options?force-light-theme" allow="fullscreen"></iframe>
 
 ## How to start
 
@@ -160,7 +160,7 @@ Note that you also need to import modules to use the appropriate modifiers. For 
 
 One of the many available options for the **Grid Component** is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#sync), which allows setting the synchronization of component states with each other. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight?force-light-theme" allow="fullscreen"></iframe>
 
 The sync can be an object configuration containing: `highlight`, `visibility` and `extremes`, which allow enabling or disabling the types of synchronization by passing the value `true` or `false`.
 
@@ -187,5 +187,5 @@ If you want to scroll the **Grid Component** automatically to a highlighted row,
 the [`autoScroll`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.DataGridHighlightSyncOptions) option.
 
 Demo:
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/grid-highlight-sync-autoscroll" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/grid-highlight-sync-autoscroll?force-light-theme" allow="fullscreen"></iframe>
 

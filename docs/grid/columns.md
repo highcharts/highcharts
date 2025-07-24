@@ -188,6 +188,6 @@ The data type determines how the cell content is rendered. For example, setting 
 
 If this property is not defined, the data type is automatically inferred from the first cell in the column.
 
-<iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-data-type" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-data-type?force-light-theme" allow="fullscreen"></iframe>
 
 For more details on customizing cell content, refer to the [cell content section](https://www.highcharts.com/docs/grid/cell-renderers).
