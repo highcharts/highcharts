@@ -8,11 +8,11 @@ const dataModifier = {
     condition: {
         operator: 'and',
         conditions: [{
-            columnName: 'Year',
+            columnId: 'Year',
             operator: '>=',
             value: firstYear
         }, {
-            columnName: 'Year',
+            columnId: 'Year',
             operator: '<=',
             value: lastYear
         }]

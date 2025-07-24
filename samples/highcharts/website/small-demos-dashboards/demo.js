@@ -462,11 +462,11 @@ function climate() {
                 operator: 'and',
                 conditions: [{
                     operator: '>=',
-                    columnName: 'time',
+                    columnId: 'time',
                     value: timeRangeMin
                 }, {
                     operator: '<=',
-                    columnName: 'time',
+                    columnId: 'time',
                     value: timeRangeMax
                 }]
             }

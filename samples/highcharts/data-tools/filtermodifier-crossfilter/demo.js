@@ -12,27 +12,27 @@ const form = document.getElementById('filter');
             condition: {
                 operator: 'and',
                 conditions: [{
-                    columnName: 'City',
+                    columnId: 'City',
                     operator: '>=',
                     value: 'Aa'
                 }, {
-                    columnName: 'City',
+                    columnId: 'City',
                     operator: '<=',
                     value: 'Zz'
                 }, {
-                    columnName: 'Elevation',
+                    columnId: 'Elevation',
                     operator: '>=',
                     value: 1
                 }, {
-                    columnName: 'Elevation',
+                    columnId: 'Elevation',
                     operator: '<=',
                     value: 3490
                 }, {
-                    columnName: 'Longitude',
+                    columnId: 'Longitude',
                     operator: '>=',
                     value: -180
                 }, {
-                    columnName: 'Longitude',
+                    columnId: 'Longitude',
                     operator: '<=',
                     value: +180
                 }]

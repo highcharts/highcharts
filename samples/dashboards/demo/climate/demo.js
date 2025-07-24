@@ -807,11 +807,11 @@ async function updateBoard(board, city, column, scale, newData) {
         selectionModifier.options.condition = {
             operator: 'and',
             conditions: [{
-                columnName: 'time',
+                columnId: 'time',
                 operator: '>=',
                 value: timeRangeMin
             }, {
-                columnName: 'time',
+                columnId: 'time',
                 operator: '<=',
                 value: timeRangeMax
             }]
