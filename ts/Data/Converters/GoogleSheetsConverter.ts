@@ -161,13 +161,11 @@ class GoogleSheetsConverter extends DataConverter {
             );
 
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
-                if (column[j] && typeof column[j] === 'string') {
-                    let cellValue = column[j] as any;
-                    if (cellValue instanceof Date) {
-                        cellValue = cellValue.getTime();
-                    }
-                    converter.columns[i][j] = cellValue;
+                let cellValue = column[j];
+                if (isDateObject(cellValue)) {
+                    cellValue = cellValue.getTime();
                 }
+                converter.columns[i][j] = cellValue;
             }
         }
 
@@ -213,3 +211,14 @@ DataConverter.registerType('GoogleSheets', GoogleSheetsConverter);
  * */
 
 export default GoogleSheetsConverter;
+
+/**
+ * Check if a value is a Date object
+ *
+ * @param {unknown} value to verify
+ * @return {boolean}
+ * True if the value is a Date object, false otherwise.
+ */
+function isDateObject(value: unknown): value is Date {
+    return Object.prototype.toString.call(value) === '[object Date]';
+}

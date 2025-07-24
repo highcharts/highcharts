@@ -382,8 +382,11 @@ class CSVConverter extends DataConverter {
 
             // Save the type of the token.
             if (typeof token === 'string') {
-                if (!isNaN(parseFloat(token)) && isFinite(token as any)) {
-                    token = parseFloat(token) as any;
+                const parsedNumber = parseFloat(token);
+                const isNumber = !isNaN(parsedNumber) && isFinite(parsedNumber);
+
+                if (isNumber) {
+                    token = parsedNumber;
                     pushType('number');
                 } else if (!isNaN(Date.parse(token))) {
                     token = token.replace(/\//g, '-');

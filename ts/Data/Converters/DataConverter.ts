@@ -35,7 +35,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    isNumber,
     merge
 } = U;
 
@@ -114,8 +113,11 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
             parser: function (match: RegExpMatchArray | null): number {
                 return (
                     match ?
-                        Date.UTC(+match[1], (match[3] as any) - 1, +match[4]) :
-                        NaN
+                        Date.UTC(
+                            +match[1],
+                            +match[3] - 1,
+                            +match[4]
+                        ) : NaN
                 );
             }
         },
@@ -124,8 +126,11 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
             parser: function (match: RegExpMatchArray | null): number {
                 return (
                     match ?
-                        Date.UTC(+match[4], (match[3] as any) - 1, +match[1]) :
-                        NaN
+                        Date.UTC(
+                            +match[4],
+                            +match[3] - 1,
+                            +match[1]
+                        ) : NaN
                 );
             },
             alternative: 'mm/dd/YYYY' // Different format with the same regex
@@ -135,8 +140,11 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
             parser: function (match: RegExpMatchArray | null): number {
                 return (
                     match ?
-                        Date.UTC(+match[4], (match[1] as any) - 1, +match[3]) :
-                        NaN
+                        Date.UTC(
+                            +match[4],
+                            +match[1] - 1,
+                            +match[3]
+                        ) : NaN
                 );
             }
         },
@@ -157,7 +165,7 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
                     year += 2000;
                 }
 
-                return Date.UTC(year, (match[3] as any) - 1, +match[1]);
+                return Date.UTC(year, +match[3] - 1, +match[1]);
             },
             alternative: 'mm/dd/YY' // Different format with the same regex
         },
@@ -168,7 +176,7 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
                     match ?
                         Date.UTC(
                             +match[4] + 2000,
-                            (match[1] as any) - 1,
+                            +match[1] - 1,
                             +match[3]
                         ) :
                         NaN
@@ -396,17 +404,23 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
 
         let dateFormat = dateFormatProp || options.dateFormat,
             result = NaN,
-            key,
-            format,
-            match;
+            key: string,
+            match: RegExpMatchArray | null = null;
+
+        type DateFormat = {
+            regex: RegExp;
+            parser: (match: RegExpMatchArray) => number;
+        };
 
         if (options.parseDate) {
             result = options.parseDate(value);
         } else {
+            const dateFormats: Record<string, DateFormat> = converter.dateFormats;
+
             // Auto-detect the date format the first time
             if (!dateFormat) {
-                for (key in converter.dateFormats) { // eslint-disable-line guard-for-in
-                    format = converter.dateFormats[key];
+                for (key in dateFormats) { // eslint-disable-line guard-for-in
+                    const format = dateFormats[key];
                     match = value.match(format.regex);
                     if (match) {
                         dateFormat = key;
@@ -417,11 +431,11 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
 
             // Next time, use the one previously found
             } else {
-                format = converter.dateFormats[dateFormat];
+                let format = dateFormats[dateFormat];
 
                 if (!format) {
                     // The selected format is invalid
-                    format = converter.dateFormats['YYYY/mm/dd'];
+                    format = dateFormats['YYYY/mm/dd'];
                 }
 
                 match = value.match(format.regex);
@@ -429,30 +443,19 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
                     result = format.parser(match);
                 }
             }
+
             // Fall back to Date.parse
             if (!match) {
-                match = Date.parse(value);
-                // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
-                if (
-                    typeof match === 'object' &&
-                        match !== null &&
-                        (match as any).getTime
-                ) {
-                    result = (
-                        (match as any).getTime() -
-                            (match as any).getTimezoneOffset() *
-                            60000
-                    );
+                const parsed = Date.parse(value);
 
-                    // Timestamp
-                } else if (isNumber(match)) {
-                    result = match - (
-                        new Date(match)
-                    ).getTimezoneOffset() * 60000;
-                    if (// Reset dates without year in Chrome
-                        value.indexOf('2001') === -1 &&
-                        (new Date(result)).getFullYear() === 2001
+                if (!isNaN(parsed)) {
+                    result =
+                        parsed - new Date(parsed).getTimezoneOffset() * 60000;
+
+                    // Reset dates without year in Chrome
+                    if (
+                        !value.includes('2001') &&
+                        new Date(result).getFullYear() === 2001
                     ) {
                         result = NaN;
                     }
