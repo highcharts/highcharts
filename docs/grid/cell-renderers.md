@@ -219,7 +219,7 @@ If you want your custom renderer to be usable in cell edit mode, you need to imp
 - [`EditModeContent`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeContent) - it should extend the custom cell content class.
 - [`EditModeRenderer`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeRenderer) - it should extend the custom cell renderer class.
 
-## Custom Textarea Component
+## Custom Textarea Renderer
 
 This section demonstrates how to create a custom **Textarea** cell renderer for the Grid. The custom renderer will display a `<textarea>` element inside the cell, allowing for multi-line text editing.
 
