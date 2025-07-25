@@ -11,6 +11,7 @@ describe('Column distribution strategies.', () => {
 
     it('Should be independent strategy when selected.', () => {
         cy.get('#select-distr').select('independent');
+        cy.wait(100);
         cy.grid().then(grid => {
             expect(grid.viewport.columnResizing.type).to.equal('independent');
         });
