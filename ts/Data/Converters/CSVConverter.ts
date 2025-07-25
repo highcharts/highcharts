@@ -31,7 +31,7 @@ import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { merge, isNumber } = U;
 
 /* *
  *
@@ -382,14 +382,21 @@ class CSVConverter extends DataConverter {
 
             // Save the type of the token.
             if (typeof token === 'string') {
-                if (!isNaN(parseFloat(token)) && isFinite(token as any)) {
-                    token = parseFloat(token) as any;
-                    pushType('number');
-                } else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//g, '-');
-                    pushType('date');
-                } else {
+                const parsedNumber = parseFloat(token);
+
+                if (decimalPoint) {
+                    token = token.replace(decimalPoint, '.');
                     pushType('string');
+                } else {
+                    if (isNumber(parsedNumber)) {
+                        token = parsedNumber;
+                        pushType('number');
+                    } else if (!isNaN(Date.parse(token))) {
+                        token = token.replace(/\//g, '-');
+                        pushType('date');
+                    } else {
+                        pushType('string');
+                    }
                 }
             } else {
                 pushType('number');
@@ -397,22 +404,6 @@ class CSVConverter extends DataConverter {
 
             if (columns.length < column + 1) {
                 columns.push([]);
-            }
-
-            // Try to apply the decimal point, and check if the token then is a
-            // number. If not, reapply the initial value
-            if (
-                typeof token !== 'number' &&
-                DataConverterUtils.guessType(token, converter) !== 'number' &&
-                decimalPoint
-            ) {
-                const initialValue = token;
-                token = token.replace(decimalPoint, '.');
-                if (
-                    DataConverterUtils.guessType(token, converter) !== 'number'
-                ) {
-                    token = initialValue;
-                }
             }
 
             columns[column][rowNumber] = token;
