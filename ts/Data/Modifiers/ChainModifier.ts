@@ -205,7 +205,7 @@ class ChainModifier extends DataModifier {
                 this.chain.slice()
         );
 
-        if (table.modified === table) {
+        if (table.getModified() === table) {
             table.modified = table.clone(false, eventDetail);
         }
 
@@ -222,7 +222,7 @@ class ChainModifier extends DataModifier {
                 throw error;
             }
 
-            modified = modified.modified;
+            modified = modified.getModified();
         }
 
         table.modified = modified;
@@ -277,7 +277,7 @@ class ChainModifier extends DataModifier {
                     cellValue,
                     eventDetail
                 );
-                clone = clone.modified;
+                clone = clone.getModified();
             }
 
             table.modified = clone;
@@ -329,7 +329,7 @@ class ChainModifier extends DataModifier {
                     rowIndex,
                     eventDetail
                 );
-                clone = clone.modified;
+                clone = clone.getModified();
             }
 
             table.modified = clone;
@@ -381,7 +381,7 @@ class ChainModifier extends DataModifier {
                     rowIndex,
                     eventDetail
                 );
-                clone = clone.modified;
+                clone = clone.getModified();
             }
 
             table.modified = clone;
@@ -425,7 +425,7 @@ class ChainModifier extends DataModifier {
                 chain.chain.slice()
         );
 
-        let modified = table.modified;
+        let modified = table.getModified();
 
         for (
             let i = 0,
@@ -435,7 +435,8 @@ class ChainModifier extends DataModifier {
             ++i
         ) {
             modifier = modifiers[i];
-            modified = modifier.modifyTable(modified, eventDetail).modified;
+            modified =
+                modifier.modifyTable(modified, eventDetail).getModified();
         }
 
         table.modified = modified;

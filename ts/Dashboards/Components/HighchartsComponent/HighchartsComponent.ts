@@ -465,7 +465,7 @@ class HighchartsComponent extends Component {
             return;
         }
 
-        const table = connectorHandler.presentationTable.modified;
+        const table = connectorHandler.presentationTable.getModified();
         const modifierOptions =
             connectorHandler.presentationTable.getModifier()?.options;
 

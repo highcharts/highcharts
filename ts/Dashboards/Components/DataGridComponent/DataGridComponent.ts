@@ -154,7 +154,8 @@ class DataGridComponent extends Component {
                 this.getFirstConnector()?.getTable()?.id
             ) {
                 this.grid.update({
-                    dataTable: this.getFirstConnector()?.getTable()?.modified
+                    dataTable:
+                        this.getFirstConnector()?.getTable()?.getModified()
                 }, false);
             }
 
@@ -206,7 +207,7 @@ class DataGridComponent extends Component {
         }
 
         const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey);
-        if (!dataTable?.modified) {
+        if (!dataTable?.getModified()) {
             grid.update({ dataTable: void 0 });
             return;
         }
@@ -216,7 +217,7 @@ class DataGridComponent extends Component {
             // names have changed, so we can update the whole grid. If they
             // have not changed, we can just update the rows (more efficient).
 
-            const newColumnIds = dataTable.modified.getColumnIds();
+            const newColumnIds = dataTable.getModified().getColumnIds();
             const { columnOptionsMap, enabledColumns } = grid;
 
             let index = 0;
@@ -228,7 +229,7 @@ class DataGridComponent extends Component {
                 if (enabledColumns?.[index] !== newColumn) {
                     // If the visible columns have changed,
                     // update the whole grid.
-                    grid.update({ dataTable: dataTable.modified });
+                    grid.update({ dataTable: dataTable.getModified() });
                     return;
                 }
 
@@ -236,7 +237,7 @@ class DataGridComponent extends Component {
             }
         }
 
-        grid.dataTable = dataTable?.modified;
+        grid.dataTable = dataTable?.getModified();
 
         // Data has changed and the whole grid is not re-rendered, so mark in
         // the querying that data table was modified.
@@ -355,7 +356,7 @@ class DataGridComponent extends Component {
             );
 
         if (dataTable) {
-            gridOptions.dataTable = dataTable.modified;
+            gridOptions.dataTable = dataTable.getModified();
         }
 
         const dataGridInstance =

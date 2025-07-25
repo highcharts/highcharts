@@ -876,7 +876,7 @@ async function setupCity(board, city, column, scale) {
             formula: 'F1*1.8-459.67'
         }]
     }));
-    cityTable.modified.setColumn(
+    cityTable.getModified().setColumn(
         'Date',
         (cityTable.getColumn('time') || []).map(
             timestamp => new Date(timestamp)
@@ -889,9 +889,9 @@ async function setupCity(board, city, column, scale) {
         citiesTable.getRowIndexBy('city', city)
     );
 
-    const pointValue = convertToNumber(cityTable.modified.getCell(
+    const pointValue = convertToNumber(cityTable.getModified().getCell(
         column,
-        cityTable.modified.getRowIndexBy('time', latestTime)
+        cityTable.getModified().getRowIndexBy('time', latestTime)
     ));
 
     // Add city to world map
@@ -940,11 +940,11 @@ async function updateBoard(board, city, column, scale, newData) {
     if (newData) {
         timeRangeSelector.chart.series[0].update({
             type: column[0] === 'T' ? 'spline' : 'column',
-            data: cityTable.modified
+            data: cityTable.getModified()
                 .getRows(void 0, void 0, ['time', column])
         });
 
-        selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+        selectionTable.setColumns(cityTable.getModified().getColumns(), 0);
     }
 
     // Update range selection
@@ -975,7 +975,7 @@ async function updateBoard(board, city, column, scale, newData) {
         await selectionTable.setModifier(selectionModifier);
     }
 
-    const rangeTable = selectionTable.modified;
+    const rangeTable = selectionTable.getModified();
     const rangeEnd = rangeTable.getRowCount() - 1;
 
     // Update world map
@@ -996,9 +996,9 @@ async function updateBoard(board, city, column, scale, newData) {
                 elevation: cityInfo.elevation,
                 yScale: scale
             },
-            y: convertToNumber(pointTable.modified.getCell(
+            y: convertToNumber(pointTable.getModified().getCell(
                 column,
-                pointTable.modified.getRowIndexBy('time', lastTime)
+                pointTable.getModified().getRowIndexBy('time', lastTime)
             ))
         }, false);
     }

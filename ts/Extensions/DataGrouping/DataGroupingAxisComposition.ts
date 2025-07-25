@@ -158,7 +158,7 @@ function getGroupPixelWidth(
             );
 
             dataLength = (
-                series[i].dataTable.modified ||
+                series[i].dataTable.getModified() ||
                 series[i].dataTable
             ).rowCount;
 

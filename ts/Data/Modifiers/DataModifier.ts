@@ -160,7 +160,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
     ): Promise<T> {
         const modifier = this;
         return new Promise((resolve, reject): void => {
-            if (table.modified === table) {
+            if (table.getModified() === table) {
                 table.modified = table.clone(false, eventDetail);
             }
             try {

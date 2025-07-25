@@ -91,13 +91,13 @@ QUnit.test('ChainModifier.modify', function (assert) {
         .then((table) => {
 
             assert.equal(
-                table.modified.getRowCount(),
+                table.getModified().getRowCount(),
                 3,
                 'Modified table should contain three rows.'
             );
 
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 3, 4],
                     y: ['a', 'b', 'b']
@@ -106,13 +106,13 @@ QUnit.test('ChainModifier.modify', function (assert) {
             );
 
             assert.deepEqual(
-                table.modified.localRowIndexes,
+                table.getModified().localRowIndexes,
                 [void 0, 0, 1, 2],
                 'Modified table should have expected local row indexes.'
             );
 
             assert.deepEqual(
-                table.modified.originalRowIndexes,
+                table.getModified().originalRowIndexes,
                 [1, 2, 3],
                 'Modified table should have expected original row indexes.'
             );
@@ -167,19 +167,19 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
             );
 
             assert.deepEqual(
-                table.modified.getColumn('x'),
+                table.getModified().getColumn('x'),
                 [5, 4, 3, 2],
                 'DataTable.modified x column should contain expected values.'
             );
 
             assert.deepEqual(
-                table.modified.localRowIndexes,
+                table.getModified().localRowIndexes,
                 [void 0, 3, 2, 1, 0],
                 'Modified table should have expected local row indexes.'
             );
 
             assert.deepEqual(
-                table.modified.originalRowIndexes,
+                table.getModified().originalRowIndexes,
                 [4, 3, 2, 1],
                 'Modified table should have expected original row indexes.'
             );
@@ -194,21 +194,21 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
             );
 
             assert.deepEqual(
-                table.modified.getColumn('x'),
+                table.getModified().getColumn('x'),
                 [5, 4, 2],
                 'DataTable.modified x column should contain expected values ' +
                 'after the cell modification.'
             );
 
             assert.deepEqual(
-                table.modified.localRowIndexes,
+                table.getModified().localRowIndexes,
                 [void 0, 2, void 0, 1, 0],
                 'Modified table should have expected local row indexes after ' +
                 'the cell modification.'
             );
 
             assert.deepEqual(
-                table.modified.originalRowIndexes,
+                table.getModified().originalRowIndexes,
                 [4, 3, 1],
                 'Modified table should have expected original row indexes ' +
                 'after the cell modification.'
@@ -264,7 +264,7 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
             );
 
             assert.strictEqual(
-                table.modified.getRowCount(),
+                table.getModified().getRowCount(),
                 4,
                 'DataTable.modified should contain four rows.'
             );
@@ -278,19 +278,19 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
             );
 
             assert.strictEqual(
-                table.modified.getRowCount(),
+                table.getModified().getRowCount(),
                 3,
                 'DataTable.modified should contain three rows.'
             );
 
             assert.deepEqual(
-                table.modified.localRowIndexes,
+                table.getModified().localRowIndexes,
                 [void 0, 2, void 0, 1, void 0, 0],
                 'Modified table should have expected local row indexes.'
             );
 
             assert.deepEqual(
-                table.modified.originalRowIndexes,
+                table.getModified().originalRowIndexes,
                 [5, 3, 1],
                 'Modified table should have expected original row indexes.'
             );
@@ -347,7 +347,7 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
             );
 
             assert.strictEqual(
-                table.modified.getRowCount(),
+                table.getModified().getRowCount(),
                 4,
                 'DataTable.modified should contain four rows.'
             );
@@ -361,19 +361,19 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
             );
 
             assert.strictEqual(
-                table.modified.getRowCount(),
+                table.getModified().getRowCount(),
                 4,
                 'DataTable.modified should contain three rows.'
             );
 
             assert.deepEqual(
-                table.modified.localRowIndexes,
+                table.getModified().localRowIndexes,
                 [void 0, 2, 1, 0, void 0, void 0, 3],
                 'Modified table should have expected local row indexes.'
             );
 
             assert.deepEqual(
-                table.modified.originalRowIndexes,
+                table.getModified().originalRowIndexes,
                 [3, 2, 1, 6],
                 'Modified table should have expected original row indexes.'
             );

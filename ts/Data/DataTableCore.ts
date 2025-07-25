@@ -93,7 +93,11 @@ class DataTableCore {
          * @type {string}
          */
         this.id = (options.id || uniqueKey());
+
         this.modified = this;
+        // Remove the modified property to prevent the circular reference.
+        delete this.modified.modified;
+
         this.rowCount = 0;
         this.versionTag = uniqueKey();
 
@@ -120,7 +124,7 @@ class DataTableCore {
 
     public readonly id: string;
 
-    public modified: DataTableCore;
+    public modified?: DataTableCore;
 
     public rowCount: number;
 
@@ -366,6 +370,16 @@ class DataTableCore {
             fireEvent(this, 'afterSetRows');
             this.versionTag = uniqueKey();
         }
+    }
+
+    /**
+     * Returns the medified (clone) or the original data table.
+     *
+     * @return {Highcharts.DataTableCore}
+     * The medified (clone) or the original data table.
+     */
+    public getModified(): DataTableCore {
+        return this.modified || this;
     }
 }
 

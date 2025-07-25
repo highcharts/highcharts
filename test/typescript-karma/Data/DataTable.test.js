@@ -450,7 +450,7 @@ QUnit.test('DataTable.setModifier', function (assert) {
         });
 
     assert.deepEqual(
-        table.modified.getColumns(),
+        table.getModified().getColumns(),
         {
             x: [0, 1, 2],
             y: [3, 1, 2]
@@ -462,7 +462,7 @@ QUnit.test('DataTable.setModifier', function (assert) {
         .setModifier(modifier)
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 0, 1],
                     y: [3, 1, 2] 
@@ -472,8 +472,8 @@ QUnit.test('DataTable.setModifier', function (assert) {
 
             assert.deepEqual(
                 [
-                    table.modified.originalRowIndexes,
-                    table.modified.localRowIndexes
+                    table.getModified().originalRowIndexes,
+                    table.getModified().localRowIndexes
                 ],
                 [void 0, void 0],
                 'Table sorted with `orderInColumn` option should not change ' +
@@ -489,7 +489,7 @@ QUnit.test('DataTable.setModifier', function (assert) {
         })
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [0, 2, 1],
                     y: [3, 2, 1] 
@@ -498,22 +498,22 @@ QUnit.test('DataTable.setModifier', function (assert) {
             );
 
             assert.strictEqual(
-                table.modified.getLocalRowIndex(1), 2,
+                table.getModified().getLocalRowIndex(1), 2,
                 'Sorted table should allow to retrieve the local row index' +
                 'from the original row index.'
             );
 
             assert.strictEqual(
-                table.modified.getOriginalRowIndex(2), 1,
+                table.getModified().getOriginalRowIndex(2), 1,
                 'Sorted table should allow to retrieve the original row index' +
                 'from the local row index.'
             );
 
-            table.modified.deleteRowIndexReferences();
+            table.getModified().deleteRowIndexReferences();
             assert.deepEqual(
                 [
-                    table.modified.originalRowIndexes,
-                    table.modified.localRowIndexes
+                    table.getModified().originalRowIndexes,
+                    table.getModified().localRowIndexes
                 ],
                 [void 0, void 0],
                 'The `deleteRowIndexReferences` method should remove row ' +

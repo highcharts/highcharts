@@ -472,7 +472,7 @@ const board = Dashboards.board('container', {
 }, true);
 
 board.then(res => {
-    const table = res.dataPool.connectors.data.getTable().modified.columns;
+    const table = res.dataPool.connectors.data.getTable().getModified().columns;
 
     const revKPI = res.mountedComponents[0].component;
     const revForecast = res.mountedComponents[1].component;

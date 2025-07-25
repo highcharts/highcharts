@@ -77,7 +77,7 @@ const syncPair: Sync.SyncPair = {
                 continue;
             }
 
-            const presTable = table?.modified;
+            const presTable = table?.getModified();
             const colAssignment = connectorHandler.columnAssignment?.find(
                 (s): boolean => s.seriesId === seriesId
             );
@@ -228,7 +228,7 @@ const syncPair: Sync.SyncPair = {
 
                 const row = cursor.row;
                 if (series?.visible && row !== void 0) {
-                    const rowIndex = table.modified.getLocalRowIndex(row);
+                    const rowIndex = table.getModified().getLocalRowIndex(row);
                     if (rowIndex === void 0) {
                         return;
                     }

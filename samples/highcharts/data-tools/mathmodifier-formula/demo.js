@@ -22,7 +22,7 @@ const table = new Highcharts.DataTable({
 table.setModifier(new MathModifier());
 
 renderTable(container1, table, true);
-renderTable(container2, table.modified);
+renderTable(container2, table.getModified());
 
 
 // Add Change Listener
@@ -48,7 +48,7 @@ function onChange(e) {
             )
         );
 
-        renderTable(container2, table.modified);
+        renderTable(container2, table.getModified());
 
         cursor.emitCursor(table, {
             column: Array

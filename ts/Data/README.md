@@ -13,7 +13,7 @@ Sub-folders:
   table
 
 * Modifiers - modify table data into a second table, accessible via the
-  `DataTable.modified` property.
+  `DataTable.getModified()` method.
 
 
 
@@ -83,9 +83,9 @@ help of modifiers. Each table can have only one modifier, but this modifier
 might call additional modifiers.
 
 Modifications usually do not change the table. Instead modifiers produce a
-second table, accessible under `DataTable.modified`. Changes in the original
-table will also result in changes in the second table, unless the modifier
-explicitly dismisses incoming changes.
+second table, accessible under `DataTable.getModified()` method. Changes in the
+original table will also result in changes in the second table, unless the 
+modifier explicitly dismisses incoming changes.
 
 ```TypeScript
 table.setModifier(new FilterModifier({
@@ -103,14 +103,14 @@ table.setModifier(new FilterModifier({
     }
 });
 table.getRowCount() === 2;
-table.modified.getRowCount() === 1;
+table.getModified().getRowCount() === 1;
 
 table.setRows([
     [1983, 'Gremlins Teaser'],
     [2023, 'Gremlins 3']
 ]);
 table.getRowCount() === 4;
-table.modified.getRowCount() === 2;
+table.getModified().getRowCount() === 2;
 ```
 
 

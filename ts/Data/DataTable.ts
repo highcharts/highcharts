@@ -159,7 +159,10 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
     public constructor(options: DataTableOptions = {}) {
         super(options);
+
         this.modified = this;
+        // Remove the modified property to prevent the circular reference.
+        delete this.modified.modified;
     }
 
     /* *
@@ -172,7 +175,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
     private localRowIndexes?: Array<number>;
 
-    public modified: DataTable;
+    public modified?: DataTable;
 
     private originalRowIndexes?: Array<number|undefined>;
 
@@ -1186,10 +1189,13 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             type: 'setModifier',
             detail: eventDetail,
             modifier,
-            modified: table.modified
+            modified: table.getModified()
         });
 
         table.modified = table;
+        // Remove the modified property to prevent the circular reference.
+        delete table.modified.modified;
+
         table.modifier = modifier;
 
         if (modifier) {
@@ -1204,7 +1210,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     type: 'afterSetModifier',
                     detail: eventDetail,
                     modifier,
-                    modified: table.modified
+                    modified: table.getModified()
                 });
                 return table;
             })['catch']((error): this => {
@@ -1212,7 +1218,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     type: 'setModifierError',
                     error,
                     modifier,
-                    modified: table.modified
+                    modified: table.getModified()
                 });
                 throw error;
             });
@@ -1381,6 +1387,16 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             rowIndex,
             rows
         });
+    }
+
+    /**
+     * Returns the medified (clone) or the original data table.
+     *
+     * @return {Highcharts.DataTable}
+     * The medified (clone) or the original data table.
+     */
+    public getModified(): DataTable {
+        return this.modified || this;
     }
 }
 

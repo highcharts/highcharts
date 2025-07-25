@@ -387,10 +387,10 @@ function getRangeValues(
             if (
                 typeof cell === 'string' &&
                 cell[0] === '=' &&
-                table !== table.modified
+                table !== table.getModified()
             ) {
                 // Look in the modified table for formula result
-                cell = table.modified.getCell(columnIds[i], j);
+                cell = table.getModified().getCell(columnIds[i], j);
             }
 
             values.push(isValue(cell) ? cell : NaN);
@@ -427,10 +427,10 @@ function getReferenceValue(
         if (
             typeof cell === 'string' &&
             cell[0] === '=' &&
-            table !== table.modified
+            table !== table.getModified()
         ) {
             // Look in the modified table for formula result
-            const result = table.modified.getCell(columnId, reference.row);
+            const result = table.getModified().getCell(columnId, reference.row);
             return isValue(result) ? result : NaN;
         }
 
