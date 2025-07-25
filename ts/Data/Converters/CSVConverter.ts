@@ -31,7 +31,7 @@ import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { merge, isNumber } = U;
 
 /* *
  *
@@ -383,13 +383,12 @@ class CSVConverter extends DataConverter {
             // Save the type of the token.
             if (typeof token === 'string') {
                 const parsedNumber = parseFloat(token);
-                const isNumber = !isNaN(parsedNumber) && isFinite(parsedNumber);
 
                 if (decimalPoint) {
                     token = token.replace(decimalPoint, '.');
                     pushType('string');
                 } else {
-                    if (isNumber) {
+                    if (isNumber(parsedNumber)) {
                         token = parsedNumber;
                         pushType('number');
                     } else if (!isNaN(Date.parse(token))) {
