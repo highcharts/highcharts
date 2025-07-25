@@ -25,6 +25,7 @@ import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
 import type JSONConverterOptions from './JSONConverterOptions';
 
 import DataConverter from './DataConverter.js';
+import DataConverterUtils from './DataConverterUtils.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { error, isArray, merge, objectEach } = U;
@@ -74,7 +75,7 @@ class JSONConverter extends DataConverter {
         super(mergedOptions);
 
         this.options = mergedOptions;
-        this.table = new DataTable();
+        // this.table = new DataTable();
     }
 
     /* *
@@ -84,14 +85,17 @@ class JSONConverter extends DataConverter {
      * */
 
     private columns: DataTable.BasicColumn[] = [];
-    private headers: string[] | ColumnIdsOptions = [];
+    private headerColumnIds: string[] | ColumnIdsOptions = [];
+    // private headers: string[] | ColumnIdsOptions = [];
+    private headers: string[] = [];
+
 
     /**
      * Options for the DataConverter.
      */
     public readonly options: JSONConverterOptions;
 
-    private table: DataTable;
+    // private table: DataTable;
 
     /* *
      *
@@ -131,6 +135,7 @@ class JSONConverter extends DataConverter {
             return;
         }
 
+
         converter.columns = [];
 
         converter.emit({
@@ -161,10 +166,10 @@ class JSONConverter extends DataConverter {
                         converter.headers.push(columnIds[i]);
                     }
 
-                    converter.table.setColumn(
-                        converter.headers[i] || i.toString(),
-                        item
-                    );
+                    // converter.table.setColumn(
+                    //     converter.headers[i] || i.toString(),
+                    //     item
+                    // );
                 } else {
                     error(
                         'JSONConverter: Invalid `columnIds` option.',
@@ -176,7 +181,8 @@ class JSONConverter extends DataConverter {
             if (firstRowAsNames) {
                 converter.headers = data.shift() as string[];
             } else if (columnIds) {
-                converter.headers = columnIds;
+                // console.log('columnIds', columnIds);
+                converter.headerColumnIds = columnIds;
             }
 
             for (
@@ -198,12 +204,21 @@ class JSONConverter extends DataConverter {
                         converter.columns[columnIndex].push(
                             row[columnIndex]
                         );
-                        if (converter.headers instanceof Array) {
-                            this.table.setColumn(
-                                converter.headers[columnIndex] ||
-                                    columnIndex.toString(),
-                                converter.columns[columnIndex]
+                        if (converter.headerColumnIds instanceof Array) {
+                            // console.log(
+                            //     converter.headerColumnIds,
+                            //     converter.headers[columnIndex],
+                            //     columnIndex.toString()
+                            // )
+                            converter.headers.push(
+                                converter.headerColumnIds[columnIndex] ||
+                                columnIndex.toString()
                             );
+                            // this.table.setColumn(
+                            //     converter.headers[columnIndex] ||
+                            //         columnIndex.toString(),
+                            //     converter.columns[columnIndex]
+                            // );
                         } else {
                             error(
                                 'JSONConverter: Invalid `columnIds` option.',
@@ -212,7 +227,7 @@ class JSONConverter extends DataConverter {
                         }
                     }
                 } else {
-                    const columnIds = converter.headers;
+                    const columnIds = converter.headerColumnIds;
 
                     if (columnIds && !(columnIds instanceof Array)) {
                         const newRow = {} as Record<string, string | number>;
@@ -232,7 +247,7 @@ class JSONConverter extends DataConverter {
                         row = newRow;
                     }
 
-                    this.table.setRows([row], rowIndex);
+                    // this.table.setRows([row], rowIndex);
                 }
             }
         }
@@ -252,7 +267,8 @@ class JSONConverter extends DataConverter {
      * Table from the parsed CSV.
      */
     public getTable(): DataTable {
-        return this.table;
+        const { columns, headers } = this;
+        return DataConverterUtils.getTableFromColumns(columns, headers);
     }
 
 }
