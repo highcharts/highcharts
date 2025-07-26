@@ -123,32 +123,38 @@ function isInsidePane(
 
     if (defined(startAngle) && defined(endAngle)) {
         // Round angle to N-decimals to avoid numeric errors
-        const angle = Math.atan2(
+        let angle = Math.atan2(
             correctFloat(y - cy, 8),
             correctFloat(x - cx, 8)
         );
 
+        // Normalize angle to [0, 2π)
+        angle = (angle + 2 * Math.PI) % (2 * Math.PI);
+        startAngle = (startAngle + 2 * Math.PI) % (2 * Math.PI);
+        endAngle = (endAngle + 2 * Math.PI) % (2 * Math.PI);
+
         // Ignore full circle panes:
-        if (endAngle !== startAngle) {
+        if (Math.abs(endAngle - startAngle) > 1e-6) {
             // If normalized start angle is bigger than normalized end,
             // it means angles have different signs. In such situation we
-            // check the <-PI, startAngle> and <endAngle, PI> ranges.
+            // check the [startAngle, 2π) and [0, endAngle] ranges.
             if (startAngle > endAngle) {
                 insideSlice = (
-                    angle >= startAngle &&
-                    angle <= Math.PI
-                ) || (
-                    angle <= endAngle &&
-                    angle >= -Math.PI
+                    angle >= startAngle ||
+                    angle <= endAngle
                 );
             } else {
-                // In this case, we simple check if angle is within the
-                // <startAngle, endAngle> range
+                // In this case, we simply check if angle is within the
+                // [startAngle, endAngle] range
                 insideSlice = angle >= startAngle &&
-                    angle <= correctFloat(endAngle, 8);
+                    angle <= endAngle;
             }
         }
+    } else {
+        // No angles → assume full circle
+        insideSlice = true;
     }
+
     // Round up radius because x and y values are rounded
     return distance <= Math.ceil(center[2] / 2) && insideSlice;
 }
