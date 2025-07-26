@@ -135,9 +135,9 @@ function isInsidePane(
 
         // Ignore full circle panes:
         if (Math.abs(endAngle - startAngle) > 1e-6) {
-            // If normalized start angle is bigger than normalized end,
-            // it means angles have different signs. In such situation we
-            // check the [startAngle, 2π) and [0, endAngle] ranges.
+        // If the normalized start angle is greater than the end angle,
+        // it means the arc wraps around 0°. In this case, we check
+        // if the angle falls into either [startAngle, 2π) or [0, endAngle].
             if (startAngle > endAngle) {
                 insideSlice = (
                     angle >= startAngle ||
@@ -151,7 +151,7 @@ function isInsidePane(
             }
         }
     } else {
-        // No angles → assume full circle
+        // If no start/end angles are defined, treat it as a full circle
         insideSlice = true;
     }
 
