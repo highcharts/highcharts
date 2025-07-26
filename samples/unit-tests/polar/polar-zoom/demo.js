@@ -382,28 +382,12 @@ QUnit.test(
 
         const chart = Highcharts.chart('container', {
             chart: {
-                polar: true,
-                animation: false
-            },
-            title: {
-                text: null
+                polar: true
             },
             pane: {
                 startAngle: 0
             },
-            tooltip: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    marker: {
-                        enabled: true
-                    },
-                    animation: false
-                }
-            },
             series: [{
-                type: 'line',
                 data: [1, 2]
             }]
         });
