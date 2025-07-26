@@ -374,3 +374,71 @@ QUnit.test('Axes zoom', function (assert) {
         'Zoom shouldn\'t work outside bottom semi circle'
     );
 });
+
+QUnit.test(
+    'Points should be hoverable at various startAngles',
+    function (assert) {
+        const angles = [-180, -90, -45, 0, 45, 90, 180];
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                polar: true,
+                animation: false
+            },
+            title: {
+                text: null
+            },
+            pane: {
+                startAngle: 0
+            },
+            tooltip: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: true
+                    },
+                    animation: false
+                }
+            },
+            series: [{
+                type: 'line',
+                data: [1, 2]
+            }]
+        });
+
+        angles.forEach(angle => {
+            chart.update({
+                pane: {
+                    startAngle: angle
+                }
+            });
+
+            const pointer = chart.pointer,
+                points = chart.series[0].points;
+
+            let hovered = 0;
+
+            points.forEach(point => {
+                const e = {
+                    chartX: point.plotX + chart.plotLeft,
+                    chartY: point.plotY + chart.plotTop,
+                    type: 'mousemove'
+                };
+
+                pointer.runPointActions(e);
+
+                if (chart.hoverPoint === point) {
+                    hovered++;
+                }
+            });
+
+            assert.strictEqual(
+                hovered,
+                points.length,
+                `All points hovered at angle ${angle}`
+            );
+        });
+    }
+);
