@@ -159,10 +159,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
     public constructor(options: DataTableOptions = {}) {
         super(options);
-
-        this.modified = this;
-        // Remove the modified property to prevent the circular reference.
-        delete this.modified.modified;
     }
 
     /* *
@@ -174,8 +170,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     private modifier?: DataModifier;
 
     private localRowIndexes?: Array<number>;
-
-    public modified?: DataTable;
 
     private originalRowIndexes?: Array<number|undefined>;
 
@@ -208,7 +202,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     public clone(
         skipColumns?: boolean,
         eventDetail?: DataEvent.Detail
-    ): DataTable {
+    ): this {
         const table = this,
             tableOptions: DataTableOptions = {};
 
@@ -222,7 +216,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             tableOptions.id = table.id;
         }
 
-        const tableClone: DataTable = new DataTable(tableOptions);
+        const tableClone = new DataTable(tableOptions) as this;
 
         if (!skipColumns) {
             tableClone.versionTag = table.versionTag;
@@ -1192,9 +1186,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             modified: table.getModified()
         });
 
-        table.modified = table;
-        // Remove the modified property to prevent the circular reference.
-        delete table.modified.modified;
+        if (table.getModified() === table) {
+            table.modified = table.clone(false, eventDetail);
+        }
 
         table.modifier = modifier;
 
@@ -1387,16 +1381,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             rowIndex,
             rows
         });
-    }
-
-    /**
-     * Returns the medified (clone) or the original data table.
-     *
-     * @return {Highcharts.DataTable}
-     * The medified (clone) or the original data table.
-     */
-    public getModified(): DataTable {
-        return this.modified || this;
     }
 }
 

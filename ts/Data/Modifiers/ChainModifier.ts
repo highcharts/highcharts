@@ -209,7 +209,7 @@ class ChainModifier extends DataModifier {
             table.modified = table.clone(false, eventDetail);
         }
 
-        let modified: DataTable = table;
+        let modified = table;
         for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
             try {
                 await modifiers[i].modify(modified, eventDetail);
