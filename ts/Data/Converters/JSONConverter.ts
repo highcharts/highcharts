@@ -212,7 +212,6 @@ class JSONConverter extends DataConverter {
                         }
                     }
                 } else {
-                    console.log('test case');
                     const columnIds = converter.headerColumnIds;
                     if (columnIds && !(columnIds instanceof Array)) {
                         const newRow = {} as Record<string, string | number>;
@@ -230,6 +229,15 @@ class JSONConverter extends DataConverter {
                             });
 
                         row = newRow;
+
+                        objectEach(row, (value, columnId):void => {
+                            if (!this.columns[columnId as any]) {
+                                this.columns[columnId as any] = [];
+                                converter.headers.push(columnId);
+                            }
+
+                            this.columns[columnId as any].push(value);
+                        });
                     }
                 }
             }
@@ -251,7 +259,8 @@ class JSONConverter extends DataConverter {
      */
     public getTable(): DataTable {
         const { columns, headers } = this;
-        return DataConverterUtils.getTableFromColumns(columns, headers);
+        console.log(columns, headers);
+        return DataConverterUtils.getTableFromColumns(columns);
     }
 
 }
