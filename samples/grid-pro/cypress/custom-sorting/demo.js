@@ -22,7 +22,7 @@ const sorter = (a, b) => {
     return isNumA ? -1 : 1;
 };
 
-DataGrid.dataGrid('container', {
+Grid.grid('container', {
     dataTable: {
         columns: {
             weight: [100, 40, 0.5, 200]

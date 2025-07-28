@@ -398,7 +398,7 @@ class Grid {
             if (oneToOne) {
                 this.setColumnOptionsOneToOne(newOptions.columns);
             } else {
-                this.setColumnOptions(newOptions);
+                this.setColumnOptions(newOptions.columns);
             }
             delete newOptions.columns;
         }
@@ -427,19 +427,17 @@ class Grid {
     /**
      * Sets the new column options to the userOptions field.
      *
-     * @param options
-     * The new options that should be loaded.
+     * @param newColumnOptions
+     * The new column options that should be loaded.
      *
      * @param overwrite
      * Whether to overwrite the existing column options with the new ones.
      * Default is `false`.
      */
     private setColumnOptions(
-        options: Partial<Options>,
+        newColumnOptions: IndividualColumnOptions[],
         overwrite = false
     ): void {
-        const newColumnOptions = options.columns ?? [];
-
         if (!this.userOptions.columns) {
             this.userOptions.columns = [];
         }
@@ -459,7 +457,7 @@ class Grid {
             }
 
             if (colOptionsIndex === -1) {
-                columnOptions.push(merge(options.columnDefaults, newOptions));
+                columnOptions.push(newOptions);
             } else if (overwrite) {
                 columnOptions[colOptionsIndex] = newOptions;
             } else {
@@ -608,15 +606,10 @@ class Grid {
         render: boolean = true,
         overwrite = false
     ): Promise<void> {
-        this.setColumnOptions(
-            {
-                columns: [{
-                    id: columnId,
-                    ...options
-                }]
-            },
-            overwrite
-        );
+        this.setColumnOptions([{
+            id: columnId,
+            ...options
+        }], overwrite);
 
         await this.update(void 0, render);
     }
