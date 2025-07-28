@@ -428,10 +428,7 @@ class PlotLineOrBand {
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions)
     ): string | undefined {
         return defined(optionsLabel.formatter) ?
-            (optionsLabel.formatter as
-            // Templating.FormatterCallback<PlotLineOrBand>)
-            any)
-                .call(this, this) :
+            optionsLabel.formatter.call(this, this) :
             optionsLabel.text;
     }
 
