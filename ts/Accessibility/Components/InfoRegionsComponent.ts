@@ -317,10 +317,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                         ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>|undefined
                     ) = accessibilityOptions.screenReaderSection
                         .beforeChartFormatter;
-                    return formatter ? formatter(chart) :
-                        (
-                            component.defaultBeforeChartFormatter as any
-                        )(chart, component);
+                    return formatter ? formatter(chart, component) :
+                        component.defaultBeforeChartFormatter();
                 },
                 insertIntoDOM: function (
                     el: HTMLDOMElement,
