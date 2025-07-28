@@ -160,6 +160,9 @@ class JSONConverter extends DataConverter {
                     } else if (columnIds && columnIds instanceof Array) {
                         converter.headers.push(columnIds[i]);
                     }
+
+                    this.columns.push(item);
+
                 } else {
                     error(
                         'JSONConverter: Invalid `columnIds` option.',
@@ -181,40 +184,9 @@ class JSONConverter extends DataConverter {
             ) {
                 let row = data[rowIndex];
 
-                if (isArray(row)) {
-                    for (
-                        let columnIndex = 0, jEnd = row.length;
-                        columnIndex < jEnd;
-                        columnIndex++
-                    ) {
-                        if (converter.columns.length < columnIndex + 1) {
-                            converter.columns.push([]);
-                        }
-
-                        converter.columns[columnIndex].push(
-                            row[columnIndex]
-                        );
-
-                        if (!firstRowAsNames) {
-                            if (
-                                converter.headerColumnIds instanceof Array
-                            ) {
-                                converter.headers.push(
-                                    converter.headerColumnIds[columnIndex] ||
-                                    columnIndex.toString()
-                                );
-                            } else {
-                                error(
-                                    'JSONConverter: Invalid `columnIds` option.',
-                                    false
-                                );
-                            }
-                        }
-                    }
-                } else {
-                    const columnIds = converter.headerColumnIds;
+                if (!isArray(row)) {
                     if (columnIds && !(columnIds instanceof Array)) {
-                        const newRow = {} as Record<string, string | number>;
+                        const newRow: (string | number)[] = [];
 
                         objectEach(
                             columnIds,
@@ -222,22 +194,51 @@ class JSONConverter extends DataConverter {
                                 arrayWithPath: (string | number)[],
                                 name
                             ): void => {
-                                newRow[name] = arrayWithPath.reduce(
+                                newRow.push(arrayWithPath.reduce(
                                     (acc: any, key: string | number): any =>
                                         acc[key], row
-                                );
+                                ));
+                                if (converter.headers.indexOf(name) < 0) {
+                                    converter.headers.push(name);
+                                }
                             });
 
                         row = newRow;
+                    } else {
+                        row = Object.values(data[rowIndex]);
+                        converter.headerColumnIds = Object.keys(data[rowIndex]);
+                    }
+                }
 
-                        objectEach(row, (value, columnId):void => {
-                            if (!this.columns[columnId as any]) {
-                                this.columns[columnId as any] = [];
-                                converter.headers.push(columnId);
-                            }
+                for (
+                    let columnIndex = 0,
+                        jEnd = (row as Array<string|number>).length;
+                    columnIndex < jEnd;
+                    columnIndex++
+                ) {
+                    if (converter.columns.length < columnIndex + 1) {
+                        converter.columns.push([]);
+                    }
 
-                            this.columns[columnId as any].push(value);
-                        });
+                    converter.columns[columnIndex].push(
+                        (row as Array<string|number>)[columnIndex]
+                    );
+
+                    // Create headers only once.
+                    if (!firstRowAsNames && rowIndex === 0) {
+                        if (
+                            converter.headerColumnIds instanceof Array
+                        ) {
+                            converter.headers.push(
+                                converter.headerColumnIds[columnIndex] ||
+                                columnIndex.toString()
+                            );
+                        } else {
+                            error(
+                                'JSONConverter: Invalid `columnIds` option.',
+                                false
+                            );
+                        }
                     }
                 }
             }
@@ -259,8 +260,11 @@ class JSONConverter extends DataConverter {
      */
     public getTable(): DataTable {
         const { columns, headers } = this;
-        console.log(columns, headers);
-        return DataConverterUtils.getTableFromColumns(columns);
+
+        return DataConverterUtils.getTableFromColumns(
+            columns,
+            headers
+        );
     }
 
 }
