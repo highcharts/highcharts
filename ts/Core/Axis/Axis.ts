@@ -875,7 +875,7 @@ class Axis {
                 axis.isOrdinal ||
                 axis.brokenAxis?.hasBreaks ||
                 (axis.logarithmic && handleLog)
-            ) && axis.lin2val;
+            ) && !!axis.lin2val;
 
         let sign = 1,
             cvsOffset = 0,

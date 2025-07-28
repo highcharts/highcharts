@@ -104,34 +104,30 @@ class Validator {
         cell: TableCell,
         errors: string[] = []
     ): boolean {
-        const { options } = cell.column;
+        const { options, dataType } = cell.column;
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
         let rules = Array.from(options?.cells?.editMode?.validationRules || []);
 
-        if (options?.dataType) {
-            // Remove duplicates in validationRules
-            const isArrayString = rules.every(
-                (rule): Boolean => typeof rule === 'string'
+        // Remove duplicates in validationRules
+        const isArrayString = rules.every(
+            (rule): Boolean => typeof rule === 'string'
+        );
+
+        if (rules.length > 0 && isArrayString) {
+            rules = [...new Set(rules)];
+        } else {
+            const predefined = Validator.predefinedRules[dataType] || [];
+
+            const hasPredefined = rules.some(
+                (rule): Boolean =>
+                    typeof rule !== 'string' &&
+                    typeof rule.validate === 'string' &&
+                    predefined.includes(rule.validate)
             );
 
-            if (rules.length > 0 && isArrayString) {
-                rules = [...new Set(rules)];
-            } else {
-                const predefined = Validator.predefinedRules[
-                    options?.dataType
-                ] || [];
-
-                const hasPredefined = rules.some(
-                    (rule): Boolean =>
-                        typeof rule !== 'string' &&
-                        typeof rule.validate === 'string' &&
-                        predefined.includes(rule.validate)
-                );
-
-                if (!hasPredefined) {
-                    rules.push(...predefined);
-                }
+            if (!hasPredefined) {
+                rules.push(...predefined);
             }
         }
 

@@ -1,14 +1,14 @@
-import DataGrid from '/base/code/datagrid/es-modules/masters/datagrid.src.js';
+import Grid from '/base/code/datagrid/es-modules/masters/datagrid.src.js';
 
 const { test } = QUnit;
 
-test('DataGrid formatter options', async function (assert) {
+test('Grid formatter options', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
     }
 
-    const dataGrid = await DataGrid.dataGrid(parentElement, {
+    const grid = await Grid.grid(parentElement, {
         dataTable: {
             columns: {
                 product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -29,7 +29,7 @@ test('DataGrid formatter options', async function (assert) {
             }
         }
     }, true);
-    dataGrid.viewport?.resizeObserver?.disconnect();
+    grid.viewport?.resizeObserver?.disconnect();
 
-    assert.ok(dataGrid, 'Formatter returns the wrong type, but it can be stringified without causing an error.');
+    assert.ok(grid, 'Formatter returns the wrong type, but it can be stringified without causing an error.');
 });
