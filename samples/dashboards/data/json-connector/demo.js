@@ -74,13 +74,13 @@ async function setupBoard() {
                     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
                     ReadOps: ['DiskOperations', 0, 'ReadOps']
                 },
-                columnAssignment: [{
-                    seriesId: 'ReadOps',
-                    data: ['InstanceType', 'ReadOps']
-                }, {
-                    seriesId: 'SizeGB',
-                    data: ['InstanceType', 'SizeGB']
-                }],
+                // columnAssignment: [{
+                //     seriesId: 'ReadOps',
+                //     data: ['InstanceType', 'ReadOps']
+                // }, {
+                //     seriesId: 'SizeGB',
+                //     data: ['InstanceType', 'SizeGB']
+                // }],
                 data
             }]
         },
