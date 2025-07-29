@@ -57,13 +57,13 @@ Grid.grid('container', {
             text: ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta'],
             description: [
                 // Intentionally long text to test the textarea content type
-                'Alpha is the first letter of the Greek alphabet and is a vowel. Although it shares the name with the first letter of the English alphabet. In Greek, Alpha holds both phonetic and symbolic significance.',
-                'Beta is the second letter of the Greek alphabet and is a vowel. Although it shares the name with the second letter of the English alphabet. In Greek, Beta holds both phonetic and symbolic significance.',
-                'Gamma is the third letter of the Greek alphabet and is a vowel. Although it shares the name with the third letter of the English alphabet. In Greek, Gamma holds both phonetic and symbolic significance.',
-                'Delta is the fourth letter of the Greek alphabet and is a vowel. Although it shares the name with the fourth letter of the English alphabet. In Greek, Delta holds both phonetic and symbolic significance.',
-                'Epsilon is the fifth letter of the Greek alphabet and is a vowel. Although it shares the name with the fifth letter of the English alphabet. In Greek, Epsilon holds both phonetic and symbolic significance.',
-                'Zeta is the sixth letter of the Greek alphabet and is a vowel. Although it shares the name with the sixth letter of the English alphabet. In Greek, Zeta holds both phonetic and symbolic significance.',
-                'Eta is the seventh letter of the Greek alphabet and is a vowel. Although it shares the name with the seventh letter of the English alphabet. In Greek, Eta holds both phonetic and symbolic significance.'
+                'Alpha is the first letter of the Greek alphabet. In science, it often represents important constants or particles, like in alpha radiation, which consists of helium nuclei emitted by some radioactive elements.',
+                'Beta is the second letter of the Greek alphabet. It is known from beta radiation, where electrons or positrons are emitted from atomic nuclei during certain types of decay.',
+                'Gamma is the third letter of the Greek alphabet. Gamma rays are powerful forms of electromagnetic radiation, often produced by nuclear reactions or cosmic events like supernovae.',
+                'Delta is the fourth letter of the Greek alphabet. In math and science, it often means a change in value - for example, Δt means a change in time between two events.',
+                'Epsilon is the fifth letter of the Greek alphabet. In mathematics, it’s used to describe very small quantities, especially in precise definitions involving limits and accuracy.',
+                'Zeta is the sixth letter of the Greek alphabet. It appears in number theory through the Riemann zeta function, which explores deep patterns in prime numbers.',
+                'Eta is the seventh letter of the Greek alphabet. In physics, it’s sometimes used to describe viscosity, which is how much a fluid resists flowing - like honey versus water.'
             ]
         }
     },
