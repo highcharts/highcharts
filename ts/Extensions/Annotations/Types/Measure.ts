@@ -1232,7 +1232,6 @@ namespace Measure {
 
 }
 
-
 /* *
  *
  *  Registry
