@@ -16,7 +16,6 @@
  *
  * */
 import type Chart from '../../Chart/Chart';
-// Import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
