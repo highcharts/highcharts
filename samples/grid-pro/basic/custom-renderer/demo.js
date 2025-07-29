@@ -57,13 +57,13 @@ Grid.grid('container', {
             text: ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta'],
             description: [
                 // Intentionally long text to test the textarea content type
-                'Alpha is the first letter of the Greek alphabet. It is a vowel.It is also the first letter of the English alphabet. It is also the first letter of the Greek alphabet.',
-                'Beta is the second letter of the Greek alphabet. It is a consonant. It is also the second letter of the English alphabet. It is also the second letter of the Greek alphabet.',
-                'Gamma is the third letter of the Greek alphabet. It is a consonant. It is also the third letter of the English a lphabet. It is also the third letter of the Greek alphabet.',
-                'Delta is the fourth letter of the Greek alphabet. It is a consonant. It is also the fourth letter of the English alphabet. It is also the fourth letter of the Greek alphabet.',
-                'Epsilon is the fifth letter of the Greek alphabet. It is a vowel. It is also the fifth letter of the English alphabet. It is also the fifth letter of the Greek alphabet.',
-                'Zeta is the sixth letter of the Greek alphabet. It is a consonant. It is also the sixth letter of the English alphabet. It is also the sixth letter of the Greek alphabet.',
-                'Eta is the seventh letter of the Greek alphabet. It is a vowel. It is also the seventh letter of the English alphabet. It is also the seventh letter of the Greek alphabet.'
+                'Alpha is the first letter of the Greek alphabet and is a vowel. Although it shares the name with the first letter of the English alphabet. In Greek, Alpha holds both phonetic and symbolic significance.',
+                'Beta is the second letter of the Greek alphabet and is a vowel. Although it shares the name with the second letter of the English alphabet. In Greek, Beta holds both phonetic and symbolic significance.',
+                'Gamma is the third letter of the Greek alphabet and is a vowel. Although it shares the name with the third letter of the English alphabet. In Greek, Gamma holds both phonetic and symbolic significance.',
+                'Delta is the fourth letter of the Greek alphabet and is a vowel. Although it shares the name with the fourth letter of the English alphabet. In Greek, Delta holds both phonetic and symbolic significance.',
+                'Epsilon is the fifth letter of the Greek alphabet and is a vowel. Although it shares the name with the fifth letter of the English alphabet. In Greek, Epsilon holds both phonetic and symbolic significance.',
+                'Zeta is the sixth letter of the Greek alphabet and is a vowel. Although it shares the name with the sixth letter of the English alphabet. In Greek, Zeta holds both phonetic and symbolic significance.',
+                'Eta is the seventh letter of the Greek alphabet and is a vowel. Although it shares the name with the seventh letter of the English alphabet. In Greek, Eta holds both phonetic and symbolic significance.'
             ]
         }
     },

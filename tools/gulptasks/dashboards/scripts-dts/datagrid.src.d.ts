@@ -13,6 +13,8 @@ import './es-modules/Grid/Pro/CellEditing/CellEditingComposition';
 import './es-modules/Grid/Pro/Dash3Compatibility';
 import './es-modules/Grid/Pro/Credits/CreditsProComposition';
 import './es-modules/Grid/Pro/ColumnTypes/ValidatorComposition';
+import './es-modules/Grid/Pro/CellRendering/CellRenderer';
+import './es-modules/Grid/Pro/CellRendering/CellContentPro';
 import './es-modules/Grid/Pro/CellRendering/CellRenderersComposition';
 import './es-modules/Grid/Pro/CellRendering/Renderers/TextRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/CheckboxRenderer';
