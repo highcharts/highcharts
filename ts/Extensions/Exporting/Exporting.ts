@@ -622,7 +622,7 @@ class Exporting {
                 if (e) {
                     e.stopPropagation();
                 }
-                onclick.call(chart, e);
+                onclick.call(chart, e, chart);
             };
         } else if (menuItems) {
             callback = function (
