@@ -125,6 +125,7 @@ class JSONConverter extends DataConverter {
             firstRowAsNames,
             columnIds
         } = options;
+
         let data = options.data;
 
         if (!data) {
@@ -147,101 +148,9 @@ class JSONConverter extends DataConverter {
         data = data.slice();
 
         if (orientation === 'columns') {
-            for (let i = 0, iEnd = data.length; i < iEnd; i++) {
-                const item = data[i];
-
-                if (!(item instanceof Array)) {
-                    return;
-                }
-
-                if (converter.headers instanceof Array) {
-                    if (firstRowAsNames) {
-                        converter.headers.push(`${item.shift()}`);
-                    } else if (columnIds && columnIds instanceof Array) {
-                        converter.headers.push(columnIds[i]);
-                    }
-
-                    this.columns.push(item);
-
-                } else {
-                    error(
-                        'JSONConverter: Invalid `columnIds` option.',
-                        false
-                    );
-                }
-            }
+            this.parseColumnsOrientation(data, firstRowAsNames, columnIds);
         } else if (orientation === 'rows') {
-            if (firstRowAsNames) {
-                converter.headers = data.shift() as string[];
-            } else if (columnIds) {
-                converter.headerColumnIds = columnIds;
-            }
-
-            for (
-                let rowIndex = 0, iEnd = data.length;
-                rowIndex < iEnd;
-                rowIndex++
-            ) {
-                let row = data[rowIndex];
-
-                if (!isArray(row)) {
-                    if (columnIds && !(columnIds instanceof Array)) {
-                        const newRow: (string | number)[] = [];
-
-                        objectEach(
-                            columnIds,
-                            (
-                                arrayWithPath: (string | number)[],
-                                name
-                            ): void => {
-                                newRow.push(arrayWithPath.reduce(
-                                    (acc: any, key: string | number): any =>
-                                        acc[key], row
-                                ));
-                                if (converter.headers.indexOf(name) < 0) {
-                                    converter.headers.push(name);
-                                }
-                            });
-
-                        row = newRow;
-                    } else {
-                        row = Object.values(data[rowIndex]);
-                        converter.headerColumnIds = Object.keys(data[rowIndex]);
-                    }
-                }
-
-                for (
-                    let columnIndex = 0,
-                        jEnd = (row as Array<string|number>).length;
-                    columnIndex < jEnd;
-                    columnIndex++
-                ) {
-                    if (converter.columns.length < columnIndex + 1) {
-                        converter.columns.push([]);
-                    }
-
-                    converter.columns[columnIndex].push(
-                        (row as Array<string|number>)[columnIndex]
-                    );
-
-                    // Create headers only once.
-                    if (!firstRowAsNames && rowIndex === 0) {
-                        if (
-                            converter.headerColumnIds instanceof Array
-                        ) {
-                            converter.headers.push(
-                                converter.headerColumnIds[columnIndex] ||
-                                columnIndex.toString()
-                            );
-                        } else {
-                            error(
-                                'JSONConverter: Invalid `columnIds` option.',
-                                false
-                            );
-                        }
-                    }
-                }
-            }
+            this.parseRowsOrientation(data, firstRowAsNames, columnIds);
         }
 
         converter.emit({
@@ -250,6 +159,156 @@ class JSONConverter extends DataConverter {
             detail: eventDetail,
             headers: converter.headers
         });
+    }
+
+    /**
+     * Helper for parsing data in 'columns' orientation.
+     * @param {unknown[]} [data]
+     * Array of data elements.
+     *
+     * @param {Boolean} [firstRowAsNames]
+     * Defines row as names.
+     *
+     * @param {Array<string>} [columnIds]
+     * Column ids to retrieve.
+     *
+     * @return {void}
+     */
+    private parseColumnsOrientation(
+        data: unknown[],
+        firstRowAsNames?: boolean,
+        columnIds?: string[] | ColumnIdsOptions
+    ): void {
+        const converter = this;
+        for (let i = 0, iEnd = data.length; i < iEnd; i++) {
+            const item = data[i];
+            if (!(item instanceof Array)) {
+                return;
+            }
+            if (converter.headers instanceof Array) {
+                if (firstRowAsNames) {
+                    converter.headers.push(`${item.shift()}`);
+                } else if (columnIds && columnIds instanceof Array) {
+                    converter.headers.push(columnIds[i]);
+                }
+                converter.columns.push(item);
+            } else {
+                error(
+                    'JSONConverter: Invalid `columnIds` option.',
+                    false
+                );
+            }
+        }
+    }
+
+    /**
+     * Helper for parsing data in 'rows' orientation.
+     *
+     * @param {unknown[]} [data]
+     * Array of data elements.
+     *
+     * @param {Boolean} [firstRowAsNames]
+     * Defines row as names.
+     *
+     * @param {Array<string>} [columnIds]
+     * Column ids to retrieve.
+     *
+     * @return {void}
+     */
+    private parseRowsOrientation(
+        data: unknown[],
+        firstRowAsNames?: boolean,
+        columnIds?: string[] | ColumnIdsOptions
+    ): void {
+        const converter = this;
+        if (firstRowAsNames) {
+            converter.headers = data.shift() as string[];
+        } else if (columnIds) {
+            converter.headerColumnIds = columnIds;
+        }
+        for (
+            let rowIndex = 0, iEnd = data.length;
+            rowIndex < iEnd;
+            rowIndex++
+        ) {
+            let row = data[rowIndex];
+
+            if (!isArray(row)) {
+                row = this.convertItemToRow(
+                    row as Record<string, string|number>,
+                    columnIds
+                );
+            }
+            for (
+                let columnIndex = 0,
+                    jEnd = (row as Array<string|number>).length;
+                columnIndex < jEnd;
+                columnIndex++
+            ) {
+                if (converter.columns.length < columnIndex + 1) {
+                    converter.columns.push([]);
+                }
+                converter.columns[columnIndex].push(
+                    (row as Array<string|number>)[columnIndex]
+                );
+
+                // Create headers only once.
+                if (!firstRowAsNames && rowIndex === 0) {
+                    if (
+                        converter.headerColumnIds instanceof Array
+                    ) {
+                        converter.headers.push(
+                            converter.headerColumnIds[columnIndex] ||
+                            columnIndex.toString()
+                        );
+                    } else {
+                        error(
+                            'JSONConverter: Invalid `columnIds` option.',
+                            false
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Extracts a row from an object, using columnIds if provided.
+     *
+     * @param {Record<string, string|number>} [rowObj]
+     * Set of props.
+     *
+     * @param {Array<string>} [columnIds]
+     * Column ids to retrieve.
+     *
+     * @return {(string | number)[]}
+     * Row converted to array.
+     */
+    private convertItemToRow(
+        rowObj: Record<string, string|number>,
+        columnIds?: string[] | ColumnIdsOptions
+    ): (string | number)[] {
+        const converter = this;
+        if (columnIds && !(columnIds instanceof Array)) {
+            const newRow: (string | number)[] = [];
+            objectEach(
+                columnIds,
+                (
+                    arrayWithPath: (string | number)[],
+                    name
+                ): void => {
+                    newRow.push(arrayWithPath.reduce(
+                        (acc: any, key: string | number): any =>
+                            acc[key], rowObj
+                    ));
+                    if (converter.headers.indexOf(name) < 0) {
+                        converter.headers.push(name);
+                    }
+                });
+            return newRow;
+        }
+        converter.headerColumnIds = Object.keys(rowObj);
+        return Object.values(rowObj);
     }
 
     /**
