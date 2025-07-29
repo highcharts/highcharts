@@ -174,6 +174,7 @@ test('Grid update methods', async function (assert) {
     );
 });
 
+
 //@ts-ignore
 test('Grid custom sorting', async function (assert) {
 
@@ -202,6 +203,8 @@ test('Grid custom sorting', async function (assert) {
             }
         }]
     }, true);
+
+    grid.viewport?.resizeObserver?.disconnect();
 
     await grid.viewport?.getColumn('weight')?.sorting?.setOrder('asc');
 
