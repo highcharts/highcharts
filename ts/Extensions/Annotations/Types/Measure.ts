@@ -848,7 +848,7 @@ class Measure extends Annotation {
 
         if (this.labels.length > 0) {
             (this.labels[0]).text = (
-                (formatter && (formatter as any).call(this, this)) ||
+                formatter?.call(this, this) ||
                 defaultFormatter.call(this)
             );
 
@@ -879,7 +879,7 @@ class Measure extends Annotation {
                     };
                 } as any,
                 text: (
-                    (formatter && formatter.call(this)) ||
+                    formatter?.call(this, this) ||
                     defaultFormatter.call(this)
                 )
             }, typeOptions.label as any), void 0 as any);
@@ -1217,7 +1217,7 @@ namespace Measure {
     }
     export interface MeasureTypeLabelOptions {
         enabled: boolean;
-        formatter?: Templating.FormatterCallback<Measure>;
+        formatter?: Templating.Es6FormatterCallback<Measure>;
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends AnnotationTypeOptions {
