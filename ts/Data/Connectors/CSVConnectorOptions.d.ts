@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Karol Kolodziej
+ *  - Kamil Kubik
  *
  * */
 
@@ -71,12 +72,6 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
     itemDelimiter?: string;
 
     /**
-     * A custom callback function that parses the data before it's being parsed
-     * to the data table format inside the converter.
-     */
-    beforeParse?: CSVBeforeParseCallbackFunction;
-
-    /**
      * Allows defining multiple data tables within a single connector to adjust
      * options or data parsing in various ways based on the same data source.
      *
@@ -121,7 +116,21 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: DataTableConnectorOptions[];
+    dataTables?: CSVDataTableConnectorOptions[];
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     */
+    beforeParse?: CSVBeforeParseCallbackFunction;
+}
+
+/**
+ * Options of the CSVConnector dataTable.
+ */
+export interface CSVDataTableConnectorOptions extends DataTableConnectorOptions {
+    firstRowAsNames?: boolean;
+    beforeParse?: CSVBeforeParseCallbackFunction;
 }
 
 /**
