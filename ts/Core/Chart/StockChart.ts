@@ -792,7 +792,7 @@ namespace StockChart {
                 if (axis.horiz) {
                     let skip;
 
-                    x1 = x2 = Math.round(transVal + axis.transB);
+                    x1 = x2 = transVal + axis.transB;
 
                     // Outside plot area
                     if (
