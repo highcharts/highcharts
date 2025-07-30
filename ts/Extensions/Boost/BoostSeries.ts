@@ -504,19 +504,26 @@ function createAndAttachRenderer(
     boost.canvas.height = height;
 
     if (boost.clipRect) {
-        const box = getBoostClipRect(chart, target),
-
-            // When using panes, the image itself must be clipped. When not
-            // using panes, it is better to clip the target group, because then
-            // we preserve clipping on touch- and mousewheel zoom preview.
-            clippedElement = (
-                box.width === chart.clipBox.width &&
-                box.height === chart.clipBox.height
-            ) ? targetGroup :
-                (boost.targetFo || boost.target);
+        const box = getBoostClipRect(chart, target);
 
         boost.clipRect.attr(box);
-        clippedElement?.clip(boost.clipRect);
+
+        // When using panes, the image itself must be clipped. When not
+        // using panes, it is better to clip the target group, because then
+        // we preserve clipping on touch- and mousewheel zoom preview.
+        if (
+            box.width === chart.clipBox.width &&
+            box.height === chart.clipBox.height
+        ) {
+            targetGroup?.clip(chart.renderer.clipRect(
+                box.x - 4,
+                box.y,
+                box.width + 4,
+                box.height + 4
+            )); // #9799
+        } else {
+            (boost.targetFo || boost.target).clip(boost.clipRect);
+        }
     }
 
     boost.resize();

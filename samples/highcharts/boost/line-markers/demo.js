@@ -18,7 +18,8 @@ const chart = Highcharts.chart('container', {
     },
 
     series: [{
-        data: [11, 10, 12, 11, 10, 13]
+        data: [0, 10, 12, 11, 10, 13],
+        type: 'scatter'
     }]
 
 });
@@ -33,6 +34,6 @@ chart.addSeries({
     data: [9, 8, 9, 8, 7, 9]
 });
 chart.addSeries({
-    data: [11, 10, 12, 11, 10, 13],
+    data: [11, 10, 0, 0, 10, 13],
     type: 'scatter'
 });
