@@ -14,8 +14,10 @@ In order to fetch a return time series, specify series type
 
 ```js
 const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     series: {
         type: 'Return'
