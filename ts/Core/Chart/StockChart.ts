@@ -697,9 +697,10 @@ namespace StockChart {
             axisLeft = axis.left,
             axisTop = axis.top,
             result = [] as SVGPath,
-            translatedValue = e.translatedValue,
-            value = e.value,
-            force = e.force,
+            { acrossPanes = true, force, translatedValue, value } = e,
+            allPerpendicularAxes = (
+                axis.isXAxis ? chart.yAxis : chart.xAxis
+            ) || [],
             /**
              * Return the other axis based on either the axis option or on
              * related series.
@@ -708,6 +709,12 @@ namespace StockChart {
             getAxis = (coll: string): Array<Axis> => {
                 const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
                     opt = (axis.options as AnyRecord)[otherColl];
+
+                if (acrossPanes && !axis.options.isInternal) {
+                    return allPerpendicularAxes.filter((a): boolean =>
+                        !a.options.isInternal
+                    );
+                }
 
                 // Other axis indexed by number
                 if (isNumber(opt)) {
@@ -728,13 +735,11 @@ namespace StockChart {
             x2,
             y2,
             axes = [], // #3416 need a default array
-            axes2: Array<Axis>,
             uniqueAxes: Array<Axis>,
             transVal: number;
 
-        if (// For stock chart, by default render paths across the panes
-            // except the case when `acrossPanes` is disabled by user (#6644)
-            (chart.options.isStock && e.acrossPanes !== false) &&
+        if (
+            chart.options.isStock &&
             // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
             axis.coll === 'xAxis' || axis.coll === 'yAxis'
         ) {
@@ -745,14 +750,12 @@ namespace StockChart {
             axes = getAxis(axis.coll);
 
             // Get the related axes based options.*Axis setting #2810
-            axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-            for (const A of axes2) {
+            for (const A of allPerpendicularAxes) {
                 if (!A.options.isInternal) {
                     const a = (A.isXAxis ? 'yAxis' : 'xAxis'),
                         relatedAxis: Axis = (
-                            defined((A.options as any)[a]) ?
-                                (chart as any)[a][(A.options as any)[a]] :
-                                (chart as any)[a][0]
+                            defined((A.options as any)[a]) &&
+                                (chart as any)[a][(A.options as any)[a]]
                         );
 
                     if (axis === relatedAxis) {
@@ -787,30 +790,41 @@ namespace StockChart {
             );
             if (isNumber(transVal)) {
                 if (axis.horiz) {
-                    for (const axis2 of uniqueAxes) {
-                        let skip;
+                    let skip;
 
-                        y1 = axis2.pos;
-                        y2 = y1 + axis2.len;
-                        x1 = x2 = Math.round(transVal + axis.transB);
+                    x1 = x2 = Math.round(transVal + axis.transB);
 
-                        // Outside plot area
-                        if (
-                            force !== 'pass' &&
-                            (x1 < axisLeft || x1 > axisLeft + axis.width)
-                        ) {
-                            if (force) {
-                                x1 = x2 = clamp(
-                                    x1,
-                                    axisLeft,
-                                    axisLeft + axis.width
-                                );
-                            } else {
-                                skip = true;
-                            }
+                    // Outside plot area
+                    if (
+                        force !== 'pass' &&
+                        (x1 < axisLeft || x1 > axisLeft + axis.width)
+                    ) {
+                        if (force) {
+                            x1 = x2 = clamp(
+                                x1,
+                                axisLeft,
+                                axisLeft + axis.width
+                            );
+                        } else {
+                            skip = true;
                         }
-                        if (!skip) {
+                    }
+
+                    if (!skip) {
+                        if (
+                            !acrossPanes &&
+                            (axis.options.top || axis.options.height)
+                        ) {
+                            y1 = axis.top;
+                            y2 = y1 + axis.height;
                             result.push(['M', x1, y1], ['L', x2, y2]);
+                        } else {
+                            for (const axis2 of uniqueAxes) {
+                                y1 = axis2.pos;
+                                y2 = y1 + axis2.len;
+
+                                result.push(['M', x1, y1], ['L', x2, y2]);
+                            }
                         }
                     }
                 } else {
