@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Karol Kolodziej
+ *  - Kamil Kubik
  *
  * */
 
@@ -88,12 +89,6 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
     startRow?: number;
 
     /**
-     * A custom callback function that parses the data before it's being parsed
-     * to the data table format inside the converter.
-     */
-    beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
-
-    /**
      * Allows defining multiple data tables within a single connector to adjust
      * options or data parsing in various ways based on the same data source.
      *
@@ -138,7 +133,20 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: DataTableConnectorOptions[];
+    dataTables?: GoogleSheetsDataTableConnectorOptions[];
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     */
+    beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
+}
+
+/**
+ * Options of the GoogleSheetsConnector dataTable.
+ */
+export interface GoogleSheetsDataTableConnectorOptions extends DataTableConnectorOptions {
+    beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
 }
 
 /**

@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Pawel Lysy
+ *  - Kamil Kubik
  *
  * */
 
@@ -47,7 +48,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      * callback function to manually parse the rows into valid JSON. However,
      * the resulting JSON will still be converted into a proper table structure.
      */
-    columnIds?: Array<string>|ColumnIdsOptions;
+    columnIds?: string[] | ColumnIdsOptions;
 
     /**
      * Data in JSON format.
@@ -84,7 +85,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *
      * @default 'rows'
      */
-    orientation?: 'columns'|'rows';
+    orientation?: 'columns' | 'rows';
 
     /**
      * Allows defining multiple data tables within a single connector to adjust
@@ -131,7 +132,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: DataTableConnectorOptions[];
+    dataTables?: JSONDataTableConnectorOptions[];
 
     /**
      * A custom callback function that parses the data before it's being parsed
@@ -153,7 +154,16 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
  * },
  */
 export interface ColumnIdsOptions {
-    [key: string]: Array<string|number>;
+    [key: string]: (string|number)[]
+}
+
+/**
+ * Options of the JSONConnector dataTable.
+ */
+export interface JSONDataTableConnectorOptions extends DataTableConnectorOptions {
+    columnIds?: string[] | ColumnIdsOptions;
+    orientation?: 'columns' | 'rows';
+    beforeParse?: JSONBeforeParseCallbackFunction;
 }
 
 /**
