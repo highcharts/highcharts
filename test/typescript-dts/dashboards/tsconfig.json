@@ -8,7 +8,7 @@
             "highcharts/*": ["code/*"],
             "@highcharts/dashboards/datagrid": ["code/datagrid/datagrid.src"],
             "@highcharts/dashboards/datagrid/*": ["code/datagrid/*"],
-
-        }
+        },
+        "skipLibCheck": true
     }
 }

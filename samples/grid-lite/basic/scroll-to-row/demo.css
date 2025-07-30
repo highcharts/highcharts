@@ -1,5 +1,19 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
 
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 #demo {
     padding: 8px;
 }
@@ -28,11 +42,4 @@
 
 .custom-caption-class {
     text-decoration: underline;
-}
-
-@media (prefers-color-scheme: dark) {
-    #demo {
-        background-color: #292929;
-        color: #fff;
-    }
 }

@@ -38,12 +38,6 @@ Grid.grid('container', {
             minVisibleRows: 5
         }
     },
-    caption: {
-        text: 'Loreum ipsum caption'
-    },
-    description: {
-        text: 'Loreum ipsum description'
-    },
     credits: {
         position: 'bottom'
     },

@@ -22,58 +22,38 @@
     margin: 1em auto;
 }
 
-#datatable {
+.highcharts-data-table table {
     font-family: Verdana, sans-serif;
     border-collapse: collapse;
-    border: 1px solid #ebebeb;
+    border: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
     margin: 10px auto;
     text-align: center;
     width: 100%;
     max-width: 500px;
 }
 
-#datatable caption {
+.highcharts-data-table caption {
     padding: 1em 0;
     font-size: 1.2em;
-    color: #555;
+    color: var(--highcharts-neutral-color-60, #666);
 }
 
-#datatable th {
+.highcharts-data-table th {
     font-weight: 600;
     padding: 0.5em;
 }
 
-#datatable td,
-#datatable th,
-#datatable caption {
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
     padding: 0.5em;
 }
 
-#datatable thead tr,
-#datatable tr:nth-child(even) {
-    background: #f8f8f8;
+.highcharts-data-table thead tr,
+.highcharts-data-table tbody tr:nth-child(even) {
+    background: var(--highcharts-neutral-color-3, #f7f7f7);
 }
 
 .highcharts-description {
     margin: 0.3rem 10px;
-}
-
-.highcharts-dark #datatable {
-    border-color: #444;
-}
-
-.highcharts-dark #datatable thead tr,
-.highcharts-dark #datatable tr:nth-child(even) {
-    background: #444;
-}
-
-@media (prefers-color-scheme: dark) {
-    #datatable {
-        border-color: #444;
-    }
-
-    #datatable thead tr,
-    #datatable tr:nth-child(even) {
-        background: #444;
-    }
 }

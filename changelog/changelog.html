@@ -15046,6 +15046,68 @@ import &#39;highcharts/modules/accessibility&#39;;
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-dashboards-v3.5.0"></a>
+              <span>Highcharts Dashboards v3.5.0 (2025-07-14)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v3.5.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-3.5.0.zip" title="Download the zip archive for Highcharts Dashboards v3.5.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Introduced <code>FilterModifier</code> to enable <code>DataTable</code> row filtering via serializable conditions.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-3-5-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v3.5.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v3.5.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-3-5-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-3-5-0" class="collapse" aria-labelledby="hd-heading-3-5-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Optimized the Grid Component, so that it does not always re-renders when the table data has changed.</li>
+                      <li>Fixed styling, added the missing light-mode <code>--highcharts-neutral-color-10</code> CSS variable override.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
+              <a id="highcharts-dashboards-v3.4.0"></a>
+              <span>Highcharts Dashboards v3.4.0 (2025-06-30)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v3.4.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-3.4.0.zip" title="Download the zip archive for Highcharts Dashboards v3.4.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added <code>mounted</code> event, triggered when all the components are mounted in the board.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-3-4-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v3.4.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v3.4.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-3-4-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-3-4-0" class="collapse" aria-labelledby="hd-heading-3-4-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23056">#23056</a>, the sidebar should not be visible when adding a new component and when the <code>settings</code> are disabled.</li>
+                      <li>Removed <code>fromJSON</code> and <code>toJSON</code> methods- use <code>getOptions</code> instead.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23095">#23095</a>, cancel data polling requests after destroying a board.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23133">#23133</a>, cell toolbar overlapped context menu.</li>
+                      <li>Fixed, the <code>esc</code> button did not hide toolbar and remove highlight.</li>
+                      <li>Fixed sync grid highlighting.</li>
+                      <li>Fixed, the resizer was not cleaned after removing the row.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23130">#23130</a>, math modifier negative value multiplication.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-dashboards-v3.3.0"></a>
               <span>Highcharts Dashboards v3.3.0 (2025-05-15)</span>
               <a class="release-header-hashtag" href="#highcharts-dashboards-v3.3.0">#</a>
@@ -15672,6 +15734,71 @@ import &#39;highcharts/modules/accessibility&#39;;
             <h2 id="highcharts-grid">Highcharts Grid</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-grid-v1.3.0"></a>
+              <span>Highcharts Grid v1.3.0 (2025-07-14)</span>
+              <a class="release-header-hashtag" href="#highcharts-grid-v1.3.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-1.3.0.zip" title="Download the zip archive for Highcharts Grid v1.3.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li><strong>Grid:</strong> Added <code>sorting.compare</code> option, allowing for defining custom sorting logic per column. See <a href="https://github.com/highcharts/highcharts/issues/22936">#22936</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hGrid-heading-1-3-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-grid v1.3.0">
+                    <button aria-label="Bug Fixes Highcharts-grid v1.3.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hGrid-1-3-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hGrid-1-3-0" class="collapse" aria-labelledby="hGrid-heading-1-3-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid:</strong> Fixed Grid table header background colour.</li>
+                      <li><strong>Grid Pro:</strong> Fixed missing imports for renderer and sparkline option types in master <code>.d.ts</code>.</li>
+                      <li><strong>Grid:</strong> Fixed <a href="https://github.com/highcharts/highcharts/issues/23086">#23086</a>, resized column width was not saved in user options.</li>
+                      <li><strong>Grid Pro:</strong> Fixed, grid crashed when incorrect <code>dataType</code> or <code>renderer.type</code> was used.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
+              <a id="highcharts-grid-v1.2.0"></a>
+              <span>Highcharts Grid v1.2.0 (2025-06-30)</span>
+              <a class="release-header-hashtag" href="#highcharts-grid-v1.2.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-1.2.0.zip" title="Download the zip archive for Highcharts Grid v1.2.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li><strong>Grid Pro</strong>: Introduced line, area, column, bar and pie sparklines. Useful for displaying trends in time series data or other sequential datasets. Check <a href="https://www.highcharts.com/demo/grid/sparklines">demo</a> and <a href="https://www.highcharts.com/docs/grid/sparklines">documentation</a>. </li>
+              <li><strong>Grid Pro</strong>: Added support for more input types, such as checkbox and select dropdown, via the new <code>renderers</code> API property. Check out <a href="https://www.highcharts.com/demo/grid/todo-app">demo</a> and <a href="https://www.highcharts.com/docs/grid/cell-renderers">documentation</a>. </li>
+              <li><strong>Grid Pro</strong>: Use the new <code>validationRules</code> API property to validate user input when editing data in cells. Check out <a href="https://www.highcharts.com/docs/grid/cell-editing#validation">documentation</a></li>
+              <li><strong>Grid Pro:</strong> Added voice over announcers to the cell editor validator.</li>
+              <li><strong>Grid Pro:</strong> Added <code>afterRender</code> event to the header cell.</li>
+              <li><strong>Grid:</strong> Added <code>rendering.columns.resizing.mode</code> option and deprecated <code>distribution</code>.</li>
+              <li><strong>Grid:</strong> Added <code>rendering.columns.resizing.enabled</code> option and deprecated <code>columnDefaults.resizing</code>.</li>
+              <li><strong>Grid:</strong> Added possibility to define <code>column.width</code> option for the <code>fixed</code> resizing strategy.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hGrid-heading-1-2-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-grid v1.2.0">
+                    <button aria-label="Bug Fixes Highcharts-grid v1.2.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hGrid-1-2-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hGrid-1-2-0" class="collapse" aria-labelledby="hGrid-heading-1-2-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid:</strong> Fixed <a href="https://github.com/highcharts/highcharts/issues/23193">#23193</a>, not all grid rows were properly removed.</li>
+                      <li><strong>Grid:</strong> Fixed <a href="https://github.com/highcharts/highcharts/issues/23173">#23173</a>, the grid <a href="https://api.highcharts.com/grid/lang.locale">lang.locale</a> property wasn&#39;t updated properly.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <h3 class="release-header">
               <a id="highcharts-grid-v1.1.0"></a>
               <span>Highcharts Grid v1.1.0 (2025-05-15)</span>

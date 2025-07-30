@@ -30,6 +30,7 @@ import '../Data/Modifiers/ChainModifier.js';
 import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
+import '../Data/Modifiers/FilterModifier.js';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';

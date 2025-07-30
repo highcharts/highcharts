@@ -17,7 +17,8 @@ Grid.grid('container', {
             ],
             country: [
                 'PL', 'NL', 'RO', 'EC', 'ES', 'IT', 'DE', 'PL', 'TR', 'BR'
-            ]
+            ],
+            wrongName: [34, 4, 51, 2, 3]
         }
     },
     lang: {
@@ -140,6 +141,14 @@ Grid.grid('container', {
                     { value: 'TR', label: 'Turkey' },
                     { value: 'BR', label: 'Brazil' }
                 ]
+            }
+        }
+    }, {
+        id: 'wrongName',
+        dataType: 'none-existing-data-type',
+        cells: {
+            renderer: {
+                type: 'wrong-render-type'
             }
         }
     }]

@@ -23,10 +23,3 @@
     padding: 8px;
     font-family: Arial, Helvetica, sans-serif;
 }
-
-@media (prefers-color-scheme: dark) {
-    .demo {
-        background-color: #141414;
-        color: #fff;
-    }
-}
