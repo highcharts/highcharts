@@ -146,7 +146,6 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
  * Options of the GoogleSheetsConnector dataTable.
  */
 export interface GoogleSheetsDataTableConnectorOptions extends DataTableConnectorOptions {
-    firstRowAsNames?: boolean;
     beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
 }
 

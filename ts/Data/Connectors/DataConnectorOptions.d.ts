@@ -42,6 +42,7 @@ export interface DataConnectorOptions {
 export interface DataTableConnectorOptions {
     key?: string;
     dataModifier?: DataModifierTypeOptions;
+    firstRowAsNames?: boolean;
 }
 
 /**

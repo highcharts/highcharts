@@ -162,7 +162,6 @@ export interface ColumnIdsOptions {
  */
 export interface JSONDataTableConnectorOptions extends DataTableConnectorOptions {
     columnIds?: string[] | ColumnIdsOptions;
-    firstRowAsNames?: boolean;
     orientation?: 'columns' | 'rows';
     beforeParse?: JSONBeforeParseCallbackFunction;
 }

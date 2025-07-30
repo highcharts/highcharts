@@ -129,7 +129,6 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
  * Options of the CSVConnector dataTable.
  */
 export interface CSVDataTableConnectorOptions extends DataTableConnectorOptions {
-    firstRowAsNames?: boolean;
     beforeParse?: CSVBeforeParseCallbackFunction;
 }
 
