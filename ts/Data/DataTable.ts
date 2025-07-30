@@ -72,84 +72,11 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * */
 
-
-    /**
-     * Null state for a row record. In some cases, a row in a table may not
-     * contain any data or may be invalid. In these cases, a null state can be
-     * used to indicate that the row record is empty or invalid.
-     *
-     * @name Highcharts.DataTable.NULL
-     * @type {Highcharts.DataTableRowObject}
-     *
-     * @see {@link Highcharts.DataTable.isNull} for a null test.
-     *
-     * @example
-     * table.setRows([DataTable.NULL, DataTable.NULL], 10);
-     */
-    public static readonly NULL: DataTable.RowObject = {};
-
-
-    /**
-     * Semantic version string of the DataTable class.
-     * @internal
-     */
-    public static readonly version: string = '1.0.0';
-
-
     /* *
      *
      *  Static Functions
      *
      * */
-
-
-    /**
-     * Tests whether a row contains only `null` values or is equal to
-     * DataTable.NULL. If all columns have `null` values, the function returns
-     * `true`. Otherwise, it returns `false` to indicate that the row contains
-     * at least one non-null value.
-     *
-     * @function Highcharts.DataTable.isNull
-     *
-     * @param {Highcharts.DataTableRow|Highcharts.DataTableRowObject} row
-     * Row to test.
-     *
-     * @return {boolean}
-     * Returns `true`, if the row contains only null, otherwise `false`.
-     *
-     * @example
-     * if (DataTable.isNull(row)) {
-     *   // handle null row
-     * }
-     */
-    public static isNull(
-        row: (DataTable.Row | DataTable.RowObject)
-    ): boolean {
-        if (row === DataTable.NULL) {
-            return true;
-        }
-        if (row instanceof Array) {
-            if (!row.length) {
-                return false;
-            }
-            for (let i = 0, iEnd = row.length; i < iEnd; ++i) {
-                if (row[i] !== null) {
-                    return false;
-                }
-            }
-        } else {
-            const columnIds = Object.keys(row);
-            if (!columnIds.length) {
-                return false;
-            }
-            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
-                if (row[columnIds[i]] !== null) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
     /* *
      *
@@ -1335,7 +1262,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             ++i, ++i2
         ) {
             row = rows[i];
-            if (row === DataTable.NULL) {
+            if (Object.keys(row).length === 0) { // Is empty Object
                 for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
                     const column = columns[columnIds[j]];
 
