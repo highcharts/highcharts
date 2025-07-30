@@ -72,30 +72,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      *
      * */
 
-
-    /**
-     * Null state for a row record. In some cases, a row in a table may not
-     * contain any data or may be invalid. In these cases, a null state can be
-     * used to indicate that the row record is empty or invalid.
-     *
-     * @name Highcharts.DataTable.NULL
-     * @type {Highcharts.DataTableRowObject}
-     *
-     * @see {@link Highcharts.DataTable.isNull} for a null test.
-     *
-     * @example
-     * table.setRows([DataTable.NULL, DataTable.NULL], 10);
-     */
-    public static readonly NULL: DataTable.RowObject = {};
-
-
-    /**
-     * Semantic version string of the DataTable class.
-     * @internal
-     */
-    public static readonly version: string = '1.0.0';
-
-
     /* *
      *
      *  Static Functions
@@ -1286,7 +1262,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             ++i, ++i2
         ) {
             row = rows[i];
-            if (row === DataTable.NULL) {
+            if (Object.keys(row).length === 0) { // Is empty Object
                 for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
                     const column = columns[columnIds[j]];
 
