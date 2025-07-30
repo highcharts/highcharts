@@ -741,7 +741,7 @@ namespace StockChart {
         if (
             chart.options.isStock &&
             // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
-            axis.coll === 'xAxis' || axis.coll === 'yAxis'
+            (axis.coll === 'xAxis' || axis.coll === 'yAxis')
         ) {
 
             e.preventDefault();
