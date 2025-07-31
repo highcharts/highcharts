@@ -228,7 +228,7 @@ class FilterModifier extends DataModifier {
 
             if (matchRow(row, table, i)) {
                 rows.push(row);
-                indexes.push(modified.getOriginalRowIndex(i));
+                indexes.push(table.getOriginalRowIndex(i));
             }
         }
 

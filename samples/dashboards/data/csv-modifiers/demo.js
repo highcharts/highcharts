@@ -4,12 +4,19 @@ const firstYear = 1961;
 const lastYear = 2022;
 
 const dataModifier = {
-    type: 'Range',
-    ranges: [{
-        column: 'Year',
-        minValue: firstYear,
-        maxValue: lastYear
-    }]
+    type: 'Filter',
+    condition: {
+        operator: 'and',
+        conditions: [{
+            columnName: 'Year',
+            operator: '>=',
+            value: firstYear
+        }, {
+            columnName: 'Year',
+            operator: '<=',
+            value: lastYear
+        }]
+    }
 };
 
 

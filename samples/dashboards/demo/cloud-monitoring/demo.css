@@ -124,22 +124,6 @@ body {
     border-width: 1px 0 0;
 }
 
-#instances-table .highcharts-datagrid-column[data-column-id="InstanceId"] {
-    width: 31%;
-}
-
-#instances-table .highcharts-datagrid-column[data-column-id="InstanceType"] {
-    width: 19%;
-}
-
-#instances-table .highcharts-datagrid-column[data-column-id="PublicIpAddress"] {
-    width: 24%;
-}
-
-#instances-table .highcharts-datagrid-column[data-column-id="State"] {
-    width: 16%;
-}
-
 .health-title {
     width: 100%;
     text-align: center;
