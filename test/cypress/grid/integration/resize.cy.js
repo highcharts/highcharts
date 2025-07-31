@@ -16,8 +16,6 @@ describe('Grid resize.', () => {
             const componentOptions = board.getOptions().components[0];
             const gridOptions = componentOptions.gridOptions;
 
-            console.log(componentOptions);
-
             assert.equal(componentOptions.type, 'Grid', 'Component type should be Grid');
             assert.notOk(gridOptions.columnDefaults, 'Column defaults should not be defined');
             assert.ok(gridOptions.columns, 'Columns should be defined');

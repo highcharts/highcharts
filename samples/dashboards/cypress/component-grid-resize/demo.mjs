@@ -36,4 +36,4 @@ Dashboards.board('container', {
             id: 'data'
         }
     }]
-}, true);
+});
