@@ -1,0 +1,20 @@
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/math-modifier.js"></script>
+
+<div id="container"></div>
+<p class="highcharts-description">
+    This demo showcases a data grid with editable cells, dropdowns, and smart validation rules. To see them in action, start editing the demo. <br /><br />
+
+    <strong>String Validation</strong><br />
+    • <strong>Product Name</strong>: Accepts only letters, numbers, and spaces — no special characters. <br />
+    • <strong>SKU</strong>: Must follow the format <code>AAA-123</code> (3 uppercase letters, a hyphen, and 3 digits).
+    <br /><br />
+
+    <strong>Number Validation</strong><br />
+    • <strong>Price</strong>: Must be zero or higher. <br />
+    • <strong>Discount</strong>: Must be a number from 0 to 100. <br /><br />
+
+    <strong>Cross-Field Validation</strong><br />
+    • <strong>Discount</strong>: If Category is "Electronics", the discount must not exceed 30%. <br />
+</p>
