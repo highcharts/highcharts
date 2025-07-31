@@ -1274,7 +1274,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                         column[i2] = null;
                     }
                 }
-            } else if (row instanceof Array) {
+            } else if (Array.isArray(row)) {
                 for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
                     columns[columnIds[j]][i2] = row[j];
                 }
