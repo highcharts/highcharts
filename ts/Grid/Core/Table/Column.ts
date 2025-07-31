@@ -259,7 +259,7 @@ class Column {
      * Returns the width of the column in pixels.
      */
     public getWidth(): number {
-        return this.viewport.columnDistribution.getColumnWidth(this);
+        return this.viewport.columnResizing.getColumnWidth(this);
     }
 
     /**
