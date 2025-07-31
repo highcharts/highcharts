@@ -84,7 +84,7 @@ test('JSONConnector from objects', async (assert) => {
     assert.deepEqual(
         connector.getTable().getColumnIds(),
         columnIds,
-        'Should have correct column Names'
+        'Should have correct Column Ids'
     );
 });
 
