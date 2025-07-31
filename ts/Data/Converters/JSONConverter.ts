@@ -28,7 +28,12 @@ import DataConverter from './DataConverter.js';
 import DataConverterUtils from './DataConverterUtils.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const { error, isArray, merge, objectEach } = U;
+const {
+    error,
+    isArray,
+    merge,
+    objectEach
+} = U;
 
 /* *
  *
@@ -182,13 +187,13 @@ class JSONConverter extends DataConverter {
         const converter = this;
         for (let i = 0, iEnd = data.length; i < iEnd; i++) {
             const item = data[i];
-            if (!(item instanceof Array)) {
+            if (!(Array.isArray(item))) {
                 return;
             }
-            if (converter.headers instanceof Array) {
+            if (Array.isArray(converter.headers)) {
                 if (firstRowAsNames) {
                     converter.headers.push(`${item.shift()}`);
-                } else if (columnIds && columnIds instanceof Array) {
+                } else if (columnIds && Array.isArray(columnIds)) {
                     converter.headers.push(columnIds[i]);
                 }
                 converter.columns.push(item);
@@ -255,7 +260,7 @@ class JSONConverter extends DataConverter {
                 // Create headers only once.
                 if (!firstRowAsNames && rowIndex === 0) {
                     if (
-                        converter.headerColumnIds instanceof Array
+                        Array.isArray(converter.headerColumnIds)
                     ) {
                         converter.headers.push(
                             converter.headerColumnIds[columnIndex] ||
@@ -289,7 +294,7 @@ class JSONConverter extends DataConverter {
         columnIds?: string[] | ColumnIdsOptions
     ): (string | number)[] {
         const converter = this;
-        if (columnIds && !(columnIds instanceof Array)) {
+        if (columnIds && !(Array.isArray(columnIds))) {
             const newRow: (string | number)[] = [];
             objectEach(
                 columnIds,
