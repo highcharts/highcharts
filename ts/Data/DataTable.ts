@@ -23,10 +23,10 @@
  *
  * */
 
-
 import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
+import type { DataTableValue } from './DataTableOptions';
 import type Types from '../Shared/Types';
 
 import DataTableCore from './DataTableCore.js';
@@ -68,7 +68,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
     /* *
      *
-     *  Static Properties
+     *  Properties
      *
      * */
 
@@ -87,6 +87,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     public constructor(options: DataTableOptions = {}) {
         super(options);
         this.modified = this;
+        this.metadata = options.metadata;
     }
 
     /* *
@@ -103,6 +104,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
     private originalRowIndexes?: Array<number|undefined>;
 
+    public metadata?: Record<string, DataTableValue>;
 
     /* *
      *
@@ -1451,7 +1453,6 @@ namespace DataTable {
         readonly modifier?: DataModifier;
         readonly modified?: DataTable;
     }
-
 }
 
 
