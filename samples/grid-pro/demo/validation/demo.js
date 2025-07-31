@@ -4,7 +4,7 @@ Grid.grid('container', {
             productName: [
                 'Phone',
                 'Bread',
-                'T-Shirt',
+                'Shirt',
                 'Laptop',
                 'Milk',
                 'Jeans',
