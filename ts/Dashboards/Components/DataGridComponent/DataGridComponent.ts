@@ -290,7 +290,7 @@ class DataGridComponent extends Component {
      */
     public override getOptions(): Partial<Options> {
         const optionsCopy = merge(this.options);
-        optionsCopy.gridOptions = this.grid?.getOptions(true);
+        optionsCopy.gridOptions = this.grid?.getOptions();
 
         // Remove the table from the options copy if the connector is set.
         if (optionsCopy.connector?.id) {
