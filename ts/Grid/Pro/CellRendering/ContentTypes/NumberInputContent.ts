@@ -1,6 +1,6 @@
 /* *
  *
- *  Date Input Cell Content class
+ *  Text Input Cell Content class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
  *  - Sebastian Bochan
  *
  * */
@@ -22,11 +21,16 @@
  *
  * */
 
-import type DateInputRenderer from '../Renderers/DateInputRenderer';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
+import type NumberInputRenderer from '../Renderers/NumberInputRenderer';
 
 import CellContentPro from '../CellContentPro.js';
+import U from '../../../../Core/Utilities.js';
+
+const {
+    defined
+} = U;
 
 
 /* *
@@ -36,9 +40,9 @@ import CellContentPro from '../CellContentPro.js';
  * */
 
 /**
- * Represents a date input type of cell content.
+ * Represents a text input type of cell content.
  */
-class DateInputContent extends CellContentPro implements EditModeContent {
+class NumberInputContent extends CellContentPro implements EditModeContent {
 
     /**
      * Whether to finish the edit after a change.
@@ -52,7 +56,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
     public changeHandler?: (e: Event) => void;
 
     /**
-     * The HTML input element representing the date input.
+     * The HTML input element representing the text input.
      */
     private input: HTMLInputElement;
 
@@ -65,7 +69,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
 
     constructor(
         cell: TableCell,
-        renderer: DateInputRenderer,
+        renderer: NumberInputRenderer,
         parentElement?: HTMLElement
     ) {
         super(cell, renderer);
@@ -89,10 +93,10 @@ class DateInputContent extends CellContentPro implements EditModeContent {
     ): HTMLInputElement {
         const cell = this.cell;
         const input = this.input = document.createElement('input');
-        const { options } = this.renderer as DateInputRenderer;
+        const { options } = this.renderer as NumberInputRenderer;
 
+        input.type = 'number';
         input.tabIndex = -1;
-        input.type = 'date';
         input.name = cell.column.id + '-' + cell.row.id;
 
         if (options.attributes) {
@@ -103,25 +107,24 @@ class DateInputContent extends CellContentPro implements EditModeContent {
 
         this.update();
 
-        parentElement.appendChild(input);
+        parentElement.appendChild(this.input);
 
         input.addEventListener('change', this.onChange);
         input.addEventListener('keydown', this.onKeyDown);
         input.addEventListener('blur', this.onBlur);
+        input.addEventListener('dblclick', this.dblClickHandler);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
-        return this.input;
+        return input;
     }
 
     /**
      * Updates the input element.
      */
     public override update(): void {
-        const input = this.input;
-        const { options } = this.renderer as DateInputRenderer;
-
-        input.value = this.convertToInputValue();
-        input.disabled = !!options.disabled;
+        const { options } = this.renderer as NumberInputRenderer;
+        this.input.value = this.convertToInputValue();
+        this.input.disabled = !!options.disabled;
     }
 
     /**
@@ -132,10 +135,23 @@ class DateInputContent extends CellContentPro implements EditModeContent {
     }
 
     /**
-     * Gets the value of the input element.
+     * Gets the number value of the input element.
      */
     public get value(): number {
-        return new Date(this.input.value).getTime();
+        return +this.input.value;
+    }
+
+    private readonly dblClickHandler = (e: MouseEvent): void => {
+        e.stopPropagation();
+        this.input.focus();
+    };
+
+    /**
+     * Converts the cell value to a string for the input.
+     */
+    private convertToInputValue(): string {
+        const val = this.cell.value;
+        return defined(val) ? '' + val : '';
     }
 
     /**
@@ -163,16 +179,13 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         input.remove();
     }
 
-    /**
-     * Converts the cell value to a string for the input.
-     */
-    private convertToInputValue(): string {
-        const time = this.cell.column.viewport.grid.time;
-        return time.dateFormat('%Y-%m-%d', Number(this.cell.value || 0));
-    }
-
     private readonly onChange = (e: Event): void => {
-        this.changeHandler?.(e);
+        if (this.changeHandler) {
+            this.changeHandler(e);
+            return;
+        }
+
+        void this.cell.setValue(this.value, true);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
@@ -184,24 +197,18 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         }
 
         if (e.key === 'Escape') {
-            this.cell.htmlElement.focus();
             this.input.value = this.convertToInputValue();
+            this.cell.htmlElement.focus();
             return;
         }
 
         if (e.key === 'Enter') {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.value, true);
         }
     };
 
     private readonly onBlur = (e: FocusEvent): void => {
-        if (this.blurHandler) {
-            this.blurHandler(e);
-            return;
-        }
-
-        void this.cell.setValue(this.value, true);
+        this.blurHandler?.(e);
     };
 
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {
@@ -219,4 +226,4 @@ class DateInputContent extends CellContentPro implements EditModeContent {
  *
  * */
 
-export default DateInputContent;
+export default NumberInputContent;
