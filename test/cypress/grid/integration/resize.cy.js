@@ -13,15 +13,17 @@ describe('Grid resize.', () => {
         cy.get('@cell').invoke('width').should('be.lessThan', 400);
 
         cy.board().then((board) => {
-            const options = board.getOptions().components[0];
-            const gridOptions = options.gridOptions;
+            const componentOptions = board.getOptions().components[0];
+            const gridOptions = componentOptions.gridOptions;
 
-            assert.equal(options.type, 'Grid', 'Component type should be Grid');
-            assert.ok(gridOptions.columnDefaults, 'Column defaults should be defined');
+            console.log(componentOptions);
+
+            assert.equal(componentOptions.type, 'Grid', 'Component type should be Grid');
+            assert.notOk(gridOptions.columnDefaults, 'Column defaults should not be defined');
             assert.ok(gridOptions.columns, 'Columns should be defined');
-            assert.ok(gridOptions.credits, 'Credits should be defined');
-            assert.ok(gridOptions.lang, 'Language should be defined');
-            assert.ok(gridOptions.rendering, 'Rendering should be defined');
+            assert.notOk(gridOptions.credits, 'Credits should not be defined');
+            assert.notOk(gridOptions.lang, 'Language should not be defined');
+            assert.notOk(gridOptions.rendering, 'Rendering should not be defined');
         });
     });
 });
