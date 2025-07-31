@@ -819,39 +819,50 @@ namespace StockChart {
                             y2 = y1 + axis.height;
                             result.push(['M', x1, y1], ['L', x2, y2]);
                         } else {
-                            for (const axis2 of uniqueAxes) {
-                                y1 = axis2.pos;
-                                y2 = y1 + axis2.len;
+                            for (const perpendicularAxis of uniqueAxes) {
+                                y1 = perpendicularAxis.pos;
+                                y2 = y1 + perpendicularAxis.len;
 
                                 result.push(['M', x1, y1], ['L', x2, y2]);
                             }
                         }
                     }
                 } else {
-                    for (const axis2 of uniqueAxes) {
-                        let skip;
+                    let skip;
 
-                        x1 = axis2.pos;
-                        x2 = x1 + axis2.len;
-                        y1 = y2 = axisTop + axis.height - transVal;
+                    y1 = y2 = axisTop + axis.height - transVal;
 
-                        // Outside plot area
-                        if (
-                            force !== 'pass' &&
-                            (y1 < axisTop || y1 > axisTop + axis.height)
-                        ) {
-                            if (force) {
-                                y1 = y2 = clamp(
-                                    y1,
-                                    axisTop,
-                                    axisTop + axis.height
-                                );
-                            } else {
-                                skip = true;
-                            }
+                    // Outside plot area
+                    if (
+                        force !== 'pass' &&
+                        (y1 < axisTop || y1 > axisTop + axis.height)
+                    ) {
+                        if (force) {
+                            y1 = y2 = clamp(
+                                y1,
+                                axisTop,
+                                axisTop + axis.height
+                            );
+                        } else {
+                            skip = true;
                         }
-                        if (!skip) {
+                    }
+
+                    if (!skip) {
+                        if (
+                            !acrossPanes &&
+                            (axis.options.left || axis.options.width)
+                        ) {
+                            x1 = axis.left;
+                            x2 = x1 + axis.width;
                             result.push(['M', x1, y1], ['L', x2, y2]);
+                        } else {
+                            for (const perpendicularAxis of uniqueAxes) {
+                                x1 = perpendicularAxis.pos;
+                                x2 = x1 + perpendicularAxis.len;
+
+                                result.push(['M', x1, y1], ['L', x2, y2]);
+                            }
                         }
                     }
                 }
