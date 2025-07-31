@@ -29,6 +29,7 @@ const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import DataTableCore from '../../Data/DataTableCore';
 const {
     arrayMax,
     arrayMin,
@@ -129,21 +130,65 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
-    public binsNumber(): number {
+    public binsNumber(series?: Series): number {
         const binsNumberOption = this.options.binsNumber;
         const binsNumber = binsNumberFormulas[binsNumberOption as any] ||
             // #7457
             (typeof binsNumberOption === 'function' && binsNumberOption);
 
         return Math.ceil(
-            (binsNumber && binsNumber(this.baseSeries)) ||
+            (binsNumber && binsNumber(series)) ||
             (
                 isNumber(binsNumberOption) ?
                     binsNumberOption :
-                    binsNumberFormulas['square-root'](this.baseSeries)
+                    binsNumberFormulas['square-root'](series)
             )
         );
     }
+
+    public processData(force?: boolean): undefined {
+
+        if ((this.baseSeries === null) && (this.dataTable.rowCount !== 0)) {
+            const series = this,
+                yData = series.getColumn('y');
+
+            const derivedData = this.derivedData(
+                yData,
+                this.binsNumber(series),
+                this.options.binWidth as any
+            );
+
+            series.processedData = derivedData;
+            series.dataTable.modified = new DataTableCore({
+                columns: {
+                    x: derivedData.map(
+                        (p): string | number | undefined => p['x']
+                    ),
+                    y: derivedData.map(
+                        (p): number | null | undefined => p['y']
+                    )
+                }
+            });
+
+            const { xAxis } = this;
+            xAxis.getSeriesExtremes(true);
+            this.setData(derivedData, false);
+        }
+
+
+        super.processData.call(this, force);
+
+    }
+    // Part of implementation, but may not be needed
+    // public getProcessedData():
+    // Series.ProcessedDataObject {
+    //     return {
+    //         modified: this.dataTable.modified,
+    //         cropped: false,
+    //         cropStart: 0,
+    //         closestPointRange: 0
+    //     };
+    // }
 
     public derivedData(
         baseData: Array<number>,
@@ -237,7 +282,7 @@ class HistogramSeries extends ColumnSeries {
 
         const data = this.derivedData(
             yData,
-            this.binsNumber(),
+            this.binsNumber(this.baseSeries),
             this.options.binWidth as any
         );
 

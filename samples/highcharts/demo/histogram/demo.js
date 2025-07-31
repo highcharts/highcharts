@@ -48,7 +48,8 @@ Highcharts.chart('container', {
         type: 'histogram',
         xAxis: 1,
         yAxis: 1,
-        baseSeries: 's1',
+        // baseSeries: 's1',
+        data: data,
         zIndex: -1
     }, {
         name: 'Data',
