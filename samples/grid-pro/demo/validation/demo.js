@@ -96,7 +96,7 @@ Grid.grid('container', {
             editMode: {
                 validationRules: [{
                     validate: function ({ rawValue }) {
-                        return rawValue >= 0;
+                        return rawValue >= 10;
                     },
                     notification: 'Price must be zero or more.'
                 }]
