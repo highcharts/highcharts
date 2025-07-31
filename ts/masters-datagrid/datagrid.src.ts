@@ -47,6 +47,8 @@ import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js'
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
+import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
+import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
 
 /* *
@@ -73,6 +75,8 @@ import '../Grid/Pro/Dash3Compatibility.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
 
 // Cell Renderers
+import '../Grid/Pro/CellRendering/CellRenderer.js';
+import '../Grid/Pro/CellRendering/CellContentPro.js';
 import '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import '../Grid/Pro/CellRendering/Renderers/TextRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
@@ -125,8 +129,10 @@ declare global {
         HeaderCell: typeof HeaderCell;
         TableCell: typeof TableCell;
         Templating: typeof Templating;
+        CellContentPro: typeof CellContentPro;
         merge: typeof Utilities.merge;
         CellRendererRegistry: typeof CellRendererRegistry;
+        CellRenderer: typeof CellRenderer;
     }
     interface Window {
         /**
@@ -183,6 +189,8 @@ ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 
 G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
+G.CellContentPro = CellContentPro;
+G.CellRenderer = CellRenderer;
 
 
 /* *
