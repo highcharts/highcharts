@@ -1277,7 +1277,11 @@ class Legend {
         }
 
         this.group.align(merge(options, {
-            width: this.maxLegendWidth || this.legendWidth,
+            width: (
+                this.options?.maxWidth ?
+                    this.maxLegendWidth :
+                    this.legendWidth
+            ),
             height: this.legendHeight,
             verticalAlign: this.proximate ? 'top' : options.verticalAlign
         }), true, alignTo);
