@@ -43,7 +43,7 @@ const form = document.getElementById('filter');
     await csv.load();
     const table = csv.getTable();
 
-    renderTable(container, table.modified);
+    renderTable(container, table.getModified());
 
     form.querySelectorAll('input').forEach(input => {
         input.onchange = () => updateRange(csv.table, input);
@@ -69,7 +69,7 @@ async function updateRange(table, input) {
 
     await table.setModifier(modifier);
 
-    renderTable(container, table.modified);
+    renderTable(container, table.getModified());
 }
 
 // Render Simple HTML Table

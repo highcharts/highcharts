@@ -86,7 +86,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
     public constructor(options: DataTableOptions = {}) {
         super(options);
-        this.modified = this;
     }
 
     /* *
@@ -98,8 +97,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     private modifier?: DataModifier;
 
     private localRowIndexes?: Array<number>;
-
-    public modified: DataTable;
 
     private originalRowIndexes?: Array<number|undefined>;
 
@@ -132,7 +129,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     public clone(
         skipColumns?: boolean,
         eventDetail?: DataEvent.Detail
-    ): DataTable {
+    ): this {
         const table = this,
             tableOptions: DataTableOptions = {};
 
@@ -146,7 +143,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             tableOptions.id = table.id;
         }
 
-        const tableClone: DataTable = new DataTable(tableOptions);
+        const tableClone = new DataTable(tableOptions) as this;
 
         if (!skipColumns) {
             tableClone.versionTag = table.versionTag;
@@ -1113,10 +1110,13 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             type: 'setModifier',
             detail: eventDetail,
             modifier,
-            modified: table.modified
+            modified: table.getModified()
         });
 
-        table.modified = table;
+        if (table.getModified() === table) {
+            table.modified = table.clone(false, eventDetail);
+        }
+
         table.modifier = modifier;
 
         if (modifier) {
@@ -1131,7 +1131,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     type: 'afterSetModifier',
                     detail: eventDetail,
                     modifier,
-                    modified: table.modified
+                    modified: table.getModified()
                 });
                 return table;
             })['catch']((error): this => {
@@ -1139,7 +1139,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     type: 'setModifierError',
                     error,
                     modifier,
-                    modified: table.modified
+                    modified: table.getModified()
                 });
                 throw error;
             });

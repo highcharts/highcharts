@@ -220,15 +220,15 @@ class SortModifier extends DataModifier {
 
         if (columnId === orderByColumn) {
             if (orderInColumn) {
-                table.modified.setCell(columnId, rowIndex, cellValue);
-                table.modified.setColumn(
+                table.getModified().setCell(columnId, rowIndex, cellValue);
+                table.getModified().setColumn(
                     orderInColumn,
                     modifier
                         .modifyTable(new DataTable({
                             columns: table
                                 .getColumns([orderByColumn, orderInColumn])
                         }))
-                        .modified
+                        .getModified()
                         .getColumn(orderInColumn)
                 );
             } else {
@@ -274,15 +274,15 @@ class SortModifier extends DataModifier {
 
         if (columnIds.indexOf(orderByColumn) > -1) {
             if (orderInColumn && columns[columnIds[0]].length) {
-                table.modified.setColumns(columns, rowIndex);
-                table.modified.setColumn(
+                table.getModified().setColumns(columns, rowIndex);
+                table.getModified().setColumn(
                     orderInColumn,
                     modifier
                         .modifyTable(new DataTable({
                             columns: table
                                 .getColumns([orderByColumn, orderInColumn])
                         }))
-                        .modified
+                        .getModified()
                         .getColumn(orderInColumn)
                 );
             } else {
@@ -330,15 +330,15 @@ class SortModifier extends DataModifier {
             orderInColumn &&
             rows.length
         ) {
-            table.modified.setRows(rows, rowIndex);
-            table.modified.setColumn(
+            table.getModified().setRows(rows, rowIndex);
+            table.getModified().setColumn(
                 orderInColumn,
                 modifier
                     .modifyTable(new DataTable({
                         columns: table
                             .getColumns([orderByColumn, orderInColumn])
                     }))
-                    .modified
+                    .getModified()
                     .getColumn(orderInColumn)
             );
         } else {
@@ -379,7 +379,7 @@ class SortModifier extends DataModifier {
             } = modifier.options,
             compare = SortModifier.compareFactory(direction, customCompare),
             orderByColumnIndex = columnIds.indexOf(orderByColumn),
-            modified = table.modified;
+            modified = table.getModified();
 
         if (orderByColumnIndex !== -1) {
             rowReferences.sort((a, b): number => compare(

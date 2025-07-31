@@ -118,7 +118,7 @@ class MathModifier extends DataModifier {
                 modifier.options.formulaColumns ||
                 table.getColumnIds()
             ),
-            modified = table.modified;
+            modified = table.getModified();
 
         for (
             let i = 0,
@@ -264,7 +264,7 @@ class MathModifier extends DataModifier {
         rowEnd = rowEnd >= 0 ? rowEnd : table.getRowCount() + rowEnd;
 
         const column = [],
-            modified = table.modified;
+            modified = table.getModified();
 
 
         for (let i = 0, iEnd = (rowEnd - rowStart); i < iEnd; ++i) {

@@ -85,7 +85,7 @@ document.querySelector('#modify').addEventListener('click', async () => {
 
     // render results
     renderTable(document.querySelector('#container'), table);
-    renderTable(document.querySelector('#container2'), table.modified);
+    renderTable(document.querySelector('#container2'), table.getModified());
 });
 
 

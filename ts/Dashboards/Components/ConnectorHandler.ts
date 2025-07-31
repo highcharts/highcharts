@@ -198,8 +198,8 @@ class ConnectorHandler {
         if (this.presentationModifier) {
             this.presentationTable =
                 this.presentationModifier.modifyTable(
-                    table.modified.clone()
-                ).modified;
+                    table.getModified().clone()
+                ).getModified();
         } else {
             this.presentationTable = table;
         }

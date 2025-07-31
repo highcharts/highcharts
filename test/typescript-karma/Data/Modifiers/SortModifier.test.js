@@ -23,18 +23,18 @@ QUnit.test('SortModifier.modify', (assert) => {
         .modify(table.clone())
         .then((tableDescY) => {
             assert.deepEqual(
-                tableDescY.modified.getColumn('x'),
+                tableDescY.getModified().getColumn('x'),
                 [0, 2, 1],
                 'Sorted table should be in descending order of Y values.'
             );
             return tableDescY;
         })
         .then((tableDescY) =>
-            ascXModifier.modify(tableDescY.modified.clone())
+            ascXModifier.modify(tableDescY.getModified().clone())
         )
         .then((tableAscX) =>
             assert.deepEqual(
-                tableAscX.modified.getColumns(['x', 'y']),
+                tableAscX.getModified().getColumns(['x', 'y']),
                 table.getColumns(['x', 'y']),
                 'Resorted table should be ordered the same as original.'
             )
@@ -67,7 +67,7 @@ QUnit.test('SortModifier.modifyCell', function (assert) {
         .setModifier(modifier)
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 0, 1],
                     y: [3, 1, 2] 
@@ -82,7 +82,7 @@ QUnit.test('SortModifier.modifyCell', function (assert) {
         })
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [0, 2, 1],
                     y: [3, 1, 2] 
@@ -94,7 +94,7 @@ QUnit.test('SortModifier.modifyCell', function (assert) {
         .then((table) => {
             table.setCell('y', 0, 0);
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 1, 0],
                     y: [0, 1, 2] 
@@ -130,7 +130,7 @@ QUnit.test('SortModifier.modifyColumns', function (assert) {
         .setModifier(modifier)
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 0, 1],
                     y: [3, 1, 2] 
@@ -145,7 +145,7 @@ QUnit.test('SortModifier.modifyColumns', function (assert) {
         })
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [0, 2, 1],
                     y: [3, 1, 2] 
@@ -157,7 +157,7 @@ QUnit.test('SortModifier.modifyColumns', function (assert) {
         .then((table) => {
             table.setColumn('y', [1, 2, 3]);
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 1, 0],
                     y: [1, 2, 3] 
@@ -193,7 +193,7 @@ QUnit.test('SortModifier.modifyRows', function (assert) {
         .setModifier(modifier)
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 0, 1],
                     y: [3, 1, 2] 
@@ -208,7 +208,7 @@ QUnit.test('SortModifier.modifyRows', function (assert) {
         })
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [0, 2, 1],
                     y: [3, 1, 2] 
@@ -220,7 +220,7 @@ QUnit.test('SortModifier.modifyRows', function (assert) {
         .then((table) => {
             table.setRow({ 'y': 0 }, 0);
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 1, 0],
                     y: [0, 1, 2] 

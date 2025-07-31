@@ -131,7 +131,7 @@ class RangeModifier extends DataModifier {
         end = Math.min(end || Infinity, table.getRowCount());
         const length = Math.max(end - start, 0);
 
-        const modified = table.modified;
+        const modified = table.getModified();
         modified.deleteRows();
         modified.setRows(table.getRows(start, length));
         modified.setOriginalRowIndexes(Array.from(

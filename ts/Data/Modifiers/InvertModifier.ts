@@ -120,7 +120,7 @@ class InvertModifier extends DataModifier {
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
     ): T {
-        const modified = table.modified,
+        const modified = table.getModified(),
             modifiedRowIndex = modified.getRowIndexBy('columnIds', columnId);
 
         if (typeof modifiedRowIndex === 'undefined') {
@@ -166,7 +166,7 @@ class InvertModifier extends DataModifier {
         rowIndex: number,
         eventDetail?: DataEvent.Detail
     ): T {
-        const modified = table.modified,
+        const modified = table.getModified(),
             modifiedColumnIds = (modified.getColumn('columnIds') || []);
 
         let columnIds = table.getColumnIds(),
@@ -248,7 +248,7 @@ class InvertModifier extends DataModifier {
         eventDetail?: DataEvent.Detail
     ): T {
         const columnIds = table.getColumnIds(),
-            modified = table.modified,
+            modified = table.getModified(),
             modifiedColumnIds = (modified.getColumn('columnIds') || []);
 
         let reset = (table.getRowCount() !== modifiedColumnIds.length);
@@ -313,7 +313,7 @@ class InvertModifier extends DataModifier {
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        const modified = table.modified;
+        const modified = table.getModified();
 
         if (table.hasColumns(['columnIds'])) { // Inverted table
             const columnIdsColumn = (

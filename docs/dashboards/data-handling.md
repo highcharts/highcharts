@@ -102,7 +102,7 @@ They can change the products as needed and store the modified versions separatel
 Data tables can automatically modify data during their lifetime with
 the help of modifiers. Each table can have only one modifier, but this modifier
 might call additional modifiers. If a `DataModifier` changes the `DataTable`,
-changes are available on a clone in the `DataTable.modified` property.
+changes are available on a clone through the `DataTable.getModified()` method.
 
 
 ## DataCursor

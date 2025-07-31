@@ -46,7 +46,7 @@ async function run() {
   const table = await board.dataPool
     .getConnector('My Currency Data')
     .then((connector) => connector.getTable());
-  const modifiedTable = table.modified;
+  const modifiedTable = table.getModified();
 }
 run();
 ```

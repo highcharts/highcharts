@@ -390,7 +390,7 @@ function climate() {
                 formula: 'F1*1.8-459.67'
             }]
         }));
-        cityTable.modified.setColumn(
+        cityTable.getModified().setColumn(
             'Date',
             (cityTable.getColumn('time') || []).map(
                 timestamp => new Date(timestamp)
@@ -412,7 +412,7 @@ function climate() {
             lat: cityInfo.lat,
             lon: cityInfo.lon,
             name: cityInfo.city,
-            y: convertToNumber(cityTable.modified.getCell(
+            y: convertToNumber(cityTable.getModified().getCell(
                 column,
                 cityTable.getRowIndexBy('time', time)
             )) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
@@ -447,13 +447,13 @@ function climate() {
             // Update time range selector
             timeRangeSelector.chart.series[0].update({
                 type: column[0] === 'T' ? 'spline' : 'column',
-                data: cityTable.modified
+                data: cityTable.getModified()
                     .getRows(void 0, void 0, ['time', column])
             });
         }
 
         // Update range selection
-        selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+        selectionTable.setColumns(cityTable.getModified().getColumns(), 0);
         const timeRangeMax = timeRangeSelector.chart.axes[0].max;
         const timeRangeMin = timeRangeSelector.chart.axes[0].min;
         await selectionTable.setModifier(new FilterModifier({
@@ -471,7 +471,7 @@ function climate() {
                 }]
             }
         }));
-        const rangeTable = selectionTable.modified;
+        const rangeTable = selectionTable.getModified();
 
         // Update world map
         worldMap.chart.update({
@@ -495,7 +495,7 @@ function climate() {
                     custom: {
                         yScale: scale
                     },
-                    y: convertToNumber(pointTable.modified.getCell(
+                    y: convertToNumber(pointTable.getModified().getCell(
                         column,
                         pointTable.getRowIndexBy('time', lastTime)
                     ))
