@@ -16,7 +16,6 @@
  *
  * */
 import type Chart from '../../Chart/Chart';
-import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -263,7 +262,7 @@ class PlotLineOrBand {
                 svgElem?.on(
                     eventType,
                     (e: any): void => {
-                        events[eventType].apply(this, [e]);
+                        events[eventType].apply(this, [e, this]);
                     }
                 );
             });
@@ -428,9 +427,7 @@ class PlotLineOrBand {
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions)
     ): string | undefined {
         return defined(optionsLabel.formatter) ?
-            (optionsLabel.formatter as
-              Templating.FormatterCallback<PlotLineOrBand>)
-                .call(this) :
+            optionsLabel.formatter.call(this, this) :
             optionsLabel.text;
     }
 
