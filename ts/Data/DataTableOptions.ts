@@ -51,6 +51,10 @@ export interface DataTableOptions {
      */
     key?: string;
 
+    /**
+     * Metadata to describe the dataTable.
+     */
+    metadata?: Record<string, DataTableValue>;
 }
 
 
