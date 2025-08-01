@@ -205,7 +205,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Combination with non-boostable series types and null values (#7634)',
     function (assert) {
-        const chart = Highcharts.chart('container', {
+        let chart = Highcharts.chart('container', {
             boost: {
                 seriesThreshold: 1
             },
@@ -277,6 +277,36 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             true,
             `There shouldn't be any error in the console, after chart render
             (#17014).`
+        );
+
+        chart = Highcharts.chart('container', {
+            plotOptions: {
+                series: {
+                    boostThreshold: 1
+                }
+            },
+            series: [{
+                data: [
+                    [4, 3],
+                    [5, 4]
+                ]
+            }, {
+                data: [
+                    [3, 5],
+                    [4, 6]
+                ]
+            }]
+        });
+
+        chart.series.forEach(series => {
+            series.update({
+                boostThreshold: 0
+            });
+        });
+
+        assert.ok(
+            chart.series[0].points[0].graphic.element.isConnected,
+            'After disabling boost, marker should be added to DOM, #22950.'
         );
     }
 );

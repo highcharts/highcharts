@@ -771,7 +771,7 @@ function hasExtremes(
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return dataLength > (options.boostThreshold || Number.MAX_VALUE) &&
+    return dataLength > pick(options.boostThreshold, Number.MAX_VALUE) &&
             // Defined yAxis extremes
             isNumber(yAxis.min) &&
             isNumber(yAxis.max) &&
@@ -803,7 +803,7 @@ const getSeriesBoosting = (
         isChartSeriesBoosting(series.chart) ||
         (
             (data ? data.length : 0) >=
-            (series.options.boostThreshold || Number.MAX_VALUE)
+            pick(series.options.boostThreshold, Number.MAX_VALUE)
         )
     );
 };
