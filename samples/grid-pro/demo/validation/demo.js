@@ -28,8 +28,8 @@ Grid.grid('container', {
                 'Clothing',
                 'Electronics'
             ],
-            price: [699.99, 2.5, 29.99, 1199.99, 1.99, 49.99, 499.99],
-            discount: [20, 2, 40, 24, 0, 10, 15]
+            price: [699.99, 10.5, 29.99, 1199.99, 12, 49.99, 500],
+            discount: [20, 5, 40, 25, 10, 15, 30]
         }
     },
     columnDefaults: {
@@ -44,12 +44,15 @@ Grid.grid('container', {
         dataType: 'string',
         cells: {
             editMode: {
-                validationRules: [{
-                    validate: function ({ rawValue }) {
-                        return /^[a-zA-Z0-9\s]+$/.test(rawValue);
-                    },
-                    notification: 'No special characters allowed.'
-                }]
+                validationRules: [
+                    'notEmpty',
+                    {
+                        validate: function ({ value }) {
+                            return /^[a-zA-Z0-9\s]+$/.test(value);
+                        },
+                        notification: 'No special characters allowed.'
+                    }
+                ]
             }
         },
         header: {
@@ -61,10 +64,17 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 validationRules: [{
-                    validate: function ({ rawValue }) {
-                        return /^[A-Z]{3}-\d{3}$/.test(rawValue);
+                    validate: function ({ value }) {
+                        const columnData = this.column.data;
+
+                        if (columnData.indexOf(value) !== -1) {
+                            return false;
+                        }
+
+                        return /^[A-Z]{3}-\d{3}$/.test(value);
                     },
-                    notification: 'SKU must be in format AAA-123.'
+                    notification:
+                        'SKU must be unique and in the format AAA-123.'
                 }]
             }
         },
@@ -83,7 +93,20 @@ Grid.grid('container', {
                         { value: 'Electronics', label: 'Electronics' },
                         { value: 'Clothing', label: 'Clothing' }
                     ]
-                }
+                },
+                validationRules: [{
+                    validate: function ({ value }) {
+                        const discount = this.row.data.discount;
+
+                        if (value === 'Electronics' && discount >= 30) {
+                            return false;
+                        }
+
+                        return true;
+                    },
+                    // eslint-disable-next-line max-len
+                    notification: 'Discount for Electronics must be a number between 1% and 30%, change the discount first.'
+                }]
             }
         },
         header: {
@@ -93,12 +116,13 @@ Grid.grid('container', {
         id: 'price',
         dataType: 'number',
         cells: {
+            format: '{value:,.2f}',
             editMode: {
                 validationRules: [{
-                    validate: function ({ rawValue }) {
-                        return rawValue >= 10;
+                    validate: function ({ value }) {
+                        return value >= 10;
                     },
-                    notification: 'Price must be zero or more.'
+                    notification: 'Price must be 10 or more.'
                 }]
             }
         },
@@ -109,26 +133,32 @@ Grid.grid('container', {
         id: 'discount',
         dataType: 'number',
         cells: {
-            className: '{#if (gt value 30)}greater-than-30{/if}',
             editMode: {
                 validationRules: [{
-                    validate: function ({ rawValue }) {
-                        const num = Number(rawValue);
-
-                        if (isNaN(num)) {
-                            return false;
-                        }
-
+                    validate: function ({ value }) {
                         const category = this.row.data.category;
+
                         if (category === 'Electronics') {
-                            return num >= 0 && num <= 30;
+                            return value >= 1 && value <= 30;
                         }
-                        return num >= 0 && num <= 100;
+
+                        return true;
                     },
                     // eslint-disable-next-line max-len
-                    notification: 'Discount for Electronics must be a number between 0% and 30%, otherwise between 0% and 100%.'
-                }
-                ]
+                    notification: 'Discount for Electronics must be a number between 1% and 30%.'
+                }, {
+                    validate: function ({ value }) {
+                        const category = this.row.data.category;
+
+                        if (category !== 'Electronics') {
+                            return value >= 1 && value <= 60;
+                        }
+
+                        return true;
+                    },
+                    // eslint-disable-next-line max-len
+                    notification: 'Discount must be a number between 1% and 60% for non-electronics.'
+                }]
             }
         },
         header: {

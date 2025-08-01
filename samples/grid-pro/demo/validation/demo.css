@@ -17,7 +17,3 @@
 .content {
     padding: 8px;
 }
-
-tr:has(td[data-column-id="category"][data-value="Electronics"]) td.greater-than-30 {
-    background-color: #ff7979;
-}
