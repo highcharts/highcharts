@@ -332,7 +332,10 @@ namespace ScrollbarAxis {
                 isNaN(scrollMax) ||
                 !defined(axis.min) ||
                 !defined(axis.max) ||
-                axis.dataMin === axis.dataMax // #10733
+                (
+                    defined(axis.dataMin) && // #23335
+                    axis.dataMin === axis.dataMax // #10733
+                )
             ) {
                 // Default action: when data extremes are the same or there is
                 // not extremes on the axis, but scrollbar exists, make it
