@@ -190,8 +190,8 @@ class SortModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Modified table.
      *
-     * @param {string} columnName
-     * Column name of changed cell.
+     * @param {string} columnId
+     * Column id of changed cell.
      *
      * @param {number|undefined} rowIndex
      * Row index of changed cell.
@@ -207,7 +207,7 @@ class SortModifier extends DataModifier {
      */
     public modifyCell<T extends DataTable>(
         table: T,
-        columnName: string,
+        columnId: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
@@ -218,9 +218,9 @@ class SortModifier extends DataModifier {
                 orderInColumn
             } = modifier.options;
 
-        if (columnName === orderByColumn) {
+        if (columnId === orderByColumn) {
             if (orderInColumn) {
-                table.modified.setCell(columnName, rowIndex, cellValue);
+                table.modified.setCell(columnId, rowIndex, cellValue);
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
@@ -270,13 +270,10 @@ class SortModifier extends DataModifier {
                 orderByColumn,
                 orderInColumn
             } = modifier.options,
-            columnNames = Object.keys(columns);
+            columnIds = Object.keys(columns);
 
-        if (columnNames.indexOf(orderByColumn) > -1) {
-            if (
-                orderInColumn &&
-                columns[columnNames[0]].length
-            ) {
+        if (columnIds.indexOf(orderByColumn) > -1) {
+            if (orderInColumn && columns[columnIds[0]].length) {
                 table.modified.setColumns(columns, rowIndex);
                 table.modified.setColumn(
                     orderInColumn,
@@ -371,7 +368,7 @@ class SortModifier extends DataModifier {
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        const columnNames = table.getColumnNames(),
+        const columnIds = table.getColumnIds(),
             rowCount = table.getRowCount(),
             rowReferences = this.getRowReferences(table),
             {
@@ -381,7 +378,7 @@ class SortModifier extends DataModifier {
                 compare: customCompare
             } = modifier.options,
             compare = SortModifier.compareFactory(direction, customCompare),
-            orderByColumnIndex = columnNames.indexOf(orderByColumn),
+            orderByColumnIndex = columnIds.indexOf(orderByColumn),
             modified = table.modified;
 
         if (orderByColumnIndex !== -1) {

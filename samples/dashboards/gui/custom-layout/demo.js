@@ -3,13 +3,11 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                data: [
-                    ['Product Name', 'Quantity'],
-                    ['Laptop', 100],
-                    ['Smartphone', 150]
-                ]
-            }
+            data: [
+                ['Product Name', 'Quantity'],
+                ['Laptop', 100],
+                ['Smartphone', 150]
+            ]
         }]
     },
     gui: {

@@ -15,7 +15,7 @@ QUnit.test('InvertModifier.modify', function (assert) {
         }))
         .then((table) => {
 
-            const tableColumnNames = table.getColumnNames();
+            const tableColumnIds = table.getColumnIds();
 
             assert.notStrictEqual(
                 table.modified,
@@ -25,13 +25,13 @@ QUnit.test('InvertModifier.modify', function (assert) {
 
             assert.strictEqual(
                 table.modified.getRowCount(),
-                tableColumnNames.length,
+                tableColumnIds.length,
                 'Original and inverted table should have an inverted amount of columns and rows.'
             );
 
             assert.deepEqual(
-                table.modified.getColumn('columnNames'),
-                tableColumnNames,
+                table.modified.getColumn('columnIds'),
+                tableColumnIds,
                 'Row names of inverted table should be the same as column names of original table.'
             );
 
@@ -72,12 +72,12 @@ QUnit.test('InvertModifier.modifyCell', function (assert) {
 
             assert.strictEqual(
                 table.modified.getRowCount(),
-                table.getColumnNames().length,
+                table.getColumnIds().length,
                 'Original and inverted table should have an inverted amount of columns and rows.'
             );
 
             assert.strictEqual(
-                table.modified.getColumnNames().length,
+                table.modified.getColumnIds().length,
                 table.getRowCount() + 1, // because of column 'columns'
                 'Original and inverted table should have an inverted amount of rows and columns.'
             );
@@ -191,7 +191,7 @@ QUnit.test('InvertModifier.modifyRows', function (assert) {
             );
 
             assert.strictEqual(
-                table.modified.getColumnNames().length,
+                table.modified.getColumnIds().length,
                 7,
                 'Inverted table should contain six rows (plus one extra) as columns.'
             );
@@ -199,7 +199,7 @@ QUnit.test('InvertModifier.modifyRows', function (assert) {
             table.deleteRows(2, 1);
 
             assert.strictEqual(
-                table.modified.getColumnNames().length,
+                table.modified.getColumnIds().length,
                 6,
                 'Inverted table should contain only five rows (plus one extra) as columns.'
             );

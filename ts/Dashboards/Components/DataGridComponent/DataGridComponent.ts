@@ -151,10 +151,10 @@ class DataGridComponent extends Component {
 
             if (
                 this.grid?.viewport?.dataTable?.id !==
-                this.getFirstConnector()?.table?.id
+                this.getFirstConnector()?.getTable()?.id
             ) {
                 this.grid.update({
-                    dataTable: this.getFirstConnector()?.table?.modified
+                    dataTable: this.getFirstConnector()?.getTable()?.modified
                 }, false);
             }
 
@@ -216,11 +216,11 @@ class DataGridComponent extends Component {
             // names have changed, so we can update the whole grid. If they
             // have not changed, we can just update the rows (more efficient).
 
-            const newColumnNames = dataTable.modified.getColumnNames();
+            const newColumnIds = dataTable.modified.getColumnIds();
             const { columnOptionsMap, enabledColumns } = grid;
 
             let index = 0;
-            for (const newColumn of newColumnNames) {
+            for (const newColumn of newColumnIds) {
                 if (columnOptionsMap[newColumn]?.options?.enabled === false) {
                     continue;
                 }

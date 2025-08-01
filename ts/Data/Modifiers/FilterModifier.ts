@@ -105,7 +105,7 @@ class FilterModifier extends DataModifier {
             }
         }
 
-        const { columnName: col, value } = condition;
+        const { columnId: col, value } = condition;
         switch (op) {
             case '==':
                 // eslint-disable-next-line eqeqeq

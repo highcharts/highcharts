@@ -64,14 +64,14 @@ const dataTablesOptions = [
     })),
     {
         key: 'dataset-4',
-        columnNames: ['name', 'value'],
+        columnIds: ['name', 'value'],
         beforeParse: function (data) {
             return Object.entries(calculateStatistics(data));
         }
     }
 ];
 
-const columnNames = ['time', 'open', 'high', 'low', 'close', 'volume'];
+const columnIds = ['time', 'open', 'high', 'low', 'close', 'volume'];
 
 /**
  *
@@ -81,9 +81,11 @@ const columnNames = ['time', 'open', 'high', 'low', 'close', 'volume'];
 class DataTablesConnector extends Dashboards.DataConnector {
     constructor(options) {
         const mergedOptions = Dashboards.merge(
-            DataTablesConnector.defaultOptions, options
+            DataTablesConnector.defaultOptions,
+            { dataTables: dataTablesOptions },
+            options
         );
-        super(mergedOptions, dataTablesOptions);
+        super(mergedOptions);
         this.options = mergedOptions;
     }
 
@@ -93,15 +95,14 @@ class DataTablesConnector extends Dashboards.DataConnector {
      * and particular dataTable options.
      */
     async load(eventDetail) {
-        const connector = this,
-            tables = connector.dataTables,
-            { data, dataUrl, dataModifier } = connector.options;
+        const connector = this;
+        const options = connector.options;
+        const { data, dataUrl, dataTables } = options;
 
         connector.emit({
             type: 'load',
-            data,
             detail: eventDetail,
-            tables
+            data
         });
 
         return Promise
@@ -113,8 +114,7 @@ class DataTablesConnector extends Dashboards.DataConnector {
                         connector.emit({
                             type: 'loadError',
                             detail: eventDetail,
-                            error,
-                            tables
+                            error
                         });
                         console.warn(`Unable to fetch data from ${dataUrl}.`);
                     })
@@ -123,13 +123,16 @@ class DataTablesConnector extends Dashboards.DataConnector {
                 if (data) {
                     this.initConverters(
                         data,
-                        (key, table) => {
-                            const options = this.options;
+                        key => {
+                            const tableOptions = dataTables?.find(
+                                dataTable => dataTable.key === key
+                            );
+
                             const dataTableOptions = {
                                 dataTableKey: key,
-                                beforeParse: table.beforeParse,
-                                columnNames: table.columnNames ??
-                                    options.columnNames
+                                beforeParse: tableOptions?.beforeParse,
+                                columnIds: tableOptions?.columnIds ??
+                                    options.columnIds
                             };
 
                             return new Dashboards.DataConverter.types.JSON(
@@ -141,23 +144,20 @@ class DataTablesConnector extends Dashboards.DataConnector {
                         }
                     );
                 }
-                return connector.setModifierOptions(dataModifier)
-                    .then(() => data);
+                return connector.applyTableModifiers().then(() => data);
             })
             .then(data => {
                 connector.emit({
                     type: 'afterLoad',
-                    data,
                     detail: eventDetail,
-                    tables
+                    data
                 });
                 return connector;
             }).catch(error => {
                 connector.emit({
                     type: 'loadError',
                     detail: eventDetail,
-                    error,
-                    tables
+                    error
                 });
                 throw error;
             });
@@ -175,7 +175,7 @@ DataTablesConnector.defaultOptions = {
     dataRefreshRate: 0,
     firstRowAsNames: false,
     orientation: 'rows',
-    columnNames
+    columnIds
 };
 
 /**
@@ -270,7 +270,7 @@ Dashboards.board('container', {
                 dataTableKey: `dataset-${index}`,
                 columnAssignment: [{
                     seriesId: `2024 Q${index + 1}`,
-                    data: columnNames
+                    data: columnIds
                 }]
             }],
             chartOptions: {

@@ -87,7 +87,7 @@ Highcharts.chart('container', {
     series: ids.map(id => ({
         type: 'column',
         name: id,
-        data: connector.table.getRowObjects().map(obj => [
+        data: connector.getTable().getRowObjects().map(obj => [
             obj['TrailingPerformance_TimePeriod_' + id],
             obj['TrailingPerformance_Value_' + id]
         ])

@@ -97,7 +97,7 @@ function renderTable(container, table) {
     html.push('<table>');
     html.push('<thead>');
     html.push('<tr>');
-    for (const column of table.getColumnNames()) {
+    for (const column of table.getColumnIds()) {
         html.push('<th>', `${column}`, '</th>');
     }
     html.push('</tr>');

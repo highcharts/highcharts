@@ -5,10 +5,8 @@ Dashboards.board('container', {
         connectors: [{
             type: 'CSV',
             id: 'data',
-            options: {
-                csv: csvData,
-                firstRowAsNames: true
-            }
+            csv: csvData,
+            firstRowAsNames: true
         }]
     },
     gui: {

@@ -5,7 +5,7 @@ Dashboards.board('container', {
             type: 'JSON',
             options: {
                 firstRowAsNames: false,
-                columnNames: ['Col-A', 'Col-B', 'Col-C'],
+                columnIds: ['Col-A', 'Col-B', 'Col-C'],
                 data: [
                     ['Row-1', 1349, 5],
                     ['Row-2', 1960, 4],
@@ -25,11 +25,11 @@ Dashboards.board('container', {
                     condition: {
                         operator: 'and',
                         conditions: [{
-                            columnName: 'Col-B',
+                            columnId: 'Col-B',
                             operator: '>=',
                             value: 500
                         }, {
-                            columnName: 'Col-B',
+                            columnId: 'Col-B',
                             operator: '<=',
                             value: 2010
                         }]

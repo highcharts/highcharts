@@ -9,10 +9,8 @@ Dashboards.board(
                 {
                     id: 'sample',
                     type: 'CSV',
-                    options: {
-                        csv: csvData,
-                        firstRowAsNames: true
-                    }
+                    csv: csvData,
+                    firstRowAsNames: true
                 }
             ]
         },

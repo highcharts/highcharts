@@ -31,6 +31,10 @@ import type DataConnectorOptions from './DataConnectorOptions';
  */
 export interface HTMLTableConnectorOptions extends DataConnectorOptions {
     /**
+     * The corresponding connector type.
+     */
+    type: 'HTMLTable';
+    /**
      * The id of the HTML table element to load or a reference to the HTML.
      */
     table: (string|HTMLElement);

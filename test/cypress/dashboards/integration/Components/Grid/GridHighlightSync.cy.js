@@ -5,7 +5,7 @@ describe('Grid Component highlight sync autoscroll', () => {
 
     it('Grid AutoScroll should work', () => {
         cy.board().then((board) => {
-            const table = board.dataPool.connectors.data.table;
+            const table = board.dataPool.connectors.data.getTable();
             board.dataCursor.emitCursor(table, {
                 type: 'position',
                 row: 50,
@@ -32,7 +32,7 @@ describe('Grid Component highlight sync autoscroll', () => {
                 }
             });
 
-            const table = board.dataPool.connectors.data.table;
+            const table = board.dataPool.connectors.data.getTable();
             board.dataCursor.emitCursor(table, {
                 type: 'position',
                 row: 50,

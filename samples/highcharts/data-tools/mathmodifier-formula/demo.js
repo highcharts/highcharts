@@ -42,7 +42,7 @@ function onChange(e) {
         td.blur();
 
         table.setCell(
-            table.getColumnNames()[column],
+            table.getColumnIds()[column],
             row,
             (isNaN(value) ? td.innerText : value
             )
@@ -124,7 +124,7 @@ function renderTable(container, table, editable) {
     html.push('<table>');
     html.push('<thead>');
     html.push('<tr>');
-    for (const column of table.getColumnNames()) {
+    for (const column of table.getColumnIds()) {
         html.push(
             editable ? '<th contenteditable>' : '<th>',
             escapeStringForHTML(column),

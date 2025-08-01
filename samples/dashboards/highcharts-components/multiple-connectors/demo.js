@@ -3,15 +3,11 @@ Dashboards.board('container', {
         connectors: [{
             id: 'csv-1',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv1').innerText
-            }
+            csv: document.getElementById('csv1').innerText
         }, {
             id: 'csv-2',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv2').innerText
-            }
+            csv: document.getElementById('csv2').innerText
         }]
     },
     gui: {

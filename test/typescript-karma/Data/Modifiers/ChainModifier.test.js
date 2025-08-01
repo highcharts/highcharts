@@ -11,11 +11,11 @@ QUnit.test('ChainModifier.benchmark', function (assert) {
                 condition: {
                     operator: 'and',
                     conditions: [{
-                        columnName: 'value',
+                        columnId: 'value',
                         operator: '>=',
                         value: 'A'
                     }, {
-                        columnName: 'value',
+                        columnId: 'value',
                         operator: '<=',
                         value: 'b'
                     }]
@@ -65,11 +65,11 @@ QUnit.test('ChainModifier.modify', function (assert) {
                 condition: {
                     operator: 'and',
                     conditions: [{
-                        columnName: 'y',
+                        columnId: 'y',
                         operator: '>=',
                         value: 'A'
                     }, {
-                        columnName: 'y',
+                        columnId: 'y',
                         operator: '<=',
                         value: 'b'
                     }]
@@ -143,11 +143,11 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
                 condition: {
                     operator: 'and',
                     conditions: [{
-                        columnName: 'x',
+                        columnId: 'x',
                         operator: '>=',
                         value: 2
                     }, {
-                        columnName: 'x',
+                        columnId: 'x',
                         operator: '<=',
                         value: 5
                     }]
@@ -240,11 +240,11 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
                 condition: {
                     operator: 'and',
                     conditions: [{
-                        columnName: 'x',
+                        columnId: 'x',
                         operator: '>=',
                         value: 2
                     }, {
-                        columnName: 'x',
+                        columnId: 'x',
                         operator: '<=',
                         value: 5
                     }]
@@ -323,11 +323,11 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
                 condition: {
                     operator: 'and',
                     conditions: [{
-                        columnName: 'x',
+                        columnId: 'x',
                         operator: '>=',
                         value: 2
                     }, {
-                        columnName: 'x',
+                        columnId: 'x',
                         operator: '<=',
                         value: 5
                     }]
