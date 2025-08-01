@@ -429,7 +429,8 @@ class HTMLElement extends SVGElement {
             if (textWidth !== oldTextWidth) { // #983, #1254
                 const textPxLength = getTextPxLength(),
                     textWidthNum = textWidth || 0,
-                    willOverWrap = element.style.textOverflow === '' &&
+                    willOverWrap = !renderer.styledMode &&
+                        element.style.textOverflow === '' &&
                         element.style.webkitLineClamp;
                 if (
                     (
