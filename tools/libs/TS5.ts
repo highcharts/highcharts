@@ -39,16 +39,6 @@ import * as TS from 'typescript';
  * */
 
 
-export interface ArrayInfo {
-    doclet?: DocletInfo;
-    flags?: Array<InfoFlag>;
-    kind: 'Array';
-    meta: Meta;
-    node: TS.ArrayLiteralExpression;
-    value: Array<Value>;
-}
-
-
 export interface ClassInfo {
     doclet?: DocletInfo;
     extends?: string;
@@ -57,36 +47,29 @@ export interface ClassInfo {
     implements?: Array<string>;
     kind: 'Class';
     members: Array<MemberInfo>;
-    meta: Meta;
+    meta: InfoMeta;
     name: string;
     node: TS.ClassDeclaration;
 }
 
 
 export type CodeInfo = (
-    ArrayInfo|ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionCallInfo|
-    FunctionInfo|ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|
-    ReferenceInfo|TypeAliasInfo|VariableInfo
+    | ClassInfo
+    | DocletInfo
+    | FunctionInfo
+    | InterfaceInfo
+    | NamespaceInfo
+    | PropertyInfo
+    | TypeAliasInfo
+    | VariableInfo
 );
-
-
-export interface DeconstructInfo {
-    deconstructs: Record<string,string>;
-    doclet?: DocletInfo;
-    flags?: Array<InfoFlag>;
-    from?: (FunctionCallInfo|ReferenceInfo)
-    kind: 'Deconstruct';
-    meta: Meta;
-    node: (TS.ParameterDeclaration|TS.VariableDeclaration);
-    type?: Array<string>;
-}
 
 
 export interface DocletInfo {
     kind: 'Doclet';
-    meta: Meta;
+    meta: InfoMeta;
     node: TS.JSDoc;
-    tags: Record<string,Array<string>>;
+    tags: Record<string, Array<string>>;
 }
 
 
@@ -100,57 +83,34 @@ export interface DocletTag {
 }
 
 
-export interface ExportInfo {
-    doclet?: DocletInfo;
-    flags?: Array<InfoFlag>;
-    kind: 'Export';
-    meta: Meta;
-    node: TS.ExportAssignment;
-    value?: Value;
-}
-
-
-export interface FunctionCallInfo {
-    arguments?: Array<Value>;
-    doclet?: DocletInfo;
-    genericArguments?: Array<string>;
-    kind: 'FunctionCall';
-    meta: Meta;
-    name: string;
-    node: TS.CallExpression;
-}
-
-
 export interface FunctionInfo {
-    body?: Array<DocletInfo>;
     doclet?: DocletInfo;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
     inherited?: boolean;
     kind: 'Function';
-    meta: Meta;
+    meta: InfoMeta;
     name: string;
     node: (TS.ConstructorDeclaration|TS.FunctionDeclaration|TS.MethodDeclaration);
     parameters?: Array<VariableInfo>;
-    return?: Array<string>;
-}
-
-
-export interface ImportInfo {
-    doclet?: DocletInfo;
-    flags?: Array<InfoFlag>;
-    imports: Record<string,string>;
-    kind: 'Import';
-    meta: Meta;
-    node: TS.ImportDeclaration;
-    from: string;
+    return?: VariableType;
 }
 
 
 export type InfoFlag = (
     'async'|'abstract'|'assured'|'await'|'declare'|'default'|'export'|
-    'optional'|'private'|'protected'|'rest'|'static'|'type'
+    'optional'|'private'|'protected'|'readonly'|'rest'|'static'|'type'
 );
+
+
+export interface InfoMeta {
+    begin: number;
+    end: number;
+    file: string;
+    overhead: number;
+    scope: string;
+    syntax: number;
+}
 
 
 export interface InterfaceInfo {
@@ -160,24 +120,16 @@ export interface InterfaceInfo {
     extends?: Array<string>;
     kind: 'Interface';
     members: Array<MemberInfo>;
-    meta: Meta;
+    meta: InfoMeta;
     name: string;
     node: TS.InterfaceDeclaration;
 }
 
 
+export type IntersectType = Array<VariableType>;
+
+
 export type MemberInfo = (DocletInfo|FunctionInfo|PropertyInfo);
-
-
-export interface Meta {
-    begin: number;
-    end: number;
-    file: string;
-    merged?: boolean;
-    overhead: number;
-    scope?: string;
-    syntax: number;
-}
 
 
 export interface NamespaceInfo {
@@ -185,20 +137,27 @@ export interface NamespaceInfo {
     flags?: Array<InfoFlag>;
     kind: ('Module'|'Namespace');
     members: Array<CodeInfo>;
-    meta: Meta;
+    meta: InfoMeta;
     name: string;
     node: TS.ModuleDeclaration;
 }
 
 
-export interface ObjectInfo {
+export interface ObjectType {
     doclet?: DocletInfo;
     flags?: Array<InfoFlag>;
-    kind: 'Object';
+    kind: 'ObjectType';
     members: Array<MemberInfo>;
-    meta: Meta;
-    node: TS.ObjectLiteralExpression;
-    type?: Array<string>;
+    meta: InfoMeta;
+    name: string;
+    node: TS.TypeLiteralNode;
+}
+
+
+export interface Project {
+    rootPath?: string;
+    sourceInfos: Array<SourceInfo>;
+    tsProgram: TS.Program;
 }
 
 
@@ -207,7 +166,7 @@ export interface PropertyInfo {
     flags?: Array<InfoFlag>;
     inherited?: boolean;
     kind: 'Property';
-    meta: Meta;
+    meta: InfoMeta;
     name: string;
     node: (
         | TS.PropertyAssignment
@@ -215,25 +174,15 @@ export interface PropertyInfo {
         | TS.PropertySignature
         | TS.ShorthandPropertyAssignment
     );
-    type?: Array<string>;
-    value?: Value;
-}
-
-
-export interface ReferenceInfo {
-    doclet?: DocletInfo;
-    kind: 'Reference';
-    meta: Meta;
-    name: string;
-    node: (TS.Identifier|TS.ParameterDeclaration|TS.PropertyAccessExpression);
+    type?: VariableType;
 }
 
 
 export interface SourceInfo {
     code: Array<CodeInfo>;
+    file: string;
     kind: 'Source';
     node: TS.SourceFile;
-    path: string;
 }
 
 
@@ -241,29 +190,25 @@ export interface TypeAliasInfo {
     doclet?: DocletInfo;
     kind: 'TypeAlias';
     generics?: Array<TypeAliasInfo>;
-    meta: Meta;
+    meta: InfoMeta;
     name: string;
     node: (TS.TypeAliasDeclaration|TS.TypeParameterDeclaration);
-    value?: Array<string>;
+    value?: VariableType;
 }
-
-
-export type Value = (
-    boolean|null|number|string|ArrayInfo|FunctionCallInfo|FunctionInfo|
-    ObjectInfo|ReferenceInfo
-);
 
 
 export interface VariableInfo {
     doclet?: DocletInfo;
     flags?: Array<InfoFlag>;
     kind: 'Variable';
-    meta: Meta;
+    meta: InfoMeta;
     name: string;
     node: (TS.ParameterDeclaration|TS.TypeParameterDeclaration|TS.VariableDeclaration);
-    type?: Array<string>;
-    value?: Value;
+    type: VariableType;
 }
+
+
+export type VariableType = (string|IntersectType|ObjectType);
 
 
 /* *
@@ -273,16 +218,21 @@ export interface VariableInfo {
  * */
 
 
-const DOCLET = /\/\*\*.*?\*\//gsu;
-
-
 const DOCLET_TAG_INSET = /^\s*\{([^}]+)\}/su;
 
 
 const DOCLET_TAG_NAME = /^(?:\[([a-z][\w\.='"]+)\]|([a-z][\w\.='"]*))/su;
 
 
-const JSX = /\.j(sx?)$/su;
+const JSDOC_TAG_REPLACEMENTS: Record<string, string> = {
+    arg: 'param',
+    argument: 'param',
+    defaultvalue: 'default',
+    desc: 'description',
+    func: 'function',
+    method: 'function',
+    returns: 'return',
+};
 
 
 const GENERIC = /^[\w\.]*<[\s\w\.\[\],|()]+>$/su;
@@ -308,19 +258,7 @@ const NATIVE_TYPES = [
 ];
 
 
-/**
- * Array of product IDs to extract. If empty, everything is included.
- */
-export const PRODUCTS: Array<string> = [];
-
-
-const SANITIZE_TEXT = /^(['"`]?)(.*)\1$/gsu;
-
-
 const SANITIZE_TYPE = /\(\s*(.*)\s*\)/gsu;
-
-
-const SOURCE_EXTENSION = /(?:\.d)?\.[jt]sx?$/gsu;
 
 
 /* *
@@ -333,6 +271,9 @@ const SOURCE_EXTENSION = /(?:\.d)?\.[jt]sx?$/gsu;
 /**
  * Add child informations and doclets.
  *
+ * @param project
+ * Related project.
+ *
  * @param infos
  * Array of code information to add to.
  *
@@ -340,14 +281,21 @@ const SOURCE_EXTENSION = /(?:\.d)?\.[jt]sx?$/gsu;
  * Child nodes to extract from.
  */
 function addChildInfos (
+    project: Project,
     infos: Array<CodeInfo>,
-    nodes: (Array<TS.Node>|TS.NodeArray<TS.Node>)
+    nodes: (Array<TS.Node>|TS.NodeArray<TS.Node>|TS.SymbolTable)
 ): void {
     let _child: (CodeInfo|undefined);
     let _children: (Array<CodeInfo>|undefined);
     let _doclet: DocletInfo;
     let _doclets: Array<DocletInfo>;
-    let _previousNode = nodes[0];
+
+    if (!(nodes instanceof Array)) { // Symbol
+        nodes = Array
+            .from(nodes.values())
+            .filter(v => !!v.valueDeclaration)
+            .map(v => v.valueDeclaration!);
+    }
 
     for (const node of nodes) {
 
@@ -355,32 +303,31 @@ function addChildInfos (
             break;
         } else if (TS.isVariableStatement(node)) {
             addChildInfos(
+                project,
                 infos,
                 nodesChildren(node.declarationList)
             );
+        } else if (TS.isExportAssignment(node)) {
+            addChildInfos(
+                project,
+                infos,
+                [node.expression]
+            );
         } else {
-            console.log(TS.SyntaxKind[node.kind], !!node.getSourceFile(), !!node.parent);
             _child = (
-                getVariableInfo(node) ||
-                getTypeAliasInfo(node) ||
-                getPropertyInfo(node) ||
-                getObjectInfo(node) ||
-                getNamespaceInfo(node) ||
-                getInterfaceInfo(node) ||
-                getImportInfo(node) ||
-                getFunctionInfo(node) ||
-                getFunctionCallInfo(node) ||
-                getExportInfo(node) ||
-                // getEnumInfo(node) ||
-                getDeconstructInfos(node) ||
-                getClassInfo(node) ||
-                getArrayInfo(node)
+                getVariableInfo(project, node) ||
+                getTypeAliasInfo(project, node) ||
+                getPropertyInfo(project, node) ||
+                getNamespaceInfo(project, node) ||
+                getInterfaceInfo(project, node) ||
+                getFunctionInfo(project, node) ||
+                getClassInfo(project, node)
             );
         }
 
         // Retrieve leading doclets
 
-        _doclets = getDocletInfosBetween(_previousNode, node);
+        _doclets = getDocletInfos(project, node);
 
         // Deal with floating doclets before leading child doclet
 
@@ -393,8 +340,6 @@ function addChildInfos (
             if (
                 _child &&
                 _child.kind !== 'Doclet' &&
-                _child.kind !== 'Export' &&
-                _child.kind !== 'Import' &&
                 !_doclet.tags.apioption
             ) {
                 _child.doclet = _doclets.pop();
@@ -403,9 +348,7 @@ function addChildInfos (
             // Add floating doclets
 
             for (_doclet of _doclets) {
-                if (isProductRelated(_doclet)) {
-                    infos.push(_doclet);
-                }
+                infos.push(_doclet);
             }
 
         }
@@ -413,9 +356,7 @@ function addChildInfos (
         // Finally add child(ren)
 
         if (_child) {
-            if (isProductRelated(_child.kind === 'Doclet' ? _child : _child.doclet)) {
-                infos.push(_child);
-            }
+            infos.push(_child);
             _child = void 0;
         }
 
@@ -423,8 +364,6 @@ function addChildInfos (
             infos.push(..._children);
             _children = void 0;
         }
-
-        _previousNode = node;
     }
 
 }
@@ -440,15 +379,14 @@ function addChildInfos (
  * Node to retrieve from.
  */
 function addInfoFlags (
-    info: CodeInfo,
+    info: Partial<(CodeInfo|ObjectType)>,
     node: TS.Node
 ): void {
 
     switch (info.kind) {
         case 'Doclet':
-        case 'FunctionCall':
-        case 'Reference':
         case 'TypeAlias':
+        case undefined:
             return;
     }
 
@@ -522,7 +460,7 @@ function addInfoFlags (
  * Node to return meta information for.
  */
 function addInfoMeta (
-    info: CodeInfo,
+    info: Partial<(CodeInfo|ObjectType)>,
     node: TS.Node
 ): void {
     info.meta = {
@@ -530,10 +468,11 @@ function addInfoMeta (
         end: node.getEnd(),
         file: node.getSourceFile().fileName,
         overhead: node.getLeadingTriviaWidth(),
+        scope: '',
         syntax: node.kind
     };
     Object.defineProperty(info, 'node', {
-        value: node
+        value: node,
     });
 }
 
@@ -549,7 +488,7 @@ function addInfoMeta (
  */
 function addInfoScopes (
     parentInfo: (CodeInfo|SourceInfo),
-    targetInfos: Array<CodeInfo|Value>
+    targetInfos: Array<CodeInfo|VariableType>
 ): void {
     const _scopePath = extractInfoScopePath(parentInfo);
 
@@ -558,9 +497,8 @@ function addInfoScopes (
         if (
             !_info ||
             typeof _info !== 'object' ||
-            _info.kind === 'Doclet' ||
-            _info.kind === 'Export' ||
-            _info.kind === 'Import'
+            _info instanceof Array ||
+            _info.kind === 'Doclet'
         ) {
             continue;
         }
@@ -570,12 +508,6 @@ function addInfoScopes (
         }
 
         switch (_info.kind) {
-
-            case 'Array':
-                if (_info.value) {
-                    addInfoScopes(_info, _info.value);
-                }
-                break;
 
             case 'Class':
             case 'Interface':
@@ -595,25 +527,15 @@ function addInfoScopes (
                 }
                 break;
 
-            case 'FunctionCall':
-                if (_info.arguments) {
-                    addInfoScopes(_info, _info.arguments);
-                }
-                if (_info.genericArguments) {
-                    addInfoScopes(_info, _info.genericArguments);
-                }
-                break;
-
             case 'Module':
             case 'Namespace':
-            case 'Object':
                 addInfoScopes(_info, _info.members);
                 break;
 
             case 'Property':
             case 'Variable':
-                if (typeof _info.value === 'object') {
-                    addInfoScopes(_info, [_info.value]);
+                if (typeof _info.type === 'object') {
+                    addInfoScopes(_info, [_info.type]);
                 }
                 break;
 
@@ -630,38 +552,6 @@ function addInfoScopes (
 
     }
 
-}
-
-
-/**
- * Adds a tag to a DocletInfo object.
- *
- * @param doclet
- * Doclet information to modify.
- *
- * @param tag
- * Tag to add to.
- *
- * @param text
- * Text to add.
- *
- * @return
- * DocletInfo object as reference.
- */
-function addTag (
-    doclet: DocletInfo,
-    tag: string,
-    text?: string
-): DocletInfo {
-    const tags = doclet.tags;
-
-    tags[tag] = tags[tag] || [];
-
-    if (text) {
-        tags[tag].push(text);
-    }
-
-    return doclet;
 }
 
 
@@ -820,18 +710,18 @@ export function extractGenericArguments (
 /**
  * Extracts the entity name from the given code information.
  *
- * @param codeInfo
+ * @param info
  * Code information to extract from.
  *
  * @return
  * Extracted name or `undefined`.
  */
 export function extractInfoName (
-    codeInfo: (CodeInfo|SourceInfo)
+    info: (CodeInfo|ObjectType|SourceInfo)
 ): (string|undefined) {
     let _name: (string|undefined);
 
-    switch (codeInfo.kind) {
+    switch (info.kind) {
         case 'Class':
         case 'Function':
         case 'Interface':
@@ -840,114 +730,22 @@ export function extractInfoName (
         case 'Property':
         case 'TypeAlias':
         case 'Variable':
-            return codeInfo.name;
+            return info.name;
         case 'Doclet':
-            _name = extractTagText(codeInfo, 'optionparent', true);
+            _name = extractTagText(info, 'optionparent', true);
             if (typeof _name === 'string') {
                 return _name;
             }
             return (
-                extractTagText(codeInfo, 'apioption', true) ||
-                extractTagText(codeInfo, 'function', true) ||
-                extractTagText(codeInfo, 'name', true)
+                extractTagText(info, 'apioption', true) ||
+                extractTagText(info, 'function', true) ||
+                extractTagText(info, 'name', true)
             );
         case 'Source':
-            return codeInfo.path;
+            return info.file;
         default:
             return void 0;
     }
-}
-
-
-/**
- * Extracts information from an array of CodeInfo types.
- *
- * @param arr
- * Array of informations to extract from.
- *
- * @param name
- * Name of information to extract.
- *
- * @return
- * Extracted information or `undefined`.
- */
-function extractInfos (
-    arr: Array<CodeInfo>,
-    name: string
-): (Array<CodeInfo>|undefined) {
-
-    if (typeof name !== 'string') {
-        return void 0;
-    }
-
-    const extractions: Array<CodeInfo> = [];
-
-    for (const info of arr) {
-        switch (info.kind) {
-            case 'Class':
-            case 'Function':
-            case 'Interface':
-            case 'Module':
-            case 'Namespace':
-            case 'Property':
-            case 'Variable':
-                if (info.name === name) {
-                    extractions.push(info);
-                }
-                continue;
-            default:
-                continue;
-        }
-    }
-
-    return (
-        extractions.length ?
-            extractions :
-            void 0
-    );
-}
-
-
-/**
- * Extracts scope path for the given code information.
- *
- * @param info
- * Information to extract from.
- *
- * @return
- * Scope path or `undefined`.
- */
-function extractInfoScopePath (
-    info: (CodeInfo|SourceInfo)
-): (string|undefined) {
-
-    switch (info.kind) {
-
-        case 'Array':
-        case 'Deconstruct':
-        case 'Object':
-            return info.meta.scope;
-
-        case 'Class':
-        case 'Function':
-        case 'FunctionCall':
-        case 'Interface':
-        case 'Namespace':
-        case 'Property':
-        case 'Reference':
-        case 'TypeAlias':
-        case 'Variable':
-            return (
-                info.meta.scope ?
-                    `${info.meta.scope}.${info.name}` :
-                    info.name
-            );
-
-        default:
-            return void 0;
-
-    }
-
 }
 
 
@@ -964,6 +762,44 @@ export function extractTagInset (
     text: string
 ): string {
     return (text.match(DOCLET_TAG_INSET) || [])[1];
+}
+
+
+/**
+ * Extracts scope path for the given code information.
+ *
+ * @param info
+ * Information to extract from.
+ *
+ * @return
+ * Scope path or `undefined`.
+ */
+function extractInfoScopePath (
+    info: (CodeInfo|ObjectType|SourceInfo)
+): (string|undefined) {
+
+    switch (info.kind) {
+
+        case 'Class':
+        case 'Function':
+        case 'Interface':
+        case 'Namespace':
+        case 'Module':
+        case 'ObjectType':
+        case 'Property':
+        case 'TypeAlias':
+        case 'Variable':
+            return (
+                info.meta.scope ?
+                    `${info.meta.scope}.${info.name}` :
+                    info.name
+            );
+
+        default:
+            return void 0;
+
+    }
+
 }
 
 
@@ -1179,45 +1015,10 @@ export function extractTypes (
 
 
 /**
- * Retrieves array info from the given node.
- *
- * @param node
- * Node that might be an array.
- *
- * @return
- * Array information or `undefined`.
- */
-function getArrayInfo (
-    node: TS.Node
-): (ArrayInfo|undefined) {
-
-    if (!TS.isArrayLiteralExpression(node)) {
-        return void 0;
-    }
-
-    const _info = {
-        kind: 'Array'
-    } as ArrayInfo;
-
-    const _values: Array<Value> = _info.value = [];
-
-    for (const _child of node.elements) {
-        const _infoValue = getInfoValue(_child);
-
-        if (_infoValue) {
-            _values.push(_infoValue);
-        }
-    }
-
-    addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
-
-    return _info;
-}
-
-
-/**
  * Retrieves class info from the given node.
+ *
+ * @param project
+ * Related project.
  *
  * @param node
  * Node that might be a class.
@@ -1226,6 +1027,7 @@ function getArrayInfo (
  * Class information or `undefined`.
  */
 function getClassInfo (
+    project: Project,
     node: TS.Node
 ): (ClassInfo|undefined) {
 
@@ -1240,7 +1042,7 @@ function getClassInfo (
     _info.name = ((node.name && node.name.getText()) || 'default');
 
     if (node.typeParameters) {
-        addChildInfos(_info.generics = [], node.typeParameters);
+        addChildInfos(project, _info.generics = [], node.typeParameters);
     }
 
     if (node.heritageClauses) {
@@ -1253,315 +1055,93 @@ function getClassInfo (
         }
     }
 
-    addChildInfos(_info.members = [], node.members);
+    addChildInfos(project, _info.members = [], node.members);
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
     return _info;
 }
 
-
 /**
- * Retrieves deconstruct information from the given node.
+ * Retrieves doclet information from the given node.
+ *
+ * @param project
+ * Related project.
  *
  * @param node
- * Node that might be a deconstruct.
+ * Node that might have a doclet.
  *
  * @return
- * Deconstruct information or `undefined`.
+ * Doclet information or `undefined`.
  */
-function getDeconstructInfos (
+function getDocletInfos(
+    project: Project,
     node: TS.Node
-): (DeconstructInfo|undefined) {
-
-    if (
-        !TS.isParameter(node) &&
-        !TS.isVariableDeclaration(node)
-    ) {
-        return void 0;
-    }
-
-    if (
-        !TS.isArrayBindingPattern(node.name) &&
-        !TS.isObjectBindingPattern(node.name)
-    ) {
-        return void 0;
-    }
-
-    const _info = {
-        kind: 'Deconstruct',
-        deconstructs: {}
-    } as DeconstructInfo;
-
-    if (node.initializer) {
-        const _from = getInfoValue(node.initializer);
-
-        if (
-            _from &&
-            typeof _from === 'object' &&
-            (
-                _from.kind === 'FunctionCall' ||
-                _from.kind === 'Reference'
-            )
-        ) {
-            _info.from = _from;
-        }
-    }
-
-    for (const element of node.name.elements) {
-        if (TS.isOmittedExpression(element)) {
-            continue;
-        }
-        _info.deconstructs[(element.propertyName || element.name).getText()] =
-            element.name.getText();
-    }
-
-    addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
-
-    return _info;
-}
-
-
-/**
- * Retrieve doclet informations between two nodes.
- *
- * @param startNode
- * Node that comes before doclets.
- *
- * @param endNode
- * Node that comes after doclets.
- *
- * @return
- * Retrieved doclet informations.
- */
-function getDocletInfosBetween (
-    startNode: TS.Node,
-    endNode: TS.Node
 ): Array<DocletInfo> {
-    const _toString = (tag: (TS.JSDoc|TS.JSDocComment|TS.JSDocTag)): (string|undefined) => {
-        switch (tag.kind) {
-            case TS.SyntaxKind.JSDoc:
-                return (
-                    tag.comment instanceof Array ?
-                        tag.comment.map(_toString).join('') :
-                        tag.comment
-                );
-            case TS.SyntaxKind.JSDocLink:
-            case TS.SyntaxKind.JSDocLinkCode:
-            case TS.SyntaxKind.JSDocLinkPlain:
-                return (
-                    '{@link ' +
-                    ((tag as TS.JSDocLink).name?.getText() || '') +
-                    tag.getText() +
-                    '}'
-                );
-            case TS.SyntaxKind.JSDocText:
-                return tag.getText();
-            default:
-                return tag
-                    .getText()
-                    .substring(tag.tagName.text.length + 1)
-                    .replace(/\n +\* ?/gsu, '\n')
-                    .trim();
-        }
-    };
 
-    const _doclets: Array<DocletInfo> = [];
-
-    let _doclet: DocletInfo;
-    let _tagName: string;
-
-    for (const doclet of getDocletsBetween(startNode, endNode)) {
-
-        _doclet = newDocletInfo();
-
-        for (const node of doclet) {
-            if (TS.isJSDoc(node)) {
-
-                if (node.comment) {
-                    addTag(_doclet, 'description', _toString(node));
-                }
-
-                if (node.tags) {
-                    for (const tag of node.tags) {
-                        _tagName = tag.tagName.text;
-                        addTag(_doclet, _tagName, _toString(tag));
-                    }
-                }
-
-                addInfoMeta(_doclet, node);
-
-            }
-        }
-
-        _doclets.push(_doclet);
-
+    if (!TS.isJSDocCommentContainingNode(node)) {
+        return [];
     }
 
-    return _doclets;
-}
+    const _docs = TS.getJSDocCommentsAndTags(node);
+    const _infos: Array<DocletInfo> = [];
 
+    let _info: (DocletInfo|undefined);
 
-/**
- * Retrieves all doclet nodes between two nodes.
- *
- * @param startNode
- * Start node that comes before doclets.
- *
- * @param endNode
- * End node that comes after doclets.
- *
- * @return
- * Array of doclet nodes.
- */
-function getDocletsBetween (
-    startNode: TS.Node,
-    endNode: TS.Node
-): Array<ReturnType<typeof TS.getJSDocCommentsAndTags>> {
-    const doclets: Array<ReturnType<typeof TS.getJSDocCommentsAndTags>> = [];
-    const end = endNode.getStart();
-    const start = (
-        startNode === endNode ?
-            startNode.getFullStart() :
-            startNode.getEnd()
-    );
-    const sourceFile = startNode.getSourceFile();
-    const snippets = Array.from(
-        sourceFile
-            .getFullText()
-            .substring(start, end)
-            .matchAll(DOCLET)
-    );
-
-    if (snippets.length) {
-        // Restore original position range in snap
-        let lastIndex = 0;
-        let snap = ''.padEnd(start, ' ');
-
-        for (const snippet of snippets) {
-            snap += (
-                '\n\'' + ''.padEnd(snippet.index - lastIndex - 5, '_') +
-                '\';\n' + snippet
-            );
-            lastIndex = snippet.index;
+    for (const _doc of _docs) {
+        if (_info && TS.isJSDoc(_doc) && Object.keys(_info.tags).length) {
+            _infos.push(_info);
+            _info = undefined;
         }
-
-        let parts: ReturnType<typeof TS.getJSDocCommentsAndTags>;
-
-        TS.forEachChild(
-            TS.createSourceFile(
-                sourceFile.fileName,
-                snap + '\n\'\';\n',
-                TS.ScriptTarget.Latest,
-                true
-            ),
-            node => {
-                parts = TS.getJSDocCommentsAndTags(node);
-                if (parts.length) {
-                    doclets.push(parts);
+        if (!_info) {
+            _info = {
+                kind: 'Doclet',
+                tags: {},
+            } as DocletInfo;
+            addInfoMeta(_info, _doc);
+        }
+        if (TS.isJSDoc(_doc)) {
+            if (_doc.comment) {
+                _info.tags.description = _info.tags.description || [];
+                if (_doc.comment instanceof Array) {
+                    _info.tags.description = _info.tags.description
+                        .concat(_doc.comment.map(c => c.text));
+                } else {
+                    _info.tags.description.push(_doc.comment);
                 }
             }
-        );
-    }
+        } else {
+            let _tag =_doc.tagName.text;
 
-    return doclets;
-}
+            _tag = JSDOC_TAG_REPLACEMENTS[_tag] || _tag;
+            _info.tags[_tag] = _info.tags[_tag] || [];
 
-
-/**
- * Retrieves export information from the given node.
- *
- * @param node
- * Node that might be an export.
- *
- * @return
- * Export information or `undefined`.
- */
-function getExportInfo (
-    node: TS.Node
-): (ExportInfo|undefined) {
-
-    if (!TS.isExportAssignment(node)) {
-        return void 0;
-    }
-
-    const _info = {
-        kind: 'Export',
-        value: getInfoValue(node.expression)
-    } as ExportInfo;
-
-    addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
-
-    return _info;
-}
-
-
-/**
- * Retrieves function call info from the given node.
- *
- * @param node
- * Node that might be a function call.
- *
- * @return
- * Function call information or `undefined`.
- */
-function getFunctionCallInfo (
-    node: TS.Node
-): (FunctionCallInfo|undefined) {
-
-    if (!TS.isCallExpression(node)) {
-        return void 0;
-    }
-
-    const _info = {
-        kind: 'FunctionCall',
-        name: ''
-    } as FunctionCallInfo;
-
-    if (TS.isIdentifier(node.expression)) {
-        _info.name = node.expression.text;
-    }
-
-    if (node.arguments) {
-        const _arguments: Array<Value> = _info.arguments = [];
-
-        let _valueInfo: (Value|undefined);
-
-        for (const _child of node.arguments) {
-            _valueInfo = getInfoValue(_child);
-
-            if (_valueInfo) {
-                _arguments.push(_valueInfo);
+            if (_doc.comment instanceof Array) {
+                _info.tags[_tag] = _info.tags.description
+                    .concat(_doc.comment.map(c => c.text));
+            } else if (_doc.comment) {
+                _info.tags[_tag].push(_doc.comment);
             }
         }
-
-        if (!_arguments.length) {
-            delete _info.arguments;
-        }
     }
 
-    if (node.typeArguments) {
-        const _genericArguments: Array<string> = _info.genericArguments = [];
-
-        for (const _child of node.typeArguments) {
-            _genericArguments.push(...(getInfoType(_child) || []));
-        }
-
-        if (!_genericArguments.length) {
-            delete _info.genericArguments;
-        }
+    if (_info && !_infos.includes(_info)) {
+        _infos.push(_info);
     }
 
-    addInfoMeta(_info, node);
+    if (_infos.length) {
+        return _infos;
+    }
 
-    return _info;
+    return [];
 }
 
 
 /**
  * Retrieves function information from the given node.
+ *
+ * @param project
+ * Related project.
  *
  * @param node
  * Node that might be an import.
@@ -1570,6 +1150,7 @@ function getFunctionCallInfo (
  * Function information or `undefined`.
  */
 function getFunctionInfo (
+    project: Project,
     node: TS.Node
 ): (FunctionInfo|undefined) {
 
@@ -1586,9 +1167,27 @@ function getFunctionInfo (
         name: (
             TS.isConstructorDeclaration(node) ?
                 'constructor' :
-                (node.name?.getText() || '')
+                nodesName(node)
         )
     } as FunctionInfo;
+
+    if (node.parameters) {
+        const _parameters: Array<VariableInfo> = _info.parameters = [];
+
+        let _variableInfo: (VariableInfo|undefined);
+
+        for (const parameter of node.parameters) {
+            _variableInfo = getVariableInfo(project, parameter);
+
+            if (_variableInfo) {
+                _parameters.push(_variableInfo);
+            }
+        }
+
+        if (_parameters.length) {
+            _info.parameters = _parameters;
+        }
+    }
 
     if (node.typeParameters) {
         const _generics: Array<TypeAliasInfo> = _info.generics = [];
@@ -1596,7 +1195,7 @@ function getFunctionInfo (
         let _typeAlias: (TypeAliasInfo|undefined);
 
         for (const _typeParameter of node.typeParameters) {
-            _typeAlias = getTypeAliasInfo(_typeParameter);
+            _typeAlias = getTypeAliasInfo(project, _typeParameter);
 
             if (_typeAlias) {
                 _generics.push(_typeAlias);
@@ -1608,97 +1207,10 @@ function getFunctionInfo (
         }
     }
 
-    if (node.parameters) {
-        const _parameters: Array<VariableInfo> = _info.parameters = [];
+    const _returnType = node.type || TS.getJSDocReturnType(node);
 
-        let _variableInfo: (VariableInfo|undefined);
-
-        for (const parameter of node.parameters) {
-            _variableInfo = getVariableInfo(parameter);
-
-            if (_variableInfo) {
-                _parameters.push(_variableInfo);
-            }
-        }
-
-        if (!_parameters.length) {
-            delete _info.parameters;
-        }
-    }
-
-    const _type = node.type || TS.getJSDocReturnType(node);
-
-    if (_type) {
-        _info.return = getInfoType(_type);
-    }
-
-    addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
-
-    const firstToken = node.body?.getFirstToken()
-
-    if (firstToken) {
-        const _bodyDoclets = getDocletInfosBetween(
-            firstToken,
-            node.body?.getLastToken() || firstToken
-        );
-
-        if (_bodyDoclets && _bodyDoclets.length) {
-            _info.body = _bodyDoclets;
-        }
-
-    }
-
-    return _info;
-}
-
-
-/**
- * Retrieves import information from the given node.
- *
- * @param node
- * Node that might be an import.
- *
- * @return
- * Import information or `undefined`.
- */
-function getImportInfo (
-    node: TS.Node
-): (ImportInfo|undefined) {
-
-    if (!TS.isImportDeclaration(node)) {
-        return void 0;
-    }
-
-    const _info = {
-        kind: 'Import'
-    } as ImportInfo;
-
-    _info.from = sanitizeText(node.moduleSpecifier.getText());
-
-    if (node.importClause) {
-        const _imports: Record<string, string> = _info.imports = {};
-
-        let propertyName: string;
-
-        for (const clause of nodesChildren(node.importClause)) {
-            if (TS.isIdentifier(clause)) {
-                _imports.default = clause.text;
-            }
-            if (TS.isNamedImports(clause)) {
-                for (const child of nodesChildren(clause)) {
-                    if (TS.isImportSpecifier(child)) {
-                        propertyName = (
-                            child.propertyName &&
-                            child.propertyName.text ||
-                            child.name.text
-                        );
-                        _imports[propertyName] = child.name.text;
-                    }
-                }
-            }
-        }
-
+    if (_returnType) {
+        _info.return = getInfoType(project, _returnType);
     }
 
     addInfoFlags(_info, node);
@@ -1711,6 +1223,9 @@ function getImportInfo (
 /**
  * Retrieves type information for a given node.
  *
+ * @param project
+ * Related project.
+ *
  * @param node
  * Node to return type information for.
  *
@@ -1718,39 +1233,59 @@ function getImportInfo (
  * Type information for the given node.
  */
 function getInfoType (
-    node: (TS.Expression|TS.TypeNode|undefined)
-): (Array<string>|undefined) {
-    let _infoType: Array<string> = [];
+    project: Project,
+    node: (TS.TypeNode|undefined)
+): (VariableType|undefined) {
+
+    if (
+        !node ||
+        !TS.isTypeNode(node)
+    ) {
+        return;
+    }
+
+    let _infoType: Array<VariableType> = [];
 
     if (node) {
-        const _tsChecker = tsChecker();
-
-        const _nodeSymbol = _tsChecker.getSymbolAtLocation(node);
-
-        if (_nodeSymbol) {
-            const _mergedSymbol = _tsChecker.getMergedSymbol(_nodeSymbol);
-
-            console.log(_mergedSymbol.name); // , mergedSymbol.getDocumentationComment(tsChecker));
-        }
-
         if (TS.isParenthesizedTypeNode(node)) {
-            return getInfoType(node.type);
+            return getInfoType(project, node.type);
         }
-        if (TS.isExpression(node)) {
-            const _nodeValue = getInfoValue(node);
-            if (!_nodeValue || typeof _nodeValue !== 'object') {
-                _infoType.push(typeof _nodeValue);
-            } else if (_nodeValue.kind === 'Reference') {
-                _infoType.push(_nodeValue.name);
-            } else {
-                _infoType.push(
-                    _nodeValue.kind.replace('FunctionCall', 'Function')
+        if (TS.isTypeLiteralNode(node)) {
+            const _type: Partial<ObjectType> = {
+                kind: 'ObjectType',
+                name: nodesName(node),
+                members: []
+            };
+
+            let _memberType: (MemberInfo|undefined);
+
+            for (const _member of node.members) {
+                _memberType = (
+                    getPropertyInfo(project, _member) ||
+                    getFunctionInfo(project, _member)
                 );
+                if (_memberType) {
+                    _type.members!.push(_memberType);
+                }
             }
-        } else if (TS.isUnionTypeNode(node)) {
-            for (const _nodeType of node.types) {
-                _infoType.push(...(getInfoType(_nodeType) || []));
+
+            addInfoFlags(_type, node);
+            addInfoMeta(_type, node);
+
+            return _type as ObjectType;
+        }
+        if (TS.isUnionTypeNode(node) || TS.isIntersectionTypeNode(node)) {
+            let _subtype: (VariableType|undefined);
+
+            for (const _subitem of node.types) {
+                _subtype = getInfoType(project, _subitem);
+
+                if (_subtype) {
+                    _infoType.push(_subtype);
+                }
             }
+        } else if (TS.isTypeReferenceNode(node)) {
+            _infoType.push(sanitizeType(node.typeName.getText()));
         } else {
             _infoType.push(sanitizeType(node.getText()));
         }
@@ -1758,72 +1293,19 @@ function getInfoType (
 
     _infoType = _infoType.filter(_type => _type !== 'void');
 
-    if (_infoType.length) {
-        return _infoType;
+    if (!_infoType.length) {
+        return void 0;
     }
 
-    return void 0;
-}
-
-
-/**
- * Retrieves value information for a given expression.
- *
- * @param node
- * Expression to return a value for.
- *
- * @return
- * Value or `undefined`.
- */
-function getInfoValue (
-    node: TS.Expression
-): (Value|undefined) {
-    let _value: (Value|undefined) = (
-        getArrayInfo(node) ||
-        getFunctionCallInfo(node) ||
-        getFunctionInfo(node) ||
-        getReferenceInfo(node) ||
-        getVariableInfo(node)?.value
-    );
-
-    if (typeof _value === 'undefined') {
-        const _deconstructInfo = getDeconstructInfos(node);
-
-        if (_deconstructInfo) {
-            _value = _deconstructInfo.from;
-        }
-    }
-
-    if (_value && typeof _value === 'object') {
-        const _doclets = getDocletInfosBetween(node, node);
-
-        if (_doclets.length) {
-            _value.doclet = _doclets.pop();
-        }
-
-        return _value;
-    }
-
-    _value = node.getText();
-
-    if (sanitizeText(_value) !== _value) {
-        return sanitizeText(_value);
-    }
-
-    if (!isNaN(Number(_value))) {
-        return Number(_value);
-    }
-
-    return {
-        false: false,
-        null: null,
-        true: true
-    }[_value] || _value;
+    return (_infoType.length === 1 ? _infoType[0] : _infoType);
 }
 
 
 /**
  * Retrieves interface information from the given node.
+ *
+ * @param project
+ * Related project.
  *
  * @param node
  * Node that might be an interface.
@@ -1832,6 +1314,7 @@ function getInfoValue (
  * Interface or `undefined`.
  */
 function getInterfaceInfo (
+    project: Project,
     node: TS.Node
 ): (InterfaceInfo|undefined) {
 
@@ -1839,24 +1322,33 @@ function getInterfaceInfo (
         return void 0;
     }
 
-    const _tsChecker = tsChecker();
-    const _type = nodesType(node);
+    const _tsChecker = project.tsProgram.getTypeChecker();
     const _info = {
         kind: 'Interface',
-        name: _type.symbol.name
+        name: nodesName(node)
     } as InterfaceInfo;
 
     if (node.typeParameters) {
-        addChildInfos(_info.generics = [], node.typeParameters);
+        addChildInfos(project, _info.generics = [], node.typeParameters);
     }
 
     if (node.heritageClauses) {
+        const _type = nodesType(project.tsProgram, node);
         _info.extends = _tsChecker
             .getBaseTypes(_type as TS.InterfaceType)
             .map(_baseType => _tsChecker.typeToString(_baseType));
     }
 
-    addChildInfos(_info.members = [], node.members);
+    const _symbol = _tsChecker.getSymbolAtLocation(node.name);
+
+    if (_symbol) {
+        const _mergedSymbol = _tsChecker.getMergedSymbol(_symbol);
+
+        if (_mergedSymbol.members) {
+            addChildInfos(project, _info.members = [], _mergedSymbol.members);
+        }
+    }
+
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
@@ -1867,6 +1359,9 @@ function getInterfaceInfo (
 /**
  * Retrieves namespace and module information from the given node.
  *
+ * @param project
+ * Related project.
+ *
  * @param node
  * Node that might be a namespace or module.
  *
@@ -1874,6 +1369,7 @@ function getInterfaceInfo (
  * Namespace, module or `undefined`.
  */
 function getNamespaceInfo (
+    project: Project,
     node: TS.Node
 ): (NamespaceInfo|undefined) {
 
@@ -1893,6 +1389,7 @@ function getNamespaceInfo (
     } as NamespaceInfo;
 
     addChildInfos(
+        project,
         _info.members = [],
         node.body && nodesChildren(node.body) || []
     );
@@ -1904,82 +1401,47 @@ function getNamespaceInfo (
 
 
 /**
- * Retrieves object information from the current node.
- *
- * @param node
- * Node that might be an object literal.
- *
- * @return
- * Object information or `undefined`.
- */
-function getObjectInfo (
-    node: TS.Node
-): (ObjectInfo|undefined) {
-    let _type: (Array<string>|undefined);
-
-    if (TS.isAsExpression(node)) {
-        _type = getInfoType(node.type);
-        node = node.expression;
-    }
-
-    if (!TS.isObjectLiteralExpression(node)) {
-        return void 0;
-    }
-
-    const _info = {
-        kind: 'Object'
-    } as ObjectInfo;
-
-    _type = (_type || getInfoType(TS.getJSDocType(node)));
-
-    if (typeof _type !== 'object') {
-        _info.type = _type;
-    }
-
-    addChildInfos(_info.members = [], node.properties);
-    addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
-
-    return _info;
-}
-
-
-/**
- * Retrieves source information for the given project.
+ * Retrieves project information for the given root path.
  *
  * @param configOrEntryPath
  * Path to config, root file, or project folder.
  *
  * @return
- * Array of source information.
+ * New Project with source information.
  */
-export function getProjectInfos(
-    configOrRootPath: string
-): Array<SourceInfo> {
-    const _tsProgram = tsProgram(configOrRootPath);
+export function getProject(
+    configOrRootPath: string,
+): Project {
+    const _project: Project = {
+        rootPath: configOrRootPath,
+        sourceInfos: [],
+        tsProgram: tsProgram(configOrRootPath)
+    };
     const _folderPath = (
         Path.extname(configOrRootPath) ?
             Path.dirname(configOrRootPath):
             configOrRootPath
     );
     const _absolutePath: string = Path.resolve(_folderPath);
-    const _sourceInfos: Array<SourceInfo> = [];
+    const _sourceInfos = _project.sourceInfos;
 
-    for (const _sourceFile of _tsProgram.getSourceFiles()) {
+    for (const _sourceFile of _project.tsProgram.getSourceFiles()) {
         if (
             _sourceFile.fileName.startsWith(_absolutePath) ||
             _sourceFile.fileName.startsWith(_folderPath)
         ) {
-            console.log(_sourceFile.fileName);
-            _sourceInfos.push(getSourceInfo(_sourceFile));
+            _sourceInfos.push(getSourceInfo(_project, _sourceFile));
         }
     }
 
-    return _sourceInfos;
+    return _project;
 }
 
 /**
  * Retrieves property information from the current node.
+ *
+ * @param project
+ * Related project.
  *
  * @param node
  * Node that might be a property.
@@ -1988,82 +1450,22 @@ export function getProjectInfos(
  * Property information or `undefined`.
  */
 function getPropertyInfo (
+    project: Project,
     node: TS.Node
 ): (PropertyInfo|undefined) {
 
     if (
-        !TS.isPropertyAssignment(node) &&
         !TS.isPropertyDeclaration(node) &&
-        !TS.isPropertySignature(node) &&
-        !TS.isShorthandPropertyAssignment(node)
+        !TS.isPropertySignature(node)
     ) {
         return void 0;
     }
 
     const _info = {
-        kind: 'Property'
+        kind: 'Property',
+        name: nodesName(node),
+        type: getInfoType(project, node.type)
     } as PropertyInfo;
-
-    _info.name = node.name.getText();
-
-    if (
-        !TS.isPropertyAssignment(node) &&
-        !TS.isShorthandPropertyAssignment(node)
-    ) {
-        _info.type = (
-            getInfoType(node.type) ||
-            getInfoType(TS.getJSDocType(node))
-        );
-    }
-
-    if (!TS.isPropertySignature(node)) {
-        const _initializer = (
-            TS.isShorthandPropertyAssignment(node) ?
-                node.objectAssignmentInitializer :
-                node.initializer
-        );
-
-        if (_initializer) {
-            _info.value = getInfoValue(_initializer);
-        }
-    }
-
-    addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
-
-    return _info;
-}
-
-
-/**
- * Retrieves reference information from the current node.
- *
- * @param node
- * Node that might be a reference like an intendifier.
- *
- * @return
- * Reference information or `undefined`.
- */
-function getReferenceInfo (
-    node: TS.Node
-): (ReferenceInfo|undefined) {
-
-    if (
-        !TS.isIdentifier(node) &&
-        !TS.isParameter(node) &&
-        !TS.isPropertyAccessExpression(node)
-    ) {
-        return void 0;
-    }
-
-    const _info = {
-        kind: 'Reference',
-        name: (
-            TS.isParameter(node) ?
-                node.name.getText() :
-                node.getText()
-        )
-    } as ReferenceInfo;
 
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
@@ -2075,30 +1477,32 @@ function getReferenceInfo (
 /**
  * Retrieves source information from the given file source.
  *
- * @param node
- * Node that might be a source file.
+ * @param project
+ * Related project.
  *
- * @param sourceText
- * Text of source file.
+ * @param sourceFile
+ * Node or path of source file.
  *
  * @return
  * Source information.
  */
 export function getSourceInfo (
-    sourceFile: (string|TS.SourceFile)
+    project: Project,
+    sourceFile: (string|TS.SourceFile),
 ): SourceInfo {
 
     if (typeof sourceFile === 'string') {
-        sourceFile = tsProgram().getSourceFile(sourceFile)!;
+        sourceFile = project.tsProgram.getSourceFile(sourceFile)!;
     }
 
     const _info = {
         kind: 'Source',
-        path: sourceFile.fileName,
-        code: []
+        code: [],
+        file: sourceFile.fileName,
+        node: sourceFile
     } as SourceInfo;
 
-    addChildInfos(_info.code, nodesChildren(sourceFile));
+    addChildInfos(project, _info.code, nodesChildren(sourceFile));
     addInfoScopes(_info, _info.code);
 
     return _info;
@@ -2108,6 +1512,9 @@ export function getSourceInfo (
 /**
  * Retrieves type alias information from the given node.
  *
+ * @param project
+ * Related project.
+ *
  * @param node
  * Node that might be a type alias.
  *
@@ -2115,6 +1522,7 @@ export function getSourceInfo (
  * Type alias information or `undefined`.
  */
 function getTypeAliasInfo (
+    project: Project,
     node: TS.Node
 ): (TypeAliasInfo|undefined) {
 
@@ -2127,21 +1535,21 @@ function getTypeAliasInfo (
 
     const _info = {
         kind: 'TypeAlias',
-        name: node.name.text
+        name: nodesName(node)
     } as TypeAliasInfo;
 
     if (TS.isTypeParameterDeclaration(node)) {
         if (node.constraint) {
-            _info.value = getInfoType(node.constraint);
+            _info.value = getInfoType(project, node.constraint);
         }
         if (node.default) {
             _info.value = _info.value || [];
-            _info.value = getInfoType(node.default);
+            _info.value = getInfoType(project, node.default);
         }
     } else {
         _info.value = (
-            getInfoType(node.type) ||
-            getInfoType(TS.getJSDocType(node))
+            getInfoType(project, node.type) ||
+            getInfoType(project, TS.getJSDocType(node))
         );
         if (node.typeParameters) {
             const _generics: Array<TypeAliasInfo> = [];
@@ -2149,7 +1557,7 @@ function getTypeAliasInfo (
             let _typeAliasInfo: (TypeAliasInfo|undefined);
 
             for (const parameter of node.typeParameters) {
-                _typeAliasInfo = getTypeAliasInfo(parameter);
+                _typeAliasInfo = getTypeAliasInfo(project, parameter);
                 if (_typeAliasInfo) {
                     _generics.push(_typeAliasInfo);
                 }
@@ -2172,6 +1580,9 @@ function getTypeAliasInfo (
 /**
  * Retrieves variable information from the given node.
  *
+ * @param project
+ * Related project.
+ *
  * @param node
  * Node that might be a variable or assignment.
  *
@@ -2179,34 +1590,21 @@ function getTypeAliasInfo (
  * Variable information or `undefined`.
  */
 function getVariableInfo (
+    project: Project,
     node: TS.Node
 ): (VariableInfo|undefined) {
 
-    if (
-        !TS.isVariableDeclaration(node) ||
-        TS.isArrayBindingPattern(node.name) || // See getDeconstructInfo
-        TS.isObjectBindingPattern(node.name)
-    ) {
+    if (!TS.isVariableDeclaration(node)) {
         return void 0;
     }
 
+    const _tsChecker = project.tsProgram.getTypeChecker();
+    const _type = nodesType(project.tsProgram, node);
     const _info = {
         kind: 'Variable',
-        name: node.name.text
+        name: nodesName(node),
+        type: [_tsChecker.typeToString(_type)]
     } as VariableInfo;
-
-    _info.type = (
-        getInfoType(node.type) ||
-        getInfoType(TS.getJSDocType(node))
-    );
-
-    if (node.initializer) {
-        _info.type = (
-            _info.type ||
-            getInfoType(node.initializer)
-        );
-        _info.value = getInfoValue(node.initializer);
-    }
 
     if (TS.isVariableDeclarationList(node.parent)) {
         addInfoFlags(_info, node.parent.parent);
@@ -2261,330 +1659,6 @@ export function isNativeType (
 
 
 /**
- * Tests whether a doclet tag is related to one or more products. The test will
- * also succeed, if no product information was provided or could be found.
- *
- * @param docletOrTagLine
- * Doclet information or tag line to test.
- *
- * @param products
- * Products to test against.
- *
- * @return
- * `true` if related to one or more products, otherwise `false`.
- */
-function isProductRelated (
-    docletOrTagLine: (string|DocletInfo|undefined),
-    products: Array<string> = PRODUCTS
-): boolean {
-    const productsToTest: Array<string> = [];
-
-    if (
-        !docletOrTagLine ||
-        !products.length
-    ) {
-        return true;
-    }
-
-    /**
-     * Adds any discovered product to the `productsToTest` array.
-     *
-     * @param tagLine
-     * Line to extract product from.
-     */
-    function addProductsToTest (tagLine: string) {
-        const inset = extractTagInset(tagLine);
-
-        if (inset) {
-            productsToTest.push(...inset.split(/[^\w\-]+/gu));
-        }
-
-    }
-
-    if (typeof docletOrTagLine === 'string') {
-
-        addProductsToTest(docletOrTagLine);
-
-    } else {
-        const productTagLine = extractTagText(docletOrTagLine, 'product', true);
-
-        if (productTagLine) {
-            return isProductRelated(`{${productTagLine}}`, products);
-        }
-
-        const tags = docletOrTagLine.tags;
-
-        for (const tag of Object.keys(tags)) {
-
-            if (
-                tag === 'param' ||
-                tag === 'type'
-            ) {
-                continue;
-            }
-
-            for (const tagLine of tags[tag]) {
-                addProductsToTest(tagLine);
-            }
-
-        }
-
-    }
-
-    if (!productsToTest.length) {
-        return true;
-    }
-
-    for (const product of productsToTest) {
-        if (products.includes(product)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-/**
- * Merge code information.
- *
- * @param targetInfo
- * Target information to merge into.
- *
- * @param sourceInfo
- * Source information to merge.
- *
- * @return
- * Target infos as reference.
- */
-function mergeCodeInfos<T extends (CodeInfo|SourceInfo)> (
-    targetInfo: T,
-    sourceInfo: (CodeInfo|SourceInfo)
-): T {
-    let _sourceMembers: Array<CodeInfo>;
-    let _targetMembers: Array<CodeInfo>;
-
-    switch (targetInfo.kind) {
-        default:
-            return targetInfo;
-        case 'Class':
-        case 'Interface':
-        case 'Namespace':
-        case 'Object':
-            _targetMembers = targetInfo.members;
-            break;
-        case 'Source':
-            _targetMembers = targetInfo.code;
-            break;
-    }
-
-    switch (sourceInfo.kind) {
-        default:
-            return targetInfo;
-        case 'Class':
-        case 'Interface':
-        case 'Module':
-        case 'Namespace':
-        case 'Object':
-            _sourceMembers = sourceInfo.members;
-            break;
-        case 'Source':
-            _sourceMembers = sourceInfo.code;
-            break;
-    }
-
-    if (
-        targetInfo.kind !== sourceInfo.kind &&
-        (
-            targetInfo.kind !== 'Source' ||
-            sourceInfo.kind !== 'Module'
-        )
-    ) {
-        return targetInfo;
-    }
-
-    let _merged: boolean;
-    let _mergedMember: CodeInfo;
-    let _name: (string|undefined);
-
-    for (const _sourceMember of _sourceMembers) {
-
-        _merged = false;
-        _name = extractInfoName(_sourceMember);
-
-        if (!_name) {
-            continue;
-        }
-
-        for (
-            const _targetMember
-            of (extractInfos(_targetMembers, _name) || [])
-        ) {
-            if (_targetMember.kind !== _sourceMember.kind) {
-                continue;
-            }
-            switch (_sourceMember.kind) {
-                default:
-                    continue;
-                case 'Class':
-                case 'Interface':
-                case 'Namespace':
-                case 'Object':
-                    mergeCodeInfos(_targetMember, _sourceMember);
-                    break;
-                case 'Doclet':
-                    if (_targetMember.kind !== 'Doclet') {
-                        continue;
-                    }
-                    mergeDocletInfos(
-                        _targetMember,
-                        _sourceMember
-                    );
-                    break;
-                case 'Function':
-                    _mergedMember = newCodeInfo(_sourceMember);
-                    _mergedMember.meta.merged = true;
-                    _targetMembers.push(_mergedMember);
-                    addInfoScopes(_targetMember, [_mergedMember]);
-                    break;
-                case 'Property':
-                    if (_targetMember.kind !== 'Property') {
-                        continue;
-                    }
-                    if (_sourceMember.doclet) {
-                        if (_targetMember.doclet) {
-                            mergeDocletInfos(
-                                _targetMember.doclet,
-                                _sourceMember.doclet
-                            );
-                        } else {
-                            _mergedMember =
-                                newDocletInfo(_sourceMember.doclet);
-                            _mergedMember.meta.merged = true;
-                            _targetMember.doclet = _mergedMember;
-                        }
-                    }
-                    if (
-                        _targetMember.type ||
-                        _sourceMember.type
-                    ) {
-                        _targetMember.type = Array.from(new Set([
-                            ...(_targetMember.type || []),
-                            ...(_sourceMember.type || [])
-                        ]));
-                    }
-                    if (
-                        _targetMember.value &&
-                        typeof _targetMember.value === 'object' &&
-                        _sourceMember.value &&
-                        typeof _sourceMember.value === 'object'
-                    ) {
-                        mergeCodeInfos(
-                            _targetMember,
-                            _sourceMember
-                        );
-                    }
-                    break;
-            }
-            _merged = true;
-        }
-
-        if (!_merged) {
-            _mergedMember = newCodeInfo(_sourceMember as Partial<ArrayInfo>);
-            _mergedMember.meta.merged = true;
-            _targetMembers.push(_mergedMember);
-            addInfoScopes(targetInfo, [_mergedMember]);
-        }
-
-    }
-
-    return targetInfo;
-}
-
-
-/**
- * Merge multiple DocletInfo objects into the first.
- *
- * @param targetDoclet
- * Doclet information to add to.
- *
- * @param sourceDoclets
- * Doclet informations to add.
- *
- * @return
- * First DocletObject as reference.
- */
-function mergeDocletInfos (
-    targetDoclet?: DocletInfo,
-    ...sourceDoclets: Array<DocletInfo>
-): DocletInfo {
-    targetDoclet = targetDoclet || newDocletInfo();
-
-    const targetTags = targetDoclet.tags;
-
-    let productTagLine: (string|undefined);
-    let sourceTags: Record<string,Array<string>>;
-    let targetTag: Array<string>;
-
-    for (const sourceDoclet of sourceDoclets) {
-        productTagLine = extractTagText(sourceDoclet, 'product', true);
-
-        if (
-            productTagLine &&
-            !isProductRelated(`{${productTagLine}}`)
-        ) {
-            continue;
-        }
-
-        sourceTags = sourceDoclet.tags;
-
-        for (const tag of Object.keys(sourceTags)) {
-            targetTag = targetTags[tag] = targetTags[tag] || [];
-            for (const value of sourceTags[tag]) {
-                if (
-                    !targetTag.includes(value) &&
-                    isProductRelated(value)
-                ) {
-                    targetTag.push(value);
-                }
-            }
-        }
-    }
-
-    targetDoclet.meta.merged = true;
-
-    return targetDoclet;
-}
-
-
-/**
- * Creates a new code or source information object.
- *
- * @param template
- * Information to apply.
- *
- * @return
- * New information.
- */
-function newCodeInfo<T> (
-    template?: Partial<T>
-): T {
-    const clone = {
-        kind: 'Object',
-        meta: newMeta(),
-        ...structuredClone({
-            ...template,
-            node: void 0 // Avoid clone of native TSNode.
-        })
-    } as T;
-
-    delete (clone as Record<string, unknown>).node; // Clean-up
-
-    return clone;
-}
-
-
-/**
  * Creates a new DocletInfo object.
  *
  * @param template
@@ -2596,19 +1670,21 @@ function newCodeInfo<T> (
 export function newDocletInfo (
     template: Partial<DocletInfo> = {}
 ): DocletInfo {
-    const clone: DocletInfo = {
+    const mockupSource = TS
+        .createSourceFile('', '/** */', TS.ScriptTarget.Latest);
+    const clone: Partial<DocletInfo> = {
         kind: 'Doclet',
         tags: {},
         meta: newMeta(),
         ...structuredClone({
             ...template,
-            node: void 0 // Avoid clone of native TSNode.
+            node: void 0
         })
     };
 
-    delete clone.node; // Clean-up
+    clone.node = mockupSource.getChildAt(0) as TS.JSDoc;
 
-    return clone;
+    return clone as DocletInfo;
 }
 
 
@@ -2622,13 +1698,14 @@ export function newDocletInfo (
  * New meta.
  */
 function newMeta (
-    template: Partial<Meta> = {}
-): Meta {
+    template: Partial<InfoMeta> = {}
+): InfoMeta {
     return {
         begin: 0,
         end: 0,
         file: '',
         overhead: 0,
+        scope: '',
         syntax: 0,
         ...structuredClone(template)
     };
@@ -2658,7 +1735,67 @@ function nodesChildren (
 
 
 /**
+ * [TS] Retrieves the name of a given reflective node.
+ *
+ * @param node
+ * Node to retrieve name from.
+ *
+ * @return
+ * Retrieved type.
+ */
+function nodesName(
+    node: (TS.NamedDeclaration|TS.TypeReferenceNode)
+): string {
+    return (
+        TS.isTypeReferenceNode(node) ?
+            node.typeName.getText() :
+            TS.getNameOfDeclaration(node)?.getText() ||
+            TS.InternalSymbolName.Missing
+    );
+}
+
+
+/**
+ * [TS] Retrieves the symbol of a given reflective node.
+ *
+ * @param program
+ * Related parser program.
+ *
+ * @param node
+ * Node to retrieve symbol from.
+ *
+ * @return
+ * Retrieved symbol.
+ */
+function nodesSymbol(
+    program: TS.Program,
+    node: (TS.Declaration|TS.Expression)
+): TS.Symbol {
+    const _identifier = TS.getNameOfDeclaration(node);
+    const _name = _identifier?.getText() || TS.InternalSymbolName.Missing;
+    const _symbol = _identifier && program
+        .getTypeChecker()
+        .getSymbolAtLocation(_identifier);
+
+    return (_symbol || {
+        escapedName: TS.InternalSymbolName.Missing,
+        flags: TS.SymbolFlags.None,
+        name: _name,
+        getDeclarations: () => [],
+        getDocumentationComment: () => [],
+        getEscapedName: () => TS.InternalSymbolName.Missing,
+        getFlags: () => TS.SymbolFlags.None,
+        getJsDocTags: () => [],
+        getName: () => _name,
+    });
+}
+
+
+/**
  * [TS] Retrieves the type of a given reflective node.
+ *
+ * @param program
+ * Related parser program.
  *
  * @param node
  * Node to retrieve type from.
@@ -2667,13 +1804,16 @@ function nodesChildren (
  * Retrieved type.
  */
 function nodesType(
-    node: TS.NamedDeclaration
+    program: TS.Program,
+    node: (TS.NamedDeclaration|TS.TypeNode)
 ): TS.Type {
-    const _tsChecker = tsChecker();
-    const _identifier = TS.getNameOfDeclaration(node);
-    const _symbol = _tsChecker.getSymbolAtLocation(_identifier);
+    const _tsChecker = program.getTypeChecker();
 
-    return _tsChecker.getDeclaredTypeOfSymbol(_symbol!);
+    return (
+        TS.isTypeNode(node) ?
+            _tsChecker.getTypeFromTypeNode(node) :
+            _tsChecker.getDeclaredTypeOfSymbol(nodesSymbol(program, node))
+    );
 }
 
 
@@ -2726,76 +1866,22 @@ export function removeTag (
 }
 
 
-/**
- * Resets the products array and parser program for a new session.
- */
-export function reset (): void {
-    PRODUCTS.length = 0;
-    (tsProgram as unknown as Record<string, unknown>).raw = void 0;
-}
+export function resolveReference(
+    project: Project,
+    location: (CodeInfo|SourceInfo),
+    reference: string
+): Array<CodeInfo> {
+    const _tsChecker = project.tsProgram.getTypeChecker();
+    const _symbol = _tsChecker
+        .resolveName(reference, location.node, TS.SymbolFlags.All, true);
 
+    const _resolvedReferences: Array<CodeInfo> = [];
 
-/**
- * Resolves a reference relative to the given information.
- *
- * @param scopeInfo
- * Scope information to use.
- *
- * @param reference
- * Reference name or information to resolve.
- *
- * @return
- * Resolved information or `undefined`.
- */
-export function resolveReference (
-    scopeInfo: (CodeInfo|SourceInfo),
-    reference: (string|ReferenceInfo)
-): (CodeInfo|undefined) {
-    const _tsChecker = tsChecker();
-    const _sourceInfo = (
-        scopeInfo.kind === 'Source' ?
-            scopeInfo :
-            getSourceInfo(scopeInfo.meta.file)
-    );
-
-    let _hasThis = false;
-    let _referenceName = (
-        typeof reference === 'string' ?
-            reference :
-            reference.name
-    );
-
-    const _referenceSplit = _referenceName.split(/\W+/gsu);
-
-    if (_referenceSplit.indexOf('this') === 0) {
-        _hasThis = true;
-        _referenceName = _referenceName.substring(5);
-        _referenceSplit.shift();
+    if (_symbol?.declarations) {
+        addChildInfos(project, _resolvedReferences, _symbol.declarations);
     }
 
-    let _sourceFile = tsProgram().getSourceFile(_sourceInfo.path);
-
-    if (!_sourceFile) {
-        return void 0;
-    }
-
-    return void 0;
-}
-
-
-/**
- * Sanitize text from surrounding quote characters.
- *
- * @param text
- * Text to sanitize.
- *
- * @return
- * Sanitized text.
- */
-function sanitizeText (
-    text: string
-): string {
-    return ('' + text).replace(SANITIZE_TEXT, '$2');
+    return _resolvedReferences;
 }
 
 
@@ -2927,106 +2013,77 @@ export function toDocletString (
 
 
 /**
- * [TS] Returns the type checker for the current program session.
- *
- * @returns
- * Type checker of the current program session.
- */
-function tsChecker(): TS.TypeChecker {
-    return tsProgram().getTypeChecker();
-}
-
-
-/**
- * [TS] Returns the current parser program, or creates one based on settings.
+ * [TS] Creates a parser program.
  *
  * @param rootPath
  * Root path to load. This can be either a config, folder, or source.
  *
- * @param compilerOptions
- * Additional compilerOptions to overwrite existing settings.
- *
  * @returns
- * Program session.
+ * Parser program.
  *
  * @throws Error
  */
 function tsProgram(
-    rootPath?: string,
-    compilerOptions?: TS.CompilerOptions
+    rootPath: string
 ): TS.Program {
-    const _self = tsProgram as unknown as Record<string, unknown>;
 
-    // Fallback to defaults
-    if (!_self.raw && !rootPath) {
-        rootPath = Path.join('code', 'es-modules');
+    // Fix root path
+    if (FS.existsSync(Path.join(rootPath, 'tsconfig.json'))) {
+        rootPath = Path.join(rootPath, 'tsconfig.json');
     }
 
-    if (rootPath) {
-        if (FS.existsSync(Path.join(rootPath, 'tsconfig.json'))) {
-            // Fix project path
-            rootPath = Path.join(rootPath, 'tsconfig.json');
+    // TSConfig mode
+    if (rootPath.endsWith('.json')) {
+        const _parsedConfig = TS.readConfigFile(rootPath, TS.sys.readFile);
+
+        if (_parsedConfig.error) {
+            throw new Error(_parsedConfig.error.messageText.toString());
         }
-        if (rootPath.endsWith('.json')) {
-            // TSConfig mode
-            const _parsedConfig = TS.readConfigFile(rootPath, TS.sys.readFile);
 
-            if (_parsedConfig.error) {
-                throw new Error(_parsedConfig.error.messageText.toString());
-            }
+        const _parsedCommandLine = TS.parseJsonConfigFileContent(
+            _parsedConfig.config || {},
+            TS.sys,
+            Path.dirname(rootPath)
+        );
 
-            const _parsedCommandLine = TS.parseJsonConfigFileContent(
-                _parsedConfig.config || {},
-                TS.sys,
-                Path.dirname(rootPath)
+        if (_parsedCommandLine.errors.length) {
+            throw new Error(
+                _parsedCommandLine.errors[0].messageText.toString()
             );
-
-            if (_parsedCommandLine.errors.length) {
-                throw new Error(
-                    _parsedCommandLine.errors[0].messageText.toString()
-                );
-            }
-
-            _self.raw = TS.createProgram(
-                _parsedCommandLine.fileNames,
-                {
-                    ..._parsedCommandLine.options,
-                    ...compilerOptions
-                }
-            );
-
-        } else {
-            // Discovery mode
-            const _files: Array<string> = [];
-            const _addFolder = (folderPath: string): void => {
-                for (const entry of FS.readdirSync(folderPath, {
-                    encoding: 'utf8',
-                    recursive: true,
-                    withFileTypes: true
-                })) {
-                    if (entry.isDirectory()) {
-                        _addFolder(Path.join(entry.parentPath, entry.name));
-                    } else if (entry.name.match(/\.[jt]sx?$/gsu)) {
-                        _files.push(Path.join(entry.parentPath, entry.name));
-                    }
-                }
-            };
-
-            if (FS.statSync(rootPath).isDirectory()) {
-                _addFolder(rootPath);
-            } else if (rootPath.match(/\.[jt]sx?$/gsu)) {
-                _files.push(rootPath);
-            }
-
-            _self.raw = TS.createProgram(_files, {
-                module: TS.ModuleKind.NodeNext,
-                moduleResolution: TS.ModuleResolutionKind.NodeNext,
-                ...compilerOptions
-            });
         }
+
+        return TS.createProgram(
+            _parsedCommandLine.fileNames,
+            _parsedCommandLine.options
+        );
     }
 
-    return _self.raw as TS.Program;
+    // Discovery mode
+    const _files: Array<string> = [];
+    const _addFolder = (folderPath: string): void => {
+        for (const entry of FS.readdirSync(folderPath, {
+            encoding: 'utf8',
+            recursive: true,
+            withFileTypes: true
+        })) {
+            if (entry.isDirectory()) {
+                _addFolder(Path.join(entry.parentPath, entry.name));
+            } else if (entry.name.match(/\.[jt]sx?$/gsu)) {
+                _files.push(Path.join(entry.parentPath, entry.name));
+            }
+        }
+    };
+
+    if (FS.statSync(rootPath).isDirectory()) {
+        _addFolder(rootPath);
+    } else if (rootPath.match(/\.[jt]sx?$/gsu)) {
+        _files.push(rootPath);
+    }
+
+    return TS.createProgram(_files, {
+        module: TS.ModuleKind.NodeNext,
+        moduleResolution: TS.ModuleResolutionKind.NodeNext
+    });
 }
 
 

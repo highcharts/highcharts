@@ -13,7 +13,6 @@
 
 
 const Gulp = require('gulp');
-const Path = require('node:path');
 
 
 /* *
@@ -70,17 +69,10 @@ async function apiDocs() {
             ` --source "${source}"`
     );
 
-    if (args.next) {
-        await ProcessLib.exec(
-            'npx ts-node tools/api-docs/api-options-5.ts' +
-                ` --source "${args.source || Path.join('ts', 'tsconfig.json')}"`
-        );
-    } else {
-        await ProcessLib.exec(
-            'npx ts-node tools/api-docs/api-options.ts' +
-                ` --source "${source}"`
-        );
-    }
+    await ProcessLib.exec(
+        'npx ts-node tools/api-docs/api-options.ts' +
+            ` --source "${source}"`
+    );
 
     await createApiDocumentation();
 
