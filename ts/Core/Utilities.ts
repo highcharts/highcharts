@@ -1876,7 +1876,7 @@ function removeEvent<T>(
 function fireEvent<T>(
     el: T,
     type: string,
-    eventArguments?: (AnyRecord|Event),
+    eventArguments: (AnyRecord|Event) = {},
     defaultFunction?: (EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
@@ -1909,7 +1909,7 @@ function fireEvent<T>(
         if (!(eventArguments as any).target) {
             // We're running a custom event
 
-            extend(eventArguments as any, {
+            extend(eventArguments, {
                 // Attach a simple preventDefault function to skip
                 // default handler if called. The built-in
                 // defaultPrevented property is not overwritable (#5112)
@@ -1959,8 +1959,8 @@ function fireEvent<T>(
         events.forEach((obj): void => {
             // If the event handler returns false, prevent the default handler
             // from executing
-            if (obj.fn.call(el, eventArguments as any, el) === false) {
-                (eventArguments as any).preventDefault();
+            if (obj.fn.call(el, eventArguments, el) === false) {
+                eventArguments.preventDefault();
             }
         });
 
@@ -2029,6 +2029,9 @@ function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
 
+/**
+ *
+ */
 function ucfirst(s: unknown): string {
     return (
         (isString(s) ?
