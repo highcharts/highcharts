@@ -139,7 +139,9 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
 
         // If user options dataTables is not defined, generate a default table.
         } else {
-            this.dataTables[0] = new DataTable();
+            this.dataTables[0] = new DataTable({
+                id: options.id // Required by DataTableCore
+            });
         }
     }
 

@@ -20,6 +20,7 @@
  *
  * */
 
+import { DataTableValue } from '../DataTableOptions';
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
 
 /* *
@@ -43,6 +44,7 @@ export interface DataTableConnectorOptions {
     key?: string;
     dataModifier?: DataModifierTypeOptions;
     firstRowAsNames?: boolean;
+    metadata?: Record<string, DataTableValue>;
 }
 
 /**
