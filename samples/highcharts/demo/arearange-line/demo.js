@@ -1,3 +1,69 @@
+function createChart(ranges, averages) {
+    Highcharts.chart('container', {
+
+        title: {
+            text: 'April temperatures in Nesbyen, 2024',
+            align: 'left'
+        },
+
+        subtitle: {
+            text: 'Source: ' +
+                '<a href="https://www.yr.no/nb/historikk/graf/1-113585/Norge/Buskerud/Nesbyen/Nesbyen?q=2024-04"' +
+                'target="_blank">YR</a>',
+            align: 'left'
+        },
+
+        xAxis: {
+            type: 'datetime',
+            accessibility: {
+                rangeDescription: 'Range: April 1st 2022 to April 30th 2024.'
+            }
+        },
+
+        yAxis: {
+            title: {
+                text: null
+            }
+        },
+
+        tooltip: {
+            crosshairs: true,
+            shared: true,
+            valueSuffix: '°C'
+        },
+
+        plotOptions: {
+            series: {
+                pointStart: '2024-05-01',
+                pointIntervalUnit: 'day'
+            }
+        },
+
+        series: [{
+            name: 'Temperature',
+            data: averages,
+            zIndex: 1,
+            marker: {
+                fillColor: 'white',
+                lineWidth: 2,
+                lineColor: Highcharts.getOptions().colors[0]
+            }
+        }, {
+            name: 'Range',
+            data: ranges,
+            type: 'arearange',
+            lineWidth: 0,
+            linkedTo: ':previous',
+            color: Highcharts.getOptions().colors[0],
+            fillOpacity: 0.3,
+            zIndex: 0,
+            marker: {
+                enabled: false
+            }
+        }]
+    });
+}
+
 const ranges = [
         [-4.4, 13.1],
         [-0.5, 8.9],
@@ -64,67 +130,4 @@ const ranges = [
         [7.2]
     ];
 
-
-Highcharts.chart('container', {
-
-    title: {
-        text: 'April temperatures in Nesbyen, 2024',
-        align: 'left'
-    },
-
-    subtitle: {
-        text: 'Source: ' +
-            '<a href="https://www.yr.no/nb/historikk/graf/1-113585/Norge/Buskerud/Nesbyen/Nesbyen?q=2024-04"' +
-            'target="_blank">YR</a>',
-        align: 'left'
-    },
-
-    xAxis: {
-        type: 'datetime',
-        accessibility: {
-            rangeDescription: 'Range: April 1st 2022 to April 30th 2024.'
-        }
-    },
-
-    yAxis: {
-        title: {
-            text: null
-        }
-    },
-
-    tooltip: {
-        crosshairs: true,
-        shared: true,
-        valueSuffix: '°C'
-    },
-
-    plotOptions: {
-        series: {
-            pointStart: '2024-05-01',
-            pointIntervalUnit: 'day'
-        }
-    },
-
-    series: [{
-        name: 'Temperature',
-        data: averages,
-        zIndex: 1,
-        marker: {
-            fillColor: 'white',
-            lineWidth: 2,
-            lineColor: Highcharts.getOptions().colors[0]
-        }
-    }, {
-        name: 'Range',
-        data: ranges,
-        type: 'arearange',
-        lineWidth: 0,
-        linkedTo: ':previous',
-        color: Highcharts.getOptions().colors[0],
-        fillOpacity: 0.3,
-        zIndex: 0,
-        marker: {
-            enabled: false
-        }
-    }]
-});
+createChart(ranges, averages);
