@@ -16,16 +16,6 @@ following:
 *   **Flutter:** Version 1.17.0 or later.
     This is the minimum Flutter version required for the package to function correctly.
 
-*   **Web Package:**
-    If you're targeting web, ensure the `web` package is correctly configured
-    in your Flutter project.  This is essential for web deployments.
-
-*   **Webview Packages:**  Highcharts Flutter leverages webviews to render the
-    charts.  Depending on your target platforms (Android, iOS, Web), you might
-    need to install and configure platform-specific webview packages.  Depending
-    on your build targets, you will need one or more `webview_flutter` packages.
-
-
 
 ## Installation
 
