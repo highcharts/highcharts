@@ -92,10 +92,14 @@ function onTransform(
                 chart.isDirtyBox = true;
                 params.hasZoomed = true;
 
-                const {
+                let {
                     plotSizeX = 0,
                     plotSizeY = 0
                 } = chart;
+
+                if (chart.inverted) {
+                    [plotSizeX, plotSizeY] = [plotSizeY, plotSizeX];
+                }
 
                 if (trigger === 'pan' && series.zooming) {
                     series.zooming.panX -= (to.x || 0) / plotSizeX;
@@ -108,7 +112,6 @@ function onTransform(
                             } = to,
                             currentScale =
                                 Math.abs(series.group?.scaleX || 1);
-
 
                         let {
                                 x: zoomX = 0,
@@ -212,17 +215,17 @@ function onTransform(
                             // bounding box and the point, which is normalized
                             // position to zoom-in
                             // chart.renderer.rect(
-                            //    x + chart.plotLeft,
-                            //    y + chart.plotTop,
-                            //    fromWidth,
-                            //    fromHeight,
-                            //    0,
-                            //    2
+                            //     x + chart.plotLeft,
+                            //     y + chart.plotTop,
+                            //     fromWidth,
+                            //     fromHeight,
+                            //     0,
+                            //     2
                             // ).attr({ stroke: 'red' }).add();
                             // chart.renderer.circle(
-                            //    zoomX + chart.plotLeft,
-                            //    zoomY + chart.plotTop,
-                            //    2
+                            //     zoomX + chart.plotLeft,
+                            //     zoomY + chart.plotTop,
+                            //     2
                             // ).attr({ stroke: 'blue' }).add();
                         }
 
