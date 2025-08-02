@@ -470,6 +470,8 @@ class SMAIndicator extends LineSeries {
                 ) || emptySet
             ) : emptySet;
 
+        processedData.xData.length = processedData.values.length;
+
         // Reset
         delete indicator.linkedParent.xData;
         indicator.linkedParent.yData = yData;
@@ -559,10 +561,12 @@ class SMAIndicator extends LineSeries {
 
         if (overwriteData) {
             table.setColumns({
-                ...valueColumns,
-                x: processedData.xData as Array<number>
+                x: processedData.xData as Array<number>,
+                ...valueColumns
             });
-            indicator.options.data = (processedData.values as any);
+            if (!this.useDataTable) {
+                indicator.options.data = (processedData.values as any);
+            }
         }
 
         if (
