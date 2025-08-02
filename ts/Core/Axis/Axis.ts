@@ -3088,7 +3088,8 @@ class Axis {
                 return parseInt(String(cssWidth), 10);
             }
 
-            if (marginLeft) {
+            // Skip marginLeft for opposite axis to avoid label cutoff, #22821
+            if (!this.opposite && marginLeft) {
                 return marginLeft - chart.spacing[3];
             }
         }
