@@ -692,10 +692,8 @@ namespace StockChart {
                     axis.linkedParent.series :
                     axis.series
             ),
-            chart = axis.chart,
+            { chart, horiz } = axis,
             renderer = chart.renderer,
-            axisLeft = axis.left,
-            axisTop = axis.top,
             result = [] as SVGPath,
             { acrossPanes = true, force, translatedValue, value } = e,
             allPerpendicularAxes = (
@@ -730,11 +728,21 @@ namespace StockChart {
                 return series.map((s): Axis => s[otherColl]);
             };
 
-        let x1,
-            y1,
-            x2,
-            y2,
-            axes = [], // #3416 need a default array
+        /**
+         * Push a segment to the result SVGPath array
+         */
+        function pushSegment(
+            pos: number,
+            crossingPos1: number,
+            crossingPos2: number
+        ): void {
+            result.push(
+                ['M', horiz ? pos : crossingPos1, horiz ? crossingPos1 : pos],
+                ['L', horiz ? pos : crossingPos2, horiz ? crossingPos2 : pos]
+            );
+        }
+
+        let axes = [], // #3416 need a default array
             uniqueAxes: Array<Axis>,
             transVal: number;
 
@@ -788,81 +796,55 @@ namespace StockChart {
                 translatedValue,
                 axis.translate(value || 0, void 0, void 0, e.old)
             );
+
             if (isNumber(transVal)) {
-                if (axis.horiz) {
-                    let skip;
+                let skip,
+                    pos = horiz ?
+                        transVal + axis.pos :
+                        axis.pos + axis.len - transVal;
 
-                    x1 = x2 = transVal + axis.transB;
+                // Outside plot area
+                if (
+                    force !== 'pass' &&
+                    (pos < axis.pos || pos > axis.pos + axis.len)
+                ) {
+                    if (force) {
+                        pos = clamp(
+                            pos,
+                            axis.pos,
+                            axis.pos + axis.len
+                        );
+                    } else {
+                        skip = true;
+                    }
+                }
 
-                    // Outside plot area
+                if (!skip) {
+                    const crossingPosName = horiz ? 'top' : 'left',
+                        crossingLenName = horiz ? 'height' : 'width';
                     if (
-                        force !== 'pass' &&
-                        (x1 < axisLeft || x1 > axisLeft + axis.width)
+                        !acrossPanes &&
+                        // If the perpendicular position is set explicitly on
+                        // the axis, use it. For example, if `top` and `height`
+                        // options are set on a horizontal x-axis, the grid
+                        // lines should conform to that position.
+                        (
+                            axis.options[crossingPosName] ||
+                            axis.options[crossingLenName]
+                        )
                     ) {
-                        if (force) {
-                            x1 = x2 = clamp(
-                                x1,
-                                axisLeft,
-                                axisLeft + axis.width
+                        pushSegment(
+                            pos,
+                            axis[crossingPosName],
+                            axis[crossingPosName] + axis[crossingLenName]
+                        );
+                    } else {
+                        for (const perpendicularAxis of uniqueAxes) {
+                            pushSegment(
+                                pos,
+                                perpendicularAxis.pos,
+                                perpendicularAxis.pos + perpendicularAxis.len
                             );
-                        } else {
-                            skip = true;
-                        }
-                    }
-
-                    if (!skip) {
-                        if (
-                            !acrossPanes &&
-                            (axis.options.top || axis.options.height)
-                        ) {
-                            y1 = axis.top;
-                            y2 = y1 + axis.height;
-                            result.push(['M', x1, y1], ['L', x2, y2]);
-                        } else {
-                            for (const perpendicularAxis of uniqueAxes) {
-                                y1 = perpendicularAxis.pos;
-                                y2 = y1 + perpendicularAxis.len;
-
-                                result.push(['M', x1, y1], ['L', x2, y2]);
-                            }
-                        }
-                    }
-                } else {
-                    let skip;
-
-                    y1 = y2 = axisTop + axis.height - transVal;
-
-                    // Outside plot area
-                    if (
-                        force !== 'pass' &&
-                        (y1 < axisTop || y1 > axisTop + axis.height)
-                    ) {
-                        if (force) {
-                            y1 = y2 = clamp(
-                                y1,
-                                axisTop,
-                                axisTop + axis.height
-                            );
-                        } else {
-                            skip = true;
-                        }
-                    }
-
-                    if (!skip) {
-                        if (
-                            !acrossPanes &&
-                            (axis.options.left || axis.options.width)
-                        ) {
-                            x1 = axis.left;
-                            x2 = x1 + axis.width;
-                            result.push(['M', x1, y1], ['L', x2, y2]);
-                        } else {
-                            for (const perpendicularAxis of uniqueAxes) {
-                                x1 = perpendicularAxis.pos;
-                                x2 = x1 + perpendicularAxis.len;
-
-                                result.push(['M', x1, y1], ['L', x2, y2]);
-                            }
                         }
                     }
                 }
