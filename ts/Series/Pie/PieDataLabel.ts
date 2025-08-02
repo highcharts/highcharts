@@ -38,6 +38,7 @@ const {
     arrayMax,
     clamp,
     defined,
+    isNumber,
     pick,
     pushUnique,
     relativeLength
@@ -627,7 +628,7 @@ namespace ColumnDataLabel {
                         labelPosition = dataLabel.dataLabelPosition;
 
                     // Draw the connector
-                    if (connectorWidth) {
+                    if (isNumber(connectorWidth)) {
                         let isNew;
 
                         connector = dataLabel.connector;
