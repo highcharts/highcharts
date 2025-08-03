@@ -1,6 +1,6 @@
 /* *
  *
- *  Text Input Cell Renderer class
+ *  Date Input Cell Renderer class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
  *  - Sebastian Bochan
  *
  * */
@@ -25,14 +24,14 @@
 
 import type Column from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
-import { EditModeRenderer } from '../../CellEditing/CellEditMode';
+import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
 import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
 import CellRenderer from '../CellRenderer.js';
 import CellRendererRegistry from '../CellRendererRegistry.js';
-import TextInputContent from '../ContentTypes/TextInputContent.js';
+import NumberInputContent from '../ContentTypes/NumberInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
 const {
@@ -49,22 +48,22 @@ const {
 /**
  * Renderer for the Select in a column..
  */
-class TextInputRenderer extends CellRenderer implements EditModeRenderer {
+class NumberInputRenderer extends CellRenderer implements EditModeRenderer {
 
     /**
-     * The default edit mode renderer type names for this view renderer.
+     * The default edit mode renderer type name for this view renderer.
      */
     public static defaultEditingRenderer: EditModeRendererTypeName =
-        'textInput';
+        'numberInput';
 
     /**
-     * Default options for the text input renderer.
+     * Default options for the date input renderer.
      */
-    public static defaultOptions: TextInputRenderer.Options = {
-        type: 'textInput'
+    public static defaultOptions: NumberInputRenderer.Options = {
+        type: 'numberInput'
     };
 
-    public override options: TextInputRenderer.Options;
+    public override options: NumberInputRenderer.Options;
 
 
     /* *
@@ -75,7 +74,7 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-        this.options = merge(TextInputRenderer.defaultOptions, options);
+        this.options = merge(NumberInputRenderer.defaultOptions, options);
     }
 
 
@@ -88,8 +87,8 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
     public override render(
         cell: TableCell,
         parentElement?: HTMLElement
-    ): TextInputContent {
-        return new TextInputContent(cell, this, parentElement);
+    ): NumberInputContent {
+        return new NumberInputContent(cell, this, parentElement);
     }
 
 }
@@ -101,34 +100,32 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
  *
  * */
 
-namespace TextInputRenderer {
+namespace NumberInputRenderer {
 
     /**
-     * Options to control the text input renderer content.
+     * Options to control the number input renderer content.
      */
     export interface Options extends CellRenderer.Options {
-        type: 'textInput';
+        type: 'numberInput';
 
         /**
-         * Whether the text input is disabled.
+         * Whether the number input is disabled.
          */
         disabled?: boolean;
 
         /**
-         * Attributes to control the text input.
+         * Attributes to control the number input.
          */
-        attributes?:TextInputAttributes;
+        attributes?: NumberInputAttributes;
     }
 
     /**
-     * Attributes to control the text input.
+     * Attributes to control the number input.
      */
-    export interface TextInputAttributes {
-        minlength?: number;
-        maxlength?: number;
-        pattern?: string;
-        placeholder?: string;
-        size?: number;
+    export interface NumberInputAttributes {
+        min?: number;
+        max?: number;
+        step?: number;
     }
 }
 
@@ -141,11 +138,11 @@ namespace TextInputRenderer {
 
 declare module '../CellRendererType' {
     interface CellRendererTypeRegistry {
-        textInput: typeof TextInputRenderer
+        numberInput: typeof NumberInputRenderer
     }
 }
 
-CellRendererRegistry.registerRenderer('textInput', TextInputRenderer);
+CellRendererRegistry.registerRenderer('numberInput', NumberInputRenderer);
 
 
 /* *
@@ -154,4 +151,4 @@ CellRendererRegistry.registerRenderer('textInput', TextInputRenderer);
  *
  * */
 
-export default TextInputRenderer;
+export default NumberInputRenderer;
