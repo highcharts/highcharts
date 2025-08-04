@@ -38,6 +38,10 @@ async function scriptsWebpack() {
         configs = {
             Dashboards: 'dashboards.webpack.mjs'
         };
+    } else if (argv.product === 'Dashboards') {
+        configs = {
+            Dashboards: 'dashboards.webpack.mjs'
+        };
     } else {
         configs = {
             Highcharts: 'highcharts.webpack.mjs',

@@ -37,6 +37,10 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     if (argv.product === 'Grid') {
         esModulesFolder = fsLib.path(['code', 'grid', 'es-modules']);
         targetFolder = fsLib.path(['code', 'grid']);
+    } else if (argv.product === 'Dashboards') {
+        const dashCfg = require('./dashboards/_config.json');
+        esModulesFolder = dashCfg.esModulesFolder;
+        targetFolder = dashCfg.bundleTargetFolder;
     } else if (product === 'highcharts') {
         esModulesFolder = '/es-modules/';
         targetFolder = 'code';

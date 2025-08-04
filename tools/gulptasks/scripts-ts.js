@@ -141,6 +141,10 @@ async function scriptsTS(argv) {
             fsLib.deleteDirectory(dashCfg.bundleTargetFolder);
         }
 
+        if (product === 'Dashboards') {
+            fsLib.deleteDirectory(dashCfg.bundleTargetFolder);
+        }
+
         fsLib.deleteDirectory('js');
 
         if (product === 'Grid') {
@@ -165,6 +169,13 @@ async function scriptsTS(argv) {
 
             logLib.success('Copied stand-alone DTS for Grid');
 
+        } else if (product === 'Dashboards') {
+            fsLib.copyAllFiles(
+                'ts',
+                fsLib.path(['code', 'es-modules']),
+                true,
+                sourcePath => sourcePath.endsWith('.d.ts')
+            );
         } else {
             fsLib.copyAllFiles(
                 'ts',
@@ -175,6 +186,9 @@ async function scriptsTS(argv) {
         }
 
         if (argv.dashboards) {
+            await processLib
+                .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
+        } else if (product === 'Dashboards') {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
         } else if (product === 'Grid') {
@@ -242,6 +256,17 @@ async function scriptsTS(argv) {
                 fsLib.path(['js', 'masters-dashboards']),
                 fsLib.path(['js', 'masters'])
             );
+        } else if (product === 'Dashboards') {
+            removeHighcharts();
+
+            // Remove Grid
+            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
+
+            // Fix masters
+            fs.renameSync(
+                fsLib.path(['js', 'masters-dashboards']),
+                fsLib.path(['js', 'masters'])
+            );
         } else {
             // Remove Dashboards
             fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']));
@@ -259,7 +284,7 @@ async function scriptsTS(argv) {
 scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
     '--dashboards': 'Build dashboards files only',
-    '--product': 'The project to build: Highcharts (default), Grid'
+    '--product': 'The project to build: Highcharts (default), Grid, Dashboards'
 };
 gulp.task(
     'scripts-ts',
