@@ -115,7 +115,8 @@ function isInsidePane(
     let insideSlice = true;
 
     const cx = center[0],
-        cy = center[1];
+        cy = center[1],
+        twoPi = 2 * Math.PI;
 
     const distance = Math.sqrt(
         Math.pow(x - cx, 2) + Math.pow(y - cy, 2)
@@ -129,9 +130,9 @@ function isInsidePane(
         );
 
         // Normalize angle to [0, 2π)
-        angle = (angle + 2 * Math.PI) % (2 * Math.PI);
-        startAngle = (startAngle + 2 * Math.PI) % (2 * Math.PI);
-        endAngle = (endAngle + 2 * Math.PI) % (2 * Math.PI);
+        angle = (angle + twoPi) % (twoPi);
+        startAngle = (startAngle + twoPi) % (twoPi);
+        endAngle = (endAngle + twoPi) % (twoPi);
 
         // Ignore full circle panes:
         if (Math.abs(endAngle - startAngle) > 1e-6) {
