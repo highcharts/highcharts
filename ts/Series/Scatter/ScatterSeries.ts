@@ -159,7 +159,7 @@ extend(ScatterSeries.prototype, {
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
-    noSharedTooltip: true,
+    noSharedTooltip: false,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 
