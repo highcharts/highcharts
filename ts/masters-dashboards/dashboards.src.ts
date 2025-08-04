@@ -32,6 +32,15 @@ import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
 import '../Data/Modifiers/FilterModifier.js';
 
+// Import SerializeHelper modules to register them
+import '../Dashboards/SerializeHelper/CSVConnectorHelper.js';
+import '../Dashboards/SerializeHelper/DataConverterHelper.js';
+import '../Dashboards/SerializeHelper/DataCursorHelper.js';
+import '../Dashboards/SerializeHelper/DataTableHelper.js';
+import '../Dashboards/SerializeHelper/GoogleSheetsConnectorHelper.js';
+import '../Dashboards/SerializeHelper/HTMLTableConnectorHelper.js';
+import '../Dashboards/SerializeHelper/JSONConnectorHelper.js';
+
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import Board from '../Dashboards/Board.js';

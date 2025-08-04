@@ -53,12 +53,12 @@ async function dashboardsScripts() {
             );
         }
 
-        // Copy valid native DTS
+        // Copy valid native DTS and JS files
         fsLib.copyAllFiles(
             'js/',
             esModulesFolder,
             true,
-            sourcePath => sourcePath.endsWith('.d.ts')
+            sourcePath => sourcePath.endsWith('.d.ts') || sourcePath.endsWith('.js')
         );
 
         logLib.success('Created Dashboards code');
