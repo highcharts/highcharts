@@ -41,10 +41,10 @@ Highcharts.chart('container', {
     yAxis: {
         opposite: true,
         title: {
-            text: 'Norwegian Kroner, Millions'
+            text: 'Norwegian Kroner'
         },
         labels: {
-            format: '{value}m NOK'
+            format: '{value}M'
         },
         min: 0
     },
