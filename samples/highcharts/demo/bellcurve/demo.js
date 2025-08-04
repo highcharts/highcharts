@@ -29,7 +29,8 @@ const createChart = data => Highcharts.chart('container', {
         type: 'bellcurve',
         xAxis: 1,
         yAxis: 1,
-        baseSeries: 1,
+        // baseSeries: 1,
+        data: data,
         zIndex: -1
     }, {
         name: 'Data',
