@@ -15,6 +15,40 @@ const Path = require('node:path');
  * */
 
 /**
+ * Post-webpack processing for Dashboards - copies webpack-generated files to es-modules
+ *
+ * @return {Promise<void>}
+ * Promise to keep.
+ */
+async function postWebpackDashboards() {
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
+
+    const {
+        esModulesFolder
+    } = require('./dashboards/_config.json');
+
+    // Copy webpack-generated JS files to es-modules/masters for tests
+    // Copy dashboards.src.js
+    fsLib.copyFile(
+        'code/dashboards/dashboards.src.js',
+        esModulesFolder + '/masters/dashboards.src.js'
+    );
+
+    // Copy modules JS files if they exist
+    if (fsLib.isDirectory('code/dashboards/modules')) {
+        fsLib.copyAllFiles(
+            'code/dashboards/modules/',
+            esModulesFolder + '/masters/modules/',
+            true,
+            sourcePath => sourcePath.endsWith('.src.js')
+        );
+    }
+
+    // Note: DTS and JS file copying is handled in scripts-ts.js to match Grid pattern
+}
+
+/**
  * Webpack task.
  *
  * @return {Promise<void>}
@@ -77,6 +111,11 @@ async function scriptsWebpack() {
     await FSP.writeFile('webpack.log', log, { flag: 'a' }); // 'a' - append
 
     LogLib.success('Finished packing.');
+
+    // Post-webpack processing for Dashboards
+    if (argv.product === 'Dashboards' || argv.dashboards) {
+        await postWebpackDashboards();
+    }
 
 }
 

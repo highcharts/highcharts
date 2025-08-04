@@ -170,6 +170,17 @@ async function scriptsTS(argv) {
             logLib.success('Copied stand-alone DTS for Grid');
 
         } else if (product === 'Dashboards') {
+            // Copy bundle DTS files first (similar to Grid)
+            const bundleDtsFolder = path.join(__dirname, 'dashboards', 'scripts-dts/');
+
+            fsLib.copyAllFiles(bundleDtsFolder, dashCfg.bundleTargetFolder, true);
+            fsLib.deleteFile(path.join(dashCfg.bundleTargetFolder, 'datagrid.src.d.ts'));
+
+            fsLib.copyAllFiles(bundleDtsFolder, dashCfg.bundleTargetFolderDataGrid, true);
+            fsLib.deleteFile(path.join(dashCfg.bundleTargetFolderDataGrid, 'dashboards.src.d.ts'));
+
+            logLib.success('Copied bundle DTS files for Dashboards');
+
             fsLib.copyAllFiles(
                 'ts',
                 fsLib.path(['code', 'es-modules']),
@@ -191,6 +202,73 @@ async function scriptsTS(argv) {
         } else if (product === 'Dashboards') {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
+
+            // Copy DTS files from ts/ folders to es-modules (similar to Grid pattern)
+            const DTS_FILES = [
+                'Core/Color/ColorString.d.ts',
+                'Core/Color/ColorType.d.ts',
+                'Core/Color/GradientColor.d.ts',
+                'Core/Renderer/AlignObject.d.ts',
+                'Core/Renderer/CSSObject.d.ts',
+                'Core/Renderer/DashStyleValue.d.ts',
+                'Core/Renderer/DOMElementType.d.ts',
+                'Core/Renderer/HTML/HTMLAttributes.d.ts',
+                'Core/Renderer/SVG/SVGAttributes.d.ts',
+                'Core/Renderer/SVG/SVGPath.d.ts',
+                'Shared/LangOptionsCore.d.ts'
+            ].map(fsLib.path);
+
+            const DTS_FOLDERS = [
+                'Dashboards/',
+                'Data/',
+                'Grid/'
+            ].map(fsLib.path);
+
+            // Copy individual DTS files
+            for (const dtsFile of DTS_FILES) {
+                fsLib.copyFile(
+                    path.join('ts', dtsFile),
+                    path.join(dashCfg.esModulesFolder, dtsFile)
+                );
+                fsLib.copyFile(
+                    path.join('ts', dtsFile),
+                    path.join(dashCfg.esModulesFolderDataGrid, dtsFile)
+                );
+            }
+
+            // Copy DTS folders
+            for (const dtsFolder of DTS_FOLDERS) {
+                fsLib.copyAllFiles(
+                    path.join('ts', dtsFolder),
+                    path.join(dashCfg.esModulesFolder, dtsFolder),
+                    true,
+                    sourcePath => sourcePath.endsWith('.d.ts')
+                );
+                fsLib.copyAllFiles(
+                    path.join('ts', dtsFolder),
+                    path.join(dashCfg.esModulesFolderDataGrid, dtsFolder),
+                    true,
+                    sourcePath => sourcePath.endsWith('.d.ts')
+                );
+            }
+
+            // Process bundle DTS files with transformations
+            const bundleDtsFolder = path.join(__dirname, 'dashboards', 'scripts-dts/');
+            const bundleDtsFiles = fsLib.getFilePaths(bundleDtsFolder, true);
+
+            for (const bundleDtsFile of bundleDtsFiles) {
+                fs.writeFileSync(
+                    path.join(
+                        bundleDtsFile.includes('datagrid') ? dashCfg.bundleTargetFolderDataGrid : dashCfg.bundleTargetFolder,
+                        path
+                            .relative(bundleDtsFolder, bundleDtsFile)
+                            .replace(/\.src\.d\.ts$/u, '.d.ts')
+                    ),
+                    fs.readFileSync(bundleDtsFile, 'utf8').replace(/\.src"/gu, '"')
+                );
+            }
+
+            logLib.success('Processed Dashboards DTS files');
         } else if (product === 'Grid') {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
