@@ -9,6 +9,7 @@
  *  Authors:
  *  - Sophie Bremer
  *  - Gøran Slettemark
+ *  - Dawid Dragula
  *
  * */
 
@@ -138,12 +139,13 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @param {DataModifier.Event} [e]
      * Event object containing additonal event information.
      */
-    public emit<E extends DataEvent>(e: E): void {
+    public emit<E extends DataModifierEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
     /**
-     * Returns a modified copy of the given table.
+     * Modifies the given table and sets its `modified` property as a reference
+     * to the modified table.
      *
      * @param {Highcharts.DataTable} table
      * Table to modify.
@@ -177,102 +179,8 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
     }
 
     /**
-     * Applies partial modifications of a cell change to the property `modified`
-     * of the given modified table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {string} columnId
-     * Column id of changed cell.
-     *
-     * @param {number|undefined} rowIndex
-     * Row index of changed cell.
-     *
-     * @param {Highcharts.DataTableCellType} cellValue
-     * Changed cell value.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyCell(
-        table: DataTable,
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        columnId: string,
-        rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEvent.Detail
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): DataTable {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies partial modifications of column changes to the property
-     * `modified` of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Highcharts.DataTableColumnCollection} columns
-     * Changed columns as a collection, where the keys are the column names.
-     *
-     * @param {number} [rowIndex=0]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyColumns(
-        table: DataTable,
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        columns: DataTable.ColumnCollection,
-        rowIndex: number,
-        eventDetail?: DataEvent.Detail
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): DataTable {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies partial modifications of row changes to the property `modified`
-     * of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
-     * Changed rows.
-     *
-     * @param {number} [rowIndex]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyRows(
-        table: DataTable,
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number,
-        eventDetail?: DataEvent.Detail
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): DataTable {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies modifications of row changes to the property `modified` of the
-     * given table.
+     * Creates a modified copy of the given table and sets its `modified`
+     * property as a reference to the modified table.
      *
      * @param {Highcharts.DataTable} table
      * Table to modify.
@@ -300,9 +208,11 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on<E extends DataEvent>(
-        type: E['type'],
-        callback: DataEvent.Callback<this, E>
+    public on<T extends DataModifierEvent['type']>(
+        type: T,
+        callback: DataEvent.Callback<this, Extract<DataModifierEvent, {
+            type: T
+        }>>
     ): Function {
         return addEvent(this, type, callback);
     }

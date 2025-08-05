@@ -105,10 +105,10 @@ class MathModifier extends DataModifier {
      * */
 
 
-    public modifyTable<T extends DataTable>(
-        table: T,
+    public override modifyTable(
+        table: DataTable,
         eventDetail?: (DataEvent.Detail|undefined)
-    ): T {
+    ): DataTable {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
@@ -118,6 +118,8 @@ class MathModifier extends DataModifier {
                 modifier.options.formulaColumns ||
                 table.getColumnIds()
             ),
+            // TODO: If the `modified` property is not set, it takes the
+            // original table. This will need to be handled better.
             modified = table.getModified();
 
         for (

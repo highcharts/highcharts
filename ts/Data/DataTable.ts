@@ -224,7 +224,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             }
 
             if (modifier) {
-                modifier.modifyColumns(table, modifiedColumns, 0, eventDetail);
+                modifier.modifyTable(table);
             }
 
             table.emit({
@@ -330,12 +330,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         }
 
         if (modifier) {
-            modifier.modifyRows(
-                table,
-                modifiedRows,
-                (rowIndex || 0),
-                eventDetail
-            );
+            modifier.modifyTable(table);
         }
 
         table.emit({
@@ -957,7 +952,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         column[rowIndex] = cellValue;
 
         if (modifier) {
-            modifier.modifyCell(table, columnId, rowIndex, cellValue);
+            modifier.modifyTable(table);
         }
 
         table.emit({
@@ -1073,7 +1068,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         }
 
         if (tableModifier) {
-            tableModifier.modifyColumns(table, columns, rowIndex || 0);
+            tableModifier.modifyTable(table);
         }
 
         table.emit({
@@ -1296,7 +1291,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         }
 
         if (modifier) {
-            modifier.modifyRows(table, rows, rowIndex);
+            modifier.modifyTable(table);
         }
 
         table.emit({

@@ -118,10 +118,10 @@ class RangeModifier extends DataModifier {
      * @return {DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
+    public override modifyTable(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
@@ -131,7 +131,10 @@ class RangeModifier extends DataModifier {
         end = Math.min(end || Infinity, table.getRowCount());
         const length = Math.max(end - start, 0);
 
+        // TODO: If the `modified` property is not set, it takes the original
+        // table. This will need to be handled better in the future.
         const modified = table.getModified();
+
         modified.deleteRows();
         modified.setRows(table.getRows(start, length));
         modified.setOriginalRowIndexes(Array.from(
