@@ -78,10 +78,8 @@ async function setupBoard() {
             connectors: [{
                 id: 'Range Selection',
                 type: 'CSV',
-                options: {
-                    dataModifier: {
-                        type: 'Filter'
-                    }
+                dataModifier: {
+                    type: 'Filter'
                 }
             }, {
                 id: 'Cities',
