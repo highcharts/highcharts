@@ -205,7 +205,7 @@ class ChainModifier extends DataModifier {
                 this.chain.slice()
         );
 
-        if (table.getModified() === table) {
+        if (!table.modified) {
             table.modified = table.clone(false, eventDetail);
         }
 

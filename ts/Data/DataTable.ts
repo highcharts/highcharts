@@ -1186,10 +1186,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             modified: table.getModified()
         });
 
-        if (table.getModified() === table) {
-            table.modified = table.clone(false, eventDetail);
-        }
-
         table.modifier = modifier;
 
         if (modifier) {
