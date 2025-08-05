@@ -20,11 +20,8 @@
  *
  * */
 
-import CSVConverterOptions from '../Converters/CSVConverterOptions';
-import GoogleSheetsConverterOptions from '../Converters/GoogleSheetsConverterOptions';
-import JSONConverterOptions from '../Converters/JSONConverterOptions';
+import type { DataTableValue } from '../DataTableOptions';
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
-import type { ColumnIdsOptions } from './JSONConnectorOptions';
 
 /* *
  *
@@ -46,14 +43,8 @@ export interface DataConnectorOptions {
 export interface DataTableConnectorOptions {
     key?: string;
     dataModifier?: DataModifierTypeOptions;
-    columnIds?: string[] | ColumnIdsOptions;
     firstRowAsNames?: boolean;
-    orientation?: 'columns' | 'rows';
-    beforeParse?: (
-        JSONConverterOptions['beforeParse'] |
-        CSVConverterOptions['beforeParse'] |
-        GoogleSheetsConverterOptions['beforeParse']
-    )
+    metadata?: Record<string, DataTableValue>;
 }
 
 /**

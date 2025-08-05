@@ -206,7 +206,7 @@ class DataTableCore {
      * `DataTable.getColumns` method, always returning by reference.
      *
      * @param {Array<string>} [columnIds]
-     * Column names to retrieve.
+     * Column ids to retrieve.
      *
      * @return {Highcharts.DataTableColumnCollection}
      * Collection of columns. If a requested column was not found, it is

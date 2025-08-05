@@ -276,7 +276,7 @@ class InvertModifier extends DataModifier {
         ) {
             row = rows[i];
 
-            if (row instanceof Array) {
+            if (Array.isArray(row)) {
                 modified.setColumn(`${i2}`, row);
             } else {
                 for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {

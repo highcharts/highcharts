@@ -3,37 +3,35 @@ Dashboards.board('container', {
         connectors: [{
             id: 'conn-id',
             type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                columnIds: ['Col-A', 'Col-B', 'Col-C'],
-                data: [
-                    ['Row-1', 1349, 5],
-                    ['Row-2', 1960, 4],
-                    ['Row-3', 2024, 3],
-                    ['Row-4', 1914, 9],
-                    ['Row-5', 1223, 6],
-                    ['Row-6', 2011, 12],
-                    ['Row-7', 1300, 7],
-                    ['Row-8', 800, 9],
-                    ['Row-9', 800, 10],
-                    ['Row-A', 1800, 11],
-                    ['Row-B', 2000, 9],
-                    ['Row-C', 2009, 3]
-                ],
-                dataModifier: {
-                    type: 'Filter',
-                    condition: {
-                        operator: 'and',
-                        conditions: [{
-                            columnId: 'Col-B',
-                            operator: '>=',
-                            value: 500
-                        }, {
-                            columnId: 'Col-B',
-                            operator: '<=',
-                            value: 2010
-                        }]
-                    }
+            firstRowAsNames: false,
+            columnIds: ['Col-A', 'Col-B', 'Col-C'],
+            data: [
+                ['Row-1', 1349, 5],
+                ['Row-2', 1960, 4],
+                ['Row-3', 2024, 3],
+                ['Row-4', 1914, 9],
+                ['Row-5', 1223, 6],
+                ['Row-6', 2011, 12],
+                ['Row-7', 1300, 7],
+                ['Row-8', 800, 9],
+                ['Row-9', 800, 10],
+                ['Row-A', 1800, 11],
+                ['Row-B', 2000, 9],
+                ['Row-C', 2009, 3]
+            ],
+            dataModifier: {
+                type: 'Filter',
+                condition: {
+                    operator: 'and',
+                    conditions: [{
+                        columnId: 'Col-B',
+                        operator: '>=',
+                        value: 500
+                    }, {
+                        columnId: 'Col-B',
+                        operator: '<=',
+                        value: 2010
+                    }]
                 }
             }
         }]

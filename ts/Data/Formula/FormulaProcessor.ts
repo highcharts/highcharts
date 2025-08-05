@@ -665,7 +665,7 @@ function translateReferences<T extends Arguments|Formula>(
 
     for (let i = 0, iEnd = formula.length, item: Item; i < iEnd; ++i) {
         item = formula[i];
-        if (item instanceof Array) {
+        if (Array.isArray(item)) {
             translateReferences(item, columnDelta, rowDelta);
         } else if (isFunction(item)) {
             translateReferences(item.args, columnDelta, rowDelta);
