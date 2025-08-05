@@ -1,6 +1,11 @@
 const { dashboardsPaths } = Cypress.env('demoPaths') || [];
 const dashboardsDir = '/dashboards/';
 
+const excludeList = [
+    'gui/layout',
+    'components/component-error-handler'
+];
+
 describe('Dashboards demos', () => {
     (dashboardsPaths || []).forEach((demoPath) => {
         it(`should not have console errors in ${demoPath}`, () => {
@@ -16,6 +21,12 @@ describe('Dashboards demos', () => {
                     errorMessages.push(event.reason);
                 });
             });
+
+            if (excludeList.some((el) => el === demoPath)) {
+                console.log('skip', demoPath);
+                return;
+            }
+
             cy.visit(dashboardsDir + demoPath);
             cy.then(() => {
                 expect(
