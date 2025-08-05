@@ -131,7 +131,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     public clone(
         skipColumns?: boolean,
         eventDetail?: DataEvent.Detail
-    ): this {
+    ): DataTable {
         const table = this,
             tableOptions: DataTableOptions = {};
 
@@ -145,7 +145,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             tableOptions.id = table.id;
         }
 
-        const tableClone = new DataTable(tableOptions) as this;
+        const tableClone = new DataTable(tableOptions);
 
         if (!skipColumns) {
             tableClone.versionTag = table.versionTag;
@@ -1103,10 +1103,10 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     public setModifier(
         modifier?: DataModifier,
         eventDetail?: DataEvent.Detail
-    ): Promise<this> {
+    ): Promise<DataTable> {
         const table = this;
 
-        let promise: Promise<this>;
+        let promise: Promise<DataTable>;
 
         table.emit({
             type: 'setModifier',
@@ -1124,7 +1124,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         }
 
         return promise
-            .then((table): this => {
+            .then((table): DataTable => {
                 table.emit({
                     type: 'afterSetModifier',
                     detail: eventDetail,
@@ -1132,7 +1132,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     modified: table.getModified()
                 });
                 return table;
-            })['catch']((error): this => {
+            })['catch']((error): DataTable => {
                 table.emit({
                     type: 'setModifierError',
                     error,

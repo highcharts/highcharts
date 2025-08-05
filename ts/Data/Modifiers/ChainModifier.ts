@@ -195,10 +195,10 @@ class ChainModifier extends DataModifier {
      * @return {Promise<Highcharts.DataTable>}
      * Table with `modified` property as a reference.
      */
-    public async modify<T extends DataTable>(
-        table: T,
+    public async modify(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): Promise<T> {
+    ): Promise<DataTable> {
         const modifiers = (
             this.options.reverse ?
                 this.chain.slice().reverse() :
@@ -253,13 +253,13 @@ class ChainModifier extends DataModifier {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyCell<T extends DataTable>(
-        table: T,
+    public modifyCell(
+        table: DataTable,
         columnId: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifiers = (
             this.options.reverse ?
                 this.chain.reverse() :
@@ -307,12 +307,12 @@ class ChainModifier extends DataModifier {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyColumns<T extends DataTable>(
-        table: T,
+    public modifyColumns(
+        table: DataTable,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifiers = (
             this.options.reverse ?
                 this.chain.reverse() :
@@ -359,12 +359,12 @@ class ChainModifier extends DataModifier {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyRows<T extends DataTable>(
-        table: T,
+    public modifyRows(
+        table: DataTable,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifiers = (
             this.options.reverse ?
                 this.chain.reverse() :
@@ -407,10 +407,10 @@ class ChainModifier extends DataModifier {
      * @emits ChainDataModifier#execute
      * @emits ChainDataModifier#afterExecute
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
+    public modifyTable(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const chain = this;
 
         chain.emit<ChainModifier.Event>({
