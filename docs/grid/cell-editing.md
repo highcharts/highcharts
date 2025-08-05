@@ -68,6 +68,8 @@ In addition to `dataType` you can extend a selection of predefined validation ru
 - `boolean`
 - `number`
 - `datetime`
+- `caseUnique`
+- `unique`
 
 To prevent users from entering `null` or empty string values in any column, add the `notEmpty` validation rule:
 

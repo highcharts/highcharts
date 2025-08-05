@@ -343,6 +343,8 @@ namespace Validator {
         datetime: RuleDefinition;
         notEmpty: RuleDefinition;
         number: RuleDefinition;
+        caseUnique: RuleDefinition;
+        unique: RuleDefinition;
     }
 
     /**
@@ -380,6 +382,30 @@ namespace Validator {
                 Number(rawValue) === 1 || Number(rawValue) === 0
             ),
             notification: 'Value has to be a boolean.'
+        },
+        caseUnique: {
+            validate: function ({ rawValue }): boolean {
+                const columnData = this.column.data;
+                const isDuplicate = columnData?.some(
+                    (value): boolean => String(value).toLowerCase() ===
+                        String(rawValue).toLowerCase()
+                );
+
+                return !isDuplicate;
+
+            },
+            notification: 'Value must be unique, ignoring letter case.'
+        },
+        unique: {
+            validate: function ({ rawValue }): boolean {
+                const columnData = this.column.data;
+                const isDuplicate = columnData?.some(
+                    (value): boolean => value === rawValue
+                );
+
+                return !isDuplicate;
+            },
+            notification: 'Value must be unique.'
         }
     };
 
