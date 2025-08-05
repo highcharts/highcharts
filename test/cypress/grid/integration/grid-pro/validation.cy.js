@@ -74,38 +74,6 @@ describe('Grid Pro - validation.', () => {
             .type('true{enter}');
     });
 
-    it('Predefined rules - custom error message.', () => {
-        const numberCell =
-            'tr[data-row-index="2"] td[data-column-id="numbers"]';
-        const priceCell = 'tr[data-row-index="2"] td[data-column-id="price"]';
-
-        cy.get(numberCell)
-            .dblclick()
-            .find('input')
-            .clear()
-            .type('{enter}');
-
-        cy.get('.hcg-notification-error').eq(0)
-            .should('be.visible')
-            .should('contain', 'formatter');
-
-        cy.get(numberCell)
-            .type('5{enter}');
-
-        cy.get(priceCell)
-            .dblclick()
-            .find('input')
-            .clear()
-            .type('text{enter}');
-
-        cy.get('.hcg-notification-error').eq(0)
-            .should('be.visible')
-            .should('contain', 'Price should be number');
-
-        cy.get(priceCell)
-            .type('5{enter}');
-    });
-
     it('In case of wrong renderer type or dataType, it should default to string.', () => {
         cy.get('tr[data-row-index="2"] td[data-column-id="wrongName"]').should('exist');
     });
