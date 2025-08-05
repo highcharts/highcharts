@@ -384,12 +384,15 @@ class CSVConverter extends DataConverter {
             if (typeof token === 'string') {
                 const parsedNumber = parseFloat(token);
 
-                if (!isNaN(parsedNumber) && !converter.options.decimalPoint) {
-                    token = parsedNumber;
-                    pushType('number');
-                } else if (!isNaN(Date.parse(token))) {
+                if (!isNaN(Date.parse(token))) {
                     token = token.replace(/\//g, '-');
                     pushType('date');
+                } else if (
+                    !isNaN(parsedNumber) &&
+                    !converter.options.decimalPoint
+                ) {
+                    token = parsedNumber;
+                    pushType('number');
                 } else {
                     pushType('string');
                 }
