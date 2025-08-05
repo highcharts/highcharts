@@ -183,18 +183,6 @@ class SortModifier extends DataModifier {
         return rowReferences;
     }
 
-    /**
-     * Sorts rows in the table.
-     *
-     * @param {DataTable} table
-     * Table to sort in.
-     *
-     * @param {DataEvent.Detail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {DataTable}
-     * Table with `modified` property as a reference.
-     */
     public override modifyTable(
         table: DataTable,
         eventDetail?: DataEvent.Detail
@@ -214,8 +202,6 @@ class SortModifier extends DataModifier {
             } = modifier.options,
             compare = SortModifier.compareFactory(direction, customCompare),
             orderByColumnIndex = columnIds.indexOf(orderByColumn),
-            // TODO: If the `modified` property is not set, it takes the
-            // original table. This will need to be handled better.
             modified = table.getModified();
 
         if (orderByColumnIndex !== -1) {

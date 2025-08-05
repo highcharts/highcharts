@@ -92,7 +92,9 @@ class InvertModifier extends DataModifier {
      * */
 
     /**
-     * Inverts rows and columns in the table.
+     * Inverts rows and columns in the table. If the given table does not have
+     * defined a `modified` property, the filtering is applied in-place on the
+     * original table rather than on a `modified` copy.
      *
      * @param {DataTable} table
      * Table to invert.
@@ -101,7 +103,8 @@ class InvertModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * Table with inverted `modified` property as a reference.
+     * Table with inverted `modified` property as a reference or modified table,
+     * if `modified` property of the original table is undefined.
      */
     public override modifyTable(
         table: DataTable,
@@ -111,8 +114,6 @@ class InvertModifier extends DataModifier {
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        // TODO: If the `modified` property is not set, it takes the original
-        // table. This will need to be handled better in the future.
         const modified = table.getModified();
 
         if (table.hasColumns(['columnIds'])) { // Inverted table

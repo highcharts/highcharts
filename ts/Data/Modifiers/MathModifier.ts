@@ -118,8 +118,6 @@ class MathModifier extends DataModifier {
                 modifier.options.formulaColumns ||
                 table.getColumnIds()
             ),
-            // TODO: If the `modified` property is not set, it takes the
-            // original table. This will need to be handled better.
             modified = table.getModified();
 
         for (

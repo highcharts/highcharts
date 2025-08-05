@@ -42,7 +42,6 @@ const {
 
 /**
  * Abstract class to provide an interface for modifying a table.
- *
  */
 abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
 
@@ -145,7 +144,8 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
 
     /**
      * Modifies the given table and sets its `modified` property as a reference
-     * to the modified table.
+     * to the modified table. If `modified` property does not exist on the
+     * original table, it's always created.
      *
      * @param {Highcharts.DataTable} table
      * Table to modify.
@@ -180,7 +180,8 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
 
     /**
      * Creates a modified copy of the given table and sets its `modified`
-     * property as a reference to the modified table.
+     * property as a reference to the modified table. If `modified` property
+     * does not exist, the original table is changed.
      *
      * @param {Highcharts.DataTable} table
      * Table to modify.
@@ -189,7 +190,8 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
+     * Table with `modified` property as a reference or modified table, if
+     * `modified` property of the original table is undefined.
      */
     public abstract modifyTable(
         table: DataTable,

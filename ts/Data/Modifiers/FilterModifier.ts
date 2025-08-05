@@ -182,7 +182,9 @@ class FilterModifier extends DataModifier {
      * */
 
     /**
-     * Filters out table rows matching a given condition.
+     * Filters out table rows matching a given condition. If the given table
+     * does not have defined a `modified` property, the filtering is applied
+     * in-place on the original table rather than on a `modified` copy.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -191,7 +193,8 @@ class FilterModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * Table with `modified` property as a reference.
+     * Table with `modified` property as a reference or modified table, if
+     * `modified` property of the original table is undefined.
      */
     public override modifyTable(
         table: DataTable,
@@ -209,8 +212,6 @@ class FilterModifier extends DataModifier {
 
         const matchRow = FilterModifier.compile(condition);
 
-        // TODO: If the `modified` property is not set, it takes the original
-        // table. This will need to be handled better in the future.
         const modified = table.getModified();
 
         const rows: DataTable.RowObject[] = [];

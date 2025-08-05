@@ -149,7 +149,7 @@ class ChainModifier extends DataModifier {
         modifier: DataModifier,
         eventDetail?: DataEvent.Detail
     ): void {
-        this.emit<ChainModifier.Event>({
+        this.emit({
             type: 'addModifier',
             detail: eventDetail,
             modifier
@@ -157,7 +157,7 @@ class ChainModifier extends DataModifier {
 
         this.chain.push(modifier);
 
-        this.emit<ChainModifier.Event>({
+        this.emit({
             type: 'addModifier',
             detail: eventDetail,
             modifier
@@ -171,14 +171,14 @@ class ChainModifier extends DataModifier {
      * Custom information for pending events.
      */
     public clear(eventDetail?: DataEvent.Detail): void {
-        this.emit<ChainModifier.Event>({
+        this.emit({
             type: 'clearChain',
             detail: eventDetail
         });
 
         this.chain.length = 0;
 
-        this.emit<ChainModifier.Event>({
+        this.emit({
             type: 'afterClearChain',
             detail: eventDetail
         });
@@ -216,7 +216,7 @@ class ChainModifier extends DataModifier {
             try {
                 await modifiers[i].modify(modified, eventDetail);
             } catch (error) {
-                this.emit<DataModifierEvent>({
+                this.emit({
                     type: 'error',
                     detail: eventDetail,
                     table
@@ -234,7 +234,7 @@ class ChainModifier extends DataModifier {
     /**
      * Applies several modifications to the table.
      *
-     * *Note:* The `modified` property of the table gets replaced.
+     * *Note:* The `modified` property reference of the table gets replaced.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -254,7 +254,7 @@ class ChainModifier extends DataModifier {
     ): DataTable {
         const chain = this;
 
-        chain.emit<ChainModifier.Event>({
+        chain.emit({
             type: 'modify',
             detail: eventDetail,
             table
@@ -266,8 +266,6 @@ class ChainModifier extends DataModifier {
                 chain.chain.slice()
         );
 
-        // TODO: If the `modified` property is not set, it takes the original
-        // table. This will need to be handled better in the future.
         let modified = table.getModified();
 
         for (
@@ -284,7 +282,7 @@ class ChainModifier extends DataModifier {
 
         table.modified = modified;
 
-        chain.emit<ChainModifier.Event>({
+        chain.emit({
             type: 'afterModify',
             detail: eventDetail,
             table
@@ -308,7 +306,7 @@ class ChainModifier extends DataModifier {
     ): void {
         const modifiers = this.chain;
 
-        this.emit<ChainModifier.Event>({
+        this.emit({
             type: 'removeModifier',
             detail: eventDetail,
             modifier
@@ -316,7 +314,7 @@ class ChainModifier extends DataModifier {
 
         modifiers.splice(modifiers.indexOf(modifier), 1);
 
-        this.emit<ChainModifier.Event>({
+        this.emit({
             type: 'afterRemoveModifier',
             detail: eventDetail,
             modifier
