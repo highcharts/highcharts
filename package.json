@@ -137,7 +137,7 @@
     "topojson-client": "^3.1.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.0",
-    "typedoc": "^0.28.7",
+    "typedoc": "^0.28.9",
     "typedoc-plugin-rename-defaults": "^0.7.0",
     "typescript": "~5.9.2",
     "undertaker-forward-reference": "^2.0.0",
