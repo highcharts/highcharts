@@ -9,6 +9,10 @@ const excludeList = [
 describe('Dashboards demos', () => {
     (dashboardsPaths || []).forEach((demoPath) => {
         it(`should not have console errors in ${demoPath}`, () => {
+            if (excludeList.some((el) => el === demoPath)) {
+                return;
+            }
+
             let errorMessages = [];
             cy.on('window:before:load', (win) => {
                 cy.stub(win.console, 'error').callsFake((msg) => {
@@ -21,11 +25,6 @@ describe('Dashboards demos', () => {
                     errorMessages.push(event.reason);
                 });
             });
-
-            if (excludeList.some((el) => el === demoPath)) {
-                console.log('skip', demoPath);
-                return;
-            }
 
             cy.visit(dashboardsDir + demoPath);
             cy.then(() => {
