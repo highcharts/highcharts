@@ -383,16 +383,12 @@ class CSVConverter extends DataConverter {
             // Save the type of the token.
             if (typeof token === 'string') {
                 const parsedNumber = parseFloat(token);
-
-                if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//g, '-');
-                    pushType('date');
-                } else if (
-                    !isNaN(parsedNumber) &&
-                    !converter.options.decimalPoint
-                ) {
+                if (!isNaN(parsedNumber) && isFinite(Number(token))) {
                     token = parsedNumber;
                     pushType('number');
+                } else if (!isNaN(Date.parse(token))) {
+                    token = token.replace(/\//g, '-');
+                    pushType('date');
                 } else {
                     pushType('string');
                 }
