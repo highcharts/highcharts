@@ -191,6 +191,36 @@ async function scriptsTS(argv) {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
         } else if (product === 'Dashboards') {
+            // First compile Grid Pro (required for Dashboards)
+            await processLib
+                .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
+            removeHighcharts(true);
+
+            // Copy Grid DTS files to grid es-modules
+            [
+                'Data',
+                'Grid',
+                'Shared'
+            ].forEach(dtsFolder => {
+                fsLib.copyAllFiles(
+                    fsLib.path(['ts', dtsFolder]),
+                    fsLib.path(['code', 'grid', 'es-modules', dtsFolder]),
+                    true,
+                    sourcePath => sourcePath.endsWith('.d.ts')
+                );
+            });
+
+            // Rename masters-grid to masters for Grid
+            if (fs.existsSync(fsLib.path(['code', 'grid', 'es-modules', 'masters-grid']))) {
+                fs.renameSync(
+                    fsLib.path(['code', 'grid', 'es-modules', 'masters-grid']),
+                    fsLib.path(['code', 'grid', 'es-modules', 'masters'])
+                );
+            }
+
+            logLib.success('Completed Grid Pro TypeScript compilation');
+
+            // Then compile Dashboards
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
 

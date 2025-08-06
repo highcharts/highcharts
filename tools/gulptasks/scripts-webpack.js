@@ -62,9 +62,9 @@ async function postWebpackDashboards() {
         );
     }
 
-    // Copy DTS folders from ts/ to es-modules (Dashboards only)
-    // Note: Grid folder is now handled by Grid Pro build
-    const dashboardsDtsFolders = ['Dashboards/', 'Data/'].map(fsLib.path);
+    // Copy DTS folders from ts/ to es-modules (Dashboards + Grid)
+    // Grid folder is needed for Dashboards to use Grid components
+    const dashboardsDtsFolders = ['Dashboards/', 'Data/', 'Grid/'].map(fsLib.path);
     for (const dtsFolder of dashboardsDtsFolders) {
         fsLib.copyAllFiles(
             path.join('ts', dtsFolder),
@@ -135,6 +135,16 @@ async function postWebpackDashboards() {
         true,
         sourcePath => sourcePath.endsWith('.d.ts') || sourcePath.endsWith('.js')
     );
+
+    // Copy Grid Pro JS/DTS files to Dashboards es-modules for integration
+    if (fsLib.isDirectory('code/grid/es-modules/Grid/')) {
+        fsLib.copyAllFiles(
+            'code/grid/es-modules/Grid/',
+            path.join(esModulesFolder, 'Grid/'),
+            true,
+            sourcePath => sourcePath.endsWith('.d.ts') || sourcePath.endsWith('.js')
+        );
+    }
 }
 
 /**
@@ -163,6 +173,7 @@ async function scriptsWebpack() {
         };
     } else if (argv.product === 'Dashboards') {
         configs = {
+            Grid: 'grid.webpack.mjs',
             Dashboards: 'dashboards.webpack.mjs'
         };
     } else {
