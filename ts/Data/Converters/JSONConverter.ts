@@ -286,13 +286,13 @@ class JSONConverter extends DataConverter {
      * @param {Array<string>} [columnIds]
      * Column ids to retrieve.
      *
-     * @return {(string | number)[]}
+     * @return {Array<string | number>}
      * Row converted to array.
      */
     private convertItemToRow(
         rowObj: Record<string, string|number>,
         columnIds?: string[] | ColumnIdsOptions
-    ): (string | number)[] {
+    ): Array<string | number> {
         const converter = this;
         if (columnIds && !(Array.isArray(columnIds))) {
             const newRow: (string | number)[] = [];
