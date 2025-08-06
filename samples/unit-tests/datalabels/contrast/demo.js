@@ -26,7 +26,7 @@ QUnit.test(
                 ],
                 yAxis: {
                     endOnTick: false,
-                    max: 15.3
+                    max: 15
                 }
             }),
             point = chart.series[0].points[1];
