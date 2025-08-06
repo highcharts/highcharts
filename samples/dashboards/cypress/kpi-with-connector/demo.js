@@ -59,8 +59,6 @@ Dashboards.board('container', {
                 data: ['Date', 'Value']
             }]
         }
-    }, {
-        renderTo: 'kpi-2'
     }],
     gui: {
         layouts: [{
