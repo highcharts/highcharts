@@ -62,6 +62,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
     dataLabels: {
         crop: false,
+        distance: 0,
         formatter: function (): string { // #2945
             const { numberFormatter } = this.series.chart;
             const { value } = this.point as MapPoint;
