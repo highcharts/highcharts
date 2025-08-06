@@ -296,17 +296,6 @@ abstract class Cell {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace Cell {
-
-}
-
-
-/* *
- *
  *  Default Export
  *
  * */
