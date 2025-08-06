@@ -182,7 +182,9 @@ class FilterModifier extends DataModifier {
      * */
 
     /**
-     * Replaces table rows with filtered rows.
+     * Filters out table rows matching a given condition. If the given table
+     * does not have defined a `modified` property, the filtering is applied
+     * in-place on the original table rather than on a `modified` copy.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -191,12 +193,13 @@ class FilterModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * Table with `modified` property as a reference.
+     * Table with `modified` property as a reference or modified table, if
+     * `modified` property of the original table is undefined.
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
+    public override modifyTable(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
@@ -209,7 +212,6 @@ class FilterModifier extends DataModifier {
 
         const matchRow = FilterModifier.compile(condition);
 
-        // This line should be investigated further when reworking Data Layer.
         const modified = table.getModified();
 
         const rows: DataTable.RowObject[] = [];
