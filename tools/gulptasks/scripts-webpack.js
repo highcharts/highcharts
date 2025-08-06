@@ -3,6 +3,7 @@
  */
 
 
+const FS = require('node:fs');
 const FSP = require('node:fs/promises');
 const Gulp = require('gulp');
 const Path = require('node:path');
@@ -28,10 +29,21 @@ async function scriptsWebpack() {
 
     LogLib.message('Packing code...');
 
-    const configs = {
-        Highcharts: 'highcharts.webpack.mjs',
-        HighchartsES5: 'highcharts-es5.webpack.mjs'
-    };
+    let configs;
+    if (argv.product === 'Grid') {
+        configs = {
+            Grid: 'grid.webpack.mjs'
+        };
+    } else {
+        configs = {
+            Highcharts: 'highcharts.webpack.mjs',
+            HighchartsES5: 'highcharts-es5.webpack.mjs'
+        };
+    }
+
+    if (FS.existsSync('webpack.log')) {
+        await FSP.rm('webpack.log');
+    }
 
     let config;
     let log = '';
@@ -44,8 +56,9 @@ async function scriptsWebpack() {
         }
 
         log += await ProcessLib.exec(
-            `npx webpack -c ${config}`,
+            `npx webpack -c ${config} --no-color`,
             {
+                maxBuffer: 1024 * 1024,
                 silent: argv.verbose ? 1 : 2,
                 timeout: 60000
             }
@@ -53,7 +66,7 @@ async function scriptsWebpack() {
 
     }
 
-    await FSP.writeFile('webpack.log', log);
+    await FSP.writeFile('webpack.log', log, { flag: 'a' }); // 'a' - append
 
     LogLib.success('Finished packing.');
 

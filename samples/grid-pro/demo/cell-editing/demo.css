@@ -1,0 +1,27 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
+.content {
+    padding: 8px;
+}
+
+#changelog:not(:empty) {
+    border-radius: 5px;
+    padding: 10px 15px;
+    border: 1px solid #aaa;
+    max-height: 250px;
+    overflow-y: auto;
+}

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -204,7 +204,7 @@ export interface PackedBubbleSeriesOptions
     sizeBy?: BubbleSizeByValue;
 
     states?: SeriesStatesOptions<PackedBubbleSeries>;
-
+    stickyTracking: false;
     tooltip?: Partial<TooltipOptions>;
 
     /**

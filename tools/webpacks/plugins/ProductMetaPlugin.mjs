@@ -29,7 +29,7 @@ import Webpack from 'webpack';
  * */
 
 
-const HEADER_PATTERN = /\/\*\*[\s]+\*[\s]+@license.*?\*\//su;
+const HEADER_PATTERN = /\/\*!?\*[\s]+\*[\s]+@license[\s\S]*?\*\//gsu;
 
 
 const HOOKS_NAME = 'Highcharts.ProductMetaPlugin';
@@ -76,6 +76,20 @@ export class ProductMetaPlugin {
             options.productName ||
             packageJSON.name
         );
+
+        if (
+            !options.productVersion &&
+            FS.existsSync('build-properties.json')
+        ) {
+            const buildPropertiesJSON =
+                JSON.parse(FS.readFileSync('build-properties.json'));
+
+            options.productVersion = (
+                options.productVersion ||
+                buildPropertiesJSON.version
+            );
+        }
+
         options.productVersion = (
             options.productVersion ||
             packageJSON.version
@@ -127,9 +141,14 @@ export class ProductMetaPlugin {
         const options = this.options;
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
 
+        if (!FS.existsSync(filepath)) {
+            return;
+        }
+
         let content = FS.readFileSync(filepath, 'utf8');
         let productMatch = content.indexOf('@product.');
-        let headerMatch = content.match(HEADER_PATTERN);
+        // Use the last match - should be the one from ts/masters.
+        let headerMatch = [...content.matchAll(HEADER_PATTERN)].at(-1);
 
         if (
             headerMatch?.index < 80 &&

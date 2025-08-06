@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type { BeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
+import type { GoogleSheetsBeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -90,7 +90,7 @@ class GoogleSheetsConverter extends DataConverter {
      *
      * */
 
-    private columns: DataTable.CellType[][];
+    private columns: DataTable.BasicColumn[];
     private header: string[];
 
     /**
@@ -126,7 +126,7 @@ class GoogleSheetsConverter extends DataConverter {
         let columns = ((
             parseOptions.json?.values
         ) || []).map(
-            (column): DataTable.Column => column.slice()
+            (column): DataTable.BasicColumn => column.slice()
         );
 
         if (columns.length === 0) {
@@ -226,7 +226,7 @@ namespace GoogleSheetsConverter {
      * Options that are not compatible with ClassJSON
      */
     export interface SpecialOptions {
-        beforeParse?: BeforeParseCallbackFunction;
+        beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
     }
 
     /**

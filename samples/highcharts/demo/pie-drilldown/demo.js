@@ -20,7 +20,7 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        series: {
+        pie: {
             borderRadius: 5,
             dataLabels: [{
                 enabled: true,
@@ -285,5 +285,15 @@ Highcharts.chart('container', {
                 ]
             }
         ]
+    },
+
+    navigation: {
+        breadcrumbs: {
+            buttonTheme: {
+                style: {
+                    color: 'var(--highcharts-highlight-color-100)'
+                }
+            }
+        }
     }
 });

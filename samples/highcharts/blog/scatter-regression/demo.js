@@ -9,7 +9,6 @@ Highcharts.chart('container', {
         text: 'GDP per capita vs Self-reported Life Satisfaction, 2015'
     },
     subtitle: {
-        useHTML: true,
         text: 'Source: <a href="http://data.worldbank.org/data-catalog/world-development-indicators">Worldbank</a>'
     },
     yAxis: {
@@ -24,7 +23,6 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        useHTML: true,
         headerFormat: null,
         pointFormat: '<b>Country</b>: {point.name}<br><b>GDP per capita</b>: ' +
             '{point.x} $<br/><b>Life satisfaction</b>: {point.y}'

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
@@ -215,6 +215,12 @@ namespace FocusBorderComposition {
         }
 
         this.focusElement = svgElement;
+
+        // #22122, focus border should re-render after window is resized
+        addEvent(this, 'endResize', function (): void {
+            this.renderFocusBorder();
+        });
+
         this.renderFocusBorder();
     }
 

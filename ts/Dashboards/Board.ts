@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,7 +27,6 @@
 import type Component from './Components/Component';
 import type ComponentType from './Components/ComponentType';
 import type DataPoolOptions from '../Data/DataPoolOptions';
-import type JSON from './JSON';
 import type EditMode from './EditMode/EditMode';
 import type Fullscreen from './EditMode/Fullscreen';
 
@@ -35,11 +34,9 @@ import Bindings from './Actions/Bindings.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataCursor from '../Data/DataCursor.js';
-import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
 import DataPool from '../Data/DataPool.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
-import Serializable from './Serializable.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
 import U from '../Core/Utilities.js';
 const {
@@ -82,7 +79,7 @@ const {
  *      }]
  * });
  */
-class Board implements Serializable<Board, Board.JSON> {
+class Board {
 
     /* *
      *
@@ -330,8 +327,13 @@ class Board implements Serializable<Board, Board.JSON> {
         this.initEvents();
 
         if (async) {
-            return Promise.all(componentPromises).then((): Board => this);
+            return Promise.all(componentPromises).then((): Board => {
+                options.events?.mounted?.call(this);
+                return this;
+            });
         }
+
+        options.events?.mounted?.call(this);
 
         return this;
     }
@@ -417,50 +419,38 @@ class Board implements Serializable<Board, Board.JSON> {
     public destroy(): void {
         const board = this;
 
+        // Cancel all data connectors pending requests.
+        this.dataPool.cancelPendingRequests();
+
         // Destroy layouts.
-        for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
-            board.layouts[i].destroy();
+        if (this.guiEnabled) {
+            for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
+                board.layouts[i].destroy();
+            }
+        } else {
+            for (const mountedComponent of board.mountedComponents) {
+                mountedComponent.component.destroy();
+            }
         }
 
         // Remove resizeObserver from the board
         this.resizeObserver?.unobserve(board.container);
 
         // Destroy container.
-        board.container?.remove();
+        if (this.guiEnabled) {
+            board.container?.remove();
+        }
 
         // @ToDo Destroy bindings.
 
         // Delete all properties.
-        objectEach(board, function (val: unknown, key: string): void {
+        objectEach(board, function (val: unknown, key: any): void {
             delete (board as Record<string, any>)[key];
         });
 
         Globals.boards[this.index] = void 0;
 
         return;
-    }
-
-    /**
-     * Export layouts to the local storage.
-     */
-    public exportLocal(): void {
-        localStorage.setItem(
-            // Dashboard.prefix + this.id,
-            Globals.classNamePrefix + '1', // Temporary for demo test
-            JSON.stringify(this.toJSON())
-        );
-    }
-
-    /**
-     * Import the dashboard's layouts from the local storage.
-     *
-     * @param id
-     * The id of the layout to import.
-     *
-     * @returns Returns the imported layout.
-     */
-    public importLayoutLocal(id: string): Layout | undefined {
-        return Layout.importLocal(id, this);
     }
 
     /**
@@ -485,67 +475,11 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Converts the given JSON to a class instance.
-     *
-     * @param json
-     * JSON to deserialize as a class instance or object.
-     *
-     * @returns Returns the class instance or object.
-     */
-    public fromJSON(
-        json: Board.JSON
-    ): Board {
-        const options = json.options,
-            board = new Board(
-                options.containerId,
-                {
-                    componentOptions: options.componentOptions as
-                        Partial<Component.Options>,
-                    dataPool: options.dataPool,
-                    layoutsJSON: options.layouts
-                }
-            );
-
-        board.dataCursor = DataCursorHelper.fromJSON(json.dataCursor);
-
-        return board;
-    }
-
-    /**
-     * Converts the class instance to a class JSON.
-     *
-     * @returns Class JSON of this Dashboard instance.
-     */
-    public toJSON(): Board.JSON {
-        const board = this,
-            layouts = [];
-
-        // Get layouts JSON.
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
-            layouts.push(board.layouts[i].toJSON());
-        }
-
-        return {
-            $class: 'Board',
-            dataCursor: DataCursorHelper.toJSON(board.dataCursor),
-            options: {
-                containerId: board.container.id,
-                dataPool: board.options.dataPool as
-                    DataPoolOptions & JSON.Object,
-                guiEnabled: board.guiEnabled,
-                layouts: layouts,
-                componentOptions: board.options.componentOptions as
-                    Partial<Component.ComponentOptionsJSON>
-            }
-        };
-    }
-
-    /**
      * Convert the current state of board's options into JSON. The function does
      * not support converting functions or events into JSON object.
      *
      * @returns
-     * The JSON of boards's options.
+     * Dashboards options.
      */
     public getOptions(): Globals.DeepPartial<Board.Options> {
         const board = this,
@@ -657,7 +591,7 @@ namespace Board {
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options | Datagrid component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | Datagrid component}
          *
          **/
         components?: Array<Partial<ComponentType['options']>>;
@@ -666,42 +600,9 @@ namespace Board {
          **/
         componentOptions?: Partial<Component.Options>;
         /**
-         * A list of serialized layouts to add to the board.
-         * @internal
-         **/
-        layoutsJSON?: Array<Layout.JSON>;
-    }
-
-    /**
-     * Serialized options to configure the board.
-     * @internal
-     **/
-    export interface OptionsJSON extends JSON.Object {
-        /**
-         * General options for the components in JSON format.
-         **/
-        componentOptions?: Partial<Component.ComponentOptionsJSON>;
-        /**
-         * List of components to add to the board in JSON format.
-         **/
-        components?: Array<Component.ComponentOptionsJSON>;
-        /**
-         * Id of the container to which the board is added.
-         **/
-        containerId: string;
-        /**
-         * Data pool with all of the connectors.
-         **/
-        dataPool?: DataPoolOptions & JSON.Object;
-        /**
-         * An array of serialized layouts options and their elements to add to
-         * the board.
-         **/
-        layouts: Array<Layout.JSON>;
-        /**
-         * Whether the GUI is enabled or not.
-         **/
-        guiEnabled?: boolean;
+         * Events related to the board.
+         */
+        events?: BoardEvents;
     }
 
     export interface GUIOptions {
@@ -724,18 +625,22 @@ namespace Board {
         layouts: Array<Layout.Options>;
     }
 
-    /** @internal */
-    export interface JSON extends Serializable.JSON<'Board'> {
+    /**
+     * Events related to the board.
+     */
+    export interface BoardEvents {
         /**
-         * Serialized data cursor of the board.
-         **/
-        dataCursor: DataCursorHelper.JSON;
-        /**
-         * Serialized options to configure the board.
-         **/
-        options: OptionsJSON;
+         * Callback function to be called after the board and all components are
+         * initialized.
+         */
+        mounted: MountedEventCallback;
     }
 
+
+    /**
+     * Callback function to be called when a board event is triggered.
+     */
+    export type MountedEventCallback = (this: Board) => void;
     /* *
      *
      *  Constants
@@ -757,33 +662,6 @@ namespace Board {
         components: []
     };
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Import layouts from the local storage.
-     *
-     * @returns Returns the Dashboard instance or undefined.
-     */
-    export function importLocal(): (Board | undefined) {
-        const dashboardJSON = localStorage.getItem(
-            // Dashboard.prefix + this.id,
-            Globals.classNamePrefix + '1' // Temporary for demo test
-        );
-
-        if (dashboardJSON) {
-            try {
-                return Serializable
-                    .fromJSON(JSON.parse(dashboardJSON)) as Board;
-            } catch (e) {
-                throw new Error('' + e);
-            }
-        }
-    }
-
 }
 
 /* *
@@ -792,7 +670,6 @@ namespace Board {
  *
  * */
 
-Serializable.registerClassPrototype('Board', Board.prototype);
 ComponentRegistry.registerComponent('HTML', HTMLComponent);
 
 /* *

@@ -1,0 +1,93 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
+#container {
+    margin: 8px;
+    padding: 20px;
+}
+
+.highcharts-description {
+    padding-left: 10px;
+}
+
+.custom-theme,
+.highcharts-light .custom-theme {
+    /* This starts of by defining some custom color variabled */
+    --highlight-color: #e2e2e2;
+    --highlight-border-color: #cec184;
+    --high-color: #348700;
+    --low-color: #d8003a;
+
+    /* The custom variables are then applied to the included theming --hcg variables */
+    --hcg-padding: 10px;
+    --hcg-header-row-border-width: 2px;
+    --hcg-header-row-border-color: var(--highlight-color);
+    --hcg-row-border-width: 1px;
+    --hcg-row-border-color: var(--highlight-color);
+    --hcg-cell-hovered-background: var(--highlight-color);
+    --hcg-cell-hovered-column-border-width: 1px;
+    --hcg-cell-hovered-column-border-color: var(--highlight-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    .custom-theme {
+        --highlight-color: #4c4c4c;
+        --highlight-border-color: #7d754c;
+        --high-color: #98d76a;
+        --low-color: #ffa8a8;
+    }
+}
+
+.highcharts-dark .custom-theme {
+    --highlight-color: #4c4c4c;
+    --highlight-border-color: #7d754c;
+    --high-color: #98d76a;
+    --low-color: #ffa8a8;
+}
+
+.hcg-table th.bold span,
+.hcg-table td.bold {
+    font-weight: bold;
+}
+
+/* We also reuse the custom CSS variables inside the custom CSS classes, and append !important to make sure
+formatting is kept regardless of any hover states etc. */
+.hcg-table tr:has(.highlight-color) td {
+    background: var(--highlight-color) !important;
+}
+
+.hcg-table td.high-color {
+    color: var(--high-color) !important;
+}
+
+.hcg-table td.low-color {
+    color: var(--low-color) !important;
+}
+
+/* We put ALL numbers inside a span to ensure that they all have the same padding, for vertical alignment */
+.hcg-table span.box {
+    font-weight: inherit;
+    display: inline-block;
+    padding: 2px 5px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+
+/* Only numbers greater than 50 receives a background and border */
+.hcg-table span.highlight {
+    background: var(--highlight-color);
+    border-color: var(--highlight-border-color);
+}

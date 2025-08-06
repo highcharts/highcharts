@@ -30,7 +30,7 @@ Instead of downloading, you can use our CDN to access files directly. See [code.
 
 ```HTML
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <link rel="stylesheet" src="https://code.highcharts.com/dashboards/css/dashboards.css">
+    <link rel="stylesheet" href="https://code.highcharts.com/dashboards/css/dashboards.css">
 ```
 
 ### Install from npm

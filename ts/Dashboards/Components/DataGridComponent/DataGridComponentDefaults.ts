@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -37,9 +37,9 @@ const {
  * */
 
 const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
-    dataGridClassName: 'dataGrid-container',
-    dataGridID: 'dataGrid-' + uniqueKey(),
-    dataGridOptions: {},
+    gridClassName: 'dataGrid-container',
+    gridID: 'dataGrid-' + uniqueKey(),
+    gridOptions: {},
     editableOptions: [
         {
             name: 'connectorName',
@@ -54,54 +54,62 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
             propertyPath: ['caption'],
             type: 'input'
         }, {
-            name: 'DataGrid options',
+            name: 'Grid options',
             type: 'nested',
             nestedOptions: [{
                 name: 'General',
                 options: [
                     {
                         name: 'Caption/title',
-                        propertyPath: ['dataGridOptions', 'caption', 'text'],
+                        propertyPath: ['gridOptions', 'caption', 'text'],
                         type: 'input'
                     }, {
-                        name: 'Columns distribution',
+                        name: 'Columns resizing mode',
                         propertyPath:
                             [
-                                'dataGridOptions',
+                                'gridOptions',
                                 'rendering',
                                 'columns',
-                                'distribution'
+                                'resizing',
+                                'mode'
                             ],
                         type: 'select',
                         selectOptions: [{
+                            name: ''
+                        }, {
                             name: 'full'
                         }, {
                             name: 'fixed'
+                        }, {
+                            name: 'mixed'
                         }]
                     }, {
-                        name: 'Editable DataGrid',
+                        name: 'Editable Grid',
                         propertyPath:
                             [
-                                'dataGridOptions',
+                                'gridOptions',
                                 'columnDefaults',
                                 'cells',
-                                'editable'
+                                'editMode',
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {
                         name: 'Resizable columns',
                         propertyPath:
                             [
-                                'dataGridOptions',
-                                'columnDefaults',
-                                'resizing'
+                                'gridOptions',
+                                'rendering',
+                                'columns',
+                                'resizing',
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {
                         name: 'Sortable columns',
                         propertyPath:
                             [
-                                'dataGridOptions',
+                                'gridOptions',
                                 'columnDefaults',
                                 'sorting',
                                 'sortable'
@@ -111,7 +119,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         name: 'Cell text truncation',
                         propertyPath:
                             [
-                                'dataGridOptions',
+                                'gridOptions',
                                 'rendering',
                                 'rows',
                                 'strictHeights'
@@ -121,12 +129,12 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 ]
             }]
         }, {
-            name: 'DataGrid class name',
-            propertyPath: ['dataGridClassName'],
+            name: 'Grid class name',
+            propertyPath: ['gridClassName'],
             type: 'input'
         }, {
-            name: 'DataGrid ID',
-            propertyPath: ['dataGridID'],
+            name: 'Grid ID',
+            propertyPath: ['gridID'],
             type: 'input'
         }
     ],

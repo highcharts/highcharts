@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2025 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -131,6 +131,7 @@ function getDlOptions(
     const point = params.point,
         shape: Partial<SunburstNode.NodeValuesObject> =
             isObject(params.shapeArgs) ? params.shapeArgs : {},
+        { end = 0, radius = 0, start = 0 } = shape,
         optionsPoint = (
             isObject(params.optionsPoint) ?
                 params.optionsPoint.dataLabels :
@@ -143,9 +144,8 @@ function getDlOptions(
                 params.level.dataLabels :
                 {}
         )[0],
-        options = merge<SunburstDataLabelOptions>({
-            style: {}
-        }, optionsLevel, optionsPoint),
+        options = merge<SunburstDataLabelOptions>(optionsLevel, optionsPoint),
+        style = options.style = options.style || {},
         padding: Array<number> = splat(options.padding || 0),
         paddingLeft = padding[3 % padding.length],
         paddingRight = padding[1 % padding.length],
@@ -153,7 +153,9 @@ function getDlOptions(
 
     let rotationRad: (number|undefined),
         rotation: (number|undefined),
-        rotationMode = options.rotationMode;
+        rotationMode = options.rotationMode,
+        width: number|undefined = defined(style.width) ?
+            parseInt(style.width || '0', 10) : void 0;
 
     if (!isNumber(options.rotation)) {
         if (rotationMode === 'auto' || rotationMode === 'circular') {
@@ -167,10 +169,7 @@ function getDlOptions(
                 rotationMode = 'auto';
             }
 
-            if (
-                innerArcLength < 1 &&
-                outerArcLength > (shape.radius as any)
-            ) {
+            if (innerArcLength < 1 && outerArcLength > radius) {
                 rotationRad = 0;
                 // Trigger setTextPath function to get textOutline etc.
                 if (point.dataLabelPath && rotationMode === 'circular') {
@@ -178,10 +177,13 @@ function getDlOptions(
                         enabled: true
                     };
                 }
-            } else if (
-                innerArcLength > 1 &&
-                outerArcLength > 1.5 * (shape.radius as any)
-            ) {
+                // If the slice is less than 180 degrees, set a reasonable width
+                // for fitting into the open slice (#22532)
+                if (end - start < Math.PI) {
+                    width = radius * 0.7;
+                }
+
+            } else if (innerArcLength > 1 && outerArcLength > 1.5 * radius) {
                 if (rotationMode === 'circular') {
                     options.textPath = {
                         enabled: true,
@@ -208,30 +210,22 @@ function getDlOptions(
 
         if (rotationMode !== 'auto' && rotationMode !== 'circular') {
 
-            if (point.dataLabel && point.dataLabel.textPath) {
+            if (point.dataLabel?.textPath) {
                 options.textPath = {
                     enabled: false
                 };
             }
-            rotationRad = (
-                (shape.end as any) -
-                ((shape.end as any) - (shape.start as any)) / 2
-            );
+            rotationRad = end - (end - start) / 2;
         }
 
         if (rotationMode === 'parallel') {
-            (options.style as any).width = Math.min(
-                (shape.radius as any) * 2.5,
+            width = Math.min(
+                radius * 2.5,
                 (outerArcLength + innerArcLength) / 2
             );
         } else {
-            if (
-                !defined((options.style as any).width) &&
-                shape.radius
-            ) {
-                (options.style as any).width = point.node.level === 1 ?
-                    2 * shape.radius :
-                    shape.radius;
+            if (!defined(width) && radius) {
+                width = point.node.level === 1 ? 2 * radius : radius;
             }
         }
 
@@ -240,22 +234,32 @@ function getDlOptions(
             // yet because the label is not rendered. A better approach for this
             // would be to hide the label from the `alignDataLabel` function
             // when the actual line height is known.
-            if (outerArcLength < 16) {
-                (options.style as any).width = 1;
-            } else {
-                (options.style as any).lineClamp = Math.floor(
-                    innerArcLength / 16
-                ) || 1;
+            const h = 16;
+            if (outerArcLength < h) {
+                width = 1;
+            } else if (shape.radius) {
+                style.lineClamp = Math.floor(innerArcLength / h) || 1;
+
+                // When the slice is narrow (< 16px) in the inner end, compute a
+                // safe margin to avoid the label overlapping the border
+                // (#22532)
+                const safeMargin = innerArcLength < h ?
+                    radius * (
+                        (h - innerArcLength) /
+                        (outerArcLength - innerArcLength)
+                    ) :
+                    0;
+                width = radius - safeMargin;
             }
         }
 
         // Apply padding (#8515)
-        (options.style as any).width = Math.max(
-            (options.style as any).width - paddingLeft - paddingRight,
+        width = Math.max(
+            (width || 0) - paddingLeft - paddingRight,
             1
         );
 
-        rotation = ((rotationRad as any) * rad2deg) % 180;
+        rotation = ((rotationRad || 0) * rad2deg) % 180;
         if (rotationMode === 'parallel') {
             rotation -= 90;
         }
@@ -280,15 +284,14 @@ function getDlOptions(
             // Center dataLabel - disable textPath
             options.textPath.enabled = false;
             // Setting width and padding
-            (options.style as any).width = Math.max(
+            width = Math.max(
                 (point.shapeExisting.r * 2) - paddingLeft - paddingRight,
                 1
             );
         } else if (
-            point.dlOptions &&
-            point.dlOptions.textPath &&
+            point.dlOptions?.textPath &&
             !point.dlOptions.textPath.enabled &&
-            (rotationMode === 'circular')
+            rotationMode === 'circular'
         ) {
             // Bring dataLabel back if was a center dataLabel
             options.textPath.enabled = true;
@@ -297,15 +300,16 @@ function getDlOptions(
             // Enable rotation to render text
             options.rotation = 0;
             // Setting width and padding
-            (options.style as any).width = Math.max(
-                ((point.outerArcLength as any) +
-                    (point.innerArcLength as any)) / 2 -
+            width = Math.max(
+                (outerArcLength + innerArcLength) / 2 -
                     paddingLeft - paddingRight,
                 1
             );
-            (options.style as any).whiteSpace = 'nowrap';
+            style.whiteSpace = 'nowrap';
         }
     }
+    style.width = width + 'px';
+
     return options;
 }
 
@@ -505,6 +509,11 @@ class SunburstSeries extends TreemapSeries {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
+
+        // In sunburst dataLabel may be placed, but this should be reset to
+        // make sure the dataLabel can be aligned to a new position (#21913)
+        dataLabel.placed = false;
+
         return super.alignDataLabel.apply(this, arguments);
     }
 

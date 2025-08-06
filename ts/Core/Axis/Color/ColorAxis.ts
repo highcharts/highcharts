@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -361,12 +361,11 @@ class ColorAxis extends Axis implements AxisLike {
 
             // First time only
             if (!axis.added) {
-
                 axis.added = true;
-
-                axis.labelLeft = 0;
-                axis.labelRight = axis.width;
             }
+
+            axis.labelLeft = 0;
+            axis.labelRight = axis.width;
             // Reset it to avoid color axis reserving space
             axis.chart.axisOffset[axis.side] = sideOffset;
         }
@@ -559,8 +558,8 @@ class ColorAxis extends Axis implements AxisLike {
     ): void {
         const axis = this,
             legendItem = axis.legendItem || {},
-            plotX = point && point.plotX,
-            plotY = point && point.plotY,
+            plotX = point?.plotX,
+            plotY = point?.plotY,
             axisPos = axis.pos,
             axisLen = axis.len;
 
@@ -674,7 +673,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.update(newOptions, redraw);
 
-        if (axis.legendItem && axis.legendItem.label) {
+        if (axis.legendItem?.label) {
             axis.setLegendColor();
             legend.colorizeItem(this as any, true);
         }
@@ -912,6 +911,7 @@ namespace ColorAxis {
         legend?: LegendOptions;
         marker?: MarkerOptions;
         showInLegend?: boolean;
+        labelRight?: number;
     }
 
 }

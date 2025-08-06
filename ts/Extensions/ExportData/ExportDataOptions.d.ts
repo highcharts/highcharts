@@ -2,13 +2,16 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
+import Exporting from '../Exporting/Exporting.js';
+import { ExportingButtonsOptions } from '../Exporting/ExportingOptions.js';
 
 /* *
  *
@@ -20,7 +23,7 @@ declare module '../Exporting/ExportingOptions' {
     interface ExportingOptions {
         csv?: ExportingCsvOptions;
         showTable?: boolean;
-        tableCaption?: (boolean|string);
+        tableCaption?: (boolean | string);
         showExportInProgress?: boolean;
     }
 }
@@ -60,17 +63,19 @@ export interface ExportDataOptions {
 
 export interface ExportingCsvOptions {
     annotations?: AnnotationInDataTableOptions;
-    columnHeaderFormatter?: (Function|null);
+    columnHeaderFormatter?: (Function | null);
     dateFormat?: string;
-    decimalPoint?: (string|null);
-    itemDelimiter?: (string|null);
+    decimalPoint?: (string | null);
+    itemDelimiter?: (string | null);
     lineDelimiter?: string;
 }
 
 export interface ExportingOptions {
     csv?: ExportingCsvOptions;
+    buttons?: ExportingButtonsOptions;
+    menuItemDefinitions?: Record<string, Exporting.MenuObject>;
     showTable?: boolean;
-    tableCaption?: (boolean|string);
+    tableCaption?: (boolean | string);
     useMultiLevelHeaders?: boolean;
     useRowspanHeaders?: boolean;
     showExportInProgress?: boolean;

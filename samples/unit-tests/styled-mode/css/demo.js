@@ -21,22 +21,33 @@ QUnit.test('CSS variables should be set', function (assert) {
     );
 
     const styles = getComputedStyle(container);
-    assert.ok(container.classList.contains('highcharts-light'));
+    assert.ok(
+        container.classList.contains('highcharts-light'),
+        'The initial class name'
+    );
 
     assert.strictEqual(
         styles.getPropertyValue('--highcharts-background-color'),
-        '#ffffff'
+        '#ffffff',
+        'The --highcharts-background-color should be set'
     );
 
     container.classList.remove('highcharts-light');
     container.classList.add('highcharts-dark');
 
-    assert.ok(container.classList.contains('highcharts-dark'));
+    assert.ok(
+        container.classList.contains('highcharts-dark'),
+        'The class name should be swapped'
+    );
 
     assert.strictEqual(
         styles.getPropertyValue('--highcharts-background-color'),
-        'rgb(48, 48, 48)'
+        '#141414',
+        'The --highcharts-background-color should be swapped'
     );
+
+    container.classList.remove('highcharts-dark');
+
 });
 
 QUnit.test(
@@ -65,4 +76,5 @@ QUnit.test(
             styles.getPropertyValue('--highcharts-background-color'),
             ''
         );
+        container.classList.remove('highcharts-light');
     });

@@ -352,6 +352,53 @@ QUnit.test('General Navigator tests', function (assert) {
             'disabled and navigator.baseSeries not set (#13114).'
     );
 
+    chart.update({
+        scrollbar: {
+            enabled: true
+        }
+    });
+    const defaultScrollbarMargin = 3;
+    const actualScrollbarNavigatorSpace =
+        chart.scrollbar.renderer.spacingBox.height -
+        chart.navigator.top - chart.navigator.height;
+    assert.strictEqual(
+        actualScrollbarNavigatorSpace,
+        defaultScrollbarMargin,
+        'The space between scrollbar and navigator should be 3px by default'
+    );
+
+    const scrollbarMargin = 10;
+    const navigatorMargin = 20;
+    chart.update({
+        navigator: {
+            margin: navigatorMargin
+        },
+        scrollbar: {
+            margin: scrollbarMargin
+        },
+        xAxis: {
+            visible: false
+        }
+    });
+    const definedScrollbarNavigatorSpace =
+        chart.scrollbar.y - chart.scrollbar.trackBorderWidth -
+        chart.navigator.top - chart.navigator.height;
+    const definedNavigatorAxisSpace =
+        chart.xAxis[0].bottom - (chart.chartHeight - chart.navigator.top);
+
+    assert.strictEqual(
+        definedScrollbarNavigatorSpace,
+        scrollbarMargin,
+        'The space between scrollbar and navigator should match ' +
+            'the defined scrollbar margin'
+    );
+    assert.strictEqual(
+        definedNavigatorAxisSpace,
+        navigatorMargin,
+        'The space between navigator and axis should match ' +
+            'the defined navigator margin'
+    );
+
     chart.xAxis[0].setExtremes(0, 5);
 
     const outlinePathArray = chart.navigator.outline.pathArray;
@@ -1000,6 +1047,25 @@ QUnit.test('Chart update enables navigator (#7067)', function (assert) {
     assert.ok(
         chart.navigator && chart.navigator.navigatorEnabled,
         'Navigator should be enabled.'
+    );
+
+    chart.update({
+        navigator: {
+            adaptToUpdatedData: false,
+            enabled: false
+        }
+    });
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    assert.ok(
+        chart.navigator.series.length,
+        `Navigator series should reappear when reenabling navigator with
+        adaptToUpdatedData: false (#22557).`
     );
 });
 QUnit.test(

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -356,6 +356,11 @@ class PlotLineOrBand {
 
             if (!axis.chart.styledMode) {
                 label.css(merge({
+                    // To allow theming, and in lack of a general place to set
+                    // default options for plot lines and bands, default to the
+                    // title color. If we expose the palette, we should use that
+                    // instead.
+                    color: axis.chart.options.title?.style.color,
                     fontSize: '0.8em',
                     textOverflow: (isBand && !inside) ? '' : 'ellipsis'
                 }, optionsLabel.style));
@@ -380,6 +385,8 @@ class PlotLineOrBand {
             width: bBoxWidth,
             height: arrayMax(yBounds) - y
         });
+
+        label.alignAttr.y -= renderer.fontMetrics(label).b;
 
         if (
             !label.alignValue ||
@@ -989,7 +996,7 @@ export default PlotLineOrBand;
  */
 
 /**
- * Text labels for the plot bands
+ * Text labels for the plot lines
  *
  * @apioption xAxis.plotLines.label
  */
@@ -1007,6 +1014,15 @@ export default PlotLineOrBand;
  * @default    left
  * @since      2.1
  * @apioption  xAxis.plotLines.label.align
+ */
+
+/**
+ * Whether or not the label can be hidden if it overlaps with another label.
+ *
+ * @type      {boolean}
+ * @default   undefined
+ * @since     11.4.8
+ * @apioption xAxis.plotBands.label.allowOverlap
  */
 
 /**

@@ -164,7 +164,7 @@ Highcharts.seriesType(
 ```
 
 **Module**
-The indicator is available as a [indicators/trendline.js](http://code.highcharts.com/stock/indicators/trendline.js) main module.
+The indicator is available as a [indicators/trendline.js](https://code.highcharts.com/stock/indicators/trendline.js) main module.
 
 ### 3. Indicator with multiple lines
 Highcharts Stock offers many already implemented ready-to-use indicators. Some of them are drawn using multiple lines (e.g. Bollinger Bands). In this section, you will learn how to build a custom indicator consisting of 5 lines.
@@ -311,8 +311,8 @@ Example configuration should look like:
 Highcharts.seriesType('customIndicator', 'sma', {}, {
     getValues: function (series) {
         return this.getSum(
-            series.processedXData || series.xData,
-            series.processedYData || series.yData
+            series.getColumn('x', true) || series.xData,
+            series.getColumn('y', true) || series.yData
         );
     },
     calculateOn: {

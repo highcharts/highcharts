@@ -7,7 +7,8 @@
  *  Variables
  *
  **/
-:root {
+:root,
+.highcharts-light {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
     --highcharts-color-0-light: #d7e3f3;
@@ -25,7 +26,7 @@
 
     /* Components */
     --color-title: #000;
-    --component-background: var(--highcharts-neutral-color-0);
+    --component-background: var(--highcharts-background-color);
     --component-background-optional: var(--highcharts-neutral-color-5);
     --component-rounded-corners: 6px;
     --datagrid-border-color: var(--highcharts-neutral-color-20);
@@ -79,7 +80,7 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-    /* dark mode */
+    /* auto dark mode */
     :root {
         /* Others */
         --color-link: #cca;
@@ -108,6 +109,36 @@ body {
     #html-control-div {
         color: #f2f1f4;
     }
+}
+
+/* Explicit dark mode */
+.highcharts-dark {
+    /* Others */
+    --color-link: #cca;
+    --container-background: #2f2e38;
+    --color-title: #c8c7d1;
+
+    /* components */
+    --component-background: #e3e3e8;
+    --component-background-optional: #474554;
+    --datagrid-border-color: var(--component-background-optional);
+}
+
+.highcharts-dark #container {
+    background: var(--container-background);
+}
+
+.highcharts-dark #election-grid {
+    --color-hover-background: #252052;
+}
+
+.highcharts-dark #elections-selector-wrapper select {
+    color: #f2f1f4;
+    background-color: var(--component-background-optional);
+}
+
+.highcharts-dark #html-control-div {
+    color: #f2f1f4;
 }
 
 /**
@@ -472,7 +503,6 @@ text.highcharts-data-label {
 }
 
 /* Custom map tooltip */
-
 #election-map .map-tooltip caption {
     font-size: 13px;
     font-weight: bold;
@@ -578,6 +608,12 @@ text.highcharts-data-label {
     font-size: 1em;
 }
 
+#election-chart-year .datalabels-wrapper {
+    display: inline-block;
+    white-space: normal;
+    width: 200px;
+}
+
 #election-chart-year .highcharts-axis-labels {
     font-size: 1.3em;
     font-weight: bold;
@@ -597,23 +633,6 @@ text.highcharts-data-label {
  *
  **/
 
-#election-grid .highcharts-datagrid-container {
-    border-radius: var(--component-rounded-corners);
-    height: 400px;
-}
-
-#election-grid .highcharts-datagrid-container table {
-    border: 0;
-}
-
-#election-grid .highcharts-datagrid-hovered-row {
-    background-color: var(--color-hover-background);
-}
-
-#election-grid .highcharts-datagrid-hovered-column {
-    background: none;
-}
-
 /* Styling of first row (national results) */
 #election-grid .highcharts-datagrid-row[data-row-index="0"] {
     font-weight: bold;
@@ -621,8 +640,8 @@ text.highcharts-data-label {
     border-bottom: 1px solid #000;
 }
 
-#election-grid .highcharts-datagrid-column-header {
-    border-color: #000;
+#election-grid .highcharts-datagrid-container {
+    height: 400px;
 }
 
 .highcharts-datagrid-row[data-row-index="0"] td {
@@ -741,6 +760,7 @@ text.highcharts-data-label {
     #info-dem2,
     #info-rep2 {
         font-size: 10px;
+        white-space: normal;
     }
 
     #info-dem2 {
@@ -762,7 +782,7 @@ text.highcharts-data-label {
     }
 
     #election-chart-year .datalabels-wrapper {
-        font-size: 0.75em;
+        font-size: 0.65em;
         display: inline-block;
         white-space: normal;
         width: 100px;

@@ -49,10 +49,11 @@ types.
 
 ### Available Connectors
 
-* [Goal Analysis](./goal-analysis.md)
-* [RNANews](./regulatory-news-announcements.md)
-* [Risk Score](./risk-score.md)
-* [TimeSeries](./time-series/time-series.md)
-* [Investment Screener](./screeners/investment-screener.md)
-* [XRay](./x-ray.md)
-* [Security Details](./security-details.md)
+* [Goal Analysis](https://www.highcharts.com/docs/morningstar/goal-analysis)
+* [RNANews](https://www.highcharts.com/docs/morningstar/regulatory-news-announcements)
+* [Risk Score](https://www.highcharts.com/docs/morningstar/risk-score)
+* [TimeSeries](https://www.highcharts.com/docs/morningstar/time-series/time-series)
+* [XRay](https://www.highcharts.com/docs/morningstar/x-ray)
+* [Screener](https://www.highcharts.com/docs/morningstar/screeners/screener)
+* [Security Details](https://www.highcharts.com/docs/morningstar/security-details)
+* [Security Compare](https://www.highcharts.com/docs/morningstar/security-compare)

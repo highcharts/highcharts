@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2024 Paweł Fus
+ *  (c) 2010-2025 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -113,14 +113,25 @@ function onChartLoad(
 
     let mousedownUnbinder: Function,
         mousemoveUnbinder: Function,
-        mouseupUnbinder: Function;
+        mouseupUnbinder: Function,
+        point: DragNodesPoint;
 
     if (chart.container) {
         mousedownUnbinder = addEvent(
             chart.container,
             'mousedown',
             (event: PointerEvent): void => {
-                const point = chart.hoverPoint;
+
+                if (mousemoveUnbinder) {
+                    mousemoveUnbinder();
+                }
+
+                if (mouseupUnbinder) {
+                    mouseupUnbinder();
+                }
+
+                point = chart.hoverPoint;
+
                 if (
                     point &&
                     point.series &&
@@ -172,6 +183,13 @@ function onMouseDown(
     point: DragNodesPoint,
     event: PointerEvent
 ): void {
+    const { panKey } = this.chart.options.chart,
+        panKeyPressed = panKey && event[`${panKey}Key`];
+
+    if (panKeyPressed) {
+        return;
+    }
+
     const normalizedEvent = this.chart.pointer?.normalize(event) || event;
 
     point.fixedPosition = {

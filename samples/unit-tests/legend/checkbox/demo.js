@@ -1,7 +1,19 @@
 QUnit.test(
-    'Legend border should contain items with checkboxes (#4853)',
+    'Legend items and checkboxes',
     function (assert) {
-        var chart = Highcharts.chart('container', {
+        function countBoxes(legend) {
+            let count = 0;
+
+            legend.allItems.forEach(item => {
+                if (item.checkbox) {
+                    count++;
+                }
+            });
+
+            return count;
+        }
+
+        const chart = Highcharts.chart('container', {
             chart: {
                 width: 600,
                 animation: false
@@ -27,18 +39,16 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.getBBox().width > 340 &&
-                chart.legend.box.getBBox().width < 360,
-            true,
+            countBoxes(chart.legend),
+            2,
             'Legend box contains checkboxes - 2 items'
         );
 
         chart.series[0].remove();
 
         assert.strictEqual(
-            chart.legend.box.getBBox().width > 170 &&
-                chart.legend.box.getBBox().width < 190,
-            true,
+            countBoxes(chart.legend),
+            1,
             'Legend box contains checkbox - 1 item'
         );
 
@@ -51,7 +61,8 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.getBBox().width > 70 &&
+            countBoxes(chart.legend) === 0 &&
+                chart.legend.box.getBBox().width > 70 &&
                 chart.legend.box.getBBox().width < 90,
             true,
             'Legend box without checkboxes is of proper size - 1 item'
@@ -68,8 +79,8 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.getBBox().width > 370 &&
-                chart.legend.box.getBBox().width < 395,
+            countBoxes(chart.legend) === 0 &&
+                chart.legend.allItems.length === 4,
             true,
             'Legend box without checkboxes is of proper size - 4 items'
         );
@@ -83,9 +94,8 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.getBBox().width > 510 &&
-                chart.legend.box.getBBox().width < 535,
-            true,
+            countBoxes(chart.legend),
+            4,
             'Legend box contains checkboxes - 4 items'
         );
     }

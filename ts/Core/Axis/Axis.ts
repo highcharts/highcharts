@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -46,7 +46,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TickPositionsArray from './TickPositionsArray';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
+import type Types from '../../Shared/Types';
 
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -215,7 +215,7 @@ class Axis {
     public bottom!: number;
     public categories?: Array<string>;
     public chart!: Chart;
-    public closestPointRange!: number;
+    public closestPointRange?: number;
     public coll!: AxisCollectionKey;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
@@ -620,6 +620,13 @@ class Axis {
 
         this.options = merge(
             sideSpecific,
+            // Merge in the default title for y-axis, which changes with
+            // language settings
+            this.coll === 'yAxis' ? {
+                title: {
+                    text: this.chart.options.lang.yAxisTitle
+                }
+            } : {},
             defaultOptions[this.coll] as AxisOptions,
             userOptions
         );
@@ -663,7 +670,7 @@ class Axis {
                 Math.abs(value) :
                 axis.tickInterval;
 
-        let i = numericSymbols && numericSymbols.length,
+        let i = numericSymbols?.length,
             multi,
             ret: (string|undefined);
 
@@ -868,7 +875,7 @@ class Axis {
                 axis.isOrdinal ||
                 axis.brokenAxis?.hasBreaks ||
                 (axis.logarithmic && handleLog)
-            ) && axis.lin2val;
+            ) && !!axis.lin2val;
 
         let sign = 1,
             cvsOffset = 0,
@@ -1309,7 +1316,7 @@ class Axis {
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
                 closestDataRange = getClosestDistance(
-                    axis.series.map((s): number[]|TypedArray => {
+                    axis.series.map((s): number[]|Types.TypedArray => {
                         const xData = s.getColumn('x');
                         // If xIncrement, we only need to measure the two first
                         // points to get the distance. Saves processing time.
@@ -1618,9 +1625,7 @@ class Axis {
             }
 
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = (
-                axis.ordinal && axis.ordinal.slope && closestPointRange
-            ) ?
+            ordinalCorrection = (axis.ordinal?.slope && closestPointRange) ?
                 axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =
@@ -1638,7 +1643,7 @@ class Axis {
             // The `closestPointRange` is the closest distance between points.
             // In columns it is mostly equal to pointRange, but in lines
             // pointRange is 0 while closestPointRange is some other value
-            if (isXAxis && closestPointRange) {
+            if (isXAxis) {
                 axis.closestPointRange = closestPointRange;
             }
         }
@@ -1959,7 +1964,11 @@ class Axis {
             !axis.series.some((s): boolean|undefined => !s.sorted) ?
                 axis.closestPointRange : 0
         );
-        if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
+        if (
+            !tickIntervalOption &&
+            minTickInterval &&
+            axis.tickInterval < minTickInterval
+        ) {
             axis.tickInterval = minTickInterval;
         }
 
@@ -2194,7 +2203,12 @@ class Axis {
 
         fireEvent(this, 'trimTicks');
 
-        if (!this.isLinked) {
+        if (
+            !this.isLinked ||
+            // Linked non-grid axes should trim ticks, #21743.
+            // Grid axis has custom handling of ticks.
+            !this.grid
+        ) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
                 this.min = roundedMin;
             } else {
@@ -2575,14 +2589,14 @@ class Axis {
             // well:
             isXAxisDirty = (
                 isXAxisDirty ||
-                (series.xAxis && series.xAxis.isDirty) ||
+                series.xAxis?.isDirty ||
                 false
             );
         });
 
         // Set the new axisLength
         axis.setAxisSize();
-        const isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
+        const isDirtyAxisLength = axis.len !== axis.old?.len;
 
         // Do we really need to go through all this?
         if (
@@ -2591,8 +2605,8 @@ class Axis {
             isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
-            axis.userMin !== (axis.old && axis.old.userMin) ||
-            axis.userMax !== (axis.old && axis.old.userMax) ||
+            axis.userMin !== axis.old?.userMin ||
+            axis.userMax !== axis.old?.userMax ||
             axis.alignToOthers()
         ) {
 
@@ -3184,7 +3198,7 @@ class Axis {
         // Apply general and specific CSS
         tickPositions.forEach(function (pos: number): void {
             const tick = ticks[pos],
-                label = tick && tick.label,
+                label = tick?.label,
                 widthOption = labelStyleOptions.width,
                 css: CSSObject = {};
 
@@ -3562,7 +3576,7 @@ class Axis {
                 (axis.axisTitleMargin || 0) + titleOffset +
                 directionFactor * axis.offset,
                 labelOffsetPadded, // #3027
-                tickPositions && tickPositions.length && tickSize ?
+                tickPositions?.length && tickSize ?
                     tickSize[0] + directionFactor * axis.offset :
                     0 // #4866
             );
@@ -3767,7 +3781,7 @@ class Axis {
         if (
             !isLinked ||
             (pos >= (axis.min as any) && pos <= (axis.max as any)) ||
-            (axis.grid && axis.grid.isColumn)
+            axis.grid?.isColumn
         ) {
 
             if (!ticks[pos]) {
@@ -3991,7 +4005,7 @@ class Axis {
 
 
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+        if (stackLabelOptions?.enabled && axis.stacking) {
             axis.stacking.renderStackTotals();
         }
         // End stacked totals
@@ -4133,7 +4147,7 @@ class Axis {
     public drawCrosshair(e?: PointerEvent, point?: Point): void {
 
         const options = this.crosshair,
-            snap = pick(options && options.snap, true),
+            snap = options?.snap ?? true,
             chart = this.chart;
 
         let path,
@@ -4147,7 +4161,7 @@ class Axis {
         // Use last available event when updating non-snapped crosshairs without
         // mouse interaction (#5287)
         if (!e) {
-            e = this.cross && this.cross.e;
+            e = this.cross?.e;
         }
 
         if (
@@ -4193,8 +4207,8 @@ class Axis {
                     // polar chart
                     extend(crossOptions, {
                         isCrosshair: true,
-                        chartX: e && e.chartX,
-                        chartY: e && e.chartY,
+                        chartX: e?.chartX,
+                        chartY: e?.chartY,
                         point: point
                     });
                 }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -50,7 +50,7 @@ declare module '../../Core/Axis/AxisType' {
 }
 
 interface WaterfallAxis extends StackingAxis {
-    waterfall: WaterfallAxis.Composition;
+    waterfall?: WaterfallAxis.Composition;
 }
 
 /* *
@@ -115,7 +115,7 @@ namespace WaterfallAxis {
      */
     function onAxisAfterBuildStacks(this: Axis): void {
         const axis = this as WaterfallAxis,
-            stacks = axis.waterfall.stacks;
+            stacks = axis.waterfall?.stacks;
 
         if (stacks) {
             stacks.changed = false;
@@ -131,8 +131,8 @@ namespace WaterfallAxis {
             stackLabelOptions = axis.options.stackLabels;
 
         if (
-            stackLabelOptions && stackLabelOptions.enabled &&
-            axis.waterfall.stacks
+            stackLabelOptions?.enabled &&
+            axis.waterfall?.stacks
         ) {
             axis.waterfall.renderStackTotals();
         }
@@ -159,7 +159,7 @@ namespace WaterfallAxis {
         for (const serie of series) {
             if (serie.options.stacking) {
                 for (const axis of axes) {
-                    if (!axis.isXAxis) {
+                    if (!axis.isXAxis && axis.waterfall) {
                         axis.waterfall.stacks.changed = true;
                     }
                 }
@@ -214,10 +214,8 @@ namespace WaterfallAxis {
          */
         public renderStackTotals(): void {
             const yAxis = this.axis,
-                waterfallStacks = yAxis.waterfall.stacks,
-                stackTotalGroup = (
-                    yAxis.stacking && yAxis.stacking.stackTotalGroup
-                ),
+                waterfallStacks = yAxis.waterfall?.stacks,
+                stackTotalGroup = yAxis.stacking?.stackTotalGroup,
                 dummyStackItem = new StackItem(
                     yAxis,
                     yAxis.options.stackLabels || {},

@@ -58,7 +58,7 @@ QUnit.test('Symbol tests', function (assert) {
                     // With explicit size
                     symbol2 = ren
                         .symbol(
-                            url.replace(')', '?' + Date.now() + ')'),
+                            url.replace(')', '?svgr_' + Date.now() + ')'),
                             200,
                             100,
                             null,
@@ -168,6 +168,46 @@ QUnit.test('Arc', assert => {
         path[1][2],
         0,
         '#15382: Y radius should be 0'
+    );
+
+    const ren = new Highcharts.Renderer(
+            document.getElementById('container'),
+            400,
+            400
+        ),
+        arcBox = ren.path({
+            d: ren.symbols.arc(150, 150, 150, 150, {
+                r: 150,
+                end: Math.PI * 2 - 1.1,
+                start: -1.1
+            })
+        }).attr({
+            stroke: 'black'
+        }).add().getBBox();
+
+    assert.close(
+        arcBox.y,
+        0,
+        0.001,
+        'Arc with changed start and end angle should create a correct circle.'
+    );
+    assert.close(
+        arcBox.x,
+        0,
+        0.001,
+        'Arc with changed start and end angle should create a correct circle.'
+    );
+    assert.close(
+        arcBox.width,
+        300,
+        0.001,
+        'Arc with changed start and end angle should create a correct circle.'
+    );
+    assert.close(
+        arcBox.height,
+        300,
+        0.001,
+        'Arc with changed start and end angle should create a correct circle.'
     );
 });
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -321,6 +321,7 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
+    public dataLabelsGroup?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -371,6 +372,7 @@ class Chart {
     public xAxis!: Array<AxisType>;
     public yAxis!: Array<AxisType>;
     public zooming!: ChartZoomingOptions;
+    public zoomClipRect?: SVGElement;
 
     /* *
      *
@@ -516,12 +518,15 @@ class Chart {
              * @name Highcharts.Chart#time
              * @type {Highcharts.Time}
              */
-            this.time = new Time(extend(
-                options.time || {},
-                {
-                    locale: this.locale
-                }
-            ));
+            this.time = new Time(
+                extend(
+                    options.time || {},
+                    {
+                        locale: this.locale
+                    }
+                ),
+                options.lang
+            );
             options.time = this.time.options;
 
             /**
@@ -710,6 +715,48 @@ class Chart {
                 }
             }
         }
+    }
+
+    /**
+     * Get the clipping for a series. Could be called for a series to initialate
+     * animating the clip or to set the final clip (only width and x).
+     *
+     * @private
+     * @function Highcharts.Chart#getClipBox
+     */
+    public getClipBox(series?: Series, chartCoords?: boolean): BBoxObject {
+
+        const inverted = this.inverted,
+            { xAxis, yAxis } = series || {};
+
+        // If no axes on the series, or series undefined, use global clipBox
+        let { x, y, width, height } = merge(this.clipBox);
+
+        if (series) {
+            // Otherwise, use clipBox.width which is corrected for
+            // plotBorderWidth and clipOffset
+            if (xAxis && xAxis.len !== this.plotSizeX) {
+                width = xAxis.len;
+            }
+
+            if (yAxis && yAxis.len !== this.plotSizeY) {
+                height = yAxis.len;
+            }
+
+            // If the chart is inverted and the series is not invertible, the
+            // chart clip box should be inverted, but not the series clip box
+            // (#20264)
+            if (inverted && !series.invertible) {
+                [width, height] = [height, width];
+            }
+        }
+
+        if (chartCoords) {
+            x += (inverted ? yAxis : xAxis)?.pos ?? this.plotLeft;
+            y += (inverted ? xAxis : yAxis)?.pos ?? this.plotTop;
+        }
+
+        return { x, y, width, height };
     }
 
     /**
@@ -1338,7 +1385,7 @@ class Chart {
                         },
                         descOptions
                     ),
-                    width = descOptions.width || (
+                    width = (descOptions.width || (
                         (
                             uncappedScale > minScale ?
                                 // One line
@@ -1346,7 +1393,7 @@ class Chart {
                                 // Allow word wrap
                                 alignTo.width
                         ) / scale
-                    );
+                    )) + 'px';
 
                 // No animation when switching alignment
                 if (desc.alignValue !== alignAttr.align) {
@@ -1355,7 +1402,7 @@ class Chart {
                 // Set the width and read the height
                 const height = Math.round(
                     desc
-                        .css({ width: `${width}px` })
+                        .css({ width })
                         // Skip the cache for HTML (#3481, #11666)
                         .getBBox(descOptions.useHTML).height
                 );
@@ -1529,7 +1576,7 @@ class Chart {
             tempStyle: CSSObject;
 
         if (!revert) {
-            while (node && node.style) {
+            while (node?.style) {
 
                 // When rendering to a detached node, it needs to be temporarily
                 // attached in order to read styling and bounding boxes (#5783,
@@ -1571,7 +1618,7 @@ class Chart {
                 }
             }
         } else {
-            while (node && node.style) {
+            while (node?.style) {
                 if ((node as any).hcOrigStyle) {
                     css(node, (node as any).hcOrigStyle);
                     delete (node as any).hcOrigStyle;
@@ -1725,7 +1772,7 @@ class Chart {
             chartHeight,
             void 0,
             optionsChart.forExport,
-            options.exporting && options.exporting.allowHTML,
+            options.exporting?.allowHTML,
             chart.styledMode
         ) as Chart.Renderer;
 
@@ -1779,7 +1826,7 @@ class Chart {
         }
 
         // Adjust for legend
-        if (this.legend && this.legend.display) {
+        if (this.legend?.display) {
             this.legend.adjustMargins(margin, spacing);
         }
 
@@ -1812,7 +1859,7 @@ class Chart {
         if (chart.hasCartesianSeries) {
             getOffset(chart.axes);
 
-        } else if (colorAxis && colorAxis.length) {
+        } else if (colorAxis?.length) {
             getOffset(colorAxis);
         }
 
@@ -1869,7 +1916,7 @@ class Chart {
         // Width and height checks for display:none. Target is doc in Opera
         // and win in Firefox, Chrome and IE9.
         if (
-            !chart.isPrinting &&
+            !chart.exporting?.isPrinting &&
             !chart.isResizing &&
             oldBox &&
             // When fired by resize observer inside hidden container
@@ -2085,9 +2132,7 @@ class Chart {
          */
         chart.plotWidth = plotWidth = Math.max(
             0,
-            Math.round(
-                (chartWidth as any) - plotLeft - (chart.marginRight as any)
-            )
+            Math.round(chartWidth - plotLeft - (chart.marginRight ?? 0))
         );
 
         /**
@@ -2098,9 +2143,7 @@ class Chart {
          */
         chart.plotHeight = plotHeight = Math.max(
             0,
-            Math.round(
-                (chartHeight as any) - plotTop - (chart.marginBottom as any)
-            )
+            Math.round(chartHeight - plotTop - (chart.marginBottom ?? 0))
         );
 
         chart.plotSizeX = inverted ? plotHeight : plotWidth;
@@ -2110,8 +2153,8 @@ class Chart {
         chart.spacingBox = renderer.spacingBox = {
             x: spacing[3],
             y: spacing[0],
-            width: (chartWidth as any) - spacing[3] - spacing[1],
-            height: (chartHeight as any) - spacing[0] - spacing[2]
+            width: chartWidth - spacing[3] - spacing[1],
+            height: chartHeight - spacing[0] - spacing[2]
         };
         chart.plotBox = renderer.plotBox = {
             x: plotLeft,
@@ -2159,7 +2202,7 @@ class Chart {
         const chart = this,
             chartOptions = chart.options.chart,
             plotBorderWidth = chartOptions.plotBorderWidth || 0,
-            halfWidth = plotBorderWidth / 2;
+            halfWidth = Math.round(plotBorderWidth) / 2;
 
         // Create margin and spacing array
         ['margin', 'spacing'].forEach(function splashArrays(
@@ -2338,14 +2381,13 @@ class Chart {
             });
         }
 
-        plotBorder[verb](plotBorder.crisp({
-            x: plotLeft,
-            y: plotTop,
-            width: plotWidth,
-            height: plotHeight
-        }, -plotBorder.strokeWidth())); // #3282 plotBorder should be negative;
+        plotBorder[verb](plotBorder.crisp(
+            plotBox,
+            // #3282 plotBorder should be negative
+            -plotBorder.strokeWidth()
+        ));
 
-        // reset
+        // Reset
         chart.isDirtyBox = false;
 
         fireEvent(this, 'afterDrawChartBox');
@@ -2390,7 +2432,7 @@ class Chart {
             // Requires it
 
             // 4. Check if any the chart's series require it
-            i = seriesOptions && seriesOptions.length;
+            i = seriesOptions?.length;
             while (!value && i--) {
                 klass = seriesTypes[seriesOptions[i].type as any];
                 if (klass && (klass.prototype as any)[key]) {
@@ -2604,17 +2646,20 @@ class Chart {
         if (chart.hasCartesianSeries) {
             renderAxes(axes);
 
-        } else if (colorAxis && colorAxis.length) {
+        } else if (colorAxis?.length) {
             renderAxes(colorAxis);
         }
 
         // The series
-        if (!chart.seriesGroup) {
-            chart.seriesGroup = renderer.g('series-group')
-                .attr({ zIndex: 3 })
-                .shadow(chart.options.chart.seriesGroupShadow)
-                .add();
-        }
+        chart.seriesGroup ||= renderer.g('series-group')
+            .attr({ zIndex: 3 })
+            .shadow(chart.options.chart.seriesGroupShadow)
+            .add();
+
+        chart.dataLabelsGroup ||= renderer.g('datalabels-group')
+            .attr({ zIndex: 6 })
+            .add();
+
         chart.renderSeries();
 
         // Credits
@@ -2709,7 +2754,7 @@ class Chart {
             axes = chart.axes,
             series = chart.series,
             container = chart.container,
-            parentNode = container && container.parentNode;
+            parentNode = container?.parentNode;
 
         let i: number;
 
@@ -2736,9 +2781,7 @@ class Chart {
         }
 
         // Destroy scroller & scroller series before destroying base series
-        if (this.scroller && this.scroller.destroy) {
-            this.scroller.destroy();
-        }
+        this.scroller?.destroy?.();
 
         // Destroy each series
         i = series.length;
@@ -2752,12 +2795,8 @@ class Chart {
             'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits',
             'pointer', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip',
             'renderer'
-        ].forEach(function (name: string): void {
-            const prop = (chart as any)[name];
-
-            if (prop && prop.destroy) {
-                (chart as any)[name] = prop.destroy();
-            }
+        ].forEach((name: string): void => {
+            (chart as any)[name] = (chart as any)[name]?.destroy?.();
         });
 
         // Remove container and all SVG, check container as it can break in IE
@@ -2883,7 +2922,7 @@ class Chart {
             this.renderer.boxWrapper.attr({
                 role: 'img',
                 'aria-label': (
-                    (title && title.element.textContent) || ''
+                    title?.element.textContent || ''
                 // #17753, < is not allowed in SVG attributes
                 ).replace(/</g, '&lt;')
             });
@@ -3500,7 +3539,7 @@ class Chart {
         }
 
         // Update size. Redraw is forced.
-        const newWidth = optionsChart && optionsChart.width;
+        const newWidth = optionsChart?.width;
         const newHeight = optionsChart && (
             isString(optionsChart.height) ?
                 relativeLength(
@@ -3717,12 +3756,14 @@ class Chart {
             } = params,
             { inverted, time } = this;
 
-        let hasZoomed = false,
-            displayButton: boolean|undefined,
-            isAnyAxisPanning: true|undefined;
-
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
+
+        fireEvent(this, 'transform', params);
+
+        let hasZoomed = params.hasZoomed || false,
+            displayButton: boolean|undefined,
+            isAnyAxisPanning: true|undefined;
 
         for (const axis of axes) {
             const {
@@ -3757,29 +3798,25 @@ class Chart {
                 continue;
             }
 
-            let newMin = axis.toValue(minPx, true) +
-                // Don't apply offset for selection (#20784)
-                    (
-                        selection || axis.isOrdinal ?
-                            0 : minPointOffset * pointRangeDirection
-                    ),
-                newMax =
-                    axis.toValue(
-                        minPx + len / scale, true
-                    ) -
-                    (
-                        // Don't apply offset for selection (#20784)
-                        selection || axis.isOrdinal ?
-                            0 :
-                            (
-                                (minPointOffset * pointRangeDirection) ||
-                                // Polar zoom tests failed when this was not
-                                // commented:
-                                // (axis.isXAxis && axis.pointRangePadding) ||
-                                0
-                            )
-                    ),
+            // Adjust offset to ensure selection zoom triggers correctly
+            // (#22945)
+            const offset = (axis.chart.polar || axis.isOrdinal) ?
+                    0 :
+                    (minPointOffset * pointRangeDirection || 0),
+                eventMin = axis.toValue(minPx, true),
+                eventMax = axis.toValue(minPx + len / scale, true);
+
+            let newMin = eventMin + offset,
+                newMax = eventMax - offset,
                 allExtremes = axis.allExtremes;
+
+            if (selection) {
+                selection[axis.coll as 'xAxis' | 'yAxis'].push({
+                    axis,
+                    min: Math.min(eventMin, eventMax),
+                    max: Math.max(eventMin, eventMax)
+                });
+            }
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
@@ -3869,12 +3906,7 @@ class Chart {
             // It is not necessary to calculate extremes on ordinal axis,
             // because they are already calculated, so we don't want to override
             // them.
-            if (
-                !axis.isOrdinal ||
-                axis.options.overscroll || // #21316
-                scale !== 1 ||
-                reset
-            ) {
+            if (!axis.isOrdinal || scale !== 1 || reset) {
                 // If the new range spills over, either to the min or max,
                 // adjust it.
                 if (newMin < floor) {
@@ -3936,6 +3968,16 @@ class Chart {
                     }
 
                     hasZoomed = true;
+                }
+
+                // Show the resetZoom button for non-cartesian series,
+                // except when triggered by mouse wheel zoom
+                if (
+                    !this.hasCartesianSeries &&
+                    !reset &&
+                    trigger !== 'mousewheel'
+                ) {
+                    displayButton = true;
                 }
 
                 if (event) {
@@ -4122,6 +4164,7 @@ namespace Chart {
         selection?: Pointer.SelectEventObject;
         from?: Partial<BBoxObject>;
         trigger?: string;
+        hasZoomed?: boolean;
     }
 
     export interface CreateAxisOptionsObject {

@@ -11,8 +11,8 @@ const gaugeOptions = {
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor:
-                Highcharts.defaultOptions.legend.backgroundColor || '#fafafa',
+            backgroundColor: 'var(--highcharts-neutral-color-3, #fafafa)',
+            borderColor: 'var(--highcharts-neutral-color-20, #ccc)',
             borderRadius: 5,
             innerRadius: '60%',
             outerRadius: '100%',
@@ -52,8 +52,7 @@ const gaugeOptions = {
             borderRadius: 3,
             dataLabels: {
                 y: 5,
-                borderWidth: 0,
-                useHTML: true
+                borderWidth: 0
             }
         }
     }

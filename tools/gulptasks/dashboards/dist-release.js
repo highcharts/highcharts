@@ -65,22 +65,15 @@ async function distRelease() {
     });
 
     // Remove deprecated files and folders
-    fsLib.deleteDirectory(
-        path.join(distRepository, 'es-modules', 'Core'),
-        true
-    );
+    fsLib.deleteDirectory(path.join(distRepository, 'es-modules', 'Core'));
 
-    fsLib.deleteDirectory(
-        path.join(distRepository, 'css', 'dashboards'),
-        true
-    );
+    fsLib.deleteDirectory(path.join(distRepository, 'es-modules', 'DataGrid'));
 
-    fsLib.deleteDirectory(path.join(distRepository, 'examples'), true);
+    fsLib.deleteDirectory(path.join(distRepository, 'css', 'dashboards'));
 
-    fsLib.deleteDirectory(
-        path.join(distRepository, 'gfx', 'dashboards-icons'),
-        true
-    );
+    fsLib.deleteDirectory(path.join(distRepository, 'examples'));
+
+    fsLib.deleteDirectory(path.join(distRepository, 'gfx', 'dashboards-icons'));
 
     // Copy build/dist into repository
 

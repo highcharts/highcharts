@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -20,9 +20,6 @@ import DG from '../Globals.js';
 
 const PREFIX = DG.classNamePrefix + 'edit-';
 
-/**
- * @internal
- */
 const EditGlobals: EditGlobals = {
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
@@ -68,6 +65,7 @@ const EditGlobals: EditGlobals = {
         toggleSlider: PREFIX + 'toggle-slider',
         toggleWrapperColored: PREFIX + 'toggle-wrapper-colored',
         toggleLabels: PREFIX + 'toggle-labels',
+        labeledToggleWrapper: PREFIX + 'labeled-toggle-wrapper',
         button: PREFIX + 'button',
         sidebarNavButton: PREFIX + 'sidebar-button-nav',
         labelText: PREFIX + 'label-text',
@@ -164,9 +162,6 @@ const EditGlobals: EditGlobals = {
     }
 };
 
-/**
- * @internal
- */
 interface EditGlobals {
     classNames: EditGlobals.ClassNamesOptions;
     lang: EditGlobals.LangOptions;
@@ -258,6 +253,7 @@ namespace EditGlobals {
         toggleSlider: string;
         toggleWrapper: string;
         toggleWrapperColored: string;
+        labeledToggleWrapper: string;
         viewFullscreen: string;
     }
 

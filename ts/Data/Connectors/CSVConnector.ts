@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -25,11 +25,12 @@
 import type DataEvent from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
 import type Types from '../../Shared/Types';
+import type DataTableOptions from '../DataTableOptions';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { merge, defined } = U;
 
 /* *
  *
@@ -69,16 +70,21 @@ class CSVConnector extends DataConnector {
      *
      * @param {CSVConnector.UserOptions} [options]
      * Options for the connector and converter.
+     *
+     * @param {Array<DataTableOptions>} [dataTables]
+     * Multiple connector data tables options.
+     *
      */
     public constructor(
-        options?: CSVConnector.UserOptions
+        options?: CSVConnector.UserOptions,
+        dataTables?: Array<DataTableOptions>
     ) {
         const mergedOptions = merge(CSVConnector.defaultOptions, options);
 
-        super(mergedOptions);
+        super(mergedOptions, dataTables);
 
-        this.converter = new CSVConverter(mergedOptions);
-        this.options = mergedOptions;
+        this.options = defined(dataTables) ?
+            merge(mergedOptions, { dataTables }) : mergedOptions;
 
         if (mergedOptions.enablePolling) {
             this.startPolling(
@@ -102,13 +108,14 @@ class CSVConnector extends DataConnector {
     /**
      * The attached parser, which can be replaced in the constructor
      */
-    public readonly converter: CSVConverter;
+    public converter?: CSVConverter;
 
     /* *
      *
      *  Functions
      *
      * */
+
 
     /**
      * Initiates the loading of the CSV source to the connector
@@ -121,39 +128,64 @@ class CSVConnector extends DataConnector {
      */
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
-            converter = connector.converter,
-            table = connector.table,
+            tables = connector.dataTables,
             {
                 csv,
                 csvURL,
-                dataModifier
+                dataModifier,
+                dataTables
             } = connector.options;
 
         connector.emit<CSVConnector.Event>({
             type: 'load',
             csv,
             detail: eventDetail,
-            table
+            tables
         });
 
 
         return Promise
             .resolve(
                 csvURL ?
-                    fetch(csvURL).then(
+                    fetch(csvURL, {
+                        signal: connector?.pollingController?.signal
+                    }).then(
                         (response): Promise<string> => response.text()
                     ) :
                     csv || ''
             )
             .then((csv): Promise<string> => {
                 if (csv) {
-                    // If already loaded, clear the current rows
-                    table.deleteColumns();
-                    converter.parse({ csv });
-                    table.setColumns(converter.getTable().getColumns());
+                    this.initConverters<string>(
+                        csv,
+                        (key): CSVConverter => {
+                            const options = this.options;
+                            const tableOptions = dataTables?.find(
+                                (dataTable): boolean => dataTable.key === key
+                            );
+
+                            // Takes over the connector default options.
+                            const mergedTableOptions = {
+                                dataTableKey: key,
+                                firstRowAsNames:
+                                    tableOptions?.firstRowAsNames ??
+                                    options.firstRowAsNames,
+                                beforeParse: tableOptions?.beforeParse ??
+                                    options.beforeParse
+                            };
+
+                            return new CSVConverter(
+                                merge(this.options, mergedTableOptions)
+                            );
+                        },
+                        (converter, data): void => {
+                            converter.parse({ csv: data });
+                        }
+                    );
                 }
+
                 return connector
-                    .setModifierOptions(dataModifier)
+                    .setModifierOptions(dataModifier, dataTables)
                     .then((): string => csv);
             })
             .then((csv): this => {
@@ -161,7 +193,7 @@ class CSVConnector extends DataConnector {
                     type: 'afterLoad',
                     csv,
                     detail: eventDetail,
-                    table
+                    tables
                 });
                 return connector;
             })['catch']((error): never => {
@@ -169,7 +201,7 @@ class CSVConnector extends DataConnector {
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table
+                    tables
                 });
                 throw error;
             });
@@ -214,12 +246,9 @@ namespace CSVConnector {
     }
 
     /**
-     * Available options for constructor and converter of the CSVConnector.
+     * Available options for constructor of the CSVConnector.
      */
-    export type UserOptions = (
-        Types.DeepPartial<CSVConnectorOptions>&
-        CSVConverter.UserOptions
-    );
+    export type UserOptions = Types.DeepPartial<CSVConnectorOptions>;
 
 }
 

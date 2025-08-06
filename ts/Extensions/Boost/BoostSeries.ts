@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2025 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -31,7 +31,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
+import type Types from '../../Shared/Types';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import BoostableMap from './BoostableMap.js';
@@ -65,6 +65,7 @@ const {
     defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 
 /* *
  *
@@ -201,6 +202,7 @@ function boostEnabled(chart: Chart): boolean {
 function compose<T extends typeof Series>(
     SeriesClass: T,
     seriesTypes: typeof SeriesRegistry.seriesTypes,
+    PointClass: typeof Point,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
     if (pushUnique(composed, 'Boost.Series')) {
@@ -235,6 +237,28 @@ function compose<T extends typeof Series>(
         ).forEach((method): void =>
             wrapSeriesFunctions(seriesProto, seriesTypes, method)
         );
+        wrap(
+            PointClass.prototype,
+            'firePointEvent',
+            function (
+                this: typeof PointClass.prototype,
+                proceed,
+                type,
+                e
+            ): boolean | undefined {
+                if (type === 'click' && this.series.boosted) {
+                    const point = e.point;
+
+                    if (
+                        (point.dist || point.distX) >= (
+                            point.series.options.marker?.radius ?? 10
+                        )
+                    ) {
+                        return;
+                    }
+                }
+                return proceed.apply(this, [].slice.call(arguments, 1));
+            });
 
         // Set default options
         Boostables.forEach((type: string): void => {
@@ -588,7 +612,7 @@ function destroyGraphics(
  * Set to true to skip timeouts.
  */
 function eachAsync(
-    arr: Array<unknown>|TypedArray,
+    arr: Array<unknown>|Types.TypedArray,
     fn: Function,
     finalFunc: Function,
     chunkSize?: number,
@@ -769,7 +793,7 @@ function hasExtremes(
  */
 const getSeriesBoosting = (
     series: BoostSeriesComposition,
-    data?: Array<(PointOptions|PointShortOptions)>|TypedArray
+    data?: Array<(PointOptions|PointShortOptions)>|Types.TypedArray
 ): boolean => {
     // Check if will be grouped.
     if (series.forceCrop) {
@@ -800,7 +824,7 @@ function onSeriesDestroy(
         chart.boost &&
         chart.boost.markerGroup === series.markerGroup
     ) {
-        series.markerGroup = null as any;
+        series.markerGroup = void 0;
     }
 
     if (chart.hoverPoints) {
@@ -812,7 +836,7 @@ function onSeriesDestroy(
     }
 
     if (chart.hoverPoint && chart.hoverPoint.series === series) {
-        chart.hoverPoint = null as any;
+        chart.hoverPoint = void 0;
     }
 }
 
@@ -874,7 +898,8 @@ function getPoint(
         return boostPoint as BoostPointComposition;
     }
 
-    const isScatter = series.is('scatter'),
+    const data = seriesOptions.data,
+        isScatter = series.is('scatter'),
         xData = (
             (isScatter && series.getColumn('x', true).length ?
                 series.getColumn('x', true) :
@@ -889,15 +914,33 @@ function getPoint(
             seriesOptions.yData ||
             false
         ),
+        pointIndex = boostPoint.i,
         point = new PointClass(
             series as BoostSeriesComposition,
             (isScatter && xData && yData) ?
-                [xData[boostPoint.i], yData[boostPoint.i]] :
+                [xData[pointIndex], yData[pointIndex]] :
                 (
-                    isArray(series.options.data) ? series.options.data : []
+                    isArray(data) ? data : []
                 )[boostPoint.i],
-            xData ? xData[boostPoint.i] : void 0
+            xData ? xData[pointIndex] : void 0
         ) as BoostPointComposition;
+
+    if (
+        isScatter &&
+        seriesOptions?.keys?.length
+    ) {
+        const keys = seriesOptions.keys;
+
+        // Don't reassign X and Y properties as they're already handled above
+        for (
+            let keysIndex = keys.length - 1;
+            keysIndex > -1;
+            keysIndex--
+        ) {
+            (point as any)[keys[keysIndex]] =
+                (data as any)[pointIndex][keysIndex];
+        }
+    }
 
     point.category = pick(
         xAxis.categories ?
@@ -911,7 +954,7 @@ function getPoint(
     point.distX = boostPoint.distX;
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
-    point.index = boostPoint.i;
+    point.index = pointIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
     return point;
@@ -1045,6 +1088,11 @@ function scatterProcessData(
     series.cropped = cropped;
     series.cropStart = 0;
     // For boosted points rendering
+    if (cropped && series.dataTable.modified === series.dataTable) {
+        // Calling setColumns with cropped data must be done on a new instance
+        // to avoid modification of the original (complete) data
+        series.dataTable.modified = new DataTableCore();
+    }
     series.dataTable.modified.setColumns({
         x: processedXData,
         y: processedYData
@@ -1093,14 +1141,16 @@ function seriesRenderCanvas(this: Series): void {
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
             (
-                this.getColumn('x', true).length ?
-                    this.getColumn('x', true) :
+                this.getColumn('x').length ?
+                    this.getColumn('x') :
                     void 0
             ) ||
             this.options.xData ||
             this.getColumn('x', true)
         ),
-        lineWidth = pick(options.lineWidth, 1);
+        lineWidth = pick(options.lineWidth, 1),
+        nullYSubstitute = options.nullInteraction && yMin,
+        tooltip = chart.tooltip;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1110,6 +1160,32 @@ function seriesRenderCanvas(this: Series): void {
         minI: (number|undefined),
         maxI: (number|undefined);
 
+    // Clear mock points and tooltip after zoom (#20330)
+    if (!this.boosted) {
+        return;
+    }
+
+    this.points?.forEach((point: Point): void => {
+        point?.destroyElements?.();
+    });
+    this.points = [];
+
+    if (tooltip && !tooltip.isHidden) {
+        const isSeriesHovered =
+            chart.hoverPoint?.series === this ||
+            chart.hoverPoints?.some(
+                (point: Point): boolean => point.series === this
+            );
+
+        if (isSeriesHovered) {
+            chart.hoverPoint = chart.hoverPoints = void 0;
+            tooltip.hide(0);
+        }
+    } else if (chart.hoverPoints) {
+        chart.hoverPoints = chart.hoverPoints.filter(
+            (point: Point): boolean => point.series !== this
+        );
+    }
 
     // When touch-zooming or mouse-panning, re-rendering the canvas would not
     // perform fast enough. Instead, let the axes redraw, but not the series.
@@ -1268,7 +1344,7 @@ function seriesRenderCanvas(this: Series): void {
         const chartDestroyed = typeof chart.index === 'undefined';
 
         let x: number,
-            y: number,
+            y,
             clientX,
             plotY,
             percentage,
@@ -1285,7 +1361,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData?.[i] as any;
+                y = yData[i] ?? nullYSubstitute ?? null;
             }
 
             // Resolve low and high for range series
@@ -1533,8 +1609,9 @@ function wrapSeriesProcessData(
     this: Series,
     proceed: Function
 ): void {
-    let dataToMeasure: (PointOptions|PointShortOptions)[]|TypedArray|undefined =
-        this.options.data;
+    let dataToMeasure: (
+        PointOptions|PointShortOptions
+    )[]|Types.TypedArray|undefined = this.options.data;
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
@@ -1566,7 +1643,7 @@ function wrapSeriesProcessData(
             }
 
             // Extra check for zoomed scatter data
-            if (isScatter && !series.yAxis.treeGrid) {
+            if (isScatter && series.yAxis.type !== 'treegrid') {
                 scatterProcessData.call(series, arguments[1]);
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));

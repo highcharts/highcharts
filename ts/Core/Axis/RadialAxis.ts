@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -54,6 +54,7 @@ const {
     pick,
     pushUnique,
     relativeLength,
+    splat,
     wrap
 } = U;
 
@@ -321,7 +322,7 @@ namespace RadialAxis {
             ) {
                 return this.tickPositions
                     .map((pos: number): (SVGElement|undefined) =>
-                        this.ticks[pos] && this.ticks[pos].label
+                        this.ticks[pos]?.label
                     )
                     .filter((label: (SVGElement|undefined)): boolean =>
                         Boolean(label)
@@ -627,10 +628,9 @@ namespace RadialAxis {
             chart = this.chart,
             inverted = chart.inverted,
             reverse = options.reverse,
-
-            background = this.pane.options.background ?
-                (this.pane.options.background[0] ||
-                    this.pane.options.background) :
+            backgroundOption = this.pane.options.background,
+            background = backgroundOption ?
+                splat(backgroundOption)[0] :
                 {},
             innerRadius = background.innerRadius || '0%',
             outerRadius = background.outerRadius || '100%',
@@ -869,7 +869,7 @@ namespace RadialAxis {
             options = this.options,
             isHidden = chart.angular && this.isXAxis,
             pane = this.pane,
-            paneOptions = pane && pane.options;
+            paneOptions = pane?.options;
 
         if (!isHidden && pane && (chart.angular || chart.polar)) {
             const fullCircle = Math.PI * 2,
@@ -930,10 +930,7 @@ namespace RadialAxis {
     function onAxisDestroy(
         this: AxisComposition
     ): void {
-        if (
-            this.chart &&
-            this.chart.labelCollectors
-        ) {
+        if (this.chart?.labelCollectors) {
             const index = (
                 this.labelCollector ?
                     this.chart.labelCollectors.indexOf(

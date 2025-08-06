@@ -13,4 +13,10 @@
 }, {
     "url": "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=64.128288&lon=-21.827774",
     "filename": "weather-forecast.json"
+}, {
+    "url": "https://cdn.jsdelivr.net/gh/datasets/s-and-p-500-companies-financials@67dd99e/data/constituents-financials.csv",
+    "filename": "constituents-financials-current.csv"
+}, {
+    "url": "https://cdn.jsdelivr.net/gh/datasets/s-and-p-500-companies-financials@9f63bc5/data/constituents-financials.csv",
+    "filename": "constituents-financials-current.csv"
 }]

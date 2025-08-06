@@ -24,7 +24,6 @@
 
 .inputs-wrapper {
     padding: 12px;
-    background-color: white;
     box-shadow: none;
     margin: 1em;
 }
@@ -34,11 +33,7 @@
     margin-bottom: 10px;
 }
 
-@media (prefers-color-scheme: dark) {
-    .highcharts-point {
-        fill-opacity: 0.9;
-    }
-}
+/* Responsive */
 
 /* LARGE */
 @media (max-width: 1200px) {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -261,6 +261,8 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * @product highstock
      */
     style: {
+        /** @ignore-option */
+        color: Palette.neutralColor100,
         /** @ignore-option */
         fontSize: '0.7em',
         /** @ignore-option */

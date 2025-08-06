@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -112,11 +112,14 @@ abstract class BaseForm {
             this.container
         );
 
-        closeButton.style['background-image' as any] = 'url(' +
-                (
-                    iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
-                        iconsURL : iconsURL + 'close.svg'
-                ) + ')';
+        createElement('span', {
+            className: 'highcharts-icon'
+        }, {
+            backgroundImage: 'url(' + (
+                iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
+                    iconsURL : iconsURL + 'close.svg'
+            ) + ')'
+        }, closeButton);
 
         ['click', 'touchstart'].forEach((eventName: string): void => {
             addEvent(

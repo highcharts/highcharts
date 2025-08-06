@@ -76,6 +76,7 @@ Squarified
 treemaps
 variablepie
 Marimekko
+Mekko
 Archimedian
 behaviour
 tickmarks
@@ -195,3 +196,13 @@ BLGZ
 CUSIP
 MSID
 OHLCV
+indexmundi
+Dataviz
+KIIDs
+SFDR
+Segoe
+sparkline
+sparklines
+preconfigured
+datepicker
+specific

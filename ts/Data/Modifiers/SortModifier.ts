@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -98,6 +98,27 @@ class SortModifier extends DataModifier {
             (b || 0) < (a || 0) ? -1 :
                 (b || 0) > (a || 0) ? 1 :
                     0
+        );
+    }
+
+    private static compareFactory(
+        direction: 'asc'|'desc',
+        customCompare?: (a: DataTable.CellType, b: DataTable.CellType) => number
+    ): ((a: DataTable.CellType, b: DataTable.CellType) => number) {
+        if (customCompare) {
+            if (direction === 'desc') {
+                return (
+                    a: DataTable.CellType,
+                    b: DataTable.CellType
+                ): number => -customCompare(a, b);
+            }
+            return customCompare;
+        }
+
+        return (
+            direction === 'asc' ?
+                SortModifier.ascending :
+                SortModifier.descending
         );
     }
 
@@ -356,13 +377,10 @@ class SortModifier extends DataModifier {
             {
                 direction,
                 orderByColumn,
-                orderInColumn
+                orderInColumn,
+                compare: customCompare
             } = modifier.options,
-            compare = (
-                direction === 'asc' ?
-                    SortModifier.ascending :
-                    SortModifier.descending
-            ),
+            compare = SortModifier.compareFactory(direction, customCompare),
             orderByColumnIndex = columnNames.indexOf(orderByColumn),
             modified = table.modified;
 

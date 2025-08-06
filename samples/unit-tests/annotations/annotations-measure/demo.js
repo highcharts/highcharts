@@ -1,4 +1,107 @@
-// 1
+QUnit.test('General tests for measure annotation', function (assert) {
+    Highcharts.setOptions({
+        annotations: {
+            labelOptions: {
+                borderColor: 'green',
+                backgroundColor: 'green',
+                style: {
+                    color: 'green'
+                }
+            },
+            controlPointOptions: {
+                style: {
+                    fill: 'green',
+                    stroke: 'green'
+                }
+            },
+            shapeOptions: {
+                stroke: 'green',
+                fill: 'green'
+            },
+            types: {
+                measure: {
+                    controlPointOptions: {
+                        style: {
+                            fill: 'lightgreen',
+                            stroke: 'lightgreen'
+                        }
+                    }
+                }
+            }
+        }
+    });
+    const chart = Highcharts.chart('container', {
+        annotations: [{
+            type: 'measure',
+            controlPointOptions: {
+                visible: true
+            },
+            typeOptions: {
+                point: {
+                    x: 0.5,
+                    y: 6
+                },
+                background: {
+                    width: 200 + 'px',
+                    height: 150 + 'px'
+                }
+            }
+        }],
+
+        series: [{
+            data: [
+                5, 2, 1.5, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.annotations[0].controlPoints[0].graphic.visibility,
+        'inherit',
+        `Control point should be visible and setting it should not throw any
+        errors (#21879).`
+    );
+
+    assert.strictEqual(
+        chart.annotations[0].average,
+        3.625,
+        'Average should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].min,
+        1.5,
+        'Min should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].max,
+        6,
+        'Max should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].bins,
+        4,
+        'Bins should be calculated correctly.'
+    );
+
+    assert.strictEqual(
+        chart.container.querySelector(
+            '.highcharts-annotation-shapes .highcharts-measure-crosshair-x'
+        ).getAttribute('fill'),
+        'green',
+        'Shape color should be set according to global options'
+    );
+
+    assert.strictEqual(
+        chart.container.querySelector(
+            '.highcharts-control-points path'
+        ).style.fill,
+        'lightgreen',
+        'Shape color should be set according to global, type-specific options'
+    );
+
+});
+
+
 QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
     var chart = Highcharts.chart('container', {
         xAxis: {
@@ -16,24 +119,22 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
                 height: '50%'
             }
         ],
-        annotations: [
-            {
-                type: 'measure',
-                typeOptions: {
-                    selectType: 'x',
-                    yAxis: 1,
-                    xAxis: 0,
-                    point: {
-                        x: 5,
-                        y: 10
-                    },
-                    background: {
-                        width: 300 + 'px',
-                        height: 150 + 'px'
-                    }
+        annotations: { // Test for single object
+            type: 'measure',
+            typeOptions: {
+                selectType: 'x',
+                yAxis: 1,
+                xAxis: 0,
+                point: {
+                    x: 5,
+                    y: 10
+                },
+                background: {
+                    width: 300 + 'px',
+                    height: 150 + 'px'
                 }
             }
-        ],
+        },
 
         series: [{
             data: [1, 2, 3, 2, 3, 4, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3]

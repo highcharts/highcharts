@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type G from '../../Core/Globals';
 
@@ -23,18 +24,7 @@ import type G from '../../Core/Globals';
  * */
 
 declare global {
-    interface Canvg {
-        fromString(
-            ctx: CanvasRenderingContext2D,
-            svg: string
-        ): Canvg;
-        start(): void;
-    }
-    interface CanvgNamespace {
-        Canvg: Canvg;
-    }
     interface Window {
-        canvg: CanvgNamespace;
         jspdf: jspdf;
         svg2pdf: Function;
     }
@@ -57,6 +47,7 @@ declare global {
     interface JsPDFAPI {
         events: JsPDFEvent[];
     }
+
     class jsPDF {
         static API: JsPDFAPI;
         constructor (a: string, b: string, c: Array<number>);
@@ -67,11 +58,16 @@ declare global {
         addFont(
             postScriptName: string,
             id: string,
-            fontStyle: 'bold'|'bolditalic'|'italic'|'normal',
-            fontWeight?: number|string
+            fontStyle: ('bold' | 'bolditalic' | 'italic' | 'normal'),
+            fontWeight?: (number | string)
         ): void;
         output: Function;
-        setFont(fontFamily: string): void;
+        setFont(
+            fontFamily: string
+        ): void;
+        getFontList(): {
+            HighchartsFont: unknown
+        };
         svg (
             svgElement: SVGElement,
             options: AnyRecord

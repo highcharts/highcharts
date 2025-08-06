@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -113,6 +113,10 @@ declare module './SeriesLike' {
             alignTo?: BBoxObject,
             isNew?: boolean
         ): (boolean|undefined);
+        mergeArrays(
+            one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
+            two: (DataLabelOptions|Array<DataLabelOptions>|undefined)
+        ): (DataLabelOptions|Array<DataLabelOptions>);
         placeDataLabels?(): void;
         setDataLabelStartPos(
             point: ColumnPoint,
@@ -490,6 +494,7 @@ namespace DataLabel {
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
+            seriesProto.mergeArrays = mergeArrays;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
             seriesProto.hasDataLabels = hasDataLabels;
         }
@@ -505,7 +510,8 @@ namespace DataLabel {
             'dataLabelsGroup',
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
-            (this.options.dataLabels as any).zIndex || 6
+            (this.options.dataLabels as any).zIndex || 6,
+            this.chart.dataLabelsGroup
         );
     }
 
@@ -577,7 +583,8 @@ namespace DataLabel {
             // Make the labels for each point
             points.forEach((point): void => {
 
-                const dataLabels = point.dataLabels || [];
+                const dataLabels = point.dataLabels || [],
+                    pointColor = point.color || series.color;
 
                 // Merge in series options for the point.
                 // @note dataLabelAttribs (like pointAttribs) would eradicate
@@ -610,8 +617,8 @@ namespace DataLabel {
                             labelOptions.padding || 0
                         );
 
-                    let formatString,
-                        labelText,
+                    let formatString: string|undefined,
+                        labelText: string|undefined,
                         rotation,
                         attr: SVGAttributes = {},
                         dataLabel: SVGElement|undefined =
@@ -658,6 +665,7 @@ namespace DataLabel {
                                     (
                                         labelBgColor !== 'auto' &&
                                         labelBgColor !== 'contrast' &&
+                                        isString(labelBgColor) &&
                                         labelBgColor
                                     ) ||
                                     (point.color || series.color) as any
@@ -726,7 +734,11 @@ namespace DataLabel {
                         dataLabel && (
                             !labelEnabled ||
                             !defined(labelText) ||
-                            !!dataLabel.div !== !!labelOptions.useHTML ||
+                            // Changed useHTML value
+                            !!(
+                                dataLabel.div ||
+                                dataLabel.text?.foreignObject
+                            ) !== !!labelOptions.useHTML ||
                             (
                                 // Change from no rotation to rotation and
                                 // vice versa. Don't use defined() because
@@ -746,8 +758,11 @@ namespace DataLabel {
                     // Individual labels are disabled if the are explicitly
                     // disabled in the point options, or if they fall outside
                     // the plot area.
-                    if (labelEnabled && defined(labelText)) {
-
+                    if (
+                        labelEnabled &&
+                        defined(labelText) &&
+                        labelText !== ''
+                    ) {
                         if (!dataLabel) {
                             // Create new label element
                             dataLabel = renderer.label(
@@ -836,7 +851,7 @@ namespace DataLabel {
                 while (j--) {
                     // The item can be undefined if a disabled data label is
                     // succeeded by an enabled one (#19457)
-                    if (!dataLabels[j] || !dataLabels[j].isActive) {
+                    if (!dataLabels[j]?.isActive) {
                         dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
                     } else {

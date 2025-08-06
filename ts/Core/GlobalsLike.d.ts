@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -50,6 +50,7 @@ export interface GlobalsLike {
     readonly marginNames: ReadonlyArray<string>;
     readonly nav: Navigator;
     readonly noop: (this: any, ...args: Array<any>) => any;
+    readonly pageLang?: string,
     readonly product: string;
     readonly seriesTypes: SeriesTypeRegistry;
     readonly supportsPassiveEvents: boolean;

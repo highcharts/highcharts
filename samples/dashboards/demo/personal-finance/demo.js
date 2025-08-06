@@ -225,6 +225,9 @@ Dashboards.board('container', {
         dataGridOptions: {
             credits: {
                 enabled: false
+            },
+            rendering: {
+                theme: 'hcg-custom-theme'
             }
         }
     }]

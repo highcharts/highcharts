@@ -69,7 +69,7 @@ function getProducts(logPaths) {
             if (['Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
                 mark('Core');
                 mark('Dashboards');
-            } else if (pathParts[1] === 'DataGrid') {
+            } else if (pathParts[1] === 'Grid') {
                 mark('Dashboards');
             }
         }
