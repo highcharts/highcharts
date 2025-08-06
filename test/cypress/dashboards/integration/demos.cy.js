@@ -9,7 +9,7 @@ const excludeList = [
 describe('Dashboards demos', () => {
     (dashboardsPaths || []).forEach((demoPath) => {
         it(`should not have console errors in ${demoPath}`, () => {
-            if (excludeList.some((el) => el === demoPath)) {
+            if (excludeList.includes(demoPath)) {
                 return;
             }
 
