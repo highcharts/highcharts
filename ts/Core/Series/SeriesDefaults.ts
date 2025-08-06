@@ -1925,7 +1925,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @since 2.2.1
          */
-        padding: [1, 3],
+        padding: [1, 1],
 
         /**
          * Aligns data labels relative to points. If `center` alignment is
