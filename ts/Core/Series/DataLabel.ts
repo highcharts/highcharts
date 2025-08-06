@@ -396,7 +396,7 @@ namespace DataLabel {
             if (justify && alignTo.height >= 0) { // #8830
                 this.justifyDataLabel(
                     dataLabel,
-                    dataLabel.alignOptions || {},
+                    options,
                     dataLabel.alignAttr,
                     bBox,
                     alignTo,
@@ -668,7 +668,7 @@ namespace DataLabel {
                                         isString(labelBgColor) &&
                                         labelBgColor
                                     ) ||
-                                    (point.color || series.color) as any
+                                    (isString(pointColor) ? pointColor : '')
                                 );
 
                                 style.color = (
@@ -883,9 +883,9 @@ namespace DataLabel {
         isNew?: boolean
     ): (boolean|undefined) {
         const chart = this.chart,
-            align = options.align,
-            verticalAlign = options.verticalAlign,
-            padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
+            { align, distance, verticalAlign } = options,
+            dist = isNumber(distance) ? distance : 0,
+            padding = dataLabel.box ? dist : (dataLabel.padding || 0),
             horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
             horizontalAxisShift = horizontalAxis ?
                 horizontalAxis.left - chart.plotLeft : 0,
