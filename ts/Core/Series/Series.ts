@@ -1021,12 +1021,9 @@ class Series {
      * @private
      * @function Highcharts.Series#getColumn
      */
-    public getColumn(
-        columnId: string,
-        modified?: boolean
-    ): Array<number> {
+    public getColumn(columnId: string, modified?: boolean): Array<number> {
         return (
-            (modified ? this.dataTable.modified : this.dataTable)
+            (modified ? this.dataTable.getModified() : this.dataTable)
                 .getColumn(columnId, true) as Array<number>
         ) || [];
     }
@@ -1839,7 +1836,7 @@ class Series {
         const series = this,
             options = series.options,
             dataOptions = series.processedData || options.data,
-            table = series.dataTable.modified,
+            table = series.dataTable.getModified(),
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
             processedDataLength = table.rowCount,
@@ -2038,7 +2035,7 @@ class Series {
                 this.options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
                 this.dataTable :
-                this.dataTable.modified,
+                this.dataTable.getModified(),
             rowCount = table.rowCount,
             customData = yData || this.stackedYData,
             yAxisData = customData ?

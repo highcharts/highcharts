@@ -86,7 +86,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
     public constructor(options: DataTableOptions = {}) {
         super(options);
-        this.modified = this;
         this.metadata = options.metadata;
     }
 
@@ -99,8 +98,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     private modifier?: DataModifier;
 
     private localRowIndexes?: Array<number>;
-
-    public modified: DataTable;
 
     private originalRowIndexes?: Array<number|undefined>;
 
@@ -148,7 +145,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             tableOptions.id = table.id;
         }
 
-        const tableClone: DataTable = new DataTable(tableOptions);
+        const tableClone = new DataTable(tableOptions);
 
         if (!skipColumns) {
             tableClone.versionTag = table.versionTag;
@@ -1106,19 +1103,18 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     public setModifier(
         modifier?: DataModifier,
         eventDetail?: DataEvent.Detail
-    ): Promise<this> {
+    ): Promise<DataTable> {
         const table = this;
 
-        let promise: Promise<this>;
+        let promise: Promise<DataTable>;
 
         table.emit({
             type: 'setModifier',
             detail: eventDetail,
             modifier,
-            modified: table.modified
+            modified: table.getModified()
         });
 
-        table.modified = table;
         table.modifier = modifier;
 
         if (modifier) {
@@ -1128,20 +1124,20 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         }
 
         return promise
-            .then((table): this => {
+            .then((table): DataTable => {
                 table.emit({
                     type: 'afterSetModifier',
                     detail: eventDetail,
                     modifier,
-                    modified: table.modified
+                    modified: table.getModified()
                 });
                 return table;
-            })['catch']((error): this => {
+            })['catch']((error): DataTable => {
                 table.emit({
                     type: 'setModifierError',
                     error,
                     modifier,
-                    modified: table.modified
+                    modified: table.getModified()
                 });
                 throw error;
             });

@@ -85,7 +85,7 @@ class RenkoSeries extends ColumnSeries {
     }
 
     public getProcessedData(): Series.ProcessedDataObject {
-        const modified = this.dataTable.modified;
+        const modified = this.dataTable.getModified();
         const processedXData: number[] = [];
         const processedYData: number[] = [];
         const processedLowData: number[] = [];

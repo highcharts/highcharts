@@ -40,7 +40,7 @@ describe('Crossfilter with affectNavigator option', () => {
                 .getConnector('Economy')
                 .then(connector => connector.getTable());
             assert.ok(
-                dataTable.modified.rowCount < dataTable.rowCount,
+                dataTable.getModified().rowCount < dataTable.rowCount,
                 'The modified table should have less rows than the original one.'
             );
 

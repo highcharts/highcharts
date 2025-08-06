@@ -195,21 +195,21 @@ class ChainModifier extends DataModifier {
      * @return {Promise<Highcharts.DataTable>}
      * Table with `modified` property as a reference.
      */
-    public async modify<T extends DataTable>(
-        table: T,
+    public async modify(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): Promise<T> {
+    ): Promise<DataTable> {
         const modifiers = (
             this.options.reverse ?
                 this.chain.slice().reverse() :
                 this.chain.slice()
         );
 
-        if (table.modified === table) {
+        if (!table.modified) {
             table.modified = table.clone(false, eventDetail);
         }
 
-        let modified: DataTable = table;
+        let modified = table;
         for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
             try {
                 await modifiers[i].modify(modified, eventDetail);
@@ -222,7 +222,7 @@ class ChainModifier extends DataModifier {
                 throw error;
             }
 
-            modified = modified.modified;
+            modified = modified.getModified();
         }
 
         table.modified = modified;
@@ -253,13 +253,13 @@ class ChainModifier extends DataModifier {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyCell<T extends DataTable>(
-        table: T,
+    public modifyCell(
+        table: DataTable,
         columnId: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifiers = (
             this.options.reverse ?
                 this.chain.reverse() :
@@ -277,7 +277,7 @@ class ChainModifier extends DataModifier {
                     cellValue,
                     eventDetail
                 );
-                clone = clone.modified;
+                clone = clone.getModified();
             }
 
             table.modified = clone;
@@ -307,12 +307,12 @@ class ChainModifier extends DataModifier {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyColumns<T extends DataTable>(
-        table: T,
+    public modifyColumns(
+        table: DataTable,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifiers = (
             this.options.reverse ?
                 this.chain.reverse() :
@@ -329,7 +329,7 @@ class ChainModifier extends DataModifier {
                     rowIndex,
                     eventDetail
                 );
-                clone = clone.modified;
+                clone = clone.getModified();
             }
 
             table.modified = clone;
@@ -359,12 +359,12 @@ class ChainModifier extends DataModifier {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyRows<T extends DataTable>(
-        table: T,
+    public modifyRows(
+        table: DataTable,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifiers = (
             this.options.reverse ?
                 this.chain.reverse() :
@@ -381,7 +381,7 @@ class ChainModifier extends DataModifier {
                     rowIndex,
                     eventDetail
                 );
-                clone = clone.modified;
+                clone = clone.getModified();
             }
 
             table.modified = clone;
@@ -407,10 +407,10 @@ class ChainModifier extends DataModifier {
      * @emits ChainDataModifier#execute
      * @emits ChainDataModifier#afterExecute
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
+    public modifyTable(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const chain = this;
 
         chain.emit<ChainModifier.Event>({
@@ -425,7 +425,7 @@ class ChainModifier extends DataModifier {
                 chain.chain.slice()
         );
 
-        let modified = table.modified;
+        let modified = table.getModified();
 
         for (
             let i = 0,
@@ -435,7 +435,8 @@ class ChainModifier extends DataModifier {
             ++i
         ) {
             modifier = modifiers[i];
-            modified = modifier.modifyTable(modified, eventDetail).modified;
+            modified =
+                modifier.modifyTable(modified, eventDetail).getModified();
         }
 
         table.modified = modified;

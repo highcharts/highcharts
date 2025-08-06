@@ -575,7 +575,7 @@ test('Data columnAssignment', async function (assert) {
 
     assert.ok(
         // @ts-ignore
-        mountedComponents[3].component.chart.series[2].dataTable.modified.rowCount > 0,
+        mountedComponents[3].component.chart.series[2].dataTable.getModified().rowCount > 0,
         'OHLC point is an array of open/low/high/close'
     );
 
@@ -876,7 +876,7 @@ test('Crossfilter with string values', async function (assert) {
             );
 
             assert.equal(
-                table.modified.rowCount,
+                table.getModified().rowCount,
                 1,
                 'DataTable should have 2 rows after extremes changed.'
             );

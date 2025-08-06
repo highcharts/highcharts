@@ -210,7 +210,7 @@ class FilterModifier extends DataModifier {
         const matchRow = FilterModifier.compile(condition);
 
         // This line should be investigated further when reworking Data Layer.
-        const modified = table.modified;
+        const modified = table.getModified();
 
         const rows: DataTable.RowObject[] = [];
         const indexes: Array<number|undefined> = [];

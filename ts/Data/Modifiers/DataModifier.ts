@@ -154,13 +154,13 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @return {Promise<Highcharts.DataTable>}
      * Table with `modified` property as a reference.
      */
-    public modify<T extends DataTable>(
-        table: T,
+    public modify(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): Promise<T> {
+    ): Promise<DataTable> {
         const modifier = this;
         return new Promise((resolve, reject): void => {
-            if (table.modified === table) {
+            if (!table.modified) {
                 table.modified = table.clone(false, eventDetail);
             }
             try {
@@ -198,15 +198,15 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyCell<T extends DataTable>(
-        table: T,
+    public modifyCell(
+        table: DataTable,
         /* eslint-disable @typescript-eslint/no-unused-vars */
         columnId: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
         /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): T {
+    ): DataTable {
         return this.modifyTable(table);
     }
 
@@ -229,14 +229,14 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyColumns<T extends DataTable>(
-        table: T,
+    public modifyColumns(
+        table: DataTable,
         /* eslint-disable @typescript-eslint/no-unused-vars */
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
         /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): T {
+    ): DataTable {
         return this.modifyTable(table);
     }
 
@@ -259,14 +259,14 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyRows<T extends DataTable>(
-        table: T,
+    public modifyRows(
+        table: DataTable,
         /* eslint-disable @typescript-eslint/no-unused-vars */
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
         /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): T {
+    ): DataTable {
         return this.modifyTable(table);
     }
 
@@ -283,10 +283,10 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public abstract modifyTable<T extends DataTable>(
-        table: T,
+    public abstract modifyTable(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): T;
+    ): DataTable;
 
     /**
      * Registers a callback for a specific modifier event.
