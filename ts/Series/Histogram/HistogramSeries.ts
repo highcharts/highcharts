@@ -20,7 +20,6 @@
 import type HistogramPoint from './HistogramPoint';
 import type HistogramPointOptions from './HistogramPointOptions';
 import type HistogramSeriesOptions from './HistogramSeriesOptions';
-import type Series from '../../Core/Series/Series';
 
 import DerivedComposition from '../DerivedComposition.js';
 import HistogramSeriesDefaults from './HistogramSeriesDefaults.js';
@@ -29,12 +28,11 @@ const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import DataTableCore from '../../Data/DataTableCore';
+import AnimationOptions from '../../Core/Animation/AnimationOptions';
 const {
     arrayMax,
     arrayMin,
     correctFloat,
-    extend,
     isNumber,
     merge
 } = U;
@@ -44,23 +42,22 @@ const {
  * ************************************************************************** */
 
 /**
- * A dictionary with formulas for calculating number of bins based on the
- * base series
+ * A dictionary with formulas for calculating number of bins based on data
  **/
 const binsNumberFormulas: Record<string, Function> = {
-    'square-root': function (baseSeries: Series): number {
-        return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
+    'square-root': function (data: number[]): number {
+        return Math.ceil(Math.sqrt((data as any).length));
     },
 
-    'sturges': function (baseSeries: Series): number {
+    'sturges': function (data: number[]): number {
         return Math.ceil(
-            Math.log((baseSeries.options.data as any).length) * Math.LOG2E
+            Math.log((data as any).length) * Math.LOG2E
         );
     },
 
-    'rice': function (baseSeries: Series): number {
+    'rice': function (data: number[]): number {
         return Math.ceil(
-            2 * Math.pow((baseSeries.options.data as any).length, 1 / 3)
+            2 * Math.pow((data as any).length, 1 / 3)
         );
     }
 };
@@ -130,65 +127,45 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
-    public binsNumber(series?: Series): number {
+    public binsNumber(data?: number[]): number {
         const binsNumberOption = this.options.binsNumber;
         const binsNumber = binsNumberFormulas[binsNumberOption as any] ||
             // #7457
             (typeof binsNumberOption === 'function' && binsNumberOption);
 
         return Math.ceil(
-            (binsNumber && binsNumber(series)) ||
+            (binsNumber && binsNumber(data)) ||
             (
                 isNumber(binsNumberOption) ?
                     binsNumberOption :
-                    binsNumberFormulas['square-root'](series)
+                    binsNumberFormulas['square-root'](data)
             )
         );
     }
 
-    public processData(force?: boolean): undefined {
-
-        if ((this.baseSeries === null) && (this.dataTable.rowCount !== 0)) {
-            const series = this,
-                yData = series.getColumn('y');
-
-            const derivedData = this.derivedData(
-                yData,
-                this.binsNumber(series),
+    public setData(
+        data: number[]|undefined,
+        redraw: boolean = true,
+        animation?: (boolean|Partial<AnimationOptions>),
+        updatePoints?: boolean
+    ): void {
+        let alteredData;
+        if (typeof data !== 'undefined' && data.length > 0) {
+            alteredData = this.derivedData(
+                data,
+                this.binsNumber(data),
                 this.options.binWidth as any
             );
-
-            series.processedData = derivedData;
-            series.dataTable.modified = new DataTableCore({
-                columns: {
-                    x: derivedData.map(
-                        (p): string | number | undefined => p['x']
-                    ),
-                    y: derivedData.map(
-                        (p): number | null | undefined => p['y']
-                    )
-                }
-            });
-
-            const { xAxis } = this;
-            xAxis.getSeriesExtremes(true);
-            this.setData(derivedData, false);
         }
 
-
-        super.processData.call(this, force);
-
+        super.setData.call(
+            this,
+            alteredData,
+            redraw,
+            animation,
+            updatePoints
+        );
     }
-    // Part of implementation, but may not be needed
-    // public getProcessedData():
-    // Series.ProcessedDataObject {
-    //     return {
-    //         modified: this.dataTable.modified,
-    //         cropped: false,
-    //         cropStart: 0,
-    //         closestPointRange: 0
-    //     };
-    // }
 
     public derivedData(
         baseData: Array<number>,
@@ -280,13 +257,7 @@ class HistogramSeries extends ColumnSeries {
             return;
         }
 
-        const data = this.derivedData(
-            yData,
-            this.binsNumber(this.baseSeries),
-            this.options.binWidth as any
-        );
-
-        this.setData(data, false);
+        this.setData(yData, false, void 0, false);
     }
 
 }
@@ -308,10 +279,6 @@ interface HistogramSeries extends DerivedComposition.SeriesComposition {
     pointClass: typeof HistogramPoint;
     remove: typeof ColumnSeries.prototype.remove;
 }
-
-extend(HistogramSeries.prototype, {
-    hasDerivedData: DerivedComposition.hasDerivedData
-});
 
 DerivedComposition.compose(HistogramSeries);
 

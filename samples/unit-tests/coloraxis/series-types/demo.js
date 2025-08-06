@@ -64,7 +64,7 @@ QUnit.module('Color axis for series types', function () {
                             { lat: 0, lon: 10, value: 1 },
                             { lat: 10, lon: 0, value: 2 }
                         ];
-                    } else if (type === 'bellcurve') {
+                    } else if (type === 'bellcurve' || type === 'histogram') {
                         cfg.series[0].data = [1, 2, 2, 3];
                     }
 
