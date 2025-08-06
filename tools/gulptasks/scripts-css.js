@@ -39,13 +39,6 @@ const dashboardsConfig = {
     exclude: []
 };
 
-const datagridConfig = {
-    sources: 'css/datagrid/',
-    target: TARGET_DIRECTORY + '/datagrid',
-    replacePath: 'datagrid/',
-    exclude: []
-};
-
 const gridConfig = {
     sources: 'css/grid/',
     target: TARGET_DIRECTORY + '/grid/',
@@ -138,12 +131,10 @@ function scriptCSS(argv) {
         if (argv.dashboards) {
             log.message('Generating css for Dashboards...');
             copyCSS(dashboardsConfig);
-            copyCSS(datagridConfig);
             log.success('Copied dashboards CSS');
         } else if (argv.product === 'Dashboards') {
             log.message('Generating css for Dashboards...');
             copyCSS(dashboardsConfig);
-            copyCSS(datagridConfig);
             log.success('Copied dashboards CSS');
         } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');

@@ -28,9 +28,9 @@ async function postWebpackDashboards() {
 
     const {
         bundleTargetFolder,
-        bundleTargetFolderDataGrid,
+        bundleTargetFolderGridPro,
         esModulesFolder,
-        esModulesFolderDataGrid
+        esModulesFolderGridPro
     } = require('./scripts-dts/dashboards/_config.json');
 
     // DTS processing constants (from dashboards/scripts-dts.js)
@@ -54,29 +54,21 @@ async function postWebpackDashboards() {
         'Grid/'
     ].map(fsLib.path);
 
-    // Copy individual DTS files from ts/ to es-modules
+    // Copy individual DTS files from ts/ to es-modules (Dashboards only)
     for (const dtsFile of DTS_FILES) {
         fsLib.copyFile(
             path.join('ts', dtsFile),
             path.join(esModulesFolder, dtsFile)
         );
-        fsLib.copyFile(
-            path.join('ts', dtsFile),
-            path.join(esModulesFolderDataGrid, dtsFile)
-        );
     }
 
-    // Copy DTS folders from ts/ to es-modules
-    for (const dtsFolder of DTS_FOLDERS) {
+    // Copy DTS folders from ts/ to es-modules (Dashboards only)
+    // Note: Grid folder is now handled by Grid Pro build
+    const dashboardsDtsFolders = ['Dashboards/', 'Data/'].map(fsLib.path);
+    for (const dtsFolder of dashboardsDtsFolders) {
         fsLib.copyAllFiles(
             path.join('ts', dtsFolder),
             path.join(esModulesFolder, dtsFolder),
-            true,
-            sourcePath => sourcePath.endsWith('.d.ts')
-        );
-        fsLib.copyAllFiles(
-            path.join('ts', dtsFolder),
-            path.join(esModulesFolderDataGrid, dtsFolder),
             true,
             sourcePath => sourcePath.endsWith('.d.ts')
         );
@@ -87,23 +79,24 @@ async function postWebpackDashboards() {
     // Process bundle DTS files (use permanent location)
     const bundleDtsFolder = path.join(__dirname, 'scripts-dts', 'dashboards');
 
-    // Copy bundle DTS files to target folders (exclude config file)
-    fsLib.copyAllFiles(bundleDtsFolder, bundleTargetFolder, true, sourcePath => !sourcePath.endsWith('_config.json'));
-    fsLib.deleteFile(path.join(bundleTargetFolder, 'datagrid.src.d.ts'));
-
-    fsLib.copyAllFiles(bundleDtsFolder, bundleTargetFolderDataGrid, true, sourcePath => !sourcePath.endsWith('_config.json'));
-    fsLib.deleteFile(path.join(bundleTargetFolderDataGrid, 'dashboards.src.d.ts'));
+    // Copy bundle DTS files to target folders (exclude config file and datagrid files)
+    fsLib.copyAllFiles(
+        bundleDtsFolder,
+        bundleTargetFolder,
+        true,
+        sourcePath => !sourcePath.endsWith('_config.json') && !sourcePath.includes('datagrid')
+    );
 
     // Transform bundle DTS files (.src.d.ts → .d.ts)
     const bundleDtsFiles = fsLib.getFilePaths(bundleDtsFolder, true);
     for (const bundleDtsFile of bundleDtsFiles) {
-        // Skip config files
-        if (bundleDtsFile.endsWith('_config.json')) {
+        // Skip config files and datagrid files
+        if (bundleDtsFile.endsWith('_config.json') || bundleDtsFile.includes('datagrid')) {
             continue;
         }
         fs.writeFileSync(
             path.join(
-                bundleDtsFile.includes('datagrid') ? bundleTargetFolderDataGrid : bundleTargetFolder,
+                bundleTargetFolder,
                 path
                     .relative(bundleDtsFolder, bundleDtsFile)
                     .replace(/\.src\.d\.ts$/u, '.d.ts')

@@ -12,12 +12,11 @@
     "product": "Highcharts Dashboards",
     "readmeFile": "ts/Dashboards/README.md",
     "typeScriptFolder": "ts/masters-dashboards/",
-
-    "buildFolderDataGrid": "build/dist/datagrid/",
-    "bundleSourceFolderDataGrid": "code/datagrid/es-modules/masters/",
-    "bundleTargetFolderDataGrid": "code/datagrid/",
-    "cdnFolderDataGrid": "datagrid/",
-    "esModulesFolderDataGrid": "code/datagrid/es-modules/",
-    "productDataGrid": "Highcharts DataGrid",
-    "typeScriptFolderDatagrid": "ts/masters-datagrid/"
+    "buildFolderGridPro": "build/dist/grid-pro/",
+    "bundleSourceFolderGridPro": "code/grid/es-modules/masters/",
+    "bundleTargetFolderGridPro": "code/grid/",
+    "cdnFolderGridPro": "grid/",
+    "esModulesFolderGridPro": "code/grid/es-modules/",
+    "productGridPro": "Highcharts Grid Pro",
+    "typeScriptFolderGridPro": "ts/masters-grid/"
 }
