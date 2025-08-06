@@ -215,6 +215,12 @@ async function scriptsWebpack() {
     // Post-webpack processing for Dashboards
     if (argv.product === 'Dashboards' || argv.dashboards) {
         await postWebpackDashboards();
+
+        // Compile .src.js files to .js files for Dashboards
+        LogLib.message('Compiling Dashboards modules...');
+        const scriptsCompile = require('./scripts-compile');
+        await scriptsCompile();
+        LogLib.success('Compiled Dashboards modules');
     }
 
 }
