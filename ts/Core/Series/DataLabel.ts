@@ -904,7 +904,8 @@ namespace DataLabel {
 
         let { x = 0, y = 0 } = options,
             off,
-            justified;
+            justifiedX,
+            justifiedY;
 
         // Off left
         off = (alignAttr.x || 0) - distX + padding + horizontalAxisShift;
@@ -915,7 +916,7 @@ namespace DataLabel {
             } else {
                 x -= off;
             }
-            justified = true;
+            justifiedX = true;
         }
 
         // Off right
@@ -928,7 +929,7 @@ namespace DataLabel {
             } else {
                 x += chart.plotWidth - off;
             }
-            justified = true;
+            justifiedX = true;
         }
 
         // Off top
@@ -940,7 +941,7 @@ namespace DataLabel {
             } else {
                 y -= off;
             }
-            justified = true;
+            justifiedY = true;
         }
 
         // Off bottom
@@ -953,17 +954,17 @@ namespace DataLabel {
             } else {
                 y += chart.plotHeight - off;
             }
-            justified = true;
+            justifiedY = true;
         }
 
-        if (justified) {
-            options.x = x;
-            options.y = y;
+        if (justifiedX || justifiedY) {
+            options.x = justifiedX ? x : x + distX;
+            options.y = justifiedY ? y : y + distY;
             dataLabel.placed = !isNew;
             dataLabel.align(options, void 0, alignTo);
         }
 
-        return justified;
+        return justifiedX || justifiedY;
     }
 
     /**

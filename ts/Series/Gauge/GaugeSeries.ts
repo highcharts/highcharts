@@ -143,7 +143,9 @@ class GaugeSeries extends Series {
                 borderWidth: 1,
                 crop: false,
                 defer: false,
+                distance: 0,
                 enabled: true,
+                padding: 5,
                 verticalAlign: 'top',
                 y: 15,
                 zIndex: 2
