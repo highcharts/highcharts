@@ -56,7 +56,7 @@ describe('Grid Pro - validation.', () => {
         cy.get('.hcg-notification-error')
             .eq(0)
             .should('be.visible')
-            .should('contain', 'Value must be unique, ignoring letter case.');
+            .should('contain', 'Value must be unique within this column (case-insensitive).');
 
         // Act
         cy.editGridCell(1, 'product', 'Red Apples');

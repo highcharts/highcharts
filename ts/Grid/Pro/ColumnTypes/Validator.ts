@@ -394,7 +394,8 @@ namespace Validator {
                 return !isDuplicate;
 
             },
-            notification: 'Value must be unique within this column (case-insensitive).'
+            notification:
+                'Value must be unique within this column (case-insensitive).'
         },
         unique: {
             validate: function ({ rawValue }): boolean {
@@ -405,7 +406,8 @@ namespace Validator {
 
                 return !isDuplicate;
             },
-            notification: 'Value must be unique within this column (case-sensitive).
+            notification:
+                'Value must be unique within this column (case-sensitive).'
         }
     };
 
