@@ -405,7 +405,7 @@ namespace Validator {
 
                 return !isDuplicate;
             },
-            notification: 'Value must be unique.'
+            notification: 'Value must be unique within this column (case-sensitive).
         }
     };
 
