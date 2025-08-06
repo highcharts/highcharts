@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -110,6 +111,18 @@ namespace CheckboxRenderer {
          * Whether the checkbox is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the checkbox.
+         */
+        attributes?: CheckboxAttributes;
+    }
+
+    /**
+     * Attributes to control the checkbox.
+     */
+    export interface CheckboxAttributes {
+        checked?: boolean;
     }
 }
 

@@ -7,6 +7,8 @@ Grid.grid('container', {
             checkbox_checkbox: [true, false, true],
             text_textInput: ['Alpha', 'Beta', 'Gamma'],
             textInput_textInput: ['Alpha', 'Beta', 'Gamma'],
+            text_numberInput: [1, 2, 3],
+            numberInput_numberInput: [1, 2, 3],
             text_select: ['R', 'B', 'G'],
             select_select: ['R', 'B', 'G'],
             text_date: [
@@ -50,6 +52,33 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'textInput'
+            }
+        }
+    }, {
+        id: 'text_numberInput',
+        cells: {
+            editMode: {
+                renderer: {
+                    type: 'numberInput',
+                    attributes: {
+                        step: '1',
+                        min: '0',
+                        max: '10'
+                    }
+                }
+            }
+        }
+    }, {
+        id: 'numberInput_numberInput',
+        dataType: 'number',
+        cells: {
+            renderer: {
+                type: 'numberInput',
+                attributes: {
+                    step: '0.5',
+                    min: '0',
+                    max: '10'
+                }
             }
         }
     }, {
