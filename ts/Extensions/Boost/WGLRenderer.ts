@@ -29,7 +29,7 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type { WGLDrawModeValue } from './WGLDrawMode';
 import type WGLOptions from './WGLOptions';
 
-import BoostChart from './BoostChart';
+import BoostChart from './BoostChart.js';
 const { getBoostClipRect } = BoostChart;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
