@@ -341,7 +341,7 @@ namespace DataLabel {
 
             // Apply the distance
             let { x = 0, y = 0 } = options;
-            if (isNumber(distance) && this.isCartesian && !options.inside) {
+            if (isNumber(distance) && !options.inside) {
                 x += distance * (1 - 2 * alignFactor);
                 y += distance * (1 - 2 * verticalAlignFactor);
             }
@@ -894,7 +894,7 @@ namespace DataLabel {
         // Apply the distance
         let distX = 0,
             distY = 0;
-        if (isNumber(distance) && this.isCartesian && !options.inside) {
+        if (isNumber(distance) && !options.inside) {
             distX = distance * (1 - 2 * alignFactor);
             distY = distance * (1 - 2 * verticalAlignFactor);
         }
