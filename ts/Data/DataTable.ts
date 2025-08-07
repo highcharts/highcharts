@@ -68,18 +68,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
 
     /* *
      *
-     *  Properties
-     *
-     * */
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /* *
-     *
      *  Constructor
      *
      * */
@@ -88,6 +76,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         super(options);
         this.metadata = options.metadata;
     }
+
 
     /* *
      *
@@ -102,6 +91,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     private originalRowIndexes?: Array<number|undefined>;
 
     public metadata?: Record<string, DataTableValue>;
+
 
     /* *
      *
@@ -241,15 +231,12 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     /**
      * Deletes the row index references. This is useful when the original table
      * is deleted, and the references are no longer needed. This table is
-     * then considered an original table or a table that has the same row's
+     * then considered an original table or a table that has the same rows
      * order as the original table.
      */
     public deleteRowIndexReferences(): void {
         delete this.originalRowIndexes;
         delete this.localRowIndexes;
-
-        // Here, in case of future need, can be implemented updating of the
-        // modified tables' row indexes references.
     }
 
     /**
@@ -391,14 +378,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         }
     }
 
-    public getColumn(
-        columnId: string,
-        asReference?: boolean
-    ): (DataTable.Column | undefined);
-    public getColumn(
-        columnId: string,
-        asReference: true
-    ): (DataTable.Column | undefined);
     /**
      * Fetches the given column by the canonical column name.
      * This function is a simplified wrap of {@link getColumns}.
@@ -425,12 +404,12 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Fetches all column names.
+     * Fetches all column IDs.
      *
      * @function Highcharts.DataTable#getColumnIds
      *
      * @return {Array<string>}
-     * Returns all column names.
+     * Returns all column IDs.
      */
     public getColumnIds(): Array<string> {
         return Object.keys(this.columns);
@@ -528,11 +507,12 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Retrieves the modifier for the table.
-     * @private
+     * Retrieves the table's modifier for the table.
      *
      * @return {Highcharts.DataModifier|undefined}
      * Returns the modifier or `undefined`.
+     *
+     * @private
      */
     public getModifier(): (DataModifier | undefined) {
         return this.modifier;
@@ -548,9 +528,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      * @return {number|undefined}
      * Returns the original row index or `undefined` if not found.
      */
-    public getOriginalRowIndex(
-        rowIndex: number
-    ): (number | undefined) {
+    public getOriginalRowIndex(rowIndex: number): (number | undefined) {
         const { originalRowIndexes } = this;
 
         if (originalRowIndexes) {
@@ -660,7 +638,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Fetches all or a number of rows.
+     * Fetches all or a number of rows in an object form.
      *
      * @function Highcharts.DataTable#getRowObjects
      *
@@ -712,7 +690,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Fetches all or a number of rows.
+     * Fetches all or a number of rows in an array form.
      *
      * @function Highcharts.DataTable#getRows
      *
@@ -776,7 +754,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Checks for given column names.
+     * Determines whether all specified column names exist in the table.
      *
      * @function Highcharts.DataTable#hasColumns
      *
@@ -807,7 +785,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Searches for a specific cell value.
+     * Checks if any row in the specified column contains the given cell value.
      *
      * @function Highcharts.DataTable#hasRowWith
      *
@@ -841,7 +819,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Registers a callback for a specific event.
+     * Registers a callback function to be executed when a specific event is
+     * emitted. To stop listening to the event, call the function returned by
+     * this method.
      *
      * @function Highcharts.DataTable#on
      *
@@ -864,7 +844,8 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Replaces the old column by its id with a new one.
+     * Changes the ID of an existing column to a new ID, effectively renaming
+     * the column.
      *
      * @function Highcharts.DataTable#changeColumnId
      *
@@ -897,8 +878,10 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Sets a cell value based on the row index and column.  Will
-     * insert a new column, if not found.
+     * Sets the value of a specific cell identified by column ID and row index.
+     * If the column does not exist, it will be created. If the row index is
+     * beyond the current row count, the table will be expanded to accommodate
+     * the new cell.
      *
      * @function Highcharts.DataTable#setCell
      *
@@ -965,8 +948,8 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Sets cell values for multiple columns. Will insert new columns, if not
-     * found.
+     * Replaces or updates multiple columns in the table with new data. If a
+     * column does not exist, it will be created and added to the table.
      *
      * @function Highcharts.DataTable#setColumns
      *
@@ -1081,7 +1064,11 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Sets or unsets the modifier for the table.
+     * Assigns a new data modifier to the table.
+     *
+     * This method does not modify the table directly. Instead, it sets the
+     * `.modified` property of the table with a modified copy of this table,
+     * as produced by the modifier.
      *
      * @param {Highcharts.DataModifier} [modifier]
      * Modifier to set, or `undefined` to unset.
