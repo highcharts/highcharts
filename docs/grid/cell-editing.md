@@ -67,7 +67,7 @@ In addition to `dataType` you can extend a selection of predefined validation ru
 - `notEmpty`- Only accepts non-empty values.
 - `boolean`- Only accepts `true`, `false`, `1` and `0` as valid values.
 - `number`- Only accepts numbers.
-- `datetime`- Only accepts valid timestamps.
+- `datetime`- Only accepts valid timestamps in milliseconds.
 - `ignoreCaseUnique`- Only accepts unique values within the column (case-insensitive).
 - `unique`- Only accepts unique values within the column (case-sensitive).
 
