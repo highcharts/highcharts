@@ -68,6 +68,8 @@ class ScatterSeries extends LineSeries {
 
     public points!: Array<ScatterPoint>;
 
+    // Public noSharedTooltip = true;
+
     /* *
      *
      *  Functions
@@ -75,6 +77,13 @@ class ScatterSeries extends LineSeries {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    public constructor() {
+        super();
+        if (this?.chart?.tooltip?.options?.shared) {
+            this.noSharedTooltip = false;
+        }
+    }
 
     /**
      * Optionally add the jitter effect.
@@ -159,7 +168,7 @@ extend(ScatterSeries.prototype, {
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
-    noSharedTooltip: false,
+    // NoSharedTooltip: false,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 
