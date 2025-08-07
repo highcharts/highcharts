@@ -29,6 +29,8 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type { WGLDrawModeValue } from './WGLDrawMode';
 import type WGLOptions from './WGLOptions';
 
+import BoostChart from './BoostChart.js';
+const { getBoostClipRect } = BoostChart;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
@@ -1236,6 +1238,7 @@ class WGLRenderer {
 
         shader.setUniform('xAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('xAxisMin', axis.min as any);
+        shader.setUniform('xAxisMax', axis.max as any);
         shader.setUniform('xAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('xAxisPointRange', axis.pointRange);
         shader.setUniform('xAxisLen', axis.len * pixelRatio);
@@ -1262,6 +1265,7 @@ class WGLRenderer {
 
         shader.setUniform('yAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('yAxisMin', axis.min as any);
+        shader.setUniform('yAxisMax', axis.max as any);
         shader.setUniform('yAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('yAxisPointRange', axis.pointRange);
         shader.setUniform('yAxisLen', axis.len * pixelRatio);
@@ -1521,6 +1525,11 @@ class WGLRenderer {
             // Do the actual rendering
             // If the line width is < 0, skip rendering of the lines. See #7833.
             if (lineWidth > 0 || s.drawMode !== 'LINE_STRIP') {
+                const { x: cx, y: cy, width: cw, height: ch } =
+                    getBoostClipRect(chart, s.series);
+
+                gl.enable(gl.SCISSOR_TEST);
+                gl.scissor(cx, height - cy - ch, cw, ch);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
                     vbuffer.render(
                         s.segments[sindex].from,
@@ -1528,6 +1537,7 @@ class WGLRenderer {
                         s.drawMode
                     );
                 }
+                gl.disable(gl.SCISSOR_TEST);
             }
 
             if (s.hasMarkers && showMarkers) {

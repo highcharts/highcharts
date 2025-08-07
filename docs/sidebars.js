@@ -295,7 +295,9 @@ module.exports = {
             'extending-highcharts/extending-highcharts'
         ],
         'Flutter': [
-            'flutter/getting-started'
+            'flutter/getting-started',
+            'flutter/your-first-chart',
+            'flutter/highcharts-bundling'
         ],
         'React integration (beta)': [
             'react/getting-started',
