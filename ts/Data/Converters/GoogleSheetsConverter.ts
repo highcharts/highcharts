@@ -79,7 +79,6 @@ class GoogleSheetsConverter extends DataConverter {
 
         super(mergedOptions);
 
-        this.columns = [];
         this.header = [];
         this.options = mergedOptions;
     }
@@ -90,7 +89,6 @@ class GoogleSheetsConverter extends DataConverter {
      *
      * */
 
-    private columns: DataTable.BasicColumn[];
     private header: string[];
 
     /**
@@ -119,26 +117,25 @@ class GoogleSheetsConverter extends DataConverter {
     public parse(
         options: Partial<GoogleSheetsConverterOptions>,
         eventDetail?: DataEvent.Detail
-    ): (boolean | undefined) {
+    ): DataTable.ColumnCollection {
         const converter = this,
             parseOptions = merge(converter.options, options);
 
-        let columns = ((
+        let columnsArray = ((
             parseOptions.json?.values
         ) || []).map(
             (column): DataTable.BasicColumn => column.slice()
         );
 
-        if (columns.length === 0) {
-            return false;
+        if (columnsArray.length === 0) {
+            return {};
         }
 
         converter.header = [];
-        converter.columns = [];
 
         converter.emit({
             type: 'parse',
-            columns: converter.columns,
+            columns: [],
             detail: eventDetail,
             headers: converter.header
         });
@@ -146,14 +143,13 @@ class GoogleSheetsConverter extends DataConverter {
         // If beforeParse is defined, use it to modify the data
         const { beforeParse, json } = parseOptions;
         if (beforeParse && json) {
-            columns = beforeParse(json.values);
+            columnsArray = beforeParse(json.values);
         }
 
         let column;
-        converter.columns = columns;
 
-        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            column = columns[i];
+        for (let i = 0, iEnd = columnsArray.length; i < iEnd; i++) {
+            column = columnsArray[i];
             converter.header[i] = (
                 parseOptions.firstRowAsNames ?
                     `${column.shift()}` :
@@ -165,27 +161,20 @@ class GoogleSheetsConverter extends DataConverter {
                 if (isDateObject(cellValue)) {
                     cellValue = cellValue.getTime();
                 }
-                converter.columns[i][j] = cellValue;
+                columnsArray[i][j] = cellValue;
             }
         }
 
         converter.emit({
             type: 'afterParse',
-            columns: converter.columns,
+            columns: columnsArray,
             detail: eventDetail,
             headers: converter.header
         });
-    }
 
-    /**
-     * Handles converting the parsed data to a table.
-     *
-     * @return {DataTable}
-     * Table from the parsed Google Sheet
-     */
-    public getTable(): DataTable {
-        const { columns, header } = this;
-        return DataConverterUtils.getTableFromColumns(columns, header);
+        return DataConverterUtils.getColumnsCollection(
+            columnsArray, converter.header
+        );
     }
 
 }

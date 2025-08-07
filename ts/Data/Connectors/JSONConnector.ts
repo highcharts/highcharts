@@ -23,6 +23,7 @@
 import type DataEvent from '../DataEvent';
 import type JSONConnectorOptions from './JSONConnectorOptions';
 import type { JSONData } from '../Converters/JSONConverterOptions';
+import type DataTable from '../DataTable';
 
 import DataConnector from './DataConnector.js';
 import JSONConverter from '../Converters/JSONConverter.js';
@@ -188,9 +189,8 @@ class JSONConnector extends DataConnector {
                                 merge(options, mergedTableOptions)
                             );
                         },
-                        (converter, data): void => {
-                            converter.parse({ data });
-                        }
+                        (converter, data): DataTable.ColumnCollection =>
+                            converter.parse({ data })
                     );
                 }
                 return connector.applyTableModifiers().then(

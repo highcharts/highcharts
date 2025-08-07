@@ -227,37 +227,34 @@ namespace DataConverterUtils {
     }
 
     /**
-     * Converts an array of columns to a table instance. Second dimension of the
-     * array are the row cells.
+     * Parses an array of columns to a column collection. If more headers are
+     * provided, the corresponding, empty columns are added.
      *
-     * @param {DataTable.Column[]} [columns]
-     * Array to convert.
+     * @param {DataTable.Column[]} [columnsArray]
+     * Array of columns.
      *
      * @param {string[]} [headers]
-     * Column names to use.
+     * Column ids to use.
      *
-     * @return {DataTable}
-     * Table instance from the arrays.
+     * @return {DataTable.ColumnCollection}
+     * Parsed columns.
      */
-    export function getTableFromColumns(
-        columns: DataTable.Column[] = [],
-        headers: string[] = []
-    ): DataTable {
-        const table = new DataTable();
-
+    export function getColumnsCollection(
+        columnsArray: DataTable.Column[] = [],
+        headers: string[]
+    ): DataTable.ColumnCollection {
+        const columns: DataTable.ColumnCollection = {};
         for (
             let i = 0,
-                iEnd = Math.max(headers.length, columns.length);
+                iEnd = Math.max(headers.length, columnsArray.length);
             i < iEnd;
             ++i
         ) {
-            table.setColumn(
-                headers[i] || `${i}`,
-                columns[i]
-            );
+            const columnId = headers[i] || `${i}`;
+            columns[columnId] = columnsArray[i] ? columnsArray[i].slice() : [];
         }
 
-        return table;
+        return columns;
     }
 }
 

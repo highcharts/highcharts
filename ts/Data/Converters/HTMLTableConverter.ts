@@ -106,7 +106,6 @@ class HTMLTableConverter extends DataConverter {
 
         super(mergedOptions);
 
-        this.columns = [];
         this.headers = [];
         this.options = mergedOptions;
 
@@ -122,7 +121,6 @@ class HTMLTableConverter extends DataConverter {
      *
      * */
 
-    private columns: DataTable.BasicColumn[];
     private headers: string[];
 
     /**
@@ -403,9 +401,9 @@ class HTMLTableConverter extends DataConverter {
     public parse(
         options: Partial<HTMLTableConverterOptions>,
         eventDetail?: DataEvent.Detail
-    ): void {
+    ): DataTable.ColumnCollection {
         const converter = this,
-            columns: DataTable.BasicColumn[] = [],
+            columnsArray: DataTable.BasicColumn[] = [],
             headers: string[] = [],
             parseOptions = merge(converter.options, options),
             {
@@ -420,19 +418,19 @@ class HTMLTableConverter extends DataConverter {
         if (!(tableHTML instanceof HTMLElement)) {
             converter.emit({
                 type: 'parseError',
-                columns,
+                columns: columnsArray,
                 detail: eventDetail,
                 headers,
                 error: 'Not a valid HTML Table'
             });
-            return;
+            return {};
         }
         converter.tableElement = tableHTML;
         converter.tableElementID = tableHTML.id;
 
         this.emit({
             type: 'parse',
-            columns: converter.columns,
+            columns: columnsArray,
             detail: eventDetail,
             headers: converter.headers
         });
@@ -474,7 +472,7 @@ class HTMLTableConverter extends DataConverter {
 
                 while (columnIndex < columnsInRowLength) {
                     const relativeColumnIndex = columnIndex - startColumn,
-                        row = columns[relativeColumnIndex];
+                        row = columnsArray[relativeColumnIndex];
 
                     item = columnsInRow[columnIndex];
 
@@ -488,15 +486,15 @@ class HTMLTableConverter extends DataConverter {
                             columnIndex <= endColumn
                         )
                     ) {
-                        if (!columns[relativeColumnIndex]) {
-                            columns[relativeColumnIndex] = [];
+                        if (!columnsArray[relativeColumnIndex]) {
+                            columnsArray[relativeColumnIndex] = [];
                         }
 
                         let cellValue = converter.convertByType(item.innerHTML);
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }
-                        columns[relativeColumnIndex][
+                        columnsArray[relativeColumnIndex][
                             rowIndex - startRow
                         ] = cellValue;
 
@@ -518,26 +516,18 @@ class HTMLTableConverter extends DataConverter {
 
             rowIndex++;
         }
-        this.columns = columns;
         this.headers = headers;
 
         this.emit({
             type: 'afterParse',
-            columns,
+            columns: columnsArray,
             detail: eventDetail,
             headers
         });
-    }
 
-    /**
-     * Handles converting the parsed data to a table.
-     *
-     * @return {DataTable}
-     * Table from the parsed HTML table
-     */
-    public getTable(): DataTable {
-        const { columns, headers } = this;
-        return DataConverterUtils.getTableFromColumns(columns, headers);
+        return DataConverterUtils.getColumnsCollection(
+            columnsArray, converter.headers
+        );
     }
 
 }

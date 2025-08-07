@@ -25,6 +25,7 @@
 
 import type DataEvent from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
+import type DataTable from '../DataTable';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -177,9 +178,8 @@ class CSVConnector extends DataConnector {
                                 merge(options, mergedTableOptions)
                             );
                         },
-                        (converter, data): void => {
-                            converter.parse({ csv: data });
-                        }
+                        (converter, data): DataTable.ColumnCollection =>
+                            converter.parse({ csv: data })
                     );
                 }
 

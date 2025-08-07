@@ -155,14 +155,14 @@ class HTMLTableConnector extends DataConnector {
             return Promise.reject(new Error(error));
         }
 
-        converter.parse(
+        const columns = converter.parse(
             merge({ tableElement: connector.tableElement }, options),
             eventDetail
         );
 
         // If already loaded, clear the current rows
         table.deleteColumns();
-        table.setColumns(converter.getTable().getColumns());
+        table.setColumns(columns);
 
         await connector.applyTableModifiers();
         connector.emit({

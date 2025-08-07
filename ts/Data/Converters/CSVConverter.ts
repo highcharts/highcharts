@@ -85,7 +85,6 @@ class CSVConverter extends DataConverter {
      *
      * */
 
-    private columns: DataTable.BasicColumn[] = [];
     private headers: string[] = [];
     private dataTypes: string[][] = [];
     private guessedItemDelimiter?: string;
@@ -217,7 +216,7 @@ class CSVConverter extends DataConverter {
     public parse(
         options: Partial<CSVConverterOptions>,
         eventDetail?: DataEvent.Detail
-    ): void {
+    ): DataTable.ColumnCollection {
         const converter = this,
             dataTypes = converter.dataTypes,
             parserOptions = merge(this.options, options),
@@ -237,11 +236,11 @@ class CSVConverter extends DataConverter {
             } = parserOptions,
             column;
 
-        converter.columns = [];
+        const columnsArray: DataTable.BasicColumn[] = [];
 
         converter.emit({
             type: 'parse',
-            columns: converter.columns,
+            columns: columnsArray,
             detail: eventDetail,
             headers: converter.headers
         });
@@ -291,8 +290,11 @@ class CSVConverter extends DataConverter {
                 if (lines[rowIt][0] === '#') {
                     offset++;
                 } else {
-                    converter
-                        .parseCSVRow(lines[rowIt], rowIt - startRow - offset);
+                    converter.parseCSVRow(
+                        columnsArray,
+                        lines[rowIt],
+                        rowIt - startRow - offset
+                    );
                 }
             }
 
@@ -303,13 +305,13 @@ class CSVConverter extends DataConverter {
                 !converter.options.dateFormat
             ) {
                 converter.deduceDateFormat(
-                    converter.columns[0] as string[], null, true
+                    columnsArray[0] as string[], null, true
                 );
             }
 
             // Guess types.
-            for (let i = 0, iEnd = converter.columns.length; i < iEnd; ++i) {
-                column = converter.columns[i];
+            for (let i = 0, iEnd = columnsArray.length; i < iEnd; ++i) {
+                column = columnsArray[i];
 
                 for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                     if (column[j] && typeof column[j] === 'string') {
@@ -319,7 +321,7 @@ class CSVConverter extends DataConverter {
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }
-                        converter.columns[i][j] = cellValue;
+                        columnsArray[i][j] = cellValue;
                     }
                 }
             }
@@ -327,18 +329,25 @@ class CSVConverter extends DataConverter {
 
         converter.emit({
             type: 'afterParse',
-            columns: converter.columns,
+            columns: columnsArray,
             detail: eventDetail,
             headers: converter.headers
         });
+
+        return DataConverterUtils.getColumnsCollection(
+            columnsArray, converter.headers
+        );
     }
 
     /**
      * Internal method that parses a single CSV row
      */
-    private parseCSVRow(columnStr: string, rowNumber: number): void {
+    private parseCSVRow(
+        columns: DataTable.BasicColumn[],
+        columnStr: string,
+        rowNumber: number
+    ): void {
         const converter = this,
-            columns = converter.columns || [],
             dataTypes = converter.dataTypes,
             { startColumn, endColumn } = converter.options,
             itemDelimiter = (
@@ -471,7 +480,6 @@ class CSVConverter extends DataConverter {
         }
 
         push();
-
     }
 
     /**
@@ -585,16 +593,6 @@ class CSVConverter extends DataConverter {
         }
 
         return guessed;
-    }
-    /**
-     * Handles converting the parsed data to a table.
-     *
-     * @return {DataTable}
-     * Table from the parsed CSV.
-     */
-    public getTable(): DataTable {
-        const { columns, headers } = this;
-        return DataConverterUtils.getTableFromColumns(columns, headers);
     }
 
 }

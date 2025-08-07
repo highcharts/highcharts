@@ -27,6 +27,7 @@
 import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type { GoogleSpreadsheetJSON } from '../Converters/GoogleSheetsConverterOptions';
+import type DataTable from '../DataTable';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -222,9 +223,8 @@ class GoogleSheetsConnector extends DataConnector {
                             merge(options, mergedTableOptions)
                         );
                     },
-                    (converter, data): void => {
-                        converter.parse({ json: data });
-                    }
+                    (converter, data): DataTable.ColumnCollection =>
+                        converter.parse({ json: data })
                 );
                 return connector.applyTableModifiers();
             })
