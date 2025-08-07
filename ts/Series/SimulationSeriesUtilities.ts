@@ -74,6 +74,13 @@ function initDataLabels(this: SimulationSeries): SVGElement {
         dataLabelsGroup.attr({ opacity: 0 });
 
         if (series.visible) { // #2597, #3023, #3024
+            // #19663, initial data labels animation
+            if (series.options.animation && dlOptions?.animation) {
+                dataLabelsGroup.animate({ opacity: 1 }, dlOptions?.animation);
+            } else {
+                dataLabelsGroup.attr({ opacity: 1 });
+            }
+
             dataLabelsGroup.show();
         }
 
