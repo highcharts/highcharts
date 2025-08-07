@@ -64,10 +64,7 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 validationRules: [{
-                    validate: function ({ value }) {
-                        const columnData = this.column.data;
-    return !columnData.includes(value) && /^[A-Z]{3}-\d{3}$/.test(value);
-                    },
+                    validate: 'unique',
                     notification:
                         'SKU must be unique and in the format AAA-123.'
                 }]
