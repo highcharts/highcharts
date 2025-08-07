@@ -14,7 +14,7 @@ QUnit.test(
                             enabled: true,
                             inside: false,
                             style: {
-                                textOutline: null
+                                _textOutline: null
                             },
                             backgroundColor: 'contrast'
                         }
@@ -32,13 +32,44 @@ QUnit.test(
             }),
             point = chart.series[0].points[1];
 
+
+        const contrastColor = Highcharts.color(
+                chart.renderer.getContrast(point.color)
+            ).get(),
+            contrastBackgroundColor = Highcharts.color(
+                chart.renderer.getContrast(contrastColor)
+            ).get();
         assert.strictEqual(
             Highcharts.color(
                 point.dataLabel.element.querySelector('text').style.fill
             ).get(),
-            Highcharts.color(chart.renderer.getContrast(point.color)).get(),
+            contrastColor,
             'Contrast color should be used for a justified label on a column.'
         );
+
+        assert.strictEqual(
+            Highcharts.color(
+                point.dataLabel.element.querySelector(
+                    '.highcharts-text-outline'
+                ).getAttribute('fill')
+            ).get(),
+            contrastBackgroundColor,
+            'Text outline should be updated for justified label on a column.'
+        );
+
+        /*
+        assert.strictEqual(
+            Highcharts.color(
+                point.dataLabel.element.querySelector(
+                    'rect'
+                ).getAttribute('fill')
+            )
+                .setOpacity(1)
+                .get(),
+            contrastBackgroundColor,
+            'Contrast background should be updated for justified label'
+        );
+        */
 
         chart.yAxis[0].setExtremes(null, 20000000, false, false);
         chart.addSeries({
