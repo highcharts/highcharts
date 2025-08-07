@@ -106,12 +106,12 @@ body {
     }
 
     #elections-selector-wrapper select {
-        color: #f2f1f4;
+        color: var(--color-title);
         background-color: var(--component-background-optional);
     }
 
     #html-control-div {
-        color: #f2f1f4;
+        color: var(--color-title);
     }
 }
 
