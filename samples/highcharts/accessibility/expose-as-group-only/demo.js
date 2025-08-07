@@ -74,7 +74,6 @@ Highcharts.chart('container', {
             color: '#ffffff',
             enabled: true,
             format: '{(sum):,.0f} / {70000:,.0f} steps this week.',
-            verticalAlign: 'top',
             style: {
                 fontSize: '12px',
                 fontWeight: 'bold'
