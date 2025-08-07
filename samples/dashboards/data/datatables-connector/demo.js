@@ -139,9 +139,7 @@ class DataTablesConnector extends Dashboards.DataConnector {
                                 Dashboards.merge(options, dataTableOptions)
                             );
                         },
-                        (converter, data) => {
-                            converter.parse({ data });
-                        }
+                        (converter, data) => converter.parse({ data })
                     );
                 }
                 return connector.applyTableModifiers().then(() => data);
