@@ -66,12 +66,7 @@ Grid.grid('container', {
                 validationRules: [{
                     validate: function ({ value }) {
                         const columnData = this.column.data;
-
-                        if (columnData.indexOf(value) !== -1) {
-                            return false;
-                        }
-
-                        return /^[A-Z]{3}-\d{3}$/.test(value);
+    return !columnData.includes(value) && /^[A-Z]{3}-\d{3}$/.test(value);
                     },
                     notification:
                         'SKU must be unique and in the format AAA-123.'
