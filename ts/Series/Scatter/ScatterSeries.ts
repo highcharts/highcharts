@@ -80,9 +80,7 @@ class ScatterSeries extends LineSeries {
 
     public constructor() {
         super();
-        if (this?.chart?.tooltip?.options?.shared) {
-            this.noSharedTooltip = false;
-        }
+        this.noSharedTooltip = !this.chart.tooltip?.options?.shared;
     }
 
     /**
