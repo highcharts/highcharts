@@ -78,7 +78,7 @@
     "excludeInternal": true,
     "excludePrivate": true,
     "hideGenerator": true,
-    "htmlLang": "en",
+    "lang": "en",
     "name": "Highcharts Dashboards",
     "out": "../../../build/api/dashboards/typedoc/",
     "plugin": [
