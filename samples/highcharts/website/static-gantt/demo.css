@@ -1,5 +1,9 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+html {
+    overflow: hidden;
+}
+
 body {
     margin: 0 !important;
     font-size: 1rem;
