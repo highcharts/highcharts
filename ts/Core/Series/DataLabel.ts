@@ -910,6 +910,7 @@ namespace DataLabel {
             if (align === 'right' && x >= 0) {
                 options.align = 'left';
                 options.inside = true;
+                x -= distX;
             } else {
                 x -= off;
             }
@@ -923,6 +924,7 @@ namespace DataLabel {
             if (align === 'left' && x <= 0) {
                 options.align = 'right';
                 options.inside = true;
+                x -= distX;
             } else {
                 x += chart.plotWidth - off;
             }
@@ -935,6 +937,7 @@ namespace DataLabel {
             if (verticalAlign === 'bottom' && y >= 0) {
                 options.verticalAlign = 'top';
                 options.inside = true;
+                y -= distY;
             } else {
                 y -= off;
             }
@@ -948,6 +951,7 @@ namespace DataLabel {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';
                 options.inside = true;
+                y -= distY;
             } else {
                 y += chart.plotHeight - off;
             }
