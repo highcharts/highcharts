@@ -343,7 +343,7 @@ namespace Validator {
         datetime: RuleDefinition;
         notEmpty: RuleDefinition;
         number: RuleDefinition;
-        caseUnique: RuleDefinition;
+        ignoreCaseUnique: RuleDefinition;
         unique: RuleDefinition;
     }
 
@@ -383,7 +383,7 @@ namespace Validator {
             ),
             notification: 'Value has to be a boolean.'
         },
-        caseUnique: {
+        ignoreCaseUnique: {
             validate: function ({ rawValue }): boolean {
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(

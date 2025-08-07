@@ -31,7 +31,7 @@ Grid.grid('container', {
             boolean: {
                 notification: 'New value has to be a boolean.'
             },
-            caseUnique: {
+            ignoreCaseUnique: {
                 notification: 'New value has to be unique (case-sensitive).'
             }
         }
@@ -57,7 +57,7 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 // Gets default error message text or from lang (if defined)
-                validationRules: ['notEmpty', 'caseUnique']
+                validationRules: ['notEmpty', 'ignoreCaseUnique']
             }
         }
     }, {

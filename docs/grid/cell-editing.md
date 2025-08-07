@@ -68,7 +68,7 @@ In addition to `dataType` you can extend a selection of predefined validation ru
 - `boolean`- Only accepts `true`, `false`, `1` and `0` as valid values.
 - `number`- Only accepts numbers.
 - `datetime`- Only accepts valid timestamps.
-- `caseUnique`- Only accepts unique values within the column (case-insensitive).
+- `ignoreCaseUnique`- Only accepts unique values within the column (case-insensitive).
 - `unique`- Only accepts unique values within the column (case-sensitive).
 
 See how adding the `notEmpty` validation rule prevents users from entering `null` or empty string values in any column:
