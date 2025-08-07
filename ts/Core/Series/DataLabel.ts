@@ -339,23 +339,29 @@ namespace DataLabel {
             setStartPos(alignTo); // Data sorting
 
             // Apply the distance
-            let { x = 0, y = 0 } = options;
+            let distX = 0,
+                distY = 0;
             if (isNumber(distance) && !options.inside) {
-                x += distance * (1 - 2 * alignFactor);
-                y += distance * (1 - 2 * verticalAlignFactor);
+                distX = distance * (1 - 2 * alignFactor);
+                distY = distance * (1 - 2 * verticalAlignFactor);
             }
 
             // Align the label to the adjusted box with for unrotated bBox due
             // to rotationOrigin, which is based on unrotated label
             dataLabel.align(merge(
                 options, {
-                    x,
-                    y,
+                    x: (options.x || 0) + distX,
+                    y: (options.y || 0) + distY,
                     width: unrotatedbBox.width,
                     height: unrotatedbBox.height
                 }
             ), false, alignTo, false);
 
+            // Record for later use in justifyDataLabel
+            dataLabel.distX = distX;
+            dataLabel.distY = distY;
+
+            // Modify for rotation
             dataLabel.alignAttr.x += alignFactor *
                 (unrotatedbBox.width - bBox.width);
             dataLabel.alignAttr.y += verticalAlignFactor *
@@ -864,7 +870,7 @@ namespace DataLabel {
      */
     function justifyDataLabel(
         this: Series,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         options: DataLabelOptions,
         alignAttr: SVGAttributes,
         bBox: BBoxObject,
@@ -872,9 +878,8 @@ namespace DataLabel {
         isNew?: boolean
     ): (boolean|undefined) {
         const chart = this.chart,
-            { align, distance, verticalAlign } = options,
-            alignFactor = getAlignFactor(align),
-            verticalAlignFactor = getAlignFactor(verticalAlign),
+            { align, verticalAlign } = options,
+            { distX = 0, distY = 0 } = dataLabel,
             padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
             horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
             horizontalAxisShift = horizontalAxis ?
@@ -882,14 +887,6 @@ namespace DataLabel {
             verticalAxis = chart.inverted ? this.xAxis : this.yAxis,
             verticalAxisShift = verticalAxis ?
                 verticalAxis.top - chart.plotTop : 0;
-
-        // Apply the distance
-        let distX = 0,
-            distY = 0;
-        if (isNumber(distance) && !options.inside) {
-            distX = distance * (1 - 2 * alignFactor);
-            distY = distance * (1 - 2 * verticalAlignFactor);
-        }
 
         let { x = 0, y = 0 } = options,
             off,

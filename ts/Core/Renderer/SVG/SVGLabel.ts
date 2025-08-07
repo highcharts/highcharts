@@ -147,6 +147,8 @@ class SVGLabel extends SVGElement {
     public bBox: BBoxObject;
     public box?: SVGElement;
     public deferredAttr: (SVGAttributes&AnyRecord);
+    public distX?: number; /* For the resolved data label distance */
+    public distY?: number;
     public heightSetting?: number;
     public needsBox?: boolean;
     public padding: number;
