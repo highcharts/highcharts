@@ -57,7 +57,6 @@ QUnit.test(
             'Text outline should be updated for justified label on a column.'
         );
 
-        /*
         assert.strictEqual(
             Highcharts.color(
                 point.dataLabel.element.querySelector(
@@ -69,7 +68,6 @@ QUnit.test(
             contrastBackgroundColor,
             'Contrast background should be updated for justified label'
         );
-        */
 
         chart.yAxis[0].setExtremes(null, 20000000, false, false);
         chart.addSeries({

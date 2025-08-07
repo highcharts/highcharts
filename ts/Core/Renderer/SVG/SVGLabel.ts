@@ -227,6 +227,9 @@ class SVGLabel extends SVGElement {
             } else if ('width' in textStyles || 'textOverflow' in textStyles) {
                 this.updateBoxSize();
             }
+            if ('color' in textStyles) {
+                this.updateBackground();
+            }
 
         }
         return SVGElement.prototype.css.call(this, styles) as this;
@@ -330,6 +333,7 @@ class SVGLabel extends SVGElement {
             this.updateBoxSize();
             this.doUpdate = false;
         }
+        this.updateBackground();
     }
 
     /*
@@ -408,6 +412,17 @@ class SVGLabel extends SVGElement {
         this.updateTextPadding();
 
         this.reAlign();
+    }
+
+    private updateBackground(): void {
+        if (this.fill === 'contrast') {
+            this.box?.attr({
+                fill: this.renderer.getContrast(
+                    this.text.styles.color || '#000'
+                ),
+                'fill-opacity': 0.65
+            });
+        }
     }
 
     /*

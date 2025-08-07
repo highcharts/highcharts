@@ -33,7 +33,6 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
-import Color from '../Color/Color.js';
 import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
@@ -702,14 +701,7 @@ namespace DataLabel {
                         if (!chart.styledMode) {
                             attr.fill = backgroundColor === 'auto' ?
                                 point.color :
-                                (
-                                    backgroundColor === 'contrast' &&
-                                    isString(style.color)
-                                ) ?
-                                    new Color(
-                                        renderer.getContrast(style.color)
-                                    ).setOpacity(0.65).get() :
-                                    backgroundColor;
+                                backgroundColor;
                             attr.stroke = borderColor === 'auto' ?
                                 point.color :
                                 borderColor;
