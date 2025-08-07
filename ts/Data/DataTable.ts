@@ -507,7 +507,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Retrieves the table's modifier for the table.
+     * Returns the modifier associated with this table, if any.
      *
      * @return {Highcharts.DataModifier|undefined}
      * Returns the modifier or `undefined`.
