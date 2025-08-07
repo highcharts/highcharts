@@ -116,12 +116,7 @@ Highcharts.chart('container', {
             sets: ['Custom', 'Dashboards'],
             value: 0.3,
             name: 'Sync API'
-        }],
-        dataLabels: {
-            style: {
-                textOutline: 'none'
-            }
-        }
+        }]
     }],
     title: {
         text: 'Highsoft products relationships'
