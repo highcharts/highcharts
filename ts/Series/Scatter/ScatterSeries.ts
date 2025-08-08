@@ -144,6 +144,14 @@ class ScatterSeries extends LineSeries {
         }
     }
 
+    public init(chart: any, options: any): void {
+        super.init(chart, options);
+
+        if (chart.options?.tooltip?.shared) {
+            this.noSharedTooltip = false;
+        }
+    }
+
     /* eslint-enable valid-jsdoc */
 
 }
@@ -161,7 +169,7 @@ extend(ScatterSeries.prototype, {
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
-    noSharedTooltip: false,
+    noSharedTooltip: true,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 
