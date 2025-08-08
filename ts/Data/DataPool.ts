@@ -231,7 +231,8 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
     }
 
     /**
-     * Creates and loads the connector.
+     * Instantiates the connector class for the given options and loads its
+     * data.
      *
      * @private
      *
@@ -397,8 +398,8 @@ namespace DataPool {
 
     export interface Event {
         type: (
-            |'load'|'afterLoad'
-            |'setConnectorOptions'|'afterSetConnectorOptions'
+            'load' | 'afterLoad' | 'setConnectorOptions' |
+            'afterSetConnectorOptions'
         );
         options: DataConnectorTypeOptions;
     }
