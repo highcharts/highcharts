@@ -139,8 +139,8 @@ class BellcurveSeries extends AreaSplineSeries {
         updatePoints?: boolean
     ): void {
         let alteredData;
-
         if (typeof data !== 'undefined' && data.length > 0) {
+            data = data.filter(isNumber),
             this.setMean(data);
             this.setStandardDeviation(data);
             alteredData = this.derivedData(

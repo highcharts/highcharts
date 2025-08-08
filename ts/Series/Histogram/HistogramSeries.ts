@@ -152,7 +152,7 @@ class HistogramSeries extends ColumnSeries {
         let alteredData;
         if (typeof data !== 'undefined' && data.length > 0) {
             alteredData = this.derivedData(
-                data,
+                data.filter(isNumber),
                 this.binsNumber(data),
                 this.options.binWidth as any
             );
