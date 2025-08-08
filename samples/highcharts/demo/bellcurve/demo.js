@@ -1,4 +1,4 @@
-function createChart(data, getJitterData) {
+function createChart(data) {
     Highcharts.chart('container', {
 
         title: {
@@ -28,11 +28,18 @@ function createChart(data, getJitterData) {
             enableMouseTracking: false
         }, {
             type: 'scatter',
-            data: getJitterData(data),
+            // Data is one dimensional with the
+            // values being displayed on the x-axis
+            data: data.map(p => ({
+                x: p,
+                y: 0
+            })),
             yAxis: 1,
             marker: {
                 radius: 1.5
             },
+            // Jitter on the y-axis to help separate datapoints,
+            // preventing them form forming a line
             jitter: {
                 y: 1
             },
@@ -246,12 +253,6 @@ const data = [
     3.2680900325828453
 ];
 
-// Generate dataset with datavalues on x-axis
-const getJitterData = data => data.map(p => [
-    p,
-    0
-]);
-
 // Plugin to add bell curve zones and labels
 (({ addEvent, seriesTypes }) => {
     const decoratedSeries = [];
@@ -298,4 +299,4 @@ const getJitterData = data => data.map(p => [
     });
 })(Highcharts);
 
-createChart(data, getJitterData);
+createChart(data);
