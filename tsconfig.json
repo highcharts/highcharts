@@ -1,7 +1,11 @@
 {
     "compilerOptions": {
-        "module": "Node16",
-        "moduleResolution": "Node16",
+        "allowJs": true,
+        "noEmit": true,
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "skipLibCheck": true,
+        "strict": true,
         "target": "ES2020"
-    },
+    }
 }

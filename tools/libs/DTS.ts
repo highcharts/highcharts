@@ -1,7 +1,6 @@
 /* *
  *
- *  Handles TypeScript API and provides a simplified AST for doclet-relevant
- *  source nodes.
+ *  Handles TypeScript API and provides a simplified AST of native declarations.
  *
  *  (c) Highsoft AS
  *
@@ -41,10 +40,10 @@ import * as TS from 'typescript';
 
 export interface ClassInfo {
     doclet?: DocletInfo;
-    extends?: string;
+    extends?: ReferenceType;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
-    implements?: Array<string>;
+    implements?: Array<ReferenceType>;
     kind: 'Class';
     members: Array<MemberInfo>;
     meta: InfoMeta;
@@ -91,15 +90,19 @@ export interface FunctionInfo {
     kind: 'Function';
     meta: InfoMeta;
     name: string;
-    node: (TS.ConstructorDeclaration|TS.FunctionDeclaration|TS.MethodDeclaration);
+    node: (
+        | TS.ConstructorDeclaration
+        | TS.FunctionDeclaration
+        | TS.MethodDeclaration
+    );
     parameters?: Array<VariableInfo>;
     return?: VariableType;
 }
 
 
 export type InfoFlag = (
-    'async'|'abstract'|'assured'|'await'|'declare'|'default'|'export'|
-    'optional'|'private'|'protected'|'readonly'|'rest'|'static'|'type'
+    'async'|'abstract'|'assured'|'default'|'export'|
+    'optional'|'private'|'protected'|'readonly'|'rest'|'static'
 );
 
 
@@ -117,7 +120,7 @@ export interface InterfaceInfo {
     doclet?: DocletInfo;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
-    extends?: Array<string>;
+    extends?: Array<VariableType>;
     kind: 'Interface';
     members: Array<MemberInfo>;
     meta: InfoMeta;
@@ -135,7 +138,7 @@ export type MemberInfo = (DocletInfo|FunctionInfo|PropertyInfo);
 export interface NamespaceInfo {
     doclet?: DocletInfo;
     flags?: Array<InfoFlag>;
-    kind: ('Module'|'Namespace');
+    kind: 'Namespace';
     members: Array<CodeInfo>;
     meta: InfoMeta;
     name: string;
@@ -144,8 +147,6 @@ export interface NamespaceInfo {
 
 
 export interface ObjectType {
-    doclet?: DocletInfo;
-    flags?: Array<InfoFlag>;
     kind: 'ObjectType';
     members: Array<MemberInfo>;
     meta: InfoMeta;
@@ -155,9 +156,10 @@ export interface ObjectType {
 
 
 export interface Project {
+    infoLookup: Map<TS.Symbol, CodeInfo>;
+    program: TS.Program;
     rootPath?: string;
     sourceInfos: Array<SourceInfo>;
-    tsProgram: TS.Program;
 }
 
 
@@ -175,6 +177,14 @@ export interface PropertyInfo {
         | TS.ShorthandPropertyAssignment
     );
     type?: VariableType;
+}
+
+
+export interface ReferenceType {
+    kind: 'ReferenceType';
+    meta: InfoMeta;
+    name: string;
+    symbol: TS.Symbol;
 }
 
 
@@ -203,12 +213,12 @@ export interface VariableInfo {
     kind: 'Variable';
     meta: InfoMeta;
     name: string;
-    node: (TS.ParameterDeclaration|TS.TypeParameterDeclaration|TS.VariableDeclaration);
+    node: (TS.ParameterDeclaration|TS.VariableDeclaration);
     type: VariableType;
 }
 
 
-export type VariableType = (string|IntersectType|ObjectType);
+export type VariableType = (string|IntersectType|ObjectType|ReferenceType);
 
 
 /* *
@@ -277,93 +287,48 @@ const SANITIZE_TYPE = /\(\s*(.*)\s*\)/gsu;
  * @param infos
  * Array of code information to add to.
  *
- * @param nodes
- * Child nodes to extract from.
+ * @param symbols
+ * Child symbols to process and add.
  */
 function addChildInfos (
     project: Project,
     infos: Array<CodeInfo>,
-    nodes: (Array<TS.Node>|TS.NodeArray<TS.Node>|TS.SymbolTable)
+    symbols: Iterable<TS.Symbol>
 ): void {
     let _child: (CodeInfo|undefined);
-    let _children: (Array<CodeInfo>|undefined);
-    let _doclet: DocletInfo;
-    let _doclets: Array<DocletInfo>;
 
-    if (!(nodes instanceof Array)) { // Symbol
-        nodes = Array
-            .from(nodes.values())
-            .filter(v => !!v.valueDeclaration)
-            .map(v => v.valueDeclaration!);
-    }
+    for (const symbol of symbols) {
 
-    for (const node of nodes) {
-
-        if (node.kind === TS.SyntaxKind.EndOfFileToken) {
-            break;
-        } else if (TS.isVariableStatement(node)) {
-            addChildInfos(
-                project,
-                infos,
-                nodesChildren(node.declarationList)
-            );
-        } else if (TS.isExportAssignment(node)) {
-            addChildInfos(
-                project,
-                infos,
-                [node.expression]
-            );
-        } else {
-            _child = (
-                getVariableInfo(project, node) ||
-                getTypeAliasInfo(project, node) ||
-                getPropertyInfo(project, node) ||
-                getNamespaceInfo(project, node) ||
-                getInterfaceInfo(project, node) ||
-                getFunctionInfo(project, node) ||
-                getClassInfo(project, node)
-            );
-        }
-
-        // Retrieve leading doclets
-
-        _doclets = getDocletInfos(project, node);
-
-        // Deal with floating doclets before leading child doclet
-
-        if (_doclets.length) {
-
-            _doclet = _doclets[_doclets.length - 1];
-
-            // Add trailing doclet to child information
-
-            if (
-                _child &&
-                _child.kind !== 'Doclet' &&
-                !_doclet.tags.apioption
-            ) {
-                _child.doclet = _doclets.pop();
-            }
-
-            // Add floating doclets
-
-            for (_doclet of _doclets) {
-                infos.push(_doclet);
-            }
-
-        }
-
-        // Finally add child(ren)
+        _child = project.infoLookup.get(symbol);
 
         if (_child) {
             infos.push(_child);
-            _child = void 0;
+            continue;
         }
 
-        if (_children) {
-            infos.push(..._children);
-            _children = void 0;
+        if (!symbol.declarations) {
+            continue;
         }
+
+        for (const declaration of symbol.declarations) {
+            _child = (
+                getVariableInfo(project, declaration) ||
+                getTypeAliasInfo(project, declaration) ||
+                getPropertyInfo(project, declaration) ||
+                getNamespaceInfo(project, declaration) ||
+                getInterfaceInfo(project, declaration) ||
+                getFunctionInfo(project, declaration) ||
+                getClassInfo(project, declaration)
+            );
+            if (_child) {
+                _child.doclet = getDocletInfo(project, symbol)
+                infos.push(_child);
+                _child = void 0;
+                break;
+            }
+
+        }
+
     }
 
 }
@@ -379,7 +344,7 @@ function addChildInfos (
  * Node to retrieve from.
  */
 function addInfoFlags (
-    info: Partial<(CodeInfo|ObjectType)>,
+    info: Partial<CodeInfo>,
     node: TS.Node
 ): void {
 
@@ -431,20 +396,154 @@ function addInfoFlags (
         }
     }
 
-    if (TS.isExportAssignment(node)) {
-        _flags.push('default');
-    }
-
     if (
-        TS.isImportDeclaration(node) &&
-        node.importClause &&
-        node.importClause.isTypeOnly
+        TS.isExportAssignment(node.parent) ||
+        TS.isExportDeclaration(node.parent) &&
+        (
+            TS.getCombinedModifierFlags(node.parent) & // Bit operation
+                TS.ModifierFlags.ExportDefault
+        )
     ) {
-        _flags.push('type');
+        _flags.push('default');
     }
 
     if (_flags.length) {
         info.flags = _flags;
+    }
+
+}
+
+
+/**
+ * Adds generic parameter informations.
+ *
+ * @param info
+ * Information to add to.
+ *
+ * @param node
+ * Node to retrieve from.
+ *
+ * @param project
+ * Related project.
+ */
+function addInfoGenerics (
+    info: Partial<(ClassInfo|FunctionInfo|InterfaceInfo|TypeAliasInfo)>,
+    node: (
+        | TS.ClassDeclaration
+        | TS.FunctionLikeDeclaration
+        | TS.InterfaceDeclaration
+        | TS.TypeAliasDeclaration
+    ),
+    project: Project
+): void {
+
+    if (!node.typeParameters) {
+        return;
+    }
+
+    const _generics: Array<TypeAliasInfo> = [];
+    const _program = project.program;
+
+    let _info: TypeAliasInfo;
+    let _symbol: (TS.Symbol|undefined);
+
+    for (const _typeParameter of node.typeParameters) {
+        _symbol = nodesSymbol(_program, _typeParameter);
+
+        if (!_symbol) {
+            continue;
+        }
+
+        _info = {
+            kind: 'TypeAlias',
+            name: symbolsName(_program, _symbol)
+        } as TypeAliasInfo;
+
+        if (_typeParameter.constraint) {
+            _info.value = getInfoType(project, _typeParameter.constraint);
+        }
+
+        if (_typeParameter.default) {
+            _info.value = _info.value || [];
+            _info.value = getInfoType(project, _typeParameter.default);
+        }
+
+        addInfoFlags(_info, _typeParameter);
+        addInfoMeta(_info, _typeParameter);
+
+        _generics.push(_info);
+    }
+
+    if (_generics.length) {
+        info.generics = _generics;
+    }
+
+}
+
+
+/**
+ * Adds heritage information.
+ *
+ * @param info
+ * Information to add to.
+ *
+ * @param node
+ * Node to retrieve from.
+ *
+ * @param project
+ * Related project.
+ */
+function addInfoHeritage (
+    info: Partial<(ClassInfo|InterfaceInfo)>,
+    node: (TS.ClassDeclaration|TS.InterfaceDeclaration),
+    project: Project
+): void {
+
+    if (!node.heritageClauses) {
+        return;
+    }
+
+    const _program = project.program;
+    const _referenceTypes: Array<ReferenceType> = [];
+    const _addReferenceType = (_type: TS.ExpressionWithTypeArguments): void => {
+        const _heritageSymbol = nodesSymbol(_program, _type);
+        if (_heritageSymbol) {
+            _referenceType = getReferenceType(project, _heritageSymbol);
+            _referenceTypes.push(_referenceType);
+        }
+    };
+
+    let _referenceType: ReferenceType;
+    let _classHeritage: (ReferenceType|undefined);
+
+    for (const _heritageClause of node.heritageClauses) {
+
+        if (
+            _heritageClause.token === TS.SyntaxKind.ExtendsKeyword &&
+            TS.isClassDeclaration(node)
+        ) {
+            _addReferenceType(_heritageClause.types[0]);
+            _classHeritage = _referenceTypes.pop();
+            continue;
+        }
+
+        for (const _heritageType of _heritageClause.types) {
+            _addReferenceType(_heritageType);
+        }
+
+    }
+
+    if (info.kind === 'Class') {
+        if (_classHeritage) {
+            info.extends = _classHeritage;
+        }
+        if (_referenceTypes.length) {
+            info.implements = _referenceTypes;
+        }
+    } else {
+        if (_referenceTypes.length) {
+            info.extends = _referenceTypes;
+        }
     }
 
 }
@@ -460,20 +559,30 @@ function addInfoFlags (
  * Node to return meta information for.
  */
 function addInfoMeta (
-    info: Partial<(CodeInfo|ObjectType)>,
-    node: TS.Node
+    info: Partial<(CodeInfo|ObjectType|ReferenceType)>,
+    node?: TS.Node
 ): void {
-    info.meta = {
-        begin: node.getStart(),
-        end: node.getEnd(),
-        file: node.getSourceFile().fileName,
-        overhead: node.getLeadingTriviaWidth(),
-        scope: '',
-        syntax: node.kind
-    };
-    Object.defineProperty(info, 'node', {
-        value: node,
-    });
+
+    if (node) {
+        info.meta = {
+            begin: node.getStart(),
+            end: node.getEnd(),
+            file: node.getSourceFile().fileName,
+            overhead: node.getLeadingTriviaWidth(),
+            scope: '',
+            syntax: node.kind
+        };
+    } else {
+        info.meta = {
+            begin: 0,
+            end: 0,
+            file: '',
+            overhead: 0,
+            scope: '',
+            syntax: TS.SyntaxKind.Unknown
+        };
+    }
+
 }
 
 
@@ -490,7 +599,13 @@ function addInfoScopes (
     parentInfo: (CodeInfo|SourceInfo),
     targetInfos: Array<CodeInfo|VariableType>
 ): void {
-    const _scopePath = extractInfoScopePath(parentInfo);
+    const _scopePath = (
+        parentInfo.kind === 'Doclet' || parentInfo.kind === 'Source' ?
+            '' :
+            parentInfo.meta.scope ?
+                `${parentInfo.meta.scope}.${parentInfo.name}` :
+                parentInfo.name
+    );
 
     for (const _info of targetInfos) {
 
@@ -527,7 +642,6 @@ function addInfoScopes (
                 }
                 break;
 
-            case 'Module':
             case 'Namespace':
                 addInfoScopes(_info, _info.members);
                 break;
@@ -625,45 +739,6 @@ export function changeSourceNode (
 
 
 /**
- * [TS] Logs debug information for a node and its children into the console.
- *
- * @param node
- * Node to debug.
- *
- * @param depth
- * Level of debug depth regarding children.
- *
- * @param indent
- * Internal parameter.
- */
-export function debug (
-    node: TS.Node,
-    depth: number = 0,
-    indent: string = ''
-): void {
-
-    if (!node) {
-        console.info(indent + 0, 'undefined', '[-:-]');
-        return;
-    }
-
-    console.info(
-        indent + node.kind,
-        TS.SyntaxKind[node.kind],
-        `[${node.getFullStart()}:${node.getEnd()}]`
-    );
-
-    if (depth-- > 0) {
-        indent += '  ';
-        for (const child of nodesChildren(node)) {
-            debug(child, depth, indent);
-        }
-    }
-
-}
-
-
-/**
  * Extracts the arguments of the generic name or type.
  *
  * @param nameOrTypeString
@@ -677,7 +752,7 @@ export function extractGenericArguments (
 ): Array<string>|undefined {
 
     if (!nameOrTypeString.match(GENERIC)) {
-        return void 0;
+        return;
     }
 
     const types: Array<string> = [];
@@ -725,7 +800,6 @@ export function extractInfoName (
         case 'Class':
         case 'Function':
         case 'Interface':
-        case 'Module':
         case 'Namespace':
         case 'Property':
         case 'TypeAlias':
@@ -744,7 +818,7 @@ export function extractInfoName (
         case 'Source':
             return info.file;
         default:
-            return void 0;
+            return;
     }
 }
 
@@ -762,44 +836,6 @@ export function extractTagInset (
     text: string
 ): string {
     return (text.match(DOCLET_TAG_INSET) || [])[1];
-}
-
-
-/**
- * Extracts scope path for the given code information.
- *
- * @param info
- * Information to extract from.
- *
- * @return
- * Scope path or `undefined`.
- */
-function extractInfoScopePath (
-    info: (CodeInfo|ObjectType|SourceInfo)
-): (string|undefined) {
-
-    switch (info.kind) {
-
-        case 'Class':
-        case 'Function':
-        case 'Interface':
-        case 'Namespace':
-        case 'Module':
-        case 'ObjectType':
-        case 'Property':
-        case 'TypeAlias':
-        case 'Variable':
-            return (
-                info.meta.scope ?
-                    `${info.meta.scope}.${info.name}` :
-                    info.name
-            );
-
-        default:
-            return void 0;
-
-    }
-
 }
 
 
@@ -912,11 +948,8 @@ export function extractTagText (
 ): (string|undefined) {
     const _tagText = doclet.tags[tag];
 
-    if (
-        !_tagText ||
-        !_tagText.length
-    ) {
-        return void 0;
+    if (!_tagText?.length) {
+        return;
     }
 
     if (allOrInset === false) {
@@ -1032,30 +1065,28 @@ function getClassInfo (
 ): (ClassInfo|undefined) {
 
     if (!TS.isClassDeclaration(node)) {
-        return void 0;
+        return;
+    }
+
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
     }
 
     const _info = {
-        kind: 'Class'
+        kind: 'Class',
+        name: symbolsName(_program, _symbol)
     } as ClassInfo;
 
-    _info.name = ((node.name && node.name.getText()) || 'default');
-
-    if (node.typeParameters) {
-        addChildInfos(project, _info.generics = [], node.typeParameters);
-    }
-
-    if (node.heritageClauses) {
-        for (const clause of node.heritageClauses) {
-            if (clause.token === TS.SyntaxKind.ExtendsKeyword) {
-                _info.extends = clause.types[0]?.getText();
-            } else {
-                _info.implements = clause.types.map(t => t.getText());
-            }
-        }
-    }
-
-    addChildInfos(project, _info.members = [], node.members);
+    addInfoGenerics(_info, node, project);
+    addInfoHeritage(_info, node, project);
+    addChildInfos(
+        project,
+        _info.members = [],
+        symbolsChildren(_program, _symbol)
+    );
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
@@ -1063,77 +1094,62 @@ function getClassInfo (
 }
 
 /**
- * Retrieves doclet information from the given node.
+ * Retrieves doclet information from the given project symbol.
  *
  * @param project
  * Related project.
  *
- * @param node
- * Node that might have a doclet.
+ * @param symbol
+ * Symbol that might have a doclet.
  *
  * @return
  * Doclet information or `undefined`.
  */
-function getDocletInfos(
+function getDocletInfo(
     project: Project,
-    node: TS.Node
-): Array<DocletInfo> {
-
-    if (!TS.isJSDocCommentContainingNode(node)) {
-        return [];
+    symbol: TS.Symbol
+): (DocletInfo|undefined) {
+    const _typeChecker = project.program.getTypeChecker();
+    const _commentParts = symbol.getDocumentationComment(_typeChecker);
+    
+    if (!_commentParts) {
+        return;
     }
 
-    const _docs = TS.getJSDocCommentsAndTags(node);
-    const _infos: Array<DocletInfo> = [];
+    const _description: Array<string> = [];
 
-    let _info: (DocletInfo|undefined);
+    for (const _part of _commentParts) {
+        if (_part.kind !== 'text') {
+            break;
+        } 
+        _description.push(_part.text);
+    }
 
-    for (const _doc of _docs) {
-        if (_info && TS.isJSDoc(_doc) && Object.keys(_info.tags).length) {
-            _infos.push(_info);
-            _info = undefined;
+    const _info = {
+        kind: 'Doclet',
+        tags: {},
+    } as DocletInfo;
+
+    if (_description.length) {
+        _info.tags['description'] = _description;
+    }
+
+    let _tag: string;
+
+    for (const _part of symbol.getJsDocTags(_typeChecker)) {
+
+        _tag = JSDOC_TAG_REPLACEMENTS[_part.name] || _part.name;
+        _info.tags[_tag] = _info.tags[_tag] || [];
+
+        if (_part.text) {
+            _info.tags[_tag].push(TS.displayPartsToString(_part.text));
         }
-        if (!_info) {
-            _info = {
-                kind: 'Doclet',
-                tags: {},
-            } as DocletInfo;
-            addInfoMeta(_info, _doc);
-        }
-        if (TS.isJSDoc(_doc)) {
-            if (_doc.comment) {
-                _info.tags.description = _info.tags.description || [];
-                if (_doc.comment instanceof Array) {
-                    _info.tags.description = _info.tags.description
-                        .concat(_doc.comment.map(c => c.text));
-                } else {
-                    _info.tags.description.push(_doc.comment);
-                }
-            }
-        } else {
-            let _tag =_doc.tagName.text;
 
-            _tag = JSDOC_TAG_REPLACEMENTS[_tag] || _tag;
-            _info.tags[_tag] = _info.tags[_tag] || [];
-
-            if (_doc.comment instanceof Array) {
-                _info.tags[_tag] = _info.tags.description
-                    .concat(_doc.comment.map(c => c.text));
-            } else if (_doc.comment) {
-                _info.tags[_tag].push(_doc.comment);
-            }
-        }
     }
 
-    if (_info && !_infos.includes(_info)) {
-        _infos.push(_info);
-    }
+    addInfoMeta(_info, symbol.declarations?.[0]);
 
-    if (_infos.length) {
-        return _infos;
-    }
-
-    return [];
+    return _info;
 }
 
 
@@ -1157,19 +1173,26 @@ function getFunctionInfo (
     if (
         !TS.isConstructorDeclaration(node) &&
         !TS.isFunctionDeclaration(node) &&
-        !TS.isMethodDeclaration(node)
+        !TS.isGetAccessorDeclaration(node) &&
+        !TS.isMethodDeclaration(node) &&
+        !TS.isSetAccessorDeclaration(node)
     ) {
-        return void 0;
+        return;
+    }
+
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
     }
 
     const _info = {
         kind: 'Function',
-        name: (
-            TS.isConstructorDeclaration(node) ?
-                'constructor' :
-                nodesName(node)
-        )
+        name: symbolsName(_program, _symbol)
     } as FunctionInfo;
+
+    addInfoGenerics(_info, node, project);
 
     if (node.parameters) {
         const _parameters: Array<VariableInfo> = _info.parameters = [];
@@ -1186,24 +1209,6 @@ function getFunctionInfo (
 
         if (_parameters.length) {
             _info.parameters = _parameters;
-        }
-    }
-
-    if (node.typeParameters) {
-        const _generics: Array<TypeAliasInfo> = _info.generics = [];
-
-        let _typeAlias: (TypeAliasInfo|undefined);
-
-        for (const _typeParameter of node.typeParameters) {
-            _typeAlias = getTypeAliasInfo(project, _typeParameter);
-
-            if (_typeAlias) {
-                _generics.push(_typeAlias);
-            }
-        }
-
-        if (!_generics.length) {
-            delete _info.generics;
         }
     }
 
@@ -1244,6 +1249,13 @@ function getInfoType (
         return;
     }
 
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
+    }
+
     let _infoType: Array<VariableType> = [];
 
     if (node) {
@@ -1253,23 +1265,15 @@ function getInfoType (
         if (TS.isTypeLiteralNode(node)) {
             const _type: Partial<ObjectType> = {
                 kind: 'ObjectType',
-                name: nodesName(node),
+                name: symbolsName(_program, _symbol),
                 members: []
             };
 
-            let _memberType: (MemberInfo|undefined);
-
-            for (const _member of node.members) {
-                _memberType = (
-                    getPropertyInfo(project, _member) ||
-                    getFunctionInfo(project, _member)
-                );
-                if (_memberType) {
-                    _type.members!.push(_memberType);
-                }
-            }
-
-            addInfoFlags(_type, node);
+            addChildInfos(
+                project,
+                _type.members!,
+                symbolsChildren(_program, _symbol)
+            );
             addInfoMeta(_type, node);
 
             return _type as ObjectType;
@@ -1294,7 +1298,7 @@ function getInfoType (
     _infoType = _infoType.filter(_type => _type !== 'void');
 
     if (!_infoType.length) {
-        return void 0;
+        return;
     }
 
     return (_infoType.length === 1 ? _infoType[0] : _infoType);
@@ -1319,36 +1323,28 @@ function getInterfaceInfo (
 ): (InterfaceInfo|undefined) {
 
     if (!TS.isInterfaceDeclaration(node)) {
-        return void 0;
+        return;
     }
 
-    const _tsChecker = project.tsProgram.getTypeChecker();
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
+    }
+
     const _info = {
         kind: 'Interface',
-        name: nodesName(node)
+        name: symbolsName(_program, _symbol)
     } as InterfaceInfo;
 
-    if (node.typeParameters) {
-        addChildInfos(project, _info.generics = [], node.typeParameters);
-    }
-
-    if (node.heritageClauses) {
-        const _type = nodesType(project.tsProgram, node);
-        _info.extends = _tsChecker
-            .getBaseTypes(_type as TS.InterfaceType)
-            .map(_baseType => _tsChecker.typeToString(_baseType));
-    }
-
-    const _symbol = _tsChecker.getSymbolAtLocation(node.name);
-
-    if (_symbol) {
-        const _mergedSymbol = _tsChecker.getMergedSymbol(_symbol);
-
-        if (_mergedSymbol.members) {
-            addChildInfos(project, _info.members = [], _mergedSymbol.members);
-        }
-    }
-
+    addInfoGenerics(_info, node, project);
+    addInfoHeritage(_info, node, project);
+    addChildInfos(
+        project,
+        _info.members = [],
+        symbolsChildren(_program, _symbol)
+    );
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
@@ -1357,16 +1353,16 @@ function getInterfaceInfo (
 
 
 /**
- * Retrieves namespace and module information from the given node.
+ * Retrieves namespace information from the given node.
  *
  * @param project
  * Related project.
  *
  * @param node
- * Node that might be a namespace or module.
+ * Node that might be a namespace.
  *
  * @return
- * Namespace, module or `undefined`.
+ * Namespace or `undefined`.
  */
 function getNamespaceInfo (
     project: Project,
@@ -1374,29 +1370,27 @@ function getNamespaceInfo (
 ): (NamespaceInfo|undefined) {
 
     if (!TS.isModuleDeclaration(node)) {
-        return void 0;
+        return;
     }
 
-    const _info = {
-        kind: (
-            node
-                .getChildren()
-                .some(token => token.kind === TS.SyntaxKind.ModuleKeyword) ?
-                'Module' :
-                'Namespace'
-        ),
-        name: node.name.text
-    } as NamespaceInfo;
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
 
-    addChildInfos(
-        project,
-        _info.members = [],
-        node.body && nodesChildren(node.body) || []
-    );
+    if (!_symbol) {
+        return;
+    }
+
+    const _info: Partial<NamespaceInfo> = {
+        kind: 'Namespace',
+        name: symbolsName(_program, _symbol),
+        members: []
+    };
+
+    addChildInfos(project, _info.members!, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
-    return _info;
+    return _info as NamespaceInfo;
 }
 
 
@@ -1413,9 +1407,10 @@ export function getProject(
     configOrRootPath: string,
 ): Project {
     const _project: Project = {
+        program: tsProgram(configOrRootPath),
         rootPath: configOrRootPath,
         sourceInfos: [],
-        tsProgram: tsProgram(configOrRootPath)
+        infoLookup: new Map(),
     };
     const _folderPath = (
         Path.extname(configOrRootPath) ?
@@ -1425,7 +1420,7 @@ export function getProject(
     const _absolutePath: string = Path.resolve(_folderPath);
     const _sourceInfos = _project.sourceInfos;
 
-    for (const _sourceFile of _project.tsProgram.getSourceFiles()) {
+    for (const _sourceFile of _project.program.getSourceFiles()) {
         if (
             _sourceFile.fileName.startsWith(_absolutePath) ||
             _sourceFile.fileName.startsWith(_folderPath)
@@ -1458,12 +1453,19 @@ function getPropertyInfo (
         !TS.isPropertyDeclaration(node) &&
         !TS.isPropertySignature(node)
     ) {
-        return void 0;
+        return;
+    }
+
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
     }
 
     const _info = {
         kind: 'Property',
-        name: nodesName(node),
+        name: symbolsName(_program, _symbol),
         type: getInfoType(project, node.type)
     } as PropertyInfo;
 
@@ -1471,6 +1473,35 @@ function getPropertyInfo (
     addInfoMeta(_info, node);
 
     return _info;
+}
+
+
+/**
+ * Retrieves reference information from the given project symbol.
+ *
+ * @param project
+ * Related project.
+ *
+ * @param symbol
+ * Project symbol for reference.
+ *
+ * @return
+ * Reference information.
+ */
+function getReferenceType (
+    project: Project,
+    symbol: TS.Symbol
+): ReferenceType {
+    const _program = project.program;
+    const _info: Partial<ReferenceType> = {
+        kind: 'ReferenceType',
+        name: symbolsName(_program, symbol),
+        symbol: symbol
+    };
+
+    addInfoMeta(_info, symbol.declarations?.[0])
+
+    return _info as ReferenceType;
 }
 
 
@@ -1490,9 +1521,10 @@ export function getSourceInfo (
     project: Project,
     sourceFile: (string|TS.SourceFile),
 ): SourceInfo {
+    const _program = project.program;
 
     if (typeof sourceFile === 'string') {
-        sourceFile = project.tsProgram.getSourceFile(sourceFile)!;
+        sourceFile = _program.getSourceFile(sourceFile)!;
     }
 
     const _info = {
@@ -1502,7 +1534,12 @@ export function getSourceInfo (
         node: sourceFile
     } as SourceInfo;
 
-    addChildInfos(project, _info.code, nodesChildren(sourceFile));
+    const _symbol = nodesSymbol(_program, sourceFile)!;
+
+    if (_symbol) {
+        addChildInfos(project, _info.code, symbolsChildren(_program, _symbol));
+    }
+
     addInfoScopes(_info, _info.code);
 
     return _info;
@@ -1526,50 +1563,28 @@ function getTypeAliasInfo (
     node: TS.Node
 ): (TypeAliasInfo|undefined) {
 
-    if (
-        !TS.isTypeAliasDeclaration(node) &&
-        !TS.isTypeParameterDeclaration(node)
-    ) {
-        return void 0;
+    if (!TS.isTypeAliasDeclaration(node)) {
+        return;
+    }
+
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
     }
 
     const _info = {
         kind: 'TypeAlias',
-        name: nodesName(node)
+        name: symbolsName(_program, _symbol)
     } as TypeAliasInfo;
 
-    if (TS.isTypeParameterDeclaration(node)) {
-        if (node.constraint) {
-            _info.value = getInfoType(project, node.constraint);
-        }
-        if (node.default) {
-            _info.value = _info.value || [];
-            _info.value = getInfoType(project, node.default);
-        }
-    } else {
-        _info.value = (
-            getInfoType(project, node.type) ||
-            getInfoType(project, TS.getJSDocType(node))
-        );
-        if (node.typeParameters) {
-            const _generics: Array<TypeAliasInfo> = [];
+    _info.value = (
+        getInfoType(project, node.type) ||
+        getInfoType(project, TS.getJSDocType(node))
+    );
 
-            let _typeAliasInfo: (TypeAliasInfo|undefined);
-
-            for (const parameter of node.typeParameters) {
-                _typeAliasInfo = getTypeAliasInfo(project, parameter);
-                if (_typeAliasInfo) {
-                    _generics.push(_typeAliasInfo);
-                }
-            }
-
-            if (_generics.length) {
-                _info.generics = _generics;
-            }
-        }
-
-    }
-
+    addInfoGenerics(_info, node, project);
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
@@ -1595,16 +1610,32 @@ function getVariableInfo (
 ): (VariableInfo|undefined) {
 
     if (!TS.isVariableDeclaration(node)) {
-        return void 0;
+        return;
     }
 
-    const _tsChecker = project.tsProgram.getTypeChecker();
-    const _type = nodesType(project.tsProgram, node);
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
+    }
+
     const _info = {
         kind: 'Variable',
-        name: nodesName(node),
-        type: [_tsChecker.typeToString(_type)]
+        name: symbolsName(_program, _symbol)
     } as VariableInfo;
+
+    if (_symbol.declarations && TS.isTypeNode(_symbol.declarations[0])) {
+        const _infoType = getInfoType(project, _symbol.declarations[0]);
+
+        if (_infoType) {
+            _info.type = _infoType;
+        }
+    }
+
+    if (!_info.type) {
+        symbolsTypeToString(_program, _symbol)
+    }
 
     if (TS.isVariableDeclarationList(node.parent)) {
         addInfoFlags(_info, node.parent.parent);
@@ -1713,50 +1744,49 @@ function newMeta (
 
 
 /**
- * [TS] Retrieves all logical children and skips statement tokens.
+ * [TS] Retrieves all generic paramter for a given ndode.
  *
- * @param node
- * Node to retrieve logical children from.
+ * @param program
+ * Related parser program.
+ *
+ * @param symbol
+ * Node to retrieve generic parameters from.
  *
  * @return
- * Array of logical children.
+ * Retrieved generic parameters.
  */
-function nodesChildren (
+function nodesGenericSymbols(
+    program: TS.Program,
     node: TS.Node
-): Array<TS.Node> {
-    const children: Array<TS.Node> = [];
+): Array<TS.Symbol> {
+    const _genericParameters: Array<TS.Symbol> = [];
 
-    TS.forEachChild(node, child => {
-        children.push(child);
-    });
+    if (
+        TS.isClassDeclaration(node) ||
+        TS.isFunctionDeclaration(node) ||
+        TS.isTypeAliasDeclaration(node)
+    ) {
+        let _symbol: (TS.Symbol|undefined);
 
-    return children;
+        for (const _typeParameter of node.typeParameters || []) {
+
+            _symbol = nodesSymbol(program, _typeParameter);
+
+            if (_symbol) {
+                _genericParameters.push(_symbol);
+            }
+
+        }
+
+    }
+
+    return _genericParameters
 }
 
 
 /**
- * [TS] Retrieves the name of a given reflective node.
- *
- * @param node
- * Node to retrieve name from.
- *
- * @return
- * Retrieved type.
- */
-function nodesName(
-    node: (TS.NamedDeclaration|TS.TypeReferenceNode)
-): string {
-    return (
-        TS.isTypeReferenceNode(node) ?
-            node.typeName.getText() :
-            TS.getNameOfDeclaration(node)?.getText() ||
-            TS.InternalSymbolName.Missing
-    );
-}
-
-
-/**
- * [TS] Retrieves the symbol of a given reflective node.
+ * [TS] Retrieves the project symbol for the given node. This can be used for
+ * project-wide reflection and requires some form of identity.
  *
  * @param program
  * Related parser program.
@@ -1765,55 +1795,45 @@ function nodesName(
  * Node to retrieve symbol from.
  *
  * @return
- * Retrieved symbol.
+ * Retrieved symbol or `undefined`.
  */
 function nodesSymbol(
     program: TS.Program,
-    node: (TS.Declaration|TS.Expression)
-): TS.Symbol {
-    const _identifier = TS.getNameOfDeclaration(node);
-    const _name = _identifier?.getText() || TS.InternalSymbolName.Missing;
-    const _symbol = _identifier && program
-        .getTypeChecker()
-        .getSymbolAtLocation(_identifier);
+    node: (
+        | TS.Declaration
+        | TS.Expression
+        | TS.SourceFile
+        | TS.TypeNode
+        | TS.TypeReferenceNode
+    )
+): (TS.Symbol|undefined) {
+    const _typeChecker = program.getTypeChecker();
 
-    return (_symbol || {
-        escapedName: TS.InternalSymbolName.Missing,
-        flags: TS.SymbolFlags.None,
-        name: _name,
-        getDeclarations: () => [],
-        getDocumentationComment: () => [],
-        getEscapedName: () => TS.InternalSymbolName.Missing,
-        getFlags: () => TS.SymbolFlags.None,
-        getJsDocTags: () => [],
-        getName: () => _name,
-    });
-}
+    let _symbol: (TS.Symbol|undefined);
 
+    if (TS.isSourceFile(node)) {
+        _symbol = _typeChecker.getSymbolAtLocation(node);
+    } else if (TS.isTypeNode(node)) {
+        _symbol = _typeChecker.getTypeFromTypeNode(node).getSymbol();
+    } else if (TS.isTypeReferenceNode(node)) {
+        _symbol = _typeChecker.getSymbolAtLocation(node.typeName);
+    } else {
+        const _identifier = TS.getNameOfDeclaration(node);
 
-/**
- * [TS] Retrieves the type of a given reflective node.
- *
- * @param program
- * Related parser program.
- *
- * @param node
- * Node to retrieve type from.
- *
- * @return
- * Retrieved type.
- */
-function nodesType(
-    program: TS.Program,
-    node: (TS.NamedDeclaration|TS.TypeNode)
-): TS.Type {
-    const _tsChecker = program.getTypeChecker();
+        if (_identifier) {
+            _symbol = _typeChecker.getSymbolAtLocation(_identifier);
+        }
+    }
 
-    return (
-        TS.isTypeNode(node) ?
-            _tsChecker.getTypeFromTypeNode(node) :
-            _tsChecker.getDeclaredTypeOfSymbol(nodesSymbol(program, node))
-    );
+    if (!_symbol) {
+        return;
+    }
+
+    if (_symbol.flags & TS.SymbolFlags.Alias) {
+        _symbol = _typeChecker.getAliasedSymbol(_symbol)
+    }
+
+    return _typeChecker.getMergedSymbol(_symbol);
 }
 
 
@@ -1866,25 +1886,6 @@ export function removeTag (
 }
 
 
-export function resolveReference(
-    project: Project,
-    location: (CodeInfo|SourceInfo),
-    reference: string
-): Array<CodeInfo> {
-    const _tsChecker = project.tsProgram.getTypeChecker();
-    const _symbol = _tsChecker
-        .resolveName(reference, location.node, TS.SymbolFlags.All, true);
-
-    const _resolvedReferences: Array<CodeInfo> = [];
-
-    if (_symbol?.declarations) {
-        addChildInfos(project, _resolvedReferences, _symbol.declarations);
-    }
-
-    return _resolvedReferences;
-}
-
-
 /**
  * Sanitize type from surrounding paranthesis characters.
  *
@@ -1904,6 +1905,147 @@ function sanitizeType (
     }
 
     return type.replace(new RegExp(SANITIZE_TYPE.source, 'gu'), '$1').trim();
+}
+
+
+/**
+ * [TS] Retrieves all children for a given project symbol.
+ *
+ * @param program
+ * Related parser program.
+ *
+ * @param symbol
+ * Symbol to retrieve children for.
+ *
+ * @return
+ * Retrieved children.
+ */
+function symbolsChildren(
+    program: TS.Program,
+    symbol: TS.Symbol
+): Array<TS.Symbol> {
+    const _type = symbolsType(program, symbol);
+    const _typeChecker = program.getTypeChecker();
+
+    if (symbol.exports) {
+        return Array.from(symbol.exports.values());
+    }
+
+    return _typeChecker.getPropertiesOfType(_type);
+}
+
+
+/**
+ * [TS] Retrieves all heritage clauses for a given project symbol.
+ *
+ * @param program
+ * Related parser program.
+ *
+ * @param symbol
+ * Symbol to retrieve heritage clauses for.
+ *
+ * @return
+ * Retrieved heritage clauses.
+ */
+function symbolsHeritageClauses(
+    program: TS.Program,
+    symbol: TS.Symbol
+): Array<TS.Symbol> {
+    const _heritageSymbols: Array<TS.Symbol> = [];
+
+    let _heritageSymbol: (TS.Symbol|undefined);
+
+    for (const _declaration of symbol.declarations || []) {
+
+        if (
+            !TS.isClassDeclaration(_declaration) &&
+            !TS.isInterfaceDeclaration(_declaration)
+        ) {
+            continue;
+        }
+
+        for (const _heritageClause of _declaration.heritageClauses || []) {
+            for (const _heritageType of _heritageClause.types) {
+                _heritageSymbol = nodesSymbol(program, _heritageType);
+
+                if (_heritageSymbol) {
+                    _heritageSymbols.push(_heritageSymbol);
+                }
+            }
+        }
+
+    }
+
+    return _heritageSymbols;
+}
+
+
+/**
+ * [TS] Retrieves the name for a given project symbol. This works around default
+ * exports.
+ *
+ * @param program
+ * Related parser program.
+ *
+ * @param symbol
+ * Symbol to retrieve name for.
+ *
+ * @return
+ * Retrieved name.
+ */
+function symbolsName(
+    program: TS.Program,
+    symbol: TS.Symbol
+): string {
+
+    if (
+        symbol.flags & TS.SymbolFlags.ModuleExports &&
+        symbol.name === 'default'
+    ) {
+        symbol = program.getTypeChecker().getAliasedSymbol(symbol);
+    }
+
+    return symbol.name;
+}
+
+
+/**
+ * [TS] Retrieves the type for a given project symbol.
+ *
+ * @param program
+ * Related parser program.
+ *
+ * @param symbol
+ * Symbol to retrieve type for.
+ *
+ * @return
+ * Retrieved type.
+ */
+function symbolsType(
+    program: TS.Program,
+    symbol: TS.Symbol
+): TS.Type {
+    return program.getTypeChecker().getDeclaredTypeOfSymbol(symbol);
+}
+
+
+/**
+ * [TS] Retrieves the type string for a given project symbol.
+ *
+ * @param program
+ * Related parser program.
+ *
+ * @param symbol
+ * Symbol to retrieve type string for.
+ *
+ * @return
+ * Retrieved type string.
+ */
+function symbolsTypeToString(
+    program: TS.Program,
+    symbol: TS.Symbol
+): string {
+    return program.getTypeChecker().typeToString(symbolsType(program, symbol));
 }
 
 
@@ -2094,4 +2236,4 @@ function tsProgram(
  * */
 
 
-export * as default from './TS5';
+export * as default from './DTS';

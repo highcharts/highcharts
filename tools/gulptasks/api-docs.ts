@@ -100,8 +100,7 @@ function createApiDocumentation() {
         const sourceJSON = JSON.parse(fs.readFileSync(OPTIONS_TREE)),
             products = argv.products && argv.products.split(',');
 
-        apidocs(sourceJSON, TARGET_DIRECTORY, products, error => {
-
+        apidocs(sourceJSON, TARGET_DIRECTORY, products, (error: unknown) => {
             if (error) {
                 log.failure(error);
                 reject(error);

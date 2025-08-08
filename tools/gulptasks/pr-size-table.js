@@ -116,7 +116,7 @@ function makeTable(master, proposed) {
 
         let tableBody = '';
         Object.keys(masterSizes).forEach(key => {
-            const package = key.replace('.src.js', '');
+            const pkg = key.replace('.src.js', '');
 
             // eslint-disable-next-line require-jsdoc
             function toFixedKiloBytes(bytes) {
@@ -133,7 +133,7 @@ function makeTable(master, proposed) {
                         masterSizes[key].gzip;
 
                 if (difference) {
-                    tableBody += `\n| ${package}.js | ` +
+                    tableBody += `\n| ${pkg}.js | ` +
                         `**${toFixedKiloBytes(masterSizes[key].gzip)} kB**<br>${toFixedKiloBytes(masterSizes[key].compiled)} kB | ` +
                         `**${toFixedKiloBytes(proposedSizes[key].gzip)} kB**<br>${toFixedKiloBytes(proposedSizes[key].compiled)} kB | ` +
                         `**${gzipDifference} B**<br>${difference} B |`;
