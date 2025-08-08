@@ -33,6 +33,7 @@ import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
+    isFunction,
     merge
 } = U;
 
@@ -76,7 +77,7 @@ class FilterModifier extends DataModifier {
      * Condition to compile.
      */
     private static compile(condition: FilterCondition): CallbackCondition {
-        if (typeof condition === 'function') {
+        if (isFunction(condition)) {
             return condition;
         }
 
@@ -106,17 +107,23 @@ class FilterModifier extends DataModifier {
 
         const { columnName: col, value } = condition;
         switch (op) {
-            case 'eq':
+            case '==':
+                // eslint-disable-next-line eqeqeq
+                return (row): boolean => row[col] == value;
+            case '===':
                 return (row): boolean => row[col] === value;
-            case 'ne':
+            case '!=':
+                // eslint-disable-next-line eqeqeq
+                return (row): boolean => row[col] != value;
+            case '!==':
                 return (row): boolean => row[col] !== value;
-            case 'gt':
+            case '>':
                 return (row): boolean => (row[col] || 0) > (value || 0);
-            case 'ge':
+            case '>=':
                 return (row): boolean => (row[col] || 0) >= (value || 0);
-            case 'lt':
+            case '<':
                 return (row): boolean => (row[col] || 0) < (value || 0);
-            case 'le':
+            case '<=':
                 return (row): boolean => (row[col] || 0) <= (value || 0);
         }
 

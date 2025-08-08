@@ -23,7 +23,7 @@
 
 import type { ColumnSortingOrder } from '../Options.js';
 
-import Grid from '../Grid.js';
+import QueryingController from './QueryingController.js';
 import SortModifier from '../../../Data/Modifiers/SortModifier.js';
 
 /* *
@@ -46,7 +46,7 @@ class SortingController {
     /**
      * The data grid instance.
      */
-    private grid: Grid;
+    private querying: QueryingController;
 
     /**
      * The current sorting options: column ID and sorting order.
@@ -65,12 +65,6 @@ class SortingController {
      */
     public modifier?: SortModifier;
 
-    /**
-     * The flag that indicates if the data should be updated because of the
-     * change in the sorting options.
-     */
-    public shouldBeUpdated: boolean = false;
-
 
     /* *
     *
@@ -81,11 +75,11 @@ class SortingController {
     /**
      * Constructs the SortingController instance.
      *
-     * @param grid
-     * The data grid instance.
+     * @param querying
+     * The querying controller instance.
      */
-    constructor(grid: Grid) {
-        this.grid = grid;
+    constructor(querying: QueryingController) {
+        this.querying = querying;
     }
 
 
@@ -111,7 +105,7 @@ class SortingController {
             this.currentSorting?.columnId !== columnId ||
             this.currentSorting?.order !== order
         ) {
-            this.shouldBeUpdated = true;
+            this.querying.shouldBeUpdated = true;
             this.currentSorting = {
                 columnId,
                 order
@@ -125,7 +119,7 @@ class SortingController {
      * Returns the sorting options from the data grid options.
      */
     private getSortingOptions(): SortingController.SortingState {
-        const grid = this.grid,
+        const grid = this.querying.grid,
             { columnOptionsMap } = grid;
 
         if (!columnOptionsMap) {
@@ -192,15 +186,16 @@ class SortingController {
         if (!order || !columnId) {
             return;
         }
+        const grid = this.querying.grid;
 
         return new SortModifier({
             orderByColumn: columnId,
             direction: order,
-            compare: this.grid.columnOptionsMap?.[columnId]
-                ?.options?.sorting?.compare
+            compare: grid.columnOptionsMap?.[columnId]?.options
+                ?.sorting?.compare ||
+                grid.options?.columnDefaults?.sorting?.compare
         });
     }
-
 }
 
 

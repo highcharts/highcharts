@@ -114,7 +114,7 @@ abstract class Cell {
      * Init element.
      * @internal
      */
-    public init(): HTMLTableCellElement {
+    protected init(): HTMLTableCellElement {
         return document.createElement('td', {});
     }
 

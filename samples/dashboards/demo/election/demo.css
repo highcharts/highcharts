@@ -8,7 +8,8 @@
  *
  **/
 :root,
-.highcharts-light {
+.highcharts-light,
+.highcharts-dark {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
     --highcharts-color-0-light: #d7e3f3;
@@ -16,7 +17,10 @@
     /* Republican */
     --highcharts-color-1: #be2f24;
     --highcharts-color-1-light: #f5d3d1;
+}
 
+:root,
+.highcharts-light {
     /* Others */
     --container-background: var(--highcharts-neutral-color-10);
     --color-background: var(--highcharts-neutral-color-3);
@@ -102,12 +106,12 @@ body {
     }
 
     #elections-selector-wrapper select {
-        color: #f2f1f4;
+        color: var(--color-title);
         background-color: var(--component-background-optional);
     }
 
     #html-control-div {
-        color: #f2f1f4;
+        color: var(--color-title);
     }
 }
 

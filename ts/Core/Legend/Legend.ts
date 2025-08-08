@@ -971,21 +971,21 @@ class Legend {
                 /(rtv|rm|rbv)/,
                 /(rbh|cb|lbh)/,
                 /(lbv|lm|ltv)/
-            ]).forEach(function (alignments: RegExp, side: number): void {
+            ]).forEach((alignments: RegExp, side): void => {
                 if (alignments.test(alignment) && !defined(margin[side])) {
 
                     // Now we have detected on which side of the chart we should
                     // reserve space for the legend
-                    (chart as any)[marginNames[side]] = Math.max(
-                        (chart as any)[marginNames[side]],
+                    chart[marginNames[side]] = Math.max(
+                        chart[marginNames[side]] as number,
                         (
                             chart.legend[
                                 (side + 1) % 2 ? 'legendHeight' : 'legendWidth'
                             ] +
                             [1, -1, -1, 1][side] * (options[
                                 (side % 2) ? 'x' : 'y'
-                            ] as any) +
-                            pick(options.margin as any, 12) +
+                            ]) +
+                            (options.margin ?? 12) +
                             spacing[side] +
                             (chart.titleOffset[side] || 0)
                         )

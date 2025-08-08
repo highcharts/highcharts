@@ -254,7 +254,7 @@ class ControllablePath extends Controllable {
      * @return {Highcharts.SVGPathArray|null}
      * A path's d attribute.
      */
-    public toD(): (SVGPath|null) {
+    public toD(): (SVGPath|string|null) {
         const dOption = this.options.d;
 
         if (dOption) {
