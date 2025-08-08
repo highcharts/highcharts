@@ -690,7 +690,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
     }
 
     /**
-     * Fetches all or a number of rows in an array form.
+     * Fetches all or a number of rows as an array.
      *
      * @function Highcharts.DataTable#getRows
      *
