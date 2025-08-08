@@ -34,8 +34,10 @@ or `currencyId`.
 
 ```js
 const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     series: {
         type: 'Dividend'
@@ -68,8 +70,10 @@ Dashboards.board('container', {
             id: 'time-series',
             type: 'MorningstarTimeSeries',
             options: {
-                postman: {
-                    environmentJSON: postmanJSON
+                api: {
+                    access: {
+                        token: 'your_access_token'
+                    }
                 },
                 series: {
                     type: 'Dividend'
