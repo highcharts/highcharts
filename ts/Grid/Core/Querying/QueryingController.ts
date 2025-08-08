@@ -26,6 +26,7 @@ import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import Grid from '../Grid.js';
 import SortingController from './SortingController.js';
+import FilteringController from './FilteringController.js';
 
 /* *
  *
@@ -51,9 +52,14 @@ class QueryingController {
     public grid: Grid;
 
     /**
-     * Sorting controller instance
+     * Sorting controller instance.
      */
     public sorting: SortingController;
+
+    /**
+     * Filtering controller instance.
+     */
+    public filtering: FilteringController;
 
     /**
      * This flag should be set to `true` if the modifiers should reapply to the
@@ -70,6 +76,8 @@ class QueryingController {
 
     constructor(grid: Grid) {
         this.grid = grid;
+
+        this.filtering = new FilteringController();
         this.sorting = new SortingController(this);
     }
 
@@ -88,7 +96,11 @@ class QueryingController {
      * changed.
      */
     public async proceed(force: boolean = false): Promise<void> {
-        if (force || this.shouldBeUpdated) {
+        if (
+            force ||
+            this.shouldBeUpdated ||
+            this.filtering.shouldBeUpdated
+        ) {
             await this.modifyData();
         }
     }
@@ -103,11 +115,22 @@ class QueryingController {
     /**
      * Creates a list of modifiers that should be applied to the data table.
      */
+    public willNotModify(): boolean {
+        return (
+            !this.sorting.modifier &&
+            !this.filtering.modifier
+        );
+    }
+
     public getModifiers(): DataModifier[] {
         const modifiers: DataModifier[] = [];
 
         if (this.sorting.modifier) {
             modifiers.push(this.sorting.modifier);
+        }
+
+        if (this.filtering.modifier) {
+            modifiers.push(this.filtering.modifier);
         }
 
         return modifiers;
@@ -134,6 +157,7 @@ class QueryingController {
         }
 
         this.shouldBeUpdated = false;
+        this.filtering.shouldBeUpdated = false;
     }
 }
 
