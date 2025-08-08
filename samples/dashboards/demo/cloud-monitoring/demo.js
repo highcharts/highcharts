@@ -70,62 +70,56 @@ const setupDashboard = instanceId => {
             connectors: [{
                 id: 'charts',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    columnNames: [
-                        'timestamp', 'readOpt', 'writeOpt', 'networkIn',
-                        'networkOut', 'cpuUtilization'
-                    ],
-                    dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
-                    beforeParse: function (data) {
-                        const currentInstance = data.find(
-                            inst => inst.InstanceId === currentInstanceId
-                        ) || data;
-                        return currentInstance.Details.map(
-                            el => el
-                        );
-                    }
+                firstRowAsNames: false,
+                columnIds: [
+                    'timestamp', 'readOpt', 'writeOpt', 'networkIn',
+                    'networkOut', 'cpuUtilization'
+                ],
+                dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
+                beforeParse: function (data) {
+                    const currentInstance = data.find(
+                        inst => inst.InstanceId === currentInstanceId
+                    ) || data;
+                    return currentInstance.Details.map(
+                        el => el
+                    );
                 }
             }, {
                 id: 'instanceDetails',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    orientantion: 'columns',
-                    columnNames: [
-                        'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB',
-                        'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB',
-                        'Documents', 'Downloads'
-                    ],
-                    dataUrl: 'https://demo-live-data.highcharts.com/instances.json',
-                    beforeParse: function (data) {
-                        const currentInstance = data.find(
-                            inst => inst.InstanceId === currentInstanceId
-                        ) || data;
-                        const diskSpace = currentInstance.DiskSpace.RootDisk;
-                        return [
-                            [
-                                0, // display one record on chart KPI / disk
-                                currentInstance.CPUUtilization,
-                                currentInstance.MemoryUsage,
-                                diskSpace.SizeGB,
-                                diskSpace.UsedGB,
-                                diskSpace.FreeGB,
-                                diskSpace.MediaGB,
-                                diskSpace.RootGB,
-                                diskSpace.Documents,
-                                diskSpace.Downloads
-                            ]
-                        ];
-                    }
+                firstRowAsNames: false,
+                orientantion: 'columns',
+                columnIds: [
+                    'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB',
+                    'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB',
+                    'Documents', 'Downloads'
+                ],
+                dataUrl: 'https://demo-live-data.highcharts.com/instances.json',
+                beforeParse: function (data) {
+                    const currentInstance = data.find(
+                        inst => inst.InstanceId === currentInstanceId
+                    ) || data;
+                    const diskSpace = currentInstance.DiskSpace.RootDisk;
+                    return [
+                        [
+                            0, // display one record on chart KPI / disk
+                            currentInstance.CPUUtilization,
+                            currentInstance.MemoryUsage,
+                            diskSpace.SizeGB,
+                            diskSpace.UsedGB,
+                            diskSpace.FreeGB,
+                            diskSpace.MediaGB,
+                            diskSpace.RootGB,
+                            diskSpace.Documents,
+                            diskSpace.Downloads
+                        ]
+                    ];
                 }
             }, {
                 id: 'instances',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: instances
-                }
+                firstRowAsNames: false,
+                data: instances
             }]
         },
         gui: {
@@ -376,7 +370,7 @@ const setupDashboard = instanceId => {
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'CPUUtilization',
+            columnId: 'CPUUtilization',
             chartOptions: {
                 ...KPIOptions,
                 plotOptions: {
@@ -422,7 +416,7 @@ const setupDashboard = instanceId => {
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'MemoryUsage',
+            columnId: 'MemoryUsage',
             chartOptions: {
                 ...KPIOptions,
                 yAxis: {
@@ -489,7 +483,7 @@ const setupDashboard = instanceId => {
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'DiskUsedGB',
+            columnId: 'DiskUsedGB',
             chartOptions: {
                 ...KPIOptions,
                 plotOptions: {

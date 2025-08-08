@@ -61,14 +61,12 @@ Dashboards.board(
     await dataPool.loadConnector({
         id: 'updatedData',
         type: 'CSV',
-        options: {
-            csv: `Food,Vitamin A
+        csv: `Food,Vitamin A
             Beef Liver,6421
             Lamb Liver,2122
             Cod Liver Oil,1350
             Mackerel,388
             Tuna,214`
-        }
     });
 
     await dash.mountedComponents[0].component.update({

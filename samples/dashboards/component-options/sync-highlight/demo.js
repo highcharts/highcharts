@@ -15,10 +15,8 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Vitamin',
             type: 'CSV',
-            options: {
-                csv: csvData,
-                firstRowAsNames: true
-            }
+            csv: csvData,
+            firstRowAsNames: true
         }]
     },
     gui: {

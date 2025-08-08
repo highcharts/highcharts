@@ -69,7 +69,8 @@ const syncPair: Sync.SyncPair = {
             if (!cursor) {
                 return;
             }
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table =
+                component.connectorHandlers?.[0]?.connector?.getTable();
 
             if (!table) {
                 return;
@@ -88,7 +89,8 @@ const syncPair: Sync.SyncPair = {
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table =
+                component.connectorHandlers?.[0]?.connector?.getTable();
             const { dataCursor: cursor } = board;
 
             if (!table) {

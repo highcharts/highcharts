@@ -17,16 +17,14 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                data: [
-                    ['Click Here'],
-                    [100],
-                    [150],
-                    [250],
-                    [120],
-                    [140]
-                ]
-            }
+            data: [
+                ['Click Here'],
+                [100],
+                [150],
+                [250],
+                [120],
+                [140]
+            ]
         }]
     },
     gui: {

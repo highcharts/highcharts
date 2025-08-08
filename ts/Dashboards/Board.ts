@@ -26,7 +26,6 @@
 
 import type Component from './Components/Component';
 import type ComponentType from './Components/ComponentType';
-import type DataPoolOptions from '../Data/DataPoolOptions';
 import type EditMode from './EditMode/EditMode';
 import type Fullscreen from './EditMode/Fullscreen';
 
@@ -567,7 +566,7 @@ namespace Board {
         /**
          * Data pool with all of the connectors.
          **/
-        dataPool?: DataPoolOptions;
+        dataPool?: DataPool.Options;
         /**
          * Options for the GUI. Allows to define graphical elements and its
          * layout.

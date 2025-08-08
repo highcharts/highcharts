@@ -28,31 +28,27 @@ Dashboards.board('container', {
         connectors: [{
             id: 'cumulativeData',
             type: 'JSON',
-            options: {
-                data: [
-                    ['Date', 'Done', 'To Do', 'Blocked'],
-                    [Date.UTC(2023, 4, 1), 0, 156, 30],
-                    [Date.UTC(2023, 4, 8), 23, 134, 30],
-                    [Date.UTC(2023, 4, 15), 45, 111, 30],
-                    [Date.UTC(2023, 4, 22), 68, 89, 13],
-                    [Date.UTC(2023, 4, 29), 85, 93, 2],
-                    [Date.UTC(2023, 5, 5), 113, 51, 8],
-                    [Date.UTC(2023, 5, 12), null, 51, 8]
-                ]
-            }
+            data: [
+                ['Date', 'Done', 'To Do', 'Blocked'],
+                [Date.UTC(2023, 4, 1), 0, 156, 30],
+                [Date.UTC(2023, 4, 8), 23, 134, 30],
+                [Date.UTC(2023, 4, 15), 45, 111, 30],
+                [Date.UTC(2023, 4, 22), 68, 89, 13],
+                [Date.UTC(2023, 4, 29), 85, 93, 2],
+                [Date.UTC(2023, 5, 5), 113, 51, 8],
+                [Date.UTC(2023, 5, 12), null, 51, 8]
+            ]
         }, {
             id: 'taskByAssignee',
             type: 'JSON',
-            options: {
-                data: [
-                    ['Assignee', 'Completed tasks'],
-                    ['Alex', 41],
-                    ['Jasmine', 28],
-                    ['Ryan', 15],
-                    ['Emily', 14],
-                    ['Jordan', 4]
-                ]
-            }
+            data: [
+                ['Assignee', 'Completed tasks'],
+                ['Alex', 41],
+                ['Jasmine', 28],
+                ['Ryan', 15],
+                ['Emily', 14],
+                ['Jordan', 4]
+            ]
         }]
     },
     components: [{
@@ -351,7 +347,7 @@ Dashboards.board('container', {
         incompleteTaskKPI = dashboard.mountedComponents[1].component,
         taskByStatusChart = dashboard.mountedComponents[2].component,
         connectors = dashboard.dataPool.connectors,
-        cumulativeData = connectors.cumulativeData.table.columns,
+        cumulativeData = connectors.cumulativeData.getTable().columns,
         completedTask = cumulativeData.Done[5] - cumulativeData.Done[4],
         planedTask = cumulativeData['To Do'][4] - cumulativeData['To Do'][5],
         blockedTask = cumulativeData.Blocked[5] - cumulativeData.Blocked[4],

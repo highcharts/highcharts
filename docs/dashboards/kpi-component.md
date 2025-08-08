@@ -104,9 +104,9 @@ Dashboards.board('container', {
             enabled: false
         },
         chartOptions: {
-        series: [{
-            data: [734, 244, 685, 250, 920, 320, 200, 150]
-        }]
+            series: [{
+                data: [734, 244, 685, 250, 920, 320, 200, 150]
+            }]
         }
     }]
 });
@@ -117,7 +117,7 @@ By default, the KPI value is synchronized with the Y value of the first point in
 You can also use this option to change the point to be synchronized with the value, setting its index and the index of the series it belongs to.
 
 ## Working with data
-You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The KPIComponent reflects the last value from the column (declared by `columnName` param) as a value itself.
+You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The KPIComponent reflects the last value from the column (declared by `columnId` param) as a value itself.
 
 Here is an [example](https://www.highcharts.com/samples/embed/dashboards/components/kpi-with-connector) that uses as connector.
 
@@ -127,20 +127,18 @@ Dashboards.board('container', {
         connectors: [{
             id: 'value',
             type: 'CSV',
-            options: {
-                csv: `Date,Value
-                2019-01-01,100
-                2019-01-02,200
-                2019-01-03,300
-                2019-01-04,400`
-            }
+            csv: `Date,Value
+            2019-01-01,100
+            2019-01-02,200
+            2019-01-03,300
+            2019-01-04,400`
         }]
     },
     components: [{
         renderTo: 'kpi',
         type: 'KPI',
         title: 'Last day\'s value',
-        columnName: 'Value',
+        columnId: 'Value',
         connector: {
             id: 'value'
         }

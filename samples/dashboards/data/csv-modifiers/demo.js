@@ -8,11 +8,11 @@ const dataModifier = {
     condition: {
         operator: 'and',
         conditions: [{
-            columnName: 'Year',
+            columnId: 'Year',
             operator: '>=',
             value: firstYear
         }, {
-            columnName: 'Year',
+            columnId: 'Year',
             operator: '<=',
             value: lastYear
         }]
@@ -20,8 +20,8 @@ const dataModifier = {
 };
 
 
-function createColumnAssignment(columnNames) {
-    return columnNames.map(function (column) {
+function createColumnAssignment(columnIds) {
+    return columnIds.map(function (column) {
         return {
             seriesId: column,
             data: ['Year', column]
@@ -215,12 +215,10 @@ Dashboards.board('container', {
         connectors: [{
             id: 'population-growth',
             type: 'CSV',
-            options: {
-                csv: csvData,
-                firstRowAsNames: true,
-                dataModifier: dataModifier,
-                beforeParse: beforeParse
-            }
+            csv: csvData,
+            firstRowAsNames: true,
+            dataModifier: dataModifier,
+            beforeParse
         }]
     },
     gui: {

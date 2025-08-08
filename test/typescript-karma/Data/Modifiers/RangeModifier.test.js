@@ -15,7 +15,7 @@ QUnit.test('RangeModifier.modify', async function (assert) {
     await modifier.modify(table);
 
     assert.deepEqual(
-        table.modified.getRow(0),
+        table.getModified().getRow(0),
         table.getRow(0),
         'Filtered table should contain same rows.'
     );
@@ -26,7 +26,7 @@ QUnit.test('RangeModifier.modify', async function (assert) {
     await modifier.modify(table);
 
     assert.deepEqual(
-        table.modified.getColumns(),
+        table.getModified().getColumns(),
         {
             x: [ -1, -0 ],
             y: [ 'b', 'c' ],
@@ -41,7 +41,7 @@ QUnit.test('RangeModifier.modify', async function (assert) {
     await modifier.modify(table);
 
     assert.deepEqual(
-        table.modified.getColumns(),
+        table.getModified().getColumns(),
         {
             x: [ 2 ],
             y: [ 'e' ],
@@ -51,13 +51,13 @@ QUnit.test('RangeModifier.modify', async function (assert) {
     );
 
     assert.deepEqual(
-        table.modified.localRowIndexes,
+        table.getModified().localRowIndexes,
         [ void 0, void 0, void 0, void 0, 0 ],
         'Local row indexes should be set correctly.'
     )
 
     assert.deepEqual(
-        table.modified.originalRowIndexes,
+        table.getModified().originalRowIndexes,
         [4],
         'Original row indexes should be set correctly.'
     );
