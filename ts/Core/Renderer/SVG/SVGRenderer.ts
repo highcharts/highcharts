@@ -1726,13 +1726,12 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#fontMetrics
      *
-     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number|string} [ref]
-     *        The element to inspect for a current font size. If a number or
-     *        string is given, it's used as a fall back for direct font size in
-     *        pixels.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number|string} ref
+     * The element to inspect for a current font size. If a number or string is
+     * given, it's used as a fall back for direct font size in pixels.
      *
      * @return {Highcharts.FontMetricsObject}
-     *         The font metrics.
+     * The font metrics.
      */
     public fontMetrics(
         ref: (DOMElementType|SVGElement|number|string)
