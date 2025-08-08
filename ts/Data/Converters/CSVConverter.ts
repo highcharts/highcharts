@@ -57,7 +57,11 @@ class CSVConverter extends DataConverter {
      */
     protected static readonly defaultOptions: CSVConverterOptions = {
         ...DataConverter.defaultOptions,
-        lineDelimiter: '\n'
+        lineDelimiter: '\n',
+        startColumn: 0,
+        endColumn: Number.MAX_VALUE,
+        startRow: 0,
+        endRow: Number.MAX_VALUE
     };
 
     /* *

@@ -130,15 +130,7 @@ class JSONConnector extends DataConnector {
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this;
         const options = connector.options;
-        const {
-            columnIds,
-            data,
-            dataUrl,
-            firstRowAsNames,
-            orientation,
-            dataTables,
-            beforeParse
-        } = options;
+        const { data, dataUrl, dataTables } = options;
 
         connector.emit({
             type: 'load',
@@ -172,22 +164,24 @@ class JSONConnector extends DataConnector {
                                 (dataTable): boolean => dataTable.key === key
                             );
 
-                            // Takes over the connector default options.
-                            const mergedTableOptions = {
-                                dataTableKey: key,
-                                columnIds: tableOptions?.columnIds ?? columnIds,
+                            // The data table options takes precedence over the
+                            // connector options.
+                            const converterOptions = {
+                                data,
+                                columnIds:
+                                    tableOptions?.columnIds ??
+                                    options.columnIds,
                                 firstRowAsNames:
                                     tableOptions?.firstRowAsNames ??
-                                    firstRowAsNames,
-                                orientation: tableOptions?.orientation ??
-                                    orientation,
-                                beforeParse: tableOptions?.beforeParse ??
-                                    beforeParse
+                                    options.firstRowAsNames,
+                                orientation:
+                                    tableOptions?.orientation ??
+                                    options.orientation,
+                                beforeParse:
+                                    tableOptions?.beforeParse ??
+                                    options.beforeParse
                             };
-
-                            return new JSONConverter(
-                                merge(options, mergedTableOptions)
-                            );
+                            return new JSONConverter(converterOptions);
                         },
                         (converter, data): DataTable.ColumnCollection =>
                             converter.parse({ data })

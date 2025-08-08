@@ -31,6 +31,10 @@ import DataConverter from './DataConverter';
  * Options of the CSVConverter.
  */
 export interface CSVConverterOptions extends DataConverter.Options {
+    startRow: number;
+    endRow: number;
+    startColumn: number;
+    endColumn: number;
     csv?: string;
     decimalPoint?: string;
     itemDelimiter?: string;
