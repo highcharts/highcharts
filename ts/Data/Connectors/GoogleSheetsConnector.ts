@@ -27,6 +27,7 @@
 import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type { GoogleSpreadsheetJSON } from '../Converters/GoogleSheetsConverterOptions';
+import type DataTable from '../DataTable';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -171,9 +172,7 @@ class GoogleSheetsConnector extends DataConnector {
             enablePolling,
             googleAPIKey,
             googleSpreadsheetKey,
-            firstRowAsNames,
-            dataTables,
-            beforeParse
+            dataTables
         } = options;
         const url = GoogleSheetsConnector.buildFetchURL(
             googleAPIKey,
@@ -209,22 +208,20 @@ class GoogleSheetsConnector extends DataConnector {
                             (dataTable): boolean => dataTable.key === key
                         );
 
-                        // Takes over the connector default options.
-                        const mergedTableOptions = {
-                            dataTableKey: key,
-                            firstRowAsNames: tableOptions?.firstRowAsNames ??
-                                firstRowAsNames,
-                            beforeParse: tableOptions?.beforeParse ??
-                                beforeParse
+                        // The data table options takes precedence over the
+                        // connector options.
+                        const {
+                            firstRowAsNames = options.firstRowAsNames,
+                            beforeParse = options.beforeParse
+                        } = tableOptions || {};
+                        const converterOptions = {
+                            firstRowAsNames,
+                            beforeParse
                         };
-
-                        return new GoogleSheetsConverter(
-                            merge(options, mergedTableOptions)
-                        );
+                        return new GoogleSheetsConverter(converterOptions);
                     },
-                    (converter, data): void => {
-                        converter.parse({ json: data });
-                    }
+                    (converter, data): DataTable.ColumnCollection =>
+                        converter.parse({ json: data })
                 );
                 return connector.applyTableModifiers();
             })

@@ -29,6 +29,10 @@ import DataConverter from './DataConverter';
  * Options of the HTMLTableConverter.
  */
 export interface HTMLTableConverterOptions extends DataConverter.Options {
+    startRow: number;
+    endRow: number;
+    startColumn: number;
+    endColumn: number;
     decimalPoint?: string;
     exportIDColumn?: boolean;
     tableCaption?: string;

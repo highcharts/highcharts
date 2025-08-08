@@ -392,11 +392,11 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
         for (const [key, table] of Object.entries(this.dataTables)) {
             // Create a proper converter and parse its data.
             const converter = createConverter(key);
-            parseData(converter, data);
+            const columns = parseData(converter, data);
 
             // Update the dataTable.
             table.deleteColumns();
-            table.setColumns(converter.getTable().getColumns());
+            table.setColumns(columns);
 
             // Assign the first converter.
             if (index === 0) {
@@ -441,7 +441,7 @@ namespace DataConnector {
      * Runs the converter parse method with the specific data type.
      */
     export interface ParseDataFunction<T> {
-        (converter: DataConverterType, data: T): void
+        (converter: DataConverterType, data: T): DataTable.ColumnCollection
     }
 
     /* *

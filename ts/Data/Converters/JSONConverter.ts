@@ -88,7 +88,6 @@ class JSONConverter extends DataConverter {
      *
      * */
 
-    private columns: DataTable.BasicColumn[] = [];
     private headerColumnIds: string[] | ColumnIdsOptions = [];
     private headers: string[] = [];
 
@@ -119,7 +118,7 @@ class JSONConverter extends DataConverter {
     public parse(
         options: Partial<JSONConverterOptions>,
         eventDetail?: DataEvent.Detail
-    ): void {
+    ): DataTable.ColumnCollection {
         const converter = this;
 
         options = merge(converter.options, options);
@@ -134,14 +133,15 @@ class JSONConverter extends DataConverter {
         let data = options.data;
 
         if (!data) {
-            return;
+            return {};
         }
 
-        converter.columns = [];
+        converter.headers = [];
+        const columnsArray: DataTable.BasicColumn[] = [];
 
         converter.emit({
             type: 'parse',
-            columns: converter.columns,
+            columns: columnsArray,
             detail: eventDetail,
             headers: converter.headers
         });
@@ -153,21 +153,39 @@ class JSONConverter extends DataConverter {
         data = data.slice();
 
         if (orientation === 'columns') {
-            this.parseColumnsOrientation(data, firstRowAsNames, columnIds);
+            this.parseColumnsOrientation(
+                columnsArray,
+                data,
+                firstRowAsNames,
+                columnIds
+            );
         } else if (orientation === 'rows') {
-            this.parseRowsOrientation(data, firstRowAsNames, columnIds);
+            this.parseRowsOrientation(
+                columnsArray,
+                data,
+                firstRowAsNames,
+                columnIds
+            );
         }
 
         converter.emit({
             type: 'afterParse',
-            columns: converter.columns,
+            columns: columnsArray,
             detail: eventDetail,
             headers: converter.headers
         });
+
+        return DataConverterUtils.getColumnsCollection(
+            columnsArray, converter.headers
+        );
     }
 
     /**
      * Helper for parsing data in 'columns' orientation.
+     *
+     * @param {DataTable.BasicColumn[]} [columnsArray]
+     * Array of columns.
+     *
      * @param {unknown[]} [data]
      * Array of data elements.
      *
@@ -180,6 +198,7 @@ class JSONConverter extends DataConverter {
      * @return {void}
      */
     private parseColumnsOrientation(
+        columnsArray: DataTable.BasicColumn[],
         data: unknown[],
         firstRowAsNames?: boolean,
         columnIds?: string[] | ColumnIdsOptions
@@ -196,7 +215,7 @@ class JSONConverter extends DataConverter {
                 } else if (columnIds && Array.isArray(columnIds)) {
                     converter.headers.push(columnIds[i]);
                 }
-                converter.columns.push(item);
+                columnsArray.push(item);
             } else {
                 error(
                     'JSONConverter: Invalid `columnIds` option.',
@@ -209,6 +228,11 @@ class JSONConverter extends DataConverter {
     /**
      * Helper for parsing data in 'rows' orientation.
      *
+     * @param {DataTable.BasicColumn[]} [columnsArray]
+     * Array of columns.
+     *
+     * Helper for parsing data in 'rows' orientation.
+     *
      * @param {unknown[]} [data]
      * Array of data elements.
      *
@@ -218,9 +242,11 @@ class JSONConverter extends DataConverter {
      * @param {Array<string>} [columnIds]
      * Column ids to retrieve.
      *
-     * @return {void}
+     * @return {DataTable.BasicColumn[]}
+     * Parsed columns.
      */
     private parseRowsOrientation(
+        columnsArray: DataTable.BasicColumn[],
         data: unknown[],
         firstRowAsNames?: boolean,
         columnIds?: string[] | ColumnIdsOptions
@@ -250,10 +276,10 @@ class JSONConverter extends DataConverter {
                 columnIndex < jEnd;
                 columnIndex++
             ) {
-                if (converter.columns.length < columnIndex + 1) {
-                    converter.columns.push([]);
+                if (columnsArray.length < columnIndex + 1) {
+                    columnsArray.push([]);
                 }
-                converter.columns[columnIndex].push(
+                columnsArray[columnIndex].push(
                     (row as Array<string|number>)[columnIndex]
                 );
 
@@ -314,21 +340,6 @@ class JSONConverter extends DataConverter {
         }
         converter.headerColumnIds = Object.keys(rowObj);
         return Object.values(rowObj);
-    }
-
-    /**
-     * Handles converting the parsed data to a table.
-     *
-     * @return {DataTable}
-     * Table from the parsed CSV.
-     */
-    public getTable(): DataTable {
-        const { columns, headers } = this;
-
-        return DataConverterUtils.getTableFromColumns(
-            columns,
-            headers
-        );
     }
 
 }
