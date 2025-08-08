@@ -8,11 +8,6 @@ Highcharts.chart('container', {
             'Oct', 'Nov', 'Dec'
         ]
     }],
-
-    tooltip: {
-        shared: true
-    },
-
     series: [{
         name: 'Temperature',
         type: 'scatter',
