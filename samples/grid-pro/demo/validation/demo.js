@@ -67,7 +67,8 @@ Grid.grid('container', {
                     validate: 'unique',
                     notification: 'SKU must be unique.'
                 }, {
-                    validate: ({ rawValue }) => /^[A-Z]{3}-\d{3}$/.test(rawValue),
+                    validate: ({ rawValue }) =>
+                        /^[A-Z]{3}-\d{3}$/.test(rawValue),
                     notification: 'SKU must be in the format AAA-123.'
                 }]
             }
