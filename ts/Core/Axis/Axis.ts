@@ -730,7 +730,9 @@ class Axis {
      * @emits Highcharts.Axis#event:afterGetSeriesExtremes
      * @emits Highcharts.Axis#event:getSeriesExtremes
      */
-    public getSeriesExtremes(): void {
+    public getSeriesExtremes(
+        modified?: boolean
+    ): void {
         const axis = this;
 
         let xExtremes;
@@ -764,7 +766,7 @@ class Axis {
 
                     // Get dataMin and dataMax for X axes
                     if (axis.isXAxis) {
-                        xData = series.getColumn('x');
+                        xData = series.getColumn('x', modified);
                         if (xData.length) {
                             xData = axis.logarithmic ?
                                 xData.filter((x): boolean => x > 0) :

@@ -797,7 +797,7 @@ QUnit.test('Histogram', function (assert) {
 
     assert.strictEqual(
         chart.get('histo-s1').data.length,
-        chart.get('histo-s1').binsNumber(),
+        chart.get('histo-s1').binsNumber(chart.series[1].baseSeries.data),
         'Histogram produces correctnumber of bins on negative point values.'
     );
 });
