@@ -68,8 +68,6 @@ class ScatterSeries extends LineSeries {
 
     public points!: Array<ScatterPoint>;
 
-    // Public noSharedTooltip = true;
-
     /* *
      *
      *  Functions
