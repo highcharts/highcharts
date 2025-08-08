@@ -166,20 +166,18 @@ class JSONConnector extends DataConnector {
 
                             // The data table options takes precedence over the
                             // connector options.
+                            const {
+                                columnIds = options.columnIds,
+                                firstRowAsNames = options.firstRowAsNames,
+                                orientation = options.orientation,
+                                beforeParse = options.beforeParse
+                            } = tableOptions || {};
                             const converterOptions = {
                                 data,
-                                columnIds:
-                                    tableOptions?.columnIds ??
-                                    options.columnIds,
-                                firstRowAsNames:
-                                    tableOptions?.firstRowAsNames ??
-                                    options.firstRowAsNames,
-                                orientation:
-                                    tableOptions?.orientation ??
-                                    options.orientation,
-                                beforeParse:
-                                    tableOptions?.beforeParse ??
-                                    options.beforeParse
+                                columnIds,
+                                firstRowAsNames,
+                                orientation,
+                                beforeParse
                             };
                             return new JSONConverter(converterOptions);
                         },

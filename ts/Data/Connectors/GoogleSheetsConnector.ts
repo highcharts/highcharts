@@ -210,13 +210,13 @@ class GoogleSheetsConnector extends DataConnector {
 
                         // The data table options takes precedence over the
                         // connector options.
+                        const {
+                            firstRowAsNames = options.firstRowAsNames,
+                            beforeParse = options.beforeParse
+                        } = tableOptions || {};
                         const converterOptions = {
-                            firstRowAsNames:
-                                tableOptions?.firstRowAsNames ??
-                                options.firstRowAsNames,
-                            beforeParse:
-                                tableOptions?.beforeParse ??
-                                options.beforeParse
+                            firstRowAsNames,
+                            beforeParse
                         };
                         return new GoogleSheetsConverter(converterOptions);
                     },
