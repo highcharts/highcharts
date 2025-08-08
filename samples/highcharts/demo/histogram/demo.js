@@ -1,4 +1,4 @@
-function generateChart(data, getJitterData) {
+function generateChart(data) {
     Highcharts.chart('container', {
         title: {
             text: 'Highcharts Histogram'
@@ -9,12 +9,9 @@ function generateChart(data, getJitterData) {
         }],
 
         yAxis: [{
-            title: { text: 'Bucket value' }
+            title: { text: 'Bin value' }
         }, {
-            title: { enabled: false },
-            labels: {
-                enabled: false
-            }
+            visible: false
         }],
 
         plotOptions: {
@@ -36,7 +33,10 @@ function generateChart(data, getJitterData) {
             opacity: 0.9
         }, {
             type: 'scatter',
-            data: getJitterData(data),
+            data: data.map(p => ({
+                x: p,
+                y: 0
+            })),
             yAxis: 1,
             marker: {
                 radius: 1.5
@@ -254,10 +254,4 @@ const data = [
     3.2680900325828453
 ];
 
-// Generate dataset with datavalues on x-axis
-const getJitterData = data => data.map(p => [
-    p,
-    0
-]);
-
-generateChart(data, getJitterData);
+generateChart(data);
