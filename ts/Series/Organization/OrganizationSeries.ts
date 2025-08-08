@@ -107,7 +107,7 @@ class OrganizationSeries extends SankeySeries {
             const padding = splat(this.options.dataLabels.padding || 0),
                 borderWidth = this.options.borderWidth || 0,
                 padjustX = borderWidth + 2 * padding[3 % padding.length],
-                padjustY = borderWidth + 2 * padding[1 % padding.length];
+                padjustY = borderWidth + 2 * padding[0 % padding.length];
 
             let width = shapeArgs.width || 0,
                 height = shapeArgs.height || 0;
@@ -117,8 +117,8 @@ class OrganizationSeries extends SankeySeries {
                 height = shapeArgs.width || 0;
             }
 
-            height -= padjustY;
             width -= padjustX;
+            height -= padjustY;
 
             text.foreignObject?.attr({
                 x: 0,
