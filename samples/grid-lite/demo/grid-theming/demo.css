@@ -60,7 +60,8 @@
     display: inline-block;
 }
 
-.theme-compact {
+.theme-compact,
+.highcharts-light .theme-compact {
     --hcg-font-size: 14px;
     --hcg-padding: 7px;
     --hcg-header-vertical-padding: 7px;
