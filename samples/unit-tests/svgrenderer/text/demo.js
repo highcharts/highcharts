@@ -874,15 +874,6 @@ QUnit.test('Text height', function (assert) {
             },
             'Number should be supported by fontMetrics.'
         );
-        assert.deepEqual(
-            renderer.fontMetrics('24px'),
-            {
-                h: 29,
-                b: 23,
-                f: 24
-            },
-            'String should be supported by fontMetrics.'
-        );
 
         // Highcharts 4.1.1, Issue #3842:
         // Bar dataLabels positions in 4.1.x - Firefox, Internet Explorer

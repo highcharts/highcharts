@@ -1726,20 +1726,18 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#fontMetrics
      *
-     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number|string} ref
-     * The element to inspect for a current font size. If a number or string is
-     * given, it's used as a fall back for direct font size in pixels.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} ref
+     * The element to inspect for a current font size. If a number is given,
+     * it's used as a fall back for direct font size in pixels.
      *
      * @return {Highcharts.FontMetricsObject}
      * The font metrics.
      */
     public fontMetrics(
-        ref: (DOMElementType|SVGElement|number|string)
+        ref: (DOMElementType|SVGElement|number)
     ): FontMetricsObject {
-        const f = pInt(
-            isObject(ref) ?
-                (SVGElement.prototype.getStyle.call(ref, 'font-size') || 0) :
-                ref
+        const f = isNumber(ref) ? ref : pInt(
+            (SVGElement.prototype.getStyle.call(ref, 'font-size') || 0)
         );
 
         // Empirical values found by comparing font size and bounding box
