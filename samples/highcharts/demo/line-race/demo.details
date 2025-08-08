@@ -1,0 +1,10 @@
+---
+name: Line Race Chart
+authors:
+  - Tord Vikestad
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Line charts
+...
