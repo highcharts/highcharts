@@ -61,7 +61,8 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
      * Default options for the date input renderer.
      */
     public static defaultOptions: DateInputRenderer.Options = {
-        type: 'dateInput'
+        type: 'dateInput',
+        inputType: 'date'
     };
 
     public override options: DateInputRenderer.Options;
@@ -108,6 +109,13 @@ namespace DateInputRenderer {
      */
     export interface Options extends CellRenderer.Options {
         type: 'dateInput';
+
+        /**
+         * The type of the date input.
+         *
+         * @default 'date'
+         */
+        inputType?: 'date' | 'datetime-local' | 'time';
 
         /**
          * Whether the date input is disabled.
