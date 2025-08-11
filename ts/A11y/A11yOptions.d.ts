@@ -28,6 +28,9 @@ export interface A11yChartDescriptionSectionOptions {
      * `{chartTitle}` is replaced with the chart title, or default chart title
      * if none is visible in the chart.
      *
+     * Note that to set heading level for the chart title, use the
+     * [a11y.headingLevel](#a11y.headingLevel) option.
+     *
      * The chart context is available as `{chart}`, and can be used to access other
      * information. See [Templating](https://www.highcharts.com/docs/chart-concepts/templating)
      * for more information.
