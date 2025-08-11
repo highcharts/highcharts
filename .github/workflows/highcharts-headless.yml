@@ -41,19 +41,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: highcharts
+
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'npm'
+          cache-dependency-path: highcharts/package-lock.json
 
-      - name: Install dependencies
-        uses: cypress-io/github-action@v6
-        with:
-          runTests: false
-          browser: chrome
+      - name: Install Highcharts deps
+        run: |
+          cd highcharts
+          npm ci
 
       - name: Build Highcharts
-        run: npx gulp scripts
+        run: |
+          cd highcharts
+          npx gulp scripts
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -70,9 +75,10 @@ jobs:
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
         with:
-          start: node utils/server --localOnly
+          start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
           browser: chrome
+          working-directory: highcharts
           config-file: test/cypress/highcharts/config.mjs
           install: false
 
@@ -108,6 +114,8 @@ jobs:
         with:
           firefox-version: latest-esr
       - uses: browser-actions/setup-geckodriver@latest
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Display
         run: |
           chromedriver --url-base=/wd/hub &

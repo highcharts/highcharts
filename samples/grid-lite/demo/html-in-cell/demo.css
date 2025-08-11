@@ -14,7 +14,8 @@
         sans-serif;
 }
 
-.hcg-theme-default {
+.hcg-theme-default,
+.highcharts-light .hcg-theme-default {
     --anchor-color: #007bff;
 }
 
@@ -26,10 +27,10 @@
     .hcg-theme-default {
         --anchor-color: #8ec3fc;
     }
+}
 
-    #container {
-        background-color: #141414;
-    }
+.highcharts-dark .hcg-theme-default {
+    --anchor-color: #8ec3fc;
 }
 
 #container {

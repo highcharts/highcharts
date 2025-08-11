@@ -14,5 +14,9 @@ Grid.grid('container', {
                 enabled: false
             }
         }
-    }
+    },
+    columns: [{
+        id: 'weight',
+        width: '40%'
+    }]
 });

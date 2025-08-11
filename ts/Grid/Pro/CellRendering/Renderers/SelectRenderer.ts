@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -138,6 +139,20 @@ namespace SelectRenderer {
          * Whether the select input is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the select input.
+         */
+        attributes?: SelectAttributes;
+    }
+
+    /**
+     * Attributes to control the select input.
+     */
+    export interface SelectAttributes {
+        multiple?: boolean;
+        autofocus?: boolean;
+        size?: number;
     }
 }
 
