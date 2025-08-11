@@ -39,7 +39,7 @@ import * as TS from 'typescript';
 
 
 export interface ClassInfo {
-    doclet?: DocletInfo;
+    doclet?: InfoDoclet;
     extends?: ReferenceType;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
@@ -54,7 +54,6 @@ export interface ClassInfo {
 
 export type CodeInfo = (
     | ClassInfo
-    | DocletInfo
     | FunctionInfo
     | InterfaceInfo
     | NamespaceInfo
@@ -64,12 +63,9 @@ export type CodeInfo = (
 );
 
 
-export interface DocletInfo {
-    kind: 'Doclet';
-    meta: InfoMeta;
-    node: TS.JSDoc;
-    tags: Record<string, Array<string>>;
-}
+export interface InfoDoclet {
+    [tag: string]: Array<string>
+};
 
 
 export interface DocletTag {
@@ -83,7 +79,7 @@ export interface DocletTag {
 
 
 export interface FunctionInfo {
-    doclet?: DocletInfo;
+    doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
     inherited?: boolean;
@@ -117,7 +113,7 @@ export interface InfoMeta {
 
 
 export interface InterfaceInfo {
-    doclet?: DocletInfo;
+    doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
     extends?: Array<VariableType>;
@@ -132,11 +128,11 @@ export interface InterfaceInfo {
 export type IntersectType = Array<VariableType>;
 
 
-export type MemberInfo = (DocletInfo|FunctionInfo|PropertyInfo);
+export type MemberInfo = (FunctionInfo|PropertyInfo);
 
 
 export interface NamespaceInfo {
-    doclet?: DocletInfo;
+    doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
     kind: 'Namespace';
     members: Array<CodeInfo>;
@@ -158,13 +154,13 @@ export interface ObjectType {
 export interface Project {
     infoLookup: Map<TS.Symbol, CodeInfo>;
     program: TS.Program;
-    rootPath?: string;
+    rootPath: string;
     sourceInfos: Array<SourceInfo>;
 }
 
 
 export interface PropertyInfo {
-    doclet?: DocletInfo;
+    doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
     inherited?: boolean;
     kind: 'Property';
@@ -197,7 +193,7 @@ export interface SourceInfo {
 
 
 export interface TypeAliasInfo {
-    doclet?: DocletInfo;
+    doclet?: InfoDoclet;
     kind: 'TypeAlias';
     generics?: Array<TypeAliasInfo>;
     meta: InfoMeta;
@@ -208,7 +204,7 @@ export interface TypeAliasInfo {
 
 
 export interface VariableInfo {
-    doclet?: DocletInfo;
+    doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
     kind: 'Variable';
     meta: InfoMeta;
@@ -297,20 +293,20 @@ function addChildInfos (
 ): void {
     let _child: (CodeInfo|undefined);
 
-    for (const symbol of symbols) {
+    for (const _symbol of symbols) {
 
-        _child = project.infoLookup.get(symbol);
+        _child = project.infoLookup.get(_symbol);
 
         if (_child) {
             infos.push(_child);
             continue;
         }
 
-        if (!symbol.declarations) {
+        if (!_symbol.declarations) {
             continue;
         }
 
-        for (const declaration of symbol.declarations) {
+        for (const declaration of _symbol.declarations) {
             _child = (
                 getVariableInfo(project, declaration) ||
                 getTypeAliasInfo(project, declaration) ||
@@ -321,7 +317,7 @@ function addChildInfos (
                 getClassInfo(project, declaration)
             );
             if (_child) {
-                _child.doclet = getDocletInfo(project, symbol)
+                addInfoDoclet(_child, _symbol, project);
                 infos.push(_child);
                 _child = void 0;
                 break;
@@ -331,6 +327,63 @@ function addChildInfos (
 
     }
 
+}
+
+
+/**
+ * Adds doclet information from the given project symbol.
+ *
+ * @param node
+ * Node that might have 
+ *
+ * @param symbol
+ * Symbol that might have a doclet.
+ *
+ * @param project
+ * Related project.
+ *
+ * @return
+ * Doclet information or `undefined`.
+ */
+function addInfoDoclet(
+    info: CodeInfo,
+    symbol: TS.Symbol,
+    project: Project,
+): (InfoDoclet|undefined) {
+    const _typeChecker = project.program.getTypeChecker();
+    const _commentParts = symbol.getDocumentationComment(_typeChecker);
+    
+    if (!_commentParts) {
+        return;
+    }
+
+    const _description: Array<string> = [];
+
+    for (const _part of _commentParts) {
+        if (_part.kind !== 'text') {
+            break;
+        } 
+        _description.push(_part.text);
+    }
+
+    const _doclet: InfoDoclet = info.doclet = info.doclet || {};
+
+    if (_description.length) {
+        _doclet['description'] = _description;
+    }
+
+    let _tag: string;
+
+    for (const _part of symbol.getJsDocTags(_typeChecker)) {
+
+        _tag = JSDOC_TAG_REPLACEMENTS[_part.name] || _part.name;
+        _doclet[_tag] = _doclet[_tag] || [];
+
+        if (_part.text) {
+            _doclet[_tag].push(TS.displayPartsToString(_part.text));
+        }
+
+    }
 }
 
 
@@ -349,7 +402,6 @@ function addInfoFlags (
 ): void {
 
     switch (info.kind) {
-        case 'Doclet':
         case 'TypeAlias':
         case undefined:
             return;
@@ -600,7 +652,7 @@ function addInfoScopes (
     targetInfos: Array<CodeInfo|VariableType>
 ): void {
     const _scopePath = (
-        parentInfo.kind === 'Doclet' || parentInfo.kind === 'Source' ?
+        parentInfo.kind === 'Source' ?
             '' :
             parentInfo.meta.scope ?
                 `${parentInfo.meta.scope}.${parentInfo.name}` :
@@ -612,8 +664,7 @@ function addInfoScopes (
         if (
             !_info ||
             typeof _info !== 'object' ||
-            _info instanceof Array ||
-            _info.kind === 'Doclet'
+            _info instanceof Array
         ) {
             continue;
         }
@@ -792,7 +843,7 @@ export function extractGenericArguments (
  * Extracted name or `undefined`.
  */
 export function extractInfoName (
-    info: (CodeInfo|ObjectType|SourceInfo)
+    info: (CodeInfo|InfoDoclet|ObjectType|SourceInfo)
 ): (string|undefined) {
     let _name: (string|undefined);
 
@@ -805,7 +856,11 @@ export function extractInfoName (
         case 'TypeAlias':
         case 'Variable':
             return info.name;
-        case 'Doclet':
+        case 'Source':
+            return info.file;
+        case 'ObjectType':
+            return;
+        default:
             _name = extractTagText(info, 'optionparent', true);
             if (typeof _name === 'string') {
                 return _name;
@@ -815,10 +870,6 @@ export function extractInfoName (
                 extractTagText(info, 'function', true) ||
                 extractTagText(info, 'name', true)
             );
-        case 'Source':
-            return info.file;
-        default:
-            return;
     }
 }
 
@@ -852,7 +903,7 @@ export function extractTagInset (
  * Retrieved tag informations.
  */
 export function extractTagObjects (
-    doclet: DocletInfo,
+    doclet: InfoDoclet,
     tag: string
 ): Array<DocletTag> {
     const _objects: Array<DocletTag> = [];
@@ -861,7 +912,7 @@ export function extractTagObjects (
     let _match: (RegExpMatchArray|null);
     let _object: DocletTag;
 
-    for (let _text of (doclet.tags[tag] || [])) {
+    for (let _text of (doclet[tag] || [])) {
         _object = { tag };
         _inset = extractTagInset(_text);
 
@@ -915,7 +966,7 @@ export function extractTagObjects (
 
     if (
         !_objects.length &&
-        doclet.tags[tag]
+        doclet[tag]
     ) {
         _objects.push({ tag });
     }
@@ -939,17 +990,17 @@ export function extractTagObjects (
  * * `string`: Extracts only text with matching leading inset (e.g. product).
  *
  * @return
- * Retrieved text or `undefined`.
+ * Retrieved text.
  */
 export function extractTagText (
-    doclet: DocletInfo,
+    doclet: (InfoDoclet|undefined),
     tag: string,
     allOrInset: (boolean|string) = false
-): (string|undefined) {
-    const _tagText = doclet.tags[tag];
+): string {
+    const _tagText = doclet?.[tag];
 
     if (!_tagText?.length) {
-        return;
+        return '';
     }
 
     if (allOrInset === false) {
@@ -1089,65 +1140,6 @@ function getClassInfo (
     );
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
-
-    return _info;
-}
-
-/**
- * Retrieves doclet information from the given project symbol.
- *
- * @param project
- * Related project.
- *
- * @param symbol
- * Symbol that might have a doclet.
- *
- * @return
- * Doclet information or `undefined`.
- */
-function getDocletInfo(
-    project: Project,
-    symbol: TS.Symbol
-): (DocletInfo|undefined) {
-    const _typeChecker = project.program.getTypeChecker();
-    const _commentParts = symbol.getDocumentationComment(_typeChecker);
-    
-    if (!_commentParts) {
-        return;
-    }
-
-    const _description: Array<string> = [];
-
-    for (const _part of _commentParts) {
-        if (_part.kind !== 'text') {
-            break;
-        } 
-        _description.push(_part.text);
-    }
-
-    const _info = {
-        kind: 'Doclet',
-        tags: {},
-    } as DocletInfo;
-
-    if (_description.length) {
-        _info.tags['description'] = _description;
-    }
-
-    let _tag: string;
-
-    for (const _part of symbol.getJsDocTags(_typeChecker)) {
-
-        _tag = JSDOC_TAG_REPLACEMENTS[_part.name] || _part.name;
-        _info.tags[_tag] = _info.tags[_tag] || [];
-
-        if (_part.text) {
-            _info.tags[_tag].push(TS.displayPartsToString(_part.text));
-        }
-
-    }
-
-    addInfoMeta(_info, symbol.declarations?.[0]);
 
     return _info;
 }
@@ -1404,23 +1396,24 @@ function getNamespaceInfo (
  * New Project with source information.
  */
 export function getProject(
-    configOrRootPath: string,
+    configOrRootPath: string
 ): Project {
-    const _project: Project = {
-        program: tsProgram(configOrRootPath),
-        rootPath: configOrRootPath,
-        sourceInfos: [],
-        infoLookup: new Map(),
-    };
+    const _program = tsProgram(configOrRootPath);
     const _folderPath = (
         Path.extname(configOrRootPath) ?
             Path.dirname(configOrRootPath):
             configOrRootPath
     );
+    const _project: Project = {
+        program: _program,
+        rootPath: _folderPath,
+        sourceInfos: [],
+        infoLookup: new Map(),
+    };
     const _absolutePath: string = Path.resolve(_folderPath);
     const _sourceInfos = _project.sourceInfos;
 
-    for (const _sourceFile of _project.program.getSourceFiles()) {
+    for (const _sourceFile of _program.getSourceFiles()) {
         if (
             _sourceFile.fileName.startsWith(_absolutePath) ||
             _sourceFile.fileName.startsWith(_folderPath)
@@ -1530,7 +1523,7 @@ export function getSourceInfo (
     const _info = {
         kind: 'Source',
         code: [],
-        file: sourceFile.fileName,
+        file: Path.relative(project.rootPath, TS.sys.resolvePath(sourceFile.fileName)),
         node: sourceFile
     } as SourceInfo;
 
@@ -1690,101 +1683,6 @@ export function isNativeType (
 
 
 /**
- * Creates a new DocletInfo object.
- *
- * @param template
- * Doclet information to apply.
- *
- * @return
- * The new doclet information.
- */
-export function newDocletInfo (
-    template: Partial<DocletInfo> = {}
-): DocletInfo {
-    const mockupSource = TS
-        .createSourceFile('', '/** */', TS.ScriptTarget.Latest);
-    const clone: Partial<DocletInfo> = {
-        kind: 'Doclet',
-        tags: {},
-        meta: newMeta(),
-        ...structuredClone({
-            ...template,
-            node: void 0
-        })
-    };
-
-    clone.node = mockupSource.getChildAt(0) as TS.JSDoc;
-
-    return clone as DocletInfo;
-}
-
-
-/**
- * Creates a new Meta object.
- *
- * @param template
- * Meta to apply.
- *
- * @return
- * New meta.
- */
-function newMeta (
-    template: Partial<InfoMeta> = {}
-): InfoMeta {
-    return {
-        begin: 0,
-        end: 0,
-        file: '',
-        overhead: 0,
-        scope: '',
-        syntax: 0,
-        ...structuredClone(template)
-    };
-}
-
-
-/**
- * [TS] Retrieves all generic paramter for a given ndode.
- *
- * @param program
- * Related parser program.
- *
- * @param symbol
- * Node to retrieve generic parameters from.
- *
- * @return
- * Retrieved generic parameters.
- */
-function nodesGenericSymbols(
-    program: TS.Program,
-    node: TS.Node
-): Array<TS.Symbol> {
-    const _genericParameters: Array<TS.Symbol> = [];
-
-    if (
-        TS.isClassDeclaration(node) ||
-        TS.isFunctionDeclaration(node) ||
-        TS.isTypeAliasDeclaration(node)
-    ) {
-        let _symbol: (TS.Symbol|undefined);
-
-        for (const _typeParameter of node.typeParameters || []) {
-
-            _symbol = nodesSymbol(program, _typeParameter);
-
-            if (_symbol) {
-                _genericParameters.push(_symbol);
-            }
-
-        }
-
-    }
-
-    return _genericParameters
-}
-
-
-/**
  * [TS] Retrieves the project symbol for the given node. This can be used for
  * project-wide reflection and requires some form of identity.
  *
@@ -1857,36 +1755,6 @@ export function removeAllDoclets (
 
 
 /**
- * Removes a tag from a DocletInfo object.
- *
- * @param doclet
- * Doclet information to modify.
- *
- * @param tag
- * Tag to remove.
- *
- * @return
- * Removed tag text.
- */
-export function removeTag (
-    doclet: DocletInfo,
-    tag: string
-): Array<string> {
-    const tags = doclet.tags;
-
-    if (tags) {
-        const text = tags[tag];
-
-        delete tags[tag];
-
-        return text;
-    }
-
-    return [];
-}
-
-
-/**
  * Sanitize type from surrounding paranthesis characters.
  *
  * @param type
@@ -1932,51 +1800,6 @@ function symbolsChildren(
     }
 
     return _typeChecker.getPropertiesOfType(_type);
-}
-
-
-/**
- * [TS] Retrieves all heritage clauses for a given project symbol.
- *
- * @param program
- * Related parser program.
- *
- * @param symbol
- * Symbol to retrieve heritage clauses for.
- *
- * @return
- * Retrieved heritage clauses.
- */
-function symbolsHeritageClauses(
-    program: TS.Program,
-    symbol: TS.Symbol
-): Array<TS.Symbol> {
-    const _heritageSymbols: Array<TS.Symbol> = [];
-
-    let _heritageSymbol: (TS.Symbol|undefined);
-
-    for (const _declaration of symbol.declarations || []) {
-
-        if (
-            !TS.isClassDeclaration(_declaration) &&
-            !TS.isInterfaceDeclaration(_declaration)
-        ) {
-            continue;
-        }
-
-        for (const _heritageClause of _declaration.heritageClauses || []) {
-            for (const _heritageType of _heritageClause.types) {
-                _heritageSymbol = nodesSymbol(program, _heritageType);
-
-                if (_heritageSymbol) {
-                    _heritageSymbols.push(_heritageSymbol);
-                }
-            }
-        }
-
-    }
-
-    return _heritageSymbols;
 }
 
 
@@ -2084,7 +1907,7 @@ function trimBetween (
  * Doclet string.
  */
 export function toDocletString (
-    doclet: DocletInfo,
+    doclet: InfoDoclet,
     indent: (number|string) = 0
 ): string {
 
@@ -2096,31 +1919,30 @@ export function toDocletString (
         indent = '\n' + indent;
     }
 
-    const tags = doclet.tags;
-    const tagKeys = Object.keys(tags);
+    const tags = Object.keys(doclet);
 
     let compiled = indent + '/**';
 
     if (
-        tags.description &&
+        doclet.description &&
         (
-            tags.description.length <= 1 ||
-            tags.description[1][0] !== '{'
+            doclet.description.length <= 1 ||
+            doclet.description[1][0] !== '{'
         )
     ) {
         compiled += (
             indent + ' * ' +
-            tags.description
+            doclet.description
                 .join('\n\n')
                 .trim()
                 .split('\n')
                 .join(indent + ' * ')
         );
-        tagKeys.splice(tagKeys.indexOf('description'), 1);
+        tags.splice(tags.indexOf('description'), 1);
     }
 
-    for (const tag of tagKeys) {
-        for (const text of tags[tag]) {
+    for (const tag of tags) {
+        for (const text of doclet[tag]) {
             compiled += (
                 indent + ' *' +
                 indent + ' * @' + tag + ' ' +
@@ -2227,13 +2049,3 @@ function tsProgram(
         moduleResolution: TS.ModuleResolutionKind.NodeNext
     });
 }
-
-
-/* *
- *
- *  Default Export
- *
- * */
-
-
-export * as default from './DTS';
