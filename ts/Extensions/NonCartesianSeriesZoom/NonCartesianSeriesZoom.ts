@@ -92,18 +92,14 @@ function onTransform(
                 chart.isDirtyBox = true;
                 params.hasZoomed = true;
 
-                let {
-                    plotSizeX = 0,
-                    plotSizeY = 0
+                const {
+                    plotWidth = 0,
+                    plotHeight = 0
                 } = chart;
 
-                if (chart.inverted) {
-                    [plotSizeX, plotSizeY] = [plotSizeY, plotSizeX];
-                }
-
                 if (trigger === 'pan' && series.zooming) {
-                    series.zooming.panX -= (to.x || 0) / plotSizeX;
-                    series.zooming.panY -= (to.y || 0) / plotSizeY;
+                    series.zooming.panX -= (to.x || 0) / plotWidth;
+                    series.zooming.panY -= (to.y || 0) / plotHeight;
                 } else {
                     if (Object.keys(from).length) {
                         const {
@@ -126,10 +122,10 @@ function onTransform(
                                 1,
                             width = (
                                 series.zooming?.width || 1
-                            ) * plotSizeX,
+                            ) * plotWidth,
                             height = (
                                 series.zooming?.height || 1
-                            ) * plotSizeY;
+                            ) * plotHeight;
 
                         if (Object.keys(to).length) {
                             width = width * (fromWidth / toWidth);
@@ -143,8 +139,8 @@ function onTransform(
 
                             scale =
                                 Math.min(
-                                    plotSizeX / width,
-                                    plotSizeY / height
+                                    plotWidth / width,
+                                    plotHeight / height
                                 );
 
                             // Uncomment this block to visualize the zooming
@@ -173,25 +169,25 @@ function onTransform(
                             fromHeight /= currentScale;
 
                             scale = Math.min(
-                                plotSizeX / fromWidth,
-                                plotSizeY / fromHeight
+                                plotWidth / fromWidth,
+                                plotHeight / fromHeight
                             );
 
                             let prevX = 0,
                                 prevY = 0;
 
                             if (series.zooming) {
-                                prevX = series.zooming.x * plotSizeX;
-                                prevY = series.zooming.y * plotSizeY;
+                                prevX = series.zooming.x * plotWidth;
+                                prevY = series.zooming.y * plotHeight;
                             }
 
                             // Calculate the normalized coefficients of the
                             // rectangle center position
                             const factorX = (zoomX - chart.plotLeft) /
-                                    ((plotSizeX - fromWidth * currentScale) ||
+                                    ((plotWidth - fromWidth * currentScale) ||
                                         1),
                                 factorY = (zoomY - chart.plotTop) /
-                                    ((plotSizeY - fromHeight * currentScale) ||
+                                    ((plotHeight - fromHeight * currentScale) ||
                                         1);
 
                             width = fromWidth;
@@ -230,12 +226,12 @@ function onTransform(
                         }
 
                         series.zooming = {
-                            x: x / plotSizeX,
-                            y: y / plotSizeY,
-                            zoomX: zoomX / plotSizeX,
-                            zoomY: zoomY / plotSizeY,
-                            width: width / plotSizeX,
-                            height: height / plotSizeY,
+                            x: x / plotWidth,
+                            y: y / plotHeight,
+                            zoomX: zoomX / plotWidth,
+                            zoomY: zoomY / plotHeight,
+                            width: width / plotWidth,
+                            height: height / plotHeight,
                             scale,
                             panX: 0,
                             panY: 0
