@@ -151,7 +151,6 @@ QUnit.test('Update and z-index', function (assert) {
     }
     function addData(newData) {
         const series = chart.series[0];
-        console.log(series.options.data);
         series.update({ data: [...series.userOptions.data, ...newData] }, true);
     }
 
@@ -165,7 +164,7 @@ QUnit.test('Update and z-index', function (assert) {
     assert.strictEqual(
         chart.get('id-6').graphic.element.parentNode
             .getAttribute('data-z-index'),
-        '996',
+        '-4',
         'Added nodes to traversed tree should have a static z-index (#23432)'
     );
 });

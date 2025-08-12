@@ -963,11 +963,9 @@ class TreemapSeries extends ScatterSeries {
                 if (!(series as any)[groupKey]) {
                     (series as any)[groupKey] = renderer.g(groupKey)
                         .attr({
-                            // @todo Set the zIndex based upon the number of
-                            // levels, instead of using 1000.
                             // Use the static level in order to retain z-index
                             // when data is updated (#23432).
-                            zIndex: 1000 - (point.node.level || 0)
+                            zIndex: -(point.node.level || 0)
                         })
                         .add(series.group);
                     (series as any)[groupKey].survive = true;
