@@ -70,7 +70,9 @@ const getGraticule = () => {
 };
 
 (async () => {
-    const topology = await fetch('https://code.highcharts.com/mapdata/custom/world-highres.topo.json').then(response => response.json());
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world-highres.topo.json'
+    ).then(response => response.json());
     const mapData = topology.objects.default.geometries.map(country => [
         country.properties['hc-key'],
         country.id
@@ -166,8 +168,7 @@ const getGraticule = () => {
                 },
                 redraw() {
                     const chart = this;
-                    // "Reset" view to account for
-                    // manual globe rotation
+                    // "Reset" view to account for manual globe rotation
                     chart.mapView.fitToBounds(undefined, undefined, false);
                     chart.renderSea?.();
                 },
@@ -175,14 +176,14 @@ const getGraticule = () => {
                     const chart = this,
                         renderer = chart.renderer;
 
-                    // Responsive rules cause the render event to fire
-                    // before the load event. Therefore, we need to create
-                    // these functions on the render event instead.
+                    // Responsive rules cause the render event to fire before
+                    // the load event. Therefore, we need to create these
+                    // functions on the render event instead.
 
                     if (!chart.renderSea) {
-                        // Render a circle filled with a radial
-                        // gradient behind the globe to make it
-                        // appear as the sea around the continents
+                        // Render a circle filled with a radial gradient behind
+                        // the globe to make it appear as the sea around the
+                        // continents
                         chart.renderSea = () => {
                             let verb = 'animate';
                             if (!chart.sea) {
@@ -404,12 +405,11 @@ const getGraticule = () => {
 
         exporting: {
             csv: {
-                columnHeaderFormatter: function (_, key) {
-                    return key === 'population' ? 'Population (M)' :
-                        key === 'y' ? 'Gold Reserves (t)' :
-                            key === 'z' ? 'Gold per Capita (oz t)' :
-                                'Country';
-                }
+                columnHeaderFormatter: (_, key) => ({
+                    population: 'Population (M)',
+                    y: 'Gold Reserves (t)',
+                    z: 'Gold per Capita (oz t)'
+                }[key] || 'Country')
             }
         },
 
@@ -487,18 +487,18 @@ const getGraticule = () => {
                 ]
                 ),
                 colors:
-                        [
-                            '#ccb339',
-                            '#d2ba45',
-                            '#d7c150',
-                            '#ddc85c',
-                            '#e3ce68',
-                            '#e8d673',
-                            '#eedc7f',
-                            '#f4e38b',
-                            '#f9ea96',
-                            '#fff1a2'
-                        ],
+                    [
+                        '#ccb339',
+                        '#d2ba45',
+                        '#d7c150',
+                        '#ddc85c',
+                        '#e3ce68',
+                        '#e8d673',
+                        '#eedc7f',
+                        '#f4e38b',
+                        '#f9ea96',
+                        '#fff1a2'
+                    ],
                 point: {
                     events: {
                         unselect() {
