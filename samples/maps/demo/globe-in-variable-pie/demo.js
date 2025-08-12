@@ -295,7 +295,7 @@ const getGraticule = () => {
                         const radialAxis = renderer.path([
                             'M', cx - 3, cy - innerR, 'L', cx - 3, cy - r
                         ]).attr({
-                            stroke: 'black',
+                            stroke: 'var(--highcharts-neutral-color-80, #444)',
                             'stroke-width': 2
                         }).add(chart.customAxes);
 
@@ -309,7 +309,7 @@ const getGraticule = () => {
                         }).attr({
                             'font-size': fontSizeAxes,
                             'font-weight': 'bold',
-                            fill: '#444'
+                            fill: 'var(--highcharts-neutral-color-80, #444)'
                         }).add(chart.customAxes);
 
                         // Angular axis
@@ -318,7 +318,7 @@ const getGraticule = () => {
                             'M', cx - angularAxisR, cy, 'A', angularAxisR,
                             angularAxisR, 0, 0, 1, cx - 2, cy - angularAxisR
                         ]).attr({
-                            stroke: 'black',
+                            stroke: 'var(--highcharts-neutral-color-80, #444)',
                             'stroke-width': 2
                         }).add(chart.customAxes);
 
@@ -335,7 +335,7 @@ const getGraticule = () => {
                             }).attr({
                                 'font-size': fontSizeAxes,
                                 'font-weight': 'bold',
-                                fill: '#444'
+                                fill: 'var(--highcharts-neutral-color-80, #444)'
                             })
                             .add(chart.customAxes);
 

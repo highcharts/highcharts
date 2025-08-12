@@ -60,14 +60,14 @@ a:active {
 }
 
 .highcharts-data-table tbody tr:nth-child(even) {
-    background-color: #e8e8e8;
+    background-color: var(--highcharts-neutral-color-10, #e6e6e6);
 }
 
 .highcharts-data-table tbody tr:nth-child(odd) {
-    background-color: #f7f7f7;
+    background-color: var(--highcharts-neutral-color-3, #f7f7f7);
 }
 
 .highcharts-table-caption,
 .highcharts-data-table thead tr {
-    background-color: #e8e8e8;
+    background-color: var(--highcharts-neutral-color-10, #e6e6e6);
 }
