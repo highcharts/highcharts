@@ -186,12 +186,14 @@ class SortingController {
         if (!order || !columnId) {
             return;
         }
+        const grid = this.querying.grid;
 
         return new SortModifier({
             orderByColumn: columnId,
             direction: order,
-            compare: this.querying.grid.columnOptionsMap?.[columnId]
-                ?.options?.sorting?.compare
+            compare: grid.columnOptionsMap?.[columnId]?.options
+                ?.sorting?.compare ||
+                grid.options?.columnDefaults?.sorting?.compare
         });
     }
 }

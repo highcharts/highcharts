@@ -68,7 +68,7 @@
     "excludeInternal": true,
     "excludePrivate": true,
     "hideGenerator": true,
-    "htmlLang": "en",
+    "lang": "en",
     "name": "Highcharts Grid",
     "out": "../../../build/api/grid/typedoc/",
     "plugin": [

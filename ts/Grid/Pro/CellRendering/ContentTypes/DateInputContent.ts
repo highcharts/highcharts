@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -39,6 +40,9 @@ import CellContentPro from '../CellContentPro.js';
  */
 class DateInputContent extends CellContentPro implements EditModeContent {
 
+    /**
+     * Whether to finish the edit after a change.
+     */
     public finishAfterChange: boolean = false;
 
     public blurHandler?: (e: FocusEvent) => void;
@@ -75,15 +79,27 @@ class DateInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
+    /**
+     * Adds the input element to the parent element.
+     * @param parentElement The parent element to add the input element to.
+     * @returns The input element.
+     */
     public override add(
         parentElement: HTMLElement = this.cell.htmlElement
     ): HTMLInputElement {
         const cell = this.cell;
         const input = this.input = document.createElement('input');
+        const { options } = this.renderer as DateInputRenderer;
 
         input.tabIndex = -1;
         input.type = 'date';
         input.name = cell.column.id + '-' + cell.row.id;
+
+        if (options.attributes) {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
+                input.setAttribute(key, value);
+            });
+        }
 
         this.update();
 
@@ -97,6 +113,9 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
+    /**
+     * Updates the input element.
+     */
     public override update(): void {
         const input = this.input;
         const { options } = this.renderer as DateInputRenderer;
@@ -105,18 +124,31 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         input.disabled = !!options.disabled;
     }
 
+    /**
+     * Gets the raw value of the input element.
+     */
     public get rawValue(): string {
         return this.input.value;
     }
 
+    /**
+     * Gets the value of the input element.
+     */
     public get value(): number {
         return new Date(this.input.value).getTime();
     }
 
+    /**
+     * Gets the main element (input) of the content.
+     * @returns The input element.
+     */
     public getMainElement(): HTMLInputElement {
         return this.input;
     }
 
+    /**
+     * Destroys the content.
+     */
     public override destroy(): void {
         const input = this.input;
         this.cell.htmlElement.removeEventListener(
