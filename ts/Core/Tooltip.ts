@@ -79,7 +79,6 @@ declare module './Chart/ChartLike' {
 declare module './Series/PointLike' {
     interface PointLike {
         isHeader?: boolean;
-        tooltipPos?: Array<number>;
     }
 }
 
@@ -371,7 +370,12 @@ class Tooltip {
             ret = [chartX - plotLeft, chartY - plotTop];
 
         }
-        return ret.map(Math.round);
+
+        const params = { point: points[0], ret };
+
+        fireEvent(this, 'getAnchor', params);
+
+        return params.ret.map(Math.round);
 
     }
 

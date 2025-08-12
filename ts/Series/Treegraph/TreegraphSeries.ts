@@ -755,9 +755,11 @@ interface TreegraphSeries {
 }
 
 extend(TreegraphSeries.prototype, {
+    forceDL: true,
     pointClass: TreegraphPoint,
     NodeClass: TreegraphNode,
-    LinkClass: TreegraphLink
+    LinkClass: TreegraphLink,
+    isCartesian: false
 });
 
 /* *

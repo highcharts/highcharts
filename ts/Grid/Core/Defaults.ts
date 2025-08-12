@@ -8,7 +8,7 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
-*  Authors:
+ *  Authors:
  *  - Dawid Dragula
  *  - Sebastian Bochan
  *
@@ -65,9 +65,6 @@ namespace Defaults {
             timezone: 'UTC'
         },
         rendering: {
-            columns: {
-                distribution: 'full'
-            },
             rows: {
                 bufferSize: 10,
                 minVisibleRows: 2,
@@ -77,13 +74,17 @@ namespace Defaults {
             header: {
                 enabled: true
             },
+            columns: {
+                resizing: {
+                    enabled: true
+                }
+            },
             theme: 'hcg-theme-default'
         },
         columnDefaults: {
             sorting: {
                 sortable: true
-            },
-            resizing: true
+            }
         }
     };
 

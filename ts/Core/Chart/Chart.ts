@@ -321,6 +321,7 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
+    public dataLabelsGroup?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -371,6 +372,7 @@ class Chart {
     public xAxis!: Array<AxisType>;
     public yAxis!: Array<AxisType>;
     public zooming!: ChartZoomingOptions;
+    public zoomClipRect?: SVGElement;
 
     /* *
      *
@@ -1845,8 +1847,8 @@ class Chart {
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
             colorAxis = chart.colorAxis,
             margin = chart.margin,
-            getOffset = function (axes: Array<Axis>): void {
-                axes.forEach(function (axis): void {
+            getOffset = (axes: Array<Axis>): void => {
+                axes.forEach((axis): void => {
                     if (axis.visible) {
                         axis.getOffset();
                     }
@@ -1862,9 +1864,9 @@ class Chart {
         }
 
         // Add the axis offsets
-        marginNames.forEach(function (m: string, side: number): void {
+        marginNames.forEach((marginName, side): void => {
             if (!defined(margin[side])) {
-                (chart as any)[m] += axisOffset[side];
+                chart[marginName] += axisOffset[side];
             }
         });
 
@@ -1914,7 +1916,7 @@ class Chart {
         // Width and height checks for display:none. Target is doc in Opera
         // and win in Firefox, Chrome and IE9.
         if (
-            !chart.isPrinting &&
+            !chart.exporting?.isPrinting &&
             !chart.isResizing &&
             oldBox &&
             // When fired by resize observer inside hidden container
@@ -2203,29 +2205,30 @@ class Chart {
             halfWidth = Math.round(plotBorderWidth) / 2;
 
         // Create margin and spacing array
-        ['margin', 'spacing'].forEach(function splashArrays(
-            target: string
-        ): void {
-            const value = (chartOptions as any)[target],
+        (['margin', 'spacing'] as ('margin'|'spacing')[]).forEach((
+            target
+        ): void => {
+            const value = chartOptions[target],
                 values = isObject(value) ? value : [value, value, value, value];
 
-            [
+            ([
                 'Top',
                 'Right',
                 'Bottom',
                 'Left'
-            ].forEach(function (sideName: string, side: number): void {
-                (chart as any)[target][side] = pick(
-                    (chartOptions as any)[target + sideName],
+            ] as ('Top'|'Right'|'Bottom'|'Left')[]
+            ).forEach((sideName, side): void => {
+                chart[target][side] = (
+                    chartOptions[`${target}${sideName}`] ??
                     values[side]
-                );
+                ) as any;
             });
         });
 
         // Set margin names like chart.plotTop, chart.plotLeft,
         // chart.marginRight, chart.marginBottom.
-        marginNames.forEach(function (m: string, side: number): void {
-            (chart as any)[m] = pick(chart.margin[side], chart.spacing[side]);
+        marginNames.forEach((marginName, side): void => {
+            chart[marginName] = chart.margin[side] ?? chart.spacing[side];
         });
         chart.axisOffset = [0, 0, 0, 0]; // Top, right, bottom, left
         chart.clipOffset = [
@@ -2649,12 +2652,15 @@ class Chart {
         }
 
         // The series
-        if (!chart.seriesGroup) {
-            chart.seriesGroup = renderer.g('series-group')
-                .attr({ zIndex: 3 })
-                .shadow(chart.options.chart.seriesGroupShadow)
-                .add();
-        }
+        chart.seriesGroup ||= renderer.g('series-group')
+            .attr({ zIndex: 3 })
+            .shadow(chart.options.chart.seriesGroupShadow)
+            .add();
+
+        chart.dataLabelsGroup ||= renderer.g('datalabels-group')
+            .attr({ zIndex: 6 })
+            .add();
+
         chart.renderSeries();
 
         // Credits
@@ -3751,12 +3757,14 @@ class Chart {
             } = params,
             { inverted, time } = this;
 
-        let hasZoomed = false,
-            displayButton: boolean|undefined,
-            isAnyAxisPanning: true|undefined;
-
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
+
+        fireEvent(this, 'transform', params);
+
+        let hasZoomed = params.hasZoomed || false,
+            displayButton: boolean|undefined,
+            isAnyAxisPanning: true|undefined;
 
         for (const axis of axes) {
             const {
@@ -3791,29 +3799,25 @@ class Chart {
                 continue;
             }
 
-            let newMin = axis.toValue(minPx, true) +
-                // Don't apply offset for selection (#20784)
-                    (
-                        selection || axis.isOrdinal ?
-                            0 : minPointOffset * pointRangeDirection
-                    ),
-                newMax =
-                    axis.toValue(
-                        minPx + len / scale, true
-                    ) -
-                    (
-                        // Don't apply offset for selection (#20784)
-                        selection || axis.isOrdinal ?
-                            0 :
-                            (
-                                (minPointOffset * pointRangeDirection) ||
-                                // Polar zoom tests failed when this was not
-                                // commented:
-                                // (axis.isXAxis && axis.pointRangePadding) ||
-                                0
-                            )
-                    ),
+            // Adjust offset to ensure selection zoom triggers correctly
+            // (#22945)
+            const offset = (axis.chart.polar || axis.isOrdinal) ?
+                    0 :
+                    (minPointOffset * pointRangeDirection || 0),
+                eventMin = axis.toValue(minPx, true),
+                eventMax = axis.toValue(minPx + len / scale, true);
+
+            let newMin = eventMin + offset,
+                newMax = eventMax - offset,
                 allExtremes = axis.allExtremes;
+
+            if (selection) {
+                selection[axis.coll as 'xAxis' | 'yAxis'].push({
+                    axis,
+                    min: Math.min(eventMin, eventMax),
+                    max: Math.max(eventMin, eventMax)
+                });
+            }
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
@@ -3903,12 +3907,7 @@ class Chart {
             // It is not necessary to calculate extremes on ordinal axis,
             // because they are already calculated, so we don't want to override
             // them.
-            if (
-                !axis.isOrdinal ||
-                axis.options.overscroll || // #21316
-                scale !== 1 ||
-                reset
-            ) {
+            if (!axis.isOrdinal || scale !== 1 || reset) {
                 // If the new range spills over, either to the min or max,
                 // adjust it.
                 if (newMin < floor) {
@@ -3970,6 +3969,16 @@ class Chart {
                     }
 
                     hasZoomed = true;
+                }
+
+                // Show the resetZoom button for non-cartesian series,
+                // except when triggered by mouse wheel zoom
+                if (
+                    !this.hasCartesianSeries &&
+                    !reset &&
+                    trigger !== 'mousewheel'
+                ) {
+                    displayButton = true;
                 }
 
                 if (event) {
@@ -4156,6 +4165,7 @@ namespace Chart {
         selection?: Pointer.SelectEventObject;
         from?: Partial<BBoxObject>;
         trigger?: string;
+        hasZoomed?: boolean;
     }
 
     export interface CreateAxisOptionsObject {

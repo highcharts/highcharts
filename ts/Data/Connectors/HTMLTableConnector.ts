@@ -94,7 +94,7 @@ class HTMLTableConnector extends DataConnector {
     /**
      * The attached parser, which can be replaced in the constructor
      */
-    public readonly converter: HTMLTableConverter;
+    public converter: HTMLTableConverter;
 
     /**
      * The table element to create the connector from. Is either supplied
@@ -128,7 +128,7 @@ class HTMLTableConnector extends DataConnector {
         connector.emit<HTMLTableConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            table,
+            tables: { table },
             tableElement: connector.tableElement
         });
 
@@ -153,7 +153,7 @@ class HTMLTableConnector extends DataConnector {
                 type: 'loadError',
                 detail: eventDetail,
                 error,
-                table
+                tables: { table }
             });
 
             return Promise.reject(new Error(error));
@@ -174,7 +174,7 @@ class HTMLTableConnector extends DataConnector {
                 connector.emit<HTMLTableConnector.Event>({
                     type: 'afterLoad',
                     detail: eventDetail,
-                    table,
+                    tables: { table },
                     tableElement: connector.tableElement
                 });
                 return connector;

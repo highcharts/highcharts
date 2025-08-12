@@ -139,11 +139,11 @@ describe('layout resize on window changes', () => {
             .find('input[type="checkbox"]')
             .should('be.checked');
 
-        cy.get('.highcharts-dashboards-edit-label-text').contains('Columns distribution').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Columns resizing mode').should('be.visible');
         cy.get('.highcharts-dashboards-edit-dropdown.highcharts-dashboards-edit-collapsable-content-header')
             .eq(1)
             .find('.highcharts-dashboards-edit-dropdown-button-content > span')
-            .should('have.text', 'full');
+            .should('have.text', '');
 
         cy.get('.highcharts-dashboards-edit-label-text').contains('Cell text truncation').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')

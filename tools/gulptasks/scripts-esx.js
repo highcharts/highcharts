@@ -294,11 +294,11 @@ async function scriptsESX(
 
         logLib.message(`Deleting ${esModulesFolder}...`);
 
-        fsLib.deleteDirectory(esModulesFolder, true);
+        fsLib.deleteDirectory(esModulesFolder);
 
         logLib.message(`Deleting ${bundleTargetFolder}...`);
 
-        fsLib.deleteDirectory(bundleTargetFolder, true);
+        fsLib.deleteDirectory(bundleTargetFolder);
 
         logLib.message(`Building ${bundleTargetFolder}...`);
 
@@ -334,7 +334,7 @@ async function scriptsESX(
 
         logLib.message(`Deleting ${esModulesFolder}...`);
 
-        fsLib.deleteDirectory(esModulesFolder, true);
+        fsLib.deleteDirectory(esModulesFolder);
 
         logLib.message(`Building ${esModulesFolder}...`);
 

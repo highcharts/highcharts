@@ -65,7 +65,7 @@
                 enabled: null, // auto
                 radius: 3,
                 lineWidth: 1,
-                lineColor: '#FFFFFF'
+                lineColor: 'var(--highcharts-background-color, #fff)'
             },
             tooltip: {
                 valueDecimals: 2

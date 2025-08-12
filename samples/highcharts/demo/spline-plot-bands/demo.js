@@ -36,7 +36,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Light air',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }, { // Light breeze
@@ -46,7 +46,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Light breeze',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }, { // Gentle breeze
@@ -56,7 +56,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Gentle breeze',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }, { // Moderate breeze
@@ -66,7 +66,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Moderate breeze',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }, { // Fresh breeze
@@ -76,7 +76,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Fresh breeze',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }, { // Strong breeze
@@ -86,7 +86,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Strong breeze',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }, { // Near Gale
@@ -96,7 +96,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Near gale',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }, { // Fresh Gale
@@ -106,7 +106,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Fresh gale',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }, { // Strong Gale
@@ -116,7 +116,7 @@ Highcharts.chart('container', {
             label: {
                 text: 'Strong gale',
                 style: {
-                    color: '#606060'
+                    opacity: 0.7
                 }
             }
         }]

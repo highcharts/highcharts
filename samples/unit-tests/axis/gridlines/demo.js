@@ -127,3 +127,66 @@ QUnit.test('Animation of grid lines and tick marks', function (assert) {
 
     TestUtilities.lolexUninstall(clock);
 });
+
+
+QUnit.test('Position of grid lines and tick marks (#22981)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        yAxis: [{
+            tickWidth: 1,
+            gridLineColor: 'red',
+            tickAmount: 4
+        }],
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }]
+    });
+    const ticks = chart.yAxis[0].ticks;
+
+    for (const pos in ticks) {
+        if (Object.hasOwnProperty.call(ticks, pos)) {
+            assert.strictEqual(
+                ticks[pos].mark.attr('d').split(' ')[2],
+                ticks[pos].gridLine.attr('d').split(' ')[2],
+                `Tick ${pos} mark and grid line should have the same y
+                position.`
+            );
+        }
+    }
+});
+
+QUnit.test('Grid line gaps across panes (#23382)', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        plotOptions: {
+            series: {
+                pointStart: '2025-07-30',
+                pointIntervalUnit: 'day'
+            }
+        },
+        series: [{
+            data: [1, 3, 2, 4, 3]
+        }, {
+            data: [4, 2, 3, 1, 3],
+            yAxis: 1
+        }],
+        yAxis: [{
+            height: '48%',
+            lineWidth: 1
+        }, {
+            height: '48%',
+            lineWidth: 1,
+            top: '52%'
+        }],
+        xAxis: {
+            gridLineWidth: 1
+        }
+    });
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-xaxis-grid path')[0]
+            .getAttribute('d')
+            .split(' ')
+            .filter(d => d === 'M').length,
+        2,
+        'There should be two path segments in the grid line path'
+    );
+});
