@@ -36,6 +36,12 @@ const grid = Grid.grid('container', {
         cells: {
             format: '{row.index}%'
         }
+    }, {
+        id: 'b',
+        width: '30%'
+    }, {
+        id: 'c',
+        width: '10%'
     }]
 });
 

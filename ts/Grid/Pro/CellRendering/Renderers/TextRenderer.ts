@@ -56,7 +56,7 @@ class TextRenderer extends CellRenderer {
     Column.DataType, EditModeRendererTypeName
     > = {
             string: 'textInput',
-            number: 'textInput',
+            number: 'numberInput',
             'boolean': 'checkbox',
             datetime: 'dateInput'
         };

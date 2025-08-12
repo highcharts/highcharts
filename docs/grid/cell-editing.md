@@ -64,12 +64,14 @@ Each column has a specific `dataType`, which can be set explicitly or inferred f
 
 In addition to `dataType` you can extend a selection of predefined validation rules:
 
-- `notEmpty`
-- `boolean`
-- `number`
-- `datetime`
+- `notEmpty`- Only accepts non-empty values.
+- `boolean`- Only accepts `true`, `false`, `1` and `0` as valid values.
+- `number`- Only accepts numbers.
+- `datetime`- Only accepts valid timestamps in milliseconds.
+- `ignoreCaseUnique`- Only accepts unique values within the column (case-insensitive).
+- `unique`- Only accepts unique values within the column (case-sensitive).
 
-To prevent users from entering `null` or empty string values in any column, add the `notEmpty` validation rule:
+See how adding the `notEmpty` validation rule prevents users from entering `null` or empty string values in any column:
 
 ```ts
 columns: [{

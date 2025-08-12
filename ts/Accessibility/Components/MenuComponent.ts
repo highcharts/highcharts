@@ -530,11 +530,12 @@ namespace MenuComponent {
         if (exportButton) {
             const el = exportButton.element;
             if (el.onclick) {
-                el.onclick(getFakeMouseEvent('click'));
+                el.onclick = function (): void {
+                    getFakeMouseEvent('click');
+                };
             }
         }
     }
-
 
     /**
      * @private
