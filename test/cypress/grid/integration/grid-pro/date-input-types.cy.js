@@ -19,12 +19,12 @@ describe('Date Input Types', () => {
             .should('contain', '2023-12-25');
     });
 
-    it('Should parse datetime-local input values correctly', () => {
-        // Test datetime-local input type
+    it('Should parse datetime input values correctly', () => {
+        // Test datetime input type
         cy.get('tr[data-row-index="0"] td[data-column-id="datetimeView"]')
             .dblclick()
             .find('input[type="datetime-local"]')
-            .should('have.value', '2023-01-01T08:15')
+            .should('have.value', '2023-01-01T08:15:30')
             .clear()
             .type('2023-05-20T14:30');
 
@@ -40,7 +40,7 @@ describe('Date Input Types', () => {
         cy.get('tr[data-row-index="0"] td[data-column-id="timeView"]')
             .dblclick()
             .find('input[type="time"]')
-            .should('have.value', '03:00')
+            .should('have.value', '03:00:00')
             .clear()
             .type('16:30');
 
@@ -79,11 +79,11 @@ describe('Date Input Types', () => {
         cy.get('tr[data-row-index="0"] td[data-column-id="datetimeEdit"]')
             .find('input[type="datetime-local"]')
             .should('exist')
-            .should('have.value', '2023-01-01T21:05');
+            .should('have.value', '2023-01-01T21:05:10');
 
         cy.get('tr[data-row-index="0"] td[data-column-id="timeEdit"]')
             .find('input[type="time"]')
             .should('exist')
-            .should('have.value', '07:00');
+            .should('have.value', '07:00:00');
     });
 });

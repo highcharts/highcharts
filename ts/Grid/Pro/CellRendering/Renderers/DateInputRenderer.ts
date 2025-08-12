@@ -115,7 +115,7 @@ namespace DateInputRenderer {
          *
          * @default 'date'
          */
-        inputType?: 'date' | 'datetime-local' | 'time';
+        inputType?: 'date' | 'datetime' | 'time';
 
         /**
          * Whether the date input is disabled.

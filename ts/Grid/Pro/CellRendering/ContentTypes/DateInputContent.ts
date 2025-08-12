@@ -48,8 +48,8 @@ class DateInputContent extends CellContentPro implements EditModeContent {
     string
     > = {
             date: '%Y-%m-%d',
-            'datetime-local': '%Y-%m-%dT%H:%M',
-            time: '%H:%M'
+            datetime: '%Y-%m-%dT%H:%M:%S',
+            time: '%H:%M:%S'
         } as const;
 
     /**
@@ -109,7 +109,10 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         const input = this.input = document.createElement('input');
 
         input.tabIndex = -1;
-        input.type = options.inputType || 'date';
+        input.type = (
+            options.inputType === 'datetime' ?
+                'datetime-local' : options.inputType
+        ) || 'date';
         input.name = cell.column.id + '-' + cell.row.id;
 
         if (options.attributes) {

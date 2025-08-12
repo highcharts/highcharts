@@ -61,7 +61,7 @@ Grid.grid('container', {
             editMode: {
                 renderer: {
                     type: 'dateInput',
-                    inputType: 'datetime-local'
+                    inputType: 'datetime'
                 }
             }
         }
@@ -70,7 +70,7 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'dateInput',
-                inputType: 'datetime-local'
+                inputType: 'datetime'
             }
         }
     }, {
