@@ -418,13 +418,28 @@ const getGraticule = () => {
                 fontSize: '1em'
             },
             valueDecimals: 2,
+            useHTML: true,
             headerFormat:
-                        `<span style="font-weight: bold">
-                        {point.key}</span><br/>`,
+                `<table>
+                    <tr>
+                        <th colspan="2" style="font-weight: bold">
+                            {point.key}
+                        </th>
+                    </tr>`,
             pointFormat:
-                        `<span>Population: <b>{point.population} M</b>
-                        </br>Gold Reserves: <b>{point.y} t</b>
-                        <br/>Per Capita: <b>{point.z} oz t</b></span>`
+                `<tr>
+                    <td>Population:</td>
+                    <td><b>{point.population} M</b></td>
+                </tr>
+                <tr>
+                    <td>Gold Reserves:</td>
+                    <td><b>{point.y} t</b></td>
+                </tr>
+                <tr>
+                    <td>Per Capita:</td>
+                    <td><b>{point.z} oz t</b></td>
+                </tr>`,
+            footerFormat: '</table>'
         },
 
         series: [
