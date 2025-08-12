@@ -2135,7 +2135,7 @@ namespace Utilities {
         (
             this: TContext,
             value: TObject[keyof TObject],
-            key: keyof TObject,
+            key: Extract<keyof TObject, string>,
             obj: TObject
         ): void;
     }

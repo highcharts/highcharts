@@ -173,6 +173,8 @@ test('Grid update methods', async function (assert) {
         'ears","Plums","Bananas"],"weight":[100,40,0.5,200],"price":[1.5,2.53,5,4.5]}}}',
         'The getOptionsJSON method should return the correct JSON string.'
     );
+
+    grid.viewport?.resizeObserver?.disconnect();
 });
 
 
@@ -204,7 +206,6 @@ test('Grid custom sorting', async function (assert) {
             }
         }]
     }, true);
-
     grid.viewport?.resizeObserver?.disconnect();
 
     await grid.viewport?.getColumn('weight')?.sorting?.setOrder('asc');

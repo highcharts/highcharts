@@ -22,7 +22,7 @@ import type * as H from '../Grid/Pro/highcharts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
-import ColumnDistribution from '../Grid/Core/Table/ColumnDistribution/ColumnDistribution.js';
+import ColumnResizing from '../Grid/Core/Table/ColumnResizing/ColumnResizing.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
@@ -47,6 +47,8 @@ import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js'
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
+import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
+import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
 
 /* *
@@ -73,6 +75,8 @@ import '../Grid/Pro/Dash3Compatibility.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
 
 // Cell Renderers
+import '../Grid/Pro/CellRendering/CellRenderer.js';
+import '../Grid/Pro/CellRendering/CellContentPro.js';
 import '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import '../Grid/Pro/CellRendering/Renderers/TextRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
@@ -80,6 +84,7 @@ import '../Grid/Pro/CellRendering/Renderers/SelectRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/TextInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/DateInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
 
 /* *
@@ -110,7 +115,7 @@ declare global {
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
         grids: Array<(_Grid|undefined)>;
-        ColumnDistribution: typeof ColumnDistribution;
+        ColumnResizing: typeof ColumnResizing;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -125,8 +130,10 @@ declare global {
         HeaderCell: typeof HeaderCell;
         TableCell: typeof TableCell;
         Templating: typeof Templating;
+        CellContentPro: typeof CellContentPro;
         merge: typeof Utilities.merge;
         CellRendererRegistry: typeof CellRendererRegistry;
+        CellRenderer: typeof CellRenderer;
     }
     interface Window {
         /**
@@ -162,7 +169,7 @@ G.grids = _Grid.grids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
-G.ColumnDistribution = ColumnDistribution;
+G.ColumnResizing = ColumnResizing;
 G.defaultOptions = Defaults.defaultOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.setOptions = Defaults.setOptions;
@@ -183,6 +190,8 @@ ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 
 G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
+G.CellContentPro = CellContentPro;
+G.CellRenderer = CellRenderer;
 
 
 /* *
