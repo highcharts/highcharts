@@ -17,7 +17,8 @@ Grid.grid('container', {
             ],
             country: [
                 'PL', 'NL', 'RO', 'EC', 'ES', 'IT', 'DE', 'PL', 'TR', 'BR'
-            ]
+            ],
+            wrongName: [34, 4, 51, 2, 3]
         }
     },
     lang: {
@@ -57,7 +58,7 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 // Gets default error message text or from lang (if defined)
-                validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+                validationRules: ['notEmpty', 'ignoreCaseUnique']
             }
         }
     }, {
@@ -140,6 +141,14 @@ Grid.grid('container', {
                     { value: 'TR', label: 'Turkey' },
                     { value: 'BR', label: 'Brazil' }
                 ]
+            }
+        }
+    }, {
+        id: 'wrongName',
+        dataType: 'none-existing-data-type',
+        cells: {
+            renderer: {
+                type: 'wrong-render-type'
             }
         }
     }]

@@ -30,6 +30,9 @@ Grid.grid('container', {
             },
             boolean: {
                 notification: 'New value has to be a boolean.'
+            },
+            ignoreCaseUnique: {
+                notification: 'New value has to be unique (case-sensitive).'
             }
         }
     },
@@ -37,12 +40,6 @@ Grid.grid('container', {
         rows: {
             minVisibleRows: 5
         }
-    },
-    caption: {
-        text: 'Loreum ipsum caption'
-    },
-    description: {
-        text: 'Loreum ipsum description'
     },
     credits: {
         position: 'bottom'
@@ -60,7 +57,7 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 // Gets default error message text or from lang (if defined)
-                validationRules: ['notEmpty']
+                validationRules: ['notEmpty', 'ignoreCaseUnique']
             }
         }
     }, {

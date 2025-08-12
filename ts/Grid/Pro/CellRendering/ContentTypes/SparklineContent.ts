@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -50,7 +51,6 @@ class SparklineContent extends CellContentPro {
     > = {
             chart: {
                 height: 40,
-                animation: false,
                 margin: [5, 8, 5, 8],
                 backgroundColor: 'transparent',
                 skipClone: true
@@ -150,7 +150,13 @@ class SparklineContent extends CellContentPro {
     }
 
     public override update(): void {
-        this.chart?.update(this.getProcessedOptions(), true, false);
+        const chartOptions = this.getProcessedOptions();
+        this.chart?.update(
+            chartOptions,
+            true,
+            false,
+            chartOptions.chart?.animation
+        );
     }
 
     public override destroy(): void {
