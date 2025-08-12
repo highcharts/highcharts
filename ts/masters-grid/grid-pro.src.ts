@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v@product.version@ (@product.date@)
+ * @license Highcharts Grid Pro v@product.version@ (@product.date@)
  * @module grid/grid-pro
  *
  * (c) 2009-2025 Highsoft AS
