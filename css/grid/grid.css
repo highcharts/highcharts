@@ -10,24 +10,30 @@
 .hcg-container,
 .highcharts-light .hcg-container {
     --ig-default-color: #000000;
-    --ig-negative-default-border-color: #ff0000;
-    --ig-negative-default-background: #ffe5e5;
-    --ig-neutral-default-border-color: #595959;
-    --ig-neutral-default-background: #d1d1d1;
-    --ig-positive-default-border-color: #008000;
-    --ig-positive-default-background: #e0ebe0;
+    --ig-negative-default-color: #c10008;
+    --ig-negative-default-border-color: #e7000b;
+    --ig-negative-default-background: #fef3f2;
+    --ig-neutral-default-color: #884b00;
+    --ig-neutral-default-border-color: #d18700;
+    --ig-neutral-default-background: #fefce8;
+    --ig-positive-default-color: #008236;
+    --ig-positive-default-border-color: #00a63e;
+    --ig-positive-default-background: #effdf4;
     --ig-highlight-color-5: #f3f6fe;
 }
 
 @media (prefers-color-scheme: dark) {
     .hcg-container {
         --ig-default-color: #ffffff;
-        --ig-negative-default-border-color: #a80000;
-        --ig-negative-default-background: #6b0000;
-        --ig-neutral-default-border-color: #b3b3b3;
-        --ig-neutral-default-background: #636363;
-        --ig-positive-default-border-color: #008000;
-        --ig-positive-default-background: #265a26;
+        --ig-negative-default-color: #ffb3b3;
+        --ig-negative-default-border-color: #7a1e1e;
+        --ig-negative-default-background: #3d0e0b;
+        --ig-neutral-default-color: #ffe8c1;
+        --ig-neutral-default-border-color: #7d5c20;
+        --ig-neutral-default-background: #3b2a11;
+        --ig-positive-default-color: #a6f8c1;
+        --ig-positive-default-border-color: #1e6f3e;
+        --ig-positive-default-background: #0a3e1a;
         --ig-highlight-color-5: #2d2e36;
     }
 }
@@ -90,6 +96,14 @@
     --ig-description-font: var(--ig-description-font-weight) var(--ig-description-font-size) var(--ig-description-font-family);
     --ig-description-text-align: var(--hcg-description-text-align, var(--ig-text-align));
 
+    /* Notification fonts */
+    --ig-notification-font-weight: var(--hcg-notification-font-weight, var(--ig-font-weight));
+    --ig-notification-font-size: var(--hcg-notification-font-size, var(--ig-font-size));
+    --ig-notification-font-family: var(--hcg-notification-font-family, var(--ig-font-family));
+    --ig-notification-color: var(--hcg-notification-color, var(--ig-color));
+    --ig-notification-font: var(--ig-notification-font-weight) var(--ig-notification-font-size) var(--ig-notification-font-family);
+    --ig-notification-text-align: var(--hcg-notification-text-align, var(--ig-text-align));
+
     /* Credits fonts */
     --ig-credits-font-size: var(--hcg-credits-font-size, 0.7em);
     --ig-credits-color: var(--hcg-credits-color, var(--ig-color));
@@ -126,6 +140,13 @@
     --ig-header-column-border-color: var(--hcg-header-column-border-color, var(--ig-column-border-color));
     --ig-header-column-border: var(--ig-header-column-border-width) var(--ig-header-column-border-style) var(--ig-header-column-border-color);
 
+    /* Notification border */
+    --ig-notification-border-radius: var(--hcg-notification-border-radius, var(--ig-border-radius));
+    --ig-notification-border-width: var(--hcg-notification-border-width, 1px);
+    --ig-notification-border-style: var(--hcg-notification-border-style, solid);
+    --ig-notification-border-color: var(--hcg-notification-border-color, var(--ig-color));
+    --ig-notification-border: var(--ig-notification-border-width) var(--ig-notification-border-style) var(--ig-notification-border-color);
+
     /* Default padding */
     --ig-horizontal-padding: var(--hcg-horizontal-padding, var(--hcg-padding, 0));
     --ig-vertical-padding: var(--hcg-vertical-padding, var(--hcg-padding, 0));
@@ -149,7 +170,12 @@
     /* Credits padding */
     --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, var(--ig-horizontal-padding)));
     --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, var(--ig-vertical-padding)));
-    --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) 0 var(--ig-credits-horizontal-padding);
+    --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding);
+
+    /* Notification padding */
+    --ig-notification-horizontal-padding: var(--hcg-notification-horizontal-padding, var(--hcg-notification-padding, var(--ig-horizontal-padding)));
+    --ig-notification-vertical-padding: var(--hcg-notification-vertical-padding, var(--hcg-notification-padding, var(--ig-vertical-padding)));
+    --ig-notification-padding: var(--ig-notification-vertical-padding) var(--ig-notification-horizontal-padding);
 
     /* Loading indicator */
     --ig-loader-color: var(--hcg-loader-color, var(--ig-color));
@@ -276,19 +302,19 @@
     --ig-negative-border-color: var(--hcg-negative-border-color, var(--ig-negative-default-border-color));
     --ig-negative-border-size: var(--hcg-negative-border-size, var(--ig-highlight-border-size));
     --ig-negative-background: var(--hcg-negative-background, var(--ig-negative-default-background));
-    --ig-negative-color: var(--hcg-negative-color, var(--ig-color));
+    --ig-negative-color: var(--hcg-negative-color, var(--ig-negative-default-color));
 
     /* Neutral colors */
     --ig-neutral-border-color: var(--hcg-neutral-border-color, var(--ig-neutral-default-border-color));
     --ig-neutral-border-size: var(--hcg-neutral-border-size, var(--ig-highlight-border-size));
     --ig-neutral-background: var(--hcg-neutral-background, var(--ig-neutral-default-background));
-    --ig-neutral-color: var(--hcg-neutral-color, var(--ig-color));
+    --ig-neutral-color: var(--hcg-neutral-color, var(--ig-neutral-default-color));
 
     /* Positive colors */
     --ig-positive-border-color: var(--hcg-positive-border-color, var(--ig-positive-default-border-color));
     --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
-    --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+    --ig-positive-color: var(--hcg-positive-color, var(--ig-positive-default-color));
 }
 
 /* ==== End Grid Variables ==== */
@@ -730,8 +756,29 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     border-left: none;
 }
 
-.hcg-table tbody td.hcg-edited-cell input,
-.hcg-table tbody td.hcg-edited-cell input:focus {
+.hcg-table tbody td input:not(.hcg-field-auto-width),
+.hcg-table tbody td select {
+    width: 100%;
+}
+
+.hcg-cell-editing-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    padding-left: inherit;
+    z-index: 1;
+    background: #b7d4ff;
+    box-shadow: inset 0 0 0 1px #0000ed;
+    display: flex;
+    align-items: center;
+}
+
+.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width),
+.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width):focus,
+.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width),
+.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width):focus {
     border-width: 0;
     position: absolute;
     top: 0;
@@ -741,9 +788,17 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     outline: none;
     float: left;
     font: var(--ig-font);
-    box-shadow: inset 0 0 0 1px #0000ed;
-    padding: var(--ig-padding);
-    background: #b7d4ff;
+    padding-left: inherit;
+    background: transparent;
+}
+
+.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width),
+.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width):focus,
+.hcg-table tbody td.hcg-edited-cell-error select,
+.hcg-table tbody td.hcg-edited-cell-error select:focus {
+    color: var(--ig-color);
+    box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
+    background-color: var(--ig-negative-background) !important;
 }
 
 /* Accessibility */
@@ -802,7 +857,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     width: 100%;
     height: 100%;
     gap: 10px;
-    color: var(--ig-loader-color);
 }
 
 .hcg-loading-wrapper .hcg-spinner {
@@ -820,6 +874,57 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
     to {
         transform: rotate(360deg);
+    }
+}
+
+/* Notification container */
+.hcg-notification {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 10px;
+    width: calc(100% - 20px);
+    display: none;
+    padding: var(--ig-notification-padding);
+    font: var(--ig-notification-font);
+    background: var(--ig-background);
+    border-radius: var(--ig-notification-border-radius);
+    border: var(--ig-notification-border);
+    box-shadow: 0 0 15px 1px #00000030;
+}
+
+/* Notification states */
+.hcg-notification-error {
+    color: var(--ig-negative-color);
+    background: var(--ig-negative-background);
+    border-color: var(--ig-negative-border-color);
+}
+
+.hcg-notification-warning {
+    color: var(--ig-neutral-color);
+    background: var(--ig-neutral-background);
+    border-color: var(--ig-neutral-border-color);
+}
+
+.hcg-notification-success {
+    color: var(--ig-positive-color);
+    background: var(--ig-positive-background);
+    border-color: var(--ig-positive-border-color);
+}
+
+/* Notification animation */
+.hcg-notification-animation {
+    display: block;
+    animation: notification-animation 0.5s;
+}
+
+@keyframes notification-animation {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
     }
 }
 
@@ -904,12 +1009,13 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Start Grid Default Theme */
 .hcg-theme-default,
-.highcharts-light .hcg-theme-default {
+.highcharts-light .hcg-theme-default,
+.highcharts-light .hcg-container {
     /* Primary colors */
     --hcg-color: var(--highcharts-neutral-color-100, #000000);
     --hcg-background: var(--highcharts-background-color, #ffffff);
 
-    /* Other colors */
+    /* Other properties */
     --hcg-border-radius: 5px;
     --hcg-border-width: 1px;
     --hcg-caption-font-size: 18px;
@@ -922,18 +1028,21 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 @media (prefers-color-scheme: dark) {
-    .hcg-theme-default {
+    .hcg-theme-default,
+    .hcg-container {
         --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
         --hcg-background: var(--highcharts-background-color, #141414);
     }
 }
 
-.highcharts-dark .hcg-theme-default {
+.highcharts-dark .hcg-theme-default,
+.highcharts-dark .hcg-container {
     --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
     --hcg-background: var(--highcharts-background-color, #141414);
 }
 
-.hcg-theme-default {
+.hcg-theme-default,
+.hcg-container {
     --hcg-border-color:
         var(
             --highcharts-neutral-color-20,
