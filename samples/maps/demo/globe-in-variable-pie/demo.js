@@ -100,6 +100,7 @@ const getGraticule = () => {
     const chart = Highcharts.mapChart('container', {
         chart: {
             map: topology,
+            height: '80%',
             events: {
                 load() {
                     const chart = this;
@@ -577,6 +578,9 @@ const getGraticule = () => {
                     maxWidth: 650
                 },
                 chartOptions: {
+                    chart: {
+                        height: '120%'
+                    },
                     plotOptions: {
                         variablepie: {
                             dataLabels: {
