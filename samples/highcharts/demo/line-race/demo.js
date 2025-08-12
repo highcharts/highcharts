@@ -19,7 +19,7 @@ const formatPoints = [];
 const chart = Highcharts.chart('container', {
     chart: {
         type: 'line',
-        marginRight: 150,
+        marginRight: 110,
         animation: {
             duration: animationDuration,
             easing: t => t
@@ -45,7 +45,14 @@ const chart = Highcharts.chart('container', {
     xAxis: {
         allowDecimals: false,
         min: startRound,
-        max: endRound
+        max: endRound,
+        title: {
+            text: 'Round #',
+            align: 'high',
+            textAlign: 'left',
+            x: 20,
+            y: -20
+        }
     },
     yAxis: {
         reversedStacks: false,
@@ -83,8 +90,8 @@ const chart = Highcharts.chart('container', {
                     pointerEvents: 'none',
                     transition: 'opacity 0.5s'
                 },
-                x: 6,
-                y: 0
+                x: -8,
+                y: -1
             },
             labels: new Array(10).fill({
                 text: 0,
@@ -172,7 +179,12 @@ function update(sliderClicked) {
         const newY = formatPoints[i][input.value];
         labels[i].options.point.x = yearIndex;
         labels[i].options.point.y = newY;
-        labels[i].options.text = series[i].name;
+
+        if (yearIndex === 0) {
+            labels[i].options.text =
+                `<span style="color:${series[i].color}">●</span>
+                ${series[i].name}</span>`;
+        }
         nextnums.push(newY);
         if (series[i].options.data.length <= yearIndex) {
             series[i].addPoint(newY, false);
@@ -213,7 +225,9 @@ btn.addEventListener('click', function () {
     }
 });
 
-play(btn);
+update(true); // Move to initial position
+update(false); // Animate to the first point immediately
+play(btn); // Start the animation
 
 // Trigger the update on the range bar click.
 input.addEventListener('click', function () {
