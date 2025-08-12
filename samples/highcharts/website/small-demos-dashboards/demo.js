@@ -18,7 +18,7 @@ if (chartArray.length > 1) {
 
 function climate() {
     const MathModifier = Dashboards.DataModifier.types.Math;
-    const RangeModifier = Dashboards.DataModifier.types.Range;
+    const FilterModifier = Dashboards.DataModifier.types.Filter;
 
     // left arrow
     Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
@@ -440,13 +440,20 @@ function climate() {
         selectionTable.setColumns(cityTable.modified.getColumns(), 0);
         const timeRangeMax = timeRangeSelector.chart.axes[0].max;
         const timeRangeMin = timeRangeSelector.chart.axes[0].min;
-        await selectionTable.setModifier(new RangeModifier({
-            modifier: 'Range',
-            ranges: [{
-                column: 'time',
-                maxValue: timeRangeMax,
-                minValue: timeRangeMin
-            }]
+        await selectionTable.setModifier(new FilterModifier({
+            modifier: 'Filter',
+            condition: {
+                operator: 'and',
+                conditions: [{
+                    operator: '>=',
+                    columnName: 'time',
+                    value: timeRangeMin
+                }, {
+                    operator: '<=',
+                    columnName: 'time',
+                    value: timeRangeMax
+                }]
+            }
         }));
         const rangeTable = selectionTable.modified;
 

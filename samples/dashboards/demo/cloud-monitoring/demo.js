@@ -657,19 +657,25 @@ const setupDashboard = instanceId => {
                 ],
                 columns: [{
                     id: 'InstanceId',
+                    width: '31%',
                     header: {
                         format: 'ID'
                     }
                 }, {
                     id: 'InstanceType',
+                    width: '19%',
                     header: {
                         format: 'Type'
                     }
                 }, {
                     id: 'PublicIpAddress',
+                    width: '24%',
                     header: {
                         format: 'Public IP'
                     }
+                }, {
+                    id: 'State',
+                    width: '16%'
                 }, {
                     id: 'HealthIndicator',
                     header: {

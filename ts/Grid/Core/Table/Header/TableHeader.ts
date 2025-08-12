@@ -125,7 +125,6 @@ class TableHeader {
         }
 
         const { clientWidth, offsetWidth } = vp.tbodyElement;
-        const header = vp.header;
         const rows = this.rows;
         const bordersWidth = offsetWidth - clientWidth;
 
@@ -136,20 +135,6 @@ class TableHeader {
         if (vp.rowsWidth) {
             vp.theadElement.style.width =
                 Math.max(vp.rowsWidth, clientWidth) + bordersWidth + 'px';
-        }
-
-        if (
-            header &&
-            bordersWidth > 0 &&
-            this.viewport.columnDistribution.type === 'full'
-        ) {
-            const row = this.columns[this.columns.length - 1].header?.row;
-            const lastCellEl = row?.cells[row.cells.length - 1]?.htmlElement;
-
-            if (lastCellEl) {
-                lastCellEl.style.width = lastCellEl.style.maxWidth =
-                lastCellEl.offsetWidth + bordersWidth + 'px';
-            }
         }
     }
 

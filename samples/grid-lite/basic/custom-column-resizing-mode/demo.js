@@ -1,3 +1,27 @@
+class CustomColumnResizingMode extends Grid.ColumnResizing.types.independent {
+    constructor(viewport) {
+        super(viewport);
+        this.type = 'custom';
+    }
+
+    resize(resizer, diff) {
+        const column = resizer.draggedColumn;
+        if (!column) {
+            return;
+        }
+
+        const toPercent = val => column.viewport.getRatioFromWidth(val) * 100;
+
+        this.columnWidths[column.id] = toPercent(Math.max(
+            (resizer.columnStartWidth || 0) + diff,
+            CustomColumnResizingMode.getMinWidth(column)
+        ));
+        this.columnWidthUnits[column.id] = 1; // Always save in percent
+    }
+}
+
+Grid.ColumnResizing.types.custom = CustomColumnResizingMode;
+
 Grid.grid('container', {
     dataTable: {
         columns: {
@@ -11,7 +35,7 @@ Grid.grid('container', {
     rendering: {
         columns: {
             resizing: {
-                mode: 'mixed'
+                mode: 'custom'
             }
         }
     },

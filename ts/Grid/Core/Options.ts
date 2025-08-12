@@ -25,7 +25,8 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
-import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistribution';
+import type { PaginationOptions } from './Pagination/PaginationOptions';
+import type ColumnResizing from './Table/ColumnResizing/ColumnResizing';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
@@ -42,7 +43,7 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 /**
  * The resizing strategy of the columns in the grid structure.
  */
-export type ColumnDistributionType = ColumnDistribution.StrategyType;
+export type ColumnResizingMode = ColumnResizing.ModeType;
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -65,6 +66,11 @@ export interface Options {
      * Accessibility options for the grid.
      */
     accessibility?: A11yOptions;
+
+    /**
+     * Pagination options for the grid.
+     */
+    pagination?: PaginationOptions;
 
     /**
      * Options for the table caption.
@@ -158,11 +164,6 @@ export interface RenderingSettings {
  * Options to control the columns rendering.
  */
 export interface ColumnsSettings {
-    /**
-     * @deprecated
-     * Use `resizing.mode` instead.
-     */
-    distribution?: ColumnDistributionType;
 
     /**
      * Columns included in the grid structure - contains the columns IDs.
@@ -197,21 +198,21 @@ export interface ResizingOptions {
     enabled?: boolean;
 
     /**
-     * Resizing mode of the columns. If `full`, the columns will be
-     * distributed so that the first and the last column are at the edges of
-     * the grid. If `fixed`, the columns will have a fixed width, only the
-     * resized column will be affected. If `mixed`, resizing will change the
-     * width of the neighboring columns, but the rest will remain in the same
-     * place.
+     * Determines how column widths are adjusted when resizing.
+     * - `'adjacent'`: Resizing a column will also adjust the width of its
+     *   immediate neighbor, keeping the rest of the columns in the same place.
+     *   This is the default mode.
+     * - `'independent'`: Only the resized column is changed; all columns to
+     *   its right retain their current pixel widths, effectively "freezing"
+     *   their widths.
+     * - `'distributed'`: Only the resized column is affected; other column
+     *   width settings will not be changed.
      *
-     * If `undefined`, the default column rensizing strategy will be used, which
-     * is `mixed`, if `width` is set for any column, otherwise `full`.
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing | Resizing overview}
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-distribution | Resizing overview}
-     *
-     * @default undefined
+     * @default 'adjacent'
      */
-    mode?: ColumnDistributionType;
+    mode?: ColumnResizingMode;
 }
 
 /**
@@ -335,12 +336,6 @@ export interface ColumnOptions {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
      */
     sorting?: ColumnSortingOptions;
-
-    /**
-     * @deprecated
-     * Use `rendering.columns.resizing.enabled` instead.
-     */
-    resizing?: boolean;
 
     /**
      * The width of the column. It can be set in pixels or as a percentage of
@@ -509,14 +504,6 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
-
-    /**
-     * @internal
-     * @private
-     * @deprecated
-     * It will be removed in the next major release.
-     */
-    resizing?: boolean;
 }
 
 export interface CaptionOptions {

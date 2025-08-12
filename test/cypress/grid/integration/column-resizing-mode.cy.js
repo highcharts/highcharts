@@ -1,11 +1,19 @@
 describe('Column distribution strategies.', () => {
     before(() => {
-        cy.visit('/grid-lite/cypress/column-distribution');
+        cy.visit('/grid-lite/cypress/column-resizing-mode');
     });
 
-    it('Should be mixed strategy when width in column options.', () => {
+    it('Should be adjacent strategy by default.', () => {
         cy.grid().then(grid => {
-            expect(grid.viewport.columnDistribution.type).to.equal('mixed');
+            expect(grid.viewport.columnResizing.type).to.equal('adjacent');
+        });
+    });
+
+    it('Should be independent strategy when selected.', () => {
+        cy.get('#select-distr').select('independent');
+        cy.wait(50);
+        cy.grid().then(grid => {
+            expect(grid.viewport.columnResizing.type).to.equal('independent');
         });
     });
 
@@ -28,11 +36,11 @@ describe('Column distribution strategies.', () => {
         });
     });
 
-    it('Remove widths from options should change strategy to full.', () => {
+    it('Remove widths from options should reset column widths to default.', () => {
         cy.get('#btn-remove-widths').click();
 
         cy.grid().then(grid => {
-            expect(grid.viewport.columnDistribution.type).to.equal('full');
+            expect(grid.viewport.columns[0].options.width).to.be.undefined;
         });
     });
 });
