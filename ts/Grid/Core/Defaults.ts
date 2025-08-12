@@ -59,7 +59,17 @@ namespace Defaults {
                 }
             },
             loading: 'Loading...',
-            noData: 'No data to display'
+            noData: 'No data to display',
+            pagination: {
+                pageInfo: 'Showing {start} - {end} of {total}',
+                pageSizeLabel: 'rows per page',
+                firstPage: 'First page',
+                previousPage: 'Previous page',
+                nextPage: 'Next page',
+                lastPage: 'Last page',
+                pageNumber: 'Page {page}',
+                ellipsis: 'More pages'
+            }
         },
         time: {
             timezone: 'UTC'
