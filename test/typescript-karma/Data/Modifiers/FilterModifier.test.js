@@ -61,6 +61,25 @@ QUnit.test('FilterModifier queries', async function (assert) {
         );
     }
 
+    // Number comparison (empty)
+    {
+        const data = [12, null, '', 30];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'empty',
+                columnName: 'name',
+                value: null
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: [null, ''] },
+            'Only empty strings and nulls are kept.'
+        );
+    }
+
     // Date comparisons
     {
         const table = new DataTable({
@@ -102,6 +121,27 @@ QUnit.test('FilterModifier queries', async function (assert) {
             table.modified.getColumns(),
             { name: ['apricot'] },
             'contains "ap" (ignoreCase false) matches only apricot.'
+        );
+    }
+
+    // String comparison (not empty)
+    {
+        const data = ['Apple', 'banana', '', 'date', null];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'not',
+                condition: {
+                    operator: 'empty',
+                    columnName: 'name'
+                }
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: ['Apple', 'banana', 'date'] },
+            'Only empty strings and nulls are kept.'
         );
     }
 
