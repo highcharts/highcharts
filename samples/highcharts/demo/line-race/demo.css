@@ -40,3 +40,7 @@ figure {
     width: calc(100% - 90px);
     background: #f8f8f8;
 }
+
+pre#csv {
+    display: none;
+}

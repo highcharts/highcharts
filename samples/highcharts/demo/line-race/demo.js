@@ -19,18 +19,21 @@ const formatPoints = [];
 const chart = Highcharts.chart('container', {
     chart: {
         type: 'line',
-        marginTop: 100,
-        marginRight: 50,
+        marginRight: 150,
         animation: {
             duration: animationDuration,
             easing: t => t
         }
     },
     title: {
-        text: 'F1 2012 Top Ten Drivers'
+        text: 'F1 2012 Top Ten Drivers',
+        floating: true,
+        align: 'left',
+        x: 70,
+        y: 50
     },
     data: {
-        csv: document.getElementById('csv').innerHTML,
+        csv: document.getElementById('csv').innerText,
         itemDelimiter: '\t',
         complete: function (options) {
             for (let i = 0; i < options.series.length; i++) {
@@ -69,109 +72,29 @@ const chart = Highcharts.chart('container', {
     },
     annotations: [
         {
+            crop: false,
             labelOptions: {
                 borderWidth: 0,
                 backgroundColor: undefined,
+                align: 'left',
                 verticalAlign: 'middle',
-                allowOverlap: false,
-                crop: false,
+                overflow: 'allow',
                 style: {
                     pointerEvents: 'none',
-                    opacity: 1
-                }
+                    transition: 'opacity 0.5s'
+                },
+                x: 6,
+                y: 0
             },
-            labels: [
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
-                },
-                {
-                    text: 0,
-                    point: {
-                        x: 0,
-                        xAxis: 0,
-                        y: 0,
-                        yAxis: 0
-                    }
+            labels: new Array(10).fill({
+                text: 0,
+                point: {
+                    x: 0,
+                    xAxis: 0,
+                    y: 0,
+                    yAxis: 0
                 }
-            ]
+            })
         }
     ],
 
@@ -182,12 +105,13 @@ const chart = Highcharts.chart('container', {
                     maxWidth: 500
                 },
                 chartOptions: {
-                    title: {
-                        align: 'left'
+                    chart: {
+                        marginTop: 80
                     },
-                    subtitle: {
-                        y: -150,
-                        x: -20
+                    title: {
+                        floating: false,
+                        x: 0,
+                        y: 20
                     },
                     yAxis: {
                         labels: {
@@ -246,66 +170,14 @@ function update(sliderClicked) {
     // Add current year if applicable, and update labels
     for (let i = 0; i < series.length; i++) {
         const newY = formatPoints[i][input.value];
-        labels[i].options.point.x = Math.min(yearIndex + 0.3, endRound);
-        labels[i].options.point.y = Math.max(newY - 10, 0);
+        labels[i].options.point.x = yearIndex;
+        labels[i].options.point.y = newY;
+        labels[i].options.text = series[i].name;
         nextnums.push(newY);
         if (series[i].options.data.length <= yearIndex) {
-            series[i].addPoint([newY], false);
+            series[i].addPoint(newY, false);
         }
     }
-
-
-    const ease = {
-        linear: t => t,
-        inOutQuad: t => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t)
-        // https://gist.github.com/gre/1650294
-    };
-
-    // https://stackoverflow.com/questions/70746105/animate-counter-from-start-to-end-value
-
-    const counter = EL => {
-
-
-        let start = parseInt(EL.textContent, 10); // Get start and end values
-        let end = nextnums.pop();
-        if (isNaN(start)) {
-            start = 0;
-        }
-        if (isNaN(end)) {
-            end = 0;
-        }
-
-        // If equal values, stop here.
-        if (start === end) {
-            return;
-        }
-
-        const range = end - start; // Get the range
-        let curr = start; // Set current at start position
-
-        const timeStart = Date.now();
-
-        const loop = () => {
-            let elaps = Date.now() - timeStart;
-            // Stop the loop
-            if (elaps > animationDuration) {
-                elaps = animationDuration;
-            }
-            // normalised value + easing
-            const norm = ease.linear(elaps / animationDuration);
-            const step = norm * range; // Calculate the value step
-            curr = start + step; // Increment or Decrement current value
-            EL.textContent = Math.trunc(curr); // Apply to UI as integer
-            if (elaps < animationDuration) {
-                requestAnimationFrame(loop);
-            } // Loop
-        };
-
-        requestAnimationFrame(loop); // Start the loop
-    };
-
-    document.querySelectorAll('g.highcharts-annotation-label > text')
-        .forEach(counter);
 
     if (sliderClicked) {
         chart.redraw(false);
