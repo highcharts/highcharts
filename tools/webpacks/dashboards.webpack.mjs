@@ -26,7 +26,7 @@ const dashboardsCfg = FSLib.getFile(
 );
 
 const sourceFolder = Path.join('code', 'dashboards', 'es-modules');
-const mastersFolder = Path.join('js', 'masters');
+const mastersFolder = Path.join(sourceFolder, 'masters');
 const targetFolder = Path.join('code', 'dashboards');
 
 const namespace = 'Dashboards';
@@ -75,7 +75,7 @@ const webpacks = FSLib
                             {
                                 amd: `dashboards/${masterName}`,
                                 commonjs: `dashboards/${masterName}`,
-                                root: [namespace, masterName.replace('dashboards-', '')]
+                                root: namespace
                             }
                     ),
                     type: 'umd',

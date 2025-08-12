@@ -128,7 +128,6 @@ async function scriptsTS(argv) {
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
-    const dashCfg = require('./scripts-dts/dashboards/_config.json');
 
     try {
         const product = argv.product || 'Highcharts';
@@ -137,27 +136,29 @@ async function scriptsTS(argv) {
 
         processLib.isRunning('scripts-ts', true);
 
-        if (argv.dashboards) {
-            fsLib.deleteDirectory(dashCfg.bundleTargetFolder);
-        }
-
-        if (product === 'Dashboards') {
-            // Clean up specific files but preserve CSS/GFX directories
-            if (fsLib.isDirectory(dashCfg.bundleTargetFolder)) {
-                // Delete specific files, not the entire directory
-                fsLib.deleteFile(path.join(dashCfg.bundleTargetFolder, 'dashboards.src.js'));
-                fsLib.deleteFile(path.join(dashCfg.bundleTargetFolder, 'dashboards.src.d.ts'));
-                fsLib.deleteFile(path.join(dashCfg.bundleTargetFolder, 'dashboards.d.ts'));
-                // Delete es-modules and modules directories if they exist
-                fsLib.deleteDirectory(path.join(dashCfg.bundleTargetFolder, 'es-modules'));
-                fsLib.deleteDirectory(path.join(dashCfg.bundleTargetFolder, 'modules'));
-            }
-        }
 
         fsLib.deleteDirectory('js');
 
+        if (product === 'Dashboards') {
+            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/dashboards/');
+            const codeDashboardsFolder = 'code/dashboards/';
+
+            fsLib.copyAllFiles(
+                bundleDtsFolder,
+                codeDashboardsFolder,
+                true
+            );
+
+            fsLib.copyFile(
+                codeDashboardsFolder + 'dashboards.src.d.ts',
+                codeDashboardsFolder + 'dashboards.d.ts'
+            );
+
+            logLib.success('Copied stand-alone DTS for Dashboards');
+        }
+
         if (product === 'Grid') {
-            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
+            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/grid/');
             const codeGridFolder = 'code/grid/';
 
             fsLib.copyAllFiles(
@@ -187,16 +188,11 @@ async function scriptsTS(argv) {
             );
         }
 
-        if (argv.dashboards) {
+        if (product === 'Dashboards') {
             await processLib
-                .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
-        } else if (product === 'Dashboards') {
-            // First compile Grid Pro (required for Dashboards)
-            await processLib
-                .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
+                .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-dashboards'])}`);
             removeHighcharts(true);
-
-            // Copy Grid DTS files to grid es-modules
+            // Copy Dashboards DTS files to dashboards es-modules
             [
                 'Data',
                 'Grid',
@@ -204,25 +200,19 @@ async function scriptsTS(argv) {
             ].forEach(dtsFolder => {
                 fsLib.copyAllFiles(
                     fsLib.path(['ts', dtsFolder]),
-                    fsLib.path(['code', 'grid', 'es-modules', dtsFolder]),
+                    fsLib.path(['code', 'dashboards', 'es-modules', dtsFolder]),
                     true,
                     sourcePath => sourcePath.endsWith('.d.ts')
                 );
             });
 
-            // Rename masters-grid to masters for Grid
-            if (fs.existsSync(fsLib.path(['code', 'grid', 'es-modules', 'masters-grid']))) {
+            // Rename masters-dashboards to masters for Dashboards
+            if (fs.existsSync(fsLib.path(['code', 'dashboards', 'es-modules', 'masters-dashboards']))) {
                 fs.renameSync(
-                    fsLib.path(['code', 'grid', 'es-modules', 'masters-grid']),
-                    fsLib.path(['code', 'grid', 'es-modules', 'masters'])
+                    fsLib.path(['code', 'dashboards', 'es-modules', 'masters-dashboards']),
+                    fsLib.path(['code', 'dashboards', 'es-modules', 'masters'])
                 );
             }
-
-            logLib.success('Completed Grid Pro TypeScript compilation');
-
-            // Then compile Dashboards
-            await processLib
-                .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
 
             logLib.success('Completed Dashboards TypeScript compilation');
         } else if (product === 'Grid') {
@@ -279,27 +269,15 @@ async function scriptsTS(argv) {
             }
         }
 
-        if (argv.dashboards) {
+        if (product === 'Dashboards') {
             removeHighcharts();
-
-            // Remove Grid
-            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
-
-            // Fix masters
-            fs.renameSync(
-                fsLib.path(['js', 'masters-dashboards']),
-                fsLib.path(['js', 'masters'])
-            );
-        } else if (product === 'Dashboards') {
-            removeHighcharts();
-
-            // Remove Grid
-            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
-
-            // Fix masters
-            fs.renameSync(
-                fsLib.path(['js', 'masters-dashboards']),
-                fsLib.path(['js', 'masters'])
+            // Copy ambient Dashboards DTS that are not emitted by tsc
+            // (e.g. ComponentType.d.ts, TextOptions.d.ts, JSON.d.ts etc.)
+            fsLib.copyAllFiles(
+                fsLib.path(['ts', 'Dashboards']),
+                fsLib.path(['code', 'dashboards', 'es-modules', 'Dashboards']),
+                true,
+                sourcePath => sourcePath.endsWith('.d.ts')
             );
         } else {
             // Remove Dashboards

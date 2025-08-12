@@ -11,54 +11,53 @@ const gulp = require('gulp');
  * */
 
 /**
- * Gulp task to run the building process of distribution js files using webpack.
+ * Gulp task to run the building process of distribution js files the classic
+ * way.
  *
  * @return {Promise<void>}
  * Promise to keep
  */
 async function dashboardsScripts() {
     const argv = require('yargs').argv;
+    const buildTool = require('../../build');
     const fsLib = require('../../libs/fs');
     const logLib = require('../../libs/log');
     const processLib = require('../../libs/process');
 
     const {
+        bundleTargetFolder,
         esModulesFolder
     } = require('./_config.json');
 
     try {
-        logLib.message('Building Dashboards with webpack...');
+        const { release } = argv;
 
-        // Run scripts-webpack for dashboards
-        const ProcessLib = require('../../libs/process');
-        await ProcessLib.exec(
-            'npx webpack -c tools/webpacks/dashboards.webpack.mjs --no-color',
-            { silent: 2 }
-        );
+        // Assemble bundle
+        await buildTool
+            .getBuildScripts({
+                base: 'js/masters/',
+                debug: (argv.debug || false),
+                files: (
+                    (argv.file) ?
+                        argv.file.split(',') :
+                        null
+                ),
+                namespace: 'Dashboards',
+                product: 'Dashboards',
+                output: bundleTargetFolder,
+                version: (release || ''),
+                assetPrefix: release ?
+                    `https://code.highcharts.com/dashboards/${release}` :
+                    '/code/dashboards'
+            })
+            .fnFirstBuild();
 
-        // Copy webpack-generated JS files to es-modules/masters for tests
-        // Copy dashboards.src.js
-        fsLib.copyFile(
-            'code/dashboards/dashboards.src.js',
-            esModulesFolder + '/masters/dashboards.src.js'
-        );
-
-        // Copy modules JS files if they exist
-        if (fsLib.isDirectory('code/dashboards/modules')) {
-            fsLib.copyAllFiles(
-                'code/dashboards/modules/',
-                esModulesFolder + '/masters/modules/',
-                true,
-                sourcePath => sourcePath.endsWith('.src.js')
-            );
-        }
-
-        // Copy valid native DTS and JS files
+        // Copy valid native DTS
         fsLib.copyAllFiles(
             'js/',
             esModulesFolder,
             true,
-            sourcePath => sourcePath.endsWith('.d.ts') || sourcePath.endsWith('.js')
+            sourcePath => sourcePath.endsWith('.d.ts')
         );
 
         logLib.success('Created Dashboards code');
@@ -152,8 +151,11 @@ const { scriptCSS } = require('../scripts-css');
 require('./scripts-dts');
 
 gulp.task('dashboards/scripts', gulp.series(
+    () => scriptsTS({ datagrid: true }),
+    dataGridScripts,
     () => scriptsTS({ dashboards: true }),
     dashboardsScripts,
     () => scriptCSS({ dashboards: true }),
-    'dashboards/scripts-dts'
+    'dashboards/scripts-dts',
+    copyDataGrid
 ));

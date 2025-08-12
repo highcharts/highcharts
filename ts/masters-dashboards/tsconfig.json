@@ -5,7 +5,7 @@
         "declaration": true,
         "baseUrl": "./",
         "moduleResolution": "node",
-        "outDir": "../../js/",
+        "outDir": "../../code/dashboards/es-modules",
         "rootDir": "../",
         "paths": {
             "highcharts": [
