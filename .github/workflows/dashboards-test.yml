@@ -39,24 +39,35 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          path: highcharts
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: highcharts/package-lock.json
 
       - name: Install Dependencies
-        run: npm i
+        run: |
+          cd highcharts
+          npm i
 
       - name: Build Highcharts definitions
-        run: npx gulp jsdoc-dts
+        run: |
+          cd highcharts
+          npx gulp jsdoc-dts
 
       - name: Build Grid
-        run: npx gulp scripts --product Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
 
       - name: Run Dashboards Tests
-        run: npx gulp dashboards/test
+        run: |
+          cd highcharts
+          npx gulp dashboards/test
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -73,8 +84,9 @@ jobs:
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
         with:
-          start: node utils/server --localOnly
+          start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           browser: chrome
+          working-directory: highcharts
           config-file: test/cypress/dashboards/config.mjs
           install: false

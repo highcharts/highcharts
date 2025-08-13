@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -53,14 +54,8 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * The default edit mode renderer type names for this view renderer.
      */
-    public static defaultEditingRenderer: Record<
-    Column.DataType, EditModeRendererTypeName
-    > = {
-            string: 'textInput',
-            number: 'textInput',
-            'boolean': 'checkbox',
-            datetime: 'dateInput'
-        };
+    public static defaultEditingRenderer: EditModeRendererTypeName =
+        'textInput';
 
     /**
      * Default options for the text input renderer.
@@ -118,6 +113,22 @@ namespace TextInputRenderer {
          * Whether the text input is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the text input.
+         */
+        attributes?:TextInputAttributes;
+    }
+
+    /**
+     * Attributes to control the text input.
+     */
+    export interface TextInputAttributes {
+        minlength?: number;
+        maxlength?: number;
+        pattern?: string;
+        placeholder?: string;
+        size?: number;
     }
 }
 

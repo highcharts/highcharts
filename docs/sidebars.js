@@ -126,8 +126,8 @@ module.exports = {
             'grid/columns',
             'grid/header',
             'grid/cell-editing',
-            'grid/cell-content',
-            'grid/sparkline',
+            'grid/cell-renderers',
+            'grid/sparklines',
             'grid/events',
             {
                 'Theming': [
@@ -295,7 +295,9 @@ module.exports = {
             'extending-highcharts/extending-highcharts'
         ],
         'Flutter': [
-            'flutter/getting-started'
+            'flutter/getting-started',
+            'flutter/your-first-chart',
+            'flutter/highcharts-bundling'
         ],
         'React integration (beta)': [
             'react/getting-started',

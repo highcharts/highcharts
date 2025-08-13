@@ -1,3 +1,120 @@
+function createChart(data, weekdays) {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'heatmap'
+        },
+
+        title: {
+            text: 'Day temperature in Oslo, Norway July 2023',
+            align: 'left'
+        },
+
+        subtitle: {
+            text: 'Temperature variation at day through July',
+            align: 'left'
+        },
+
+        accessibility: {
+            landmarkVerbosity: 'one'
+        },
+
+        tooltip: {
+            enabled: true,
+            outside: true,
+            zIndex: 20,
+            headerFormat: '',
+            pointFormat: '{#unless point.custom.empty}{point.date:%A, %b %e, ' +
+                '%Y}{/unless}',
+            nullFormat: 'No data'
+        },
+
+        xAxis: {
+            categories: weekdays,
+            opposite: true,
+            lineWidth: 26,
+            offset: 13,
+            lineColor: 'rgba(27, 26, 37, 0.2)',
+            labels: {
+                rotation: 0,
+                y: 20,
+                style: {
+                    textTransform: 'uppercase',
+                    fontWeight: 'bold'
+                }
+            },
+            accessibility: {
+                description: 'weekdays',
+                rangeDescription: 'X Axis is showing all 7 days of the week, ' +
+                    'starting with Sunday.'
+            }
+        },
+
+        yAxis: {
+            min: 0,
+            max: 5,
+            accessibility: {
+                description: 'weeks'
+            },
+            visible: false
+        },
+
+        legend: {
+            align: 'right',
+            layout: 'vertical',
+            verticalAlign: 'middle'
+        },
+
+        colorAxis: {
+            min: 0,
+            stops: [
+                [0.2, 'lightblue'],
+                [0.4, '#CBDFC8'],
+                [0.6, '#F3E99E'],
+                [0.9, '#F9A05C']
+            ],
+            labels: {
+                format: '{value} °C'
+            }
+        },
+
+        series: [{
+            keys: ['x', 'y', 'value', 'date', 'id'],
+            data: data,
+            nullColor: 'rgba(196, 196, 196, 0.2)',
+            borderWidth: 2,
+            borderColor: 'rgba(196, 196, 196, 0.2)',
+            dataLabels: [{
+                enabled: true,
+                format: '{#unless point.custom.empty}' +
+                        '{point.value:.1f}°{/unless}',
+                style: {
+                    textOutline: 'none',
+                    fontWeight: 'normal',
+                    fontSize: '1rem'
+                },
+                y: 4
+            }, {
+                enabled: true,
+                align: 'left',
+                verticalAlign: 'top',
+                format: '{#unless ' +
+                    'point.custom.empty}{point.custom.monthDay}{/unless}',
+                backgroundColor: 'whitesmoke',
+                padding: 2,
+                style: {
+                    textOutline: 'none',
+                    color: 'rgba(70, 70, 92, 1)',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold',
+                    opacity: 0.5
+                },
+                x: 1,
+                y: 1
+            }]
+        }]
+    });
+}
+
 const data = [{
     date: '2023-07-01',
     temperature: 19.1
@@ -192,118 +309,4 @@ function generateChartData(data) {
     }
     return chartData;
 }
-const chartData = generateChartData(data);
-
-Highcharts.chart('container', {
-    chart: {
-        type: 'heatmap'
-    },
-
-    title: {
-        text: 'Day temperature in Oslo, Norway July 2023',
-        align: 'left'
-    },
-
-    subtitle: {
-        text: 'Temperature variation at day through July',
-        align: 'left'
-    },
-
-    accessibility: {
-        landmarkVerbosity: 'one'
-    },
-
-    tooltip: {
-        enabled: true,
-        outside: true,
-        zIndex: 20,
-        headerFormat: '',
-        pointFormat: '{#unless point.custom.empty}{point.date:%A, %b %e, ' +
-            '%Y}{/unless}',
-        nullFormat: 'No data'
-    },
-
-    xAxis: {
-        categories: weekdays,
-        opposite: true,
-        lineWidth: 26,
-        offset: 13,
-        lineColor: 'rgba(27, 26, 37, 0.2)',
-        labels: {
-            rotation: 0,
-            y: 20,
-            style: {
-                textTransform: 'uppercase',
-                fontWeight: 'bold'
-            }
-        },
-        accessibility: {
-            description: 'weekdays',
-            rangeDescription: 'X Axis is showing all 7 days of the week, ' +
-                'starting with Sunday.'
-        }
-    },
-
-    yAxis: {
-        min: 0,
-        max: 5,
-        accessibility: {
-            description: 'weeks'
-        },
-        visible: false
-    },
-
-    legend: {
-        align: 'right',
-        layout: 'vertical',
-        verticalAlign: 'middle'
-    },
-
-    colorAxis: {
-        min: 0,
-        stops: [
-            [0.2, 'lightblue'],
-            [0.4, '#CBDFC8'],
-            [0.6, '#F3E99E'],
-            [0.9, '#F9A05C']
-        ],
-        labels: {
-            format: '{value} °C'
-        }
-    },
-
-    series: [{
-        keys: ['x', 'y', 'value', 'date', 'id'],
-        data: chartData,
-        nullColor: 'rgba(196, 196, 196, 0.2)',
-        borderWidth: 2,
-        borderColor: 'rgba(196, 196, 196, 0.2)',
-        dataLabels: [{
-            enabled: true,
-            format: '{#unless point.custom.empty}{point.value:.1f}°{/unless}',
-            style: {
-                textOutline: 'none',
-                fontWeight: 'normal',
-                fontSize: '1rem'
-            },
-            y: 4
-        }, {
-            enabled: true,
-            align: 'left',
-            verticalAlign: 'top',
-            format: '{#unless ' +
-                'point.custom.empty}{point.custom.monthDay}{/unless}',
-            backgroundColor: 'whitesmoke',
-            padding: 2,
-            style: {
-                textOutline: 'none',
-                color: 'rgba(70, 70, 92, 1)',
-                fontSize: '0.8rem',
-                fontWeight: 'bold',
-                opacity: 0.5
-            },
-            x: 1,
-            y: 1
-        }]
-    }]
-});
+createChart(generateChartData(data), weekdays);

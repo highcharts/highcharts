@@ -24,7 +24,9 @@ document.getElementById('select-distr').addEventListener('change', e => {
     grid.update({
         rendering: {
             columns: {
-                distribution: e.target.value
+                resizing: {
+                    mode: e.target.value
+                }
             }
         }
     });

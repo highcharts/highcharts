@@ -23,7 +23,7 @@
  * */
 
 import type Column from '../Column.js';
-import ColumnsResizer from '../Actions/ColumnsResizer.js';
+import type ColumnsResizer from '../Actions/ColumnsResizer.js';
 
 import DistributionStrategy from './ColumnDistributionStrategy.js';
 import Globals from '../../Globals.js';
@@ -50,6 +50,13 @@ class FixedDistributionStrategy extends DistributionStrategy {
 
     public override readonly type = 'fixed' as const;
 
+    /**
+     * Array of units for each column width value. Codified as:
+     * - `0` - px
+     * - `1` - %
+     */
+    private columnWidthUnits: Record<string, number> = {};
+
 
     /* *
      *
@@ -58,11 +65,40 @@ class FixedDistributionStrategy extends DistributionStrategy {
      * */
 
     public override loadColumn(column: Column): void {
-        this.columnWidths[column.id] = this.getInitialColumnWidth(column);
+        const rawWidth = column.options.width;
+        if (!rawWidth) {
+            this.columnWidths[column.id] = this.getInitialColumnWidth(column);
+            this.columnWidthUnits[column.id] = 0;
+            return;
+        }
+
+        let value: number;
+        let unitCode: number = 0;
+
+        if (typeof rawWidth === 'number') {
+            value = rawWidth;
+            unitCode = 0;
+        } else {
+            value = parseFloat(rawWidth);
+            unitCode = rawWidth.charAt(rawWidth.length - 1) === '%' ? 1 : 0;
+        }
+
+        this.columnWidthUnits[column.id] = unitCode;
+        this.columnWidths[column.id] = value;
     }
 
     public override getColumnWidth(column: Column): number {
-        return this.columnWidths[column.id];
+        const vp = this.viewport;
+        const widthValue = this.columnWidths[column.id];
+        const minWidth = DistributionStrategy.getMinWidth(column);
+
+        if (this.columnWidthUnits[column.id] === 1) {
+            // If %:
+            return Math.max(vp.getWidthFromRatio(widthValue / 100), minWidth);
+        }
+
+        // If px:
+        return widthValue || 100; // Default to 100px if not defined
     }
 
     public override resize(resizer: ColumnsResizer, diff: number): void {
@@ -71,10 +107,13 @@ class FixedDistributionStrategy extends DistributionStrategy {
             return;
         }
 
-        this.columnWidths[column.id] = Math.max(
+        const width = this.columnWidths[column.id] = Math.round(Math.max(
             (resizer.columnStartWidth || 0) + diff,
             DistributionStrategy.getMinWidth(column)
-        );
+        ) * 10) / 10;
+        this.columnWidthUnits[column.id] = 0; // Always save in px
+
+        column.update({ width }, false);
     }
 
     /**

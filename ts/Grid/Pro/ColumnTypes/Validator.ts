@@ -104,34 +104,30 @@ class Validator {
         cell: TableCell,
         errors: string[] = []
     ): boolean {
-        const { options } = cell.column;
+        const { options, dataType } = cell.column;
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
         let rules = Array.from(options?.cells?.editMode?.validationRules || []);
 
-        if (options?.dataType) {
-            // Remove duplicates in validationRules
-            const isArrayString = rules.every(
-                (rule): Boolean => typeof rule === 'string'
+        // Remove duplicates in validationRules
+        const isArrayString = rules.every(
+            (rule): Boolean => typeof rule === 'string'
+        );
+
+        if (rules.length > 0 && isArrayString) {
+            rules = [...new Set(rules)];
+        } else {
+            const predefined = Validator.predefinedRules[dataType] || [];
+
+            const hasPredefined = rules.some(
+                (rule): Boolean =>
+                    typeof rule !== 'string' &&
+                    typeof rule.validate === 'string' &&
+                    predefined.includes(rule.validate)
             );
 
-            if (rules.length > 0 && isArrayString) {
-                rules = [...new Set(rules)];
-            } else {
-                const predefined = Validator.predefinedRules[
-                    options?.dataType
-                ] || [];
-
-                const hasPredefined = rules.some(
-                    (rule): Boolean =>
-                        typeof rule !== 'string' &&
-                        typeof rule.validate === 'string' &&
-                        predefined.includes(rule.validate)
-                );
-
-                if (!hasPredefined) {
-                    rules.push(...predefined);
-                }
+            if (!hasPredefined) {
+                rules.push(...predefined);
             }
         }
 
@@ -347,6 +343,8 @@ namespace Validator {
         datetime: RuleDefinition;
         notEmpty: RuleDefinition;
         number: RuleDefinition;
+        ignoreCaseUnique: RuleDefinition;
+        unique: RuleDefinition;
     }
 
     /**
@@ -384,6 +382,32 @@ namespace Validator {
                 Number(rawValue) === 1 || Number(rawValue) === 0
             ),
             notification: 'Value has to be a boolean.'
+        },
+        ignoreCaseUnique: {
+            validate: function ({ rawValue }): boolean {
+                const columnData = this.column.data;
+                const isDuplicate = columnData?.some(
+                    (value): boolean => String(value).toLowerCase() ===
+                        String(rawValue).toLowerCase()
+                );
+
+                return !isDuplicate;
+
+            },
+            notification:
+                'Value must be unique within this column (case-insensitive).'
+        },
+        unique: {
+            validate: function ({ rawValue }): boolean {
+                const columnData = this.column.data;
+                const isDuplicate = columnData?.some(
+                    (value): boolean => value === rawValue
+                );
+
+                return !isDuplicate;
+            },
+            notification:
+                'Value must be unique within this column (case-sensitive).'
         }
     };
 

@@ -23,7 +23,8 @@
     padding-left: 10px;
 }
 
-.custom-theme {
+.custom-theme,
+.highcharts-light .custom-theme {
     /* This starts of by defining some custom color variabled */
     --highlight-color: #e2e2e2;
     --highlight-border-color: #cec184;
@@ -42,20 +43,12 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #141414;
-    }
-
     .custom-theme {
         --highlight-color: #4c4c4c;
         --highlight-border-color: #7d754c;
         --high-color: #98d76a;
         --low-color: #ffa8a8;
     }
-}
-
-.highcharts-dark #container {
-    background-color: #141414;
 }
 
 .highcharts-dark .custom-theme {
