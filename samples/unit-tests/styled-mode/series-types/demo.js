@@ -118,7 +118,7 @@ QUnit.module('Styled mode for series types', function () {
                     cfg.series[1].keys = ['from', 'to'];
                 }
 
-                if (type === 'histogram') {
+                if (type === 'histogram' || type === 'bellcurve') {
                     cfg.series[0].data = [1, 1, 2, 2, 2, 2, 3, 3];
                     cfg.series[1].data = [1, 1, 2, 2, 2, 2, 3, 3];
                 }
