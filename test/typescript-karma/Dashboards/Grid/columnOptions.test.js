@@ -1,4 +1,6 @@
-import Grid from '/base/code/datagrid/es-modules/masters/datagrid.src.js';
+import '/base/code/grid/es-modules/masters/grid-pro.src.js';
+
+const Grid = window.Grid;
 
 const { test } = QUnit;
 

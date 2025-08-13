@@ -55,8 +55,11 @@ function removeHighcharts(removeFromCode = false) {
  * @param {string} productName
  * Official product name to replace with.
  *
- * @param {string} version
- * Version string to replace with.
+ * @param {string} productVersion
+ * Product version string to replace with.
+ *
+ * @param {Date} productDate
+ * Product date to replace with.
  *
  * @return {Promise<void>}
  * Promise to keep.
@@ -125,7 +128,6 @@ async function scriptsTS(argv) {
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
-    const dashCfg = require('./dashboards/_config.json');
 
     try {
         const product = argv.product || 'Highcharts';
@@ -134,14 +136,29 @@ async function scriptsTS(argv) {
 
         processLib.isRunning('scripts-ts', true);
 
-        if (argv.dashboards) {
-            fsLib.deleteDirectory(dashCfg.bundleTargetFolder);
-        }
 
         fsLib.deleteDirectory('js');
 
+        if (product === 'Dashboards') {
+            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/dashboards/');
+            const codeDashboardsFolder = 'code/dashboards/';
+
+            fsLib.copyAllFiles(
+                bundleDtsFolder,
+                codeDashboardsFolder,
+                true
+            );
+
+            fsLib.copyFile(
+                codeDashboardsFolder + 'dashboards.src.d.ts',
+                codeDashboardsFolder + 'dashboards.d.ts'
+            );
+
+            logLib.success('Copied stand-alone DTS for Dashboards');
+        }
+
         if (product === 'Grid') {
-            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
+            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/grid/');
             const codeGridFolder = 'code/grid/';
 
             fsLib.copyAllFiles(
@@ -155,6 +172,11 @@ async function scriptsTS(argv) {
                 codeGridFolder + 'grid-lite.d.ts'
             );
 
+            fsLib.copyFile(
+                codeGridFolder + 'grid-pro.src.d.ts',
+                codeGridFolder + 'grid-pro.d.ts'
+            );
+
             logLib.success('Copied stand-alone DTS for Grid');
 
         } else {
@@ -166,12 +188,33 @@ async function scriptsTS(argv) {
             );
         }
 
-        if (argv.dashboards) {
+        if (product === 'Dashboards') {
             await processLib
-                .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
-        } else if (argv.datagrid) {
-            await processLib
-                .exec(`npx tsc -p ${dashCfg.typeScriptFolderDatagrid} --outDir js`);
+                .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-dashboards'])}`);
+            removeHighcharts(true);
+            // Copy Dashboards DTS files to dashboards es-modules
+            [
+                'Data',
+                'Grid',
+                'Shared'
+            ].forEach(dtsFolder => {
+                fsLib.copyAllFiles(
+                    fsLib.path(['ts', dtsFolder]),
+                    fsLib.path(['code', 'dashboards', 'es-modules', dtsFolder]),
+                    true,
+                    sourcePath => sourcePath.endsWith('.d.ts')
+                );
+            });
+
+            // Rename masters-dashboards to masters for Dashboards
+            if (fs.existsSync(fsLib.path(['code', 'dashboards', 'es-modules', 'masters-dashboards']))) {
+                fs.renameSync(
+                    fsLib.path(['code', 'dashboards', 'es-modules', 'masters-dashboards']),
+                    fsLib.path(['code', 'dashboards', 'es-modules', 'masters'])
+                );
+            }
+
+            logLib.success('Completed Dashboards TypeScript compilation');
         } else if (product === 'Grid') {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
@@ -211,10 +254,7 @@ async function scriptsTS(argv) {
                 fsLib.getFilePaths(fsLib.path(['code', 'es-modules']), true);
 
             for (const file of esmFiles) {
-                if (
-                    file.includes('dashboards') ||
-                    file.includes('datagrid')
-                ) {
+                if (file.includes('dashboards')) {
                     continue;
                 }
                 await replaceProductPlaceholders(
@@ -229,33 +269,19 @@ async function scriptsTS(argv) {
             }
         }
 
-        if (argv.dashboards) {
+        if (product === 'Dashboards') {
             removeHighcharts();
-
-            // Remove DataGrid
-            fsLib.deleteDirectory(fsLib.path(['js', 'datagrid']));
-            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']));
-
-            // Remove Grid
-            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
-
-            // Fix masters
-            fs.renameSync(
-                fsLib.path(['js', 'masters-dashboards']),
-                fsLib.path(['js', 'masters'])
-            );
-        } else if (argv.datagrid) { // Should be completely replaced by grid
-            removeHighcharts();
-
-            // Fix masters
-            fs.renameSync(
-                fsLib.path(['js', 'masters-datagrid']),
-                fsLib.path(['js', 'masters'])
+            // Copy ambient Dashboards DTS that are not emitted by tsc
+            // (e.g. ComponentType.d.ts, TextOptions.d.ts, JSON.d.ts etc.)
+            fsLib.copyAllFiles(
+                fsLib.path(['ts', 'Dashboards']),
+                fsLib.path(['code', 'dashboards', 'es-modules', 'Dashboards']),
+                true,
+                sourcePath => sourcePath.endsWith('.d.ts')
             );
         } else {
             // Remove Dashboards
             fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']));
-            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']));
 
             // Remove Grid
             fsLib.deleteDirectory(fsLib.path(['js', 'Grid']));
@@ -270,8 +296,7 @@ async function scriptsTS(argv) {
 scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
     '--dashboards': 'Build dashboards files only',
-    '--datagrid': 'Build datagrid files only',
-    '--product': 'The project to build: Highcharts (default), Grid'
+    '--product': 'The project to build: Highcharts (default), Grid, Dashboards'
 };
 gulp.task(
     'scripts-ts',

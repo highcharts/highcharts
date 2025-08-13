@@ -23,8 +23,8 @@ const PRODUCT_NAMES = {
     ],
     Dashboards: ['Highcharts Dashboards'],
     Grid: [
-        'Highcharts Grid Lite'
-        // 'Highcharts Grid Pro'
+        'Highcharts Grid Lite',
+        'Highcharts Grid Pro'
     ]
 };
 
@@ -38,7 +38,7 @@ function getZipLocation(productName, version) {
     const zipName = productName.replace(' ', '-');
 
     if (productName === 'Highcharts Dashboards') {
-        const { cdnFolder } = require('./dashboards/_config.json');
+        const { cdnFolder } = require('./scripts-dts/dashboards/_config.json');
         return `https://code.highcharts.com/${cdnFolder.length ? cdnFolder : ''}zips/${zipName}-${version}.zip`;
     }
 

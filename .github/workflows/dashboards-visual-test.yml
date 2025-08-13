@@ -6,7 +6,6 @@ on:
     paths:
       - '.github/workflows/dashboards-visual-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
       - 'samples/dashboards/**'
       - 'test/cypress/dashboards/**'
       - 'ts/Dashboards/**'

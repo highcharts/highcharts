@@ -1,6 +1,6 @@
 /**
- * @license Highcharts Dashboards v@product.version@ (@product.date@)
- * @module datagrid/datagrid
+ * @license Highcharts Grid Pro v@product.version@ (@product.date@)
+ * @module grid/grid-pro
  *
  * (c) 2009-2025 Highsoft AS
  *
@@ -95,26 +95,14 @@ import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
 
 declare global {
-    interface DataGridNamespace {
+    interface GridNamespace {
         win: typeof Globals.win;
-        product: 'Grid Pro';
+        product: 'Grid Lite' | 'Grid Pro';
         AST: typeof AST;
         classNamePrefix: typeof Globals.classNamePrefix;
-        /**
-         * @deprecated Use `Grid` instead.
-         */
-        DataGrid: typeof _Grid;
-        /**
-         * @deprecated Use `grid` instead.
-         */
-        dataGrid: typeof _Grid.grid;
-        /**
-         * @deprecated Use `grids` instead.
-         */
-        dataGrids: Array<(_Grid|undefined)>;
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
-        grids: Array<(_Grid|undefined)>;
+        grids: Array<(_Grid | undefined)>;
         ColumnResizing: typeof ColumnResizing;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
@@ -136,11 +124,7 @@ declare global {
         CellRenderer: typeof CellRenderer;
     }
     interface Window {
-        /**
-         * @deprecated Use `Grid` instead.
-         */
-        DataGrid: DataGridNamespace;
-        Grid: DataGridNamespace;
+        Grid: GridNamespace;
         Highcharts?: typeof H;
     }
 }
@@ -153,16 +137,13 @@ declare global {
  * */
 
 
-const G = Globals as unknown as DataGridNamespace;
+const G = Globals as unknown as GridNamespace;
 
 G.AST = AST;
-G.classNamePrefix = 'highcharts-datagrid-';
+G.classNamePrefix = 'hcg-';
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
 G.DataConverter = DataConverter;
-G.DataGrid = _Grid;
-G.dataGrid = _Grid.grid;
-G.dataGrids = _Grid.grids;
 G.Grid = _Grid;
 G.grid = _Grid.grid;
 G.grids = _Grid.grids;
@@ -211,10 +192,6 @@ namespace G {
  *
  * */
 
-
-if (!G.win.DataGrid) {
-    G.win.DataGrid = G;
-}
 
 if (!G.win.Grid) {
     G.win.Grid = G;
