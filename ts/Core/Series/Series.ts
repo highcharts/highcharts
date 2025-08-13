@@ -4263,7 +4263,7 @@ class Series {
                 chart.options.chart.type
             );
         const keepPoints = !(
-            // Indicators, histograms etc recalculate the data. It should be
+            // Indicators etc recalculate the data. It should be
             // possible to omit this.
             this.hasDerivedData ||
             // New type requires new point classes

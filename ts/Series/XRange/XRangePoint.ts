@@ -126,8 +126,10 @@ class XRangePoint extends ColumnPoint {
                 this.color = colorByPoint.color;
             }
 
-            if (typeof this.options.colorIndex === 'undefined' || 
-                this.options.colorIndex === null) {
+            if (
+                typeof this.options.colorIndex === 'undefined' ||
+                this.options.colorIndex === null
+            ) {
                 this.colorIndex = colorByPoint.colorIndex;
             }
         } else {
