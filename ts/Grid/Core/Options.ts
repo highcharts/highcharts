@@ -25,7 +25,7 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
-import type { PaginationOptions } from './Pagination/PaginationOptions';
+import type { PaginationLangOptions, PaginationOptions } from './Pagination/PaginationOptions';
 import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistribution';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
@@ -646,7 +646,13 @@ export interface LangOptions extends LangOptionsCore {
      * @default 'No data to display'
      */
     noData?: string;
+
+    /**
+     * Language options for pagination text values.
+     */
+    pagination?: PaginationLangOptions;
 }
+
 
 /**
  * Options for the time settings.
