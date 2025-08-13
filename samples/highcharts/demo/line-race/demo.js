@@ -36,6 +36,7 @@ const chart = Highcharts.chart('container', {
         csv: document.getElementById('csv').innerText,
         itemDelimiter: '\t',
         complete: function (options) {
+            // Store the data for later use, and remove it from the series
             for (let i = 0; i < options.series.length; i++) {
                 formatPoints[i] = arrToAssociative(options.series[i].data);
                 options.series[i].data = null;
@@ -64,8 +65,7 @@ const chart = Highcharts.chart('container', {
     tooltip: {
         split: true,
         headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
-        pointFormat:
-            '{series.name}: {point.y} Points',
+        pointFormat: '{series.name}: {point.y} Points',
         crosshairs: true
     },
     plotOptions: {
@@ -236,4 +236,5 @@ input.addEventListener('click', function () {
 // Stop animation when clicking and dragging range bar
 input.addEventListener('input', function () {
     pause(btn);
+    update(true);
 });
