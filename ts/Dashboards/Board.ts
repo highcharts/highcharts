@@ -28,6 +28,7 @@ import type Component from './Components/Component';
 import type ComponentType from './Components/ComponentType';
 import type EditMode from './EditMode/EditMode';
 import type Fullscreen from './EditMode/Fullscreen';
+import type DataPoolOptions from '../Data/DataPoolOptions';
 
 import Bindings from './Actions/Bindings.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
@@ -566,7 +567,7 @@ namespace Board {
         /**
          * Data pool with all of the connectors.
          **/
-        dataPool?: DataPool.Options;
+        dataPool?: DataPoolOptions;
         /**
          * Options for the GUI. Allows to define graphical elements and its
          * layout.

@@ -24,14 +24,7 @@
 import type DataEvent from './DataEvent';
 import type DataConnectorType from './Connectors/DataConnectorType';
 import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType';
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* API docs */
-import type CSVConnectorOptions from './Connectors/CSVConnectorOptions';
-import type GoogleSheetsConnectorOptions from './Connectors/GoogleSheetsConnectorOptions';
-import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptions';
-import type JSONConnectorOptions from './Connectors/JSONConnectorOptions';
-/* eslint-enable @typescript-eslint/no-unused-vars */
+import type DataPoolOptions from './DataPoolOptions';
 
 import DataConnector from './Connectors/DataConnector.js';
 import U from '../Core/Utilities.js';
@@ -55,10 +48,20 @@ const {
  * @class
  * @name Data.DataPool
  *
- * @param {DataPool.Options} options
+ * @param {DataPoolOptions} options
  * Pool options with all connectors.
  */
 class DataPool implements DataEvent.Emitter<DataPool.Event> {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    protected static readonly defaultOptions: DataPoolOptions = {
+        connectors: []
+    };
 
     /* *
      *
@@ -75,7 +78,7 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
     /**
      * Pool options with all connectors.
      */
-    public readonly options: DataPool.Options;
+    public readonly options: DataPoolOptions;
 
 
     /**
@@ -90,7 +93,7 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
      *
      * */
 
-    public constructor(options?: DataPool.Options) {
+    public constructor(options?: DataPoolOptions) {
         this.options = merge(DataPool.defaultOptions, options);
         this.connectors = {};
         this.waiting = {};
@@ -364,37 +367,9 @@ namespace DataPool {
 
     /* *
      *
-     *  Definitions
-     *
-     * */
-
-    export const defaultOptions: Options = {
-        connectors: []
-    };
-
-
-    /* *
-     *
      *  Declarations
      *
      * */
-
-    export interface Options {
-        /**
-         * The connectors to use for loading data. Available connectors and its
-         * options:
-         *
-         * {@link CSVConnectorOptions | CSVConnector}
-         *
-         * {@link GoogleSheetsConnectorOptions | GoogleSheetsConnector}
-         *
-         * {@link HTMLTableConnectorOptions | HTMLTableConnector}
-         *
-         * {@link JSONConnectorOptions | JSONConnector}
-         *
-         **/
-        connectors: DataConnectorTypeOptions[];
-    }
 
     export interface Event {
         type: (
@@ -403,7 +378,6 @@ namespace DataPool {
         );
         options: DataConnectorTypeOptions;
     }
-
 
 }
 
