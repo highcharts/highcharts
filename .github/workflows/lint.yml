@@ -87,7 +87,7 @@ jobs:
         run: npm i
 
       - name: Lint samples TS and JS
-        run: npx eslint -c samples/.eslintrc "samples/**/{*.js,demo.ts}"
+        run: npx eslint -c samples/.eslintrc "samples/**/*.{js,ts}"
 
       - name: Lint samples CSS
         run: npx stylelint --config .stylelintrc.json "samples/**/*.css"
