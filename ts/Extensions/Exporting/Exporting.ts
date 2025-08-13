@@ -30,7 +30,8 @@ import type {
 import type ExportingLike from './ExportingLike';
 import type {
     DOMElementType,
-    HTMLDOMElement
+    HTMLDOMElement,
+    SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type GradientColor from '../../Core/Color/GradientColor';
 import type { LangOptions } from '../../Core/Options';
@@ -350,6 +351,122 @@ class Exporting {
             return canvas.toDataURL(imageType);
         }
     }
+
+    private static async fetchCSS(href: string): Promise<CSSStyleSheet> {
+        const content = await fetch(href)
+            .then((res): Promise<string> => res.text());
+
+        const newSheet = new CSSStyleSheet();
+        newSheet.replaceSync(content);
+
+        return newSheet;
+    }
+
+    private static async handleStyleSheet(
+        sheet: CSSStyleSheet,
+        resultArray: string[]
+    ): Promise<void> {
+        try {
+            for (const rule of Array.from(sheet.cssRules)) {
+                if (rule instanceof CSSImportRule) {
+                    const sheet = await Exporting.fetchCSS(rule.href);
+                    await Exporting.handleStyleSheet(sheet, resultArray);
+                }
+
+                if (rule instanceof CSSFontFaceRule) {
+                    let cssText = rule.cssText;
+
+                    if (sheet.href) {
+                        const baseUrl = sheet.href,
+                            regexp =
+                        /url\(\s*(['"]?)(?![a-z]+:|\/\/)([^'")]+?)\1\s*\)/gi;
+
+                        // Replace relative URLs
+                        cssText = cssText.replace(
+                            regexp,
+                            (_, quote: string, relPath: string): string => {
+                                const absolutePath =
+                                    new URL(relPath, baseUrl).href;
+                                return `url(${quote}${absolutePath}${quote})`;
+                            });
+                    }
+
+                    resultArray.push(cssText);
+                }
+            }
+        } catch (err) {
+            if (sheet.href) {
+                const newSheet = await Exporting.fetchCSS(sheet.href);
+                await Exporting.handleStyleSheet(newSheet, resultArray);
+            }
+        }
+    }
+
+    private static async fetchStyleSheets(): Promise<string[]> {
+        const cssTexts: string[] = [];
+
+        for (const sheet of Array.from(doc.styleSheets)) {
+            await Exporting.handleStyleSheet(sheet, cssTexts);
+        }
+
+        return cssTexts;
+    }
+
+    public static async inlineFonts(svg: SVGSVGElement): Promise<SVGSVGElement> {
+        const cssTexts = await Exporting.fetchStyleSheets(),
+            urlRegex = /url\(([^)]+)\)/g,
+            urls: string[] = [];
+
+        let cssText = cssTexts.join('\n'),
+            match;
+
+        while ((match = urlRegex.exec(cssText))) {
+            const m = match[1].replace(/['"]/g, '');
+            if (!urls.includes(m)) {
+                urls.push(m);
+            }
+        }
+
+        const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        };
+
+        const replacements: Record<string, string> = {};
+        for (const url of urls) {
+            try {
+                const res = await fetch(url),
+                    contentType = res.headers.get('Content-Type') || '',
+                    b64 = arrayBufferToBase64(await res.arrayBuffer());
+
+                replacements[url] = `data:${contentType};base64,${b64}`;
+            } catch {
+                // eslint-disable-next-line
+            }
+        }
+
+        cssText = cssText.replace(urlRegex, (_, url: string): string => {
+            const strippedUrl = url.replace(/['"]/g, '');
+            return `url(${replacements[strippedUrl] || strippedUrl})`;
+        });
+
+
+        const styleEl = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'style'
+        );
+        styleEl.textContent = cssText;
+
+        // Needs to be appended to pass sanitization
+        svg.append(styleEl);
+
+        return svg;
+    }
+
 
     /**
      * Loads an image from the provided URL.
@@ -912,9 +1029,9 @@ class Exporting {
             // Presentational CSS
             if (!chart.styledMode) {
                 css(innerMenu, extend<CSSObject>({
-                    MozBoxShadow: '3px 3px 10px #888',
-                    WebkitBoxShadow: '3px 3px 10px #888',
-                    boxShadow: '3px 3px 10px #888'
+                    MozBoxShadow: '3px 3px 10px #0008',
+                    WebkitBoxShadow: '3px 3px 10px #0008',
+                    boxShadow: '3px 3px 10px #0008'
                 }, navOptions?.menuStyle || {}));
             }
 
@@ -2134,6 +2251,15 @@ class Exporting {
                 }
             }
 
+            const svgElement = chartCopyContainer?.querySelector('svg');
+
+            if (
+                svgElement &&
+                !exportingOptions.chartOptions?.chart?.style?.fontFamily
+            ) {
+                await Exporting.inlineFonts(svgElement);
+            }
+
             // Sanitize the SVG
             const sanitizedSVG = sanitize(chartCopyContainer?.innerHTML);
 
@@ -2262,6 +2388,7 @@ class Exporting {
             { chart, options } = exporting,
             isDirty = exporting?.isDirty || !exporting?.svgElements.length;
 
+        exporting.buttonOffset = 0;
         if (exporting.isDirty) {
             exporting.destroy();
         }
@@ -2291,17 +2418,24 @@ class Exporting {
      * @requires modules/exporting
      */
     public resolveCSSVariables(): void {
-        const svgElements = this.chart.container.querySelectorAll('*'),
-            colorAttributes = ['color', 'fill', 'stop-color', 'stroke'];
-
-        Array.from(svgElements).forEach((element: Element): void => {
-            colorAttributes.forEach((attr): void => {
-                const attrValue = element.getAttribute(attr);
+        Array.from(
+            this.chart.container.querySelectorAll(
+                '*'
+            ) as NodeListOf<SVGDOMElement>
+        ).forEach((element): void => {
+            ['color', 'fill', 'stop-color', 'stroke'].forEach((prop): void => {
+                const attrValue = element.getAttribute(prop);
                 if (attrValue?.includes('var(')) {
                     element.setAttribute(
-                        attr,
-                        getComputedStyle(element).getPropertyValue(attr)
+                        prop,
+                        getComputedStyle(element).getPropertyValue(prop)
                     );
+                }
+
+                const styleValue = element.style?.[prop as any];
+                if (styleValue?.includes('var(')) {
+                    element.style[prop as any] =
+                        getComputedStyle(element).getPropertyValue(prop);
                 }
             });
         });

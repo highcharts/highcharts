@@ -1,5 +1,9 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+html {
+    overflow: hidden;
+}
+
 .chart-container .thick {
     stroke-width: 1;
     stroke: white;

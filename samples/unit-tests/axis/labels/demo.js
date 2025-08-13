@@ -2340,3 +2340,36 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('connectorWidth updates properly (#23062)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        plotOptions: {
+            dataLabels: {
+                enabled: true
+            }
+        },
+        series: [
+            {
+                type: 'pie',
+                dataLabels: {
+                    connectorWidth: 1
+                },
+                data: [1, 2, 3, 4]
+            }
+        ]
+    });
+
+    const point = chart.series[0].points[0],
+        initialWidth = point.dataLabel.connector.attr('stroke-width');
+
+    chart.series[0].update({
+        dataLabels: {
+            connectorWidth: 0
+        }
+    });
+
+    const updatedWidth = point.dataLabel.connector.attr('stroke-width');
+
+    assert.notEqual(initialWidth, updatedWidth, 'connectorWidth has changed');
+    assert.strictEqual(updatedWidth, 0, 'connectorWidth updated to 0');
+});

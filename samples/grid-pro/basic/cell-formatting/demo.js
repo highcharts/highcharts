@@ -17,7 +17,9 @@ Grid.dataGrid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true,
+            editMode: {
+                enabled: true
+            },
             formatter: function () {
                 return `Default value: ${this.value}`;
             }

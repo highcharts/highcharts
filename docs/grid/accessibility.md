@@ -14,12 +14,12 @@ Accessibility features are enabled by default, and we generally recommend keepin
 
 ```js
 {
-  accessibility: {
-    enabled: false,
-    announcements: {
-      sorting: true
+    accessibility: {
+        enabled: false,
+        announcements: {
+            sorting: true
+        }
     }
-  }
 }
 ```
 
@@ -33,23 +33,23 @@ To customize the default language or wording for ARIA attributes and announcers,
 
 ```js
 {
-  lang: {
-    accessibility: {
-      cellEditing: {
-        editable: "Editable",
-        announcements: {
-          started: "Entered cell editing mode",
-          ...
+    lang: {
+        accessibility: {
+            cellEditing: {
+                editable: "Editable",
+                announcements: {
+                    started: "Entered cell editing mode",
+                    ...
+                }
+            },
+            sorting: {
+                announcements: {
+                    ascending: "Sorted ascending",
+                    ...
+                }
+            }
         }
-      },
-      sorting: {
-        announcements: {
-          ascending: "Sorted ascending",
-          ...
-        }
-      }
     }
-  }
 }
 ```
 
@@ -63,16 +63,16 @@ When developing your own custom theme it's recommended to include a high contras
 
 ```css
 .my-theme {
-  --hcg-color: #606060;
-  --hcg-border-stye: dashed;
-  ...;
+    --hcg-color: #606060;
+    --hcg-border-stye: dashed;
+    ...;
 }
 @media (prefers-contrast: more) {
-  .my-theme {
-    --hcg-color: #000000;
-    --hcg-border-style: solid;
-    ...;
-  }
+    .my-theme {
+        --hcg-color: #000000;
+        --hcg-border-style: solid;
+        ...;
+    }
 }
 ```
 
@@ -88,6 +88,6 @@ Make sure you use a proper heading level (`<h1>`–`<h6>`) when configuring the 
 
 ```js
 caption: {
-  text: "<h3>This is the caption</h3>";
+    text: "<h3>This is the caption</h3>";
 }
 ```

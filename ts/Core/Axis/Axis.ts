@@ -875,7 +875,7 @@ class Axis {
                 axis.isOrdinal ||
                 axis.brokenAxis?.hasBreaks ||
                 (axis.logarithmic && handleLog)
-            ) && axis.lin2val;
+            ) && !!axis.lin2val;
 
         let sign = 1,
             cvsOffset = 0,
@@ -4122,7 +4122,7 @@ class Axis {
         }
 
         // Delete all properties and fall back to the prototype.
-        objectEach(axis, function (val: any, key: string): void {
+        objectEach(axis, function (_val: any, key: string): void {
             if (axis.getKeepProps().indexOf(key) === -1) {
                 delete (axis as any)[key];
             }

@@ -47,7 +47,9 @@ export interface GlobalsLike {
     readonly isSafari: boolean;
     readonly isTouchDevice: boolean;
     readonly isWebKit: boolean;
-    readonly marginNames: ReadonlyArray<string>;
+    readonly marginNames: ReadonlyArray<
+    'plotTop'|'marginRight'|'marginBottom'|'plotLeft'
+    >;
     readonly nav: Navigator;
     readonly noop: (this: any, ...args: Array<any>) => any;
     readonly pageLang?: string,

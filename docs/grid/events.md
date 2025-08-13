@@ -42,43 +42,43 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
 
 ```js
 columnDefaults: {
-  events: {
-    afterResize: function () {
-      console.log('Column resized:', this);
+    events: {
+        afterResize: function () {
+            console.log('Column resized:', this);
+        },
+        afterSorting: function () {
+            console.log('Column sorted:', this);
+        }
     },
-    afterSorting: function () {
-      console.log('Column sorted:', this);
+    cells: {
+        events: {
+            afterEdit: function () {
+                console.log('Cell value set:', this);
+            },
+            afterRender: function () {
+                console.log('Cell value:', this);
+            },
+            click: function () {
+                console.log('Cell clicked:', this);
+            },
+            dblClick: function () {
+                console.log('Cell double-clicked:', this);
+            },
+            mouseOver: function () {
+                console.log('Mouse over cell:', this);
+            },
+            mouseOut: function () {
+                console.log('Mouse out of cell:', this);
+            }
+        }
+    },
+    header: {
+        events: {
+            click: function () {
+                console.log('Header clicked:', this);
+            }
+        }
     }
-  },
-  cells: {
-    events: {
-      afterEdit: function () {
-        console.log('Cell value set:', this);
-      },
-      afterRender: function () {
-        console.log('Cell value:', this);
-      },
-      click: function () {
-        console.log('Cell clicked:', this);
-      },
-      dblClick: function () {
-        console.log('Cell double-clicked:', this);
-      },
-      mouseOver: function () {
-        console.log('Mouse over cell:', this);
-      },
-      mouseOut: function () {
-        console.log('Mouse out of cell:', this);
-      }
-    }
-  },
-  header: {
-    events: {
-      click: function () {
-        console.log('Header clicked:', this);
-      }
-    }
-  }
 }
 ```
 
@@ -86,28 +86,28 @@ You can also declare all events to the dedicated column:
 
 ```js
 columns: [{
-  id: 'columnId',
-  events: {
-    afterResize: function () {
-      // callback
-    }
-  }
-  cells: {
+    id: 'columnId',
     events: {
-      click: function () {
-        // callback
-      }
+        afterResize: function () {
+            // callback
+        }
+    },
+    cells: {
+        events: {
+            click: function () {
+                // callback
+            }
+        }
+    },
+    header: {
+        events: {
+            click: function () {
+                // callback
+            }
+        }
     }
-  },
-  header: {
-    events: {
-      click: function () {
-        // callback
-      }
-    }
-  }
 }]
 ```
 
 Live example:
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/basic/cell-events" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid-pro/basic/cell-events?force-light-theme" allow="fullscreen"></iframe>
