@@ -3,11 +3,9 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                columnNames: ['time', 'open', 'high', 'low', 'close'],
-                dataUrl: 'https://www.highcharts.com/samples/data/new-intraday.json'
-            }
+            firstRowAsNames: false,
+            columnIds: ['time', 'open', 'high', 'low', 'close'],
+            dataUrl: 'https://www.highcharts.com/samples/data/new-intraday.json'
         }]
     },
     gui: {

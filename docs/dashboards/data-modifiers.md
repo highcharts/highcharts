@@ -21,12 +21,10 @@ To add the modifier, specify it in the connector options.
 connector: {
     type: 'CSV',
     id: 'connector-id',
-    options: {
-        //... other options
-        dataModifier: {
-            type: 'Math' // or 'Invert'|'Math' etc,
-            // additional modifier options
-        }
+    //... other options
+    dataModifier: {
+        type: 'Math' // or 'Invert'|'Math' etc,
+        // additional modifier options
     }
 }
 ```
@@ -61,11 +59,11 @@ dataModifier: {
         operator: 'and', // combine multiple checks
         conditions: [{
             operator: '>', // numeric “greater than”
-            columnName: 'score',
+            columnId: 'score',
             value: 50
         }, {
             operator: 'contains', // text “contains”
-            columnName: 'name',
+            columnId: 'name',
             value: 'smith',
             ignoreCase: true
         }]

@@ -100,7 +100,7 @@ const dataGridOptions = {
 const connConfig = {
     autoSubscribe: true,
     maxRows: 10,
-    columnNames: [
+    columnIds: [
         'time',
         'value'
     ],
@@ -162,17 +162,13 @@ async function createDashboard() {
             connectors: [{
                 type: 'MQTT',
                 id: 'mqtt-data-1',
-                options: {
-                    topic: Object.keys(topicMap)[0],
-                    ...connConfig
-                }
+                topic: Object.keys(topicMap)[0],
+                ...connConfig
             }, {
                 type: 'MQTT',
                 id: 'mqtt-data-2',
-                options: {
-                    topic: Object.keys(topicMap)[1],
-                    ...connConfig
-                }
+                topic: Object.keys(topicMap)[1],
+                ...connConfig
             }]
         },
         components: [{
@@ -427,7 +423,7 @@ class MQTTConnector extends DataConnector {
      **/
     async reset() {
         const connector = this,
-            table = connector.table;
+            table = connector.getTable();
 
         connector.packetCount = 0;
         await table.deleteColumns();
@@ -549,7 +545,7 @@ class MQTTConnector extends DataConnector {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
-            connTable = connector.table;
+            connTable = connector.getTable();
 
         // Parse the packets
         let data;
