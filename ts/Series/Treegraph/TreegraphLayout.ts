@@ -277,8 +277,10 @@ class TreegraphLayout {
      * right outernal node or defaultAncestor.
      *
      * @param {TreegraphNode} node
+     * Treegraph node.
+     *
      * @param {TreegraphNode} defaultAncestor
-     *        The default ancestor of the passed node.
+     * The default ancestor of the passed node.
      */
     public apportion(
         node: TreegraphNode,
@@ -358,9 +360,13 @@ class TreegraphLayout {
      * Shifts the subtree from leftNode to rightNode.
      *
      * @param {TreegraphNode} leftNode
+     * Left treegraph node.
+     *
      * @param {TreegraphNode} rightNode
+     * Right treegraph node.
+     *
      * @param {number} shift
-     *        The value, by which the subtree should be moved.
+     * The value, by which the subtree should be moved.
      */
     public moveSubtree(
         leftNode: TreegraphNode,
@@ -392,8 +398,8 @@ class TreegraphLayout {
                 node.parentNode = node.oldParentNode;
 
                 // Delete dummyNode
-                node.oldParentNode.children.splice(node.relativeXPosition, 1);
-                node.oldParentNode.children[node.relativeXPosition] = node;
+                node.oldParentNode.children
+                    .splice(node.relativeXPosition, 1, node);
                 node.oldParentNode = void 0;
             }
         }
