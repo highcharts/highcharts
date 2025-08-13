@@ -11,7 +11,9 @@ function generateChart(data) {
         yAxis: [{
             title: { text: 'Bin value' }
         }, {
-            visible: false
+            visible: false,
+            min: -1,
+            max: 1
         }],
 
         plotOptions: {
@@ -28,21 +30,20 @@ function generateChart(data) {
         series: [{
             name: 'Histogram',
             type: 'histogram',
-            data: data,
+            data,
             zIndex: 1,
             opacity: 0.9
         }, {
+            name: 'Observations',
             type: 'scatter',
-            data: data.map(p => ({
-                x: p,
-                y: 0
-            })),
+            // Data is one dimensional with values being displayed on the x-axis
+            data: data.map(x => [x, 0]),
             yAxis: 1,
             marker: {
                 radius: 1.5
             },
             jitter: {
-                y: 10
+                y: 1
             },
             opacity: 0.5,
             enableMouseTracking: false

@@ -27,13 +27,10 @@ function createChart(data) {
             zIndex: -1,
             enableMouseTracking: false
         }, {
+            name: 'Observations',
             type: 'scatter',
-            // Data is one dimensional with the
-            // values being displayed on the x-axis
-            data: data.map(p => ({
-                x: p,
-                y: 0
-            })),
+            // Data is one dimensional with values being displayed on the x-axis
+            data: data.map(x => [x, 0]),
             yAxis: 1,
             marker: {
                 radius: 1.5
