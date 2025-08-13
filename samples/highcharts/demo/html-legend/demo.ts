@@ -11,6 +11,13 @@ const icons = {
     Renewables: "🌱",
 };
 
+declare namespace Highcharts {
+    interface Series {
+        tr?: HTMLElement;
+        trRefresh?: boolean;
+    }
+}
+
 // Plugin to render custom HTML legend and custom HTML tooltip outside chart
 // container
 (({ addEvent, Chart, Series }) => {
@@ -21,9 +28,9 @@ const icons = {
         tooltipValue = document.getElementById("tooltip-value");
 
     // Do now remove tr while updating the series
-    Series.keepProps.push('tr');
+    (Series as typeof Series & { keepProps: string[] }).keepProps.push('tr');
 
-    addEvent(Chart, "render", function (this: typeof Chart) {
+    addEvent(Chart, "render", function () {
         const series = this.series;
 
         // Function to update the tooltip and legend row styles based on hover state
@@ -46,7 +53,7 @@ const icons = {
                 tooltip.style.borderColor = "gray";
             }
 
-            this.series.forEach((s: typeof Series) => {
+            series.forEach((s) => {
                 if (!this.hoverSeries || s === this.hoverSeries) {
                     s.tr.classList.remove("inactive");
                 } else {
@@ -56,10 +63,9 @@ const icons = {
         };
 
         // Create a custom legend row for each series if not already created
-        series.forEach((s: typeof Series) => {
-            console.log(s.name, s.tr);
-            if (!s.tr || s.tr.refresh) {
-                if (s.tr?.refresh) {
+        series.forEach((s) => {
+            if (!s.tr || s.trRefresh) {
+                if (s.trRefresh) {
                     while (s.tr.firstChild) {
                         s.tr.removeChild(s.tr.lastChild);
                     }
@@ -90,13 +96,13 @@ const icons = {
                 max.innerHTML = s.dataMax.toFixed(1) + s.options.custom.valueSuffix;
                 s.tr.appendChild(max);
 
-                if (!s.tr.refresh) {
+                if (!s.trRefresh) {
                     table.appendChild(s.tr);
 
                     // Hovering the legend highlights the graph
                     addEvent(s.tr, "mouseover", () => {
                         s.setState("hover");
-                        series.forEach((otherSeries: typeof Series) => {
+                        series.forEach((otherSeries) => {
                             if (otherSeries !== s) {
                                 otherSeries.setState("inactive");
                             }
@@ -107,14 +113,14 @@ const icons = {
 
                     // Reset highlight when mouse leaves the row
                     addEvent(s.tr, "mouseout", () => {
-                        series.forEach((otherSeries: typeof Series) => {
+                        series.forEach((otherSeries) => {
                             otherSeries.setState("normal");
                         });
                         this.hoverSeries = undefined;
                         highlightRow();
                     });
                 }
-                delete s.tr.refresh;
+                delete s.trRefresh;
             }
         });
 
@@ -123,16 +129,16 @@ const icons = {
         addEvent(this.container, "mouseout", highlightRow);
     });
 
-    addEvent(Series, 'remove', function(this: typeof Series) {
+    addEvent(Series, 'remove', function() {
         if (this.tr) {
             this.tr.remove();
             delete this.tr;
         }
     });
 
-    addEvent(Series, 'afterUpdate', function(this: typeof Series) {
+    addEvent(Series, 'afterUpdate', function() {
         if (this.tr) {
-            this.tr.refresh = true;
+            this.trRefresh = true;
         }
     });
 })(Highcharts);
