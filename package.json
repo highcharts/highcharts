@@ -164,7 +164,7 @@
     "*.js": [
       "eslint"
     ],
-    "demo.ts": [
+    "**/demo.ts": [
       "eslint"
     ],
     "./ts/!(Dashboards|Grid)**/*.ts": [

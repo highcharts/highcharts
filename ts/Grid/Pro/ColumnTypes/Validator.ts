@@ -111,7 +111,7 @@ class Validator {
 
         // Remove duplicates in validationRules
         const isArrayString = rules.every(
-            (rule): Boolean => typeof rule === 'string'
+            (rule): boolean => typeof rule === 'string'
         );
 
         if (rules.length > 0 && isArrayString) {
@@ -120,7 +120,7 @@ class Validator {
             const predefined = Validator.predefinedRules[dataType] || [];
 
             const hasPredefined = rules.some(
-                (rule): Boolean =>
+                (rule): boolean =>
                     typeof rule !== 'string' &&
                     typeof rule.validate === 'string' &&
                     predefined.includes(rule.validate)
