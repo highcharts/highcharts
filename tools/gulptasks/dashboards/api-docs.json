@@ -63,6 +63,10 @@
         "../../../ts/Data/Modifiers/RangeModifierOptions.ts",
         "../../../ts/Data/Modifiers/ChainModifier.ts",
         "../../../ts/Data/Modifiers/ChainModifierOptions.ts",
+        "../../../ts/Data/Modifiers/InvertModifier.ts",
+        "../../../ts/Data/Modifiers/InvertModifierOptions.ts",
+        "../../../ts/Data/Modifiers/FilterModifier.ts",
+        "../../../ts/Data/Modifiers/FilterModifierOptions.ts",
 
         // DataLayer
         "../../../ts/Data/DataPool.ts",
@@ -74,7 +78,7 @@
     "excludeInternal": true,
     "excludePrivate": true,
     "hideGenerator": true,
-    "htmlLang": "en",
+    "lang": "en",
     "name": "Highcharts Dashboards",
     "out": "../../../build/api/dashboards/typedoc/",
     "plugin": [

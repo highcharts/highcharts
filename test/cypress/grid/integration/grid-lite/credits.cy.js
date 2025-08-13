@@ -1,9 +1,9 @@
 describe('Credits.', () => {
     it('Credits are default and not configurable.', () => {
         cy.visit('/grid-lite/cypress/credits/');
-        cy.get('.hcg-credits')
-            .should('not.contain', 'overwriteText')
-            .find('img').should('exist'); // Default Highcharts icon
+        cy.get('a.hcg-credits')
+            .should('have.attr', 'href', 'https://www.highcharts.com')
+            .should('exist');
 
         cy.window().its('Grid').then((grid) => {
             grid.grids[0].update({
@@ -12,8 +12,17 @@ describe('Credits.', () => {
                 }
             });
 
-            cy.get('.hcg-credits')
-                .find('img').should('exist'); // Default Highcharts icon
+        cy.grid().then((grid) => {
+            grid.update({
+            credits: {
+                    enabled: false
+                }
+            });
+        });
+
+        cy.get('a.hcg-credits')
+            .should('have.attr', 'href', 'https://www.highcharts.com')
+            .should('exist');
         });
     });
 });
