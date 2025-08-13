@@ -867,10 +867,32 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-table tfoot .hcg-pagination-wrapper {
-    text-align: right;
+    /* text-align: right; */
+    float: right;
+    display: flex;
+    justify-content: space-between;
+    align-items: right;
+    width: 700px;
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper button {
+.hcg-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hcg-pagination-ellipsis {
+    user-select: none;
+}
+
+.hcg-pagination-page-size-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* .hcg-table tfoot .hcg-pagination-wrapper button {
     font-size: 1.25em;
 }
 
@@ -880,7 +902,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 .hcg-table tfoot .hcg-pagination-wrapper button:first-child {
     margin-right: 5px;
-}
+} */
 
 /* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
