@@ -61,7 +61,7 @@ describe('Multiple dataTables rendering', () => {
             connector.components.forEach((component) => {
                 assert.deepEqual(
                     connector.dataTables[component.dataTableKey].columns,
-                    component.connectorHandlers[0].presentationTable.columns,
+                    component.connectorHandlers[0].dataTable.columns,
                     'The component dataTable columns should match based on the provided data table key.'
                 );
             });
