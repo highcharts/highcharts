@@ -17,14 +17,13 @@ Gulp.registry(new GulpForwardReference());
  *
  * */
 
-(function (tasks) {
-    tasks.forEach(
-        gulpTask => require('./tools/gulptasks/' + gulpTask)
-    );
+(function (tasks: Array<string>) {
+    tasks.forEach(gulpTask => require(`./tools/gulptasks/${gulpTask}`));
 }([
     'api',
     'api-docs',
     'api-server',
+    'api-sync',
     'api-tree',
     'api-upload',
     'clean',
@@ -134,4 +133,4 @@ Gulp.registry(new GulpForwardReference());
     'examples': 'dist-examples',
     'start-api-server': 'jsdoc-server',
     'styles': 'scripts-css'
-} as Record<string, string>));
+}));

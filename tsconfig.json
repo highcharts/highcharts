@@ -4,8 +4,23 @@
         "noEmit": true,
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
+        "outDir": "./tmp/",
+        "resolveJsonModule": true,
+        "rootDir": "./",
         "skipLibCheck": true,
         "strict": true,
         "target": "ES2020"
+    },
+    "exclude": [
+        "build/",
+        "code/",
+        "node_modules/"
+    ],
+    "include": [
+        "*.ts",
+        "tools/**/*.ts"
+    ],
+    "ts-node": {
+        "esm": true
     }
 }
