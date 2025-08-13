@@ -1074,22 +1074,31 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .hcg-table tfoot .hcg-pagination-wrapper,
 .highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper {
-    text-align: right;
+    /* text-align: right; */
+    float: right;
+    display: flex;
+    justify-content: space-between;
+    align-items: right;
+    width: 700px;
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper button,
-.highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper button {
-    font-size: 1.25em;
+.hcg-pagination-controls,
+.highcharts-datagrid-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled),
-.highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper button:not(:disabled) {
-    cursor: pointer;
+.hcg-pagination-ellipsis,
+.highcharts-datagrid-pagination-ellipsis {
+    user-select: none;
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper button:first-child,
-.highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper button:first-child {
-    margin-right: 5px;
+.hcg-pagination-page-size-container,
+.highcharts-datagrid-pagination-page-size-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* Helpers */
