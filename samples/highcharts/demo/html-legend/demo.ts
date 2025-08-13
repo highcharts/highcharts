@@ -31,12 +31,12 @@ const icons = {
             if (this.hoverPoint) {
                 tooltipDefault.style.display = "none";
                 tooltipName.innerHTML =
-                    "<b>Fuel type</b>: " +
+                    this.options.tooltip.headerFormat +
                     this.hoverPoint.series.name +
                     " " +
                     icons[this.hoverPoint.series.name as keyof typeof icons];
                 tooltipValue.innerHTML =
-                    "<b>Elec. Gen.</b>: " +
+                    this.options.tooltip.pointFormat +
                     this.hoverPoint.y +
                     this.hoverPoint.series.options.custom.valueSuffix;
                 tooltip.style.borderColor = this.hoverPoint.series.color.toString();
@@ -161,6 +161,8 @@ Highcharts.chart("container", {
 
     tooltip: {
         enabled: false,
+        pointFormat: '<b>Elec. Gen.</b>: ',
+        headerFormat: '<b>Fuel type</b>: ',
     },
 
     xAxis: {
