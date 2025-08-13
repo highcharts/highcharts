@@ -21,21 +21,24 @@
 
 .highcharts-wrapper {
     min-height: 400px;
-    display: flex;
+    display: grid;
     gap: 1em;
     align-items: center;
+    place-items: center;
+    margin-bottom: 1em;
 }
 
 #container {
-    flex: 0.7;
+    width: 100%;
 }
 
 #custom-tooltip {
-    flex: 0.3;
     text-align: center;
     border: 1px solid gray;
     border-radius: 1em;
-    margin-right: 1em;
+    height: 90px;
+    width: 300px;
+    padding: 0 1em;
 }
 
 #table-wrapper {

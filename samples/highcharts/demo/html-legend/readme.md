@@ -1,5 +1,5 @@
 # Line chart with custom HTML demo
-This demo showcases how to build a custom HTML legend outside of the chart container, instead of relying on the built-in legend system.
+This demo showcases how to build a custom HTML legend outside of the chart container and implement a custom tooltip, rather than relying on the built-in legend and tooltip systems.
 
 **Note:** The legend is not included in exports.
 

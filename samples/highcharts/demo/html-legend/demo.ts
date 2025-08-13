@@ -1,24 +1,32 @@
-(({ addEvent, Chart }) => {
+// Mapping series names to small icon-like symbols (used in tooltip display)
+const icons = {
+    Year: "📅",
+    Coal: "🏭",
+    Gas: "🔥",
+    Petroleum: "⛽️",
+    Hydro: "💧",
+    Nuclear: "☢️",
+    "Net Imports": "🚢",
+    Other: "🔧",
+    Renewables: "🌱",
+};
+
+// Plugin to render custom HTML legend and custom HTML tooltip outside chart
+// container
+(({ addEvent, Chart, Series }) => {
     const table = document.getElementById("custom-legend"),
         tooltip = document.getElementById("custom-tooltip"),
         tooltipDefault = document.getElementById("tooltip-default"),
         tooltipName = document.getElementById("tooltip-name"),
-        tooltipValue = document.getElementById("tooltip-value"),
-        icons = {
-            Year: "📅",
-            Coal: "🏭",
-            Gas: "🔥",
-            Petroleum: "⛽️",
-            Hydro: "💧",
-            Nuclear: "☢️",
-            "Net Imports": "🚢",
-            Other: "🔧",
-            Renewables: "🌱",
-        };
+        tooltipValue = document.getElementById("tooltip-value");
 
-    addEvent(Chart, "render", function () {
+    // Do now remove tr while updating the series
+    Series.keepProps.push('tr');
+
+    addEvent(Chart, "render", function (this: typeof Chart) {
         const series = this.series;
 
+        // Function to update the tooltip and legend row styles based on hover state
         const highlightRow = () => {
             if (this.hoverPoint) {
                 tooltipDefault.style.display = "none";
@@ -35,70 +43,97 @@
             } else {
                 tooltipDefault.style.display = "block";
                 tooltipName.innerHTML = tooltipValue.innerHTML = "";
+                tooltip.style.borderColor = "gray";
             }
 
-            this.series.forEach((s) => {
+            this.series.forEach((s: typeof Series) => {
                 if (!this.hoverSeries || s === this.hoverSeries) {
-                    s.options.custom.tr.classList.remove("inactive");
+                    s.tr.classList.remove("inactive");
                 } else {
-                    s.options.custom.tr.classList.add("inactive");
+                    s.tr.classList.add("inactive");
                 }
             });
         };
 
-        series.forEach((s) => {
-            if (!s.options.custom.tr) {
-                s.options.custom.tr = document.createElement("tr");
+        // Create a custom legend row for each series if not already created
+        series.forEach((s: typeof Series) => {
+            console.log(s.name, s.tr);
+            if (!s.tr || s.tr.refresh) {
+                if (s.tr?.refresh) {
+                    while (s.tr.firstChild) {
+                        s.tr.removeChild(s.tr.lastChild);
+                    }
+                } else {
+                    s.tr = document.createElement("tr");
+                }
 
                 const symbol = document.createElement("th");
                 symbol.innerText = "\u25CF";
                 symbol.style.color = s.color.toString();
-                s.options.custom.tr.appendChild(symbol);
+                s.tr.appendChild(symbol);
 
                 const name = document.createElement("th");
                 name.innerText = s.name;
-                s.options.custom.tr.appendChild(name);
+                s.tr.appendChild(name);
 
                 const last = document.createElement("td");
                 last.innerHTML =
                     s.points[s.points.length - 1].y.toFixed(1) +
                     s.options.custom.valueSuffix;
-                s.options.custom.tr.appendChild(last);
+                s.tr.appendChild(last);
 
                 const min = document.createElement("td");
                 min.innerHTML = s.dataMin.toFixed(1) + s.options.custom.valueSuffix;
-                s.options.custom.tr.appendChild(min);
+                s.tr.appendChild(min);
 
                 const max = document.createElement("td");
                 max.innerHTML = s.dataMax.toFixed(1) + s.options.custom.valueSuffix;
-                s.options.custom.tr.appendChild(max);
+                s.tr.appendChild(max);
 
-                table.appendChild(s.options.custom.tr);
+                if (!s.tr.refresh) {
+                    table.appendChild(s.tr);
 
-                // Hovering the legend highlights the graph
-                addEvent(s.options.custom.tr, "mouseover", () => {
-                    s.setState("hover");
-                    series.forEach((otherSeries) => {
-                        if (otherSeries !== s) {
-                            otherSeries.setState("inactive");
-                        }
+                    // Hovering the legend highlights the graph
+                    addEvent(s.tr, "mouseover", () => {
+                        s.setState("hover");
+                        series.forEach((otherSeries: typeof Series) => {
+                            if (otherSeries !== s) {
+                                otherSeries.setState("inactive");
+                            }
+                        });
+                        this.hoverSeries = s;
+                        highlightRow();
                     });
-                    this.hoverSeries = s;
-                    highlightRow();
-                });
 
-                addEvent(s.options.custom.tr, "mouseout", () => {
-                    series.forEach((otherSeries) => {
-                        otherSeries.setState("normal");
+                    // Reset highlight when mouse leaves the row
+                    addEvent(s.tr, "mouseout", () => {
+                        series.forEach((otherSeries: typeof Series) => {
+                            otherSeries.setState("normal");
+                        });
+                        this.hoverSeries = undefined;
+                        highlightRow();
                     });
-                    this.hoverSeries = undefined;
-                    highlightRow();
-                });
+                }
+                delete s.tr.refresh;
             }
         });
 
+        // Also update highlight when hovering over chart area itself
         addEvent(this.container, "mouseover", highlightRow);
         addEvent(this.container, "mouseout", highlightRow);
+    });
+
+    addEvent(Series, 'remove', function(this: typeof Series) {
+        if (this.tr) {
+            this.tr.remove();
+            delete this.tr;
+        }
+    });
+
+    addEvent(Series, 'afterUpdate', function(this: typeof Series) {
+        if (this.tr) {
+            this.tr.refresh = true;
+        }
     });
 })(Highcharts);
 
