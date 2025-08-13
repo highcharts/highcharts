@@ -38,15 +38,17 @@ export interface PageSizeSelectorOptions {
  */
 export interface PaginationControlsOptions {
     /**
-     * Page size selector configuration including available options and enabled state.
-     * Users can select from the options to change the number of items displayed per page.
+     * Page size selector configuration including available options and enabled
+     * state. Users can select from the options to change the number of items
+     * displayed per page.
      *
      * @default { enabled: true, options: [10, 20, 50, 100] }
      */
     pageSizeSelector: PageSizeSelectorOptions;
 
     /**
-     * Whether to show the page information text (e.g., "Showing 1 - 20 of 254").
+     * Whether to show the page information text
+     * (e.g., "Showing 1 - 20 of 200").
      *
      * @default true
      */
@@ -164,7 +166,8 @@ export interface PaginationOptions {
 
     /**
      * Initial number of items per page when the Grid is initialized.
-     * This value will be used as the default page size if not specified in pageSizeSelector options.
+     * This value will be used as the default page size if not specified
+     * in pageSizeSelector options.
      *
      * @default 10
      */
@@ -185,36 +188,58 @@ export interface PaginationOptions {
  * Pagination events.
  */
 export interface PaginationEvents {
+
     /**
      * Fired before a page change occurs.
      *
-     * @param currentPage The current page number
-     * @param newPage The page number being navigated to
-     * @param itemsPerPage The current items per page setting
+     * @param e
+     * The event object.
      */
-    beforePageChange?: (currentPage: number, newPage: number, itemsPerPage: number) => void;
+    beforePageChange?: (e: BeforePageChangeEvent) => void;
+
 
     /**
      * Fired after a page change occurs.
      *
-     * @param currentPage The new current page number
-     * @param itemsPerPage The current items per page setting
+     * @param e
+     * The event object.
      */
-    afterPageChange?: (currentPage: number, itemsPerPage: number) => void;
+    afterPageChange?: (e: AfterPageChangeEvent) => void;
 
     /**
      * Fired before the page size setting changes.
      *
-     * @param newPageSize The new page size value
-     * @param oldPageSize The previous page size value
+     * @param e
+     * The event object.
      */
-    beforePageSizeChange?: (newPageSize: number, oldPageSize: number) => void;
+    beforePageSizeChange?: (e: BeforePageSizeChangeEvent) => void;
 
     /**
      * Fired after the page size setting changes.
      *
-     * @param newPageSize The new page size value
-     * @param oldPageSize The previous page size value
+     * @param e
+     * The event object.
      */
-    afterPageSizeChange?: (newPageSize: number, oldPageSize: number) => void;
+    afterPageSizeChange?: (e: AfterPageSizeChangeEvent) => void;
+}
+
+export interface BeforePageChangeEvent {
+    currentPage: number;
+    newPage: number;
+    itemsPerPage: number;
+}
+
+export interface AfterPageChangeEvent {
+    currentPage: number;
+    itemsPerPage: number;
+}
+
+export interface BeforePageSizeChangeEvent {
+    newPageSize: number;
+    oldPageSize: number;
+}
+
+export interface AfterPageSizeChangeEvent {
+    newPageSize: number;
+    oldPageSize: number;
 }
