@@ -837,7 +837,7 @@ class TreemapSeries extends ScatterSeries {
                 return n.node.visible || defined(n.dataLabel);
             }),
             padding = splat(series.options.dataLabels || {})[0]?.padding,
-            positionsAreSet = points.some((p): Boolean => isNumber(p.plotY));
+            positionsAreSet = points.some((p): boolean => isNumber(p.plotY));
 
         for (const point of points) {
             const style: CSSObject = {},

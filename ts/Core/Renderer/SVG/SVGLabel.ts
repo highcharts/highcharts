@@ -87,7 +87,7 @@ class SVGLabel extends SVGElement {
         str: string,
         x: number,
         y?: number,
-        shape?: (SymbolKey|string),
+        shape?: string, // @todo (SymbolKey|string),
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,

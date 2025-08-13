@@ -392,7 +392,7 @@ class TreegraphLayout {
                 node.parentNode = node.oldParentNode;
 
                 // Delete dummyNode
-                delete node.oldParentNode.children[node.relativeXPosition];
+                node.oldParentNode.children.splice(node.relativeXPosition, 1);
                 node.oldParentNode.children[node.relativeXPosition] = node;
                 node.oldParentNode = void 0;
             }
