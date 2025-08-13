@@ -125,7 +125,12 @@ export interface InterfaceInfo {
 }
 
 
-export type IntersectType = Array<VariableType>;
+export interface IntersectionType {
+    kind: 'IntersectionType';
+    members: Array<VariableType>;
+    meta: InfoMeta;
+    symbol: TS.Symbol;
+}
 
 
 export type MemberInfo = (FunctionInfo|PropertyInfo);
@@ -139,15 +144,6 @@ export interface NamespaceInfo {
     meta: InfoMeta;
     name: string;
     node: TS.ModuleDeclaration;
-}
-
-
-export interface ObjectType {
-    kind: 'ObjectType';
-    members: Array<MemberInfo>;
-    meta: InfoMeta;
-    name: string;
-    node: TS.TypeLiteralNode;
 }
 
 
@@ -194,8 +190,9 @@ export interface SourceInfo {
 
 export interface TypeAliasInfo {
     doclet?: InfoDoclet;
-    kind: 'TypeAlias';
+    fullNames: Array<string>;
     generics?: Array<TypeAliasInfo>;
+    kind: 'TypeAlias';
     meta: InfoMeta;
     name: string;
     node: (TS.TypeAliasDeclaration|TS.TypeParameterDeclaration);
@@ -214,7 +211,7 @@ export interface VariableInfo {
 }
 
 
-export type VariableType = (string|IntersectType|ObjectType|ReferenceType);
+export type VariableType = (string|IntersectionType|ReferenceType);
 
 
 /* *
@@ -512,12 +509,14 @@ function addInfoGenerics (
         } as TypeAliasInfo;
 
         if (_typeParameter.constraint) {
-            _info.value = getInfoType(project, _typeParameter.constraint);
+            _info.value = nodesInfoType(
+                project,
+                TS.getEffectiveConstraintOfTypeParameter(_typeParameter)
+            );
         }
 
         if (_typeParameter.default) {
-            _info.value = _info.value || [];
-            _info.value = getInfoType(project, _typeParameter.default);
+            _info.value = nodesInfoType(project, _typeParameter.default);
         }
 
         addInfoFlags(_info, _typeParameter);
@@ -611,7 +610,7 @@ function addInfoHeritage (
  * Node to return meta information for.
  */
 function addInfoMeta (
-    info: Partial<(CodeInfo|ObjectType|ReferenceType)>,
+    info: Partial<(CodeInfo|IntersectionType|ReferenceType)>,
     node?: TS.Node
 ): void {
 
@@ -663,8 +662,7 @@ function addInfoScopes (
 
         if (
             !_info ||
-            typeof _info !== 'object' ||
-            _info instanceof Array
+            typeof _info !== 'object'
         ) {
             continue;
         }
@@ -843,7 +841,7 @@ export function extractGenericArguments (
  * Extracted name or `undefined`.
  */
 export function extractInfoName (
-    info: (CodeInfo|InfoDoclet|ObjectType|SourceInfo)
+    info: (CodeInfo|InfoDoclet|SourceInfo)
 ): (string|undefined) {
     let _name: (string|undefined);
 
@@ -858,8 +856,6 @@ export function extractInfoName (
             return info.name;
         case 'Source':
             return info.file;
-        case 'ObjectType':
-            return;
         default:
             _name = extractTagText(info, 'optionparent', true);
             if (typeof _name === 'string') {
@@ -1207,93 +1203,13 @@ function getFunctionInfo (
     const _returnType = node.type || TS.getJSDocReturnType(node);
 
     if (_returnType) {
-        _info.return = getInfoType(project, _returnType);
+        _info.return = nodesInfoType(project, _returnType);
     }
 
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
     return _info;
-}
-
-
-/**
- * Retrieves type information for a given node.
- *
- * @param project
- * Related project.
- *
- * @param node
- * Node to return type information for.
- *
- * @return
- * Type information for the given node.
- */
-function getInfoType (
-    project: Project,
-    node: (TS.TypeNode|undefined)
-): (VariableType|undefined) {
-
-    if (
-        !node ||
-        !TS.isTypeNode(node)
-    ) {
-        return;
-    }
-
-    const _program = project.program;
-    const _symbol = nodesSymbol(_program, node);
-
-    if (!_symbol) {
-        return;
-    }
-
-    let _infoType: Array<VariableType> = [];
-
-    if (node) {
-        if (TS.isParenthesizedTypeNode(node)) {
-            return getInfoType(project, node.type);
-        }
-        if (TS.isTypeLiteralNode(node)) {
-            const _type: Partial<ObjectType> = {
-                kind: 'ObjectType',
-                name: symbolsName(_program, _symbol),
-                members: []
-            };
-
-            addChildInfos(
-                project,
-                _type.members!,
-                symbolsChildren(_program, _symbol)
-            );
-            addInfoMeta(_type, node);
-
-            return _type as ObjectType;
-        }
-        if (TS.isUnionTypeNode(node) || TS.isIntersectionTypeNode(node)) {
-            let _subtype: (VariableType|undefined);
-
-            for (const _subitem of node.types) {
-                _subtype = getInfoType(project, _subitem);
-
-                if (_subtype) {
-                    _infoType.push(_subtype);
-                }
-            }
-        } else if (TS.isTypeReferenceNode(node)) {
-            _infoType.push(sanitizeType(node.typeName.getText()));
-        } else {
-            _infoType.push(sanitizeType(node.getText()));
-        }
-    }
-
-    _infoType = _infoType.filter(_type => _type !== 'void');
-
-    if (!_infoType.length) {
-        return;
-    }
-
-    return (_infoType.length === 1 ? _infoType[0] : _infoType);
 }
 
 
@@ -1459,7 +1375,7 @@ function getPropertyInfo (
     const _info = {
         kind: 'Property',
         name: symbolsName(_program, _symbol),
-        type: getInfoType(project, node.type)
+        type: nodesInfoType(project, node.type)
     } as PropertyInfo;
 
     addInfoFlags(_info, node);
@@ -1573,8 +1489,8 @@ function getTypeAliasInfo (
     } as TypeAliasInfo;
 
     _info.value = (
-        getInfoType(project, node.type) ||
-        getInfoType(project, TS.getJSDocType(node))
+        nodesInfoType(project, node.type) ||
+        nodesInfoType(project, TS.getJSDocType(node))
     );
 
     addInfoGenerics(_info, node, project);
@@ -1619,7 +1535,7 @@ function getVariableInfo (
     } as VariableInfo;
 
     if (_symbol.declarations && TS.isTypeNode(_symbol.declarations[0])) {
-        const _infoType = getInfoType(project, _symbol.declarations[0]);
+        const _infoType = nodesInfoType(project, _symbol.declarations[0]);
 
         if (_infoType) {
             _info.type = _infoType;
@@ -1679,6 +1595,81 @@ export function isNativeType (
         !!typeString.match(NATIVE_HELPER) ||
         !!TS.SyntaxKind[typeString as keyof typeof TS.SyntaxKind]
     );
+}
+
+
+/**
+ * Retrieves type information for a given node.
+ *
+ * @param project
+ * Related project.
+ *
+ * @param node
+ * Node to return type information for.
+ *
+ * @return
+ * Type information for the given node.
+ */
+function nodesInfoType (
+    project: Project,
+    node: (TS.TypeNode|undefined)
+): (VariableType|undefined) {
+
+    if (
+        !node ||
+        !TS.isTypeNode(node)
+    ) {
+        return;
+    }
+
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
+    }
+
+    if (TS.isParenthesizedTypeNode(node)) {
+        return nodesInfoType(project, node.type);
+    }
+
+    if (TS.isIntersectionTypeNode(node)) {
+        let _infoType = {
+            kind: 'IntersectionType',
+            members: [],
+            symbol: _symbol
+        } as unknown as IntersectionType;
+        let _subType: (VariableType|undefined);
+
+        for (const _subitem of node.types) {
+            _subType = nodesInfoType(project, _subitem);
+
+            if (
+                _subType &&
+                _subType !== 'void'
+            ) {
+                _infoType.members.push(_subType);
+            }
+        }
+
+        addInfoMeta(_infoType, node);
+
+        return _infoType;
+    }
+
+    if (TS.isTypeReferenceNode(node)) {
+        const _infoType = {
+            kind: 'ReferenceType',
+            name: node.typeName.getText(),
+            symbol: _symbol
+        } as ReferenceType;
+
+        addInfoMeta(_infoType, node);
+
+        return _infoType;
+    }
+
+    return sanitizeType(node.getText());
 }
 
 
@@ -1821,10 +1812,7 @@ function symbolsName(
     symbol: TS.Symbol
 ): string {
 
-    if (
-        symbol.flags & TS.SymbolFlags.ModuleExports &&
-        symbol.name === 'default'
-    ) {
+    if (symbol.flags & TS.SymbolFlags.Alias) {
         symbol = program.getTypeChecker().getAliasedSymbol(symbol);
     }
 
