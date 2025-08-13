@@ -32,7 +32,7 @@ import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import U from '../../../../Core/Utilities.js';
 
-const { Range: RangeModifier } = DataModifier.types;
+const { Filter: FilterModifier } = DataModifier.types;
 const { addEvent } = U;
 
 
@@ -66,20 +66,27 @@ const syncPair: Sync.SyncPair = {
 
                 let modifier = table.getModifier();
 
-                if (modifier instanceof RangeModifier) {
+                if (modifier instanceof FilterModifier) {
                     NavigatorSyncUtils.setRangeOptions(
-                        modifier.options.ranges,
+                        modifier.options,
                         filterColumn,
                         min,
                         max
                     );
                 } else {
-                    modifier = new RangeModifier({
-                        ranges: [{
-                            column: filterColumn,
-                            maxValue: max,
-                            minValue: min
-                        }]
+                    modifier = new FilterModifier({
+                        condition: {
+                            operator: 'and',
+                            conditions: [{
+                                columnName: filterColumn,
+                                operator: '>=',
+                                value: min
+                            }, {
+                                columnName: filterColumn,
+                                operator: '<=',
+                                value: max
+                            }]
+                        }
                     });
                 }
 
@@ -129,4 +136,5 @@ const syncPair: Sync.SyncPair = {
 *  Default export
 *
 * */
+
 export default { defaultOptions, syncPair };

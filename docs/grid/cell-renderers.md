@@ -18,18 +18,33 @@ Unless specified the default renderer is [`text`](https://api.highcharts.com/gri
 
 Using specific input types is preferable to relying on complex validation logic for plain text inputs because it leverages built-in browser behavior to enforce correct data formats. This reduces the need for custom code, minimizes validation errors, and improves performance. If more specific validation is needed, for e.g. string validation, please [refer to `validationRules`](https://www.highcharts.com/docs/grid/cell-editing#validation).
 
-From a user experience perspective, typed inputs provide clearer intent, better accessibility, and context-appropriate interfaces
+From a user experience perspective, typed inputs provide clearer intent, better accessibility, and context-appropriate interfaces.
 
-In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the cell renderer for view and `editMode`. If not specified, the renderer for `editMode` is determined by `dataType`. When not in editMode it defaults to `text`. 
+In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the cell renderer for view and `editMode`. If not specified, the renderer for `editMode` is determined by `dataType`. When not in editMode it defaults to `text`.
 
 Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for how to implement renderers and read more below.
 
 | renderer | Description | dataType |
 |---|---|---|
 |[`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1)| Text input that supports text/number and HTML | string / number |
+|[`numberInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_NumberInputRenderer.NumberInputRenderer-1) | Number input element | number |
 |[`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input with datepicker | datetime |
 |[`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | boolean |
 |[`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element. Note that `options` are required. | |
+
+You can further customize input renderers by using the `attributes` option. This allows you to pass additional HTML attributes to the underlying input element, such as `min`, `max`, `step`, `placeholder`, or any other valid attribute.
+This is especially useful for number and date inputs, where you may want to restrict the allowed range or provide hints to users. For example:
+
+```js
+renderer: {
+    type: 'numberInput',
+    attributes: {
+        min: 0,
+        max: 100,
+        step: 1
+    }
+}
+```
 
 ### Text
 Renders an editable text field for the value in editMode, and plain text/HTML when not in editMode. No specific configuration is needed since this is the default:
@@ -67,7 +82,7 @@ Renders a checkbox input element in `editMode` and uses `format` to display icon
 columns: [{
     id: 'done', // column id
     cells: {
-        dataType: 'datetime',
+        dataType: 'boolean',
         format: '{#if value}✓{else}✗{/if}',
         editMode: {
             enabled: true
@@ -101,6 +116,28 @@ columns: [{
     }
 }]
 ```
+
+### Number
+Renders an editable number field for the value in editMode, and plain text when not in editMode.
+
+```js
+columns: [{
+    id: 'age', // column id
+    dataType: 'number',
+    cells: {
+        renderer: {
+            type: 'numberInput',
+            attributes: { // optional properties
+                min: 0,
+                max: 100,
+                step: 1
+            }
+        }
+    }
+}]
+```
+
+
 
 ### Mixed
 Renders a select element for predefined options when not in `editMode`. When in `editMode` a text input is used. `dataType: 'number'` is set to make sure number and not string is written to `DataTable` on updates, and `validationRules` is also applied to provide user feedback:
@@ -171,7 +208,7 @@ You can also write a custom renderer. To do so, define:
             // update your content here, when the cell value has changed
         }
 
-        public override dalete(): void {
+        public override delete(): void {
             // remove the element from DOM, clear event listeners, etc.
         }
 
@@ -218,3 +255,86 @@ You can also write a custom renderer. To do so, define:
 If you want your custom renderer to be usable in cell edit mode, you need to implement additionally the following interfaces:
 - [`EditModeContent`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeContent) - it should extend the custom cell content class.
 - [`EditModeRenderer`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeRenderer) - it should extend the custom cell renderer class.
+
+## Custom Textarea Renderer
+
+This section demonstrates how to create a custom **Textarea** cell renderer for the Grid. The custom renderer will display a `<textarea>` element inside the cell, allowing for multi-line text editing.
+
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/grid-pro/basic/custom-renderer?force-light-theme" allow="fullscreen"></iframe>
+
+1. We start by importing the default [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) and `CellContentPro` classes and [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) from the `Grid` namespace.
+
+```js
+const {
+    CellRenderer,
+    CellContentPro,
+    CellRendererRegistry
+} = Grid;
+
+class TextareaContent extends CellContentPro {
+
+}
+```
+2. The next step is to create a new class, such as **TextareaContent**, which extends the imported `CellContentPro` class and is responsible for creating and managing the <textarea> element.
+
+```js
+class TextareaContent extends CellContentPro {
+    constructor(cell, renderer) {
+        super(cell, renderer);
+        this.add();
+    }
+
+    // Required by the interface
+    add(parentElement = this.cell.htmlElement) {
+        const textarea = this.textarea = document.createElement('textarea');
+        this.update();
+        parentElement.appendChild(textarea);
+        return textarea;
+    }
+
+    // Required by the interface
+    update() {
+        this.textarea.value = this.cell.value;
+    }
+
+    // Required by the interface
+    destroy() {
+        this.textarea.remove();
+    }
+}
+```
+
+3. The **TextareaRenderer** class is responsible for integrating the custom textarea content into the grid. By extending the [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) base class, it provides a `render`
+method that creates and returns a new instance of `TextareaContent` for each cell.
+
+```js
+class TextareaRenderer extends CellRenderer {
+    constructor(column, options) {
+        super(column);
+        this.options = options;
+    }
+
+    render(cell) {
+        return new TextareaContent(cell, this);
+    }
+}
+```
+
+4. Register the new renderer type with the [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) so it can be used in the Grid configuration.
+
+```js
+CellRendererRegistry.registerRenderer('textarea', TextareaRenderer);
+```
+
+Once registered, you can use the custom `textarea` renderer in your column configuration:
+
+```js
+columns: [{
+    id: 'description',
+    cells: {
+        renderer: {
+            type: 'textarea'
+        }
+    }
+}]
+```

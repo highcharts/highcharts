@@ -60,7 +60,7 @@ dataModifier: {
     condition: {
         operator: 'and', // combine multiple checks
         conditions: [{
-            operator: 'gt', // numeric “greater than”
+            operator: '>', // numeric “greater than”
             columnName: 'score',
             value: 50
         }, {
@@ -98,15 +98,12 @@ dataModifier: {
 [API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_MathModifierOptions.MathModifierOptions-1.html)
 
 ### Range
-Can filter the data by minimal and maximal values. Older version of Filter Modifier and in the future it may be replaced by it completely. It works both for numbers and alphanumerical values. The `column` option specifies from which column the values should be used to perform filtering, and the `minValue` and `maxValue` specify the range limits. Here is an example:
+Allows on slicing rows of the original table based on a specified range of indices. Option `start` specifies the index at which the slice begins; option `end` specifies the index at which it ends (excluding the row at the end index), analogous to JavaScript’s slice method. Here is an example:
 ```js
 dataModifier: {
     type: 'Range',
-    ranges: [{
-        column: 'year',
-        minValue: '1961',
-        maxValue: '2021'
-    }]
+    start: 5,
+    end: 100
 }
 ```
 [API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_RangeModifierOptions.RangeModifierOptions-1.html)
@@ -136,7 +133,7 @@ Every modified table contains two methods that allow you to manage the relations
 You can check the modifiers in action with the following demos:
 
 ### Grid with MathModifier
-<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/grid-mathmodifier" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/grid-mathmodifier?force-light-theme" allow="fullscreen"></iframe>
 
-### CSV data with RangeModifier
-<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/csv-modifiers" allow="fullscreen"></iframe>
+### CSV data with FilterModifier
+<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/csv-modifiers?force-light-theme" allow="fullscreen"></iframe>

@@ -6,6 +6,10 @@
     transition: background-color 100ms, color 100ms;
 }
 
+html {
+    overflow: hidden;
+}
+
 .highcharts-dark {
     --highcharts-background-color: #46465c;
     --highcharts-neutral-color-20: #78758c;
@@ -146,7 +150,7 @@
 #container {
     border-radius: 4px;
     background-color: #2f2b38;
-    border: 1px solid #46465c;
+    border: none;
 }
 
 #dashboard-col-1 .highcharts-dashboards-component,

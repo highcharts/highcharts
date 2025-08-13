@@ -63,4 +63,6 @@ test('Grid update methods', async function (assert) {
     grid.viewport?.resizeObserver?.disconnect();
 
     assert.ok(grid.credits, 'Credits should be able to be enabled.');
+
+    grid.viewport?.resizeObserver?.disconnect();
 });

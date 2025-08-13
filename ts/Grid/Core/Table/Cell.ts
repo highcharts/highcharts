@@ -114,7 +114,7 @@ abstract class Cell {
      * Init element.
      * @internal
      */
-    public init(): HTMLTableCellElement {
+    protected init(): HTMLTableCellElement {
         return document.createElement('td', {});
     }
 
@@ -291,17 +291,6 @@ abstract class Cell {
         this.row.unregisterCell(this);
         this.htmlElement.remove();
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Cell {
-
 }
 
 

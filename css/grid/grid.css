@@ -374,6 +374,10 @@
     display: block;
 }
 
+.hcg-table thead {
+    background-color: var(--ig-header-background);
+}
+
 .hcg-table thead th {
     position: relative;
     border-right: var(--ig-header-column-border);
@@ -836,6 +840,38 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Credits */
 
+.hcg-credits {
+    display: block;
+    width: 114px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_light.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_lightx2.png") 2x
+        );
+}
+
+.highcharts-light .hcg-credits {
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_light.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_lightx2.png") 2x
+        );
+}
+
+.highcharts-dark .hcg-credits {
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
+        );
+}
+
 .hcg-credits-container.hcg-credits-pro {
     text-align: var(--ig-credits-text-align);
     padding: var(--ig-credits-padding);
@@ -926,6 +962,29 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     100% {
         opacity: 1;
     }
+}
+
+/* Pagination */
+.hcg-table tfoot td {
+    border-top: var(--ig-header-row-border);
+    background: var(--ig-header-background);
+    padding: var(--ig-header-padding);
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper {
+    text-align: right;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button {
+    font-size: 1.25em;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled) {
+    cursor: pointer;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:first-child {
+    margin-right: 5px;
 }
 
 /* Start Grid CSS Helpers Classes */
@@ -1032,6 +1091,15 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     .hcg-container {
         --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
         --hcg-background: var(--highcharts-background-color, #141414);
+    }
+
+    .hcg-credits {
+        background-image:
+            image-set(
+                /* stylelint-disable-next-line function-comma-newline-after */
+                url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
+                url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
+            );
     }
 }
 

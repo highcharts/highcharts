@@ -36,6 +36,7 @@ import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
+import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
@@ -143,6 +144,11 @@ class Grid {
      * The accessibility controller.
      */
     public accessibility?: Accessibility;
+
+    /**
+     * The Pagination controller.
+     */
+    public pagination?: Pagination;
 
     /**
      * The caption element of the Grid.
@@ -268,6 +274,12 @@ class Grid {
      */
     public id: string;
 
+    /**
+     * Functions that unregister events attached to the grid's data table,
+     * that need to be removed when the grid is destroyed.
+     */
+    private dataTableEventDestructors: Function[] = [];
+
 
     /* *
     *
@@ -299,6 +311,7 @@ class Grid {
 
         this.initContainers(renderTo);
         this.initAccessibility();
+        this.initPagination();
         this.loadDataTable(this.options?.dataTable);
         this.initVirtualization();
 
@@ -336,6 +349,20 @@ class Grid {
 
         if (this.options?.accessibility?.enabled) {
             this.accessibility = new Accessibility(this);
+        }
+    }
+
+    /*
+     * Initializes the pagination.
+     */
+    private initPagination(): void {
+        this.pagination?.destroy();
+        delete this.pagination;
+
+        const paginationOptions = this.options?.pagination;
+
+        if (paginationOptions?.enabled) {
+            this.pagination = new Pagination(this, paginationOptions);
         }
     }
 
@@ -532,18 +559,23 @@ class Grid {
         oneToOne = false
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
-        this.initAccessibility();
 
-        let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
             this.userOptions.dataTable = options.dataTable;
             (this.options ?? {}).dataTable = options.dataTable;
 
             this.loadDataTable(this.options?.dataTable);
-            newDataTable = true;
+            this.querying.shouldBeUpdated = true;
 
             this.initVirtualization();
         }
+
+        if (!render) {
+            return;
+        }
+
+        this.initAccessibility();
+        this.initPagination();
 
         this.querying.loadOptions();
 
@@ -557,10 +589,8 @@ class Grid {
             ));
         }
 
-        if (render) {
-            await this.querying.proceed(newDataTable);
-            this.renderViewport();
-        }
+        await this.querying.proceed();
+        this.renderViewport();
     }
 
     public updateColumn(
@@ -813,6 +843,7 @@ class Grid {
         this.renderDescription();
 
         this.accessibility?.setA11yOptions();
+        this.pagination?.render();
 
         fireEvent(this, 'afterRenderViewport');
 
@@ -876,17 +907,42 @@ class Grid {
         return result;
     }
 
+    /**
+     * Loads the data table of the Grid. If the data table is passed as a
+     * reference, it should be used instead of creating a new one.
+     *
+     * @param tableOptions
+     * The data table to load. If not provided, a new data table will be
+     * created.
+     */
     private loadDataTable(tableOptions?: DataTable | DataTableOptions): void {
+        // Unregister all events attached to the previous data table.
+        this.dataTableEventDestructors.forEach((fn): void => fn());
+
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
-        if (tableOptions?.id) {
+        if ((tableOptions as DataTable)?.clone) {
             this.dataTable = tableOptions as DataTable;
             this.presentationTable = this.dataTable.modified;
             return;
         }
 
-        this.dataTable = this.presentationTable =
+        const dt = this.dataTable = this.presentationTable =
             new DataTable(tableOptions as DataTableOptions);
+
+        // If the data table is modified, mark the querying controller to be
+        // updated on the next proceed.
+        ([
+            'afterDeleteColumns',
+            'afterDeleteRows',
+            'afterSetCell',
+            'afterSetColumns',
+            'afterSetRows'
+        ] as const).forEach((eventName): void => {
+            this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
+                this.querying.shouldBeUpdated = true;
+            }));
+        });
     }
 
     /**
@@ -936,6 +992,7 @@ class Grid {
             (dg): boolean => dg === this
         );
 
+        this.dataTableEventDestructors.forEach((fn): void => fn());
         this.viewport?.destroy();
 
         if (this.container) {
@@ -1050,7 +1107,7 @@ class Grid {
      * @returns
      * Grid options.
      */
-    public getOptions(onlyUserOptions = true): Globals.DeepPartial<Options> {
+    public getOptions(onlyUserOptions = true): Partial<Options> {
         const options =
             onlyUserOptions ? merge(this.userOptions) : merge(this.options);
 

@@ -23,8 +23,10 @@
  * */
 
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
+import DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import Grid from '../Grid.js';
 import SortingController from './SortingController.js';
+import PaginationController from './PaginationController.js';
 
 /* *
  *
@@ -47,12 +49,23 @@ class QueryingController {
     /**
      * The data grid instance.
      */
-    private grid: Grid;
+    public grid: Grid;
 
     /**
      * Sorting controller instance
      */
     public sorting: SortingController;
+
+    /**
+     * This flag should be set to `true` if the modifiers should reapply to the
+     * data table due to some data change or other important reason.
+     */
+    public shouldBeUpdated: boolean = false;
+
+    /**
+     * Pagination controller instance
+     */
+    public pagination: PaginationController;
 
 
     /* *
@@ -63,8 +76,8 @@ class QueryingController {
 
     constructor(grid: Grid) {
         this.grid = grid;
-        this.sorting = new SortingController(grid);
-        /// this.filtering = new FilteringController(grid);
+        this.sorting = new SortingController(this);
+        this.pagination = new PaginationController(this);
     }
 
 
@@ -82,11 +95,7 @@ class QueryingController {
      * changed.
      */
     public async proceed(force: boolean = false): Promise<void> {
-        if (
-            force ||
-            this.sorting.shouldBeUpdated // ||
-            // this.filtering.shouldBeUpdated
-        ) {
+        if (force || this.shouldBeUpdated) {
             await this.modifyData();
         }
     }
@@ -96,16 +105,24 @@ class QueryingController {
      */
     public loadOptions(): void {
         this.sorting.loadOptions();
+        this.pagination.loadOptions();
     }
 
     /**
-     * Check if the data table does not need to be modified.
+     * Creates a list of modifiers that should be applied to the data table.
      */
-    public willNotModify(): boolean {
-        return (
-            !this.sorting.modifier
-            // && !this.filtering.modifier
-        );
+    public getModifiers(): DataModifier[] {
+        const modifiers: DataModifier[] = [];
+
+        if (this.sorting.modifier) {
+            modifiers.push(this.sorting.modifier);
+        }
+
+        if (this.pagination.modifier) {
+            modifiers.push(this.pagination.modifier);
+        }
+
+        return modifiers;
     }
 
     /**
@@ -117,16 +134,7 @@ class QueryingController {
             return;
         }
 
-        const modifiers = [];
-
-        // TODO: Implement filtering
-        // if (this.filtering.modifier) {
-        //     modifiers.push(this.filtering.modifier);
-        // }
-
-        if (this.sorting.modifier) {
-            modifiers.push(this.sorting.modifier);
-        }
+        const modifiers = this.getModifiers();
 
         if (modifiers.length > 0) {
             const chainModifier = new ChainModifier({}, ...modifiers);
@@ -137,20 +145,8 @@ class QueryingController {
             this.grid.presentationTable = originalDataTable.modified;
         }
 
-        this.sorting.shouldBeUpdated = false;
-        /// this.filtering.shouldBeUpdated = false;
+        this.shouldBeUpdated = false;
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace QueryingController {
-
 }
 
 
