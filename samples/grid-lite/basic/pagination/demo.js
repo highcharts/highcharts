@@ -50,30 +50,17 @@ window.gridInstance = Grid.grid('container', {
             }
         },
         events: {
-            beforePageChange: function (currentPage, newPage, itemsPerPage) {
-                console.log('Before page change:', {
-                    currentPage,
-                    newPage,
-                    itemsPerPage
-                });
+            beforePageChange: function (pg) {
+                console.log('Before page change:', pg);
             },
-            afterPageChange: function (currentPage, itemsPerPage) {
-                console.log('After page change:', {
-                    currentPage,
-                    itemsPerPage
-                });
+            afterPageChange: function (pg) {
+                console.log('After page change:', pg);
             },
-            beforePageSizeChange: function (newPageSize, oldPageSize) {
-                console.log('Before page size change:', {
-                    newPageSize,
-                    oldPageSize
-                });
+            beforePageSizeChange: function (pg) {
+                console.log('Before page size change:', pg);
             },
-            afterPageSizeChange: function (newPageSize, oldPageSize) {
-                console.log('After page size change:', {
-                    newPageSize,
-                    oldPageSize
-                });
+            afterPageSizeChange: function (pg) {
+                console.log('After page size change:', pg);
             }
         }
     }
