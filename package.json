@@ -163,6 +163,9 @@
     "*.js": [
       "eslint"
     ],
+    "demo.ts": [
+      "eslint"
+    ],
     "./ts/!(Dashboards|Grid)**/*.ts": [
       "npm run lint"
     ],
