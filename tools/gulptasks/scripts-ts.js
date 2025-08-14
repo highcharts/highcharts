@@ -162,7 +162,11 @@ async function scriptsTS(argv) {
                 'ts',
                 argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
                 true,
-                sourcePath => sourcePath.endsWith('.d.ts')
+                sourcePath => (
+                    sourcePath.endsWith('.d.ts') &&
+                    !sourcePath.startsWith(path.join('ts', 'Dashboards')) &&
+                    !sourcePath.startsWith(path.join('ts', 'Grid'))
+                )
             );
         }
 
