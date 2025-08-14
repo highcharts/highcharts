@@ -44,8 +44,8 @@ class DateInputContent extends CellContentPro implements EditModeContent {
      * The format of the input value for each input type.
      */
     private static readonly inputValueFormats: Record<
-    NonNullable<DateInputRenderer.Options['inputType']>,
-    string
+        NonNullable<DateInputRenderer.Options['inputType']>,
+        string
     > = {
             date: '%Y-%m-%d',
             datetime: '%Y-%m-%dT%H:%M:%S',
