@@ -24,6 +24,7 @@
 
 import Column from '../../Core/Table/Column.js';
 import U from '../../../Core/Utilities.js';
+import { FilteringOptions } from '../../Core/Options.js';
 
 const { fireEvent } = U;
 
@@ -58,7 +59,7 @@ class ColumnFiltering {
     * */
 
     /**
-     * Constructs fitering controller for a dedicated column.
+     * Constructs filtering controller for a dedicated column.
      *
      * @param column
      * The filtered column.
@@ -75,19 +76,17 @@ class ColumnFiltering {
     * */
 
     /**
-     * Filters the rows by checking if the column contains the given string
-     * in the cell values.
+     * Applies the filtering to the column.
      *
-     * @param contains
-     * The string to check for in the cell values. If not provided, filter for
-     * this column will be cleared.
+     * @param options
+     * The filtering options.
      */
-    public async filterContaining(contains?: string): Promise<void> {
+    public async applyFilter(options: FilteringOptions): Promise<void> {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
 
-        filteringController.addSimpleCondition(this.column.id, contains);
+        filteringController.addFilterCondition(this.column.id, options);
         await querying.proceed();
 
         viewport.loadPresentationData();

@@ -93,10 +93,11 @@ namespace FilteringComposition {
         this.filterInput = makeHTMLElement('input', {}, inputWrapper);
         this.headerContent.style.paddingBottom =
             this.filterInput.offsetHeight + this.filterInput.offsetTop + 'px';
+        const filteringOptions = column.options.filtering;
 
-        addEvent(this.filterInput, 'keyup', (e): void => {
-            void column.filtering?.filterContaining(e.target.value);
-        });
+        if (filteringOptions?.condition) {
+            void column.filtering?.applyFilter(filteringOptions);
+        }
     }
 }
 
@@ -129,8 +130,37 @@ declare module '../../Core/Options' {
         filtering?: FilteringOptions;
     }
 
-    interface FilteringOptions {
-        enabled: boolean;
+    /**
+     * Column filtering options.
+     */
+    export interface FilteringOptions {
+        /**
+         * The condition to use for filtering the column.
+         */
+        condition?: 'contains' | 'doesNotContain' | 'equals' | 'doesNotEqual' |
+        'beginsWith' | 'endsWith' | 'greaterThan' | 'greaterThanOrEqualTo' |
+        'lessThan' | 'lessThanOrEqualTo' | 'before' | 'after' | 'between' |
+        'empty' | 'notEmpty';
+
+        /**
+         * Whether the filtering is enabled or not.
+         */
+        enabled?: boolean;
+
+        /**
+         * The value that is used with the condition to filter the column.
+         */
+        value?: string;
+
+        /**
+         * Only used with the `between` condition to define the lower bound.
+         */
+        from?: number;
+
+        /**
+         * Only used with the `between` condition to define the upper bound.
+         */
+        to?: number;
     }
 }
 /* *

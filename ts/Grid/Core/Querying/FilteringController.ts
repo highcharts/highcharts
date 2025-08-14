@@ -27,6 +27,7 @@ import type {
 } from '../../../Data/Modifiers/FilterModifierOptions.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
+import { FilteringOptions } from '../Options.js';
 
 
 /* *
@@ -90,39 +91,35 @@ class FilteringController {
     }
 
     /**
-     * Adds a new simple string `contains` condition to the filtering options.
-     * If the condition already exists, it will be updated. If the `contains`
-     * parameter is not provided or empty string, the condition will be removed.
+     * Adds a new filtering condition to the specified column.
      *
      * @param columnId
      * The column ID to filter in.
      *
-     * @param contains
-     * The string to filter by.
+     * @param options
+     * The filtering options.
      */
-    public addSimpleCondition(columnId: string, contains?: string): void {
-        const conditions = this.simpleConditions;
-        const condition: StringCondition = {
-            columnName: columnId,
-            operator: 'contains',
-            value: contains || ''
-        };
+    public addFilterCondition(
+        columnId: string,
+        options: FilteringOptions
+    ): void {
+        const condition = this.mapOptionsToFilter(columnId, options);
 
-        const index = conditions.findIndex(
+        const index = this.simpleConditions.findIndex(
             (c): boolean => c.columnName === columnId
         );
 
         if (index > -1) {
-            if (contains) {
+            if (condition) {
                 // If the condition already exists, update it.
-                conditions[index] = condition;
+                this.simpleConditions[index] = condition;
             } else {
                 // If the condition is empty, remove it.
-                conditions.splice(index, 1);
+                this.simpleConditions.splice(index, 1);
             }
-        } else if (contains) {
+        } else if (condition) {
             // If the condition does not exist, add it.
-            conditions.push(condition);
+            this.simpleConditions.push(condition);
         }
 
         this.shouldBeUpdated = true;
@@ -138,6 +135,164 @@ class FilteringController {
 
         this.simpleConditions.length = 0;
         this.shouldBeUpdated = true;
+    }
+
+    /**
+     * Maps filtering options to the filtering condition.
+     *
+     * @param columnId
+     * Id of the column to filter.
+     *
+     * @param options
+     * Filtering options.
+     */
+    private mapOptionsToFilter(
+        columnId: string,
+        options: FilteringOptions
+    ): any {
+        const condition = options.condition;
+
+        if (condition === 'contains') {
+            return {
+                columnName: columnId,
+                operator: 'contains',
+                value: options.value || ''
+            };
+        }
+
+        if (condition === 'doesNotContain') {
+            return {
+                operator: 'not',
+                conditions: [{
+                    columnName: columnId,
+                    operator: 'contains',
+                    value: options.value
+                }]
+            };
+        }
+
+        if (condition === 'equals') {
+            return {
+                columnName: columnId,
+                operator: '===',
+                value: options.value
+            };
+        }
+
+        if (condition === 'doesNotEqual') {
+            return {
+                columnName: columnId,
+                operator: '!==',
+                value: options.value
+            };
+        }
+
+        if (condition === 'beginsWith') {
+            return {
+                columnName: columnId,
+                operator: 'startsWith',
+                value: options.value
+            };
+        }
+
+        if (condition === 'endsWith') {
+            return {
+                columnName: columnId,
+                operator: 'endsWith',
+                value: options.value
+            };
+        }
+
+        if (condition === 'greaterThan') {
+            return {
+                columnName: columnId,
+                operator: '>',
+                value: options.value
+            };
+        }
+
+        if (condition === 'greaterThanOrEqualTo') {
+            return {
+                columnName: columnId,
+                operator: '>=',
+                value: options.value
+            };
+        }
+
+        if (condition === 'lessThan') {
+            return {
+                columnName: columnId,
+                operator: '<',
+                value: options.value
+            };
+        }
+
+        if (condition === 'lessThanOrEqualTo') {
+            return {
+                columnName: columnId,
+                operator: '<=',
+                value: options.value
+            };
+        }
+
+        if (condition === 'before') {
+            return {
+                columnName: columnId,
+                operator: '<',
+                value: options.value
+            };
+        }
+
+        if (condition === 'after') {
+            return {
+                columnName: columnId,
+                operator: '>',
+                value: options.value
+            };
+        }
+
+        if (condition === 'between') {
+            return {
+                operator: 'and',
+                conditions: [
+                    {
+                        columnName: columnId,
+                        operator: '>=',
+                        value: options.from
+                    },
+                    {
+                        columnName: columnId,
+                        operator: '<=',
+                        value: options.to
+                    }
+                ]
+            };
+        }
+
+        if (condition === 'empty') {
+            return {
+                columnName: columnId,
+                operator: 'empty',
+                value: options.value
+            };
+        }
+
+        if (condition === 'notEmpty') {
+            return {
+                operator: 'not',
+                conditions: [{
+                    columnName: columnId,
+                    operator: 'empty',
+                    value: options.value
+                }]
+            };
+        }
+
+        return {
+            columnName: columnId,
+            operator: 'contains',
+            value: options.value
+        };
     }
 }
 

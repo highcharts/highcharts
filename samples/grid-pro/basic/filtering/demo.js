@@ -42,11 +42,19 @@ Grid.grid('container', {
                 }]
             }]
         }
-    ]
+    ],
     // columns: [{
-    //     id: 'icon',
+    //     id: 'product',
     //     filtering: {
-    //         enabled: true
+    //         condition: 'startsWith',
+    //         value: 'ap'
     //     }
     // }]
+    columns: [{
+        id: 'weight',
+        filtering: {
+            condition: 'lessThan',
+            value: 120
+        }
+    }]
 });
