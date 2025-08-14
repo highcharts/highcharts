@@ -1731,7 +1731,7 @@ class WGLRenderer {
                 gl.bindTexture(gl.TEXTURE_2D, null);
 
                 props.isReady = true;
-            } catch (e) {
+            } catch {
                 // Silent error
             }
         };
