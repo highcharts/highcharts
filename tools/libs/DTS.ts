@@ -54,6 +54,7 @@ export interface ClassInfo {
 
 export type CodeInfo = (
     | ClassInfo
+    | EnumerationInfo
     | FunctionInfo
     | InterfaceInfo
     | NamespaceInfo
@@ -78,11 +79,21 @@ export interface DocletTag {
 }
 
 
+export interface EnumerationInfo {
+    doclet?: InfoDoclet;
+    flags?: Array<InfoFlag>;
+    kind: 'Enumeration';
+    members: Array<PropertyInfo>;
+    meta: InfoMeta;
+    name: string;
+    node: TS.EnumDeclaration;
+}
+
+
 export interface FunctionInfo {
     doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
-    inherited?: boolean;
     kind: 'Function';
     meta: InfoMeta;
     name: string;
@@ -158,7 +169,6 @@ export interface Project {
 export interface PropertyInfo {
     doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
-    inherited?: boolean;
     kind: 'Property';
     meta: InfoMeta;
     name: string;
@@ -280,17 +290,27 @@ const SANITIZE_TYPE = /\(\s*(.*)\s*\)/gsu;
  * @param infos
  * Array of code information to add to.
  *
- * @param symbols
- * Child symbols to process and add.
+ * @param children
+ * Child nodes or symbols to process and add.
  */
 function addChildInfos (
     project: Project,
     infos: Array<CodeInfo>,
-    symbols: Iterable<TS.Symbol>
+    children: (Iterable<TS.Node>|Iterable<TS.Symbol>)
 ): void {
     let _child: (CodeInfo|undefined);
 
-    for (const _symbol of symbols) {
+    for (let _symbol of children) {
+
+        if (isNode(_symbol)) {
+            const _nodeSymbol = nodesSymbol(project.program, _symbol);
+
+            if (!_nodeSymbol) {
+                continue;
+            }
+
+            _symbol = _nodeSymbol;
+        }
 
         _child = project.infoLookup.get(_symbol);
 
@@ -303,21 +323,49 @@ function addChildInfos (
             continue;
         }
 
-        for (const declaration of _symbol.declarations) {
+        for (const _node of _symbol.declarations) {
+
+            if (TS.isExportAssignment(_node)) {
+                continue;
+            }
+
+            if (TS.isVariableStatement(_node)) {
+                addChildInfos(project, infos, _node
+                    .declarationList.declarations
+                    .map(_innerNode => nodesSymbol(project.program, _innerNode))
+                    .filter(_innerSymbol => !!_innerSymbol)
+                );
+                continue;
+            }
+
             _child = (
-                getVariableInfo(project, declaration) ||
-                getTypeAliasInfo(project, declaration) ||
-                getPropertyInfo(project, declaration) ||
-                getNamespaceInfo(project, declaration) ||
-                getInterfaceInfo(project, declaration) ||
-                getFunctionInfo(project, declaration) ||
-                getClassInfo(project, declaration)
+                getVariableInfo(project, _node) ||
+                getTypeAliasInfo(project, _node) ||
+                getPropertyInfo(project, _node) ||
+                getNamespaceInfo(project, _node) ||
+                getInterfaceInfo(project, _node) ||
+                getFunctionInfo(project, _node) ||
+                getEnumerationInfo(project, _node) ||
+                getClassInfo(project, _node)
             );
+
             if (_child) {
                 addInfoDoclet(_child, _symbol, project);
+
+                if (_node.parent.kind !== TS.SyntaxKind.ModuleBlock) {
+                    project.infoLookup.set(_symbol, _child);
+                }
+
                 infos.push(_child);
                 _child = void 0;
+
                 break;
+            } else {
+                console.error(
+                    'NOT SUPPORTED:',
+                    `${_symbol.name}: ${TS.SyntaxKind[_node.kind]}`,
+                    `in ${_node.getSourceFile().fileName}`
+                );
             }
 
         }
@@ -481,6 +529,7 @@ function addInfoGenerics (
         | TS.ClassDeclaration
         | TS.FunctionLikeDeclaration
         | TS.InterfaceDeclaration
+        | TS.MethodSignature
         | TS.TypeAliasDeclaration
     ),
     project: Project
@@ -573,8 +622,10 @@ function addInfoHeritage (
             _heritageClause.token === TS.SyntaxKind.ExtendsKeyword &&
             TS.isClassDeclaration(node)
         ) {
-            _addReferenceType(_heritageClause.types[0]);
-            _classHeritage = _referenceTypes.pop();
+            if (_heritageClause.types.length === 1) {
+                _addReferenceType(_heritageClause.types[0]);
+                _classHeritage = _referenceTypes.pop();
+            }
             continue;
         }
 
@@ -847,6 +898,7 @@ export function extractInfoName (
 
     switch (info.kind) {
         case 'Class':
+        case 'Enumeration':
         case 'Function':
         case 'Interface':
         case 'Namespace':
@@ -1142,13 +1194,55 @@ function getClassInfo (
 
 
 /**
+ * Retrieves enumeration information from the given node.
+ *
+ * @param project
+ * Related project.
+ *
+ * @param node
+ * Node that might be an enumeration.
+ *
+ * @return
+ * Enumeration information or `undefined`.
+ */
+function getEnumerationInfo (
+    project: Project,
+    node: TS.Node
+): (EnumerationInfo|undefined) {
+
+    if (!TS.isEnumDeclaration(node)) {
+        return;
+    }
+
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (!_symbol) {
+        return;
+    }
+
+    const _info = {
+        kind: 'Enumeration',
+        name: symbolsName(_program, _symbol),
+        members: []
+    } as unknown as EnumerationInfo;
+
+    addChildInfos(project, _info.members, node.members);
+    addInfoFlags(_info, node);
+    addInfoMeta(_info, node);
+
+    return _info;
+}
+
+
+/**
  * Retrieves function information from the given node.
  *
  * @param project
  * Related project.
  *
  * @param node
- * Node that might be an import.
+ * Node that might be a function.
  *
  * @return
  * Function information or `undefined`.
@@ -1163,6 +1257,7 @@ function getFunctionInfo (
         !TS.isFunctionDeclaration(node) &&
         !TS.isGetAccessorDeclaration(node) &&
         !TS.isMethodDeclaration(node) &&
+        !TS.isMethodSignature(node) &&
         !TS.isSetAccessorDeclaration(node)
     ) {
         return;
@@ -1288,17 +1383,17 @@ function getNamespaceInfo (
         return;
     }
 
-    const _info: Partial<NamespaceInfo> = {
+    const _info = {
         kind: 'Namespace',
         name: symbolsName(_program, _symbol),
         members: []
-    };
+    } as unknown as NamespaceInfo;
 
-    addChildInfos(project, _info.members!, symbolsChildren(_program, _symbol));
+    addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
-    return _info as NamespaceInfo;
+    return _info;
 }
 
 
@@ -1359,6 +1454,7 @@ function getPropertyInfo (
 ): (PropertyInfo|undefined) {
 
     if (
+        !TS.isEnumMember(node) &&
         !TS.isPropertyDeclaration(node) &&
         !TS.isPropertySignature(node)
     ) {
@@ -1374,9 +1470,14 @@ function getPropertyInfo (
 
     const _info = {
         kind: 'Property',
-        name: symbolsName(_program, _symbol),
-        type: nodesInfoType(project, node.type)
+        name: symbolsName(_program, _symbol)
     } as PropertyInfo;
+
+    if (TS.isEnumMember(node)) {
+        _info.type = node.initializer?.getText();
+    } else {
+        _info.type = nodesInfoType(project, node.type);
+    }
 
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
@@ -1438,8 +1539,11 @@ export function getSourceInfo (
 
     const _info = {
         kind: 'Source',
+        file: Path.relative(
+            project.rootPath,
+            TS.sys.resolvePath(sourceFile.fileName)
+        ),
         code: [],
-        file: Path.relative(project.rootPath, TS.sys.resolvePath(sourceFile.fileName)),
         node: sourceFile
     } as SourceInfo;
 
@@ -1534,7 +1638,10 @@ function getVariableInfo (
         name: symbolsName(_program, _symbol)
     } as VariableInfo;
 
-    if (_symbol.declarations && TS.isTypeNode(_symbol.declarations[0])) {
+    if (
+        _symbol.declarations?.length === 1 &&
+        TS.isTypeNode(_symbol.declarations[0])
+    ) {
         const _infoType = nodesInfoType(project, _symbol.declarations[0]);
 
         if (_infoType) {
@@ -1573,6 +1680,27 @@ function isCapitalCase (
     const firstChar = `${text}`.charAt(0);
 
     return (firstChar === firstChar.toUpperCase());
+}
+
+
+/**
+ * [TS] Tests the given object for an node-like structure.
+ *
+ * @param obj
+ * Object to test.
+ *
+ * @return
+ * `true` if it is a Node, otherwise `false`.
+ */
+function isNode(
+    obj: unknown
+): obj is TS.Node {
+    return (
+        !!obj &&
+        typeof obj === 'object' &&
+        typeof (obj as TS.Node).getSourceFile === 'function' &&
+        typeof (obj as TS.Node).kind === 'number'
+    );
 }
 
 
@@ -1688,13 +1816,7 @@ function nodesInfoType (
  */
 function nodesSymbol(
     program: TS.Program,
-    node: (
-        | TS.Declaration
-        | TS.Expression
-        | TS.SourceFile
-        | TS.TypeNode
-        | TS.TypeReferenceNode
-    )
+    node: TS.Node
 ): (TS.Symbol|undefined) {
     const _typeChecker = program.getTypeChecker();
 
@@ -1702,13 +1824,12 @@ function nodesSymbol(
 
     if (TS.isSourceFile(node)) {
         _symbol = _typeChecker.getSymbolAtLocation(node);
-    } else if (TS.isTypeNode(node)) {
-        _symbol = _typeChecker.getTypeFromTypeNode(node).getSymbol();
     } else if (TS.isTypeReferenceNode(node)) {
         _symbol = _typeChecker.getSymbolAtLocation(node.typeName);
+    } else if (TS.isTypeNode(node)) {
+        _symbol = _typeChecker.getTypeFromTypeNode(node).getSymbol();
     } else {
-        const _identifier = TS.getNameOfDeclaration(node);
-
+        const _identifier = TS.getNameOfDeclaration(node as TS.Declaration);
         if (_identifier) {
             _symbol = _typeChecker.getSymbolAtLocation(_identifier);
         }
@@ -1786,8 +1907,8 @@ function symbolsChildren(
     const _type = symbolsType(program, symbol);
     const _typeChecker = program.getTypeChecker();
 
-    if (symbol.exports) {
-        return Array.from(symbol.exports.values());
+    if (symbol.flags & TS.SymbolFlags.Module) {
+        return _typeChecker.getExportsOfModule(symbol);
     }
 
     return _typeChecker.getPropertiesOfType(_type);
@@ -1961,6 +2082,32 @@ export function toDocletString (
         .join('\n');
 
     return compiled + indent + ' */\n';
+}
+
+/**
+ * Compiles project information into a JSON file.
+ *
+ * @see changeSourceCode
+ *
+ * @param project
+ * Project information to compile.
+ *
+ * @param filePath
+ * File path to save JSON into.
+ */
+export function toProjectJSON (
+    project: Project,
+    filePath: string
+): void {
+    FS.writeFileSync(filePath, JSON.stringify(
+        project,
+        (_key, value) => {
+            if (typeof value?.flags !== 'number') {
+                return value;
+            }
+        },
+        2
+    ), 'utf8');
 }
 
 
