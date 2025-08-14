@@ -34,8 +34,8 @@ import DataConverter from './DataConverter';
  * Options of the JSONConverter.
  */
 export interface JSONConverterOptions extends DataConverter.Options {
-    data: JSONData;
     orientation: 'columns' | 'rows';
+    data?: JSONData;
     columnIds?: string[] | ColumnIdsOptions;
     beforeParse?: JSONBeforeParseCallbackFunction;
 }
