@@ -41,6 +41,10 @@
     padding: 0 1em;
 }
 
+#custom-tooltip .tooltip-value {
+    white-space: nowrap;
+}
+
 #table-wrapper {
     overflow-x: auto;
     padding: 1em;

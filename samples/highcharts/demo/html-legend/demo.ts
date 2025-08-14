@@ -1,16 +1,3 @@
-// Mapping series names to small icon-like symbols (used in tooltip display)
-const icons = {
-    Year: '📅',
-    Coal: '🏭',
-    Gas: '🔥',
-    Petroleum: '⛽️',
-    Hydro: '💧',
-    Nuclear: '☢️',
-    'Net Imports': '🚢',
-    Other: '🔧',
-    Renewables: '🌱'
-};
-
 declare namespace Highcharts {
     interface Series {
         tr?: HTMLElement;
@@ -20,7 +7,7 @@ declare namespace Highcharts {
 
 // Plugin to render custom HTML legend and custom HTML tooltip outside chart
 // container
-(({ addEvent, Chart, Series }) => {
+(({ addEvent, format, Chart, Series }) => {
     const table = document.getElementById('custom-legend'),
         tooltip = document.getElementById('custom-tooltip'),
         tooltipDefault = document.getElementById('tooltip-default'),
@@ -38,21 +25,20 @@ declare namespace Highcharts {
         const highlightRow = () => {
             if (this.hoverPoint) {
                 tooltipDefault.style.display = 'none';
-                tooltipName.innerHTML =
-                    this.options.tooltip.headerFormat +
-                    this.hoverPoint.series.name +
-                    ' ' +
-                    icons[this.hoverPoint.series.name as keyof typeof icons];
-                tooltipValue.innerHTML =
-                    this.options.tooltip.pointFormat +
-                    this.hoverPoint.y +
-                    this.hoverPoint.series.options.custom.valueSuffix;
+                tooltipName.innerHTML = format(
+                    this.options.tooltip.headerFormat,
+                    this.hoverPoint
+                );
+                tooltipValue.innerHTML = format(
+                    this.options.tooltip.pointFormat,
+                    this.hoverPoint
+                );
                 if (typeof this.hoverPoint.series.color === 'string') {
                     tooltip.style.borderColor = this.hoverPoint.series.color;
                 }
             } else {
                 tooltipDefault.style.display = 'block';
-                tooltipName.innerHTML = tooltipValue.innerHTML = '';
+                tooltipName.innerText = tooltipValue.innerText = '';
                 tooltip.style.borderColor = 'gray';
             }
 
@@ -155,7 +141,25 @@ Highcharts.chart('container', {
         type: 'spline'
     },
     data: {
-        csv: document.getElementById('csv').innerHTML
+        csv: document.getElementById('csv').innerHTML,
+        complete: function (options) {
+            // Add custom properties to series
+            options.series.forEach(s => {
+                s.custom = {
+                    icon: {
+                        Year: '📅',
+                        Coal: '🏭',
+                        Gas: '🔥',
+                        Petroleum: '⛽️',
+                        Hydro: '💧',
+                        Nuclear: '☢️',
+                        'Net Imports': '🚢',
+                        Other: '🔧',
+                        Renewables: '🌱'
+                    }[s.name] || ''
+                };
+            });
+        }
     },
 
     title: {
@@ -165,7 +169,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Data source: <a style="color: #ddd" href="https://data.gov/">U.S. Government\'s Open Data</a>'
+        text: `Data source: <a style="color: #ddd" href="https://data.gov/">
+            U.S. Government's Open Data</a>`
     },
 
     legend: {
@@ -173,9 +178,13 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        enabled: false,
-        pointFormat: '<b>Elec. Gen.</b>: ',
-        headerFormat: '<b>Fuel type</b>: '
+        enabled: false, // Because we use a custom tooltip
+        headerFormat: `<b>Fuel type</b>:
+            {series.name} {series.options.custom.icon}<br/>`,
+        pointFormat: `<b>Electricity Generation</b>:
+            <span class="tooltip-value">
+                {point.y:,.1f} {series.options.custom.valueSuffix}
+            </span>`
     },
 
     xAxis: {
@@ -193,7 +202,7 @@ Highcharts.chart('container', {
     plotOptions: {
         series: {
             custom: {
-                valueSuffix: '&nbsp;GWh'
+                valueSuffix: ' GWh'
             },
             marker: {
                 enabled: false,
