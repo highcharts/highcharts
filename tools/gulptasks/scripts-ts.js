@@ -14,6 +14,19 @@ const FS = require('node:fs');
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+// Exclude list to filter out original DTS files from other product sources.
+const HIGHCHARTS_DTS_COPY_EXCLUDES = [
+    'Dashboards',
+    'Data',
+    'Grid'
+].map(p => path.join('ts', p));
+
+/* *
+ *
  *  Tasks
  *
  * */
@@ -164,8 +177,8 @@ async function scriptsTS(argv) {
                 true,
                 sourcePath => (
                     sourcePath.endsWith('.d.ts') &&
-                    !sourcePath.startsWith(path.join('ts', 'Dashboards')) &&
-                    !sourcePath.startsWith(path.join('ts', 'Grid'))
+                    !HIGHCHARTS_DTS_COPY_EXCLUDES
+                        .some(p => sourcePath.startsWith(p))
                 )
             );
         }
