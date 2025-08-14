@@ -1095,10 +1095,13 @@ namespace ExportData {
 
                 // Convert to string if number
                 if (typeof textContent === 'number') {
-                    textContent = textContent.toString();
-                    if (decimalPoint === ',') {
-                        textContent = textContent.replace('.', decimalPoint);
-                    }
+                    textContent = chart.numberFormatter(
+                        textContent,
+                        -1,
+                        decimalPoint,
+                        tagName === 'th' ? '' : void 0
+                    );
+
                     className = 'highcharts-number';
                 } else if (!value) {
                     className = 'highcharts-empty';
