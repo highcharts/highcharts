@@ -387,6 +387,8 @@ class GaugeSeries extends Series {
                 backgroundColor: Palette.neutralColor100
             },
 
+            threshold: 0,
+
             tooltip: {
                 headerFormat: ''
             },
