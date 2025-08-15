@@ -168,7 +168,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
     /**
      * The end angle of the polar X axis or gauge value axis, given in
      * degrees where 0 is north. Defaults to [startAngle](#pane.startAngle)
-     * + 360.
+     * + 360 for polar charts, `startAngle` + 240 for gauges.
      *
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         VU-meter with custom start and end angle
@@ -208,6 +208,19 @@ const pane: PaneOptions|Array<PaneOptions> = {
     size: '85%',
 
     /**
+     * The start angle of the polar X axis or gauge axis, given in degrees
+     * where 0 is north. Defaults to 0 for polar charts, -120 for gauges.
+     *
+     * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+     *         VU-meter with custom start and end angle
+     *
+     * @since   2.3.0
+     * @product highcharts
+     * @type      {number}
+     * @apioption pane.startAngle
+     */
+
+    /**
      * The inner size of the pane, either as a number defining pixels, or a
      * percentage defining a percentage of the pane's size.
      *
@@ -217,19 +230,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @type    {number|string}
      * @product highcharts
      */
-    innerSize: '0%',
-
-    /**
-     * The start angle of the polar X axis or gauge axis, given in degrees
-     * where 0 is north. Defaults to 0.
-     *
-     * @sample {highcharts} highcharts/demo/gauge-vu-meter/
-     *         VU-meter with custom start and end angle
-     *
-     * @since   2.3.0
-     * @product highcharts
-     */
-    startAngle: 0
+    innerSize: '0%'
 
 };
 
