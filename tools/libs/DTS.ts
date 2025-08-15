@@ -40,10 +40,10 @@ import * as TS from 'typescript';
 
 export interface ClassInfo {
     doclet?: InfoDoclet;
-    extends?: ReferenceType;
+    extends?: VariableType;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
-    implements?: Array<ReferenceType>;
+    implements?: Array<VariableType>;
     kind: 'Class';
     members: Array<MemberInfo>;
     meta: InfoMeta;
@@ -199,6 +199,7 @@ export interface ReferenceType {
     meta: InfoMeta;
     name: string;
     symbol: TS.Symbol;
+    type: string;
 }
 
 
@@ -364,6 +365,12 @@ function addChildInfos (
             );
 
             if (_child) {
+
+                if (_child.meta.file.startsWith('..')) {
+                    // Skip externals
+                    continue;
+                }
+
                 addInfoDoclet(_child, _symbol, project);
 
                 if (_node.parent.kind !== TS.SyntaxKind.ModuleBlock) {
@@ -373,15 +380,14 @@ function addChildInfos (
                 infos.push(_child);
                 _child = void 0;
 
-                break;
-            } else {
-                console.error(
-                    'NOT SUPPORTED:',
-                    `${_symbol.name}: ${TS.SyntaxKind[_node.kind]}`,
-                    `in ${_node.getSourceFile().fileName}`
-                );
+                continue;
             }
 
+            console.error(
+                'NOT SUPPORTED:',
+                `${_symbol.name}: ${TS.SyntaxKind[_node.kind]}`,
+                `in ${_node.getSourceFile().fileName}`
+            );
         }
 
     }
@@ -465,6 +471,7 @@ function addInfoFlags (
 ): void {
 
     switch (info.kind) {
+        case 'Export':
         case 'TypeAlias':
         case undefined:
             return;
@@ -584,7 +591,7 @@ function addInfoGenerics (
         }
 
         addInfoFlags(_info, _typeParameter);
-        addInfoMeta(_info, _typeParameter);
+        addInfoMeta(_info, _typeParameter, project);
 
         _generics.push(_info);
     }
@@ -619,17 +626,15 @@ function addInfoHeritage (
     }
 
     const _program = project.program;
-    const _referenceTypes: Array<ReferenceType> = [];
+    const _referenceTypes: Array<VariableType> = [];
     const _addReferenceType = (_type: TS.ExpressionWithTypeArguments): void => {
-        const _heritageSymbol = nodesSymbol(_program, _type);
-        if (_heritageSymbol) {
-            _referenceType = getReferenceType(project, _heritageSymbol);
-            _referenceTypes.push(_referenceType);
+        const _heritageType = nodesInfoType(project, _type);
+        if (_heritageType) {
+            _referenceTypes.push(_heritageType);
         }
     };
 
-    let _referenceType: ReferenceType;
-    let _classHeritage: (ReferenceType|undefined);
+    let _classHeritage: (VariableType|undefined);
 
     for (const _heritageClause of node.heritageClauses) {
 
@@ -677,14 +682,15 @@ function addInfoHeritage (
  */
 function addInfoMeta (
     info: Partial<(CodeInfo|IntersectionType|ReferenceType)>,
-    node?: TS.Node
+    node: (TS.Node|undefined),
+    project: Project
 ): void {
 
     if (node) {
         info.meta = {
             begin: node.getStart(),
             end: node.getEnd(),
-            file: node.getSourceFile().fileName,
+            file: nodesProjectPath(project, node),
             overhead: node.getLeadingTriviaWidth(),
             scope: '',
             syntax: node.kind
@@ -720,7 +726,7 @@ function addInfoScopes (
         parentInfo.kind === 'Source' ?
             '' :
             parentInfo.meta.scope ?
-                `${parentInfo.meta.scope}.${parentInfo.name}` :
+                parentInfo.meta.scope :
                 parentInfo.name
     );
 
@@ -1203,7 +1209,7 @@ function getClassInfo (
         symbolsChildren(_program, _symbol)
     );
     addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
 }
@@ -1245,7 +1251,7 @@ function getEnumerationInfo (
 
     addChildInfos(project, _info.members, node.members);
     addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
 }
@@ -1283,22 +1289,14 @@ function getExportInfo (
         return;
     }
 
-    const _infoType = {
-        kind: 'ReferenceType',
-        name: symbolsName(_program, _symbol),
-        symbol: _symbol
-    } as ReferenceType;
-
-    addInfoMeta(_infoType, _symbol.declarations[0]);
-
     const _info = {
         kind: 'Export',
         name: (node.propertyName || node.name).getText(),
-        type: _infoType
+        type: nodesInfoType(project, _symbol.declarations[0])
     } as ExportInfo;
 
     addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
 }
@@ -1371,7 +1369,7 @@ function getFunctionInfo (
     }
 
     addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
 }
@@ -1418,7 +1416,7 @@ function getInterfaceInfo (
         symbolsChildren(_program, _symbol)
     );
     addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
 }
@@ -1460,7 +1458,7 @@ function getNamespaceInfo (
 
     addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
 }
@@ -1549,38 +1547,9 @@ function getPropertyInfo (
     }
 
     addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
-}
-
-
-/**
- * Retrieves reference information from the given project symbol.
- *
- * @param project
- * Related project.
- *
- * @param symbol
- * Project symbol for reference.
- *
- * @return
- * Reference information.
- */
-function getReferenceType (
-    project: Project,
-    symbol: TS.Symbol
-): ReferenceType {
-    const _program = project.program;
-    const _info: Partial<ReferenceType> = {
-        kind: 'ReferenceType',
-        name: symbolsName(_program, symbol),
-        symbol: symbol
-    };
-
-    addInfoMeta(_info, symbol.declarations?.[0])
-
-    return _info as ReferenceType;
 }
 
 
@@ -1623,10 +1592,6 @@ export function getSourceInfo (
     }
 
     addInfoScopes(_info, _info.code);
-
-    if (_info.file.includes('Formula/Formula')) {
-        console.log({..._info, node: undefined});
-    }
 
     return _info;
 }
@@ -1672,7 +1637,7 @@ function getTypeAliasInfo (
 
     addInfoGenerics(_info, node, project);
     addInfoFlags(_info, node);
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
 }
@@ -1734,7 +1699,7 @@ function getVariableInfo (
         addInfoFlags(_info, node);
     }
 
-    addInfoMeta(_info, node);
+    addInfoMeta(_info, node, project);
 
     return _info;
 }
@@ -1815,70 +1780,102 @@ export function isNativeType (
  */
 function nodesInfoType (
     project: Project,
-    node: (TS.TypeNode|undefined)
+    node: (TS.Declaration|TS.TypeNode|undefined)
 ): (VariableType|undefined) {
 
-    if (
-        !node ||
-        !TS.isTypeNode(node)
-    ) {
+    if (!node) {
         return;
     }
+
+    if (!TS.isTypeNode(node)) {
+        return;
+    }
+
 
     const _program = project.program;
     const _symbol = nodesSymbol(_program, node);
 
-    if (!_symbol) {
+    if (
+        !_symbol ||
+        !_symbol.declarations
+    ) {
         return;
-    }
-
-    if (TS.isImportTypeNode(node)) {
-        console.log('YOYO');
-        return nodesInfoType(project, node.argument);
     }
 
     if (TS.isParenthesizedTypeNode(node)) {
         return nodesInfoType(project, node.type);
     }
 
-    if (TS.isIntersectionTypeNode(node)) {
-        const _infoType = {
-            kind: 'IntersectionType',
-            members: [],
-            symbol: _symbol
-        } as unknown as IntersectionType;
+    if (
+        !nodesProjectPath(project, node).startsWith('..') &&
+        !nodesProjectPath(project, _symbol.declarations[0]).startsWith('..')
+    ) {
 
-        let _subType: (VariableType|undefined);
+        if (TS.isIntersectionTypeNode(node)) {
+            const _infoType = {
+                kind: 'IntersectionType',
+                members: [],
+                symbol: _symbol
+            } as unknown as IntersectionType;
 
-        for (const _subitem of node.types) {
-            _subType = nodesInfoType(project, _subitem);
+            let _subType: (VariableType|undefined);
 
-            if (
-                _subType &&
-                _subType !== 'void'
-            ) {
-                _infoType.members.push(_subType);
+            for (const _subitem of node.types) {
+                _subType = nodesInfoType(project, _subitem);
+
+                if (
+                    _subType &&
+                    _subType !== 'void'
+                ) {
+                    _infoType.members.push(_subType);
+                }
             }
+
+            addInfoMeta(_infoType, node, project);
+
+            return _infoType;
         }
 
-        addInfoMeta(_infoType, node);
+        if (TS.isTypeReferenceNode(node)) {
+            const _infoType = {
+                kind: 'ReferenceType',
+                name: node.typeName.getText(),
+                type: node.getText(),
+                symbol: _symbol
+            } as ReferenceType;
 
-        return _infoType;
-    }
+            addInfoMeta(_infoType, node, project);
 
-    if (TS.isTypeReferenceNode(node)) {
-        const _infoType = {
-            kind: 'ReferenceType',
-            name: node.typeName.getText(),
-            symbol: _symbol
-        } as ReferenceType;
+            return _infoType;
+        }
 
-        addInfoMeta(_infoType, node);
-
-        return _infoType;
     }
 
     return sanitizeType(node.getText());
+}
+
+
+/**
+ * Retrieves the project path for a given node. The path of external nodes
+ * starts with `..`.
+ *
+ * @param project
+ * Related project.
+ *
+ * @param node
+ * Node to return project path for.
+ *
+ * @return
+ * Project path for the given node.
+ */
+function nodesProjectPath(
+    project: Project,
+    node: TS.Node
+): string {
+    return Path.relative(
+        Path.resolve(project.rootPath),
+        Path.resolve(node.getSourceFile().fileName)
+    );
 }
 
 
@@ -1923,7 +1920,7 @@ function nodesSymbol(
         return;
     }
 
-    if (_symbol.flags & TS.SymbolFlags.Alias) {
+    if (_symbol.flags & /* Bit operation */ TS.SymbolFlags.Alias) {
         _symbol = _typeChecker.getAliasedSymbol(_symbol)
     }
 
@@ -1991,7 +1988,7 @@ function symbolsChildren(
     const _type = symbolsType(program, symbol);
     const _typeChecker = program.getTypeChecker();
 
-    if (symbol.flags & TS.SymbolFlags.Module) {
+    if (symbol.flags & /* Bit operation */ TS.SymbolFlags.Module) {
         return _typeChecker.getExportsOfModule(symbol);
     }
 
@@ -2017,7 +2014,7 @@ function symbolsName(
     symbol: TS.Symbol
 ): string {
 
-    if (symbol.flags & TS.SymbolFlags.Alias) {
+    if (symbol.flags & /* Bit operation */ TS.SymbolFlags.Alias) {
         symbol = program.getTypeChecker().getAliasedSymbol(symbol);
     }
 
