@@ -37,8 +37,10 @@ For more details, see [Morningstar’s RiskScore API].
 
 ```js
 const riskScoreConnector = new HighchartsConnectors.Morningstar.RiskScoreConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     portfolios: [
         {
