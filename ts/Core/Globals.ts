@@ -219,27 +219,37 @@ namespace Globals {
             'plotLeft'
         ],
         noop = function (): void {},
-        supportsPassiveEvents = (function (): boolean {
-            // Checks whether the browser supports passive events, (#11353).
+        checkSupportPassiveEvent = function (el: EventTarget = win) : boolean {
             let supportsPassive = false;
 
-            // Object.defineProperty doesn't work on IE as well as passive
-            // events - instead of using polyfill, we can exclude IE totally.
             if (!isMS) {
-                const opts = Object.defineProperty({}, 'passive', {
-                    get: function (): void {
-                        supportsPassive = true;
-                    }
-                });
+                // eslint-disable-next-line no-console
+                const originalConsoleError = console.error;
+                // eslint-disable-next-line no-console
+                console.error = function () : void {};
+                try {
+                    const opts = Object.defineProperty({}, 'passive', {
+                        get() : boolean {
+                            supportsPassive = true;
+                            return true;
+                        }
+                    });
 
-                if (win.addEventListener && win.removeEventListener) {
-                    win.addEventListener('testPassive', noop, opts);
-                    win.removeEventListener('testPassive', noop, opts);
+                    if (el.addEventListener && el.removeEventListener) {
+                        el.addEventListener('testPassive', noop, opts);
+                        el.removeEventListener('testPassive', noop, opts);
+                    }
+                } catch {
+                    supportsPassive = false;
+                } finally {
+                    // eslint-disable-next-line no-console
+                    console.error = originalConsoleError;
                 }
             }
 
             return supportsPassive;
-        }());
+        },
+        supportsPassiveEvents = checkSupportPassiveEvent();
 
     /**
      * An array containing the current chart objects in the page. A chart's

@@ -1720,17 +1720,23 @@ function addEvent<T>(
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
     const addEventListener = (el as any).addEventListener;
+    let supportsPassiveEvents = H.supportsPassiveEvents;
+    if (addEventListener !== Element.prototype.addEventListener) {
+        supportsPassiveEvents = H.checkSupportPassiveEvent(el);
+    }
+
     if (addEventListener) {
-        addEventListener.call(
-            el,
-            type,
-            fn,
-            H.supportsPassiveEvents ? {
+        const args: any[] = [type, fn];
+
+        if (supportsPassiveEvents) {
+            args.push({
                 passive: options.passive === void 0 ?
                     type.indexOf('touch') !== -1 : options.passive,
                 capture: false
-            } : false
-        );
+            });
+        }
+
+        addEventListener.apply(el, args);
     }
 
     if (!events[type]) {

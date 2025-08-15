@@ -55,6 +55,7 @@ export interface GlobalsLike {
     readonly pageLang?: string,
     readonly product: string;
     readonly seriesTypes: SeriesTypeRegistry;
+    checkSupportPassiveEvent: Function;
     readonly supportsPassiveEvents: boolean;
     readonly svg: boolean;
     readonly symbolSizes: Record<string, SizeObject>;
