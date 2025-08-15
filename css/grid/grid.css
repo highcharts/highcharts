@@ -17,6 +17,14 @@
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #e0ebe0;
     --ig-highlight-color-5: #f3f6fe;
+
+    /* Header icon hover colors - Light mode */
+    --hcg-header-icon-hover-background: #e8e8e8;
+    --hcg-header-icon-hover-color: #141414;
+    --hcg-header-icon-color: #626262;
+
+    /* Header background - pure white in light mode */
+    --hcg-header-background: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +37,11 @@
         --ig-positive-default-border-color: #008000;
         --ig-positive-default-background: #265a26;
         --ig-highlight-color-5: #2d2e36;
+
+        /* Header icon hover colors - Dark mode */
+        --hcg-header-icon-hover-background: #3b3b3b;
+        --hcg-header-icon-hover-color: #ffffff;
+        --hcg-header-icon-color: #626262;
     }
 }
 
@@ -41,6 +54,11 @@
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #265a26;
     --ig-highlight-color-5: #2d2e36;
+
+    /* Header icon hover colors - Dark mode */
+    --hcg-header-icon-hover-background: #3b3b3b;
+    --hcg-header-icon-hover-color: #ffffff;
+    --hcg-header-icon-color: #626262;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -289,6 +307,11 @@
     --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+
+    /* Header icon hover colors - Light mode */
+    --ig-header-icon-hover-background: var(--hcg-header-icon-hover-background, #e8e8e8);
+    --ig-header-icon-hover-color: var(--hcg-header-icon-hover-color, #141414);
+    --ig-header-icon-color: var(--hcg-header-icon-color, #626262);
 }
 
 /* ==== End Grid Variables ==== */
@@ -402,6 +425,84 @@
 
 .hcg-table tbody tr:last-of-type td:last-child {
     border-bottom-right-radius: var(--ig-border-radius);
+}
+
+.hcg-head-row-content {
+    display: flex;
+}
+
+/* Header cell flex container */
+.hcg-header-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.hcg-header-cell-content {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.hcg-header-cell-filter-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 0;
+    margin-left: 0;
+    opacity: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
+}
+
+/* Show filter icon on header cell hover - keep visible while hovering the icon container */
+.hcg-table thead th:hover .hcg-header-cell-filter-icon,
+.hcg-header-cell-filter-icon:hover {
+    max-width: 36px;
+    margin-left: 8px;
+    opacity: 1;
+}
+
+/* Individual icon styles */
+.hcg-header-cell-filter-icon img {
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+/* SVG icon styling */
+.hcg-header-cell-filter-icon svg {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.hcg-header-cell-filter-icon svg:hover {
+    background-color: var(--ig-header-icon-hover-background);
+}
+
+/* Light mode - stroke color on hover */
+.hcg-container .hcg-header-cell-filter-icon svg:hover path,
+.highcharts-light .hcg-container .hcg-header-cell-filter-icon svg:hover path {
+    stroke: #141414;
+}
+
+/* Dark mode SVG stroke color changes */
+@media (prefers-color-scheme: dark) {
+    .hcg-container .hcg-header-cell-filter-icon svg:hover path {
+        stroke: #ffffff;
+    }
+}
+
+.highcharts-dark .hcg-container .hcg-header-cell-filter-icon svg:hover path {
+    stroke: #ffffff;
 }
 
 .hcg-resizable-content tr {
