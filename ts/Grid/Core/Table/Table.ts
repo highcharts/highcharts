@@ -36,6 +36,7 @@ import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
 import Defaults from '../Defaults.js';
+import Cell from './Cell.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -136,6 +137,12 @@ class Table {
      * table cell is not focused.
      */
     public focusCursor?: [number, number];
+
+    /**
+     * The only cell that is to be focusable using tab key - a table focus
+     * entry point.
+     */
+    public focusAnchorCell?: Cell;
 
     /**
      * The flag that indicates if the table rows are virtualized.
@@ -512,6 +519,18 @@ class Table {
             const row = this.rows[rowIndex - this.rows[0].index];
             row?.cells[columnIndex]?.htmlElement.focus();
         }
+    }
+
+    /**
+     * Sets the focus anchor cell.
+     *
+     * @param cell
+     * The cell to set as the focus anchor cell.
+     */
+    public setFocusAnchorCell(cell: Cell): void {
+        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
+        this.focusAnchorCell = cell;
+        this.focusAnchorCell.htmlElement.setAttribute('tabindex', '0');
     }
 
     /**
