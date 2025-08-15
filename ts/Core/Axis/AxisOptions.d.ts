@@ -85,8 +85,8 @@ export interface AxisEventsOptions {
 }
 
 export type AxisLabelFormatterCallback = FormatterCallback<
-AxisLabelFormatterContextObject,
-AxisLabelFormatterContextObject
+    AxisLabelFormatterContextObject,
+    AxisLabelFormatterContextObject
 >;
 
 export interface AxisLabelFormatterContextObject {
