@@ -55,6 +55,7 @@ export interface ClassInfo {
 export type CodeInfo = (
     | ClassInfo
     | EnumerationInfo
+    | ExportInfo
     | FunctionInfo
     | InterfaceInfo
     | NamespaceInfo
@@ -62,11 +63,6 @@ export type CodeInfo = (
     | TypeAliasInfo
     | VariableInfo
 );
-
-
-export interface InfoDoclet {
-    [tag: string]: Array<string>
-};
 
 
 export interface DocletTag {
@@ -90,6 +86,17 @@ export interface EnumerationInfo {
 }
 
 
+export interface ExportInfo {
+    doclet?: InfoDoclet;
+    flags: Array<InfoFlag>;
+    kind: 'Export';
+    meta: InfoMeta;
+    name: string;
+    node: TS.ExportSpecifier;
+    type: VariableType;
+}
+
+
 export interface FunctionInfo {
     doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
@@ -105,6 +112,11 @@ export interface FunctionInfo {
     parameters?: Array<VariableInfo>;
     return?: VariableType;
 }
+
+
+export interface InfoDoclet {
+    [tag: string]: Array<string>
+};
 
 
 export type InfoFlag = (
@@ -326,6 +338,7 @@ function addChildInfos (
         for (const _node of _symbol.declarations) {
 
             if (TS.isExportAssignment(_node)) {
+                // Ignore old school exports
                 continue;
             }
 
@@ -345,6 +358,7 @@ function addChildInfos (
                 getNamespaceInfo(project, _node) ||
                 getInterfaceInfo(project, _node) ||
                 getFunctionInfo(project, _node) ||
+                getExportInfo(project, _node) ||
                 getEnumerationInfo(project, _node) ||
                 getClassInfo(project, _node)
             );
@@ -397,8 +411,12 @@ function addInfoDoclet(
 ): (InfoDoclet|undefined) {
     const _typeChecker = project.program.getTypeChecker();
     const _commentParts = symbol.getDocumentationComment(_typeChecker);
+    const _commentTags = symbol.getJsDocTags(_typeChecker);
     
-    if (!_commentParts) {
+    if (
+        !_commentParts ||
+        !_commentTags.length
+    ) {
         return;
     }
 
@@ -419,7 +437,7 @@ function addInfoDoclet(
 
     let _tag: string;
 
-    for (const _part of symbol.getJsDocTags(_typeChecker)) {
+    for (const _part of _commentTags) {
 
         _tag = JSDOC_TAG_REPLACEMENTS[_part.name] || _part.name;
         _doclet[_tag] = _doclet[_tag] || [];
@@ -494,12 +512,9 @@ function addInfoFlags (
     }
 
     if (
-        TS.isExportAssignment(node.parent) ||
         TS.isExportDeclaration(node.parent) &&
-        (
-            TS.getCombinedModifierFlags(node.parent) & // Bit operation
+        TS.getCombinedModifierFlags(node.parent) & // Bit operation
                 TS.ModifierFlags.ExportDefault
-        )
     ) {
         _flags.push('default');
     }
@@ -899,6 +914,7 @@ export function extractInfoName (
     switch (info.kind) {
         case 'Class':
         case 'Enumeration':
+        case 'Export':
         case 'Function':
         case 'Interface':
         case 'Namespace':
@@ -1235,6 +1251,59 @@ function getEnumerationInfo (
 }
 
 
+
+/**
+ * Retrieves export information from the given node.
+ *
+ * @param project
+ * Related project.
+ *
+ * @param node
+ * Node that might be a passthrough export.
+ *
+ * @return
+ * Export information or `undefined`.
+ */
+function getExportInfo (
+    project: Project,
+    node: TS.Node
+): (ExportInfo|undefined) {
+
+    if (!TS.isExportSpecifier(node)) {
+        return;
+    }
+
+    const _program = project.program;
+    const _symbol = nodesSymbol(_program, node);
+
+    if (
+        !_symbol ||
+        !_symbol.declarations
+    ) {
+        return;
+    }
+
+    const _infoType = {
+        kind: 'ReferenceType',
+        name: symbolsName(_program, _symbol),
+        symbol: _symbol
+    } as ReferenceType;
+
+    addInfoMeta(_infoType, _symbol.declarations[0]);
+
+    const _info = {
+        kind: 'Export',
+        name: (node.propertyName || node.name).getText(),
+        type: _infoType
+    } as ExportInfo;
+
+    addInfoFlags(_info, node);
+    addInfoMeta(_info, node);
+
+    return _info;
+}
+
+
 /**
  * Retrieves function information from the given node.
  *
@@ -1555,6 +1624,10 @@ export function getSourceInfo (
 
     addInfoScopes(_info, _info.code);
 
+    if (_info.file.includes('Formula/Formula')) {
+        console.log({..._info, node: undefined});
+    }
+
     return _info;
 }
 
@@ -1622,7 +1695,9 @@ function getVariableInfo (
     node: TS.Node
 ): (VariableInfo|undefined) {
 
-    if (!TS.isVariableDeclaration(node)) {
+    if (
+        !TS.isVariableDeclaration(node)
+    ) {
         return;
     }
 
@@ -1757,16 +1832,22 @@ function nodesInfoType (
         return;
     }
 
+    if (TS.isImportTypeNode(node)) {
+        console.log('YOYO');
+        return nodesInfoType(project, node.argument);
+    }
+
     if (TS.isParenthesizedTypeNode(node)) {
         return nodesInfoType(project, node.type);
     }
 
     if (TS.isIntersectionTypeNode(node)) {
-        let _infoType = {
+        const _infoType = {
             kind: 'IntersectionType',
             members: [],
             symbol: _symbol
         } as unknown as IntersectionType;
+
         let _subType: (VariableType|undefined);
 
         for (const _subitem of node.types) {
@@ -1822,7 +1903,10 @@ function nodesSymbol(
 
     let _symbol: (TS.Symbol|undefined);
 
-    if (TS.isSourceFile(node)) {
+    if (TS.isExportSpecifier(node)) {
+        _symbol = _typeChecker
+            .getSymbolAtLocation(node.propertyName || node.name);
+    } else if (TS.isSourceFile(node)) {
         _symbol = _typeChecker.getSymbolAtLocation(node);
     } else if (TS.isTypeReferenceNode(node)) {
         _symbol = _typeChecker.getSymbolAtLocation(node.typeName);
