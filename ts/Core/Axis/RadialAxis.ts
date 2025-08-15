@@ -49,6 +49,7 @@ const {
     defined,
     extend,
     fireEvent,
+    isNumber,
     isObject,
     merge,
     pick,
@@ -225,7 +226,7 @@ namespace RadialAxis {
             this.max++;
         }
 
-        if (this.autoConnect) {
+        if (this.autoConnect && isNumber(this.max)) {
             this.max += (
                 (this.categories && 1) ||
                 this.pointRange ||
@@ -854,7 +855,6 @@ namespace RadialAxis {
         radialAxis.getOffset = noop;
         radialAxis.redraw = renderHidden;
         radialAxis.render = renderHidden;
-        radialAxis.setScale = noop;
         radialAxis.setCategories = noop;
         radialAxis.setTitle = noop;
     }
@@ -1019,7 +1019,7 @@ namespace RadialAxis {
         this: AxisComposition
     ): void {
         if (this.isRadial) {
-            this.beforeSetTickPositions();
+            this.beforeSetTickPositions?.();
         }
     }
 
