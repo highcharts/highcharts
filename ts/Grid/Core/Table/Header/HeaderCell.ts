@@ -301,7 +301,7 @@ class HeaderCell extends Cell {
             className: Globals.getClassName('headerCellFilterIcon')
         });
 
-        // Create inline SVG for better control over styling
+        // Create button with icon inside following Grid button/icon pattern
         const svgPath = 'M2.2571 3.77791C1.75287 3.21437 1.50076 2.93259 ' +
             '1.49125 2.69312C1.48299 2.48509 1.57238 2.28515 1.73292 ' +
             '2.15259C1.91773 2 2.29583 2 3.05202 2H12.9473C13.7035 2 ' +
@@ -321,11 +321,14 @@ class HeaderCell extends Cell {
             '8.14196 6.06126 8.02962L2.2571 3.77791Z';
 
         spanElement.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" ` +
-            `xmlns="http://www.w3.org/2000/svg">
-                <path d="${svgPath}" stroke="#8A8A8A" stroke-width="1.33" ` +
-                `stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <button class="hcg-button" type="button">
+                <svg class="hcg-icon" width="16" height="16" ` +
+                'viewBox="0 0 16 16" fill="none" ' +
+                `xmlns="http://www.w3.org/2000/svg">
+                    <path d="${svgPath}" stroke-width="1.33" ` +
+                    `stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
         `;
 
         return spanElement;

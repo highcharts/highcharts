@@ -18,10 +18,16 @@
     --ig-positive-default-background: #e0ebe0;
     --ig-highlight-color-5: #f3f6fe;
 
-    /* Header icon hover colors - Light mode */
-    --hcg-header-icon-hover-background: #e8e8e8;
-    --hcg-header-icon-hover-color: #141414;
-    --hcg-header-icon-color: #626262;
+    /* Button styles - Light mode */
+    --hcg-button-background: transparent;
+    --hcg-button-hover-background: #e8e8e8;
+    --hcg-button-color: #141414;
+    --hcg-button-padding: 3px;
+    --hcg-button-border-radius: 4px;
+
+    /* Icon styles - Light mode */
+    --hcg-icon-color: #626262;
+    --hcg-icon-hover-color: #141414;
 
     /* Header background - pure white in light mode */
     --hcg-header-background: #ffffff;
@@ -38,10 +44,12 @@
         --ig-positive-default-background: #265a26;
         --ig-highlight-color-5: #2d2e36;
 
-        /* Header icon hover colors - Dark mode */
-        --hcg-header-icon-hover-background: #3b3b3b;
-        --hcg-header-icon-hover-color: #ffffff;
-        --hcg-header-icon-color: #626262;
+        /* Button styles - Dark mode */
+        --hcg-button-hover-background: #3b3b3b;
+        --hcg-button-color: #ffffff;
+
+        /* Icon styles - Dark mode */
+        --hcg-icon-hover-color: #ffffff;
     }
 }
 
@@ -55,10 +63,12 @@
     --ig-positive-default-background: #265a26;
     --ig-highlight-color-5: #2d2e36;
 
-    /* Header icon hover colors - Dark mode */
-    --hcg-header-icon-hover-background: #3b3b3b;
-    --hcg-header-icon-hover-color: #ffffff;
-    --hcg-header-icon-color: #626262;
+    /* Button styles - Dark mode */
+    --hcg-button-hover-background: #3b3b3b;
+    --hcg-button-color: #ffffff;
+
+    /* Icon styles - Dark mode */
+    --hcg-icon-hover-color: #ffffff;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -308,10 +318,16 @@
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
 
-    /* Header icon hover colors - Light mode */
-    --ig-header-icon-hover-background: var(--hcg-header-icon-hover-background, #e8e8e8);
-    --ig-header-icon-hover-color: var(--hcg-header-icon-hover-color, #141414);
-    --ig-header-icon-color: var(--hcg-header-icon-color, #626262);
+    /* Button styles */
+    --ig-button-background: var(--hcg-button-background, transparent);
+    --ig-button-hover-background: var(--hcg-button-hover-background, #e8e8e8);
+    --ig-button-color: var(--hcg-button-color, #141414);
+    --ig-button-padding: var(--hcg-button-padding, 3px);
+    --ig-button-border-radius: var(--hcg-button-border-radius, 4px);
+
+    /* Icon styles */
+    --ig-icon-color: var(--hcg-icon-color, #626262);
+    --ig-icon-hover-color: var(--hcg-icon-hover-color, #141414);
 }
 
 /* ==== End Grid Variables ==== */
@@ -474,35 +490,42 @@
     transition: background-color 0.2s ease;
 }
 
-/* SVG icon styling */
-.hcg-header-cell-filter-icon svg {
-    width: 100%;
-    height: 100%;
-    padding: 5px;
-    border-radius: 4px;
+/* Generic button styling for Grid */
+.hcg-button {
+    background: var(--ig-button-background);
+    padding: var(--ig-button-padding);
+    border-radius: var(--ig-button-border-radius);
+    border: none;
+    cursor: pointer;
     transition: background-color 0.2s ease;
-    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.hcg-header-cell-filter-icon svg:hover {
-    background-color: var(--ig-header-icon-hover-background);
+.hcg-button:hover {
+    background: var(--ig-button-hover-background);
 }
 
-/* Light mode - stroke color on hover */
-.hcg-container .hcg-header-cell-filter-icon svg:hover path,
-.highcharts-light .hcg-container .hcg-header-cell-filter-icon svg:hover path {
-    stroke: #141414;
+/* Generic icon styling for Grid */
+.hcg-icon {
+    width: 20px;
+    height: 16px;
+    transition: stroke 0.2s ease;
 }
 
-/* Dark mode SVG stroke color changes */
-@media (prefers-color-scheme: dark) {
-    .hcg-container .hcg-header-cell-filter-icon svg:hover path {
-        stroke: #ffffff;
-    }
+.hcg-icon path {
+    stroke: var(--ig-icon-color);
 }
 
-.highcharts-dark .hcg-container .hcg-header-cell-filter-icon svg:hover path {
-    stroke: #ffffff;
+.hcg-button:hover .hcg-icon path {
+    stroke: var(--ig-icon-hover-color);
+}
+
+/* Filter icon specific styling */
+.hcg-header-cell-filter-icon .hcg-button {
+    width: 26px;
+    height: 20px;
 }
 
 .hcg-resizable-content tr {
