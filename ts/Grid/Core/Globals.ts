@@ -75,6 +75,7 @@ namespace Globals {
         scrollableContent: 'scrollable-content',
         headerCell: 'header-cell',
         headerCellContent: 'header-cell-content',
+        headerCellFilterIcon: 'header-cell-filter-icon',
         headerRow: 'head-row-content',
         noData: 'no-data',
         noPadding: 'no-padding',

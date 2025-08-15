@@ -17,6 +17,20 @@
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #e0ebe0;
     --ig-highlight-color-5: #f3f6fe;
+
+    /* Button styles - Light mode */
+    --hcg-button-background: transparent;
+    --hcg-button-hover-background: #e8e8e8;
+    --hcg-button-color: #141414;
+    --hcg-button-padding: 3px;
+    --hcg-button-border-radius: 4px;
+
+    /* Icon styles - Light mode */
+    --hcg-icon-color: #626262;
+    --hcg-icon-hover-color: #141414;
+
+    /* Header background - pure white in light mode */
+    --hcg-header-background: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +43,13 @@
         --ig-positive-default-border-color: #008000;
         --ig-positive-default-background: #265a26;
         --ig-highlight-color-5: #2d2e36;
+
+        /* Button styles - Dark mode */
+        --hcg-button-hover-background: #3b3b3b;
+        --hcg-button-color: #ffffff;
+
+        /* Icon styles - Dark mode */
+        --hcg-icon-hover-color: #ffffff;
     }
 }
 
@@ -41,6 +62,13 @@
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #265a26;
     --ig-highlight-color-5: #2d2e36;
+
+    /* Button styles - Dark mode */
+    --hcg-button-hover-background: #3b3b3b;
+    --hcg-button-color: #ffffff;
+
+    /* Icon styles - Dark mode */
+    --hcg-icon-hover-color: #ffffff;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -289,6 +317,17 @@
     --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+
+    /* Button styles */
+    --ig-button-background: var(--hcg-button-background, transparent);
+    --ig-button-hover-background: var(--hcg-button-hover-background, #e8e8e8);
+    --ig-button-color: var(--hcg-button-color, #141414);
+    --ig-button-padding: var(--hcg-button-padding, 3px);
+    --ig-button-border-radius: var(--hcg-button-border-radius, 4px);
+
+    /* Icon styles */
+    --ig-icon-color: var(--hcg-icon-color, #626262);
+    --ig-icon-hover-color: var(--hcg-icon-hover-color, #141414);
 }
 
 /* ==== End Grid Variables ==== */
@@ -402,6 +441,91 @@
 
 .hcg-table tbody tr:last-of-type td:last-child {
     border-bottom-right-radius: var(--ig-border-radius);
+}
+
+.hcg-head-row-content {
+    display: flex;
+}
+
+/* Header cell flex container */
+.hcg-header-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.hcg-header-cell-content {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.hcg-header-cell-filter-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 0;
+    margin-left: 0;
+    opacity: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
+}
+
+/* Show filter icon on header cell hover - keep visible while hovering the icon container */
+.hcg-table thead th:hover .hcg-header-cell-filter-icon,
+.hcg-header-cell-filter-icon:hover {
+    max-width: 36px;
+    margin-left: 8px;
+    opacity: 1;
+}
+
+/* Individual icon styles */
+.hcg-header-cell-filter-icon img {
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+/* Generic button styling for Grid */
+.hcg-button {
+    background: var(--ig-button-background);
+    padding: var(--ig-button-padding);
+    border-radius: var(--ig-button-border-radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hcg-button:hover {
+    background: var(--ig-button-hover-background);
+}
+
+/* Generic icon styling for Grid */
+.hcg-icon {
+    width: 20px;
+    height: 16px;
+    transition: stroke 0.2s ease;
+}
+
+.hcg-icon path {
+    stroke: var(--ig-icon-color);
+}
+
+.hcg-button:hover .hcg-icon path {
+    stroke: var(--ig-icon-hover-color);
+}
+
+/* Filter icon specific styling */
+.hcg-header-cell-filter-icon .hcg-button {
+    width: 26px;
+    height: 20px;
 }
 
 .hcg-resizable-content tr {
