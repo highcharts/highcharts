@@ -48,7 +48,6 @@ class JSONConnector extends DataConnector {
      * */
 
     protected static readonly defaultOptions: JSONConnectorOptions = {
-        data: [],
         enablePolling: false,
         dataRefreshRate: 0,
         firstRowAsNames: true,
