@@ -232,10 +232,6 @@ abstract class Component {
      */
     public id: string;
     /**
-     * Reference to the specific connector data table.
-     */
-    public dataTableKey?: string;
-    /**
      * An array of options marked as editable by the UI.
      *
      */
@@ -329,11 +325,6 @@ abstract class Component {
                     new ConnectorHandler(this, connectorOptions)
                 );
             }
-
-            // Assign the data table key to define the proper dataTable.
-            this.dataTableKey = isArray(this.options.connector) ?
-                this.options.connector[0].dataTableKey :
-                this.options.connector.dataTableKey;
         }
 
         this.editableOptions =
@@ -666,10 +657,20 @@ abstract class Component {
 
         if (!connectorsHaveChanged) {
             for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
-                const oldConnectorId = this.connectorHandlers[i]?.options.id;
-                const newConnectorId = connectorOptions[i]?.id;
+                // Check if the connector id has changed.
+                if (
+                    connectorOptions[i]?.id !==
+                    this.connectorHandlers[i]?.options.id
+                ) {
+                    connectorsHaveChanged = true;
+                    break;
+                }
 
-                if (oldConnectorId !== newConnectorId) {
+                // Check if the data table key has changed.
+                if (
+                    connectorOptions[i]?.dataTableKey !==
+                    this.connectorHandlers[i]?.options.dataTableKey
+                ) {
                     connectorsHaveChanged = true;
                     break;
                 }
@@ -690,12 +691,6 @@ abstract class Component {
                 );
             }
             await this.initConnectors();
-        }
-
-        // Assign the data table key to define the proper dataTable.
-        const firstConnectorDataTableKey = connectorOptions[0]?.dataTableKey;
-        if (firstConnectorDataTableKey) {
-            this.dataTableKey = firstConnectorDataTableKey;
         }
 
         if (shouldRerender || eventObject.shouldForceRerender) {
