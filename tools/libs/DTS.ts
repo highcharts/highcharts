@@ -126,7 +126,6 @@ export interface InfoMeta {
     column: number;
     file: string;
     line: number;
-    overhead: number;
     scope: string;
     syntax: number;
 }
@@ -155,6 +154,7 @@ export interface InterfaceInfo {
 
 
 export interface IntersectionType {
+    isConditional?: boolean;
     kind: 'IntersectionType';
     members: Array<InfoType>;
     meta: InfoMeta;
@@ -205,7 +205,6 @@ export interface ReferenceType {
     isTypeOf?: boolean;
     kind: 'ReferenceType';
     meta: InfoMeta;
-    name: string;
     symbol: TS.Symbol;
     type: string;
 }
@@ -719,7 +718,6 @@ function addInfoMeta (
             column: _location.column,
             file: nodesProjectPath(project, node),
             line: _location.line,
-            overhead: node.getLeadingTriviaWidth(),
             scope: '',
             syntax: node.kind
         };
@@ -728,7 +726,6 @@ function addInfoMeta (
             column: 1,
             file: '',
             line: 1,
-            overhead: 0,
             scope: '',
             syntax: TS.SyntaxKind.Unknown
         };
@@ -1845,13 +1842,22 @@ function nodesInfoType (
         !nodesProjectPath(project, _symbol.declarations[0]).startsWith('..')
     ) {
 
-        if (TS.isExpressionWithTypeArguments(node)) {
-            const _expression = (node as TS.ExpressionWithTypeArguments);
-            const _innerSymbol = nodesSymbol(_program, _expression.expression);
+        if (
+            TS.isExpressionWithTypeArguments(node) ||
+            (
+                TS.isTypeReferenceNode(node) &&
+                node.typeArguments
+            )
+        ) {
+            const _innerSymbol = nodesSymbol(_program, (
+                TS.isExpressionWithTypeArguments(node) ?
+                    node.expression :
+                    node
+            ));
 
             if (
                 _innerSymbol &&
-                _expression.typeArguments
+                node.typeArguments
             ) {
                 // Only process real generics, rest becomes references
                 const _infoType = {
@@ -1863,7 +1869,7 @@ function nodesInfoType (
 
                 let _argInfoType: (InfoType|undefined);
 
-                for (const _arg of _expression.typeArguments) {
+                for (const _arg of node.typeArguments) {
                     _argInfoType = nodesInfoType(project, _arg);
                     if (_argInfoType) {
                         _infoType.arguments.push(_argInfoType);
@@ -1877,6 +1883,7 @@ function nodesInfoType (
         }
 
         if (
+            TS.isConditionalTypeNode(node) ||
             TS.isIntersectionTypeNode(node) ||
             TS.isUnionTypeNode(node)
         ) {
@@ -1890,17 +1897,28 @@ function nodesInfoType (
                 symbol: _symbol
             } as unknown as IntersectionType;
 
-            let _subType: (InfoType|undefined);
+            const _isConditional = TS.isConditionalTypeNode(node);
+            const _innerNodes = (
+                _isConditional ?
+                    [node.trueType, node.falseType] :
+                    node.types
+            );
 
-            for (const _subitem of node.types) {
-                _subType = nodesInfoType(project, _subitem);
+            let _innerType: (InfoType|undefined);
+
+            for (const _innerNode of _innerNodes) {
+                _innerType = nodesInfoType(project, _innerNode);
 
                 if (
-                    _subType &&
-                    _subType !== 'void'
+                    _innerType &&
+                    _innerType !== 'void'
                 ) {
-                    _infoType.members.push(_subType);
+                    _infoType.members.push(_innerType);
                 }
+            }
+
+            if (_isConditional) {
+                _infoType.isConditional = true;
             }
 
             addInfoMeta(_infoType, node, project);
@@ -1913,21 +1931,19 @@ function nodesInfoType (
             TS.isTypeQueryNode(node) ||
             TS.isTypeReferenceNode(node)
         ) {
-            const _name = (
-                TS.isExpressionWithTypeArguments(node) ?
-                    symbolsName(_program, _symbol) :
-                    TS.isTypeQueryNode(node) ?
-                        node.exprName.getText() :
-                        node.typeName.getText()
+            const _isTypeOf = TS.isTypeQueryNode(node);
+            const _type = (
+                _isTypeOf ?
+                    node.getText().substring(7) :
+                    node.getText()
             );
             const _infoType = {
                 kind: 'ReferenceType',
-                name: _name,
-                type: node.getText(),
+                type: _type,
                 symbol: _symbol
-            } as ReferenceType;
+            } as unknown as ReferenceType;
 
-            if (TS.isTypeQueryNode(node)) {
+            if (_isTypeOf) {
                 _infoType.isTypeOf = true;
             }
 
