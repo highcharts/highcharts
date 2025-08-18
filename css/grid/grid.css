@@ -520,7 +520,8 @@
 
 /* Show icons on header cell hover - supports multiple icons */
 .hcg-table thead th:hover .hcg-header-cell-icons,
-.hcg-header-cell-icons:hover {
+.hcg-header-cell-icons:hover,
+.hcg-header-cell-icons.has-active-icons {
     max-width: 100px;
     margin-left: 8px;
     opacity: 1;
@@ -561,6 +562,15 @@
 /* Sort icon transitions */
 .hcg-header-cell-sort-icon .hcg-icon {
     transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Active icon styling - icons that are in an active state */
+.hcg-header-cell-icons .hcg-button.active {
+    background: var(--ig-button-hover-background);
+}
+
+.hcg-header-cell-icons .hcg-button.active .hcg-icon {
+    color: var(--ig-icon-hover-color);
 }
 
 .hcg-resizable-content tr {

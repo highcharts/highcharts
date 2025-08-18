@@ -74,6 +74,12 @@ interface HeaderIconConfig {
     alwaysVisible?: boolean;
 
     /**
+     * Whether the icon is currently in an active state (e.g., filter applied,
+     * sorting active). Active icons are always visible.
+     */
+    isActive?: boolean;
+
+    /**
      * Custom state data for the icon (e.g., sorting order).
      */
     state?: any;
@@ -259,7 +265,7 @@ class HeaderIconManager {
 
         // Create button
         const button = makeHTMLElement('button', {
-            className: 'hcg-button'
+            className: config.isActive ? 'hcg-button active' : 'hcg-button'
         }) as HTMLButtonElement;
         button.type = 'button';
 
@@ -280,12 +286,14 @@ class HeaderIconManager {
         if (config.onClick) {
             button.addEventListener('click', (event: MouseEvent): void => {
                 event.stopPropagation();
-                config.onClick!(event, this.headerCell);
+                if (config.onClick) {
+                    config.onClick(event, this.headerCell);
+                }
             });
         }
 
         // Set visibility behavior
-        if (!config.alwaysVisible) {
+        if (!config.alwaysVisible && !config.isActive) {
             iconWrapper.style.display = 'none';
         }
 
@@ -330,6 +338,45 @@ class HeaderIconManager {
             if (config.onStateChange) {
                 config.onStateChange(element, state, this.headerCell);
             }
+        }
+    }
+
+    /**
+     * Sets the active state of a specific icon.
+     * Active icons are always visible, even without hover.
+     *
+     * @param id
+     * The icon identifier.
+     *
+     * @param isActive
+     * Whether the icon is in an active state.
+     */
+    public setIconActive(id: string, isActive: boolean): void {
+        const config = this.iconConfigs.get(id);
+        const element = this.iconElements.get(id);
+
+        if (config && element) {
+            config.isActive = isActive;
+
+            // Update active CSS class on button
+            const button = element.querySelector('.hcg-button');
+            if (button) {
+                if (isActive) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            }
+
+            // Update visibility immediately
+            if (isActive) {
+                element.style.display = 'flex';
+            } else if (!config.alwaysVisible) {
+                element.style.display = 'none';
+            }
+
+            // Update container class to show when has active icons
+            this.updateContainerActiveState();
         }
     }
 
@@ -379,6 +426,7 @@ class HeaderIconManager {
     /**
      * Shows or hides icons based on hover state.
      * This is typically called from header cell hover events.
+     * Active icons remain visible regardless of hover state.
      *
      * @param show
      * Whether to show the icons.
@@ -387,7 +435,12 @@ class HeaderIconManager {
         for (const [id, element] of this.iconElements) {
             const config = this.iconConfigs.get(id);
             if (config && !config.alwaysVisible) {
-                element.style.display = show ? 'flex' : 'none';
+                // Active icons should always be visible
+                if (config.isActive) {
+                    element.style.display = 'flex';
+                } else {
+                    element.style.display = show ? 'flex' : 'none';
+                }
             }
         }
     }
@@ -399,6 +452,22 @@ class HeaderIconManager {
         this.iconContainer.innerHTML = '';
         this.iconConfigs.clear();
         this.iconElements.clear();
+    }
+
+    /**
+     * Updates the container CSS class to show when it has active icons.
+     * This ensures the container remains visible when it contains active icons.
+     */
+    private updateContainerActiveState(): void {
+        const hasActiveIcons = Array.from(this.iconConfigs.values()).some(
+            (config): boolean => config.isActive === true
+        );
+
+        if (hasActiveIcons) {
+            this.iconContainer.classList.add('has-active-icons');
+        } else {
+            this.iconContainer.classList.remove('has-active-icons');
+        }
     }
 
     /**

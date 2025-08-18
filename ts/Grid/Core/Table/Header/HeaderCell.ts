@@ -394,12 +394,31 @@ class HeaderCell extends Cell {
 
         const { currentSorting } = this.column.viewport.grid.querying.sorting;
         let sortState = 'none';
+        let isActive = false;
 
         if (currentSorting?.columnId === this.column.id) {
             sortState = currentSorting.order || 'none';
+            isActive = sortState !== 'none';
         }
 
+        // Update both state and active status
         this.iconManager.updateIconState('sort', sortState);
+        this.iconManager.setIconActive('sort', isActive);
+    }
+
+    /**
+     * Updates the filter icon active state.
+     * Call this when a filter is applied or removed for this column.
+     *
+     * @param isActive
+     * Whether a filter is currently applied to this column.
+     */
+    public setFilterActive(isActive: boolean): void {
+        if (!this.iconManager) {
+            return;
+        }
+
+        this.iconManager.setIconActive('filter', isActive);
     }
 }
 
