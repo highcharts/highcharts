@@ -110,7 +110,7 @@ class HeatmapSeries extends ScatterSeries {
 
     public colorAxis!: ColorAxis;
 
-    public context?: CanvasRenderingContext2D;
+    public context?: CanvasRenderingContext2D | any;
 
     public data!: Array<HeatmapPoint>;
 
@@ -125,6 +125,10 @@ class HeatmapSeries extends ScatterSeries {
     public valueMin: number = NaN;
 
     public isDirtyCanvas: boolean = true;
+
+    public adapter?: any;
+
+    public device?: any;
 
     /* *
      *
@@ -341,6 +345,11 @@ class HeatmapSeries extends ScatterSeries {
         if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
         }
+
+        const canvas = this.canvas = document.createElement('canvas');
+        if (canvas) {
+            this.context = canvas?.getContext('webgpu') as any;
+        }
     }
 
     /**
@@ -522,6 +531,36 @@ class HeatmapSeries extends ScatterSeries {
         }
 
         fireEvent(series, 'afterTranslate');
+    }
+
+    private get3DData(): any {
+        const points3d: Float32Array = new Float32Array(this.points.length * 3);
+
+        this.points.forEach((point, i): void => {
+            points3d[i * 3] = point.x;
+            points3d[i * 3 + 1] = point.y;
+            points3d[i * 3 + 2] = point.value ?? 0;
+        });
+
+        return points3d;
+    }
+
+    public async run(): Promise<void> {
+        const { context } = this;
+        if (!this.adapter) {
+            this.adapter = await (navigator as any)?.gpu.requestAdapter();
+        }
+        if (!this.device) {
+            this.device = await this.adapter.requestDevice();
+        }
+        const { device } = this;
+
+        const canvasFormat = (navigator as any)?.gpu.getPreferredCanvasFormat();
+        context?.configure({
+            device: device,
+            format: canvasFormat
+        });
+
     }
 
     /* eslint-enable valid-jsdoc */
