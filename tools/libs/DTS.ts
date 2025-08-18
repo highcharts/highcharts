@@ -123,9 +123,9 @@ export type InfoFlag = (
 
 
 export interface InfoMeta {
-    begin: number;
-    end: number;
+    column: number;
     file: string;
+    line: number;
     overhead: number;
     scope: string;
     syntax: number;
@@ -202,6 +202,7 @@ export interface PropertyInfo {
 
 
 export interface ReferenceType {
+    isTypeOf?: boolean;
     kind: 'ReferenceType';
     meta: InfoMeta;
     name: string;
@@ -712,19 +713,21 @@ function addInfoMeta (
     }
 
     if (node) {
+        const _location = nodesLocation(node);
+
         info.meta = {
-            begin: node.getStart(),
-            end: node.getEnd(),
+            column: _location.column,
             file: nodesProjectPath(project, node),
+            line: _location.line,
             overhead: node.getLeadingTriviaWidth(),
             scope: '',
             syntax: node.kind
         };
     } else {
         info.meta = {
-            begin: 0,
-            end: 0,
+            column: 1,
             file: '',
+            line: 1,
             overhead: 0,
             scope: '',
             syntax: TS.SyntaxKind.Unknown
@@ -897,16 +900,13 @@ export function error(
     message: string,
     node: TS.Node
 ): void {
-    const _sourceFile = node.getSourceFile();
-    const _fileName = Path.resolve(_sourceFile.fileName);
-    const _linesUntilPos = _sourceFile
-        .getFullText()
-        .substring(0, node.getStart())
-        .split(/\r?\n/gsu);
-    const _ln = _linesUntilPos.length;
-    const _col = _linesUntilPos[_ln - 1].length + 1;
+    const _fileName = node.getSourceFile().fileName;
+    const _location = nodesLocation(node);
 
-    console.error(message, `\n  in ${_fileName}:${_ln}:${_col}`);
+    console.error(
+        message,
+        `\n  in ${_fileName}:${_location.line}:${_location.column}`
+    );
 }
 
 
@@ -1845,14 +1845,15 @@ function nodesInfoType (
         !nodesProjectPath(project, _symbol.declarations[0]).startsWith('..')
     ) {
 
-        if (
-            TS.isExpression(node) &&
-            node.kind === TS.SyntaxKind.ExpressionWithTypeArguments
-        ) {
+        if (TS.isExpressionWithTypeArguments(node)) {
             const _expression = (node as TS.ExpressionWithTypeArguments);
             const _innerSymbol = nodesSymbol(_program, _expression.expression);
 
-            if (_innerSymbol) {
+            if (
+                _innerSymbol &&
+                _expression.typeArguments
+            ) {
+                // Only process real generics, rest becomes references
                 const _infoType = {
                     kind: 'GenericType',
                     name: _innerSymbol.name,
@@ -1862,9 +1863,7 @@ function nodesInfoType (
 
                 let _argInfoType: (InfoType|undefined);
 
-                for (
-                    const _arg of _expression.typeArguments || []
-                ) {
+                for (const _arg of _expression.typeArguments) {
                     _argInfoType = nodesInfoType(project, _arg);
                     if (_argInfoType) {
                         _infoType.arguments.push(_argInfoType);
@@ -1909,13 +1908,28 @@ function nodesInfoType (
             return _infoType;
         }
 
-        if (TS.isTypeReferenceNode(node)) {
+        if (
+            TS.isExpressionWithTypeArguments(node) ||
+            TS.isTypeQueryNode(node) ||
+            TS.isTypeReferenceNode(node)
+        ) {
+            const _name = (
+                TS.isExpressionWithTypeArguments(node) ?
+                    symbolsName(_program, _symbol) :
+                    TS.isTypeQueryNode(node) ?
+                        node.exprName.getText() :
+                        node.typeName.getText()
+            );
             const _infoType = {
                 kind: 'ReferenceType',
-                name: node.typeName.getText(),
+                name: _name,
                 type: node.getText(),
                 symbol: _symbol
             } as ReferenceType;
+
+            if (TS.isTypeQueryNode(node)) {
+                _infoType.isTypeOf = true;
+            }
 
             addInfoMeta(_infoType, node, project);
 
@@ -1927,6 +1941,38 @@ function nodesInfoType (
     }
 
     return sanitizeType(node.getText());
+}
+
+
+/**
+ * [TS] Retrieves the location for the given node.
+ *
+ * @param program
+ * Related parser program.
+ *
+ * @param node
+ * Node to retrieve location for.
+ *
+ * @return
+ * Retrieved location.
+ */
+function nodesLocation(
+    node: TS.Node
+): { column: number, line: number, start: number, end: number } {
+    const _linesUntilPos = node
+        .getSourceFile()
+        .getFullText()
+        .substring(0, node.getStart())
+        .split(/\r?\n/gsu);
+    const _line = _linesUntilPos.length;
+    const _column = _linesUntilPos[_line - 1].length + 1;
+
+    return {
+        column: _column,
+        end: node.getEnd(),
+        line: _line,
+        start: node.getStart()
+    };
 }
 
 
@@ -1980,6 +2026,8 @@ function nodesSymbol(
             .getSymbolAtLocation(node.propertyName || node.name);
     } else if (TS.isSourceFile(node)) {
         _symbol = _typeChecker.getSymbolAtLocation(node);
+    } else if (TS.isTypeQueryNode(node)) {
+        _symbol = _typeChecker.getSymbolAtLocation(node.exprName);
     } else if (TS.isTypeReferenceNode(node)) {
         _symbol = _typeChecker.getSymbolAtLocation(node.typeName);
     } else if (TS.isTypeNode(node)) {
