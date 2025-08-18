@@ -39,6 +39,7 @@ import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
+import GridIcons from '../Grid/Icons/GridIcons.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
@@ -134,6 +135,7 @@ declare global {
         merge: typeof Utilities.merge;
         CellRendererRegistry: typeof CellRendererRegistry;
         CellRenderer: typeof CellRenderer;
+        GridIcons: typeof GridIcons;
     }
     interface Window {
         /**
@@ -192,6 +194,7 @@ CellRenderersComposition.compose(G.Column);
 G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
 G.CellContentPro = CellContentPro;
 G.CellRenderer = CellRenderer;
+G.GridIcons = GridIcons;
 
 
 /* *

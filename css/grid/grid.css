@@ -478,7 +478,7 @@
 /* Show filter icon on header cell hover - keep visible while hovering the icon container */
 .hcg-table thead th:hover .hcg-header-cell-filter-icon,
 .hcg-header-cell-filter-icon:hover {
-    max-width: 36px;
+    max-width: 32px;
     margin-left: 8px;
     opacity: 1;
 }
@@ -510,22 +510,29 @@
 /* Generic icon styling for Grid */
 .hcg-icon {
     width: 20px;
-    height: 16px;
-    transition: stroke 0.2s ease;
+    height: 20px;
+    color: var(--ig-icon-color);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
 }
 
+/* Icons automatically inherit color from parent via currentColor */
 .hcg-icon path {
-    stroke: var(--ig-icon-color);
+    stroke: currentcolor;
 }
 
-.hcg-button:hover .hcg-icon path {
-    stroke: var(--ig-icon-hover-color);
+.hcg-button:hover .hcg-icon {
+    color: var(--ig-icon-hover-color);
 }
 
 /* Filter icon specific styling */
 .hcg-header-cell-filter-icon .hcg-button {
-    width: 26px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hcg-resizable-content tr {
