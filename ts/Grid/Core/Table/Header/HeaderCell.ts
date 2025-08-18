@@ -31,6 +31,7 @@ import GridUtils from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
+import HeaderIconManager from './HeaderIconManager.js';
 
 const {
     makeHTMLElement,
@@ -79,6 +80,11 @@ class HeaderCell extends Cell {
      * Content value of the header cell.
      */
     public override value: string = '';
+
+    /**
+     * Icon manager for this header cell.
+     */
+    public iconManager?: HeaderIconManager;
 
 
     /* *
@@ -172,9 +178,10 @@ class HeaderCell extends Cell {
         // Render the header cell element content.
         setHTMLContent(this.headerContent, this.value);
 
-        // Add filter icon right aligned
-        const filterIcon = this.getFilterIcon();
-        headerCellContainer.appendChild(filterIcon);
+        // Initialize icon manager
+        this.iconManager = new HeaderIconManager(this);
+        this.setupHeaderIcons();
+        headerCellContainer.appendChild(this.iconManager.getContainer());
         this.htmlElement.setAttribute('scope', 'col');
 
         if (this.options.className) {
@@ -296,22 +303,103 @@ class HeaderCell extends Cell {
         return lastViewportColumn === lastCellColumn;
     }
 
-    private getFilterIcon(): HTMLElement {
-        const container = makeHTMLElement('span', {
-            className: Globals.getClassName('headerCellFilterIcon')
+    /**
+     * Sets up header icons using the IconManager.
+     */
+    private setupHeaderIcons(): void {
+        if (!this.iconManager) {
+            return;
+        }
+
+        const { column } = this;
+        const iconOptions = column?.options.header?.icons;
+
+        // Register filter icon (enabled by default unless explicitly disabled)
+        this.iconManager.registerIcon('filter', {
+            icon: 'filter',
+            enabled: iconOptions?.filter !== false,
+            onClick: (): void => {
+                // Filter click handler - can be expanded later
+            }
         });
 
-        const button = makeHTMLElement('button', {
-            className: 'hcg-button'
-        }) as HTMLButtonElement;
-        button.type = 'button';
+        // Register sort icon if column is sortable and enabled
+        if (column?.options.sorting?.sortable && iconOptions?.sort !== false) {
+            this.iconManager.registerIcon('sort', {
+                icon: 'chevronDown',
+                enabled: true,
+                onClick: (
+                    event: MouseEvent,
+                    headerCell: HeaderCell
+                ): void => {
+                    headerCell.column?.sorting?.toggle();
+                },
+                onStateChange: (
+                    iconElement: HTMLElement,
+                    state: any
+                ): void => {
+                    // Update sort icon based on current sorting state
+                    const iconWrapper = iconElement;
+                    iconWrapper.classList.remove(
+                        'sort-asc',
+                        'sort-desc',
+                        'sort-none'
+                    );
 
-        // Create filter icon using GridIcons
-        const icon = (Globals as any).GridIcons.createGridIcon('filter', 20);
-        button.appendChild(icon);
-        container.appendChild(button);
+                    if (state === 'asc') {
+                        iconWrapper.classList.add('sort-asc');
+                    } else if (state === 'desc') {
+                        iconWrapper.classList.add('sort-desc');
+                    } else {
+                        iconWrapper.classList.add('sort-none');
+                    }
+                }
+            });
 
-        return container;
+            // Set initial sort state
+            this.updateSortIconState();
+        }
+
+        // Register menu icon if enabled
+        if (iconOptions?.menu === true) {
+            this.iconManager.registerIcon('menu', {
+                icon: 'menu',
+                enabled: true,
+                onClick: (): void => {
+                    // Menu click handler - can be expanded later
+                }
+            });
+        }
+
+        // Render all icons
+        this.iconManager.renderIcons();
+
+        // Add hover event handlers to show/hide icons
+        this.htmlElement.addEventListener('mouseenter', (): void => {
+            this.iconManager?.setIconsVisible(true);
+        });
+
+        this.htmlElement.addEventListener('mouseleave', (): void => {
+            this.iconManager?.setIconsVisible(false);
+        });
+    }
+
+    /**
+     * Updates the sort icon state based on current sorting.
+     */
+    public updateSortIconState(): void {
+        if (!this.iconManager || !this.column) {
+            return;
+        }
+
+        const { currentSorting } = this.column.viewport.grid.querying.sorting;
+        let sortState = 'none';
+
+        if (currentSorting?.columnId === this.column.id) {
+            sortState = currentSorting.order || 'none';
+        }
+
+        this.iconManager.updateIconState('sort', sortState);
     }
 }
 

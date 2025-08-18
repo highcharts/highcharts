@@ -463,27 +463,7 @@
     transition: all 0.3s ease;
 }
 
-.hcg-header-cell-filter-icon {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    max-width: 0;
-    margin-left: 0;
-    opacity: 0;
-    overflow: hidden;
-    cursor: pointer;
-    transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
-}
-
-/* Show filter icon on header cell hover - keep visible while hovering the icon container */
-.hcg-table thead th:hover .hcg-header-cell-filter-icon,
-.hcg-header-cell-filter-icon:hover {
-    max-width: 32px;
-    margin-left: 8px;
-    opacity: 1;
-}
-
-/* Individual icon styles */
+/* Legacy filter icon styles (deprecated - now handled by generic .hcg-header-cell-icons) */
 .hcg-header-cell-filter-icon img {
     padding: 5px;
     border-radius: 4px;
@@ -525,14 +505,62 @@
     color: var(--ig-icon-hover-color);
 }
 
-/* Filter icon specific styling */
-.hcg-header-cell-filter-icon .hcg-button {
+/* Header cell icons container - generic for all icon types */
+.hcg-header-cell-icons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 0;
+    margin-left: 0;
+    opacity: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
+}
+
+/* Show icons on header cell hover - supports multiple icons */
+.hcg-table thead th:hover .hcg-header-cell-icons,
+.hcg-header-cell-icons:hover {
+    max-width: 100px;
+    margin-left: 8px;
+    opacity: 1;
+}
+
+/* Individual icon containers */
+.hcg-header-cell-filter-icon,
+.hcg-header-cell-sort-icon,
+.hcg-header-cell-menu-icon {
+    display: flex;
+    align-items: center;
+}
+
+/* Generic icon button styling - applies to all header icons */
+.hcg-header-cell-icons .hcg-button {
     width: 24px;
     height: 24px;
     padding: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 2px;
+}
+
+/* Sort icon state styles */
+.hcg-header-cell-sort-icon.sort-asc .hcg-icon {
+    transform: rotate(180deg);
+}
+
+.hcg-header-cell-sort-icon.sort-desc .hcg-icon {
+    transform: rotate(0deg);
+}
+
+.hcg-header-cell-sort-icon.sort-none .hcg-icon {
+    opacity: 0.6;
+}
+
+/* Sort icon transitions */
+.hcg-header-cell-sort-icon .hcg-icon {
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .hcg-resizable-content tr {

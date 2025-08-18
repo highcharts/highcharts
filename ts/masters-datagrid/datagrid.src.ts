@@ -40,6 +40,7 @@ import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import GridIcons from '../Grid/Icons/GridIcons.js';
+import HeaderIconManager from '../Grid/Core/Table/Header/HeaderIconManager.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
@@ -136,6 +137,7 @@ declare global {
         CellRendererRegistry: typeof CellRendererRegistry;
         CellRenderer: typeof CellRenderer;
         GridIcons: typeof GridIcons;
+        HeaderIconManager: typeof HeaderIconManager;
     }
     interface Window {
         /**
@@ -195,6 +197,7 @@ G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
 G.CellContentPro = CellContentPro;
 G.CellRenderer = CellRenderer;
 G.GridIcons = GridIcons;
+G.HeaderIconManager = HeaderIconManager;
 
 
 /* *

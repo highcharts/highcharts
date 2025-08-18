@@ -36,6 +36,7 @@ import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
 import Utilities from '../Core/Utilities.js';
 import GridIcons from '../Grid/Icons/GridIcons.js';
+import HeaderIconManager from '../Grid/Core/Table/Header/HeaderIconManager.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -76,6 +77,7 @@ declare global {
         Templating: typeof Templating;
         merge: typeof Utilities.merge;
         GridIcons: typeof GridIcons;
+        HeaderIconManager: typeof HeaderIconManager;
     }
     interface Window {
         Grid: GridNamespace;
@@ -110,6 +112,7 @@ G.product = 'Grid Lite';
 G.setOptions = Defaults.setOptions;
 G.merge = Utilities.merge;
 G.GridIcons = GridIcons;
+G.HeaderIconManager = HeaderIconManager;
 
 G.Table = G.Table || Table;
 
