@@ -149,8 +149,6 @@ namespace BoostCanvas {
      *
      * */
 
-    let ChartConstructor: typeof Chart;
-
     let destroyLoadingDiv: number;
 
     /* *
@@ -232,7 +230,6 @@ namespace BoostCanvas {
                 scatter: ScatterSeries
             } = seriesTypes;
 
-            ChartConstructor = ChartClass;
             ChartClass.prototype.callbacks.push((chart): void => {
                 addEvent(chart, 'predraw', onChartClear);
                 addEvent(chart, 'render', onChartCanvasToSVG);
@@ -430,9 +427,6 @@ namespace BoostCanvas {
 
             boost.clipRect = chart.renderer.clipRect();
             boost.target.clip(boost.clipRect);
-
-        } else if (!(target instanceof ChartConstructor)) {
-            ///  ctx.clearRect(0, 0, width, height);
         }
 
         if (boost.canvas.width !== width) {

@@ -14,7 +14,8 @@
         sans-serif;
 }
 
-:root {
+:root,
+.highcharts-light {
     --default-background: #fff;
     --mask-background: rgba(255, 255, 255, 0.5);
     --default-color: #000;
@@ -28,6 +29,13 @@
         --default-color: #fff;
         --shadow: rgba(255, 255, 255, 0.5);
     }
+}
+
+.highcharts-dark {
+    --default-background: #292929;
+    --mask-background: rgba(0, 0, 0, 0.7);
+    --default-color: #fff;
+    --shadow: rgba(255, 255, 255, 0.5);
 }
 
 .content {
@@ -147,11 +155,4 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 #modalContent .cancel {
     background: #6c757d;
-}
-
-@media (prefers-color-scheme: dark) {
-    .content {
-        background-color: #292929;
-        color: #fff;
-    }
 }

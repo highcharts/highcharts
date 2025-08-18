@@ -116,15 +116,18 @@ columns: [{
     sorting: {
         sortable: true,
         order: "desc",
+        compare: (a, b) => ... // optionally, custom sorting logic
     }
 }]
 ```
 
-The optional `sorting` object consists of two configuration options:
+The optional `sorting` object consists of three configuration options:
 
 - **`sortable`**: A boolean that determines whether the end user can sort a column by clicking on the column header.
 
 - **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). Only the last one will be considered if `order` is defined in multiple columns.
+
+- **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a number indicating whether the first value (`a`) is less than (`-1`), equal to (`0`), or greater than (`1`) the second value (`b`).
 
 See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 
@@ -185,6 +188,6 @@ The data type determines how the cell content is rendered. For example, setting 
 
 If this property is not defined, the data type is automatically inferred from the first cell in the column.
 
-<iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-data-type" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-data-type?force-light-theme" allow="fullscreen"></iframe>
 
 For more details on customizing cell content, refer to the [cell content section](https://www.highcharts.com/docs/grid/cell-renderers).

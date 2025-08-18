@@ -381,6 +381,11 @@
     display: block;
 }
 
+.hcg-table thead,
+.highcharts-datagrid-table thead {
+    background-color: var(--ig-header-background);
+}
+
 .hcg-table thead th,
 .highcharts-datagrid-table thead th {
     position: relative;
@@ -982,6 +987,37 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Credits */
+.highcharts-datagrid-credits:empty {
+    display: block;
+    width: 114px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_light.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_lightx2.png") 2x
+        );
+}
+
+.highcharts-light .highcharts-datagrid-credits:empty {
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_light.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_lightx2.png") 2x
+        );
+}
+
+.highcharts-dark .highcharts-datagrid-credits:empty {
+    background-image:
+        image-set(
+            /* stylelint-disable-next-line function-comma-newline-after */
+            url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
+            url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
+        );
+}
 
 .hcg-credits-container.hcg-credits-pro,
 .highcharts-datagrid-credits-container.highcharts-datagrid-credits-pro {
@@ -1084,6 +1120,15 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     .highcharts-datagrid-theme-default {
         --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
         --hcg-background: var(--highcharts-background-color, #141414);
+    }
+
+    .highcharts-datagrid-credits:empty {
+        background-image:
+            image-set(
+                /* stylelint-disable-next-line function-comma-newline-after */
+                url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
+                url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
+            );
     }
 }
 

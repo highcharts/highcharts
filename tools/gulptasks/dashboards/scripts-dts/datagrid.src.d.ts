@@ -19,6 +19,8 @@ import './es-modules/Grid/Pro/CellRendering/Renderers/CheckboxRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/SelectRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/TextInputRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/DateInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/NumberInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/SparklineRenderer';
 
 export { /** @deprecated Use `Grid` instead. */ default as DataGrid } from './es-modules/Grid/Core/Grid.js';
 export { default as Grid } from './es-modules/Grid/Core/Grid.js';

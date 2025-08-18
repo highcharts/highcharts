@@ -53,10 +53,10 @@ class TextRenderer extends CellRenderer {
      * The default edit mode renderer type names for this view renderer.
      */
     public static defaultEditingRenderer: Record<
-    Column.DataType, EditModeRendererTypeName
+        Column.DataType, EditModeRendererTypeName
     > = {
             string: 'textInput',
-            number: 'textInput',
+            number: 'numberInput',
             'boolean': 'checkbox',
             datetime: 'dateInput'
         };

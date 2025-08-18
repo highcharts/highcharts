@@ -31,7 +31,8 @@
  * If there are multiple grids on the same page that share some styling it is
  * recommended to apply these variables to the outer .hcg-container element.
  */
-.hcg-container {
+.hcg-container,
+.highcharts-light .hcg-container {
     --hcg-caption-font-size: 20px;
     --hcg-caption-color: #333;
     --hcg-description-font-size: 14px;
@@ -48,7 +49,8 @@
     line-height: 1.5em;
 }
 
-.hcg-description code {
+.hcg-description code,
+.highcharts-light .hcg-description code {
     font-family: Consolas, "courier new", monospace;
     line-height: 1em;
     background: #f7f7f7;
@@ -58,7 +60,8 @@
     display: inline-block;
 }
 
-.theme-compact {
+.theme-compact,
+.highcharts-light .theme-compact {
     --hcg-font-size: 14px;
     --hcg-padding: 7px;
     --hcg-header-vertical-padding: 7px;
@@ -66,7 +69,8 @@
     --hcg-row-border-width: 0;
 }
 
-.my-theme {
+.my-theme,
+.highcharts-light .my-theme {
     --my-hover-color: #f00;
     --hcg-font-size: 15px;
     --hcg-color: #666;
@@ -87,7 +91,8 @@
     --hcg-header-hovered-color: var(--my-hover-color);
 }
 
-.opacity-theme {
+.opacity-theme,
+.highcharts-light .opacity-theme {
     /* Define some custom properties. */
     --hover-color: 255, 255, 255;
     --gradient-from-color: rgb(172, 50, 228);
@@ -107,10 +112,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #333;
-    }
-
     .hcg-container {
         --hcg-caption-color: #eee;
         --hcg-description-color: #eee;
@@ -136,10 +137,6 @@
         background: #222;
         border-color: #474747;
     }
-}
-
-.highcharts-dark #container {
-    background-color: #333;
 }
 
 .highcharts-dark .hcg-container {

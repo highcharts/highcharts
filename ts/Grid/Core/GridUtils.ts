@@ -159,7 +159,7 @@ namespace GridUtils {
         try {
             return new DOMParser().parseFromString(text, 'text/html')
                 .body.textContent || '';
-        } catch (error) {
+        } catch {
             return '';
         }
     }

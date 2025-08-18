@@ -433,7 +433,7 @@ export interface ColumnSortingOptions {
      * Whether to allow users to sort values in column. When it is enabled,
      * the column header will be clickable.
      *
-     * When sorting is disabled `false`, this column cannot be sorted by the
+     * When sorting is disabled (`false`), this column cannot be sorted by the
      * user interface. However, the order of rows in this column may still
      * change when other columns are sorted.
      *
@@ -442,6 +442,23 @@ export interface ColumnSortingOptions {
      * @default true
      */
     sortable?: boolean;
+
+    /**
+     * Custom compare function to sort the column values. It overrides the
+     * default sorting behavior. If not set, the default sorting behavior is
+     * used.
+     *
+     * @param a
+     * The first value to compare.
+     *
+     * @param b
+     * The second value to compare.
+     *
+     * @return
+     * A number indicating whether the first value (`a`) is less than (`-1`),
+     * equal to (`0`), or greater than (`1`) the second value (`b`).
+     */
+    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
 }
 
 /**

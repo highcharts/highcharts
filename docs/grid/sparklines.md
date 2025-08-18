@@ -123,5 +123,5 @@ You can configure the sparkline using the `chartOptions` API option, that suppor
 ## Performance
 Sparkline supports all standard Highcharts chart options and is optimized for speed, including virtual scrolling for large datasets.
 
-<iframe src="https://www.highcharts.com/samples/embed/grid/basic/sparklines" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/sparklines?force-light-theme" allow="fullscreen"></iframe>
 

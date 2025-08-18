@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -39,6 +40,21 @@ import CellContentPro from '../CellContentPro.js';
  */
 class DateInputContent extends CellContentPro implements EditModeContent {
 
+    /**
+     * The format of the input value for each input type.
+     */
+    private static readonly inputValueFormats: Record<
+        NonNullable<DateInputRenderer.Options['inputType']>,
+        string
+    > = {
+            date: '%Y-%m-%d',
+            datetime: '%Y-%m-%dT%H:%M:%S',
+            time: '%H:%M:%S'
+        } as const;
+
+    /**
+     * Whether to finish the edit after a change.
+     */
     public finishAfterChange: boolean = false;
 
     public blurHandler?: (e: FocusEvent) => void;
@@ -51,6 +67,11 @@ class DateInputContent extends CellContentPro implements EditModeContent {
      * The HTML input element representing the date input.
      */
     private input: HTMLInputElement;
+
+    /**
+     * The options of the date input renderer.
+     */
+    private options: DateInputRenderer.Options;
 
 
     /* *
@@ -65,6 +86,7 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         parentElement?: HTMLElement
     ) {
         super(cell, renderer);
+        this.options = renderer.options;
         this.input = this.add(parentElement);
     }
 
@@ -75,15 +97,29 @@ class DateInputContent extends CellContentPro implements EditModeContent {
      *
      * */
 
+    /**
+     * Adds the input element to the parent element.
+     * @param parentElement The parent element to add the input element to.
+     * @returns The input element.
+     */
     public override add(
         parentElement: HTMLElement = this.cell.htmlElement
     ): HTMLInputElement {
-        const cell = this.cell;
+        const { cell, options } = this;
         const input = this.input = document.createElement('input');
 
         input.tabIndex = -1;
-        input.type = 'date';
+        input.type = (
+            options.inputType === 'datetime' ?
+                'datetime-local' : options.inputType
+        ) || 'date';
         input.name = cell.column.id + '-' + cell.row.id;
+
+        if (options.attributes) {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
+                input.setAttribute(key, value);
+            });
+        }
 
         this.update();
 
@@ -97,26 +133,45 @@ class DateInputContent extends CellContentPro implements EditModeContent {
         return this.input;
     }
 
+    /**
+     * Updates the input element.
+     */
     public override update(): void {
         const input = this.input;
-        const { options } = this.renderer as DateInputRenderer;
 
         input.value = this.convertToInputValue();
-        input.disabled = !!options.disabled;
+        input.disabled = !!this.options.disabled;
     }
 
+    /**
+     * Gets the raw value of the input element.
+     */
     public get rawValue(): string {
         return this.input.value;
     }
 
+    /**
+     * Gets the value of the input element.
+     */
     public get value(): number {
-        return new Date(this.input.value).getTime();
+        return new Date(
+            this.options.inputType === 'time' ?
+                `1970-01-01T${this.input.value}Z` :
+                `${this.input.value}Z`
+        ).getTime();
     }
 
+    /**
+     * Gets the main element (input) of the content.
+     * @returns The input element.
+     */
     public getMainElement(): HTMLInputElement {
         return this.input;
     }
 
+    /**
+     * Destroys the content.
+     */
     public override destroy(): void {
         const input = this.input;
         this.cell.htmlElement.removeEventListener(
@@ -136,7 +191,12 @@ class DateInputContent extends CellContentPro implements EditModeContent {
      */
     private convertToInputValue(): string {
         const time = this.cell.column.viewport.grid.time;
-        return time.dateFormat('%Y-%m-%d', Number(this.cell.value || 0));
+        return time.dateFormat(
+            DateInputContent.inputValueFormats[
+                this.options.inputType || 'date'
+            ],
+            Number(this.cell.value || 0)
+        );
     }
 
     private readonly onChange = (e: Event): void => {
