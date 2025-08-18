@@ -127,7 +127,7 @@ describe('Pagination.', () => {
             });
 
             cy.get('.hcg-pagination-wrapper').should('exist');
-            cy.get('table tbody tr').should('have.length', 20);
+            cy.get('table tbody tr').should('have.length', 21);
         });
     });
 
