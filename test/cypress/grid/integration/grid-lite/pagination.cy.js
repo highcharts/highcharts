@@ -41,20 +41,12 @@ describe('Pagination.', () => {
         // Check data rows update
         cy.get('table tbody tr').should('have.length', 21);
 
-        // Check event logging
-        cy.get('#beforePageChange').should('have.value', '1');
-        cy.get('#afterPageChange').should('have.value', '2');
-
         // Click previous button
         cy.get('.hcg-pagination-btn[title="Previous page"]').click();
 
         // Check we're back on page 1
         cy.get('.hcg-pagination-info').should('contain', 'Showing 1');
         cy.get('.hcg-pagination-page-active').should('contain', '1');
-
-        // Check event logging
-        cy.get('#beforePageChange').should('have.value', '2');
-        cy.get('#afterPageChange').should('have.value', '1');
     });
 
     it('First/last button', () => {
@@ -85,10 +77,6 @@ describe('Pagination.', () => {
 
         // Check we're on page
         cy.get('.hcg-pagination-info').should('contain', 'Showing 45 - 66 of 254');
-
-        // Check event logging
-        cy.get('#beforePageChange').should('have.value', '1');
-        cy.get('#afterPageChange').should('have.value', '3');
     });
 
     it('Page size', () => {
@@ -100,10 +88,6 @@ describe('Pagination.', () => {
 
         // Check data rows update
         cy.get('table tbody tr').should('have.length', 20);
-
-        // // Check event logging
-        cy.get('#beforePageSizeChange').should('have.value', '22');
-        cy.get('#afterPageSizeChange').should('have.value', '20');
     });
 
     it('Update pagination.', () => {

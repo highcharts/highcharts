@@ -49,24 +49,6 @@ window.grid = Grid.grid('container', {
                 enabled: true,
                 count: 5
             }
-        },
-        events: {
-            beforePageChange: function (pg) {
-                document.getElementById('beforePageChange').value =
-                    pg.currentPage;
-            },
-            afterPageChange: function (pg) {
-                document.getElementById('afterPageChange').value =
-                    pg.currentPage;
-            },
-            beforePageSizeChange: function (pg) {
-                document.getElementById('beforePageSizeChange').value =
-                    pg.oldPageSize;
-            },
-            afterPageSizeChange: function (pg) {
-                document.getElementById('afterPageSizeChange').value =
-                    pg.newPageSize;
-            }
         }
     }
 });

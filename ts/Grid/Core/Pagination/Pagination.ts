@@ -30,10 +30,7 @@ import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const {
-    fireEvent,
-    merge
-} = Utilities;
+const { merge, fireEvent } = Utilities;
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -576,20 +573,14 @@ class Pagination {
     public async setPageSize(newPageSize: number): Promise<void> {
         const oldPageSize = this.currentPageSize;
 
-        // Fire before event
-        const { beforePageSizeChange } = this.options.events || {};
-        if (beforePageSizeChange) {
-            fireEvent(
-                this,
-                'beforePageSizeChange',
-                {
-                    newPageSize,
-                    oldPageSize
-                },
-                beforePageSizeChange
-            );
-        }
-
+        fireEvent(
+            this,
+            'beforePageSizeChange',
+            {
+                newPageSize,
+                oldPageSize
+            }
+        );
         this.currentPageSize = newPageSize;
 
         // Recalculate total pages
@@ -606,19 +597,14 @@ class Pagination {
         this.updatePageNumbers();
         this.updateButtonStates();
 
-        // Fire after event
-        const { afterPageSizeChange } = this.options.events || {};
-        if (afterPageSizeChange) {
-            fireEvent(
-                this,
-                'afterPageSizeChange',
-                {
-                    newPageSize,
-                    oldPageSize
-                },
-                afterPageSizeChange
-            );
-        }
+        fireEvent(
+            this,
+            'afterPageSizeChange',
+            {
+                newPageSize,
+                oldPageSize
+            }
+        );
     }
 
     /**
@@ -636,19 +622,15 @@ class Pagination {
             return;
         }
 
-        const { beforePageChange } = this.options.events || {};
-        if (beforePageChange) {
-            fireEvent(
-                this,
-                'beforePageChange',
-                {
-                    currentPage: this.currentPage,
-                    newPage: pageNumber,
-                    itemsPerPage: this.currentPageSize
-                },
-                beforePageChange
-            );
-        }
+        fireEvent(
+            this,
+            'beforePageChange',
+            {
+                currentPage: this.currentPage,
+                newPage: pageNumber,
+                itemsPerPage: this.currentPageSize
+            }
+        );
 
         this.currentPage = pageNumber;
 
@@ -657,18 +639,14 @@ class Pagination {
         this.updatePageNumbers();
         this.updateButtonStates();
 
-        const { afterPageChange } = this.options.events || {};
-        if (afterPageChange) {
-            fireEvent(
-                this,
-                'afterPageChange',
-                {
-                    currentPage: this.currentPage,
-                    itemsPerPage: this.currentPageSize
-                },
-                afterPageChange
-            );
-        }
+        fireEvent(
+            this,
+            'afterPageChange',
+            {
+                currentPage: this.currentPage,
+                itemsPerPage: this.currentPageSize
+            }
+        );
     }
 
     /**

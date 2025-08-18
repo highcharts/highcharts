@@ -47,6 +47,8 @@ import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js'
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
+import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.js';
+import Pagination from '../Grid/Core/Pagination/Pagination.js';
 
 
 /* *
@@ -124,6 +126,7 @@ declare global {
         Column: typeof Column;
         HeaderCell: typeof HeaderCell;
         TableCell: typeof TableCell;
+        Pagination: typeof Pagination;
         Templating: typeof Templating;
         merge: typeof Utilities.merge;
         CellRendererRegistry: typeof CellRendererRegistry;
@@ -174,6 +177,7 @@ G.Table = G.Table || Table;
 G.Column = G.Column || Column;
 G.HeaderCell = G.HeaderCell || HeaderCell;
 G.TableCell = G.TableCell || TableCell;
+G.Pagination = G.Pagination || Pagination;
 
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
@@ -181,6 +185,7 @@ CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
+PaginationComposition.compose(G.Pagination);
 
 G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
 

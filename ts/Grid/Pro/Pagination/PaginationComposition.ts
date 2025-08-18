@@ -1,0 +1,186 @@
+/* *
+ *
+ *  Grid Pro Pagination class
+ *
+ *  (c) 2020-2025 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sebastian Bochan
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Pagination from '../../Core/Pagination/Pagination';
+
+import Utilities from '../../../Core/Utilities.js';
+import Globals from '../../../Core/Globals.js';
+
+const { addEvent, pushUnique } = Utilities;
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace PaginationComposition {
+    /**
+     * Extends the pagination class with events.
+     *
+     * @param PaginationClass
+     * The class to extend.
+     *
+     */
+    export function compose(
+        PaginationClass: typeof Pagination
+    ): void {
+        if (!pushUnique(Globals.composed, 'PaginationPro')) {
+            return;
+        }
+
+        // Register pagination events
+        addEvent(
+            PaginationClass,
+            'beforePageChange',
+            (e: PaginationEvent): void => {
+                const pg = e.target;
+                pg.options.events?.beforePageChange?.call(pg, {
+                    currentPage: e.currentPage,
+                    newPage: e.newPage,
+                    itemsPerPage: e.itemsPerPage
+                });
+            }
+        );
+
+        addEvent(
+            PaginationClass,
+            'afterPageChange',
+            (e: PaginationEvent): void => {
+                const pg = e.target;
+                pg.options.events?.afterPageChange?.call(pg, {
+                    currentPage: e.currentPage,
+                    itemsPerPage: e.itemsPerPage
+                });
+            }
+        );
+
+        addEvent(
+            PaginationClass,
+            'beforePageSizeChange',
+            (e: PaginationEvent): void => {
+                const pg = e.target;
+                pg.options.events?.beforePageSizeChange?.call(pg, {
+                    newPageSize: e.newPageSize,
+                    oldPageSize: e.oldPageSize
+                });
+            }
+        );
+
+        addEvent(
+            PaginationClass,
+            'afterPageSizeChange',
+            (e: PaginationEvent): void => {
+                const pg = e.target;
+                pg.options.events?.afterPageSizeChange?.call(pg, {
+                    newPageSize: e.newPageSize,
+                    oldPageSize: e.oldPageSize
+                });
+            }
+        );
+    }
+}
+
+declare module '../../Core/Pagination/PaginationOptions' {
+    interface PaginationOptions {
+        /**
+         * Pagination events.
+         *
+         */
+        events?: PaginationEvents;
+    }
+}
+
+/* *
+ *
+ *  Interfaces
+ *
+ * */
+
+/**
+ * Pagination events for Pro version.
+ */
+export interface PaginationEvents {
+    /**
+     * Fired before a page change occurs.
+     *
+     * @param e
+     * The event object.
+     */
+    beforePageChange?: (e: BeforePageChangeEvent) => void;
+
+    /**
+     * Fired after a page change occurs.
+     *
+     * @param e
+     * The event object.
+     */
+    afterPageChange?: (e: AfterPageChangeEvent) => void;
+
+    /**
+     * Fired before the page size setting changes.
+     *
+     * @param e
+     * The event object.
+     */
+    beforePageSizeChange?: (e: BeforePageSizeChangeEvent) => void;
+
+    /**
+     * Fired after the page size setting changes.
+     *
+     * @param e
+     * The event object.
+     */
+    afterPageSizeChange?: (e: AfterPageSizeChangeEvent) => void;
+}
+
+export interface BeforePageChangeEvent {
+    currentPage: number;
+    newPage: number;
+    itemsPerPage: number;
+}
+
+export interface AfterPageChangeEvent {
+    currentPage: number;
+    itemsPerPage: number;
+}
+
+export interface BeforePageSizeChangeEvent {
+    newPageSize: number;
+    oldPageSize: number;
+}
+
+export interface AfterPageSizeChangeEvent {
+    newPageSize: number;
+    oldPageSize: number;
+}
+
+export type PaginationEvent = Record<string, number> & { target: Pagination };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default PaginationComposition;

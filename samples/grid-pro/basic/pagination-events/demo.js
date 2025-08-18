@@ -11,7 +11,8 @@ function generateRandomData(rows) {
     };
 
     for (let i = 0; i < rows; i++) {
-        const nameIndex = Math.floor(Math.random() * names.length);
+        const nameIndex = i < names.length ?
+            i : Math.floor(Math.random() * names.length);
         const departmentIndex = Math.floor(Math.random() * departments.length);
         const positionIndex = Math.floor(Math.random() * positions.length);
         const id = i + 1;
@@ -29,9 +30,10 @@ function generateRandomData(rows) {
     return columns;
 }
 
-window.gridInstance = Grid.grid('container', {
+
+Grid.grid('container', {
     dataTable: {
-        columns: generateRandomData(254) // 254 items to match the design
+        columns: generateRandomData(254)
     },
     pagination: {
         enabled: true,
@@ -47,6 +49,24 @@ window.gridInstance = Grid.grid('container', {
             pageButtons: {
                 enabled: true,
                 count: 5
+            }
+        },
+        events: {
+            beforePageChange: function (e) {
+                document.getElementById('beforePageChange').value =
+                    e.currentPage;
+            },
+            afterPageChange: function (e) {
+                document.getElementById('afterPageChange').value =
+                    e.currentPage;
+            },
+            beforePageSizeChange: function (e) {
+                document.getElementById('beforePageSizeChange').value =
+                    e.oldPageSize;
+            },
+            afterPageSizeChange: function (e) {
+                document.getElementById('afterPageSizeChange').value =
+                    e.newPageSize;
             }
         }
     }
