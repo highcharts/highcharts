@@ -40,10 +40,10 @@ import * as TS from 'typescript';
 
 export interface ClassInfo {
     doclet?: InfoDoclet;
-    extends?: VariableType;
+    extends?: InfoType;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
-    implements?: Array<VariableType>;
+    implements?: Array<InfoType>;
     kind: 'Class';
     members: Array<MemberInfo>;
     meta: InfoMeta;
@@ -93,7 +93,7 @@ export interface ExportInfo {
     meta: InfoMeta;
     name: string;
     node: TS.ExportSpecifier;
-    type: VariableType;
+    type: InfoType;
 }
 
 
@@ -110,7 +110,16 @@ export interface FunctionInfo {
         | TS.MethodDeclaration
     );
     parameters?: Array<VariableInfo>;
-    return?: VariableType;
+    return?: InfoType;
+}
+
+
+export interface GenericType {
+    arguments: Array<InfoType>;
+    kind: 'GenericType';
+    meta: InfoMeta;
+    name: string;
+    symbol: TS.Symbol;
 }
 
 
@@ -120,7 +129,7 @@ export interface InfoDoclet {
 
 
 export type InfoFlag = (
-    'async'|'abstract'|'assured'|'default'|'export'|
+    'async'|'abstract'|'assured'|'default'|'export'|'global'|
     'optional'|'private'|'protected'|'readonly'|'rest'|'static'
 );
 
@@ -135,11 +144,20 @@ export interface InfoMeta {
 }
 
 
+export type InfoType = (
+    | string
+    | GenericType
+    | IntersectionType
+    | ReferenceType
+    | UnionType
+);
+
+
 export interface InterfaceInfo {
     doclet?: InfoDoclet;
     flags?: Array<InfoFlag>;
     generics?: Array<TypeAliasInfo>;
-    extends?: Array<VariableType>;
+    extends?: Array<InfoType>;
     kind: 'Interface';
     members: Array<MemberInfo>;
     meta: InfoMeta;
@@ -150,7 +168,7 @@ export interface InterfaceInfo {
 
 export interface IntersectionType {
     kind: 'IntersectionType';
-    members: Array<VariableType>;
+    members: Array<InfoType>;
     meta: InfoMeta;
     symbol: TS.Symbol;
 }
@@ -171,6 +189,7 @@ export interface NamespaceInfo {
 
 
 export interface Project {
+    globalInfos: Array<CodeInfo>;
     infoLookup: Map<TS.Symbol, CodeInfo>;
     program: TS.Program;
     rootPath: string;
@@ -190,7 +209,7 @@ export interface PropertyInfo {
         | TS.PropertySignature
         | TS.ShorthandPropertyAssignment
     );
-    type?: VariableType;
+    type?: InfoType;
 }
 
 
@@ -213,13 +232,22 @@ export interface SourceInfo {
 
 export interface TypeAliasInfo {
     doclet?: InfoDoclet;
+    flags?: Array<InfoFlag>;
     fullNames: Array<string>;
     generics?: Array<TypeAliasInfo>;
     kind: 'TypeAlias';
     meta: InfoMeta;
     name: string;
     node: (TS.TypeAliasDeclaration|TS.TypeParameterDeclaration);
-    value?: VariableType;
+    value?: InfoType;
+}
+
+
+export interface UnionType {
+    kind: 'UnionType';
+    members: Array<InfoType>;
+    meta: InfoMeta;
+    symbol: TS.Symbol;
 }
 
 
@@ -230,11 +258,8 @@ export interface VariableInfo {
     meta: InfoMeta;
     name: string;
     node: (TS.ParameterDeclaration|TS.VariableDeclaration);
-    type: VariableType;
+    type: InfoType;
 }
-
-
-export type VariableType = (string|IntersectionType|ReferenceType);
 
 
 /* *
@@ -366,7 +391,10 @@ function addChildInfos (
 
             if (_child) {
 
-                if (_child.meta.file.startsWith('..')) {
+                if (
+                    _child.meta.file.startsWith('..') ||
+                    (extractInfoName(_child) || '').startsWith('_')
+                ) {
                     // Skip externals
                     continue;
                 }
@@ -377,17 +405,18 @@ function addChildInfos (
                     project.infoLookup.set(_symbol, _child);
                 }
 
-                infos.push(_child);
+                if (_child.flags?.includes('global')) {
+                    project.globalInfos.push(_child);
+                } else {
+                    infos.push(_child);
+                }
+
                 _child = void 0;
 
                 continue;
             }
 
-            console.error(
-                'NOT SUPPORTED:',
-                `${_symbol.name}: ${TS.SyntaxKind[_node.kind]}`,
-                `in ${_node.getSourceFile().fileName}`
-            );
+            error(`NOT SUPPORTED: ${TS.SyntaxKind[_node.kind]}`, _node);
         }
 
     }
@@ -479,21 +508,22 @@ function addInfoFlags (
 
     const _flags: Array<InfoFlag> = [];
 
-    if (!TS.canHaveModifiers(node)) {
-        return;
+    if (node.flags & /* Bit operation */ TS.NodeFlags.GlobalAugmentation) {
+        _flags.push('global');
     }
 
-    for (const _modifier of (TS.getModifiers(node) || [])) {
-        if (!TS.isDecorator(_modifier)) {
-            _flags.push(_modifier.getText() as InfoFlag);
+    if (TS.canHaveModifiers(node)) {
+        for (const _modifier of (TS.getModifiers(node) || [])) {
+            if (!TS.isDecorator(_modifier)) {
+                _flags.push(_modifier.getText() as InfoFlag);
+            }
         }
     }
 
     if (
         (
             TS.isBindingElement(node) ||
-            TS.isParameterPropertyDeclaration(node, node.parent) ||
-            TS.isTupleTypeNode(node)
+            TS.isParameterPropertyDeclaration(node, node.parent)
         ) &&
         node.dotDotDotToken
     ) {
@@ -501,7 +531,6 @@ function addInfoFlags (
     }
 
     if (
-        TS.isArrayLiteralExpression(node) ||
         TS.isConstructorDeclaration(node) ||
         TS.isFunctionDeclaration(node) ||
         TS.isGetAccessorDeclaration(node) ||
@@ -513,7 +542,10 @@ function addInfoFlags (
         if (node.exclamationToken) {
             _flags.push('assured');
         }
-        if (node.questionToken) {
+        if (
+            !TS.isVariableDeclaration(node) &&
+            node.questionToken
+        ) {
             _flags.push('optional');
         }
     }
@@ -550,6 +582,7 @@ function addInfoGenerics (
     node: (
         | TS.ClassDeclaration
         | TS.FunctionLikeDeclaration
+        | TS.FunctionTypeNode
         | TS.InterfaceDeclaration
         | TS.MethodSignature
         | TS.TypeAliasDeclaration
@@ -626,7 +659,7 @@ function addInfoHeritage (
     }
 
     const _program = project.program;
-    const _referenceTypes: Array<VariableType> = [];
+    const _referenceTypes: Array<InfoType> = [];
     const _addReferenceType = (_type: TS.ExpressionWithTypeArguments): void => {
         const _heritageType = nodesInfoType(project, _type);
         if (_heritageType) {
@@ -634,7 +667,7 @@ function addInfoHeritage (
         }
     };
 
-    let _classHeritage: (VariableType|undefined);
+    let _classHeritage: (InfoType|undefined);
 
     for (const _heritageClause of node.heritageClauses) {
 
@@ -681,10 +714,14 @@ function addInfoHeritage (
  * Node to return meta information for.
  */
 function addInfoMeta (
-    info: Partial<(CodeInfo|IntersectionType|ReferenceType)>,
+    info: Partial<(CodeInfo|InfoType)>,
     node: (TS.Node|undefined),
     project: Project
 ): void {
+
+    if (typeof info === 'string') {
+        return;
+    }
 
     if (node) {
         info.meta = {
@@ -720,7 +757,7 @@ function addInfoMeta (
  */
 function addInfoScopes (
     parentInfo: (CodeInfo|SourceInfo),
-    targetInfos: Array<CodeInfo|VariableType>
+    targetInfos: Array<CodeInfo|InfoType>
 ): void {
     const _scopePath = (
         parentInfo.kind === 'Source' ?
@@ -856,6 +893,32 @@ export function changeSourceNode (
         TS.ScriptTarget.ESNext,
         true
     );
+}
+
+
+/**
+ * [TS] Writes an error message with a source path to given node.
+ *
+ * @param message
+ * Error message to write.
+ *
+ * @param node
+ * Node to point to.
+ */
+export function error(
+    message: string,
+    node: TS.Node
+): void {
+    const _sourceFile = node.getSourceFile();
+    const _fileName = Path.resolve(_sourceFile.fileName);
+    const _linesUntilPos = _sourceFile
+        .getFullText()
+        .substring(0, node.getStart())
+        .split(/\r?\n/gsu);
+    const _ln = _linesUntilPos.length;
+    const _col = _linesUntilPos[_ln - 1].length + 1;
+
+    console.error(message, `\n  in ${_fileName}:${_ln}:${_col}`);
 }
 
 
@@ -1322,6 +1385,7 @@ function getFunctionInfo (
     if (
         !TS.isConstructorDeclaration(node) &&
         !TS.isFunctionDeclaration(node) &&
+        !TS.isFunctionTypeNode(node) &&
         !TS.isGetAccessorDeclaration(node) &&
         !TS.isMethodDeclaration(node) &&
         !TS.isMethodSignature(node) &&
@@ -1349,9 +1413,8 @@ function getFunctionInfo (
 
         let _variableInfo: (VariableInfo|undefined);
 
-        for (const parameter of node.parameters) {
-            _variableInfo = getVariableInfo(project, parameter);
-
+        for (const _parameter of node.parameters) {
+            _variableInfo = getVariableInfo(project, _parameter);
             if (_variableInfo) {
                 _parameters.push(_variableInfo);
             }
@@ -1485,9 +1548,11 @@ export function getProject(
     const _project: Project = {
         program: _program,
         rootPath: _folderPath,
+        globalInfos: [],
         sourceInfos: [],
         infoLookup: new Map(),
     };
+
     const _absolutePath: string = Path.resolve(_folderPath);
     const _sourceInfos = _project.sourceInfos;
 
@@ -1518,7 +1583,11 @@ export function getProject(
 function getPropertyInfo (
     project: Project,
     node: TS.Node
-): (PropertyInfo|undefined) {
+): (FunctionInfo|PropertyInfo|undefined) {
+
+    if (hasArrowFunction(node)) {
+        return getFunctionInfo(project, node);
+    }
 
     if (
         !TS.isEnumMember(node) &&
@@ -1612,7 +1681,11 @@ export function getSourceInfo (
 function getTypeAliasInfo (
     project: Project,
     node: TS.Node
-): (TypeAliasInfo|undefined) {
+): (FunctionInfo|TypeAliasInfo|undefined) {
+
+    if (hasArrowFunction(node)) {
+        return getFunctionInfo(project, node.type);
+    }
 
     if (!TS.isTypeAliasDeclaration(node)) {
         return;
@@ -1706,6 +1779,30 @@ function getVariableInfo (
 
 
 /**
+ * [TS] Tests the given node for an arrow function type.
+ *
+ * @param node
+ * Node to test.
+ *
+ * @return
+ * `true` if it has an arrow function type, otherwise `false`.
+ */
+function hasArrowFunction(
+    node: TS.Node
+): node is TS.Node&{type: TS.FunctionTypeNode} {
+    return (
+        (
+            TS.isPropertyDeclaration(node) ||
+            TS.isPropertySignature(node) ||
+            TS.isTypeAliasDeclaration(node)
+        ) &&
+        !!node.type &&
+        TS.isFunctionTypeNode(node.type)
+    );
+}
+
+
+/**
  * Tests if a text string starts with upper case.
  *
  * @param text
@@ -1781,16 +1878,11 @@ export function isNativeType (
 function nodesInfoType (
     project: Project,
     node: (TS.Declaration|TS.TypeNode|undefined)
-): (VariableType|undefined) {
+): (InfoType|undefined) {
 
     if (!node) {
         return;
     }
-
-    if (!TS.isTypeNode(node)) {
-        return;
-    }
-
 
     const _program = project.program;
     const _symbol = nodesSymbol(_program, node);
@@ -1799,7 +1891,7 @@ function nodesInfoType (
         !_symbol ||
         !_symbol.declarations
     ) {
-        return;
+        return node.getText();
     }
 
     if (TS.isParenthesizedTypeNode(node)) {
@@ -1811,14 +1903,53 @@ function nodesInfoType (
         !nodesProjectPath(project, _symbol.declarations[0]).startsWith('..')
     ) {
 
-        if (TS.isIntersectionTypeNode(node)) {
+        if (
+            TS.isExpression(node) &&
+            node.kind === TS.SyntaxKind.ExpressionWithTypeArguments
+        ) {
+            const _expression = (node as TS.ExpressionWithTypeArguments);
+            const _innerSymbol = nodesSymbol(_program, _expression.expression);
+
+            if (_innerSymbol) {
+                const _infoType = {
+                    kind: 'GenericType',
+                    name: _innerSymbol.name,
+                    arguments: [],
+                    symbol: _innerSymbol
+                } as unknown as GenericType;
+
+                let _argInfoType: (InfoType|undefined);
+
+                for (
+                    const _arg of _expression.typeArguments || []
+                ) {
+                    _argInfoType = nodesInfoType(project, _arg);
+                    if (_argInfoType) {
+                        _infoType.arguments.push(_argInfoType);
+                    }
+                }
+
+                addInfoMeta(_infoType, node, project);
+
+                return _infoType;
+            }
+        }
+
+        if (
+            TS.isIntersectionTypeNode(node) ||
+            TS.isUnionTypeNode(node)
+        ) {
             const _infoType = {
-                kind: 'IntersectionType',
+                kind: (
+                    TS.isUnionTypeNode(node) ?
+                        'UnionType' :
+                        'IntersectionType'
+                ),
                 members: [],
                 symbol: _symbol
             } as unknown as IntersectionType;
 
-            let _subType: (VariableType|undefined);
+            let _subType: (InfoType|undefined);
 
             for (const _subitem of node.types) {
                 _subType = nodesInfoType(project, _subitem);
@@ -1848,6 +1979,8 @@ function nodesInfoType (
 
             return _infoType;
         }
+
+        error(`UNKNOWN TYPE: ${TS.SyntaxKind[node.kind]}`, node);
 
     }
 
