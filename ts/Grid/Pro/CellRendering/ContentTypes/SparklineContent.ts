@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -46,7 +47,7 @@ const {
 class SparklineContent extends CellContentPro {
 
     public static defaultChartOptions: Globals.DeepPartial<
-    HighchartsNamespace.Options
+        HighchartsNamespace.Options
     > = {
             chart: {
                 height: 40,

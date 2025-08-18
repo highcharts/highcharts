@@ -165,7 +165,7 @@ function hasWebGLSupport(): boolean {
                 if (typeof gl !== 'undefined' && gl !== null) {
                     return true;
                 }
-            } catch (e) {
+            } catch {
                 // Silent error
             }
         }

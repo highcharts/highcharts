@@ -53,7 +53,7 @@ export interface CSSObject {
     bottom?: string;
     boxShadow?: string;
     clip?: string;
-    color?: ('contrast'|ColorString);
+    color?: ColorString; // @todo ('contrast'|ColorString);
     cursor?: CursorValue;
     direction?: string;
     display?: string;
