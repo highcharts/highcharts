@@ -55,7 +55,6 @@ export interface ClassInfo {
 export type CodeInfo = (
     | ClassInfo
     | EnumerationInfo
-    | ExportInfo
     | FunctionInfo
     | InterfaceInfo
     | NamespaceInfo
@@ -83,17 +82,6 @@ export interface EnumerationInfo {
     meta: InfoMeta;
     name: string;
     node: TS.EnumDeclaration;
-}
-
-
-export interface ExportInfo {
-    doclet?: InfoDoclet;
-    flags: Array<InfoFlag>;
-    kind: 'Export';
-    meta: InfoMeta;
-    name: string;
-    node: TS.ExportSpecifier;
-    type: InfoType;
 }
 
 
@@ -129,8 +117,8 @@ export interface InfoDoclet {
 
 
 export type InfoFlag = (
-    'async'|'abstract'|'assured'|'default'|'export'|'global'|
-    'optional'|'private'|'protected'|'readonly'|'rest'|'static'
+    'async'|'abstract'|'assured'|'global'|'optional'|'private'|'protected'|
+    'readonly'|'rest'|'static'
 );
 
 
@@ -336,12 +324,14 @@ function addChildInfos (
     infos: Array<CodeInfo>,
     children: (Iterable<TS.Node>|Iterable<TS.Symbol>)
 ): void {
+    const _program = project.program;
+
     let _child: (CodeInfo|undefined);
 
     for (let _symbol of children) {
 
         if (isNode(_symbol)) {
-            const _nodeSymbol = nodesSymbol(project.program, _symbol);
+            const _nodeSymbol = nodesSymbol(_program, _symbol);
 
             if (!_nodeSymbol) {
                 continue;
@@ -361,17 +351,25 @@ function addChildInfos (
             continue;
         }
 
-        for (const _node of _symbol.declarations) {
+        for (let _node of _symbol.declarations) {
 
             if (TS.isExportAssignment(_node)) {
                 // Ignore old school exports
                 continue;
             }
 
+            if (TS.isExportSpecifier(_node)) {
+                const _innerSymbol = nodesSymbol(_program, _node);
+                if (_innerSymbol) {
+                    addChildInfos(project, infos, [_innerSymbol]);
+                }
+                continue;
+            }
+
             if (TS.isVariableStatement(_node)) {
                 addChildInfos(project, infos, _node
                     .declarationList.declarations
-                    .map(_innerNode => nodesSymbol(project.program, _innerNode))
+                    .map(_innerNode => nodesSymbol(_program, _innerNode))
                     .filter(_innerSymbol => !!_innerSymbol)
                 );
                 continue;
@@ -384,7 +382,6 @@ function addChildInfos (
                 getNamespaceInfo(project, _node) ||
                 getInterfaceInfo(project, _node) ||
                 getFunctionInfo(project, _node) ||
-                getExportInfo(project, _node) ||
                 getEnumerationInfo(project, _node) ||
                 getClassInfo(project, _node)
             );
@@ -500,7 +497,6 @@ function addInfoFlags (
 ): void {
 
     switch (info.kind) {
-        case 'Export':
         case 'TypeAlias':
         case undefined:
             return;
@@ -548,14 +544,6 @@ function addInfoFlags (
         ) {
             _flags.push('optional');
         }
-    }
-
-    if (
-        TS.isExportDeclaration(node.parent) &&
-        TS.getCombinedModifierFlags(node.parent) & // Bit operation
-                TS.ModifierFlags.ExportDefault
-    ) {
-        _flags.push('default');
     }
 
     if (_flags.length) {
@@ -983,7 +971,6 @@ export function extractInfoName (
     switch (info.kind) {
         case 'Class':
         case 'Enumeration':
-        case 'Export':
         case 'Function':
         case 'Interface':
         case 'Namespace':
@@ -1313,51 +1300,6 @@ function getEnumerationInfo (
     } as unknown as EnumerationInfo;
 
     addChildInfos(project, _info.members, node.members);
-    addInfoFlags(_info, node);
-    addInfoMeta(_info, node, project);
-
-    return _info;
-}
-
-
-
-/**
- * Retrieves export information from the given node.
- *
- * @param project
- * Related project.
- *
- * @param node
- * Node that might be a passthrough export.
- *
- * @return
- * Export information or `undefined`.
- */
-function getExportInfo (
-    project: Project,
-    node: TS.Node
-): (ExportInfo|undefined) {
-
-    if (!TS.isExportSpecifier(node)) {
-        return;
-    }
-
-    const _program = project.program;
-    const _symbol = nodesSymbol(_program, node);
-
-    if (
-        !_symbol ||
-        !_symbol.declarations
-    ) {
-        return;
-    }
-
-    const _info = {
-        kind: 'Export',
-        name: (node.propertyName || node.name).getText(),
-        type: nodesInfoType(project, _symbol.declarations[0])
-    } as ExportInfo;
-
     addInfoFlags(_info, node);
     addInfoMeta(_info, node, project);
 
