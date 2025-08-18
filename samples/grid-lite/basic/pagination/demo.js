@@ -29,7 +29,7 @@ function generateRandomData(rows) {
     return columns;
 }
 
-window.gridInstance = Grid.grid('container', {
+Grid.grid('container', {
     dataTable: {
         columns: generateRandomData(254) // 254 items to match the design
     },
