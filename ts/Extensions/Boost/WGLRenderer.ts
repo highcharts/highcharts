@@ -779,11 +779,14 @@ class WGLRenderer {
                 if (isObject(pointOptions, true) && pointOptions.color) {
                     pcolor = color(pointOptions.color).rgba;
                 }
+
+                const colorKeyIndex = series.options.keys?.indexOf('color');
                 if (
                     Array.isArray(pointOptions) &&
-                    typeof pointOptions[2] === 'string'
+                    colorKeyIndex &&
+                    typeof pointOptions[colorKeyIndex] === 'string'
                 ) {
-                    pcolor = color(pointOptions[2]).rgba;
+                    pcolor = color(pointOptions[colorKeyIndex]).rgba;
                 }
 
                 if (pcolor) {
