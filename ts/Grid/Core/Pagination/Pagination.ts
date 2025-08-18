@@ -177,7 +177,7 @@ class Pagination {
      */
     constructor(
         grid: Grid,
-        options: any
+        options: PaginationOptions & Pagination.PaginationState
     ) {
         this.grid = grid;
         this.options = merge(Pagination.defaultOptions, options);
@@ -555,12 +555,15 @@ class Pagination {
                 optionElement.selected = true;
             }
 
-            this.pageSizeSelect!.appendChild(optionElement);
+            this.pageSizeSelect?.appendChild(optionElement);
         });
 
         this.pageSizeSelect.addEventListener('change', (): void => {
-            const newPageSize = parseInt(this.pageSizeSelect!.value, 10);
-            void this.setPageSize(newPageSize);
+            if (!this.pageSizeSelect) {
+                return;
+            }
+
+            void this.setPageSize(parseInt(this.pageSizeSelect.value, 10));
         });
     }
 
@@ -766,6 +769,15 @@ class Pagination {
         this.contentWrapper?.remove();
         this.grid.querying.pagination.reset();
     }
+}
+
+namespace Pagination {
+    export type PaginationState = {
+        currentPage?: number;
+        currentPageSize?: number;
+        totalItems?: number;
+        totalPages?: number;
+    };
 }
 
 /* *
