@@ -341,6 +341,12 @@ test.describe('createChart', () => {
             }
         );
 
+
+        await expect.poll(()=> test.info().annotations).toContainEqual({
+            type: 'redirect',
+            description: 'https://code.highcharts.com/css/highcharts.css --> code/css/highcharts.css'
+        });
+
         expect(
             await chart.evaluate(c => c.options)
         ).toHaveProperty('stockTools');
