@@ -94,12 +94,7 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(TableCellClass, name, (e: GridEvent<TableCell>): void => {
             const cell = e.target;
-            const cellEvent =
-                cell.column.options.cells?.events?.[name] ||
-                // Backward compatibility
-                cell.row.viewport.grid.options?.events?.cell?.[name];
-
-            cellEvent?.call(cell);
+            cell.column.options.cells?.events?.[name]?.call(cell);
             propagate['cell_' + name]?.call(cell);
         });
     });
@@ -110,12 +105,7 @@ function compose(
     ] as const).forEach((name): void => {
         addEvent(ColumnClass, name, (e: GridEvent<Column>): void => {
             const column = e.target;
-            const columnEvent =
-                column.options?.events?.[name] ||
-                // Backward compatibility
-                column.viewport.grid.options?.events?.column?.[name];
-
-            columnEvent?.call(column);
+            column.options?.events?.[name]?.call(column);
         });
     });
 
@@ -129,16 +119,7 @@ function compose(
             name,
             (e: GridEvent<HeaderCell> & { column?: Column }): void => {
                 const { column } = e;
-                if (!column) {
-                    return;
-                }
-
-                const headerEvent =
-                    column.options?.header?.events?.[name] ||
-                    // Backward compatibility
-                    column.viewport.grid.options?.events?.header?.[name];
-
-                headerEvent?.call(column);
+                column?.options?.header?.events?.[name]?.call(column);
             }
         );
     });
@@ -184,16 +165,6 @@ export interface CellEvents {
      * Callback function to be called when the cell is no longer hovered.
      */
     mouseOut?: CellEventCallback;
-
-    /**
-     * Callback function to be called after the cell value is set (on init or
-     * after editing).
-     *
-     * Use the `afterRender` event instead.
-     *
-     * @deprecated
-     */
-    afterSetValue?: CellEventCallback;
 
     /**
      * Callback function to be called after the cell value is set (on init or
@@ -257,14 +228,6 @@ export interface GridEvents {
 }
 
 declare module '../Core/Options' {
-    interface Options {
-        /**
-         * Events options triggered by the grid elements.
-         * @deprecated
-         */
-        events?: GridEvents;
-    }
-
     interface ColumnCellOptions {
         /**
          * Events options triggered by the grid elements.
