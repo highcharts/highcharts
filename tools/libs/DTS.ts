@@ -897,7 +897,7 @@ export function error(
     message: string,
     node: TS.Node
 ): void {
-    const _fileName = node.getSourceFile().fileName;
+    const _fileName = Path.resolve(node.getSourceFile().fileName);
     const _location = nodesLocation(node);
 
     console.error(
@@ -1152,6 +1152,8 @@ export function extractTagText (
 /**
  * Extracts all types of a type statement, including conditionals, generics,
  * intersects and unions.
+ *
+ * @deprecated
  *
  * @param typeStrings
  * Type statements as strings to extract from.
@@ -1928,20 +1930,26 @@ function nodesInfoType (
 
         if (
             TS.isExpressionWithTypeArguments(node) ||
+            TS.isIndexedAccessTypeNode(node) ||
             TS.isTypeQueryNode(node) ||
             TS.isTypeReferenceNode(node)
         ) {
-            const _isTypeOf = TS.isTypeQueryNode(node);
+            const _isTypeOf = (
+                TS.isIndexedAccessTypeNode(node) ||
+                TS.isTypeQueryNode(node)
+            );
             const _type = (
-                _isTypeOf ?
+                TS.isTypeQueryNode(node) ?
                     node.getText().substring(7) :
-                    node.getText()
+                    TS.isIndexedAccessTypeNode(node) ?
+                        node.getText().replace(/\[(['"])(.*?)\1\]/gsu, '.$2') :
+                        node.getText()
             );
             const _infoType = {
                 kind: 'ReferenceType',
                 type: _type,
                 symbol: _symbol
-            } as unknown as ReferenceType;
+            } as ReferenceType;
 
             if (_isTypeOf) {
                 _infoType.isTypeOf = true;
