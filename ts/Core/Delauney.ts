@@ -25,8 +25,6 @@ function orient2d(
     return 0;
 }
 
-const EDGE_STACK = new Uint32Array(512);
-
 export default class Delaunator {
     public triangles: Uint32Array;
     private _triangles: Uint32Array;
@@ -65,9 +63,7 @@ export default class Delaunator {
 
     constructor(coords: Float64Array) {
         const n = coords.length >> 1;
-        if (n > 0 && typeof coords[0] !== 'number') {
-            throw new Error('Expected coords to contain numbers.');
-        }
+
 
         this.coords = coords;
 
@@ -234,9 +230,7 @@ export default class Delaunator {
                     d0 = d;
                 }
             }
-            // This.hull = hull.subarray(0, j);
             this.triangles = new Uint32Array(0);
-            // This.halfedges = new Int32Array(0);
             return;
         }
 
@@ -271,7 +265,6 @@ export default class Delaunator {
 
         // Set up the seed triangle as the starting hull
         this._hullStart = i0;
-        let hullSize = 3;
 
         hullNext[i0] = hullPrev[i2] = i1;
         hullNext[i1] = hullPrev[i0] = i2;
@@ -287,7 +280,7 @@ export default class Delaunator {
         hullHash[this._hashKey(i2x, i2y)] = i2;
 
         this.trianglesLen = 0;
-        this._addTriangle(i0, i1, i2, -1, -1, -1);
+        this._addTriangle(i0, i1, i2);
 
         for (let k = 0, xp = 0, yp = 0; k < this._ids.length; k++) {
             const i = this._ids[k],
@@ -348,11 +341,10 @@ export default class Delaunator {
             } // Likely a near-duplicate point; skip it
 
             // add the first triangle from the point
-            let t = this._addTriangle(e, i, hullNext[e], -1, -1, hullTri[e]);
+            let t = this._addTriangle(e, i, hullNext[e]);
 
-            hullTri[i] = this._legalize(t + 2);
+            hullTri[i] = 0;
             hullTri[e] = t; // Keep track of boundary triangles on the hull
-            hullSize++;
 
             let n = hullNext[e];
             while (
@@ -366,10 +358,9 @@ export default class Delaunator {
                     coords[2 * q + 1]
                 ) < 0
             ) {
-                t = this._addTriangle(n, i, q, hullTri[i], -1, hullTri[n]);
-                hullTri[i] = this._legalize(t + 2);
+                t = this._addTriangle(n, i, q);
+                hullTri[i] = 0;
                 hullNext[n] = n; // Mark as removed
-                hullSize--;
                 n = q;
             }
 
@@ -385,11 +376,9 @@ export default class Delaunator {
                         coords[2 * e + 1]
                     ) < 0
                 ) {
-                    t = this._addTriangle(q, i, e, -1, hullTri[e], hullTri[q]);
-                    this._legalize(t + 2);
+                    t = this._addTriangle(q, i, e);
                     hullTri[q] = t;
                     hullNext[e] = e; // Mark as removed
-                    hullSize--;
                     e = q;
                 }
             }
@@ -404,11 +393,6 @@ export default class Delaunator {
             hullHash[this._hashKey(coords[2 * e], coords[2 * e + 1])] = e;
         }
 
-        this.hull = new Uint32Array(hullSize);
-        for (let i = 0, e = this._hullStart; i < hullSize; i++) {
-            this.hull[i] = e;
-            e = hullNext[e];
-        }
 
         // Trim typed triangle mesh arrays
         this.triangles = this._triangles.subarray(0, this.trianglesLen);
@@ -433,120 +417,6 @@ export default class Delaunator {
     }
 
     /**
-     * Flip an edge in a pair of triangles if it doesn't satisfy the Delaunay
-     * condition.
-     *
-     * @param {number} a
-     * @private
-     */
-    _legalize(a: number): number {
-        const { _triangles: triangles, _halfedges: halfedges, coords } = this;
-
-        let i = 0,
-            ar = 0;
-
-        // Recursion eliminated with a fixed-size stack
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-            const b = halfedges[a];
-
-            /*
-             * If the pair of triangles doesn't satisfy the Delaunay condition
-             *
-             * (p1 is inside the circumcircle of [p0, pl, pr]), flip them,
-             * then do the same check/flip recursively for the new pair of
-             * triangles
-             *
-             *           pl                    pl
-             *          /||\                  /  \
-             *       al/ || \bl            al/    \a
-             *        /  ||  \              /      \
-             *       /  a||b  \    flip    /___ar___\
-             *     p0\   ||   /p1   =>   p0\---bl---/p1
-             *        \  ||  /              \      /
-             *       ar\ || /br             b\    /br
-             *          \||/                  \  /
-             *           pr                    pr
-             */
-            const a0 = a - a % 3;
-            ar = a0 + (a + 2) % 3;
-
-            if (b === -1) { // Convex hull edge
-                if (i === 0) {
-                    break;
-                }
-                a = EDGE_STACK[--i];
-                continue;
-            }
-
-            const b0 = b - b % 3,
-                al = a0 + (a + 1) % 3,
-                bl = b0 + (b + 2) % 3,
-                p0 = triangles[ar],
-                pr = triangles[a],
-                pl = triangles[al],
-                p1 = triangles[bl],
-                illegal = inCircle(
-                    coords[2 * p0], coords[2 * p0 + 1],
-                    coords[2 * pr], coords[2 * pr + 1],
-                    coords[2 * pl], coords[2 * pl + 1],
-                    coords[2 * p1], coords[2 * p1 + 1]
-                );
-
-            if (illegal) {
-                triangles[a] = p1;
-                triangles[b] = p0;
-
-                const hbl = halfedges[bl];
-
-                // Edge swapped on the other side of the hull (rare);
-                // fix the half-edge reference
-                if (hbl === -1) {
-                    let e = this._hullStart;
-                    do {
-                        if (this._hullTri[e] === bl) {
-                            this._hullTri[e] = a;
-                            break;
-                        }
-                        e = this._hullPrev[e];
-                    } while (e !== this._hullStart);
-                }
-                this._link(a, hbl);
-                this._link(b, halfedges[ar]);
-                this._link(ar, bl);
-
-                const br = b0 + (b + 1) % 3;
-
-                // Don't worry about hitting the cap: it can only happen on
-                // extremely degenerate input
-                if (i < EDGE_STACK.length) {
-                    EDGE_STACK[i++] = br;
-                }
-            } else {
-                if (i === 0) {
-                    break;
-                }
-                a = EDGE_STACK[--i];
-            }
-        }
-
-        return ar;
-    }
-
-    /**
-     * Link two half-edges to each other.
-     * @param {number} a
-     * @param {number} b
-     * @private
-     */
-    _link(a: number, b: number): void {
-        this._halfedges[a] = b;
-        if (b !== -1) {
-            this._halfedges[b] = a;
-        }
-    }
-
-    /**
      * Add a new triangle given vertex indices and adjacent half-edge ids.
      *
      * @param {number} i0
@@ -560,20 +430,13 @@ export default class Delaunator {
     _addTriangle(
         i0: number,
         i1: number,
-        i2: number,
-        a: number,
-        b: number,
-        c: number
+        i2: number
     ): number {
         const t = this.trianglesLen;
 
         this._triangles[t] = i0;
         this._triangles[t + 1] = i1;
         this._triangles[t + 2] = i2;
-
-        this._link(t, a);
-        this._link(t + 1, b);
-        this._link(t + 2, c);
 
         this.trianglesLen += 3;
 
@@ -599,36 +462,6 @@ function dist(ax: number, ay: number, bx: number, by: number): number {
         dy = ay - by;
     return dx * dx + dy * dy;
 }
-
-
-/**
- *
- */
-function inCircle(
-    ax: number,
-    ay: number,
-    bx: number,
-    by: number,
-    cx: number,
-    cy: number,
-    px: number,
-    py: number
-): boolean {
-    const dx = ax - px,
-        dy = ay - py,
-        ex = bx - px,
-        ey = by - py,
-        fx = cx - px,
-        fy = cy - py,
-        ap = dx * dx + dy * dy,
-        bp = ex * ex + ey * ey,
-        cp = fx * fx + fy * fy;
-
-    return dx * (ey * cp - bp * fy) -
-           dy * (ex * cp - bp * fx) +
-           ap * (ex * fy - ey * fx) < 0;
-}
-
 
 /**
  *
