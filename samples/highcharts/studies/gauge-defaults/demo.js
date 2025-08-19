@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+Highcharts.chart('container-1', {
 
     chart: {
         type: 'gauge'
@@ -6,6 +6,22 @@ Highcharts.chart('container', {
 
     title: {
         text: 'Highcharts gauge defauls'
+    },
+
+    series: [{
+        data: [27]
+    }]
+
+});
+
+Highcharts.chart('container-2', {
+
+    chart: {
+        type: 'solidgauge'
+    },
+
+    title: {
+        text: 'Highcharts solid gauge defauls'
     },
 
     series: [{

@@ -131,6 +131,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
     colorByPoint: true,
 
     dataLabels: {
+        verticalAlign: 'middle',
         y: 0
     }
 };

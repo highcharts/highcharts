@@ -132,20 +132,20 @@ class GaugeSeries extends Series {
 
             /**
              * Data labels for the gauge. For gauges, the data labels are
-             * enabled by default and shown in a bordered box below the point.
+             * enabled by default and shown in the center.
              *
              * @since   2.3.0
              * @product highcharts
              */
             dataLabels: {
-                borderColor: Palette.neutralColor20,
-                borderRadius: 3,
-                borderWidth: 1,
                 crop: false,
                 defer: false,
                 enabled: true,
                 verticalAlign: 'top',
-                y: 15,
+                style: {
+                    fontSize: '1.4em'
+                },
+                y: 25,
                 zIndex: 2
             },
 
