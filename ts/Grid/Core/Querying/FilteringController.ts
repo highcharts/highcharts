@@ -288,11 +288,7 @@ class FilteringController {
             };
         }
 
-        return {
-            columnName: columnId,
-            operator: 'contains',
-            value: options.value
-        };
+        return null;
     }
 }
 

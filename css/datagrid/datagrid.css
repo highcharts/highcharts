@@ -1076,7 +1076,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .hcg-col-filter-wrapper input,
-.highcharts-datagrid-col-filter-wrapper input {
+.highcharts-datagrid-col-filter-wrapper input,
+.hcg-col-filter-wrapper select,
+.highcharts-datagrid-col-filter-wrapper select {
     border: 1px solid var(--ig-header-row-border-color);
     border-radius: var(--hcg-border-radius);
     padding: var(--ig-header-padding);
