@@ -413,10 +413,9 @@ class WGLRenderer {
             /// threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
             // hasThreshold = isNumber(threshold),
-            // colorByPoint = series.options.colorByPoint,
+            colorByPoint = series.options.colorByPoint,
             // This is required for color by point, so make sure this is
             // uncommented if enabling that
-            // colorIndex = 0,
             // Required for color axis support
             // caxis,
             connectNulls = options.connectNulls,
@@ -463,7 +462,8 @@ class WGLRenderer {
             zoneColors: Array<Color.RGBA>,
             zoneDefColor: (Color.RGBA|undefined) = false as any,
             gapSize: number = false as any,
-            vlen = 0;
+            vlen = 0,
+            colorIndex = 0;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -760,39 +760,38 @@ class WGLRenderer {
                 break;
             }
 
-            // Uncomment this to enable color by point.
-            // This currently left disabled as the charts look really ugly
-            // when enabled and there's a lot of points.
-            // Leaving in for the future (tm).
-            // if (colorByPoint) {
-            //     colorIndex = ++colorIndex %
-            //         series.chart.options.colors.length;
-            //     pcolor = toRGBAFast(series.chart.options.colors[colorIndex]);
-            //     pcolor[0] /= 255.0;
-            //     pcolor[1] /= 255.0;
-            //     pcolor[2] /= 255.0;
-            // }
+            if (colorByPoint && chart.options.colors) {
+                colorIndex = ++colorIndex %
+                    chart.options.colors.length;
 
-            // Handle the point.color option (#5999)
-            const pointOptions = rawData && rawData[i];
-            if (!useRaw) {
-                if (isObject(pointOptions, true) && pointOptions.color) {
-                    pcolor = color(pointOptions.color).rgba;
-                }
-
-                const colorKeyIndex = series.options.keys?.indexOf('color');
-                if (
-                    Array.isArray(pointOptions) &&
-                    colorKeyIndex &&
-                    typeof pointOptions[colorKeyIndex] === 'string'
-                ) {
-                    pcolor = color(pointOptions[colorKeyIndex]).rgba;
-                }
-
+                pcolor = color(chart.options.colors[colorIndex]).rgba;
                 if (pcolor) {
                     pcolor[0] /= 255.0;
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
+                }
+            } else {
+                // Handle the point.color option (#5999)
+                const pointOptions = rawData && rawData[i];
+                if (!useRaw) {
+                    if (isObject(pointOptions, true) && pointOptions.color) {
+                        pcolor = color(pointOptions.color).rgba;
+                    }
+
+                    const colorKeyIndex = series.options.keys?.indexOf('color');
+                    if (
+                        Array.isArray(pointOptions) &&
+                        colorKeyIndex &&
+                        typeof pointOptions[colorKeyIndex] === 'string'
+                    ) {
+                        pcolor = color(pointOptions[colorKeyIndex]).rgba;
+                    }
+
+                    if (pcolor) {
+                        pcolor[0] /= 255.0;
+                        pcolor[1] /= 255.0;
+                        pcolor[2] /= 255.0;
+                    }
                 }
             }
 
