@@ -357,7 +357,7 @@ class RowsVirtualizer {
         }
 
         // Set the focus anchor cell if not set or it's not rendered
-        if (!vp.focusAnchorCell || !vp.focusAnchorCell.row.rendered) {
+        if (!vp.focusAnchorCell?.row.rendered) {
             vp.setFocusAnchorCell(rows[0].cells[0]);
         }
     }
