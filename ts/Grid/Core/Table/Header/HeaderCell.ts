@@ -314,15 +314,6 @@ class HeaderCell extends Cell {
         const { column } = this;
         const iconOptions = column?.options.header?.icons;
 
-        // Register filter icon (enabled by default unless explicitly disabled)
-        this.iconManager.registerIcon('filter', {
-            icon: 'filter',
-            enabled: iconOptions?.filter !== false,
-            onClick: (): void => {
-                // Filter click handler - can be expanded later
-            }
-        });
-
         // Register sort icon if column is sortable and enabled
         if (column?.options.sorting?.sortable && iconOptions?.sort !== false) {
             this.iconManager.registerIcon('sort', {
@@ -370,6 +361,15 @@ class HeaderCell extends Cell {
             // Set initial sort state
             this.updateSortIconState();
         }
+
+        // Register filter icon (enabled by default unless explicitly disabled)
+        this.iconManager.registerIcon('filter', {
+            icon: 'filter',
+            enabled: iconOptions?.filter !== false,
+            onClick: (): void => {
+                // Filter click handler - can be expanded later
+            }
+        });
 
         // Register menu icon if enabled
         if (iconOptions?.menu === true) {
