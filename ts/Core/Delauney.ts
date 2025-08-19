@@ -28,7 +28,6 @@ function orient2d(
 export default class Delaunator {
     public triangles: Uint32Array;
     private _triangles: Uint32Array;
-    private _halfedges: Int32Array;
     private _hashSize: number;
     private _hullPrev: Uint32Array;
     private _hullNext: Uint32Array; // Edge to next edge
@@ -41,23 +40,6 @@ export default class Delaunator {
     private _cy: number = 0;
     private coords: Float64Array;
 
-    static from(
-        points: any,
-        getX = defaultGetX,
-        getY = defaultGetY
-    ): Delaunator {
-        const n = points.length;
-        const coords = new Float64Array(n * 2);
-
-        for (let i = 0; i < n; i++) {
-            const p = points[i];
-            coords[2 * i] = getX(p);
-            coords[2 * i + 1] = getY(p);
-        }
-
-        return new Delaunator(coords);
-    }
-
     constructor(coords: Float64Array) {
         const n = coords.length >> 1,
             maxTriangles = Math.max(2 * n - 5, 0),
@@ -68,7 +50,6 @@ export default class Delaunator {
 
         // Arrays that will store the triangulation graph
         /** @private */ this._triangles = new Uint32Array(maxTrianglesTimesThree);
-        /** @private */ this._halfedges = new Int32Array(maxTrianglesTimesThree);
 
         // Temporary arrays for tracking the edges of the advancing convex hull
         /** @private */ this._hashSize = Math.ceil(Math.sqrt(n));
@@ -563,17 +544,4 @@ function swap(arr: Uint32Array, i: number, j: number): void {
     const tmp = arr[i];
     arr[i] = arr[j];
     arr[j] = tmp;
-}
-
-/**
- *
- */
-function defaultGetX(p: Float64Array): number {
-    return p[0];
-}
-/**
- *
- */
-function defaultGetY(p: Float64Array): number {
-    return p[1];
 }
