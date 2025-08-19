@@ -456,7 +456,7 @@ class WGLRenderer {
             low: number|undefined|null,
             nextInside = false,
             prevInside = false,
-            pcolor: Color.RGBA = false as any,
+            pcolor: Color.RGBA | undefined = void 0,
             isXInside = false,
             isYInside = true,
             firstPoint = true,
@@ -681,7 +681,7 @@ class WGLRenderer {
                     swidth = pointAttr['stroke-width'] || 0;
 
                     // Handle point colors
-                    pcolor = color(pointAttr.fill).rgba as any;
+                    pcolor = color(pointAttr.fill).rgba;
                     pcolor[0] /= 255.0;
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
@@ -775,9 +775,21 @@ class WGLRenderer {
 
             // Handle the point.color option (#5999)
             const pointOptions = rawData && rawData[i];
-            if (!useRaw && isObject(pointOptions, true)) {
-                if (pointOptions.color) {
-                    pcolor = color(pointOptions.color).rgba as any;
+            if (!useRaw) {
+                if (isObject(pointOptions, true) && pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba;
+                }
+
+                const colorKeyIndex = series.options.keys?.indexOf('color');
+                if (
+                    Array.isArray(pointOptions) &&
+                    colorKeyIndex &&
+                    typeof pointOptions[colorKeyIndex] === 'string'
+                ) {
+                    pcolor = color(pointOptions[colorKeyIndex]).rgba;
+                }
+
+                if (pcolor) {
                     pcolor[0] /= 255.0;
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
@@ -1060,7 +1072,7 @@ class WGLRenderer {
                 }
 
                 // Need to add an extra point here
-                vertice(x, minVal as any, 0 as any, 0, pcolor);
+                vertice(x, minVal as any, false, 0, pcolor);
             }
 
             // Do step line if enabled.
@@ -1071,7 +1083,7 @@ class WGLRenderer {
                 vertice(
                     x,
                     lastY,
-                    0 as any,
+                    false,
                     2,
                     pcolor
                 );
@@ -1080,7 +1092,7 @@ class WGLRenderer {
             vertice(
                 x,
                 y,
-                0 as any,
+                false,
                 series.type === 'bubble' ? (z || 1) : 2,
                 pcolor
             );
