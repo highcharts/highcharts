@@ -28,10 +28,8 @@ function orient2d(
 export default class Delaunator {
     public triangles: Uint32Array;
     private _triangles: Uint32Array;
-    private halfedges: Int32Array;
     private _halfedges: Int32Array;
     private _hashSize: number;
-    private hull: Uint32Array;
     private _hullPrev: Uint32Array;
     private _hullNext: Uint32Array; // Edge to next edge
     private _hullTri: Uint32Array; // Edge to adjacent triangle
@@ -41,7 +39,6 @@ export default class Delaunator {
     private trianglesLen: number = 0;
     private _cx: number = 0;
     private _cy: number = 0;
-    private _hullStart: number = 0;
     private coords: Float64Array;
 
     static from(
@@ -62,15 +59,16 @@ export default class Delaunator {
     }
 
     constructor(coords: Float64Array) {
-        const n = coords.length >> 1;
+        const n = coords.length >> 1,
+            maxTriangles = Math.max(2 * n - 5, 0),
+            maxTrianglesTimesThree = maxTriangles * 3;
 
 
         this.coords = coords;
 
         // Arrays that will store the triangulation graph
-        const maxTriangles = Math.max(2 * n - 5, 0);
-        /** @private */ this._triangles = new Uint32Array(maxTriangles * 3);
-        /** @private */ this._halfedges = new Int32Array(maxTriangles * 3);
+        /** @private */ this._triangles = new Uint32Array(maxTrianglesTimesThree);
+        /** @private */ this._halfedges = new Int32Array(maxTrianglesTimesThree);
 
         // Temporary arrays for tracking the edges of the advancing convex hull
         /** @private */ this._hashSize = Math.ceil(Math.sqrt(n));
@@ -92,27 +90,11 @@ export default class Delaunator {
         /** @private */ this._dists = new Float64Array(n);
 
         /**
-         * A `Uint32Array` array of indices that reference points on the
-         * convex hull of the input data, counter-clockwise.
-         */
-        this.hull = this._triangles;
-
-        /**
          * A `Uint32Array` array of triangle vertex indices (each group of
          * three numbers forms a triangle). All triangles are directed
          * counterclockwise.
         */
         this.triangles = this._triangles;
-
-        /**
-         * A `Int32Array` array of triangle half-edge indices that allows you
-         * to traverse the triangulation.
-         * `i`-th half-edge in the array corresponds to vertex `triangles[i]`
-         * the half-edge is coming from.
-         * `halfedges[i]` is the index of a twin half-edge in an adjacent
-         * triangle (or `-1` for outer half-edges on the convex hull).
-         */
-        this.halfedges = this._halfedges;
 
         this.update();
     }
@@ -263,8 +245,6 @@ export default class Delaunator {
         // Sort the points by distance from the seed triangle circumcenter
         quicksort(this._ids, this._dists, 0, n - 1);
 
-        // Set up the seed triangle as the starting hull
-        this._hullStart = i0;
 
         hullNext[i0] = hullPrev[i2] = i1;
         hullNext[i1] = hullPrev[i0] = i2;
@@ -384,7 +364,6 @@ export default class Delaunator {
             }
 
             // Update the hull indices
-            this._hullStart = hullPrev[i] = e;
             hullNext[e] = hullPrev[n] = i;
             hullNext[i] = n;
 
@@ -394,9 +373,8 @@ export default class Delaunator {
         }
 
 
-        // Trim typed triangle mesh arrays
+        // Trim typed triangle mesh array
         this.triangles = this._triangles.subarray(0, this.trianglesLen);
-        this.halfedges = this._halfedges.subarray(0, this.trianglesLen);
     }
 
     /**
