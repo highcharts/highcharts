@@ -326,7 +326,7 @@ class HeaderCell extends Cell {
         // Register sort icon if column is sortable and enabled
         if (column?.options.sorting?.sortable && iconOptions?.sort !== false) {
             this.iconManager.registerIcon('sort', {
-                icon: 'chevronDown',
+                icon: 'chevronSelector',
                 enabled: true,
                 onClick: (
                     event: MouseEvent,
@@ -338,21 +338,32 @@ class HeaderCell extends Cell {
                     iconElement: HTMLElement,
                     state: any
                 ): void => {
-                    // Update sort icon based on current sorting state
                     const iconWrapper = iconElement;
-                    iconWrapper.classList.remove(
-                        'sort-asc',
-                        'sort-desc',
-                        'sort-none'
-                    );
+                    const button = iconWrapper.querySelector('.hcg-button');
+                    if (!button) {
+                        return;
+                    }
+
+                    // Remove existing icon
+                    const existingIcon = button.querySelector('svg');
+                    if (existingIcon) {
+                        button.removeChild(existingIcon);
+                    }
+
+                    let iconName: 'chevronUp' |
+                    'chevronDown' | 'chevronSelector' = 'chevronSelector';
 
                     if (state === 'asc') {
-                        iconWrapper.classList.add('sort-asc');
+                        iconName = 'chevronUp';
                     } else if (state === 'desc') {
-                        iconWrapper.classList.add('sort-desc');
-                    } else {
-                        iconWrapper.classList.add('sort-none');
+                        iconName = 'chevronDown';
                     }
+
+                    const newIcon = (Globals as any).GridIcons.createGridIcon(
+                        iconName,
+                        20
+                    );
+                    button.appendChild(newIcon);
                 }
             });
 
