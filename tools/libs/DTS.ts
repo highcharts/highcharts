@@ -48,7 +48,7 @@ export interface ClassInfo {
     members: Array<MemberInfo>;
     meta: InfoMeta;
     name: string;
-    node: TS.ClassDeclaration;
+    symbol: TS.Symbol;
 }
 
 
@@ -81,7 +81,7 @@ export interface EnumerationInfo {
     members: Array<PropertyInfo>;
     meta: InfoMeta;
     name: string;
-    node: TS.EnumDeclaration;
+    symbol: TS.Symbol;
 }
 
 
@@ -92,13 +92,9 @@ export interface FunctionInfo {
     kind: 'Function';
     meta: InfoMeta;
     name: string;
-    node: (
-        | TS.ConstructorDeclaration
-        | TS.FunctionDeclaration
-        | TS.MethodDeclaration
-    );
     parameters?: Array<VariableInfo>;
     return?: InfoType;
+    symbol: TS.Symbol
 }
 
 
@@ -135,6 +131,7 @@ export type InfoType = (
     | string
     | GenericType
     | IntersectionType
+    | ObjectType
     | ReferenceType
     | UnionType
 );
@@ -149,7 +146,7 @@ export interface InterfaceInfo {
     members: Array<MemberInfo>;
     meta: InfoMeta;
     name: string;
-    node: TS.InterfaceDeclaration;
+    symbol: TS.Symbol;
 }
 
 
@@ -172,7 +169,15 @@ export interface NamespaceInfo {
     members: Array<CodeInfo>;
     meta: InfoMeta;
     name: string;
-    node: TS.ModuleDeclaration;
+    symbol: TS.Symbol;
+}
+
+
+export interface ObjectType {
+    kind: 'ObjectType';
+    members: Array<MemberInfo>;
+    meta: InfoMeta;
+    symbol: TS.Symbol;
 }
 
 
@@ -191,12 +196,7 @@ export interface PropertyInfo {
     kind: 'Property';
     meta: InfoMeta;
     name: string;
-    node: (
-        | TS.PropertyAssignment
-        | TS.PropertyDeclaration
-        | TS.PropertySignature
-        | TS.ShorthandPropertyAssignment
-    );
+    symbol: TS.Symbol;
     type?: InfoType;
 }
 
@@ -214,7 +214,7 @@ export interface SourceInfo {
     code: Array<CodeInfo>;
     file: string;
     kind: 'Source';
-    node: TS.SourceFile;
+    symbol?: TS.Symbol;
 }
 
 
@@ -226,7 +226,7 @@ export interface TypeAliasInfo {
     kind: 'TypeAlias';
     meta: InfoMeta;
     name: string;
-    node: (TS.TypeAliasDeclaration|TS.TypeParameterDeclaration);
+    symbol: TS.Symbol;
     value?: InfoType;
 }
 
@@ -245,7 +245,7 @@ export interface VariableInfo {
     kind: 'Variable';
     meta: InfoMeta;
     name: string;
-    node: (TS.ParameterDeclaration|TS.VariableDeclaration);
+    symbol: TS.Symbol;
     type: InfoType;
 }
 
@@ -1247,16 +1247,14 @@ function getClassInfo (
 
     const _info = {
         kind: 'Class',
-        name: symbolsName(_program, _symbol)
-    } as ClassInfo;
+        name: symbolsName(_program, _symbol),
+        members: [],
+        symbol: _symbol
+    } as unknown as ClassInfo;
 
     addInfoGenerics(_info, node, project);
     addInfoHeritage(_info, node, project);
-    addChildInfos(
-        project,
-        _info.members = [],
-        symbolsChildren(_program, _symbol)
-    );
+    addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
     addInfoMeta(_info, node, project);
 
@@ -1295,7 +1293,8 @@ function getEnumerationInfo (
     const _info = {
         kind: 'Enumeration',
         name: symbolsName(_program, _symbol),
-        members: []
+        members: [],
+        symbol: _symbol
     } as unknown as EnumerationInfo;
 
     addChildInfos(project, _info.members, node.members);
@@ -1344,7 +1343,8 @@ function getFunctionInfo (
 
     const _info = {
         kind: 'Function',
-        name: symbolsName(_program, _symbol)
+        name: symbolsName(_program, _symbol),
+        symbol: _symbol
     } as FunctionInfo;
 
     addInfoGenerics(_info, node, project);
@@ -1409,16 +1409,14 @@ function getInterfaceInfo (
 
     const _info = {
         kind: 'Interface',
-        name: symbolsName(_program, _symbol)
-    } as InterfaceInfo;
+        name: symbolsName(_program, _symbol),
+        members: [],
+        symbol: _symbol
+    } as unknown as InterfaceInfo;
 
     addInfoGenerics(_info, node, project);
     addInfoHeritage(_info, node, project);
-    addChildInfos(
-        project,
-        _info.members = [],
-        symbolsChildren(_program, _symbol)
-    );
+    addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
     addInfoMeta(_info, node, project);
 
@@ -1457,7 +1455,8 @@ function getNamespaceInfo (
     const _info = {
         kind: 'Namespace',
         name: symbolsName(_program, _symbol),
-        members: []
+        members: [],
+        symbol: _symbol
     } as unknown as NamespaceInfo;
 
     addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
@@ -1585,6 +1584,8 @@ export function getSourceInfo (
         sourceFile = _program.getSourceFile(sourceFile)!;
     }
 
+    const _symbol = nodesSymbol(_program, sourceFile);
+
     const _info = {
         kind: 'Source',
         file: Path.relative(
@@ -1592,10 +1593,8 @@ export function getSourceInfo (
             TS.sys.resolvePath(sourceFile.fileName)
         ),
         code: [],
-        node: sourceFile
+        symbol: _symbol
     } as SourceInfo;
-
-    const _symbol = nodesSymbol(_program, sourceFile)!;
 
     if (_symbol) {
         addChildInfos(project, _info.code, symbolsChildren(_program, _symbol));
@@ -1641,7 +1640,8 @@ function getTypeAliasInfo (
 
     const _info = {
         kind: 'TypeAlias',
-        name: symbolsName(_program, _symbol)
+        name: symbolsName(_program, _symbol),
+        symbol: _symbol
     } as TypeAliasInfo;
 
     _info.value = (
@@ -1689,7 +1689,8 @@ function getVariableInfo (
 
     const _info = {
         kind: 'Variable',
-        name: symbolsName(_program, _symbol)
+        name: symbolsName(_program, _symbol),
+        symbol: _symbol
     } as VariableInfo;
 
     if (
@@ -1955,6 +1956,23 @@ function nodesInfoType (
                 _infoType.isTypeOf = true;
             }
 
+            addInfoMeta(_infoType, node, project);
+
+            return _infoType;
+        }
+
+        if (TS.isTypeLiteralNode(node)) {
+            const _infoType = {
+                kind: 'ObjectType',
+                members: [],
+                symbol: _symbol
+            } as unknown as ObjectType;
+
+            addChildInfos(
+                project,
+                _infoType.members,
+                node.members
+            );
             addInfoMeta(_infoType, node, project);
 
             return _infoType;
