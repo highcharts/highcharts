@@ -334,11 +334,6 @@
     fill: var(--highcharts-background-color);
 }
 
-.highcharts-tooltip-box {
-    stroke-width: 0;
-    fill: var(--highcharts-background-color);
-}
-
 .highcharts-tooltip-box .highcharts-label-box {
     fill: var(--highcharts-background-color);
 }
