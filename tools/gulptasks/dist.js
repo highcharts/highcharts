@@ -48,6 +48,11 @@ function dist(callback) {
         case 'Grid':
             tasks.push('grid/api-docs');
             break;
+        case 'Dashboards':
+            // Use webpack-based build for Dashboards
+            tasks.splice(tasks.indexOf('scripts'), 1, 'scripts-webpack');
+            tasks.push('dashboards/api-docs');
+            break;
         default:
     }
 
@@ -58,6 +63,6 @@ function dist(callback) {
 
 dist.description = 'Builds distribution files for the specified product.';
 dist.flags = {
-    '--product': 'Product name. Available products: Highcharts, Grid. Defaults to Highcharts.'
+    '--product': 'Product name. Available products: Highcharts, Grid, Dashboards. Defaults to Highcharts.'
 };
 Gulp.task('dist', dist);

@@ -153,7 +153,13 @@ const CODE_FILTER = {
         ['grid', 'grid-lite.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
-    )
+    ),
+    dashboards: [
+        ['dashboards', 'es-modules', 'Gantt'],
+        ['dashboards', 'es-modules', 'Grid'],
+        ['dashboards', 'es-modules', 'Maps'],
+        ['dashboards', 'es-modules', 'Stock']
+    ]
 };
 
 /**
@@ -197,7 +203,8 @@ const VENDOR_FILTER = [
  */
 const PRODUCTS = {
     Highcharts: ['highcharts', 'highstock', 'highmaps', 'gantt'],
-    Grid: ['grid-lite', 'grid-pro']
+    Grid: ['grid-lite', 'grid-pro'],
+    Dashboards: ['dashboards']
 };
 
 /* *
@@ -228,6 +235,9 @@ function distCopy() {
 
         if (distProduct === 'Grid') {
             sourceDir = Path.join(CODE_DIRECTORY, 'grid');
+            codeExtensions = [...CODE_EXTENSIONS, '.ts']; // copy also d.ts files
+        } else if (distProduct === 'Dashboards') {
+            sourceDir = Path.join(CODE_DIRECTORY, 'dashboards');
             codeExtensions = [...CODE_EXTENSIONS, '.ts']; // copy also d.ts files
         } else {
             sourceDir = CODE_DIRECTORY;

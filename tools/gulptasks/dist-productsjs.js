@@ -109,6 +109,11 @@ async function distProductsJS(options) {
 
         date = new Date().toISOString().split('T')[0];
         nr = buildProperties.version;
+    } else if (distProduct === 'Dashboards') {
+        const buildProperties = require('./dashboards/build-properties.json');
+
+        date = new Date().toISOString().split('T')[0];
+        nr = buildProperties.version;
     } else {
         if (!release) {
             throw new Error('No `--release x.x.x` provided.');
