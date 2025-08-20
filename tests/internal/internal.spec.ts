@@ -389,4 +389,17 @@ test.describe('createChart', () => {
         expect(await chart.evaluate(c => c)).toHaveProperty('mapView');
 
     });
+
+    test('chartCallback option', async ({ page }) => {
+        const chart = await createChart(page, {}, {
+            chartCallback: (chart) => {
+                window['chartCreated'] = true;
+                chart['chartCallbackCalled'] = true;
+            }
+        });
+
+        await page.waitForFunction(() => typeof window['chartCreated'] !== 'undefined');
+        expect(await page.evaluate(()=> window['chartCreated'])).toBeTruthy();
+        expect(await chart.evaluate((c)=> c['chartCallbackCalled'])).toBeTruthy();
+    });
 });
