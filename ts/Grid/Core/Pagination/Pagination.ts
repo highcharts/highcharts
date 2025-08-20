@@ -254,7 +254,7 @@ class Pagination {
         this.reflow();
 
         this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('pgWrapper')
+            className: Globals.getClassName('paginationWrapper')
         }, this.cell);
 
         // Update total pages first to ensure correct calculations
@@ -282,7 +282,7 @@ class Pagination {
         }
 
         this.pageInfoElement = makeHTMLElement('div', {
-            className: Globals.getClassName('pgPageInfo')
+            className: Globals.getClassName('paginationPageInfo')
         }, this.contentWrapper);
 
         this.updatePageInfo();
@@ -316,7 +316,7 @@ class Pagination {
      */
     public renderControls(): void {
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('pgControls')
+            className: Globals.getClassName('paginationControls')
         }, this.contentWrapper);
 
         // Render first/previous buttons
@@ -363,7 +363,7 @@ class Pagination {
 
         this.firstButton = makeHTMLElement('button', {
             innerHTML: '&laquo;',
-            className: Globals.getClassName('pgButton')
+            className: Globals.getClassName('paginationButton')
         }, container);
         this.firstButton.title = this.lang.firstPage;
 
@@ -391,7 +391,7 @@ class Pagination {
 
         this.prevButton = makeHTMLElement('button', {
             innerHTML: '&lsaquo;',
-            className: Globals.getClassName('pgButton')
+            className: Globals.getClassName('paginationButton')
         }, container);
         this.prevButton.title = this.lang.previousPage;
 
@@ -419,7 +419,7 @@ class Pagination {
 
         this.nextButton = makeHTMLElement('button', {
             innerHTML: '&rsaquo;',
-            className: Globals.getClassName('pgButton')
+            className: Globals.getClassName('paginationButton')
         }, container);
         this.nextButton.title = this.lang.nextPage;
 
@@ -450,7 +450,7 @@ class Pagination {
 
         this.lastButton = makeHTMLElement('button', {
             innerHTML: '&raquo;',
-            className: Globals.getClassName('pgButton')
+            className: Globals.getClassName('paginationButton')
         }, container);
         this.lastButton.title = this.lang.lastPage;
 
@@ -480,7 +480,7 @@ class Pagination {
         }
 
         this.pageNumbersContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('pgPageButton')
+            className: Globals.getClassName('paginationPageButton')
         }, container);
 
         this.updatePageNumbers();
@@ -560,7 +560,7 @@ class Pagination {
         const button = makeHTMLElement('button', {
             innerHTML: pageNumber.toString(),
             className: Globals.getClassName(
-                isActive ? 'pgPageButtonActive' : 'pgPageButton'
+                isActive ? 'paginationPageButtonActive' : 'paginationPageButton'
             )
         }, this.pageNumbersContainer);
         button.title = this.formatText(
@@ -583,7 +583,7 @@ class Pagination {
 
         const ellipsisElement = makeHTMLElement('span', {
             innerHTML: '...',
-            className: Globals.getClassName('pgEllipsis')
+            className: Globals.getClassName('paginationEllipsis')
         }, this.pageNumbersContainer);
         ellipsisElement.title = this.lang.ellipsis;
     }
@@ -605,7 +605,7 @@ class Pagination {
         }
 
         const container = makeHTMLElement('div', {
-            className: Globals.getClassName('pgPageSizeContainer')
+            className: Globals.getClassName('paginationPageSizeContainer')
         }, this.contentWrapper);
 
         makeHTMLElement('span', {
@@ -613,7 +613,7 @@ class Pagination {
         }, container);
 
         this.pageSizeSelect = makeHTMLElement('select', {
-            className: Globals.getClassName('pgPageSizeSelect')
+            className: Globals.getClassName('paginationPageSizeSelect')
         }, container) as HTMLSelectElement;
 
         this.pageSizeOptions.forEach((option: number): void => {
@@ -815,10 +815,14 @@ class Pagination {
      */
     public setButtonState(button: HTMLElement, disabled?: boolean): void {
         if (disabled) {
-            button.classList.add(Globals.getClassName('pgButtonDisabled'));
+            button.classList.add(
+                Globals.getClassName('paginationButtonDisabled')
+            );
             button.setAttribute('disabled', 'disabled');
         } else {
-            button.classList.remove(Globals.getClassName('pgButtonDisabled'));
+            button.classList.remove(
+                Globals.getClassName('paginationButtonDisabled')
+            );
             button.removeAttribute('disabled');
         }
     }
