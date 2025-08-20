@@ -2906,6 +2906,7 @@ class Chart {
         }
 
         this.warnIfA11yModuleNotLoaded();
+        this.warnIfCSSNotLoaded();
 
         // Don't run again
         this.hasLoaded = true;
@@ -2938,6 +2939,27 @@ class Chart {
                     '"accessibility.enabled" option to false to remove this ' +
                     'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
                     false, this
+                );
+            }
+        }
+    }
+
+    /**
+     * Emit console warning if the highcharts.css file is not loaded.
+     * @private
+     */
+    public warnIfCSSNotLoaded(): void {
+        if (this.styledMode) {
+            const containerStyle = win.getComputedStyle(this.container);
+
+            if (containerStyle.zIndex !== '0') {
+                error(
+                    'Highcharts error: The "highcharts.css" file is ' +
+                    'required when using styled mode (chart.styledMode = ' +
+                    'true). Without it, charts cannot be rendered correctly. ' +
+                    'See https://www.highcharts.com/docs/chart-design-and-style/style-by-css.',
+                    false,
+                    this
                 );
             }
         }
