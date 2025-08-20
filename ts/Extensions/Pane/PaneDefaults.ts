@@ -35,8 +35,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * A background item or an array of such for the pane. When used in
  * `Highcharts.setOptions` for theming, the background must be a single item.
  *
- * @sample {highcharts} highcharts/demo/gauge-speedometer/
- *         Speedometer gauge with multiple backgrounds
+ * @sample {highcharts} highcharts/series-solidgauge/pane-borderradius
+ *         Solid gauge with background settings
  *
  * @type         {Array<*>}
  * @optionparent pane.background
@@ -68,7 +68,7 @@ const background: PaneBackgroundOptions = {
      * @since   2.3.0
      * @product highcharts
      */
-    shape: 'circle',
+    shape: 'arc',
 
     /**
      * The border radius of the pane background when the shape is `arc`. Can be
@@ -88,7 +88,7 @@ const background: PaneBackgroundOptions = {
      * @since 2.3.0
      * @product highcharts
      */
-    borderWidth: 1,
+    borderWidth: 0,
 
     /**
      * The pane background border color.
@@ -107,18 +107,7 @@ const background: PaneBackgroundOptions = {
      * @since   2.3.0
      * @product highcharts
      */
-    backgroundColor: {
-
-        /** @ignore-option */
-        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-
-        /** @ignore-option */
-        stops: [
-            [0, Palette.backgroundColor],
-            [1, Palette.neutralColor10]
-        ]
-
-    },
+    backgroundColor: Palette.neutralColor5,
 
     /** @ignore-option */
     from: -Number.MAX_VALUE, // Corrected to axis min
@@ -131,7 +120,7 @@ const background: PaneBackgroundOptions = {
      * @since   2.3.0
      * @product highcharts
      */
-    innerRadius: 0,
+    innerRadius: '60%',
 
     /** @ignore-option */
     to: Number.MAX_VALUE, // Corrected to axis max
@@ -144,7 +133,7 @@ const background: PaneBackgroundOptions = {
      * @since    2.3.0
      * @product  highcharts
      */
-    outerRadius: '105%'
+    outerRadius: '100%'
 
 };
 
@@ -162,8 +151,6 @@ const background: PaneBackgroundOptions = {
  * @optionparent pane
  */
 const pane: PaneOptions|Array<PaneOptions> = {
-
-    background,
 
     /**
      * The end angle of the polar X axis or gauge value axis, given in

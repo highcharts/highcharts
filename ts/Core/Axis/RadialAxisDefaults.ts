@@ -46,11 +46,10 @@ const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
     gridLineWidth: 0,
     labels: {
         align: 'center',
-        distance: -25,
+        distance: 15,
         x: 0,
         y: void 0 // Auto
     },
-    lineWidth: 1,
     minorGridLineWidth: 0,
     minorTickInterval: 'auto',
     minorTickLength: 10,
