@@ -1,3 +1,4 @@
+/* eslint-disable spaced-comment */
 /// <reference path="../code/highcharts.src.d.ts" />
 /// <reference path="../node_modules/@types/jquery/index.d.ts" />
 /// <reference path="../node_modules/@types/qunit/index.d.ts" />
