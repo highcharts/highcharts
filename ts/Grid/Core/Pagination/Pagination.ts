@@ -182,8 +182,7 @@ class Pagination {
         this.grid = grid;
         this.options = merge(Pagination.defaultOptions, options);
 
-        this.pageSizeOptions =
-            this.options.controls.pageSizeSelector.options as number[];
+        this.pageSizeOptions = this.options.controls.pageSizeSelector.options;
 
         this.currentPageSize =
             options.currentPageSize ||
@@ -285,7 +284,7 @@ class Pagination {
             this.totalItems
         );
 
-        const pageInfoText = this.formatText(this.lang.pageInfo as string, {
+        const pageInfoText = this.formatText(this.lang.pageInfo, {
             start: startItem,
             end: endItem,
             total: this.totalItems
@@ -339,7 +338,7 @@ class Pagination {
             innerHTML: '&laquo;',
             className: Globals.getClassName('pgButton')
         }, container);
-        this.firstButton.title = this.lang.firstPage as string;
+        this.firstButton.title = this.lang.firstPage;
 
         this.firstButton.addEventListener('click', (): void => {
             void this.goToPage(1);
@@ -359,7 +358,7 @@ class Pagination {
             innerHTML: '&lsaquo;',
             className: Globals.getClassName('pgButton')
         }, container);
-        this.prevButton.title = this.lang.previousPage as string;
+        this.prevButton.title = this.lang.previousPage;
 
         this.prevButton.addEventListener('click', (): void => {
             void this.goToPage(this.currentPage - 1);
@@ -379,7 +378,7 @@ class Pagination {
             innerHTML: '&rsaquo;',
             className: Globals.getClassName('pgButton')
         }, container);
-        this.nextButton.title = this.lang.nextPage as string;
+        this.nextButton.title = this.lang.nextPage;
 
         this.nextButton.addEventListener('click', (): void => {
             void this.goToPage(this.currentPage + 1);
@@ -402,7 +401,7 @@ class Pagination {
             innerHTML: '&raquo;',
             className: Globals.getClassName('pgButton')
         }, container);
-        this.lastButton.title = this.lang.lastPage as string;
+        this.lastButton.title = this.lang.lastPage;
 
         this.lastButton.addEventListener('click', (): void => {
             void this.goToPage(this.totalPages);
@@ -439,7 +438,7 @@ class Pagination {
         // Clear existing page numbers
         this.pageNumbersContainer.innerHTML = '';
 
-        const maxPageNumbers = this.options.controls?.pageButtons?.count || 5;
+        const maxPageNumbers = this.options.controls.pageButtons.count;
         const totalPages = this.totalPages;
         const currentPage = this.currentPage;
 
@@ -502,7 +501,7 @@ class Pagination {
             )
         }, this.pageNumbersContainer);
         button.title = this.formatText(
-            this.lang.pageNumber as string,
+            this.lang.pageNumber,
             { page: pageNumber }
         );
 
@@ -523,7 +522,7 @@ class Pagination {
             innerHTML: '...',
             className: Globals.getClassName('pgEllipsis')
         }, this.pageNumbersContainer);
-        ellipsisElement.title = this.lang.ellipsis as string;
+        ellipsisElement.title = this.lang.ellipsis;
     }
 
     /**
