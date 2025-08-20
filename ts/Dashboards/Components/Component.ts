@@ -657,13 +657,12 @@ abstract class Component {
 
         if (!connectorsHaveChanged) {
             for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
+                const oldOpt = this.connectorHandlers[i]?.options;
+                const newOpt = connectorOptions[i];
+
                 if (
-                    // Check if the connector id has changed.
-                    connectorOptions[i]?.id !==
-                    this.connectorHandlers[i]?.options.id ||
-                    // Check if the data table key has changed.
-                    connectorOptions[i]?.dataTableKey !==
-                    this.connectorHandlers[i]?.options.dataTableKey
+                    newOpt?.id !== oldOpt?.id ||
+                    newOpt?.dataTableKey !== oldOpt?.dataTableKey
                 ) {
                     connectorsHaveChanged = true;
                     break;
