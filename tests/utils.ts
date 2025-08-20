@@ -70,4 +70,15 @@ export async function setTestingOptions(
             }
         });
     }, { HC });
+
+
+}
+
+export async function getKarmaScripts() {
+    const { default: files } = await import(
+        '../test/karma-files.json',
+        { with: { type: 'json'} }
+    );
+
+    return files;
 }

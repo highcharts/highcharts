@@ -10,7 +10,7 @@ import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path/posix';
 
 import { test as base } from '@playwright/test';
-import { setTestingOptions } from './utils';
+import { getKarmaScripts, setTestingOptions } from './utils';
 
 const contentTypes: Record<string, string> = {
     '.js': 'application/javascript',
@@ -295,6 +295,12 @@ export type CreateChartConfig = {
      *  @defaultValue `true`
      */
     applyTestOptions: boolean;
+    /**
+     *  If enabled, loads all scripts in karma-files.json
+     *
+     *  @defaultValue `false`
+     */
+    emulateKarma: boolean;
 };
 
 const defaultCreateChartConfig: CreateChartConfig = {
@@ -303,7 +309,8 @@ const defaultCreateChartConfig: CreateChartConfig = {
     chartConstructor: 'chart',
     HC: undefined,
     css: '',
-    applyTestOptions: true
+    applyTestOptions: true,
+    emulateKarma: false
 };
 
 export function chartTemplate({
@@ -311,7 +318,8 @@ export function chartTemplate({
     modules,
     chartConstructor,
     HC,
-    css
+    css,
+    emulateKarma
 }: CreateChartConfig): string {
     const constructorToModule: Record<CreateChartConfig['chartConstructor'], string> = {
         'chart': 'highcharts.src.js',
@@ -323,7 +331,7 @@ export function chartTemplate({
     const isIdContainer =  !!(typeof container === 'string');
 
     const moduleSet = new Set<string>([
-        HC ?  undefined : constructorToModule[chartConstructor],
+        HC || emulateKarma ?  undefined : constructorToModule[chartConstructor],
         ...modules
     ]);
 
@@ -361,6 +369,19 @@ export async function createChart(
 
     if (ccc.modules.length && ccc.HC) {
         throw new Error('Combining `modules` and `HC` option is not allowed (yet)');
+    }
+
+    if (
+        ccc.emulateKarma &&
+        !test.info().annotations.find(a => a.type === 'emulateKarma')
+    ) {
+        for (const script of await getKarmaScripts()) {
+            await page.addScriptTag({
+                path: script
+            });
+        }
+
+        test.info().annotations.push({ type: 'emulateKarma' });
     }
 
     await page.setContent(chartTemplate(ccc));
