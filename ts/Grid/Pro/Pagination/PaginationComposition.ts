@@ -57,8 +57,8 @@ namespace PaginationComposition {
                 const pg = e.target;
                 pg.options.events?.beforePageChange?.call(pg, {
                     currentPage: e.currentPage,
-                    newPage: e.newPage,
-                    itemsPerPage: e.itemsPerPage
+                    nextPage: e.nextPage,
+                    pageSize: e.pageSize
                 });
             }
         );
@@ -70,7 +70,8 @@ namespace PaginationComposition {
                 const pg = e.target;
                 pg.options.events?.afterPageChange?.call(pg, {
                     currentPage: e.currentPage,
-                    itemsPerPage: e.itemsPerPage
+                    previousPage: e.previousPage,
+                    pageSize: e.pageSize
                 });
             }
         );
@@ -156,13 +157,14 @@ export interface PaginationEvents {
 
 export interface BeforePageChangeEvent {
     currentPage: number;
-    newPage: number;
-    itemsPerPage: number;
+    nextPage: number;
+    pageSize: number;
 }
 
 export interface AfterPageChangeEvent {
     currentPage: number;
-    itemsPerPage: number;
+    previousPage: number;
+    pageSize: number;
 }
 
 export interface BeforePageSizeChangeEvent {

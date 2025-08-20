@@ -625,13 +625,15 @@ class Pagination {
             return;
         }
 
+        const previousPage = this.currentPage;
+
         fireEvent(
             this,
             'beforePageChange',
             {
                 currentPage: this.currentPage,
-                newPage: pageNumber,
-                itemsPerPage: this.currentPageSize
+                nextPage: pageNumber,
+                pageSize: this.currentPageSize
             }
         );
 
@@ -647,7 +649,8 @@ class Pagination {
             'afterPageChange',
             {
                 currentPage: this.currentPage,
-                itemsPerPage: this.currentPageSize
+                previousPage: previousPage,
+                pageSize: this.currentPageSize
             }
         );
     }
