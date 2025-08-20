@@ -1961,18 +1961,29 @@ function nodesInfoType (
             return _infoType;
         }
 
-        if (TS.isTypeLiteralNode(node)) {
+        if (
+            TS.isMappedTypeNode(node) ||
+            TS.isTypeLiteralNode(node)
+        ) {
             const _infoType = {
                 kind: 'ObjectType',
                 members: [],
                 symbol: _symbol
             } as unknown as ObjectType;
 
-            addChildInfos(
-                project,
-                _infoType.members,
-                node.members
-            );
+            if (TS.isMappedTypeNode(node)) {
+                const _typeChecker = _program.getTypeChecker();
+                addChildInfos(
+                    project,
+                    _infoType.members,
+                    _typeChecker.getPropertiesOfType(
+                        _typeChecker.getTypeFromTypeNode(node)
+                    ),
+                );
+            } else {
+                addChildInfos(project, _infoType.members, node.members || []);
+            }
+
             addInfoMeta(_infoType, node, project);
 
             return _infoType;
