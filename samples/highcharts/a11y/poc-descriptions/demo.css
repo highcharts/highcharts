@@ -1,0 +1,56 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family:
+        system-ui,
+        -apple-system,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        "Noto Sans",
+        "Apple Color Emoji",
+        "Segoe UI Emoji";
+}
+
+.shell {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+header.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.title {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.title h1 {
+    font-size: 2rem;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+/* 6-up grid */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+.highcharts-background {
+    fill: transparent;
+}
