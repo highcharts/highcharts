@@ -1,7 +1,8 @@
 const btn = document.getElementById('play-pause-button'),
     input = document.getElementById('play-range'),
     startYear = 1973,
-    endYear = 2021;
+    endYear = 2024,
+    animationDuration = 400;
 
 // General helper functions
 const arrToAssociative = arr => {
@@ -30,17 +31,12 @@ const chart = Highcharts.chart('container', {
                     .graphic.attr({
                         rotation: -20
                     });
-                labels
-                    .find(a => a.options.id === 'cassettes-label')
-                    .graphic.attr({
-                        rotation: 20
-                    });
             }
         },
         type: 'area',
         marginTop: 100,
         animation: {
-            duration: 700,
+            duration: animationDuration,
             easing: t => t
         }
     },
@@ -72,6 +68,7 @@ const chart = Highcharts.chart('container', {
     },
     yAxis: {
         reversedStacks: false,
+        max: 20,
         title: {
             text: 'Revenue in the U.S.'
         },
@@ -143,7 +140,7 @@ const chart = Highcharts.chart('container', {
                     point: {
                         x: 1987,
                         xAxis: 0,
-                        y: 2.6,
+                        y: 2,
                         yAxis: 0
                     },
                     style: {
@@ -240,7 +237,7 @@ function pause(button) {
     chart.sequenceTimer = undefined;
 }
 
-function update() {
+function update(sliderClicked) {
     chart.update(
         {
             subtitle: {
@@ -260,7 +257,7 @@ function update() {
     // If slider moved back in time
     if (yearIndex < dataLength - 1) {
         for (let i = 0; i < series.length; i++) {
-            const seriesData = series[i].data.slice(0, yearIndex);
+            const seriesData = series[i].options.data.slice(0, yearIndex);
             series[i].setData(seriesData, false);
         }
     }
@@ -289,7 +286,11 @@ function update() {
             });
     });
 
-    chart.redraw();
+    if (sliderClicked) {
+        chart.redraw(false);
+    } else {
+        chart.redraw();
+    }
 
     input.value = parseInt(input.value, 10) + 1;
 
@@ -307,8 +308,8 @@ function play(button) {
     button.title = 'pause';
     button.className = 'fa fa-pause';
     chart.sequenceTimer = setInterval(function () {
-        update();
-    }, 700);
+        update(false);
+    }, animationDuration);
 }
 
 btn.addEventListener('click', function () {
@@ -322,4 +323,10 @@ btn.addEventListener('click', function () {
 play(btn);
 
 // Trigger the update on the range bar click.
-input.addEventListener('input', update);
+input.addEventListener('click', function () {
+    update(true);
+});
+// Stop animation when clicking and dragging range bar
+input.addEventListener('input', function () {
+    pause(btn);
+});

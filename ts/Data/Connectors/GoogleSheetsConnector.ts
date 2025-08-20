@@ -172,9 +172,7 @@ class GoogleSheetsConnector extends DataConnector {
             enablePolling,
             googleAPIKey,
             googleSpreadsheetKey,
-            firstRowAsNames,
-            dataTables,
-            beforeParse
+            dataTables
         } = options;
         const url = GoogleSheetsConnector.buildFetchURL(
             googleAPIKey,
@@ -210,18 +208,17 @@ class GoogleSheetsConnector extends DataConnector {
                             (dataTable): boolean => dataTable.key === key
                         );
 
-                        // Takes over the connector default options.
-                        const mergedTableOptions = {
-                            dataTableKey: key,
-                            firstRowAsNames: tableOptions?.firstRowAsNames ??
-                                firstRowAsNames,
-                            beforeParse: tableOptions?.beforeParse ??
-                                beforeParse
+                        // The data table options takes precedence over the
+                        // connector options.
+                        const {
+                            firstRowAsNames = options.firstRowAsNames,
+                            beforeParse = options.beforeParse
+                        } = tableOptions || {};
+                        const converterOptions = {
+                            firstRowAsNames,
+                            beforeParse
                         };
-
-                        return new GoogleSheetsConverter(
-                            merge(options, mergedTableOptions)
-                        );
+                        return new GoogleSheetsConverter(converterOptions);
                     },
                     (converter, data): DataTable.ColumnCollection =>
                         converter.parse({ json: data })

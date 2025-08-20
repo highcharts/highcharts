@@ -132,13 +132,7 @@ class CSVConnector extends DataConnector {
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this;
         const options = connector.options;
-        const {
-            csv,
-            csvURL,
-            firstRowAsNames,
-            dataTables,
-            beforeParse
-        } = options;
+        const { csv, csvURL, dataTables, decimalPoint } = options;
 
         connector.emit({
             type: 'load',
@@ -164,19 +158,19 @@ class CSVConnector extends DataConnector {
                                 (dataTable): boolean => dataTable.key === key
                             );
 
-                            // Takes over the connector default options.
-                            const mergedTableOptions = {
-                                dataTableKey: key,
-                                firstRowAsNames:
-                                    tableOptions?.firstRowAsNames ??
-                                    firstRowAsNames,
-                                beforeParse: tableOptions?.beforeParse ??
-                                    beforeParse
+                            // The data table options takes precedence over the
+                            // connector options.
+                            const {
+                                firstRowAsNames = options.firstRowAsNames,
+                                beforeParse = options.beforeParse
+                            } = tableOptions || {};
+                            const converterOptions = {
+                                decimalPoint,
+                                firstRowAsNames,
+                                beforeParse
                             };
-
                             return new CSVConverter(
-                                merge(options, mergedTableOptions)
-                            );
+                                merge(options, converterOptions));
                         },
                         (converter, data): DataTable.ColumnCollection =>
                             converter.parse({ csv: data })

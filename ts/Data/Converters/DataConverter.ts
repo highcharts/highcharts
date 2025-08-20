@@ -62,13 +62,7 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
      */
     protected static readonly defaultOptions: DataConverter.Options = {
         dateFormat: '',
-        alternativeFormat: '',
-        startColumn: 0,
-        endColumn: Number.MAX_VALUE,
-        startRow: 0,
-        endRow: Number.MAX_VALUE,
-        firstRowAsNames: true,
-        switchRowsAndColumns: false
+        firstRowAsNames: true
     };
 
     /* *
@@ -513,21 +507,13 @@ namespace DataConverter {
      */
     export interface Options {
         dateFormat?: string;
-        alternativeFormat?: string;
         decimalPoint?: string;
-        startRow: number;
-        endRow: number;
-        startColumn: number;
-        endColumn: number;
         firstRowAsNames: boolean;
-
         /**
          * A function to parse string representations of dates into JavaScript
          * timestamps. If not set, the default implementation will be used.
          */
         parseDate?: DataConverter.ParseDateFunction;
-
-        switchRowsAndColumns: boolean;
     }
 
     /**

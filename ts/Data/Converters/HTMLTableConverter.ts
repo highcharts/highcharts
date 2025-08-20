@@ -86,7 +86,11 @@ class HTMLTableConverter extends DataConverter {
     protected static readonly defaultOptions: HTMLTableConverterOptions = {
         ...DataConverter.defaultOptions,
         useRowspanHeaders: true,
-        useMultiLevelHeaders: true
+        useMultiLevelHeaders: true,
+        startColumn: 0,
+        endColumn: Number.MAX_VALUE,
+        startRow: 0,
+        endRow: Number.MAX_VALUE
     };
 
     /* *

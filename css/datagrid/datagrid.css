@@ -878,6 +878,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     font: var(--ig-font);
     padding-left: inherit;
     background: transparent;
+    color: #000000;
 }
 
 .highcharts-datagrid-table tbody td.hcg-edited-cell-error input:not(.highcharts-datagrid-field-auto-width),

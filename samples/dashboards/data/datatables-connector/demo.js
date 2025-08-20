@@ -97,7 +97,7 @@ class DataTablesConnector extends Dashboards.DataConnector {
     async load(eventDetail) {
         const connector = this;
         const options = connector.options;
-        const { data, dataUrl, dataTables } = options;
+        const { data, dataUrl, dataTables, firstRowAsNames } = options;
 
         connector.emit({
             type: 'load',
@@ -127,21 +127,21 @@ class DataTablesConnector extends Dashboards.DataConnector {
                             const tableOptions = dataTables?.find(
                                 dataTable => dataTable.key === key
                             );
-
-                            const dataTableOptions = {
-                                dataTableKey: key,
-                                beforeParse: tableOptions?.beforeParse,
-                                columnIds: tableOptions?.columnIds ??
-                                    options.columnIds
+                            const {
+                                columnIds = options.columnIds,
+                                beforeParse = options.beforeParse
+                            } = tableOptions || {};
+                            const converterOptions = {
+                                firstRowAsNames,
+                                columnIds,
+                                beforeParse
                             };
 
                             return new Dashboards.DataConverter.types.JSON(
-                                Dashboards.merge(options, dataTableOptions)
+                                converterOptions
                             );
                         },
-                        (converter, data) => {
-                            converter.parse({ data });
-                        }
+                        (converter, data) => converter.parse({ data })
                     );
                 }
                 return connector.applyTableModifiers().then(() => data);

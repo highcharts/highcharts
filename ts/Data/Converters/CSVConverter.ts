@@ -57,7 +57,11 @@ class CSVConverter extends DataConverter {
      */
     protected static readonly defaultOptions: CSVConverterOptions = {
         ...DataConverter.defaultOptions,
-        lineDelimiter: '\n'
+        lineDelimiter: '\n',
+        startColumn: 0,
+        endColumn: Number.MAX_VALUE,
+        startRow: 0,
+        endRow: Number.MAX_VALUE
     };
 
     /* *
@@ -202,13 +206,16 @@ class CSVConverter extends DataConverter {
     }
 
     /**
-     * Initiates parsing of CSV
+     * Parses the CSV string into a DataTable column collection.
+     * Handles line and item delimiters, optional header row, and
+     * applies pre-processing if a beforeParse callback is provided.
      *
-     * @param {Partial<CSVConverterOptions>}[options]
-     * Options for the parser
-     *
+     * @param {Partial<CSVConverterOptions>} [options]
+     * Options for the parser.
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
+     * @return {DataTable.ColumnCollection}
+     * The parsed column collection.
      *
      * @emits CSVDataParser#parse
      * @emits CSVDataParser#afterParse
@@ -340,7 +347,8 @@ class CSVConverter extends DataConverter {
     }
 
     /**
-     * Internal method that parses a single CSV row
+     * Parses a single CSV row string into columns, handling delimiters,
+     * quoted values, data type inference, and column range selection.
      */
     private parseCSVRow(
         columns: DataTable.BasicColumn[],
