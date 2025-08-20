@@ -1,4 +1,4 @@
----
+-[-](https://vt.tiktok.com/ZSHGUX86s7Fj3-nZAWT/)-
 sidebar_label: "Installation"
 ---
 
