@@ -127,7 +127,8 @@ declare module '../../Core/Options' {
         /**
          * Events options triggered by the grid elements.
          */
-        filtering?: FilteringOptions;
+        filtering?:
+        FilteringLiteConditionOptions | FilteringLiteRangeConditionOptions;
     }
 
     /**
@@ -135,22 +136,31 @@ declare module '../../Core/Options' {
      */
     export interface FilteringOptions {
         /**
+         * Whether the filtering is enabled or not.
+         */
+        enabled?: boolean;
+    }
+
+    export interface FilteringLiteConditionOptions extends FilteringOptions {
+        /**
          * The condition to use for filtering the column.
          */
         condition?: 'contains' | 'doesNotContain' | 'equals' | 'doesNotEqual' |
         'beginsWith' | 'endsWith' | 'greaterThan' | 'greaterThanOrEqualTo' |
-        'lessThan' | 'lessThanOrEqualTo' | 'before' | 'after' | 'between' |
-        'empty' | 'notEmpty';
-
-        /**
-         * Whether the filtering is enabled or not.
-         */
-        enabled?: boolean;
+        'lessThan' | 'lessThanOrEqualTo' | 'before' | 'after' | 'empty' |
+        'notEmpty';
 
         /**
          * The value that is used with the condition to filter the column.
          */
         value?: string;
+    }
+
+    export interface FilteringLiteRangeConditionOptions extends FilteringOptions {
+        /**
+         * The condition to use for filtering the column.
+         */
+        condition?: 'between';
 
         /**
          * Only used with the `between` condition to define the lower bound.

@@ -27,7 +27,7 @@ import type {
 } from '../../../Data/Modifiers/FilterModifierOptions.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
-import { FilteringOptions } from '../Options.js';
+import { FilteringLiteConditionOptions, FilteringLiteRangeConditionOptions, FilteringOptions } from '../Options.js';
 
 
 /* *
@@ -101,16 +101,17 @@ class FilteringController {
      */
     public static mapOptionsToFilter(
         columnId: string,
-        options: FilteringOptions
+        options: FilteringLiteConditionOptions |
+        FilteringLiteRangeConditionOptions
     ): any {
-        const { condition, value, from, to } = options;
+        const { condition } = options;
 
         switch (condition) {
             case 'contains':
                 return {
                     columnName: columnId,
                     operator: 'contains',
-                    value: value || ''
+                    value: options.value
                 };
 
             case 'doesNotContain':
@@ -119,51 +120,100 @@ class FilteringController {
                     conditions: [{
                         columnName: columnId,
                         operator: 'contains',
-                        value
+                        value: options.value
                     }]
                 };
 
             case 'equals':
-                return { columnName: columnId, operator: '===', value };
+                return {
+                    columnName: columnId,
+                    operator: '===',
+                    value: options.value
+                };
 
             case 'doesNotEqual':
-                return { columnName: columnId, operator: '!==', value };
+                return {
+                    columnName: columnId,
+                    operator: '!==',
+                    value: options.value
+                };
 
             case 'beginsWith':
-                return { columnName: columnId, operator: 'startsWith', value };
+                return {
+                    columnName: columnId,
+                    operator: 'startsWith',
+                    value: options.value
+                };
 
             case 'endsWith':
-                return { columnName: columnId, operator: 'endsWith', value };
+                return {
+                    columnName: columnId,
+                    operator: 'endsWith',
+                    value: options.value
+                };
 
             case 'greaterThan':
-                return { columnName: columnId, operator: '>', value };
+                return {
+                    columnName: columnId,
+                    operator: '>',
+                    value: options.value
+                };
 
             case 'greaterThanOrEqualTo':
-                return { columnName: columnId, operator: '>=', value };
+                return {
+                    columnName: columnId,
+                    operator: '>=',
+                    value: options.value
+                };
 
             case 'lessThan':
-                return { columnName: columnId, operator: '<', value };
+                return {
+                    columnName: columnId,
+                    operator: '<',
+                    value: options.value
+                };
 
             case 'lessThanOrEqualTo':
-                return { columnName: columnId, operator: '<=', value };
+                return {
+                    columnName: columnId,
+                    operator: '<=',
+                    value: options.value
+                };
 
             case 'before':
-                return { columnName: columnId, operator: '<', value };
+                return {
+                    columnName: columnId,
+                    operator: '<',
+                    value: options.value
+                };
 
             case 'after':
-                return { columnName: columnId, operator: '>', value };
+                return {
+                    columnName: columnId,
+                    operator: '>',
+                    value: options.value
+                };
 
             case 'between':
                 return {
                     operator: 'and',
-                    conditions: [
-                        { columnName: columnId, operator: '>=', value: from },
-                        { columnName: columnId, operator: '<=', value: to }
-                    ]
+                    conditions: [{
+                        columnName: columnId,
+                        operator: '>=',
+                        value: options.from
+                    }, {
+                        columnName: columnId,
+                        operator: '<=',
+                        value: options.to
+                    }]
                 };
 
             case 'empty':
-                return { columnName: columnId, operator: 'empty', value };
+                return {
+                    columnName: columnId,
+                    operator: 'empty',
+                    value: options.value
+                };
 
             case 'notEmpty':
                 return {
@@ -171,12 +221,16 @@ class FilteringController {
                     conditions: [{
                         columnName: columnId,
                         operator: 'empty',
-                        value
+                        value: options.value
                     }]
                 };
 
             default:
-                return { columnName: columnId, operator: 'contains', value };
+                return {
+                    columnName: columnId,
+                    operator: 'contains',
+                    value: ''
+                };
         }
     }
 
