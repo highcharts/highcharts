@@ -22,12 +22,10 @@
  *
  * */
 
-import type {
-    StringCondition
-} from '../../../Data/Modifiers/FilterModifierOptions.js';
+import type { FilterCondition } from '../../../Data/Modifiers/FilterModifierOptions.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
-import { FilteringLiteConditionOptions, FilteringLiteRangeConditionOptions, FilteringOptions } from '../Options.js';
+import { FilteringLiteConditionOptions } from '../Options.js';
 
 
 /* *
@@ -49,7 +47,7 @@ class FilteringController {
     /**
      * The simple conditions that are used in simple filtering.
      */
-    private simpleConditions: StringCondition[];
+    private simpleConditions: FilterCondition[];
 
     private _modifier: FilterModifier;
 
@@ -101,9 +99,8 @@ class FilteringController {
      */
     public static mapOptionsToFilter(
         columnId: string,
-        options: FilteringLiteConditionOptions |
-        FilteringLiteRangeConditionOptions
-    ): any {
+        options: FilteringLiteConditionOptions
+    ): FilterCondition {
         const { condition } = options;
 
         switch (condition) {
@@ -111,17 +108,17 @@ class FilteringController {
                 return {
                     columnName: columnId,
                     operator: 'contains',
-                    value: options.value
+                    value: options.value || ''
                 };
 
             case 'doesNotContain':
                 return {
                     operator: 'not',
-                    conditions: [{
+                    condition: {
                         columnName: columnId,
                         operator: 'contains',
-                        value: options.value
-                    }]
+                        value: options.value || ''
+                    }
                 };
 
             case 'equals':
@@ -142,14 +139,14 @@ class FilteringController {
                 return {
                     columnName: columnId,
                     operator: 'startsWith',
-                    value: options.value
+                    value: options.value || ''
                 };
 
             case 'endsWith':
                 return {
                     columnName: columnId,
                     operator: 'endsWith',
-                    value: options.value
+                    value: options.value || ''
                 };
 
             case 'greaterThan':
@@ -194,20 +191,6 @@ class FilteringController {
                     value: options.value
                 };
 
-            case 'between':
-                return {
-                    operator: 'and',
-                    conditions: [{
-                        columnName: columnId,
-                        operator: '>=',
-                        value: options.from
-                    }, {
-                        columnName: columnId,
-                        operator: '<=',
-                        value: options.to
-                    }]
-                };
-
             case 'empty':
                 return {
                     columnName: columnId,
@@ -218,11 +201,11 @@ class FilteringController {
             case 'notEmpty':
                 return {
                     operator: 'not',
-                    conditions: [{
+                    condition: {
                         columnName: columnId,
                         operator: 'empty',
                         value: options.value
-                    }]
+                    }
                 };
 
             default:
@@ -245,13 +228,17 @@ class FilteringController {
      */
     public addFilterCondition(
         columnId: string,
-        options: FilteringOptions
+        options: FilteringLiteConditionOptions
     ): void {
         const condition =
             FilteringController.mapOptionsToFilter(columnId, options);
 
         const index = this.simpleConditions.findIndex(
-            (c): boolean => c.columnName === columnId
+            (c): boolean => {
+                const columnName = this.getColumnName(c);
+
+                return columnName === columnId;
+            }
         );
 
         if (index > -1) {
@@ -280,6 +267,36 @@ class FilteringController {
 
         this.simpleConditions.length = 0;
         this.shouldBeUpdated = true;
+    }
+
+    /**
+     * Based on the condition, returns the column name.
+     *
+     * @param condition
+     * The condition to get the column name from.
+     */
+    private getColumnName(condition: FilterCondition): string | undefined {
+        // CallbackCondition
+        if (typeof condition === 'function') {
+            return void 0;
+        }
+
+        // ComparisonCondition | StringCondition
+        if ('columnName' in condition) {
+            return condition.columnName;
+        }
+
+        // LogicalSingleCondition
+        if ('condition' in condition) {
+            return this.getColumnName(condition.condition);
+        }
+
+        // LogicalMultipleCondition
+        if ('conditions' in condition) {
+            return condition.conditions.map(this.getColumnName).find(Boolean);
+        }
+
+        return void 0;
     }
 }
 

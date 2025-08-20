@@ -127,21 +127,13 @@ declare module '../../Core/Options' {
         /**
          * Events options triggered by the grid elements.
          */
-        filtering?:
-        FilteringLiteConditionOptions | FilteringLiteRangeConditionOptions;
+        filtering?: FilteringLiteConditionOptions;
     }
 
     /**
      * Column filtering options.
      */
-    export interface FilteringOptions {
-        /**
-         * Whether the filtering is enabled or not.
-         */
-        enabled?: boolean;
-    }
-
-    export interface FilteringLiteConditionOptions extends FilteringOptions {
+    export interface FilteringLiteConditionOptions {
         /**
          * The condition to use for filtering the column.
          */
@@ -151,26 +143,14 @@ declare module '../../Core/Options' {
         'notEmpty';
 
         /**
+         * Whether the filtering is enabled or not.
+         */
+        enabled?: boolean;
+
+        /**
          * The value that is used with the condition to filter the column.
          */
         value?: string;
-    }
-
-    export interface FilteringLiteRangeConditionOptions extends FilteringOptions {
-        /**
-         * The condition to use for filtering the column.
-         */
-        condition?: 'between';
-
-        /**
-         * Only used with the `between` condition to define the lower bound.
-         */
-        from?: number;
-
-        /**
-         * Only used with the `between` condition to define the upper bound.
-         */
-        to?: number;
     }
 }
 /* *
