@@ -301,6 +301,18 @@ export type CreateChartConfig = {
      *  @defaultValue `false`
      */
     emulateKarma: boolean;
+
+    /**
+     * A callback function that is passed to the [chart constructor](https://api.highcharts.com/class-reference/Highcharts.Chart#Chart)
+     * callback parameter.
+     *
+     * Note that as this function is stringified and then recreated in the
+     * browser context, accessing variables outside the scope of the function
+     * scope, the document, or the `chart` parameter is not possible.
+     *
+     * @defaultValue `undefined`
+     */
+    chartCallback: Highcharts.ChartCallbackFunction | undefined;
 };
 
 const defaultCreateChartConfig: CreateChartConfig = {
@@ -310,7 +322,8 @@ const defaultCreateChartConfig: CreateChartConfig = {
     HC: undefined,
     css: '',
     applyTestOptions: true,
-    emulateKarma: false
+    emulateKarma: false,
+    chartCallback: undefined
 };
 
 export function chartTemplate({
@@ -394,16 +407,39 @@ export async function createChart(
         await setTestingOptions(page, ccc.HC);
     }
 
+    let chartCallbackBody = '';
+
+    if (ccc.chartCallback) {
+        chartCallbackBody = ccc.chartCallback.toString();
+        chartCallbackBody = chartCallbackBody.substring(
+            chartCallbackBody.indexOf('{') + 1,
+            chartCallbackBody.lastIndexOf('}')
+        ).trim()
+        ;
+        ccc.chartCallback = undefined;
+    }
+
     const handle = await page.evaluateHandle(
-        ([{ chartConstructor, container, HC }, cc]) =>{
+        ([{ chartConstructor, container, HC }, cc, chartCallbackBody]) => {
             const HCInstance = HC ?? Highcharts;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-            return HCInstance[chartConstructor](container, cc);
+            return HCInstance[chartConstructor](
+                container, cc, chartCallbackBody ?
+                    (chart: Highcharts.Chart) => {
+                        // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-call
+                        new Function(
+                            'chart',
+                            chartCallbackBody
+                        )(chart);
+                    } :
+                    undefined
+            );
         },
         [
             ccc,
-            chartConfig
-        ] as [CreateChartConfig, object]
+            chartConfig,
+            chartCallbackBody
+        ] as [CreateChartConfig, object, string | undefined]
     );
 
     return handle;
