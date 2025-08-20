@@ -36,18 +36,46 @@ async function apiSync(): Promise<void> {
     const gimp = await APIDoc.getGitIgnoreMeProperties();
     const itemMerger = new APIDoc.ItemMerger();
 
-    LogLib.warn('Loading \'code/es-modules/\'...');
+    // Arguments
 
-    await itemMerger.mergeDeclarations('code/es-modules/');
-    console.log(Object.keys(itemMerger.mergedItems));
+    const postgres = (
+        typeof args.postgres === 'string' ?
+            args.postgres :
+            gimp['apidoc.postgres']
+    );
+    const product = (
+        typeof args.product === 'string' ?
+            args.product :
+            'highcharts'
+    );
+
+    // Database
 
     LogLib.warn('Loading API Database...');
 
-    await itemMerger.mergeDatabase(
-        gimp['apidoc.postgres'],
-        typeof args.product === 'string' ? args.product : 'highcharts'
-    );
-    console.log(Object.keys(itemMerger.mergedItems));
+    await itemMerger.mergeDatabase(postgres, product);
+    const itemCount = Object.keys(itemMerger.mergedItems).length;
+
+    if (itemCount) {
+        LogLib.success(itemCount, 'item(s) found.');
+    } else {
+        LogLib.failure('No items found!');
+    }
+
+    // Declarations
+
+    LogLib.warn('Merging \'code/es-modules/\'...');
+
+    await itemMerger.mergeDeclarations('code/es-modules/', product);
+    const mergeItemCount = Object.keys(itemMerger.mergedItems).length;
+
+    if (mergeItemCount > itemCount) {
+        LogLib.success(mergeItemCount - itemCount, 'item(s) added.');
+    }
+
+    if (itemCount) {
+        LogLib.success(itemCount, 'item(s) merged.');
+    }
 
 }
 
