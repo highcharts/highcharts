@@ -306,6 +306,7 @@ class Pagination {
             this.renderFirstButton(navContainer);
         }
 
+        // Render previous button
         if (this.options.controls?.prevNextButtons) {
             this.renderPrevButton(navContainer);
         }
@@ -315,7 +316,7 @@ class Pagination {
             this.renderPageNumbers(navContainer);
         }
 
-        // Render next/last buttons
+        // Render next button
         if (this.options.controls?.prevNextButtons) {
             this.renderNextButton(navContainer);
         }
