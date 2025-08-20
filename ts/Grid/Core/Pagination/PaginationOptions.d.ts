@@ -44,7 +44,7 @@ export interface PaginationControlsOptions {
      *
      * @default { enabled: true, options: [10, 20, 50, 100] }
      */
-    pageSizeSelector: PageSizeSelectorOptions;
+    pageSizeSelector: boolean | PageSizeSelectorOptions;
 
     /**
      * Whether to show the page information text
@@ -52,42 +52,28 @@ export interface PaginationControlsOptions {
      *
      * @default true
      */
-    pageInfo?: boolean;
+    pageInfo?: boolean | PageInfoOptions;
 
     /**
-     * Whether to show the first/last page navigation buttons.
+     * Whether to show the first/last page controls buttons.
      *
      * @default true
      */
-    firstLastButtons?: boolean;
+    firstLastButtons?: boolean | FirstLastButtonsOptions;
 
     /**
-     * Whether to show the previous/next page navigation buttons.
+     * Whether to show the previous/next page controls buttons.
      *
      * @default true
      */
-    prevNextButtons?: boolean;
+    prevNextButtons?: boolean | PrevNextButtonsOptions;
 
     /**
      * Page number buttons configuration.
      *
      * @default { enabled: true, count: 5 }
      */
-    pageButtons: {
-        /**
-         * Whether to show page number buttons.
-         *
-         * @default true
-         */
-        enabled?: boolean;
-
-        /**
-         * Maximum number of page number buttons to show before using ellipsis.
-         *
-         * @default 5
-         */
-        count: number;
-    };
+    pageButtons: boolean | PageButtonsOptions;
 }
 
 /**
@@ -177,4 +163,59 @@ export interface PaginationOptions {
      * Controls options for pagination UI elements.
      */
     controls: PaginationControlsOptions;
+}
+
+/**
+ * Page buttons configuration options.
+ */
+export interface PageButtonsOptions {
+    /**
+     * Whether to show page number buttons.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * Maximum number of page number buttons to show before using ellipsis.
+     *
+     * @default 5
+     */
+    count: number;
+}
+
+/**
+ * Page info configuration options.
+ */
+export interface PageInfoOptions {
+    /**
+     * Whether to show the page information text.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+}
+
+/**
+ * First/last page navigation buttons configuration options.
+ */
+export interface FirstLastButtonsOptions {
+    /**
+     * Whether to show the first/last page navigation buttons.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+}
+
+/**
+ * Previous/next page navigation buttons configuration options.
+ */
+export interface PrevNextButtonsOptions {
+    /**
+     * Whether to show the previous/next page navigation buttons.
+     *
+     * @default true
+     */
+    enabled?: boolean;
 }

@@ -22,7 +22,12 @@
  * */
 
 import type Grid from '../Grid';
-import type { PaginationOptions, PaginationLangOptions } from './PaginationOptions';
+import type {
+    PaginationOptions,
+    PaginationLangOptions,
+    PageSizeSelectorOptions,
+    PageButtonsOptions
+} from './PaginationOptions';
 
 import Defaults from '../Defaults.js';
 import Globals from '../Globals.js';
@@ -30,7 +35,7 @@ import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { merge, fireEvent } = Utilities;
+const { merge, fireEvent, isObject } = Utilities;
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -54,9 +59,15 @@ class Pagination {
                 enabled: true,
                 options: [10, 20, 50, 100]
             },
-            pageInfo: true,
-            firstLastButtons: true,
-            prevNextButtons: true,
+            pageInfo: {
+                enabled: true
+            },
+            firstLastButtons: {
+                enabled: true
+            },
+            prevNextButtons: {
+                enabled: true
+            },
             pageButtons: {
                 enabled: true,
                 count: 5
@@ -182,7 +193,10 @@ class Pagination {
         this.grid = grid;
         this.options = merge(Pagination.defaultOptions, options);
 
-        this.pageSizeOptions = this.options.controls.pageSizeSelector.options;
+        const pageSizeSelector = this.options.controls.pageSizeSelector;
+        this.pageSizeOptions = isObject(pageSizeSelector) ?
+            pageSizeSelector.options :
+            (Pagination.defaultOptions.controls.pageSizeSelector as PageSizeSelectorOptions).options; // eslint-disable-line
 
         this.currentPageSize =
             options.currentPageSize ||
@@ -259,7 +273,11 @@ class Pagination {
      * Render the page information text.
      */
     public renderPageInfo(): void {
-        if (!this.options.controls?.pageInfo) {
+        const pageInfo = this.options.controls?.pageInfo;
+        if (
+            pageInfo === false ||
+            (isObject(pageInfo) && pageInfo.enabled === false)
+        ) {
             return;
         }
 
@@ -312,7 +330,7 @@ class Pagination {
         }
 
         // Render page numbers
-        if (this.options.controls?.pageButtons?.enabled) {
+        if (this.options.controls?.pageButtons) {
             this.renderPageNumbers(navContainer);
         }
 
@@ -335,6 +353,14 @@ class Pagination {
      *
      */
     public renderFirstButton(container: HTMLElement): void {
+        const firstLastButtons = this.options.controls?.firstLastButtons;
+        if (
+            firstLastButtons === false ||
+            (isObject(firstLastButtons) && firstLastButtons.enabled === false)
+        ) {
+            return;
+        }
+
         this.firstButton = makeHTMLElement('button', {
             innerHTML: '&laquo;',
             className: Globals.getClassName('pgButton')
@@ -355,6 +381,14 @@ class Pagination {
      * The container element for the previous page button.
      */
     public renderPrevButton(container: HTMLElement): void {
+        const prevNextButtons = this.options.controls?.prevNextButtons;
+        if (
+            prevNextButtons === false ||
+            (isObject(prevNextButtons) && prevNextButtons.enabled === false)
+        ) {
+            return;
+        }
+
         this.prevButton = makeHTMLElement('button', {
             innerHTML: '&lsaquo;',
             className: Globals.getClassName('pgButton')
@@ -375,6 +409,14 @@ class Pagination {
      * The container element for the next page button.
      */
     public renderNextButton(container: HTMLElement): void {
+        const prevNextButtons = this.options.controls?.prevNextButtons;
+        if (
+            prevNextButtons === false ||
+            (isObject(prevNextButtons) && prevNextButtons.enabled === false)
+        ) {
+            return;
+        }
+
         this.nextButton = makeHTMLElement('button', {
             innerHTML: '&rsaquo;',
             className: Globals.getClassName('pgButton')
@@ -398,6 +440,14 @@ class Pagination {
      * The container element for the last page button.
      */
     public renderLastButton(container: HTMLElement): void {
+        const firstLastButtons = this.options.controls?.firstLastButtons;
+        if (
+            firstLastButtons === false ||
+            (isObject(firstLastButtons) && firstLastButtons.enabled === false)
+        ) {
+            return;
+        }
+
         this.lastButton = makeHTMLElement('button', {
             innerHTML: '&raquo;',
             className: Globals.getClassName('pgButton')
@@ -421,6 +471,14 @@ class Pagination {
      * The container element for the page number buttons.
      */
     public renderPageNumbers(container: HTMLElement): void {
+        const pageButtons = this.options.controls?.pageButtons;
+        if (
+            pageButtons === false ||
+            (isObject(pageButtons) && pageButtons.enabled === false)
+        ) {
+            return;
+        }
+
         this.pageNumbersContainer = makeHTMLElement('div', {
             className: Globals.getClassName('pgPageButton')
         }, container);
@@ -439,7 +497,11 @@ class Pagination {
         // Clear existing page numbers
         this.pageNumbersContainer.innerHTML = '';
 
-        const maxPageNumbers = this.options.controls.pageButtons.count;
+        const pageButtons = this.options.controls?.pageButtons;
+        const maxPageNumbers = isObject(pageButtons) ?
+            pageButtons.count :
+            (Pagination.defaultOptions.controls.pageButtons as PageButtonsOptions).count; // eslint-disable-line
+
         const totalPages = this.totalPages;
         const currentPage = this.currentPage;
 
@@ -530,7 +592,15 @@ class Pagination {
      * Render the page size selector.
      */
     public renderPageSizeSelector(): void {
-        if (!this.options.controls.pageSizeSelector.enabled) {
+
+        const pageSizeSelector = this.options.controls.pageSizeSelector;
+        if (
+            pageSizeSelector === false ||
+            (
+                isObject(pageSizeSelector) &&
+                pageSizeSelector.enabled === false
+            )
+        ) {
             return;
         }
 
