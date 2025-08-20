@@ -375,4 +375,18 @@ test.describe('createChart', () => {
         await page.mouse.click(width / 2, height / 2);
         await expect(page.locator('.highcharts-annotation')).toBeVisible();
     });
+
+    test('emulateKarma', async ({ page }) => {
+        const chart = await createChart(page, {}, {
+            chartConstructor: 'mapChart',
+            emulateKarma: true
+        });
+        await page.waitForFunction(()=>  typeof window['proj4'] !== 'undefined' );
+        await expect.poll(() => test.info().annotations).toContainEqual({
+            type: 'emulateKarma'
+        });
+
+        expect(await chart.evaluate(c => c)).toHaveProperty('mapView');
+
+    });
 });
