@@ -45,7 +45,8 @@ const {
     getStyle,
     merge,
     pick,
-    defined
+    defined,
+    isObject
 } = U;
 
 
@@ -379,7 +380,11 @@ class Grid {
         delete this.pagination;
 
         const paginationOptions = merge(
-            this.options?.pagination,
+            (
+                isObject(this.options?.pagination) ?
+                    this.options?.pagination :
+                    { enabled: this.options?.pagination }
+            ),
             {
                 ...paginationState
             }
