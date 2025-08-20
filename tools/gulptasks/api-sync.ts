@@ -13,6 +13,7 @@
 
 
 import Gulp from 'gulp';
+import Path from 'node:path';
 
 
 /* *
@@ -33,28 +34,52 @@ async function apiSync(): Promise<void> {
     const LogLib = require('../libs/log');
 
     const args = APIDoc.getArgs();
-    const gimp = await APIDoc.getGitIgnoreMeProperties();
-    const itemMerger = new APIDoc.ItemMerger();
+    const props = await APIDoc.getProperties();
 
     // Arguments
 
-    const postgres = (
-        typeof args.postgres === 'string' ?
-            args.postgres :
-            gimp['apidoc.postgres']
-    );
-    const product = (
-        typeof args.product === 'string' ?
-            args.product :
-            'highcharts'
+    const options = {
+        declarationsFolder: (
+            typeof args.declarations === 'string' ?
+                args.declarations :
+                Path.join('code', 'es-modules')
+        ),
+        postgres: (
+            typeof args.postgres === 'string' ?
+                args.postgres :
+                props['apidoc.postgres']
+        ),
+        productNamespace: (
+            typeof args.namespace === 'string' ?
+                args.namespace :
+                'Highcharts'
+        ),
+        productURLName: (
+            typeof args.product === 'string' ?
+                args.product :
+                'highcharts'
+        ),
+        release: (
+            typeof args.release === 'string' ?
+                args.release :
+                require('../../build-properties.json').version
+        )
+    };
+
+    const mergerSession = await APIDoc.MergerSession.createMergerSession(
+        options.postgres,
+        options.declarationsFolder,
+        options.productNamespace,
+        options.productURLName,
+        options.release
     );
 
     // Database
 
     LogLib.warn('Loading API Database...');
 
-    await itemMerger.mergeDatabase(postgres, product);
-    const itemCount = Object.keys(itemMerger.mergedItems).length;
+    await mergerSession.mergeDatabase();
+    const itemCount = Object.keys(mergerSession.mergedItems).length;
 
     if (itemCount) {
         LogLib.success(itemCount, 'item(s) found.');
@@ -66,8 +91,8 @@ async function apiSync(): Promise<void> {
 
     LogLib.warn('Merging \'code/es-modules/\'...');
 
-    await itemMerger.mergeDeclarations('code/es-modules/', product);
-    const mergeItemCount = Object.keys(itemMerger.mergedItems).length;
+    await mergerSession.mergeDeclarations();
+    const mergeItemCount = Object.keys(mergerSession.mergedItems).length;
 
     if (mergeItemCount > itemCount) {
         LogLib.success(mergeItemCount - itemCount, 'item(s) added.');
@@ -76,6 +101,10 @@ async function apiSync(): Promise<void> {
     if (itemCount) {
         LogLib.success(itemCount, 'item(s) merged.');
     }
+
+    LogLib.warn('Saving merged items...');
+
+    await mergerSession.saveToDatabase();
 
 }
 
