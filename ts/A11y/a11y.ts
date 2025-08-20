@@ -148,7 +148,8 @@ class A11y {
         );
         addDescContent('p', 'hc-author-description', i.description);
         // Placeholder auto desc to be updated on render
-        this.autoDescEl = addDescContent('p', 'hc-auto-description', '...');
+        // Not sure if desc should be a <div> or a <p> yet
+        this.autoDescEl = addDescContent('div', 'hc-auto-description', '...');
 
         // Add further proxy groups based on the order
         (a11yOptions.order || []).forEach((groupName): void => {
