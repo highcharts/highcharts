@@ -54,6 +54,8 @@ const {
     getContext
 } = IU;
 
+import Delaunator from '../../Core/Delauney';
+
 /* *
  *
  *  Declarations
@@ -135,6 +137,25 @@ class HeatmapSeries extends ScatterSeries {
      *  Functions
      *
      * */
+
+    public d(): boolean {
+        const coords = new Delaunator(new Float64Array([
+            377, 479, 453, 434, 326, 387, 444, 359, 511, 389,
+            586, 429, 470, 315, 622, 493, 627, 367, 570, 314
+        ])).triangles;
+        const tris = [
+            4, 3, 1, 4, 6, 3, 1, 5, 4, 4, 9, 6, 2, 0, 1, 1, 7, 5,
+            5, 9, 4, 6, 2, 3, 3, 2, 1, 5, 8, 9, 0, 7, 1, 5, 7, 8
+        ];
+
+        for (let i = 0; i < coords.length; i++) {
+            if (tris[i] !== coords[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * @private
