@@ -1,9 +1,12 @@
 const HC_CONFIGS = {
     chart1: {
-        accessibility: {
-            description: 'Basic line chart showing trends in a dataset. ' +
-                'This chart includes the series-label module, which adds ' +
-                'a label to each line for enhanced readability.'
+        // accessibility: {
+        //     description: 'Basic line chart showing trends in a dataset. ' +
+        //         'This chart includes the series-label module, which adds ' +
+        //         'a label to each line for enhanced readability.'
+        // },
+        a11y: {
+            enabled: true
         },
         title: {
             text: 'U.S Solar Employment Growth',
@@ -18,12 +21,6 @@ const HC_CONFIGS = {
         yAxis: {
             title: {
                 text: 'Number of Employees'
-            }
-        },
-
-        xAxis: {
-            accessibility: {
-                rangeDescription: 'Range: 2010 to 2022'
             }
         },
 
@@ -93,12 +90,12 @@ const HC_CONFIGS = {
         chart: {
             type: 'column'
         },
-        accessibility: {
-            description: 'A basic column chart comparing estimated corn and ' +
-                'wheat production in some countries. The chart is making use ' +
-                'of the axis crosshair feature, to highlight the hovered ' +
-                'country.'
-        },
+        // accessibility: {
+        //     description: 'A basic column chart comparing estimated corn ' +
+        //         'andwheat production in some countries. The chart is ' +
+        //         'making use of the axis crosshair feature, to ' +
+        //         'highlight the hovered country.'
+        // },
         title: {
             text: 'Corn vs wheat estimated production for 2023'
         },
@@ -109,10 +106,7 @@ const HC_CONFIGS = {
         },
         xAxis: {
             categories: ['USA', 'China', 'Brazil', 'EU', 'Argentina', 'India'],
-            crosshair: true,
-            accessibility: {
-                description: 'Countries'
-            }
+            crosshair: true
         },
         yAxis: {
             min: 0,
@@ -152,12 +146,12 @@ const HC_CONFIGS = {
             },
             panKey: 'shift'
         },
-        accessibility: {
-            description: 'Pie charts are very popular for showing a compact ' +
-                'overview of a composition or comparison. While they can be ' +
-                'harder to read than column charts, they remain a popular ' +
-                'choice for small datasets.'
-        },
+        // accessibility: {
+        //     description: 'Pie charts are very popular for showing ' +
+        //         'a compact overview of a composition or comparison. ' +
+        //         'While they can be harder to read than column charts, ' +
+        //         'they remain a popular choice for small datasets.'
+        // },
         title: {
             text: 'Egg Yolk Composition'
         },
@@ -234,15 +228,15 @@ const HC_CONFIGS = {
             },
             panKey: 'shift'
         },
-        accessibility: {
-            description: 'Sankey charts are used to visualize data flow and ' +
-                'volume between nodes. The wider lines indicate larger ' +
-                'volumes.',
-            point: {
-                valueDescriptionFormat: '{index}. {point.from} to ' +
-                    '{point.to}, {point.weight}.'
-            }
-        },
+        // accessibility: {
+        //     description: 'Sankey charts are used to visualize data ' +
+        //         'flow and volume between nodes. The wider lines ' +
+        //         'indicate larger volumes.',
+        //     point: {
+        //         valueDescriptionFormat: '{index}. {point.from} to ' +
+        //             '{point.to}, {point.weight}.'
+        //     }
+        // },
         tooltip: {
             headerFormat: null,
             pointFormat:
@@ -491,13 +485,13 @@ const HC_CONFIGS = {
             reversed: true
         },
 
-        accessibility: {
-            point: {
-                descriptionFormat: '{(add index 1)}. ' +
-                '{series.xAxis.categories.(x)} sales ' +
-                '{series.yAxis.categories.(y)}, {value}.'
-            }
-        },
+        // accessibility: {
+        //     point: {
+        //         descriptionFormat: '{(add index 1)}. ' +
+        //         '{series.xAxis.categories.(x)} sales ' +
+        //         '{series.yAxis.categories.(y)}, {value}.'
+        //     }
+        // },
 
         colorAxis: {
             min: 0,
@@ -558,4 +552,25 @@ const HC_CONFIGS = {
     }
 };
 
-console.log(HC_CONFIGS);
+
+(function POC_A11Y_DESC_PLUGIN(Highcharts) {
+    const H = Highcharts;
+
+    H.addEvent(H.Chart, 'beforeA11yUpdate', function (e) {
+        e.chartDetailedInfo.chartAutoDescription =
+        'I can override this auto desc';
+        console.log('Overide autodesc success');
+    });
+}(Highcharts));
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    Object.keys(HC_CONFIGS).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) {
+            console.warn(`Missing container #${id}`);
+            return;
+        }
+        Highcharts.chart(id, HC_CONFIGS[id]);
+    });
+});
