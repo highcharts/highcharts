@@ -207,10 +207,15 @@ async function scriptsTS(argv) {
             });
 
             // Rename masters-dashboards to masters for Dashboards
+            const dashboardsMastersPath = fsLib.path(['code', 'dashboards', 'es-modules', 'masters']);
+            if (fs.existsSync(dashboardsMastersPath)) {
+                // Ensure destination does not exist to avoid ENOTEMPTY on rename
+                fsLib.deleteDirectory(dashboardsMastersPath);
+            }
             if (fs.existsSync(fsLib.path(['code', 'dashboards', 'es-modules', 'masters-dashboards']))) {
                 fs.renameSync(
                     fsLib.path(['code', 'dashboards', 'es-modules', 'masters-dashboards']),
-                    fsLib.path(['code', 'dashboards', 'es-modules', 'masters'])
+                    dashboardsMastersPath
                 );
             }
 
