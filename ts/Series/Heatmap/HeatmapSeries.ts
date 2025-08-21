@@ -126,9 +126,9 @@ class HeatmapSeries extends ScatterSeries {
 
     public isDirtyCanvas: boolean = true;
 
-    public adapter?: any;
+    public adapter?: GPUAdapter | null;
 
-    public device?: any;
+    public device?: GPUDevice;
 
     /* *
      *
@@ -547,20 +547,24 @@ class HeatmapSeries extends ScatterSeries {
 
     public async run(): Promise<void> {
         const context = this.context as GPUCanvasContext;
+        let adapter, device;
+
         if (!this.adapter) {
-            this.adapter = await (navigator as any)?.gpu.requestAdapter();
+            adapter = this.adapter = await navigator?.gpu.requestAdapter();
         }
-        if (!this.device) {
-            this.device = await this.adapter.requestDevice();
+
+        if (!this.device && adapter) {
+            device = this.device = await adapter.requestDevice();
         }
-        const { device } = this;
 
         const canvasFormat = (navigator as any)?.gpu.getPreferredCanvasFormat();
-        context?.configure({
-            device: device,
-            format: canvasFormat
-        });
 
+        if (device) {
+            context?.configure({
+                device: device,
+                format: canvasFormat
+            });
+        }
     }
 
     /* eslint-enable valid-jsdoc */
