@@ -24,16 +24,14 @@ test('Sync events leak in updated components', async function (assert) {
             connectors: [{
                 id: 'micro-element',
                 type: 'JSON',
-                options: {
-                    data: [
-                        ['Food', 'Vitamin A',  'Iron'],
-                        ['Beef Liver', 6421, 6.5],
-                        ['Lamb Liver', 2122, 6.5],
-                        ['Cod Liver Oil', 1350, 0.9],
-                        ['Mackerel', 388, 1],
-                        ['Tuna', 214, 0.6]
-                    ]
-                }
+                data: [
+                    ['Food', 'Vitamin A',  'Iron'],
+                    ['Beef Liver', 6421, 6.5],
+                    ['Lamb Liver', 2122, 6.5],
+                    ['Cod Liver Oil', 1350, 0.9],
+                    ['Mackerel', 388, 1],
+                    ['Tuna', 214, 0.6]
+                ]
             }]
         },
         gui: {
@@ -164,14 +162,12 @@ test('There should be no errors when syncing with chart with different extremes'
           connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-              data: Array.from(Array(200)).map((_, i) => {
-                if (i === 0) {
-                  return ['Series']
-                }
-                return [Math.random() * 10]
-              })
-            }
+            data: Array.from(Array(200)).map((_, i) => {
+              if (i === 0) {
+                return ['Series']
+              }
+              return [Math.random() * 10]
+            })
           }]
         },
         gui: {
@@ -214,7 +210,7 @@ test('There should be no errors when syncing with chart with different extremes'
     }, true);
 
     assert.ok(
-        dashboard.dataCursor.emitCursor(dashboard.dataPool.connectors.data.table, {
+        dashboard.dataCursor.emitCursor(dashboard.dataPool.connectors.data.getTable(), {
             type: 'position',
             row: 120,
             column: 'Series',

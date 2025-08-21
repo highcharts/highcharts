@@ -12,27 +12,27 @@ const form = document.getElementById('filter');
             condition: {
                 operator: 'and',
                 conditions: [{
-                    columnName: 'City',
+                    columnId: 'City',
                     operator: '>=',
                     value: 'Aa'
                 }, {
-                    columnName: 'City',
+                    columnId: 'City',
                     operator: '<=',
                     value: 'Zz'
                 }, {
-                    columnName: 'Elevation',
+                    columnId: 'Elevation',
                     operator: '>=',
                     value: 1
                 }, {
-                    columnName: 'Elevation',
+                    columnId: 'Elevation',
                     operator: '<=',
                     value: 3490
                 }, {
-                    columnName: 'Longitude',
+                    columnId: 'Longitude',
                     operator: '>=',
                     value: -180
                 }, {
-                    columnName: 'Longitude',
+                    columnId: 'Longitude',
                     operator: '<=',
                     value: +180
                 }]
@@ -41,14 +41,13 @@ const form = document.getElementById('filter');
     });
 
     await csv.load();
+    const table = csv.getTable();
 
-    renderTable(container, csv.table.modified);
+    renderTable(container, table.getModified());
 
     form.querySelectorAll('input').forEach(input => {
         input.onchange = () => updateRange(csv.table, input);
     });
-
-    console.log(csv.table);
 
 })();
 
@@ -70,7 +69,7 @@ async function updateRange(table, input) {
 
     await table.setModifier(modifier);
 
-    renderTable(container, table.modified);
+    renderTable(container, table.getModified());
 }
 
 // Render Simple HTML Table
@@ -81,7 +80,7 @@ function renderTable(container, table) {
     html.push('<table>');
     html.push('<thead>');
     html.push('<tr>');
-    for (const column of table.getColumnNames()) {
+    for (const column of table.getColumnIds()) {
         html.push('<th>', escapeStringForHTML(column), '</th>');
     }
     html.push('</tr>');
