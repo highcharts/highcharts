@@ -65,7 +65,7 @@ export class MergerSession {
      * @param productURLName
      * Product name as used on the website.
      *
-     * @param releaseVersion
+     * @param productVersion
      * Release version to merge and save.
      *
      * @return
@@ -86,20 +86,21 @@ export class MergerSession {
             }
         });
         const declarations = DTS.getProject(declarationsFolder);
-        const version = APIDB.parseSemanticVersion(releaseVersion);
+        const productVersion = APIDB.parseSemanticVersion(releaseVersion);
 
-        await database.activateProductPlatform(
-            'js',
-            productURLName,
-            void 0,
-            version
-        );
-
-        return new MergerSession(
+        const mergerSession = new MergerSession(
             database,
             declarations,
-            productNamespace
+            productNamespace,
+            productURLName,
+            productVersion
         );
+
+        if (!await mergerSession.activateOrCreateProductPlatform()) {
+            throw new Error('Product is not available.');
+        }
+
+        return mergerSession;
     }
 
 
@@ -113,11 +114,15 @@ export class MergerSession {
     private constructor (
         database: APIDB.APIDocDatabase,
         declarations: DTS.Project,
-        defaultNamespace: string
+        productNamespace: string,
+        productURLName: string,
+        productVersion: number
     ) {
         this.database = database;
         this.declarations = declarations;
-        this.defaultNamespace = defaultNamespace;
+        this.productNamespace = productNamespace;
+        this.productURLName = productURLName;
+        this.productVersion = productVersion;
     }
 
 
@@ -134,13 +139,19 @@ export class MergerSession {
     public readonly declarations: DTS.Project;
 
 
-    public readonly defaultNamespace: string;
-
-
     public readonly mergedItems: Record<string, APIDB.ItemRow> = {};
 
 
     private optionStack: Array<DTS.CodeInfo> = [];
+
+
+    public readonly productNamespace: string;
+
+
+    public readonly productURLName: string;
+
+
+    public readonly productVersion: number;
 
 
     /* *
@@ -150,6 +161,59 @@ export class MergerSession {
      * */
 
 
+    public async activateOrCreateProductPlatform(): Promise<boolean> {
+        const database = this.database;
+        const productURLName = this.productURLName;
+        const productVersion = this.productVersion;
+
+        if (await database.activateProductPlatform(
+            'js',
+            productURLName,
+            void 0,
+            productVersion
+        )) {
+            return true;
+        }
+
+        let platformId = database.activePlatform.id; 
+
+        if (!platformId) {
+            const platformRow = await database.setPlatform({
+                url_name: 'js'
+            });
+
+            if (!platformRow?.id) {
+                return false;
+            }
+
+            platformId = platformRow.id;
+        }
+
+        let productId = database.activeProduct.id;
+
+        if (!database.activeProduct.id) {
+            const productRow = await database.setProduct({
+                latest_version: productVersion,
+                platform_id: platformId,
+                url_name: productURLName
+            });
+
+            if (!productRow?.id) {
+                return false;
+            }
+
+            productId = productRow.id;
+        }
+
+        return await database.activateProductPlatform(
+            'js',
+            productURLName,
+            void 0,
+            productVersion
+        );
+    }
+
+
     /**
      * Merges matching item rows from the database into the merger session.
      *
@@ -157,6 +221,12 @@ export class MergerSession {
      * Promise to keep.
      */
     public async mergeDatabase(): Promise<void> {
+        const database = this.database;
+
+        for (const item of await database.getItemChildren('')) {
+            await this.mergeItem(item);
+        }
+
     }
 
 
@@ -177,12 +247,13 @@ export class MergerSession {
         info: DTS.CodeInfo,
     ): Promise<void> {
         const APIDB = await import('../../../hc-apidoc-backend/lib/index.js');
+        const database = this.database;
 
         const optionItemRow: APIDB.ItemRow = {
             path,
             description: '',
             since: 1,
-            product_id: '',
+            product_id: database.activeProduct.id!,
             meta: {
                 file: info.meta.file
             }
