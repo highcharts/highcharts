@@ -1,0 +1,109 @@
+/**
+ * @license Highcharts Grid Pro v@product.version@
+ *
+ * (c) 2009-2025 Highsoft AS
+ *
+ * License: www.highcharts.com/license
+ */
+
+/* Import Grid Lite styles */
+@import url("grid-lite.css");
+
+/* Grid Pro specific styles */
+
+/* Grid Pro Helper Variables */
+.hcg-container {
+    /* CSS helpers */
+    --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
+
+    /* Negative colors */
+    --ig-negative-border-size: var(--hcg-negative-border-size, var(--ig-highlight-border-size));
+
+    /* Neutral colors */
+    --ig-neutral-border-size: var(--hcg-neutral-border-size, var(--ig-highlight-border-size));
+
+    /* Positive colors */
+    --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
+}
+
+/* Start Grid Pro CSS Helpers Classes */
+.hcg-table tbody tr td.hcg-negative::before,
+.hcg-table tbody tr:has(.hcg-negative-row) td::before,
+.hcg-table tbody tr td.hcg-neutral::before,
+.hcg-table tbody tr:has(.hcg-neutral-row) td::before,
+.hcg-table tbody tr td.hcg-positive::before,
+.hcg-table tbody tr:has(.hcg-positive-row) td::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.hcg-table tbody tr td.hcg-negative,
+.hcg-table tbody tr:has(.hcg-negative-row) td {
+    background: var(--ig-negative-background) !important;
+    color: var(--ig-negative-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-negative::before {
+    border: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+}
+
+.hcg-table tbody tr:has(.hcg-negative-row) td::before {
+    border-top: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+    border-bottom: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-neutral,
+.hcg-table tbody tr:has(.hcg-neutral-row) td {
+    background: var(--ig-neutral-background) !important;
+    color: var(--ig-neutral-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-neutral::before {
+    border: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+}
+
+.hcg-table tbody tr:has(.hcg-neutral-row) td::before {
+    border-top: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+    border-bottom: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-positive,
+.hcg-table tbody tr:has(.hcg-positive-row) td {
+    background: var(--ig-positive-background) !important;
+    color: var(--ig-positive-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-positive::before {
+    border: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+}
+
+.hcg-table tbody tr:has(.hcg-positive-row) td::before {
+    border-top: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+    border-bottom: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+}
+
+/* End Grid Pro CSS Helpers Classes */
+
+/* Grid Pro Helpers */
+.hcg-no-padding {
+    padding: 0 !important;
+}
+
+/* Grid Pro Credits Pro styles */
+.hcg-credits-container.hcg-credits-pro {
+    text-align: var(--ig-credits-text-align);
+    padding: var(--ig-credits-padding);
+}
+
+.hcg-credits-container.hcg-credits-pro .hcg-credits {
+    color: var(--ig-credits-color);
+    font-size: var(--ig-credits-font-size);
+    text-decoration: none;
+    display: inline-block;
+}
