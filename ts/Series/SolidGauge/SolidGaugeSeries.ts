@@ -153,7 +153,8 @@ class SolidGaugeSeries extends GaugeSeries {
                             pick(
                                 point.options.innerRadius,
                                 options.innerRadius,
-                                60 // %
+                                yAxis.pane.options.innerSize,
+                                0
                             )
                         ) * center[2]
                     ) / 200),

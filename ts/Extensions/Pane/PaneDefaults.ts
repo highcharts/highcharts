@@ -114,13 +114,13 @@ const background: PaneBackgroundOptions = {
 
     /**
      * The inner radius of the pane background. Can be either numeric
-     * (pixels) or a percentage string.
+     * (pixels) or a percentage string. Defaults to match the `pane.innerSize`.
      *
      * @type    {number|string}
      * @since   2.3.0
      * @product highcharts
+     * @apioption pane.background.innerRadius
      */
-    innerRadius: '60%',
 
     /** @ignore-option */
     to: Number.MAX_VALUE, // Corrected to axis max
@@ -192,7 +192,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @type    {number|string}
      * @product highcharts
      */
-    size: '85%',
+    size: '85%'
 
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees
@@ -209,15 +209,16 @@ const pane: PaneOptions|Array<PaneOptions> = {
 
     /**
      * The inner size of the pane, either as a number defining pixels, or a
-     * percentage defining a percentage of the pane's size.
+     * percentage defining a percentage of the pane's size. Defaults to 0 on
+     * polar charts, 60% on gauges.
      *
      * @sample {highcharts} highcharts/series-polar/column-inverted-inner
      *         The inner size set to 20%
      *
      * @type    {number|string}
      * @product highcharts
+     * @apioption pane.innerSize
      */
-    innerSize: '0%'
 
 };
 

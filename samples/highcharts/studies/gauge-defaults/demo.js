@@ -6,10 +6,6 @@ Highcharts.setOptions({
 
 const options = {
 
-    pane: {
-        innerSize: '80%'
-    },
-
     yAxis: {
         plotBands: [{
             from: 0,

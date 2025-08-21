@@ -416,26 +416,16 @@ namespace RadialAxis {
     function getLinePath(
         this: AxisComposition,
         _lineWidth: number,
-        radius?: number,
-        innerRadius?: number
+        radius?: number
     ): SVGPath {
         const center = this.pane.center,
             chart = this.chart,
             left = this.left || 0,
-            top = this.top || 0;
+            top = this.top || 0,
+            r = pick(radius, center[2] / 2 - this.offset);
 
         let end,
-            r = pick(radius, center[2] / 2 - this.offset),
             path: SVGPath;
-
-        if (typeof innerRadius === 'undefined') {
-            innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
-        }
-
-        // In case when innerSize of pane is set, it must be included
-        if (innerRadius) {
-            r += innerRadius;
-        }
 
         if (this.isCircular || typeof radius !== 'undefined') {
             path = this.chart.renderer.symbols.arc(
@@ -532,7 +522,7 @@ namespace RadialAxis {
                 fullRadius
             ),
             innerRadius = radiusToPixels(options.innerRadius),
-            thickness = pick(radiusToPixels(options.thickness), 10);
+            thickness = radiusToPixels(options.thickness);
 
         // Polygonal plot bands
         if (this.options.gridLineInterpolation === 'polygon') {
@@ -568,7 +558,9 @@ namespace RadialAxis {
             }
 
             outerRadius -= offset; // #5283
-            thickness -= offset; // #5283
+            if (isNumber(thickness)) {
+                thickness -= offset; // #5283
+            }
 
             path = chart.renderer.symbols.arc(
                 left + center[0],
@@ -581,7 +573,8 @@ namespace RadialAxis {
                     end: Math.max(start, end),
                     innerR: pick(
                         innerRadius,
-                        outerRadius - thickness
+                        isNumber(thickness) ? outerRadius - thickness : void 0,
+                        this.center[3] / 2
                     ),
                     open,
                     borderRadius: options.borderRadius
@@ -1296,6 +1289,10 @@ namespace RadialAxis {
             // translation of reversed axis points (#2570)
             if (this.isCircular) {
                 this.sector = this.endAngleRad - this.startAngleRad;
+
+                // Axis len is used to lay out the ticks
+                this.len = this.width = this.height =
+                    center[2] * this.sector / 2;
             } else {
                 // When the pane's startAngle or the axis' angle is set then
                 // new x and y values for vertical axis' center must be
@@ -1303,11 +1300,11 @@ namespace RadialAxis {
                 start = this.postTranslate(this.angleRad, center[3] / 2);
                 center[0] = start.x - this.chart.plotLeft;
                 center[1] = start.y - this.chart.plotTop;
-            }
 
-            // Axis len is used to lay out the ticks
-            this.len = this.width = this.height =
-                (center[2] - center[3]) * pick(this.sector, 1) / 2;
+                // Axis len is used to lay out the ticks
+                this.len = this.width = this.height =
+                    (center[2] - center[3]) / 2;
+            }
         }
     }
 
