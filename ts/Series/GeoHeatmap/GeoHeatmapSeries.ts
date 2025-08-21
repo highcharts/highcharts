@@ -656,7 +656,7 @@ class GeoHeatmapSeries extends MapSeries {
 
     public searchPoint(
         e: PointerEvent,
-        compareX?: boolean | undefined
+        compareX?: boolean
     ): Point | undefined {
         const series = this,
             chart = this.chart,

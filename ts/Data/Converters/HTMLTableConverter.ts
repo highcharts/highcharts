@@ -351,7 +351,7 @@ class HTMLTableConverter extends DataConverter {
                     if (cur === subheaders[i]) {
                         if (useRowspanHeaders) {
                             rowspan = 2;
-                            delete subheaders[i];
+                            subheaders.splice(i, 1);
                         } else {
                             rowspan = 1;
                             subheaders[i] = '';

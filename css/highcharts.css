@@ -330,12 +330,7 @@
 }
 
 .highcharts-tooltip-box {
-    stroke-width: 1px;
-    fill: var(--highcharts-background-color);
-}
-
-.highcharts-tooltip-box {
-    stroke-width: 0;
+    stroke-width: 0px;
     fill: var(--highcharts-background-color);
 }
 

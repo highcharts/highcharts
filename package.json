@@ -71,6 +71,7 @@
     "@highcharts/highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.5",
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
+    "@stylistic/eslint-plugin": "^3.0.0",
     "@swc/core": "^1.9.2",
     "@types/gulp": "^4.0.17",
     "@types/jquery": "^3.5.30",
@@ -162,6 +163,9 @@
   },
   "lint-staged": {
     "*.js": [
+      "eslint"
+    ],
+    "**/demo.ts": [
       "eslint"
     ],
     "./ts/!(Dashboards|Grid)**/*.ts": [
