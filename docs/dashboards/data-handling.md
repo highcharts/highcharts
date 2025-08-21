@@ -78,7 +78,7 @@ dataPool: {
     connectors: [{
         id: 'my-html-table-connector',
         type: 'HTMLTable',
-        HTMLTable: 'table-element-id',
+        htmlTable: 'table-element-id',
     }]
 }
 ```
