@@ -195,20 +195,20 @@ declare module '../../Core/Options' {
         /**
          * Events options triggered by the grid elements.
          */
-        filtering?: FilteringOptions;
+        filtering?: FilteringLiteConditionOptions;
     }
 
     /**
      * Column filtering options.
      */
-    export interface FilteringOptions {
+    export interface FilteringLiteConditionOptions {
         /**
          * The condition to use for filtering the column.
          */
         condition?: 'contains' | 'doesNotContain' | 'equals' | 'doesNotEqual' |
         'beginsWith' | 'endsWith' | 'greaterThan' | 'greaterThanOrEqualTo' |
-        'lessThan' | 'lessThanOrEqualTo' | 'before' | 'after' | 'between' |
-        'empty' | 'notEmpty';
+        'lessThan' | 'lessThanOrEqualTo' | 'before' | 'after' | 'empty' |
+        'notEmpty';
 
         /**
          * Whether the filtering is enabled or not.
@@ -219,16 +219,6 @@ declare module '../../Core/Options' {
          * The value that is used with the condition to filter the column.
          */
         value?: string | boolean | null;
-
-        /**
-         * Only used with the `between` condition to define the lower bound.
-         */
-        from?: number;
-
-        /**
-         * Only used with the `between` condition to define the upper bound.
-         */
-        to?: number;
     }
 }
 /* *

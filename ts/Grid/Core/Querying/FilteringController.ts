@@ -22,12 +22,14 @@
  *
  * */
 
-import type {
-    StringCondition
-} from '../../../Data/Modifiers/FilterModifierOptions.js';
+import type { FilterCondition } from '../../../Data/Modifiers/FilterModifierOptions.js';
+import type { FilteringLiteConditionOptions } from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
-import { FilteringOptions } from '../Options.js';
+import U from '../../../Core/Utilities.js';
+const {
+    isString
+} = U;
 
 
 /* *
@@ -49,7 +51,7 @@ class FilteringController {
     /**
      * The simple conditions that are used in simple filtering.
      */
-    private simpleConditions: StringCondition[];
+    private simpleConditions: FilterCondition[];
 
     private _modifier: FilterModifier;
 
@@ -91,6 +93,132 @@ class FilteringController {
     }
 
     /**
+     * Maps filtering options to the filtering condition.
+     *
+     * @param columnId
+     * Id of the column to filter.
+     *
+     * @param options
+     * Filtering options.
+     */
+    public static mapOptionsToFilter(
+        columnId: string,
+        options: FilteringLiteConditionOptions
+    ): FilterCondition | undefined {
+        const { condition, value } = options;
+        const stringifiedValue = isString(value) ? value : '';
+
+        switch (condition) {
+            case 'contains':
+                return {
+                    columnName: columnId,
+                    operator: 'contains',
+                    value: stringifiedValue
+                };
+
+            case 'doesNotContain':
+                return {
+                    operator: 'not',
+                    condition: {
+                        columnName: columnId,
+                        operator: 'contains',
+                        value: stringifiedValue
+                    }
+                };
+
+            case 'equals':
+                return {
+                    columnName: columnId,
+                    operator: '===',
+                    value
+                };
+
+            case 'doesNotEqual':
+                return {
+                    columnName: columnId,
+                    operator: '!==',
+                    value
+                };
+
+            case 'beginsWith':
+                return {
+                    columnName: columnId,
+                    operator: 'startsWith',
+                    value: stringifiedValue
+                };
+
+            case 'endsWith':
+                return {
+                    columnName: columnId,
+                    operator: 'endsWith',
+                    value: stringifiedValue
+                };
+
+            case 'greaterThan':
+                return {
+                    columnName: columnId,
+                    operator: '>',
+                    value
+                };
+
+            case 'greaterThanOrEqualTo':
+                return {
+                    columnName: columnId,
+                    operator: '>=',
+                    value
+                };
+
+            case 'lessThan':
+                return {
+                    columnName: columnId,
+                    operator: '<',
+                    value
+                };
+
+            case 'lessThanOrEqualTo':
+                return {
+                    columnName: columnId,
+                    operator: '<=',
+                    value
+                };
+
+            case 'before':
+                return {
+                    columnName: columnId,
+                    operator: '<',
+                    value
+                };
+
+            case 'after':
+                return {
+                    columnName: columnId,
+                    operator: '>',
+                    value
+                };
+
+            case 'empty':
+                return {
+                    columnName: columnId,
+                    operator: 'empty',
+                    value
+                };
+
+            case 'notEmpty':
+                return {
+                    operator: 'not',
+                    condition: {
+                        columnName: columnId,
+                        operator: 'empty',
+                        value
+                    }
+                };
+
+            default:
+                return void 0;
+        }
+    }
+
+    /**
      * Adds a new filtering condition to the specified column.
      *
      * @param columnId
@@ -101,12 +229,17 @@ class FilteringController {
      */
     public addFilterCondition(
         columnId: string,
-        options: FilteringOptions
+        options: FilteringLiteConditionOptions
     ): void {
-        const condition = this.mapOptionsToFilter(columnId, options);
+        const condition =
+            FilteringController.mapOptionsToFilter(columnId, options);
 
         const index = this.simpleConditions.findIndex(
-            (c): boolean => c.columnName === columnId
+            (c): boolean => {
+                const columnName = this.getColumnName(c);
+
+                return columnName === columnId;
+            }
         );
 
         if (index > -1) {
@@ -138,160 +271,35 @@ class FilteringController {
     }
 
     /**
-     * Maps filtering options to the filtering condition.
+     * Based on the condition, returns the column name.
      *
-     * @param columnId
-     * Id of the column to filter.
-     *
-     * @param options
-     * Filtering options.
+     * @param condition
+     * The condition to get the column name from.
      */
-    private mapOptionsToFilter(
-        columnId: string,
-        options: FilteringOptions
-    ): any {
-        const condition = options.condition;
-
-        if (condition === 'contains') {
-            return {
-                columnName: columnId,
-                operator: 'contains',
-                value: options.value || ''
-            };
+    private getColumnName(condition: FilterCondition): string | undefined {
+        // CallbackCondition
+        if (typeof condition === 'function') {
+            return void 0;
         }
 
-        if (condition === 'doesNotContain') {
-            return {
-                operator: 'not',
-                conditions: [{
-                    columnName: columnId,
-                    operator: 'contains',
-                    value: options.value
-                }]
-            };
+        // ComparisonCondition | StringCondition
+        if ('columnName' in condition) {
+            return condition.columnName;
         }
 
-        if (condition === 'equals') {
-            return {
-                columnName: columnId,
-                operator: '===',
-                value: options.value
-            };
+        // LogicalSingleCondition
+        if ('condition' in condition) {
+            return this.getColumnName(condition.condition);
         }
 
-        if (condition === 'doesNotEqual') {
-            return {
-                columnName: columnId,
-                operator: '!==',
-                value: options.value
-            };
+        // LogicalMultipleCondition
+        if ('conditions' in condition) {
+            return condition.conditions.map(this.getColumnName).find(Boolean);
         }
 
-        if (condition === 'beginsWith') {
-            return {
-                columnName: columnId,
-                operator: 'startsWith',
-                value: options.value
-            };
-        }
-
-        if (condition === 'endsWith') {
-            return {
-                columnName: columnId,
-                operator: 'endsWith',
-                value: options.value
-            };
-        }
-
-        if (condition === 'greaterThan') {
-            return {
-                columnName: columnId,
-                operator: '>',
-                value: options.value
-            };
-        }
-
-        if (condition === 'greaterThanOrEqualTo') {
-            return {
-                columnName: columnId,
-                operator: '>=',
-                value: options.value
-            };
-        }
-
-        if (condition === 'lessThan') {
-            return {
-                columnName: columnId,
-                operator: '<',
-                value: options.value
-            };
-        }
-
-        if (condition === 'lessThanOrEqualTo') {
-            return {
-                columnName: columnId,
-                operator: '<=',
-                value: options.value
-            };
-        }
-
-        if (condition === 'before') {
-            return {
-                columnName: columnId,
-                operator: '<',
-                value: options.value
-            };
-        }
-
-        if (condition === 'after') {
-            return {
-                columnName: columnId,
-                operator: '>',
-                value: options.value
-            };
-        }
-
-        if (condition === 'between') {
-            return {
-                operator: 'and',
-                conditions: [
-                    {
-                        columnName: columnId,
-                        operator: '>=',
-                        value: options.from
-                    },
-                    {
-                        columnName: columnId,
-                        operator: '<=',
-                        value: options.to
-                    }
-                ]
-            };
-        }
-
-        if (condition === 'empty') {
-            return {
-                columnName: columnId,
-                operator: 'empty',
-                value: options.value
-            };
-        }
-
-        if (condition === 'notEmpty') {
-            return {
-                operator: 'not',
-                conditions: [{
-                    columnName: columnId,
-                    operator: 'empty',
-                    value: options.value
-                }]
-            };
-        }
-
-        return null;
+        return void 0;
     }
 }
-
 
 /* *
  *

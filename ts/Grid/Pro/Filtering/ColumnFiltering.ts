@@ -24,7 +24,7 @@
 
 import Column from '../../Core/Table/Column.js';
 import U from '../../../Core/Utilities.js';
-import { FilteringOptions } from '../../Core/Options.js';
+import { FilteringLiteConditionOptions } from '../../Core/Options.js';
 
 const { fireEvent } = U;
 
@@ -81,7 +81,9 @@ class ColumnFiltering {
      * @param options
      * The filtering options.
      */
-    public async applyFilter(options: FilteringOptions): Promise<void> {
+    public async applyFilter(
+        options: FilteringLiteConditionOptions
+    ): Promise<void> {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
