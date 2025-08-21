@@ -22,7 +22,7 @@
  *
  * */
 
-import type { FilterCondition } from '../../../Data/Modifiers/FilterModifierOptions.js';
+import type { FilterCondition, LogicalMultipleCondition } from '../../../Data/Modifiers/FilterModifierOptions.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import { FilteringLiteConditionOptions } from '../Options.js';
@@ -45,9 +45,9 @@ class FilteringController {
     *
     * */
     /**
-     * The simple conditions that are used in simple filtering.
+     * A map of the simple conditions for each column.
      */
-    private simpleConditions: FilterCondition[];
+    private simpleConditions: {[key: string]: FilterCondition[]} = {};
 
     private _modifier: FilterModifier;
 
@@ -64,11 +64,10 @@ class FilteringController {
     * */
 
     constructor() {
-        this.simpleConditions = [];
         this._modifier = new FilterModifier({
             condition: {
                 operator: 'and',
-                conditions: this.simpleConditions
+                conditions: []
             }
         });
     }
@@ -81,7 +80,7 @@ class FilteringController {
     * */
 
     public get modifier(): FilterModifier | undefined {
-        if (this.simpleConditions.length === 0) {
+        if (Object.keys(this.simpleConditions).length === 0) {
             return;
         }
 
@@ -233,7 +232,7 @@ class FilteringController {
         const condition =
             FilteringController.mapOptionsToFilter(columnId, options);
 
-        const index = this.simpleConditions.findIndex(
+        const index = this.simpleConditions?.[columnId]?.findIndex(
             (c): boolean => {
                 const columnName = this.getColumnName(c);
 
@@ -244,14 +243,28 @@ class FilteringController {
         if (index > -1) {
             if (condition) {
                 // If the condition already exists, update it.
-                this.simpleConditions[index] = condition;
+                this.simpleConditions[columnId][index] = condition;
             } else {
                 // If the condition is empty, remove it.
-                this.simpleConditions.splice(index, 1);
+                this.simpleConditions[columnId].splice(index, 1);
             }
         } else if (condition) {
+            if (!this.simpleConditions[columnId]) {
+                this.simpleConditions[columnId] = [];
+            }
             // If the condition does not exist, add it.
-            this.simpleConditions.push(condition);
+            this.simpleConditions[columnId].push(condition);
+
+            this._modifier = new FilterModifier({
+                condition: {
+                    operator: 'and',
+                    conditions: Object.values(this.simpleConditions)
+                        .map((group): LogicalMultipleCondition => ({
+                            operator: 'and',
+                            conditions: group
+                        }))
+                }
+            });
         }
 
         this.shouldBeUpdated = true;
@@ -259,13 +272,16 @@ class FilteringController {
 
     /**
      * Clears all the meaningful filtering options.
+     *
+     * @param columnId
+     * The column ID to clear.
      */
-    public clearFiltering(): void {
-        if (this.simpleConditions.length < 1) {
+    public clearFiltering(columnId: string): void {
+        if (this.simpleConditions[columnId].length < 1) {
             return;
         }
 
-        this.simpleConditions.length = 0;
+        this.simpleConditions[columnId].length = 0;
         this.shouldBeUpdated = true;
     }
 
