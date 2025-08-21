@@ -275,7 +275,7 @@ test('HTMLTableConnector from HTML element', function (assert) {
     const tableElement = createElement('div');
     tableElement.innerHTML = tableHTML;
 
-    const connector = new HTMLTableConnector({ dataTable: tableElement });
+    const connector = new HTMLTableConnector({ HTMLTable: tableElement });
 
     const doneLoading = assert.async();
 
@@ -390,7 +390,7 @@ test('Export as HTML', async (assert) => {
     );
 
     // Make sure the exported table is parseable, and returns the same result
-    const connectorWithExport = new HTMLTableConnector({ dataTable: tableElement });
+    const connectorWithExport = new HTMLTableConnector({ HTMLTable: tableElement });
     const done = assert.async();
 
     connectorWithExport.on('afterLoad', e => {

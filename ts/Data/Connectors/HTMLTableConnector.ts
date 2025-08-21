@@ -56,7 +56,7 @@ class HTMLTableConnector extends DataConnector {
     protected static readonly defaultOptions: HTMLTableConnectorOptions = {
         id: 'HTML-table-connector',
         type: 'HTMLTable',
-        dataTable: ''
+        HTMLTable: ''
     };
 
     /* *
@@ -122,7 +122,7 @@ class HTMLTableConnector extends DataConnector {
         const options = connector.options;
         const converter = connector.converter;
         const table = connector.getTable();
-        const tableHTML = options.dataTable;
+        const HTMLTable = options.HTMLTable;
 
         connector.emit({
             type: 'load',
@@ -132,11 +132,11 @@ class HTMLTableConnector extends DataConnector {
 
         let tableElement: (HTMLElement|null);
 
-        if (typeof tableHTML === 'string') {
-            connector.tableID = tableHTML;
-            tableElement = win.document.getElementById(tableHTML);
+        if (typeof HTMLTable === 'string') {
+            connector.tableID = HTMLTable;
+            tableElement = win.document.getElementById(HTMLTable);
         } else {
-            tableElement = tableHTML;
+            tableElement = HTMLTable;
             connector.tableID = tableElement.id;
         }
 
