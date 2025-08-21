@@ -80,7 +80,8 @@ function jsonSupportFor(
 function toJSON(
     obj: HTMLTableConnector
 ): HTMLTableConnectorHelper.JSON {
-    const options = merge(obj.options) as HTMLTableConnectorHelper.OptionsJSON;
+    const options =
+        merge(obj.options) as unknown as HTMLTableConnectorHelper.OptionsJSON;
 
     options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
@@ -109,7 +110,7 @@ namespace HTMLTableConnectorHelper {
     }
 
     export type OptionsJSON =
-        JSON.Object & HTMLTableConnectorOptions & HTMLTableConverterOptions;
+        JSON.Object & Omit<HTMLTableConnectorOptions, 'dataTable'> & HTMLTableConverterOptions;
 
 }
 

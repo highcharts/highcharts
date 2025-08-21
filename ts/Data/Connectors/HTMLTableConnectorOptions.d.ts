@@ -35,9 +35,9 @@ export interface HTMLTableConnectorOptions extends DataConnectorOptions {
      */
     type: 'HTMLTable';
     /**
-     * The id of the HTML table element to load or a reference to the HTML.
+     * The id of the HTML data table element to load or a reference to the HTML.
      */
-    table: (string|HTMLElement);
+    dataTable: string | HTMLElement;
 }
 
 /* *

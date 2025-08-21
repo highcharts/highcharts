@@ -66,9 +66,9 @@ dataPool: {
 dataPool: {
     connectors: [{
         id: 'my-google-sheets-connector',
-            type: 'GoogleSheets',
-            googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-            googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
+        type: 'GoogleSheets',
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
     }]
 }
 ```
@@ -78,7 +78,7 @@ dataPool: {
     connectors: [{
         id: 'my-html-table-connector',
         type: 'HTMLTable',
-        table: 'table-element-id',
+        dataTable: 'table-element-id',
     }]
 }
 ```
