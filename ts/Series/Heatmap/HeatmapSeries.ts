@@ -110,7 +110,7 @@ class HeatmapSeries extends ScatterSeries {
 
     public colorAxis!: ColorAxis;
 
-    public context?: CanvasRenderingContext2D | any;
+    public context?: CanvasRenderingContext2D | GPUCanvasContext;
 
     public data!: Array<HeatmapPoint>;
 
@@ -546,7 +546,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     public async run(): Promise<void> {
-        const { context } = this;
+        const context = this.context as GPUCanvasContext;
         if (!this.adapter) {
             this.adapter = await (navigator as any)?.gpu.requestAdapter();
         }
