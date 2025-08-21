@@ -75,3 +75,5 @@ tmp/
 /env.file
 
 *.bak
+
+CLAUDE*.md

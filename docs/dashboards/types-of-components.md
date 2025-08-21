@@ -139,7 +139,7 @@ To visualize data in a row-column layout, you can use the Grid component. The `G
 
 The `Grid` module has its own style set, so the CSS file must be imported for correct rendering.
 ```css
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/grid/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 

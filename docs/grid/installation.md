@@ -28,7 +28,7 @@ Then, import the package into your project:
 
 ```js
 import * as Grid from '@highcharts/grid-lite/grid-lite';
-import '@highcharts/grid-lite/css/grid.css';
+import '@highcharts/grid-lite/css/grid-lite.css';
 ```
 
 ### Include Grid Lite via `<script>` tag
@@ -37,7 +37,7 @@ Load **Grid Lite** from our public CDN by adding the appropriate JavaScript and 
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css" />
 ```
 
 Alternatively, you can download the files from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
