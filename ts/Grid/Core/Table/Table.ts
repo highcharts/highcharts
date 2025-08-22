@@ -319,6 +319,7 @@ class Table {
                 this.rows[i].update();
             }
             this.rowsVirtualizer.adjustRowHeights();
+            this.reflow();
         }
 
         if (focusedRowId !== void 0 && vp.focusCursor) {
