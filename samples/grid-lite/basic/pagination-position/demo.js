@@ -42,21 +42,7 @@ Grid.grid('container', {
     },
     pagination: {
         enabled: true,
-        position: 'bottom', // default
-        pageSize: 10,
-        controls: {
-            pageSizeSelector: {
-                enabled: true,
-                options: [5, 10, 20, 50]
-            },
-            pageInfo: true,
-            firstLastButtons: true,
-            previousNextButtons: true,
-            pageButtons: {
-                enabled: true,
-                count: 5
-            }
-        }
+        position: 'bottom' // default
     }
 });
 
@@ -73,21 +59,7 @@ Grid.grid('container-top', {
     },
     pagination: {
         enabled: true,
-        position: 'top',
-        pageSize: 10,
-        controls: {
-            pageSizeSelector: {
-                enabled: true,
-                options: [5, 10, 20, 50]
-            },
-            pageInfo: true,
-            firstLastButtons: true,
-            previousNextButtons: true,
-            pageButtons: {
-                enabled: true,
-                count: 5
-            }
-        }
+        position: 'top'
     }
 });
 
@@ -104,21 +76,7 @@ Grid.grid('container-footer', {
     },
     pagination: {
         enabled: true,
-        position: 'footer', // renders in tfoot element
-        pageSize: 10,
-        controls: {
-            pageSizeSelector: {
-                enabled: true,
-                options: [5, 10, 20, 50]
-            },
-            pageInfo: true,
-            firstLastButtons: true,
-            previousNextButtons: true,
-            pageButtons: {
-                enabled: true,
-                count: 5
-            }
-        }
+        position: 'footer'
     }
 });
 
@@ -135,20 +93,6 @@ Grid.grid('container-custom', {
     },
     pagination: {
         enabled: true,
-        position: '#custom-pagination', // renders in external div with ID
-        pageSize: 10,
-        controls: {
-            pageSizeSelector: {
-                enabled: true,
-                options: [5, 10, 20, 50]
-            },
-            pageInfo: true,
-            firstLastButtons: true,
-            previousNextButtons: true,
-            pageButtons: {
-                enabled: true,
-                count: 5
-            }
-        }
+        position: '#custom-pagination'
     }
 });
