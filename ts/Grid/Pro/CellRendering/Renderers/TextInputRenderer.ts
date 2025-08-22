@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -112,6 +113,22 @@ namespace TextInputRenderer {
          * Whether the text input is disabled.
          */
         disabled?: boolean;
+
+        /**
+         * Attributes to control the text input.
+         */
+        attributes?:TextInputAttributes;
+    }
+
+    /**
+     * Attributes to control the text input.
+     */
+    export interface TextInputAttributes {
+        minlength?: number;
+        maxlength?: number;
+        pattern?: string;
+        placeholder?: string;
+        size?: number;
     }
 }
 

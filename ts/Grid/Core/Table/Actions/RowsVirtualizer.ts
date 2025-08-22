@@ -386,6 +386,9 @@ class RowsVirtualizer {
         const { rowCursor: cursor, defaultRowHeight: defaultH } = this;
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
+        if (rowsLn < 1) {
+            return;
+        }
 
         let translateBuffer = rows[0].getDefaultTopOffset();
 

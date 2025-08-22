@@ -141,6 +141,7 @@ class Point {
     public shapeType?: string;
     public startXPos?: number;
     public state?: StatesOptionsKey;
+    public tooltipPos?: Array<number>;
     public total?: number;
     public visible: boolean = true;
     public x!: number;
@@ -231,6 +232,16 @@ class Point {
      * @readonly
      * @name Highcharts.Point#shapeArgs
      * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     */
+
+    /**
+     * Defines the tooltip's position for a data point in a chart. It is an
+     * array of numbers representing the coordinates for the tooltip's
+     * placement, allowing for precise control over its location.
+     *
+     * @readonly
+     * @name Highcharts.Point#tooltipPos
+     * @type {Readonly<Array<number>>|undefined}
      */
 
     /**
@@ -1658,8 +1669,8 @@ class Point {
 interface Point extends PointLike {
     // Merge extensions with point class
     hcEvents?: Record<
-    string,
-    Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+        string,
+        Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
     >;
 }
 

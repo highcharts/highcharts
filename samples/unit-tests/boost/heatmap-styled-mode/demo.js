@@ -1,9 +1,65 @@
 QUnit.test('Boosted heatmap with styled mode (#6650)', function (assert) {
-    assert.expect(0);
+    const GROUPCT = 5,
+        list = [...Array(GROUPCT).keys()],
+        xCate = list.map(i => `X${i + 1}`),
+        yCate = list.map(i => `Y${i + 1}`);
+
+    let data = [];
+    list.forEach(x =>
+        list.forEach(y => data.push([x, y, Math.random() * GROUPCT]))
+    );
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'heatmap'
+        },
+        plotOptions: {
+            series: {
+                boostThreshold: 1
+            }
+        },
+        xAxis: {
+            categories: xCate,
+            min: 0,
+            max: GROUPCT - 1,
+            scrollbar: {
+                enabled: true,
+                showFull: false
+            }
+        },
+        yAxis: {
+            categories: yCate,
+            min: 0,
+            max: GROUPCT - 1,
+            scrollbar: {
+                enabled: true,
+                showFull: false
+            }
+        },
+        series: [{
+            data
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(1, 3, false);
+    chart.yAxis[0].setExtremes(1, 3);
+
+    assert.notEqual(
+        chart.yAxis[0].scrollbar.from,
+        0,
+        'Y-axis scrollbar should be shown for boosted heatmap, #23335.'
+    );
+
+    assert.notEqual(
+        chart.yAxis[0].scrollbar.to,
+        1,
+        'Y-axis scrollbar should be shown for boosted heatmap, #23335.'
+    );
+
     var xsize = 26;
     var ysize = 100;
     // Add some random data
-    var data = new Array(xsize * ysize);
+    data = new Array(xsize * ysize);
     for (var i = 0; i < xsize * ysize; i++) {
         var row = new Array(3);
         row[0] = Math.floor(i / ysize);

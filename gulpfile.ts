@@ -119,7 +119,7 @@ Gulp.registry(new GulpForwardReference());
  *
  * */
 
-(function (tasks) {
+(function (tasks: Record<string, string>) {
     Object
         .keys(tasks)
         .forEach(alias => Gulp.task(alias, Gulp.series(tasks[alias])));
