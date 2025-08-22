@@ -44,7 +44,7 @@ window.grid = Grid.grid('container', {
             },
             pageInfo: true,
             firstLastButtons: true,
-            prevNextButtons: true,
+            previousNextButtons: true,
             pageButtons: {
                 enabled: true,
                 count: 5

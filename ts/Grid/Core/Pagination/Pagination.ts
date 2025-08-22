@@ -65,7 +65,7 @@ class Pagination {
             firstLastButtons: {
                 enabled: true
             },
-            prevNextButtons: {
+            previousNextButtons: {
                 enabled: true
             },
             pageButtons: {
@@ -325,7 +325,7 @@ class Pagination {
         }
 
         // Render previous button
-        if (this.options.controls?.prevNextButtons) {
+        if (this.options.controls?.previousNextButtons) {
             this.renderPrevButton(navContainer);
         }
 
@@ -335,7 +335,7 @@ class Pagination {
         }
 
         // Render next button
-        if (this.options.controls?.prevNextButtons) {
+        if (this.options.controls?.previousNextButtons) {
             this.renderNextButton(navContainer);
         }
 
@@ -381,10 +381,13 @@ class Pagination {
      * The container element for the previous page button.
      */
     public renderPrevButton(container: HTMLElement): void {
-        const prevNextButtons = this.options.controls?.prevNextButtons;
+        const previousNextButtons = this.options.controls?.previousNextButtons;
         if (
-            prevNextButtons === false ||
-            (isObject(prevNextButtons) && prevNextButtons.enabled === false)
+            previousNextButtons === false ||
+            (
+                isObject(previousNextButtons) &&
+                previousNextButtons.enabled === false
+            )
         ) {
             return;
         }
@@ -409,10 +412,13 @@ class Pagination {
      * The container element for the next page button.
      */
     public renderNextButton(container: HTMLElement): void {
-        const prevNextButtons = this.options.controls?.prevNextButtons;
+        const previousNextButtons = this.options.controls?.previousNextButtons;
         if (
-            prevNextButtons === false ||
-            (isObject(prevNextButtons) && prevNextButtons.enabled === false)
+            previousNextButtons === false ||
+            (
+                isObject(previousNextButtons) &&
+                previousNextButtons.enabled === false
+            )
         ) {
             return;
         }
