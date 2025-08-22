@@ -2953,14 +2953,7 @@ class Chart {
             const containerStyle = win.getComputedStyle(this.container);
 
             if (containerStyle.zIndex !== '0') {
-                error(
-                    'Highcharts error: The "highcharts.css" file is ' +
-                    'required when using styled mode (chart.styledMode = ' +
-                    'true). Without it, charts cannot be rendered correctly. ' +
-                    'See https://www.highcharts.com/docs/chart-design-and-style/style-by-css.',
-                    false,
-                    this
-                );
+                error(35);
             }
         }
     }
