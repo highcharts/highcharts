@@ -1710,5 +1710,5 @@ QUnit.test('Thousand separator from lang options', function (assert) {
         }]
     });
 
-    assert.ok(chart.getTable().includes('_THOUSAND_SEPERATOR_'));
+    assert.ok(chart.getTable().includes('_THOUSAND_SEPARATOR_'));
 });
