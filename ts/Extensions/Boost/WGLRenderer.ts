@@ -760,38 +760,31 @@ class WGLRenderer {
                 break;
             }
 
-            if (colorByPoint && chart.options.colors) {
-                colorIndex = ++colorIndex %
-                    chart.options.colors.length;
+            // Handle the point.color option (#5999)
+            const pointOptions = rawData && rawData[i];
+            if (!useRaw) {
+                if (isObject(pointOptions, true) && pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba;
+                }
 
-                pcolor = color(chart.options.colors[colorIndex]).rgba;
+                const colorKeyIndex = series.options.keys?.indexOf('color');
+                if (
+                    Array.isArray(pointOptions) &&
+                    colorKeyIndex &&
+                    typeof pointOptions[colorKeyIndex] === 'string'
+                ) {
+                    pcolor = color(pointOptions[colorKeyIndex]).rgba;
+                } else if (colorByPoint && chart.options.colors) {
+                    colorIndex = colorIndex %
+                        chart.options.colors.length;
+
+                    pcolor = color(chart.options.colors[colorIndex++]).rgba;
+                }
+
                 if (pcolor) {
                     pcolor[0] /= 255.0;
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
-                }
-            } else {
-                // Handle the point.color option (#5999)
-                const pointOptions = rawData && rawData[i];
-                if (!useRaw) {
-                    if (isObject(pointOptions, true) && pointOptions.color) {
-                        pcolor = color(pointOptions.color).rgba;
-                    }
-
-                    const colorKeyIndex = series.options.keys?.indexOf('color');
-                    if (
-                        Array.isArray(pointOptions) &&
-                        colorKeyIndex &&
-                        typeof pointOptions[colorKeyIndex] === 'string'
-                    ) {
-                        pcolor = color(pointOptions[colorKeyIndex]).rgba;
-                    }
-
-                    if (pcolor) {
-                        pcolor[0] /= 255.0;
-                        pcolor[1] /= 255.0;
-                        pcolor[2] /= 255.0;
-                    }
                 }
             }
 

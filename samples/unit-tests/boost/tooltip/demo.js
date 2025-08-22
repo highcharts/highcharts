@@ -57,9 +57,7 @@ QUnit.test('Tooltip on a boosted chart with categories', function (assert) {
 
     controller.moveTo(
         chart.series[0].points[0].plotX + chart.plotLeft,
-        chart.series[0].points[0].plotY + chart.plotTop,
-        void 0,
-        true
+        chart.series[0].points[0].plotY + chart.plotTop
     );
 
     assert.strictEqual(
