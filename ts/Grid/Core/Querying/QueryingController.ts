@@ -27,6 +27,7 @@ import DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import Grid from '../Grid.js';
 import SortingController from './SortingController.js';
 import FilteringController from './FilteringController.js';
+import PaginationController from './PaginationController.js';
 
 /* *
  *
@@ -67,6 +68,11 @@ class QueryingController {
      */
     public shouldBeUpdated: boolean = false;
 
+    /**
+     * Pagination controller instance
+     */
+    public pagination: PaginationController;
+
 
     /* *
     *
@@ -79,6 +85,7 @@ class QueryingController {
 
         this.filtering = new FilteringController();
         this.sorting = new SortingController(this);
+        this.pagination = new PaginationController(this);
     }
 
 
@@ -110,6 +117,7 @@ class QueryingController {
      */
     public loadOptions(): void {
         this.sorting.loadOptions();
+        this.pagination.loadOptions();
     }
 
     /**
@@ -131,6 +139,10 @@ class QueryingController {
 
         if (this.filtering.modifier) {
             modifiers.push(this.filtering.modifier);
+        }
+
+        if (this.pagination.modifier) {
+            modifiers.push(this.pagination.modifier);
         }
 
         return modifiers;

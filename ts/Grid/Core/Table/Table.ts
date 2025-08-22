@@ -27,8 +27,8 @@ import type TableRow from './Body/TableRow';
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
 import DataTable from '../../../Data/DataTable.js';
-import ColumnDistribution from './ColumnDistribution/ColumnDistribution.js';
-import ColumnDistributionStrategy from './ColumnDistribution/ColumnDistributionStrategy.js';
+import ColumnResizing from './ColumnResizing/ColumnResizing.js';
+import ColumnResizingMode from './ColumnResizing/ResizingMode.js';
 import Column from './Column.js';
 import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
@@ -86,6 +86,11 @@ class Table {
     public readonly tbodyElement: HTMLElement;
 
     /**
+     * The HTML element of the table footer.
+     */
+    public readonly tfootElement?: HTMLElement;
+
+    /**
      * The head of the table.
      */
     public header?: TableHeader;
@@ -116,7 +121,7 @@ class Table {
     /**
      * The column distribution.
      */
-    public readonly columnDistribution: ColumnDistributionStrategy;
+    public readonly columnResizing: ColumnResizingMode;
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
@@ -168,7 +173,7 @@ class Table {
         const dgOptions = grid.options;
         const customClassName = dgOptions?.rendering?.table?.className;
 
-        this.columnDistribution = ColumnDistribution.initStrategy(this);
+        this.columnResizing = ColumnResizing.initMode(this);
         this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
 
         if (dgOptions?.rendering?.header?.enabled) {
@@ -181,10 +186,7 @@ class Table {
             );
         }
 
-        if (!(
-            dgOptions?.rendering?.columns?.resizing?.enabled === false ||
-            dgOptions?.columnDefaults?.resizing === false
-        )) {
+        if (dgOptions?.rendering?.columns?.resizing?.enabled) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
@@ -201,6 +203,11 @@ class Table {
 
         // Init Table
         this.init();
+
+        // Init pagination container
+        if (this.grid.pagination) {
+            this.tfootElement = makeHTMLElement('tfoot', {}, tableElement);
+        }
 
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
@@ -273,7 +280,7 @@ class Table {
             );
         }
 
-        this.columnDistribution.loadColumns();
+        this.columnResizing.loadColumns();
     }
 
     /**
@@ -319,6 +326,7 @@ class Table {
                 this.rows[i].update();
             }
             this.rowsVirtualizer.adjustRowHeights();
+            this.reflow();
         }
 
         if (focusedRowId !== void 0 && vp.focusCursor) {
@@ -364,13 +372,16 @@ class Table {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-        this.columnDistribution.reflow();
+        this.columnResizing.reflow();
 
         // Reflow the head
         this.header?.reflow();
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
+
+        // Reflow the pagination
+        this.grid.pagination?.reflow();
     }
 
     /**
@@ -488,7 +499,7 @@ class Table {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
-            columnDistribution: this.columnDistribution,
+            columnResizing: this.columnResizing,
             focusCursor: this.focusCursor
         };
     }
@@ -556,7 +567,7 @@ namespace Table {
     export interface ViewportStateMetadata {
         scrollTop: number;
         scrollLeft: number;
-        columnDistribution: ColumnDistributionStrategy;
+        columnResizing: ColumnResizingMode;
         focusCursor?: [number, number];
     }
 }

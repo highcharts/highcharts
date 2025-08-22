@@ -12,6 +12,7 @@
     "plugins": [
         "brackets",
         "@highcharts/highcharts",
+        "@stylistic",
         "@typescript-eslint"
     ],
     "rules": {
@@ -86,16 +87,10 @@
                 "allowTypedFunctionExpressions": false
             }
         ],
-        "@typescript-eslint/indent": [
-            "error",
-            4,
-            {
-                "FunctionExpression": { "parameters": 1 },
-                "SwitchCase": 1
-            }
-        ],
+        "@typescript-eslint/no-base-to-string": 0, // @todo
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
+        "@typescript-eslint/no-empty-object-type": 0,
         "@typescript-eslint/no-explicit-any": 0,
         "@typescript-eslint/no-floating-promises": 1, // @todo
         "@typescript-eslint/no-inferrable-types": 0, // @todo ?
@@ -106,6 +101,10 @@
         "@typescript-eslint/no-unsafe-argument": 0, // @todo
         "@typescript-eslint/no-unsafe-assignment": 0, // @todo
         "@typescript-eslint/no-unsafe-call": 0, // @todo
+        "@typescript-eslint/no-unsafe-declaration-merging": 0, // @todo
+        "@typescript-eslint/no-unsafe-enum-comparison": 0, // @todo
+        "@typescript-eslint/no-unused-expressions": 0, // @todo
+        "@typescript-eslint/no-unsafe-function-type": 0, // @todo
         "@typescript-eslint/no-unsafe-member-access": 0, // @todo
         "@typescript-eslint/no-unsafe-return": 0, // @todo
         "@typescript-eslint/no-unused-vars": ["error", { "vars": "all", "args": "after-used" }],
@@ -118,8 +117,16 @@
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/restrict-plus-operands": 0,
         "@typescript-eslint/restrict-template-expressions": 1, // @todo
-        "@typescript-eslint/semi": 2,
         "@typescript-eslint/unbound-method": 0, // @todo
+        "@stylistic/indent": [
+            "error",
+            4,
+            {
+                "FunctionExpression": { "parameters": 1 },
+                "SwitchCase": 1
+            }
+        ],
+        "@stylistic/semi": 2,
         "@highcharts/highcharts/doclet-apioption-last": 2,
         "@highcharts/highcharts/no-highcharts-namespace": 1, // @todo
         "@highcharts/highcharts/no-highcharts-object": 2,

@@ -159,10 +159,9 @@ beforeParseSelect.addEventListener('input', async e => {
 //
 const MathModifier = Dashboards.DataModifier.types.Math;
 const SortModifier = Dashboards.DataModifier.types.Sort;
-const RangeModifier = Dashboards.DataModifier.types.Range;
+const FilterModifier = Dashboards.DataModifier.types.Filter;
 
 const mathModifier = new MathModifier({
-    type: 'Math',
     columnFormulas: [{
         column: 'Sum',
         formula: 'B1+C1+D1'
@@ -170,22 +169,27 @@ const mathModifier = new MathModifier({
 });
 
 const sortModifier = new SortModifier({
-    type: 'Sort',
     orderByColumn: 'Jane',
     order: 'asc'
 });
 
-const rangeModifier = new RangeModifier({
-    type: 'Range',
-    ranges: [{
-        column: 'John',
-        minValue: 4,
-        maxValue: 7
-    }]
+const filterModifier = new FilterModifier({
+    condition: {
+        operator: 'and',
+        conditions: [{
+            operator: '>=',
+            column: 'John',
+            value: 4
+        }, {
+            operator: '<=',
+            column: 'John',
+            value: 7
+        }]
+    }
 });
 
 // DataModifier lookup, the order must reflect the dropdown in demo.html
-const dataModifiers = [null, mathModifier, sortModifier, rangeModifier];
+const dataModifiers = [null, mathModifier, sortModifier, filterModifier];
 
 async function applyDataModifier(idx) {
     const connector = board.dataPool.connectors['conn-mod'];

@@ -873,7 +873,7 @@ test('Crossfilter with string values', async function (assert) {
         const table = e.connector.table;
 
         // Assert only on the last event
-        if (table?.modifier?.options?.ranges?.length > 1) {
+        if (table?.modifier?.options?.condition?.conditions?.length > 2) {
 
             assert.equal(
                 countPoints(stringsNavigator.chart.series[0]),

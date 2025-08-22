@@ -22,7 +22,7 @@
  *
  * */
 
-import type { FilterCondition, LogicalMultipleCondition } from '../../../Data/Modifiers/FilterModifierOptions.js';
+import type { FilterCondition } from '../../../Data/Modifiers/FilterModifierOptions.js';
 import type { FilteringLiteConditionOptions } from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
@@ -49,9 +49,9 @@ class FilteringController {
     *
     * */
     /**
-     * A map of the simple conditions for each column.
+     * A map of the filtering conditions for each column.
      */
-    private simpleConditions: {[key: string]: FilterCondition[]} = {};
+    private columnConditions: {[key: string]: FilterCondition} = {};
 
     private _modifier: FilterModifier;
 
@@ -84,7 +84,7 @@ class FilteringController {
     * */
 
     public get modifier(): FilterModifier | undefined {
-        if (Object.keys(this.simpleConditions).length === 0) {
+        if (Object.keys(this.columnConditions).length === 0) {
             return;
         }
 
@@ -232,38 +232,24 @@ class FilteringController {
     ): void {
         const condition =
             FilteringController.mapOptionsToFilter(columnId, options);
+        const filterExists = this.columnConditions?.[columnId];
 
-        const index = this.simpleConditions?.[columnId]?.findIndex(
-            (c): boolean => {
-                const columnName = this.getColumnName(c);
-
-                return columnName === columnId;
-            }
-        );
-
-        if (index > -1) {
+        if (filterExists) {
             if (condition) {
                 // If the condition already exists, update it.
-                this.simpleConditions[columnId][index] = condition;
+                this.columnConditions[columnId] = condition;
             } else {
                 // If the condition is empty, remove it.
-                this.simpleConditions[columnId].splice(index, 1);
+                delete this.columnConditions[columnId];
             }
         } else if (condition) {
-            if (!this.simpleConditions[columnId]) {
-                this.simpleConditions[columnId] = [];
-            }
             // If the condition does not exist, add it.
-            this.simpleConditions[columnId].push(condition);
+            this.columnConditions[columnId] = condition;
 
             this._modifier = new FilterModifier({
                 condition: {
                     operator: 'and',
-                    conditions: Object.values(this.simpleConditions)
-                        .map((group): LogicalMultipleCondition => ({
-                            operator: 'and',
-                            conditions: group
-                        }))
+                    conditions: Object.values(this.columnConditions)
                 }
             });
         }
@@ -278,42 +264,12 @@ class FilteringController {
      * The column ID to clear.
      */
     public clearFiltering(columnId: string): void {
-        if (this.simpleConditions[columnId].length < 1) {
+        if (!this.columnConditions[columnId]) {
             return;
         }
 
-        this.simpleConditions[columnId].length = 0;
+        delete this.columnConditions[columnId];
         this.shouldBeUpdated = true;
-    }
-
-    /**
-     * Based on the condition, returns the column name.
-     *
-     * @param condition
-     * The condition to get the column name from.
-     */
-    private getColumnName(condition: FilterCondition): string | undefined {
-        // CallbackCondition
-        if (typeof condition === 'function') {
-            return void 0;
-        }
-
-        // ComparisonCondition | StringCondition
-        if ('columnName' in condition) {
-            return condition.columnName;
-        }
-
-        // LogicalSingleCondition
-        if ('condition' in condition) {
-            return this.getColumnName(condition.condition);
-        }
-
-        // LogicalMultipleCondition
-        if ('conditions' in condition) {
-            return condition.conditions.map(this.getColumnName).find(Boolean);
-        }
-
-        return void 0;
     }
 }
 
