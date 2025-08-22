@@ -47,13 +47,12 @@ namespace FilteringComposition {
     /**
      * The options for the boolean select.
      */
-    export const booleanSelectOptions =
-        ['all', 'true', 'false', 'empty'] as const;
+    export type booleanSelectOptions = 'all' | 'true' | 'false' | 'empty';
 
     /**
      * Corresponding values for the boolean select options.
      */
-    export const booleanValueMap: Record<typeof booleanSelectOptions[number], 'all' | boolean | null> = {
+    export const booleanValueMap: Record<booleanSelectOptions, 'all' | boolean | null> = {
         'all': 'all',
         'true': true,
         'false': false,
@@ -128,7 +127,7 @@ namespace FilteringComposition {
                 this.filterInput = makeHTMLElement('select', {}, inputWrapper);
 
                 // Render the options.
-                for (const option of booleanSelectOptions) {
+                for (const option of Object.keys(booleanValueMap)) {
                     const optionElement = document.createElement('option');
                     optionElement.value = option;
                     optionElement.textContent = option;
