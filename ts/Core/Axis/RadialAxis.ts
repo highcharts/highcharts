@@ -577,7 +577,8 @@ namespace RadialAxis {
                         this.center[3] / 2
                     ),
                     open,
-                    borderRadius: options.borderRadius
+                    borderRadius: options.borderRadius ??
+                        this.pane.options.borderRadius
                 }
             );
 

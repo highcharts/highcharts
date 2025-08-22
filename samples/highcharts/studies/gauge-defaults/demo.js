@@ -6,14 +6,6 @@ Highcharts.setOptions({
 
 const options = {
 
-    yAxis: {
-        plotBands: [{
-            from: 0,
-            to: 10,
-            color: 'green'
-        }]
-    },
-
     series: [{
         data: [27],
         opacity: 0.75
@@ -25,6 +17,18 @@ Highcharts.chart('container-1', {
 
     chart: {
         type: 'gauge'
+    },
+
+    yAxis: {
+        plotBands: [{
+            from: 0,
+            to: 10,
+            color: 'green'
+        }, {
+            from: 10,
+            to: 15,
+            color: 'red'
+        }]
     },
 
     title: {

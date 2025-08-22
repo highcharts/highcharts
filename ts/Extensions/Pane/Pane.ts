@@ -194,7 +194,11 @@ class Pane {
                     this.renderBackground(
                         merge(
                             PaneDefaults.background,
-                            { innerRadius: this.center[3] / 2 },
+                            // Defaults inherited from the `pane` option
+                            {
+                                borderRadius: this.options.borderRadius,
+                                innerRadius: this.center[3] / 2
+                            },
                             backgroundOption[i]
                         ),
                         i
