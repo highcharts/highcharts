@@ -879,6 +879,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     font: var(--ig-font);
     padding-left: inherit;
     background: transparent;
+    color: #000000;
 }
 
 .highcharts-datagrid-table tbody td.hcg-edited-cell-error input:not(.highcharts-datagrid-field-auto-width),
@@ -1081,6 +1082,34 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-radius: var(--hcg-border-radius);
     padding: var(--ig-header-padding);
     width: 100%;
+}
+
+/* Pagination */
+.hcg-table tfoot td,
+.highcharts-datagrid-table tfoot td {
+    border-top: var(--ig-header-row-border);
+    background: var(--ig-header-background);
+    padding: var(--ig-header-padding);
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper,
+.highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper {
+    text-align: right;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button,
+.highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper button {
+    font-size: 1.25em;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled),
+.highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper button:not(:disabled) {
+    cursor: pointer;
+}
+
+.hcg-table tfoot .hcg-pagination-wrapper button:first-child,
+.highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper button:first-child {
+    margin-right: 5px;
 }
 
 /* Helpers */

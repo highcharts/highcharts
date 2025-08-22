@@ -61,14 +61,18 @@ Grid.grid('container', {
     rendering: {
         columns: {
             resizing: {
-                mode: 'fixed'
+                mode: 'independent'
             }
         },
         rows: {
             strictHeights: true
         }
     },
+    columnDefaults: {
+        width: 40
+    },
     columns: [{
-        id: 'employee'
+        id: 'employee',
+        width: 120
     }]
 });
