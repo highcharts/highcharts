@@ -1499,8 +1499,8 @@ class SVGElement implements SVGElementLike {
                     if (isFunction(toggleTextShadowShim)) {
                         toggleTextShadowShim('');
                     }
-                } catch (e) {
-                    '';
+                } catch {
+                    // Ignore error
                 }
 
                 // If the bBox is not set, the try-catch block above failed. The

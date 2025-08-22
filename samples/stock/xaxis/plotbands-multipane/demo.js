@@ -2,9 +2,10 @@ Highcharts.stockChart('container', {
     xAxis: {
         plotBands: [{
             color: '#eeeeee',
-            from: 2,
-            to: 3
-        }]
+            from: '2025-07-31',
+            to: '2025-08-02'
+        }],
+        gridLineWidth: 1
     },
     yAxis: [
         {
@@ -16,6 +17,13 @@ Highcharts.stockChart('container', {
             offset: 0
         }
     ],
+
+    plotOptions: {
+        series: {
+            pointStart: '2025-07-30',
+            pointIntervalUnit: 'day'
+        }
+    },
 
     series: [
         {
