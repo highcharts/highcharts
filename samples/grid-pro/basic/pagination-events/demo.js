@@ -61,12 +61,14 @@ Grid.grid('container', {
                     e.currentPage;
             },
             beforePageSizeChange: function (e) {
+                console.log('beforePageSizeChange', e);
                 document.getElementById('beforePageSizeChange').value =
-                    e.oldPageSize;
+                    e.pageSize;
             },
             afterPageSizeChange: function (e) {
+                console.log('afterPageSizeChange', e);
                 document.getElementById('afterPageSizeChange').value =
-                    e.newPageSize;
+                    e.pageSize;
             }
         }
     }

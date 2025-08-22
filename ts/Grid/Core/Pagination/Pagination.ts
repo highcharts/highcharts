@@ -644,14 +644,14 @@ class Pagination {
      * The new page size to set.
      */
     public async setPageSize(newPageSize: number): Promise<void> {
-        const oldPageSize = this.currentPageSize;
+        const pageSize = this.currentPageSize;
 
         fireEvent(
             this,
             'beforePageSizeChange',
             {
-                newPageSize,
-                oldPageSize
+                pageSize: pageSize,
+                newPageSize: newPageSize
             }
         );
         this.currentPageSize = newPageSize;
@@ -674,8 +674,8 @@ class Pagination {
             this,
             'afterPageSizeChange',
             {
-                newPageSize,
-                oldPageSize
+                pageSize: newPageSize,
+                previousPageSize: pageSize
             }
         );
     }

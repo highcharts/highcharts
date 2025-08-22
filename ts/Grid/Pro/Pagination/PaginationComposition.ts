@@ -82,8 +82,8 @@ namespace PaginationComposition {
             (e: PaginationEvent): void => {
                 const pg = e.target;
                 pg.options.events?.beforePageSizeChange?.call(pg, {
-                    newPageSize: e.newPageSize,
-                    oldPageSize: e.oldPageSize
+                    pageSize: e.pageSize,
+                    newPageSize: e.newPageSize
                 });
             }
         );
@@ -94,8 +94,8 @@ namespace PaginationComposition {
             (e: PaginationEvent): void => {
                 const pg = e.target;
                 pg.options.events?.afterPageSizeChange?.call(pg, {
-                    newPageSize: e.newPageSize,
-                    oldPageSize: e.oldPageSize
+                    pageSize: e.pageSize,
+                    previousPageSize: e.previousPageSize
                 });
             }
         );
@@ -168,13 +168,13 @@ export interface AfterPageChangeEvent {
 }
 
 export interface BeforePageSizeChangeEvent {
+    pageSize: number;
     newPageSize: number;
-    oldPageSize: number;
 }
 
 export interface AfterPageSizeChangeEvent {
-    newPageSize: number;
-    oldPageSize: number;
+    pageSize: number;
+    previousPageSize: number;
 }
 
 export type PaginationEvent = Record<string, number> & { target: Pagination };
