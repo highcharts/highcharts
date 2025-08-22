@@ -235,7 +235,7 @@ declare module '../Core/Options' {
         events?: CellEvents;
     }
 
-    interface IndividualColumnOptions {
+    interface ColumnOptions {
         /**
          * Events options triggered by the grid elements.
          */
