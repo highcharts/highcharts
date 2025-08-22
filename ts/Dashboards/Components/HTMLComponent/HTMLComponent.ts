@@ -234,7 +234,6 @@ class HTMLComponent extends Component {
 
     public getOptionsOnDrop(): Partial<Options> {
         return {
-            cell: '',
             type: 'HTML',
             elements: [{
                 tagName: 'span',

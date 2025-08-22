@@ -304,7 +304,7 @@ abstract class Component {
         options: Partial<Component.Options>,
         board?: Board
     ) {
-        const renderTo = options.renderTo || options.cell;
+        const renderTo = options.renderTo;
         this.board = board || cell?.row?.layout?.board || {};
         this.parentElement =
             cell?.container || document.querySelector('#' + renderTo);
@@ -1037,14 +1037,6 @@ namespace Component {
         } & EventRecord;
 
     export interface Options {
-
-        /**
-         * Cell id, where component is attached.
-         * Deprecated, use `renderTo` instead.
-         *
-         * @deprecated
-         */
-        cell?: string;
 
         /**
          * Cell id, where component is attached.
