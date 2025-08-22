@@ -1066,6 +1066,27 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Pagination */
+.hcg-pagination-container,
+.highcharts-datagrid-pagination-container {
+    background: var(--ig-header-background);
+    padding: var(--ig-header-padding);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Bottom pagination (default) */
+.hcg-pagination-container:not(:first-child),
+.highcharts-datagrid-pagination-container:not(:first-child) {
+    border-top: var(--ig-header-row-border);
+}
+
+/* Top pagination */
+.hcg-pagination-container:first-child,
+.highcharts-datagrid-pagination-container:first-child {
+    border-bottom: var(--ig-header-row-border);
+}
+
+/* Footer pagination (tfoot) */
 .hcg-table tfoot td,
 .highcharts-datagrid-table tfoot td {
     border-top: var(--ig-header-row-border);
@@ -1073,8 +1094,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     padding: var(--ig-header-padding);
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper,
-.highcharts-datagrid-table tfoot .highcharts-datagrid-pagination-wrapper {
+.hcg-pagination-wrapper,
+.highcharts-datagrid-pagination-wrapper {
     /* text-align: right; */
     float: right;
     display: flex;

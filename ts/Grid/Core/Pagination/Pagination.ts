@@ -54,6 +54,7 @@ class Pagination {
     public static defaultOptions: PaginationOptions = {
         enabled: false,
         pageSize: 10,
+        position: 'bottom',
         controls: {
             pageSizeSelector: {
                 enabled: true,
@@ -82,14 +83,10 @@ class Pagination {
     * */
 
     /**
-     * The row in tfoot
+     * The pagination container element (div for top/bottom,
+     * tfoot cell for footer, or custom element).
      */
-    private row?: HTMLElement;
-
-    /**
-     * The cell of the row in the tfoot
-     */
-    private cell?: HTMLElement;
+    private paginationContainer?: HTMLElement;
 
     /**
      * The Grid Table instance which the pagination belongs to.
@@ -242,20 +239,24 @@ class Pagination {
 
     /**
      * Render the pagination container.
+     *
+     * The pagination container is positioned based on the `position` option:
+     * - `'top'`: Rendered before the table
+     * - `'bottom'`: Rendered after the table (default)
+     * - `'footer'`: Rendered inside a tfoot element
+     * - `'#id'` or any string: Rendered inside a custom container with
+     * the specified ID.
      */
     public render(): void {
-        const pgContainer = this.grid.viewport?.tfootElement;
-        this.row = makeHTMLElement('tr', {}, pgContainer);
-        this.cell = makeHTMLElement('td', {}, this.row);
-        this.cell.setAttribute(
-            'colSpan',
-            (this.grid.enabledColumns || []).length
-        );
-        this.reflow();
+        const position = this.options.position;
 
-        this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationWrapper')
-        }, this.cell);
+        if (position === 'footer') {
+            this.renderFooter();
+        } else if (typeof position === 'string' && position.startsWith('#')) {
+            this.renderCustomContainer(position);
+        } else {
+            this.renderContainer();
+        }
 
         // Update total pages first to ensure correct calculations
         this.updateTotalPages();
@@ -267,6 +268,96 @@ class Pagination {
 
         // Update button states after rendering
         this.updateButtonStates();
+    }
+
+    /**
+     * Render pagination in a tfoot element.
+     */
+    private renderFooter(): void {
+        const tableElement = this.grid.tableElement;
+        if (!tableElement) {
+            return;
+        }
+
+        // Create tfoot element
+        const tfootElement = makeHTMLElement('tfoot', {}, tableElement);
+
+        // Create tfoot row
+        const tfootRow = makeHTMLElement('tr', {}, tfootElement);
+
+        // Create tfoot cell with colspan and store it in paginationContainer
+        this.paginationContainer = makeHTMLElement('td', {}, tfootRow);
+        this.paginationContainer.setAttribute(
+            'colSpan',
+            (this.grid.enabledColumns || []).length.toString()
+        );
+
+        this.reflow();
+
+        // Set content wrapper to the tfoot cell
+        this.contentWrapper = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationWrapper')
+        }, this.paginationContainer);
+    }
+
+    /**
+     * Render pagination in a custom container by ID.
+     *
+     * @param id
+     * The ID of the custom container.
+     */
+    private renderCustomContainer(id: string): void {
+        const customContainer = document.querySelector(id) as HTMLElement;
+
+        if (!customContainer) {
+            console.warn(`Pagination: Custom container with ID "${id}" not found.`); // eslint-disable-line no-console
+            return;
+        }
+
+        this.paginationContainer = customContainer;
+
+        // Set content wrapper to the custom container
+        this.contentWrapper = customContainer;
+    }
+
+    /**
+     * Render pagination in a separate div container.
+     */
+    private renderContainer(): void {
+        // Only create a new container if one doesn't exist.
+        if (!this.paginationContainer) {
+            // Create pagination container div
+            this.paginationContainer = makeHTMLElement('div', {
+                className: Globals.getClassName('paginationContainer')
+            }, this.grid.contentWrapper);
+
+            // Insert the pagination container based on position
+            const position = this.options.position;
+            const tableElement = this.grid.tableElement;
+
+            if (tableElement && tableElement.parentNode) {
+                if (position === 'top') {
+                    // Insert before the table element
+                    tableElement.parentNode.insertBefore(
+                        this.paginationContainer,
+                        tableElement
+                    );
+                } else {
+                    // Insert after the table element (default: bottom)
+                    tableElement.parentNode.insertBefore(
+                        this.paginationContainer,
+                        tableElement.nextSibling
+                    );
+                }
+            } else if (position === 'top') {
+                this.grid.contentWrapper?.appendChild(this.paginationContainer);
+            }
+        }
+
+        // Create pagination wrapper inside the container
+        this.contentWrapper = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationWrapper')
+        }, this.paginationContainer);
     }
 
     /**
@@ -837,19 +928,37 @@ class Pagination {
      * Reflow the pagination container.
      */
     public reflow(): void {
-        if (!this.cell) {
+        const position = this.options.position;
+
+        if (!this.paginationContainer) {
             return;
         }
 
-        this.cell.style.width = this.grid.tableElement?.offsetWidth + 'px';
+        if (position === 'footer') {
+            // Set the width to match the table width
+            this.paginationContainer.style.width =
+                this.grid.tableElement?.offsetWidth + 'px';
+            return;
+        }
     }
 
     /**
      * Destroy the pagination instance.
      */
     public destroy(): void {
-        this.row?.remove();
-        this.contentWrapper?.remove();
+        const position = this.options.position;
+
+        if (position === 'footer') {
+            // For footer position, remove the entire tfoot element.
+            this.paginationContainer?.parentElement?.parentElement?.remove();
+        } else if (typeof position === 'string' && position.startsWith('#')) {
+            // Don't remove the custom container itself
+            this.contentWrapper?.remove();
+        } else {
+            // For top/bottom positions, remove the entire pagination container
+            this.paginationContainer?.remove();
+        }
+
         this.grid.querying.pagination.reset();
     }
 }

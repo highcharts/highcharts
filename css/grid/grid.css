@@ -860,13 +860,19 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 /* Pagination */
+.hcg-pagination-container {
+    padding: var(--ig-header-padding);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Footer pagination (tfoot) */
 .hcg-table tfoot td {
-    border-top: var(--ig-header-row-border);
     background: var(--ig-header-background);
     padding: var(--ig-header-padding);
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper {
+.hcg-pagination-wrapper {
     /* text-align: right; */
     float: right;
     display: flex;
@@ -891,18 +897,14 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     gap: 8px;
 }
 
-
-/* .hcg-table tfoot .hcg-pagination-wrapper button {
-    font-size: 1.25em;
-}
-
-.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled) {
+/* Pagination button styling */
+.hcg-pagination-wrapper button:not(:disabled) {
     cursor: pointer;
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper button:first-child {
+.hcg-pagination-wrapper button:first-child {
     margin-right: 5px;
-} */
+}
 
 /* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,

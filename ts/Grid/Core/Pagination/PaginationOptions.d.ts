@@ -160,6 +160,13 @@ export interface PaginationOptions {
     pageSize?: number;
 
     /**
+     * Position of the pagination container relative to the table.
+     *
+     * @default 'bottom'
+     */
+    position?: 'top' | 'bottom' | 'footer' | string;
+
+    /**
      * Controls options for pagination UI elements.
      */
     controls: PaginationControlsOptions;

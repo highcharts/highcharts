@@ -849,6 +849,8 @@ class Grid {
      */
     public renderViewport(): void {
         const viewportMeta = this.viewport?.getStateMeta();
+        const pagination = this.pagination;
+        const paginationPosition = pagination?.options.position;
 
         this.enabledColumns = this.getEnabledColumnIDs();
 
@@ -860,6 +862,11 @@ class Grid {
         this.resetContentWrapper();
         this.renderCaption();
 
+        // Render top pagination if enabled (before table)
+        if (paginationPosition === 'top') {
+            pagination?.render();
+        }
+
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
             if (viewportMeta && this.viewport) {
@@ -869,10 +876,15 @@ class Grid {
             this.renderNoData();
         }
 
-        this.renderDescription();
-
         this.accessibility?.setA11yOptions();
-        this.pagination?.render();
+
+        // Render bottom pagination, footer pagination,
+        // or custom container pagination (after table).
+        if (paginationPosition !== 'top') {
+            pagination?.render();
+        }
+
+        this.renderDescription();
 
         fireEvent(this, 'afterRenderViewport');
 
