@@ -2,6 +2,7 @@ Grid.grid('container', {
     dataTable: {
         columns: {
             id: ['1', '2', '3', '4'],
+            active: [true, null, false, true],
             product: ['Apples', 'Pears', 'Plums', 'Apricots'],
             weight: [100, 40, 0.5, 200],
             price: [1.5, 2.53, 5, 4.5],
@@ -16,6 +17,7 @@ Grid.grid('container', {
     },
     header: [
         'id',
+        'active',
         {
             format: 'Product',
             columns: [{

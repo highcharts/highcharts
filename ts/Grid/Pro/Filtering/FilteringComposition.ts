@@ -45,6 +45,24 @@ const {
 
 namespace FilteringComposition {
     /**
+     * The options for the boolean select.
+     */
+    export type BooleanSelectOptions = 'all' | 'true' | 'false' | 'empty';
+
+    /**
+     * Corresponding values for the boolean select options.
+     */
+    export const booleanValueMap: Record<
+        BooleanSelectOptions,
+        'all' | boolean | null
+    > = {
+        'all': 'all',
+        'true': true,
+        'false': false,
+        empty: null
+    } as const;
+
+    /**
      * The class names used by the filtering functionality.
      */
     export const classNames = {
@@ -86,18 +104,66 @@ namespace FilteringComposition {
 
         column.filtering = new ColumnFiltering(column);
 
+        // Render the input wrapper.
         const inputWrapper = makeHTMLElement('div', {
             className: FilteringComposition.classNames.colFilterWrapper
         }, this.htmlElement);
-
-        this.filterInput = makeHTMLElement('input', {}, inputWrapper);
-        this.headerContent.style.paddingBottom =
-            this.filterInput.offsetHeight + this.filterInput.offsetTop + 'px';
         const filteringOptions = column.options.filtering;
 
-        if (filteringOptions?.condition) {
-            void column.filtering?.applyFilter(filteringOptions);
+        // Render the proper element based on the column type.
+        switch (column.dataType) {
+            case 'string':
+            case 'number':
+            case 'datetime':
+                // Render the input element.
+                this.filterInput = makeHTMLElement('input', {}, inputWrapper);
+
+                // Attach event listener.
+                addEvent(this.filterInput, 'keyup', (e): void => {
+                    filteringOptions.value = e.target.value;
+                    filteringOptions.condition = 'contains';
+                    void column.filtering?.applyFilter(filteringOptions);
+                });
+                break;
+            case 'boolean':
+                // Render the select element.
+                this.filterInput = makeHTMLElement('select', {}, inputWrapper);
+
+                // Render the options.
+                for (const option of Object.keys(booleanValueMap)) {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+
+                    // Set the default value.
+                    if (option === 'all') {
+                        optionElement.selected = true;
+                    }
+
+                    this.filterInput.appendChild(optionElement);
+                }
+
+                // Attach event listener.
+                addEvent(this.filterInput, 'change', (e): void => {
+                    const option: keyof typeof booleanValueMap = e.target.value;
+
+                    filteringOptions.value = booleanValueMap[option];
+
+                    if (option !== 'all') {
+                        filteringOptions.condition = 'equals';
+
+                        // Clear the condition if the "all" option is selected.
+                    } else {
+                        delete filteringOptions.condition;
+                    }
+
+                    void column.filtering?.applyFilter(filteringOptions);
+                });
+                break;
         }
+
+        this.headerContent.style.paddingBottom =
+            this.filterInput.offsetHeight + this.filterInput.offsetTop + 'px';
     }
 }
 
@@ -150,7 +216,7 @@ declare module '../../Core/Options' {
         /**
          * The value that is used with the condition to filter the column.
          */
-        value?: string;
+        value?: string | boolean | null;
     }
 }
 /* *

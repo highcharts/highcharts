@@ -28,6 +28,10 @@ import type {
 import type { FilteringLiteConditionOptions } from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
+import U from '../../../Core/Utilities.js';
+const {
+    isString
+} = U;
 
 
 /* *
@@ -82,14 +86,15 @@ class FilteringController {
         columnId: string,
         options: FilteringLiteConditionOptions
     ): FilterCondition | undefined {
-        const { condition } = options;
+        const { condition, value } = options;
+        const stringifiedValue = isString(value) ? value : '';
 
         switch (condition) {
             case 'contains':
                 return {
                     columnName: columnId,
                     operator: 'contains',
-                    value: options.value || ''
+                    value: stringifiedValue
                 };
 
             case 'doesNotContain':
@@ -98,7 +103,7 @@ class FilteringController {
                     condition: {
                         columnName: columnId,
                         operator: 'contains',
-                        value: options.value || ''
+                        value: stringifiedValue
                     }
                 };
 
@@ -106,77 +111,77 @@ class FilteringController {
                 return {
                     columnName: columnId,
                     operator: '===',
-                    value: options.value
+                    value
                 };
 
             case 'doesNotEqual':
                 return {
                     columnName: columnId,
                     operator: '!==',
-                    value: options.value
+                    value
                 };
 
             case 'beginsWith':
                 return {
                     columnName: columnId,
                     operator: 'startsWith',
-                    value: options.value || ''
+                    value: stringifiedValue
                 };
 
             case 'endsWith':
                 return {
                     columnName: columnId,
                     operator: 'endsWith',
-                    value: options.value || ''
+                    value: stringifiedValue
                 };
 
             case 'greaterThan':
                 return {
                     columnName: columnId,
                     operator: '>',
-                    value: options.value
+                    value
                 };
 
             case 'greaterThanOrEqualTo':
                 return {
                     columnName: columnId,
                     operator: '>=',
-                    value: options.value
+                    value
                 };
 
             case 'lessThan':
                 return {
                     columnName: columnId,
                     operator: '<',
-                    value: options.value
+                    value
                 };
 
             case 'lessThanOrEqualTo':
                 return {
                     columnName: columnId,
                     operator: '<=',
-                    value: options.value
+                    value
                 };
 
             case 'before':
                 return {
                     columnName: columnId,
                     operator: '<',
-                    value: options.value
+                    value
                 };
 
             case 'after':
                 return {
                     columnName: columnId,
                     operator: '>',
-                    value: options.value
+                    value
                 };
 
             case 'empty':
                 return {
                     columnName: columnId,
                     operator: 'empty',
-                    value: options.value
+                    value
                 };
 
             case 'notEmpty':
@@ -185,7 +190,7 @@ class FilteringController {
                     condition: {
                         columnName: columnId,
                         operator: 'empty',
-                        value: options.value
+                        value
                     }
                 };
         }
