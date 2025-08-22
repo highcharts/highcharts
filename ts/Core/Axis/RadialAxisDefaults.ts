@@ -42,7 +42,6 @@ const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
  * @private
  */
 const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
-    endOnTick: false,
     gridLineWidth: 0,
     labels: {
         align: 'center',
@@ -55,7 +54,6 @@ const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
     minorTickLength: 10,
     minorTickPosition: 'inside',
     minorTickWidth: 1,
-    startOnTick: false,
     tickLength: 10,
     tickPixelInterval: 100,
     tickPosition: 'inside',
