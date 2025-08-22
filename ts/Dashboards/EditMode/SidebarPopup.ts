@@ -510,7 +510,7 @@ class SidebarPopup extends BaseForm {
 
         dragDrop.onCellDragEnd(newCell);
         const options = merge(componentOptions, {
-            cell: newCell.id
+            renderTo: newCell.id
         });
 
         const componentPromise =

@@ -243,6 +243,7 @@ class HTMLComponent extends Component {
     }
 
     /**
+     * Constructs the HTML tree.
      * @internal
      */
     private constructTree(): void {

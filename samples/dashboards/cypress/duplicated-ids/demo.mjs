@@ -22,7 +22,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'HTML',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         elements: [
             {
                 tagName: 'h1',
@@ -30,7 +30,7 @@ Dashboards.board('container', {
             }
         ]
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -55,7 +55,7 @@ Dashboards.board('container2', {
     },
     components: [{
         type: 'HTML',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         elements: [
             {
                 tagName: 'h1',
@@ -63,7 +63,7 @@ Dashboards.board('container2', {
             }
         ]
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             series: [{
