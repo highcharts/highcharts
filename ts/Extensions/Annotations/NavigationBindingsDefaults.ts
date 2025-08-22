@@ -148,6 +148,12 @@ const navigation: NavigationOptions = {
         circleAnnotation: {
             /** @ignore-option */
             className: 'highcharts-circle-annotation',
+            /**
+             * @type      {Highcharts.AnnotationsOptions}
+             * @extends   navigation.annotationsOptions
+             * @apioption navigation.bindings.circleAnnotation.annotationsOptions
+             */
+            annotationsOptions: {},
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,
@@ -234,7 +240,7 @@ const navigation: NavigationOptions = {
             ]
         },
         /**
-         * A ellipse annotation bindings. Includes `start` and two events in
+         * An ellipse annotation bindings. Includes `start` and two events in
          * `steps` array. First updates the second point, responsible for a
          * rx width, and second updates the ry width.
          *
@@ -243,6 +249,12 @@ const navigation: NavigationOptions = {
          */
         ellipseAnnotation: {
             className: 'highcharts-ellipse-annotation',
+            /**
+             * @type      {Highcharts.AnnotationsOptions}
+             * @extends   navigation.annotationsOptions
+             * @apioption navigation.bindings.ellipseAnnotation.annotationsOptions
+             */
+            annotationsOptions: {},
             start: function (
                 this: NavigationBindings,
                 e: PointerEvent
@@ -341,6 +353,12 @@ const navigation: NavigationOptions = {
         rectangleAnnotation: {
             /** @ignore-option */
             className: 'highcharts-rectangle-annotation',
+            /**
+             * @type      {Highcharts.AnnotationsOptions}
+             * @extends   navigation.annotationsOptions
+             * @apioption navigation.bindings.rectangleAnnotation.annotationsOptions
+             */
+            annotationsOptions: {},
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,
@@ -432,6 +450,12 @@ const navigation: NavigationOptions = {
         labelAnnotation: {
             /** @ignore-option */
             className: 'highcharts-label-annotation',
+            /**
+             * @type      {Highcharts.AnnotationsOptions}
+             * @extends   navigation.annotationsOptions
+             * @apioption navigation.bindings.labelAnnotation.annotationsOptions
+             */
+            annotationsOptions: {},
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,
