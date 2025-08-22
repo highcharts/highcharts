@@ -1701,7 +1701,7 @@ QUnit.test('Dot notation in exporting data (#20470)', function (assert) {
 QUnit.test('Thousand separator from lang options', function (assert) {
     const chart = Highcharts.chart('container', {
         lang: {
-            thousandsSep: '_THOUSAND_SEPERATOR_'
+            thousandsSep: '_THOUSAND_SEPARATOR_'
         },
         series: [{
             data: [
