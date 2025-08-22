@@ -91,7 +91,7 @@ class ColumnFiltering {
         filteringController.addColumnFilterCondition(this.column.id, options);
         await querying.proceed();
 
-        viewport.loadPresentationData();
+        await viewport.updateRows();
 
         fireEvent(this.column, 'afterFiltering', {
             target: this.column
