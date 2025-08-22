@@ -553,8 +553,8 @@ class TextBuilder {
                                 words ? end + 1 : end
                             );
 
-                    } catch (e) {
-                        '';
+                    } catch {
+                        // Ignore error
                     }
                 }
             }

@@ -15,6 +15,7 @@
  * */
 
 import type ColorString from '../../../Core/Color/ColorString';
+import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -31,7 +32,6 @@ import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    column: ColumnSeries,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
