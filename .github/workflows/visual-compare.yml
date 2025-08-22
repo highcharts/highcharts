@@ -1,5 +1,6 @@
 name: Highcharts Visual Comparison
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - 'master'
