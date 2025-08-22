@@ -778,7 +778,7 @@ class WGLRenderer {
                     colorIndex = colorIndex %
                         chart.options.colors.length;
 
-                    pcolor = color(chart.options.colors[colorIndex++]).rgba;
+                    pcolor = color(chart.options.colors[colorIndex]).rgba;
                 }
 
                 if (pcolor) {
@@ -786,6 +786,8 @@ class WGLRenderer {
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
                 }
+
+                colorIndex++;
             }
 
             if (useRaw) {
