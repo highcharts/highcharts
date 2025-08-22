@@ -47,21 +47,17 @@ namespace FilteringComposition {
     /**
      * The options for the boolean select.
      */
-    export enum BooleanSelectOptions {
-        All = 'all',
-        True = 'true',
-        False = 'false',
-        Empty = 'empty'
-    }
+    export const booleanSelectOptions =
+        ['all', 'true', 'false', 'empty'] as const;
 
     /**
      * Corresponding values for the boolean select options.
      */
-    export const booleanValueMap = {
-        [BooleanSelectOptions.All]: 'all',
-        [BooleanSelectOptions.True]: true,
-        [BooleanSelectOptions.False]: false,
-        [BooleanSelectOptions.Empty]: null
+    export const booleanValueMap: Record<typeof booleanSelectOptions[number], 'all' | boolean | null> = {
+        'all': 'all',
+        'true': true,
+        'false': false,
+        empty: null
     } as const;
 
     /**
@@ -132,13 +128,13 @@ namespace FilteringComposition {
                 this.filterInput = makeHTMLElement('select', {}, inputWrapper);
 
                 // Render the options.
-                for (const option of Object.values(BooleanSelectOptions)) {
+                for (const option of booleanSelectOptions) {
                     const optionElement = document.createElement('option');
                     optionElement.value = option;
                     optionElement.textContent = option;
 
                     // Set the default value.
-                    if (option === BooleanSelectOptions.All) {
+                    if (option === 'all') {
                         optionElement.selected = true;
                     }
 
@@ -151,7 +147,7 @@ namespace FilteringComposition {
 
                     filteringOptions.value = booleanValueMap[option];
 
-                    if (option !== BooleanSelectOptions.All) {
+                    if (option !== 'all') {
                         filteringOptions.condition = 'equals';
 
                         // Clear the condition if the "all" option is selected.
