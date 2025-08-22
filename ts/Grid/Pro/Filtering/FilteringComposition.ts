@@ -47,12 +47,15 @@ namespace FilteringComposition {
     /**
      * The options for the boolean select.
      */
-    export type booleanSelectOptions = 'all' | 'true' | 'false' | 'empty';
+    export type BooleanSelectOptions = 'all' | 'true' | 'false' | 'empty';
 
     /**
      * Corresponding values for the boolean select options.
      */
-    export const booleanValueMap: Record<booleanSelectOptions, 'all' | boolean | null> = {
+    export const booleanValueMap: Record<
+        BooleanSelectOptions,
+        'all' | boolean | null
+    > = {
         'all': 'all',
         'true': true,
         'false': false,
