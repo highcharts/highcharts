@@ -22,7 +22,9 @@
  *
  * */
 
-import type { FilterCondition } from '../../../Data/Modifiers/FilterModifierOptions.js';
+import type {
+    FilterCondition
+} from '../../../Data/Modifiers/FilterModifierOptions.js';
 import type { FilteringLiteConditionOptions } from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
@@ -53,7 +55,10 @@ class FilteringController {
      */
     private columnConditions: {[key: string]: FilterCondition} = {};
 
-    private _modifier: FilterModifier;
+    /**
+     * The modifier that is used to filter the data.
+     */
+    public modifier?: FilterModifier;
 
     /**
      * The flag that indicates if the data should be updated because of the
@@ -61,35 +66,12 @@ class FilteringController {
      */
     public shouldBeUpdated: boolean = false;
 
-    /* *
-    *
-    *  Properties
-    *
-    * */
-
-    constructor() {
-        this._modifier = new FilterModifier({
-            condition: {
-                operator: 'and',
-                conditions: []
-            }
-        });
-    }
-
 
     /* *
     *
     *  Functions
     *
     * */
-
-    public get modifier(): FilterModifier | undefined {
-        if (Object.keys(this.columnConditions).length === 0) {
-            return;
-        }
-
-        return this._modifier;
-    }
 
     /**
      * Maps filtering options to the filtering condition.
@@ -211,9 +193,6 @@ class FilteringController {
                         value
                     }
                 };
-
-            default:
-                return void 0;
         }
     }
 
@@ -226,50 +205,61 @@ class FilteringController {
      * @param options
      * The filtering options.
      */
-    public addFilterCondition(
+    public addColumnFilterCondition(
         columnId: string,
         options: FilteringLiteConditionOptions
     ): void {
-        const condition =
-            FilteringController.mapOptionsToFilter(columnId, options);
-        const filterExists = this.columnConditions?.[columnId];
+        const condition = FilteringController.mapOptionsToFilter(
+            columnId,
+            options
+        );
 
-        if (filterExists) {
-            if (condition) {
-                // If the condition already exists, update it.
-                this.columnConditions[columnId] = condition;
-            } else {
-                // If the condition is empty, remove it.
-                delete this.columnConditions[columnId];
-            }
-        } else if (condition) {
-            // If the condition does not exist, add it.
+        if (condition) {
             this.columnConditions[columnId] = condition;
-
-            this._modifier = new FilterModifier({
-                condition: {
-                    operator: 'and',
-                    conditions: Object.values(this.columnConditions)
-                }
-            });
+        } else {
+            delete this.columnConditions[columnId];
         }
 
-        this.shouldBeUpdated = true;
+        this.updateModifier();
     }
 
     /**
-     * Clears all the meaningful filtering options.
+     * Clears the filtering condition for the specified column. If no column ID
+     * is provided, clears all the column filtering conditions.
      *
      * @param columnId
-     * The column ID to clear.
+     * The column ID to clear or `undefined` to clear all the column filtering
+     * conditions.
      */
-    public clearFiltering(columnId: string): void {
-        if (!this.columnConditions[columnId]) {
+    public clearColumnFiltering(columnId?: string): void {
+        if (!columnId) {
+            this.columnConditions = {};
+        } else {
+            delete this.columnConditions[columnId];
+        }
+
+        this.updateModifier();
+    }
+
+
+    /**
+     * Updates the modifier based on the current column conditions.
+     */
+    private updateModifier(): void {
+        const columnConditions = Object.values(this.columnConditions);
+        this.shouldBeUpdated = true;
+
+        if (columnConditions.length < 1) {
+            delete this.modifier;
             return;
         }
 
-        delete this.columnConditions[columnId];
-        this.shouldBeUpdated = true;
+        this.modifier = new FilterModifier({
+            condition: {
+                operator: 'and',
+                conditions: columnConditions
+            }
+        });
     }
 }
 
