@@ -1830,6 +1830,9 @@ export default Legend;
  *//**
  * @name Highcharts.LegendItemObject#symbol
  * @type {Highcharts.SVGElement|undefined}
+ *//**
+ * @name Highcharts.LegendItemObject#label
+ * @type {Highcharts.SVGElement|undefined}
  */
 
 /**
