@@ -1,0 +1,13 @@
+/**
+ * @license Highmaps JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/heatmap
+ * @requires highcharts
+ *
+ * (c) 2009-2025 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import Highcharts from '../../Core/Globals.js';
+import '../../Series/Contour/ContourSeries.js';
+export default Highcharts;
