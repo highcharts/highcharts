@@ -30,7 +30,7 @@ Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 You must also import the styles in your main CSS file.
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/grid/css/grid-pro.css");
 ```
 
 ### 3. Cell identifier

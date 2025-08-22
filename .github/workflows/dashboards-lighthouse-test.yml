@@ -6,7 +6,6 @@ on:
     paths:
       - '.github/workflows/dashboards-lighthouse-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
       - 'css/grid*'
       - 'samples/dashboards/**'
       - 'samples/grid-lite/**'
