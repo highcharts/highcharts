@@ -27,14 +27,14 @@
 <div id="description">
     <p>This demo shows how to connect to an <a href="https://mqtt.org/" target="_blank">MQTT</a>
         broker and subscribe to a topic. The data is then displayed in a <i>Highcharts chart</i> and a <i>Dashboards
-            datagrid</i>.
+            grid</i>.
         The demo also shows how to implement a <i>Custom Connector</i> in Javascript, in his case MQTT. The Custom
         Connector establishes the connection with the MQTT broker, subscribes to a topic and receives the data. The
-        received data are stored in the connector's data table for use in the chart and datagrid. The connector also
+        received data are stored in the connector's data table for use in the chart and grid. The connector also
         supports
         callbacks for connection status, packet reception and error handling. The connector is a sub-class of the
         <i>DataConnector</i> and uses the JSON Converter to convert the received data to a format that can be used
-        by the chart and datagrid.
+        by the chart and grid.
     </p>
     <p>MQTT data is delivered from a Highcharts server. It uses the broker
         <i>broker.hivemq.com</i>, port <i>8000 or 8884 (secure)</i> and data is send every five seconds to the topics

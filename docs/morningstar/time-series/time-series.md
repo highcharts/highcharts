@@ -90,9 +90,9 @@ Dashboards.board('container', {
             connector: {
                 id: 'time-series'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             title: 'Dividends',
-            dataGridOptions: {
+            gridOptions: {
                 editable: false,
                 columns: {
                     Date: {

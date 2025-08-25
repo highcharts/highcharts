@@ -18,7 +18,7 @@
  * */
 
 import type { Highcharts as H } from '../Dashboards/Plugins/HighchartsTypes';
-import type { GridNamespace as D } from '../Dashboards/Plugins/DataGridTypes';
+import type { GridNamespace as D } from '../Dashboards/Plugins/GridTypes';
 
 // Fill registries
 import '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
@@ -52,7 +52,7 @@ import DataConverter from '../Data/Converters/DataConverter.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
-import GridPlugin from '../Dashboards/Plugins/DataGridPlugin.js';
+import GridPlugin from '../Dashboards/Plugins/GridPlugin.js';
 import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';

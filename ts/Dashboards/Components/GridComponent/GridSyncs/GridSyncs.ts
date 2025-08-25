@@ -21,9 +21,9 @@
  * */
 
 import type Sync from '../../Sync/Sync';
-import DataGridExtremesSync from './DataGridExtremesSync.js';
-import DataGridHighlightSync from './DataGridHighlightSync.js';
-import DataGridVisibilitySync from './DataGridVisibilitySync.js';
+import GridExtremesSync from './GridExtremesSync.js';
+import GridHighlightSync from './GridHighlightSync.js';
+import GridVisibilitySync from './GridVisibilitySync.js';
 
 /* *
 *
@@ -32,14 +32,14 @@ import DataGridVisibilitySync from './DataGridVisibilitySync.js';
 * */
 const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
     defaultSyncPairs: {
-        extremes: DataGridExtremesSync.syncPair,
-        highlight: DataGridHighlightSync.syncPair,
-        visibility: DataGridVisibilitySync.syncPair
+        extremes: GridExtremesSync.syncPair,
+        highlight: GridHighlightSync.syncPair,
+        visibility: GridVisibilitySync.syncPair
     },
     defaultSyncOptions: {
-        extremes: DataGridExtremesSync.defaultOptions,
-        highlight: DataGridHighlightSync.defaultOptions,
-        visibility: DataGridVisibilitySync.defaultOptions
+        extremes: GridExtremesSync.defaultOptions,
+        highlight: GridHighlightSync.defaultOptions,
+        visibility: GridVisibilitySync.defaultOptions
     }
 };
 

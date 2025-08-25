@@ -22,12 +22,12 @@
 
 import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
-import type { Grid, GridNamespace } from '../../Plugins/DataGridTypes';
-import type Options from './DataGridComponentOptions';
+import type { Grid, GridNamespace } from '../../Plugins/GridTypes';
+import type { Options } from './GridComponentOptions';
 
 import Component from '../Component.js';
-import DataGridSyncs from './DataGridSyncs/DataGridSyncs.js';
-import GridComponentDefaults from './DataGridComponentDefaults.js';
+import GridSyncs from './GridSyncs/GridSyncs';
+import GridComponentDefaults from './GridComponentDefaults';
 import U from '../../../Core/Utilities.js';
 import DU from '../../Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';
@@ -48,7 +48,7 @@ const { deepClone } = DU;
  * Grid Component for Highcharts Dashboards.
  * @private
  */
-class DataGridComponent extends Component {
+class GridComponent extends Component {
 
     /* *
      *
@@ -59,16 +59,7 @@ class DataGridComponent extends Component {
     /**
      * Predefined sync config for the Grid Component.
      */
-    public static predefinedSyncConfig = DataGridSyncs;
-
-    /**
-     * The namespace of the Grid Component.
-     * @deprecated
-     * DataGrid will be removed in behalf of Grid in the next major version.
-     */
-    public static get DataGridNamespace(): GridNamespace|undefined {
-        return DataGridComponent.GridNamespace;
-    }
+    public static predefinedSyncConfig = GridSyncs;
 
     /**
      * The namespace of the Grid Component.
@@ -88,15 +79,6 @@ class DataGridComponent extends Component {
      *  Properties
      *
      * */
-
-    /**
-     * The Grid that is rendered in the Grid Component.
-     * @deprecated
-     * DataGrid will be removed in behalf of Grid in the next major version.
-     */
-    public get dataGrid(): Grid|undefined {
-        return this.grid;
-    }
 
     /**
      * The Grid that is rendered in the Grid Component.
@@ -120,7 +102,7 @@ class DataGridComponent extends Component {
         options: Partial<Options>,
         board?: Board
     ) {
-        options = merge(DataGridComponent.defaultOptions, options);
+        options = merge(GridComponent.defaultOptions, options);
         super(cell, options, board);
 
         this.options = options as Options;
@@ -141,11 +123,7 @@ class DataGridComponent extends Component {
 
         if (this.grid) {
             this.grid.update(
-                merge(
-                    {},
-                    options.gridOptions,
-                    options.dataGridOptions
-                ),
+                options.gridOptions,
                 false
             );
 
@@ -302,7 +280,7 @@ class DataGridComponent extends Component {
         }
 
         return {
-            ...diffObjects(optionsCopy, DataGridComponent.defaultOptions),
+            ...diffObjects(optionsCopy, GridComponent.defaultOptions),
             type: 'Grid'
         };
     }
@@ -322,8 +300,8 @@ class DataGridComponent extends Component {
      */
     private setOptions(): void {
         const options = this.options,
-            gridClassName = options.gridClassName || options.dataGridClassName,
-            gridID = options.gridID || options.dataGridID;
+            gridClassName = options.gridClassName,
+            gridID = options.gridID;
 
         if (gridClassName) {
             this.contentElement.classList.value =
@@ -342,29 +320,29 @@ class DataGridComponent extends Component {
      * @returns The Grid.
      */
     private constructGrid(): Grid {
-        const DGN = DataGridComponent.GridNamespace;
+        const DGN = GridComponent.GridNamespace;
         if (!DGN) {
             throw new Error('Grid not connected.');
         }
 
         const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey),
             options = this.options,
-            gridOptions = merge(
-                {},
-                options.gridOptions,
-                options.dataGridOptions
-            );
+            gridOptions = options.gridOptions;
+
+        if (!gridOptions) {
+            throw new Error('Grid options are not set.');
+        }
 
         if (dataTable) {
             gridOptions.dataTable = dataTable.modified;
         }
 
-        const dataGridInstance =
+        const gridInstance =
             new DGN.Grid(this.contentElement, gridOptions);
 
-        this.options.gridOptions = dataGridInstance.options;
+        this.options.gridOptions = gridInstance.options;
 
-        return dataGridInstance;
+        return gridInstance;
     }
 }
 
@@ -374,7 +352,7 @@ class DataGridComponent extends Component {
  *
  * */
 
-namespace DataGridComponent {
+namespace GridComponent {
 
     /* *
      *
@@ -383,7 +361,7 @@ namespace DataGridComponent {
      * */
 
     /** @private */
-    export type ComponentType = DataGridComponent;
+    export type ComponentType = GridComponent;
 
     /** @private */
     export type ChartComponentEvents = Component.EventTypes;
@@ -395,4 +373,4 @@ namespace DataGridComponent {
  *
  * */
 
-export default DataGridComponent;
+export default GridComponent;

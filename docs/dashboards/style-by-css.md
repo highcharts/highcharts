@@ -147,7 +147,7 @@ For information on how to individually style the dashboard's `Highcharts chart` 
 ### Grid component
 To style the dashboard's **Grid Component** `div` and its content:
 ```css
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     border-radius: 10px;
 }
 ```

@@ -4,7 +4,7 @@ describe('Credits.', () => {
     });
 
     it('Default credits should be displayed.', () => {
-        cy.get('.highcharts-datagrid-credits')
+        cy.get('.highcharts-grid-credits')
             .should('have.css', 'background-image')
             .then((bg) => {
                 expect(bg).to.contain('https://assets.highcharts.com/grid/logo_light.png');
@@ -23,8 +23,8 @@ describe('Credits.', () => {
             });
         });
 
-        cy.get('.highcharts-datagrid-credits').should('contain', 'overwriteText');
-        cy.get('.highcharts-datagrid-credits').should('have.css', 'background-image', 'none');
+        cy.get('.highcharts-grid-credits').should('contain', 'overwriteText');
+        cy.get('.highcharts-grid-credits').should('have.css', 'background-image', 'none');
     });
 
     it('Disabled credits should not be displayed.', () => {
@@ -35,6 +35,6 @@ describe('Credits.', () => {
                 }
             });
         });
-        cy.get('.highcharts-datagrid-credits').should('not.exist');
+        cy.get('.highcharts-grid-credits').should('not.exist');
     });
 });

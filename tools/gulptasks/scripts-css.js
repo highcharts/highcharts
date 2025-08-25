@@ -23,7 +23,6 @@ const highchartsConfig = {
     replacePath: '',
     exclude: [
         'dashboards/',
-        'datagrid/',
         'grid/',
         'dashboards-icons/'
     ]

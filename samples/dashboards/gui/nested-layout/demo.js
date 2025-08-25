@@ -199,7 +199,7 @@ Dashboards.board(
             },
             {
                 renderTo: 'db-col-2-nolayout',
-                type: 'DataGrid',
+                type: 'Grid',
                 connector: {
                     id: 'sample'
                 },

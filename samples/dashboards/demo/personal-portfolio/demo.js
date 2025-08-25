@@ -106,7 +106,7 @@ const getCurrentTotal = arrOfArr => {
 
     const holdings = [],
         investedAmounts = [],
-        dataGridData = [];
+        gridData = [];
 
     stockCollection.forEach(stock => {
         const { holding, investedAmount } = generatePortfolio(
@@ -123,14 +123,14 @@ const getCurrentTotal = arrOfArr => {
         lastHoldingTotal = getCurrentTotal(holdings),
         annualInvestment = 200 * 12 * holdings.length;
 
-    // Generate columns for the datagrid
+    // Generate columns for the grid
     stockCollection.forEach((stock, i) => {
         const len = holdings[i].length,
             lastHolding = holdings[i][len - 1],
             ISIN = stock.ISIN,
             tradingSymbol = stock.tradingSymbol;
 
-        dataGridData.push([
+        gridData.push([
             tradingSymbol,
             ISIN,
             Math.round(lastHolding / lastHoldingTotal * 100)
@@ -375,7 +375,7 @@ const getCurrentTotal = arrOfArr => {
                 options: {
                     columnNames: ['Name', 'ISIN', 'Percentage'],
                     firstRowAsNames: false,
-                    data: dataGridData
+                    data: gridData
                 }
             }, {
                 id: 'risk-score',
@@ -478,12 +478,12 @@ const getCurrentTotal = arrOfArr => {
             }],
             chartOptions: walletChartOptions
         }, {
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'stock-grid'
             },
             renderTo: 'data-grid',
-            dataGridOptions: {
+            gridOptions: {
                 rendering: {
                     rows: {
                         strictHeights: true

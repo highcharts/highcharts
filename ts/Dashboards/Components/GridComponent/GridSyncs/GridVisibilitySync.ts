@@ -21,10 +21,11 @@
  * */
 
 import type Sync from '../../Sync/Sync';
-import type DataGridComponent from '../DataGridComponent.js';
+import type GridComponent from '../GridComponent.js';
 
 import Component from '../../Component';
 import DataCursor from '../../../../Data/DataCursor';
+
 
 /* *
  *
@@ -38,34 +39,27 @@ const syncPair: Sync.SyncPair = {
     emitter: void 0,
     handler: function (this: Component): (() => void) | void {
         if (
-            this.type !== 'DataGrid' && // To be removed in v4
             this.type !== 'Grid'
         ) {
             return;
         }
-        const component = this as DataGridComponent;
-        const syncOptions = this.sync.syncConfig.extremes;
+        const component = this as GridComponent;
+        const syncOptions = this.sync.syncConfig.visibility;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
 
         const { board } = component;
 
-        const handleChangeExtremes = (e: DataCursor.Event): void => {
-            const cursor = e.cursor;
-            if (
-                cursor.type === 'position' &&
-                component.dataGrid &&
-                typeof cursor?.row === 'number'
-            ) {
-                const { row } = cursor;
-                const { viewport } = component.dataGrid;
-                const rowIndex = viewport?.dataTable?.getLocalRowIndex(row);
-
-                if (rowIndex !== void 0) {
-                    component.dataGrid.viewport?.scrollToRow(rowIndex);
-                }
+        const handleVisibilityChange = (e: DataCursor.Event): void => {
+            const cursor = e.cursor,
+                grid = component.grid;
+            if (!(grid && cursor.type === 'position' && cursor.column)) {
+                return;
             }
 
+            void grid.updateColumn(cursor.column, {
+                enabled: cursor.state !== 'series.hide' + groupKey
+            });
         };
 
         const registerCursorListeners = (): void => {
@@ -82,8 +76,13 @@ const syncPair: Sync.SyncPair = {
 
             cursor.addListener(
                 table.id,
-                'xAxis.extremes.min' + groupKey,
-                handleChangeExtremes
+                'series.show' + groupKey,
+                handleVisibilityChange
+            );
+            cursor.addListener(
+                table.id,
+                'series.hide' + groupKey,
+                handleVisibilityChange
             );
         };
 
@@ -97,8 +96,13 @@ const syncPair: Sync.SyncPair = {
 
             cursor.removeListener(
                 table.id,
-                'xAxis.extremes.min' + groupKey,
-                handleChangeExtremes
+                'series.show' + groupKey,
+                handleVisibilityChange
+            );
+            cursor.removeListener(
+                table.id,
+                'series.hide' + groupKey,
+                handleVisibilityChange
             );
         };
 

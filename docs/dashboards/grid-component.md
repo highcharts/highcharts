@@ -7,12 +7,12 @@
 ## How to start
 
 ### 1. Import
-To use **Grid Pro** as a component in Dashboards, you need to import the required modules, [datagrid.js](https://code.highcharts.com/dashboards/datagrid.js) and [dashboards.js](https://code.highcharts.com/dashboards/dashboards.js), and bind them together.
+To use **Grid Pro** as a component in Dashboards, you need to import the required modules, [grid-pro.js](https://code.highcharts.com/grid/grid-pro.js) and [dashboards.js](https://code.highcharts.com/dashboards/dashboards.js), and bind them together.
 
 The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Grid** module.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/grid/grid-pro.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
@@ -20,7 +20,7 @@ Alternatively, you can also use NPM packages (see: [Installation](https://www.hi
 
 ```typescript
 import * as Dashboards from '@highcharts/dashboards';
-import * as Grid from '@highcharts/dashboards/datagrid';
+import * as Grid from '@highcharts/grid/grid-pro';
 
 Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
@@ -80,7 +80,7 @@ components: [{
     type: 'Grid'
 }]
 ```
-To see more options available for the Grid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
+To see more options available for the Grid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.Options).
 
 See the summarized JS code needed to create a simple Grid:
 ```js
@@ -164,7 +164,7 @@ Note that you also need to import modules to use the appropriate modifiers. For 
 
 ## Component synchronization
 
-One of the many available options for the **Grid Component** is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#sync), which allows setting the synchronization of component states with each other. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
+One of the many available options for the **Grid Component** is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.Options#sync), which allows setting the synchronization of component states with each other. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight?force-light-theme" allow="fullscreen"></iframe>
 
@@ -190,7 +190,7 @@ sync: {
 ```
 
 If you want to scroll the **Grid Component** automatically to a highlighted row, turn on
-the [`autoScroll`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.DataGridHighlightSyncOptions) option.
+the [`autoScroll`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.GridHighlightSyncOptions) option.
 
 Demo:
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/grid-highlight-sync-autoscroll?force-light-theme" allow="fullscreen"></iframe>

@@ -4,8 +4,8 @@ describe('Grid resize.', () => {
     });
 
     it('Changes in the grid should be reflected in the options', () => {
-        cy.get('.highcharts-datagrid-header-cell').eq(0).as('cell');
-        cy.get('@cell').find('.highcharts-datagrid-column-resizer').as('resizer');
+        cy.get('.highcharts-grid-header-cell').eq(0).as('cell');
+        cy.get('@cell').find('.highcharts-grid-column-resizer').as('resizer');
         cy.get('@resizer').trigger('mousedown');
         cy.get('@resizer').trigger('mousemove', { pageX: 100 });
         cy.get('@resizer').trigger('mouseup');

@@ -63,7 +63,7 @@ body {
     height: 250px;
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     min-height: auto;
 }
 

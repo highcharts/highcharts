@@ -14,7 +14,7 @@ Using the included CSS variables also helps prevent breaking changes in future v
 
 ## Variable Inheritance
 
-CSS variables naturally inherit through the datagrid’s structure in a logical cascade: from `<table>` to `<tbody>` and finally `<thead>`. For example, the variable `--hcg-border-width` applies to the entire table by default and cascades to rows, columns, and cells unless overridden by more specific variables like `--hcg-row-border-width`.
+CSS variables naturally inherit through the grid’s structure in a logical cascade: from `<table>` to `<tbody>` and finally `<thead>`. For example, the variable `--hcg-border-width` applies to the entire table by default and cascades to rows, columns, and cells unless overridden by more specific variables like `--hcg-row-border-width`.
 
 In the example below, a custom theme renders a 3px solid black border around the table and between rows and columns. The last two variables override the row border’s width and style, but the row border color inherits from `--hcg-border-color`.
 

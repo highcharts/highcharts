@@ -1,15 +1,14 @@
-
 // Bring in other forms of Highcharts
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
-import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
+import Grid from '../../../../code/grid/grid-pro.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.GridPlugin.custom.connectGrid(Grid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 
 Dashboards.board('container', {
     dataPool: {
@@ -45,6 +44,6 @@ Dashboards.board('container', {
         connector: {
             id: 'connector-1'
         },
-        type: 'DataGrid'
+        type: 'Grid'
     }]
 }, true);

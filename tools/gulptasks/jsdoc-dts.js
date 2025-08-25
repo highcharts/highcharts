@@ -47,7 +47,6 @@ function jsDocESMDTS() {
         .filter(file => (
             file.endsWith('.d.ts') &&
             !file.includes('dashboards') &&
-            !file.includes('datagrid') &&
             !file.includes('grid') &&
             !file.includes('es-modules')
         ));

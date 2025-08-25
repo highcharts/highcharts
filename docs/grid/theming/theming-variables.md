@@ -270,6 +270,6 @@ Check our [theming demo](https://www.highcharts.com/demo/grid/grid-theming) to s
 
 1. Define global variables for fonts, borders, padding, and backgrounds.
 2. Use section-specific prefixes to refine specific areas.
-3. The DataGrid falls back to global values when no section-specific variable is defined.
+3. The Grid falls back to global values when no section-specific variable is defined.
 
 This system ensures flexible, maintainable, and consistent theming.

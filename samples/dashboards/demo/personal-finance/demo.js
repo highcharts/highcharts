@@ -221,8 +221,8 @@ Dashboards.board('container', {
             id: 'transactions'
         },
         title: 'Transactions',
-        type: 'DataGrid',
-        dataGridOptions: {
+        type: 'Grid',
+        gridOptions: {
             credits: {
                 enabled: false
             },

@@ -93,34 +93,34 @@ body {
     vertical-align: middle;
 }
 
-#instances-table .highcharts-datagrid-row {
+#instances-table .highcharts-grid-row {
     cursor: pointer;
 }
 
-#instances-table .highcharts-datagrid-row.current {
+#instances-table .highcharts-grid-row.current {
     background-color: var(--highcharts-neutral-color-10);
     pointer-events: none;
 }
 
-#instances-table .highcharts-datagrid-hovered-row {
+#instances-table .highcharts-grid-hovered-row {
     background-color: var(--highcharts-neutral-color-10);
 }
 
-#instances-table .highcharts-datagrid-row td[data-column-id="HealthIndicator"] {
+#instances-table .highcharts-grid-row td[data-column-id="HealthIndicator"] {
     text-align: center;
 }
 
-#instances-table .highcharts-datagrid-row img {
+#instances-table .highcharts-grid-row img {
     margin-top: 5px;
     width: 30px;
     height: 30px;
 }
 
-#instances-table .highcharts-datagrid-table th {
+#instances-table .highcharts-grid-table th {
     height: 35px;
 }
 
-#instances-table .highcharts-datagrid-table {
+#instances-table .highcharts-grid-table {
     border-width: 1px 0 0;
 }
 

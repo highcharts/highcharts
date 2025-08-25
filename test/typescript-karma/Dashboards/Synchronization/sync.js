@@ -1,7 +1,6 @@
 //@ts-check
 import '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
-import '../../../../code/grid/es-modules/masters/grid-pro.src.js';
+import '../../../../code/grid/grid-pro.src.js';
 
 // Access the globals created by the UMD modules
 const Dashboards = window.Dashboards;
@@ -42,7 +41,7 @@ test('Sync events leak in updated components', async function (assert) {
                     cells: [{
                         id: 'chart'
                     }, {
-                        id: 'datagrid'
+                        id: 'grid'
                     }]
                 }]
             }]
@@ -59,8 +58,8 @@ test('Sync events leak in updated components', async function (assert) {
                 extremes: true
             }
         }, {
-            renderTo: 'datagrid',
-            type: 'DataGrid',
+            renderTo: 'grid',
+            type: 'Grid',
             connector: {
                 id: 'micro-element'
             },
@@ -73,7 +72,7 @@ test('Sync events leak in updated components', async function (assert) {
     }, true);
 
     const cChart = dashboard.mountedComponents[0].component;
-    const cDataGrid = dashboard.mountedComponents[1].component;
+    const cGrid = dashboard.mountedComponents[1].component;
 
     const testLeaks = async (component) => {
         // only the most important events, not all possible ones are checked
@@ -86,7 +85,7 @@ test('Sync events leak in updated components', async function (assert) {
         await component.update({});
 
         // Disconnect the resize observer to avoid errors in the test
-        component.dataGrid?.viewport.resizeObserver.disconnect();
+        component.grid?.viewport.resizeObserver.disconnect();
 
         return Object.keys(events).every((key) => (
             events[key] === component.hcEvents[key]?.length
@@ -99,8 +98,8 @@ test('Sync events leak in updated components', async function (assert) {
     );
 
     assert.ok(
-        await testLeaks(cDataGrid),
-        'DataGrid Component should not leak events when update.'
+        await testLeaks(cGrid),
+        'Grid Component should not leak events when update.'
     );
 });
 

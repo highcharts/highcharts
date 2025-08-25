@@ -255,11 +255,11 @@ Dashboards.board('container', {
         connector: {
             id: 'Population'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         sync: {
             extremes: true
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             }

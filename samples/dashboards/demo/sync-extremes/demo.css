@@ -20,7 +20,7 @@
     fill: #f0f0f0;
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     height: 200px;
 }
 
@@ -54,7 +54,7 @@
     padding: 0 20px;
 }
 
-.highcharts-datagrid-table tbody {
+.highcharts-grid-table tbody {
     scroll-behavior: smooth;
 }
 

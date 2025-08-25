@@ -37,7 +37,7 @@
 
 /**
  *
- *  Dashboards/Datagrid specific
+ *  Dashboards/grid specific
  *
  **/
 .highcharts-dashboards-wrapper {
@@ -50,7 +50,7 @@
     max-height: var(--chart-height);
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     font-size: 0.8em;
     max-height: 100%;
 }

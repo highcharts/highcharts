@@ -13,7 +13,7 @@ describe('Grid Component highlight sync autoscroll', () => {
                 state: 'point.mouseOver'
             });
 
-            cy.get('.highcharts-datagrid-row.highcharts-datagrid-synced-row')
+            cy.get('.highcharts-grid-row.highcharts-grid-synced-row')
                 .children()
                 .eq(0)
                 .should('have.text', '2015-07-15');
@@ -22,8 +22,8 @@ describe('Grid Component highlight sync autoscroll', () => {
 
     it('Grid AutoScroll should be possible to disable', () => {
         cy.board().then((board) => {
-            const dataGridComponent = board.mountedComponents[1].component;
-            dataGridComponent.update({
+            const gridComponent = board.mountedComponents[1].component;
+            gridComponent.update({
                 sync: {
                     highlight: {
                         enabled: true,
@@ -40,7 +40,7 @@ describe('Grid Component highlight sync autoscroll', () => {
                 state: 'point.mouseOver'
             });
 
-            cy.get('tr.highcharts-datagrid-row').children().eq(0).should('have.text', '2015-05-06');
+            cy.get('tr.highcharts-grid-row').children().eq(0).should('have.text', '2015-05-06');
         });
     });
 });

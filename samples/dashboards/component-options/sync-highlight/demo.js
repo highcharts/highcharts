@@ -68,7 +68,7 @@ Dashboards.board('container', {
                 text: 'sync highlight: true'
             },
             renderTo: 'dashboard-col-2',
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'Vitamin'
             },

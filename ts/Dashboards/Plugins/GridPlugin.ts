@@ -20,10 +20,10 @@
  *
  * */
 
-import type { GridNamespace } from './DataGridTypes';
+import type { GridNamespace } from './GridTypes';
 import type PluginHandler from '../PluginHandler';
 
-import GridComponent from '../Components/DataGridComponent/DataGridComponent.js';
+import GridComponent from '../Components/GridComponent/GridComponent';
 
 /* *
  *
@@ -33,11 +33,6 @@ import GridComponent from '../Components/DataGridComponent/DataGridComponent.js'
 
 declare module '../Components/ComponentType' {
     interface ComponentTypeRegistry {
-        /**
-         * @deprecated
-         * DataGrid will be removed in behalf of Grid in the next major version.
-         */
-        DataGrid: typeof GridComponent;
         Grid: typeof GridComponent;
     }
 }
@@ -69,7 +64,6 @@ function onRegister(
     e: PluginHandler.Event
 ): void {
     const { ComponentRegistry } = e;
-    ComponentRegistry.registerComponent('DataGrid', GridComponent);
     ComponentRegistry.registerComponent('Grid', GridComponent);
 }
 

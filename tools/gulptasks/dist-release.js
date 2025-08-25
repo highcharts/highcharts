@@ -225,7 +225,6 @@ function copyFiles() {
 
     const pathsToIgnore = [
         'dashboards',
-        'datagrid',
         'grid',
         'es5'
     ];

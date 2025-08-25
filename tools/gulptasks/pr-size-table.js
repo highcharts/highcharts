@@ -29,7 +29,8 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/offline-exporting.src.js',
     'dashboards/dashboards.src.js',
     'dashboards/modules/layout.src.js',
-    'datagrid/datagrid.src.js'
+    'grid/grid-pro.src.js',
+    'grid/grid-lite.src.js'
 ];
 
 /* *

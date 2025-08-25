@@ -62,7 +62,7 @@ function lintTS(argv) {
 lintTS.description = 'Run eslint on TypeScript files (.ts) in the ts folder';
 lintTS.flags = {
     '--dashboards': 'Lint dashboards TypeScript files only',
-    '--datagrid': 'Lint datagrid TypeScript files only',
+    '--grid': 'Lint grid TypeScript files only',
     '--product': 'Lint project Typescript files only: Highcharts (default), Grid'
 };
 gulp.task('lint-ts', () => lintTS(require('yargs').argv));

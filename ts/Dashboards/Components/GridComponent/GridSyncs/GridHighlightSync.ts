@@ -22,9 +22,9 @@
 
 import type Sync from '../../Sync/Sync';
 import type DataCursor from '../../../../Data/DataCursor';
-import type DataGridComponent from '../DataGridComponent.js';
-import type { DataGridHighlightSyncOptions } from '../DataGridComponentOptions';
-import type { TableCell } from '../../../Plugins/DataGridTypes';
+import type GridComponent from '../GridComponent.js';
+import type { GridHighlightSyncOptions } from '../GridComponentOptions';
+import type { TableCell } from '../../../Plugins/GridTypes';
 
 import Component from '../../Component';
 import U from '../../../../Core/Utilities.js';
@@ -36,19 +36,18 @@ const { addEvent, removeEvent } = U;
  *
  * */
 
-const defaultOptions: DataGridHighlightSyncOptions = {
+const defaultOptions: GridHighlightSyncOptions = {
     autoScroll: false
 };
 
 const syncPair: Sync.SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (
-            this.type !== 'DataGrid' && // To be removed in v4
             this.type !== 'Grid'
         ) {
             return;
         }
-        const component = this as DataGridComponent;
+        const component = this as GridComponent;
 
         const { grid, board } = component;
         const highlightOptions = this.sync.syncConfig.highlight;
@@ -110,16 +109,15 @@ const syncPair: Sync.SyncPair = {
     },
     handler: function (this: Component): (() => void) | void {
         if (
-            this.type !== 'DataGrid' && // To be removed in v4
             this.type !== 'Grid'
         ) {
             return;
         }
-        const component = this as DataGridComponent;
+        const component = this as GridComponent;
 
         const { board } = component;
         const highlightOptions =
-            component.sync.syncConfig.highlight as DataGridHighlightSyncOptions;
+            component.sync.syncConfig.highlight as GridHighlightSyncOptions;
         const groupKey = highlightOptions.group ?
             ':' + highlightOptions.group : '';
 

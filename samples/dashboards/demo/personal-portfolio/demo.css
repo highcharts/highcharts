@@ -42,7 +42,7 @@
     fill: var(--highcharts-color-0);
 }
 
-.highcharts-datagrid-table {
+.highcharts-grid-table {
     border: 0;
 }
 
@@ -69,7 +69,7 @@
     font-weight: 500;
 }
 
-.highcharts-datagrid-table tbody td {
+.highcharts-grid-table tbody td {
     padding-left: 14px;
 }
 
