@@ -45,6 +45,10 @@ import type Tick from '../Core/Axis/Tick';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import BorderRadius from '../Extensions/BorderRadius.js';
+const { optionsToObject } = BorderRadius;
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { composed } = H;
 import Series from '../Core/Series/Series.js';
@@ -56,6 +60,7 @@ const {
     defined,
     find,
     isNumber,
+    isObject,
     merge,
     pick,
     pushUnique,
@@ -648,6 +653,47 @@ function onSeriesAfterInit(
             this.isRadialSeries = true;
             if (this.is('column')) {
                 this.isRadialBar = true;
+            }
+        }
+    }
+}
+
+/**
+ * Apply conditional rounding to stacked items
+ */
+function onSeriesAfterColumnTranslate(
+    this: Series
+): void {
+    const { chart, options, yAxis } = this;
+    if (
+        options.borderRadius &&
+        chart.polar &&
+        chart.inverted
+    ) {
+        const seriesDefault = defaultOptions.plotOptions
+                ?.[this.type]
+                ?.borderRadius,
+            borderRadius = optionsToObject(
+                options.borderRadius,
+                isObject(seriesDefault) ? seriesDefault : {}
+            );
+
+        for (const point of this.points) {
+            const { shapeArgs } = point;
+            if (
+                point.shapeType === 'arc' &&
+                shapeArgs &&
+                borderRadius.scope === 'stack'
+            ) {
+                let brStart = point.stackY === point.y,
+                    brEnd = point.stackY === point.stackTotal;
+
+                if (yAxis.reversed) {
+                    [brStart, brEnd] = [brEnd, brStart];
+                }
+
+                shapeArgs.brStart = brStart;
+                shapeArgs.brEnd = brEnd;
             }
         }
     }
@@ -1518,6 +1564,15 @@ class PolarAdditions {
             );
 
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
+            addEvent(
+                SeriesClass,
+                'afterColumnTranslate',
+                onSeriesAfterColumnTranslate,
+                {
+                    // After columnrange and polar column modifications
+                    order: 9
+                }
+            );
             addEvent(
                 SeriesClass,
                 'afterTranslate',
