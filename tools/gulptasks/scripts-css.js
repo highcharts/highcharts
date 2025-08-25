@@ -84,6 +84,37 @@ function copyCSS(config) {
     );
 }
 
+function mergeAndCopyGridProCSS(config) {
+    const fslib = require('../libs/fs');
+    const path = require('path');
+
+    config = handleConfig(config);
+
+    // Read the original source files
+    const gridLiteCSS = fslib.getFile(path.join('css/grid', 'grid-lite.css'));
+    const gridProCSS = fslib.getFile(path.join('css/grid', 'grid-pro.css'));
+
+    // Extract Grid Pro license header
+    const gridProLicenseMatch = gridProCSS.match(/^\/\*\*[\s\S]*?\*\/\s*/);
+    const gridProLicense = gridProLicenseMatch ? gridProLicenseMatch[0] : '';
+
+    // Remove license header from Grid Lite CSS (everything until the first non-license content)
+    const gridLiteCSSNoLicense = gridLiteCSS.replace(/^\/\*\*[\s\S]*?\*\/\s*/, '');
+
+    // Remove license header, @import statement, and import comments from Grid Pro CSS
+    const gridProCSSClean = gridProCSS
+        .replace(/^\/\*\*[\s\S]*?\*\/\s*/, '') // Remove license header
+        .replace(/@import\s+url\s*\(\s*["']?grid-lite\.css["']?\s*\)\s*;?\s*/g, '') // Remove import
+        .replace(/^\/\*\s*Import Grid Lite styles\s*\*\/\s*/gm, '') // Remove import comment
+        .trim();
+
+    // Combine: Grid Pro license + Grid Lite CSS (no license) + cleaned Grid Pro CSS
+    const mergedCSS = gridProLicense + '\n' + gridLiteCSSNoLicense + '\n\n' + gridProCSSClean;
+
+    // Write the merged CSS to the target directory
+    fslib.setFile(path.join(config.target, 'css', 'grid-pro.css'), mergedCSS);
+}
+
 /**
  * Changes the HC Grid product version in the CSS files.
  *
@@ -138,6 +169,7 @@ function scriptCSS(argv) {
         } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
+            mergeAndCopyGridProCSS(gridConfig);
             replaceGridVersionInFile(gridConfig.target + '/css/');
             log.success('Copied grid CSS');
         } else {
