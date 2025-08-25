@@ -5,7 +5,7 @@ describe('Pagination.', () => {
 
     it('Render pagination container.', () => {
         // Check pagination wrapper is visible
-        cy.get('.hcg-pagination-wrapper').should('be.visible');
+        cy.get('.hcg-pagination-container').should('be.visible');
 
         // Check page info is displayed with correct initial page size
         cy.get('.hcg-pagination-info').should('be.visible');
@@ -155,6 +155,82 @@ describe('Pagination.', () => {
             cy.get('.hcg-pagination-page-size-container')
                 .eq(0)
                 .should('contain', 'Items per page');
+        });
+    });
+
+    it('Position parameter - custom container.', () => {
+        cy.window().its('Grid').then((grid) => {
+            // Test custom container position
+            grid.grids[0].update({
+                pagination: {
+                    enabled: true,
+                    position: '#test-custom-container'
+                }
+            });
+
+            // Check that custom container exists and contains pagination
+            cy.get('#test-custom-container').should('exist');
+            cy.get('#test-custom-container .hcg-pagination-controls')
+                .should('exist');
+            cy.get('#test-custom-container .hcg-pagination-info')
+                .should('exist');
+            cy.get('#test-custom-container .hcg-pagination-page')
+                .should('exist');
+        });
+    });
+
+    it('Position parameter - top/bottom/footer.', () => {
+        cy.window().its('Grid').then((grid) => {
+            // Check that pagination container is before the table
+            grid.grids[0].update({
+                pagination: {
+                    enabled: true,
+                    position: 'top'
+                }
+            });
+
+            // Check that pagination container is before the table
+            cy.get('.hcg-pagination-container').should('exist');
+            
+            // Verify the DOM order: pagination should be before table
+            cy.get('.hcg-container').then(($container) => {
+                const paginationIndex =
+                    $container.find('.hcg-pagination-container').index();
+                const tableIndex = $container.find('.hcg-table').index();
+                expect(paginationIndex).to.be.lessThan(tableIndex);
+
+                // Test bottom position (default)
+                grid.grids[0].update({
+                    pagination: {
+                        position: 'bottom'
+                    }
+                });
+
+                // Verify the DOM order: pagination should be after table
+                cy.get('.hcg-container').then(($container) => {
+                    const paginationIndex =
+                        $container.find('.hcg-pagination-container').index();
+                    const tableIndex = $container.find('.hcg-table').index();
+                    expect(paginationIndex).to.be.greaterThan(tableIndex);
+
+                    // Test footer position
+                    grid.grids[0].update({
+                        pagination: {
+                            enabled: true,
+                            position: 'footer',
+                            pageSize: 10
+                        }
+                    });
+
+                    // Check that tfoot element exists and contains pagination
+                    cy.get('.hcg-table tfoot').should('exist');
+                    cy.get('.hcg-table tfoot .hcg-pagination-wrapper')
+                        .should('exist');
+                    
+                    // Verify that pagination container doesn't exist
+                    cy.get('.hcg-pagination-container').should('not.exist');
+                });
+            });
         });
     });
 });
