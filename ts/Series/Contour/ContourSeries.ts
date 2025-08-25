@@ -86,12 +86,16 @@ class ContourSeries extends ScatterSeries {
 
         const ctx = canvas.getContext('2d');
         if (ctx) {
+            // === Just to test canvas ===
             ctx.fillStyle = 'blue';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
             this.image = this.chart.renderer.image(
                 canvas.toDataURL('image/png', 1)
-            ).attr({ width: 480, height: 320 }).add(this.group);
-
+            ).attr({
+                width: this.xAxis.len,
+                height: this.yAxis.len
+            }).add(this.group);
         }
 
         // This.context = canvas.getContext('webgpu');
