@@ -624,7 +624,11 @@ class Pagination {
             // First page and ellipsis
             if (startPage > 1) {
                 this.createPageButton(1, false);
-                this.createEllipsis();
+                // Only show ellipsis if there's a gap between page 1 and
+                // startPage.
+                if (startPage > 2) {
+                    this.createEllipsis();
+                }
             }
 
             // Page numbers
@@ -634,7 +638,11 @@ class Pagination {
 
             // Last page and ellipsis
             if (endPage < totalPages) {
-                this.createEllipsis();
+                // Only show ellipsis if there's a gap between endPage and
+                // totalPages.
+                if (endPage < totalPages - 1) {
+                    this.createEllipsis();
+                }
                 this.createPageButton(totalPages, false);
             }
         }
