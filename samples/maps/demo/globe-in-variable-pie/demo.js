@@ -392,7 +392,7 @@ const getGraticule = () => {
                     style: {
                         fontSize: '1em'
                     },
-                    connectorColor: 'black'
+                    connectorColor: 'var(--highcharts-neutral-color-80, #444)'
                 },
                 includeInDataExport: true
             },
