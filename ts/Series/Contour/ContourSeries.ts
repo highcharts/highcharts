@@ -22,13 +22,15 @@ const {
     }
 } = SeriesRegistry;
 import Delaunator from '../../Core/Delauney';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 
 class ContourSeries extends ScatterSeries {
     public canvas?: HTMLCanvasElement;
-    public context?: GPUCanvasContext;
+    public context?: GPUCanvasContext | null;
     public adapter?: GPUAdapter | null;
     public device?: GPUDevice;
-
+    public image?: SVGElement;
     // Dummy func for test for now
     public d(): boolean {
         const coords = new Delaunator(new Float64Array([
@@ -48,6 +50,52 @@ class ContourSeries extends ScatterSeries {
         return true;
     }
 
+    public drawPoints(): void {
+        /*
+        Const points2d: Float32Array = new Float32Array(this.points.length * 2);
+        const { xAxis, yAxis } = this;
+        const extremes = [
+            xAxis.toValue(0, true), // XMin
+            xAxis.toValue(xAxis.len, true), // XMax
+            yAxis.toValue(yAxis.len, true), // YMin
+            yAxis.toValue(0, true) // YMax
+        ];
+        let xDivider = 1,
+            yDivider = 1;
+        if (Math.abs(extremes[0]) > 10e6) {
+            xDivider = 10e6;
+        }
+        if (Math.abs(extremes[2]) > 10e6) {
+            yDivider = 10e6;
+        }
+
+        this.points.forEach((point, i): void => {
+            points2d[i * 2] = point.x / xDivider;
+            points2d[i * 2 + 1] = (point?.y || 0) / yDivider;
+        });
+
+        const result = new Delaunator(points2d);
+        console.log(result);
+
+
+        */
+        const series = this;
+        const canvas = series.canvas = document.createElement('canvas');
+        canvas.classList.add('contourmap-canvas');
+        // Series.chart.container.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            this.image = this.chart.renderer.image(
+                canvas.toDataURL('image/png', 1)
+            ).attr({ width: 480, height: 320 }).add(this.group);
+
+        }
+
+        // This.context = canvas.getContext('webgpu');
+    }
 }
 
 /* *
