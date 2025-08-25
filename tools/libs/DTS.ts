@@ -353,12 +353,21 @@ function addChildInfos (
 
         for (let _node of _symbol.declarations) {
 
-            if (TS.isExportAssignment(_node)) {
-                // Ignore old school exports
+            if (TS.isImportSpecifier(_node)) {
                 continue;
             }
 
-            if (TS.isExportSpecifier(_node)) {
+            if (
+                TS.isExportAssignment(_node) ||
+                TS.isExportSpecifier(_node)
+            ) {
+                if (
+                    _node.kind === TS.SyntaxKind.ExportAssignment &&
+                    _node.isExportEquals
+                ) {
+                    // Ignore old school exports
+                    continue;
+                }
                 const _innerSymbol = nodesSymbol(_program, _node);
                 if (_innerSymbol) {
                     addChildInfos(project, infos, [_innerSymbol]);
@@ -1819,7 +1828,7 @@ export function isNativeType (
  */
 function nodesInfoType (
     project: Project,
-    node: (TS.Declaration|TS.TypeNode|undefined)
+    node: (TS.TypeNode|undefined)
 ): (InfoType|undefined) {
 
     if (!node) {
@@ -1989,6 +1998,22 @@ function nodesInfoType (
             return _infoType;
         }
 
+        if (TS.isThisTypeNode(node)) {
+            const _infoType = {
+                kind: 'ReferenceType',
+                type: _symbol.name,
+                symbol: _symbol
+            } as ReferenceType;
+
+            addInfoMeta(_infoType, node, project);
+
+            return _infoType;
+        }
+
+        if (TS.isImportTypeNode(node) && node.qualifier) {
+            return node.qualifier.getText();
+        }
+
         error(`UNKNOWN TYPE: ${TS.SyntaxKind[node.kind]}`, node);
 
     }
@@ -2074,9 +2099,14 @@ function nodesSymbol(
 
     let _symbol: (TS.Symbol|undefined);
 
-    if (TS.isExportSpecifier(node)) {
+    if (TS.isExportAssignment(node)) {
+        _symbol = _typeChecker
+            .getSymbolAtLocation(node.expression || node.name);
+    } else if (TS.isExportSpecifier(node)) {
         _symbol = _typeChecker
             .getSymbolAtLocation(node.propertyName || node.name);
+    } else if (TS.isImportTypeNode(node)) {
+        _symbol = _typeChecker.getSymbolAtLocation(node.qualifier || node);
     } else if (TS.isSourceFile(node)) {
         _symbol = _typeChecker.getSymbolAtLocation(node);
     } else if (TS.isTypeQueryNode(node)) {
