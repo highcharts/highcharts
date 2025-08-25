@@ -1,6 +1,6 @@
 //@ts-check
 import '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import '../../../../code/grid/grid-pro.src.js';
+import '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
 // Access the globals created by the UMD modules
 const Dashboards = window.Dashboards;
