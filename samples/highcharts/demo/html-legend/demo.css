@@ -1,3 +1,33 @@
+:root {
+    --font-color-1: rgba(0, 0, 0, 1);
+    --font-color-2: rgba(111, 111, 111, 1);
+    --font-color-3: rgba(20, 20, 20, 1);
+    --font-color-4: rgba(79, 79, 79, 1);
+    --font-color-5: rgba(1, 76, 229, 0.8);
+    --font-color-6: rgba(71, 69, 84, 1);
+    --font-color-7: rgba(117, 115, 140, 1);
+    --font-color-8: rgba(1, 76, 229, 1);
+    --background-color-1: rgba(246, 246, 246, 1);
+    --border-color-1: rgba(209, 209, 209, 1);
+    --border-color-2: rgba(225, 225, 225, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --font-color-1: rgba(255, 255, 255, 0.95);
+        --font-color-2: rgba(180, 180, 180, 1);
+        --font-color-3: rgba(230, 230, 230, 1);
+        --font-color-4: rgba(160, 160, 160, 1);
+        --font-color-5: rgba(100, 150, 255, 0.8);
+        --font-color-6: rgba(200, 200, 200, 1);
+        --font-color-7: rgba(150, 150, 170, 1);
+        --font-color-8: rgba(100, 150, 255, 1);
+        --background-color-1: rgba(18, 18, 18, 1);
+        --border-color-1: rgba(60, 60, 60, 1);
+        --border-color-2: rgba(40, 40, 40, 1);
+    }
+}
+
 * {
     font-family:
         -apple-system,
@@ -13,7 +43,7 @@
 }
 
 #custom-title {
-    color: rgba(0, 0, 0, 1);
+    color: var(--font-color-1);
     font-weight: 700;
     font-style: bold;
     font-size: 22px;
@@ -21,7 +51,7 @@
 }
 
 #custom-subtitle {
-    color: rgba(111, 111, 111, 1);
+    color: var(--font-color-2);
     font-weight: 400;
     font-size: 14px;
     margin: 5px 10px;
@@ -48,8 +78,8 @@
 }
 
 #custom-tooltip {
-    background-color: rgba(246, 246, 246, 1);
-    border: 1px solid rgba(209, 209, 209, 1);
+    background-color: var(--background-color-1);
+    border: 1px solid var(--border-color-1);
     border-radius: 6px;
     width: 334px;
     margin-bottom: 29px;
@@ -72,7 +102,7 @@
 }
 
 #tooltip-fuel-type-label {
-    color: rgba(20, 20, 20, 1);
+    color: var(--font-color-3);
     font-weight: 700;
     font-style: bold;
 }
@@ -93,13 +123,13 @@
 }
 
 #tooltip-series-name {
-    color: rgba(79, 79, 79, 1);
+    color: var(--font-color-4);
     font-weight: 400;
     font-size: 14px;
 }
 
 #tooltip-value {
-    color: rgba(20, 20, 20, 1);
+    color: var(--font-color-3);
     font-weight: 500;
     font-style: medium;
     font-size: 30px;
@@ -111,7 +141,7 @@
     gap: 1em;
 
     span {
-        color: rgba(79, 79, 79, 1);
+        color: var(--font-color-4);
         font-weight: 400;
         font-size: 14px;
     }
@@ -121,7 +151,7 @@
     background: transparent;
     border: none;
     outline: none;
-    color: rgba(1, 76, 229, 1);
+    color: var(--font-color-8);
     cursor: pointer;
     text-align: left;
     display: flex;
@@ -134,14 +164,14 @@
     }
 
     &:hover {
-        color: rgba(1, 76, 229, 0.8);
+        color: var(--font-color-5);
     }
 }
 
 #table-wrapper {
     overflow-x: auto;
     margin: 10px;
-    border: 1px solid rgba(225, 225, 225, 1);
+    border: 1px solid var(--border-color-2);
     border-radius: 6px;
 }
 
@@ -155,7 +185,7 @@
 }
 
 #custom-legend tr.active {
-    background-color: rgba(244, 244, 244, 1);
+    background-color: var(--background-color-1);
 }
 
 #custom-legend th:first-child,
@@ -173,7 +203,7 @@
     font-weight: 400;
     font-size: 14px;
     font-style: normal;
-    color: rgba(71, 69, 84, 1);
+    color: var(--font-color-6);
 }
 
 #custom-legend tr:first-child {
@@ -181,7 +211,7 @@
 }
 
 #custom-legend tr {
-    border-top: 1px solid rgba(225, 225, 225, 1);
+    border-top: 1px solid var(--border-color-2);
 }
 
 #custom-legend td {
@@ -189,7 +219,7 @@
     white-space: nowrap;
 
     span {
-        color: rgba(117, 115, 140, 1);
+        color: var(--font-color-7);
         font-weight: 400;
         font-size: 14px;
     }
