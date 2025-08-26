@@ -240,18 +240,97 @@ class HeaderCell extends Cell {
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {
-        if (!this.column || e.target !== this.htmlElement) {
+        if (!this.column) {
             return;
         }
 
-        if (e.key === 'Enter') {
-            if (this.column.options.sorting?.sortable) {
-                this.column.sorting?.toggle();
+        // Handle keyboard navigation within header cell
+        if (e.target === this.htmlElement) {
+            if (e.key === 'Enter') {
+                // Enter on header cell should focus first icon if available
+                const firstIcon = this.iconManager?.getFirstFocusableButton();
+                if (firstIcon) {
+                    e.preventDefault();
+                    this.showIcons(); // Ensure icons are visible and focusable
+                    firstIcon.focus();
+                    return;
+                }
+                // Fallback to sorting if no icons
+                if (this.column.options.sorting?.sortable) {
+                    this.column.sorting?.toggle();
+                }
+                return;
             }
+        }
+
+        // Handle navigation between icons
+        if (
+            e.target &&
+            (e.target as HTMLElement).classList.contains('hcg-button')
+        ) {
+            this.handleIconNavigation(e);
             return;
         }
 
         super.onKeyDown(e);
+    }
+
+    /**
+     * Handles keyboard navigation between icons within the header cell.
+     *
+     * @param e
+     * The keyboard event.
+     */
+    private handleIconNavigation(e: KeyboardEvent): void {
+        const target = e.target as HTMLButtonElement;
+        if (!this.iconManager) {
+            return;
+        }
+
+        const allButtons = this.iconManager.getAllButtons();
+        const currentIndex = allButtons.indexOf(target);
+
+        if (currentIndex === -1) {
+            return;
+        }
+
+        let nextButton: HTMLButtonElement | null = null;
+
+        switch (e.key) {
+            case 'ArrowLeft':
+            case 'ArrowUp':
+                e.preventDefault();
+                nextButton = allButtons[currentIndex - 1] ||
+                    allButtons[allButtons.length - 1];
+                break;
+            case 'ArrowRight':
+            case 'ArrowDown':
+                e.preventDefault();
+                nextButton = allButtons[currentIndex + 1] || allButtons[0];
+                break;
+            case 'Tab':
+                // Allow normal tab behavior unless it's the last icon
+                if (e.shiftKey && currentIndex === 0) {
+                    // Shift+Tab on first icon should go back to header cell
+                    e.preventDefault();
+                    this.htmlElement.focus();
+                } else if (
+                    !e.shiftKey &&
+                    currentIndex === allButtons.length - 1
+                ) {
+                    // Tab on last icon should go to next focusable element
+                    // Let browser handle this naturally
+                }
+                return;
+            case 'Escape':
+                e.preventDefault();
+                this.htmlElement.focus();
+                return;
+        }
+
+        if (nextButton) {
+            nextButton.focus();
+        }
     }
 
     protected override onClick(e: MouseEvent): void {
@@ -366,8 +445,13 @@ class HeaderCell extends Cell {
         this.iconManager.registerIcon('filter', {
             icon: 'filter',
             enabled: iconOptions?.filter !== false,
-            onClick: (): void => {
-                // Filter click handler - can be expanded later
+            onClick: (event: MouseEvent, headerCell: HeaderCell): void => {
+                // Toggle filter active state for demonstration
+                const currentConfig = headerCell.iconManager?.getIconConfig(
+                    'filter'
+                );
+                const newActiveState = !currentConfig?.isActive;
+                headerCell.setFilterActive(newActiveState);
             }
         });
 
@@ -385,14 +469,35 @@ class HeaderCell extends Cell {
         // Render all icons
         this.iconManager.renderIcons();
 
-        // Add hover event handlers to show/hide icons
+        // Add hover and focus event handlers to show/hide icons
         this.htmlElement.addEventListener('mouseenter', (): void => {
-            this.iconManager?.setIconsVisible(true);
+            this.showIcons();
         });
 
         this.htmlElement.addEventListener('mouseleave', (): void => {
-            this.iconManager?.setIconsVisible(false);
+            this.hideIcons();
         });
+
+        // Show icons when header cell is focused
+        this.htmlElement.addEventListener(
+            'focusin',
+            (): void => {
+                this.showIcons();
+            }
+        );
+
+        this.htmlElement.addEventListener(
+            'focusout',
+            (event: FocusEvent): void => {
+                // Only hide icons if focus is leaving the entire
+                // header cell area
+                if (!this.htmlElement.contains(
+                    event.relatedTarget as Node
+                )) {
+                    this.hideIcons();
+                }
+            }
+        );
     }
 
     /**
@@ -430,6 +535,30 @@ class HeaderCell extends Cell {
         }
 
         this.iconManager.setIconActive('filter', isActive);
+    }
+
+    /**
+     * Shows icons and enables keyboard navigation.
+     */
+    private showIcons(): void {
+        if (!this.iconManager) {
+            return;
+        }
+
+        this.iconManager.setIconsVisible(true);
+        this.iconManager.setKeyboardNavigationEnabled(true);
+    }
+
+    /**
+     * Hides icons and disables keyboard navigation.
+     */
+    private hideIcons(): void {
+        if (!this.iconManager) {
+            return;
+        }
+
+        this.iconManager.setIconsVisible(false);
+        this.iconManager.setKeyboardNavigationEnabled(false);
     }
 }
 

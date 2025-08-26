@@ -29,6 +29,9 @@
     --hcg-icon-color: #626262;
     --hcg-icon-hover-color: #141414;
 
+    /* Focus ring color for accessibility */
+    --hcg-focus-ring-color: #626bd0;
+
     /* Header background - pure white in light mode */
     --hcg-header-background: #ffffff;
 }
@@ -477,7 +480,7 @@
     border-radius: var(--ig-button-border-radius);
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -485,6 +488,12 @@
 
 .hcg-button:hover {
     background: var(--ig-button-hover-background);
+}
+
+/* Focus/A11Y - keyboard accessibility */
+.hcg-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-header-background, #ffffff), 0 0 0 5px var(--hcg-focus-ring-color, #626bd0);
 }
 
 /* Generic icon styling for Grid */
@@ -518,8 +527,10 @@
     transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
 }
 
-/* Show icons on header cell hover - supports multiple icons */
+/* Show icons on header cell hover, focus, or when has active icons */
 .hcg-table thead th:hover .hcg-header-cell-icons,
+.hcg-table thead th:focus-visible .hcg-header-cell-icons,
+.hcg-table thead th:focus-within .hcg-header-cell-icons,
 .hcg-header-cell-icons:hover,
 .hcg-header-cell-icons.has-active-icons {
     max-width: 100px;
@@ -571,6 +582,31 @@
 
 .hcg-header-cell-icons .hcg-button.active .hcg-icon {
     color: var(--ig-icon-hover-color);
+}
+
+/* Active indicator dot - positioned at top right of button */
+.hcg-active-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--hcg-focus-ring-color, #626bd0);
+    pointer-events: none;
+}
+
+/* Active indicator icon styling */
+.hcg-active-indicator-icon {
+    width: 6px;
+    height: 6px;
+    color: var(--hcg-focus-ring-color, #626bd0);
+    fill: currentcolor;
+}
+
+/* Make button relative for absolute positioning of indicator */
+.hcg-header-cell-icons .hcg-button {
+    position: relative;
 }
 
 .hcg-resizable-content tr {

@@ -268,9 +268,12 @@ class HeaderIconManager {
             className: config.isActive ? 'hcg-button active' : 'hcg-button'
         }) as HTMLButtonElement;
         button.type = 'button';
+        // Start unfocusable, will be made focusable when needed
+        button.tabIndex = -1;
 
         if (config.tooltip) {
             button.title = config.tooltip;
+            button.setAttribute('aria-label', config.tooltip);
         }
 
         // Create icon using GridIcons
@@ -288,6 +291,23 @@ class HeaderIconManager {
                 event.stopPropagation();
                 if (config.onClick) {
                     config.onClick(event, this.headerCell);
+                }
+            });
+
+            // Add keyboard event handler for accessibility
+            button.addEventListener('keydown', (event: KeyboardEvent): void => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (config.onClick) {
+                        // Create a synthetic MouseEvent for consistency
+                        const syntheticEvent = new MouseEvent('click', {
+                            bubbles: true,
+                            cancelable: true,
+                            view: window
+                        });
+                        config.onClick(syntheticEvent, this.headerCell);
+                    }
                 }
             });
         }
@@ -366,6 +386,11 @@ class HeaderIconManager {
                 } else {
                     button.classList.remove('active');
                 }
+            }
+
+            // Add/remove active indicator for filter icon
+            if (id === 'filter') {
+                this.toggleActiveIndicator(element, isActive);
             }
 
             // Update visibility immediately
@@ -475,6 +500,88 @@ class HeaderIconManager {
      */
     public getContainer(): HTMLElement {
         return this.iconContainer;
+    }
+
+    /**
+     * Enables or disables keyboard navigation for icon buttons.
+     * This controls whether the buttons can be focused via Tab or
+     * programmatically.
+     *
+     * @param enabled
+     * Whether keyboard navigation should be enabled.
+     */
+    public setKeyboardNavigationEnabled(enabled: boolean): void {
+        const buttons = this.iconContainer.querySelectorAll('.hcg-button');
+        buttons.forEach((button): void => {
+            (button as HTMLButtonElement).tabIndex = enabled ? 0 : -1;
+        });
+    }
+
+    /**
+     * Gets the first focusable icon button in the container.
+     *
+     * @returns
+     * The first button element or null if none exist.
+     */
+    public getFirstFocusableButton(): HTMLButtonElement | null {
+        return this.iconContainer.querySelector('.hcg-button') as
+            HTMLButtonElement;
+    }
+
+    /**
+     * Gets all focusable icon buttons in the container.
+     *
+     * @returns
+     * Array of button elements.
+     */
+    public getAllButtons(): HTMLButtonElement[] {
+        return Array.from(
+            this.iconContainer.querySelectorAll('.hcg-button')
+        );
+    }
+
+    /**
+     * Toggles the active indicator (small dot) for an icon.
+     * This creates a visual indicator that shows when a feature is
+     * active.
+     *
+     * @param iconElement
+     * The icon wrapper element.
+     *
+     * @param show
+     * Whether to show or hide the active indicator.
+     */
+    private toggleActiveIndicator(
+        iconElement: HTMLElement,
+        show: boolean
+    ): void {
+        const button = iconElement.querySelector('.hcg-button');
+        if (!button) {
+            return;
+        }
+
+        // Remove existing indicator if it exists
+        const existingIndicator = button.querySelector('.hcg-active-indicator');
+        if (existingIndicator) {
+            button.removeChild(existingIndicator);
+        }
+
+        if (show) {
+            // Create active indicator dot
+            const indicator = makeHTMLElement('div', {
+                className: 'hcg-active-indicator'
+            });
+
+            // Create the dot SVG
+            const dotIcon = (Globals as any).GridIcons.createGridIcon(
+                'activeIndicator',
+                6,
+                'hcg-active-indicator-icon'
+            );
+
+            indicator.appendChild(dotIcon);
+            button.appendChild(indicator);
+        }
     }
 }
 
