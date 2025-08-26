@@ -38,6 +38,13 @@ import * as TS from 'typescript';
  * */
 
 
+export interface ArrayType {
+    kind: 'ArrayType';
+    meta: InfoMeta;
+    symbol: TS.Symbol;
+    type?: InfoType;
+}
+
 export interface ClassInfo {
     doclet?: InfoDoclet;
     extends?: InfoType;
@@ -131,6 +138,7 @@ export interface InfoMeta {
 
 export type InfoType = (
     | string
+    | ArrayType
     | GenericType
     | IntersectionType
     | ObjectType
@@ -200,7 +208,7 @@ export interface PropertyInfo {
     kind: 'Property';
     meta: InfoMeta;
     name: string;
-    scope?: string;
+    scope?: undefined;
     symbol: TS.Symbol;
     type?: InfoType;
 }
@@ -233,7 +241,7 @@ export interface TypeAliasInfo {
     name: string;
     scope?: string;
     symbol: TS.Symbol;
-    value?: InfoType;
+    type?: InfoType;
 }
 
 
@@ -335,32 +343,41 @@ function addChildInfos (
 
     let _child: (CodeInfo|undefined);
 
-    for (let _symbol of children) {
+    for (let _childSymbol of children) {
 
-        if (isNode(_symbol)) {
-            const _nodeSymbol = nodesSymbol(_program, _symbol);
+        if (isNode(_childSymbol)) {
+            const _nodeSymbol = nodesSymbol(_program, _childSymbol);
 
             if (!_nodeSymbol) {
                 continue;
             }
 
-            _symbol = _nodeSymbol;
+            _childSymbol = _nodeSymbol;
         }
 
-        _child = project.infoLookup.get(_symbol);
+        _child = project.infoLookup.get(_childSymbol);
 
         if (_child) {
             infos.push(_child);
             continue;
         }
 
-        if (!_symbol.declarations) {
+        if (!_childSymbol.declarations) {
             continue;
         }
 
-        for (let _node of _symbol.declarations) {
+        for (let _node of _childSymbol.declarations) {
 
             if (TS.isImportSpecifier(_node)) {
+                continue;
+            }
+
+            const _nodeSymbol = nodesSymbol(_program, _node);
+
+            if (
+                !_nodeSymbol ||
+                project.infoLookup.has(_nodeSymbol)
+            ) {
                 continue;
             }
 
@@ -375,10 +392,7 @@ function addChildInfos (
                     // Ignore old school exports
                     continue;
                 }
-                const _innerSymbol = nodesSymbol(_program, _node);
-                if (_innerSymbol) {
-                    addChildInfos(project, infos, [_innerSymbol]);
-                }
+                addChildInfos(project, infos, [_nodeSymbol]);
                 continue;
             }
 
@@ -412,10 +426,10 @@ function addChildInfos (
                     continue;
                 }
 
-                addInfoDoclet(_child, _symbol, project);
+                addInfoDoclet(_child, _childSymbol, project);
 
                 if (_node.parent.kind !== TS.SyntaxKind.ModuleBlock) {
-                    project.infoLookup.set(_symbol, _child);
+                    project.infoLookup.set(_childSymbol, _child);
                 }
 
                 if (_child.flags?.includes('global')) {
@@ -617,14 +631,14 @@ function addInfoGenerics (
         } as TypeAliasInfo;
 
         if (_typeParameter.constraint) {
-            _info.value = nodesInfoType(
+            _info.type = nodesInfoType(
                 project,
                 TS.getEffectiveConstraintOfTypeParameter(_typeParameter)
             );
         }
 
         if (_typeParameter.default) {
-            _info.value = nodesInfoType(project, _typeParameter.default);
+            _info.type = nodesInfoType(project, _typeParameter.default);
         }
 
         addInfoFlags(_info, _typeParameter);
@@ -762,63 +776,26 @@ function addInfoScopes (
     targetInfos: Array<CodeInfo>
 ): void {
 
-    const _scopePath = (
-        parentInfo.kind === 'Source' ?
-            '' :
-            parentInfo.scope ?
-                parentInfo.scope :
-                parentInfo.name
-    );
+    if (parentInfo.kind !== 'Namespace') {
+        return;
+    }
 
     for (const _info of targetInfos) {
 
         if (
             !_info ||
-            typeof _info !== 'object'
+            typeof _info !== 'object' ||
+            _info.kind === 'Property'
         ) {
             continue;
         }
 
-        if (_scopePath) {
-            _info.scope = _scopePath;
+        if (!_info.scope) {
+            _info.scope = parentInfo.scope || parentInfo.name;
         }
 
-        switch (_info.kind) {
-
-            case 'Class':
-            case 'Interface':
-                if (_info.generics) {
-                    addInfoScopes(_info, _info.generics);
-                }
-                addInfoScopes(_info, _info.members);
-                break;
-
-            case 'Enumeration':
-                addInfoScopes(_info, _info.members);
-                break;
-
-            case 'Function':
-                if (_info.generics) {
-                    addInfoScopes(_info, _info.generics);
-                }
-                if (_info.parameters) {
-                    addInfoScopes(_info, _info.parameters);
-                }
-                break;
-
-            case 'Namespace':
-                addInfoScopes(_info, _info.members);
-                break;
-
-            case 'TypeAlias':
-                if (_info.generics) {
-                    addInfoScopes(_info, _info.generics);
-                }
-                break;
-
-            default:
-                break;
-
+        if (_info.kind == 'Namespace') {
+            addInfoScopes(_info, _info.members);
         }
 
     }
@@ -1504,13 +1481,12 @@ export function getProject(
         infoLookup: new Map(),
     };
 
-    const _absolutePath: string = Path.resolve(_folderPath);
     const _sourceInfos = _project.sourceInfos;
 
     for (const _sourceFile of _program.getSourceFiles()) {
         if (
-            _sourceFile.fileName.startsWith(_absolutePath) ||
-            _sourceFile.fileName.startsWith(_folderPath)
+            !_program.isSourceFileDefaultLibrary(_sourceFile) &&
+            !_program.isSourceFileFromExternalLibrary(_sourceFile)
         ) {
             _sourceInfos.push(getSourceInfo(_project, _sourceFile));
         }
@@ -1655,8 +1631,8 @@ function getTypeAliasInfo (
         symbol: _symbol
     } as TypeAliasInfo;
 
-    _info.value = (
-        nodesInfoType(project, node.type, _info.name === 'Class') ||
+    _info.type = (
+        nodesInfoType(project, node.type) ||
         nodesInfoType(project, TS.getJSDocType(node))
     );
 
@@ -1830,8 +1806,7 @@ export function isNativeType (
  */
 function nodesInfoType (
     project: Project,
-    node: (TS.TypeNode|undefined),
-    _debug?: boolean
+    node: (TS.TypeNode|undefined)
 ): (InfoType|undefined) {
 
     if (!node) {
@@ -1852,10 +1827,24 @@ function nodesInfoType (
         return node.getText();
     }
 
+    const _sourceFile = node.getSourceFile();
+
     if (
-        !nodesProjectPath(project, node).startsWith('..') &&
-        !nodesProjectPath(project, _symbol.declarations[0]).startsWith('..')
+        !_program.isSourceFileDefaultLibrary(_sourceFile) &&
+        !_program.isSourceFileFromExternalLibrary(_sourceFile)
     ) {
+
+        if (TS.isArrayTypeNode(node)) {
+            const _infoType = {
+                kind: 'ArrayType',
+                type: nodesInfoType(project, node.elementType),
+                symbol: _symbol
+            } as ArrayType;
+
+            addInfoMeta(_infoType, node, project);
+
+            return _infoType;
+        }
 
         if (
             TS.isExpressionWithTypeArguments(node) ||
@@ -2099,13 +2088,6 @@ function nodesSymbol(
     program: TS.Program,
     node: TS.Node
 ): (TS.Symbol|undefined) {
-    const _typeChecker = program.getTypeChecker();
-
-    let _symbol: (TS.Symbol|undefined);
-
-    if (TS.isParenthesizedTypeNode(node)) {
-        return nodesSymbol(program, node.type);
-    }
 
     if (
         TS.isIntersectionTypeNode(node) ||
@@ -2113,6 +2095,14 @@ function nodesSymbol(
     ) {
         return nodesSymbol(program, node.types[0]);
     }
+
+    if (TS.isParenthesizedTypeNode(node)) {
+        return nodesSymbol(program, node.type);
+    }
+
+    const _typeChecker = program.getTypeChecker();
+
+    let _symbol: (TS.Symbol|undefined);
 
     if (TS.isExportAssignment(node)) {
         _symbol = _typeChecker
