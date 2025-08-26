@@ -504,12 +504,16 @@ namespace RadialAxis {
             },
             center = this.center,
             startAngleRad = this.startAngleRad,
+            borderRadius = options.borderRadius ??
+                this.pane.options.borderRadius,
             fullRadius = center[2] / 2,
             offset = Math.min(this.offset, 0),
             left = this.left || 0,
             top = this.top || 0,
             percentRegex = /%$/,
-            isCircular = this.isCircular; // X axis in a polar chart
+            isCircular = this.isCircular, // X axis in a polar chart
+            trueBands = this.options.plotBands || [],
+            index = trueBands.indexOf(options);
 
         let start,
             end,
@@ -522,7 +526,19 @@ namespace RadialAxis {
                 fullRadius
             ),
             innerRadius = radiusToPixels(options.innerRadius),
-            thickness = radiusToPixels(options.thickness);
+            thickness = radiusToPixels(options.thickness),
+            brStart = true,
+            brEnd = true;
+
+        // Apply conditional border radius, only for ends of band stacks
+        if (borderRadius && index > -1) {
+            if (trueBands[index - 1] && trueBands[index - 1].to === from) {
+                brStart = false;
+            }
+            if (trueBands[index + 1] && trueBands[index + 1].from === to) {
+                brEnd = false;
+            }
+        }
 
         // Polygonal plot bands
         if (this.options.gridLineInterpolation === 'polygon') {
@@ -577,8 +593,9 @@ namespace RadialAxis {
                         this.center[3] / 2
                     ),
                     open,
-                    borderRadius: options.borderRadius ??
-                        this.pane.options.borderRadius
+                    borderRadius,
+                    brStart,
+                    brEnd
                 }
             );
 
