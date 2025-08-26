@@ -21,12 +21,19 @@ Dashboards.board('container', {
                     ['Row-C', 2009, 3]
                 ],
                 dataModifier: {
-                    type: 'Range',
-                    ranges: [{
-                        column: 'Col-B',
-                        minValue: 500,
-                        maxValue: 2010
-                    }]
+                    type: 'Filter',
+                    condition: {
+                        operator: 'and',
+                        conditions: [{
+                            columnName: 'Col-B',
+                            operator: '>=',
+                            value: 500
+                        }, {
+                            columnName: 'Col-B',
+                            operator: '<=',
+                            value: 2010
+                        }]
+                    }
                 }
             }
         }]

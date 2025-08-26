@@ -668,7 +668,6 @@ class KPIComponent extends Component {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
-            cell: '',
             type: 'KPI'
         };
 

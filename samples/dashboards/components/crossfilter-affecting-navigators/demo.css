@@ -9,3 +9,7 @@ h2 {
 #csv {
     display: none;
 }
+
+#bottom {
+    height: 400px;
+}

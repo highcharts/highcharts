@@ -32,14 +32,17 @@ import type {
     Options
 } from './NavigatorComponentOptions';
 import type {
-    RangeModifierOptions, RangeModifierRangeOptions
-} from '../../../Data/Modifiers/RangeModifierOptions';
+    FilterModifierOptions
+} from '../../../Data/Modifiers/FilterModifierOptions';
+
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import DataTable from '../../../Data/DataTable.js';
 import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
+import NavigatorSyncUtils from './NavigatorSyncs/NavigatorSyncUtils.js';
+
 import U from '../../../Core/Utilities.js';
 const {
     diffObjects,
@@ -221,8 +224,7 @@ class NavigatorComponent extends Component {
      * Navigator column assignment.
      */
     public getColumnAssignment(): [string, string] {
-        const columnAssignment = this.options.columnAssignment ??
-            this.options.columnAssignments ?? {};
+        const columnAssignment = this.options.columnAssignment ?? {};
 
         let columnsAssignment: (string|null);
 
@@ -423,16 +425,22 @@ class NavigatorComponent extends Component {
         let filteredValues: (number | string)[];
 
         const modifierOptions = table.getModifier()?.options;
-        if (crossfilterOptions.affectNavigator && modifierOptions) {
-            const appliedRanges: RangeModifierRangeOptions[] = [],
-                rangedColumns: DataTable.Column[] = [],
-                { ranges } = (modifierOptions as RangeModifierOptions);
+
+        if (
+            crossfilterOptions.affectNavigator &&
+            modifierOptions?.type === 'Filter'
+        ) {
+            const appliedRanges: NavigatorSyncUtils.Range[] = [];
+            const rangedColumns: DataTable.Column[] = [];
+            const ranges = NavigatorSyncUtils.toRange(
+                modifierOptions as FilterModifierOptions
+            );
 
             for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
-                if (ranges[i].column !== this.getColumnAssignment()[0]) {
+                if (ranges[i].columnName !== this.getColumnAssignment()[0]) {
                     appliedRanges.push(ranges[i]);
                     rangedColumns.push(table.getColumn(
-                        ranges[i].column, true
+                        ranges[i].columnName, true
                     ) || []);
                 }
             }

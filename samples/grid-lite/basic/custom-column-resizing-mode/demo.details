@@ -1,5 +1,5 @@
 ---
- name: Custom column distribution Demo
+ name: Custom column resizing mode Demo
  authors:
    - Dawid Dragula
    - Sebastian Bochan

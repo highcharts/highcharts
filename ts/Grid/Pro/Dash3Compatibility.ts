@@ -63,23 +63,6 @@ function compose(
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../Core/Table/Table' {
-    export default interface Table {
-        /**
-         * Deprecated. Use `grid` instead.
-         * @deprecated
-         */
-        readonly dataGrid: Grid;
-    }
-}
-
-
-/* *
- *
  *  Default Export
  *
  * */

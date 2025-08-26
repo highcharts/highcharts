@@ -76,7 +76,8 @@ namespace Defaults {
             },
             columns: {
                 resizing: {
-                    enabled: true
+                    enabled: true,
+                    mode: 'adjacent'
                 }
             },
             theme: 'hcg-theme-default'

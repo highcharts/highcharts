@@ -1,5 +1,5 @@
 ---
- name: RangeModifier crossfilter demo
+ name: FilterModifier crossfilter demo
  authors:
    - Sophie Bremer
  js_wrap: b

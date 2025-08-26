@@ -104,7 +104,7 @@ class SidebarPopup extends BaseForm {
 
             void Bindings.addComponent({
                 type: 'HTML',
-                cell: cellId,
+                renderTo: cellId,
                 className: 'highcharts-dashboards-component-placeholder',
                 html: `
                     <h2> Placeholder </h2>
@@ -510,7 +510,7 @@ class SidebarPopup extends BaseForm {
 
         dragDrop.onCellDragEnd(newCell);
         const options = merge(componentOptions, {
-            cell: newCell.id
+            renderTo: newCell.id
         });
 
         const componentPromise =
