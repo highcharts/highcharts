@@ -659,7 +659,7 @@ function onSeriesAfterInit(
 }
 
 /**
- * Apply conditional rounding to stacked items
+ * Apply conditional rounding to polar bars
  */
 function onSeriesAfterColumnTranslate(
     this: Series
@@ -673,20 +673,21 @@ function onSeriesAfterColumnTranslate(
         const seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
-            borderRadius = optionsToObject(
+            { scope, where = 'end' } = optionsToObject(
                 options.borderRadius,
                 isObject(seriesDefault) ? seriesDefault : {}
             );
 
         for (const point of this.points) {
             const { shapeArgs } = point;
-            if (
-                point.shapeType === 'arc' &&
-                shapeArgs &&
-                borderRadius.scope === 'stack'
-            ) {
-                let brStart = point.stackY === point.y,
+            if (point.shapeType === 'arc' && shapeArgs) {
+                let brStart = where === 'all',
+                    brEnd = true;
+
+                if (options.stacking && scope === 'stack') {
+                    brStart = point.stackY === point.y && where === 'all',
                     brEnd = point.stackY === point.stackTotal;
+                }
 
                 if (yAxis.reversed) {
                     [brStart, brEnd] = [brEnd, brStart];
