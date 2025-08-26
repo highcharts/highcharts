@@ -2,15 +2,15 @@ declare namespace Highcharts {
     interface Series {
         tr?: HTMLElement;
         trRefresh?: boolean;
-        last?: number;
-        min?: number;
-        max?: number;
+        last?: string;
+        min?: string;
+        max?: string;
     }
 }
 
 // Plugin to render custom HTML legend and custom HTML tooltip outside chart
 // container
-(({ addEvent, format, Chart, Series, Point }) => {
+(({ addEvent, color, format, Chart, Series, Point }) => {
     const table = document.getElementById('custom-legend'),
         tooltipFuelType = document.getElementById('tooltip-fuel-type'),
         tooltipSeriesName = document.getElementById('tooltip-series-name'),
@@ -33,7 +33,8 @@ declare namespace Highcharts {
                     this.options.tooltip.headerFormat,
                     this.hoverPoint
                 );
-                tooltipFuelType.style.backgroundColor = this.hoverPoint.color;
+                tooltipFuelType.style.backgroundColor =
+                    color(this.hoverPoint.color).get() as string;
                 tooltipSeriesName.innerHTML =
                     `${this.hoverPoint.x} Electricity Generation`;
                 tooltipValue.innerHTML = format(
@@ -48,9 +49,9 @@ declare namespace Highcharts {
                 tooltipFuelType.style.backgroundColor = 'transparent';
                 tooltipSeriesName.innerHTML = '- Electricity Generation';
                 tooltipValue.innerHTML = '- GWh';
-                tooltipLastValue.innerHTML = '- GWh';
-                tooltipMinValue.innerHTML = '- GWh';
-                tooltipMaxValue.innerHTML = '- GWh';
+                tooltipLastValue.innerHTML = '- <span>GWh</span>';
+                tooltipMinValue.innerHTML = '- <span>GWh</span>';
+                tooltipMaxValue.innerHTML = '- <span>GWh</span>';
             }
 
             series.forEach(s => {
@@ -78,7 +79,8 @@ declare namespace Highcharts {
                 dot.style.display = 'inline-block';
                 dot.style.width = '12px';
                 dot.style.height = '4px';
-                dot.style.backgroundColor = s.color;
+                dot.style.backgroundColor =
+                    color(s.color).get() as string;
                 dot.style.borderRadius = '999px';
 
                 name.appendChild(dot);
