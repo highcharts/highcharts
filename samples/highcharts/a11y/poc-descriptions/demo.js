@@ -1,10 +1,5 @@
 const HC_CONFIGS = {
     chart1: {
-        // accessibility: {
-        //     description: 'Basic line chart showing trends in a dataset. ' +
-        //         'This chart includes the series-label module, which adds ' +
-        //         'a label to each line for enhanced readability.'
-        // },
         a11y: {
             enabled: true
         },
@@ -555,15 +550,73 @@ const HC_CONFIGS = {
 
 (function POC_A11Y_DESC_PLUGIN(Highcharts) {
     const H = Highcharts;
-
     H.addEvent(H.Chart, 'beforeA11yUpdate', function (e) {
-        e.chartDetailedInfo.chartAutoDescription =
-        'I can override this auto desc';
-        console.log('Overide autodesc success');
+        if (this.options?.a11y?.enabled === false || !this.a11y) {
+            return;
+        }
+
+        const fam = familyOf(this);
+        const html = `<p>${(basicSummary(this))}</p>`;
+
+        e.chartDetailedInfo.chartAutoDescription = html;
+        console.log('[a11y-auto-desc]', this.renderTo.id, { fam, html });
     });
 }(Highcharts));
 
 
+function familyOf(chart) {
+    const t = (chart.options?.chart?.type ||
+        chart.series?.[0]?.type || '').toLowerCase();
+
+    if (t === 'column') {
+        return chart.xAxis?.[0]?.isDatetimeAxis ? 'timeseries' : 'categorical';
+    }
+    if (t === 'pie') {
+        return 'composition';
+    }
+    if (t === 'heatmap') {
+        return 'grid';
+    }
+    if (t === 'sankey') {
+        return 'flow';
+    }
+    if ([
+        'line', 'spline', 'area', 'arearange', 'areaspline',
+        'streamgraph', 'xrange'
+    ].includes(t)) {
+        return 'timeseries';
+    }
+    return 'generic';
+}
+
+function basicSummary(chart) {
+    const type = (chart.options?.chart?.type ||
+        chart.series?.[0]?.type || '').toLowerCase();
+
+    const typeLabel = ({
+        line: 'Line chart',
+        spline: 'Line chart',
+        area: 'Area chart',
+        column: 'Column chart',
+        bar: 'Bar chart',
+        pie: 'Pie chart',
+        heatmap: 'Heatmap',
+        sankey: 'Sankey diagram',
+        histogram: 'Histogram'
+    })[type] || 'Chart';
+
+    const visible = chart.series.filter(s => s.visible !== false);
+    const names = visible.map(s => s.name).filter(Boolean);
+    const title = chart.options?.title?.text || '';
+    const source = (chart.options?.subtitle?.text || '')
+        .replace(/<[^>]+>/g, '').trim();
+
+    return `${title ? `${title}. ` : ''}${typeLabel} 
+    with ${visible.length} series${names.length ?
+    ` (${names.join(', ')})` : ''}.${source ? ` Source: ${source}.` : ''}`;
+}
+
+const charts = {};
 document.addEventListener('DOMContentLoaded', () => {
     Object.keys(HC_CONFIGS).forEach(id => {
         const el = document.getElementById(id);
@@ -571,6 +624,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn(`Missing container #${id}`);
             return;
         }
-        Highcharts.chart(id, HC_CONFIGS[id]);
+        charts[id] = Highcharts.chart(id, HC_CONFIGS[id]);
     });
 });
