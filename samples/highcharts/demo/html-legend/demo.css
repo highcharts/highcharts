@@ -124,6 +124,14 @@
     color: rgba(1, 76, 229, 1);
     cursor: pointer;
     text-align: left;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+
+    i {
+        font-size: 20px;
+    }
 
     &:hover {
         color: rgba(1, 76, 229, 0.8);

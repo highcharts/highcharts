@@ -1,4 +1,8 @@
 declare namespace Highcharts {
+    interface ExtendedSeries {
+        keepProps: string[];
+    }
+
     interface Series {
         tr?: HTMLElement;
         trRefresh?: boolean;
@@ -20,7 +24,7 @@ declare namespace Highcharts {
         tooltipMaxValue = document.getElementById('tooltip-max-value');
 
     // Do now remove tr while updating the series
-    Series.keepProps.push('tr');
+    (Series as unknown as Highcharts.ExtendedSeries).keepProps.push('tr');
 
     addEvent(Chart, 'render', function () {
         const series = this.series;
@@ -152,22 +156,20 @@ declare namespace Highcharts {
             this.trRefresh = true;
         }
     });
+
+    document.getElementById('tooltip-btn')
+        .addEventListener('click', () => {
+            window.print();
+        });
 })(Highcharts);
 
-Highcharts.chart('container', {
+Highcharts.chart({
     chart: {
+        renderTo: 'container',
         plotBorderWidth: 1,
         spacingTop: 0,
         spacingBottom: 0,
-        height: 337,
-        events: {
-            load() {
-                document.getElementById('tooltip-btn')
-                    .addEventListener('click', () => {
-                        this.exporting?.downloadCSV();
-                    });
-            }
-        }
+        height: 337
     },
 
     credits: {
@@ -219,7 +221,6 @@ Highcharts.chart('container', {
 
     xAxis: {
         crosshair: {
-            enabled: true,
             dashStyle: 'Dash'
         },
         title: {
@@ -228,9 +229,7 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-        crosshair: {
-            enabled: true
-        },
+        crosshair: true,
         title: {
             text: void 0
         },
