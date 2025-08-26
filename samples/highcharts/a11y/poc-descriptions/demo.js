@@ -556,17 +556,20 @@ const HC_CONFIGS = {
         }
 
         const fam = familyOf(this);
-        const html = `<p>${(basicSummary(this))}</p>`;
+        let html = `<p>${escapeHTML(basicSummary(this))}</p>`;
+
+        if (fam === 'timeseries') {
+            html = describeTimeseries(this);
+        }
 
         e.chartDetailedInfo.chartAutoDescription = html;
-        console.log('[a11y-auto-desc]', this.renderTo.id, { fam, html });
     });
 }(Highcharts));
 
-
+/* Sort chart types into families */
 function familyOf(chart) {
     const t = (chart.options?.chart?.type ||
-        chart.series?.[0]?.type || '').toLowerCase();
+    chart.series?.[0]?.type || '').toLowerCase();
 
     if (t === 'column') {
         return chart.xAxis?.[0]?.isDatetimeAxis ? 'timeseries' : 'categorical';
@@ -589,10 +592,10 @@ function familyOf(chart) {
     return 'generic';
 }
 
+/* Create a basic start of the summary for all charts*/
 function basicSummary(chart) {
     const type = (chart.options?.chart?.type ||
-        chart.series?.[0]?.type || '').toLowerCase();
-
+    chart.series?.[0]?.type || '').toLowerCase();
     const typeLabel = ({
         line: 'Line chart',
         spline: 'Line chart',
@@ -605,17 +608,186 @@ function basicSummary(chart) {
         histogram: 'Histogram'
     })[type] || 'Chart';
 
-    const visible = chart.series.filter(s => s.visible !== false);
-    const names = visible.map(s => s.name).filter(Boolean);
-    const title = chart.options?.title?.text || '';
-    const source = (chart.options?.subtitle?.text || '')
-        .replace(/<[^>]+>/g, '').trim();
-
-    return `${title ? `${title}. ` : ''}${typeLabel} 
-    with ${visible.length} series${names.length ?
-    ` (${names.join(', ')})` : ''}.${source ? ` Source: ${source}.` : ''}`;
+    const visibleSeries = chart.series.filter(s => s.visible !== false);
+    return `${typeLabel} with ${visibleSeries.length} series.`;
 }
 
+
+/* ----------- Family spesific descriptions  ----------- */
+
+/* Timeseries description */
+function describeTimeseries(chart) {
+    const yAxisTitle = returnYaxisTitle(chart);
+    const visibleSeries = chart.series.filter(
+        s => s.visible !== false && s.points?.length
+    );
+
+    const allPts = [];
+    visibleSeries.forEach(s => {
+        (s.points || []).forEach(p => {
+            if (isNum(p.x) && isNum(p.y)) {
+                allPts.push({ x: p.x, y: p.y, series: s.name || 'Series' });
+            }
+        });
+    });
+
+    if (!allPts.length) {
+        return `<p>${escapeHTML(basicSummary(chart))}</p>`;
+    }
+
+    const xMin = allPts.reduce((m, p) => Math.min(m, p.x),  Infinity);
+    const xMax = allPts.reduce((m, p) => Math.max(m, p.x), -Infinity);
+
+    const yMinPt = allPts.reduce(
+        (best, p) => (best === null || p.y < best.y ? p : best), null
+    );
+    const yMaxPt = allPts.reduce(
+        (best, p) => (best === null || p.y > best.y ? p : best), null
+    );
+
+    let bestSwing = null;
+    visibleSeries.forEach(s => {
+        const pts = (s.points || [])
+            .filter(p => isNum(p.x) && isNum(p.y))
+            .map(p => ({ x: p.x, y: p.y }))
+            .sort((a, b) => a.x - b.x);
+
+        for (let i = 1; i < pts.length; i++) {
+            const d  = pts[i].y - pts[i - 1].y;
+            const ad = Math.abs(d);
+            if (!bestSwing || ad > bestSwing.dy) {
+                bestSwing = {
+                    d,
+                    dy: ad,
+                    series: s.name ||
+                    'Series',
+                    a: pts[i - 1],
+                    b: pts[i]
+                };
+            }
+        }
+    });
+
+
+    const intro = `<p>${escapeHTML(basicSummary(chart))}</p>`;
+
+    // TODO: Should there be a heading before the list?
+    const axesList = `
+    <ul>
+      <li>X-axis:
+      ${escapeHTML(fmtX(xMin, chart))}–${escapeHTML(fmtX(xMax, chart))}
+      </li>
+      <li>Y-axis: ${escapeHTML(yAxisTitle || 'Values')}; range 
+        ${escapeHTML(fmtVal(yMinPt.y, yAxisTitle))}–
+        ${escapeHTML(fmtVal(yMaxPt.y, yAxisTitle))}
+      </li>
+    </ul>`.trim();
+
+    const highlights = [];
+    if (yMaxPt) {
+        highlights.push(
+            `Highest value:
+            ${escapeHTML(fmtVal(yMaxPt.y, yAxisTitle))}` +
+      ` in ${escapeHTML(yMaxPt.series)} in 
+      (${escapeHTML(fmtX(yMaxPt.x, chart))})`
+        );
+    }
+    if (yMinPt) {
+        highlights.push(
+            `Lowest value: ${escapeHTML(fmtVal(yMinPt.y, yAxisTitle))}` +
+      ` in ${escapeHTML(yMinPt.series)} in 
+      (${escapeHTML(fmtX(yMinPt.x, chart))})`
+        );
+    }
+    if (bestSwing) {
+        highlights.push(
+            `Largest change: ${escapeHTML(verbFor(bestSwing.d))} of
+            ${escapeHTML(fmtVal(bestSwing.dy, yAxisTitle))}` +
+      ` between ${escapeHTML(fmtX(bestSwing.a.x, chart))}` +
+      `–${escapeHTML(fmtX(bestSwing.b.x, chart))}` +
+      ` in ${escapeHTML(bestSwing.series)}`
+        );
+    }
+
+    const highlightsList = highlights.length ?
+        '<ul>' +
+      highlights.map(li => `<li>${li}</li>`).join('') +
+      '</ul>' :
+        '';
+
+    return intro + axesList + highlightsList;
+}
+
+/* Timeseries helpers */
+
+function returnYaxisTitle(chart) {
+    const yAxisTitle = chart.yAxis?.[0]?.axisTitle?.textStr ||
+    chart.options?.yAxis?.title?.text || '';
+    return yAxisTitle || '';
+}
+
+function fmtVal(v, unit) {
+    const n = Math.abs(v) >= 1000 ?
+        Math.round(v).toLocaleString() :
+        Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    return unit ? `${n} ${unit}` : `${n}`;
+}
+
+function fmtX(x, chart) {
+    const xAxis = chart.xAxis?.[0];
+    if (xAxis?.isDatetimeAxis) {
+        const d = new Date(x);
+        return String(d.getUTCFullYear());
+    }
+
+    // Pick right label by index if axis has categories
+    const categories = xAxis?.categories;
+    if (categories && categories[Math.round(x)] !== null) {
+        return String(categories[Math.round(x)]);
+    }
+
+    // Treat numbers as years, TODO: Not sure if this is a good way to do it
+    if (Number.isInteger(x)) {
+        return String(x);
+    }
+    return `${x}`;
+}
+
+function isNum(v) {
+    return typeof v === 'number' && isFinite(v);
+}
+
+function escapeHTML(s) {
+    const map = {
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '\'': '&#39;', '"': '&quot;'
+    };
+    return String(s).replace(/[&<>'"]/g, c => map[c]);
+}
+
+function verbFor(d) {
+    // Used to describe the biggest change in a series and if it is an
+    // increase or decrease
+    if (d > 0) {
+        return 'increase';
+    }
+    if (d < 0) {
+        return 'decrease';
+    }
+    return 'no change';
+}
+
+/* Categorical description */
+
+/* Categorical helpers */
+
+/* Continuous description */
+
+/* Continuous helpers */
+
+/* Helpers for more chart families */
+
+
+/* CHART SETUP */
 const charts = {};
 document.addEventListener('DOMContentLoaded', () => {
     Object.keys(HC_CONFIGS).forEach(id => {
