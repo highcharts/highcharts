@@ -1,23 +1,47 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
+<link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+
 <figure class="highcharts-figure">
+    <h1 id="custom-title">Electricity Generation by Fuel Type in New York State</h1>
+    <h3 id="custom-subtitle">Data source: <a style="color: #ddd" href="https://data.gov/">U.S. Government's Open Data</a></h3>
     <div class="highcharts-wrapper">
         <div id="container"></div>
         <div id="custom-tooltip">
-            <p id="tooltip-default">Hover over a point to see details!</p>
-            <p id="tooltip-name"></p>
-            <p id="tooltip-value"></p>
+            <div id="tooltip-header">
+                <span id="tooltip-fuel-type-label">FUEL TYPE</span>
+                <div id="tooltip-fuel-type">&nbsp;</div>
+            </div>
+            <div id="tooltip-values">
+                <div id="tooltip-series-name">- Electricity Generation</div>
+                <div id="tooltip-value">- GWh</div>
+            </div>
+            <div id="tooltip-stats">
+                <div class="tooltip-stat-row">
+                    <span>Last</span>
+                    <div id="tooltip-last-value">- GWh</div>
+                </div>
+                <div class="tooltip-stat-row">
+                    <span>Min</span>
+                    <div id="tooltip-min-value">- GWh</div>
+                </div>
+                <div class="tooltip-stat-row">
+                    <span>Max</span>
+                    <div id="tooltip-max-value">- GWh</div>
+                </div>
+            </div>
+            <button id="tooltip-btn"><i class="icon-download"></i> Download the data</button>
         </div>
     </div>
 
     <div id="table-wrapper">
         <table id="custom-legend">
             <tr class="header-row">
-                <th></th>
                 <th>Name</th>
                 <th>Last</th>
                 <th>Min</th>

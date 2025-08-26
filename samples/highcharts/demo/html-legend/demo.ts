@@ -2,20 +2,25 @@ declare namespace Highcharts {
     interface Series {
         tr?: HTMLElement;
         trRefresh?: boolean;
+        last?: number;
+        min?: number;
+        max?: number;
     }
 }
 
 // Plugin to render custom HTML legend and custom HTML tooltip outside chart
 // container
-(({ addEvent, format, Chart, Series }) => {
+(({ addEvent, format, Chart, Series, Point }) => {
     const table = document.getElementById('custom-legend'),
-        tooltip = document.getElementById('custom-tooltip'),
-        tooltipDefault = document.getElementById('tooltip-default'),
-        tooltipName = document.getElementById('tooltip-name'),
-        tooltipValue = document.getElementById('tooltip-value');
+        tooltipFuelType = document.getElementById('tooltip-fuel-type'),
+        tooltipSeriesName = document.getElementById('tooltip-series-name'),
+        tooltipValue = document.getElementById('tooltip-value'),
+        tooltipLastValue = document.getElementById('tooltip-last-value'),
+        tooltipMinValue = document.getElementById('tooltip-min-value'),
+        tooltipMaxValue = document.getElementById('tooltip-max-value');
 
     // Do now remove tr while updating the series
-    (Series as typeof Series & { keepProps: string[] }).keepProps.push('tr');
+    Series.keepProps.push('tr');
 
     addEvent(Chart, 'render', function () {
         const series = this.series;
@@ -24,29 +29,35 @@ declare namespace Highcharts {
         // state
         const highlightRow = () => {
             if (this.hoverPoint) {
-                tooltipDefault.style.display = 'none';
-                tooltipName.innerHTML = format(
+                tooltipFuelType.innerHTML = format(
                     this.options.tooltip.headerFormat,
                     this.hoverPoint
                 );
+                tooltipFuelType.style.backgroundColor = this.hoverPoint.color;
+                tooltipSeriesName.innerHTML =
+                    `${this.hoverPoint.x} Electricity Generation`;
                 tooltipValue.innerHTML = format(
                     this.options.tooltip.pointFormat,
                     this.hoverPoint
                 );
-                if (typeof this.hoverPoint.series.color === 'string') {
-                    tooltip.style.borderColor = this.hoverPoint.series.color;
-                }
+                tooltipLastValue.innerHTML = this.hoverPoint.series.last;
+                tooltipMinValue.innerHTML = this.hoverPoint.series.min;
+                tooltipMaxValue.innerHTML = this.hoverPoint.series.max;
             } else {
-                tooltipDefault.style.display = 'block';
-                tooltipName.innerText = tooltipValue.innerText = '';
-                tooltip.style.borderColor = 'gray';
+                tooltipFuelType.innerHTML = '&nbsp;';
+                tooltipFuelType.style.backgroundColor = 'transparent';
+                tooltipSeriesName.innerHTML = '- Electricity Generation';
+                tooltipValue.innerHTML = '- GWh';
+                tooltipLastValue.innerHTML = '- GWh';
+                tooltipMinValue.innerHTML = '- GWh';
+                tooltipMaxValue.innerHTML = '- GWh';
             }
 
             series.forEach(s => {
-                if (!this.hoverSeries || s === this.hoverSeries) {
-                    s.tr.classList.remove('inactive');
+                if (s === this.hoverSeries) {
+                    s.tr.classList.add('active');
                 } else {
-                    s.tr.classList.add('inactive');
+                    s.tr.classList.remove('active');
                 }
             });
         };
@@ -62,31 +73,36 @@ declare namespace Highcharts {
                     s.tr = document.createElement('tr');
                 }
 
-                const symbol = document.createElement('th');
-                symbol.innerText = '\u25CF';
-                if (typeof s.color === 'string') {
-                    symbol.style.color = s.color;
-                }
-                s.tr.appendChild(symbol);
+                const name = document.createElement('td'),
+                    dot = document.createElement('span');
+                dot.style.display = 'inline-block';
+                dot.style.width = '12px';
+                dot.style.height = '4px';
+                dot.style.backgroundColor = s.color;
+                dot.style.borderRadius = '999px';
 
-                const name = document.createElement('th');
-                name.innerText = s.name;
+                name.appendChild(dot);
+                name.appendChild(document.createTextNode(` ${s.name}`));
+                name.className = 'series-name';
                 s.tr.appendChild(name);
 
-                const last = document.createElement('td');
-                last.innerHTML =
+                const last = document.createElement('td'),
+                    lastValue = last.innerHTML =
                     s.points[s.points.length - 1].y.toFixed(1) +
-                    s.options.custom.valueSuffix;
+                    '<span>' + s.options.custom.valueSuffix + '</span>';
+                s.last = lastValue;
                 s.tr.appendChild(last);
 
-                const min = document.createElement('td');
-                min.innerHTML = s.dataMin.toFixed(1) +
-                    s.options.custom.valueSuffix;
+                const min = document.createElement('td'),
+                    minValue = min.innerHTML = s.dataMin.toFixed(1) +
+                    '<span>' + s.options.custom.valueSuffix + '</span>';
+                s.min = minValue;
                 s.tr.appendChild(min);
 
-                const max = document.createElement('td');
-                max.innerHTML = s.dataMax.toFixed(1) +
-                    s.options.custom.valueSuffix;
+                const max = document.createElement('td'),
+                    maxValue = max.innerHTML = s.dataMax.toFixed(1) +
+                    '<span>' + s.options.custom.valueSuffix + '</span>';
+                s.max = maxValue;
                 s.tr.appendChild(max);
 
                 if (!s.trRefresh) {
@@ -117,9 +133,9 @@ declare namespace Highcharts {
             }
         });
 
-        // Also update highlight when hovering over chart area itself
-        addEvent(this.container, 'mouseover', highlightRow);
-        addEvent(this.container, 'mouseout', highlightRow);
+        // Also update highlight when hovering over the point and series
+        addEvent(Point, 'mouseOver', highlightRow);
+        addEvent(Series, 'mouseOut', highlightRow);
     });
 
     addEvent(Series, 'remove', function () {
@@ -138,8 +154,24 @@ declare namespace Highcharts {
 
 Highcharts.chart('container', {
     chart: {
-        type: 'spline'
+        plotBorderWidth: 1,
+        spacingTop: 0,
+        spacingBottom: 0,
+        height: 337,
+        events: {
+            load() {
+                document.getElementById('tooltip-btn')
+                    .addEventListener('click', () => {
+                        this.exporting?.downloadCSV();
+                    });
+            }
+        }
     },
+
+    credits: {
+        enabled: false
+    },
+
     data: {
         csv: document.getElementById('csv').innerHTML,
         complete: function (options) {
@@ -147,15 +179,14 @@ Highcharts.chart('container', {
             options.series.forEach(s => {
                 s.custom = {
                     icon: {
-                        Year: '📅',
-                        Coal: '🏭',
-                        Gas: '🔥',
-                        Petroleum: '⛽️',
-                        Hydro: '💧',
-                        Nuclear: '☢️',
-                        'Net Imports': '🚢',
-                        Other: '🔧',
-                        Renewables: '🌱'
+                        Coal: '<i class="icon-tasks"></i>',
+                        Gas: '<i class="icon-fire"></i>',
+                        Petroleum: '<i class="icon-truck"></i>',
+                        Hydro: '<i class="icon-tint"></i>',
+                        Nuclear: '<i class="icon-certificate"></i>',
+                        'Net Imports': '<i class="icon-random"></i>',
+                        Other: '<i class="icon-briefcase"></i>',
+                        Renewables: '<i class="icon-leaf"></i>'
                     }[s.name] || ''
                 };
             });
@@ -163,14 +194,15 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text:
-            'Electricity Generation by Fuel Type in New York State (GWh), ' +
-            '1980-2021'
+        text: void 0
     },
 
     subtitle: {
-        text: `Data source: <a style="color: #ddd" href="https://data.gov/">
-            U.S. Government's Open Data</a>`
+        text: void 0
+    },
+
+    exporting: {
+        enabled: false
     },
 
     legend: {
@@ -179,24 +211,34 @@ Highcharts.chart('container', {
 
     tooltip: {
         enabled: false, // Because we use a custom tooltip
-        headerFormat: `<b>Fuel type</b>:
-            {series.name} {series.options.custom.icon}<br/>`,
-        pointFormat: `<b>Electricity Generation</b>:
-            <span class="tooltip-value">
-                {point.y:,.1f} {series.options.custom.valueSuffix}
-            </span>`
+        headerFormat: '{series.options.custom.icon} {series.name}',
+        pointFormat: '{point.y:,.1f} {series.options.custom.valueSuffix}'
     },
 
     xAxis: {
+        crosshair: {
+            enabled: true,
+            dashStyle: 'Dash'
+        },
         title: {
-            text: 'Year'
+            text: void 0
         }
     },
 
     yAxis: {
+        crosshair: {
+            enabled: true
+        },
         title: {
-            text: 'Electricity Generation (GWh)'
-        }
+            text: void 0
+        },
+        labels: {
+            align: 'left',
+            x: 3,
+            y: -3,
+            format: '{value} GWh'
+        },
+        showLastLabel: false
     },
 
     plotOptions: {
@@ -208,7 +250,10 @@ Highcharts.chart('container', {
                 enabled: false,
                 symbol: 'circle'
             },
-            stickyTracking: false
+            stickyTracking: true,
+            events: {
+                mouseOut() {}
+            }
         }
     }
 });
