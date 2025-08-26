@@ -48,6 +48,7 @@ export interface ClassInfo {
     members: Array<MemberInfo>;
     meta: InfoMeta;
     name: string;
+    scope?: string;
     symbol: TS.Symbol;
 }
 
@@ -81,6 +82,7 @@ export interface EnumerationInfo {
     members: Array<PropertyInfo>;
     meta: InfoMeta;
     name: string;
+    scope?: string;
     symbol: TS.Symbol;
 }
 
@@ -94,6 +96,7 @@ export interface FunctionInfo {
     name: string;
     parameters?: Array<VariableInfo>;
     return?: InfoType;
+    scope?: string;
     symbol: TS.Symbol
 }
 
@@ -122,7 +125,6 @@ export interface InfoMeta {
     column: number;
     file: string;
     line: number;
-    scope: string;
     syntax: number;
 }
 
@@ -146,6 +148,7 @@ export interface InterfaceInfo {
     members: Array<MemberInfo>;
     meta: InfoMeta;
     name: string;
+    scope?: string;
     symbol: TS.Symbol;
 }
 
@@ -169,6 +172,7 @@ export interface NamespaceInfo {
     members: Array<CodeInfo>;
     meta: InfoMeta;
     name: string;
+    scope?: string;
     symbol: TS.Symbol;
 }
 
@@ -196,6 +200,7 @@ export interface PropertyInfo {
     kind: 'Property';
     meta: InfoMeta;
     name: string;
+    scope?: string;
     symbol: TS.Symbol;
     type?: InfoType;
 }
@@ -226,6 +231,7 @@ export interface TypeAliasInfo {
     kind: 'TypeAlias';
     meta: InfoMeta;
     name: string;
+    scope?: string;
     symbol: TS.Symbol;
     value?: InfoType;
 }
@@ -245,6 +251,7 @@ export interface VariableInfo {
     kind: 'Variable';
     meta: InfoMeta;
     name: string;
+    scope?: string;
     symbol: TS.Symbol;
     type: InfoType;
 }
@@ -727,7 +734,6 @@ function addInfoMeta (
             column: _location.column,
             file: nodesProjectPath(project, node),
             line: _location.line,
-            scope: '',
             syntax: node.kind
         };
     } else {
@@ -735,7 +741,6 @@ function addInfoMeta (
             column: 1,
             file: '',
             line: 1,
-            scope: '',
             syntax: TS.SyntaxKind.Unknown
         };
     }
@@ -754,13 +759,14 @@ function addInfoMeta (
  */
 function addInfoScopes (
     parentInfo: (CodeInfo|SourceInfo),
-    targetInfos: Array<CodeInfo|InfoType>
+    targetInfos: Array<CodeInfo>
 ): void {
+
     const _scopePath = (
         parentInfo.kind === 'Source' ?
             '' :
-            parentInfo.meta.scope ?
-                parentInfo.meta.scope :
+            parentInfo.scope ?
+                parentInfo.scope :
                 parentInfo.name
     );
 
@@ -774,7 +780,7 @@ function addInfoScopes (
         }
 
         if (_scopePath) {
-            _info.meta.scope = _scopePath;
+            _info.scope = _scopePath;
         }
 
         switch (_info.kind) {
@@ -787,6 +793,9 @@ function addInfoScopes (
                 addInfoScopes(_info, _info.members);
                 break;
 
+            case 'Enumeration':
+                addInfoScopes(_info, _info.members);
+                break;
 
             case 'Function':
                 if (_info.generics) {
@@ -799,13 +808,6 @@ function addInfoScopes (
 
             case 'Namespace':
                 addInfoScopes(_info, _info.members);
-                break;
-
-            case 'Property':
-            case 'Variable':
-                if (typeof _info.type === 'object') {
-                    addInfoScopes(_info, [_info.type]);
-                }
                 break;
 
             case 'TypeAlias':
@@ -1654,7 +1656,7 @@ function getTypeAliasInfo (
     } as TypeAliasInfo;
 
     _info.value = (
-        nodesInfoType(project, node.type) ||
+        nodesInfoType(project, node.type, _info.name === 'Class') ||
         nodesInfoType(project, TS.getJSDocType(node))
     );
 
@@ -1828,11 +1830,16 @@ export function isNativeType (
  */
 function nodesInfoType (
     project: Project,
-    node: (TS.TypeNode|undefined)
+    node: (TS.TypeNode|undefined),
+    _debug?: boolean
 ): (InfoType|undefined) {
 
     if (!node) {
         return;
+    }
+
+    if (TS.isParenthesizedTypeNode(node)) {
+        return nodesInfoType(project, node.type);
     }
 
     const _program = project.program;
@@ -1843,10 +1850,6 @@ function nodesInfoType (
         !_symbol.declarations
     ) {
         return node.getText();
-    }
-
-    if (TS.isParenthesizedTypeNode(node)) {
-        return nodesInfoType(project, node.type);
     }
 
     if (
@@ -1963,6 +1966,7 @@ function nodesInfoType (
 
             if (_isTypeOf) {
                 _infoType.isTypeOf = true;
+                _infoType.type = _infoType.type.replace('typeof ', '');
             }
 
             addInfoMeta(_infoType, node, project);
@@ -2098,6 +2102,17 @@ function nodesSymbol(
     const _typeChecker = program.getTypeChecker();
 
     let _symbol: (TS.Symbol|undefined);
+
+    if (TS.isParenthesizedTypeNode(node)) {
+        return nodesSymbol(program, node.type);
+    }
+
+    if (
+        TS.isIntersectionTypeNode(node) ||
+        TS.isUnionTypeNode(node)
+    ) {
+        return nodesSymbol(program, node.types[0]);
+    }
 
     if (TS.isExportAssignment(node)) {
         _symbol = _typeChecker
