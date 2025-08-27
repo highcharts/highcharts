@@ -23,6 +23,7 @@ import type {
     AxisOptions
 } from './AxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type PositionObject from '../Renderer/PositionObject';
 import type TickLike from './TickLike';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';

@@ -19,6 +19,7 @@
 import type AxisLike from './AxisLike';
 import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 
 import Axis from './Axis.js';
 import D from '../Defaults.js';

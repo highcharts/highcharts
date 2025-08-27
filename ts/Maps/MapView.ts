@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type { DeepPartial } from '../Shared/Types';
 import type {
     GeoJSON,
     MapLonLatObject,

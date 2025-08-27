@@ -17,6 +17,7 @@
  * */
 
 import type ColorAxis from './ColorAxis';
+import type { DeepPartial } from '../../../Shared/Types';
 
 import { Palette } from '../../Color/Palettes.js';
 

@@ -24,6 +24,7 @@ import type {
 import type { AxisTypeOptions } from './AxisType';
 import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
+import type { DeepPartial } from '../../Shared/Types';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
 import type SizeObject from '../Renderer/SizeObject';

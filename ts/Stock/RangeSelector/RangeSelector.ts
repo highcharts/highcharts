@@ -21,6 +21,7 @@ import type {
     AxisSetExtremesEventObject
 } from '../../Core/Axis/AxisOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
     RangeSelectorButtonOptions,

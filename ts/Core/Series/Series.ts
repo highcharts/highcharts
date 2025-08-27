@@ -23,6 +23,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataTable from '../../Data/DataTable';
+import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import type Legend from '../Legend/Legend';

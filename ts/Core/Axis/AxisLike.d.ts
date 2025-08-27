@@ -16,6 +16,7 @@
 
 import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart';
+import type { DeepPartial } from '../../Shared/Types';
 import type Series from '../Series/Series';
 import type Tick from './Tick';
 

@@ -32,10 +32,6 @@ declare global {
 
     type ArrowFunction = (...args: any) => any;
 
-    type DeepPartial<T> = {
-        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
-    };
-
     type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
 
     type FunctionNamesOf<T> = keyof FunctionsOf<T>;

@@ -22,6 +22,7 @@ import type {
 } from './AnnotationOptions';
 import type AnnotationSeries from './AnnotationSeries';
 import type Chart from '../../Core/Chart/Chart';
+import type { DeepPartial } from '../../Shared/Types';
 import type NavigationBindings from './NavigationBindings';
 import type Pointer from '../../Core/Pointer';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
