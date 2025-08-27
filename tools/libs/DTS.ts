@@ -123,8 +123,8 @@ export interface InfoDoclet {
 
 
 export type InfoFlag = (
-    'async'|'abstract'|'assured'|'global'|'optional'|'private'|'protected'|
-    'readonly'|'rest'|'static'
+    'async'|'abstract'|'assured'|'optional'|'private'|'protected'|'readonly'|
+    'rest'|'static'
 );
 
 
@@ -368,7 +368,12 @@ function addChildInfos (
 
         for (let _node of _childSymbol.declarations) {
 
-            if (TS.isImportSpecifier(_node)) {
+            if (
+                TS.isImportSpecifier(_node) ||
+                TS.isSourceFile(_node) ||
+                _program.isSourceFileDefaultLibrary(_node.getSourceFile()) ||
+                _program.isSourceFileFromExternalLibrary(_node.getSourceFile())
+            ) {
                 continue;
             }
 
@@ -418,11 +423,8 @@ function addChildInfos (
 
             if (_child) {
 
-                if (
-                    _child.meta.file.startsWith('..') ||
-                    (extractInfoName(_child) || '').startsWith('_')
-                ) {
-                    // Skip externals
+                if ((extractInfoName(_child) || '').startsWith('_')) {
+                    // Skip internals
                     continue;
                 }
 
@@ -432,11 +434,7 @@ function addChildInfos (
                     project.infoLookup.set(_childSymbol, _child);
                 }
 
-                if (_child.flags?.includes('global')) {
-                    project.globalInfos.push(_child);
-                } else {
-                    infos.push(_child);
-                }
+                infos.push(_child);
 
                 _child = void 0;
 
@@ -533,10 +531,6 @@ function addInfoFlags (
     }
 
     const _flags: Array<InfoFlag> = [];
-
-    if (node.flags & /* Bit operation */ TS.NodeFlags.GlobalAugmentation) {
-        _flags.push('global');
-    }
 
     if (TS.canHaveModifiers(node)) {
         for (const _modifier of (TS.getModifiers(node) || [])) {
@@ -1587,6 +1581,22 @@ export function getSourceInfo (
         addChildInfos(project, _info.code, symbolsChildren(_program, _symbol));
     }
 
+    for (const _statement of sourceFile.statements) {
+        if (
+            TS.isModuleDeclaration(_statement) &&
+            _statement.flags & /* Bitop */ TS.NodeFlags.GlobalAugmentation
+        ) {
+            const _globalSymbol = nodesSymbol(_program, _statement);
+            if (_globalSymbol) {
+                addChildInfos(
+                    project,
+                    project.globalInfos,
+                    symbolsChildren(_program, _globalSymbol)
+                );
+            }
+        }
+    }
+
     addInfoScopes(_info, _info.code);
 
     return _info;
@@ -1866,7 +1876,7 @@ function nodesInfoType (
                 // Only process real generics, rest becomes references
                 const _infoType = {
                     kind: 'GenericType',
-                    name: _innerSymbol.name,
+                    name: symbolsName(_program, _innerSymbol),
                     arguments: [],
                     symbol: _innerSymbol
                 } as unknown as GenericType;
