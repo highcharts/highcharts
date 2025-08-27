@@ -1,5 +1,5 @@
 /* eslint func-style:0 */
-
+// TODO: testimage :S
 (function () {
     var url =
         location.host.substr(0, 12) === 'localhost:98' ?
