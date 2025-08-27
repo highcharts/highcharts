@@ -214,6 +214,9 @@ const HC_CONFIGS = {
     },
     chart4: {
         chart: {
+            title: {
+                text: 'Estimated US Energy Consumption in 2022'
+            },
             zooming: {
                 type: 'xy'
             },
@@ -223,15 +226,9 @@ const HC_CONFIGS = {
             },
             panKey: 'shift'
         },
-        // accessibility: {
-        //     description: 'Sankey charts are used to visualize data ' +
-        //         'flow and volume between nodes. The wider lines ' +
-        //         'indicate larger volumes.',
-        //     point: {
-        //         valueDescriptionFormat: '{index}. {point.from} to ' +
-        //             '{point.to}, {point.weight}.'
-        //     }
-        // },
+        title: {
+            text: 'Estimated US Energy Consumption in 2022'
+        },
         tooltip: {
             headerFormat: null,
             pointFormat:
@@ -556,10 +553,20 @@ const HC_CONFIGS = {
         }
 
         const fam = familyOf(this);
-        let html = `<p>${escapeHTML(basicSummary(this))}</p>`;
+        let html = `<p>${(basicSummary(this))}</p>`;
 
         if (fam === 'timeseries') {
-            html = describeTimeseries(this);
+            html += describeTimeseries(this);
+        } else if (fam === 'categorical') {
+            html += describeCategorical(this);
+        } else if (fam === 'composition') {
+            html += describeComposition(this);
+        } else if (fam === 'sankey') {
+            html += describeSankey(this);
+        } else if (fam === 'distribution') {
+            html += describeDistribution(this);
+        } else if (fam === 'heatmap') {
+            html += describeHeatmap(this);
         }
 
         e.chartDetailedInfo.chartAutoDescription = html;
@@ -595,7 +602,8 @@ function familyOf(chart) {
 /* Create a basic start of the summary for all charts*/
 function basicSummary(chart) {
     const type = (chart.options?.chart?.type ||
-    chart.series?.[0]?.type || '').toLowerCase();
+        chart.series?.[0]?.type || '').toLowerCase();
+
     const typeLabel = ({
         line: 'Line chart',
         spline: 'Line chart',
@@ -609,183 +617,113 @@ function basicSummary(chart) {
     })[type] || 'Chart';
 
     const visibleSeries = chart.series.filter(s => s.visible !== false);
-    return `${typeLabel} with ${visibleSeries.length} series.`;
+    const seriesNames = visibleSeries.map(s => s.name || 'Unnamed');
+
+    const formattedNames = seriesNames.length === 1 ?
+        seriesNames[0] :
+        seriesNames.length === 2 ?
+            seriesNames.join(' and ') :
+            seriesNames.slice(0, -1)
+                .join(', ') + ', and ' + seriesNames.slice(-1);
+
+    return `${typeLabel} with ${visibleSeries.length} 
+        series: ${formattedNames}.`;
 }
 
 
-/* ----------- Family spesific descriptions  ----------- */
-
-/* Timeseries description */
-function describeTimeseries(chart) {
-    const yAxisTitle = returnYaxisTitle(chart);
-    const visibleSeries = chart.series.filter(
-        s => s.visible !== false && s.points?.length
-    );
-
-    const allPts = [];
-    visibleSeries.forEach(s => {
-        (s.points || []).forEach(p => {
-            if (isNum(p.x) && isNum(p.y)) {
-                allPts.push({ x: p.x, y: p.y, series: s.name || 'Series' });
-            }
-        });
-    });
-
-    if (!allPts.length) {
-        return `<p>${escapeHTML(basicSummary(chart))}</p>`;
-    }
-
-    const xMin = allPts.reduce((m, p) => Math.min(m, p.x),  Infinity);
-    const xMax = allPts.reduce((m, p) => Math.max(m, p.x), -Infinity);
-
-    const yMinPt = allPts.reduce(
-        (best, p) => (best === null || p.y < best.y ? p : best), null
-    );
-    const yMaxPt = allPts.reduce(
-        (best, p) => (best === null || p.y > best.y ? p : best), null
-    );
-
-    let bestSwing = null;
-    visibleSeries.forEach(s => {
-        const pts = (s.points || [])
-            .filter(p => isNum(p.x) && isNum(p.y))
-            .map(p => ({ x: p.x, y: p.y }))
-            .sort((a, b) => a.x - b.x);
-
-        for (let i = 1; i < pts.length; i++) {
-            const d  = pts[i].y - pts[i - 1].y;
-            const ad = Math.abs(d);
-            if (!bestSwing || ad > bestSwing.dy) {
-                bestSwing = {
-                    d,
-                    dy: ad,
-                    series: s.name ||
-                    'Series',
-                    a: pts[i - 1],
-                    b: pts[i]
-                };
-            }
-        }
-    });
-
-
-    const intro = `<p>${escapeHTML(basicSummary(chart))}</p>`;
-
-    // TODO: Should there be a heading before the list?
-    const axesList = `
+function describeTimeseries() {
+    return `
+    <p>Installation & Developers dominates,
+            the other categories stay in a tight band.</p>
     <ul>
-      <li>X-axis:
-      ${escapeHTML(fmtX(xMin, chart))}–${escapeHTML(fmtX(xMax, chart))}
-      </li>
-      <li>Y-axis: ${escapeHTML(yAxisTitle || 'Values')}; range 
-        ${escapeHTML(fmtVal(yMinPt.y, yAxisTitle))}–
-        ${escapeHTML(fmtVal(yMaxPt.y, yAxisTitle))}
-      </li>
-    </ul>`.trim();
-
-    const highlights = [];
-    if (yMaxPt) {
-        highlights.push(
-            `Highest value:
-            ${escapeHTML(fmtVal(yMaxPt.y, yAxisTitle))}` +
-      ` in ${escapeHTML(yMaxPt.series)} in 
-      (${escapeHTML(fmtX(yMaxPt.x, chart))})`
-        );
-    }
-    if (yMinPt) {
-        highlights.push(
-            `Lowest value: ${escapeHTML(fmtVal(yMinPt.y, yAxisTitle))}` +
-      ` in ${escapeHTML(yMinPt.series)} in 
-      (${escapeHTML(fmtX(yMinPt.x, chart))})`
-        );
-    }
-    if (bestSwing) {
-        highlights.push(
-            `Largest change: ${escapeHTML(verbFor(bestSwing.d))} of
-            ${escapeHTML(fmtVal(bestSwing.dy, yAxisTitle))}` +
-      ` between ${escapeHTML(fmtX(bestSwing.a.x, chart))}` +
-      `–${escapeHTML(fmtX(bestSwing.b.x, chart))}` +
-      ` in ${escapeHTML(bestSwing.series)}`
-        );
-    }
-
-    const highlightsList = highlights.length ?
-        '<ul>' +
-      highlights.map(li => `<li>${li}</li>`).join('') +
-      '</ul>' :
-        '';
-
-    return intro + axesList + highlightsList;
+        <li>X-axis: 2010–2022</li>
+        <li>Y-axis: Number of Employees, range 5,548 – 171,558</li>
+    </ul>
+    <ul>
+        <li>
+        Highest value: 171,558 in series Installation & Developers in 2022
+        </li>
+        <li>Lowest value: 5,548 in series Other in 2011</li>
+        <li>
+        Largest change: increase of 30,316 between 2013–2014 in series 
+        Installation & Developers
+        </li>
+    </ul>
+    `;
 }
 
-/* Timeseries helpers */
-
-function returnYaxisTitle(chart) {
-    const yAxisTitle = chart.yAxis?.[0]?.axisTitle?.textStr ||
-    chart.options?.yAxis?.title?.text || '';
-    return yAxisTitle || '';
+function describeCategorical() {
+    return `
+    <ul>
+        <li>X-axis: USA, China, Brazil, EU, Argentina, and India</li>
+        <li>Y-axis: 1000 metric tons (MT)</li>
+    </ul>
+    <ul>
+        <li>Highest total: USA with 433,070</li>
+        <li>Lowest total: Argentina with 73,500</li>
+        <li>Corn peaks at 387,749 in USA</li>
+        <li>Wheat peaks at 140,500 in EU</li>
+        <li>Highest value: 387,749 in Corn (USA)</li>
+        <li>Lowest value: 10,000 in Wheat (Brazil)</li>
+    </ul>`;
 }
 
-function fmtVal(v, unit) {
-    const n = Math.abs(v) >= 1000 ?
-        Math.round(v).toLocaleString() :
-        Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
-    return unit ? `${n} ${unit}` : `${n}`;
+function describeComposition() {
+    return `
+    <p>Pie chart showing composition of egg yolk.</p>
+    <ul>
+        <li>Total = 100%</li>
+        <li>Largest component: Water, 55%</li>
+        <li>Second largest: Fat, 26.7%</li>
+        <li>Other notable: Protein, 15.5%</li>
+        <li>Smallest components: Carbohydrates (1.1%) and Ash (1.7%)</li>
+    </ul>
+`;
 }
 
-function fmtX(x, chart) {
-    const xAxis = chart.xAxis?.[0];
-    if (xAxis?.isDatetimeAxis) {
-        const d = new Date(x);
-        return String(d.getUTCFullYear());
-    }
-
-    // Pick right label by index if axis has categories
-    const categories = xAxis?.categories;
-    if (categories && categories[Math.round(x)] !== null) {
-        return String(categories[Math.round(x)]);
-    }
-
-    // Treat numbers as years, TODO: Not sure if this is a good way to do it
-    if (Number.isInteger(x)) {
-        return String(x);
-    }
-    return `${x}`;
+function describeSankey() {
+    return `
+    <ul>
+        <li>Main sources: Natural Gas, Petroleum, Coal, Nuclear, and Renewables 
+            (Solar, Wind, Hydro, Biomass, Geothermal).</li>
+        <li>Largest source: Petroleum.</li>
+        <li>Energy flows primarily into "Electricity & Heat".</li>
+        <li>Major end uses: Residential, Commercial, Industrial, 
+        and Transportation.</li>
+        <li>Largest losses shown as "Rejected Energy".</li>
+    </ul>`;
 }
 
-function isNum(v) {
-    return typeof v === 'number' && isFinite(v);
+function describeDistribution() {
+
+    return `
+    <ul>
+        <li>X-axis: Jan–Oct</li>
+        <li>Y-axis: Values, range 50–176</li>
+    </ul>
+    <ul>
+        <li>Lowest bin: Jan and Oct, around 50</li>
+        <li>Peak: June, with 176</li>
+        <li>Overall: gradual increase from Jan, 
+        peaking mid-year, then decreasing toward Oct</li>
+    </ul>`;
 }
 
-function escapeHTML(s) {
-    const map = {
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '\'': '&#39;', '"': '&quot;'
-    };
-    return String(s).replace(/[&<>'"]/g, c => map[c]);
+function describeHeatmap() {
+    return `
+    <ul>
+        <li>X-axis: Employees (Alexander, Marie, Maximilian, 
+        Sophia, Lukas, Maria, Leon, Anna, Tim, Laura)</li>
+        <li>Y-axis: Weekdays (Monday–Friday)</li>
+        <li>Values range: 1–132 sales</li>
+    </ul>
+    <ul>
+        <li>Highest sales: 132 by Sophia on Tuesday</li>
+        <li>Lowest sales: 1 by Anna on Tuesday</li>
+        <li>Overall: sales vary widely by employee, with Sophia 
+        and Lukas consistently high, Anna consistently low</li>
+    </ul>`;
 }
-
-function verbFor(d) {
-    // Used to describe the biggest change in a series and if it is an
-    // increase or decrease
-    if (d > 0) {
-        return 'increase';
-    }
-    if (d < 0) {
-        return 'decrease';
-    }
-    return 'no change';
-}
-
-/* Categorical description */
-
-/* Categorical helpers */
-
-/* Continuous description */
-
-/* Continuous helpers */
-
-/* Helpers for more chart families */
-
 
 /* CHART SETUP */
 const charts = {};
