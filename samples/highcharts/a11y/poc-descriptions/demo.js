@@ -387,6 +387,9 @@ const HC_CONFIGS = {
         }]
     },
     chart5: {
+        custom: {
+            family: 'distribution'
+        },
         chart: {
             type: 'column'
         },
@@ -555,17 +558,18 @@ const HC_CONFIGS = {
         const fam = familyOf(this);
         let html = `<p>${(basicSummary(this))}</p>`;
 
+        console.log(fam);
         if (fam === 'timeseries') {
             html += describeTimeseries(this);
         } else if (fam === 'categorical') {
             html += describeCategorical(this);
         } else if (fam === 'composition') {
             html += describeComposition(this);
-        } else if (fam === 'sankey') {
+        } else if (fam === 'flow') {
             html += describeSankey(this);
         } else if (fam === 'distribution') {
             html += describeDistribution(this);
-        } else if (fam === 'heatmap') {
+        } else if (fam === 'grid') {
             html += describeHeatmap(this);
         }
 
@@ -575,8 +579,13 @@ const HC_CONFIGS = {
 
 /* Sort chart types into families */
 function familyOf(chart) {
-    const t = (chart.options?.chart?.type ||
-    chart.series?.[0]?.type || '').toLowerCase();
+    const override = chart.options?.custom?.family;
+    if (override) {
+        return override;
+    }   // <— honor manual override first
+
+    const t =
+    (chart.options?.chart?.type || chart.series?.[0]?.type || '').toLowerCase();
 
     if (t === 'column') {
         return chart.xAxis?.[0]?.isDatetimeAxis ? 'timeseries' : 'categorical';
@@ -590,10 +599,16 @@ function familyOf(chart) {
     if (t === 'sankey') {
         return 'flow';
     }
-    if ([
-        'line', 'spline', 'area', 'arearange', 'areaspline',
-        'streamgraph', 'xrange'
-    ].includes(t)) {
+    if (t === 'histogram') {
+        return 'distribution';
+    }
+    if (
+        [
+            'line', 'spline', 'area', 'arearange',
+            'areaspline', 'streamgraph', 'xrange'
+        ]
+            .includes(t)
+    ) {
         return 'timeseries';
     }
     return 'generic';
@@ -671,6 +686,7 @@ function describeCategorical() {
 function describeComposition() {
     return `
     <p>Pie chart showing composition of egg yolk.</p>
+    <p>Water takes up over half of the yolk's composition!</p>
     <ul>
         <li>Total = 100%</li>
         <li>Largest component: Water, 55%</li>
@@ -697,20 +713,22 @@ function describeSankey() {
 function describeDistribution() {
 
     return `
+    <p>Overall overview: gradual increase from Jan, 
+        peaking mid-year, then decreasing toward Oct</p>
     <ul>
         <li>X-axis: Jan–Oct</li>
-        <li>Y-axis: Values, range 50–176</li>
+        <li>Y-axis: Values, Range: 50–176 mm</li>
     </ul>
     <ul>
-        <li>Lowest bin: Jan and Oct, around 50</li>
-        <li>Peak: June, with 176</li>
-        <li>Overall: gradual increase from Jan, 
-        peaking mid-year, then decreasing toward Oct</li>
+        <li>Lowest bin: Jan and Oct, around 50 mm</li>
+        <li>Peak: June, with 176 mm</li>
     </ul>`;
 }
 
 function describeHeatmap() {
     return `
+    <p>Overall overview: sales vary widely by employee, with Sophia 
+        and Lukas consistently high, Anna consistently low</p>
     <ul>
         <li>X-axis: Employees (Alexander, Marie, Maximilian, 
         Sophia, Lukas, Maria, Leon, Anna, Tim, Laura)</li>
@@ -720,8 +738,6 @@ function describeHeatmap() {
     <ul>
         <li>Highest sales: 132 by Sophia on Tuesday</li>
         <li>Lowest sales: 1 by Anna on Tuesday</li>
-        <li>Overall: sales vary widely by employee, with Sophia 
-        and Lukas consistently high, Anna consistently low</li>
     </ul>`;
 }
 
