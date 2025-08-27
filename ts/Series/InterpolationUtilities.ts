@@ -86,11 +86,10 @@ function colorFromPoint(
 function getContext(
     series: HeatmapSeries | GeoHeatmapSeries
 ): CanvasRenderingContext2D | undefined {
-    const {
-        canvas,
-        context
-    } = series;
-    if (canvas && context) {
+    const canvas = series.canvas,
+        context = series.context as CanvasRenderingContext2D;
+
+    if (canvas && context && context?.clearRect) {
         context.clearRect(0, 0, canvas.width, canvas.height);
     } else {
         series.canvas = doc.createElement('canvas');
