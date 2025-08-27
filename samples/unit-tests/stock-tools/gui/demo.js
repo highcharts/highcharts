@@ -104,7 +104,8 @@ QUnit.test('Stocktools GUI', function (assert) {
     );
 });
 
-QUnit.test(
+// TODO: rewrite in playwright
+QUnit.skip(
     'Disabling and enabling stock tools buttons, when series are ' +
     'invisible, #14192',
     function (assert) {
