@@ -96,14 +96,6 @@
     --ig-description-font: var(--ig-description-font-weight) var(--ig-description-font-size) var(--ig-description-font-family);
     --ig-description-text-align: var(--hcg-description-text-align, var(--ig-text-align));
 
-    /* Notification fonts */
-    --ig-notification-font-weight: var(--hcg-notification-font-weight, var(--ig-font-weight));
-    --ig-notification-font-size: var(--hcg-notification-font-size, var(--ig-font-size));
-    --ig-notification-font-family: var(--hcg-notification-font-family, var(--ig-font-family));
-    --ig-notification-color: var(--hcg-notification-color, var(--ig-color));
-    --ig-notification-font: var(--ig-notification-font-weight) var(--ig-notification-font-size) var(--ig-notification-font-family);
-    --ig-notification-text-align: var(--hcg-notification-text-align, var(--ig-text-align));
-
     /* Credits fonts */
     --ig-credits-font-size: var(--hcg-credits-font-size, 0.7em);
     --ig-credits-color: var(--hcg-credits-color, var(--ig-color));
@@ -140,13 +132,6 @@
     --ig-header-column-border-color: var(--hcg-header-column-border-color, var(--ig-column-border-color));
     --ig-header-column-border: var(--ig-header-column-border-width) var(--ig-header-column-border-style) var(--ig-header-column-border-color);
 
-    /* Notification border */
-    --ig-notification-border-radius: var(--hcg-notification-border-radius, var(--ig-border-radius));
-    --ig-notification-border-width: var(--hcg-notification-border-width, 1px);
-    --ig-notification-border-style: var(--hcg-notification-border-style, solid);
-    --ig-notification-border-color: var(--hcg-notification-border-color, var(--ig-color));
-    --ig-notification-border: var(--ig-notification-border-width) var(--ig-notification-border-style) var(--ig-notification-border-color);
-
     /* Default padding */
     --ig-horizontal-padding: var(--hcg-horizontal-padding, var(--hcg-padding, 0));
     --ig-vertical-padding: var(--hcg-vertical-padding, var(--hcg-padding, 0));
@@ -171,11 +156,6 @@
     --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, var(--ig-horizontal-padding)));
     --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, var(--ig-vertical-padding)));
     --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding);
-
-    /* Notification padding */
-    --ig-notification-horizontal-padding: var(--hcg-notification-horizontal-padding, var(--hcg-notification-padding, var(--ig-horizontal-padding)));
-    --ig-notification-vertical-padding: var(--hcg-notification-vertical-padding, var(--hcg-notification-padding, var(--ig-vertical-padding)));
-    --ig-notification-padding: var(--ig-notification-vertical-padding) var(--ig-notification-horizontal-padding);
 
     /* Loading indicator */
     --ig-loader-color: var(--hcg-loader-color, var(--ig-color));
@@ -561,10 +541,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     text-overflow: ellipsis;
 }
 
-.hcg-table tbody td.hcg-edited-cell {
-    padding: 0;
-}
-
 .hcg-table tbody td:focus,
 .hcg-table thead th:focus-visible {
     outline: none;
@@ -765,46 +741,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     width: 100%;
 }
 
-.hcg-cell-editing-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    padding-left: inherit;
-    z-index: 1;
-    background: #b7d4ff;
-    box-shadow: inset 0 0 0 1px #0000ed;
-    display: flex;
-    align-items: center;
-}
-
-.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width),
-.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width):focus,
-.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width),
-.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width):focus {
-    border-width: 0;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    outline: none;
-    float: left;
-    font: var(--ig-font);
-    padding-left: inherit;
-    background: transparent;
-}
-
-.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width),
-.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width):focus,
-.hcg-table tbody td.hcg-edited-cell-error select,
-.hcg-table tbody td.hcg-edited-cell-error select:focus {
-    color: var(--ig-color);
-    box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
-    background-color: var(--ig-negative-background) !important;
-}
-
 /* Accessibility */
 .hcg-visually-hidden {
     position: absolute;
@@ -898,57 +834,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
     to {
         transform: rotate(360deg);
-    }
-}
-
-/* Notification container */
-.hcg-notification {
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 10px;
-    width: calc(100% - 20px);
-    display: none;
-    padding: var(--ig-notification-padding);
-    font: var(--ig-notification-font);
-    background: var(--ig-background);
-    border-radius: var(--ig-notification-border-radius);
-    border: var(--ig-notification-border);
-    box-shadow: 0 0 15px 1px #00000030;
-}
-
-/* Notification states */
-.hcg-notification-error {
-    color: var(--ig-negative-color);
-    background: var(--ig-negative-background);
-    border-color: var(--ig-negative-border-color);
-}
-
-.hcg-notification-warning {
-    color: var(--ig-neutral-color);
-    background: var(--ig-neutral-background);
-    border-color: var(--ig-neutral-border-color);
-}
-
-.hcg-notification-success {
-    color: var(--ig-positive-color);
-    background: var(--ig-positive-background);
-    border-color: var(--ig-positive-border-color);
-}
-
-/* Notification animation */
-.hcg-notification-animation {
-    display: block;
-    animation: notification-animation 0.5s;
-}
-
-@keyframes notification-animation {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
     }
 }
 
