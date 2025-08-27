@@ -21,7 +21,7 @@ label {
     padding: 0 10px;
 }
 
-input#start-angle {
+input#end-angle {
     width: calc(100% - 20px);
     margin: 1rem 10px;
 }

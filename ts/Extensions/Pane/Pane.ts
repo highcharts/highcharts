@@ -31,6 +31,7 @@ import PaneDefaults from './PaneDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    isNumber,
     merge,
     splat
 } = U;
@@ -255,11 +256,50 @@ class Pane {
      * @param {Highcharts.Axis} [axis]
      */
     public updateCenter(axis?: RadialAxis.AxisComposition): void {
+
+        const { chart, options } = this;
+
+        let size = options.size,
+            centerY = options.center?.[1];
+
+        // Handle auto-positioning when size and center are undefined
+        if (size === void 0 || centerY === void 0) {
+            const { plotHeight, plotWidth } = chart,
+                { startAngle = 0, endAngle = 0 } = options,
+                deg2rad = Math.PI * 2 / 360,
+                crossingBottom = startAngle < 180 && endAngle > 180,
+                angle = crossingBottom ? 180 : Math.max(
+                    Math.abs(startAngle),
+                    Math.abs(endAngle)
+                ),
+                sin = Math.sin(deg2rad * (angle - 90)),
+                // The size doesn't increase further to angles below this
+                // minimum. For linear gauges, this means that the pivot is kept
+                // visible.
+                minimumAngle = 90,
+                sizeRatio = 0.5 + 0.5 * Math.max(
+                    sin, Math.sin(deg2rad * (minimumAngle - 90))
+                ),
+                angleDerivedSize = plotHeight / sizeRatio;
+
+            size ??= Math.min(angleDerivedSize, plotWidth);
+            if (isNumber(size)) {
+                centerY ??= (angleDerivedSize + size) / 4;
+            }
+        }
+
         this.center = (
             axis ||
             this.axis ||
             ({} as Record<string, Array<number>>)
         ).center = CU.getCenter.call(this as any);
+
+        if (isNumber(centerY)) {
+            this.center[1] = centerY;
+        }
+        if (isNumber(size)) {
+            this.center[2] = size;
+        }
     }
 
     /**
