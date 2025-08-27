@@ -42,8 +42,8 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
 
     /**
-     * The corner radius of the border surrounding solid gauge. A
-     * number signifies pixels and percentage string, like for example `50%`,
+     * The corner radius of the border surrounding solid gauge. A number
+     * signifies pixels and percentage string, like for example `50%`,
      * signifies a relative size.
      *
      * @sample {highcharts} highcharts/series-solidgauge/pane-borderradius
