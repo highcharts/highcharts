@@ -58,6 +58,9 @@ declare module '../Core/Renderer/SVG/SVGAttributes' {
         brBoxHeight?: number;
         /** The y position of the border-radius box  */
         brBoxY?: number;
+        /** Corresponding to the `borderRadius.where` option */
+        brEnd?: boolean;
+        brStart?: boolean;
     }
 }
 
@@ -66,6 +69,8 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
         borderRadius?: number|string;
         brBoxHeight?: number;
         brBoxY?: number;
+        brEnd?: boolean;
+        brStart?: boolean;
     }
 }
 
@@ -217,7 +222,14 @@ function arc(
     options: SymbolOptions = {}
 ): SVGPath {
     const path = oldArc(x, y, w, h, options),
-        { innerR = 0, r = w, start = 0, end = 0 } = options;
+        {
+            brStart = true,
+            brEnd = true,
+            innerR = 0,
+            r = w,
+            start = 0,
+            end = 0
+        } = options;
 
     if (options.open || !options.borderRadius) {
         return path;
@@ -244,6 +256,12 @@ function arc(
     // splicing in arc segments.
     let i = path.length - 1;
     while (i--) {
+        if (
+            (!brStart && (i === 0 || i === 3)) ||
+            (!brEnd && (i === 1 || i === 2))
+        ) {
+            continue;
+        }
         applyBorderRadius(
             path,
             i,
@@ -396,7 +414,9 @@ function compose(
         SVGElementClass.symbolCustomAttribs.push(
             'borderRadius',
             'brBoxHeight',
-            'brBoxY'
+            'brBoxY',
+            'brEnd',
+            'brStart'
         );
 
         oldArc = symbols.arc;

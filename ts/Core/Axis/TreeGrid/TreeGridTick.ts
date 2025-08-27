@@ -352,6 +352,7 @@ function wrapRenderLabel(
         removeEvent(labelElement);
         label?.css({ cursor: 'default' });
         icon.destroy();
+        tickGrid.labelIcon = void 0;
     }
 }
 
