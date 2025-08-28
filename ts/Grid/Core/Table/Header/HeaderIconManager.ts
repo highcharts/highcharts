@@ -25,6 +25,7 @@ import type HeaderCell from './HeaderCell.js';
 
 import GridUtils from '../../GridUtils.js';
 import Globals from '../../Globals.js';
+import FilterPopup from './FilterPopup.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -150,7 +151,13 @@ class HeaderIconManager {
             className: 'headerCellFilterIcon',
             size: 20,
             alwaysVisible: false,
-            tooltip: 'Filter column'
+            tooltip: 'Filter column',
+            onClick: (event: MouseEvent, headerCell: HeaderCell): void => {
+                const iconManager = headerCell.iconManager;
+                if (iconManager) {
+                    iconManager.toggleFilterPopup();
+                }
+            }
         },
 
         sort: {
@@ -582,6 +589,25 @@ class HeaderIconManager {
             indicator.appendChild(dotIcon);
             button.appendChild(indicator);
         }
+    }
+
+    /**
+     * Toggles the filter popup for this header cell.
+     */
+    public toggleFilterPopup(): void {
+        const tHeader = this.headerCell.tableHeader;
+
+        // Initialize filter popup if it doesn't exist
+        if (!tHeader.filterPopup) {
+            tHeader.filterPopup = new FilterPopup(this.headerCell);
+        }
+
+        const filterIcon = this.getIconElement('filter');
+        if (!filterIcon) {
+            return;
+        }
+
+        tHeader.filterPopup.toggle(filterIcon);
     }
 }
 
