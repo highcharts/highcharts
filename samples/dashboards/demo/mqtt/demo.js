@@ -278,7 +278,7 @@ const chartComponent = {
     }
 };
 
-// grid displaying the history of generated power
+// Grid displaying the history of generated power
 // over the last 'n' hours. Oldest measurements at the top.
 const gridComponent = {
     type: 'Grid',
@@ -409,7 +409,7 @@ async function createDashboard() {
                 kpiComponent,
                 // Chart component for displaying generated power (history)
                 chartComponent,
-                // grid component for displaying generated power (history)
+                // Grid component for displaying generated power (history)
                 gridComponent
             ]
         };
@@ -695,7 +695,7 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
     // Update info component (Custom HTML)
     await updateInfoHtml(mqttData);
 
-    // Update KPI, chart and grid components
+    // Update KPI, chart and Grid components
 
     const idx = activeItem.generatorId - 1;
     const aggInfo = mqttData.aggs[idx];
@@ -728,7 +728,7 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
         title: aggName + ' (latest)'
     });
 
-    // Chart and data grid get automatically updated on every packet,
+    // Chart and data Grid get automatically updated on every packet,
     // so range and title are set only once.
     if (pktCount > 1) {
         return;
@@ -744,7 +744,7 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
         title: aggName + ' (history)'
     });
 
-    // grid
+    // Grid
     const gridComp = dashboard.getComponentByCellId('el-grid');
     await gridComp.update({
         connector: {

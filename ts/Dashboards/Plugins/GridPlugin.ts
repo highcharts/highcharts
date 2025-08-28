@@ -22,8 +22,8 @@
 
 import type { GridNamespace } from './GridTypes';
 import type PluginHandler from '../PluginHandler';
+import GridComponent from '../Components/GridComponent/GridComponent.js';
 
-import GridComponent from '../Components/GridComponent/GridComponent';
 
 /* *
  *
