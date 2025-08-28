@@ -289,7 +289,11 @@ class Pane {
             const { plotHeight, plotWidth } = chart,
                 { startAngle = 0, endAngle = 360 } = options,
                 deg2rad = Math.PI * 2 / 360,
-                crossingBottom = startAngle < 180 && endAngle > 180,
+                crossingBottom = (startAngle < 180 && endAngle > 180) ||
+                    // Circle background should fill out the plot area
+                    splat(options.background).some(
+                        (b): boolean => b?.shape === 'circle'
+                    ),
                 angle = crossingBottom ? 180 : Math.max(
                     Math.abs(startAngle),
                     Math.abs(endAngle)
