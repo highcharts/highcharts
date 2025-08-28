@@ -269,25 +269,32 @@ class ColorAxis extends Axis implements AxisLike {
     }
 
     /**
-     * Extend the setOptions method to process extreme colors and color stops.
+     * Extend the setOptions method to process title, extreme colors and
+     * color stops.
      * @private
      */
     public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
+        const legend = this.chart.options.legend || {},
+            horiz = userOptions.layout ?
+                userOptions.layout !== 'vertical' :
+                legend.layout !== 'vertical';
+
+        const sideSpecific = horiz ? { title: { rotation: 0 } } :
+            { title: { rotation: 270 } };
 
         const options = merge(
+            sideSpecific,
             defaultOptions.colorAxis as ColorAxis.Options,
             userOptions,
             // Forced options
             {
                 showEmpty: false,
-                title: null,
                 visible: this.chart.options.legend.enabled &&
                     userOptions.visible !== false
             }
         );
 
         super.setOptions(options);
-
         this.options.crosshair = this.options.marker;
     }
 
