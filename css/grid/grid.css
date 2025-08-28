@@ -1164,6 +1164,21 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     text-align: left;
 }
 
+.hcg-popup {
+    position: absolute;
+    z-index: 1000;
+    background-color: var(--ig-neutral-default-background);
+    border: 1px solid var(--ig-neutral-default-border-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+}
+
+.hcg-popup-content {
+    padding: 12px;
+    line-height: 1.4;
+}
+
 /* End Grid CSS Helpers Classes */
 
 /* Start Grid Default Theme */

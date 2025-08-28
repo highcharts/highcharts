@@ -98,7 +98,9 @@ namespace Globals {
         loadingWrapper: 'loading-wrapper',
         loadingSpinner: 'spinner',
         loadingMessage: 'loading-message',
-        paginationWrapper: 'pagination-wrapper'
+        paginationWrapper: 'pagination-wrapper',
+        popup: 'popup',
+        popupContent: 'popup-content'
     } as const;
 
     export const win = window;
