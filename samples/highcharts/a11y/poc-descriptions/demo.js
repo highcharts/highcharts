@@ -214,6 +214,7 @@ const HC_CONFIGS = {
     },
     chart4: {
         chart: {
+            type: 'sankey',
             title: {
                 text: 'Estimated US Energy Consumption in 2022'
             },
@@ -558,7 +559,6 @@ const HC_CONFIGS = {
         const fam = familyOf(this);
         let html = `<p>${(basicSummary(this))}</p>`;
 
-        console.log(fam);
         if (fam === 'timeseries') {
             html += describeTimeseries(this);
         } else if (fam === 'categorical') {
@@ -582,7 +582,7 @@ function familyOf(chart) {
     const override = chart.options?.custom?.family;
     if (override) {
         return override;
-    }   // <— honor manual override first
+    }
 
     const t =
     (chart.options?.chart?.type || chart.series?.[0]?.type || '').toLowerCase();
@@ -631,25 +631,81 @@ function basicSummary(chart) {
         histogram: 'Histogram'
     })[type] || 'Chart';
 
+    const family = familyOf(chart);
     const visibleSeries = chart.series.filter(s => s.visible !== false);
-    const seriesNames = visibleSeries.map(s => s.name || 'Unnamed');
 
-    const formattedNames = seriesNames.length === 1 ?
-        seriesNames[0] :
+    // For pie, report slices instead of series.
+    if (family === 'composition') {
+        const s = visibleSeries[0]; // pie has one series visually
+        const slices = (s?.points || []).filter(p => p.visible !== false);
+        const names = slices.map(p => p.name || 'Unnamed slice');
+
+        const formatted = names.length <= 1 ?
+            (names[0] || '') :
+            names.length === 2 ?
+                names.join(' and ') :
+                names.slice(0, -1).join(', ') + ', and ' + names.slice(-1);
+
+        return `${typeLabel} with ${slices.length} 
+            slices${formatted ? `: ${formatted}` : ''}.`;
+    }
+
+    // For sankey, report nodes and links instead of series.
+    if (family === 'flow') {
+
+        const sankeySeries =
+            visibleSeries.filter(s => (s.type || s.options?.type) === 'sankey');
+
+        const allNodes = new Map();
+        let linkCount = 0;
+
+        sankeySeries.forEach(s => {
+            const nodesOpt = s.options?.nodes || [];
+            const linksOpt = s.options?.data || [];
+            linkCount += Array.isArray(linksOpt) ? linksOpt.length : 0;
+
+            nodesOpt.forEach(n => {
+                const key = (n.id ?? n.name ?? '').toString();
+                if (key) {
+                    allNodes.set(key, n.name || n.id);
+                }
+            });
+        });
+
+        const nodeNames = Array.from(allNodes.values());
+        const nodeCount = nodeNames.length;
+
+        let namesSnippet = '';
+        if (nodeNames.length) {
+            const show = nodeNames.slice(0, 6);
+            const remaining = nodeNames.length - show.length;
+            namesSnippet = show.join(', ') +
+                (remaining > 0 ? `, and ${remaining} more` : '');
+        }
+
+        return `${typeLabel} with ${nodeCount} nodes and 
+        ${linkCount} links${namesSnippet ? `: ${namesSnippet}` : ''}.`;
+    }
+
+    // Default
+    const seriesNames = visibleSeries.map(s => s.name || 'Unnamed');
+    const formatted = seriesNames.length <= 1 ?
+        (seriesNames[0] || '') :
         seriesNames.length === 2 ?
             seriesNames.join(' and ') :
             seriesNames.slice(0, -1)
                 .join(', ') + ', and ' + seriesNames.slice(-1);
 
     return `${typeLabel} with ${visibleSeries.length} 
-        series: ${formattedNames}.`;
+        series${formatted ? `: ${formatted}` : ''}.`;
 }
 
 
 function describeTimeseries() {
     return `
-    <p>Installation & Developers dominates,
-            the other categories stay in a tight band.</p>
+    <p>Installation & Developers dominates and has a growing peak from 
+    2010-1016, the other categories stay consistent and move in parallel
+    throughout the years</p>
     <ul>
         <li>X-axis: 2010–2022</li>
         <li>Y-axis: Number of Employees, range 5,548 – 171,558</li>
@@ -674,40 +730,38 @@ function describeCategorical() {
         <li>Y-axis: 1000 metric tons (MT)</li>
     </ul>
     <ul>
-        <li>Highest total: USA with 433,070</li>
-        <li>Lowest total: Argentina with 73,500</li>
-        <li>Corn peaks at 387,749 in USA</li>
-        <li>Wheat peaks at 140,500 in EU</li>
         <li>Highest value: 387,749 in Corn (USA)</li>
         <li>Lowest value: 10,000 in Wheat (Brazil)</li>
+        <li>Corn peaks at 387,749 in USA</li>
+        <li>Wheat peaks at 140,500 in EU</li>
+
     </ul>`;
 }
 
-function describeComposition() {
+function describeComposition() { // 5 slices
     return `
-    <p>Pie chart showing composition of egg yolk.</p>
     <p>Water takes up over half of the yolk's composition!</p>
-    <ul>
-        <li>Total = 100%</li>
-        <li>Largest component: Water, 55%</li>
-        <li>Second largest: Fat, 26.7%</li>
-        <li>Other notable: Protein, 15.5%</li>
-        <li>Smallest components: Carbohydrates (1.1%) and Ash (1.7%)</li>
-    </ul>
 `;
 }
 
-function describeSankey() {
+function describeSankey() { // Wording like largest is good, need to fix desc
     return `
+    <p>
+        Energy flows primarily into Electricity & Heat,
+        but large amounts are lost as Rejected Energy.
+    </p>
     <ul>
-        <li>Main sources: Natural Gas, Petroleum, Coal, Nuclear, and Renewables 
-            (Solar, Wind, Hydro, Biomass, Geothermal).</li>
         <li>Largest source: Petroleum.</li>
-        <li>Energy flows primarily into "Electricity & Heat".</li>
-        <li>Major end uses: Residential, Commercial, Industrial, 
-        and Transportation.</li>
-        <li>Largest losses shown as "Rejected Energy".</li>
-    </ul>`;
+        <li>Main conversion hub: Electricity & Heat.</li>
+        <li>Largest losses: Rejected Energy.</li>
+    </ul>
+    <p>Top flows:</p>
+    <ul>
+        <li>Petroleum to Transportation (24.6 quads)</li>
+        <li>Electricity & Heat to Rejected Energy (24.3 quads)</li>
+        <li>Natural Gas to Electricity & Heat (12.5 quads)</li>
+    </ul>
+    `;
 }
 
 function describeDistribution() {
@@ -725,7 +779,7 @@ function describeDistribution() {
     </ul>`;
 }
 
-function describeHeatmap() {
+function describeHeatmap() { // Heatmap showing sales per employee
     return `
     <p>Overall overview: sales vary widely by employee, with Sophia 
         and Lukas consistently high, Anna consistently low</p>
