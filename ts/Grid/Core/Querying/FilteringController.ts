@@ -89,6 +89,10 @@ class FilteringController {
         const { condition, value } = options;
         const stringifiedValue = isString(value) ? value : '';
 
+        if (!value && !stringifiedValue) {
+            return;
+        }
+
         switch (condition) {
             case 'contains':
                 return {
