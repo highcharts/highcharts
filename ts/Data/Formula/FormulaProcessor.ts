@@ -435,7 +435,7 @@ function getReferenceValue(
         }
 
         if (isValue(cell)) {
-            return reference.isNegative ? -cell : cell;
+            return reference.isNegative ? -(cell as number) : cell;
         }
 
         return NaN;

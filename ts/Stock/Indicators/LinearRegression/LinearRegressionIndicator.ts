@@ -300,9 +300,7 @@ class LinearRegressionIndicator extends SMAIndicator {
             yData: Array<number> = (baseSeries.yData as any),
             period: number = (regressionSeriesParams.period as any),
             // Format required to be returned
-            indicatorData: IndicatorValuesObject<
-            TLinkedSeries
-            > = {
+            indicatorData: IndicatorValuesObject<TLinkedSeries> = {
                 xData: [], // By getValues() method
                 yData: [],
                 values: []

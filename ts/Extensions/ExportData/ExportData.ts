@@ -216,7 +216,7 @@ namespace ExportData {
         chart: Chart;
         options: SeriesOptions;
         pointArrayMap?: Array<string>;
-        index: Number;
+        index: number;
     }
 
     /* *
@@ -490,7 +490,7 @@ namespace ExportData {
                 ['\uFEFF' + content], // #7084
                 { type: type }
             ));
-        } catch (e) {
+        } catch {
             // Ignore
         }
     }
@@ -1166,6 +1166,7 @@ namespace ExportData {
                             if (cur === subheaders[i]) {
                                 if (exporting.options.useRowspanHeaders) {
                                     rowspan = 2;
+                                    // eslint-disable-next-line @typescript-eslint/no-array-delete
                                     delete subheaders[i];
                                 } else {
                                     rowspan = 1;

@@ -455,7 +455,7 @@ export interface ColumnHeaderIconsOptions {
 }
 
 /**
- * Column sorting options avalable for applying to all columns at once.
+ * Column sorting options available for applying to all columns at once.
  */
 export interface ColumnSortingOptions {
     /**

@@ -48,6 +48,7 @@ import Dash3Compatibility from '../Grid/Pro/Dash3Compatibility.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
+import FilteringComposition from '../Grid/Pro/Filtering/FilteringComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
@@ -192,6 +193,7 @@ CreditsProComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
+FilteringComposition.compose(G.HeaderCell);
 
 G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
 G.CellContentPro = CellContentPro;

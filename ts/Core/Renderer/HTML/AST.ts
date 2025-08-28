@@ -589,7 +589,7 @@ class AST {
                     markup,
                 'text/html'
             );
-        } catch (e) {
+        } catch {
             // There are two cases where this fails:
             // 1. IE9 and PhantomJS, where the DOMParser only supports parsing
             //    XML

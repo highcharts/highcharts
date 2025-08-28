@@ -214,7 +214,9 @@ export function getScript(
 
         // Reject in case of fail
         script.onerror = (): void => {
-            reject(error(`Error loading script ${scriptLocation}`));
+            const msg = `Error loading script ${scriptLocation}`;
+            error(msg);
+            reject(new Error(msg));
         };
 
         // Append the newly created script

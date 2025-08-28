@@ -19,12 +19,12 @@ QUnit.test('FilterModifier queries', async function (assert) {
         );
     }
 
-    // Numeric comparisons (ne, lt)
+    // Numeric comparisons (!==, <)
     {
         const base = [1, 2, 3, 4, 5];
         let table, modifier;
 
-        // x != 3
+        // x !== 3
         table = new DataTable({
             columns: {
                 x: base.slice()
@@ -61,12 +61,55 @@ QUnit.test('FilterModifier queries', async function (assert) {
         );
     }
 
+    // Number comparison (empty)
+    {
+        const data = [12, null, '', 30];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'empty',
+                columnName: 'name',
+                value: null
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: [null, ''] },
+            'Only empty strings and nulls are kept.'
+        );
+    }
+
+    // Date comparisons
+    {
+        const table = new DataTable({
+            columns: {
+                x: [new Date(2020, 0, 1), new Date(2020, 0, 2), new Date(2020, 0, 3)]
+            }
+        });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: '<=',
+                columnName: 'x',
+                value: new Date(2020, 0, 2)
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            {
+                x: [new Date(2020, 0, 1), new Date(2020, 0, 2)]
+            },
+            'Dates are compared as numbers.'
+        );
+    }
+
     // String comparison (contains with ignoreCase: false)
     {
         const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
         const table = new DataTable({ columns: { name: data } });
         const modifier = new FilterModifier({
-            condition:{
+            condition: {
                 operator: 'contains',
                 columnName: 'name',
                 value: 'ap',
@@ -81,12 +124,33 @@ QUnit.test('FilterModifier queries', async function (assert) {
         );
     }
 
+    // String comparison (not empty)
+    {
+        const data = ['Apple', 'banana', '', 'date', null];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'not',
+                condition: {
+                    operator: 'empty',
+                    columnName: 'name'
+                }
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: ['Apple', 'banana', 'date'] },
+            'Only empty strings and nulls are kept.'
+        );
+    }
+
     // String comparison (contains with default ignoreCase - true)
     {
         const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
         const table = new DataTable({ columns: { name: data } });
         const modifier = new FilterModifier({
-            condition:{
+            condition: {
                 operator: 'contains',
                 columnName: 'name',
                 value: 'ap'
@@ -97,6 +161,66 @@ QUnit.test('FilterModifier queries', async function (assert) {
             table.modified.getColumns(),
             { name: ['Apple', 'apricot'] },
             'contains "ap" (ignoreCase true) matches Apple & apricot.'
+        );
+    }
+
+    // String comparison (not contains with default ignoreCase - true)
+    {
+        const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'not',
+                condition: {
+                    operator: 'contains',
+                    columnName: 'name',
+                    value: 'TK'
+                }
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: data },
+            'Table should not contain "TK" and should return all rows.'
+        );
+    }
+
+    // String comparison (startsWith)
+    {
+        const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'startsWith',
+                columnName: 'name',
+                value: 'ban'
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: ['banana'] },
+            'startsWith "ban" matches only banana.'
+        );
+    }
+
+    // String comparison (endsWith)
+    {
+        const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'endsWith',
+                columnName: 'name',
+                value: 'na'
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: ['banana'] },
+            'endsWith "na" matches only banana and date.'
         );
     }
 
