@@ -634,7 +634,7 @@ class Legend {
         (item.legendItem as any).label.attr({
             text: options.labelFormat ?
                 format(options.labelFormat, item, this.chart) :
-                options.labelFormatter.call(item)
+                options.labelFormatter.call(item, item)
         });
     }
 
@@ -1674,7 +1674,9 @@ class Legend {
                             {
                                 // Pass over the click/touch event. #4.
                                 browserEvent: event,
-                                legendItem: item
+                                legendItem: item,
+                                // Provide context in case user arrow function
+                                context: legend
                             },
                             defaultItemClick
                         );
