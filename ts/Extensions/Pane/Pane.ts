@@ -329,7 +329,7 @@ class Pane {
         ).center = CU.getCenter.call(this as any);
 
         // Apply the auto-positioning
-        if (isNumber(size)) {
+        if (isNumber(size) && size >= 0) {
             this.center[2] = size;
         }
         if (!isNumber(centerY) && isNumber(angleDerivedSize)) {
