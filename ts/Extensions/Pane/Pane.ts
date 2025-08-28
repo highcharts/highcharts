@@ -271,7 +271,7 @@ class Pane {
         // Get the required margin in order to display the data label in or
         // below the center
         const centerMargin = chart.series
-            .filter((s): boolean => s.yAxis?.pane === this)
+            .filter((s): boolean => s.is('gauge') && s.yAxis?.pane === this)
             .reduce((max, s): number => {
                 const dl = splat(s.options.dataLabels)[0];
                 let margin = 0;
@@ -287,7 +287,7 @@ class Pane {
         // Handle auto-positioning when size and center are undefined
         if (size === void 0 || centerY === void 0) {
             const { plotHeight, plotWidth } = chart,
-                { startAngle = 0, endAngle = 0 } = options,
+                { startAngle = 0, endAngle = 360 } = options,
                 deg2rad = Math.PI * 2 / 360,
                 crossingBottom = startAngle < 180 && endAngle > 180,
                 angle = crossingBottom ? 180 : Math.max(
@@ -328,14 +328,18 @@ class Pane {
             ({} as Record<string, Array<number>>)
         ).center = CU.getCenter.call(this as any);
 
-        // Apply the auto-positioning
-        if (isNumber(size) && size >= 0) {
-            this.center[2] = size;
-        }
-        if (!isNumber(centerY) && isNumber(angleDerivedSize)) {
-            this.center[1] = (angleDerivedSize + this.center[2] -
-                appliedCenterMargin) / 4 +
-                margin[0];
+        if (!options.size) {
+            // Apply the auto-positioning
+            if (isNumber(size) && size >= 0) {
+                this.center[2] = size;
+            }
+            if (!isNumber(centerY) && isNumber(angleDerivedSize)) {
+                this.center[1] = (
+                    angleDerivedSize +
+                    this.center[2] -
+                    appliedCenterMargin
+                ) / 4 + margin[0];
+            }
         }
     }
 
