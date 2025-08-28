@@ -8,7 +8,8 @@ const runChart = (): void => {
     Highcharts.chart('container', {
 
         chart: {
-            plotBorderWidth: 1
+            plotBorderWidth: 1,
+            polar: true
         },
 
         title: {
@@ -32,14 +33,29 @@ const runChart = (): void => {
 
         yAxis: {
             min: 0,
-            max: 100
+            max: 100,
+            labels: {
+                distance: 15
+            }
+        },
+
+        plotOptions: {
+            series: {
+                animation: false
+            }
         },
 
         series: [{
             name: 'Speed',
             type: 'gauge',
-            animation: false,
             data: [80],
+            dataLabels: {
+                borderWidth: 0,
+                style: {
+                    fontSize: '1.4em'
+                },
+                y: 25
+            },
             tooltip: {
                 valueSuffix: ' km/h'
             }

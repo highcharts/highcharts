@@ -257,10 +257,11 @@ class Pane {
      */
     public updateCenter(axis?: RadialAxis.AxisComposition): void {
 
-        const { chart, options } = this;
+        const { chart, options } = this,
+            centerY = options.center?.[1];
 
         let size = options.size,
-            centerY = options.center?.[1];
+            angleDerivedSize: number|undefined;
 
         // Handle auto-positioning when size and center are undefined
         if (size === void 0 || centerY === void 0) {
@@ -279,26 +280,25 @@ class Pane {
                 minimumAngle = 90,
                 sizeRatio = 0.5 + 0.5 * Math.max(
                     sin, Math.sin(deg2rad * (minimumAngle - 90))
-                ),
-                angleDerivedSize = plotHeight / sizeRatio;
+                );
 
+            angleDerivedSize = plotHeight / sizeRatio;
             size ??= Math.min(angleDerivedSize, plotWidth);
-            if (isNumber(size)) {
-                centerY ??= (angleDerivedSize + size) / 4;
-            }
         }
 
+        // Run the standard centering
         this.center = (
             axis ||
             this.axis ||
             ({} as Record<string, Array<number>>)
         ).center = CU.getCenter.call(this as any);
 
-        if (isNumber(centerY)) {
-            this.center[1] = centerY;
-        }
+        // Apply the auto-positioning
         if (isNumber(size)) {
             this.center[2] = size;
+        }
+        if (!isNumber(centerY) && isNumber(angleDerivedSize)) {
+            this.center[1] = (angleDerivedSize + this.center[2]) / 4;
         }
     }
 
