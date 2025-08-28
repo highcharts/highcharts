@@ -132,11 +132,16 @@ module.exports = function (config) {
                     pattern: 'test/typescript-karma/**/!(*.test).js',
                     type: 'module'
                 }]) :
+        // product-specific default selection
+        argv.product === 'Dashboards' ?
+            [{ pattern: 'test/typescript-karma/Dashboards/**/*.test.js', type: 'module' },
+             { pattern: 'test/typescript-karma/Data/**/*.test.js', type: 'module' },
+             { pattern: 'test/typescript-karma/**/!(*.test).js', type: 'module' }] :
+        argv.product === 'Grid' ?
+            [{ pattern: 'test/typescript-karma/Grid/*.test.js', type: 'module' },
+             { pattern: 'test/typescript-karma/**/!(*.test).js', type: 'module' }] :
             // all tests
-            [{
-                pattern: 'test/typescript-karma/**/!(demo).js',
-                type: 'module'
-            }]
+            [{ pattern: 'test/typescript-karma/**/!(demo).js', type: 'module' }]
     );
 
     let options = {
