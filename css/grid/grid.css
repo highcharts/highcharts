@@ -17,6 +17,23 @@
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #e0ebe0;
     --ig-highlight-color-5: #f3f6fe;
+
+    /* Button styles - Light mode */
+    --hcg-button-background: transparent;
+    --hcg-button-hover-background: #e8e8e8;
+    --hcg-button-color: #141414;
+    --hcg-button-padding: 3px;
+    --hcg-button-border-radius: 4px;
+
+    /* Icon styles - Light mode */
+    --hcg-icon-color: #626262;
+    --hcg-icon-hover-color: #141414;
+
+    /* Focus ring color for accessibility */
+    --hcg-focus-ring-color: #626bd0;
+
+    /* Header background - pure white in light mode */
+    --hcg-header-background: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +46,13 @@
         --ig-positive-default-border-color: #008000;
         --ig-positive-default-background: #265a26;
         --ig-highlight-color-5: #2d2e36;
+
+        /* Button styles - Dark mode */
+        --hcg-button-hover-background: #3b3b3b;
+        --hcg-button-color: #ffffff;
+
+        /* Icon styles - Dark mode */
+        --hcg-icon-hover-color: #ffffff;
     }
 }
 
@@ -41,6 +65,13 @@
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #265a26;
     --ig-highlight-color-5: #2d2e36;
+
+    /* Button styles - Dark mode */
+    --hcg-button-hover-background: #3b3b3b;
+    --hcg-button-color: #ffffff;
+
+    /* Icon styles - Dark mode */
+    --hcg-icon-hover-color: #ffffff;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -289,6 +320,17 @@
     --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+
+    /* Button styles */
+    --ig-button-background: var(--hcg-button-background, transparent);
+    --ig-button-hover-background: var(--hcg-button-hover-background, #e8e8e8);
+    --ig-button-color: var(--hcg-button-color, #141414);
+    --ig-button-padding: var(--hcg-button-padding, 3px);
+    --ig-button-border-radius: var(--hcg-button-border-radius, 4px);
+
+    /* Icon styles */
+    --ig-icon-color: var(--hcg-icon-color, #626262);
+    --ig-icon-hover-color: var(--hcg-icon-hover-color, #141414);
 }
 
 /* ==== End Grid Variables ==== */
@@ -402,6 +444,169 @@
 
 .hcg-table tbody tr:last-of-type td:last-child {
     border-bottom-right-radius: var(--ig-border-radius);
+}
+
+.hcg-head-row-content {
+    display: flex;
+}
+
+/* Header cell flex container */
+.hcg-header-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.hcg-header-cell-content {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+/* Legacy filter icon styles (deprecated - now handled by generic .hcg-header-cell-icons) */
+.hcg-header-cell-filter-icon img {
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+/* Generic button styling for Grid */
+.hcg-button {
+    background: var(--ig-button-background);
+    padding: var(--ig-button-padding);
+    border-radius: var(--ig-button-border-radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hcg-button:hover {
+    background: var(--ig-button-hover-background);
+}
+
+/* Focus/A11Y - keyboard accessibility */
+.hcg-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-header-background, #ffffff), 0 0 0 5px var(--hcg-focus-ring-color, #626bd0);
+}
+
+/* Generic icon styling for Grid */
+.hcg-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--ig-icon-color);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+/* Icons automatically inherit color from parent via currentColor */
+.hcg-icon path {
+    stroke: currentcolor;
+}
+
+.hcg-button:hover .hcg-icon {
+    color: var(--ig-icon-hover-color);
+}
+
+/* Header cell icons container - generic for all icon types */
+.hcg-header-cell-icons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 0;
+    margin-left: 0;
+    opacity: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
+}
+
+/* Show icons on header cell hover, focus, or when has active icons */
+.hcg-table thead th:hover .hcg-header-cell-icons,
+.hcg-table thead th:focus-visible .hcg-header-cell-icons,
+.hcg-table thead th:focus-within .hcg-header-cell-icons,
+.hcg-header-cell-icons:hover,
+.hcg-header-cell-icons.has-active-icons {
+    max-width: 100px;
+    margin-left: 8px;
+    opacity: 1;
+}
+
+/* Individual icon containers */
+.hcg-header-cell-filter-icon,
+.hcg-header-cell-sort-icon,
+.hcg-header-cell-menu-icon {
+    display: flex;
+    align-items: center;
+}
+
+/* Generic icon button styling - applies to all header icons */
+.hcg-header-cell-icons .hcg-button {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2px;
+}
+
+/* Sort icon state styles */
+.hcg-header-cell-sort-icon.sort-asc .hcg-icon {
+    transform: rotate(180deg);
+}
+
+.hcg-header-cell-sort-icon.sort-desc .hcg-icon {
+    transform: rotate(0deg);
+}
+
+.hcg-header-cell-sort-icon.sort-none .hcg-icon {
+    opacity: 0.6;
+}
+
+/* Sort icon transitions */
+.hcg-header-cell-sort-icon .hcg-icon {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Active icon styling - icons that are in an active state */
+.hcg-header-cell-icons .hcg-button.active {
+    background: var(--ig-button-hover-background);
+}
+
+.hcg-header-cell-icons .hcg-button.active .hcg-icon {
+    color: var(--ig-icon-hover-color);
+}
+
+/* Active indicator dot - positioned at top right of button */
+.hcg-active-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--hcg-focus-ring-color, #626bd0);
+    pointer-events: none;
+}
+
+/* Active indicator icon styling */
+.hcg-active-indicator-icon {
+    width: 6px;
+    height: 6px;
+    color: var(--hcg-focus-ring-color, #626bd0);
+    fill: currentcolor;
+}
+
+/* Make button relative for absolute positioning of indicator */
+.hcg-header-cell-icons .hcg-button {
+    position: relative;
 }
 
 .hcg-resizable-content tr {
@@ -957,6 +1162,21 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 .hcg-table thead tr th.hcg-left .hcg-header-cell-content,
 .hcg-table tbody tr td.hcg-left {
     text-align: left;
+}
+
+.hcg-popup {
+    position: absolute;
+    z-index: 1000;
+    background-color: var(--ig-neutral-default-background);
+    border: 1px solid var(--ig-neutral-default-border-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+}
+
+.hcg-popup-content {
+    padding: 12px;
+    line-height: 1.4;
 }
 
 /* End Grid CSS Helpers Classes */

@@ -75,6 +75,10 @@ namespace Globals {
         scrollableContent: 'scrollable-content',
         headerCell: 'header-cell',
         headerCellContent: 'header-cell-content',
+        headerCellFilterIcon: 'header-cell-filter-icon',
+        headerCellIcons: 'header-cell-icons',
+        headerCellSortIcon: 'header-cell-sort-icon',
+        headerCellMenuIcon: 'header-cell-menu-icon',
         headerRow: 'head-row-content',
         noData: 'no-data',
         noPadding: 'no-padding',
@@ -94,7 +98,9 @@ namespace Globals {
         loadingWrapper: 'loading-wrapper',
         loadingSpinner: 'spinner',
         loadingMessage: 'loading-message',
-        paginationWrapper: 'pagination-wrapper'
+        paginationWrapper: 'pagination-wrapper',
+        popup: 'popup',
+        popupContent: 'popup-content'
     } as const;
 
     export const win = window;
