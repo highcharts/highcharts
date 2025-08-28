@@ -1,0 +1,15 @@
+body {
+    transform: scale(1.2);
+    transform-origin: 0 0;
+    zoom: 1.4;
+}
+
+#container {
+    width: 600px;
+    margin: 0 auto;
+}
+
+#top-fill {
+    height: 2000px;
+    background: #1b6060;
+}

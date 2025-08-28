@@ -74,6 +74,25 @@ function addPlainA11yEl(
 }
 
 
+/**
+ * Utility function to get scaling for an element reliably (zoom/transforms etc)
+ *
+ * @internal
+ */
+function getScaleForEl(el: HTMLElement): { scaleX: number; scaleY: number } {
+    const tester = document.createElement('div');
+    tester.style.cssText = 'position: absolute; left: 0; top: 0; ' +
+        'width: 100px; height: 100px; visibility: hidden; ' +
+        'pointer-events: none;';
+    el.appendChild(tester);
+    const testerRect = tester.getBoundingClientRect(),
+        scaleX = testerRect.width / 100,
+        scaleY = testerRect.height / 100;
+    el.removeChild(tester);
+    return { scaleX, scaleY };
+}
+
+
 interface ProxyGroup {
     containerEl: HTMLElement;
     eventRemovers: Array<Function>;
@@ -213,12 +232,13 @@ export class ProxyProvider {
             ),
             setSize = (): void => {
                 const bbox = targetEl.getBoundingClientRect(),
-                    containerBBox = container.getBoundingClientRect();
+                    containerBBox = container.getBoundingClientRect(),
+                    { scaleX, scaleY } = getScaleForEl(container);
                 Object.assign(touchableEl.style, {
-                    left: bbox.x - containerBBox.x + 'px',
-                    top: bbox.y - containerBBox.y + 'px',
-                    width: bbox.width + 'px',
-                    height: bbox.height + 'px'
+                    left: (bbox.x - containerBBox.x) / scaleX + 'px',
+                    top: (bbox.y - containerBBox.y) / scaleY + 'px',
+                    width: bbox.width / scaleX + 'px',
+                    height: bbox.height / scaleY + 'px'
                 });
             },
             resizeObserver = new ResizeObserver(setSize);
