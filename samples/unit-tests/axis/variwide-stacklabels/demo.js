@@ -51,7 +51,8 @@ QUnit.test('#10962 - Stack labels in variwide series', function (assert) {
 
     assert.close(
         yAxis.stacking.stacks[series[0].stackKey][4].label.alignAttr.x,
-        series[0].points[4].dataLabel.alignAttr.x,
+        series[0].points[4].dataLabel.alignAttr.x -
+            series[0].points[4].dataLabel.options.distance,
         5,
         'The stack labels should be x-positioned close to the data label.'
     );
