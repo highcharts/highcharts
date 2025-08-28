@@ -31,6 +31,8 @@ import PaneDefaults from './PaneDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    getAlignFactor,
+    isArray,
     isNumber,
     merge,
     splat
@@ -258,10 +260,29 @@ class Pane {
     public updateCenter(axis?: RadialAxis.AxisComposition): void {
 
         const { chart, options } = this,
-            centerY = options.center?.[1];
+            centerY = options.center?.[1],
+            m = options.margin || 0,
+            margin = isArray(m) ? m : [m, m, m, m];
 
         let size = options.size,
-            angleDerivedSize: number|undefined;
+            angleDerivedSize: number|undefined,
+            appliedCenterMargin = 0;
+
+        // Get the required margin in order to display the data label in or
+        // below the center
+        const centerMargin = chart.series
+            .filter((s): boolean => s.yAxis?.pane === this)
+            .reduce((max, s): number => {
+                const dl = splat(s.options.dataLabels)[0];
+                let margin = 0;
+                if (dl) {
+                    // 30 is an approximation of the default data label height.
+                    // It is not yet rendered.
+                    margin = (1 - getAlignFactor(dl.verticalAlign)) * 30 +
+                        (dl.y || 0);
+                }
+                return Math.max(max, margin);
+            }, 0) + margin[2];
 
         // Handle auto-positioning when size and center are undefined
         if (size === void 0 || centerY === void 0) {
@@ -282,8 +303,22 @@ class Pane {
                     sin, Math.sin(deg2rad * (minimumAngle - 90))
                 );
 
-            angleDerivedSize = plotHeight / sizeRatio;
-            size ??= Math.min(angleDerivedSize, plotWidth);
+            angleDerivedSize = (plotHeight - margin[0] - margin[2]) /
+                sizeRatio;
+            if (size === void 0) {
+                size = Math.min(
+                    angleDerivedSize,
+                    plotWidth - margin[1] - margin[3]
+                );
+
+                // Make sure there is space for the data label (centerMargin)
+                const overflow = size + margin[0] + margin[2] +
+                    2 * (centerMargin - plotHeight);
+                if (overflow > 0) {
+                    appliedCenterMargin = overflow;
+                    size -= appliedCenterMargin;
+                }
+            }
         }
 
         // Run the standard centering
@@ -298,7 +333,9 @@ class Pane {
             this.center[2] = size;
         }
         if (!isNumber(centerY) && isNumber(angleDerivedSize)) {
-            this.center[1] = (angleDerivedSize + this.center[2]) / 4;
+            this.center[1] = (angleDerivedSize + this.center[2] -
+                appliedCenterMargin) / 4 +
+                margin[0];
         }
     }
 

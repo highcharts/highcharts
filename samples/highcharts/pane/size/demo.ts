@@ -9,7 +9,14 @@ const runChart = (): void => {
 
         chart: {
             plotBorderWidth: 1,
-            polar: true
+            width: parseInt(
+                document.querySelector<HTMLInputElement>('#chart-width').value,
+                10
+            ),
+            height: parseInt(
+                document.querySelector<HTMLInputElement>('#chart-height').value,
+                10
+            )
         },
 
         title: {
@@ -24,7 +31,7 @@ const runChart = (): void => {
             endAngle,
             background: [{
                 outerRadius: '100%',
-                innerRadius: '70%',
+                innerRadius: '60%',
                 shape: 'arc'
             }],
             size: undefined,
@@ -42,6 +49,16 @@ const runChart = (): void => {
         plotOptions: {
             series: {
                 animation: false
+            },
+            gauge: {
+                dataLabels: {
+                    y: 25
+                }
+            },
+            solidgauge: {
+                dataLabels: {
+                    verticalAlign: 'middle'
+                }
             }
         },
 
@@ -54,7 +71,7 @@ const runChart = (): void => {
                 style: {
                     fontSize: '1.4em'
                 },
-                y: 25
+                backgroundColor: '#ddd8'
             },
             tooltip: {
                 valueSuffix: ' km/h'
@@ -65,4 +82,6 @@ const runChart = (): void => {
 
 runChart();
 
-document.querySelector('#end-angle').addEventListener('input', runChart);
+document.querySelectorAll('input[type="range"]').forEach(
+    input => input.addEventListener('input', runChart)
+);

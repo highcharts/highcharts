@@ -1,11 +1,20 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 
 <div id="outer-container">
     <div id="container"></div>
 
     <label>
-        Drag the slider to change start and end angle
+        Start and end angle
         <input type="range" id="end-angle" value="90" min="0" max="180" />
+    </label>
+    <label>
+        Chart width
+        <input type="range" id="chart-width" value="800" min="200" max="800" />
+    </label>
+    <label>
+        Chart height
+        <input type="range" id="chart-height" value="400" min="200" max="600" />
     </label>
 </div>

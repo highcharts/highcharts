@@ -195,6 +195,16 @@ const pane: PaneOptions|Array<PaneOptions> = {
     center: ['50%', '50%'],
 
     /**
+     * The margin between the pane and the plot area when auto-fitting the pane.
+     * This does not apply when an explicit `pane.size` is set. An array sets
+     * individual margins for the sides in the order [top, right, bottom, left].
+     *
+     * @type    {number|Array<number>}
+     * @since   next
+     */
+    margin: 20,
+
+    /**
      * The size of the pane, either as a number defining pixels, or a
      * percentage defining a percentage of the available plot area (the
      * smallest of the plot height or plot width).

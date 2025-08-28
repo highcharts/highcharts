@@ -49,6 +49,7 @@ export interface PaneOptions {
     endAngle?: number;
     id?: string;
     innerSize?: (number|string);
+    margin?: number|Array<number>;
     size?: (number|string);
     startAngle?: number;
     zIndex?: number;

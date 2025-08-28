@@ -17,11 +17,15 @@ body {
     margin: 0 auto;
 }
 
+#container div {
+    margin: 0 auto;
+}
+
 label {
     padding: 0 10px;
 }
 
-input#end-angle {
+input[type="range"] {
     width: calc(100% - 20px);
     margin: 1rem 10px;
 }
