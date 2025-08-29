@@ -826,8 +826,6 @@ test('Bindings general tests', async ({ page }) => {
             points[2].plotY + plotTop + 25
         );
 
-        console.log(points[2]);
-
         const popup = page.locator('.highcharts-annotation-toolbar');
 
         await expect(popup).toBeInViewport();
