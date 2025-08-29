@@ -265,7 +265,7 @@ class Pane {
             margin = isArray(m) ? m : [m, m, m, m];
 
         let size = options.size,
-            angleDerivedSize: number|undefined,
+            sizeFromAngle: number|undefined,
             appliedCenterMargin = 0;
 
         // Get the required margin in order to display the data label in or
@@ -307,11 +307,11 @@ class Pane {
                     sin, Math.sin(deg2rad * (minimumAngle - 90))
                 );
 
-            angleDerivedSize = (plotHeight - margin[0] - margin[2]) /
+            sizeFromAngle = (plotHeight - margin[0] - margin[2]) /
                 sizeRatio;
             if (size === void 0) {
                 size = Math.min(
-                    angleDerivedSize,
+                    sizeFromAngle,
                     plotWidth - margin[1] - margin[3]
                 );
 
@@ -337,9 +337,9 @@ class Pane {
             if (isNumber(size) && size >= 0) {
                 this.center[2] = size;
             }
-            if (!isNumber(centerY) && isNumber(angleDerivedSize)) {
+            if (!isNumber(centerY) && isNumber(sizeFromAngle)) {
                 this.center[1] = (
-                    angleDerivedSize +
+                    sizeFromAngle +
                     this.center[2] -
                     appliedCenterMargin
                 ) / 4 + margin[0];
