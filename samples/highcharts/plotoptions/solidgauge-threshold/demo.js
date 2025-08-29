@@ -9,8 +9,6 @@ const chart = Highcharts.chart('container', {
     },
 
     pane: {
-        center: ['50%', '50%'],
-        size: '90%',
         startAngle: -140,
         endAngle: 140,
         background: {
@@ -38,9 +36,8 @@ const chart = Highcharts.chart('container', {
         max: 4,
         title: {
             text: 'Loss',
-            y: 50
+            y: 30
         },
-        lineWidth: 1,
         tickAmount: 2,
         zIndex: 4,
         labels: {
@@ -55,12 +52,14 @@ const chart = Highcharts.chart('container', {
             color: '#55BF3B', // Color value
             from: -4, // Start of the plot band
             to: 0,
-            outerRadius: '78%'
+            outerRadius: '78%',
+            innerRadius: '70%'
         }, {
             color: '#DF5353', // Color value
             from: 0, // Start of the plot band
             to: 4,
-            outerRadius: '78%'
+            outerRadius: '78%',
+            innerRadius: '70%'
         }]
     },
 
@@ -79,7 +78,7 @@ const chart = Highcharts.chart('container', {
     },
 
     series: [{
-        name: 'Svinn',
+        name: 'Loss',
         data: [-0.5],
         threshold: 0,
         dataLabels: {
