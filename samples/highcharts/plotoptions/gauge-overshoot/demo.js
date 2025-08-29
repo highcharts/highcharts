@@ -90,17 +90,6 @@ Highcharts.chart('container', {
                 borderColor: '#1f9fd9',
                 backgroundColor: '#1f9fd9'
             },
-            dataLabels: {
-                borderWidth: 2,
-                borderColor: '#d3e9f7',
-                padding: 5,
-                borderRadius: 2,
-                verticalAlign: 'middle',
-                y: 30,
-                style: {
-                    fontWeight: 'normal'
-                }
-            },
             wrap: false
         }
     },
