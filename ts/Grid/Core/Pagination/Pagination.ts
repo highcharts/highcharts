@@ -831,14 +831,24 @@ class Pagination {
     }
 
     /**
-     * Update the grid's pagination range.
+     * Update the grid's pagination state.
+     *
+     * @param ignoreDataRange
+     * Whether to ignore the data range update. Used when updating the data
+     * range is not needed, for example when updating the data range from
+     * the server.
+     * @internal
      */
-    public async updateGridPagination(): Promise<void> {
+    public async updateGridPagination(
+        ignoreDataRange: boolean = false
+    ): Promise<void> {
         if (!this.grid.querying?.pagination) {
             return;
         }
 
-        this.grid.querying.pagination.setRange(this.currentPage);
+        this.grid.querying.pagination.setRange(
+            ignoreDataRange ? this.currentPage : 1
+        );
 
         // Trigger the grid to update its data and viewport
         this.grid.querying.shouldBeUpdated = true;
@@ -862,7 +872,7 @@ class Pagination {
      */
     public updateTotalPages(): void {
         const originalDataTable = this.grid.dataTable;
-        this.totalItems = originalDataTable?.rowCount || 0;
+        this.totalItems = this.totalItems || originalDataTable?.rowCount || 0;
         this.totalPages =
             Math.ceil(this.totalItems / this.currentPageSize) || 1;
 
