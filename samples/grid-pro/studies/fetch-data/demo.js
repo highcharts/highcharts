@@ -30,24 +30,59 @@ function generateRandomData(rows) {
     return columns;
 }
 
-window.grid = Grid.grid('container', {
+
+Grid.grid('container', {
     dataTable: {
-        columns: generateRandomData(254) // 254 items to match the design
+        columns: generateRandomData(10)
     },
     pagination: {
         enabled: true,
         pageSize: 22,
+        totalItems: 100,
         controls: {
-            pageSizeSelector: {
+            pageSizeSelector: { // boolean
                 enabled: true,
                 options: [10, 20, 50, 100]
             },
-            pageInfo: true,
-            firstLastButtons: true,
-            previousNextButtons: true,
-            pageButtons: {
+            pageInfo: {  // boolean
+                enabled: true
+            },
+            firstLastButtons: {  // boolean
+                enabled: true
+            },
+            previousNextButtons: {  // boolean
+                enabled: true
+            },
+            pageButtons: {  // boolean
                 enabled: true,
                 count: 5
+            }
+        },
+        events: {
+            beforePageChange: function (e) {
+                // Fetch data from server
+                const data = generateRandomData(10);
+
+                // Update data table
+                this.grid.update({
+                    dataTable: {
+                        columns: data
+                    }
+                }, false, true);
+
+                // Refresh pagination state
+                this.grid.pagination.updateGridPagination(true);
+            },
+            afterPageChange: function (e) {
+                console.log('afterPageChange');
+            },
+            beforePageSizeChange: function (e) {
+                document.getElementById('beforePageSizeChange').value =
+                    e.pageSize;
+            },
+            afterPageSizeChange: function (e) {
+                document.getElementById('afterPageSizeChange').value =
+                    e.pageSize;
             }
         }
     }

@@ -1,0 +1,22 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+
+.grid-wrapper {
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+    margin-bottom: 50px;
+}
+
+.grid-container {
+    height: 400px;
+}
+
+.custom-pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.hcg-pagination-controls {
+    padding: 0 20px;
+}

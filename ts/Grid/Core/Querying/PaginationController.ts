@@ -56,11 +56,6 @@ class PaginationController {
      */
     public currentPage?: number;
 
-    /**
-     * Whether the next button is pressed.
-     */
-    public isNextPage?: boolean = false;
-
     /* *
     *
     *  Constructor
@@ -89,13 +84,9 @@ class PaginationController {
      *
      * @param currentPage
      * The current page.
-     *
-     * @param isNextPage
-     * Whether the next button is pressed.
      */
-    public setRange(currentPage: number, isNextPage: boolean): void {
+    public setRange(currentPage: number): void {
         this.currentPage = currentPage;
-        this.isNextPage = isNextPage;
         this.querying.shouldBeUpdated = true;
         this.modifier = this.createModifier();
     }
@@ -111,8 +102,7 @@ class PaginationController {
             this.currentPage !== pagination.currentPage
         ) {
             this.currentPage = pagination.currentPage;
-            this.isNextPage = pagination.isNextPage;
-            this.setRange(this.currentPage, this.isNextPage);
+            this.setRange(this.currentPage);
         }
     }
 
@@ -120,20 +110,24 @@ class PaginationController {
      * Returns the range modifier.
      */
     private createModifier(): RangeModifier | undefined {
-        const isNextPage = this.isNextPage;
-        const currentPage = this.currentPage || 0;
-        const itemsPerPage =
-            this.querying.grid.pagination?.itemsPerPage;
+        const currentPage = this.currentPage || 1; // Start from page 1, not 0
+        const pageSize =
+            this.querying.grid.pagination?.currentPageSize;
 
-        if (!itemsPerPage) {
+        if (!pageSize) {
             return;
         }
 
-        const start = currentPage * itemsPerPage;
+        // Calculate the start index (0-based)
+        const start = (currentPage - 1) * pageSize;
+        const end = Math.min(
+            start + pageSize,
+            this.querying.grid.dataTable?.rowCount || 0
+        );
 
         return new RangeModifier({
-            start: isNextPage ? start : start - itemsPerPage,
-            end: start + (isNextPage ? itemsPerPage : 0)
+            start: start,
+            end: end
         });
     }
 
@@ -143,7 +137,6 @@ class PaginationController {
     public reset(): void {
         delete this.modifier;
         delete this.currentPage;
-        delete this.isNextPage;
         this.querying.shouldBeUpdated = true;
     }
 }

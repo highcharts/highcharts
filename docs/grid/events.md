@@ -36,6 +36,15 @@ The available events are:
 | `click`            | Triggered after clicking on a column header.             | `this: Column`        |
 | `afterRender`      | Triggered after init of a column header.                 | `this: Column`        |
 
+## pagination
+
+| **Event Name**     | **Description**                                          | **Function Context** |
+|--------------------|----------------------------------------------------------|-----------------------|
+| `beforePageChange` | Triggered before a page change occurs.                   | `this: Pagination`    |
+| `afterPageChange`  | Triggered after a page change occurs.                    | `this: Pagination`    |
+| `beforePageSizeChange` | Triggered before the page size setting changes.      | `this: Pagination`    |
+| `afterPageSizeChange`  | Triggered after the page size setting changes.       | `this: Pagination`    |
+
 # Example
 
 Here is a sample code that demonstrates how to use these event callbacks in the `events` object:
@@ -107,6 +116,28 @@ columns: [{
         }
     }
 }]
+```
+
+Pagination events are configured at the grid level:
+
+```js
+pagination: {
+    enabled: true,
+    events: {
+        beforePageChange: function (e) {
+            // callback
+        },
+        afterPageChange: function (e) {
+            // callback
+        },
+        beforePageSizeChange: function (e) {
+            // callback
+        },
+        afterPageSizeChange: function (e) {
+            // callback
+        }
+    }
+}
 ```
 
 Live example:
