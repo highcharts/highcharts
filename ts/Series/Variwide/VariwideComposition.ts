@@ -113,22 +113,19 @@ function onAxisAfterRender(
 ): void {
     const axis = this;
 
-    if (this.variwide) {
-        this.chart.labelCollectors.push(
-            function (): Array<SVGElement> {
-                return axis.tickPositions
-                    .filter((pos: number): boolean => !!axis.ticks[pos].label)
-                    .map((pos, i): SVGElement => {
-                        const label: SVGElement =
-                            axis.ticks[pos].label as any;
+    this.chart.labelCollectors.push(
+        function (): Array<SVGElement> {
+            return axis.variwide ? axis.tickPositions
+                .filter((pos: number): boolean => !!axis.ticks[pos].label)
+                .map((pos, i): SVGElement => {
+                    const label: SVGElement = axis.ticks[pos].label as any;
 
-                        label.labelrank = (axis.zData as any)[i];
+                    label.labelrank = axis.zData?.[i];
 
-                        return label;
-                    });
-            }
-        );
-    }
+                    return label;
+                }) : [];
+        }
+    );
 }
 
 /**
