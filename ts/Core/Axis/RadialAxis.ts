@@ -416,16 +416,24 @@ namespace RadialAxis {
     function getLinePath(
         this: AxisComposition,
         _lineWidth: number,
-        radius?: number
+        radius?: number,
+        innerRadius?: number
     ): SVGPath {
         const center = this.pane.center,
             chart = this.chart,
             left = this.left || 0,
-            top = this.top || 0,
-            r = pick(radius, center[2] / 2 - this.offset);
+            top = this.top || 0;
 
         let end,
-            path: SVGPath;
+            path: SVGPath,
+            r = pick(radius, center[2] / 2 - this.offset);
+
+        innerRadius ??= this.horiz ? 0 : this.center && -this.center[3] / 2;
+
+        // In case when innerSize of pane is set, it must be included
+        if (innerRadius && innerRadius > 0) {
+            r += innerRadius;
+        }
 
         if (this.isCircular || typeof radius !== 'undefined') {
             path = this.chart.renderer.symbols.arc(
