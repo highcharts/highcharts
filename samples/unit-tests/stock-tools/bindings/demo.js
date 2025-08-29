@@ -447,7 +447,6 @@ QUnit.skip('Bindings general tests', function (assert) {
         qunitContainer.style.display = 'block';
     }
 });
-
 QUnit.test(
     'Bindings on multiple axes. Checks whether a pointer action returns a ' +
     'proper axis (#12268).',
