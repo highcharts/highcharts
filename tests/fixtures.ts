@@ -238,7 +238,17 @@ export async function setupRoutes(page: Page){
                     });
                 },
             },
-            ...(await getJSONSources())
+            ...(await getJSONSources()),
+            {
+                pattern:  '**/shim.html',
+                handler: (route) =>
+                    route.fulfill({
+                        status: 200,
+                        contentType: 'text/html',
+                        body: '<!DOCTYPE html><html><head></head><body></body></html>'
+                    })
+
+            }
         ];
 
         for (const route of routes) {
@@ -385,7 +395,8 @@ export function chartTemplate({
         })
         .join('\n');
 
-    return `<html>
+    return `<!DOCTYPE html>
+<html>
     <head>
         ${scriptString}
         <style>
@@ -449,9 +460,9 @@ export async function createChart(
 
     const handle = await page.evaluateHandle(
         ([{ chartConstructor, container, HC }, cc, chartCallbackBody]) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
             const HCInstance = HC ?? window.Highcharts;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return HCInstance[chartConstructor](
                 container, cc, chartCallbackBody ?
                     (chart: Highcharts.Chart) => {

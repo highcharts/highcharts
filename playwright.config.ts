@@ -30,6 +30,15 @@ export default defineConfig({
             dependencies: ['setup-highcharts'],
         },
         {
+            name: 'qunit',
+            testDir: './tests/qunit',
+            use: {
+                ...devices['Desktop Chrome'],
+                ...devices['Desktop Firefox'],
+            },
+            dependencies: ['setup-highcharts'],
+        },
+        {
             name: 'setup-dashboards',
             testMatch: 'setup-dashboards.mts',
         },
