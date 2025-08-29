@@ -1,7 +1,6 @@
 // This test fails cinde fixing #7112 - I'm in a hurry and can't find where
 // isNull is set for log axis points.
-/*
-QUnit.test(
+QUnit.skip(
     '#6585 - zero value on logarithmic yAxis should be placed on xAxis.',
     function (assert) {
         var chart = Highcharts.chart('container', {
@@ -32,4 +31,3 @@ QUnit.test(
         );
     }
 );
-*/
