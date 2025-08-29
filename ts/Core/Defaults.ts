@@ -426,6 +426,8 @@ const defaultOptions: DefaultOptions = {
 
     },
 
+    series: [],
+
     /**
      * Time options that can apply globally or to individual charts. These
      * settings affect how `datetime` axes are laid out, how tooltips are

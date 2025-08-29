@@ -47,7 +47,8 @@ import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
-    SeriesTypeOptions
+    SeriesTypeOptions,
+    SeriesTypePlotOptions
 } from '../Series/SeriesType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
@@ -152,8 +153,9 @@ declare module '../Options' {
         chart: ChartOptions;
         caption?: Chart.CaptionOptions;
         credits?: Chart.CreditsOptions;
+        plotOptions: SeriesTypePlotOptions;
+        series: Array<SeriesTypeOptions>;
         subtitle?: Chart.SubtitleOptions;
-        series?: Array<SeriesTypeOptions>;
         title?: Chart.TitleOptions;
     }
 }
@@ -3003,7 +3005,7 @@ class Chart {
                         series.setData(options.data as any, false);
                     }
 
-                    fireEvent(chart, 'afterAddSeries', { series: series });
+                    fireEvent(chart, 'afterAddSeries', { series });
 
                     if (redraw) {
                         chart.redraw(animation);
