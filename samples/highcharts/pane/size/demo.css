@@ -1,3 +1,5 @@
+@import url("https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css");
+
 body {
     font-family:
         -apple-system,
@@ -19,6 +21,19 @@ body {
 
 #container div {
     margin: 0 auto;
+}
+
+#resizer {
+    border: 1px solid silver;
+    background: #f8f8f8;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 4px;
+    margin: 1rem;
+}
+
+#inner-resizer { /* make room for the resize handle */
+    padding: 10px;
 }
 
 label {
