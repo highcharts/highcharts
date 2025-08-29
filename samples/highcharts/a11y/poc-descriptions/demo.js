@@ -687,6 +687,21 @@ function basicSummary(chart) {
         ${linkCount} links${namesSnippet ? `: ${namesSnippet}` : ''}.`;
     }
 
+    if (family === 'grid') {
+        const s = chart.series[0]; // most heatmaps only have 1 series (?)
+        const xCategory = chart.xAxis?.[0]?.categories || [];
+        const yCategory = chart.yAxis?.[0]?.categories || [];
+        const dimension = xCategory.length && yCategory.length ?
+            `${xCategory.length}×${yCategory.length} cells` :
+            `${s?.points?.length || 0} cells`;
+
+        // Not sure if we can use cells, since heatmaps are not strictly
+        // 2D, but the chart family says grid.
+        return `${typeLabel} with ${dimension}${s?.name ?
+            ` (${s.name})` : ''}.`;
+    }
+
+
     // Default
     const seriesNames = visibleSeries.map(s => s.name || 'Unnamed');
     const formatted = seriesNames.length <= 1 ?
@@ -787,7 +802,7 @@ function describeHeatmap() { // Heatmap showing sales per employee
         <li>X-axis: Employees (Alexander, Marie, Maximilian, 
         Sophia, Lukas, Maria, Leon, Anna, Tim, Laura)</li>
         <li>Y-axis: Weekdays (Monday–Friday)</li>
-        <li>Values range: 1–132 sales</li>
+        <li>Range: 1–132 sales</li>
     </ul>
     <ul>
         <li>Highest sales: 132 by Sophia on Tuesday</li>
