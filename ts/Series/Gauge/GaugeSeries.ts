@@ -118,7 +118,7 @@ class GaugeSeries extends Series {
             /**
              * When this option is `true`, the dial will wrap around the axes.
              * For instance, in a full-range gauge going from 0 to 360, a value
-             * of 400 will point to 40\. When `wrap` is `false`, the dial stops
+             * of 400 will point to 40. When `wrap` is `false`, the dial stops
              * at 360.
              *
              * @see [overshoot](#plotOptions.gauge.overshoot)
@@ -132,20 +132,20 @@ class GaugeSeries extends Series {
 
             /**
              * Data labels for the gauge. For gauges, the data labels are
-             * enabled by default and shown in a bordered box below the point.
+             * enabled by default and shown in the center.
              *
              * @since   2.3.0
              * @product highcharts
              */
             dataLabels: {
-                borderColor: Palette.neutralColor20,
-                borderRadius: 3,
-                borderWidth: 1,
                 crop: false,
                 defer: false,
                 enabled: true,
                 verticalAlign: 'top',
-                y: 15,
+                style: {
+                    fontSize: '1.4em'
+                },
+                y: 25,
                 zIndex: 2
             },
 
@@ -386,6 +386,8 @@ class GaugeSeries extends Series {
                  */
                 backgroundColor: Palette.neutralColor100
             },
+
+            threshold: 0,
 
             tooltip: {
                 headerFormat: ''
