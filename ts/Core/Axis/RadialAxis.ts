@@ -819,7 +819,7 @@ namespace RadialAxis {
             titleOptions = this.options.title;
 
         return {
-            x: chart.plotLeft + center[0] + ((titleOptions as any).x || 0),
+            x: chart.plotLeft + center[0] + (titleOptions.x || 0),
             y: (
                 chart.plotTop +
                 center[1] -
@@ -829,11 +829,11 @@ namespace RadialAxis {
                         middle: 0.25,
                         low: 0
                     } as Record<string, number>)[
-                        (titleOptions as any).align
+                        titleOptions.align
                     ] *
                     center[2]
                 ) +
-                ((titleOptions as any).y || 0)
+                (titleOptions.y || 0)
             )
         };
     }
