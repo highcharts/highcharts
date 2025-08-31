@@ -1669,8 +1669,8 @@ class Point {
 interface Point extends PointLike {
     // Merge extensions with point class
     hcEvents?: Record<
-    string,
-    Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+        string,
+        Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
     >;
 }
 

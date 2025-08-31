@@ -477,8 +477,7 @@ class Legend {
             Series|Point
         )
     ): void {
-        const checkbox = item.checkbox,
-            legendItem = item.legendItem || {};
+        const legendItem = item.legendItem || {};
 
         // Destroy SVG elements
         for (const key of ['group', 'label', 'line', 'symbol'] as const) {
@@ -487,9 +486,7 @@ class Legend {
             }
         }
 
-        if (checkbox) {
-            discardElement(checkbox);
-        }
+        item.checkbox = discardElement(item.checkbox);
 
         item.legendItem = void 0;
     }
@@ -1829,6 +1826,9 @@ export default Legend;
  * @type {Highcharts.SVGElement|undefined}
  *//**
  * @name Highcharts.LegendItemObject#symbol
+ * @type {Highcharts.SVGElement|undefined}
+ *//**
+ * @name Highcharts.LegendItemObject#label
  * @type {Highcharts.SVGElement|undefined}
  */
 

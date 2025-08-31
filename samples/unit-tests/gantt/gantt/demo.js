@@ -911,4 +911,60 @@
                 'Array-based points are loaded into the chart'
             );
         });
+
+    QUnit.test(
+        'labelIcon toggles on series visibility (#21666, #21532)',
+        function (assert) {
+            const chart = Highcharts.ganttChart('container', {
+                yAxis: {
+                    type: 'treegrid'
+                },
+                series: [
+                    {
+                        name: 'Project',
+                        data: [{
+                            id: 'project',
+                            name: 'Project',
+                            start: Date.UTC(2014, 10, 17),
+                            end: Date.UTC(2014, 10, 18),
+                            isParent: true,
+                            pointWidth: 0
+                        }]
+                    },
+                    {
+                        name: 'Task2',
+                        data: [{
+                            id: 'task001',
+                            name: 'Task2',
+                            start: Date.UTC(2014, 10, 17),
+                            end: Date.UTC(2014, 10, 18),
+                            y: 1,
+                            parent: 'project'
+                        }]
+                    }
+                ]
+            });
+
+            const tick = chart.yAxis[0].ticks[0];
+
+            assert.ok(
+                tick.treeGrid?.labelIcon && !tick.treeGrid.labelIcon.destroyed,
+                'Icon exists initially'
+            );
+
+            chart.series[1].hide();
+
+            assert.strictEqual(
+                tick.treeGrid.labelIcon,
+                undefined,
+                'Icon removed after hiding child series'
+            );
+
+            chart.series[1].show();
+
+            assert.ok(
+                tick.treeGrid.labelIcon && !tick.treeGrid.labelIcon.destroyed,
+                'Icon restored after showing series'
+            );
+        });
 }());

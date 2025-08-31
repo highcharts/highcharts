@@ -778,7 +778,7 @@ function hasExtremes(
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return dataLength > (options.boostThreshold || Number.MAX_VALUE) &&
+    return dataLength > pick(options.boostThreshold, Number.MAX_VALUE) &&
             // Defined yAxis extremes
             isNumber(yAxis.min) &&
             isNumber(yAxis.max) &&
@@ -810,7 +810,7 @@ const getSeriesBoosting = (
         isChartSeriesBoosting(series.chart) ||
         (
             (data ? data.length : 0) >=
-            (series.options.boostThreshold || Number.MAX_VALUE)
+            pick(series.options.boostThreshold, Number.MAX_VALUE)
         )
     );
 };
@@ -922,13 +922,15 @@ function getPoint(
             false
         ),
         pointIndex = boostPoint.i,
+        pointColor = (data?.[pointIndex] as { color?: string } | undefined)
+            ?.color,
         point = new PointClass(
             series as BoostSeriesComposition,
             (isScatter && xData && yData) ?
                 [xData[pointIndex], yData[pointIndex]] :
                 (
                     isArray(data) ? data : []
-                )[boostPoint.i],
+                )[pointIndex],
             xData ? xData[pointIndex] : void 0
         ) as BoostPointComposition;
 
@@ -964,6 +966,9 @@ function getPoint(
     point.index = pointIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
+    if (pointColor) {
+        point.color = pointColor; // Set color for hover effect #23370
+    }
     return point;
 }
 
