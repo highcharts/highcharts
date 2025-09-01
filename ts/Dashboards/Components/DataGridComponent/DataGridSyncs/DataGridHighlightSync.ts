@@ -60,8 +60,7 @@ const syncPair: Sync.SyncPair = {
         }
 
         const { dataCursor: cursor } = board;
-        const table =
-            this.getFirstConnector()?.getTable(component.dataTableKey);
+        const table = this.connectorHandlers[0]?.presentationTable;
 
         const onCellHover = (e: TableCell.TableCellEvent): void => {
             if (table) {
@@ -127,8 +126,7 @@ const syncPair: Sync.SyncPair = {
             return;
         }
 
-        const table =
-            component.getFirstConnector()?.getTable(component.dataTableKey);
+        const table = component.connectorHandlers[0]?.presentationTable;
 
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
