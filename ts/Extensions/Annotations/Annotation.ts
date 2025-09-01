@@ -658,6 +658,10 @@ class Annotation extends EventEmitter implements ControlTarget {
             })
             .add();
 
+        if (this.options.className) {
+            this.graphic.addClass(this.options.className);
+        }
+
         this.shapesGroup = renderer
             .g('annotation-shapes')
             .add(this.graphic);
