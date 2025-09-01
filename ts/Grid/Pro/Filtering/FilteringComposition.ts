@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Sebastian Bochan
+ *  - Kamil Kubik
  *
  * */
 
@@ -79,7 +80,9 @@ namespace FilteringComposition {
         'equals',
         'doesNotEqual',
         'beginsWith',
-        'endsWith'
+        'endsWith',
+        'empty',
+        'notEmpty'
     ] as const;
 
     /**
@@ -91,15 +94,21 @@ namespace FilteringComposition {
         'greaterThan',
         'greaterThanOrEqualTo',
         'lessThan',
-        'lessThanOrEqualTo'
+        'lessThanOrEqualTo',
+        'empty',
+        'notEmpty'
     ] as const;
 
     /**
      * DateTime conditions values for the condition select options.
      */
     export const dateTimeConditions: DateTimeCondition[] = [
+        'equals',
+        'doesNotEqual',
         'before',
-        'after'
+        'after',
+        'empty',
+        'notEmpty'
     ] as const;
 
     /**
@@ -162,29 +171,37 @@ namespace FilteringComposition {
     ): void {
         // Render the input element.
         this.filterInput = makeHTMLElement('input', {}, inputWrapper);
+        this.filterInput.placeholder = 'value...';
 
-        // TO DO: Handle the datetime type.
         if (columnType === 'number') {
             this.filterInput.type = 'number';
         }
 
-        // Attach keyupevent listener.
-        addEvent(this.filterInput, 'keyup', (e): void => {
-            if (columnType === 'number') {
-                filteringOptions.value = Number(e.target.value);
+        if (columnType === 'datetime') {
+            this.filterInput.type = 'date';
+        }
 
-                // TO DO: Handle the datetime type.
-            } else {
-                filteringOptions.value = e.target.value;
-            }
+        // Assign the default input value.
+        if (filteringOptions.value) {
+            this.filterInput.value = filteringOptions.value.toString();
+        }
 
-            void column.filtering?.applyFilter(filteringOptions);
-        });
+        // Attach keyup event listener (string type only).
+        if (columnType === 'string' || columnType === 'number') {
+            addEvent(this.filterInput, 'keyup', (e): void => {
+                const value = e.target.value;
+                filteringOptions.value =
+                    columnType === 'number' ? Number(value) : value;
+                void column.filtering?.applyFilter(filteringOptions);
+            });
+        }
 
-        // Attach change event listener (number type only).
-        if (columnType === 'number') {
+        // Attach change event listener (number or datetime types).
+        if (columnType === 'number' || columnType === 'datetime') {
             addEvent(this.filterInput, 'change', (e): void => {
-                filteringOptions.value = Number(e.target.value);
+                const value = e.target.value;
+                filteringOptions.value =
+                    columnType === 'number' ? Number(value) : value;
                 void column.filtering?.applyFilter(filteringOptions);
             });
         }
@@ -215,31 +232,28 @@ namespace FilteringComposition {
         inputWrapper: HTMLElement,
         conditions: Condition[]
     ): void {
-        // Render the input element.
-        this.filterInput = makeHTMLElement('select', {}, inputWrapper);
+        // Render the select element.
+        this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
 
         // Render the options.
-        let index = 0;
-        for (const option of conditions) {
+        for (const condition of conditions) {
             const optionElement = document.createElement('option');
+            optionElement.value = condition;
+            optionElement.textContent = parseCamelCaseToReadable(condition);
+            this.filterSelect.appendChild(optionElement);
+        }
 
-            optionElement.value = option;
-            optionElement.textContent = option;
-
-            // Always set the first option from map as selected.
-            if (index === 0) {
-                optionElement.selected = true;
-
-                // Set the default condition.
-                filteringOptions.condition = option;
-            }
-
-            this.filterInput.appendChild(optionElement);
-            index++;
+        // Use condition from options or first available condition as default.
+        const filteringCondition = filteringOptions.condition;
+        if (filteringCondition && conditions.includes(filteringCondition)) {
+            this.filterSelect.value = filteringCondition;
+        } else {
+            this.filterSelect.value = conditions[0];
+            filteringOptions.condition = conditions[0];
         }
 
         // Attach event listener.
-        addEvent(this.filterInput, 'change', (e): void => {
+        addEvent(this.filterSelect, 'change', (e): void => {
             const option: Condition = e.target.value;
             filteringOptions.condition = option;
             void column.filtering?.applyFilter(filteringOptions);
@@ -297,24 +311,23 @@ namespace FilteringComposition {
                 break;
             case 'boolean':
                 // Render the select element.
-                this.filterInput = makeHTMLElement('select', {}, inputWrapper);
+                this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
 
                 // Render the options.
                 for (const option of Object.keys(booleanValueMap)) {
                     const optionElement = document.createElement('option');
                     optionElement.value = option;
                     optionElement.textContent = option;
+                    this.filterSelect.appendChild(optionElement);
+                }
 
-                    // Set the default value.
-                    if (option === 'all') {
-                        optionElement.selected = true;
-                    }
-
-                    this.filterInput.appendChild(optionElement);
+                // Assign the default select value.
+                if (filteringOptions.value) {
+                    this.filterSelect.value = filteringOptions.value.toString();
                 }
 
                 // Attach event listener.
-                addEvent(this.filterInput, 'change', (e): void => {
+                addEvent(this.filterSelect, 'change', (e): void => {
                     const option: keyof typeof booleanValueMap = e.target.value;
 
                     filteringOptions.value = booleanValueMap[option];
@@ -332,8 +345,40 @@ namespace FilteringComposition {
                 break;
         }
 
-        this.headerContent.style.paddingBottom =
-            this.filterInput.offsetHeight + this.filterInput.offsetTop + 'px';
+        // Apply initial filtering if provided from options.
+        if (filteringOptions.value && filteringOptions.condition) {
+            void column.filtering?.applyFilter(filteringOptions);
+        }
+
+        // Set the padding bottom of the header content to the height of the
+        // filter select or input element.
+        const filterSelect = this.filterSelect;
+        const filterInput = this.filterInput;
+
+        if (filterSelect) {
+            this.headerContent.style.paddingBottom =
+                filterSelect.offsetHeight + filterSelect.offsetTop + 'px';
+        } else if (filterInput) {
+            this.headerContent.style.paddingBottom =
+                filterInput.offsetHeight + filterInput.offsetTop + 'px';
+        }
+    }
+
+    /**
+     * Parses a camel case string to a readable string.
+     *
+     * @param value
+     * The camel case string to parse.
+     *
+     * @returns
+     * The readable string.
+     */
+    function parseCamelCaseToReadable(value: string): string {
+        return value
+            .replace(/([A-Z])/g, ' $1')
+            .trim()
+            .toLowerCase()
+            .split(/\s+/).join(' ');
     }
 }
 
@@ -345,7 +390,16 @@ namespace FilteringComposition {
 
 declare module '../../Core/Table/Header/HeaderCell' {
     export default interface HeaderCell {
-        filterInput: HTMLInputElement
+        /**
+         * The input element for the filtering. Can be of type `text`, `number`
+         * or `date`.
+         */
+        filterInput: HTMLInputElement;
+
+        /**
+         * The select element setting the condition for the filtering.
+         */
+        filterSelect: HTMLSelectElement;
     }
 }
 
@@ -375,7 +429,9 @@ declare module '../../Core/Options' {
         | 'equals'
         | 'doesNotEqual'
         | 'beginsWith'
-        | 'endsWith';
+        | 'endsWith'
+        | 'empty'
+        | 'notEmpty';
 
     /**
      * Number filtering conditions.
@@ -386,22 +442,26 @@ declare module '../../Core/Options' {
         | 'greaterThan'
         | 'greaterThanOrEqualTo'
         | 'lessThan'
-        | 'lessThanOrEqualTo';
+        | 'lessThanOrEqualTo'
+        | 'empty'
+        | 'notEmpty';
 
     /**
      * DateTime filtering conditions.
      */
-    export type DateTimeCondition = 'before' | 'after';
+    export type DateTimeCondition =
+        | 'equals'
+        | 'doesNotEqual'
+        | 'before'
+        | 'after'
+        | 'empty'
+        | 'notEmpty';
 
     /**
      * Combined filtering conditions.
      */
     export type Condition =
-        | StringCondition
-        | NumberCondition
-        | DateTimeCondition
-        | 'notEmpty'
-        | 'empty';
+        StringCondition | NumberCondition | DateTimeCondition;
 
     /**
      * Column filtering options.

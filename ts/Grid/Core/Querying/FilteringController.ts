@@ -89,7 +89,8 @@ class FilteringController {
         const { condition, value } = options;
         const stringifiedValue = isString(value) ? value : '';
 
-        if (!value && !stringifiedValue) {
+        // Allow `null` (empty) and boolean `false` values.
+        if (typeof value === 'undefined' && !stringifiedValue) {
             return;
         }
 
