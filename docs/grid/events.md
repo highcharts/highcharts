@@ -56,10 +56,10 @@ columnDefaults: {
             console.log('Column sorted:', this);
         },
         beforeFiltering: function () {
-            console.log('Column sorted:', this);
+            console.log('Column filtered:', this);
         },
         afterFiltering: function () {
-            console.log('Column sorted:', this);
+            console.log('Column filtered:', this);
         }
     },
     cells: {
