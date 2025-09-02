@@ -42,8 +42,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/KDPointSearchObjectLike' {
-    interface KDPointSearchObjectLike {
+declare module '../../Core/Series/KDPointSearchObjectBase' {
+    interface KDPointSearchObjectBase {
         lat?: number;
         lon?: number;
     }

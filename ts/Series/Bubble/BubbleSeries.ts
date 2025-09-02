@@ -23,7 +23,7 @@ import type Legend from '../../Core/Legend/Legend';
 import type Point from '../../Core/Series/Point';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type KDPointSearchObjectLike from '../../Core/Series/KDPointSearchObjectLike';
+import type KDPointSearchObjectBase from '../../Core/Series/KDPointSearchObjectBase';
 import type PointerEvent from '../../Core/PointerEvent';
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
@@ -78,7 +78,7 @@ type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
 
-interface KDPointSearchObject extends KDPointSearchObjectLike {
+interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
 /* *

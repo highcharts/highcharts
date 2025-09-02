@@ -21,7 +21,7 @@
  * Use the `declare module './PointBase'` pattern to overload the interface in
  * this definition file.
  */
-export interface KDPointSearchObjectLike {
+export interface KDPointSearchObjectBase {
     clientX?: number;
     plotY?: number;
 }
@@ -32,4 +32,4 @@ export interface KDPointSearchObjectLike {
  *
  * */
 
-export default KDPointSearchObjectLike;
+export default KDPointSearchObjectBase;

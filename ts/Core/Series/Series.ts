@@ -24,7 +24,7 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
-import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
+import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
 import type Legend from '../Legend/Legend';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
@@ -148,7 +148,7 @@ interface KDNode {
     right?: KDNode;
 }
 
-interface KDPointSearchObject extends KDPointSearchObjectLike {
+interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
 /* *
