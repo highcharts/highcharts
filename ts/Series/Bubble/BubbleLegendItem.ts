@@ -55,8 +55,8 @@ const {
  *
  * */
 
-declare module '../../Core/Legend/LegendLike' {
-    interface LegendLike {
+declare module '../../Core/Legend/LegendBase' {
+    interface LegendBase {
         bubbleLegend?: BubbleLegendItem;
     }
 }

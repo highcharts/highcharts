@@ -14,7 +14,7 @@
  *
  * */
 
-export interface LegendLike {
+export interface LegendBase {
 
 }
 
@@ -24,4 +24,4 @@ export interface LegendLike {
  *
  * */
 
-export default LegendLike;
+export default LegendBase;
