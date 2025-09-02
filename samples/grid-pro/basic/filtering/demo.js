@@ -13,20 +13,20 @@ Grid.grid('container', {
                 'Apples', 'Pears', 'Plums', 'Apricots', 'Bananas', 'Oranges',
                 'Grapes', 'Strawberries', 'Blueberries', 'Mangoes',
                 'Pineapples', 'Kiwis', 'Peaches', 'Cherries', 'Watermelons',
-                'Cantaloupe', 'Raspberries', 'Blackberries', 'Lemons', 'Limes'
+                'Cantaloupe', 'Raspberries', null, 'Lemons', 'Limes'
             ],
             weight: [
-                100, 40, 5, 200, 120, 180, 3, 25, 15, 350, 1200, 8, 150, 20,
+                100, 40, 5, 200, 120, null, 3, 25, 15, 350, 1200, 8, 150, 20,
                 5000, 2000, 12, 18, 140, 110
             ],
             price: [
                 1.5, 2.53, 5, 4.5, 0.89, 3.20, 6.75, 8.99, 12.50, 2.99, 4.25,
-                1.89, 3.75, 7.20, 8.50, 5.99, 9.25, 10.75, 2.15, 1.95
+                1.89, 3.75, 7.20, 8.50, null, 9.25, 10.75, 2.15, 1.95
             ],
             url: [
                 'http://path1.to', 'http://path2.to', 'http://path2.to',
                 'http://path3.to', 'http://path4.to', 'http://path5.to',
-                'http://path6.to', 'http://path7.to', 'http://path8.to',
+                null, 'http://path7.to', 'http://path8.to',
                 'http://path9.to', 'http://path10.to', 'http://path11.to',
                 'http://path12.to', 'http://path13.to', 'http://path14.to',
                 'http://path15.to', 'http://path16.to', 'http://path17.to',
@@ -35,7 +35,7 @@ Grid.grid('container', {
             icon: [
                 'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
                 'Bananas URL', 'Oranges URL', 'Grapes URL', 'Strawberries URL',
-                'Blueberries URL', 'Mangoes URL', 'Pineapples URL', 'Kiwis URL',
+                null, 'Mangoes URL', 'Pineapples URL', 'Kiwis URL',
                 'Peaches URL', 'Cherries URL', 'Watermelons URL',
                 'Cantaloupe URL', 'Raspberries URL', 'Blackberries URL',
                 'Lemons URL', 'Limes URL'
@@ -44,7 +44,7 @@ Grid.grid('container', {
                 '2025-10-01', '2025-10-02', '2025-10-03', '2025-10-04',
                 '2025-10-05', '2025-10-06', '2025-10-07', '2025-10-08',
                 '2025-10-09', '2025-10-10', '2025-10-11', '2025-10-12',
-                '2025-10-13', '2025-10-14', '2025-10-15', '2025-10-16',
+                '2025-10-13', '2025-10-14', null, '2025-10-16',
                 '2025-10-17', '2025-10-18', '2025-10-19', '2025-10-20'
             ]
         }

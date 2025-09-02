@@ -280,6 +280,15 @@ namespace FilteringComposition {
         addEvent(this.filterSelect, 'change', (e): void => {
             const option: Condition = e.target.value;
             filteringOptions.condition = option;
+
+            // Disable the input since the `empty` or `notEmpty` condition
+            // doesn't require a value.
+            if (option === 'empty' || option === 'notEmpty') {
+                this.filterInput.disabled = true;
+            } else if (this.filterInput.disabled) {
+                this.filterInput.disabled = false;
+            }
+
             void column.filtering?.applyFilter(filteringOptions);
         });
     }
