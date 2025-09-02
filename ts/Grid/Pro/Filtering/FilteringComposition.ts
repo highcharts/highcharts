@@ -59,6 +59,14 @@ namespace FilteringComposition {
     export type BooleanSelectOptions = 'all' | 'true' | 'false' | 'empty';
 
     /**
+     * The event object for the 'afterRender' event.
+     */
+    export type AfterRenderEvent = Event & {
+        column: Column;
+        filtering: boolean;
+    };
+
+    /**
      * Corresponding values for the boolean select options.
      */
     export const booleanValueMap: Record<
@@ -190,8 +198,16 @@ namespace FilteringComposition {
         if (columnType === 'string' || columnType === 'number') {
             addEvent(this.filterInput, 'keyup', (e): void => {
                 const value = e.target.value;
-                filteringOptions.value =
-                    columnType === 'number' ? Number(value) : value;
+
+                if (columnType === 'number') {
+                    // Set the number value to `undefined` if the input is empty
+                    // to clear the filtering condition.
+                    filteringOptions.value =
+                        value === '' ? void 0 : Number(value);
+                } else {
+                    filteringOptions.value = value;
+                }
+
                 void column.filtering?.applyFilter(filteringOptions);
             });
         }
@@ -200,8 +216,16 @@ namespace FilteringComposition {
         if (columnType === 'number' || columnType === 'datetime') {
             addEvent(this.filterInput, 'change', (e): void => {
                 const value = e.target.value;
-                filteringOptions.value =
-                    columnType === 'number' ? Number(value) : value;
+
+                if (columnType === 'number') {
+                    // Set the number value to `undefined` if the input is empty
+                    // to clear the filtering condition.
+                    filteringOptions.value =
+                        value === '' ? void 0 : Number(value);
+                } else {
+                    filteringOptions.value = value;
+                }
+
                 void column.filtering?.applyFilter(filteringOptions);
             });
         }
@@ -265,13 +289,19 @@ namespace FilteringComposition {
      *
      * @param this
      * Reference to the column's header.
+     *
+     * @param event
+     * The event object for the `afterRender` event.
      */
-    function renderFilteringContent(this: HeaderCell): void {
+    function renderFilteringContent(
+        this: HeaderCell,
+        event: AfterRenderEvent
+    ): void {
         const column = this.column;
 
         if (
             !column ||
-            !this.headerContent ||
+            !event.filtering ||
             !column.options?.filtering?.enabled
         ) {
             return;
@@ -352,15 +382,17 @@ namespace FilteringComposition {
 
         // Set the padding bottom of the header content to the height of the
         // filter select or input element.
-        const filterSelect = this.filterSelect;
-        const filterInput = this.filterInput;
+        if (this.headerContent) {
+            const filterSelect = this.filterSelect;
+            const filterInput = this.filterInput;
 
-        if (filterSelect) {
-            this.headerContent.style.paddingBottom =
-                filterSelect.offsetHeight + filterSelect.offsetTop + 'px';
-        } else if (filterInput) {
-            this.headerContent.style.paddingBottom =
-                filterInput.offsetHeight + filterInput.offsetTop + 'px';
+            if (filterSelect) {
+                this.headerContent.style.paddingBottom =
+                    filterSelect.offsetHeight + filterSelect.offsetTop + 'px';
+            } else if (filterInput) {
+                this.headerContent.style.paddingBottom =
+                    filterInput.offsetHeight + filterInput.offsetTop + 'px';
+            }
         }
     }
 

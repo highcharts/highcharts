@@ -1069,10 +1069,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 /* Filtering */
 .hcg-col-filter-wrapper,
 .highcharts-datagrid-col-filter-wrapper {
-    bottom: 0;
-    left: 0;
-    padding: var(--ig-header-padding);
-    position: absolute;
     width: 100%;
     display: flex;
     flex-flow: column;

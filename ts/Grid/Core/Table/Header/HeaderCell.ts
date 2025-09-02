@@ -139,32 +139,47 @@ class HeaderCell extends Cell {
 
     /**
      * Render the cell container.
+     *
+     * @param filtering
+     * Whether the cell is part of the filtering row.
      */
-    public override render(): void {
+    public override render(filtering?: boolean): void {
         const { column } = this;
         const options = merge(column?.options || {}, this.options);
-        const headerCellOptions = options.header || {};
-        const isSortableData = options.sorting?.sortable && column?.data;
 
-        if (headerCellOptions.formatter) {
-            this.value = headerCellOptions.formatter.call(this).toString();
-        } else if (isString(headerCellOptions.format)) {
-            this.value = column ?
-                column.format(headerCellOptions.format) :
-                headerCellOptions.format;
-        } else {
-            this.value = column?.id || '';
+        if (!filtering) {
+            const headerCellOptions = options.header || {};
+            const isSortableData = options.sorting?.sortable && column?.data;
+
+            if (headerCellOptions.formatter) {
+                this.value = headerCellOptions.formatter.call(this).toString();
+            } else if (isString(headerCellOptions.format)) {
+                this.value = column ?
+                    column.format(headerCellOptions.format) :
+                    headerCellOptions.format;
+            } else {
+                this.value = column?.id || '';
+            }
+
+            this.headerContent = makeHTMLElement('span', {
+                className: Globals.getClassName('headerCellContent')
+            }, this.htmlElement);
+
+            // Render the header cell element content.
+            setHTMLContent(this.headerContent, this.value);
+
+            if (isSortableData) {
+                column.viewport.grid.accessibility?.addSortableColumnHint(
+                    this.headerContent
+                );
+            }
+
+            // Add sorting
+            this.initColumnSorting();
         }
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
-
-        this.headerContent = makeHTMLElement('span', {
-            className: Globals.getClassName('headerCellContent')
-        }, this.htmlElement);
-
-        // Render the header cell element content.
-        setHTMLContent(this.headerContent, this.value);
 
         this.htmlElement.setAttribute('scope', 'col');
 
@@ -176,12 +191,6 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
-
-            if (isSortableData) {
-                column.viewport.grid.accessibility?.addSortableColumnHint(
-                    this.headerContent
-                );
-            }
 
             // Add user column classname
             if (column.options.className) {
@@ -195,14 +204,11 @@ class HeaderCell extends Cell {
                 column,
                 this
             );
-
-            // Add sorting
-            this.initColumnSorting();
         }
 
         this.setCustomClassName(options.header?.className);
 
-        fireEvent(this, 'afterRender', { column });
+        fireEvent(this, 'afterRender', { column, filtering });
     }
 
     public override reflow(): void {

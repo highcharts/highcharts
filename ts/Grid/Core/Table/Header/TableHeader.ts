@@ -107,9 +107,20 @@ class TableHeader {
             return;
         }
 
+        // Render regular, multiple level rows.
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
             const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
             row.renderMultipleLevel(i);
+            this.rows.push(row);
+        }
+
+        // Render a row with empty cells for filtering.
+        if (this.columns.some((column): boolean =>
+            !!column.options?.filtering?.enabled
+        )) {
+            const row =
+                new HeaderRow(vp, 1, { 'aria-rowindex': this.levels + 1 });
+            row.renderFilterRow(this.columns);
             this.rows.push(row);
         }
     }
