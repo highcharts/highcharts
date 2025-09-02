@@ -27,7 +27,7 @@ import type {
     ExportingOptions,
     ExportingButtonOptions
 } from './ExportingOptions';
-import type ExportingLike from './ExportingLike';
+import type ExportingBase from './ExportingBase';
 import type {
     DOMElementType,
     HTMLDOMElement,
@@ -2474,7 +2474,7 @@ class Exporting {
  *
  * */
 
-interface Exporting extends ExportingLike {}
+interface Exporting extends ExportingBase {}
 
 /* *
  *

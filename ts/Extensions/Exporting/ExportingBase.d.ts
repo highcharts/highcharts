@@ -14,7 +14,7 @@
  *
  * */
 
-export interface ExportingLike {}
+export interface ExportingBase {}
 
 
 /* *
@@ -23,4 +23,4 @@ export interface ExportingLike {}
  *
  * */
 
-export default ExportingLike;
+export default ExportingBase;

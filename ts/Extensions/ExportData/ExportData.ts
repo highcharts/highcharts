@@ -142,8 +142,8 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Extensions/Exporting/ExportingLike' {
-    interface ExportingLike {
+declare module '../../Extensions/Exporting/ExportingBase' {
+    interface ExportingBase {
         ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
         isDataTableVisible?: boolean;
