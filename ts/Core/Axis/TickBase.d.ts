@@ -19,7 +19,7 @@
  * Helper interface for Tick.
  *
  */
-export interface TickLike {
+export interface TickBase {
     // Add with `declare module` pattern
 }
 
@@ -29,4 +29,4 @@ export interface TickLike {
  *
  * */
 
-export default TickLike;
+export default TickBase;

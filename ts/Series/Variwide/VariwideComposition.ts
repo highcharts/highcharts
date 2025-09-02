@@ -47,8 +47,8 @@ declare module '../../Core/Axis/AxisBase' {
     }
 }
 
-declare module '../../Core/Axis/TickLike' {
-    interface TickLike {
+declare module '../../Core/Axis/TickBase' {
+    interface TickBase {
         postTranslate(
             xy: PositionObject,
             xOrY: keyof PositionObject,

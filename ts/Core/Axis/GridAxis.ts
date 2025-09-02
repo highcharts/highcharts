@@ -95,8 +95,8 @@ declare module '../Chart/ChartBase'{
     }
 }
 
-declare module './TickLike' {
-    interface TickLike {
+declare module './TickBase' {
+    interface TickBase {
         slotWidth?: number;
     }
 }

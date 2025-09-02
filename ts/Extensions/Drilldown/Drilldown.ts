@@ -80,8 +80,8 @@ declare module '../../Core/Axis/AxisBase' {
     }
 }
 
-declare module '../../Core/Axis/TickLike' {
-    interface TickLike {
+declare module '../../Core/Axis/TickBase' {
+    interface TickBase {
         drillable(): void;
     }
 }
