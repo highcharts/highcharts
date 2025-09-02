@@ -18,7 +18,7 @@
  * Optional properties for the SVGElement class. Should be defined outside of
  * this file by `declare module` pattern.
  */
-export interface SVGElementLike {
+export interface SVGElementBase {
     [key: string]: any;
 }
 
@@ -28,4 +28,4 @@ export interface SVGElementLike {
  *
  * */
 
-export default SVGElementLike;
+export default SVGElementBase;

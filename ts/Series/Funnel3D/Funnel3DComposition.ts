@@ -45,8 +45,8 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         finishedOnAdd?: boolean;
         lowerGroup?: SVGElement;
         upperGroup?: SVGElement;

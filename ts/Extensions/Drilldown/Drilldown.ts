@@ -117,8 +117,8 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
     }
 }

@@ -60,8 +60,8 @@ const {
  *
  * */
 
-declare module './SVGElementLike' {
-    interface SVGElementLike {
+declare module './SVGElementBase' {
+    interface SVGElementBase {
         attribs?: SVGAttributes;
         parts?: Array<string>;
         pathType?: string;

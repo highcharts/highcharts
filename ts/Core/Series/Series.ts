@@ -118,8 +118,8 @@ declare module '../Chart/ChartBase'{
     }
 }
 
-declare module '../Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         survive?: boolean;
     }
 }

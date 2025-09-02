@@ -52,8 +52,8 @@ declare module '../Core/Chart/ChartBase'{
     }
 }
 
-declare module '../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         focusBorder?: SVGElement;
         /** @requires modules/accessibility */
         addFocusBorder(margin: number, attribs: SVGAttributes): void;

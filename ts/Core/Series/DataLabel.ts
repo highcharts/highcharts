@@ -133,8 +133,8 @@ declare module './SeriesOptions' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         options?: DataLabelOptions;
     }
 }
