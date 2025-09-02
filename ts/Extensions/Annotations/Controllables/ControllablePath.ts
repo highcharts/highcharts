@@ -40,8 +40,8 @@ const {
  *
  * */
 
-declare module './ControllableLike' {
-    interface ControllableLike {
+declare module './ControllableBase' {
+    interface ControllableBase {
         markerEnd?: SVGElement;
         markerStart?: SVGElement;
     }
