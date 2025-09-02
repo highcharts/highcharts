@@ -43,8 +43,8 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Core/Axis/AxisBase' {
+    interface AxisBase {
         setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
         setModifier(

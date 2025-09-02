@@ -63,8 +63,8 @@ declare module './AxisComposition' {
     }
 }
 
-declare module './AxisLike' {
-    interface AxisLike {
+declare module './AxisBase' {
+    interface AxisBase {
         axisBorder?: SVGElement;
         hiddenLabels: Array<SVGElement>;
         hiddenMarks: Array<SVGElement>;

@@ -71,8 +71,8 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         ddPoints?: Record<string, Array<(false|Point)>>;
         oldPos?: number;
         drilldownCategory(x: number, e: MouseEvent): void;

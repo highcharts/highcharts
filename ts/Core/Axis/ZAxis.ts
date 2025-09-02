@@ -16,7 +16,7 @@
  *
  * */
 
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 
@@ -103,7 +103,7 @@ function onChartAfterCreateAxes(this: Chart): void {
  * 3D axis for z coordinates.
  * @private
  */
-class ZAxis extends Axis implements AxisLike {
+class ZAxis extends Axis implements AxisBase {
 
     /* *
      *

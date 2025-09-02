@@ -17,7 +17,7 @@
  * */
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisLike from '../AxisLike';
+import type AxisBase from '../AxisBase';
 import type Chart from '../../Chart/Chart.js';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
@@ -33,7 +33,7 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 import Axis from '../Axis.js';
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
-import ColorAxisLike from './ColorAxisLike.js';
+import ColorAxisBase from './ColorAxisBase.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
 import LegendSymbol from '../../Legend/LegendSymbol.js';
@@ -58,8 +58,8 @@ const {
  *
  * */
 
-declare module '../../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Axis/AxisBase' {
+    interface AxisBase {
         labelLeft?: number;
         labelRight?: number;
     }
@@ -123,7 +123,7 @@ defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
  * @param {Highcharts.ColorAxisOptions} userOptions
  * The color axis options for initialization.
  */
-class ColorAxis extends Axis implements AxisLike {
+class ColorAxis extends Axis implements AxisBase {
 
     /* *
      *
@@ -865,11 +865,11 @@ class ColorAxis extends Axis implements AxisLike {
  *
  * */
 
-interface ColorAxis extends ColorAxisLike {
+interface ColorAxis extends ColorAxisBase {
     // Nothing to add
 }
 
-extend(ColorAxis.prototype, ColorAxisLike);
+extend(ColorAxis.prototype, ColorAxisBase);
 
 /* *
  *
@@ -885,7 +885,7 @@ namespace ColorAxis {
      *
      * */
 
-    export type DataClassesOptions = ColorAxisLike.DataClassOptions;
+    export type DataClassesOptions = ColorAxisBase.DataClassOptions;
 
     export interface LegendItemObject extends DataClassesOptions {
         [key: string]: any;
@@ -905,7 +905,7 @@ namespace ColorAxis {
         width?: number;
     }
 
-    export interface Options extends ColorAxisLike.Options {
+    export interface Options extends ColorAxisBase.Options {
         dataClasses?: Array<DataClassesOptions>;
         layout?: 'horizontal'|'vertical';
         legend?: LegendOptions;

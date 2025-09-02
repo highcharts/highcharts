@@ -50,8 +50,8 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         recomputingForTilemap?: boolean;
     }
 }
