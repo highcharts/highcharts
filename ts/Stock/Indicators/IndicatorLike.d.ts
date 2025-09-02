@@ -24,7 +24,7 @@ export interface IndicatorLike extends Series {
     useCommonDataGrouping?: boolean;
 }
 
-export interface IndicatorLinkedSeriesLike {
+export interface IndicatorLinkedSeriesBase {
     processedYData?: (
         Array<(number|null)>|
         Array<Array<(number|null)>>

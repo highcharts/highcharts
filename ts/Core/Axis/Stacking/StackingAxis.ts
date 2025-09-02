@@ -65,8 +65,8 @@ declare module '../../Series/PointLike' {
     }
 }
 
-declare module '../../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Series/SeriesBase' {
+    interface SeriesBase {
         isRadialBar?: boolean;
         negStacks?: boolean;
         singleStacks?: false;

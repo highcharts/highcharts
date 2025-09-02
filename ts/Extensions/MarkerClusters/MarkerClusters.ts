@@ -72,8 +72,8 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         markerClusterInfo?: MarkerClusterInfoObject;
         markerClusterAlgorithms?: Record<string, MarkerClusterAlgorithmFunction>;
         markerClusterSeriesData?: (Array<Point|null>|null);

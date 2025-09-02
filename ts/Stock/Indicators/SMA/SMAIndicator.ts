@@ -15,7 +15,7 @@
  * */
 import type {
     IndicatorLike,
-    IndicatorLinkedSeriesLike
+    IndicatorLinkedSeriesBase
 } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeriesType from '../../../Series/Line/LineSeries';
@@ -209,7 +209,7 @@ class SMAIndicator extends LineSeries {
 
     public dataEventsToUnbind!: Array<Function>;
 
-    public linkedParent!: LineSeriesType&IndicatorLinkedSeriesLike;
+    public linkedParent!: LineSeriesType&IndicatorLinkedSeriesBase;
 
     public nameBase?: string;
 
@@ -265,7 +265,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public getValues<TLinkedSeries extends LineSeriesType>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,

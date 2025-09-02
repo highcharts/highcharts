@@ -49,8 +49,8 @@ declare module '../Series/PointLike' {
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike extends LegendItem {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase extends LegendItem {
         drawLegendSymbol: (
             legend: Legend,
             item: (Point|Series)

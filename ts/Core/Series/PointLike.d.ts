@@ -15,7 +15,7 @@
  * */
 
 import type PointOptions from './PointOptions';
-import type SeriesLike from './SeriesLike';
+import type SeriesBase from './SeriesBase';
 
 /* *
  *
@@ -32,7 +32,7 @@ import type SeriesLike from './SeriesLike';
  */
 export interface PointLike {
     options: PointOptions;
-    series: SeriesLike;
+    series: SeriesBase;
 }
 
 /* *

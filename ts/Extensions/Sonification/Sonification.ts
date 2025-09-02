@@ -68,8 +68,8 @@ declare module '../../Core/Chart/ChartBase' {
         updateSonificationEnabled: () => void;
     }
 }
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
     }
 }

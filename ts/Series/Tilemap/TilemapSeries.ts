@@ -56,8 +56,8 @@ declare module '../../Core/Axis/AxisLike' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         getSeriesPixelPadding?(axis: Axis): Record<string, number>;
     }
 }

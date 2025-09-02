@@ -89,8 +89,8 @@ declare module '../Options'{
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         clipBox?: BBoxObject;
         forceCropping(): boolean|undefined;
     }

@@ -65,8 +65,8 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         bubblePadding?: BubbleSeries['bubblePadding'];
         radii?: BubbleSeries['radii'];
         specialGroup?: BubbleSeries['specialGroup'];
