@@ -55,8 +55,8 @@ const {
  *
  * */
 
-declare module '../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         defIds?: Array<string>;
         idCounter?: number;
         patternElements?: Record<string, SVGElement>;

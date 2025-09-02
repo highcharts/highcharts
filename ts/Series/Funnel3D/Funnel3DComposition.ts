@@ -56,8 +56,8 @@ declare module '../../Core/Renderer/SVG/SVGElementLike' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         funnel3d(shapeArgs: SVGAttributes): SVGElement;
         funnel3dPath(shapeArgs: SVGAttributes): Funnel3DPathsObject;
     }

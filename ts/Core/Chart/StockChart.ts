@@ -96,8 +96,8 @@ declare module '../Series/SeriesBase' {
     }
 }
 
-declare module '../Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         crispPolyLine(points: SVGPath, width: number): SVGPath;
     }
 }

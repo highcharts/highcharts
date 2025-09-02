@@ -52,8 +52,8 @@ declare module '../../../Core/Options'{
     }
 }
 
-declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../../../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         addMarker(id: string, markerOptions: AST.Node): SVGElement;
     }
 }
