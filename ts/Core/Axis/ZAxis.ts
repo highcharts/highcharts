@@ -43,8 +43,8 @@ declare module './AxisType' {
     }
 }
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         zAxis?: Array<ZAxis>;
         addZAxis(options: DeepPartial<AxisOptions>): Axis;
     }

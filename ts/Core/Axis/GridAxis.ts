@@ -89,8 +89,8 @@ declare module './AxisOptions' {
     }
 }
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         marginRight: ChartOptions['marginRight'];
     }
 }

@@ -133,8 +133,8 @@ declare module '../../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         exporting?: Exporting;
         /**
          * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).

@@ -73,8 +73,8 @@ declare module '../../Core/Axis/AxisLike' {
     }
 }
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         extraBottomMargin?: boolean;
         extraTopMargin?: boolean;
         fixedRange?: number;

@@ -34,7 +34,7 @@ import type {
     NumberFormatterCallbackFunction,
     Options
 } from '../Options';
-import type ChartLike from './ChartLike';
+import type ChartBase from './ChartBase';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
@@ -129,8 +129,8 @@ declare module '../Axis/AxisLike' {
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+declare module './ChartBase' {
+    interface ChartBase {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
@@ -4032,7 +4032,7 @@ class Chart {
  *
  * */
 
-interface Chart extends ChartLike {
+interface Chart extends ChartBase {
     callbacks: Array<Chart.CallbackFunction>;
     collectionsWithInit: Record<string, [Function, Array<any>?]>;
     collectionsWithUpdate: Array<string>;

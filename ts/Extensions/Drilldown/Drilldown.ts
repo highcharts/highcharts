@@ -86,8 +86,8 @@ declare module '../../Core/Axis/TickLike' {
     }
 }
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         ddDupes?: Array<string>;
         drilldownLevels?: Array<Drilldown.LevelObject>;
         drillUpButton?: SVGElement;

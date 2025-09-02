@@ -14,7 +14,7 @@
  *
  * */
 
-export interface ChartLike {
+export interface ChartBase {
     // Nothing here yet
 }
 
@@ -25,4 +25,4 @@ export interface ChartLike {
  *
  * */
 
-export default ChartLike;
+export default ChartBase;

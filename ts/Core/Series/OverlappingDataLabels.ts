@@ -42,8 +42,8 @@ const {
  *
  * */
 
-declare module '../Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Chart/ChartBase' {
+    interface ChartBase {
         hideOverlappingLabels(labels: Array<SVGElement>): void;
     }
 }

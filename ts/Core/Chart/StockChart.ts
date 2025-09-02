@@ -75,8 +75,8 @@ declare module '../Axis/AxisLike' {
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+declare module './ChartBase' {
+    interface ChartBase {
         _labelPanes?: Record<string, Axis>;
         fixedRange?: number;
         setFixedRange(range: number|undefined): void;
