@@ -18,7 +18,7 @@
  * Optional properties for the Fx class. Should be defined outside of this file
  * by `declare module` pattern.
  */
-export interface FxLike {
+export interface FxBase {
     // Nothing here yet
 }
 
@@ -28,4 +28,4 @@ export interface FxLike {
  *
  * */
 
-export default FxLike;
+export default FxBase;

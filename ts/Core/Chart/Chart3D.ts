@@ -52,8 +52,8 @@ const {
  *
  * */
 
-declare module '../Animation/FxLike' {
-    interface FxLike {
+declare module '../Animation/FxBase' {
+    interface FxBase {
         matrixSetter?(): void;
     }
 }
