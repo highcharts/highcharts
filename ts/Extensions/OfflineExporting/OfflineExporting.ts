@@ -73,8 +73,8 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
         Exporting: typeof Exporting
     }
 }
