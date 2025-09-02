@@ -66,8 +66,8 @@ declare module '../../Core/Legend/LegendItem' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         a11yProxyElement?: ProxyElement;
     }
 }

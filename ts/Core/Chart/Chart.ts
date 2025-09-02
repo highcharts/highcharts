@@ -157,8 +157,8 @@ declare module '../Options' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike {
+declare module '../Series/PointBase' {
+    interface PointBase {
         touched?: boolean;
     }
 }

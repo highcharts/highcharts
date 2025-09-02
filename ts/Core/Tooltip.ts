@@ -76,8 +76,8 @@ declare module './Chart/ChartBase' {
     }
 }
 
-declare module './Series/PointLike' {
-    interface PointLike {
+declare module './Series/PointBase' {
+    interface PointBase {
         isHeader?: boolean;
     }
 }

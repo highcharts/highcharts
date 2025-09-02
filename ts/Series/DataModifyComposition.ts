@@ -55,8 +55,8 @@ declare module '../Core/Axis/AxisBase' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         change?: number;
         cumulativeSum?: number;
     }

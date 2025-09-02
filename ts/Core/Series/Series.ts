@@ -124,8 +124,8 @@ declare module '../Renderer/SVG/SVGElementLike' {
     }
 }
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         plotX?: number;
         plotY?: number;
     }

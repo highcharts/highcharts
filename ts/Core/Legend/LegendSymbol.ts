@@ -43,8 +43,8 @@ declare module '../Axis/AxisBase' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike extends LegendItem {
+declare module '../Series/PointBase' {
+    interface PointBase extends LegendItem {
         // Nothing to add
     }
 }

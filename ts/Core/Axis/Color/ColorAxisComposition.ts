@@ -44,8 +44,8 @@ const {
  *
  * */
 
-declare module '../../Series/PointLike' {
-    interface PointLike {
+declare module '../../Series/PointBase' {
+    interface PointBase {
         /** @requires ColorSeriesMixin */
         setVisible(vis?: boolean): void;
     }

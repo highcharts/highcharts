@@ -44,8 +44,8 @@ declare module '../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         dispX?: number;
         dispY?: number;
         fromNode?: Point;

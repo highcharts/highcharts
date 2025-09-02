@@ -65,8 +65,8 @@ declare module '../../Core/Series/DataLabelOptions' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         height?: number;
         outside3dPlot?: (boolean|null);
         shapey?: number;

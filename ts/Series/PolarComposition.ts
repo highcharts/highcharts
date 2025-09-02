@@ -94,8 +94,8 @@ declare module '../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         rectPlotX?: PolarPoint['rectPlotX'];
         rectPlotY?: PolarPoint['rectPlotY'];
         ttBelow?: boolean;

@@ -67,8 +67,8 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/pattern-fill */
         calculatePatternDimensions(
             pattern: PatternOptionsObject

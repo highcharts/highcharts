@@ -27,10 +27,10 @@ import type SeriesBase from './SeriesBase';
  * Helper interface for point types to add optional members to all point
  * instances.
  *
- * Use the `declare module './PointLike'` pattern to overload the interface in
+ * Use the `declare module './PointBase'` pattern to overload the interface in
  * this definition file.
  */
-export interface PointLike {
+export interface PointBase {
     options: PointOptions;
     series: SeriesBase;
 }
@@ -41,4 +41,4 @@ export interface PointLike {
  *
  * */
 
-export default PointLike;
+export default PointBase;

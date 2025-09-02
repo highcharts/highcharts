@@ -61,8 +61,8 @@ declare module '../../Core/Legend/LegendLike' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         isBubble?: boolean;
     }
 }

@@ -58,8 +58,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/draggable-points */
         getDropValues(
             origin: DragDropPositionObject,

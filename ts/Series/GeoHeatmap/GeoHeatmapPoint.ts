@@ -49,8 +49,8 @@ declare module '../../Core/Series/KDPointSearchObjectLike' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         lat?: number;
         lon?: number;
     }

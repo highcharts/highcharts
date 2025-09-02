@@ -42,8 +42,8 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         plotZ?: number;
         z?: number;
     }

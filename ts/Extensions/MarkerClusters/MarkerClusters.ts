@@ -64,8 +64,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         isCluster?: boolean;
         clusteredData?: Array<MarkerClusterSplitDataObject>;
         clusterPointsAmount?: number;

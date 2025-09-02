@@ -14,7 +14,7 @@
  *
  * */
 
-import type PointLike from './PointLike';
+import type PointBase from './PointBase';
 import type SeriesOptions from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -44,7 +44,7 @@ export interface SeriesBase {
     name: string;
     opacity?: number;
     options: SeriesOptions;
-    points: Array<PointLike>;
+    points: Array<PointBase>;
     state?: StatesOptionsKey;
     type: string;
     userOptions: DeepPartial<SeriesOptions>;
