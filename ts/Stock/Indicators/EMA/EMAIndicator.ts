@@ -19,7 +19,7 @@ import type {
     EMAParamsOptions
 } from './EMAOptions';
 import type EMAPoint from './EMAPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 

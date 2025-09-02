@@ -14,9 +14,9 @@
  *
  * */
 import type {
-    IndicatorLike,
+    IndicatorBase,
     IndicatorLinkedSeriesBase
-} from '../IndicatorLike';
+} from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeriesType from '../../../Series/Line/LineSeries';
 import type {
@@ -609,7 +609,7 @@ class SMAIndicator extends LineSeries {
  *
  * */
 
-interface SMAIndicator extends IndicatorLike {
+interface SMAIndicator extends IndicatorBase {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
     nameComponents: Array<string>|undefined;

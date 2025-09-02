@@ -16,7 +16,7 @@
 
 import type AOOptions from './AOOptions';
 import type AOPoint from './AOPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 

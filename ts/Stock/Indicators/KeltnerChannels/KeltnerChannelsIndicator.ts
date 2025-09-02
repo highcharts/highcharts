@@ -13,7 +13,7 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     KeltnerChannelsOptions,

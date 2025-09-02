@@ -15,7 +15,7 @@
  * */
 
 import type ColorType from '../../../Core/Color/ColorType';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {

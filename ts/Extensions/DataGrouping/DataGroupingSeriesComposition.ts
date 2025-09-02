@@ -23,7 +23,7 @@ import type {
 import type Axis from '../../Core/Axis/Axis';
 import type DataGroupingOptions from './DataGroupingOptions';
 import type DataTable from '../../Data/DataTable';
-import type IndicatorLike from '../../Stock/Indicators/IndicatorLike';
+import type IndicatorBase from '../../Stock/Indicators/IndicatorBase';
 import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
@@ -790,7 +790,7 @@ function onAfterSetOptions(
         // External series, for example technical indicators should also inherit
         // commonOptions which are not available outside this module
         baseOptions = (
-            (this as IndicatorLike).useCommonDataGrouping &&
+            (this as IndicatorBase).useCommonDataGrouping &&
             DataGroupingDefaults.common
         ),
         seriesSpecific = DataGroupingDefaults.seriesSpecific;

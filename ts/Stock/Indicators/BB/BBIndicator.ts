@@ -19,7 +19,7 @@ import type {
     BBParamsOptions
 } from './BBOptions';
 import type BBPoint from './BBPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 

@@ -11,7 +11,7 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesBase } from './IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from './IndicatorBase';
 import type LineSeries from '../../Series/Line/LineSeries';
 
 /* *

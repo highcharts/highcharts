@@ -19,7 +19,7 @@ import type {
     AroonParamsOptions
 } from '../Aroon/AroonOptions';
 import type AroonPoint from '../Aroon/AroonPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 

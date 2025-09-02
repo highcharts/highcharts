@@ -19,7 +19,7 @@ import type {
     OBVParamsOptions
 } from './OBVOptions';
 import type OBVPoint from './OBVPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 

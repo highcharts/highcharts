@@ -22,7 +22,7 @@ import type {
     DMIParamsOptions
 } from './DMIOptions';
 import type DMIPoint from './DMIPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 

@@ -18,7 +18,7 @@ import type {
     CCIParamsOptions
 } from './CCIOptions';
 import type CCIPoint from './CCIPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 

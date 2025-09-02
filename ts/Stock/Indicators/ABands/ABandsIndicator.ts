@@ -20,7 +20,7 @@ import type {
 } from './ABandsOptions';
 import type ABandsPoint from './ABandsPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
