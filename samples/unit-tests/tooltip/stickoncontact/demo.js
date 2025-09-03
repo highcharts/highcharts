@@ -206,3 +206,57 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    `With stickOnContact enabled, if the mouse leaves a point but enters the
+    tooltip within hideDelay, the tooltip should stay visible (#23303).`,
+    function (assert) {
+        const done = assert.async(),
+            chart = Highcharts.chart('container', {
+                chart: {
+                    animation: false
+                },
+                series: [{
+                    type: 'column',
+                    data: [1]
+                }],
+                tooltip: {
+                    useHTML: true,
+                    stickOnContact: true
+                }
+            });
+
+        const controller = new TestController(chart),
+            column = chart.series[0].points[0].shapeArgs,
+            columnX = chart.plotLeft + column.x + column.width / 2,
+            columnY = chart.plotTop + column.y + column.height / 2;
+
+        controller.moveTo(columnX, columnY);
+
+        setTimeout(() => {
+            const tooltip = chart.tooltip;
+
+            assert.ok(
+                !tooltip.isHidden,
+                'Tooltip should be visible after hovering a point.'
+            );
+
+            const tooltipBBox = tooltip.label.element.getBBox(),
+                tooltipX = tooltip.label.x + tooltipBBox.width / 2,
+                tooltipY = tooltip.label.y + tooltipBBox.height / 2,
+                exitX = columnX + 10,
+                exitY = columnY;
+
+            controller.moveTo(exitX, exitY);
+            controller.moveTo(tooltipX, tooltipY);
+
+            setTimeout(() => {
+                assert.ok(
+                    !tooltip.isHidden,
+                    `Tooltip should stay visible after leaving the point and
+                    entering the tooltip.`
+                );
+                done();
+            }, 300);
+        }, 100);
+    });
