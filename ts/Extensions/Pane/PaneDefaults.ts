@@ -183,28 +183,49 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * of [x, y] positions. Positions can be given as integers that
      * transform to pixels, or as percentages of the plot area size.
      *
+     * By default, the vertical center is calculated based on the start and end
+     * angle of the pane, to fit the plot area.
+     *
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         Two gauges with different center
      *
      * @type    {Array<string|number>}
-     * @default ["50%", "50%"]
+     * @default ["50%", undefined]
      * @since   2.3.0
      * @product highcharts
+     * @apioption pane.center
      */
-    center: ['50%', '50%'],
 
     /**
-     * The size of the pane, either as a number defining pixels, or a
-     * percentage defining a percentage of the available plot area (the
-     * smallest of the plot height or plot width).
+     * The margin between the pane and the plot area when auto-fitting the pane.
+     * This does not apply when an explicit `pane.size` is set. An array sets
+     * individual margins for the sides in the order [top, right, bottom, left].
      *
+     * @type    {number|Array<number>}
+     * @since   next
+     */
+    margin: 20,
+
+    /**
+     * The size of the pane, either as a number defining pixels, or a percentage
+     * defining a percentage of the available plot area (the smallest of the
+     * plot height or plot width).
+     *
+     * By default, the size is calculated to fit the plot area, depending on the
+     * `startAngle` and `endAngle`, `margin` and background shape.
+     *
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         Smaller size
      *
      * @type    {number|string}
+     * @default undefined
      * @product highcharts
+     * @apioption pane.size
      */
-    size: '85%'
 
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees

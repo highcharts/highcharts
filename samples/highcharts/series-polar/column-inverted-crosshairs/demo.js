@@ -2,8 +2,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'column',
         inverted: true,
-        polar: true,
-        marginTop: 40
+        polar: true
     },
     title: {
         text: 'Crosshair enabled on both axes'

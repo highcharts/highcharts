@@ -2,8 +2,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'column',
         inverted: true,
-        polar: true,
-        marginTop: 25
+        polar: true
     },
     title: {
         text: 'Stacked inverted polar bars'
