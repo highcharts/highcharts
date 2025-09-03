@@ -27,6 +27,7 @@ import type { GroupedHeaderOptions } from '../../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
+import FilterPopup from './FilterPopup.js';
 
 
 /* *
@@ -66,6 +67,11 @@ class TableHeader {
      * Amount of levels in the header, that is used in creating correct rows.
      */
     public levels: number = 1;
+
+    /**
+     * Filter popup instance for this table header.
+     */
+    public filterPopup?: FilterPopup;
 
 
     /* *
@@ -188,6 +194,20 @@ class TableHeader {
         }
 
         el.style.transform = `translateX(${-scrollLeft}px)`;
+    }
+
+    /**
+     * Destroys the table header and all its associated components.
+     */
+    public destroy(): void {
+        for (const row of this.rows) {
+            row.destroy();
+        }
+
+        if (this.filterPopup) {
+            this.filterPopup.destroy();
+            delete this.filterPopup;
+        }
     }
 }
 

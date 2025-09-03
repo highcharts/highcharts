@@ -25,11 +25,9 @@
 import type { ColumnSortingOrder } from '../../Options.js';
 
 import Column from '../Column.js';
-import GridUtils from '../../GridUtils.js';
 import Globals from '../../Globals.js';
 import U from '../../../../Core/Utilities.js';
 
-const { makeHTMLElement } = GridUtils;
 const { fireEvent } = U;
 
 /* *
@@ -82,15 +80,6 @@ class ColumnSorting {
         this.addHeaderElementAttributes();
 
         if (column.options.sorting?.sortable) {
-            makeHTMLElement(
-                'span',
-                {
-                    className: Globals.getClassName('columnSortableIcon'),
-                    innerText: '▲'
-                },
-                headerCellElement
-            ).setAttribute('aria-hidden', true);
-
             headerCellElement.classList.add(
                 Globals.getClassName('columnSortable')
             );
@@ -165,6 +154,8 @@ class ColumnSorting {
 
         for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();
+            // Update icon state for new header icon system
+            col.header?.updateSortIconState();
         }
 
         a11y?.userSortedColumn(order);
