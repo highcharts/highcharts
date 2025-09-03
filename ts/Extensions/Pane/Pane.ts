@@ -269,9 +269,9 @@ class Pane {
      * @function Highcharts.Pane#updateCenter
      * @param {Highcharts.Axis} [axis]
      */
-    public updateCenter(axis?: RadialAxis.AxisComposition): void {
+    public updateCenter(): void {
 
-        const { chart, options } = this,
+        const { axis, chart, options } = this,
             centerY = options.center?.[1],
             m = options.margin || 0,
             margin = isArray(m) ? m : [m, m, m, m];
@@ -297,20 +297,25 @@ class Pane {
             }, 0) + margin[2];
 
         // Handle auto-positioning when size and center are undefined
-        if (size === void 0 || centerY === void 0) {
+        if (
+            axis &&
+            (size === void 0 || centerY === void 0)
+        ) {
             const { plotHeight, plotWidth } = chart,
-                { startAngle = 0, endAngle = 360 } = options,
+                { endAngleRad, startAngleRad } = axis,
                 deg2rad = Math.PI * 2 / 360,
-                crossingBottom = (startAngle < 180 && endAngle > 180) ||
+                crossingBottom = (
+                    startAngleRad < Math.PI / 2 && endAngleRad > Math.PI / 2
+                ) ||
                     // Circle background should fill out the plot area
                     splat(options.background).some(
                         (b): boolean => b?.shape === 'circle'
                     ),
-                angle = crossingBottom ? 180 : Math.max(
-                    Math.abs(startAngle),
-                    Math.abs(endAngle)
+                maxAngle = crossingBottom ? Math.PI : Math.max(
+                    Math.abs(startAngleRad + Math.PI / 2),
+                    Math.abs(endAngleRad + Math.PI / 2)
                 ),
-                sin = Math.sin(deg2rad * (angle - 90)),
+                sin = Math.sin(maxAngle - Math.PI / 2),
                 // The size doesn't increase further to angles below this
                 // minimum. For linear gauges, this means that the pivot is kept
                 // visible.
@@ -340,7 +345,6 @@ class Pane {
         // Run the standard centering
         this.center = (
             axis ||
-            this.axis ||
             ({} as Record<string, Array<number>>)
         ).center = CU.getCenter.call(this as any);
 

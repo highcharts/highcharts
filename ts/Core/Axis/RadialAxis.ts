@@ -1320,7 +1320,7 @@ namespace RadialAxis {
         if (this.isRadial) {
 
             // Set the center array
-            this.pane.updateCenter(this);
+            this.pane.updateCenter();
 
             // In case when the innerSize is set in a polar chart, the axis'
             // center cannot be a reference to pane's center
