@@ -121,10 +121,13 @@ class GaugeSeries extends Series {
              * of 400 will point to 40. When `wrap` is `false`, the dial stops
              * at 360.
              *
+             * Defaults to `undefined`, which is equivalent to `true` when
+             * the axis ranges over 360 degrees, and `false` when less.
+             *
              * @see [overshoot](#plotOptions.gauge.overshoot)
              *
              * @type      {boolean}
-             * @default   true
+             * @default   undefined
              * @since     3.0
              * @product   highcharts
              * @apioption plotOptions.gauge.wrap
@@ -450,7 +453,10 @@ class GaugeSeries extends Series {
                 rearLength =
                     (pInt(dialOptions.rearLength) * radius) / 100,
                 baseWidth = dialOptions.baseWidth,
-                topWidth = dialOptions.topWidth;
+                topWidth = dialOptions.topWidth,
+                wrap = options.wrap ?? (
+                    yAxis.endAngleRad - yAxis.startAngleRad > 2 * Math.PI - 0.01
+                );
 
             let overshoot = options.overshoot,
                 rotation = yAxis.startAngleRad + yAxis.translate(
@@ -458,7 +464,7 @@ class GaugeSeries extends Series {
                 );
 
             // Handle the wrap and overshoot options
-            if (isNumber(overshoot) || options.wrap === false) {
+            if (isNumber(overshoot) || !wrap) {
                 overshoot = isNumber(overshoot) ?
                     (overshoot / 180 * Math.PI) : 0;
                 rotation = clamp(
