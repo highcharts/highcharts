@@ -443,6 +443,9 @@ class GaugeSeries extends Series {
         series.generatePoints();
 
         series.points.forEach((point): void => {
+            if (!isNumber(point.y)) {
+                return;
+            }
 
             const dialOptions: GaugeSeriesDialOptions =
                     merge(options.dial, point.dial) as any,
@@ -460,7 +463,7 @@ class GaugeSeries extends Series {
 
             let overshoot = options.overshoot,
                 rotation = yAxis.startAngleRad + yAxis.translate(
-                    point.y as any, void 0, void 0, void 0, true
+                    point.y, void 0, void 0, void 0, true
                 );
 
             // Handle the wrap and overshoot options
@@ -520,28 +523,31 @@ class GaugeSeries extends Series {
 
         series.points.forEach((point): void => {
 
-            const graphic = point.graphic,
-                shapeArgs = point.shapeArgs,
-                d = shapeArgs.d,
-                dialOptions = merge(options.dial, point.dial); // #1233
+            if (isNumber(point.y)) {
 
-            if (graphic) {
-                graphic.animate(shapeArgs);
-                shapeArgs.d = d; // Animate alters it
-            } else {
-                point.graphic =
-                    (renderer as any)[point.shapeType as any](shapeArgs)
-                        .addClass('highcharts-dial')
-                        .add(series.group);
-            }
+                const graphic = point.graphic,
+                    shapeArgs = point.shapeArgs,
+                    d = shapeArgs.d,
+                    dialOptions = merge(options.dial, point.dial); // #1233
 
-            // Presentational attributes
-            if (!chart.styledMode) {
-                (point.graphic as any)[graphic ? 'animate' : 'attr']({
-                    stroke: dialOptions.borderColor,
-                    'stroke-width': dialOptions.borderWidth,
-                    fill: dialOptions.backgroundColor
-                });
+                if (graphic) {
+                    graphic.animate(shapeArgs);
+                    shapeArgs.d = d; // Animate alters it
+                } else {
+                    point.graphic =
+                        (renderer as any)[point.shapeType as any](shapeArgs)
+                            .addClass('highcharts-dial')
+                            .add(series.group);
+                }
+
+                // Presentational attributes
+                if (!chart.styledMode) {
+                    (point.graphic as any)[graphic ? 'animate' : 'attr']({
+                        stroke: dialOptions.borderColor,
+                        'stroke-width': dialOptions.borderWidth,
+                        fill: dialOptions.backgroundColor
+                    });
+                }
             }
         });
 

@@ -511,7 +511,7 @@ namespace RadialAxis {
                 return radius;
             },
             center = this.center,
-            startAngleRad = this.startAngleRad,
+            { endAngleRad, startAngleRad } = this,
             borderRadius = options.borderRadius ??
                 this.pane.options.borderRadius,
             fullRadius = center[2] / 2,
@@ -558,8 +558,12 @@ namespace RadialAxis {
         } else {
 
             // Keep within bounds
-            from = Math.max(from, this.min);
-            to = Math.min(to, this.max);
+            if (isNumber(this.min)) {
+                from = Math.max(from, this.min);
+            }
+            if (isNumber(this.max)) {
+                to = Math.min(to, this.max);
+            }
 
             const transFrom = this.translate(from),
                 transTo = this.translate(to);
@@ -571,8 +575,19 @@ namespace RadialAxis {
                 innerRadius = transTo || 0;
             }
 
+            // Allow background for empty axis
+            if (
+                !isNumber(this.min) &&
+                !isNumber(this.max) &&
+                // Not for plot bands
+                !options.color &&
+                !options.className
+            ) {
+                start = startAngleRad;
+                end = endAngleRad;
+
             // Handle full circle
-            if (options.shape === 'circle' || !isCircular) {
+            } else if (options.shape === 'circle' || !isCircular) {
                 start = -Math.PI / 2;
                 end = Math.PI * 1.5;
                 open = true;
