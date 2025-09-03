@@ -1,0 +1,11 @@
+.container {
+    display: inline-block;
+    width: calc(50% - 1em);
+    max-width: 600px;
+}
+
+@media screen and (max-width: 500px) {
+    .container {
+        width: calc(100% - 2em);
+    }
+}

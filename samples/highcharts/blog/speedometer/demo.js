@@ -15,6 +15,7 @@ Highcharts.chart('container', {
     pane: {
         startAngle: -150,
         endAngle: 150,
+        innerSize: 0,
         background: [{
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -24,7 +25,8 @@ Highcharts.chart('container', {
                 ]
             },
             borderWidth: 0,
-            outerRadius: '109%'
+            outerRadius: '109%',
+            shape: 'circle'
         }, {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -34,14 +36,16 @@ Highcharts.chart('container', {
                 ]
             },
             borderWidth: 1,
-            outerRadius: '107%'
+            outerRadius: '107%',
+            shape: 'circle'
         }, {
-            // default background
+            shape: 'circle'
         }, {
             backgroundColor: '#DDD',
             borderWidth: 0,
             outerRadius: '105%',
-            innerRadius: '103%'
+            innerRadius: '103%',
+            shape: 'circle'
         }]
     },
 
@@ -63,23 +67,28 @@ Highcharts.chart('container', {
         tickColor: '#666',
         labels: {
             step: 2,
-            rotation: 'auto'
+            rotation: 'auto',
+            distance: -25
         },
+        lineWidth: 1,
         title: {
             text: 'km/h'
         },
         plotBands: [{
             from: 0,
             to: 120,
-            color: '#55BF3B' // green
+            color: '#55BF3B', // green
+            thickness: 10
         }, {
             from: 120,
             to: 160,
-            color: '#DDDF0D' // yellow
+            color: '#DDDF0D', // yellow
+            thickness: 10
         }, {
             from: 160,
             to: 200,
-            color: '#DF5353' // red
+            color: '#DF5353', // red
+            thickness: 10
         }]
     },
 

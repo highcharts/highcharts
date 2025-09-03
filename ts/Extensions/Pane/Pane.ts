@@ -146,10 +146,17 @@ class Pane {
      */
     public setOptions(options: PaneOptions): void {
 
+        const conditionalDefaults: PaneOptions = {};
+
+        if (this.chart.angular) {
+            conditionalDefaults.background = {};
+            conditionalDefaults.innerSize = '60%';
+        }
+
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
             PaneDefaults.pane,
-            { background: this.chart.angular ? {} : void 0 },
+            conditionalDefaults,
             options
         );
     }
@@ -190,6 +197,11 @@ class Pane {
                     this.renderBackground(
                         merge(
                             PaneDefaults.background,
+                            // Defaults inherited from the `pane` option
+                            {
+                                borderRadius: this.options.borderRadius,
+                                innerRadius: this.center[3] / 2
+                            },
                             backgroundOption[i]
                         ),
                         i
