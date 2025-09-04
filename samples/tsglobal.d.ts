@@ -6,6 +6,6 @@
 import '../code/highcharts';
 import 'jquery';
 import 'qunit';
-import '../test/test-controller';
-import '../test/test-template';
-import '../test/test-utilities';
+import '../test/test-controller.d';
+import '../test/test-template.d';
+import '../test/test-utilities.d';
