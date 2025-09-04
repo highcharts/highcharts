@@ -35,6 +35,7 @@ const {
     isArray,
     isNumber,
     merge,
+    relativeLength,
     splat
 } = U;
 
@@ -199,8 +200,7 @@ class Pane {
                             PaneDefaults.background,
                             // Defaults inherited from the `pane` option
                             {
-                                borderRadius: this.options.borderRadius,
-                                innerRadius: this.center[3] / 2
+                                borderRadius: this.options.borderRadius
                             },
                             backgroundOption[i]
                         ),
@@ -352,6 +352,10 @@ class Pane {
             // Apply the auto-positioning
             if (isNumber(size) && size >= 0) {
                 this.center[2] = size;
+                this.center[3] = Math.min(
+                    size,
+                    relativeLength(options.innerSize || 0, size)
+                );
             }
             if (!isNumber(centerY) && isNumber(sizeFromAngle)) {
                 this.center[1] = (

@@ -150,7 +150,7 @@ class SolidGaugeSeries extends GaugeSeries {
                             )
                         ) * center[2]
                     ) / 200),
-                    innerRadius = ((
+                    innerRadius = Math.min((
                         pInt(
                             pick(
                                 point.options.innerRadius,
@@ -159,7 +159,7 @@ class SolidGaugeSeries extends GaugeSeries {
                                 0
                             )
                         ) * center[2]
-                    ) / 200),
+                    ) / 200, radius),
                     axisMinAngle = Math.min(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad

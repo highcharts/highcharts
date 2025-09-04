@@ -23,14 +23,7 @@ const chart = Highcharts.chart('container', {
             endAngle: ${getPane().endAngle}`
     },
     pane: {
-        ...getPane(),
-        background: [{
-            outerRadius: '100%',
-            innerRadius: '60%',
-            shape: 'arc'
-        }],
-        size: undefined,
-        center: ['50%', undefined]
+        ...getPane()
     },
 
     yAxis: {
@@ -41,33 +34,10 @@ const chart = Highcharts.chart('container', {
         }
     },
 
-    plotOptions: {
-        gauge: {
-            dataLabels: {
-                y: 25
-            }
-        },
-        solidgauge: {
-            dataLabels: {
-                verticalAlign: 'middle'
-            }
-        }
-    },
-
     series: [{
         name: 'Speed',
         type: 'gauge',
-        data: [80],
-        dataLabels: {
-            borderWidth: 0,
-            style: {
-                fontSize: '1.4em'
-            },
-            backgroundColor: '#ddd8'
-        },
-        tooltip: {
-            valueSuffix: ' km/h'
-        }
+        data: [80]
     }]
 });
 
