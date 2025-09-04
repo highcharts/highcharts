@@ -1946,7 +1946,7 @@ class RangeSelector {
         }
     }
 
-    public maxButtonWidth(): number {
+    public maxButtonWidth = (): number => {
         let buttonWidth = 0;
 
         this.buttons.forEach((button): void => {
@@ -1957,7 +1957,7 @@ class RangeSelector {
         });
 
         return buttonWidth;
-    }
+    };
 
     /**
      * Handle collision between the button group and the input group
@@ -1983,36 +1983,6 @@ class RangeSelector {
             inputPosition
         } = this.options;
 
-        const groupsOverlap = (buttonGroupWidth: number): boolean => {
-            if (inputGroup?.alignOptions && buttonGroup) {
-                const inputGroupX = (
-                    inputGroup.alignAttr.translateX +
-                    inputGroup.alignOptions.x -
-                    xOffsetForExportButton +
-                    // `getBBox` for detecing left margin
-                    inputGroup.getBBox().x +
-                    // 2px padding to not overlap input and label
-                    2
-                );
-
-                const inputGroupWidth = inputGroup.alignOptions.width || 0;
-
-                const buttonGroupX = buttonGroup.alignAttr.translateX +
-                    buttonGroup.getBBox().x;
-
-                return (buttonGroupX + buttonGroupWidth > inputGroupX) &&
-                    (inputGroupX + inputGroupWidth > buttonGroupX) &&
-                    (
-                        buttonPosition.y <
-                        (
-                            inputPosition.y +
-                            inputGroup.getBBox().height
-                        )
-                    );
-            }
-            return false;
-        };
-
         const moveInputsDown = (): void => {
             if (inputGroup && buttonGroup) {
                 inputGroup.attr({
@@ -2027,39 +1997,31 @@ class RangeSelector {
             }
         };
 
-        if (buttonGroup) {
-            if (dropdown === 'always') {
-                this.collapseButtons();
-
-                if (groupsOverlap(this.maxButtonWidth())) {
-                    // Move the inputs down if there is still a collision
-                    // after collapsing the buttons
-                    moveInputsDown();
-                }
-                return;
-            }
-            if (dropdown === 'never') {
-                this.expandButtons();
-            }
-        }
-
         // Detect collision
         if (inputGroup && buttonGroup) {
-            if (
-                (inputPosition.align === buttonPosition.align) ||
-                // 20 is minimal spacing between elements
-                groupsOverlap(initialButtonGroupWidth + 20)
-            ) {
-                if (dropdown === 'responsive') {
-                    this.collapseButtons();
+            if (inputPosition.align === buttonPosition.align) {
+                moveInputsDown();
 
-                    if (groupsOverlap(this.maxButtonWidth())) {
-                        moveInputsDown();
-                    }
+                if (
+                    initialButtonGroupWidth >
+                    chart.plotWidth + xOffsetForExportButton - 20
+                ) {
+                    this.collapseButtons();
+                } else {
+                    this.expandButtons();
+                }
+            } else if (
+                initialButtonGroupWidth -
+                xOffsetForExportButton +
+                inputGroup.getBBox().width >
+                chart.plotWidth
+            ) {
+                if (dropdown === 'responsive' || dropdown === 'always') {
+                    this.collapseButtons();
                 } else {
                     moveInputsDown();
                 }
-            } else if (dropdown === 'responsive') {
+            } else {
                 this.expandButtons();
             }
         } else if (buttonGroup && dropdown === 'responsive') {
@@ -2069,6 +2031,18 @@ class RangeSelector {
                 this.expandButtons();
             }
         }
+
+        // Forced states
+        if (buttonGroup) {
+            if (dropdown === 'always') {
+                this.collapseButtons();
+            }
+            if (dropdown === 'never') {
+                this.expandButtons();
+            }
+        }
+
+        this.alignButtonGroup(xOffsetForExportButton);
     }
 
     /**
