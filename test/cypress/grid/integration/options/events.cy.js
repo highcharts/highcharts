@@ -90,18 +90,6 @@ describe('Grid Pro - events.', () => {
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
     });
 
-    it('AfterSorting column event.', () => {
-        // ColumnDefaults
-        cy.get('th[data-column-id="product"]').click();
-        cy.get('#columnSorting').should('have.value', 'afterSorting');
-        cy.get('#headerClick').should('have.value', 'headerClick');
-
-        // ColumnOptions
-        cy.get('th[data-column-id="weight"]').click();
-        cy.get('#columnSorting').should('have.value', 'afterSortingColumnOption');
-        cy.get('#headerClick').should('have.value', 'headerClickColumnOption');
-    });
-
     it('Resize column event.', () => {
         // ColumnDefaults
         cy.get('th[data-column-id="product"] > .highcharts-datagrid-column-resizer')
@@ -116,5 +104,31 @@ describe('Grid Pro - events.', () => {
             .trigger('mousemove', { clientX: 300, clientY: 300 })
             .trigger('mouseup');
         cy.get('#columnResizing').should('have.value', 'columnResizingColumnOption');
+    });
+
+    it('Sorting column event.', () => {
+        // ColumnDefaults
+        cy.get('th[data-column-id="product"]').click({ force: true });
+        cy.get('#beforeColumnSorting').should('have.value', 'beforeSorting');
+        cy.get('#headerClick').should('have.value', 'headerClick');
+        cy.get('#afterColumnSorting').should('have.value', 'afterSorting');
+
+        // ColumnOptions
+        cy.get('th[data-column-id="weight"]').click({ force: true });
+        cy.get('#beforeColumnSorting').should('have.value', 'beforeSortingColumnOption');
+        cy.get('#headerClick').should('have.value', 'headerClickColumnOption');
+        cy.get('#afterColumnSorting').should('have.value', 'afterSortingColumnOption');
+    });
+
+    it('Filtering column event.', () => {
+        // ColumnDefaults
+        cy.get('th[data-column-id="product"] input').type('Apples');
+        cy.get('#beforeColumnFiltering').should('have.value', 'beforeFiltering');
+        cy.get('#afterColumnFiltering').should('have.value', 'afterFiltering');
+
+        // // ColumnOptions
+        cy.get('th[data-column-id="weight"]').type(100);
+        cy.get('#beforeColumnFiltering').should('have.value', 'beforeFilteringColumnOption');
+        cy.get('#afterColumnFiltering').should('have.value', 'afterFilteringColumnOption');
     });
 });

@@ -1,4 +1,4 @@
-Grid.grid('container', {
+window.grid = Grid.grid('container', {
     dataTable: {
         columns: {
             id: [
@@ -10,10 +10,10 @@ Grid.grid('container', {
                 null, false, true, true, false, null, true, false, true, false
             ],
             product: [
-                'Apples', 'Pears', 'Plums', 'Apricots', 'Bananas', 'Oranges',
-                'Grapes', 'Strawberries', 'Blueberries', 'Mangoes',
-                'Pineapples', 'Kiwis', 'Peaches', 'Cherries', 'Watermelons',
-                'Cantaloupe', 'Raspberries', null, 'Lemons', 'Limes'
+                'apples', 'pears', 'lums', 'apricots', 'bananas', 'oranges',
+                'grapes', 'strawberries', 'blueberries', 'mangoes',
+                'pineapples', 'kiwis', 'peaches', 'cherries', 'watermelons',
+                'cantaloupe', 'raspberries', null, 'lemons', 'limes'
             ],
             weight: [
                 100, 40, 5, 200, 120, null, 3, 25, 15, 350, 1200, 8, 150, 20,
@@ -84,15 +84,14 @@ Grid.grid('container', {
                 }]
             }]
         }
-    ],
-    columns: [{
-        id: 'date',
-        dataType: 'datetime'
-    }, {
-        id: 'weight',
-        filtering: {
-            condition: 'greaterThan',
-            value: 1000
-        }
-    }]
+    ]
+    // columns: [{
+    //     id: 'id'
+    // }, {
+    //     id: 'weight',
+    //     filtering: {
+    //         condition: 'greaterThan',
+    //         value: 1000
+    //     }
+    // }]
 });

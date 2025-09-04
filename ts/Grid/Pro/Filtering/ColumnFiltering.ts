@@ -88,6 +88,10 @@ class ColumnFiltering {
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
 
+        fireEvent(this.column, 'beforeFiltering', {
+            target: this.column
+        });
+
         filteringController.addColumnFilterCondition(this.column.id, options);
         await querying.proceed();
 

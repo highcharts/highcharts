@@ -47,6 +47,10 @@ Grid.grid('container', {
                 msgTable.innerText = `Resized the column '${this.id}' to ` +
                     `${Math.round(this.width * 1000) / 10}%.`;
             },
+            beforeSorting: function () {
+                msgTable.innerText = 'Before sorting the column ' +
+                    `'${this.id}'.`;
+            },
             afterSorting: function () {
                 const { order } =
                     this.viewport.grid.querying.sorting.currentSorting;
@@ -61,6 +65,14 @@ Grid.grid('container', {
                 default:
                     msgTable.innerText += ' Unsorted.';
                 }
+            },
+            beforeFiltering: function () {
+                msgTable.innerText = 'Before filtering the column ' +
+                    `'${this.id}'.`;
+            },
+            afterFiltering: function () {
+                msgTable.innerText = 'After filtering the column ' +
+                    `'${this.id}'.`;
             }
         },
         header: {
