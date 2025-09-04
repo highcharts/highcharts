@@ -87,14 +87,18 @@ class FilteringController {
         options: FilteringLiteConditionOptions
     ): FilterCondition | undefined {
         const { condition, value } = options;
-        const stringifiedValue = isString(value) ? value : '';
+        const isStringValue = isString(value);
+        const stringifiedValue = isStringValue ? value : '';
 
         // Allow `null` (empty) and boolean `false` values.
         if (
-            typeof value === 'undefined' &&
-            !stringifiedValue &&
-            condition !== 'empty' &&
-            condition !== 'notEmpty'
+            (
+                typeof value === 'undefined' ||
+                (isStringValue && !stringifiedValue)
+
+            // Don't check the `empty` and `notEmpty` conditions, since they
+            // work without a value.
+            ) && condition !== 'empty' && condition !== 'notEmpty'
         ) {
             return;
         }

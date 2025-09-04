@@ -210,14 +210,14 @@ export interface CellEvents {
  */
 export interface ColumnEvents {
     /**
-     * Callback function to be called when the column is filtered,
-     * before clicking on header.
+     * Callback function to be called when the column is filtered, after input
+     * keypress or select change events, but before the filtering is applied.
      */
     beforeFiltering?: ColumnEventCallback;
 
     /**
-     * Callback function to be called when the column is filtered,
-     * after clicking on header.
+     * Callback function to be called when the column is filtered, after input
+     * keypress or select change events, and the filtering is applied.
      */
     afterFiltering?: ColumnEventCallback;
 

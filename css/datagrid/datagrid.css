@@ -1145,6 +1145,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     background-image: url("data:image/svg+xml,%3csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3.5 7.5L6 10L8.5 7.5M3.5 4.5L6 2L8.5 4.5' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 8px center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* Pagination */

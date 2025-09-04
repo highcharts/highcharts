@@ -198,7 +198,7 @@ class HeaderRow extends Row {
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             const column = columns[i];
-            if (enabledColumns && enabledColumns.indexOf(column.id) < 0) {
+            if (enabledColumns?.indexOf(column.id) < 0) {
                 continue;
             }
 
