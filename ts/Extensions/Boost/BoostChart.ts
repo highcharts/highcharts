@@ -59,8 +59,8 @@ export declare class BoostChartComposition extends Chart {
     series: Array<BoostSeriesComposition>;
 }
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike extends BoostTargetObject {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostChartAdditions;
     }

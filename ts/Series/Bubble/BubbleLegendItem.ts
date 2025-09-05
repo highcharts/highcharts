@@ -55,20 +55,20 @@ const {
  *
  * */
 
-declare module '../../Core/Legend/LegendLike' {
-    interface LegendLike {
+declare module '../../Core/Legend/LegendBase' {
+    interface LegendBase {
         bubbleLegend?: BubbleLegendItem;
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         isBubble?: boolean;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         ignoreSeries?: boolean;
         isBubble?: boolean;
     }

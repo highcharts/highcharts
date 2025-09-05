@@ -25,8 +25,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         allowShadow?: boolean;
     }
 }

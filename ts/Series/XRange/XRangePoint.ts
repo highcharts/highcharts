@@ -41,8 +41,8 @@ import XRangeSeries from './XRangeSeries.js';
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         tooltipDateKeys?: Array<string>;
     }
 }

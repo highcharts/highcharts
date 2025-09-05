@@ -14,7 +14,7 @@
  *
  * */
 
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 
 /* *
  *
@@ -29,7 +29,7 @@ import type AxisLike from './AxisLike';
  * Use the `declare module 'Types'` pattern to overload the interface in this
  * definition file.
  */
-export interface AxisComposition extends AxisLike {
+export interface AxisComposition extends AxisBase {
     // Add with `declare module` pattern
 }
 

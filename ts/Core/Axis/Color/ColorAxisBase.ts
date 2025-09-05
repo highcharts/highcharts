@@ -34,13 +34,13 @@ const { merge } = U;
  *
  * */
 
-interface ColorAxisLike extends AxisComposition {
+interface ColorAxisBase extends AxisComposition {
     chart: Chart;
-    dataClasses: Array<ColorAxisLike.DataClassOptions>;
+    dataClasses: Array<ColorAxisBase.DataClassOptions>;
     index: number;
-    options: ColorAxisLike.Options;
+    options: ColorAxisBase.Options;
     stops: Array<GradientColorStop>;
-    initDataClasses(userOptions: Partial<ColorAxisLike.Options>): void;
+    initDataClasses(userOptions: Partial<ColorAxisBase.Options>): void;
     initStops(): void;
     normalizedValue(value: number): number;
     toColor(value: number, point: Point): (ColorType|undefined);
@@ -52,7 +52,7 @@ interface ColorAxisLike extends AxisComposition {
  *
  * */
 
-namespace ColorAxisLike {
+namespace ColorAxisBase {
 
     /* *
      *
@@ -87,7 +87,7 @@ namespace ColorAxisLike {
      * @private
      */
     export function initDataClasses(
-        this: ColorAxisLike,
+        this: ColorAxisBase,
         userOptions: Partial<Options>
     ): void {
         const axis = this,
@@ -143,7 +143,7 @@ namespace ColorAxisLike {
      * @private
      */
     export function initStops(
-        this: ColorAxisLike
+        this: ColorAxisBase
     ): void {
         const axis = this,
             options = axis.options,
@@ -162,7 +162,7 @@ namespace ColorAxisLike {
      * @private
      */
     export function normalizedValue(
-        this: ColorAxisLike,
+        this: ColorAxisBase,
         value: number
     ): number {
         const axis = this,
@@ -184,7 +184,7 @@ namespace ColorAxisLike {
      * @private
      */
     export function toColor(
-        this: ColorAxisLike,
+        this: ColorAxisBase,
         value: number,
         point: Point
     ): (ColorType|undefined) {
@@ -251,4 +251,4 @@ namespace ColorAxisLike {
  *
  * */
 
-export default ColorAxisLike;
+export default ColorAxisBase;

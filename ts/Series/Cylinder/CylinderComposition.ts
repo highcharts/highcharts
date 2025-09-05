@@ -50,8 +50,8 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         /** @requires CylinderComposition */
         cylinder(shapeArgs: SVGAttributes): SVGElement;
         /** @requires CylinderComposition */

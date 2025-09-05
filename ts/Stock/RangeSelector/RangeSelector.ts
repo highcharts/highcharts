@@ -66,15 +66,15 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         newMax?: number;
         range?: (number|RangeSelectorButtonOptions);
     }
 }
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         extraBottomMargin?: boolean;
         extraTopMargin?: boolean;
         fixedRange?: number;

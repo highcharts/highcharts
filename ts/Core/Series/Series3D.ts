@@ -42,15 +42,15 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         plotZ?: number;
         z?: number;
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         zAxis?: ZAxis;
         rawPointsX?: Array<number>;
         zPadding?: number;

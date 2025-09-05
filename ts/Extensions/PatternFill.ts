@@ -55,8 +55,8 @@ const {
  *
  * */
 
-declare module '../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         defIds?: Array<string>;
         idCounter?: number;
         patternElements?: Record<string, SVGElement>;
@@ -67,8 +67,8 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/pattern-fill */
         calculatePatternDimensions(
             pattern: PatternOptionsObject

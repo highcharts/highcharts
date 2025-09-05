@@ -14,13 +14,10 @@
  *
  * */
 
-/**
- * Optional properties for the SVGElement class. Should be defined outside of
- * this file by `declare module` pattern.
- */
-export interface SVGRendererLike {
+export interface ChartBase {
     // Nothing here yet
 }
+
 
 /* *
  *
@@ -28,4 +25,4 @@ export interface SVGRendererLike {
  *
  * */
 
-export default SVGRendererLike;
+export default ChartBase;

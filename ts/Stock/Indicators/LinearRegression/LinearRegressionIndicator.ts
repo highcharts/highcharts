@@ -15,7 +15,7 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     LinearRegressionOptions,
@@ -292,7 +292,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     // Required to be implemented - starting point for indicator's logic
     public getValues<TLinkedSeries extends LineSeries>(
         this: LinearRegressionIndicator,
-        baseSeries: TLinkedSeries&IndicatorLinkedSeriesLike,
+        baseSeries: TLinkedSeries&IndicatorLinkedSeriesBase,
         regressionSeriesParams:
         LinearRegressionParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
