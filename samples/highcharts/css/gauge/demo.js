@@ -12,18 +12,24 @@ Highcharts.chart('container', {
     pane: {
         startAngle: -150,
         endAngle: 150,
+        margin: 0,
+        innerSize: 0,
         background: [{
             className: 'outer-pane',
-            outerRadius: '115%'
+            outerRadius: '115%',
+            shape: 'circle'
         }, {
             className: 'middle-pane',
-            outerRadius: '112%'
+            outerRadius: '112%',
+            shape: 'circle'
         }, {
-            // default background
+            shape: 'circle',
+            outerRadius: '110%'
         }, {
             className: 'inner-pane',
             outerRadius: '105%',
-            innerRadius: '103%'
+            innerRadius: '103%',
+            shape: 'circle'
         }]
     },
 
@@ -35,13 +41,16 @@ Highcharts.chart('container', {
         minorTickInterval: 'auto',
         minorTickLength: 10,
         minorTickPosition: 'inside',
+        minorTickWidth: 1,
 
         tickPixelInterval: 30,
         tickPosition: 'inside',
         tickLength: 10,
+        tickWidth: 1,
         labels: {
             step: 2,
-            rotation: 'auto'
+            rotation: 'auto',
+            distance: -25
         },
         title: {
             text: 'km/h'
@@ -49,15 +58,18 @@ Highcharts.chart('container', {
         plotBands: [{
             from: 0,
             to: 120,
-            className: 'green-band'
+            className: 'green-band',
+            thickness: 10
         }, {
             from: 120,
             to: 160,
-            className: 'yellow-band'
+            className: 'yellow-band',
+            thickness: 10
         }, {
             from: 160,
             to: 200,
-            className: 'red-band'
+            className: 'red-band',
+            thickness: 10
         }]
     },
 
