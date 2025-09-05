@@ -154,6 +154,32 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
         'rangeSelector buttons should be right aligned correctly when ' +
         'exporting enabled (#13014).'
     );
+
+    chart.update({
+        rangeSelector: {
+            inputEnabled: true,
+            buttonPosition: {
+                align: 'left'
+            },
+            dropdown: 'always'
+        },
+        chart: {
+            width: 400
+        }
+    });
+
+    assert.ok(
+        parseFloat(chart.rangeSelector.dropdown.style.width) > 1 &&
+        parseFloat(chart.rangeSelector.dropdown.style.height) > 1,
+        'Dropdown select should be clickable'
+    );
+
+    assert.close(
+        chart.rangeSelector.buttonGroup.translateY,
+        chart.rangeSelector.inputGroup.translateY,
+        1,
+        'Dropdown should be aligned with the button group'
+    );
 });
 
 QUnit.test('Aligning after updates.', function (assert) {
