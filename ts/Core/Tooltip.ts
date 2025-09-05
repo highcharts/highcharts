@@ -558,6 +558,53 @@ class Tooltip {
                 .attr({ zIndex: 8 })
                 .shadow(options.shadow ?? !options.fixed)
                 .add();
+
+            // #23303
+            if (this.shouldStickOnContact() && this.label.element) {
+                const tooltipElement = this.label.element;
+
+                U.clearTimeout(this.hideTimer);
+
+                addEvent(tooltipElement, 'mouseover', (): void => {
+                    U.clearTimeout(this.hideTimer);
+                });
+
+                addEvent(
+                    tooltipElement,
+                    'mouseout',
+                    (e: PointerEvent): void => {
+                        const relatedTarget = e.relatedTarget as any;
+
+                        const isTooltip =
+                            relatedTarget &&
+                            (
+                                this.pointer.inClass(
+                                    relatedTarget,
+                                    'highcharts-tooltip'
+                                ) ||
+                                this.pointer.inClass(
+                                    relatedTarget,
+                                    'highcharts-tooltip-box'
+                                )
+                            );
+
+                        const isPoint =
+                            relatedTarget &&
+                            (
+                                this.pointer.inClass(
+                                    relatedTarget,
+                                    'highcharts-point'
+                                )
+                            );
+
+                        if (isTooltip || isPoint) {
+                            U.clearTimeout(this.hideTimer);
+                            return;
+                        }
+
+                        this.hide();
+                    });
+            }
         }
 
         if (container && !container.parentElement) {
