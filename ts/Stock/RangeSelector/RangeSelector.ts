@@ -2123,9 +2123,7 @@ class RangeSelector {
         if (dropdown) {
             this.dropdownLabel.hide();
             css(dropdown, {
-                visibility: 'hidden',
-                width: '1px',
-                height: '1px'
+                visibility: 'hidden'
             });
             this.hasVisibleDropdown = false;
         }
