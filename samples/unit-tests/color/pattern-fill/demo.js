@@ -708,6 +708,22 @@ QUnit.test('Destroy and recreate chart', function (assert) {
     testChart(secondChart);
 });
 
+QUnit.test(
+    '#23049: All Highcharts.patterns should have a defined color',
+    function (assert) {
+        assert.ok(
+            Highcharts.patterns && Highcharts.patterns.length > 0,
+            'Highcharts.patterns should be defined and non-empty'
+        );
+        Highcharts.patterns.forEach(function (pattern, i) {
+            assert.ok(
+                typeof pattern.color === 'string' && pattern.color.length > 0,
+                'Pattern at index ' + i + ' has a defined color'
+            );
+        });
+    }
+);
+
 QUnit.test('#14765: Global patterns', assert => {
     assert.ok(Highcharts.patterns, 'Global patterns should be defined');
 });
