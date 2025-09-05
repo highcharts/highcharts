@@ -13,9 +13,11 @@
 
  ```js
  const ohlcvConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-     postman: {
-         environmentJSON: postmanJSON
-     },
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
+    },
      series: {
          type: 'OHLCV'
      },
