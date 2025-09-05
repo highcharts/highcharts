@@ -211,7 +211,7 @@ class FlagsSeries extends ColumnSeries {
                         void 0,
                         options.useHTML
                     )
-                        .addClass('highcharts-point')
+                        .addClass(point.getClassName())
                         .add(series.markerGroup);
 
                     // Add reference to the point for tracker (#6303)
