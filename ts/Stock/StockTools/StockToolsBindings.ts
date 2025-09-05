@@ -92,6 +92,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     segment: {
         /** @ignore-option */
         className: 'highcharts-segment',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.segment.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -144,6 +150,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     arrowSegment: {
         /** @ignore-option */
         className: 'highcharts-arrow-segment',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.arrowSegment.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -199,6 +211,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     ray: {
         /** @ignore-option */
         className: 'highcharts-ray',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.ray.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -252,6 +270,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     arrowRay: {
         /** @ignore-option */
         className: 'highcharts-arrow-ray',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.arrowRay.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -307,6 +331,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     infinityLine: {
         /** @ignore-option */
         className: 'highcharts-infinity-line',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.infinityLine.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -360,6 +390,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     arrowInfinityLine: {
         /** @ignore-option */
         className: 'highcharts-arrow-infinity-line',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.arrowInfinityLine.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -416,6 +452,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     horizontalLine: {
         /** @ignore-option */
         className: 'highcharts-horizontal-line',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.horizontalLine.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
@@ -459,6 +501,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     verticalLine: {
         /** @ignore-option */
         className: 'highcharts-vertical-line',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.verticalLine.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
@@ -504,6 +552,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     crooked3: {
         /** @ignore-option */
         className: 'highcharts-crooked3',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.crooked3.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -557,6 +611,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     crooked5: {
         /** @ignore-option */
         className: 'highcharts-crooked5',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.crooked5.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -614,6 +674,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     elliott3: {
         /** @ignore-option */
         className: 'highcharts-elliott3',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.elliott3.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -669,6 +735,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     elliott5: {
         /** @ignore-option */
         className: 'highcharts-elliott5',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.elliott5.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -728,6 +800,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     measureX: {
         /** @ignore-option */
         className: 'highcharts-measure-x',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.measureX.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -788,6 +866,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     measureY: {
         /** @ignore-option */
         className: 'highcharts-measure-y',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.measureY.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -849,6 +933,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     measureXY: {
         /** @ignore-option */
         className: 'highcharts-measure-xy',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.measureXY.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -912,6 +1002,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
      */
     fibonacci: {
         className: 'highcharts-fibonacci',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.fibonacci.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -964,6 +1060,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     parallelChannel: {
         /** @ignore-option */
         className: 'highcharts-parallel-channel',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.parallelChannel.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1017,6 +1119,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     pitchfork: {
         /** @ignore-option */
         className: 'highcharts-pitchfork',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.pitchfork.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1079,6 +1187,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     verticalCounter: {
         /** @ignore-option */
         className: 'highcharts-vertical-counter',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.verticalCounter.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1133,6 +1247,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
      */
     timeCycles: {
         className: 'highcharts-time-cycles',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.timeCycles.annotationsOptions
+         */
+        annotationsOptions: {},
         start: function (
             this: NavigationBindings,
             e: PointerEvent
@@ -1176,6 +1296,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     verticalLabel: {
         /** @ignore-option */
         className: 'highcharts-vertical-label',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.verticalLabel.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1228,6 +1354,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     verticalArrow: {
         /** @ignore-option */
         className: 'highcharts-vertical-arrow',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.verticalArrow.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1284,6 +1416,12 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     fibonacciTimeZones: {
         /** @ignore-option */
         className: 'highcharts-fibonacci-time-zones',
+        /**
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   navigation.annotationsOptions
+         * @apioption navigation.bindings.fibonacciTimeZones.annotationsOptions
+         */
+        annotationsOptions: {},
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
