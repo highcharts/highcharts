@@ -25,7 +25,7 @@
 import type {
     FilterCondition
 } from '../../../Data/Modifiers/FilterModifierOptions.js';
-import type { FilteringLiteConditionOptions } from '../Options.js';
+import type { FilteringConditionOptions } from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import U from '../../../Core/Utilities.js';
@@ -84,7 +84,7 @@ class FilteringController {
      */
     public static mapOptionsToFilter(
         columnId: string,
-        options: FilteringLiteConditionOptions
+        options: FilteringConditionOptions
     ): FilterCondition | undefined {
         const { condition, value } = options;
         const isStringValue = isString(value);
@@ -221,7 +221,7 @@ class FilteringController {
      */
     public addColumnFilterCondition(
         columnId: string,
-        options: FilteringLiteConditionOptions
+        options: FilteringConditionOptions
     ): void {
         const condition = FilteringController.mapOptionsToFilter(
             columnId,
