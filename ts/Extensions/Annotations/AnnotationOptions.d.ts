@@ -47,6 +47,7 @@ export interface AnnotationEventsOptions {
 
 export interface AnnotationOptions extends ControlTargetOptions {
     animation: Partial<AnimationOptions>;
+    className?: string;
     controlPointOptions: ControlPointOptions;
     crop: boolean;
     draggable: AnnotationDraggableValue;
