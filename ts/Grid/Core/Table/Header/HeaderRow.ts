@@ -184,40 +184,6 @@ class HeaderRow extends Row {
     }
 
     /**
-     * Renders a row with empty cells for filtering.
-     *
-     * @param columns
-     * All existing columns to iterate over.
-     */
-    public renderFilterRow(columns: Column[]): void {
-        const vp = this.viewport;
-        const enabledColumns = vp.grid.enabledColumns || [];
-
-        vp.theadElement?.appendChild(this.htmlElement);
-        this.htmlElement.classList.add(Globals.getClassName('headerRow'));
-
-        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const column = columns[i];
-            if (enabledColumns?.indexOf(column.id) < 0) {
-                continue;
-            }
-
-            const headerCell = this.createCell(column);
-
-            // Add class to disable left border on first column
-            if (column?.index === 0 && i === 0) {
-                headerCell.htmlElement.classList.add(
-                    Globals.getClassName('columnFirst')
-                );
-            }
-
-            headerCell.render(true);
-        }
-
-        this.setLastCellClass();
-    }
-
-    /**
      * Sets a specific class to the last cell in the row.
      */
     public setLastCellClass(): void {

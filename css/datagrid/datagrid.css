@@ -1067,18 +1067,18 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Filtering */
-.hcg-col-filter-wrapper,
-.highcharts-datagrid-col-filter-wrapper {
+.hcg-column-filter-wrapper,
+.highcharts-datagrid-column-filter-wrapper {
     width: 100%;
     display: flex;
     flex-flow: column;
     row-gap: 3px;
 }
 
-.hcg-col-filter-wrapper input,
-.highcharts-datagrid-col-filter-wrapper input,
-.hcg-col-filter-wrapper select,
-.highcharts-datagrid-col-filter-wrapper select {
+.hcg-column-filter-wrapper input,
+.highcharts-datagrid-column-filter-wrapper input,
+.hcg-column-filter-wrapper select,
+.highcharts-datagrid-column-filter-wrapper select {
     border: 1px solid var(--header-utils-dropdown-stroke-default, #d1d1d1);
     border-radius: var(--hcg-border-radius);
     padding-right: 7px;
@@ -1091,55 +1091,55 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     line-height: 1em;
 }
 
-.hcg-col-filter-wrapper input:hover,
-.highcharts-datagrid-col-filter-wrapper input:hover,
-.hcg-col-filter-wrapper select:hover,
-.highcharts-datagrid-col-filter-wrapper select:hover {
+.hcg-column-filter-wrapper input:hover,
+.highcharts-datagrid-column-filter-wrapper input:hover,
+.hcg-column-filter-wrapper select:hover,
+.highcharts-datagrid-column-filter-wrapper select:hover {
     border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
 }
 
-.hcg-col-filter-wrapper input:focus,
-.highcharts-datagrid-col-filter-wrapper input:focus,
-.hcg-col-filter-wrapper select:focus,
-.highcharts-datagrid-col-filter-wrapper select:focus {
+.hcg-column-filter-wrapper input:focus,
+.highcharts-datagrid-column-filter-wrapper input:focus,
+.hcg-column-filter-wrapper select:focus,
+.highcharts-datagrid-column-filter-wrapper select:focus {
     z-index: 1;
     outline: none;
     border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
     box-shadow: 0 0 0 2px var(--hcg-surface-ui-background-0, #ffffff), 0 0 0 5px var(--primitives-brand-600, #626bd0);
 }
 
-.hcg-col-filter-wrapper input,
-.highcharts-datagrid-col-filter-wrapper input {
+.hcg-column-filter-wrapper input,
+.highcharts-datagrid-column-filter-wrapper input {
     padding-left: 27px;
 }
 
-.hcg-col-filter-wrapper input::placeholder,
-.highcharts-datagrid-col-filter-wrapper input::placeholder {
+.hcg-column-filter-wrapper input::placeholder,
+.highcharts-datagrid-column-filter-wrapper input::placeholder {
     color: var(--header-utils-input-text-placeholder, #626262);
     font-size: 12px;
     font-weight: 500;
     line-height: 1em;
 }
 
-.hcg-col-filter-wrapper input[type="text"],
-.hcg-col-filter-wrapper input[type="number"],
-.hcg-col-filter-wrapper input[type="date"],
-.highcharts-datagrid-col-filter-wrapper input[type="text"],
-.highcharts-datagrid-col-filter-wrapper input[type="number"],
-.highcharts-datagrid-col-filter-wrapper input[type="date"] {
+.hcg-column-filter-wrapper input[type="text"],
+.hcg-column-filter-wrapper input[type="number"],
+.hcg-column-filter-wrapper input[type="date"],
+.highcharts-datagrid-column-filter-wrapper input[type="text"],
+.highcharts-datagrid-column-filter-wrapper input[type="number"],
+.highcharts-datagrid-column-filter-wrapper input[type="date"] {
     padding-left: 11px;
 }
 
-.hcg-col-filter-wrapper input:not([type="date"], [type="number"]),
-.highcharts-datagrid-col-filter-wrapper input:not([type="date"], [type="number"]) {
+.hcg-column-filter-wrapper input:not([type="date"], [type="number"]),
+.highcharts-datagrid-column-filter-wrapper input:not([type="date"], [type="number"]) {
     appearance: none;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3e%3cpath d='M10.5 10.5L7.50005 7.5M8.5 5C8.5 6.933 6.933 8.5 5 8.5C3.067 8.5 1.5 6.933 1.5 5C1.5 3.067 3.067 1.5 5 1.5C6.933 1.5 8.5 3.067 8.5 5Z' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: left 11px center;
 }
 
-.hcg-col-filter-wrapper select,
-.highcharts-datagrid-col-filter-wrapper select {
+.hcg-column-filter-wrapper select,
+.highcharts-datagrid-column-filter-wrapper select {
     padding-left: 11px;
     appearance: none;
     background-image: url("data:image/svg+xml,%3csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3.5 7.5L6 10L8.5 7.5M3.5 4.5L6 2L8.5 4.5' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
