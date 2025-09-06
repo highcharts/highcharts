@@ -649,6 +649,7 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         this.graphic = renderer
             .g('annotation')
+            .addClass(this.options.className || '')
             .attr({
                 opacity: 0,
                 zIndex: this.options.zIndex,
@@ -657,10 +658,6 @@ class Annotation extends EventEmitter implements ControlTarget {
                     'hidden'
             })
             .add();
-
-        if (this.options.className) {
-            this.graphic.addClass(this.options.className);
-        }
 
         this.shapesGroup = renderer
             .g('annotation-shapes')
