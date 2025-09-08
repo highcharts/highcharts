@@ -74,43 +74,46 @@ class ColumnFiltering {
         const header = vp.header;
         const enabledColumns = vp.grid.enabledColumns || [];
 
-        if (!header) {
+        // Stop the execution if there is no header or the filtering is not
+        // enabled for any column.
+        if (
+            !header ||
+            columns.every((column): boolean =>
+                !column.options?.filtering?.enabled
+            )
+        ) {
             return;
         }
 
-        if (columns.some((column): boolean =>
-            !!column.options?.filtering?.enabled
-        )) {
-            const row = new HeaderRow(vp, 1, { 'aria-rowindex': levels + 1 });
+        const row = new HeaderRow(vp, 1, { 'aria-rowindex': levels + 1 });
 
-            vp.theadElement?.appendChild(row.htmlElement);
-            row.htmlElement.classList.add(Globals.getClassName('headerRow'));
+        vp.theadElement?.appendChild(row.htmlElement);
+        row.htmlElement.classList.add(Globals.getClassName('headerRow'));
 
-            for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-                const column = columns[i];
-                if (enabledColumns?.indexOf(column.id) < 0) {
-                    continue;
-                }
+        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
+            const column = columns[i];
+            if (enabledColumns?.indexOf(column.id) < 0) {
+                continue;
+            }
 
-                const headerCell = row.createCell(column);
+            const headerCell = row.createCell(column);
 
-                // Add class to disable left border on first column
-                if (column?.index === 0 && i === 0) {
-                    headerCell.htmlElement.classList.add(
-                        Globals.getClassName('columnFirst')
-                    );
-                }
-
-                headerCell.render(true);
-                headerCell.column?.filtering?.renderFilteringContent(
-                    headerCell.htmlElement
+            // Add class to disable left border on first column
+            if (column?.index === 0 && i === 0) {
+                headerCell.htmlElement.classList.add(
+                    Globals.getClassName('columnFirst')
                 );
             }
 
-            row.setLastCellClass();
-
-            header.rows.push(row);
+            headerCell.render(true);
+            headerCell.column?.filtering?.renderFilteringContent(
+                headerCell.htmlElement
+            );
         }
+
+        row.setLastCellClass();
+
+        header.rows.push(row);
     }
 
     /* *
