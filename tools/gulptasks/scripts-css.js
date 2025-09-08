@@ -47,9 +47,19 @@ const datagridConfig = {
 };
 
 const gridConfig = {
-    sources: 'css/grid/',
+    sources: [
+        'css/grid/',
+        'gfx/grid-icons/'
+    ],
     target: TARGET_DIRECTORY + '/grid/',
     replacePath: 'grid/',
+    exclude: []
+};
+
+const gridMainConfig = {
+    sources: 'gfx/grid-icons/',
+    target: TARGET_DIRECTORY + '/gfx/',
+    replacePath: 'gfx/',
     exclude: []
 };
 
@@ -143,6 +153,7 @@ function scriptCSS(argv) {
         } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
+            copyCSS(gridMainConfig);
             replaceGridVersionInFile(gridConfig.target + '/css/');
             log.success('Copied grid CSS');
         } else {
