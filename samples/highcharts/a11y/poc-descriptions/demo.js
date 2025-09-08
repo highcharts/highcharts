@@ -1,123 +1,80 @@
 const HC_CONFIGS = {
+    // ===== Row 1: Time series (line) =====
     chart1: {
-        a11y: {
-            enabled: true
-        },
-        title: {
-            text: 'U.S Solar Employment Growth',
-            align: 'left'
-        },
-
+        a11y: { enabled: true },
+        title: { text: 'U.S Solar Employment Growth', align: 'left' },
         subtitle: {
-            text: 'By Job Category. Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>.',
+            text: 'By Job Category. Source: <a href="https://irecusa.org/' +
+                  'programs/solar-jobs-census/" target="_blank">IREC</a>.',
             align: 'left'
         },
-
-        yAxis: {
-            title: {
-                text: 'Number of Employees'
-            }
-        },
-
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
-        },
-
+        yAxis: { title: { text: 'Number of Employees' } },
+        legend: { layout: 'vertical', align: 'right', verticalAlign: 'middle' },
         plotOptions: {
             series: {
-                label: {
-                    connectorAllowed: false
-                },
+                label: { connectorAllowed: false },
                 pointStart: 2010
             }
         },
-
-        series: [{
-            name: 'Installation & Developers',
-            data: [
-                43934, 48656, 65165, 81827, 112143, 142383,
-                171533, 165174, 155157, 161454, 154610, 168960, 171558
-            ]
-        }, {
-            name: 'Manufacturing',
-            data: [
-                24916, 37941, 29742, 29851, 32490, 30282,
-                38121, 36885, 33726, 34243, 31050, 33099, 33473
-            ]
-        }, {
-            name: 'Sales & Distribution',
-            data: [
-                11744, 30000, 16005, 19771, 20185, 24377,
-                32147, 30912, 29243, 29213, 25663, 28978, 30618
-            ]
-        }, {
-            name: 'Operations & Maintenance',
-            data: [
-                null, null, null, null, null, null, null,
-                null, 11164, 11218, 10077, 12530, 16585
-            ]
-        }, {
-            name: 'Other',
-            data: [
-                21908, 5548, 8105, 11248, 8989, 11816, 18274,
-                17300, 13053, 11906, 10073, 11471, 11648
-            ]
-        }],
-
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
-                }
-            }]
-        }
+        series: [
+            {
+                name: 'Installation & Developers',
+                data: [
+                    43934, 48656, 65165, 81827, 112143, 142383, 171533,
+                    165174, 155157, 161454, 154610, 168960, 171558
+                ]
+            },
+            {
+                name: 'Manufacturing',
+                data: [
+                    24916, 37941, 29742, 29851, 32490, 30282, 38121,
+                    36885, 33726, 34243, 31050, 33099, 33473
+                ]
+            },
+            {
+                name: 'Sales & Distribution',
+                data: [
+                    11744, 30000, 16005, 19771, 20185, 24377, 32147,
+                    30912, 29243, 29213, 25663, 28978, 30618
+                ]
+            },
+            {
+                name: 'Operations & Maintenance',
+                data: [
+                    null, null, null, null, null, null, null, null,
+                    11164, 11218, 10077, 12530, 16585
+                ]
+            },
+            {
+                name: 'Other',
+                data: [
+                    21908, 5548, 8105, 11248, 8989, 11816, 18274,
+                    17300, 13053, 11906, 10073, 11471, 11648
+                ]
+            }
+        ]
     },
     chart2: {
-        chart: {
-            type: 'column'
-        },
-        // accessibility: {
-        //     description: 'A basic column chart comparing estimated corn ' +
-        //         'andwheat production in some countries. The chart is ' +
-        //         'making use of the axis crosshair feature, to ' +
-        //         'highlight the hovered country.'
-        // },
-        title: {
-            text: 'Corn vs wheat estimated production for 2023'
-        },
-        subtitle: {
-            text:
-            'Source: <a target="_blank" ' +
-            'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>'
-        },
+        chart: { type: 'line' },
+        title: { text: 'Placeholder TS 2' },
+        series: [{ data: [1, 2, 3] }]
+    },
+    chart3: {
+        chart: { type: 'line' },
+        title: { text: 'Placeholder TS 3' },
+        series: [{ data: [1, 2, 3] }]
+    },
+
+    // ===== Row 2: Categorical (column) =====
+    chart4: {
+        chart: { type: 'column' },
+        title: { text: 'Corn vs wheat estimated production for 2023' },
         xAxis: {
             categories: ['USA', 'China', 'Brazil', 'EU', 'Argentina', 'India'],
             crosshair: true
         },
-        yAxis: {
-            min: 0,
-            title: {
-                text: '1000 metric tons (MT)'
-            }
-        },
-        tooltip: {
-            valueSuffix: ' (1000 MT)'
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        },
+        yAxis: { min: 0, title: { text: '1000 metric tons (MT)' } },
+        tooltip: { valueSuffix: ' (1000 MT)' },
         series: [
             {
                 name: 'Corn',
@@ -129,145 +86,68 @@ const HC_CONFIGS = {
             }
         ]
     },
-    chart3: {
-        chart: {
-            type: 'pie',
-            zooming: {
-                type: 'xy'
-            },
-            panning: {
-                enabled: true,
-                type: 'xy'
-            },
-            panKey: 'shift'
-        },
-        // accessibility: {
-        //     description: 'Pie charts are very popular for showing ' +
-        //         'a compact overview of a composition or comparison. ' +
-        //         'While they can be harder to read than column charts, ' +
-        //         'they remain a popular choice for small datasets.'
-        // },
-        title: {
-            text: 'Egg Yolk Composition'
-        },
-        tooltip: {
-            valueSuffix: '%'
-        },
-        subtitle: {
-            text:
-        'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" target="_default">MDPI</a>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: [{
-                    enabled: true,
-                    distance: 20
-                }, {
-                    enabled: true,
-                    distance: -40,
-                    format: '{point.percentage:.1f}%',
-                    style: {
-                        fontSize: '1.2em',
-                        textOutline: 'none',
-                        opacity: 0.7
-                    },
-                    filter: {
-                        operator: '>',
-                        property: 'percentage',
-                        value: 10
-                    }
-                }]
-            }
-        },
-        series: [
-            {
-                name: 'Percentage',
-                colorByPoint: true,
-                data: [
-                    {
-                        name: 'Water',
-                        y: 55.02
-                    },
-                    {
-                        name: 'Fat',
-                        sliced: true,
-                        selected: true,
-                        y: 26.71
-                    },
-                    {
-                        name: 'Carbohydrates',
-                        y: 1.09
-                    },
-                    {
-                        name: 'Protein',
-                        y: 15.5
-                    },
-                    {
-                        name: 'Ash',
-                        y: 1.68
-                    }
-                ]
-            }
-        ]
+    chart5: {
+        chart: { type: 'column' },
+        title: { text: 'Placeholder Cat 2' },
+        series: [{ data: [1, 2, 3] }]
     },
-    chart4: {
+    chart6: {
+        chart: { type: 'column' },
+        title: { text: 'Placeholder Cat 3' },
+        series: [{ data: [1, 2, 3] }]
+    },
+
+    // ===== Row 3: Composition (pie) =====
+    chart7: {
+        chart: { type: 'pie' },
+        title: { text: 'Egg Yolk Composition' },
+        series: [{
+            name: 'Percentage',
+            colorByPoint: true,
+            data: [
+                { name: 'Water', y: 55.02 },
+                { name: 'Fat', y: 26.71 },
+                { name: 'Carbohydrates', y: 1.09 },
+                { name: 'Protein', y: 15.5 },
+                { name: 'Ash', y: 1.68 }
+            ]
+        }]
+    },
+    chart8: {
+        chart: { type: 'pie' },
+        title: { text: 'Placeholder Pie 2' },
+        series: [{ data: [1, 2, 3] }]
+    },
+    chart9: {
+        chart: { type: 'pie' },
+        title: { text: 'Placeholder Pie 3' },
+        series: [{ data: [1, 2, 3] }]
+    },
+
+    // ===== Row 4: Flow (sankey) =====
+    chart10: {
         chart: {
-            type: 'sankey',
-            title: {
-                text: 'Estimated US Energy Consumption in 2022'
-            },
-            zooming: {
-                type: 'xy'
-            },
-            panning: {
-                enabled: true,
-                type: 'xy'
-            },
+            zooming: { type: 'xy' },
+            panning: { enabled: true, type: 'xy' },
             panKey: 'shift'
         },
-        title: {
-            text: 'Estimated US Energy Consumption in 2022'
-        },
+        title: { text: 'Estimated US Energy Consumption in 2022' },
         tooltip: {
             headerFormat: null,
             pointFormat:
-      '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight:.2f} ' +
-      'quads',
+                '{point.fromNode.name} \u2192 {point.toNode.name}: ' +
+                '{point.weight:.2f} quads',
             nodeFormat: '{point.name}: {point.sum:.2f} quads'
         },
         series: [{
+            type: 'sankey',
             keys: ['from', 'to', 'weight'],
-
             nodes: [
-                {
-                    id: 'Electricity & Heat',
-                    color: '#ffa500',
-                    offset: -110
-                },
-                {
-                    id: 'Net Import',
-                    color: '000000'
-                },
-                {
-                    id: 'Residential',
-                    color: '#74ffe7',
-                    column: 2,
-                    offset: 50
-                },
-                {
-                    id: 'Commercial',
-                    color: '#8cff74',
-                    column: 2,
-                    offset: 50
-                },
-                {
-                    id: 'Industrial',
-                    color: '#ff8da1',
-                    column: 2,
-                    offset: 50
-                },
+                { id: 'Electricity & Heat', color: '#ffa500', offset: -110 },
+                { id: 'Net Import', color: '000000' },
+                { id: 'Residential', color: '#74ffe7', column: 2, offset: 50 },
+                { id: 'Commercial', color: '#8cff74', column: 2, offset: 50 },
+                { id: 'Industrial', color: '#ff8da1', column: 2, offset: 50 },
                 {
                     id: 'Transportation',
                     color: '#f4c0ff',
@@ -280,54 +160,17 @@ const HC_CONFIGS = {
                     column: 3,
                     offset: -30
                 },
-                {
-                    id: 'Energy Services',
-                    color: '#F9E79F',
-                    column: 3
-                },
-                {
-                    id: 'Net Import',
-                    color: '000000'
-                },
-                {
-                    id: 'Solar',
-                    color: '#009c00'
-                },
-                {
-                    id: 'Nuclear',
-                    color: '#1a8dff'
-                },
-                {
-                    id: 'Hydro',
-                    color: '#009c00'
-                },
-                {
-                    id: 'Wind',
-                    color: '#009c00'
-                },
-                {
-                    id: 'Geothermal',
-                    color: '#009c00'
-                },
-                {
-                    id: 'Natural Gas',
-                    color: '#1a8dff'
-                },
-                {
-                    id: 'Biomass',
-                    color: '#009c00'
-                },
-                {
-                    id: 'Coal',
-                    color: '#989898'
-                },
-                {
-                    id: 'Petroleum',
-                    color: '#989898',
-                    offset: -1
-                }
+                { id: 'Energy Services', color: '#F9E79F', column: 3 },
+                { id: 'Solar', color: '#009c00' },
+                { id: 'Nuclear', color: '#1a8dff' },
+                { id: 'Hydro', color: '#009c00' },
+                { id: 'Wind', color: '#009c00' },
+                { id: 'Geothermal', color: '#009c00' },
+                { id: 'Natural Gas', color: '#1a8dff' },
+                { id: 'Biomass', color: '#009c00' },
+                { id: 'Coal', color: '#989898' },
+                { id: 'Petroleum', color: '#989898', offset: -1 }
             ],
-
             data: [
                 ['Net Import', 'Electricity & Heat', 0.14],
                 ['Solar', 'Electricity & Heat', 1.28],
@@ -378,57 +221,41 @@ const HC_CONFIGS = {
                 ['Industrial', 'Energy Services', 13.1],
                 ['Transportation', 'Energy Services', 5.77]
             ],
-            type: 'sankey',
-            name: 'Sankey demo series',
             dataLabels: {
-                style: {
-                    color: 'var(--highcharts-neutral-color-100, #000)'
-                }
+                style: { color: 'var(--highcharts-neutral-color-100, #000)' }
             }
         }]
     },
-    chart5: {
-        custom: {
-            family: 'distribution'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Histogram using a column chart'
-        },
-        subtitle: {
-            text: ''
-        },
+    chart11: {
+        chart: { },
+        title: { text: 'Placeholder Sankey 2' },
+        series: [{ type: 'sankey', data: [['A', 'B', 1], ['B', 'C', 2]] }]
+    },
+    chart12: {
+        chart: { },
+        title: { text: 'Placeholder Sankey 3' },
+        series: [{ type: 'sankey', data: [['X', 'Y', 2], ['Y', 'Z', 1]] }]
+    },
+
+    // ===== Row 5: Distribution (histogram) =====
+    chart13: {
+        chart: { type: 'column' },
+        title: { text: 'Histogram using a column chart' },
         xAxis: {
             categories: [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-                'Aug',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dec'
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
             ],
             crosshair: true
         },
-        yAxis: {
-            min: 0,
-            title: {
-                text: ''
-            }
-        },
+        yAxis: { min: 0, title: { text: '' } },
         tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span>' +
-                '<table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">' +
-            '{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+            headerFormat:
+                '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat:
+                '<tr><td style="color:{series.color};padding:0">' +
+                '{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
             footerFormat: '</table>',
             shared: true,
             useHTML: true
@@ -447,118 +274,277 @@ const HC_CONFIGS = {
                 49.9, 71.5, 106.4, 129.2, 144.0, 176.0,
                 135.6, 124.1, 95.6, 54.4
             ]
-
         }]
     },
-    chart6: {
-        chart: {
-            type: 'heatmap',
-            marginTop: 40,
-            marginBottom: 80,
-            plotBorderWidth: 1
-        },
 
+    chart14: {
+        chart: { type: 'histogram' },
+        title: { text: 'Placeholder Hist 2' },
+        series: [{ data: [1, 2, 3] }]
+    },
+    chart15: {
+        chart: { type: 'histogram' },
+        title: { text: 'Placeholder Hist 3' },
+        series: [{ data: [1, 2, 3] }]
+    },
 
-        title: {
-            text: 'Sales per employee per weekday',
-            style: {
-                fontSize: '1em'
-            }
-        },
+    // ===== Row 6: Distribution (boxplot) =====
+    chart16: {
+        chart: { type: 'boxplot' },
+        title: { text: 'Boxplot A' },
+        xAxis: { categories: ['A'] },
+        series: [{ data: [[760, 801, 848, 895, 965]] }]
+    },
+    chart17: {
+        chart: { type: 'boxplot' },
+        title: { text: 'Boxplot B' },
+        xAxis: { categories: ['B'] },
+        series: [{ data: [[610, 680, 735, 802, 980]] }]
+    },
+    chart18: {
+        chart: { type: 'boxplot' },
+        title: { text: 'Boxplot C' },
+        xAxis: { categories: ['C'] },
+        series: [{ data: [[510, 590, 640, 690, 760]] }]
+    },
 
-        xAxis: {
-            categories: [
-                'Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas',
-                'Maria', 'Leon', 'Anna', 'Tim', 'Laura'
-            ]
-        },
-
-        yAxis: {
-            categories: [
-                'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'
-            ],
-            title: null,
-            reversed: true
-        },
-
-        // accessibility: {
-        //     point: {
-        //         descriptionFormat: '{(add index 1)}. ' +
-        //         '{series.xAxis.categories.(x)} sales ' +
-        //         '{series.yAxis.categories.(y)}, {value}.'
-        //     }
-        // },
-
-        colorAxis: {
-            min: 0,
-            minColor: 'var(--highcharts-background-color, #FFFFFF)',
-            maxColor: Highcharts.getOptions().colors[0]
-        },
-
-        legend: {
-            align: 'right',
-            layout: 'vertical',
-            margin: 0,
-            verticalAlign: 'top',
-            y: 25,
-            symbolHeight: 280
-        },
-
-        tooltip: {
-            format: '<b>{series.xAxis.categories.(point.x)}</b> sold<br>' +
-            '<b>{point.value}</b> items on <br>' +
-            '<b>{series.yAxis.categories.(point.y)}</b>'
-        },
-
+    // ===== Row 7: Continuous scatter (bubble) =====
+    chart19: {
+        chart: { type: 'bubble' },
+        title: { text: 'Bubble A' },
         series: [{
-            name: 'Sales per employee',
-            borderWidth: 1,
             data: [
-                [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
-                [1, 0, 92], [1, 1, 58], [1, 2, 78], [1, 3, 117], [1, 4, 48],
-                [2, 0, 35], [2, 1, 15], [2, 2, 123], [2, 3, 64], [2, 4, 52],
-                [3, 0, 72], [3, 1, 132], [3, 2, 114], [3, 3, 19], [3, 4, 16],
-                [4, 0, 38], [4, 1, 5], [4, 2, 8], [4, 3, 117], [4, 4, 115],
-                [5, 0, 88], [5, 1, 32], [5, 2, 12], [5, 3, 6], [5, 4, 120],
-                [6, 0, 13], [6, 1, 44], [6, 2, 88], [6, 3, 98], [6, 4, 96],
-                [7, 0, 31], [7, 1, 1], [7, 2, 82], [7, 3, 32], [7, 4, 30],
-                [8, 0, 85], [8, 1, 97], [8, 2, 123], [8, 3, 64], [8, 4, 84],
-                [9, 0, 47], [9, 1, 114], [9, 2, 31], [9, 3, 48], [9, 4, 91]
-            ],
-            dataLabels: {
-                enabled: true,
-                color: 'contrast'
-            }
-        }],
+                { x: 1, y: 1, z: 1 },
+                { x: 2, y: 2, z: 2 },
+                { x: 3, y: 3, z: 3 }
+            ]
+        }]
+    },
+    chart20: {
+        chart: { type: 'bubble' },
+        title: { text: 'Bubble B' },
+        series: [{
+            data: [
+                { x: 3, y: 1, z: 2 },
+                { x: 4, y: 2, z: 1 },
+                { x: 5, y: 3, z: 2 }
+            ]
+        }]
+    },
+    chart21: {
+        chart: { type: 'bubble' },
+        title: { text: 'Bubble C' },
+        series: [{
+            data: [
+                { x: 2, y: 3, z: 1 },
+                { x: 3, y: 2, z: 2 },
+                { x: 4, y: 1, z: 3 }
+            ]
+        }]
+    },
 
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    yAxis: {
-                        labels: {
-                            format: '{substr value 0 1}'
-                        }
-                    }
-                }
-            }]
-        }
+    // ===== Row 8: Hierarchical composition (treemap) =====
+    chart22: {
+        title: { text: 'Treemap A' },
+        series: [{
+            type: 'treemap',
+            data: [
+                { name: 'A', value: 6 },
+                { name: 'B', value: 3 },
+                { name: 'C', value: 1 }
+            ]
+        }]
+    },
+    chart23: {
+        title: { text: 'Treemap B' },
+        series: [{
+            type: 'treemap',
+            data: [
+                { name: 'A', value: 4 },
+                { name: 'B', value: 4 },
+                { name: 'C', value: 2 }
+            ]
+        }]
+    },
+    chart24: {
+        title: { text: 'Treemap C' },
+        series: [{
+            type: 'treemap',
+            data: [
+                { name: 'A', value: 5 },
+                { name: 'B', value: 2 },
+                { name: 'C', value: 3 }
+            ]
+        }]
+    },
+
+    // ===== Row 9: Sequential (waterfall) =====
+    chart25: {
+        chart: { type: 'waterfall' },
+        title: { text: 'Waterfall A' },
+        xAxis: { categories: ['Start', 'Step 1', 'Step 2', 'End'] },
+        series: [{
+            data: [
+                { y: 10, isSum: true },
+                5, -3,
+                { y: 12, isSum: true }
+            ]
+        }]
+    },
+    chart26: {
+        chart: { type: 'waterfall' },
+        title: { text: 'Waterfall B' },
+        xAxis: { categories: ['Start', 'Up', 'Down', 'End'] },
+        series: [{
+            data: [
+                { y: 8, isSum: true },
+                2, -1,
+                { y: 9, isSum: true }
+            ]
+        }]
+    },
+    chart27: {
+        chart: { type: 'waterfall' },
+        title: { text: 'Waterfall C' },
+        xAxis: { categories: ['Start', 'Adj', 'Adj', 'End'] },
+        series: [{ data: [{ y: 6, isSum: true }, 1, 1, { y: 8, isSum: true }] }]
+    },
+
+    // ===== Row 10: Textual (wordcloud) =====
+    chart28: {
+        title: { text: 'Wordcloud A' },
+        series: [
+            {
+                type: 'wordcloud',
+                data: [
+                    { name: 'alpha', weight: 3 },
+                    { name: 'beta', weight: 2 },
+                    { name: 'gamma', weight: 1 }
+                ]
+            }
+        ]
+    },
+    chart29: {
+        title: { text: 'Wordcloud B' },
+        series: [
+            {
+                type: 'wordcloud',
+                data: [
+                    { name: 'delta', weight: 2 },
+                    { name: 'epsilon', weight: 2 },
+                    { name: 'zeta', weight: 1 }
+                ]
+            }
+        ]
+    },
+    chart30: {
+        title: { text: 'Wordcloud C' },
+        series: [
+            {
+                type: 'wordcloud',
+                data: [
+                    { name: 'eta', weight: 3 },
+                    { name: 'theta', weight: 1 },
+                    { name: 'iota', weight: 1 }
+                ]
+            }
+        ]
+    },
+
+    // ===== Row 11: KPI (solid gauge) =====
+    chart31: {
+        chart: { type: 'solidgauge' },
+        title: { text: 'KPI A' },
+        pane: {
+            startAngle: -90,
+            endAngle: 90,
+            background: [{ outerRadius: '100%', innerRadius: '60%' }]
+        },
+        yAxis: { min: 0, max: 100, title: { text: null } },
+        series: [{ data: [55] }]
+    },
+    chart32: {
+        chart: { type: 'solidgauge' },
+        title: { text: 'KPI B' },
+        pane: {
+            startAngle: -90,
+            endAngle: 90,
+            background: [{ outerRadius: '100%', innerRadius: '60%' }]
+        },
+        yAxis: { min: 0, max: 100, title: { text: null } },
+        series: [{ data: [72] }]
+    },
+    chart33: {
+        chart: { type: 'solidgauge' },
+        title: { text: 'KPI C' },
+        pane: {
+            startAngle: -90,
+            endAngle: 90,
+            background: [{ outerRadius: '100%', innerRadius: '60%' }]
+        },
+        yAxis: { min: 0, max: 100, title: { text: null } },
+        series: [{ data: [38] }]
+    },
+
+    // ===== Row 12: Polar/Radar (line, polar) =====
+    chart34: {
+        chart: { polar: true, type: 'line' },
+        title: { text: 'Radar A' },
+        xAxis: {
+            categories: ['M', 'T', 'W', 'T', 'F'],
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+        yAxis: { gridLineInterpolation: 'polygon', lineWidth: 0, min: 0 },
+        series: [{
+            name: 'Series 1',
+            data: [1, 2, 3, 2, 1],
+            pointPlacement: 'on'
+        }]
+    },
+    chart35: {
+        chart: { polar: true, type: 'line' },
+        title: { text: 'Radar B' },
+        xAxis: {
+            categories: ['A', 'B', 'C', 'D', 'E'],
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+        yAxis: { gridLineInterpolation: 'polygon', lineWidth: 0, min: 0 },
+        series: [{
+            name: 'Series 1',
+            data: [2, 1, 2, 3, 2],
+            pointPlacement: 'on'
+        }]
+    },
+    chart36: {
+        chart: { polar: true, type: 'line' },
+        title: { text: 'Radar C' },
+        xAxis: {
+            categories: ['P', 'Q', 'R', 'S', 'T'],
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+        yAxis: { gridLineInterpolation: 'polygon', lineWidth: 0, min: 0 },
+        series: [{
+            name: 'Series 1',
+            data: [3, 2, 1, 2, 3],
+            pointPlacement: 'on'
+        }]
     }
 };
 
 
 (function POC_A11Y_DESC_PLUGIN(Highcharts) {
     const H = Highcharts;
+
     H.addEvent(H.Chart, 'beforeA11yUpdate', function (e) {
         if (this.options?.a11y?.enabled === false || !this.a11y) {
             return;
         }
 
         const fam = familyOf(this);
-        let html = `<p>${(basicSummary(this))}</p>`;
-
+        let html = `<p>${basicSummary(this)}</p>`;
         if (fam === 'timeseries') {
             html += describeTimeseries(this);
         } else if (fam === 'categorical') {
@@ -574,8 +560,44 @@ const HC_CONFIGS = {
         }
 
         e.chartDetailedInfo.chartAutoDescription = html;
+
+        // --- NEW: keep a copy and paint the debug panel
+        this.__autoDescHTML = html;
+        updateA11yDebugPanel(this, html);
     });
 }(Highcharts));
+
+function updateA11yDebugPanel(chart, html) {
+    const chartEl = chart?.renderTo; // the <div id="chartX">
+    if (!chartEl) {
+        return;
+    }
+
+    // container where we’ll append the debug div (chart wrapper if present)
+    const wrapper = chartEl.parentElement || chartEl;
+
+    // find or create the panel
+    const id = chartEl.id ? chartEl.id + '-a11y-debug' : '';
+    let panel = wrapper.querySelector('.a11y-debug');
+    if (!panel) {
+        panel = document.createElement('div');
+        panel.className = 'a11y-debug';
+        if (id) {
+            panel.id = id;
+        }
+        panel.setAttribute('role', 'region');
+        panel.setAttribute('aria-label', 'Auto-description debug');
+        // Put it right after the chart area
+        wrapper.appendChild(panel);
+    }
+
+    // inject the HTML we just produced
+    panel.innerHTML = `
+      <div class="a11y-debug__title">Auto-description:</div>
+      <div class="a11y-debug__content">${html}</div>
+    `;
+}
+
 
 /* Sort chart types into families */
 function familyOf(chart) {

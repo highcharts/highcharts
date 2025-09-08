@@ -1,56 +1,158 @@
-html,
-body {
-    height: 100%;
-}
-
-body {
-    margin: 0;
+/* page background */
+.shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     font-family:
         system-ui,
         -apple-system,
+        BlinkMacSystemFont,
         "Segoe UI",
         Roboto,
         "Helvetica Neue",
         Arial,
         "Noto Sans",
+        sans-serif,
         "Apple Color Emoji",
-        "Segoe UI Emoji";
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji";
+    background:
+        radial-gradient(1200px 600px at -10% -10%, #f9fafb 40%, transparent 41%),
+        radial-gradient(1000px 500px at 110% 0%, #f3f4f6 40%, transparent 41%),
+        #f7f7fb; /* subtle overall tint */
 }
 
-.shell {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1rem;
+/* cards: slight elevation */
+.card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.04),
+        0 6px 16px rgba(17, 24, 39, 0.06); /* soft, modern */
 }
 
-header.topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 16px;
+/* header */
+.topbar {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.title {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
+.topbar .title h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
 }
 
-.title h1 {
-    font-size: 2rem;
-    margin: 0;
-    letter-spacing: 0.2px;
+.topbar .title span {
+    color: #6b7280;
 }
 
-/* 6-up grid */
+/* grid */
 .dashboard {
+    padding: 1.25rem;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.row-title {
+    margin: 1.25rem 0 0.25rem;
+    font-size: 1.125rem;
+    color: #111827;
+}
+
+.row {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    align-items: stretch;
+    gap: 0.75rem;
 }
 
-.highcharts-background {
-    fill: transparent;
+/* cards */
+.card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 0.75rem 0.9rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.chart-wrapper {
+    padding: 0.5rem 0.75rem 0.75rem;
+}
+
+.chart-area {
+    width: 100%;
+    height: 280px; /* tweak height as you like */
+}
+
+.highcharts-description {
+    margin: 0.5rem 0 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* responsive */
+@media (max-width: 1200px) {
+    .row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .row {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-area {
+        height: 240px;
+    }
+}
+
+/* a11y utility for row labels */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.a11y-debug {
+    margin-top: 0.5rem;
+    padding: 0.75rem 0.875rem;
+    background: rgba(15, 23, 42, 0.04); /* subtle */
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.a11y-debug__title {
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    opacity: 0.8;
+}
+
+.a11y-debug__content :where(p, ul, li) {
+    margin: 0.25rem 0;
+}
+
+.a11y-debug__content ul {
+    padding-left: 1.25rem;
 }
