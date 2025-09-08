@@ -292,6 +292,12 @@ const JSDOC_TAG_REPLACEMENTS: Record<string, string> = {
 const GENERIC = /^[\w\.]*<[\s\w\.\[\],|()]+>$/su;
 
 
+const INFO_KIND_ORDER: Array<CodeInfo['kind']> = [
+    'TypeAlias', 'Interface', 'Enumeration', 'Variable', 'Class',
+    'Property', 'Function', 'Namespace'
+]
+
+
 const NATIVE_HELPER = new RegExp(
     '^(?:' + [
         'Array', 'Extract', 'Omit', 'Partial', 'Promise', 'Readonly',
@@ -1486,6 +1492,9 @@ export function getProject(
         }
     }
 
+    _sourceInfos.forEach(sourceInfo => sortMembers(sourceInfo));
+    _sourceInfos.sort((a, b) => a.file < b.file ? -1 : a.file > b.file ? 1 : 0);
+
     return _project;
 }
 
@@ -2187,6 +2196,53 @@ function sanitizeType (
     }
 
     return type.replace(new RegExp(SANITIZE_TYPE.source, 'gu'), '$1').trim();
+}
+
+
+function sortMembers(
+    info: (CodeInfo|SourceInfo)
+): void {
+    const sorter = (a: CodeInfo, b: CodeInfo): number => {
+
+        if (a.kind !== b.kind) {
+            const aOrder = INFO_KIND_ORDER.indexOf(a.kind);
+            const bOrder = INFO_KIND_ORDER.indexOf(b.kind);
+
+            return aOrder - bOrder;
+        }
+
+        const aName = a.name.toLowerCase();
+        const bName = b.name.toLowerCase();
+
+        return aName < bName ? -1 : aName > bName ? 1 : 0;
+    }
+
+    switch (info.kind) {
+        case 'Class':
+        case 'Enumeration':
+        case 'Interface':
+        case 'Namespace':
+            info.members.sort(sorter);
+            info.members
+                .forEach(memberInfo => sortMembers(memberInfo));
+            break;
+        case 'Property':
+        case 'TypeAlias':
+        case 'Variable':
+            if (
+                typeof info.type === 'object' &&
+                info.type.kind === 'ObjectType'
+            ) {
+                info.type.members.sort(sorter);
+                info.type.members
+                    .forEach(memberInfo => sortMembers(memberInfo));
+            }
+            break;
+        case 'Source':
+            info.code.sort(sorter);
+            info.code.forEach(codeInfo => sortMembers(codeInfo));
+            break;
+    }
 }
 
 
