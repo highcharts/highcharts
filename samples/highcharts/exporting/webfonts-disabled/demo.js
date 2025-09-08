@@ -1,10 +1,16 @@
 Highcharts.chart('container', {
-    exporting: {},
-    title: {
-        text: 'Offline export',
-        style: {
-            fontFamily: 'Iceberg'
+    exporting: {
+        chartOptions: {
+            chart: {
+                style: {
+                    fontFamily: 'sans-serif'
+                }
+            }
         }
+    },
+
+    title: {
+        text: 'Web font disabled in export'
     },
 
     subtitle: {
@@ -14,8 +20,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'area',
         style: {
-            fontFamily: 'Ole',
-            fontWeight: '800'
+            fontFamily: 'Iceberg'
         }
     },
 
