@@ -21,18 +21,9 @@ const grid = Grid.grid('container', {
 });
 
 csvExport.addEventListener('click', () => {
-    const csv = grid.exporting.getCSV(
-        grid.dataTable,
-        {
-            useLocalDecimalPoint: true,
-            lineDelimiter: '\n',
-            firstRowAsNames: true
-        }
-    );
-
-    result.innerHTML = csv;
+    result.innerHTML =  grid.exporting.getCSV();
 });
 
 csvDownload.addEventListener('click', () => {
-    console.log('download');
+    grid.exporting.downloadCSV();
 });

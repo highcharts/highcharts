@@ -12,6 +12,7 @@ import './es-modules/Grid/Pro/GridEvents';
 import './es-modules/Grid/Pro/CellEditing/CellEditingComposition';
 import './es-modules/Grid/Pro/Dash3Compatibility';
 import './es-modules/Grid/Pro/Credits/CreditsProComposition';
+import './es-modules/Grid/Pro/Export/ExportingComposition';
 import './es-modules/Grid/Pro/ColumnTypes/ValidatorComposition';
 import './es-modules/Grid/Pro/CellRendering/CellRenderer';
 import './es-modules/Grid/Pro/CellRendering/CellContentPro';

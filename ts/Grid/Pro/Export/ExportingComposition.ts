@@ -27,10 +27,7 @@ import Exporting from './Exporting.js';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 
-const {
-    addEvent,
-    pushUnique
-} = U;
+const { addEvent, pushUnique } = U;
 
 /* *
  *
@@ -60,7 +57,7 @@ namespace ExportingComposition {
      * Init exporting
      */
     function initExporting(this: Grid): void {
-        this.exporting = new Exporting(this);
+        this.exporting = new Exporting(this, this.options?.exporting);
     }
 }
 
@@ -69,6 +66,17 @@ namespace ExportingComposition {
  * Declarations
  *
  * */
+
+declare module '../../Core/Options' {
+    interface Options {
+        /**
+         * Options for the exporting.
+         *
+         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/exporting-csv | Export to CSV}
+         */
+        exporting?: ExportingOptions;
+    }
+}
 declare module '../../Core/Grid' {
     export default interface Grid {
         exporting?: Exporting;

@@ -22,6 +22,11 @@
  * */
 
 import type Grid from '../../Core/Grid';
+import type { ExportingOptions } from '../../Core/Options';
+
+import U from '../../../Core/Utilities.js';
+
+const { merge } = U;
 
 
 /* *
@@ -46,6 +51,21 @@ class Exporting {
      */
     public readonly grid: Grid;
 
+    /**
+     * The options for the exporting.
+     */
+    public options: ExportingOptions;
+
+    /**
+     * Default options of the credits.
+     */
+    public static defaultOptions: ExportingOptions = {
+        firstRowAsNames: true,
+        itemDelimiter: ',',
+        lineDelimiter: '\n',
+        useLocalDecimalPoint: true
+    };
+
 
     /* *
     *
@@ -59,10 +79,12 @@ class Exporting {
      * @param grid
      * The Grid instance.
      *
+     * @param options
+     * The options for the exporting.
      */
-    constructor(grid: Grid) {
-
+    constructor(grid: Grid, options?: ExportingOptions) {
         this.grid = grid;
+        this.options = merge(Exporting.defaultOptions, options);
     }
 
 
@@ -72,31 +94,34 @@ class Exporting {
     *
     * */
 
+    /**
+     * Downloads the CSV string as a file.
+     */
     public downloadCSV(): void {
-        const csv = this.getCSV(true, true);
+        const csv = this.getCSV();
 
+        // eslint-disable-next-line no-console
         console.log(csv);
     }
 
     /**
-     * Creates a CSV string from the data table on the connector instance.
+     * Creates a CSV string from the data table.
      *
-     * @param dataTable
-     * Connector instance to export from.
-     *
-     * @param {CSVConverterOptions} [options]
-     * Options used for the export.
-     *
-     * @return {string}
-     * CSV string from the connector table.
+     * @return
+     * CSV string representing the data table.
      */
-    public getCSV(
-        dataTable: any,
-        options: any
-    ): string {
-        const { useLocalDecimalPoint, lineDelimiter, firstRowAsNames } = options;
-        const exportNames = (firstRowAsNames !== false);
+    public getCSV(): string {
+        const dataTable = this.grid.dataTable;
 
+        if (!dataTable) {
+            return '';
+        }
+
+        const options =
+            this.grid.options?.exporting || Exporting.defaultOptions;
+        const { useLocalDecimalPoint, lineDelimiter, firstRowAsNames } =
+            options;
+        const exportNames = (firstRowAsNames !== false);
         let { decimalPoint, itemDelimiter } = options;
 
         if (!decimalPoint) {
