@@ -96,8 +96,12 @@ export class MergerSession {
             productVersion
         );
 
-        if (!await mergerSession.activateOrCreateProductPlatform()) {
-            throw new Error('Product is not available.');
+        try {
+            if (!await mergerSession.activateOrCreateProductPlatform()) {
+                throw new Error('Product is not available.');
+            }
+        } catch (error) {
+            console.error(error);
         }
 
         return mergerSession;
@@ -222,10 +226,18 @@ export class MergerSession {
      */
     public async mergeDatabase(): Promise<void> {
         const database = this.database;
+        const _ = void 0;
 
-        for (const item of await database.getItemChildren('')) {
-            await this.mergeItem(item);
-        }
+        let items: Array<APIDB.ItemRow>;
+        let page = 0;
+
+        do {
+            items = await database.getItemChildren('', _, _, _, _, page);
+            for (const item of items) {
+                await this.mergeItem(item);
+            }
+            ++page;
+        } while (items.length)
 
     }
 
@@ -252,7 +264,7 @@ export class MergerSession {
         const optionItemRow: APIDB.ItemRow = {
             path,
             description: '',
-            since: 1,
+            since: database.activeVersion,
             product_id: database.activeProduct.id!,
             meta: {
                 file: info.meta.file
@@ -287,7 +299,6 @@ export class MergerSession {
         await this.mergeItem(optionItemRow);
     }
 
-
     /**
      * Creates or merges the item row into the merger session.
      *
@@ -308,6 +319,10 @@ export class MergerSession {
             mergedItems[itemRow.path] = itemRow;
             return;
         }
+
+        itemRowTarget.id ||= itemRow.id;
+        itemRowTarget.product_id ||= itemRow.product_id;
+        itemRowTarget.module_id ||= itemRow.module_id;
 
         itemRowTarget.before = (
             (itemRowTarget.before || 0) < (itemRow.before || 0) ?
@@ -346,6 +361,11 @@ export class MergerSession {
             }
         }
 
+        itemRowTarget.meta = {
+            ...itemRowTarget.meta,
+            ...itemRow.meta
+        } as APIDB.ItemRowMeta;
+
         itemRowTarget.since = (
             (itemRowTarget.since || 0) < (itemRow.since || 0) ?
                 itemRowTarget.since :
@@ -362,16 +382,10 @@ export class MergerSession {
      */
     public async mergeDeclarations(): Promise<void> {
         const declarations = this.declarations;
-        const productURLName = this.database.activeProduct.url_name;
+        const productNamespace = this.productNamespace;
 
         // Debug
         DTS.toProjectJSON(declarations, 'tree-dts.json');
-
-        const referencePrefix = (
-            productURLName ?
-                `class-reference.${productURLName}` :
-                'class-reference'
-        );
 
         for (const sourceInfo of declarations.sourceInfos) {
             if (!sourceInfo.code.length) {
@@ -386,11 +400,13 @@ export class MergerSession {
                         await this.mergeOptions('', code);
                     }
                 } else {
-                    let name = code.meta.scope || code.name;
-                    await this.mergeInfo(
-                        name ? `${referencePrefix}.${name}` : referencePrefix,
-                        code
-                    );
+                    let name = code.scope || code.name;
+                    if (!name) {
+                        name = productNamespace;
+                    } else if (!name.startsWith(productNamespace)) {
+                        name = `${productNamespace}.${name}`;
+                    }
+                    await this.mergeInfo(`class-reference/${name}`, code);
                 }
             }
         }
@@ -403,23 +419,22 @@ export class MergerSession {
     /**
      * Merge options into the API rows.
      *
-     * @param parentOption
+     * @param parentName
      * Full name of the parent option.
      *
      * @param info
      * DTS information to merge.
      */
     public async mergeOptions(
-        parentOption: string,
-        info: (
-            | DTS.EnumerationInfo
-            | DTS.FunctionInfo
-            | DTS.InterfaceInfo
-            | DTS.PropertyInfo
-            | DTS.TypeAliasInfo
-            | DTS.VariableInfo
-        )
+        parentName: string,
+        info: DTS.CodeInfo
     ): Promise<void> {
+
+        if (info.kind === 'Class') { // Never an option
+            return;
+        }
+
+        const infoLookup = this.declarations.infoLookup;
         const optionStack = this.optionStack;
 
         if (optionStack.includes(info)) {
@@ -429,42 +444,95 @@ export class MergerSession {
 
         optionStack.push(info);
 
-        const optionName = (
-            parentOption ?
-                `${parentOption}.${Utilities.getOptionName(info)}` :
-                Utilities.getOptionName(info)
-        );
+        let optionName = Utilities.getOptionName(info);
 
-        if (optionName !== 'options') {
+        if (parentName) {
             const infoMeta = info.meta as InfoMetaAddon;
             const allNames = infoMeta.optionNames = infoMeta.optionNames || [];
+
+            optionName = `${parentName}.${optionName}`;
+
+            if (!optionName.startsWith('options/')) {
+                optionName = `options/${optionName}`;
+            }
 
             if (!allNames.includes(optionName)) {
                 allNames.push(optionName);
             }
         }
 
-        await this.mergeInfo(optionName, info);
-
         switch (info.kind) {
+            case 'Function':
+                if (parentName) {
+                    await this.mergeInfo(optionName, info);
+                }
+                break;
             case 'Interface':
-                for (const _memberInfo of info.members) {
-                    await this.mergeOptions(
-                        parentOption && optionName,
-                        _memberInfo
-                    );
+                if (parentName) {
+                    await this.mergeInfo(optionName, info);
+                }
+                for (const memberInfo of info.members) {
+                    await this.mergeOptions(optionName, memberInfo);
                 }
                 break;
             case 'Property':
+            case 'TypeAlias':
                 if (typeof info.type === 'object') {
-                    const lookupInfo = this.declarations.infoLookup
-                        .get(info.type.symbol);
+                    const infoType = info.type;
+
+                    if (
+                        infoType.kind === 'GenericType' &&
+                        (
+                            infoType.name === 'Array' ||
+                            infoType.name === 'Partial' ||
+                            infoType.name === 'DeepPartial'
+                        )
+                    ) {
+                        for (const argType of infoType.arguments) {
+
+                            if (typeof argType !== 'object') {
+                                continue;
+                            }
+
+                            const argInfo = infoLookup.get(argType.symbol);
+
+                            if (argInfo) {
+                                await this.mergeOptions(optionName, argInfo);
+                            }
+
+                        }
+                        break;
+                    }
+
+                    if (
+                        infoType.kind === 'IntersectionType' ||
+                        infoType.kind === 'UnionType'
+                    ) {
+                        for (const memberType of infoType.members) {
+
+                            if (typeof memberType !== 'object') {
+                                continue;
+                            }
+
+                            const memberInfo =
+                                infoLookup.get(memberType.symbol);
+
+                            if (memberInfo) {
+                                await this.mergeOptions(optionName, memberInfo);
+                            }
+
+                        }
+                    }
+
+                    const lookupInfo = infoLookup.get(infoType.symbol);
+
                     if (!lookupInfo) {
                         break;
                     }
+
                     if (lookupInfo.kind === 'Interface') {
-                        for (const _memberInfo of lookupInfo.members) {
-                            await this.mergeOptions(optionName, _memberInfo);
+                        for (const memberInfo of lookupInfo.members) {
+                            await this.mergeOptions(optionName, memberInfo);
                         }
                     } else if (
                         lookupInfo.kind !== 'Class' &&
@@ -472,9 +540,13 @@ export class MergerSession {
                     ) {
                         await this.mergeOptions(optionName, lookupInfo);
                     }
+
+                } else if (parentName) {
+                    await this.mergeInfo(optionName, info);
                 }
                 break;
             default:
+                console.error('UNSUPPORTED INFO:', info.kind);
                 break;
         }
 
