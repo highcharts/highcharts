@@ -60,6 +60,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
     shapes?: Array<ControllableShapeOptions>;
     type?: string;
     typeOptions: AnnotationTypeOptions;
+    types: Record<string, DeepPartial<AnnotationOptions>>;
     visible: boolean;
     zIndex: number;
 }

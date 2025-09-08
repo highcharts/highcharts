@@ -837,7 +837,7 @@ class TreemapSeries extends ScatterSeries {
                 return n.node.visible || defined(n.dataLabel);
             }),
             padding = splat(series.options.dataLabels || {})[0]?.padding,
-            positionsAreSet = points.some((p): Boolean => isNumber(p.plotY));
+            positionsAreSet = points.some((p): boolean => isNumber(p.plotY));
 
         for (const point of points) {
             const style: CSSObject = {},
@@ -891,7 +891,7 @@ class TreemapSeries extends ScatterSeries {
 
                 // Hide labels for shapes that are too small
                 } else {
-                    style.width = '1px';
+                    style.width = `${width}px`;
                     style.visibility = 'hidden';
                 }
             }
@@ -919,8 +919,7 @@ class TreemapSeries extends ScatterSeries {
             allowTraversingTree = options.allowTraversingTree;
 
         for (const point of points) {
-            const levelDynamic = point.node.levelDynamic,
-                animatableAttribs: SVGAttributes = {},
+            const animatableAttribs: SVGAttributes = {},
                 attribs: SVGAttributes = {},
                 css: CSSObject = {},
                 groupKey = 'level-group-' + point.node.level,
@@ -964,9 +963,9 @@ class TreemapSeries extends ScatterSeries {
                 if (!(series as any)[groupKey]) {
                     (series as any)[groupKey] = renderer.g(groupKey)
                         .attr({
-                            // @todo Set the zIndex based upon the number of
-                            // levels, instead of using 1000
-                            zIndex: 1000 - (levelDynamic || 0)
+                            // Use the static level in order to retain z-index
+                            // when data is updated (#23432).
+                            zIndex: -(point.node.level || 0)
                         })
                         .add(series.group);
                     (series as any)[groupKey].survive = true;
@@ -1268,7 +1267,7 @@ class TreemapSeries extends ScatterSeries {
 
         if (series.options.allowTraversingTree) {
             series.eventsToUnbind.push(
-                addEvent(series, 'click', series.onClickDrillToNode as any)
+                addEvent(series, 'click', series.onClickDrillToNode)
             );
 
             series.eventsToUnbind.push(

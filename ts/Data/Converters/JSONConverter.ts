@@ -21,7 +21,7 @@
 
 import type DataEvent from '../DataEvent';
 import type {
-    BeforeParseCallbackFunction,
+    JSONBeforeParseCallbackFunction,
     ColumnNamesOptions
 } from '../Connectors/JSONConnectorOptions';
 
@@ -53,7 +53,6 @@ class JSONConverter extends DataConverter {
      */
     protected static readonly defaultOptions: JSONConverter.Options = {
         ...DataConverter.defaultOptions,
-        data: [],
         orientation: 'rows'
     };
 
@@ -276,7 +275,7 @@ namespace JSONConverter {
      */
     export interface Options extends DataConverter.Options {
         columnNames?: Array<string>|ColumnNamesOptions;
-        data: Data;
+        data?: Data;
         orientation: 'columns'|'rows';
     }
 
@@ -286,7 +285,7 @@ namespace JSONConverter {
      * Options that are not compatible with ClassJSON
      */
     export interface SpecialOptions {
-        beforeParse?: BeforeParseCallbackFunction;
+        beforeParse?: JSONBeforeParseCallbackFunction;
     }
 
     /**

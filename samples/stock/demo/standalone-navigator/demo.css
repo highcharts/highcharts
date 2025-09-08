@@ -12,7 +12,6 @@
         sans-serif;
 }
 
-#container {
-    height: 400px;
-    min-width: 310px;
+#navigator-container {
+    margin-top: 10px;
 }

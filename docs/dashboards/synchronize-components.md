@@ -2,7 +2,7 @@
 
 In addition to sharing data via the data pool, **Dashboards** components can use the synchronization mechanism to aid visualization, navigation and highlighting of specific data.
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/demo/minimal allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/minimal?force-light-theme" allow="fullscreen"></iframe>
 
 ## How to synchronize Dashboards components?
 
@@ -64,7 +64,7 @@ Dashboards.board('container', {
               Tuna,214,0.6`,
           },
       }]
-  },    
+  },
   components: [{
       connector: {
           id: 'Vitamin'
@@ -128,7 +128,7 @@ sync: {
 ```
 
 Demo:
-<iframe style="width: 100%; height: 651px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/groups allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 651px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/groups?force-light-theme" allow="fullscreen"></iframe>
 
 
 ## Custom synchronization
@@ -198,4 +198,4 @@ class CustomComponent extends Component {
 ```
 
 The below example shows how [custom sync](https://www.highcharts.com/docs/dashboards/synchronize-components) between a [Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component) and a [custom component](https://www.highcharts.com/docs/dashboards/custom-component) works:
-<iframe style="width: 100%; height: 651px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/custom-component-sync allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 651px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/custom-component-sync?force-light-theme" allow="fullscreen"></iframe>

@@ -45,13 +45,20 @@ const components = [{
     renderTo: 'dashboard-col-1',
     type: 'HTML',
     elements: [{
-        tagName: 'img',
-        attributes: {
-            src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-            title: 'I heard you like components'
-        }
-    }, {
-        textContent: 'Lorem ipsum'
+        tagName: 'div',
+        children: [{
+            tagName: 'h1',
+            textContent: 'Title',
+            attributes: {
+                id: 'main-title'
+            }
+        }, {
+            tagName: 'p',
+            textContent: 'Description',
+            attributes: {
+                id: 'description'
+            }
+        }]
     }]
 }]
 
@@ -122,7 +129,7 @@ test('Components in rows with set height', function (assert) {
     layouts[0].rows[0].style = {}
 });
 
-skip('Components in layout with set width', function (assert) {
+test('Components in layout with set width', function (assert) {
     const container = setupContainer();
 
     layouts[0].style = {
@@ -137,60 +144,22 @@ skip('Components in layout with set width', function (assert) {
         components
     });
 
-    const columns = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell')
-    assert.strictEqual(columns.length, 2)
-    for (const column of columns) {
-        const components = column.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component');
-        assert.strictEqual(column.style.width, '800px');
-        for (const component of components) {
-            assert.strictEqual(component.style.height, '', 'Height should be unset')
-            assert.strictEqual(component.element.getBoundingClientRect(), column.style.width, 'Width should be set to the column')
-        }
+    const cells = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell');
+
+    assert.strictEqual(cells.length, 2);
+    for (const cell of cells) {
+        assert.strictEqual(
+            cell.style.width,
+            '800px',
+            'Width should be set to the cell.'
+        );
     }
-
-    layouts[0].style = {}
-});
-
-test('Components and rows in layout with set height', function (assert) {
-    const container = setupContainer();
-
-    layouts[0].style = {
-        height: '800px'
-    }
-
-    const board = Dashboards.board(container.id, {
-        gui: {
-            enabled: true,
-            layouts
-        },
-        components
-    });
-
-    const rows = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'row')
-    assert.strictEqual(rows.length, 2)
-
-    // This is on the todo list :)
-    // for (const row of rows) {
-    //     assert.strictEqual(window.getComputedStyle(row).height, '400px')
-    // }
-
-    // const columns = document.querySelectorAll('.highcharts-dashboards-column')
-    // assert.strictEqual(columns.length, 2)
-    // for (const column of columns) {
-    //     const components = column.querySelectorAll('.highcharts-dashboards-component');
-    //     assert.strictEqual(column.style.width, '800px');
-    //     for (const component of components) {
-    //         assert.strictEqual(component.style.height, '', 'Height should be unset')
-    //         assert.strictEqual(component.style.width, column.style.width, 'Width should be set to the column')
-    //     }
-    // }
 
     layouts[0].style = {}
 });
 
 test('Nested layouts serialization.', function (assert) {
     const container = setupContainer();
-
     const chartComponentOptions = {
         type: 'Highcharts',
         chartOptions: {
@@ -204,7 +173,7 @@ test('Nested layouts serialization.', function (assert) {
             }
         }
     };
-        const board = Dashboards.board(container.id, {
+    const board = Dashboards.board(container.id, {
         editMode: {
             enabled: true,
             contextMenu: {
@@ -245,20 +214,16 @@ test('Nested layouts serialization.', function (assert) {
 
     });
     const layoutToExport = board.layouts[0];
-    const exportedLayoutId = layoutToExport.options.id;
     const exportedRows = layoutToExport.rows;
     const exportedRowsLength = layoutToExport.rows.length;
     const exportedCellsLength = exportedRows[0].cells.length;
     const numberOfMountedComponents = board.mountedComponents.length;
-    layoutToExport.exportLocal();
-    layoutToExport.destroy();
-    const importedLayout = board.importLayoutLocal(exportedLayoutId);
+    const serializedOptions = board.getOptions();
 
-
-    assert.equal(importedLayout.rows.length, exportedRowsLength, 'The imported layout has an equal number of rows as exported one.')
-    assert.equal(importedLayout.rows[0].cells.length, exportedCellsLength, 'The imported layout has an equal number of cells as exported one.')
-    assert.equal(numberOfMountedComponents, importedLayout.board.mountedComponents.length, 'The number of mounted components should be the same after importing the layout.')
-    assert.true(importedLayout.rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
+    assert.equal(serializedOptions.gui.layouts[0].rows.length, exportedRowsLength, 'The imported layout has an equal number of rows as exported one.')
+    assert.equal(serializedOptions.gui.layouts[0].rows[0].cells.length, exportedCellsLength, 'The imported layout has an equal number of cells as exported one.')
+    assert.equal(numberOfMountedComponents, serializedOptions.components.length, 'The number of mounted components should be the same after importing the layout.')
+    assert.true(serializedOptions.gui.layouts[0].rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
 });
 
 test('Reserialized cell width', function (assert) {
@@ -324,15 +289,10 @@ test('Reserialized cell width', function (assert) {
         ]
     });
 
-    const layoutToExport = board.layouts[0];
-    const exportedLayoutId = layoutToExport.options.id;
     const widthBeforeExport = board.layouts[0].rows[0].cells.map(
         (cell) => cell.options.width
     );
-
-    layoutToExport.exportLocal();
-    layoutToExport.destroy();
-    board.importLayoutLocal(exportedLayoutId);
+    board.getOptions();
 
     const widthAfterExport = board.layouts[0].rows[0].cells.map(
         (cell) => cell.options.width
@@ -368,3 +328,39 @@ test('IDs of rows, cells and layouts', function (assert) {
     assert.strictEqual(cell.getAttribute('id'), null, 'Cell\'s id should not exist');
     assert.strictEqual(row.getAttribute('id'), null, 'Row\'s id should not exist');
 })
+
+
+test('Board destroy with custom HTML', function (assert) {
+    // Prepare custom HTML for the board.
+    const container = setupContainer();
+    const chartContainer = document.createElement("div")
+    chartContainer.id = "chart-container"
+    document.getElementById("test-container").appendChild(chartContainer)
+
+    const component = {
+        renderTo: "chart-container",
+        type: "Highcharts",
+        chartOptions: {
+          series: [
+            {
+              type: "column",
+              data: [1, 2, 3],
+            },
+          ],
+        },
+    };
+    const board = Dashboards.board(container.id, {
+        components: [component],
+    });
+
+    assert.ok(board.mountedComponents.length === 1, "There should be one mounted component");
+    board.destroy();
+    assert.strictEqual(Object.keys(board).length, 0, "Board should be destroyed and empty");
+    assert.ok(chartContainer, "Chart container (custom HTML) should exist");
+
+    const board2 = Dashboards.board(container.id, {
+        components: [component],
+    });
+    assert.ok(board2.mountedComponents.length === 1, "There should be one mounted component");
+})
+

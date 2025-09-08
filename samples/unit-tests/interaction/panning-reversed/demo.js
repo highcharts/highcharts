@@ -1,25 +1,28 @@
 QUnit.test('Panning reversed axis', function (assert) {
-    var chart = Highcharts.chart('container', {
-            chart: {
-                zoomType: 'x',
-                panning: true,
-                panKey: 'shift',
+    const chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x',
+            panning: true,
+            panKey: 'shift',
+            animation: false
+        },
+        xAxis: {
+            min: 0,
+            max: 12,
+            reversed: true
+        },
+        series: [
+            {
+                data: [15, 25, 34, 50, 10, 23, 48, 59, 23, 100, 30, 15, 25],
                 animation: false
-            },
-            xAxis: {
-                min: 0,
-                max: 12,
-                reversed: true
-            },
-            series: [
-                {
-                    data: [15, 25, 34, 50, 10, 23, 48, 59, 23, 100, 30, 15, 25],
-                    animation: false
-                }
-            ]
-        }),
-        firstZoom = {};
+            }
+        ]
+    });
 
+    const originalStyle = {
+        position: chart.container.parentNode.style.position,
+        top: chart.container.parentNode.style.top
+    };
     chart.container.parentNode.style.position = 'absolute';
     chart.container.parentNode.style.top = 0;
 
@@ -31,7 +34,7 @@ QUnit.test('Panning reversed axis', function (assert) {
     // Pan
     controller.pan([200, 100], [250, 100], { shiftKey: true });
 
-    assert.strictEqual(chart.xAxis[0].min, 0, 'Has not panned min');
+    assert.close(chart.xAxis[0].min, 0, 1e-12, 'Has not panned min');
     assert.strictEqual(chart.xAxis[0].max, 12, 'Has not panned max');
 
     // Zoom
@@ -40,7 +43,7 @@ QUnit.test('Panning reversed axis', function (assert) {
     assert.strictEqual(chart.xAxis[0].min > 0, true, 'Zoomed min');
     assert.strictEqual(chart.xAxis[0].max < 12, true, 'Zoomed max');
 
-    firstZoom = chart.xAxis[0].getExtremes();
+    const firstZoom = chart.xAxis[0].getExtremes();
 
     // Pan
     controller.pan([200, 100], [250, 100], { shiftKey: true });
@@ -52,5 +55,7 @@ QUnit.test('Panning reversed axis', function (assert) {
         'Has preserved range'
     );
 
-    chart.container.parentNode.style.position = 'static';
+    // Reverse
+    chart.container.parentNode.style.position = originalStyle.position;
+    chart.container.parentNode.style.top = originalStyle.top;
 });

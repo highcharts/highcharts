@@ -1,5 +1,19 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
 
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 #container {
     margin: 8px;
     padding: 20px;
@@ -9,7 +23,8 @@
     padding-left: 10px;
 }
 
-.custom-theme {
+.custom-theme,
+.highcharts-light .custom-theme {
     /* This starts of by defining some custom color variabled */
     --highlight-color: #e2e2e2;
     --highlight-border-color: #cec184;
@@ -28,18 +43,19 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #333;
-    }
-
     .custom-theme {
-        /* In most cases you only want to change colors for dark mode,
-        so no need to repeat any --hcg variables in dark mode */
         --highlight-color: #4c4c4c;
         --highlight-border-color: #7d754c;
         --high-color: #98d76a;
         --low-color: #ffa8a8;
     }
+}
+
+.highcharts-dark .custom-theme {
+    --highlight-color: #4c4c4c;
+    --highlight-border-color: #7d754c;
+    --high-color: #98d76a;
+    --low-color: #ffa8a8;
 }
 
 .hcg-table th.bold span,

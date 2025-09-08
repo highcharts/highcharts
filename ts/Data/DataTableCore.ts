@@ -126,6 +126,7 @@ class DataTableCore {
 
     protected versionTag: string;
 
+
     /* *
      *
      *  Functions

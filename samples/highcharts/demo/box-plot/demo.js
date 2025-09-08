@@ -48,10 +48,11 @@ Highcharts.chart('container', {
         ],
         tooltip: {
             headerFormat: '<em>Experiment No {point.key}</em><br/>'
-        }
+        },
+        color: Highcharts.defaultOptions.colors[1]
     }, {
         name: 'Outliers',
-        color: Highcharts.getOptions().colors[0],
+        color: Highcharts.defaultOptions.colors[1],
         type: 'scatter',
         data: [ // x, y positions where 0 is the first category
             [0, 644],
@@ -62,7 +63,7 @@ Highcharts.chart('container', {
         marker: {
             fillColor: 'white',
             lineWidth: 1,
-            lineColor: Highcharts.getOptions().colors[0]
+            lineColor: Highcharts.defaultOptions.colors[1]
         },
         tooltip: {
             pointFormat: 'Observation: {point.y}'

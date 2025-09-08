@@ -90,51 +90,59 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
+        /* Colors for data series and points */
+        --highcharts-color-1: #00e272;
+        --highcharts-color-2: #efdf00;
+
         /* UI colors */
-        --highcharts-background-color: rgb(48, 48, 48);
+        --highcharts-background-color: #141414;
 
         /*
             Neutral color variations
             https://www.highcharts.com/samples/highcharts/css/palette-helper
         */
-        --highcharts-neutral-color-100: rgb(255, 255, 255);
-        --highcharts-neutral-color-80: rgb(214, 214, 214);
-        --highcharts-neutral-color-60: rgb(173, 173, 173);
-        --highcharts-neutral-color-40: rgb(133, 133, 133);
-        --highcharts-neutral-color-20: rgb(92, 92, 92);
-        --highcharts-neutral-color-10: rgb(71, 71, 71);
-        --highcharts-neutral-color-5: rgb(61, 61, 61);
-        --highcharts-neutral-color-3: rgb(57, 57, 57);
+        --highcharts-neutral-color-100: #ffffff;
+        --highcharts-neutral-color-80: #d0d0d0;
+        --highcharts-neutral-color-60: #a1a1a1;
+        --highcharts-neutral-color-40: #727272;
+        --highcharts-neutral-color-20: #434343;
+        --highcharts-neutral-color-10: #2c2c2c;
+        --highcharts-neutral-color-5: #202020;
+        --highcharts-neutral-color-3: #1b1b1b;
 
         /* Highlight color variations */
-        --highcharts-highlight-color-100: rgb(122, 167, 255);
-        --highcharts-highlight-color-80: rgb(108, 144, 214);
-        --highcharts-highlight-color-60: rgb(94, 121, 173);
-        --highcharts-highlight-color-20: rgb(65, 74, 92);
-        --highcharts-highlight-color-10: rgb(58, 63, 71);
+        --highcharts-highlight-color-100: #2caffe;
+        --highcharts-highlight-color-80: #2790cf;
+        --highcharts-highlight-color-60: #2271a0;
+        --highcharts-highlight-color-20: #193343;
+        --highcharts-highlight-color-10: #16242b;
     }
 }
 
 .highcharts-dark {
+    /* Colors for data series and points */
+    --highcharts-color-1: #00e272;
+    --highcharts-color-2: #efdf00;
+
     /* UI colors */
-    --highcharts-background-color: rgb(48, 48, 48);
+    --highcharts-background-color: #141414;
 
     /* Neutral color variations */
-    --highcharts-neutral-color-100: rgb(255, 255, 255);
-    --highcharts-neutral-color-80: rgb(214, 214, 214);
-    --highcharts-neutral-color-60: rgb(173, 173, 173);
-    --highcharts-neutral-color-40: rgb(133, 133, 133);
-    --highcharts-neutral-color-20: rgb(92, 92, 92);
-    --highcharts-neutral-color-10: rgb(71, 71, 71);
-    --highcharts-neutral-color-5: rgb(61, 61, 61);
-    --highcharts-neutral-color-3: rgb(57, 57, 57);
+    --highcharts-neutral-color-100: #ffffff;
+    --highcharts-neutral-color-80: #d0d0d0;
+    --highcharts-neutral-color-60: #a1a1a1;
+    --highcharts-neutral-color-40: #727272;
+    --highcharts-neutral-color-20: #434343;
+    --highcharts-neutral-color-10: #2c2c2c;
+    --highcharts-neutral-color-5: #202020;
+    --highcharts-neutral-color-3: #1b1b1b;
 
     /* Highlight color variations */
-    --highcharts-highlight-color-100: rgb(122, 167, 255);
-    --highcharts-highlight-color-80: rgb(108, 144, 214);
-    --highcharts-highlight-color-60: rgb(94, 121, 173);
-    --highcharts-highlight-color-20: rgb(65, 74, 92);
-    --highcharts-highlight-color-10: rgb(58, 63, 71);
+    --highcharts-highlight-color-100: #2caffe;
+    --highcharts-highlight-color-80: #2790cf;
+    --highcharts-highlight-color-60: #2271a0;
+    --highcharts-highlight-color-20: #193343;
+    --highcharts-highlight-color-10: #16242b;
 }
 
 .highcharts-container {
@@ -319,11 +327,6 @@
 
 .highcharts-tooltip .highcharts-header {
     font-size: 0.8em;
-}
-
-.highcharts-tooltip-box {
-    stroke-width: 1px;
-    fill: var(--highcharts-background-color);
 }
 
 .highcharts-tooltip-box {
@@ -519,11 +522,13 @@ text.highcharts-data-label {
     stroke: var(--highcharts-background-color);
 }
 
-.highcharts-column-series .highcharts-point {
+.highcharts-column-series .highcharts-point,
+.highcharts-bar-series .highcharts-point {
     transition: fill-opacity 250ms;
 }
 
-.highcharts-column-series .highcharts-point-hover {
+.highcharts-column-series .highcharts-point-hover,
+.highcharts-bar-series .highcharts-point-hover {
     fill-opacity: 0.75;
     transition: fill-opacity 50ms;
 }

@@ -758,15 +758,6 @@ namespace AxisDefaults {
          */
 
         /**
-         * An event fired when a point is outside a break after zoom.
-         *
-         * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
-         * @product   highcharts highstock gantt
-         * @context   Highcharts.Axis
-         * @apioption xAxis.events.pointBreakOut
-         */
-
-        /**
          * Fires when the minimum and maximum is set for the axis, either by
          * calling the `.setExtremes()` method or by selecting an area in the
          * chart. One parameter, `event`, is passed to the function,
@@ -1905,6 +1896,10 @@ namespace AxisDefaults {
          * overrides the default behaviour of [tickPixelInterval](
          * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
          *
+         * Note: When working with date-time axes, be aware of time zone
+         * handling. See the [documentation on time options](https://www.highcharts.com/docs/chart-concepts/axes#datetime)
+         * for best practices.
+         *
          * @see [tickPositioner](#xAxis.tickPositioner)
          *
          * @sample {highcharts} highcharts/xaxis/tickpositions-tickpositioner/
@@ -2807,7 +2802,7 @@ namespace AxisDefaults {
          * @apioption yAxis.scrollbar.margin
          */
 
-        /* eslint-disable highcharts/doclet-apioption-last */
+        /* eslint-disable @highcharts/highcharts/doclet-apioption-last */
         /**
          * Defines the position of the scrollbar. By default, it is positioned
          * on the opposite of the main axis (right side of the chart).
@@ -2828,7 +2823,7 @@ namespace AxisDefaults {
          * @apioption xAxis.scrollbar.opposite
          *
          */
-        /* eslint-enable highcharts/doclet-apioption-last */
+        /* eslint-enable @highcharts/highcharts/doclet-apioption-last */
 
         /**
          * Whether to show the scrollbar when it is fully zoomed out at max
@@ -3066,6 +3061,7 @@ namespace AxisDefaults {
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
+             * @apioption yAxis.title.text
              */
         },
 

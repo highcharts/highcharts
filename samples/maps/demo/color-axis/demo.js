@@ -32,7 +32,11 @@
         legend: {
             layout: 'horizontal',
             borderWidth: 0,
-            backgroundColor: 'rgba(255,255,255,0.85)',
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-background-color, white),
+                transparent 15%
+            )`,
             floating: true,
             verticalAlign: 'top',
             y: 25

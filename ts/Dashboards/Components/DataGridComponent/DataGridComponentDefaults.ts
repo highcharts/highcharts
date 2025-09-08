@@ -64,19 +64,24 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath: ['gridOptions', 'caption', 'text'],
                         type: 'input'
                     }, {
-                        name: 'Columns distribution',
+                        name: 'Columns resizing mode',
                         propertyPath:
                             [
                                 'gridOptions',
                                 'rendering',
                                 'columns',
-                                'distribution'
+                                'resizing',
+                                'mode'
                             ],
                         type: 'select',
                         selectOptions: [{
+                            name: ''
+                        }, {
                             name: 'full'
                         }, {
                             name: 'fixed'
+                        }, {
+                            name: 'mixed'
                         }]
                     }, {
                         name: 'Editable Grid',
@@ -85,7 +90,8 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                                 'gridOptions',
                                 'columnDefaults',
                                 'cells',
-                                'editable'
+                                'editMode',
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {
@@ -93,8 +99,10 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath:
                             [
                                 'gridOptions',
-                                'columnDefaults',
-                                'resizing'
+                                'rendering',
+                                'columns',
+                                'resizing',
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {

@@ -4,7 +4,8 @@ Installation with ES6 modules
 Our product packages are available as ES6-compatible modules since
 Highcharts v6.1. Core files can also be loaded directly as ES modules since
 Highcharts v11.3. The latter allows you to make use of tree shaking to only
-load or bundle what is needed and reduce download and package sizes.
+load or bundle what is needed and reduce download and package sizes. Since v12.2
+the packed bundles are available as ESM.
 
 **Note:** If you code with TypeScript, please take a look at our
 [TypeScript article](https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations)
@@ -20,13 +21,13 @@ decreased download size but in an increased delay caused by the amount of
 production.
 
 ```html
-    <script type="module">
-        import Chart from 'https://code.highcharts.com/es-modules/Core/Chart/Chart.js';
-        import LineSeries from 'https://code.highcharts.com/es-modules/Series/Line/LineSeries.js';
+<script type="module">
+    import Chart from 'https://code.highcharts.com/es-modules/Core/Chart/Chart.js';
+    import LineSeries from 'https://code.highcharts.com/es-modules/Series/Line/LineSeries.js';
 
-        // Example to create a simple line chart in a div#container:
-        new Chart('container', { series: [{ data: [1, 2, 3]}] });
-    </script>
+    // Example to create a simple line chart in a div#container:
+    new Chart('container', { series: [{ data: [1, 2, 3]}] });
+</script>
 ```
 
 
@@ -69,8 +70,8 @@ Create the bundle by running `node webpack -c webpack.config.js` and load the
 result in your web page.
 
 ```html
-    <div id="container"></div>
-    <script type="module" src="./dist/mybundle.js"></script>
+<div id="container"></div>
+<script type="module" src="./dist/mybundle.js"></script>
 ```
 
 For a column chart or pie chart, the code of `mychart.js` looks similar.
@@ -105,27 +106,27 @@ packages.
 Do as below to activate data labels for example.
 
 ```js
-    import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
-    import LineSeries from 'highcharts/es-modules/Series/Line/LineSeries.js';
-    import DataLabel from 'highcharts/es-modules/Core/Series/DataLabel.js';
+import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
+import LineSeries from 'highcharts/es-modules/Series/Line/LineSeries.js';
+import DataLabel from 'highcharts/es-modules/Core/Series/DataLabel.js';
 
-    DataLabel.compose(LineSeries);
+DataLabel.compose(LineSeries);
 ```
 
 ```js
-    import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
-    import ColumnSeries from 'highcharts/es-modules/Series/Column/ColumnSeries.js';
-    import ColumnDataLabel from 'highcharts/es-modules/Series/Column/ColumnDataLabel.js';
+import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
+import ColumnSeries from 'highcharts/es-modules/Series/Column/ColumnSeries.js';
+import ColumnDataLabel from 'highcharts/es-modules/Series/Column/ColumnDataLabel.js';
 
-    ColumnDataLabel.compose(ColumnSeries);
+ColumnDataLabel.compose(ColumnSeries);
 ```
 
 ```js
-    import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
-    import PieSeries from 'highcharts/es-modules/Series/Pie/PieSeries.js';
-    import PieDataLabel from 'highcharts/es-modules/Series/Pie/PieDataLabel.js';
+import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
+import PieSeries from 'highcharts/es-modules/Series/Pie/PieSeries.js';
+import PieDataLabel from 'highcharts/es-modules/Series/Pie/PieDataLabel.js';
 
-    PieDataLabel.compose(PieSeries);
+PieDataLabel.compose(PieSeries);
 ```
 
 
@@ -160,8 +161,8 @@ Highcharts is available on our CDN as ECMAScript modules. You can [import ES mod
 without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/simple/)):
 ```html
 <script type="module">
-    import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-    import 'https://code.highcharts.com/es-modules/masters/modules/accessibility.src.js';
+    import Highcharts from 'https://code.highcharts.com/esm/highcharts.js';
+    import 'https://code.highcharts.com/esm/modules/accessibility.js';
 
     Highcharts.chart('container', {
         ...
@@ -172,10 +173,10 @@ The following example shows dynamic import with lazy-loading:
 ```js
 const loadHighchartsAndCreateChart = async () => {
     const { default: Highcharts } =
-        await import('https://code.highcharts.com/es-modules/masters/highcharts.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/highcharts-more.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/modules/exporting.src.js');
-    await import('https://code.highcharts.com/es-modules/masters/modules/export-data.src.js');
+        await import('https://code.highcharts.com/esm/highcharts.js');
+    await import('https://code.highcharts.com/esm/highcharts-more.js');
+    await import('https://code.highcharts.com/esm/modules/exporting.js');
+    await import('https://code.highcharts.com/esm/modules/export-data.js');
 
     Highcharts.chart('container', { /* options */ });
 };
@@ -197,9 +198,7 @@ import Highcharts from 'highcharts';
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
-import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module. (CommonJS only)
-Exporting(Highcharts);
+import 'highcharts/modules/exporting';
 
 // Generate the chart
 Highcharts.chart('container', {
@@ -216,11 +215,7 @@ import Highcharts from 'highcharts';
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
-import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module. (CommonJS only)
-if(typeof Exporting === 'function') {
-    Exporting(Highcharts);
-}
+import 'highcharts/modules/exporting';
 
 // Generate the chart
 Highcharts.chart('container', {
@@ -242,8 +237,8 @@ Highcharts.chart('container', {
 ### TypeScript + ESM from CDN
 ```js
 // Load modules the ES6 way
-import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-import 'https://code.highcharts.com/es-modules/masters/modules/exporting.src.js';
+import Highcharts from 'https://code.highcharts.com/esm/highcharts.js';
+import 'https://code.highcharts.com/esm/modules/exporting.js';
 
 // Generate the chart
 Highcharts.chart('container', {

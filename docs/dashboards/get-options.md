@@ -3,7 +3,7 @@
 **Dashboards** allows you to convert the current state of the dashboard's options into
 JSON. Please note that the [getOptions()](https://api.highcharts.com/dashboards/#classes/Dashboards_Board.Board-1#getOptions) function does not support converting functions or events into a JSON object.
 
-<iframe style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/exporting/export-to-json allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/exporting/export-to-json?force-light-theme" allow="fullscreen"></iframe>
 
 ## How to use `getOptions()`
 In the example below, the [getOptions()](https://api.highcharts.com/dashboards/#classes/Dashboards_Board.Board-1#getOptions)

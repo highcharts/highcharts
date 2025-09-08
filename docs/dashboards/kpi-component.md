@@ -2,7 +2,7 @@
 
 The KPI component allows you to visualize *key performance indicators*.
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/component-kpi allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/component-kpi?force-light-theme" allow="fullscreen"></iframe>
 
 ## How to start
 
@@ -10,7 +10,7 @@ The KPI component allows you to visualize *key performance indicators*.
 To be able to use KPIComponent you first have to load the main [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) package.
 
 ### Define HTML cell
-Define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.  
+Define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.
 You can find more information how to create a layout in dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
 
 ### Configuration
@@ -76,7 +76,7 @@ Importing only dashboards CSS file is enough:
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-Also, be aware that we prepared the component so it was minimalist.  
+Also, be aware that we prepared the component so it was minimalist.
 To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Components_KPIComponent_KPIComponent.KPIComponent-1#defaultChartOptions).
 
 ### Chart options

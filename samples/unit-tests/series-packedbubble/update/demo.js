@@ -1,4 +1,4 @@
-QUnit.test('Series update', function (assert) {
+QUnit.test('Packedbubble update', function (assert) {
     let chart = Highcharts.chart('container', {
         chart: {
             type: 'packedbubble',
@@ -111,4 +111,66 @@ QUnit.test('Series update', function (assert) {
         `For inverted chart without axes clip box height should be the same as
         chart plot height, #20264.`
     );
+});
+
+
+QUnit.test('Testing hovering while updating, #22892', function (assert) {
+    let count = 0,
+        clock = null;
+
+    try {
+        clock = TestUtilities.lolexInstall();
+
+        const getChartOptions = count => ({
+                chart: {
+                    type: 'packedbubble',
+                    animation: false
+                },
+                plotOptions: {
+                    packedbubble: {
+                        layoutAlgorithm: {
+                            enableSimulation: false,
+                            splitSeries: true
+                        }
+                    }
+                },
+                series: [{
+                    data: (() => {
+                        const data = [];
+                        for (let i = count; i; --i) {
+                            data.push(i);
+                        }
+                        return data;
+                    })()
+                }]
+            }),
+            done = assert.async(),
+            chart = Highcharts.chart('container', getChartOptions(count)),
+            hoverX = chart.plotLeft + (chart.chartWidth / 2),
+            hoverY = chart.plotTop + (chart.chartHeight / 2),
+            tc = new TestController(chart),
+
+            // Change chart config while simulating mouse hovering
+            // the center of the series
+            interval = setInterval(() => {
+                chart.update(getChartOptions(++count), true, true);
+
+                // We know we will hit either a bubble or the parentBubble
+                tc.moveTo(hoverX, hoverY);
+
+                if (count === 8) {
+                // Check that hovering worked
+                    assert.strictEqual(
+                        chart.hoverPoint.state,
+                        'hover',
+                        'Hovering a changing packed bubble series should work'
+                    );
+                    clearInterval(interval);
+                    done();
+                }
+            }, 50);
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
 });
