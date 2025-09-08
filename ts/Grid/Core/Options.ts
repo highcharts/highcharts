@@ -32,7 +32,7 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
-import type { Condition } from './Table/Actions/ColumnFiltering/FilteringTypes.js';
+import type { Condition } from './Table/Actions/ColumnFiltering/FilteringTypes';
 
 
 /* *
