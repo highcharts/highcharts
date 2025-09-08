@@ -22,6 +22,23 @@
     --ig-positive-default-border-color: #00a63e;
     --ig-positive-default-background: #effdf4;
     --ig-highlight-color-5: #f3f6fe;
+
+    /* Button styles - Light mode */
+    --hcg-button-background: transparent;
+    --hcg-button-hover-background: #e8e8e8;
+    --hcg-button-color: #141414;
+    --hcg-button-padding: 3px;
+    --hcg-button-border-radius: 4px;
+
+    /* Icon styles - Light mode */
+    --hcg-icon-color: #626262;
+    --hcg-icon-hover-color: #141414;
+
+    /* Focus ring color for accessibility */
+    --hcg-focus-ring-color: #626bd0;
+
+    /* Header background (for focus ring edge) */
+    --hcg-header-background: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -38,6 +55,13 @@
         --ig-positive-default-border-color: #1e6f3e;
         --ig-positive-default-background: #0a3e1a;
         --ig-highlight-color-5: #2d2e36;
+
+        /* Button styles - Dark mode */
+        --hcg-button-hover-background: #3b3b3b;
+        --hcg-button-color: #ffffff;
+
+        /* Icon styles - Dark mode */
+        --hcg-icon-hover-color: #ffffff;
     }
 }
 
@@ -51,6 +75,13 @@
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #265a26;
     --ig-highlight-color-5: #2d2e36;
+
+    /* Button styles - Dark mode */
+    --hcg-button-hover-background: #3b3b3b;
+    --hcg-button-color: #ffffff;
+
+    /* Icon styles - Dark mode */
+    --hcg-icon-hover-color: #ffffff;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -314,6 +345,17 @@
     --ig-positive-border-color: var(--hcg-positive-border-color, var(--ig-positive-default-border-color));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-positive-default-color));
+
+    /* Button styles */
+    --ig-button-background: var(--hcg-button-background, transparent);
+    --ig-button-hover-background: var(--hcg-button-hover-background, #e8e8e8);
+    --ig-button-color: var(--hcg-button-color, #141414);
+    --ig-button-padding: var(--hcg-button-padding, 3px);
+    --ig-button-border-radius: var(--hcg-button-border-radius, 4px);
+
+    /* Icon styles */
+    --ig-icon-color: var(--hcg-icon-color, #626262);
+    --ig-icon-hover-color: var(--hcg-icon-hover-color, #141414);
 }
 
 /* ==== End Grid Variables ==== */
@@ -410,6 +452,187 @@
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
 }
+
+.hcg-table thead th .hcg-header-cell-content span,
+.highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hcg-head-row-content,
+.highcharts-datagrid-head-row-content {
+    display: flex;
+}
+
+.hcg-header-cell,
+.highcharts-datagrid-header-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.hcg-header-cell-content,
+.highcharts-datagrid-header-cell-content {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+/* Generic icon button styling for Grid Pro (shared with Lite) */
+.hcg-button {
+    background: var(--ig-button-background);
+    padding: var(--ig-button-padding);
+    border-radius: var(--ig-button-border-radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ig-button-color);
+}
+
+.hcg-button:hover {
+    background: var(--ig-button-hover-background);
+}
+
+/* Focus/A11Y - keyboard accessibility */
+.hcg-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-header-background, #ffffff), 0 0 0 5px var(--hcg-focus-ring-color, #626bd0);
+}
+
+/* Generic icon styling */
+.hcg-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--ig-icon-color);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+/* Icons inherit currentColor */
+.hcg-icon path {
+    stroke: currentcolor;
+}
+
+.hcg-button:hover .hcg-icon {
+    color: var(--ig-icon-hover-color);
+}
+
+/* Icons container */
+.hcg-header-cell-icons,
+.highcharts-datagrid-header-cell-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 0;
+    margin-left: 0;
+    opacity: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
+    vertical-align: middle;
+}
+
+/* Reveal icons on hover/focus or when active */
+.hcg-table thead th:hover .hcg-header-cell-icons,
+.hcg-table thead th:focus-visible .hcg-header-cell-icons,
+.hcg-table thead th:focus-within .hcg-header-cell-icons,
+.highcharts-datagrid-table thead th:hover .hcg-header-cell-icons,
+.highcharts-datagrid-table thead th:focus-visible .hcg-header-cell-icons,
+.highcharts-datagrid-table thead th:focus-within .hcg-header-cell-icons,
+.highcharts-datagrid-table thead th:hover .highcharts-datagrid-header-cell-icons,
+.highcharts-datagrid-table thead th:focus-visible .highcharts-datagrid-header-cell-icons,
+.highcharts-datagrid-table thead th:focus-within .highcharts-datagrid-header-cell-icons,
+.hcg-header-cell-icons:hover,
+.hcg-header-cell-icons.has-active-icons,
+.highcharts-datagrid-header-cell-icons:hover,
+.highcharts-datagrid-header-cell-icons.has-active-icons {
+    max-width: 100px;
+    margin-left: 8px;
+    opacity: 1;
+}
+
+/* Force-show icon wrappers in reveal states even if inline style hides them */
+.hcg-table thead th:hover .hcg-header-cell-icons > *,
+.hcg-table thead th:focus-visible .hcg-header-cell-icons > *,
+.hcg-table thead th:focus-within .hcg-header-cell-icons > *,
+.highcharts-datagrid-table thead th:hover .hcg-header-cell-icons > *,
+.highcharts-datagrid-table thead th:focus-visible .hcg-header-cell-icons > *,
+.highcharts-datagrid-table thead th:focus-within .hcg-header-cell-icons > *,
+.highcharts-datagrid-table thead th:hover .highcharts-datagrid-header-cell-icons > *,
+.highcharts-datagrid-table thead th:focus-visible .highcharts-datagrid-header-cell-icons > *,
+.highcharts-datagrid-table thead th:focus-within .highcharts-datagrid-header-cell-icons > *,
+.hcg-header-cell-icons:hover > *,
+.hcg-header-cell-icons.has-active-icons > *,
+.highcharts-datagrid-header-cell-icons:hover > *,
+.highcharts-datagrid-header-cell-icons.has-active-icons > * {
+    display: inline-flex !important;
+}
+
+/* Individual icon wrappers */
+.hcg-header-cell-filter-icon,
+.hcg-header-cell-sort-icon,
+.hcg-header-cell-menu-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Icon button within container */
+.hcg-header-cell-icons .hcg-button,
+.highcharts-datagrid-header-cell-icons .hcg-button {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2px;
+    vertical-align: middle;
+}
+
+/* Sort icon states */
+.hcg-header-cell-sort-icon.sort-asc .hcg-icon { transform: rotate(180deg); }
+.hcg-header-cell-sort-icon.sort-desc .hcg-icon { transform: rotate(0deg); }
+.hcg-header-cell-sort-icon.sort-none .hcg-icon { opacity: 0.6; }
+.hcg-header-cell-sort-icon .hcg-icon { transition: transform 0.2s ease, opacity 0.2s ease; }
+
+/* Active icon visuals */
+.hcg-header-cell-icons .hcg-button.active,
+.highcharts-datagrid-header-cell-icons .hcg-button.active { background: var(--ig-button-hover-background); }
+
+.hcg-header-cell-icons .hcg-button.active .hcg-icon,
+.highcharts-datagrid-header-cell-icons .hcg-button.active .hcg-icon { color: var(--ig-icon-hover-color); }
+
+/* Active indicator dot - positioned at top right of button */
+.hcg-active-indicator,
+.highcharts-datagrid-active-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--hcg-focus-ring-color, #626bd0);
+    pointer-events: none;
+}
+
+/* Active indicator icon styling */
+.hcg-active-indicator-icon,
+.highcharts-datagrid-active-indicator-icon {
+    width: 6px;
+    height: 6px;
+    color: var(--hcg-focus-ring-color, #626bd0);
+    fill: currentcolor;
+}
+
+.hcg-header-cell-icons .hcg-button,
+.highcharts-datagrid-header-cell-icons .hcg-button { position: relative; }
 
 .hcg-table thead th .hcg-header-cell-content span,
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content span {
