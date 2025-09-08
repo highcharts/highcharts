@@ -29,6 +29,7 @@ import Column from '../Column';
 import Row from '../Row';
 import GridUtils from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
+import ColumnFiltering from '../Actions/ColumnFiltering/ColumnFiltering.js';
 import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 import HeaderIconManager from './HeaderIconManager.js';
@@ -194,6 +195,9 @@ class HeaderCell extends Cell {
 
             // Add sorting
             this.initColumnSorting();
+
+            // Add filtering
+            this.initColumnFiltering();
         }
 
         // Render content of th element
@@ -376,6 +380,18 @@ class HeaderCell extends Cell {
             column,
             this.htmlElement
         );
+    }
+
+    /**
+     * Add filtering option to the column.
+     */
+    private initColumnFiltering(): void {
+        const { column } = this;
+        if (!column || !column.options?.filtering?.enabled) {
+            return;
+        }
+
+        column.filtering = new ColumnFiltering(column);
     }
 
     /**

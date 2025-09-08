@@ -1,6 +1,6 @@
 /* *
  *
- *  Grid Filtering class
+ *  Grid ColumnFiltering class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -9,10 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
+ *  - Dawid Dragula
  *  - Sebastian Bochan
  *  - Kamil Kubik
  *
  * */
+
 
 'use strict';
 
@@ -22,144 +24,180 @@
  *
  * */
 
-import type HeaderCell from '../../Core/Table/Header/HeaderCell';
-import type Column from '../../Core/Table/Column.js';
-import type {
-    DateTimeCondition,
-    FilteringLiteConditionOptions,
-    NumberCondition,
-    Condition,
-    StringCondition
-} from '../../Core/Options';
+import type Column from '../../Column';
+import type { FilteringConditionOptions } from '../../../Options';
+import type Table from '../../Table';
 
-import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-import GU from '../../Core/GridUtils.js';
-import ColumnFiltering from './ColumnFiltering.js';
+import U from '../../../../../Core/Utilities.js';
+import GU from '../../../GridUtils.js';
+import Globals from '../../../Globals.js';
+import HeaderRow from '../../Header/HeaderRow.js';
+import {
+    booleanValueMap,
+    conditionsMap,
+    type Condition
+} from './FilteringTypes.js';
 
-const {
-    addEvent,
-    pushUnique
-} = U;
-
-const {
-    makeHTMLElement
-} = GU;
+const { fireEvent, addEvent } = U;
+const { makeHTMLElement } = GU;
 
 /* *
  *
- *  Class Namespace
+ *  Class
  *
  * */
 
-namespace FilteringComposition {
-    /**
-     * The options for the boolean select.
-     */
-    export type BooleanSelectOptions = 'all' | 'true' | 'false' | 'empty';
+/**
+ * Class that manages filtering for a dedicated column.
+ */
+class ColumnFiltering {
+
+
+    /* *
+    *
+    *  Static Methods
+    *
+    * */
 
     /**
-     * The event object for the 'afterRender' event.
-     */
-    export type AfterRenderEvent = Event & {
-        column: Column;
-        filtering: boolean;
-    };
-
-    /**
-     * Corresponding values for the boolean select options.
-     */
-    export const booleanValueMap: Record<
-        BooleanSelectOptions,
-        'all' | boolean | null
-    > = {
-        'all': 'all',
-        'true': true,
-        'false': false,
-        empty: null
-    } as const;
-
-    /**
-     * String conditions values for the condition select options.
-     */
-    export const stringConditions: StringCondition[] = [
-        'contains',
-        'doesNotContain',
-        'equals',
-        'doesNotEqual',
-        'beginsWith',
-        'endsWith',
-        'empty',
-        'notEmpty'
-    ] as const;
-
-    /**
-     * Number conditions values for the condition select options.
-     */
-    export const numberConditions: NumberCondition[] = [
-        'equals',
-        'doesNotEqual',
-        'greaterThan',
-        'greaterThanOrEqualTo',
-        'lessThan',
-        'lessThanOrEqualTo',
-        'empty',
-        'notEmpty'
-    ] as const;
-
-    /**
-     * DateTime conditions values for the condition select options.
-     */
-    export const dateTimeConditions: DateTimeCondition[] = [
-        'equals',
-        'doesNotEqual',
-        'before',
-        'after',
-        'empty',
-        'notEmpty'
-    ] as const;
-
-    /**
-     * Conditions map for the condition select options.
-     */
-    export const conditionsMap = {
-        string: stringConditions,
-        number: numberConditions,
-        datetime: dateTimeConditions
-    } as const;
-
-    /**
-     * The class names used by the filtering functionality.
-     */
-    export const classNames = {
-        colFilterWrapper: Globals.classNamePrefix + 'col-filter-wrapper'
-    } as const;
-
-    /**
-     * Extends the grid classes with customizable credits.
+     * Renders a row with empty cells for filtering.
      *
-     * @param HeaderCellClass
-     * The class to extend.
+     * @param vp
+     * The viewport of the table.
+     *
+     * @param levels
+     * The levels of the header.
      *
      */
-    export function compose(
-        HeaderCellClass: typeof HeaderCell
-    ): void {
-        if (!pushUnique(Globals.composed, 'Filtering')) {
+    public static renderFilterRow(vp: Table, levels: number): void {
+        const columns = vp.columns;
+        const header = vp.header;
+        const enabledColumns = vp.grid.enabledColumns || [];
+
+        // Stop the execution if there is no header or the filtering is not
+        // enabled for any column.
+        if (
+            !header ||
+            columns.every((column): boolean =>
+                !column.options?.filtering?.enabled
+            )
+        ) {
             return;
         }
 
-        addEvent(HeaderCellClass, 'afterRender', renderFilteringContent);
+        const row = new HeaderRow(vp, 1, { 'aria-rowindex': levels + 1 });
+
+        vp.theadElement?.appendChild(row.htmlElement);
+        row.htmlElement.classList.add(Globals.getClassName('headerRow'));
+
+        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
+            const column = columns[i];
+            if (enabledColumns?.indexOf(column.id) < 0) {
+                continue;
+            }
+
+            const headerCell = row.createCell(column);
+
+            // Add class to disable left border on first column
+            if (column?.index === 0 && i === 0) {
+                headerCell.htmlElement.classList.add(
+                    Globals.getClassName('columnFirst')
+                );
+            }
+
+            headerCell.render(true);
+            headerCell.column?.filtering?.renderFilteringContent(
+                headerCell.htmlElement
+            );
+        }
+
+        row.setLastCellClass();
+
+        header.rows.push(row);
+    }
+
+    /* *
+    *
+    *  Properties
+    *
+    * */
+
+    /**
+     * The filtered column of the table.
+     */
+    public column: Column;
+
+    /**
+     * The head element of the column.
+     */
+    public headerCellElement?: HTMLElement;
+
+    /**
+     * The input element for the filtering. Can be of type `text`, `number`
+     * or `date`.
+     */
+    public filterInput?: HTMLInputElement;
+
+    /**
+     * The select element setting the condition for the filtering.
+     */
+    public filterSelect?: HTMLSelectElement;
+
+
+    /* *
+    *
+    *  Constructor
+    *
+    * */
+
+    /**
+     * Constructs filtering controller for a dedicated column.
+     *
+     * @param column
+     * The filtered column.
+     *
+     * @param headerCellElement
+     * The head element of the column.
+     */
+    constructor(column: Column) {
+        this.column = column;
+    }
+
+    /* *
+    *
+    *  Methods
+    *
+    * */
+
+    /**
+     * Applies the filtering to the column.
+     *
+     * @param options
+     * The filtering options.
+     */
+    public async applyFilter(
+        options: FilteringConditionOptions
+    ): Promise<void> {
+        const viewport = this.column.viewport;
+        const querying = viewport.grid.querying;
+        const filteringController = querying.filtering;
+
+        fireEvent(this.column, 'beforeFiltering', {
+            target: this.column
+        });
+
+        filteringController.addColumnFilterCondition(this.column.id, options);
+        await querying.proceed();
+
+        await viewport.updateRows();
+
+        fireEvent(this.column, 'afterFiltering', {
+            target: this.column
+        });
     }
 
     /**
      * Render the filtering input element, based on the column type.
-     *
-     * @param this
-     * Reference to the column's header.
-     *
-     * @param column
-     * Reference to the column.
      *
      * @param filteringOptions
      * Reference to the filtering options.
@@ -170,10 +208,8 @@ namespace FilteringComposition {
      * @param columnType
      * Reference to the column type.
      */
-    function renderFilteringInput(
-        this: HeaderCell,
-        column: Column,
-        filteringOptions: FilteringLiteConditionOptions,
+    public renderFilteringInput(
+        filteringOptions: FilteringConditionOptions,
         inputWrapper: HTMLElement,
         columnType: Exclude<Column.DataType, 'boolean'>
     ): void {
@@ -208,7 +244,7 @@ namespace FilteringComposition {
                     filteringOptions.value = value;
                 }
 
-                void column.filtering?.applyFilter(filteringOptions);
+                void this.applyFilter(filteringOptions);
             });
         }
 
@@ -226,19 +262,13 @@ namespace FilteringComposition {
                     filteringOptions.value = value;
                 }
 
-                void column.filtering?.applyFilter(filteringOptions);
+                void this.applyFilter(filteringOptions);
             });
         }
     }
 
     /**
      * Render the condition select element.
-     *
-     * @param this
-     * Reference to the column's header.
-     *
-     * @param column
-     * Reference to the column.
      *
      * @param filteringOptions
      * Reference to the filtering options.
@@ -249,10 +279,8 @@ namespace FilteringComposition {
      * @param conditions
      * Reference to the conditions, different for each condition type.
      */
-    function renderConditionSelect(
-        this: HeaderCell,
-        column: Column,
-        filteringOptions: FilteringLiteConditionOptions,
+    public renderConditionSelect(
+        filteringOptions: FilteringConditionOptions,
         inputWrapper: HTMLElement,
         conditions: Condition[]
     ): void {
@@ -263,7 +291,8 @@ namespace FilteringComposition {
         for (const condition of conditions) {
             const optionElement = document.createElement('option');
             optionElement.value = condition;
-            optionElement.textContent = parseCamelCaseToReadable(condition);
+            optionElement.textContent =
+                this.parseCamelCaseToReadable(condition);
             this.filterSelect.appendChild(optionElement);
         }
 
@@ -284,44 +313,33 @@ namespace FilteringComposition {
             // Disable the input since the `empty` or `notEmpty` condition
             // doesn't require a value.
             if (option === 'empty' || option === 'notEmpty') {
-                this.filterInput.disabled = true;
-            } else if (this.filterInput.disabled) {
+                this.filterInput && (this.filterInput.disabled = true);
+            } else if (this.filterInput?.disabled) {
                 this.filterInput.disabled = false;
             }
 
-            void column.filtering?.applyFilter(filteringOptions);
+            void this.applyFilter(filteringOptions);
         });
     }
 
     /**
      * Render the filtering content in the header.
      *
-     * @param this
-     * Reference to the column's header.
-     *
-     * @param event
-     * The event object for the `afterRender` event.
+     * @param headerCellElement
+     * The header cell element.
      */
-    function renderFilteringContent(
-        this: HeaderCell,
-        event: AfterRenderEvent
-    ): void {
+    public renderFilteringContent(headerCellElement: HTMLElement): void {
+        this.headerCellElement = headerCellElement;
         const column = this.column;
 
-        if (
-            !column ||
-            !event.filtering ||
-            !column.options?.filtering?.enabled
-        ) {
+        if (!column || !column.options?.filtering?.enabled) {
             return;
         }
 
-        column.filtering = new ColumnFiltering(column);
-
         // Render the input wrapper.
         const inputWrapper = makeHTMLElement('div', {
-            className: FilteringComposition.classNames.colFilterWrapper
-        }, this.htmlElement);
+            className: Globals.getClassName('columnFilterWrapper')
+        }, this.headerCellElement);
         const filteringOptions = column.options.filtering;
         const columnType = column.dataType;
 
@@ -331,18 +349,14 @@ namespace FilteringComposition {
             case 'number':
             case 'datetime':
                 // Render the input element.
-                renderFilteringInput.call(
-                    this,
-                    column,
+                this.renderFilteringInput(
                     filteringOptions,
                     inputWrapper,
                     columnType
                 );
 
                 // Render the condition select element.
-                renderConditionSelect.call(
-                    this,
-                    column,
+                this.renderConditionSelect(
                     filteringOptions,
                     inputWrapper,
                     conditionsMap[columnType]
@@ -379,27 +393,30 @@ namespace FilteringComposition {
                         delete filteringOptions.condition;
                     }
 
-                    void column.filtering?.applyFilter(filteringOptions);
+                    void this.applyFilter(filteringOptions);
                 });
                 break;
         }
 
         // Apply initial filtering if provided from options.
         if (filteringOptions.value && filteringOptions.condition) {
-            void column.filtering?.applyFilter(filteringOptions);
+            void this.applyFilter(filteringOptions);
         }
 
         // Set the padding bottom of the header content to the height of the
         // filter select or input element.
-        if (this.headerContent) {
+        const headerContent = this.headerCellElement.querySelector(
+            Globals.getClassName('headerCellContent')
+        ) as HTMLElement;
+        if (headerContent) {
             const filterSelect = this.filterSelect;
             const filterInput = this.filterInput;
 
             if (filterSelect) {
-                this.headerContent.style.paddingBottom =
+                headerContent.style.paddingBottom =
                     filterSelect.offsetHeight + filterSelect.offsetTop + 'px';
             } else if (filterInput) {
-                this.headerContent.style.paddingBottom =
+                headerContent.style.paddingBottom =
                     filterInput.offsetHeight + filterInput.offsetTop + 'px';
             }
         }
@@ -414,7 +431,7 @@ namespace FilteringComposition {
      * @returns
      * The readable string.
      */
-    function parseCamelCaseToReadable(value: string): string {
+    private parseCamelCaseToReadable(value: string): string {
         return value
             .replace(/([A-Z])/g, ' $1')
             .trim()
@@ -425,109 +442,8 @@ namespace FilteringComposition {
 
 /* *
  *
- * Declarations
- *
- * */
-
-declare module '../../Core/Table/Header/HeaderCell' {
-    export default interface HeaderCell {
-        /**
-         * The input element for the filtering. Can be of type `text`, `number`
-         * or `date`.
-         */
-        filterInput: HTMLInputElement;
-
-        /**
-         * The select element setting the condition for the filtering.
-         */
-        filterSelect: HTMLSelectElement;
-    }
-}
-
-declare module '../../Core/Table/Column' {
-    export default interface Column {
-        /**
-         * The filtering controller for the column.
-         */
-        filtering?: ColumnFiltering;
-    }
-}
-
-declare module '../../Core/Options' {
-    interface IndividualColumnOptions {
-        /**
-         * Events options triggered by the grid elements.
-         */
-        filtering?: FilteringLiteConditionOptions;
-    }
-
-    /**
-     * String filtering conditions.
-     */
-    export type StringCondition =
-        | 'contains'
-        | 'doesNotContain'
-        | 'equals'
-        | 'doesNotEqual'
-        | 'beginsWith'
-        | 'endsWith'
-        | 'empty'
-        | 'notEmpty';
-
-    /**
-     * Number filtering conditions.
-     */
-    export type NumberCondition =
-        | 'equals'
-        | 'doesNotEqual'
-        | 'greaterThan'
-        | 'greaterThanOrEqualTo'
-        | 'lessThan'
-        | 'lessThanOrEqualTo'
-        | 'empty'
-        | 'notEmpty';
-
-    /**
-     * DateTime filtering conditions.
-     */
-    export type DateTimeCondition =
-        | 'equals'
-        | 'doesNotEqual'
-        | 'before'
-        | 'after'
-        | 'empty'
-        | 'notEmpty';
-
-    /**
-     * Combined filtering conditions.
-     */
-    export type Condition =
-        StringCondition | NumberCondition | DateTimeCondition;
-
-    /**
-     * Column filtering options.
-     */
-    export interface FilteringLiteConditionOptions {
-        /**
-         * The condition to use for filtering the column.
-         */
-        condition?: Condition;
-
-        /**
-         * Whether the filtering is enabled or not.
-         */
-        enabled?: boolean;
-
-        /**
-         * The value that is used with the condition to filter the column.
-         */
-        value?: string | number | boolean | null;
-    }
-}
-/* *
- *
  *  Default Export
  *
  * */
 
-export default FilteringComposition;
+export default ColumnFiltering;

@@ -32,6 +32,7 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
+import type { Condition } from './Table/Actions/ColumnFiltering/FilteringTypes';
 
 
 /* *
@@ -538,6 +539,11 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
+
+    /**
+     * Filtering options for the column.
+     */
+    filtering?: FilteringConditionOptions;
 }
 
 export interface CaptionOptions {
@@ -676,6 +682,25 @@ export interface TimeOptions {
     timezone?: string;
 }
 
+/**
+ * Column filtering options.
+ */
+export interface FilteringConditionOptions {
+    /**
+     * The condition to use for filtering the column.
+     */
+    condition?: Condition;
+
+    /**
+     * Whether the filtering is enabled or not.
+     */
+    enabled?: boolean;
+
+    /**
+     * The value that is used with the condition to filter the column.
+     */
+    value?: string | number | boolean | null;
+}
 
 /* *
  *

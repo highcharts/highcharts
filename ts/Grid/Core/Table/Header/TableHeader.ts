@@ -28,6 +28,7 @@ import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
 import FilterPopup from './FilterPopup.js';
+import ColumnFiltering from '../Actions/ColumnFiltering/ColumnFiltering.js';
 
 
 /* *
@@ -121,14 +122,7 @@ class TableHeader {
         }
 
         // Render a row with empty cells for filtering.
-        if (this.columns.some((column): boolean =>
-            !!column.options?.filtering?.enabled
-        )) {
-            const row =
-                new HeaderRow(vp, 1, { 'aria-rowindex': this.levels + 1 });
-            row.renderFilterRow(this.columns);
-            this.rows.push(row);
-        }
+        ColumnFiltering.renderFilterRow(vp, this.levels);
     }
 
     /**
