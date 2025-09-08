@@ -31,7 +31,7 @@ import Table from './Table.js';
 import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
 import ColumnSorting from './Actions/ColumnSorting';
-import ColumnFiltering from './Actions/ColumnFiltering';
+import ColumnFiltering from './Actions/ColumnFiltering/ColumnFiltering.js';
 import Templating from '../../../Core/Templating.js';
 import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';

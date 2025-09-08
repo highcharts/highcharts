@@ -29,7 +29,7 @@ import Column from '../Column';
 import Row from '../Row';
 import GridUtils from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
-import ColumnFiltering from '../Actions/ColumnFiltering.js';
+import ColumnFiltering from '../Actions/ColumnFiltering/ColumnFiltering.js';
 import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 import HeaderIconManager from './HeaderIconManager.js';

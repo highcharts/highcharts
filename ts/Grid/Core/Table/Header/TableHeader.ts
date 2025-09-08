@@ -28,7 +28,7 @@ import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
 import FilterPopup from './FilterPopup.js';
-import ColumnFiltering from '../Actions/ColumnFiltering.js';
+import ColumnFiltering from '../Actions/ColumnFiltering/ColumnFiltering.js';
 
 
 /* *

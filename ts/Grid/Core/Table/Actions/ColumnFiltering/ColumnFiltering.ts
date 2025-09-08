@@ -24,19 +24,19 @@
  *
  * */
 
-import type Column from '../Column';
-import type { FilteringConditionOptions } from '../../Options';
-import type Table from '../Table';
+import type Column from '../../Column';
+import type { FilteringConditionOptions } from '../../../Options';
+import type Table from '../../Table';
 
-import U from '../../../../Core/Utilities.js';
-import GU from '../../GridUtils.js';
-import Globals from '../../Globals.js';
-import HeaderRow from '../Header/HeaderRow.js';
+import U from '../../../../../Core/Utilities.js';
+import GU from '../../../GridUtils.js';
+import Globals from '../../../Globals.js';
+import HeaderRow from '../../Header/HeaderRow.js';
 import {
     booleanValueMap,
     conditionsMap,
     type Condition
-} from './Filtering/FilteringTypes.js';
+} from './FilteringTypes.js';
 
 const { fireEvent, addEvent } = U;
 const { makeHTMLElement } = GU;
