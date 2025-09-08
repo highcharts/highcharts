@@ -16,7 +16,7 @@ declare namespace Highcharts {
 // container
 (({ addEvent, color, format, Chart, Series, Point }) => {
     const table = document.getElementById('custom-legend'),
-        tooltipFuelType = document.getElementById('tooltip-fuel-type'),
+        tooltipHeader = document.getElementById('tooltip-header'),
         tooltipSeriesName = document.getElementById('tooltip-series-name'),
         tooltipValue = document.getElementById('tooltip-value'),
         tooltipLastValue = document.getElementById('tooltip-last-value'),
@@ -32,15 +32,22 @@ declare namespace Highcharts {
         // Function to update the tooltip and legend row styles based on hover
         // state
         const highlightRow = () => {
+            const valueSuffix =
+                this.options.plotOptions.series.custom.valueSuffix,
+                name = this.options.plotOptions.series.custom.name;
+
+            tooltipHeader.innerHTML = format(
+                this.options.tooltip.headerFormat,
+                this.hoverPoint
+            );
+
             if (this.hoverPoint) {
-                tooltipFuelType.innerHTML = format(
-                    this.options.tooltip.headerFormat,
-                    this.hoverPoint
-                );
-                tooltipFuelType.style.backgroundColor =
+                const tooltipHeaderValue =
+                    document.getElementById('tooltip-header-value');
+                tooltipHeaderValue.style.backgroundColor =
                     color(this.hoverPoint.color).get() as string;
                 tooltipSeriesName.innerHTML =
-                    `${this.hoverPoint.x} Electricity Generation`;
+                    `${this.hoverPoint.x} ${name}`;
                 tooltipValue.innerHTML = format(
                     this.options.tooltip.pointFormat,
                     this.hoverPoint
@@ -49,13 +56,11 @@ declare namespace Highcharts {
                 tooltipMinValue.innerHTML = this.hoverPoint.series.min;
                 tooltipMaxValue.innerHTML = this.hoverPoint.series.max;
             } else {
-                tooltipFuelType.innerHTML = '&nbsp;';
-                tooltipFuelType.style.backgroundColor = 'transparent';
-                tooltipSeriesName.innerHTML = '- Electricity Generation';
-                tooltipValue.innerHTML = '- GWh';
-                tooltipLastValue.innerHTML = '- <span>GWh</span>';
-                tooltipMinValue.innerHTML = '- <span>GWh</span>';
-                tooltipMaxValue.innerHTML = '- <span>GWh</span>';
+                tooltipSeriesName.innerHTML = `- ${name}`;
+                tooltipValue.innerHTML = `- ${valueSuffix}`;
+                tooltipLastValue.innerHTML = `- <span>${valueSuffix}</span>`;
+                tooltipMinValue.innerHTML = `- <span>${valueSuffix}</span>`;
+                tooltipMaxValue.innerHTML = `- <span>${valueSuffix}</span>`;
             }
 
             series.forEach(s => {
@@ -215,7 +220,10 @@ Highcharts.chart({
 
     tooltip: {
         enabled: false, // Because we use a custom tooltip
-        headerFormat: '{series.options.custom.icon} {series.name}',
+        headerFormat: `<span id="tooltip-header-label">FUEL TYPE</span>
+            <div id="tooltip-header-value">
+                {series.options.custom.icon} {series.name}
+            </div>`,
         pointFormat: '{point.y:,.1f} {series.options.custom.valueSuffix}'
     },
 
@@ -245,6 +253,7 @@ Highcharts.chart({
     plotOptions: {
         series: {
             custom: {
+                name: 'Electricity Generation',
                 valueSuffix: ' GWh'
             },
             marker: {

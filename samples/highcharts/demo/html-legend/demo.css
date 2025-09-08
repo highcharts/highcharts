@@ -101,13 +101,13 @@
     align-items: center;
 }
 
-#tooltip-fuel-type-label {
+#tooltip-header-label {
     color: var(--font-color-3);
     font-weight: 700;
     font-style: bold;
 }
 
-#tooltip-fuel-type {
+#tooltip-header-value {
     color: white;
     padding: 6px 12px;
     border-radius: 6px;
@@ -115,6 +115,7 @@
     flex-direction: row;
     gap: 4px;
     align-items: center;
+    min-height: 1.5rem;
 }
 
 #tooltip-values {
