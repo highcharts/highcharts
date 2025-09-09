@@ -215,473 +215,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'pane': [
         'highcharts-more'
     ],
-    'plotOptions.abands': [
-        'stock/indicators/indicators',
-        'stock/indicators/acceleration-bands'
-    ],
-    'plotOptions.ad': [
-        'stock/indicators/indicators',
-        'stock/indicators/accumulation-distribution'
-    ],
-    'plotOptions.ao': [
-        'stock/indicators/indicators',
-        'stock/indicators/ao'
-    ],
-    'plotOptions.apo': [
-        'stock/indicators/indicators',
-        'stock/indicators/apo'
-    ],
-    'plotOptions.arcdiagram': [
-        'modules/arc-diagram'
-    ],
-    'plotOptions.arearange.dragDrop.draggableHigh': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.arearange.dragDrop.draggableLow': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.arearange': [
-        'highcharts-more'
-    ],
-    'plotOptions.areasplinerange': [
-        'highcharts-more'
-    ],
-    'plotOptions.aroon': [
-        'stock/indicators/indicators',
-        'stock/indicators/aroon'
-    ],
-    'plotOptions.aroonoscillator': [
-        'stock/indicators/indicators',
-        'stock/indicators/aroon',
-        'stock/indicators/aroon-oscillator'
-    ],
-    'plotOptions.atr': [
-        'stock/indicators/indicators',
-        'stock/indicators/atr'
-    ],
-    'plotOptions.bb': [
-        'stock/indicators/indicators',
-        'stock/indicators/bollinger-bands'
-    ],
-    'plotOptions.bellcurve': [
-        'modules/histogram-bellcurve'
-    ],
-    'plotOptions.boxplot.dragDrop.draggableHigh': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.boxplot.dragDrop.draggableLow': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.boxplot.dragDrop.draggableQ1': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.boxplot.dragDrop.draggableQ3': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.boxplot': [
-        'highcharts-more'
-    ],
-    'plotOptions.bubble': [
-        'highcharts-more'
-    ],
-    'plotOptions.bullet.dragDrop.draggableTarget': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.bullet': [
-        'modules/bullet'
-    ],
-    'plotOptions.cci': [
-        'stock/indicators/indicators',
-        'stock/indicators/cci'
-    ],
-    'plotOptions.chaikin': [
-        'stock/indicators/indicators',
-        'stock/indicators/chaikin'
-    ],
-    'plotOptions.cmf': [
-        'stock/indicators/indicators',
-        'stock/indicators/cmf'
-    ],
-    'plotOptions.cmo': [
-        'stock/indicators/indicators',
-        'stock/indicators/cmo'
-    ],
-    'plotOptions.column.depth': [
-        'highcharts-3d'
-    ],
-    'plotOptions.column.edgeColor': [
-        'highcharts-3d'
-    ],
-    'plotOptions.column.edgeWidth': [
-        'highcharts-3d'
-    ],
-    'plotOptions.column.groupZPadding': [
-        'highcharts-3d'
-    ],
-    'plotOptions.columnpyramid': [
-        'highcharts-more'
-    ],
-    'plotOptions.columnrange.dragDrop.draggableHigh': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.columnrange.dragDrop.draggableLow': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.columnrange': [
-        'highcharts-more'
-    ],
-    'plotOptions.cylinder': [
-        'modules/cylinder'
-    ],
-    'plotOptions.dema': [
-        'stock/indicators/indicators',
-        'stock/indicators/dema'
-    ],
-    'plotOptions.dependencywheel': [
-        'modules/dependency-wheel'
-    ],
-    'plotOptions.disparityindex': [
-        'stock/indicators/indicators',
-        'stock/indicators/disparity-index'
-    ],
-    'plotOptions.dmi': [
-        'stock/indicators/indicators',
-        'stock/indicators/dmi'
-    ],
-    'plotOptions.dpo': [
-        'stock/indicators/indicators',
-        'stock/indicators/dpo'
-    ],
-    'plotOptions.ema': [
-        'stock/indicators/indicators'
-    ],
-    'plotOptions.errorbar': [
-        'highcharts-more'
-    ],
-    'plotOptions.flowmap': [
-        'modules/flowmap'
-    ],
-    'plotOptions.funnel': [
-        'modules/funnel'
-    ],
-    'plotOptions.funnel3d': [
-        'highcharts-3d',
-        'modules/cylinder',
-        'modules/funnel3d'
-    ],
-    'plotOptions.gantt.dragDrop.draggableEnd': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.gantt.dragDrop.draggableStart': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.gantt': [
-        'highcharts-gantt'
-    ],
-    'plotOptions.gauge': [
-        'highcharts-more'
-    ],
-    'plotOptions.geoheatmap': [
-        'modules/geoheatmap'
-    ],
-    'plotOptions.heikinashi': [
-        'modules/heikinashi'
-    ],
-    'plotOptions.histogram': [
-        'modules/histogram-bellcurve'
-    ],
-    'plotOptions.hollowcandlestick': [
-        'modules/hollowcandlestick'
-    ],
-    'plotOptions.ikh': [
-        'stock/indicators/indicators',
-        'stock/indicators/ichimoku-kinko-hyo'
-    ],
-    'plotOptions.item': [
-        'modules/item-series'
-    ],
-    'plotOptions.keltnerchannels': [
-        'stock/indicators/indicators',
-        'stock/indicators/keltner-channels'
-    ],
-    'plotOptions.klinger': [
-        'stock/indicators/indicators',
-        'stock/indicators/klinger'
-    ],
-    'plotOptions.linearregression': [
-        'stock/indicators/indicators',
-        'stock/indicators/regressions'
-    ],
-    'plotOptions.linearregressionangle': [
-        'stock/indicators/indicators',
-        'stock/indicators/regressions'
-    ],
-    'plotOptions.linearregressionintercept': [
-        'stock/indicators/indicators',
-        'stock/indicators/regressions'
-    ],
-    'plotOptions.linearregressionslope': [
-        'stock/indicators/indicators',
-        'stock/indicators/regressions'
-    ],
-    'plotOptions.macd': [
-        'stock/indicators/indicators',
-        'stock/indicators/macd'
-    ],
-    'plotOptions.mfi': [
-        'stock/indicators/indicators',
-        'stock/indicators/mfi'
-    ],
-    'plotOptions.momentum': [
-        'stock/indicators/indicators',
-        'stock/indicators/momentum'
-    ],
-    'plotOptions.natr': [
-        'stock/indicators/indicators',
-        'stock/indicators/natr'
-    ],
-    'plotOptions.networkgraph': [
-        'modules/networkgraph'
-    ],
-    'plotOptions.obv': [
-        'stock/indicators/indicators',
-        'stock/indicators/obv'
-    ],
-    'plotOptions.ohlc.dragDrop.draggableClose': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.ohlc.dragDrop.draggableHigh': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.ohlc.dragDrop.draggableLow': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.ohlc.dragDrop.draggableOpen': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.organization': [
-        'modules/organization'
-    ],
-    'plotOptions.packedbubble': [
-        'highcharts-more'
-    ],
-    'plotOptions.pareto': [
-        'modules/pareto'
-    ],
-    'plotOptions.pc': [
-        'stock/indicators/indicators',
-        'stock/indicators/price-channel'
-    ],
-    'plotOptions.pictorial': [
-        'modules/pictorial'
-    ],
-    'plotOptions.pie.depth': [
-        'highcharts-3d'
-    ],
-    'plotOptions.pivotpoints': [
-        'stock/indicators/indicators',
-        'stock/indicators/pivot-points'
-    ],
-    'plotOptions.pointandfigure': [
-        'modules/pointandfigure'
-    ],
-    'plotOptions.polygon': [
-        'highcharts-more'
-    ],
-    'plotOptions.ppo': [
-        'stock/indicators/indicators',
-        'stock/indicators/ppo'
-    ],
-    'plotOptions.priceenvelopes': [
-        'stock/indicators/indicators',
-        'stock/indicators/price-envelopes'
-    ],
-    'plotOptions.psar': [
-        'stock/indicators/indicators',
-        'stock/indicators/psar'
-    ],
-    'plotOptions.pyramid': [
-        'modules/funnel'
-    ],
-    'plotOptions.pyramid3d': [
-        'highcharts-3d',
-        'modules/cylinder',
-        'modules/funnel3d',
-        'modules/pyramid3d'
-    ],
-    'plotOptions.renko': [
-        'modules/renko'
-    ],
-    'plotOptions.roc': [
-        'stock/indicators/indicators',
-        'stock/indicators/roc'
-    ],
-    'plotOptions.rsi': [
-        'stock/indicators/indicators',
-        'stock/indicators/rsi'
-    ],
-    'plotOptions.sankey': [
-        'modules/sankey'
-    ],
-    'plotOptions.scatter3d': [
-        'highcharts-3d'
-    ],
-    'plotOptions.series.accessibility': [
-        'modules/accessibility'
-    ],
-    'plotOptions.series.boostBlending': [
-        'modules/boost'
-    ],
-    'plotOptions.series.boostThreshold': [
-        'modules/boost'
-    ],
-    'plotOptions.series.dataGrouping': [
-        'modules/stock'
-    ],
-    'plotOptions.series.description': [
-        'modules/accessibility'
-    ],
-    'plotOptions.series.dragDrop': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.series.gapSize': [
-        'modules/broken-axis'
-    ],
-    'plotOptions.series.gapUnit': [
-        'modules/broken-axis'
-    ],
-    'plotOptions.series.includeInDataExport': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
-    'plotOptions.series.label': [
-        'modules/series-label'
-    ],
-    'plotOptions.series.lastPrice': [
-        'modules/price-indicator'
-    ],
-    'plotOptions.series.lastVisiblePrice': [
-        'modules/price-indicator'
-    ],
-    'plotOptions.series.onPoint': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.point.events.drag': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.series.point.events.dragStart': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.series.point.events.drop': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.series.sonification': [
-        'modules/sonification'
-    ],
-    'plotOptions.slowstochastic': [
-        'stock/indicators/indicators',
-        'stock/indicators/stochastic',
-        'stock/indicators/slow-stochastic'
-    ],
-    'plotOptions.sma': [
-        'stock/indicators/indicators'
-    ],
-    'plotOptions.solidgauge': [
-        'modules/solid-gauge'
-    ],
-    'plotOptions.stochastic': [
-        'stock/indicators/indicators',
-        'stock/indicators/stochastic'
-    ],
-    'plotOptions.streamgraph': [
-        'modules/streamgraph'
-    ],
-    'plotOptions.sunburst': [
-        'modules/sunburst'
-    ],
-    'plotOptions.supertrend': [
-        'stock/indicators/indicators',
-        'stock/indicators/supertrend'
-    ],
-    'plotOptions.tema': [
-        'stock/indicators/indicators',
-        'stock/indicators/tema'
-    ],
-    'plotOptions.tiledwebmap': [
-        'modules/tiledwebmap'
-    ],
-    'plotOptions.tilemap': [
-        'modules/tilemap'
-    ],
-    'plotOptions.timeline': [
-        'modules/timeline'
-    ],
-    'plotOptions.treegraph': [
-        'modules/treemap',
-        'modules/treegraph'
-    ],
-    'plotOptions.treemap': [
-        'modules/treemap'
-    ],
-    'plotOptions.trendline': [
-        'stock/indicators/indicators',
-        'stock/indicators/trendline'
-    ],
-    'plotOptions.trix': [
-        'stock/indicators/indicators',
-        'stock/indicators/tema',
-        'stock/indicators/trix'
-    ],
-    'plotOptions.variablepie': [
-        'modules/variable-pie'
-    ],
-    'plotOptions.variwide': [
-        'modules/variwide'
-    ],
-    'plotOptions.vbp': [
-        'stock/indicators/indicators',
-        'stock/indicators/volume-by-price'
-    ],
-    'plotOptions.vector': [
-        'modules/vector'
-    ],
-    'plotOptions.venn': [
-        'modules/venn'
-    ],
-    'plotOptions.vwap': [
-        'stock/indicators/indicators',
-        'stock/indicators/vwap'
-    ],
-    'plotOptions.waterfall': [
-        'highcharts-more'
-    ],
-    'plotOptions.williamsr': [
-        'stock/indicators/indicators',
-        'stock/indicators/williams-r'
-    ],
-    'plotOptions.windbarb': [
-        'modules/windbarb'
-    ],
-    'plotOptions.wma': [
-        'stock/indicators/indicators',
-        'stock/indicators/wma'
-    ],
-    'plotOptions.wordcloud': [
-        'modules/wordcloud'
-    ],
-    'plotOptions.xrange.dragDrop.draggableX1': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.xrange.dragDrop.draggableX2': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.xrange': [
-        'modules/xrange'
-    ],
-    'plotOptions.zigzag': [
-        'stock/indicators/indicators',
-        'stock/indicators/zigzag'
-    ],
     'series.abands': [
         'stock/indicators/indicators',
         'stock/indicators/acceleration-bands'
@@ -924,7 +457,10 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/funnel'
     ],
     'series.pyramid3d': [
-        'modules/pyramid3d'
+        'modules/pyramid3d',
+        'highcharts-3d',
+        'modules/cylinder',
+        'modules/funnel3d'
     ],
     'series.renko': [
         'modules/renko'
@@ -991,7 +527,8 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'series.trix': [
         'stock/indicators/indicators',
-        'stock/indicators/tema'
+        'stock/indicators/tema',
+        'stock/indicators/trix'
     ],
     'series.variablepie': [
         'modules/variable-pie'
@@ -1075,6 +612,136 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'yAxis.tooltipValueFormat': [
         'modules/parallel-coordinates'
+    ],
+    'series.arearange.dragDrop.draggableHigh': [
+        'modules/draggable-points'
+    ],
+    'series.arearange.dragDrop.draggableLow': [
+        'modules/draggable-points'
+    ],
+    'series.boxplot.dragDrop.draggableHigh': [
+        'modules/draggable-points'
+    ],
+    'series.boxplot.dragDrop.draggableLow': [
+        'modules/draggable-points'
+    ],
+    'series.boxplot.dragDrop.draggableQ1': [
+        'modules/draggable-points'
+    ],
+    'series.boxplot.dragDrop.draggableQ3': [
+        'modules/draggable-points'
+    ],
+    'series.bullet.dragDrop.draggableTarget': [
+        'modules/draggable-points'
+    ],
+    'series.column.depth': [
+        'highcharts-3d'
+    ],
+    'series.column.edgeColor': [
+        'highcharts-3d'
+    ],
+    'series.column.edgeWidth': [
+        'highcharts-3d'
+    ],
+    'series.column.groupZPadding': [
+        'highcharts-3d'
+    ],
+    'series.columnrange.dragDrop.draggableHigh': [
+        'modules/draggable-points'
+    ],
+    'series.columnrange.dragDrop.draggableLow': [
+        'modules/draggable-points'
+    ],
+    'series.flowmap': [
+        'modules/flowmap'
+    ],
+    'series.gantt.dragDrop.draggableEnd': [
+        'modules/draggable-points'
+    ],
+    'series.gantt.dragDrop.draggableStart': [
+        'modules/draggable-points'
+    ],
+    'series.geoheatmap': [
+        'modules/geoheatmap'
+    ],
+    'series.hollowcandlestick': [
+        'modules/hollowcandlestick'
+    ],
+    'series.ohlc.dragDrop.draggableClose': [
+        'modules/draggable-points'
+    ],
+    'series.ohlc.dragDrop.draggableHigh': [
+        'modules/draggable-points'
+    ],
+    'series.ohlc.dragDrop.draggableLow': [
+        'modules/draggable-points'
+    ],
+    'series.ohlc.dragDrop.draggableOpen': [
+        'modules/draggable-points'
+    ],
+    'series.pie.depth': [
+        'highcharts-3d'
+    ],
+    'series.series.accessibility': [
+        'modules/accessibility'
+    ],
+    'series.series.boostBlending': [
+        'modules/boost'
+    ],
+    'series.series.boostThreshold': [
+        'modules/boost'
+    ],
+    'series.series.dataGrouping': [
+        'modules/stock'
+    ],
+    'series.series.description': [
+        'modules/accessibility'
+    ],
+    'series.series.dragDrop': [
+        'modules/draggable-points'
+    ],
+    'series.series.gapSize': [
+        'modules/broken-axis'
+    ],
+    'series.series.gapUnit': [
+        'modules/broken-axis'
+    ],
+    'series.series.includeInDataExport': [
+        'modules/exporting',
+        'modules/export-data'
+    ],
+    'series.series.label': [
+        'modules/series-label'
+    ],
+    'series.series.lastPrice': [
+        'modules/price-indicator'
+    ],
+    'series.series.lastVisiblePrice': [
+        'modules/price-indicator'
+    ],
+    'series.series.onPoint': [
+        'modules/series-on-point'
+    ],
+    'series.series.point.events.drag': [
+        'modules/draggable-points'
+    ],
+    'series.series.point.events.dragStart': [
+        'modules/draggable-points'
+    ],
+    'series.series.point.events.drop': [
+        'modules/draggable-points'
+    ],
+    'series.series.sonification': [
+        'modules/sonification'
+    ],
+    'series.tiledwebmap': [
+        'modules/tiledwebmap'
+    ],
+    'series.xrange.dragDrop.draggableX1': [
+        'modules/draggable-points'
+    ],
+    'series.xrange.dragDrop.draggableX2': [
+        'modules/draggable-points'
     ]
 };
 export default DependencyMapping;

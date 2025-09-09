@@ -15,10 +15,10 @@ function treeToMappingRecursive(key, branch, keyPath, mapping = {}) {
     }
     if (branch.doclet && branch.doclet.requires) {
         const fullKey = (keyPath.filter(Boolean).join('.') + '.' + key)
-            .replace(/^\./, '');
+            .replace(/^\./u, '');
         mapping[
             fullKey
-        ] = branch.doclet.requires.map(r => r.replace(/module:/, ''));
+        ] = branch.doclet.requires.map(r => r.replace(/module:/u, ''));
     }
     return mapping;
 }
@@ -54,7 +54,23 @@ async function dependencyMapping() {
         Object.assign(mapping, productSpecificMapping);
     }
 
-    // Remove unnecessary definitions at lower levels
+    // Remove plotOptions.*** entries, and combine them with series.*** entries
+    Object.entries(mapping).forEach(([key, value]) => {
+        if (key.startsWith('plotOptions.')) {
+            const seriesType = key.replace('plotOptions.', 'series.');
+            if (mapping[seriesType]) {
+                mapping[seriesType] = Array.from(
+                    new Set([...mapping[seriesType], ...value])
+                );
+            } else {
+                mapping[seriesType] = value;
+            }
+            delete mapping[key];
+        }
+    });
+
+    // Remove unnecessary definitions at lower levels. For example if both
+    // `exporting` and `exporting.buttons` are defined, remove the latter.
     Object.entries(mapping).forEach(([key, value]) => {
         const parentKey = key.split('.').slice(0, -1).join('.');
         if (
@@ -65,7 +81,7 @@ async function dependencyMapping() {
         }
     });
 
-    const mappingString = JSON.stringify(mapping, null, 4).replace(/"/g, '\'');
+    const mappingString = JSON.stringify(mapping, null, 4).replace(/"/gu, '\'');
 
     await fs.writeFile(
         path.join(
