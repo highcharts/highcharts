@@ -34,44 +34,22 @@ import type Column from '../../Column';
 /**
  * String filtering conditions.
  */
-export type StringCondition =
-    | 'contains'
-    | 'doesNotContain'
-    | 'equals'
-    | 'doesNotEqual'
-    | 'beginsWith'
-    | 'endsWith'
-    | 'empty'
-    | 'notEmpty';
+export type StringCondition = typeof stringConditions[number];
 
 /**
  * Number filtering conditions.
  */
-export type NumberCondition =
-    | 'equals'
-    | 'doesNotEqual'
-    | 'greaterThan'
-    | 'greaterThanOrEqualTo'
-    | 'lessThan'
-    | 'lessThanOrEqualTo'
-    | 'empty'
-    | 'notEmpty';
+export type NumberCondition = typeof numberConditions[number];
 
 /**
  * DateTime filtering conditions.
  */
-export type DateTimeCondition =
-    | 'equals'
-    | 'doesNotEqual'
-    | 'before'
-    | 'after'
-    | 'empty'
-    | 'notEmpty';
+export type DateTimeCondition = typeof dateTimeConditions[number];
 
 /**
- * The options for the boolean select.
+ * Boolean filtering conditions.
  */
-export type BooleanSelectOptions = 'all' | 'true' | 'false' | 'empty';
+export type BooleanCondition = typeof booleanConditions[number];
 
 /**
  * The event object for the 'afterRender' event.
@@ -84,25 +62,13 @@ export type AfterRenderEvent = Event & {
 /**
  * Combined filtering conditions.
  */
-export type Condition = StringCondition | NumberCondition | DateTimeCondition;
-
-/**
- * Corresponding values for the boolean select options.
- */
-export const booleanValueMap: Record<
-    BooleanSelectOptions,
-    'all' | boolean | null
-> = {
-    'all': 'all',
-    'true': true,
-    'false': false,
-    empty: null
-} as const;
+export type Condition =
+    StringCondition | NumberCondition | DateTimeCondition | BooleanCondition;
 
 /**
  * String conditions values for the condition select options.
  */
-export const stringConditions: StringCondition[] = [
+export const stringConditions = [
     'contains',
     'doesNotContain',
     'equals',
@@ -116,7 +82,7 @@ export const stringConditions: StringCondition[] = [
 /**
  * Number conditions values for the condition select options.
  */
-export const numberConditions: NumberCondition[] = [
+export const numberConditions = [
     'equals',
     'doesNotEqual',
     'greaterThan',
@@ -130,7 +96,7 @@ export const numberConditions: NumberCondition[] = [
 /**
  * DateTime conditions values for the condition select options.
  */
-export const dateTimeConditions: DateTimeCondition[] = [
+export const dateTimeConditions = [
     'equals',
     'doesNotEqual',
     'before',
@@ -140,10 +106,21 @@ export const dateTimeConditions: DateTimeCondition[] = [
 ] as const;
 
 /**
+ * Boolean conditions values for the condition select options.
+ */
+export const booleanConditions = [
+    'all',
+    'true',
+    'false',
+    'empty'
+] as const;
+
+/**
  * Conditions map for the condition select options.
  */
-export const conditionsMap = {
+export const conditionsMap: Record<Column.DataType, readonly Condition[]> = {
     string: stringConditions,
     number: numberConditions,
-    datetime: dateTimeConditions
+    datetime: dateTimeConditions,
+    'boolean': booleanConditions
 } as const;

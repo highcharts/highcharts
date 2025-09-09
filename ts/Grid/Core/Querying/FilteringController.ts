@@ -25,9 +25,10 @@
 import type {
     FilterCondition
 } from '../../../Data/Modifiers/FilterModifierOptions.js';
-import type { FilteringConditionOptions } from '../Options.js';
+import type { FilteringCondition } from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
+import QueryingController from './QueryingController.js';
 import U from '../../../Core/Utilities.js';
 const {
     isString
@@ -50,10 +51,16 @@ class FilteringController {
     *  Properties
     *
     * */
+
+    /**
+     * The data grid instance.
+     */
+    private querying: QueryingController;
+
     /**
      * A map of the filtering conditions for each column.
      */
-    private columnConditions: {[key: string]: FilterCondition} = {};
+    private columnConditions: Record<string, FilterCondition> = {};
 
     /**
      * The modifier that is used to filter the data.
@@ -65,6 +72,22 @@ class FilteringController {
      * change in the filtering options.
      */
     public shouldBeUpdated: boolean = false;
+
+    /* *
+    *
+    *  Constructor
+    *
+    * */
+
+    /**
+     * Constructs the FilteringController instance.
+     *
+     * @param querying
+     * The querying controller instance.
+     */
+    constructor(querying: QueryingController) {
+        this.querying = querying;
+    }
 
 
     /* *
@@ -84,7 +107,7 @@ class FilteringController {
      */
     public static mapOptionsToFilter(
         columnId: string,
-        options: FilteringConditionOptions
+        options: FilteringCondition
     ): FilterCondition | undefined {
         const { condition, value } = options;
         const isStringValue = isString(value);
@@ -211,6 +234,39 @@ class FilteringController {
     }
 
     /**
+     * Loads filtering options from the data grid options.
+     */
+    public loadOptions(): void {
+        const columnOptionsMap = this.querying.grid.columnOptionsMap;
+        const newConditions: Record<string, FilterCondition> = {};
+
+        if (columnOptionsMap) {
+            const columnIds = Object.keys(columnOptionsMap);
+            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+                const columnId = columnIds[i];
+                const filteringOptions =
+                    columnOptionsMap[columnId]?.options?.filtering;
+
+                if (!filteringOptions) {
+                    continue;
+                }
+
+                const condition = FilteringController.mapOptionsToFilter(
+                    columnId,
+                    filteringOptions
+                );
+
+                if (condition) {
+                    newConditions[columnId] = condition;
+                }
+            }
+        }
+
+        this.columnConditions = newConditions;
+        this.updateModifier();
+    }
+
+    /**
      * Adds a new filtering condition to the specified column.
      *
      * @param columnId
@@ -221,7 +277,7 @@ class FilteringController {
      */
     public addColumnFilterCondition(
         columnId: string,
-        options: FilteringConditionOptions
+        options: FilteringCondition
     ): void {
         const condition = FilteringController.mapOptionsToFilter(
             columnId,

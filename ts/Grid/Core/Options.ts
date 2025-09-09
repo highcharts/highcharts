@@ -543,7 +543,7 @@ export interface IndividualColumnOptions extends ColumnOptions {
     /**
      * Filtering options for the column.
      */
-    filtering?: FilteringConditionOptions;
+    filtering?: ColumnFilteringOptions;
 }
 
 export interface CaptionOptions {
@@ -685,21 +685,23 @@ export interface TimeOptions {
 /**
  * Column filtering options.
  */
-export interface FilteringConditionOptions {
+export interface FilteringCondition {
     /**
      * The condition to use for filtering the column.
      */
     condition?: Condition;
 
     /**
-     * Whether the filtering is enabled or not.
-     */
-    enabled?: boolean;
-
-    /**
      * The value that is used with the condition to filter the column.
      */
     value?: string | number | boolean | null;
+}
+
+export interface ColumnFilteringOptions extends FilteringCondition {
+    /**
+     * Whether the filtering is enabled or not.
+     */
+    enabled?: boolean;
 }
 
 /* *

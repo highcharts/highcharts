@@ -25,7 +25,7 @@
  * */
 
 import type Column from '../../Column';
-import type { FilteringConditionOptions } from '../../../Options';
+import type { FilteringCondition } from '../../../Options';
 import type Table from '../../Table';
 
 import U from '../../../../../Core/Utilities.js';
@@ -33,9 +33,10 @@ import GU from '../../../GridUtils.js';
 import Globals from '../../../Globals.js';
 import HeaderRow from '../../Header/HeaderRow.js';
 import {
-    booleanValueMap,
+    booleanConditions,
     conditionsMap,
-    type Condition
+    BooleanCondition,
+    Condition
 } from './FilteringTypes.js';
 
 const { fireEvent, addEvent } = U;
@@ -155,9 +156,6 @@ class ColumnFiltering {
      *
      * @param column
      * The filtered column.
-     *
-     * @param headerCellElement
-     * The head element of the column.
      */
     constructor(column: Column) {
         this.column = column;
@@ -175,9 +173,7 @@ class ColumnFiltering {
      * @param options
      * The filtering options.
      */
-    public async applyFilter(
-        options: FilteringConditionOptions
-    ): Promise<void> {
+    public async applyFilter(options: FilteringCondition): Promise<void> {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
@@ -186,9 +182,12 @@ class ColumnFiltering {
             target: this.column
         });
 
-        filteringController.addColumnFilterCondition(this.column.id, options);
-        await querying.proceed();
+        // Update the userOptions.
+        this.column.update({ filtering: options }, false);
 
+        filteringController.addColumnFilterCondition(this.column.id, options);
+
+        await querying.proceed();
         await viewport.updateRows();
 
         fireEvent(this.column, 'afterFiltering', {
@@ -209,7 +208,7 @@ class ColumnFiltering {
      * Reference to the column type.
      */
     public renderFilteringInput(
-        filteringOptions: FilteringConditionOptions,
+        filteringOptions: FilteringCondition,
         inputWrapper: HTMLElement,
         columnType: Exclude<Column.DataType, 'boolean'>
     ): void {
@@ -280,9 +279,9 @@ class ColumnFiltering {
      * Reference to the conditions, different for each condition type.
      */
     public renderConditionSelect(
-        filteringOptions: FilteringConditionOptions,
+        filteringOptions: FilteringCondition,
         inputWrapper: HTMLElement,
-        conditions: Condition[]
+        conditions: readonly Condition[]
     ): void {
         // Render the select element.
         this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
@@ -367,7 +366,7 @@ class ColumnFiltering {
                 this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
 
                 // Render the options.
-                for (const option of Object.keys(booleanValueMap)) {
+                for (const option of booleanConditions) {
                     const optionElement = document.createElement('option');
                     optionElement.value = option;
                     optionElement.textContent = option;
@@ -381,9 +380,9 @@ class ColumnFiltering {
 
                 // Attach event listener.
                 addEvent(this.filterSelect, 'change', (e): void => {
-                    const option: keyof typeof booleanValueMap = e.target.value;
+                    const option: BooleanCondition = e.target.value;
 
-                    filteringOptions.value = booleanValueMap[option];
+                    filteringOptions.value = option;
 
                     if (option !== 'all') {
                         filteringOptions.condition = 'equals';
@@ -396,11 +395,6 @@ class ColumnFiltering {
                     void this.applyFilter(filteringOptions);
                 });
                 break;
-        }
-
-        // Apply initial filtering if provided from options.
-        if (filteringOptions.value && filteringOptions.condition) {
-            void this.applyFilter(filteringOptions);
         }
 
         // Set the padding bottom of the header content to the height of the
@@ -437,6 +431,19 @@ class ColumnFiltering {
             .trim()
             .toLowerCase()
             .split(/\s+/).join(' ');
+    }
+
+    public async set(value?: string, condition?: Condition): Promise<void> {
+        if (this.filterInput) {
+            this.filterInput.value = value ?? '';
+        }
+
+        if (this.filterSelect) {
+            this.filterSelect.value =
+                condition ?? conditionsMap[this.column.dataType][0];
+        }
+
+        await this.applyFilter({ value, condition });
     }
 }
 
