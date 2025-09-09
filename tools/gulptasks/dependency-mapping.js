@@ -54,7 +54,7 @@ async function dependencyMapping() {
         Object.assign(mapping, productSpecificMapping);
     }
 
-    // Remove plotOptions.*** entries, and combine them with series.*** entries
+    // Remove plotOptions.* entries, and combine them with series.* entries
     Object.entries(mapping).forEach(([key, value]) => {
         if (key.startsWith('plotOptions.')) {
             const seriesType = key.replace('plotOptions.', 'series.');
@@ -65,6 +65,13 @@ async function dependencyMapping() {
             } else {
                 mapping[seriesType] = value;
             }
+            delete mapping[key];
+        }
+    });
+
+    // Remove all `lang.*` entries, as these are not features per se
+    Object.keys(mapping).forEach(key => {
+        if (key.startsWith('lang.')) {
             delete mapping[key];
         }
     });
@@ -107,4 +114,5 @@ export default DependencyMapping;
 
 require('./jsdoc');
 
+// gulp.task('dependency-mapping', dependencyMapping);
 gulp.task('dependency-mapping', gulp.series('jsdoc', dependencyMapping));

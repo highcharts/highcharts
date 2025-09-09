@@ -137,60 +137,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'exporting': [
         'modules/exporting'
     ],
-    'lang.contextButtonTitle': [
-        'modules/exporting'
-    ],
-    'lang.downloadCSV': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
-    'lang.downloadJPEG': [
-        'modules/exporting'
-    ],
-    'lang.downloadMIDI': [
-        'modules/sonification'
-    ],
-    'lang.downloadPDF': [
-        'modules/exporting'
-    ],
-    'lang.downloadPNG': [
-        'modules/exporting'
-    ],
-    'lang.downloadSVG': [
-        'modules/exporting'
-    ],
-    'lang.downloadXLS': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
-    'lang.drillUpText': [
-        'modules/drilldown'
-    ],
-    'lang.exportData': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
-    'lang.exportInProgress': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
-    'lang.hideData': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
-    'lang.noData': [
-        'modules/no-data-to-display'
-    ],
-    'lang.playAsSound': [
-        'modules/sonification'
-    ],
-    'lang.printChart': [
-        'modules/exporting'
-    ],
-    'lang.viewData': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
     'legend.accessibility': [
         'modules/accessibility'
     ],
