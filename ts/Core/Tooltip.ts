@@ -578,7 +578,7 @@ class Tooltip {
                             DOMElementType | null
                         );
 
-                        const isTooltip =
+                        if (
                             relatedTarget &&
                             (
                                 this.pointer.inClass(
@@ -588,24 +588,18 @@ class Tooltip {
                                 this.pointer.inClass(
                                     relatedTarget,
                                     'highcharts-tooltip-box'
-                                )
-                            );
-
-                        const isPoint =
-                            relatedTarget &&
-                            (
+                                ) ||
                                 this.pointer.inClass(
                                     relatedTarget,
                                     'highcharts-point'
                                 )
-                            );
-
-                        if (isTooltip || isPoint) {
+                            )
+                        ) {
                             U.clearTimeout(this.hideTimer);
                             return;
                         }
-
-                    });
+                    }
+                );
             }
         }
 
