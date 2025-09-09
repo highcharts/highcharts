@@ -5,7 +5,7 @@ const HC_CONFIGS = {
         title: { text: 'U.S Solar Employment Growth', align: 'left' },
         subtitle: {
             text: 'By Job Category. Source: <a href="https://irecusa.org/' +
-                  'programs/solar-jobs-census/" target="_blank">IREC</a>.',
+                'programs/solar-jobs-census" target="_blank">IREC</a>.',
             align: 'left'
         },
         yAxis: { title: { text: 'Number of Employees' } },
@@ -127,6 +127,7 @@ const HC_CONFIGS = {
     // ===== Row 4: Flow (sankey) =====
     chart10: {
         chart: {
+            type: 'sankey',
             zooming: { type: 'xy' },
             panning: { enabled: true, type: 'xy' },
             panKey: 'shift'
@@ -222,24 +223,32 @@ const HC_CONFIGS = {
                 ['Transportation', 'Energy Services', 5.77]
             ],
             dataLabels: {
-                style: { color: 'var(--highcharts-neutral-color-100, #000)' }
+                style: {
+                    color: 'var(--highcharts-neutral-color-100, #000)'
+                }
             }
         }]
     },
     chart11: {
-        chart: { },
+        chart: {},
         title: { text: 'Placeholder Sankey 2' },
-        series: [{ type: 'sankey', data: [['A', 'B', 1], ['B', 'C', 2]] }]
+        series: [{
+            type: 'sankey',
+            data: [['A', 'B', 1], ['B', 'C', 2]]
+        }]
     },
     chart12: {
-        chart: { },
+        chart: {},
         title: { text: 'Placeholder Sankey 3' },
-        series: [{ type: 'sankey', data: [['X', 'Y', 2], ['Y', 'Z', 1]] }]
+        series: [{
+            type: 'sankey',
+            data: [['X', 'Y', 2], ['Y', 'Z', 1]]
+        }]
     },
 
-    // ===== Row 5: Distribution (histogram) =====
+    // ===== Row 5: Distribution (histogram + boxplots) =====
     chart13: {
-        chart: { type: 'column' },
+        chart: { type: 'histogram' }, // histogram-like with column
         title: { text: 'Histogram using a column chart' },
         xAxis: {
             categories: [
@@ -250,11 +259,10 @@ const HC_CONFIGS = {
         },
         yAxis: { min: 0, title: { text: '' } },
         tooltip: {
-            headerFormat:
-                '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat:
-                '<tr><td style="color:{series.color};padding:0">' +
-                '{series.name}: </td>' +
+            headerFormat: '<span style="font-size:10px">' +
+                '{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};' +
+                'padding:0">{series.name}: </td>' +
                 '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
             footerFormat: '</table>',
             shared: true,
@@ -276,39 +284,101 @@ const HC_CONFIGS = {
             ]
         }]
     },
-
-    chart14: {
-        chart: { type: 'histogram' },
-        title: { text: 'Placeholder Hist 2' },
-        series: [{ data: [1, 2, 3] }]
-    },
-    chart15: {
-        chart: { type: 'histogram' },
-        title: { text: 'Placeholder Hist 3' },
-        series: [{ data: [1, 2, 3] }]
-    },
-
-    // ===== Row 6: Distribution (boxplot) =====
-    chart16: {
-        chart: { type: 'boxplot' },
-        title: { text: 'Boxplot A' },
-        xAxis: { categories: ['A'] },
-        series: [{ data: [[760, 801, 848, 895, 965]] }]
-    },
-    chart17: {
+    chart14: { // boxplot B
         chart: { type: 'boxplot' },
         title: { text: 'Boxplot B' },
         xAxis: { categories: ['B'] },
         series: [{ data: [[610, 680, 735, 802, 980]] }]
     },
-    chart18: {
+    chart15: { // boxplot C
         chart: { type: 'boxplot' },
         title: { text: 'Boxplot C' },
         xAxis: { categories: ['C'] },
         series: [{ data: [[510, 590, 640, 690, 760]] }]
     },
 
-    // ===== Row 7: Continuous scatter (bubble) =====
+    // ===== Row 6: Grid (heat/tiles) =====
+    chart16: {
+        chart: {
+            type: 'heatmap',
+            marginTop: 40,
+            marginBottom: 80,
+            plotBorderWidth: 1
+        },
+        title: {
+            text: 'Sales per employee per weekday',
+            style: { fontSize: '1em' }
+        },
+        xAxis: {
+            categories: [
+                'Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas',
+                'Maria', 'Leon', 'Anna', 'Tim', 'Laura'
+            ]
+        },
+        yAxis: {
+            categories: [
+                'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            title: null,
+            reversed: true
+        },
+        colorAxis: {
+            min: 0,
+            minColor: 'var(--highcharts-background-color, #FFFFFF)',
+            maxColor: Highcharts.getOptions().colors[0]
+        },
+        legend: {
+            align: 'right',
+            layout: 'vertical',
+            margin: 0,
+            verticalAlign: 'top',
+            y: 25,
+            symbolHeight: 280
+        },
+        tooltip: {
+            format:
+              '<b>{series.xAxis.categories.(point.x)}</b> sold<br>' +
+              '<b>{point.value}</b> items on <br>' +
+              '<b>{series.yAxis.categories.(point.y)}</b>'
+        },
+        series: [{
+            name: 'Sales per employee',
+            borderWidth: 1,
+            data: [
+                [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
+                [1, 0, 92], [1, 1, 58], [1, 2, 78], [1, 3, 117], [1, 4, 48],
+                [2, 0, 35], [2, 1, 15], [2, 2, 123], [2, 3, 64], [2, 4, 52],
+                [3, 0, 72], [3, 1, 132], [3, 2, 114], [3, 3, 19], [3, 4, 16],
+                [4, 0, 38], [4, 1, 5], [4, 2, 8], [4, 3, 117], [4, 4, 115],
+                [5, 0, 88], [5, 1, 32], [5, 2, 12], [5, 3, 6], [5, 4, 120],
+                [6, 0, 13], [6, 1, 44], [6, 2, 88], [6, 3, 98], [6, 4, 96],
+                [7, 0, 31], [7, 1, 1], [7, 2, 82], [7, 3, 32], [7, 4, 30],
+                [8, 0, 85], [8, 1, 97], [8, 2, 123], [8, 3, 64], [8, 4, 84],
+                [9, 0, 47], [9, 1, 114], [9, 2, 31], [9, 3, 48], [9, 4, 91]
+            ],
+            dataLabels: { enabled: true, color: 'contrast' }
+        }],
+        responsive: {
+            rules: [{
+                condition: { maxWidth: 500 },
+                chartOptions: {
+                    yAxis: { labels: { format: '{substr value 0 1}' } }
+                }
+            }]
+        }
+    },
+    chart17: {
+        chart: { type: 'heatmap' },
+        title: { text: 'Heatmap placeholder 2' },
+        series: [{ data: [] }]
+    },
+    chart18: {
+        chart: { type: 'heatmap' },
+        title: { text: 'Heatmap placeholder 3' },
+        series: [{ data: [] }]
+    },
+
+    // ===== Row 7: Points (bubble) =====
     chart19: {
         chart: { type: 'bubble' },
         title: { text: 'Bubble A' },
@@ -343,7 +413,7 @@ const HC_CONFIGS = {
         }]
     },
 
-    // ===== Row 8: Hierarchical composition (treemap) =====
+    // ===== Row 8: Hierarchy (treemap) =====
     chart22: {
         title: { text: 'Treemap A' },
         series: [{
@@ -378,7 +448,7 @@ const HC_CONFIGS = {
         }]
     },
 
-    // ===== Row 9: Sequential (waterfall) =====
+    // ===== Row 9: Waterfall =====
     chart25: {
         chart: { type: 'waterfall' },
         title: { text: 'Waterfall A' },
@@ -386,7 +456,8 @@ const HC_CONFIGS = {
         series: [{
             data: [
                 { y: 10, isSum: true },
-                5, -3,
+                5,
+                -3,
                 { y: 12, isSum: true }
             ]
         }]
@@ -398,7 +469,8 @@ const HC_CONFIGS = {
         series: [{
             data: [
                 { y: 8, isSum: true },
-                2, -1,
+                2,
+                -1,
                 { y: 9, isSum: true }
             ]
         }]
@@ -412,43 +484,40 @@ const HC_CONFIGS = {
 
     // ===== Row 10: Textual (wordcloud) =====
     chart28: {
+        chart: { type: 'wordcloud' },
         title: { text: 'Wordcloud A' },
-        series: [
-            {
-                type: 'wordcloud',
-                data: [
-                    { name: 'alpha', weight: 3 },
-                    { name: 'beta', weight: 2 },
-                    { name: 'gamma', weight: 1 }
-                ]
-            }
-        ]
+        series: [{
+            type: 'wordcloud',
+            data: [
+                { name: 'alpha', weight: 3 },
+                { name: 'beta', weight: 2 },
+                { name: 'gamma', weight: 1 }
+            ]
+        }]
     },
     chart29: {
+        chart: { type: 'wordcloud' },
         title: { text: 'Wordcloud B' },
-        series: [
-            {
-                type: 'wordcloud',
-                data: [
-                    { name: 'delta', weight: 2 },
-                    { name: 'epsilon', weight: 2 },
-                    { name: 'zeta', weight: 1 }
-                ]
-            }
-        ]
+        series: [{
+            type: 'wordcloud',
+            data: [
+                { name: 'delta', weight: 2 },
+                { name: 'epsilon', weight: 2 },
+                { name: 'zeta', weight: 1 }
+            ]
+        }]
     },
     chart30: {
+        chart: { type: 'wordcloud' },
         title: { text: 'Wordcloud C' },
-        series: [
-            {
-                type: 'wordcloud',
-                data: [
-                    { name: 'eta', weight: 3 },
-                    { name: 'theta', weight: 1 },
-                    { name: 'iota', weight: 1 }
-                ]
-            }
-        ]
+        series: [{
+            type: 'wordcloud',
+            data: [
+                { name: 'eta', weight: 3 },
+                { name: 'theta', weight: 1 },
+                { name: 'iota', weight: 1 }
+            ]
+        }]
     },
 
     // ===== Row 11: KPI (solid gauge) =====
@@ -545,6 +614,7 @@ const HC_CONFIGS = {
 
         const fam = familyOf(this);
         let html = `<p>${basicSummary(this)}</p>`;
+
         if (fam === 'timeseries') {
             html += describeTimeseries(this);
         } else if (fam === 'categorical') {
@@ -554,17 +624,32 @@ const HC_CONFIGS = {
         } else if (fam === 'flow') {
             html += describeSankey(this);
         } else if (fam === 'distribution') {
-            html += describeDistribution(this);
+            const hasBox = (this.series || []).some(s =>
+                (s.type || s.options?.type) === 'boxplot'
+            );
+            html += hasBox ? describeBoxplot(this) : describeDistribution(this);
         } else if (fam === 'grid') {
             html += describeHeatmap(this);
+        } else if (fam === 'scatter') {
+            html += describeBubble(this);
+        } else if (fam === 'hierarchical') {
+            html += describeTreemap(this);
+        } else if (fam === 'sequential') {
+            html += describeWaterfall(this);
+        } else if (fam === 'textual') {
+            html += describeWordcloud(this);
+        } else if (fam === 'kpi') {
+            html += describeGauge(this);
+        } else if (fam === 'polar') {
+            html += describeRadar(this); // new
         }
 
         e.chartDetailedInfo.chartAutoDescription = html;
-
-        // --- NEW: keep a copy and paint the debug panel
         this.__autoDescHTML = html;
         updateA11yDebugPanel(this, html);
+
     });
+
 }(Highcharts));
 
 function updateA11yDebugPanel(chart, html) {
@@ -601,47 +686,97 @@ function updateA11yDebugPanel(chart, html) {
 
 /* Sort chart types into families */
 function familyOf(chart) {
-    const override = chart.options?.custom?.family;
+    // Manual override
+    const override = chart.options?.custom?.family ||
+        chart.options?.chart?.custom?.family;
     if (override) {
         return override;
     }
 
-    const t =
-    (chart.options?.chart?.type || chart.series?.[0]?.type || '').toLowerCase();
+    // Polar/radar should win early
+    const isPolar = !!chart.options?.chart?.polar;
+    if (isPolar) {
+        return 'polar';
+    }
 
-    if (t === 'column') {
-        return chart.xAxis?.[0]?.isDatetimeAxis ? 'timeseries' : 'categorical';
-    }
-    if (t === 'pie') {
-        return 'composition';
-    }
-    if (t === 'heatmap') {
-        return 'grid';
-    }
-    if (t === 'sankey') {
+    // Collect type hints
+    const optChartType   = chart.options?.chart?.type?.toLowerCase();
+    const optSeriesTypes = (chart.options?.series || []).map(s =>
+        (s?.type || '').toLowerCase()
+    );
+    const runSeriesTypes = (chart.series || []).map(s =>
+        (s?.type || s?.options?.type || '').toLowerCase()
+    );
+    const types = [optChartType, ...optSeriesTypes, ...runSeriesTypes]
+        .filter(Boolean);
+
+    // Explicit families
+    if (types.includes('sankey'))     {
         return 'flow';
     }
-    if (t === 'histogram') {
+    if (types.includes('heatmap'))    {
+        return 'grid';
+    }
+    if (types.includes('histogram') || types.includes('boxplot')) {
         return 'distribution';
     }
+    if (types.includes('pie'))        {
+        return 'composition';
+    }
+    if (types.includes('bubble'))     {
+        return 'scatter';
+    }
+    if (types.includes('treemap'))    {
+        return 'hierarchical';
+    }
+    if (types.includes('wordcloud'))  {
+        return 'textual';
+    }
+    if (types.includes('waterfall'))  {
+        return 'sequential';
+    }
+    if (types.includes('solidgauge')) {
+        return 'kpi';
+    }
+
+    // Heuristics if module types aren’t attached yet
+    const firstSeriesData = chart.options?.series?.[0]?.data;
     if (
-        [
-            'line', 'spline', 'area', 'arearange',
-            'areaspline', 'streamgraph', 'xrange'
-        ]
-            .includes(t)
+        Array.isArray(firstSeriesData) && firstSeriesData.length &&
+        typeof firstSeriesData[0] === 'object'
     ) {
+        if ('value'  in firstSeriesData[0]) {
+            return 'hierarchical';
+        } // treemap-like
+        if ('weight' in firstSeriesData[0]) {
+            return 'textual';
+        }      // wordcloud-like
+    }
+
+    // Column can be categorical or timeseries
+    if (types.includes('column')) {
+        return chart.xAxis?.[0]?.isDatetimeAxis ? 'timeseries' : 'categorical';
+    }
+
+    // Classic time-series-ish
+    if (types.some(t => [
+        'line', 'spline', 'area', 'arearange', 'areaspline',
+        'streamgraph', 'xrange'
+    ].includes(t))) {
         return 'timeseries';
     }
+
     return 'generic';
 }
 
+
 /* Create a basic start of the summary for all charts*/
 function basicSummary(chart) {
-    const type = (chart.options?.chart?.type ||
+    const rawType = (chart.options?.chart?.type ||
         chart.series?.[0]?.type || '').toLowerCase();
+    const isPolar = !!chart.options?.chart?.polar;
 
-    const typeLabel = ({
+    const typeLabelMap = {
         line: 'Line chart',
         spline: 'Line chart',
         area: 'Area chart',
@@ -650,42 +785,47 @@ function basicSummary(chart) {
         pie: 'Pie chart',
         heatmap: 'Heatmap',
         sankey: 'Sankey diagram',
-        histogram: 'Histogram'
-    })[type] || 'Chart';
+        histogram: 'Histogram',
+        boxplot: 'Box plot',
+        bubble: 'Bubble chart',
+        treemap: 'Treemap',
+        waterfall: 'Waterfall chart',
+        wordcloud: 'Word cloud',
+        solidgauge: 'Gauge'
+    };
+    const typeLabel = isPolar ? 'Radar chart' :
+        (typeLabelMap[rawType] || 'Chart');
 
     const family = familyOf(chart);
-    const visibleSeries = chart.series.filter(s => s.visible !== false);
+    const visibleSeries = (chart.series || []).filter(s => s.visible !== false);
+    const seriesTypesLower = (chart.series || []).map(s =>
+        (s.type || s.options?.type || '').toLowerCase()
+    );
 
-    // For pie, report slices instead of series.
+    // Pie → slices
     if (family === 'composition') {
-        const s = visibleSeries[0]; // pie has one series visually
+        const s = visibleSeries[0];
         const slices = (s?.points || []).filter(p => p.visible !== false);
         const names = slices.map(p => p.name || 'Unnamed slice');
-
-        const formatted = names.length <= 1 ?
-            (names[0] || '') :
-            names.length === 2 ?
-                names.join(' and ') :
+        const formatted = names.length <= 1 ? (names[0] || '') :
+            names.length === 2 ? names.join(' and ') :
                 names.slice(0, -1).join(', ') + ', and ' + names.slice(-1);
-
-        return `${typeLabel} with ${slices.length} 
-            slices${formatted ? `: ${formatted}` : ''}.`;
+        return `${typeLabel} with ${slices.length} slices${
+            formatted ? `: ${formatted}` : ''
+        }.`;
     }
 
-    // For sankey, report nodes and links instead of series.
+    // Sankey → nodes/links
     if (family === 'flow') {
-
-        const sankeySeries =
-            visibleSeries.filter(s => (s.type || s.options?.type) === 'sankey');
-
+        const sankeySeries = visibleSeries.filter(s =>
+            (s.type || s.options?.type) === 'sankey'
+        );
         const allNodes = new Map();
         let linkCount = 0;
-
         sankeySeries.forEach(s => {
             const nodesOpt = s.options?.nodes || [];
             const linksOpt = s.options?.data || [];
             linkCount += Array.isArray(linksOpt) ? linksOpt.length : 0;
-
             nodesOpt.forEach(n => {
                 const key = (n.id ?? n.name ?? '').toString();
                 if (key) {
@@ -693,48 +833,97 @@ function basicSummary(chart) {
                 }
             });
         });
-
         const nodeNames = Array.from(allNodes.values());
-        const nodeCount = nodeNames.length;
+        const show = nodeNames.slice(0, 6);
+        const remaining = nodeNames.length - show.length;
+        const namesSnippet = nodeNames.length ?
+            show.join(', ') + (remaining > 0 ? `, and ${remaining} more` : '') :
+            '';
+        return `Sankey diagram with ${nodeNames.length} nodes and ` +
+            `${linkCount} links${namesSnippet ? `: ${namesSnippet}` : ''}.`;
+    }
 
-        let namesSnippet = '';
-        if (nodeNames.length) {
-            const show = nodeNames.slice(0, 6);
-            const remaining = nodeNames.length - show.length;
-            namesSnippet = show.join(', ') +
-                (remaining > 0 ? `, and ${remaining} more` : '');
+    // Boxplot → groups & ranges
+    if (
+        family === 'distribution' &&
+        (rawType === 'boxplot' || seriesTypesLower.includes('boxplot'))
+    ) {
+        const s = visibleSeries.find(ss =>
+            ((ss.type || ss.options?.type || '').toLowerCase()) === 'boxplot'
+        ) || visibleSeries[0];
+
+        // Prefer runtime points
+        let pts = Array.isArray(s?.points) && s.points.length ?
+            s.points.map(p => ({
+                name: p.name ?? chart.xAxis?.[0]?.categories?.[p.x],
+                low: p.low,
+                q1: p.q1,
+                median: p.median,
+                q3: p.q3,
+                high: p.high
+            })) : [];
+
+        // Fallback to options [[low,q1,median,q3,high]]
+        if (!pts.length) {
+            const dataOpt = s?.options?.data || [];
+            pts = dataOpt.map((arr, i) => ({
+                name: chart.xAxis?.[0]?.categories?.[i],
+                low: arr[0],
+                q1: arr[1],
+                median: arr[2],
+                q3: arr[3],
+                high: arr[4]
+            }));
         }
 
-        return `${typeLabel} with ${nodeCount} nodes and 
-        ${linkCount} links${namesSnippet ? `: ${namesSnippet}` : ''}.`;
+        const groups = pts.filter(p => Number.isFinite(p.median));
+        const groupCount = groups.length;
+        if (!groupCount) {
+            return 'Box plot.';
+        }
+
+        const medians = groups.map(p => p.median);
+        const lows    = groups.map(p => p.low);
+        const highs   = groups.map(p => p.high);
+
+        const minMed = Math.min(...medians);
+        const maxMed = Math.max(...medians);
+        const minLow = Math.min(...lows);
+        const maxHigh = Math.max(...highs);
+
+        const names = groups.map(p => p.name).filter(Boolean);
+        const showNames = names.slice(0, 3);
+        const rem = names.length - showNames.length;
+        const nameSnippet = showNames.length ?
+            showNames.join(', ') + (rem > 0 ? `, and ${rem} more` : '') : '';
+
+        return `Box plot with ${groupCount} group${
+            groupCount === 1 ? '' : 's'
+        }${nameSnippet ? ` (${nameSnippet})` : ''}. ` +
+            `Medians range ${minMed}–${maxMed}; ` +
+            `whiskers span ${minLow}–${maxHigh}.`;
     }
 
+    // Heatmap → grid size
     if (family === 'grid') {
-        const s = chart.series[0]; // most heatmaps only have 1 series (?)
-        const xCategory = chart.xAxis?.[0]?.categories || [];
-        const yCategory = chart.yAxis?.[0]?.categories || [];
-        const dimension = xCategory.length && yCategory.length ?
-            `${xCategory.length}×${yCategory.length} cells` :
+        const s = chart.series[0];
+        const xCats = chart.xAxis?.[0]?.categories || [];
+        const yCats = chart.yAxis?.[0]?.categories || [];
+        const dimension = xCats.length && yCats.length ?
+            `${xCats.length}×${yCats.length} cells` :
             `${s?.points?.length || 0} cells`;
-
-        // Not sure if we can use cells, since heatmaps are not strictly
-        // 2D, but the chart family says grid.
-        return `${typeLabel} with ${dimension}${s?.name ?
-            ` (${s.name})` : ''}.`;
+        return `Heatmap with ${dimension}${s?.name ? ` (${s.name})` : ''}.`;
     }
 
-
-    // Default
+    // Default: generic summary
     const seriesNames = visibleSeries.map(s => s.name || 'Unnamed');
-    const formatted = seriesNames.length <= 1 ?
-        (seriesNames[0] || '') :
-        seriesNames.length === 2 ?
-            seriesNames.join(' and ') :
-            seriesNames.slice(0, -1)
-                .join(', ') + ', and ' + seriesNames.slice(-1);
-
-    return `${typeLabel} with ${visibleSeries.length} 
-        series${formatted ? `: ${formatted}` : ''}.`;
+    const formatted = seriesNames.length <= 1 ? (seriesNames[0] || '') :
+        seriesNames.length === 2 ? seriesNames.join(' and ') :
+            seriesNames.slice(0, -1).join(', ') + ', and ' +
+            seriesNames.slice(-1);
+    return `${typeLabel} with ${visibleSeries.length} series${
+        formatted ? `: ${formatted}` : ''
+    }.`;
 }
 
 
@@ -831,6 +1020,42 @@ function describeHeatmap() { // Heatmap showing sales per employee
         <li>Lowest sales: 1 by Anna on Tuesday</li>
     </ul>`;
 }
+
+function describeBoxplot() {
+    return `
+    <p>Boxplot summary.</p>`;
+}
+
+function describeBubble() {
+    return `
+    <p>Bubble chart summary.</p>`;
+}
+
+function describeTreemap() {
+    return `
+    <p>Treemap summary.</p>`;
+}
+
+function describeWaterfall() {
+    return `
+    <p>Waterfall chart summary.</p>`;
+}
+
+function describeWordcloud() {
+    return `
+    <p>Word cloud summary.</p>`;
+}
+
+function describeGauge() {
+    return `
+   <p>Gauge chart summary.</p>`;
+}
+
+function describeRadar() {
+    return `
+    <p>Radar chart summary.</p>`;
+}
+
 
 /* CHART SETUP */
 const charts = {};
