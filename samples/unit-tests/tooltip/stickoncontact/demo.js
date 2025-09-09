@@ -206,9 +206,9 @@ QUnit.test(
 
                 // #23303
                 chart.update({
-                    series: [{ 
-                        type: 'column', 
-                        data: [1],                     
+                    series: [{
+                        type: 'column',
+                        data: [1],
                         tooltip: {
                             followPointer: false
                         }
@@ -216,7 +216,7 @@ QUnit.test(
                     tooltip: {
                         stickOnContact: true,
                         useHTML: true,
-                        hideDelay: 500,
+                        hideDelay: 500
                     }
                 }, true, true);
 
