@@ -196,8 +196,7 @@ const loadFile = async (file: string): Promise<undefined> => {
 
 // Override the factories to load script files on demand
 (
-    ['chart', 'ganttChart', 'mapChart', 'stockChart'] as
-    ['chart', 'ganttChart', 'mapChart', 'stockChart']
+    ['chart', 'ganttChart', 'mapChart', 'stockChart'] as const
 ).forEach((factory): void => {
     H[factory] = async function (
         container: string|globalThis.HTMLElement,
