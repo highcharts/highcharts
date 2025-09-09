@@ -147,6 +147,9 @@ declare namespace Highcharts {
         // Also update highlight when hovering over the point and series
         addEvent(Point, 'mouseOver', highlightRow);
         addEvent(Series, 'mouseOut', highlightRow);
+
+        // Design hack to allow rounded corners on the plot area
+        this.plotBorder.attr({ r: 6 });
     });
 
     addEvent(Series, 'remove', function () {
@@ -164,7 +167,7 @@ declare namespace Highcharts {
 
     document.getElementById('tooltip-btn')
         .addEventListener('click', () => {
-            window.print();
+            Highcharts.charts[0].exporting.downloadCSV();
         });
 })(Highcharts);
 
@@ -231,21 +234,25 @@ Highcharts.chart({
         crosshair: {
             dashStyle: 'Dash'
         },
-        title: {
-            text: void 0
-        }
+        lineWidth: 0,
+        tickColor: 'var(--border-color-1)'
     },
 
     yAxis: {
         crosshair: true,
         title: {
-            text: void 0
+            text: 'TWh',
+            align: 'high',
+            reserveSpace: false,
+            x: 13,
+            y: 10
         },
+        gridLineColor: 'var(--border-color-2)',
         labels: {
             align: 'left',
             x: 3,
             y: -3,
-            format: '{value} GWh'
+            format: '{divide value 1000}'
         },
         showLastLabel: false
     },
