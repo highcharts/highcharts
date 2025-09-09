@@ -61,17 +61,22 @@ const getFiles = (options: Partial<Options>): Array<string> => {
     const files = addedFiles.slice();
 
     const recurse = (
-        options: AnyRecord,
+        opts: AnyRecord,
         path: Array<string> = []
     ): void => {
-        Object.entries(options).forEach(([key, value]): void => {
+        Object.entries(opts).forEach(([key, value]): void => {
+            if (path.length === 1 && path[0] === 'series') {
+                key = value.type || options.chart?.type || 'line';
+            }
+
             const fullKey = path.concat(key).join('.');
             if (fullKey in mapping) {
                 mapping[fullKey].forEach(
                     (file): boolean => pushUnique(files, file)
                 );
             }
-            if (value && typeof value === 'object') {
+
+            if (value && typeof value === 'object' && key !== 'data') {
                 path.push(key);
                 recurse(value, path);
                 path.pop();
@@ -79,20 +84,6 @@ const getFiles = (options: Partial<Options>): Array<string> => {
         });
     };
     recurse(options);
-
-    // Series types are inferred from `chart.type` and `series.type`
-    type ItemWithType = { type?: string };
-    const itemsWithType: Array<ItemWithType> = (options.series || []).slice();
-    if (options.chart?.type) {
-        itemsWithType.push(options.chart);
-    }
-    itemsWithType.forEach((item): void => {
-        if (item.type && mapping[`series.${item.type}`]) {
-            mapping[`series.${item.type}`].forEach(
-                (file): boolean => pushUnique(files, file)
-            );
-        }
-    });
 
     // Advanced annotations
     if (options.annotations) {
