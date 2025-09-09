@@ -457,10 +457,10 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/funnel'
     ],
     'series.pyramid3d': [
-        'modules/pyramid3d',
         'highcharts-3d',
         'modules/cylinder',
-        'modules/funnel3d'
+        'modules/funnel3d',
+        'modules/pyramid3d'
     ],
     'series.renko': [
         'modules/renko'
