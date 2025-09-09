@@ -31,6 +31,16 @@ class ContourSeries extends ScatterSeries {
     public adapter?: GPUAdapter | null;
     public device?: GPUDevice;
     public image?: SVGElement;
+
+    private extremesUniform?: Float32Array;
+    private extremesUniformBuffer?: GPUBuffer;
+    private valueExtremesUniform?: Float32Array;
+    private valueExtremesUniformBuffer?: GPUBuffer;
+    private contourIntervalUniformBuffer?: GPUBuffer;
+    private smoothColoringUniformBuffer?: GPUBuffer;
+    private showContourLinesUniformBuffer?: GPUBuffer;
+
+
     // Dummy func for test for now
     public d(): boolean {
         const coords = new Delaunator(new Float64Array([
@@ -149,16 +159,122 @@ class ContourSeries extends ScatterSeries {
 
 
     async run(): Promise<void> {
-        // Const { context } = this;
-        if (!this.adapter) {
-            this.adapter = await navigator.gpu.requestAdapter();
+        const { context } = this;
+
+        if (context) {
+
+
+            if (!this.adapter) {
+                this.adapter = await navigator.gpu.requestAdapter();
+            }
+            if (!this.device && this.adapter) {
+                this.device = await this.adapter.requestDevice();
+            }
+
+            const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
+
+            const { device } = this;
+
+            if (device) {
+                context.configure({
+                    device: device,
+                    format: canvasFormat
+                });
+
+                const vertices = this.get3DData();
+                // Const indices = this.triangulateData().triangles;
+                const indices = new Delaunator(new Float64Array([
+                    377, 479, 453, 434, 326, 387, 444, 359, 511, 389,
+                    586, 429, 470, 315, 622, 493, 627, 367, 570, 314
+                ])).triangles;
+
+                const extremesUniform = this.extremesUniform = new Float32Array(
+                    this.getWebGPUExtremes()
+                );
+                const valueExtremesUniform = (
+                    this.valueExtremesUniform = new Float32Array(
+                        this.getDataExtremes()
+                    )
+                );
+
+
+                const vertexBuffer = device.createBuffer({
+                    size: vertices.byteLength,
+                    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+                });
+
+                const indexBuffer = device.createBuffer({
+                    size: indices.byteLength,
+                    usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST
+                });
+
+                const extremesUniformBuffer = (
+                    this.extremesUniformBuffer = device.createBuffer({
+                        size: extremesUniform.byteLength,
+                        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    }));
+
+                const valueExtremesUniformBuffer = (
+                    this.valueExtremesUniformBuffer = device.createBuffer({
+                        size: valueExtremesUniform.byteLength,
+                        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    }));
+
+                device.queue.writeBuffer(vertexBuffer, 0, vertices);
+                device.queue.writeBuffer(indexBuffer, 0, indices);
+                device.queue.writeBuffer(
+                    extremesUniformBuffer,
+                    0,
+                    extremesUniform
+                );
+                device.queue.writeBuffer(
+                    valueExtremesUniformBuffer,
+                    0,
+                    valueExtremesUniform
+                );
+            }
         }
-        if (!this.device && this.adapter) {
-            this.device = await this.adapter.requestDevice();
+    }
+
+    // Place-holder
+    private getWebGPUExtremes(): number[] {
+        const { xAxis, yAxis } = this;
+
+        return [
+            xAxis.toValue(0, true), // XMin
+            xAxis.toValue(xAxis.len, true), // XMax
+            yAxis.toValue(yAxis.len, true), // YMin
+            yAxis.toValue(0, true) // YMax
+        ];
+    }
+    private getDataExtremes(): number[] {
+        const series = this;
+
+        let min = series.valueMin;
+        if (isNaN(min || NaN)) {
+            min = series.colorAxis?.min;
+
+            if (isNaN(min || NaN)) {
+                min = Math.min(...series.points.map(
+                    (point): number => (point as any)?.value || 0
+                )
+                );
+            }
         }
 
-        // Const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
+        let max = series.valueMax;
+        if (isNaN(max || NaN)) {
+            max = series.colorAxis?.max;
 
+            if (isNaN(max || NaN)) {
+                max = Math.max(...series.points.map(
+                    (point): number => (point as any)?.value || 0
+                )
+                );
+            }
+        }
+
+        return [min || 0, max || 0];
     }
 }
 
