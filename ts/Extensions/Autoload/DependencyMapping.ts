@@ -607,6 +607,9 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/indicators',
         'stock/indicators/tema'
     ],
+    'plotOptions.tiledwebmap': [
+        'modules/tiledwebmap'
+    ],
     'plotOptions.tilemap': [
         'modules/tilemap'
     ],
