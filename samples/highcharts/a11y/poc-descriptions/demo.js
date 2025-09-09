@@ -5,7 +5,7 @@ const HC_CONFIGS = {
         title: { text: 'U.S Solar Employment Growth', align: 'left' },
         subtitle: {
             text: 'By Job Category. Source: <a href="https://irecusa.org/' +
-                'programs/solar-jobs-census" target="_blank">IREC</a>.',
+                  'programs/solar-jobs-census/" target="_blank">IREC</a>.',
             align: 'left'
         },
         yAxis: { title: { text: 'Number of Employees' } },
@@ -55,14 +55,180 @@ const HC_CONFIGS = {
         ]
     },
     chart2: {
-        chart: { type: 'line' },
-        title: { text: 'Placeholder TS 2' },
-        series: [{ data: [1, 2, 3] }]
+        title: {
+            text: 'Helsinki Average Monthly Temperature',
+            align: 'left',
+            margin: 25
+        },
+
+        sonification: {
+            duration: 8000,
+            defaultInstrumentOptions: {
+                mapping: {
+                    pitch: {
+                        min: 'c3',
+                        max: 'd6'
+                    }
+                }
+            },
+            globalContextTracks: [{
+            // A repeated piano note for the 0 plot line
+                instrument: 'piano',
+                valueInterval: 1 / 3, // Play 3 times for every X-value
+                mapping: {
+                    pitch: {
+                        mapTo: 'y',
+                        value: 0 // Map to a fixed Y value
+                    },
+                    volume: 0.1
+                }
+            }, {
+            // Percussion sound indicates the plot band
+                instrument: 'shaker',
+                activeWhen: {
+                    valueProp: 'x', // Active when X is between these values.
+                    min: 4,
+                    max: 9
+                },
+                timeInterval: 100, // Play every 100 milliseconds
+                mapping: {
+                    volume: 0.1
+                }
+            }, {
+            // Speak the plot band label
+                type: 'speech',
+                valueInterval: 1,
+                activeWhen: {
+                    crossingUp: 4 // Active when crossing over x = 4
+                },
+                mapping: {
+                    text: 'Summer',
+                    rate: 2.5,
+                    volume: 0.3
+                }
+            }]
+        },
+
+        yAxis: {
+            plotLines: [{
+                value: 0,
+                color: '#59D',
+                dashStyle: 'shortDash',
+                width: 2
+            }],
+            title: {
+                enabled: false
+            },
+            labels: {
+                format: '{text}°C'
+            },
+            gridLineWidth: 0
+        },
+
+        xAxis: {
+            plotBands: [{
+                from: 3.5,
+                to: 8.5,
+                color: '#00ff8833',
+                label: {
+                    text: 'Summer',
+                    align: 'left',
+                    x: 10
+                }
+            }],
+            plotLines: [{
+                value: 3.5,
+                color: '#4EA291',
+                width: 3
+            }, {
+                value: 8.5,
+                color: '#4EA291',
+                width: 3
+            }],
+            crosshair: true,
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'June',
+                'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
+            ]
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        tooltip: {
+            valueSuffix: '°C'
+        },
+
+        series: [{
+            name: 'Helsinki',
+            data: [-5, -6, -2, 4, 10, 14, 17, 15, 10, 6, 0, -4],
+            color: 'var(--highcharts-neutral-color-80, #334eff)'
+        }]
     },
     chart3: {
-        chart: { type: 'line' },
-        title: { text: 'Placeholder TS 3' },
-        series: [{ data: [1, 2, 3] }]
+        data: {
+            csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b99fc27c/samples/data/temp-florida-bergen-2023.csv',
+            beforeParse: function (csv) {
+                return csv.replace(/\n\n/g, '\n');
+            }
+        },
+        chart: {
+            type: 'arearange',
+            zooming: {
+                type: 'x'
+            },
+            scrollablePlotArea: {
+                minWidth: 600,
+                scrollPositionX: 1
+            }
+        },
+        title: {
+            text: 'Temperature variation by day',
+            align: 'left'
+        },
+        subtitle: {
+            text: 'Source: ' +
+            '<a href="https://veret.gfi.uib.no/"' +
+            'target="_blank">Universitetet i Bergen</a>',
+            align: 'left'
+        },
+        xAxis: {
+            type: 'datetime',
+            accessibility: {
+                rangeDescription: 'Range: Jan 1st 2023 to Jan 1st 2024.'
+            }
+        },
+        yAxis: {
+            title: {
+                text: null
+            }
+        },
+        tooltip: {
+            fixed: true,
+            crosshairs: true,
+            shared: true,
+            valueSuffix: '°C',
+            xDateFormat: '%A, %b %e'
+        },
+        legend: {
+            enabled: false
+        },
+        series: [{
+            name: 'Temperatures',
+            color: {
+                linearGradient: {
+                    x1: 0,
+                    x2: 0,
+                    y1: 0,
+                    y2: 1
+                },
+                stops: [
+                    [0, '#ff6666'],
+                    [1, '#6666ff']
+                ]
+            }
+        }]
     },
 
     // ===== Row 2: Categorical (column) =====
@@ -87,14 +253,163 @@ const HC_CONFIGS = {
         ]
     },
     chart5: {
-        chart: { type: 'column' },
-        title: { text: 'Placeholder Cat 2' },
-        series: [{ data: [1, 2, 3] }]
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Major trophies for some English teams',
+            align: 'left'
+        },
+        xAxis: {
+            categories: ['Arsenal', 'Chelsea', 'Liverpool', 'Manchester United']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Count trophies'
+            },
+            stackLabels: {
+                enabled: true
+            }
+        },
+        legend: {
+            align: 'left',
+            x: 70,
+            verticalAlign: 'top',
+            y: 70,
+            floating: true,
+            backgroundColor: 'var(--highcharts-background-color, #ffffff)',
+            borderColor: 'var(--highcharts-neutral-color-20, #cccccc)',
+            borderWidth: 1,
+            shadow: false
+        },
+        tooltip: {
+            headerFormat: '<b>{category}</b><br/>',
+            pointFormat:
+            '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+        },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        series: [{
+            name: 'BPL',
+            data: [3, 5, 1, 13]
+        }, {
+            name: 'FA Cup',
+            data: [14, 8, 8, 12]
+        }, {
+            name: 'CL',
+            data: [0, 2, 6, 3]
+        }]
     },
     chart6: {
-        chart: { type: 'column' },
-        title: { text: 'Placeholder Cat 3' },
-        series: [{ data: [1, 2, 3] }]
+        chart: {
+            type: 'dumbbell',
+            inverted: true
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        subtitle: {
+            text: '1970 vs 2021 Source: ' +
+            '<a href="https://ec.europa.eu/eurostat/en/web/main/data/database"' +
+            'target="_blank">Eurostat</a>'
+        },
+
+        title: {
+            text: 'Change in Life Expectancy'
+        },
+
+        tooltip: {
+            shared: true
+        },
+
+        xAxis: {
+            type: 'category'
+        },
+
+        yAxis: {
+            title: {
+                text: 'Life Expectancy (years)'
+            }
+        },
+
+        plotOptions: {
+            series: {
+                dataSorting: {
+                    enabled: true,
+                    sortKey: 'low'
+                }
+            }
+        },
+
+        series: [{
+            name: 'Life expectancy change',
+            data: [{
+                name: 'Austria',
+                low: 70.1,
+                high: 81.3
+            }, {
+                name: 'Belgium',
+                low: 71.0,
+                high: 81.9
+            }, {
+                name: 'Czechia',
+                low: 69.6,
+                high: 77.4
+            }, {
+                name: 'Estonia',
+                low: 70.4,
+                high: 76.9
+            }, {
+                name: 'Greece',
+                low: 73.8,
+                high: 80.3
+            }, {
+                name: 'Hungary',
+                low: 69.2,
+                high: 74.5
+            }, {
+                name: 'Iceland',
+                low: 73.8,
+                high: 83.2
+            }, {
+                name: 'Lithuania',
+                low: 71.1,
+                high: 74.5
+            }, {
+                name: 'Norway',
+                low: 74.3,
+                high: 83.2
+            }, {
+                name: 'Portugal',
+                low: 66.7,
+                high: 81.2
+            }, {
+                name: 'Romania',
+                low: 68.2,
+                high: 72.9
+            }, {
+                name: 'Slovakia',
+                low: 69.8,
+                high: 74.8
+            }, {
+                name: 'Sweden',
+                low: 74.7,
+                high: 83.2
+            }, {
+                name: 'Switzerland',
+                low: 73.2,
+                high: 84.0
+            }]
+        }]
     },
 
     // ===== Row 3: Composition (pie) =====
