@@ -488,6 +488,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/indicators'
     ],
     'series.solidgauge': [
+        'highcharts-more',
         'modules/solid-gauge'
     ],
     'series.stochastic': [
