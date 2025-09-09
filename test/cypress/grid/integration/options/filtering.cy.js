@@ -15,7 +15,7 @@ describe('Grid filtering.', () => {
     });
 
     // Init filtering
-    it.skip('Filtering on init.', () => {
+    it('Filtering on init.', () => {
         cy.get(gridRows)
             .should('have.length', 3)
             .each(($row) => {
@@ -27,14 +27,15 @@ describe('Grid filtering.', () => {
     });
 
     // Update filtering
-    it.skip('Update filtering.', () => {
+    it('Update filtering.', () => {
         cy.window().its('grid').then((grid) => {
-            grid.update({
-                columns: [{
-                    id: 'weight',
-                    filtering: {}
-                }]
-            });
+            grid.viewport.getColumn('weight').filtering.set();
+            // grid.update({
+            //     columns: [{
+            //         id: 'weight',
+            //         filtering: {}
+            //     }]
+            // });
         });
 
         cy.get(gridRows).should('have.length.above', 3);

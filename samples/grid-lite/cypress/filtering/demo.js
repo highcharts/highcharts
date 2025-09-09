@@ -84,14 +84,14 @@ window.grid = Grid.grid('container', {
                 }]
             }]
         }
-    ]
-    // columns: [{
-    //     id: 'id'
-    // }, {
-    //     id: 'weight',
-    //     filtering: {
-    //         condition: 'greaterThan',
-    //         value: 1000
-    //     }
-    // }]
+    ],
+    columns: [{
+        id: 'id'
+    }, {
+        id: 'weight',
+        filtering: {
+            condition: 'greaterThan',
+            value: 1000
+        }
+    }]
 });
