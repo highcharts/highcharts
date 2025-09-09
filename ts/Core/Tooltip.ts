@@ -28,6 +28,7 @@ import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
+import type DOMElementType from './Renderer/DOMElementType';
 
 import A from './Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -573,7 +574,9 @@ class Tooltip {
                     tooltipElement,
                     'mouseout',
                     (e: PointerEvent): void => {
-                        const relatedTarget = e.relatedTarget as any;
+                        const relatedTarget = e.relatedTarget as (
+                            DOMElementType | null
+                        );
 
                         const isTooltip =
                             relatedTarget &&
