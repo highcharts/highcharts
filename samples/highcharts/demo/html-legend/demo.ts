@@ -149,7 +149,7 @@ declare namespace Highcharts {
         addEvent(Series, 'mouseOut', highlightRow);
 
         // Design hack to allow rounded corners on the plot area
-        this.plotBorder.attr({ r: 6 });
+        (this as any).plotBorder.attr({ r: 6 });
     });
 
     addEvent(Series, 'remove', function () {
@@ -167,7 +167,7 @@ declare namespace Highcharts {
 
     document.getElementById('tooltip-btn')
         .addEventListener('click', () => {
-            Highcharts.charts[0].exporting.downloadCSV();
+            (Highcharts.charts[0] as any).exporting.downloadCSV();
         });
 })(Highcharts);
 
