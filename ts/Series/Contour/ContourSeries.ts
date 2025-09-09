@@ -50,6 +50,50 @@ class ContourSeries extends ScatterSeries {
         return true;
     }
 
+    public triangulateData(): any {
+        const points2d: Float32Array = new Float32Array(this.points.length * 2);
+
+        const { xAxis, yAxis } = this;
+
+        const extremes = [
+            xAxis.toValue(0, true), // XMin
+            xAxis.toValue(xAxis.len, true), // XMax
+            yAxis.toValue(yAxis.len, true), // YMin
+            yAxis.toValue(0, true) // YMax
+        ];
+
+        let xDivider = 1,
+            yDivider = 1;
+        if (Math.abs(extremes[0]) > 10e6) {
+            xDivider = 10e6;
+        }
+        if (Math.abs(extremes[2]) > 10e6) {
+            yDivider = 10e6;
+        }
+
+        this.points.forEach((point, i): void => {
+            points2d[i * 2] = point.x / xDivider;
+            points2d[i * 2 + 1] = point.y && (point.y / yDivider) || 0;
+        });
+
+        const result = new Delaunator(points2d);
+
+        return result;
+    }
+
+    public get3DData(): any {
+        const points3d: Float32Array = new Float32Array(this.points.length * 3);
+
+        this.points.forEach((point, i): void => {
+            points3d[i * 3] = point.x;
+            points3d[i * 3 + 1] = point.y || 0;
+            points3d[i * 3 + 2] = (point as any).value || 0;
+        });
+
+        return points3d;
+    }
+
+
     public drawPoints(): void {
         /*
         Const points2d: Float32Array = new Float32Array(this.points.length * 2);
@@ -84,21 +128,37 @@ class ContourSeries extends ScatterSeries {
         canvas.classList.add('contourmap-canvas');
         // Series.chart.container.appendChild(canvas);
 
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-            // === Just to test canvas ===
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // const ctx = canvas.getContext('2d');
+        // if (ctx) {
+        //     // === Just to test canvas ===
+        //     ctx.fillStyle = 'blue';
+        //     ctx.fillRect(0, 0, canvas.width, canvas.height);
+        //
+        //     this.image = this.chart.renderer.image(
+        //         canvas.toDataURL('image/png', 1)
+        //     ).attr({
+        //         width: this.xAxis.len,
+        //         height: this.yAxis.len
+        //     }).add(this.group);
+        // }
 
-            this.image = this.chart.renderer.image(
-                canvas.toDataURL('image/png', 1)
-            ).attr({
-                width: this.xAxis.len,
-                height: this.yAxis.len
-            }).add(this.group);
+        this.context = canvas.getContext('webgpu');
+        this.run();
+        // This.context = canvas.getContext('webgpu');
+    }
+
+
+    async run(): Promise<void> {
+        // Const { context } = this;
+        if (!this.adapter) {
+            this.adapter = await navigator.gpu.requestAdapter();
+        }
+        if (!this.device && this.adapter) {
+            this.device = await this.adapter.requestDevice();
         }
 
-        // This.context = canvas.getContext('webgpu');
+        // Const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
+
     }
 }
 
