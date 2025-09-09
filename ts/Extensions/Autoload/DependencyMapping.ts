@@ -8,21 +8,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'accessibility': [
         'modules/accessibility'
     ],
-    'annotations.crookedLine': [
-        'modules/annotations-advanced'
-    ],
-    'annotations.elliottWave': [
-        'modules/annotations-advanced'
-    ],
-    'annotations.fibonacci': [
-        'modules/annotations-advanced'
-    ],
-    'annotations.fibonacciTimeZones': [
-        'modules/annotations-advanced'
-    ],
-    'annotations.infinityLine': [
-        'modules/annotations-advanced'
-    ],
     'annotations.labelOptions.accessibility': [
         'modules/accessibility'
     ],
@@ -32,22 +17,13 @@ const DependencyMapping: Record<string, Array<string>> = {
     'annotations.labels.point': [
         'modules/annotations'
     ],
-    'annotations.measure': [
-        'modules/annotations-advanced'
-    ],
-    'annotations.pitchfork': [
-        'modules/annotations-advanced'
-    ],
     'annotations.shapes.point': [
         'modules/annotations'
     ],
-    'annotations.timeCycles': [
+    'annotations.type': [
         'modules/annotations-advanced'
     ],
-    'annotations.tunnel': [
-        'modules/annotations-advanced'
-    ],
-    'annotations.verticalLine': [
+    'annotations.types': [
         'modules/annotations-advanced'
     ],
     'annotations': [
@@ -75,6 +51,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/drilldown'
     ],
     'chart.events.exportData': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'chart.events.fullscreenClose': [
@@ -113,17 +90,13 @@ const DependencyMapping: Record<string, Array<string>> = {
     'exporting.accessibility': [
         'modules/accessibility'
     ],
-    'exporting.csv.annotations.itemDelimiter': [
-        'modules/annotations'
-    ],
-    'exporting.csv.annotations.join': [
-        'modules/annotations'
-    ],
     'exporting.csv.annotations': [
+        'modules/exporting',
         'modules/export-data',
         'modules/annotations'
     ],
     'exporting.csv': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.error': [
@@ -134,22 +107,31 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/exporting',
         'modules/offline-exporting'
     ],
+    'exporting.menuItemDefinitions': [
+        'modules/exporting',
+        'modules/export-data'
+    ],
     'exporting.pdfFont': [
         'modules/offline-exporting'
     ],
     'exporting.showExportInProgress': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.showTable': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.tableCaption': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.useMultiLevelHeaders': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.useRowspanHeaders': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'exporting': [
@@ -159,6 +141,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/exporting'
     ],
     'lang.downloadCSV': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'lang.downloadJPEG': [
@@ -177,18 +160,22 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/exporting'
     ],
     'lang.downloadXLS': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'lang.drillUpText': [
         'modules/drilldown'
     ],
     'lang.exportData': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'lang.exportInProgress': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'lang.hideData': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'lang.noData': [
@@ -201,6 +188,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/exporting'
     ],
     'lang.viewData': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'legend.accessibility': [
@@ -494,6 +482,9 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/indicators',
         'stock/indicators/pivot-points'
     ],
+    'plotOptions.pointandfigure': [
+        'modules/pointandfigure'
+    ],
     'plotOptions.polygon': [
         'highcharts-more'
     ],
@@ -517,6 +508,9 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/cylinder',
         'modules/funnel3d',
         'modules/pyramid3d'
+    ],
+    'plotOptions.renko': [
+        'modules/renko'
     ],
     'plotOptions.roc': [
         'stock/indicators/indicators',
@@ -557,6 +551,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/broken-axis'
     ],
     'plotOptions.series.includeInDataExport': [
+        'modules/exporting',
         'modules/export-data'
     ],
     'plotOptions.series.label': [
@@ -904,6 +899,9 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/indicators',
         'stock/indicators/pivot-points'
     ],
+    'series.pointandfigure': [
+        'modules/pointandfigure'
+    ],
     'series.polygon': [
         'highcharts-more'
     ],
@@ -924,6 +922,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'series.pyramid3d': [
         'modules/pyramid3d'
+    ],
+    'series.renko': [
+        'modules/renko'
     ],
     'series.roc': [
         'stock/indicators/indicators',
