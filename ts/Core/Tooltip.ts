@@ -602,7 +602,6 @@ class Tooltip {
                             return;
                         }
 
-                        this.hide();
                     });
             }
         }
