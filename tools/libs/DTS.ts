@@ -1245,9 +1245,6 @@ function getClassInfo (
 
     addInfoGenerics(_info, node, project);
     addInfoHeritage(_info, node, project);
-    // Instance members
-    addChildInfos(project, _info.members, node.members);
-    // Static members
     addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
     addInfoMeta(_info, node, project);
@@ -1410,9 +1407,6 @@ function getInterfaceInfo (
 
     addInfoGenerics(_info, node, project);
     addInfoHeritage(_info, node, project);
-    // Instance members
-    addChildInfos(project, _info.members, node.members);
-    // Static members
     addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
     addInfoMeta(_info, node, project);
@@ -2271,14 +2265,24 @@ function symbolsChildren(
     program: TS.Program,
     symbol: TS.Symbol
 ): Array<TS.Symbol> {
-    const _type = symbolsType(program, symbol);
+    const _symbols: Array<TS.Symbol> = [];
     const _typeChecker = program.getTypeChecker();
 
-    if (symbol.flags & /* Bit operation */ TS.SymbolFlags.Module) {
-        return _typeChecker.getExportsOfModule(symbol);
+    if (
+        symbol.flags & /* Bit operation */ TS.SymbolFlags.Class ||
+        symbol.flags & /* Bit operation */ TS.SymbolFlags.Enum ||
+        symbol.flags & /* Bit operation */ TS.SymbolFlags.Interface ||
+        symbol.flags & /* Bit operation */ TS.SymbolFlags.ObjectLiteral
+    ) {
+        const _type = symbolsType(program, symbol);
+        _symbols.push(..._typeChecker.getPropertiesOfType(_type));
     }
 
-    return _typeChecker.getPropertiesOfType(_type);
+    if (symbol.flags & /* Bit operation */ TS.SymbolFlags.Module) {
+        _symbols.push(..._typeChecker.getExportsOfModule(symbol));
+    }
+
+    return _symbols;
 }
 
 
