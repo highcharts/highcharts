@@ -106,6 +106,8 @@ async function apiSync(): Promise<void> {
 
     await mergerSession.saveToDatabase();
 
+    LogLib.success('Done.');
+
 }
 
 

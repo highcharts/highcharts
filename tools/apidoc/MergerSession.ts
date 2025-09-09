@@ -146,9 +146,6 @@ export class MergerSession {
     public readonly mergedItems: Record<string, APIDB.ItemRow> = {};
 
 
-    private optionStack: Array<DTS.CodeInfo> = [];
-
-
     public readonly productNamespace: string;
 
 
@@ -156,6 +153,9 @@ export class MergerSession {
 
 
     public readonly productVersion: number;
+
+
+    private referenceStack: Array<DTS.CodeInfo> = [];
 
 
     /* *
@@ -375,14 +375,13 @@ export class MergerSession {
 
 
     /**
-     * Merges declarations from the folder into the merger session.
+     * Merges declarations from the project into the merger session.
      *
      * @return
      * Promise to keep.
      */
     public async mergeDeclarations(): Promise<void> {
         const declarations = this.declarations;
-        const productNamespace = this.productNamespace;
 
         // Debug
         DTS.toProjectJSON(declarations, 'tree-dts.json');
@@ -400,13 +399,7 @@ export class MergerSession {
                         await this.mergeOptions('', code);
                     }
                 } else {
-                    let name = code.scope || code.name;
-                    if (!name) {
-                        name = productNamespace;
-                    } else if (!name.startsWith(productNamespace)) {
-                        name = `${productNamespace}.${name}`;
-                    }
-                    await this.mergeInfo(`class-reference/${name}`, code);
+                    await this.mergeReferences('', code);
                 }
             }
         }
@@ -417,7 +410,7 @@ export class MergerSession {
 
 
     /**
-     * Merge options into the API rows.
+     * Merge options into the API item rows.
      *
      * @param parentName
      * Full name of the parent option.
@@ -435,14 +428,14 @@ export class MergerSession {
         }
 
         const infoLookup = this.declarations.infoLookup;
-        const optionStack = this.optionStack;
+        const referenceStack = this.referenceStack;
 
-        if (optionStack.includes(info)) {
+        if (referenceStack.includes(info)) {
             // Prevent recursive references
             return;
         }
 
-        optionStack.push(info);
+        referenceStack.push(info);
 
         let optionName = Utilities.getOptionName(info);
 
@@ -550,7 +543,68 @@ export class MergerSession {
                 break;
         }
 
-        optionStack.pop();
+        referenceStack.pop();
+
+    }
+
+
+    /**
+     * Merge references into the API item rows.
+     *
+     * @param parentName
+     * Full name of the parent reference.
+     *
+     * @param info
+     * DTS information to merge.
+     */
+    public async mergeReferences(
+        parentName: string,
+        info: DTS.CodeInfo
+    ): Promise<void> {
+
+        if (
+            info.kind === 'Interface' &&
+            info.name.endsWith('Options')
+        ) {
+            return;
+        }
+
+        const referenceStack = this.referenceStack;
+
+        if (referenceStack.includes(info)) {
+            // Prevent recursive references
+            return;
+        }
+
+        referenceStack.push(info);
+
+        let name = info.scope || info.name;
+        let productNamespace = parentName || this.productNamespace;
+
+        if (!name) {
+            name = productNamespace;
+        } else if (!name.startsWith(productNamespace)) {
+            name = `${productNamespace}.${name}`;
+        }
+
+        if (!name.startsWith('class-reference/')) {
+            name = `class-reference/${name}`;
+        }
+
+        await this.mergeInfo(name, info);
+
+        switch (info.kind) {
+            case 'Class':
+            case 'Enumeration':
+            case 'Interface':
+            case 'Namespace':
+                for (const memberInfo of info.members) {
+                    await this.mergeReferences(name, memberInfo);
+                }
+                break;
+        }
+
+        referenceStack.pop();
 
     }
 

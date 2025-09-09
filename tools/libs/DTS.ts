@@ -361,6 +361,10 @@ function addChildInfos (
             _childSymbol = _nodeSymbol;
         }
 
+        if (infos.some(_info => _info.name === _childSymbol.name)) {
+            continue;
+        }
+
         _child = project.infoLookup.get(_childSymbol);
 
         if (_child) {
@@ -676,7 +680,6 @@ function addInfoHeritage (
         return;
     }
 
-    const _program = project.program;
     const _referenceTypes: Array<InfoType> = [];
     const _addReferenceType = (_type: TS.ExpressionWithTypeArguments): void => {
         const _heritageType = nodesInfoType(project, _type);
@@ -694,8 +697,8 @@ function addInfoHeritage (
             TS.isClassDeclaration(node)
         ) {
             if (_heritageClause.types.length === 1) {
-                _addReferenceType(_heritageClause.types[0]);
-                _classHeritage = _referenceTypes.pop();
+                _classHeritage =
+                    nodesInfoType(project, _heritageClause.types[0]);
             }
             continue;
         }
@@ -1242,6 +1245,9 @@ function getClassInfo (
 
     addInfoGenerics(_info, node, project);
     addInfoHeritage(_info, node, project);
+    // Instance members
+    addChildInfos(project, _info.members, node.members);
+    // Static members
     addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
     addInfoMeta(_info, node, project);
@@ -1404,6 +1410,9 @@ function getInterfaceInfo (
 
     addInfoGenerics(_info, node, project);
     addInfoHeritage(_info, node, project);
+    // Instance members
+    addChildInfos(project, _info.members, node.members);
+    // Static members
     addChildInfos(project, _info.members, symbolsChildren(_program, _symbol));
     addInfoFlags(_info, node);
     addInfoMeta(_info, node, project);
