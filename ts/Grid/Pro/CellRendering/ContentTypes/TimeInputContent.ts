@@ -1,6 +1,6 @@
 /* *
  *
- *  Date Input Cell Content class
+ *  Time Input Cell Content class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -10,7 +10,6 @@
  *
  *  Authors:
  *  - Dawid Dragula
- *  - Sebastian Bochan
  *
  * */
 
@@ -23,7 +22,6 @@
  * */
 
 import type { EditModeContent } from '../../CellEditing/CellEditMode.js';
-import type DateInputRenderer from '../Renderers/DateInputRenderer.js';
 
 import DateInputContentBase from './DateInputContentBase.js';
 
@@ -35,19 +33,21 @@ import DateInputContentBase from './DateInputContentBase.js';
  * */
 
 /**
- * Represents a date input type of cell content.
+ * Represents a time input type of cell content.
  */
-class DateInputContent extends DateInputContentBase implements EditModeContent {
+class TimeInputContent extends DateInputContentBase implements EditModeContent {
 
-    public override options!: DateInputRenderer.Options;
+    protected override getInputType(): 'time' {
+        return 'time';
+    }
 
-    protected override getInputType(): 'date' {
-        return 'date';
+    public override get value(): number {
+        return new Date(`1970-01-01T${this.input.value}Z`).getTime();
     }
 
     protected override convertToInputValue(): string {
         return this.cell.column.viewport.grid.time.dateFormat(
-            '%Y-%m-%d',
+            '%H:%M:%S',
             Number(this.cell.value || 0)
         );
     }
@@ -60,4 +60,4 @@ class DateInputContent extends DateInputContentBase implements EditModeContent {
  *
  * */
 
-export default DateInputContent;
+export default TimeInputContent;

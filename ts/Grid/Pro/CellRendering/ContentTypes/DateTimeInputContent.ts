@@ -1,6 +1,6 @@
 /* *
  *
- *  Date Input Cell Content class
+ *  DateTime Input Cell Content class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -10,7 +10,6 @@
  *
  *  Authors:
  *  - Dawid Dragula
- *  - Sebastian Bochan
  *
  * */
 
@@ -23,7 +22,7 @@
  * */
 
 import type { EditModeContent } from '../../CellEditing/CellEditMode.js';
-import type DateInputRenderer from '../Renderers/DateInputRenderer.js';
+import type DateTimeInputRenderer from '../Renderers/DateTimeInputRenderer.js';
 
 import DateInputContentBase from './DateInputContentBase.js';
 
@@ -35,19 +34,19 @@ import DateInputContentBase from './DateInputContentBase.js';
  * */
 
 /**
- * Represents a date input type of cell content.
+ * Represents a datetime input type of cell content.
  */
-class DateInputContent extends DateInputContentBase implements EditModeContent {
+class DateTimeInputContent extends DateInputContentBase implements EditModeContent {
 
-    public override options!: DateInputRenderer.Options;
+    public override options!: DateTimeInputRenderer.Options;
 
-    protected override getInputType(): 'date' {
-        return 'date';
+    protected override getInputType(): 'datetime-local' {
+        return 'datetime-local';
     }
 
     protected override convertToInputValue(): string {
         return this.cell.column.viewport.grid.time.dateFormat(
-            '%Y-%m-%d',
+            '%Y-%m-%dT%H:%M:%S',
             Number(this.cell.value || 0)
         );
     }
@@ -60,4 +59,4 @@ class DateInputContent extends DateInputContentBase implements EditModeContent {
  *
  * */
 
-export default DateInputContent;
+export default DateTimeInputContent;
