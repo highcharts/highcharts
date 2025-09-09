@@ -293,6 +293,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'highcharts-more'
     ],
     'series.cylinder': [
+        'highcharts-3d',
         'modules/cylinder'
     ],
     'series.dema': [
