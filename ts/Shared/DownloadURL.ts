@@ -24,7 +24,7 @@ const {
     win,
     win: { document: doc }
 } = H;
-import RegexLimits from './RegexLimits.js';
+import RegexLimits from '../Extensions/RegexLimits.js';
 import U from '../Core/Utilities.js';
 const { error } = U;
 
@@ -196,7 +196,7 @@ function downloadURL(
  * @param {string} scriptLocation
  * The location for the script to fetch.
  */
-export function getScript(
+function getScript(
     scriptLocation: string
 ): Promise<void> {
     return new Promise((resolve, reject): void => {

@@ -25,8 +25,12 @@ import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
 
 import U from '../../../Core/Utilities.js';
+import DownloadURL from '../../../Shared/DownloadURL.js';
+import Globals from '../../Core/Globals.js';
 
+const { downloadURL } = DownloadURL;
 const { merge } = U;
+const { win } = Globals;
 
 
 /* *
@@ -100,8 +104,11 @@ class Exporting {
     public downloadCSV(): void {
         const csv = this.getCSV();
 
-        // eslint-disable-next-line no-console
-        console.log(csv);
+        downloadURL(
+            this.getBlobFromContent(csv, 'text/csv') ||
+                'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+            this.getFilename() + '.csv'
+        );
     }
 
     /**
@@ -196,6 +203,70 @@ class Exporting {
         }
 
         return csvRows.join(lineDelimiter);
+    }
+
+    /**
+     * Get a blob object from content, if blob is supported.
+     *
+     * @param content
+     * The content to create the blob from.
+
+     * @param type
+     * The type of the content.
+     *
+     * @returns
+     * The blob object, or undefined if not supported.
+     */
+    private getBlobFromContent(
+        content: string,
+        type: string
+    ): (string | undefined) {
+        const nav = win.navigator,
+            domurl = win.URL || win.webkitURL || win;
+
+        try {
+            // MS specific
+            if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
+                const blob = new win.MSBlobBuilder();
+                blob.append(content);
+                return blob.getBlob('image/svg+xml');
+            }
+
+            return domurl.createObjectURL(new win.Blob(
+                ['\uFEFF' + content], // #7084
+                { type: type }
+            ));
+        } catch (e) {
+            // Ignore
+        }
+    }
+
+    /**
+     * Get the default file name used for exported the grid.
+     *
+     * @returns
+     * A file name without extension.
+     */
+    private getFilename(): string {
+        let filename = this.options.filename || 'Grid';
+
+        if (filename) {
+            return filename.replace(/\//g, '-');
+        }
+
+        if (typeof filename === 'string') {
+            filename = filename
+                .toLowerCase()
+                .replace(/<\/?[^>]+(>|$)/g, '') // Strip HTML tags
+                .replace(/[\s_]+/g, '-')
+                .replace(/[^a-z\d\-]/g, '') // Preserve only latin
+                .replace(/^[\-]+/g, '') // Dashes in the start
+                .replace(/[\-]+/g, '-') // Dashes in a row
+                .substr(0, 24)
+                .replace(/[\-]+$/g, ''); // Dashes in the end;
+        }
+
+        return filename;
     }
 }
 

@@ -611,6 +611,11 @@ export interface ExportingOptions {
     decimalPoint?: string;
 
     /**
+     * The file name to use for exported the grid.
+     */
+    filename?: string;
+
+    /**
      * Whether to export the first row as column names.
      *
      * @default true
