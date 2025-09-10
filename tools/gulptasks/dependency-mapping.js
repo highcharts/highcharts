@@ -23,6 +23,227 @@ function treeToMappingRecursive(key, branch, keyPath, mapping = {}) {
     return mapping;
 }
 
+async function buildTest(product, seriesTypes) {
+    const fs = require('fs').promises,
+        path = require('path');
+
+    const testPath = path.join(
+        __dirname,
+        `../../samples/highcharts/esm/autoload-${product}`
+    );
+
+    const factory = {
+        highcharts: 'chart',
+        highstock: 'stockChart',
+        highmaps: 'mapChart',
+        gantt: 'ganttChart'
+    }[product] || 'chart';
+
+    await fs.mkdir(testPath, { recursive: true });
+    await fs.writeFile(
+        path.join(testPath, 'README.md'),
+        `# ${product} dependency mapping test
+
+This is a generated test that ensures that all series types have a mapping
+in the DependencyMapping.ts file.
+
+If you get an error that a series type is missing, ensure that the series type
+has a corresponding entry in the DependencyMapping.ts file. If not, add it
+there and run \`gulp dependency-mapping\` to update the file.
+
+`,
+        'utf8'
+    );
+
+    await fs.writeFile(
+        path.join(testPath, 'demo.html'),
+        `<h1>Autoload test for ${product} series types</h1>
+<p>Do not edit these test files, they are generated using the
+ <code>gulp dependency-mapping</code> task.</p>
+<p id="results">
+    <span id="success">0</span> success,
+    <span id="failed">0</span> failed
+</p>
+<div id="container"></div>`
+    );
+
+    await fs.writeFile(
+        path.join(testPath, 'demo.details'),
+        `---
+name: Autoload ${product}
+authors:
+  - Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+...
+`
+    );
+
+    await fs.writeFile(
+        path.join(testPath, 'demo.css'),
+        `* {
+    font-family: sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
+
+code {
+    font-family: monospace;
+    background-color: #eee;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+#results {
+    margin: 1em;
+}
+
+#results span {
+    font-size: 2em;
+}
+
+.test-container {
+    width: 400px;
+    height: 300px;
+    float: left;
+    border: 1px solid silver;
+    border-radius: 4px;
+    margin: 5px;
+}
+
+.test-container.failed {
+    border-color: red;
+    background-color: #f003;
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    line-height: 300px;
+    white-space: pre-wrap;
+}
+`
+    );
+
+    let js = 'let success = 0,\n    failed = 0;\n';
+    seriesTypes.forEach(seriesType => {
+
+        let data = '[1, 3, 2, 4]';
+        if (['arcdiagram', 'dependencywheel', 'sankey'].includes(seriesType)) {
+            data = `[
+                    ['A', 'B', 1],
+                    ['A', 'C', 1],
+                    ['A', 'D', 1],
+                    ['B', 'D', 1],
+                    ['C', 'D', 1]
+                ]`;
+        } else if ([
+            'arearange',
+            'areasplinerange',
+            'columnrange',
+            'dumbbell',
+            'errorbar',
+            'variwide'
+        ].includes(seriesType)) {
+            data = `[
+                    [0, 1, 2],
+                    [1, 2, 3],
+                    [2, 3, 4]
+                ]`;
+        } else if (['boxplot'].includes(seriesType)) {
+            data = `[
+                    [1, 2, 3, 4, 5],
+                    [2, 3, 4, 5, 6],
+                    [3, 4, 5, 6, 7]
+                ]`;
+        } else if (seriesType === 'networkgraph') {
+            data = `[
+                    ['A', 'B'],
+                    ['A', 'C'],
+                    ['A', 'D'],
+                    ['B', 'D'],
+                    ['C', 'D']
+                ]`;
+        } else if (seriesType === 'scatter3d') {
+            data = `[
+                    [1, 2, 3],
+                    [2, 3, 4],
+                    [3, 4, 5]
+                ]`;
+        } else if (seriesType === 'vector') {
+            data = `[
+                    [0, 0, 1, 1],
+                    [1, 2, 1, -1],
+                    [2, 0, -1, 1]
+                ]`;
+        } else if (seriesType === 'venn') {
+            data = `[
+                    { sets: ['A'], value: 2 },
+                    { sets: ['B'], value: 2 },
+                    { sets: ['C'], value: 2 },
+                    { sets: ['A', 'B'], value: 1 },
+                    { sets: ['A', 'C'], value: 2 },
+                    { sets: ['B', 'C'], value: 3 }
+                ]`;
+        } else if (seriesType === 'wordcloud') {
+            data = `[
+                    { name: 'Lorem', weight: 13 },
+                    { name: 'Ipsum', weight: 10.5 },
+                    { name: 'Dolor', weight: 9.4 },
+                    { name: 'Sit', weight: 8 },
+                    { name: 'Amet', weight: 6.2 }
+                ]`;
+        } else if (seriesType === 'xrange') {
+            data = `[
+                    { x: 1, x2: 2, y: 0 },
+                    { x: 1, x2: 3, y: 1 },
+                    { x: 2, x2: 5, y: 2 }
+                ]`;
+        }
+
+        js += `
+(async () => {
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
+    const { default: Highcharts } = await import(
+        'https://code.highcharts.com/esm/highcharts-autoload.js'
+    );
+
+    try {
+        await Highcharts.${factory}(container, {
+            title: {
+                text: 'Testing ${seriesType}'
+            },
+            series: [{
+                type: '${seriesType.replace('series.', '')}',
+                data: ${data}
+            }]
+        });
+        success++;
+        document.getElementById('success').innerText = success;
+    } catch (e) {
+        container.innerText = '${seriesType} failed';
+        container.className += ' failed';
+        failed++;
+        document.getElementById('failed').innerText = failed;
+        console.error('Failed to load ${seriesType}', e);
+    }
+})();
+`;
+    });
+    await fs.writeFile(
+        path.join(testPath, 'demo.js'),
+        js
+    );
+
+
+}
+
 /**
  * Create the DependencyMapping module file
  *
@@ -52,6 +273,15 @@ async function dependencyMapping() {
         );
 
         Object.assign(mapping, productSpecificMapping);
+
+        await buildTest(
+            product,
+            Object.entries(tree.plotOptions.children)
+                .filter(([key, value]) =>
+                    (value.doclet.products?.includes(product) ?? true) &&
+                    key !== 'series')
+                .map(([key]) => key)
+        );
     }
 
     // Remove plotOptions.* entries, and combine them with series.* entries

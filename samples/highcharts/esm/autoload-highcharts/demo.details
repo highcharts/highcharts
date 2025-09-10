@@ -1,0 +1,7 @@
+---
+name: Autoload highcharts
+authors:
+  - Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+...
