@@ -100,7 +100,8 @@ namespace Globals {
         loadingMessage: 'loading-message',
         paginationWrapper: 'pagination-wrapper',
         popup: 'popup',
-        popupContent: 'popup-content'
+        popupContent: 'popup-content',
+        columnFilterWrapper: 'column-filter-wrapper'
     } as const;
 
     export const win = window;

@@ -83,7 +83,7 @@ class QueryingController {
     constructor(grid: Grid) {
         this.grid = grid;
 
-        this.filtering = new FilteringController();
+        this.filtering = new FilteringController(this);
         this.sorting = new SortingController(this);
         this.pagination = new PaginationController(this);
     }
@@ -116,6 +116,7 @@ class QueryingController {
      * Load all options needed to generate the modifiers.
      */
     public loadOptions(): void {
+        this.filtering.loadOptions();
         this.sorting.loadOptions();
         this.pagination.loadOptions();
     }

@@ -21,11 +21,12 @@
  *
  * */
 
-import type HeaderCell from './HeaderCell.js';
+import type HeaderCell from './HeaderCell';
 
 import GridUtils from '../../GridUtils.js';
 import Globals from '../../Globals.js';
 import FilterPopup from './FilterPopup.js';
+import GridIcons from '../../../Icons/GridIcons.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -284,8 +285,8 @@ class HeaderIconManager {
         }
 
         // Create icon using GridIcons
-        const iconElement = (Globals as any).GridIcons.createGridIcon(
-            config.icon,
+        const iconElement = GridIcons.createGridIcon(
+            config.icon as GridIcons.GridIconName,
             config.size || 20
         );
 
@@ -580,7 +581,7 @@ class HeaderIconManager {
             });
 
             // Create the dot SVG
-            const dotIcon = (Globals as any).GridIcons.createGridIcon(
+            const dotIcon = GridIcons.createGridIcon(
                 'activeIndicator',
                 6,
                 'hcg-active-indicator-icon'
