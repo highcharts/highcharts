@@ -20,6 +20,9 @@
  *
  * */
 
+/**
+ * Delaunay triangulation of a 2D point set.
+ */
 class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
 
     /* *
@@ -28,9 +31,20 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
      *
      * */
 
+    /**
+     * The resulting triangulation as a flat array of triangle vertex indices.
+     */
     public readonly triangles: Uint32Array;
+
+
+    /**
+     * The input points array.
+     */
     public readonly points: PointsArray;
 
+    /**
+     * Sorted and deduplicated point indices used for triangulation.
+     */
     private readonly ids: Uint32Array;
 
 
@@ -40,6 +54,12 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
      *
      * */
 
+    /**
+     * Create a new Delaunay triangulation.
+     *
+     * @param {Float32Array|Float64Array} points
+     * A 1D array of points in the format [x0, y0, x1, y1, ...].
+     */
     constructor(points: PointsArray) {
         this.points = points;
 
@@ -76,6 +96,12 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
      *
      * */
 
+    /**
+     * Triangulate the points.
+     *
+     * @return {Uint32Array}
+     * A 1D array of triangle vertex indices.
+     */
     private triangulate(): Uint32Array {
         const count = this.ids.length;
         if (count < 3) {
@@ -86,12 +112,15 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
             x = (i: number): number => points[i << 1],
             y = (i: number): number => points[(i << 1) + 1];
 
+        // Determine if three points are in counter-clockwise order.
         const orient = (a: number, b: number, c: number): boolean => {
             const ax = x(a),
                 ay = y(a);
             return (x(b) - ax) * (y(c) - ay) - (y(b) - ay) * (x(c) - ax) > 0;
         };
 
+        // Determine if a point (d) is inside the circumcircle of a triangle
+        // (a, b, c).
         const inCircle = (
             a: number,
             b: number,
@@ -99,6 +128,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
             d: number
         ): boolean => {
             if (a === d || b === d || c === d) {
+                // Skip if d is one of the triangle vertices.
                 return false;
             }
 
@@ -119,18 +149,23 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
             ) > 0;
         };
 
-        let cap = Math.max(32, ((8 * count + 7) & ~3)),
-            on = new Int32Array(cap),
-            rt = new Int32Array(cap),
-            vtx = new Uint32Array(cap),
-            seen = new Uint8Array(cap),
-            top = 0; // Next free edge id (always multiple of 4)
+        // Data structures for the quad-edge data structure.
+        let cap = Math.max(32, ((8 * count + 7) & ~3)), // Capacity (% 4 = 0)
+            on = new Int32Array(cap), // Next edge in same face
+            rt = new Int32Array(cap), // Rotation of edge (90 degrees)
+            vtx = new Uint32Array(cap), // Origin vertex of edge
+            seen = new Uint8Array(cap), // Visited flag for edge traversal
+            top = 0; // Next free edge id (% 4 = 0)
 
+        // Ensure the data structures have enough capacity for the required
+        // number of edges.
         const ensure = (need: number): void => {
+            // If the capacity is sufficient, return.
             if (need <= cap) {
                 return;
             }
 
+            // Double capacity until sufficient.
             let ncap = cap << 1;
             while (ncap < need) {
                 ncap <<= 1;
@@ -166,6 +201,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
             admissible = (e: number, base: number): boolean =>
                 rightOf(dest(e), base);
 
+        // Create a new edge between two vertices.
         const makeEdge = (a: number, b: number): number => {
             ensure(top + 4);
             const e0 = top,
@@ -195,6 +231,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
             return e0;
         };
 
+        // Splice two edges.
         const splice = (a: number, b: number): void => {
             const alpha = rt[on[a]];
             const beta = rt[on[b]];
@@ -209,6 +246,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
             on[beta] = t4;
         };
 
+        // Connect two edges.
         const connect = (a: number, b: number): number => {
             const q = makeEdge(dest(a), vtx[b]);
             splice(q, lnext(a));
@@ -216,6 +254,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
             return q;
         };
 
+        // Removes an edge from both sides.
         const drop = (e: number): void => {
             splice(e, oprev(e));
             const es = sym(e);
@@ -224,14 +263,18 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
 
         const A = this.ids;
 
+        // Recursively triangulate a range [lo, hi) of points. Returns the
+        // two endpoints [left, right] of the lower common tangent.
         const solve = (lo: number, hi: number): [number, number] => {
             const len = hi - lo;
 
+            // If there are only two points, create a single edge.
             if (len === 2) {
                 const a = makeEdge(A[lo], A[lo + 1]);
                 return [a, sym(a)];
             }
 
+            // If there are three points, create two edges and connect them.
             if (len === 3) {
                 const a = makeEdge(A[lo], A[lo + 1]),
                     b = makeEdge(A[lo + 1], A[lo + 2]);
@@ -254,6 +297,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
                 return [a, sym(b)];
             }
 
+            // Find the midpoint of the range.
             const mid = lo + ((len + 1) >>> 1);
             const L = solve(lo, mid);
             const R = solve(mid, hi);
@@ -282,7 +326,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
                 rdo = base;
             }
 
-            // Merge loop
+            // Merge loop - removing bad edges (inCircle) and adding new edges.
             for (;;) {
                 // Left candidate
                 let lc = on[sym(base)];
@@ -331,7 +375,6 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
         };
 
         let e0 = solve(0, count)[0];
-
         while (leftOf(dest(on[e0]), e0)) {
             e0 = on[e0];
         }
