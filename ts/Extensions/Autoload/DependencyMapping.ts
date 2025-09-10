@@ -8,6 +8,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     'accessibility': [
         'modules/accessibility'
     ],
+    'annotations': [
+        'modules/annotations'
+    ],
     'annotations.labelOptions.accessibility': [
         'modules/accessibility'
     ],
@@ -25,9 +28,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'annotations.types': [
         'modules/annotations-advanced'
-    ],
-    'annotations': [
-        'modules/annotations'
     ],
     'boost': [
         'modules/boost'
@@ -87,17 +87,20 @@ const DependencyMapping: Record<string, Array<string>> = {
     'drilldown': [
         'modules/drilldown'
     ],
+    'exporting': [
+        'modules/exporting'
+    ],
     'exporting.accessibility': [
         'modules/accessibility'
+    ],
+    'exporting.csv': [
+        'modules/exporting',
+        'modules/export-data'
     ],
     'exporting.csv.annotations': [
         'modules/exporting',
         'modules/export-data',
         'modules/annotations'
-    ],
-    'exporting.csv': [
-        'modules/exporting',
-        'modules/export-data'
     ],
     'exporting.error': [
         'modules/exporting',
@@ -134,23 +137,20 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/exporting',
         'modules/export-data'
     ],
-    'exporting': [
-        'modules/exporting'
-    ],
     'legend.accessibility': [
         'modules/accessibility'
     ],
     'legend.bubbleLegend': [
         'highcharts-more'
     ],
+    'navigation': [
+        'modules/exporting'
+    ],
     'navigation.annotationsOptions': [
         'modules/annotations'
     ],
     'navigation.bindings': [
         'modules/annotations'
-    ],
-    'navigation': [
-        'modules/exporting'
     ],
     'navigator.accessibility': [
         'modules/accessibility'
@@ -160,6 +160,83 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'pane': [
         'highcharts-more'
+    ],
+    'plotOptions.series.accessibility': [
+        'modules/accessibility'
+    ],
+    'plotOptions.series.boostBlending': [
+        'modules/boost'
+    ],
+    'plotOptions.series.boostThreshold': [
+        'modules/boost'
+    ],
+    'plotOptions.series.data.connect': [
+        'highcharts-gantt'
+    ],
+    'plotOptions.series.data.description': [
+        'modules/accessibility'
+    ],
+    'plotOptions.series.data.dragDrop': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.data.drilldown': [
+        'modules/drilldown'
+    ],
+    'plotOptions.series.dataGrouping': [
+        'modules/stock'
+    ],
+    'plotOptions.series.depth': [
+        'highcharts-3d'
+    ],
+    'plotOptions.series.description': [
+        'modules/accessibility'
+    ],
+    'plotOptions.series.dragDrop': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.edgeColor': [
+        'highcharts-3d'
+    ],
+    'plotOptions.series.edgeWidth': [
+        'highcharts-3d'
+    ],
+    'plotOptions.series.gapSize': [
+        'modules/broken-axis'
+    ],
+    'plotOptions.series.gapUnit': [
+        'modules/broken-axis'
+    ],
+    'plotOptions.series.groupZPadding': [
+        'highcharts-3d'
+    ],
+    'plotOptions.series.includeInDataExport': [
+        'modules/exporting',
+        'modules/export-data'
+    ],
+    'plotOptions.series.label': [
+        'modules/series-label'
+    ],
+    'plotOptions.series.lastPrice': [
+        'modules/price-indicator'
+    ],
+    'plotOptions.series.lastVisiblePrice': [
+        'modules/price-indicator'
+    ],
+    'plotOptions.series.onPoint': [
+        'highcharts-more',
+        'modules/series-on-point'
+    ],
+    'plotOptions.series.point.events.drag': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.point.events.dragStart': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.point.events.drop': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.sonification': [
+        'modules/sonification'
     ],
     'series.abands': [
         'stock/indicators/indicators',
@@ -272,6 +349,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     'series.errorbar': [
         'highcharts-more'
     ],
+    'series.flowmap': [
+        'modules/flowmap'
+    ],
     'series.funnel': [
         'modules/funnel'
     ],
@@ -286,11 +366,17 @@ const DependencyMapping: Record<string, Array<string>> = {
     'series.gauge': [
         'highcharts-more'
     ],
+    'series.geoheatmap': [
+        'modules/geoheatmap'
+    ],
     'series.heikinashi': [
         'modules/heikinashi'
     ],
     'series.histogram': [
         'modules/histogram-bellcurve'
+    ],
+    'series.hollowcandlestick': [
+        'modules/hollowcandlestick'
     ],
     'series.ikh': [
         'stock/indicators/indicators',
@@ -306,15 +392,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'series.klinger': [
         'stock/indicators/indicators',
         'stock/indicators/klinger'
-    ],
-    'series.line.data.description': [
-        'modules/accessibility'
-    ],
-    'series.line.data.dragDrop': [
-        'modules/draggable-points'
-    ],
-    'series.line.data.drilldown': [
-        'modules/drilldown'
     ],
     'series.linearregression': [
         'stock/indicators/indicators',
@@ -456,6 +533,9 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/indicators',
         'stock/indicators/tema'
     ],
+    'series.tiledwebmap': [
+        'modules/tiledwebmap'
+    ],
     'series.tilemap': [
         'modules/tilemap'
     ],
@@ -515,9 +595,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'series.wordcloud': [
         'modules/wordcloud'
     ],
-    'series.xrange.data.connect': [
-        'highcharts-gantt'
-    ],
     'series.xrange': [
         'modules/xrange'
     ],
@@ -560,136 +637,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'yAxis.tooltipValueFormat': [
         'modules/parallel-coordinates'
-    ],
-    'series.arearange.dragDrop.draggableHigh': [
-        'modules/draggable-points'
-    ],
-    'series.arearange.dragDrop.draggableLow': [
-        'modules/draggable-points'
-    ],
-    'series.boxplot.dragDrop.draggableHigh': [
-        'modules/draggable-points'
-    ],
-    'series.boxplot.dragDrop.draggableLow': [
-        'modules/draggable-points'
-    ],
-    'series.boxplot.dragDrop.draggableQ1': [
-        'modules/draggable-points'
-    ],
-    'series.boxplot.dragDrop.draggableQ3': [
-        'modules/draggable-points'
-    ],
-    'series.bullet.dragDrop.draggableTarget': [
-        'modules/draggable-points'
-    ],
-    'series.column.depth': [
-        'highcharts-3d'
-    ],
-    'series.column.edgeColor': [
-        'highcharts-3d'
-    ],
-    'series.column.edgeWidth': [
-        'highcharts-3d'
-    ],
-    'series.column.groupZPadding': [
-        'highcharts-3d'
-    ],
-    'series.columnrange.dragDrop.draggableHigh': [
-        'modules/draggable-points'
-    ],
-    'series.columnrange.dragDrop.draggableLow': [
-        'modules/draggable-points'
-    ],
-    'series.flowmap': [
-        'modules/flowmap'
-    ],
-    'series.gantt.dragDrop.draggableEnd': [
-        'modules/draggable-points'
-    ],
-    'series.gantt.dragDrop.draggableStart': [
-        'modules/draggable-points'
-    ],
-    'series.geoheatmap': [
-        'modules/geoheatmap'
-    ],
-    'series.hollowcandlestick': [
-        'modules/hollowcandlestick'
-    ],
-    'series.ohlc.dragDrop.draggableClose': [
-        'modules/draggable-points'
-    ],
-    'series.ohlc.dragDrop.draggableHigh': [
-        'modules/draggable-points'
-    ],
-    'series.ohlc.dragDrop.draggableLow': [
-        'modules/draggable-points'
-    ],
-    'series.ohlc.dragDrop.draggableOpen': [
-        'modules/draggable-points'
-    ],
-    'series.pie.depth': [
-        'highcharts-3d'
-    ],
-    'series.series.accessibility': [
-        'modules/accessibility'
-    ],
-    'series.series.boostBlending': [
-        'modules/boost'
-    ],
-    'series.series.boostThreshold': [
-        'modules/boost'
-    ],
-    'series.series.dataGrouping': [
-        'modules/stock'
-    ],
-    'series.series.description': [
-        'modules/accessibility'
-    ],
-    'series.series.dragDrop': [
-        'modules/draggable-points'
-    ],
-    'series.series.gapSize': [
-        'modules/broken-axis'
-    ],
-    'series.series.gapUnit': [
-        'modules/broken-axis'
-    ],
-    'series.series.includeInDataExport': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
-    'series.series.label': [
-        'modules/series-label'
-    ],
-    'series.series.lastPrice': [
-        'modules/price-indicator'
-    ],
-    'series.series.lastVisiblePrice': [
-        'modules/price-indicator'
-    ],
-    'series.series.onPoint': [
-        'modules/series-on-point'
-    ],
-    'series.series.point.events.drag': [
-        'modules/draggable-points'
-    ],
-    'series.series.point.events.dragStart': [
-        'modules/draggable-points'
-    ],
-    'series.series.point.events.drop': [
-        'modules/draggable-points'
-    ],
-    'series.series.sonification': [
-        'modules/sonification'
-    ],
-    'series.tiledwebmap': [
-        'modules/tiledwebmap'
-    ],
-    'series.xrange.dragDrop.draggableX1': [
-        'modules/draggable-points'
-    ],
-    'series.xrange.dragDrop.draggableX2': [
-        'modules/draggable-points'
     ]
 };
 export default DependencyMapping;

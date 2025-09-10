@@ -69,12 +69,26 @@ const getFiles = (options: Partial<Options>): Array<string> => {
                 key = value.type || options.chart?.type || 'line';
             }
 
-            const fullKey = path.concat(key).join('.');
-            if (fullKey in mapping) {
-                mapping[fullKey].forEach(
-                    (file): boolean => pushUnique(files, file)
-                );
+            const fullKey = path.concat(key).join('.'),
+                // Pick up properties that are set on series items, like
+                // `dragDrop` or `label`
+                seriesKey = fullKey.replace(
+                    /^series\.[a-zA-Z]+/, 'plotOptions.series'
+                ),
+                fullKeys = [fullKey];
+
+            // Add special cases
+            if (seriesKey !== fullKey) {
+                fullKeys.push(seriesKey);
             }
+
+            fullKeys.forEach((fullKey): void => {
+                if (fullKey in mapping) {
+                    mapping[fullKey].forEach(
+                        (file): boolean => pushUnique(files, file)
+                    );
+                }
+            });
 
             if (value && typeof value === 'object' && key !== 'data') {
                 path.push(key);

@@ -69,6 +69,17 @@ async function dependencyMapping() {
         }
     });
 
+    // Rename key series.series to plotOptions.series
+    const deepSeriesRegex = /^series\.[a-zA-Z]+\./u;
+    Object.entries(mapping).forEach(([key, value]) => {
+        if (deepSeriesRegex.test(key)) {
+            mapping[
+                key.replace(deepSeriesRegex, 'plotOptions.series.')
+            ] = value;
+            delete mapping[key];
+        }
+    });
+
     // Remove all `lang.*` entries, as these are not features per se
     Object.keys(mapping).forEach(key => {
         if (key.startsWith('lang.')) {
@@ -88,7 +99,15 @@ async function dependencyMapping() {
         }
     });
 
-    const mappingString = JSON.stringify(mapping, null, 4).replace(/"/gu, '\'');
+    // Sort the object by key name
+    const sortedMapping = {};
+    Object.keys(mapping).sort().forEach(key => {
+        sortedMapping[key] = mapping[key];
+    });
+
+    const mappingString = JSON
+        .stringify(sortedMapping, null, 4)
+        .replace(/"/gu, '\'');
 
     await fs.writeFile(
         path.join(
