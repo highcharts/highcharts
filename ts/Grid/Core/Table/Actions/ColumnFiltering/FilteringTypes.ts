@@ -116,6 +116,19 @@ export const booleanConditions = [
 ] as const;
 
 /**
+ * Corresponding values for the boolean select options.
+ */
+export const booleanValueMap: Record<
+    BooleanCondition,
+    'all' | boolean | null
+> = {
+    'all': 'all',
+    'true': true,
+    'false': false,
+    'empty': null
+} as const;
+
+/**
  * Conditions map for the condition select options.
  */
 export const conditionsMap: Record<Column.DataType, readonly Condition[]> = {

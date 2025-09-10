@@ -36,7 +36,8 @@ import {
     booleanConditions,
     conditionsMap,
     BooleanCondition,
-    Condition
+    Condition,
+    booleanValueMap
 } from './FilteringTypes.js';
 
 const { fireEvent, addEvent } = U;
@@ -382,7 +383,7 @@ class ColumnFiltering {
                 addEvent(this.filterSelect, 'change', (e): void => {
                     const option: BooleanCondition = e.target.value;
 
-                    filteringOptions.value = option;
+                    filteringOptions.value = booleanValueMap[option];
 
                     if (option !== 'all') {
                         filteringOptions.condition = 'equals';
