@@ -23,7 +23,7 @@ const {
 } = SeriesRegistry;
 import Delaunator from '../../Core/Delauney';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-
+import basicShader from './shaders/shader.wgsl';
 
 class ContourSeries extends ScatterSeries {
     public canvas?: HTMLCanvasElement;
@@ -175,7 +175,7 @@ class ContourSeries extends ScatterSeries {
 
             const { device } = this;
 
-            if (device) {
+            if (device && this.canvas) {
                 context.configure({
                     device: device,
                     format: canvasFormat
@@ -197,6 +197,19 @@ class ContourSeries extends ScatterSeries {
                     )
                 );
 
+                const colorAxisStops = this.getColorAxisStopsData();
+
+                const colorAxisStopsBuffer = device.createBuffer({
+                    size: colorAxisStops.array.byteLength,
+                    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+                    mappedAtCreation: true
+                });
+
+                const colorAxisStopsCountBuffer = device.createBuffer({
+                    size: 4,
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+                    mappedAtCreation: true
+                });
 
                 const vertexBuffer = device.createBuffer({
                     size: vertices.byteLength,
@@ -240,6 +253,121 @@ class ContourSeries extends ScatterSeries {
                 this.setContourIntervalUniform();
                 this.setSmoothColoringUniform();
                 this.setShowContourLinesUniform();
+
+                new Float32Array(
+                    colorAxisStopsBuffer.getMappedRange()
+                ).set(colorAxisStops.array);
+                colorAxisStopsBuffer.unmap();
+
+                new Uint32Array(
+                    colorAxisStopsCountBuffer.getMappedRange()
+                )[0] = colorAxisStops.length;
+                colorAxisStopsCountBuffer.unmap();
+
+                const vertexBufferLayout: GPUVertexBufferLayout = {
+                    arrayStride: 12,
+                    attributes: [{
+                        format: 'float32x3',
+                        offset: 0,
+                        shaderLocation: 0
+                    }] as GPUVertexAttribute[]
+                };
+
+                const shaderModule = device.createShaderModule({
+                    code: basicShader
+                });
+
+                const pipeline = device.createRenderPipeline({
+                    layout: 'auto',
+                    vertex: {
+                        module: shaderModule,
+                        entryPoint: 'vertexMain',
+                        buffers: [vertexBufferLayout]
+                    },
+                    fragment: {
+                        module: shaderModule,
+                        entryPoint: 'fragmentMain',
+                        targets: [{
+                            format: canvasFormat
+                        }]
+                    },
+                    primitive: {
+                        topology: 'triangle-list'
+                    }
+                });
+
+
+                // Note: Overkill with casting all of the buffers
+                const bindGroup = device.createBindGroup({
+                    layout: pipeline.getBindGroupLayout(0),
+                    entries: [{
+                        binding: 0,
+                        resource: {
+                            buffer: extremesUniformBuffer as GPUBuffer
+                        }
+                    }, {
+                        binding: 1,
+                        resource: {
+                            buffer: valueExtremesUniformBuffer as GPUBuffer
+                        }
+                    }, {
+                        binding: 2,
+                        resource: {
+                            buffer: colorAxisStopsBuffer as GPUBuffer
+                        }
+                    }, {
+                        binding: 3,
+                        resource: {
+                            buffer: colorAxisStopsCountBuffer as GPUBuffer
+                        }
+                    }, {
+                        binding: 4,
+                        resource: {
+                            buffer: (
+                                this.contourIntervalUniformBuffer as GPUBuffer
+                            )
+                        }
+                    }, {
+                        binding: 5,
+                        resource: {
+                            buffer: (
+                                this.smoothColoringUniformBuffer as GPUBuffer
+                            )
+                        }
+                    }, {
+                        binding: 6,
+                        resource: {
+                            buffer: (
+                                this.showContourLinesUniformBuffer as GPUBuffer
+                            )
+                        }
+                    }]
+                });
+
+                const encoder = device.createCommandEncoder();
+
+                const pass = encoder.beginRenderPass({
+                    colorAttachments: [{
+                        view: context.getCurrentTexture().createView(),
+                        loadOp: 'clear' as GPULoadOp,
+                        clearValue: [1, 1, 1, 1],
+                        storeOp: 'store' as GPUStoreOp
+                    }]
+                });
+                pass.setPipeline(pipeline);
+                pass.setVertexBuffer(0, vertexBuffer);
+                pass.setIndexBuffer(indexBuffer, 'uint32');
+                pass.setBindGroup(0, bindGroup);
+                pass.drawIndexed(indices.length);
+                pass.end();
+
+                device.queue.submit([encoder.finish()]);
+                this.image = this.chart.renderer.image(
+                    this.canvas.toDataURL('image/png', 1)
+                ).attr({
+                    width: this.xAxis.len,
+                    height: this.yAxis.len
+                }).add(this.group);
             }
         }
     }
@@ -389,6 +517,58 @@ class ContourSeries extends ScatterSeries {
         //     length: colorAxis.stops.length
         // };
 
+    }
+
+    private setCanvasSize(): void {
+
+        const { canvas, xAxis, yAxis } = this;
+
+        if (canvas) {
+            canvas.style.left = xAxis.toPixels(
+                xAxis.toValue(0, true),
+                false
+            ) + 'px';
+            canvas.style.top = yAxis.toPixels(
+                yAxis.toValue(0, true), false
+            ) + 'px';
+            canvas.style.width = xAxis.len + 'px';
+            canvas.style.height = yAxis.len + 'px';
+
+            canvas.width = canvas.clientWidth * window.devicePixelRatio;
+            canvas.height = canvas.clientHeight * window.devicePixelRatio;
+        }
+    }
+
+    /**
+     * Set the extremes of the Contourmap axes.
+     */
+    public setExtremes(): void {
+        if (!this.render) {
+            return;
+        }
+
+        this.setCanvasSize();
+        if (this.device) {
+
+            if (this.extremesUniform && this.extremesUniformBuffer) {
+                this.device.queue.writeBuffer(
+                    this.extremesUniformBuffer,
+                    0,
+                    this.extremesUniform as GPUAllowSharedBufferSource
+                );
+                this.extremesUniform?.set(this.getExtremes() as Array<number>);
+            }
+
+            if (this.valueExtremesUniform && this.valueExtremesUniformBuffer) {
+                this.valueExtremesUniform?.set(this.getDataExtremes());
+                this.device.queue.writeBuffer(
+                    this.valueExtremesUniformBuffer,
+                    0,
+                    this.valueExtremesUniform as GPUAllowSharedBufferSource
+                );
+            }
+            this?.render();
+        }
     }
 }
 
