@@ -153,7 +153,7 @@ const navigation: NavigationOptions = {
              * @extends   navigation.annotationsOptions
              * @apioption navigation.bindings.circleAnnotation.annotationsOptions
              */
-            annotationsOptions: {},
+
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,
@@ -254,7 +254,7 @@ const navigation: NavigationOptions = {
              * @extends   navigation.annotationsOptions
              * @apioption navigation.bindings.ellipseAnnotation.annotationsOptions
              */
-            annotationsOptions: {},
+
             start: function (
                 this: NavigationBindings,
                 e: PointerEvent
@@ -358,7 +358,7 @@ const navigation: NavigationOptions = {
              * @extends   navigation.annotationsOptions
              * @apioption navigation.bindings.rectangleAnnotation.annotationsOptions
              */
-            annotationsOptions: {},
+
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,
@@ -455,7 +455,7 @@ const navigation: NavigationOptions = {
              * @extends   navigation.annotationsOptions
              * @apioption navigation.bindings.labelAnnotation.annotationsOptions
              */
-            annotationsOptions: {},
+
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,

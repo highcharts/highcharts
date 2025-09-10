@@ -97,7 +97,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.segment.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -155,7 +155,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.arrowSegment.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -216,7 +216,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.ray.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -275,7 +275,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.arrowRay.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -336,7 +336,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.infinityLine.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -395,7 +395,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.arrowInfinityLine.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -457,7 +457,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.horizontalLine.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
@@ -506,7 +506,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.verticalLine.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
@@ -557,7 +557,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.crooked3.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -616,7 +616,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.crooked5.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -679,7 +679,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.elliott3.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -740,7 +740,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.elliott5.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -805,7 +805,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.measureX.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -871,7 +871,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.measureY.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -938,7 +938,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.measureXY.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1007,7 +1007,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.fibonacci.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1065,7 +1065,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.parallelChannel.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1124,7 +1124,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.pitchfork.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1192,7 +1192,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.verticalCounter.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1252,7 +1252,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.timeCycles.annotationsOptions
          */
-        annotationsOptions: {},
+
         start: function (
             this: NavigationBindings,
             e: PointerEvent
@@ -1301,7 +1301,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.verticalLabel.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1359,7 +1359,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.verticalArrow.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -1421,7 +1421,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.fibonacciTimeZones.annotationsOptions
          */
-        annotationsOptions: {},
+
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
