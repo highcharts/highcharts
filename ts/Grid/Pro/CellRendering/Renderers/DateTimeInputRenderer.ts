@@ -1,6 +1,6 @@
 /* *
  *
- *  Date Input Cell Renderer class
+ *  Date Time Input Cell Renderer class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -10,7 +10,6 @@
  *
  *  Authors:
  *  - Dawid Dragula
- *  - Sebastian Bochan
  *
  * */
 
@@ -33,7 +32,7 @@ import type {
 
 import CellRenderer from '../CellRenderer.js';
 import CellRendererRegistry from '../CellRendererRegistry.js';
-import DateInputContent from '../ContentTypes/DateInputContent.js';
+import DateTimeInputContent from '../ContentTypes/DateTimeInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
 const {
@@ -50,22 +49,22 @@ const {
 /**
  * Renderer for the Select in a column..
  */
-class DateInputRenderer extends CellRenderer implements EditModeRenderer {
+class DateTimeInputRenderer extends CellRenderer implements EditModeRenderer {
 
     /**
      * The default edit mode renderer type name for this view renderer.
      */
     public static defaultEditingRenderer: EditModeRendererTypeName =
-        'dateInput';
+        'dateTimeInput';
 
     /**
      * Default options for the date input renderer.
      */
-    public static defaultOptions: DateInputRenderer.Options = {
-        type: 'dateInput'
+    public static defaultOptions: DateTimeInputRenderer.Options = {
+        type: 'dateTimeInput'
     };
 
-    public override options: DateInputRenderer.Options;
+    public override options: DateTimeInputRenderer.Options;
 
 
     /* *
@@ -76,7 +75,7 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-        this.options = merge(DateInputRenderer.defaultOptions, options);
+        this.options = merge(DateTimeInputRenderer.defaultOptions, options);
     }
 
 
@@ -89,8 +88,8 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
     public override render(
         cell: TableCell,
         parentElement?: HTMLElement
-    ): DateInputContent {
-        return new DateInputContent(cell, this, parentElement);
+    ): DateTimeInputContent {
+        return new DateTimeInputContent(cell, this, parentElement);
     }
 
 }
@@ -102,13 +101,13 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
  *
  * */
 
-namespace DateInputRenderer {
+namespace DateTimeInputRenderer {
 
     /**
      * Options to control the date input renderer content.
      */
     export interface Options extends DateInputRendererBase.Options {
-        type: 'dateInput';
+        type: 'dateTimeInput';
     }
 }
 
@@ -121,11 +120,11 @@ namespace DateInputRenderer {
 
 declare module '../CellRendererType' {
     interface CellRendererTypeRegistry {
-        dateInput: typeof DateInputRenderer
+        dateTimeInput: typeof DateTimeInputRenderer
     }
 }
 
-CellRendererRegistry.registerRenderer('dateInput', DateInputRenderer);
+CellRendererRegistry.registerRenderer('dateTimeInput', DateTimeInputRenderer);
 
 
 /* *
@@ -134,4 +133,4 @@ CellRendererRegistry.registerRenderer('dateInput', DateInputRenderer);
  *
  * */
 
-export default DateInputRenderer;
+export default DateTimeInputRenderer;

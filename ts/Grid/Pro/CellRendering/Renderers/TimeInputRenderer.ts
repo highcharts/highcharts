@@ -1,6 +1,6 @@
 /* *
  *
- *  Date Input Cell Renderer class
+ *  Time Input Cell Renderer class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -10,7 +10,6 @@
  *
  *  Authors:
  *  - Dawid Dragula
- *  - Sebastian Bochan
  *
  * */
 
@@ -24,7 +23,7 @@
  * */
 
 import type Column from '../../../Core/Table/Column';
-import type DateInputRendererBase from './DateInputRendererBase';
+import type TimeInputRendererBase from './DateInputRendererBase';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
 import type {
@@ -33,7 +32,7 @@ import type {
 
 import CellRenderer from '../CellRenderer.js';
 import CellRendererRegistry from '../CellRendererRegistry.js';
-import DateInputContent from '../ContentTypes/DateInputContent.js';
+import TimeInputContent from '../ContentTypes/TimeInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
 const {
@@ -50,22 +49,22 @@ const {
 /**
  * Renderer for the Select in a column..
  */
-class DateInputRenderer extends CellRenderer implements EditModeRenderer {
+class TimeInputRenderer extends CellRenderer implements EditModeRenderer {
 
     /**
      * The default edit mode renderer type name for this view renderer.
      */
     public static defaultEditingRenderer: EditModeRendererTypeName =
-        'dateInput';
+        'timeInput';
 
     /**
-     * Default options for the date input renderer.
+     * Default options for the time input renderer.
      */
-    public static defaultOptions: DateInputRenderer.Options = {
-        type: 'dateInput'
+    public static defaultOptions: TimeInputRenderer.Options = {
+        type: 'timeInput'
     };
 
-    public override options: DateInputRenderer.Options;
+    public override options: TimeInputRenderer.Options;
 
 
     /* *
@@ -76,7 +75,7 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
 
     public constructor(column: Column, options: Partial<CellRenderer.Options>) {
         super(column);
-        this.options = merge(DateInputRenderer.defaultOptions, options);
+        this.options = merge(TimeInputRenderer.defaultOptions, options);
     }
 
 
@@ -89,8 +88,8 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
     public override render(
         cell: TableCell,
         parentElement?: HTMLElement
-    ): DateInputContent {
-        return new DateInputContent(cell, this, parentElement);
+    ): TimeInputContent {
+        return new TimeInputContent(cell, this, parentElement);
     }
 
 }
@@ -102,13 +101,13 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
  *
  * */
 
-namespace DateInputRenderer {
+namespace TimeInputRenderer {
 
     /**
-     * Options to control the date input renderer content.
+     * Options to control the time input renderer content.
      */
-    export interface Options extends DateInputRendererBase.Options {
-        type: 'dateInput';
+    export interface Options extends TimeInputRendererBase.Options {
+        type: 'timeInput';
     }
 }
 
@@ -121,11 +120,11 @@ namespace DateInputRenderer {
 
 declare module '../CellRendererType' {
     interface CellRendererTypeRegistry {
-        dateInput: typeof DateInputRenderer
+        timeInput: typeof TimeInputRenderer
     }
 }
 
-CellRendererRegistry.registerRenderer('dateInput', DateInputRenderer);
+CellRendererRegistry.registerRenderer('timeInput', TimeInputRenderer);
 
 
 /* *
@@ -134,4 +133,4 @@ CellRendererRegistry.registerRenderer('dateInput', DateInputRenderer);
  *
  * */
 
-export default DateInputRenderer;
+export default TimeInputRenderer;
