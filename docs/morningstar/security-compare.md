@@ -44,6 +44,7 @@ You can specify the type of data to retrieve by using an array of types: `conver
 - **BondStyleBoxBreakdown**
 - **CreditQualityBreakdown**
 - **HistoricalPerformanceSeries**
+- **RiskStatistics**
 
 If no converter types are provided or the converter type doesn't exist, all available types will be returned for the Security Compare connector.
 

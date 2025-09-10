@@ -57,6 +57,8 @@ types.
 * [Screener](https://www.highcharts.com/docs/morningstar/screeners/screener)
 * [Security Details](https://www.highcharts.com/docs/morningstar/security-details)
 * [Security Compare](https://www.highcharts.com/docs/morningstar/security-compare)
+* [Performance](https://www.highcharts.com/docs/morningstar/performance)
+* [Hypo Performance](https://www.highcharts.com/docs/morningstar/hypo-performance)
 
 ### Morningstar Regions
 

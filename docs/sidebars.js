@@ -241,6 +241,8 @@ module.exports = {
                     'morningstar/security-details',
                     'morningstar/security-compare',
                     'morningstar/x-ray',
+                    'morningstar/performance',
+                    'morningstar/hypo-performance',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',
