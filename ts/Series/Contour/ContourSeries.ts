@@ -61,7 +61,7 @@ class ContourSeries extends ScatterSeries {
     }
 
     public triangulateData(): any {
-        const points2d: Float32Array = new Float32Array(this.points.length * 2);
+        const points2d: Float64Array = new Float64Array(this.points.length * 2);
 
         const { xAxis, yAxis } = this;
 
