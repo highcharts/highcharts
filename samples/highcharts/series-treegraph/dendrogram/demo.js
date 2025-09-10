@@ -1,3 +1,77 @@
+// --- Dendrogram "Stair Effect" Utility ---
+// This function transforms flat treegraph data to create a step-wise dendrogram
+// by inserting nameless "ghost" nodes. Use it to display a classic hierarchical
+// layout. The original data remains unchanged.
+// eslint-disable-next-line no-unused-vars
+function createDendrogramData(sourceData) {
+    // 1. Group nodes by their parent ID
+    const nodesByParent = {};
+    const structuralNodes = []; // Nodes that are not leaves (e.g., categories)
+
+    sourceData.forEach(node => {
+        // We identify leaf nodes by the presence of the 'custom' property.
+        if (node.custom) {
+            if (!nodesByParent[node.parent]) {
+                nodesByParent[node.parent] = [];
+            }
+            nodesByParent[node.parent].push(node);
+        } else {
+            structuralNodes.push(node);
+        }
+    });
+
+    const transformedData = [...structuralNodes];
+    let ghostNodeCounter = 0;
+
+    // 2. Process each group of leaf nodes
+    for (const parentId in nodesByParent) {
+        if (Object.prototype.hasOwnProperty.call(nodesByParent, parentId)) {
+            const children = nodesByParent[parentId];
+
+            // If a parent has 2 or fewer children, no transformation is needed.
+            if (children.length <= 2) {
+                transformedData.push(...children);
+                continue;
+            }
+
+            // Apply the stair-step logic for parents with more than 2 children
+            let currentParentId = parentId;
+
+            // The first child connects directly to the original parent
+            transformedData.push(children[0]);
+
+            // Create a chain of ghost nodes for the intermediate children
+            for (let i = 1; i < children.length - 1; i++) {
+                const ghostNodeId = `${parentId}-ghost-${ghostNodeCounter++}`;
+
+                // Create and add the ghost node
+                transformedData.push({
+                    id: ghostNodeId,
+                    parent: currentParentId,
+                    name: null // Nameless node
+                });
+
+                // Re-parent the actual child to the new ghost node
+                const currentChild = { ...children[i], parent: ghostNodeId };
+                transformedData.push(currentChild);
+
+                // The next ghost node will be a child of this one
+                currentParentId = ghostNodeId;
+            }
+
+            // The very last child connects to the last ghost node created
+            const lastChild = {
+                ...children[children.length - 1],
+                parent: currentParentId
+            };
+            transformedData.push(lastChild);
+        }
+    }
+
+    return transformedData;
+}
+
+// --- Demo Data ---
 const data = [
     // Root
     {
@@ -43,28 +117,57 @@ const data = [
         parent: 'Declarative',
         name: 'Logic-based'
     },
-    // Procedural
+    // Procedural - example with extra steps
     {
         id: 'C',
         parent: 'Procedural',
         name: 'C',
-        custom: { year: 1972 }
+        custom: { year: 1972 },
+        marker: {
+            radius: 0.1
+        },
+        dataLabels: {
+            rotation: 0,
+            y: 0
+        }
+    },
+    {
+        id: 'Procedural2',
+        parent: 'Procedural',
+        name: 'Procedural',
+        marker: {
+            radius: 0
+        },
+        dataLabels: {
+            enabled: false
+        }
     },
     {
         id: 'Pascal',
-        parent: 'Procedural',
+        parent: 'Procedural2',
         name: 'Pascal',
         custom: { year: 1970 }
     },
     {
+        id: 'Procedural3',
+        parent: 'Procedural2',
+        name: 'Procedural',
+        marker: {
+            radius: 0
+        },
+        dataLabels: {
+            enabled: false
+        }
+    },
+    {
         id: 'Go',
-        parent: 'Procedural',
+        parent: 'Procedural3',
         name: 'Go',
         custom: { year: 2009 }
     },
     {
         id: 'Julia',
-        parent: 'Procedural',
+        parent: 'Procedural3',
         name: 'Julia',
         custom: { year: 2012 }
     },
@@ -206,47 +309,71 @@ const data = [
     }
 ];
 
+// --- Choose display style ---
+// To show the step-wise (stair) effect, uncomment the next line:
+// const stairData = createDendrogramData(data);
+
 Highcharts.chart('container', {
     chart: {
-        inverted: true,
-        marginBottom: 70
+        inverted: true
     },
     title: {
         text: 'Programming Languages by Paradigm'
     },
+    subtitle: {
+        text: `Exploring Dendrogram Display Styles: Traditional Steps
+            and Flattened View`
+    },
     series: [
         {
             type: 'treegraph',
+            // Change 'data' to 'stairData' for the step-wise version
             data,
             keys: ['id', 'parent', 'name', 'custom'],
             marker: {
                 radius: 0
             },
+            collapseButton: {
+                x: -5
+            },
             link: {
-                type: 'default'
+                type: 'default',
+                radius: 0
             },
             dataLabels: {
                 crop: false,
+                y: -5,
                 style: {
                     whiteSpace: 'nowrap',
                     color: '#000000',
                     textOutline: '3px contrast'
                 },
-                verticalAlign: 'bottom'
+                verticalAlign: 'middle'
             },
             levels: [
                 {
                     level: 1,
                     dataLabels: {
-                        y: -30,
+                        crop: false,
+                        overflow: 'allow',
+                        y: 0,
                         style: {
                             textOutline: '6px contrast'
                         }
+                    },
+                    collapseButton: {
+                        x: -15
                     }
                 },
+                // if you use full step display, skip below settings
                 {
                     level: 3,
-                    colorByPoint: true
+                    colorByPoint: true,
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
+                    }
                 },
                 {
                     level: 4,
