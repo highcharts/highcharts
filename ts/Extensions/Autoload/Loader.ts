@@ -148,11 +148,11 @@ const setRoot = (userRoot = root, userExtension = extension): void => {
  * @example
  * // Load the exporting module without having to set `exporting.enabled` in the
  * // options.
- * Highcharts.Loader.addFiles(['modules/exporting']);
+ * Highcharts.Loader.use(['modules/exporting']);
  *
  * @param {Array<string>} files An array of files to add.
  */
-const addFiles = (files: Array<string>): void => {
+const use = (files: Array<string>): void => {
     files.forEach((file): boolean => pushUnique(addedFiles, file));
 };
 
@@ -238,7 +238,7 @@ const loadFile = async (file: string): Promise<undefined> => {
 
 const Loader = {
     getFiles,
-    addFiles,
+    use,
     setRoot
 };
 
