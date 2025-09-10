@@ -12,8 +12,8 @@ describe('Remove the dashboard.', () => {
     });
 
     it('Rows should have even and odd classes.', () => {
-        cy.get('tbody tr').eq(0).should('have.class', 'highcharts-grid-row-odd');
-        cy.get('tbody tr').eq(1).should('have.class', 'highcharts-grid-row-even');
+        cy.get('tbody tr').eq(0).should('have.class', 'hcg-row-odd');
+        cy.get('tbody tr').eq(1).should('have.class', 'hcg-row-even');
     });
 });
 
