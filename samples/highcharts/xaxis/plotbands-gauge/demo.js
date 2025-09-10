@@ -4,6 +4,10 @@ Highcharts.chart('container', {
         type: 'gauge'
     },
 
+    title: {
+        text: 'Gauge with plot band'
+    },
+
     pane: {
         startAngle: -150,
         endAngle: 150
@@ -15,9 +19,7 @@ Highcharts.chart('container', {
         plotBands: [{
             from: 0,
             to: 60,
-            color: '#89A54E',
-            outerRadius: '105%',
-            thickness: '5%'
+            color: '#89A54E'
         }]
     },
 
