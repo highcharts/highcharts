@@ -161,15 +161,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'pane': [
         'highcharts-more'
     ],
-    'plotOptions.series.accessibility': [
-        'modules/accessibility'
-    ],
-    'plotOptions.series.boostBlending': [
-        'modules/boost'
-    ],
-    'plotOptions.series.boostThreshold': [
-        'modules/boost'
-    ],
     'plotOptions.series.data.connect': [
         'highcharts-gantt'
     ],
@@ -181,62 +172,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'plotOptions.series.data.drilldown': [
         'modules/drilldown'
-    ],
-    'plotOptions.series.dataGrouping': [
-        'modules/stock'
-    ],
-    'plotOptions.series.depth': [
-        'highcharts-3d'
-    ],
-    'plotOptions.series.description': [
-        'modules/accessibility'
-    ],
-    'plotOptions.series.dragDrop': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.series.edgeColor': [
-        'highcharts-3d'
-    ],
-    'plotOptions.series.edgeWidth': [
-        'highcharts-3d'
-    ],
-    'plotOptions.series.gapSize': [
-        'modules/broken-axis'
-    ],
-    'plotOptions.series.gapUnit': [
-        'modules/broken-axis'
-    ],
-    'plotOptions.series.groupZPadding': [
-        'highcharts-3d'
-    ],
-    'plotOptions.series.includeInDataExport': [
-        'modules/exporting',
-        'modules/export-data'
-    ],
-    'plotOptions.series.label': [
-        'modules/series-label'
-    ],
-    'plotOptions.series.lastPrice': [
-        'modules/price-indicator'
-    ],
-    'plotOptions.series.lastVisiblePrice': [
-        'modules/price-indicator'
-    ],
-    'plotOptions.series.onPoint': [
-        'highcharts-more',
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.point.events.drag': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.series.point.events.dragStart': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.series.point.events.drop': [
-        'modules/draggable-points'
-    ],
-    'plotOptions.series.sonification': [
-        'modules/sonification'
     ],
     'series.abands': [
         'stock/indicators/indicators',

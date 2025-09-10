@@ -50,6 +50,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @excluding    allowPointSelect, curveFactor, dataSorting
  * @since        7.1.0
  * @product      highcharts
+ * @requires     modules/sankey
  * @requires     modules/organization
  * @optionparent plotOptions.organization
  */

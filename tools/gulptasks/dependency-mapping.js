@@ -55,19 +55,28 @@ async function dependencyMapping() {
     }
 
     // Remove plotOptions.* entries, and combine them with series.* entries
-    Object.entries(mapping).forEach(([key, value]) => {
+    let seriesMismatch = false;
+    Object.keys(mapping).forEach(key => {
         if (key.startsWith('plotOptions.')) {
             const seriesType = key.replace('plotOptions.', 'series.');
-            if (mapping[seriesType]) {
-                mapping[seriesType] = Array.from(
-                    new Set([...mapping[seriesType], ...value])
+            if (
+                /^series\.[a-zA-Z]+$/u.test(seriesType) &&
+                mapping[key].join(',') !== mapping[seriesType]?.join(',')
+            ) {
+                log.warn(
+                    `Mismatched dependencies for ${key} and ${seriesType}:\n` +
+                    ` ${mapping[key]} vs ${mapping[seriesType]}`
                 );
-            } else {
-                mapping[seriesType] = value;
+                seriesMismatch = true;
             }
             delete mapping[key];
         }
     });
+    if (seriesMismatch) {
+        throw new Error(
+            'Mismatched dependencies between plotOptions and series types'
+        );
+    }
 
     // Rename key series.series to plotOptions.series
     const deepSeriesRegex = /^series\.[a-zA-Z]+\./u;
@@ -133,5 +142,10 @@ export default DependencyMapping;
 
 require('./jsdoc');
 
-// gulp.task('dependency-mapping', dependencyMapping);
-gulp.task('dependency-mapping', gulp.series('jsdoc', dependencyMapping));
+const buildTreeJS = true;
+gulp.task(
+    'dependency-mapping',
+    buildTreeJS ?
+        gulp.series('jsdoc', dependencyMapping) :
+        dependencyMapping
+);
