@@ -15184,9 +15184,6 @@ import &#39;highcharts/modules/accessibility&#39;;
               <a class="release-header-hashtag" href="#highcharts-dashboards-v3.6.0">#</a>
               <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-3.6.0.zip" title="Download the zip archive for Highcharts Dashboards v3.6.0"><i class="fas fa-download"></i></a></span>
             </h3>
-            <ul>
-              <li>Introduced <code>FilterModifier</code> to enable <code>DataTable</code> row filtering via serializable conditions.</li>
-            </ul>
             <div class="accordion card-group">
               <div class="card">
 
@@ -15198,8 +15195,9 @@ import &#39;highcharts/modules/accessibility&#39;;
                 <div id="bug-fixes-hd-3-6-0" class="collapse" aria-labelledby="hd-heading-3-6-0-bug-fixes" data-parent=".accordion">
                   <div class="card-body">
                     <ul>
-                      <li>Optimized the Grid Component, so that it does not always re-renders when the table data has changed.</li>
-                      <li>Fixed styling, added the missing light-mode <code>--highcharts-neutral-color-10</code> CSS variable override.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23445">#23445</a>, components with multiple connectors loaded only first data table correctly.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23447">#23447</a>, independent JSON connectors were in some cases using the same column array.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23332">#23332</a>, <code>getOptions</code> did not return correct values for a grid with resized columns.</li>
                     </ul>
 
                   </div>
@@ -15902,15 +15900,9 @@ import &#39;highcharts/modules/accessibility&#39;;
               <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-1.4.0.zip" title="Download the zip archive for Highcharts Grid v1.4.0"><i class="fas fa-download"></i></a></span>
             </h3>
             <ul>
-              <li>
-                <p><strong>Grid Pro:</strong> Added <code>inputType</code> option to date input renderer, supporting <code>date</code>, <code>datetime</code>, and <code>time</code> input types.</p>
-              </li>
-              <li>
-                <p><strong>Grid Pro:</strong> Added a <a href="https://api.highcharts.com/grid/xAxis.uniqueNames"><code>unique</code></a> and <code>caseUnique</code> cell validator.</p>
-              </li>
-              <li>
-                <p><strong>Grid Pro:</strong> Added <code>numberInput</code> renderer type.</p>
-              </li>
+              <li><strong>Grid Pro:</strong> Added <code>timeInput</code> and <code>dateTimeInput</code> cell content renderers.</li>
+              <li><strong>Grid Pro:</strong> Added a <a href="https://api.highcharts.com/grid/xAxis.uniqueNames"><code>unique</code></a> and <code>caseUnique</code> cell validator.</li>
+              <li><strong>Grid Pro:</strong> Added <code>numberInput</code> renderer type.</li>
             </ul>
             <div class="accordion card-group">
               <div class="card">
@@ -15923,21 +15915,11 @@ import &#39;highcharts/modules/accessibility&#39;;
                 <div id="bug-fixes-hGrid-1-4-0" class="collapse" aria-labelledby="hGrid-heading-1-4-0-bug-fixes" data-parent=".accordion">
                   <div class="card-body">
                     <ul>
-                      <li>
-                        <p><strong>Grid:</strong> Fixed keyboard navigation, the focus was getting trapped when using shift + tab.</p>
-                      </li>
-                      <li>
-                        <p><strong>Grid:</strong> Fixed error thrown when adjusting row heights of empty grid.</p>
-                      </li>
-                      <li>
-                        <p><strong>Grid:</strong> Fixed inconsistent cell widths per column after sorting.</p>
-                      </li>
-                      <li>
-                        <p><strong>Grid:</strong> Fixed <a href="https://github.com/highcharts/highcharts/issues/23241">#23241</a>, Grid with sorted column was not updated after modification of its Data Table.</p>
-                      </li>
-                      <li>
-                        <p><strong>Grid:</strong> Fixed, the credits logo was incorrect when the <code>highcharts-dark</code> or <code>highcharts-light</code> class was added to the parent container.</p>
-                      </li>
+                      <li><strong>Grid:</strong> Fixed keyboard navigation, the focus was getting trapped when using shift + tab.</li>
+                      <li><strong>Grid:</strong> Fixed error thrown when adjusting row heights of empty grid.</li>
+                      <li><strong>Grid:</strong> Fixed inconsistent cell widths per column after sorting.</li>
+                      <li><strong>Grid:</strong> Fixed <a href="https://github.com/highcharts/highcharts/issues/23241">#23241</a>, Grid with sorted column was not updated after modification of its Data Table.</li>
+                      <li><strong>Grid:</strong> Fixed, the credits logo was incorrect when the <code>highcharts-dark</code> or <code>highcharts-light</code> class was added to the parent container.</li>
                     </ul>
 
                   </div>
