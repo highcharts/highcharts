@@ -1106,6 +1106,11 @@ let success = 0,
             title: {
                 text: 'Testing scatter3d'
             },
+            chart: {
+                options3d: {
+                    enabled: true
+                }
+            },
             series: [{
                 type: 'scatter3d',
                 data: [

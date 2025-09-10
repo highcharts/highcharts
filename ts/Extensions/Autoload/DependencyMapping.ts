@@ -304,6 +304,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     'series.geoheatmap': [
         'modules/geoheatmap'
     ],
+    'series.heatmap': [
+        'modules/heatmap'
+    ],
     'series.heikinashi': [
         'modules/heikinashi'
     ],

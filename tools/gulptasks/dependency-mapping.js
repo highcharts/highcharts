@@ -132,7 +132,8 @@ code {
     let js = 'let success = 0,\n    failed = 0;\n';
     seriesTypes.forEach(seriesType => {
 
-        let data = '[1, 3, 2, 4]';
+        let data = '[1, 3, 2, 4]',
+            options3d = '';
         if (['arcdiagram', 'dependencywheel', 'sankey'].includes(seriesType)) {
             data = `[
                     ['A', 'B', 1],
@@ -174,6 +175,12 @@ code {
                     [2, 3, 4],
                     [3, 4, 5]
                 ]`;
+            options3d = `
+            chart: {
+                options3d: {
+                    enabled: true
+                }
+            },`;
         } else if (seriesType === 'vector') {
             data = `[
                     [0, 0, 1, 1],
@@ -218,7 +225,7 @@ code {
         await Highcharts.${factory}(container, {
             title: {
                 text: 'Testing ${seriesType}'
-            },
+            },${options3d}
             series: [{
                 type: '${seriesType.replace('series.', '')}',
                 data: ${data}
