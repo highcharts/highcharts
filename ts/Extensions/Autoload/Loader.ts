@@ -182,20 +182,17 @@ const loadFile = async (file: string): Promise<undefined> => {
             resolve(void 0);
         };
 
-        if (file.endsWith('.css')) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = `${root}${file}`;
-            link.onload = onload;
-            link.onerror = reject;
-            document.head.appendChild(link);
+        const isCss = file.endsWith('.css'),
+            el = document.createElement(isCss ? 'link' : 'script');
+        if (isCss) {
+            (el as HTMLLinkElement).rel = 'stylesheet';
+            (el as HTMLLinkElement).href = `${root}${file}`;
         } else {
-            const script = document.createElement('script');
-            script.src = `${root}${file}${extension}`;
-            script.onload = onload;
-            script.onerror = reject;
-            document.head.appendChild(script);
+            (el as HTMLScriptElement).src = `${root}${file}${extension}`;
         }
+        el.onload = onload;
+        el.onerror = reject;
+        document.head.appendChild(el);
     });
 };
 
