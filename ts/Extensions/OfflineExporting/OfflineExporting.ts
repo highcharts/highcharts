@@ -371,7 +371,7 @@ namespace OfflineExporting {
                     if (variant === 'normal') {
                         normalBase64 = base64;
                     }
-                } catch (e) {
+                } catch {
                     // If fetch or reading fails, fallback to next variant
                 }
             } else {

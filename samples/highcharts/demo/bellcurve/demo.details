@@ -1,6 +1,8 @@
 ---
 name: Bell curve
 js_wrap: b
+authors:
+  - Tord Vikestad
 tags:
   - Highcharts demo
 categories:

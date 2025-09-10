@@ -520,7 +520,7 @@ class LegendComponent extends AccessibilityComponent {
                 ]
             ],
 
-            validate: function (): (boolean) {
+            validate: function (): boolean {
                 return component.shouldHaveLegendNavigation();
             },
 
@@ -591,7 +591,7 @@ class LegendComponent extends AccessibilityComponent {
     /**
      * @private
      */
-    public shouldHaveLegendNavigation(): (boolean) {
+    public shouldHaveLegendNavigation(): boolean {
         if (!shouldDoLegendA11y(this.chart)) {
             return false;
         }

@@ -28,6 +28,7 @@ import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
 import FilterPopup from './FilterPopup.js';
+import ColumnFiltering from '../Actions/ColumnFiltering/ColumnFiltering.js';
 
 
 /* *
@@ -113,11 +114,15 @@ class TableHeader {
             return;
         }
 
+        // Render regular, multiple level rows.
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
             const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
             row.renderMultipleLevel(i);
             this.rows.push(row);
         }
+
+        // Render a row with empty cells for filtering.
+        ColumnFiltering.renderFilterRow(vp, this.levels);
     }
 
     /**

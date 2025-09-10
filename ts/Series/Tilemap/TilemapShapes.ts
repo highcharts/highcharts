@@ -465,7 +465,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
         haloPath: function (
             this: TilemapPoint,
             size: number
-        ): SVGPath { // eslint-disable-line @typescript-eslint/indent
+        ): SVGPath { // eslint-disable-line @stylistic/indent
             return ScatterSeries.prototype.pointClass.prototype.haloPath
                 .call(
                     this,

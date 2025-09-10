@@ -96,12 +96,12 @@ export interface ConnectorsStartMarkerOptions {
     width?: number;
 }
 
-export type PathfinderTypeValue = (
+export type PathfinderTypeValue = string; /* @todo (
     'straight'|
     'fastAvoid'|
     'simpleConnect'|
     string
-);
+);*/
 
 /* *
  *

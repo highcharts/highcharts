@@ -1,4 +1,4 @@
-describe('Grid events.', () => {
+describe('Grid sorting.', () => {
     before(() => {
         cy.visit('grid-pro/cypress/sorting-options');
     });

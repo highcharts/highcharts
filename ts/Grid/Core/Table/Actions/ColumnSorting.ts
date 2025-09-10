@@ -145,6 +145,10 @@ class ColumnSorting {
         const sortingController = querying.sorting;
         const a11y = viewport.grid.accessibility;
 
+        fireEvent(this.column, 'beforeSorting', {
+            target: this.column
+        });
+
         sortingController.setSorting(order, this.column.id);
         await viewport.updateRows();
 

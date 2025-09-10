@@ -10,9 +10,25 @@ Grid.grid('container', {
         }
     },
     columnDefaults: {
+        filtering: {
+            enabled: true
+        },
         events: {
+            beforeSorting: function () {
+                doc.getElementById('beforeColumnSorting').value =
+                    'beforeSorting';
+            },
             afterSorting: function () {
-                doc.getElementById('columnSorting').value = 'afterSorting';
+                doc.getElementById('afterColumnSorting').value =
+                    'afterSorting';
+            },
+            beforeFiltering: function () {
+                doc.getElementById('beforeColumnFiltering').value =
+                    'beforeFiltering';
+            },
+            afterFiltering: function () {
+                doc.getElementById('afterColumnFiltering').value =
+                    'afterFiltering';
             },
             afterResize: function () {
                 doc.getElementById('columnResizing').value = 'columnResizing';
@@ -64,9 +80,21 @@ Grid.grid('container', {
     columns: [{
         id: 'weight',
         events: {
+            beforeSorting: function () {
+                doc.getElementById('beforeColumnSorting').value =
+                    'beforeSortingColumnOption';
+            },
             afterSorting: function () {
-                doc.getElementById('columnSorting').value =
+                doc.getElementById('afterColumnSorting').value =
                     'afterSortingColumnOption';
+            },
+            beforeFiltering: function () {
+                doc.getElementById('beforeColumnFiltering').value =
+                    'beforeFilteringColumnOption';
+            },
+            afterFiltering: function () {
+                doc.getElementById('afterColumnFiltering').value =
+                    'afterFilteringColumnOption';
             },
             afterResize: function () {
                 doc.getElementById('columnResizing').value =

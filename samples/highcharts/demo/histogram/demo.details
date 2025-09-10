@@ -1,6 +1,8 @@
 ---
 name: Histogram
 js_wrap: b
+authors:
+  - Tord Vikestad
 tags:
   - Highcharts demo
 categories:

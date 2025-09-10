@@ -20,8 +20,9 @@ import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions'
 import type BellcurveSeries from './BellcurveSeries';
 import type DerivedComposition from '../DerivedComposition';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type { PointMarkerOptions, PointShortOptions } from '../../Core/Series/PointOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import BellcurvePointOptions from './BellcurvePointOptions';
 
 /* *
  *
@@ -58,7 +59,7 @@ import type ColorType from '../../Core/Color/ColorType';
  * @excluding boostThreshold, connectNulls, dragDrop, stacking, pointInterval,
  *            pointIntervalUnit
  *
- * @excluding dataParser, dataURL, data, boostThreshold, boostBlending
+ * @excluding dataParser, dataURL, boostThreshold, boostBlending
  *
  * @requires modules/histogram-bellcurve
  */
@@ -71,7 +72,30 @@ export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, Derived
      * @type {number|string}
      */
     baseSeries?: (number|string);
-    data?: undefined;
+
+    /**
+     * An array of data points for the series. For the `bellcurve` series type,
+     * points can be given in the following way:
+     *
+     * An array of numerical values. In this case, the numerical values will
+     *  be
+     *    used to calculate the `x` and `y` values. Example:
+     *    ```js
+     *    data: [0, 5, 3, 5]
+     *    ```
+     *
+     * Data can also be passed in the form of a derived series.
+     *
+     * @sample {highcharts} highcharts/chart/reflow-true/
+     *         Numerical values
+     *
+     * @type {Array<number|null>|null|*}
+     *
+     * @extends series.line.data
+     *
+     * @product highcharts
+     */
+    data?: Array<(BellcurvePointOptions|PointShortOptions)>;
 
     /**
      * This option allows to define the length of the bell curve. A unit of

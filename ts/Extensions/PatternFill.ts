@@ -89,7 +89,7 @@ export interface PatternObject {
 }
 
 export interface PatternOptionsObject {
-    _inverted?: (Boolean);
+    _inverted?: boolean;
     _height?: (number|string);
     _width?: (number|string);
     _x?: number;

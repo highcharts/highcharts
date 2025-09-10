@@ -236,7 +236,7 @@ const syncPair: Sync.SyncPair = {
 
         if (chart && board && chart.zooming?.type) {
             const dimensions = chart.zooming.type.split('')
-                .map((c): String => c + 'Axis') as ('xAxis'|'yAxis')[];
+                .map((c): string => c + 'Axis') as ('xAxis'|'yAxis')[];
             const unregisterCallbacks: (() => void)[] = [];
 
             dimensions.forEach((dimension): void => {
