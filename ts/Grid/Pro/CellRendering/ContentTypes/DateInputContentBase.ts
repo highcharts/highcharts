@@ -177,15 +177,6 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
      */
     protected abstract convertToInputValue(): string;
 
-    /*
-    {
-        return this.cell.column.viewport.grid.time.dateFormat(
-            '%Y-%m-%d',
-            Number(this.cell.value || 0)
-        );
-    }
-    */
-
     private readonly onChange = (e: Event): void => {
         this.changeHandler?.(e);
     };
