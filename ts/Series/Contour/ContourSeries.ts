@@ -236,8 +236,86 @@ class ContourSeries extends ScatterSeries {
                     0,
                     valueExtremesUniform
                 );
+
+                this.setContourIntervalUniform();
+                this.setSmoothColoringUniform();
+                this.setShowContourLinesUniform();
             }
         }
+    }
+
+    /**
+     * Set the contour interval uniform according to the series options.
+     */
+    public setContourIntervalUniform(rerender = false): void {
+        if (this.device && this.contourIntervalUniformBuffer) {
+
+
+            this.device.queue.writeBuffer(
+                this.contourIntervalUniformBuffer,
+                0,
+                new Float32Array([this.getContourInterval()])
+            );
+
+            if (rerender) {
+                this.render?.();
+            }
+        }
+    }
+
+    /**
+     * Set the smooth coloring uniform according to the series options.
+     */
+    public setSmoothColoringUniform(rerender = false): void {
+        if (this.device && this.smoothColoringUniformBuffer) {
+            this.device.queue.writeBuffer(
+                this.smoothColoringUniformBuffer,
+                0,
+                new Float32Array([this.getSmoothColoring()])
+            );
+
+            if (rerender) {
+                this.render?.();
+            }
+        }
+    }
+
+    /**
+     * Set the show contour lines uniform according to the series options.
+     */
+    public setShowContourLinesUniform(rerender = false): void {
+        if (this.device && this.showContourLinesUniformBuffer) {
+            this.device.queue.writeBuffer(
+                this.showContourLinesUniformBuffer,
+                0,
+                new Float32Array([this.getShowContourLines()])
+            );
+
+            if (rerender) {
+                this.render?.();
+            }
+        }
+    }
+
+    private getContourInterval(): number {
+        const options = this.options as any;
+        const interval = options.contourInterval;
+
+        if (isNaN(interval) || interval <= 0) {
+            return -1;
+        }
+
+        return interval;
+    }
+
+    private getSmoothColoring(): number {
+        const options = this.options as any;
+        return options.smoothColoring ? 1 : 0;
+    }
+
+    private getShowContourLines(): number {
+        const options = this.options as any;
+        return options.showContourLines ? 1 : 0;
     }
 
     // Place-holder
