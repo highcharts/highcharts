@@ -37,9 +37,6 @@ const grid = Grid.grid('container', {
     }]
 });
 
-/**
- * Grid init
- */
 jsonBtn.addEventListener('click', () => {
     result.innerHTML = grid.getJSON();
 });

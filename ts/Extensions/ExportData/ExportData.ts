@@ -40,7 +40,7 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../DownloadURL.js';
+import DownloadURL from '../../Shared/DownloadURL.js';
 const { downloadURL } = DownloadURL;
 import ExportDataDefaults from './ExportDataDefaults.js';
 import G from '../../Core/Globals.js';
