@@ -20,6 +20,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type Tooltip from '../../Core/Tooltip';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 
@@ -337,7 +338,7 @@ function onGetPlotBox(
 function onAfterDrawChartBox(this: Chart): void {
     const chart = this;
 
-    let clipRect;
+    let clipRect: SVGElement | undefined;
 
     if (chart.series.find((series): boolean => !!series.zooming)) {
         chart.zoomClipRect ||= chart.renderer.clipRect();
@@ -355,7 +356,9 @@ function onAfterDrawChartBox(this: Chart): void {
     }
 
     chart.seriesGroup?.clip(clipRect);
-    chart.dataLabelsGroup?.clip(clipRect);
+    chart.series.forEach((series): void => {
+        series.dataLabelsGroup?.clip(clipRect);
+    });
 }
 
 /**
