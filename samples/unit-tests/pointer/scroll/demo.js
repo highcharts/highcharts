@@ -111,3 +111,53 @@ QUnit.skip(
         }
     }
 );
+
+QUnit.test(
+    'Pointer should clear chartPosition on scroll,' +
+    'including shadow DOM parents', function (assert) {
+        // 1. Setup a DOM structure with a scrollable parent for
+        // a shadow DOM host
+        const scrollableParent = document.createElement('div');
+        scrollableParent.style.cssText = 'overflow:scroll; height:100px;';
+        const content = document.createElement('div');
+        content.style.height = '200px'; // Make parent scrollable
+        scrollableParent.appendChild(content);
+
+        const host = document.createElement('div');
+        content.appendChild(host);
+        document.body.appendChild(scrollableParent);
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+
+        const container = document.createElement('div');
+        container.style.height = '400px';
+        shadowRoot.appendChild(container);
+
+        // 2. Create the chart
+        const chart = Highcharts.chart(container, {
+            series: [{ data: [1, 5, 2, 4] }]
+        });
+        const controller = new TestController(chart);
+
+        // 3. Trigger a mouse move to attach the scroll listeners.
+        controller.mouseMove(100, 100);
+
+        // 4. Test that scrolling the parent clears the cached chart position
+        chart.pointer.chartPosition = { left: 1, top: 1 }; // Set mock position
+        assert.ok(
+            chart.pointer.chartPosition,
+            'Pre-condition: chartPosition should be set before scroll.'
+        );
+
+        scrollableParent.dispatchEvent(new Event('scroll'));
+        assert.strictEqual(
+            chart.pointer.chartPosition,
+            undefined,
+            'chartPosition should be cleared when parent outside shadow DOM' +
+            'scrolls.'
+        );
+
+        // 5. Clean up
+        chart.destroy();
+        document.body.removeChild(scrollableParent);
+    }
+);
