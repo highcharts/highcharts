@@ -15,6 +15,6 @@ QUnit.test('Contour plot tests', function (assert) {
     assert.strictEqual(
         c.series[0].d(),
         true,
-        'Delauney works'
+        'Delaunay triangulation works'
     );
 });
