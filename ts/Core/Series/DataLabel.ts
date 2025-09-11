@@ -58,8 +58,8 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         bottom?: number;
         contrastColor?: ColorString;
         dataLabel?: SVGElement|SVGLabel;
@@ -82,8 +82,8 @@ declare module './PointOptions' {
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         dataLabelPositioners?: DataLabel.PositionersObject;
         dataLabelsGroup?: SVGElement;
         hasDataLabels?(): boolean;
@@ -133,8 +133,8 @@ declare module './SeriesOptions' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         options?: DataLabelOptions;
     }
 }

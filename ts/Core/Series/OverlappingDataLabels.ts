@@ -42,14 +42,14 @@ const {
  *
  * */
 
-declare module '../Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Chart/ChartBase' {
+    interface ChartBase {
         hideOverlappingLabels(labels: Array<SVGElement>): void;
     }
 }
 
-declare module '../Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         absoluteBox?: BBoxObject;
     }
 }

@@ -43,8 +43,8 @@ const { attr } = U;
  * Internal types.
  * @private
  */
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         announcerContainer?: HTMLDOMElement;
     }
 }

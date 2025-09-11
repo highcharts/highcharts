@@ -31,8 +31,8 @@ import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         temperature?: number;
     }
 }

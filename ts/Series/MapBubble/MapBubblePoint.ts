@@ -38,8 +38,8 @@ const { extend } = U;
  *
  * */
 
-declare module '../../Core/Series/KDPointSearchObjectLike' {
-    interface KDPointSearchObjectLike {
+declare module '../../Core/Series/KDPointSearchObjectBase' {
+    interface KDPointSearchObjectBase {
         plotX?: number;
         plotY?: number;
     }

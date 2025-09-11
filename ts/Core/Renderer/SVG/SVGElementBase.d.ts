@@ -14,10 +14,13 @@
  *
  * */
 
-export interface ChartLike {
-    // Nothing here yet
+/**
+ * Optional properties for the SVGElement class. Should be defined outside of
+ * this file by `declare module` pattern.
+ */
+export interface SVGElementBase {
+    [key: string]: any;
 }
-
 
 /* *
  *
@@ -25,4 +28,4 @@ export interface ChartLike {
  *
  * */
 
-export default ChartLike;
+export default SVGElementBase;

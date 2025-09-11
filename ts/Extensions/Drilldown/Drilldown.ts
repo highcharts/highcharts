@@ -71,8 +71,8 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         ddPoints?: Record<string, Array<(false|Point)>>;
         oldPos?: number;
         drilldownCategory(x: number, e: MouseEvent): void;
@@ -80,14 +80,14 @@ declare module '../../Core/Axis/AxisLike' {
     }
 }
 
-declare module '../../Core/Axis/TickLike' {
-    interface TickLike {
+declare module '../../Core/Axis/TickBase' {
+    interface TickBase {
         drillable(): void;
     }
 }
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         ddDupes?: Array<string>;
         drilldownLevels?: Array<Drilldown.LevelObject>;
         drillUpButton?: SVGElement;
@@ -117,8 +117,8 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
     }
 }

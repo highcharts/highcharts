@@ -19,7 +19,7 @@ import type {
     KlingerParamsOptions
 } from './KlingerOptions';
 import type KlingerPoint from './KlingerPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -283,7 +283,7 @@ class KlingerIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: KlingerParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const Klinger: Array<Array<number>> = [],

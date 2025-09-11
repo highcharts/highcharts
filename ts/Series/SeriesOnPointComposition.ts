@@ -46,8 +46,8 @@ const {
 type CenterObject = { positions: Array<number> };
 type zData = Array<number|null>;
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         onPoint?: SeriesOnPointComposition.Additions;
         onPointSupported?: boolean;
     }

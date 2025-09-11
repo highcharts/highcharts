@@ -70,8 +70,8 @@ declare module './AxisType' {
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         /** @requires modules/broken-axis */
         drawBreaks(axis: Axis, keys: Array<string>): void;
         /** @requires modules/broken-axis */

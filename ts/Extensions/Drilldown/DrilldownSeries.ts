@@ -55,8 +55,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         drilldown?: string;
         doDrilldown(): void;
         runDrilldown(
@@ -68,8 +68,8 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         drilldownLevel?: Drilldown.LevelObject;
         isDrilling?: boolean;
         purgedOptions?: SeriesTypeOptions;

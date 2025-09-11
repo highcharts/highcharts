@@ -40,15 +40,15 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         variwide?: boolean;
         zData?: Array<number>;
     }
 }
 
-declare module '../../Core/Axis/TickLike' {
-    interface TickLike {
+declare module '../../Core/Axis/TickBase' {
+    interface TickBase {
         postTranslate(
             xy: PositionObject,
             xOrY: keyof PositionObject,

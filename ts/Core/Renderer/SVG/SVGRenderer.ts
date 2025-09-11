@@ -32,7 +32,7 @@ import type PositionObject from '../PositionObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
-import type SVGRendererLike from './SVGRendererLike';
+import type SVGRendererBase from './SVGRendererBase';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolKey } from './SymbolType';
 
@@ -145,7 +145,7 @@ let hasInternalReferenceBug: (boolean|undefined);
  *        some cases, but not when set explicitly through `.attr` and `.css`
  *        etc.
  */
-class SVGRenderer implements SVGRendererLike {
+class SVGRenderer implements SVGRendererBase {
 
     /**
      * The root `svg` node of the renderer.
@@ -2118,7 +2118,7 @@ class SVGRenderer implements SVGRendererLike {
  *
  * */
 
-interface SVGRenderer extends SVGRendererLike {
+interface SVGRenderer extends SVGRendererBase {
     Element: typeof SVGElement;
     SVG_NS: string;
     escapes: Record<string, string>;

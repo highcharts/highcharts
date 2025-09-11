@@ -25,7 +25,7 @@ import type {
     CMFParamsOptions
 } from './CMFOptions';
 import type CMFPoint from './CMFPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -163,7 +163,7 @@ class CMFIndicator extends SMAIndicator {
      */
     public getValues<TLinkedSeries extends LineSeries>(
         this: CMFIndicator,
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: CMFParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         if (!this.isValid()) {
@@ -199,7 +199,7 @@ class CMFIndicator extends SMAIndicator {
      */
     public getMoneyFlow<TLinkedSeries extends LineSeries>(
         xData: Array<number>,
-        seriesYData: IndicatorLinkedSeriesLike['yData'],
+        seriesYData: IndicatorLinkedSeriesBase['yData'],
         volumeSeriesYData: Array<number>,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {

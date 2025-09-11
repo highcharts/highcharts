@@ -72,8 +72,8 @@ declare module '../AxisComposition' {
     }
 }
 
-declare module '../AxisLike' {
-    interface AxisLike {
+declare module '../AxisBase' {
+    interface AxisBase {
         utils: TreeGridAxisUtilsObject;
     }
 }

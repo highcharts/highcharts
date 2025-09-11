@@ -20,11 +20,11 @@ import type Series from '../../Core/Series/Series';
  *
  * */
 
-export interface IndicatorLike extends Series {
+export interface IndicatorBase extends Series {
     useCommonDataGrouping?: boolean;
 }
 
-export interface IndicatorLinkedSeriesLike {
+export interface IndicatorLinkedSeriesBase {
     processedYData?: (
         Array<(number|null)>|
         Array<Array<(number|null)>>
@@ -42,4 +42,4 @@ export interface IndicatorLinkedSeriesLike {
  *
  * */
 
-export default IndicatorLike;
+export default IndicatorBase;

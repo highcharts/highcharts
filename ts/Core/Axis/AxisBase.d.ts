@@ -32,7 +32,7 @@ import type Tick from './Tick';
  * Use the `declare module 'Types'` pattern to overload the interface in this
  * definition file.
  */
-export interface AxisLike {
+export interface AxisBase {
     categories?: Array<string>;
     chart: Chart;
     coll: string;
@@ -54,4 +54,4 @@ export interface AxisLike {
  *
  * */
 
-export default AxisLike;
+export default AxisBase;

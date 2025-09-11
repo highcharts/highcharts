@@ -18,7 +18,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type Axis from '../../Core/Axis/Axis';
-import type GlobalsLike from '../../Core/GlobalsLike';
+import type GlobalsBase from '../../Core/GlobalsBase';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
@@ -41,7 +41,7 @@ const { getAssignedAxis } = NBU;
  *
  * */
 
-const composedClasses: Array<(Function|GlobalsLike)> = [],
+const composedClasses: Array<(Function|GlobalsBase)> = [],
     defaultOptions: MouseWheelZoomOptions = {
         enabled: true,
         sensitivity: 1.1

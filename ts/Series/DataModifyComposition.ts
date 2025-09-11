@@ -43,8 +43,8 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Core/Axis/AxisBase' {
+    interface AxisBase {
         setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
         setModifier(
@@ -55,15 +55,15 @@ declare module '../Core/Axis/AxisLike' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         change?: number;
         cumulativeSum?: number;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         dataModify?: DataModifyComposition.Additions;
         setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
