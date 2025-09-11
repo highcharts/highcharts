@@ -82,9 +82,9 @@ export interface PaginationControlsOptions {
 export interface PaginationLangOptions {
     /**
      * Text for the page information display.
-     * Placeholders: {start}, {end}, {total}
+     * Placeholders: {start}, {end}, {total}, {currentPage}, {totalPages}
      *
-     * @default "Showing {start} - {end} of {total}"
+     * @default "Showing {start} - {end} of {total} (page {currentPage} of {totalPages})" // eslint-disable-line
      */
     pageInfo: string;
 

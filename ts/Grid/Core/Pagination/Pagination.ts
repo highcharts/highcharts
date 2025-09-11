@@ -396,7 +396,9 @@ class Pagination {
         const pageInfoText = this.formatText(this.lang.pageInfo, {
             start: startItem,
             end: endItem,
-            total: this.totalItems
+            total: this.totalItems,
+            currentPage: this.currentPage,
+            totalPages: this.totalPages
         });
 
         this.pageInfoElement.innerHTML = pageInfoText;
@@ -453,7 +455,7 @@ class Pagination {
         }
 
         this.firstButton = makeHTMLElement('button', {
-            innerHTML: '&laquo;',
+            innerHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 9L1 5L5 1M9 9L5 5L9 1" stroke="currentColor" stroke-width="1.34" stroke-linecap="round" stroke-linejoin="round"/></svg>',
             className: Globals.getClassName('paginationButton')
         }, container);
         this.firstButton.title = this.lang.firstPage;
@@ -484,7 +486,7 @@ class Pagination {
         }
 
         this.prevButton = makeHTMLElement('button', {
-            innerHTML: '&lsaquo;',
+            innerHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 10" fill="none"><path d="M5 9L1 5L5 1" stroke="currentColor" stroke-width="1.34" stroke-linecap="round" stroke-linejoin="round"/></svg>',
             className: Globals.getClassName('paginationButton')
         }, container);
         this.prevButton.title = this.lang.previousPage;
@@ -515,7 +517,7 @@ class Pagination {
         }
 
         this.nextButton = makeHTMLElement('button', {
-            innerHTML: '&rsaquo;',
+            innerHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 4 10" fill="none"><path d="M1 1L5 5L1 9" stroke="currentColor" stroke-width="1.34" stroke-linecap="round" stroke-linejoin="round"/></svg>',
             className: Globals.getClassName('paginationButton')
         }, container);
         this.nextButton.title = this.lang.nextPage;
@@ -546,7 +548,7 @@ class Pagination {
         }
 
         this.lastButton = makeHTMLElement('button', {
-            innerHTML: '&raquo;',
+            innerHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1L9 5L5 9M1 1L5 5L1 9" stroke="currentColor" stroke-width="1.34" stroke-linecap="round" stroke-linejoin="round"/></svg>',
             className: Globals.getClassName('paginationButton')
         }, container);
         this.lastButton.title = this.lang.lastPage;

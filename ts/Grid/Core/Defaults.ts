@@ -61,7 +61,8 @@ namespace Defaults {
             loading: 'Loading...',
             noData: 'No data to display',
             pagination: {
-                pageInfo: 'Showing {start} - {end} of {total}',
+                pageInfo: `Showing {start} - {end} of {total}
+                    (page {currentPage} of {totalPages})`,
                 pageSizeLabel: 'rows per page',
                 firstPage: 'First page',
                 previousPage: 'Previous page',
