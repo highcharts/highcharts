@@ -42,7 +42,10 @@ Highcharts.chart('container', {
         {
             type: 'treegraph',
             keys: ['parent', 'id', 'name', 'level', 'custom.iconSVG'],
-            data,
+            data: data.map(e => [
+                e[0], e[1], e[2], e[3], // Pass these through as is
+                e[4] && document.getElementById(e[4]).innerHTML // icon
+            ]),
             clip: false,
             marker: {
                 radius: 0.1
@@ -54,13 +57,27 @@ Highcharts.chart('container', {
             dataLabels: {
                 crop: false,
                 allowOverlap: true,
-                useHTML: true,
-                pointFormat: '{point.name}<br>{point.custom.iconSVG}',
+                pointFormat: '~{multiply -1 point.level} Mya',
+                align: 'left',
+                verticalAlign: 'bottom',
                 style: {
-                    color: 'var(--highcharts-neutral-color-100, #000)',
-                    whiteSpace: 'nowrap'
+                    color: 'var(--highcharts-neutral-color-60, #a1a1a1)',
+                    fontWeight: 'normal'
                 }
-            }
+            },
+            levels: [{
+                level: 0,
+                dataLabels: {
+                    align: 'center',
+                    pointFormat: '{point.name}<br>{point.custom.iconSVG}',
+                    style: {
+                        color: 'var(--highcharts-neutral-color-100, #000000)',
+                        fontWeight: 'bold',
+                        whiteSpace: 'nowrap'
+                    },
+                    useHTML: true
+                }
+            }]
         }
     ]
 });
