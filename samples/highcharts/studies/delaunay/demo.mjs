@@ -1,18 +1,30 @@
 // eslint-disable-next-line node/no-unpublished-import
 import Delaunay from '../../../../code/es-modules/Shared/Delaunay.js';
 
-const pts = new Float32Array(
-    Array.from({ length: 1e3 * 2 }, () => Math.random() * 100 - 50)
-);
+const gl = document.getElementById('canvas').getContext('webgl2');
+const program = createShaderProgram();
+const pointsNo = document.getElementById('points-no');
+const generatePointsBtn = document.getElementById('generate-points');
+const triangulationTime = document.getElementById('triangulation-time');
 
-console.time('Delaunay');
-const ids = new Delaunay(pts).triangles;
-console.timeEnd('Delaunay');
+generateAndRender();
+generatePointsBtn.addEventListener('click', generateAndRender);
 
-renderTriangulation(pts, ids);
+function generateAndRender() {
+    const pts = new Float32Array(Array.from({
+        length: pointsNo.value * 2
+    }, () => Math.random() * 100 - 50));
 
-function renderTriangulation(p, idx) {
-    const gl = document.getElementById('canvas').getContext('webgl2');
+    const startTime = performance.now();
+    const ids = new Delaunay(pts).triangles;
+    const endTime = performance.now();
+
+    triangulationTime.textContent = (endTime - startTime).toFixed(2);
+
+    renderTriangulation(pts, ids);
+}
+
+function createShaderProgram() {
     const vs = `#version 300 es
         in vec2 pos;
         uniform vec4 u;
@@ -28,18 +40,24 @@ function renderTriangulation(p, idx) {
             o = vec4(1);
         }
     `;
+
     function shader(t, s) {
         const x = gl.createShader(t);
         gl.shaderSource(x, s);
         gl.compileShader(x);
         return x;
     }
+
     const program = gl.createProgram();
     gl.attachShader(program, shader(gl.VERTEX_SHADER, vs));
     gl.attachShader(program, shader(gl.FRAGMENT_SHADER, fs));
     gl.linkProgram(program);
     gl.useProgram(program);
 
+    return program;
+}
+
+function renderTriangulation(p, idx) {
     const vbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.bufferData(gl.ARRAY_BUFFER, p, gl.STATIC_DRAW);
