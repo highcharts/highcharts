@@ -2,7 +2,7 @@
 import Delaunay from '../../../../code/es-modules/Shared/Delaunay.js';
 
 const pts = new Float32Array(
-    Array.from({ length: 2e3 }, () => Math.random())
+    Array.from({ length: 1e3 * 2 }, () => Math.random() * 100 - 50)
 );
 
 console.time('Delaunay');
