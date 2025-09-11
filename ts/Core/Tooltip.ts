@@ -596,7 +596,6 @@ class Tooltip {
                             )
                         ) {
                             U.clearTimeout(this.hideTimer);
-                            return;
                         }
                     }
                 );
