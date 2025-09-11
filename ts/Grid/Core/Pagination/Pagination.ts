@@ -849,7 +849,7 @@ class Pagination {
         }
 
         this.grid.querying.pagination.setRange(
-            ignoreDataRange ? this.currentPage : 1
+            ignoreDataRange ? 1 : this.currentPage
         );
 
         // Trigger the grid to update its data and viewport
