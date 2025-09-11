@@ -137,3 +137,27 @@
         }
     });
 })();
+
+/*
+// @todo Autoload indicators with esm. Currently it fails with autoload, due to
+// loading different instances of Chart and seriesTypes. When explicitly loading
+// the modules (commented out), it works.
+(async () => {
+    const { default: Highcharts } = await import(
+        'https://code.highcharts.com/esm/highcharts-autoload.js'
+    );
+
+    // await import('https://code.highcharts.com/esm/modules/stock.js');
+    // await import('https://code.highcharts.com/esm/indicators/indicators.js');
+
+    await Highcharts.stockChart('container', {
+        title: {
+            text: 'Testing abands'
+        },
+        series: [{
+            type: 'sma',
+            data: [1, 3, 2, 4]
+        }]
+    });
+})();
+*/
