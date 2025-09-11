@@ -263,7 +263,7 @@ class TreegraphSeries extends TreemapSeries {
         const links = [] as TreegraphLink[];
         this.data.forEach((point): void => {
             const levelOptions =
-                (series.mapOptionsToLevel as any)[point.node.level || 0] || {};
+                (series.mapOptionsToLevel as any)[point.node.level ?? 0] || {};
             if (point.node.parent) {
                 const pointOptions = merge(levelOptions, point.options);
                 if (!point.linkToParent || point.linkToParent.destroyed) {
@@ -305,7 +305,7 @@ class TreegraphSeries extends TreemapSeries {
         parent?: string
     ): this['tree'] {
         const point = this.points[index];
-        level = (point && point.level) || level;
+        level = (point && point.level) ?? level;
         return super.buildTree.call(this, id, index, level, list, parent);
     }
 
@@ -594,7 +594,7 @@ class TreegraphSeries extends TreemapSeries {
     ): SVGAttributes {
         const series = this,
             levelOptions = point &&
-                (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
+                (series.mapOptionsToLevel as any)[point.node.level ?? 0] || {},
             options = point && point.options,
             stateOptions =
                 (levelOptions.states &&
