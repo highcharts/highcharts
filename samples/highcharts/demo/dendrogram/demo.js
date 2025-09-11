@@ -3,17 +3,17 @@
 const data = [
     [undefined, 'root', '', -45],
     ['root', 'procyonidae_ailuridae', '', -30],
-    ['procyonidae_ailuridae', 'red', 'Red Panda', 0, 'bear-icon'],
-    ['procyonidae_ailuridae', 'raccoon', 'Raccoon', 0, 'bear-icon'],
+    ['procyonidae_ailuridae', 'red', 'Red Panda', 0, 'redpanda-icon'],
+    ['procyonidae_ailuridae', 'raccoon', 'Raccoon', 0, 'raccoon-icon'],
     ['root', 'ursidae', '', -20],
-    ['ursidae', 'giant', 'Giant Panda', 0, 'bear-icon'],
-    ['ursidae', 'ursinae_tremarctinae', '', -10],
-    ['ursinae_tremarctinae', 'spectacled', 'Spectacled Bear', 0, 'bear-icon'],
-    ['ursinae_tremarctinae', 'ursus', '', -4],
-    ['ursus', 'black', 'Black Bear', 0, 'bear-icon'],
+    ['ursidae', 'giant', 'Giant Panda', 0, 'panda-icon'],
+    ['ursidae', 'tremarctinae', '', -10],
+    ['tremarctinae', 'spectacled', 'Spectacled Bear', 0, 'spectacled-icon'],
+    ['tremarctinae', 'ursus', '', -4],
+    ['ursus', 'black', 'Black Bear', 0, 'blackbear-icon'],
     ['ursus', 'brown_polar', '', -0.5],
-    ['brown_polar', 'polar', 'Polar Bear', 0, 'bear-icon'],
-    ['brown_polar', 'brown', 'Brown Bear', 0, 'bear-icon']
+    ['brown_polar', 'polar', 'Polar Bear', 0, 'polarbear-icon'],
+    ['brown_polar', 'brown', 'Brown Bear', 0, 'brownbear-icon']
 ];
 
 Highcharts.chart('container', {
