@@ -1,8 +1,15 @@
 // eslint-disable-next-line node/no-unpublished-import
 import Delaunay from '../../../../code/es-modules/Shared/Delaunay.js';
 
-const pts = new Float32Array(Array.from({ length: 100 }, () => Math.random()));
-renderTriangulation(pts, new Delaunay(pts).triangles);
+const pts = new Float32Array(
+    Array.from({ length: 2e3 }, () => Math.random())
+);
+
+console.time('Delaunay');
+const ids = new Delaunay(pts).triangles;
+console.timeEnd('Delaunay');
+
+renderTriangulation(pts, ids);
 
 function renderTriangulation(p, idx) {
     const gl = document.getElementById('canvas').getContext('webgl2');
