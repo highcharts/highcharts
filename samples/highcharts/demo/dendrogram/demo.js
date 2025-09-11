@@ -20,7 +20,8 @@ Highcharts.chart('container', {
     chart: {
         inverted: true,
         marginBottom: 90,
-        marginLeft: 80
+        marginLeft: 80,
+        marginRight: 40
     },
     title: {
         text: 'Evolution dendrogram'
@@ -69,13 +70,16 @@ Highcharts.chart('container', {
                 level: 0,
                 dataLabels: {
                     align: 'center',
+                    overflow: 'allow',
                     pointFormat: '{point.name}<br>{point.custom.iconSVG}',
                     style: {
                         color: 'var(--highcharts-neutral-color-100, #000000)',
                         fontWeight: 'bold',
                         whiteSpace: 'nowrap'
                     },
-                    useHTML: true
+                    verticalAlign: 'top',
+                    useHTML: true,
+                    y: 10
                 }
             }]
         }
