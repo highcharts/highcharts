@@ -1460,4 +1460,22 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
         );
 }
 
+@media (max-width: 1024px) {
+    .hcg-pagination-wrapper,
+    .highcharts-datagrid-pagination-wrapper {
+        flex-direction: column;
+        float: none;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .hcg-pagination-wrapper .hcg-pagination-info,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-info,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
 /* End Grid Default Theme */

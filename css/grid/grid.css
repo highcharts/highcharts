@@ -1245,4 +1245,18 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         );
 }
 
+@media (max-width: 1024px) {
+    .hcg-pagination-wrapper {
+        flex-direction: column;
+        float: none;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .hcg-pagination-wrapper .hcg-pagination-info,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
 /* End Grid Default Theme */
