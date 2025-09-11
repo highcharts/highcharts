@@ -1317,6 +1317,14 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     margin-left: 8px;
     cursor: pointer;
     min-height: 32px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;;
+    padding-right: 25px;
 }
 
 /* Helpers */
@@ -1385,6 +1393,16 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
                 url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
             );
     }
+    
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+}
+
+.highcharts-dark .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
+.highcharts-dark .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .highcharts-dark .hcg-theme-default,
