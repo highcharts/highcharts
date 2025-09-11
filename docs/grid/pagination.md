@@ -184,6 +184,57 @@ Control the visibility of navigation buttons. Each control can be set as a boole
     }
 ```
 
+## Public API Methods
+
+The pagination instance provides several public methods that allow you to programmatically control pagination behavior:
+
+### goToPage(pageNumber)
+
+Navigates to a specific page in the grid.
+
+```js
+// Navigate to page 3
+grid.pagination.goToPage(3);
+```
+
+**Parameters:**
+- `pageNumber` (number): The page number to navigate to (starts from 1)
+
+**Example:**
+```js
+const grid = Grid.grid('container', {
+    pagination: { enabled: true }
+});
+
+// Navigate to page 2
+await grid.pagination.goToPage(2);
+```
+
+### setPageSize(newPageSize)
+
+Changes the number of items displayed per page.
+
+```js
+// Set page size to 25 items per page
+grid.pagination.setPageSize(25);
+```
+
+**Parameters:**
+- `newPageSize` (number): The new number of items to display per page
+
+**Example:**
+```js
+const grid = Grid.grid('container', {
+    dataTable: { /* your data */ },
+    pagination: { enabled: true }
+});
+
+// Change page size to 50 items per page
+await grid.pagination.setPageSize(50);
+```
+
+**Note:** When changing the page size, the pagination automatically resets to the first page.
+
 ## Events (Grid Pro)
 
 Highcharts Grid Pro provides pagination events that allow you to respond to page changes and page size modifications. These events include:
