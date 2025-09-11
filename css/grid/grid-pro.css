@@ -191,6 +191,19 @@
     display: inline-block;
 }
 
+/*
+ * When custom credits text is provided in Grid Pro, the anchor element
+ * is no longer empty. In that case, hide the default logo background
+ * coming from Grid Lite and let the text be visible instead.
+ */
+.hcg-credits-container.hcg-credits-pro .hcg-credits:not(:empty) {
+    background-image: none;
+
+    /* Allow text to size naturally instead of the fixed logo size */
+    width: auto;
+    height: auto;
+}
+
 /* Notification container */
 .hcg-notification {
     position: absolute;
