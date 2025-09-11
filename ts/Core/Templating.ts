@@ -183,11 +183,11 @@ function format(
 ): string {
 
     // Notice: using u flag will require a refactor for ES5 (#22450).
-    const regex = /\{([a-zA-Z\u00C0-\u017F\u4E00-\u9FFF\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/g, // eslint-disable-line max-len
+    const regex = /\{([a-zA-Z\u00C0-\u017F\u0600-\u06FF\u4E00-\u9FFF\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/g, // eslint-disable-line max-len
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([a-zA-Z\u00C0-\u017F\u4E00-\u9FFF\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/g, // eslint-disable-line max-len
+        subRegex = /\(([a-zA-Z\u00C0-\u017F\u0600-\u06FF\u4E00-\u9FFF\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/g, // eslint-disable-line max-len
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
