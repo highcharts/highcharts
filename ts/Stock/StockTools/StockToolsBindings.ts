@@ -93,6 +93,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-segment',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.segment.annotationsOptions
@@ -151,6 +152,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-arrow-segment',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.arrowSegment.annotationsOptions
@@ -212,6 +214,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-ray',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.ray.annotationsOptions
@@ -271,6 +274,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-arrow-ray',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.arrowRay.annotationsOptions
@@ -332,6 +336,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-infinity-line',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.infinityLine.annotationsOptions
@@ -391,6 +396,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-arrow-infinity-line',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.arrowInfinityLine.annotationsOptions
@@ -453,6 +459,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-horizontal-line',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.horizontalLine.annotationsOptions
@@ -502,6 +509,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-vertical-line',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.verticalLine.annotationsOptions
@@ -553,6 +561,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-crooked3',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.crooked3.annotationsOptions
@@ -612,6 +621,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-crooked5',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.crooked5.annotationsOptions
@@ -675,6 +685,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-elliott3',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.elliott3.annotationsOptions
@@ -736,6 +747,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-elliott5',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.elliott5.annotationsOptions
@@ -801,6 +813,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-measure-x',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.measureX.annotationsOptions
@@ -867,6 +880,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-measure-y',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.measureY.annotationsOptions
@@ -934,6 +948,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-measure-xy',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.measureXY.annotationsOptions
@@ -1003,6 +1018,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     fibonacci: {
         className: 'highcharts-fibonacci',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.fibonacci.annotationsOptions
@@ -1061,6 +1077,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-parallel-channel',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.parallelChannel.annotationsOptions
@@ -1120,6 +1137,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-pitchfork',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.pitchfork.annotationsOptions
@@ -1188,6 +1206,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-vertical-counter',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.verticalCounter.annotationsOptions
@@ -1248,6 +1267,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     timeCycles: {
         className: 'highcharts-time-cycles',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.timeCycles.annotationsOptions
@@ -1297,6 +1317,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-vertical-label',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.verticalLabel.annotationsOptions
@@ -1355,6 +1376,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-vertical-arrow',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.verticalArrow.annotationsOptions
@@ -1417,6 +1439,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-fibonacci-time-zones',
         /**
+         * Options to customize the bindings' annotation shapes and labels.
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   navigation.annotationsOptions
          * @apioption navigation.bindings.fibonacciTimeZones.annotationsOptions

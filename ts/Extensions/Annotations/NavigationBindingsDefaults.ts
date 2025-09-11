@@ -149,6 +149,7 @@ const navigation: NavigationOptions = {
             /** @ignore-option */
             className: 'highcharts-circle-annotation',
             /**
+             * Options to customize the bindings' annotation shapes and labels.
              * @type      {Highcharts.AnnotationsOptions}
              * @extends   navigation.annotationsOptions
              * @apioption navigation.bindings.circleAnnotation.annotationsOptions
@@ -250,6 +251,7 @@ const navigation: NavigationOptions = {
         ellipseAnnotation: {
             className: 'highcharts-ellipse-annotation',
             /**
+             * Options to customize the bindings' annotation shapes and labels.
              * @type      {Highcharts.AnnotationsOptions}
              * @extends   navigation.annotationsOptions
              * @apioption navigation.bindings.ellipseAnnotation.annotationsOptions
@@ -354,6 +356,7 @@ const navigation: NavigationOptions = {
             /** @ignore-option */
             className: 'highcharts-rectangle-annotation',
             /**
+             * Options to customize the bindings' annotation shapes and labels.
              * @type      {Highcharts.AnnotationsOptions}
              * @extends   navigation.annotationsOptions
              * @apioption navigation.bindings.rectangleAnnotation.annotationsOptions
@@ -451,6 +454,7 @@ const navigation: NavigationOptions = {
             /** @ignore-option */
             className: 'highcharts-label-annotation',
             /**
+             * Options to customize the bindings' annotation shapes and labels.
              * @type      {Highcharts.AnnotationsOptions}
              * @extends   navigation.annotationsOptions
              * @apioption navigation.bindings.labelAnnotation.annotationsOptions
