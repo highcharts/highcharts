@@ -151,7 +151,14 @@ class ContourSeries extends ScatterSeries {
         //         height: this.yAxis.len
         //     }).add(this.group);
         // }
+        // this.setCanvasSize();
+        this.setExtremes();
 
+        // Canvas.width = this.chart.chartWidth * window.devicePixelRatio;
+        // canvas.height = this.chart.chartHeight * window.devicePixelRatio;
+
+
+        // Canvas.height = canvas.clientHeight * window.devicePixelRatio;
         this.context = canvas.getContext('webgpu');
         this.run();
         // This.context = canvas.getContext('webgpu');
@@ -705,8 +712,8 @@ class ContourSeries extends ScatterSeries {
             canvas.style.width = xAxis.len + 'px';
             canvas.style.height = yAxis.len + 'px';
 
-            canvas.width = canvas.clientWidth * window.devicePixelRatio;
-            canvas.height = canvas.clientHeight * window.devicePixelRatio;
+            canvas.width = this.chart.chartWidth * window.devicePixelRatio;
+            canvas.height = this.chart.chartHeight * window.devicePixelRatio;
         }
     }
 
