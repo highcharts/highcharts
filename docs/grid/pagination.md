@@ -2,8 +2,6 @@
 
 Pagination in Highcharts Grid enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls, making it easier to browse through extensive datasets without overwhelming the user interface.
 
-![Pagination controls in Highcharts Grid](ill_pagination.png)
-
 ## Basic setup
 
 To enable pagination in your Grid, you can use either `pagination: true` for default settings or `pagination.enabled: true` for custom configuration:
@@ -168,22 +166,22 @@ pageInfo: {
 Control the visibility of navigation buttons. Each control can be set as a boolean (for default settings) or as an object (for custom configuration):
 
 ```js
-// Using boolean values (default settings)
-firstLastButtons: true,        // First/Last page buttons
-previousNextButtons: true,     // Previous/Next page buttons
-pageButtons: true              // Page number buttons (default count: 5)
+    // Using boolean values (default settings)
+    firstLastButtons: true,        // First/Last page buttons
+    previousNextButtons: true,     // Previous/Next page buttons
+    pageButtons: true              // Page number buttons (default count: 5)
 
-// Using object configuration (custom settings)
-firstLastButtons: {
-    enabled: true              // First/Last page buttons
-},
-previousNextButtons: {
-    enabled: true              // Previous/Next page buttons
-},
-pageButtons: {
-    enabled: true,
-    count: 5                   // Number of page number buttons to show
-}
+    // Using object configuration (custom settings)
+    firstLastButtons: {
+        enabled: true              // First/Last page buttons
+    },
+    previousNextButtons: {
+        enabled: true              // Previous/Next page buttons
+    },
+    pageButtons: {
+        enabled: true,
+        count: 5                   // Number of page number buttons to show
+    }
 ```
 
 ## Events (Grid Pro)

@@ -1140,6 +1140,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .hcg-pagination-wrapper .hcg-pagination-last,
 .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
 .hcg-pagination-wrapper select,
+.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-ellipsis,
 .highcharts-datagrid-pagination-wrapper button,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-first,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-previous,
