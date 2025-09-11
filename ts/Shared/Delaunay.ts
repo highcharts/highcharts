@@ -23,7 +23,7 @@
 /**
  * Delaunay triangulation of a 2D point set.
  */
-class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
+class Delaunay<T extends Float32Array|Float64Array = Float32Array> {
 
     /* *
      *
@@ -40,7 +40,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
     /**
      * The input points array.
      */
-    public readonly points: PointsArray;
+    public readonly points: T;
 
     /**
      * Sorted and deduplicated point indices used for triangulation.
@@ -60,7 +60,7 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
      * @param {Float32Array|Float64Array} points
      * A 1D array of points in the format [x0, y0, x1, y1, ...].
      */
-    constructor(points: PointsArray) {
+    constructor(points: T) {
         this.points = points;
 
         const n = points.length >>> 1,
@@ -84,8 +84,8 @@ class Delaunay<PointsArray extends Float32Array|Float64Array = Float32Array> {
                 ids[m++] = pb;
             }
         }
-        this.ids = ids.subarray(0, m);
 
+        this.ids = ids.subarray(0, m);
         this.triangles = this.triangulate();
     }
 
