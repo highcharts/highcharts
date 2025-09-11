@@ -18,5 +18,12 @@
 }
 
 .hcg-pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 0 20px;
+}
+
+.hcg-pagination-page-size-select {
+    margin-left: 5px;
 }
