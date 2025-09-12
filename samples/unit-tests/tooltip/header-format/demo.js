@@ -12,10 +12,6 @@ QUnit.test('Formats in tooltip header (#3238)', function (assert) {
                     }
                 }
             },
-            xAxis: {
-                type: 'datetime'
-            },
-
             series: [
                 {
                     data: [{ name: 'Point name', y: 1 }, 1, 1]
@@ -72,4 +68,42 @@ QUnit.test('Formats in tooltip header (#3238)', function (assert) {
         'Series 1 5<br>',
         'Keys in footer are replaced'
     );
+});
+
+QUnit.test('Locale-aware tooltip header date formatting', function (assert) {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                month: '%[BY]'
+            }
+        },
+        tooltip: {
+            headerFormat: '{ucfirst point.key}',
+            pointFormat: '',
+            footerFormat: ''
+        },
+        series: [{
+            data: [
+                [Date.UTC(2025, 0, 1), 1],
+                [Date.UTC(2025, 1, 1), 2],
+                [Date.UTC(2025, 2, 1), 3]
+            ]
+        }]
+    });
+
+    // #23462
+    ['ar', 'zh-CN'].forEach(locale => {
+        chart.update({
+            lang: { locale }
+        });
+
+        chart.tooltip.refresh([chart.series[0].points[0]]);
+
+        assert.strictEqual(
+            chart.tooltip.label.text.textStr,
+            chart.series[0].points[0].key,
+            `Tooltip header should match point key for locale: ${locale}`
+        );
+    });
 });
