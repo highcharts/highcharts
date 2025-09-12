@@ -6,6 +6,8 @@ import type {
     ElementHandle,
 } from '@playwright/test';
 
+import type Highcharts from '../code/esm/highcharts.src';
+
 import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path/posix';
 
@@ -210,7 +212,43 @@ export async function setupRoutes(page: Page){
                 pattern: '**/**/mapdata/**',
                 handler: replaceMapData
             },
-            ...(await getJSONSources())
+            {
+                pattern: '**/**/{samples/graphics}/**',
+                handler: async (route) => {
+                    const url = new URL(route.request().url());
+                    const relativePath = url.pathname.split('/samples/graphics/')[1];
+                    const filePath = join('samples/graphics', relativePath);
+
+                    test.info().annotations.push({
+                        type: 'redirect',
+                        description: `${url} --> ${relativePath}`
+                    });
+
+                    await route.fulfill({
+                        path: filePath,
+                    });
+                }
+            },
+            {
+                pattern: '**/testimage.png',
+                handler(route) {
+                    return route.fulfill({
+                        path: 'test/testimage.png',  // serve this file instead
+                        contentType: 'image/png'
+                    });
+                },
+            },
+            ...(await getJSONSources()),
+            {
+                pattern:  '**/shim.html',
+                handler: (route) =>
+                    route.fulfill({
+                        status: 200,
+                        contentType: 'text/html',
+                        body: '<!DOCTYPE html><html><head></head><body></body></html>'
+                    })
+
+            }
         ];
 
         for (const route of routes) {
@@ -357,7 +395,8 @@ export function chartTemplate({
         })
         .join('\n');
 
-    return `<html>
+    return `<!DOCTYPE html>
+<html>
     <head>
         ${scriptString}
         <style>
@@ -421,7 +460,8 @@ export async function createChart(
 
     const handle = await page.evaluateHandle(
         ([{ chartConstructor, container, HC }, cc, chartCallbackBody]) => {
-            const HCInstance = HC ?? Highcharts;
+
+            const HCInstance = HC ?? window.Highcharts;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return HCInstance[chartConstructor](
                 container, cc, chartCallbackBody ?

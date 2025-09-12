@@ -1,5 +1,4 @@
 /* eslint func-style:0 */
-
 (function () {
     var url =
         location.host.substr(0, 12) === 'localhost:98' ?
