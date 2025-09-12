@@ -54,6 +54,8 @@ const {
     getContext
 } = IU;
 
+import Delaunator from '../../Core/Delauney';
+
 /* *
  *
  *  Declarations
@@ -110,7 +112,7 @@ class HeatmapSeries extends ScatterSeries {
 
     public colorAxis!: ColorAxis;
 
-    public context?: CanvasRenderingContext2D;
+    public context?: CanvasRenderingContext2D | GPUCanvasContext;
 
     public data!: Array<HeatmapPoint>;
 
@@ -126,11 +128,34 @@ class HeatmapSeries extends ScatterSeries {
 
     public isDirtyCanvas: boolean = true;
 
+    public adapter?: GPUAdapter | null;
+
+    public device?: GPUDevice;
+
     /* *
      *
      *  Functions
      *
      * */
+
+    public d(): boolean {
+        const coords = new Delaunator(new Float64Array([
+            377, 479, 453, 434, 326, 387, 444, 359, 511, 389,
+            586, 429, 470, 315, 622, 493, 627, 367, 570, 314
+        ])).triangles;
+        const tris = [
+            4, 3, 1, 4, 6, 3, 1, 5, 4, 4, 9, 6, 2, 0, 1, 1, 7, 5,
+            5, 9, 4, 6, 2, 3, 3, 2, 1, 5, 8, 9, 0, 7, 1, 5, 7, 8
+        ];
+
+        for (let i = 0; i < coords.length; i++) {
+            if (tris[i] !== coords[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * @private
@@ -341,6 +366,11 @@ class HeatmapSeries extends ScatterSeries {
         if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
         }
+
+        const canvas = this.canvas = document.createElement('canvas');
+        if (canvas) {
+            this.context = canvas?.getContext('webgpu') as any;
+        }
     }
 
     /**
@@ -522,6 +552,40 @@ class HeatmapSeries extends ScatterSeries {
         }
 
         fireEvent(series, 'afterTranslate');
+    }
+
+    private get3DData(): any {
+        const points3d: Float32Array = new Float32Array(this.points.length * 3);
+
+        this.points.forEach((point, i): void => {
+            points3d[i * 3] = point.x;
+            points3d[i * 3 + 1] = point.y;
+            points3d[i * 3 + 2] = point.value ?? 0;
+        });
+
+        return points3d;
+    }
+
+    public async run(): Promise<void> {
+        const context = this.context as GPUCanvasContext;
+        let adapter, device;
+
+        if (!this.adapter) {
+            adapter = this.adapter = await navigator?.gpu.requestAdapter();
+        }
+
+        if (!this.device && adapter) {
+            device = this.device = await adapter.requestDevice();
+        }
+
+        const canvasFormat = (navigator as any)?.gpu.getPreferredCanvasFormat();
+
+        if (device) {
+            context?.configure({
+                device: device,
+                format: canvasFormat
+            });
+        }
     }
 
     /* eslint-enable valid-jsdoc */
