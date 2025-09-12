@@ -98,6 +98,7 @@ test.describe('QUnit tests', () => {
             if(!sample.script) {
                 // eslint-disable-next-line playwright/no-skipped-test
                 test.skip('Skipping as there\'s no script');
+                return;
             }
             if (!sample.script.includes('QUnit.test')) {
                 sample.script =
