@@ -284,7 +284,7 @@ export async function getSample(path: string) {
         } catch {/**/}
     }
 
-    obj.script = resolveJSON(obj.script);
+    obj.script = resolveJSON(obj.script ?? '');
     if (path.includes('unit-tests') && /styledMode:\s+true/.test(obj.script)) {
         // Inject css
         obj.script =`window.highchartsCSS = \`${highchartsCSS}\`;`
