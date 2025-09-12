@@ -120,7 +120,8 @@ export const template = ({ script, css, html, details }: SampleObj) => `<html>
                 '.js': (url: string) => `<script src="${url}"></script>`
             };
 
-            return extToHTML[extname(r)](r);
+            const fn = extToHTML[extname(r)];
+            return fn ? fn(r) : '';
         }).join('')}
 
         <script>
