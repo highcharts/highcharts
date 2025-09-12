@@ -4,11 +4,11 @@ describe('Sync when new connector added to components.', () => {
     });
 
     it('Chart and GridComponent should have synced hover events.', () => {
-        cy.get('tr.highcharts-grid-row').eq(0).as('firstCell');
+        cy.get('tr.hcg-row').eq(0).as('firstCell');
 
         // Hover over GridComponent.
         cy.get('@firstCell').trigger('mouseover');
-        cy.get('@firstCell').should('have.class', 'highcharts-grid-hovered-row');
+        cy.get('@firstCell').should('have.class', 'hcg-hovered-row');
 
         cy.chart().then(chart =>{
             assert.notOk(

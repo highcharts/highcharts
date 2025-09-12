@@ -26,8 +26,8 @@ import type { Grid, GridNamespace } from '../../Plugins/GridTypes';
 import type { Options } from './GridComponentOptions';
 
 import Component from '../Component.js';
-import GridSyncs from './GridSyncs/GridSyncs';
-import GridComponentDefaults from './GridComponentDefaults';
+import GridSyncs from './GridSyncs/GridSyncs.js';
+import GridComponentDefaults from './GridComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
 import DU from '../../Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';

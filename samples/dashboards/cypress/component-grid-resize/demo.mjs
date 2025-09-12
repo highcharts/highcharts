@@ -1,6 +1,5 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
-import Grid from '../../../../code/grid/grid-pro.src.js';
 
 Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);

@@ -10,7 +10,7 @@ describe("Highlight sync options", () => {
         cy.get('#cbx-chart-highlightPoint').click();
         cy.get('#cbx-chart-showCrosshair').click();
 
-        cy.get('tr.highcharts-grid-row').eq(0).trigger('mouseover');
+        cy.get('tr.hcg-row').eq(0).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.ok(
@@ -33,7 +33,7 @@ describe("Highlight sync options", () => {
     it('Chart highlight showTooltip option is enabled', () => {
         cy.get('#cbx-chart-showTooltip').click();
 
-        cy.get('tr.highcharts-grid-row').eq(1).trigger('mouseover');
+        cy.get('tr.hcg-row').eq(1).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.notOk(
@@ -46,7 +46,7 @@ describe("Highlight sync options", () => {
     it('Chart highlight highlightPoint option is enabled', () => {
         cy.get('#cbx-chart-highlightPoint').click();
 
-        cy.get('tr.highcharts-grid-row').eq(2).trigger('mouseover');
+        cy.get('tr.hcg-row').eq(2).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.strictEqual(
@@ -60,7 +60,7 @@ describe("Highlight sync options", () => {
     it('Chart highlight showCrosshair option is enabled', () => {
         cy.get('#cbx-chart-showCrosshair').click();
 
-        cy.get('tr.highcharts-grid-row').eq(3).trigger('mouseover');
+        cy.get('tr.hcg-row').eq(3).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.strictEqual(
@@ -74,7 +74,7 @@ describe("Highlight sync options", () => {
     it('Chart highlight sync is disabled', () => {
         cy.get('#cbx-chart-enabled').click();
 
-        cy.get('tr.highcharts-grid-row').eq(4).trigger('mouseover');
+        cy.get('tr.hcg-row').eq(4).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.notEqual(
@@ -101,10 +101,10 @@ describe("Highlight sync options", () => {
         cy.get('#cbx-grid-enabled').click();
 
         // Highlight the row from the first grid.
-        cy.get('#grid-0 tr.highcharts-grid-row').eq(4).trigger('mouseover');
+        cy.get('#grid-0 tr.hcg-row').eq(4).trigger('mouseover');
 
         // The corresponding row from the second grid should be highlighted.
-        cy.get('#grid-1 tr.highcharts-grid-row').eq(4)
-            .should('have.class', 'highcharts-grid-synced-row');
+        cy.get('#grid-1 tr.hcg-row').eq(4)
+            .should('have.class', 'hcg-synced-row');
     });
 });

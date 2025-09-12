@@ -12,16 +12,16 @@ describe('layout resize on window changes', () => {
 
     it('Chart and Grid Component should have synced hover events.', () => {
         // Arrange
-        cy.get('tr.highcharts-grid-row').eq(0).as('firstGridRow');
-        cy.get('tr.highcharts-grid-row').eq(1).as('secondGridRow');
+        cy.get('tr.hcg-row').eq(0).as('firstGridRow');
+        cy.get('tr.hcg-row').eq(1).as('secondGridRow');
 
         // Act - hover over Grid Component.
         cy.get('@firstGridRow').children().eq(0).trigger('mouseover');
 
         // Assert - hover over Grid Component.
-        cy.get('@firstGridRow').should('have.class', 'highcharts-grid-hovered-row');
-        cy.get('@firstGridRow').children().eq(0).should('have.class', 'highcharts-grid-hovered-column');
-        cy.get('@firstGridRow').children().eq(1).should('not.have.class', 'highcharts-grid-hovered-column');
+        cy.get('@firstGridRow').should('have.class', 'hcg-hovered-row');
+        cy.get('@firstGridRow').children().eq(0).should('have.class', 'hcg-hovered-column');
+        cy.get('@firstGridRow').children().eq(1).should('not.have.class', 'hcg-hovered-column');
         cy.chart().then((chart) => {
             assert.notOk(chart.tooltip.isHidden, 'When hovering over Grid, chart should have tooltip.');
         });
@@ -31,15 +31,15 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-point').eq(1).trigger('mouseover');
 
         // Assert - synced over the chart.
-        cy.get('@firstGridRow').should('not.have.class', 'highcharts-grid-synced-row');
-        cy.get('@secondGridRow').should('have.class', 'highcharts-grid-synced-row');
-        cy.get('@secondGridRow').children().eq(0).should('not.have.class', 'highcharts-grid-synced-column');
-        cy.get('@secondGridRow').children().eq(1).should('have.class', 'highcharts-grid-synced-column');
+        cy.get('@firstGridRow').should('not.have.class', 'hcg-synced-row');
+        cy.get('@secondGridRow').should('have.class', 'hcg-synced-row');
+        cy.get('@secondGridRow').children().eq(0).should('not.have.class', 'hcg-synced-column');
+        cy.get('@secondGridRow').children().eq(1).should('have.class', 'hcg-synced-column');
     });
 
     it('Updating of the store should work by changing chart and grid', () => {
         // Arrange
-        cy.get('tr.highcharts-grid-row').eq(1).children().eq(1).as('gridCell');
+        cy.get('tr.hcg-row').eq(1).children().eq(1).as('gridCell');
 
         // Act
         cy.get('@gridCell').dblclick().type('{backspace}{backspace}{backspace}000').type('{enter}');
@@ -161,19 +161,19 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
 
         //Assert
-        cy.get('.highcharts-grid-column-sortable').should('exist');
+        cy.get('.hcg-column-sortable').should('exist');
 
         // Act
         cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').prev().click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(0).click();
 
         // Assert
-        cy.get('.highcharts-grid-column-sortable').should('not.exist');
+        cy.get('.hcg-column-sortable').should('not.exist');
     });
 
     it('Discarding changes should not be applied to the grid.', () => {
         // Assert
-        cy.get('.highcharts-grid-column-sortable').should('exist');
+        cy.get('.hcg-column-sortable').should('exist');
 
         // Act
         cy.toggleEditMode();
@@ -185,7 +185,7 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(1).click();
 
         // Assert
-        cy.get('.highcharts-grid-column-sortable').should('exist');
+        cy.get('.hcg-column-sortable').should('exist');
     });
 
     it('Applying class name to the component should work.', () => {

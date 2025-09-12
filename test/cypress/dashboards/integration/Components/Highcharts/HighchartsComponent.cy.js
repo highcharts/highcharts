@@ -7,9 +7,15 @@ describe('Multiple connectors', () => {
         cy.get('.highcharts-series.highcharts-series-1').children().should('have.length', 5);
         cy.get('.highcharts-series.highcharts-series-3').children().should('have.length', 3);
     });
+});
+
+describe('Multiple connectors with Grid hover sync', () => {
+    before(()=>{
+        cy.visit('dashboards/highcharts-components/multiple-connectors');
+    });
 
     it('Should highlight series from multiple connectors.', () => {
-        cy.get('#dashboard-col-2 tr.highcharts-grid-row').eq(0).trigger('mouseover');
+        cy.get('#dashboard-col-2 tr.hcg-row').eq(0).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.ok(
@@ -20,14 +26,14 @@ describe('Multiple connectors', () => {
     });
 });
 
-describe('Highlight sync affected series id option', () => {
+describe('Highlight sync affected series id option (with Grid)', () => {
     before(()=>{
         cy.visit('dashboards/sync/highcharts-highlight-affected-series');
     });
 
     it('Should highlight the proper series when affected series id is defined.', () => {
         cy.get('#radio-2022').click({ force: true });
-        cy.get('#dashboard-col-1 tr.highcharts-grid-row').eq(0).trigger('mouseover');
+        cy.get('#dashboard-col-1 tr.hcg-row').eq(0).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.ok(
@@ -37,3 +43,5 @@ describe('Highlight sync affected series id option', () => {
         });
     });
 });
+
+// Grid-dependent highlight tests are moved to dashboards-grid suite

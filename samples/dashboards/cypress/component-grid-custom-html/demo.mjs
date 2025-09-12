@@ -1,5 +1,4 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import Grid from '../../../../code/grid/grid-pro.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';
 
