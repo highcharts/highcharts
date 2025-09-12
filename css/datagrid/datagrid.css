@@ -22,7 +22,6 @@
     --ig-positive-default-border-color: #00a63e;
     --ig-positive-default-background: #effdf4;
     --ig-highlight-color-5: #f3f6fe;
-
     --ig-pagination-button-default-background: #ffffff;
     --ig-pagination-button-default-color: #000000;
     --ig-pagination-button-default-border: #e8e8e8;
@@ -343,7 +342,7 @@
     --ig-pagination-button-color-active: var(--hcg-pagination-button-color-active, var(--ig-pagination-button-default-color-active));
     --ig-pagination-button-border: var(--hcg-pagination-button-border, var(--ig-pagination-button-default-border));
     --ig-pagination-button-border-hover: var(--hcg-pagination-button-border-hover, var(--ig-default-color));
-    --ig-pagination-padding: var(--hcg-pagination-padding, 14px 0px 10px 0px);
+    --ig-pagination-padding: var(--hcg-pagination-padding, 14px 0 10px 0);
     --ig-pagination-icon-color: var(--hcg-pagination-icon-color, var(--ig-pagination-icon-default-color));
 }
 
@@ -1097,55 +1096,32 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Pagination */
-.hcg-pagination-container,
-.highcharts-datagrid-pagination-container {
-    padding: var(--ig-pagination-padding);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Bottom pagination (default) */
-.hcg-pagination-container:not(:first-child),
-.highcharts-datagrid-pagination-container:not(:first-child) {
-    border-top: var(--ig-header-row-border);
-}
-
-/* Top pagination */
-.hcg-pagination-container:first-child,
-.highcharts-datagrid-pagination-container:first-child {
-    border-bottom: var(--ig-header-row-border);
-}
-
-/* Footer pagination (tfoot) */
 .hcg-table tfoot td,
 .highcharts-datagrid-table tfoot td {
-    border-top: var(--ig-header-row-border);
     background: var(--ig-header-background);
     padding: var(--ig-header-padding);
 }
 
 .hcg-pagination-wrapper,
 .highcharts-datagrid-pagination-wrapper {
-    float: right;
-    justify-content: space-between;
+    padding: var(--ig-pagination-padding);
+    box-sizing: border-box;
     display: flex;
     gap: 8px;
+    justify-content: flex-end;
+}
+
+.hcg-table tfoot td .hcg-pagination-wrapper,
+.highcharts-datagrid-table tfoot td .highcharts-datagrid-pagination-wrapper {
+    padding: 0;
 }
 
 .hcg-pagination-wrapper .hcg-pagination-ellipsis,
 .hcg-pagination-wrapper button,
-.hcg-pagination-wrapper .hcg-pagination-first,
-.hcg-pagination-wrapper .hcg-pagination-previous,
-.hcg-pagination-wrapper .hcg-pagination-next,
-.hcg-pagination-wrapper .hcg-pagination-last,
 .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
 .hcg-pagination-wrapper select,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-ellipsis,
 .highcharts-datagrid-pagination-wrapper button,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-first,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-previous,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-next,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-last,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container select,
 .highcharts-datagrid-pagination-wrapper select {
     color: var(--ig-pagination-button-color);
@@ -1158,15 +1134,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 /* SVG icon styling for pagination buttons */
 .hcg-pagination-wrapper button svg,
-.hcg-pagination-wrapper .hcg-pagination-first svg,
-.hcg-pagination-wrapper .hcg-pagination-previous svg,
-.hcg-pagination-wrapper .hcg-pagination-next svg,
-.hcg-pagination-wrapper .hcg-pagination-last svg,
-.highcharts-datagrid-pagination-wrapper button svg,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-first svg,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-previous svg,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-next svg,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-last svg {
+.highcharts-datagrid-pagination-wrapper button svg {
     color: var(--ig-pagination-icon-color);
     width: 16px;
     height: 16px;
@@ -1175,16 +1143,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 /* Disabled state for SVG icons */
 .hcg-pagination-wrapper button:disabled svg,
-.hcg-pagination-wrapper .hcg-pagination-first:disabled svg,
-.hcg-pagination-wrapper .hcg-pagination-previous:disabled svg,
-.hcg-pagination-wrapper .hcg-pagination-next:disabled svg,
-.hcg-pagination-wrapper .hcg-pagination-last:disabled svg,
-.highcharts-datagrid-pagination-wrapper button:disabled svg,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-first:disabled svg,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-previous:disabled svg,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-next:disabled svg,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-last:disabled svg {
-    color: #9D9D9D;
+.highcharts-datagrid-pagination-wrapper button:disabled svg {
+    color: #9d9d9d;
 }
 
 .hcg-pagination-wrapper .hcg-pagination-ellipsis {
@@ -1210,14 +1170,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Spacing between pagination pages and navigation buttons */
-.hcg-pagination-page + .hcg-pagination-first,
-.hcg-pagination-page + .hcg-pagination-previous,
-.hcg-pagination-page + .hcg-pagination-next,
-.hcg-pagination-page + .hcg-pagination-last,
-.hcg-pagination-first + .hcg-pagination-page,
-.hcg-pagination-previous + .hcg-pagination-page,
-.hcg-pagination-next + .hcg-pagination-page,
-.hcg-pagination-last + .hcg-pagination-page,
+.hcg-pagination-page + button,
+button + .hcg-pagination-page,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-last + .highcharts-datagrid-pagination-page {
     margin-left: 12px;
 }
@@ -1243,18 +1197,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     flex-wrap: nowrap;
 }
 
-
 /* Pagination button styling - unified approach */
 .hcg-pagination-wrapper button,
-.hcg-pagination-wrapper .hcg-pagination-first,
-.hcg-pagination-wrapper .hcg-pagination-previous,
-.hcg-pagination-wrapper .hcg-pagination-next,
-.hcg-pagination-wrapper .hcg-pagination-last,
-.highcharts-datagrid-pagination-wrapper button,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-first,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-previous,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-next,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-last {
+.highcharts-datagrid-pagination-wrapper button {
     background: var(--ig-pagination-button-background);
     border: 1px solid var(--ig-pagination-button-border);
     border-radius: 4px;
@@ -1266,29 +1211,13 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 /* Hover state - only border change */
 .hcg-pagination-wrapper button:hover:not(:disabled),
-.hcg-pagination-wrapper .hcg-pagination-first:hover:not(:disabled),
-.hcg-pagination-wrapper .hcg-pagination-previous:hover:not(:disabled),
-.hcg-pagination-wrapper .hcg-pagination-next:hover:not(:disabled),
-.hcg-pagination-wrapper .hcg-pagination-last:hover:not(:disabled),
-.highcharts-datagrid-pagination-wrapper button:hover:not(:disabled),
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-first:hover:not(:disabled),
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-previous:hover:not(:disabled),
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-next:hover:not(:disabled),
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-last:hover:not(:disabled) {
+.highcharts-datagrid-pagination-wrapper button:hover:not(:disabled) {
     border-color: var(--ig-pagination-button-border-hover);
 }
 
 /* Disabled state */
 .hcg-pagination-wrapper button:disabled,
-.hcg-pagination-wrapper .hcg-pagination-first:disabled,
-.hcg-pagination-wrapper .hcg-pagination-previous:disabled,
-.hcg-pagination-wrapper .hcg-pagination-next:disabled,
-.hcg-pagination-wrapper .hcg-pagination-last:disabled,
-.highcharts-datagrid-pagination-wrapper button:disabled,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-first:disabled,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-previous:disabled,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-next:disabled,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-last:disabled {
+.highcharts-datagrid-pagination-wrapper button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -1324,7 +1253,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
-    background-size: 10px;;
+    background-size: 10px;
     padding-right: 25px;
 }
 
@@ -1394,7 +1323,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
                 url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
             );
     }
-    
+
     .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
     .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container select {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");

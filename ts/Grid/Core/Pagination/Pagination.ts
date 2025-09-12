@@ -255,7 +255,9 @@ class Pagination {
         } else if (typeof position === 'string' && position.startsWith('#')) {
             this.renderCustomContainer(position);
         } else {
-            this.renderContainer();
+            this.contentWrapper = makeHTMLElement('div', {
+                className: Globals.getClassName('paginationWrapper')
+            }, this.grid.contentWrapper);
         }
 
         // Update total pages first to ensure correct calculations
@@ -318,46 +320,6 @@ class Pagination {
 
         // Set content wrapper to the custom container
         this.contentWrapper = customContainer;
-    }
-
-    /**
-     * Render pagination in a separate div container.
-     */
-    private renderContainer(): void {
-        // Only create a new container if one doesn't exist.
-        if (!this.paginationContainer) {
-            // Create pagination container div
-            this.paginationContainer = makeHTMLElement('div', {
-                className: Globals.getClassName('paginationContainer')
-            }, this.grid.contentWrapper);
-
-            // Insert the pagination container based on position
-            const position = this.options.position;
-            const tableElement = this.grid.tableElement;
-
-            if (tableElement && tableElement.parentNode) {
-                if (position === 'top') {
-                    // Insert before the table element
-                    tableElement.parentNode.insertBefore(
-                        this.paginationContainer,
-                        tableElement
-                    );
-                } else {
-                    // Insert after the table element (default: bottom)
-                    tableElement.parentNode.insertBefore(
-                        this.paginationContainer,
-                        tableElement.nextSibling
-                    );
-                }
-            } else if (position === 'top') {
-                this.grid.contentWrapper?.appendChild(this.paginationContainer);
-            }
-        }
-
-        // Create pagination wrapper inside the container
-        this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationWrapper')
-        }, this.paginationContainer);
     }
 
     /**
