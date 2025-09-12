@@ -45,7 +45,8 @@ const {
     getStyle,
     merge,
     pick,
-    defined
+    defined,
+    isObject
 } = U;
 
 
@@ -356,10 +357,38 @@ class Grid {
      * Initializes the pagination.
      */
     private initPagination(): void {
+
+        let paginationState = {};
+
+        if (this.pagination) {
+            const {
+                currentPageSize,
+                currentPage,
+                totalItems,
+                totalPages
+            } = this.pagination || {};
+
+            paginationState = {
+                currentPageSize,
+                currentPage,
+                totalItems,
+                totalPages
+            };
+        }
+
         this.pagination?.destroy();
         delete this.pagination;
 
-        const paginationOptions = this.options?.pagination;
+        const paginationOptions = merge(
+            (
+                isObject(this.options?.pagination) ?
+                    this.options?.pagination :
+                    { enabled: this.options?.pagination }
+            ),
+            {
+                ...paginationState
+            }
+        );
 
         if (paginationOptions?.enabled) {
             this.pagination = new Pagination(this, paginationOptions);
@@ -820,6 +849,8 @@ class Grid {
      */
     public renderViewport(): void {
         const viewportMeta = this.viewport?.getStateMeta();
+        const pagination = this.pagination;
+        const paginationPosition = pagination?.options.position;
 
         this.enabledColumns = this.getEnabledColumnIDs();
 
@@ -831,6 +862,11 @@ class Grid {
         this.resetContentWrapper();
         this.renderCaption();
 
+        // Render top pagination if enabled (before table)
+        if (paginationPosition === 'top') {
+            pagination?.render();
+        }
+
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
             if (viewportMeta && this.viewport) {
@@ -840,10 +876,15 @@ class Grid {
             this.renderNoData();
         }
 
-        this.renderDescription();
-
         this.accessibility?.setA11yOptions();
-        this.pagination?.render();
+
+        // Render bottom pagination, footer pagination,
+        // or custom container pagination (after table).
+        if (paginationPosition !== 'top') {
+            pagination?.render();
+        }
+
+        this.renderDescription();
 
         fireEvent(this, 'afterRenderViewport');
 

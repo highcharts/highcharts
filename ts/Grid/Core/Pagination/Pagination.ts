@@ -22,16 +22,20 @@
  * */
 
 import type Grid from '../Grid';
-import type { PaginationOptions } from './PaginationOptions';
+import type {
+    PaginationOptions,
+    PaginationLangOptions,
+    PageSizeSelectorOptions,
+    PageButtonsOptions
+} from './PaginationOptions';
 
+import Defaults from '../Defaults.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const {
-    fireEvent
-} = Utilities;
+const { merge, fireEvent, isObject } = Utilities;
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -45,11 +49,31 @@ class Pagination {
     * */
 
     /**
-     * Default options of the credits.
+     * Default options of the pagination.
      */
     public static defaultOptions: PaginationOptions = {
         enabled: false,
-        itemsPerPage: 10
+        pageSize: 10,
+        position: 'bottom',
+        controls: {
+            pageSizeSelector: {
+                enabled: true,
+                options: [10, 20, 50, 100]
+            },
+            pageInfo: {
+                enabled: true
+            },
+            firstLastButtons: {
+                enabled: true
+            },
+            previousNextButtons: {
+                enabled: true
+            },
+            pageButtons: {
+                enabled: true,
+                count: 5
+            }
+        }
     };
 
     /* *
@@ -59,14 +83,10 @@ class Pagination {
     * */
 
     /**
-     * The row in tfoot
+     * The pagination container element (div for top/bottom,
+     * tfoot cell for footer, or custom element).
      */
-    private row?: HTMLElement;
-
-    /**
-     * The cell of the row in the tfoot
-     */
-    private cell?: HTMLElement;
+    private paginationContainer?: HTMLElement;
 
     /**
      * The Grid Table instance which the pagination belongs to.
@@ -84,14 +104,39 @@ class Pagination {
     public contentWrapper?: HTMLElement;
 
     /**
+     * Navigation first button
+     */
+    public firstButton?: HTMLElement;
+
+    /**
+     * Navigation previous button
+     */
+    public prevButton?: HTMLElement;
+
+    /**
      * Navigation next button
      */
     public nextButton?: HTMLElement;
 
     /**
-     * Navigation prev button
+     * Navigation last button
      */
-    public prevButton?: HTMLElement;
+    public lastButton?: HTMLElement;
+
+    /**
+     * Page number buttons container
+     */
+    public pageNumbersContainer?: HTMLElement;
+
+    /**
+     * Items per page selector dropdown
+     */
+    public pageSizeSelect?: HTMLSelectElement;
+
+    /**
+     * Page info text element
+     */
+    public pageInfoElement?: HTMLElement;
 
     /**
      * Current page number, starting from 1.
@@ -99,14 +144,29 @@ class Pagination {
     public currentPage: number = 1;
 
     /**
-     * Items per page
+     * Available items per page options
      */
-    public itemsPerPage: number;
+    public pageSizeOptions: Array<number>;
 
     /**
-     * Whether the next button is pressed.
+     * Current items per page setting
      */
-    public isNextPage: boolean = false;
+    public currentPageSize: number;
+
+    /**
+     * Language options for pagination text
+     */
+    public lang: PaginationLangOptions;
+
+    /**
+     * Total number of pages
+     */
+    public totalPages: number = 1;
+
+    /**
+     * Total number of items
+     */
+    public totalItems: number = 0;
 
     /* *
     *
@@ -125,14 +185,38 @@ class Pagination {
      */
     constructor(
         grid: Grid,
-        options: PaginationOptions
+        options: PaginationOptions & Pagination.PaginationState
     ) {
         this.grid = grid;
-        this.options = options ?? Pagination.defaultOptions;
-        this.itemsPerPage = this.options.itemsPerPage ||
-            Pagination.defaultOptions.itemsPerPage as number;
-    }
+        this.options = merge(Pagination.defaultOptions, options);
 
+        const pageSizeSelector = this.options.controls.pageSizeSelector;
+        this.pageSizeOptions = isObject(pageSizeSelector) ?
+            pageSizeSelector.options :
+            (Pagination.defaultOptions.controls.pageSizeSelector as PageSizeSelectorOptions).options; // eslint-disable-line
+
+        this.currentPageSize =
+            options.currentPageSize ||
+            this.options.pageSize ||
+            this.pageSizeOptions[0];
+
+        // Lang pack
+        this.lang = merge(
+            Defaults.defaultOptions.pagination,
+            this.grid.options?.lang?.pagination
+        );
+
+        // Set state
+        if (options.currentPage) {
+            this.currentPage = options.currentPage;
+        }
+        if (options.totalItems) {
+            this.totalItems = options.totalItems;
+        }
+        if (options.totalPages) {
+            this.totalPages = options.totalPages;
+        }
+    }
 
     /* *
     *
@@ -141,72 +225,649 @@ class Pagination {
     * */
 
     /**
-     * Render the pagination container.
+     * Format text with placeholders.
+     *
+     * @param template The text template with placeholders
+     * @param values Object containing values to replace placeholders
+     * @returns Formatted text
      */
-    public render(): void {
-        const pgContainer = this.grid.viewport?.tfootElement;
-        this.row = makeHTMLElement('tr', {}, pgContainer);
-        this.cell = makeHTMLElement('td', {}, this.row);
-        this.cell.setAttribute(
-            'colSpan',
-            (this.grid.enabledColumns || []).length
-        );
-        this.reflow();
-
-        this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationWrapper')
-        }, this.cell);
-
-        this.renderNavButtons();
+    private formatText(template: string, values: Record<string, string | number>): string {
+        return template.replace(/\{(\w+)\}/g, (match, key): string => (
+            values[key] !== void 0 ? String(values[key]) : match
+        ));
     }
 
     /**
-     * Render the navigation buttons.
+     * Render the pagination container.
+     *
+     * The pagination container is positioned based on the `position` option:
+     * - `'top'`: Rendered before the table
+     * - `'bottom'`: Rendered after the table (default)
+     * - `'footer'`: Rendered inside a tfoot element
+     * - `'#id'` or any string: Rendered inside a custom container with
+     * the specified ID.
      */
-    public renderNavButtons(): void {
-        const pg = this;
-        const grid = pg.grid;
-        const originalDataTable = grid.dataTable;
+    public render(): void {
+        const position = this.options.position;
 
-        this.prevButton = makeHTMLElement(
-            'button',
-            {
-                innerHTML: '&lsaquo;' // TODO: add lang support
-            },
-            this.contentWrapper
+        if (position === 'footer') {
+            this.renderFooter();
+        } else if (typeof position === 'string' && position.startsWith('#')) {
+            this.renderCustomContainer(position);
+        } else {
+            this.contentWrapper = makeHTMLElement('div', {
+                className: Globals.getClassName('paginationWrapper')
+            }, this.grid.contentWrapper);
+        }
+
+        // Update total pages first to ensure correct calculations
+        this.updateTotalPages();
+
+        // Render all components
+        this.renderPageInfo();
+        this.renderControls();
+        this.renderPageSizeSelector();
+
+        // Update button states after rendering
+        this.updateButtonStates();
+    }
+
+    /**
+     * Render pagination in a tfoot element.
+     */
+    private renderFooter(): void {
+        const tableElement = this.grid.tableElement;
+        if (!tableElement) {
+            return;
+        }
+
+        // Create tfoot element
+        const tfootElement = makeHTMLElement('tfoot', {}, tableElement);
+
+        // Create tfoot row
+        const tfootRow = makeHTMLElement('tr', {}, tfootElement);
+
+        // Create tfoot cell with colspan and store it in paginationContainer
+        this.paginationContainer = makeHTMLElement('td', {}, tfootRow);
+        this.paginationContainer.setAttribute(
+            'colSpan',
+            (this.grid.enabledColumns || []).length.toString()
         );
 
-        this.setButtonState(
-            this.prevButton,
-            true
+        this.reflow();
+
+        // Set content wrapper to the tfoot cell
+        this.contentWrapper = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationWrapper')
+        }, this.paginationContainer);
+    }
+
+    /**
+     * Render pagination in a custom container by ID.
+     *
+     * @param id
+     * The ID of the custom container.
+     */
+    private renderCustomContainer(id: string): void {
+        const customContainer = document.querySelector(id) as HTMLElement;
+
+        if (!customContainer) {
+            console.warn(`Pagination: Custom container with ID "${id}" not found.`); // eslint-disable-line no-console
+            return;
+        }
+
+        this.paginationContainer = customContainer;
+
+        // Set content wrapper to the custom container
+        this.contentWrapper = customContainer;
+    }
+
+    /**
+     * Render the page information text.
+     */
+    public renderPageInfo(): void {
+        const pageInfo = this.options.controls?.pageInfo;
+        if (
+            pageInfo === false ||
+            (isObject(pageInfo) && pageInfo.enabled === false)
+        ) {
+            return;
+        }
+
+        this.pageInfoElement = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationPageInfo')
+        }, this.contentWrapper);
+
+        this.updatePageInfo();
+    }
+
+    /**
+     * Update the page information text.
+     */
+    public updatePageInfo(): void {
+        if (!this.pageInfoElement) {
+            return;
+        }
+
+        const startItem = (this.currentPage - 1) * this.currentPageSize + 1;
+        const endItem = Math.min(
+            this.currentPage * this.currentPageSize,
+            this.totalItems
         );
 
-        this.prevButton.addEventListener(
-            'click',
-            function (): void {
-                pg.updatePage(false);
-            }
-        );
+        const pageInfoText = this.formatText(this.lang.pageInfo, {
+            start: startItem,
+            end: endItem,
+            total: this.totalItems,
+            currentPage: this.currentPage,
+            totalPages: this.totalPages
+        });
 
-        this.nextButton = makeHTMLElement(
-            'button',
-            {
-                innerHTML: '&rsaquo;' // TODO: add lang support
-            },
-            this.contentWrapper
-        );
+        this.pageInfoElement.innerHTML = pageInfoText;
+    }
 
-        this.nextButton.addEventListener(
-            'click',
-            function (): void {
-                pg.updatePage();
-            }
-        );
+    /**
+     * Render the controls buttons and page numbers.
+     */
+    public renderControls(): void {
+        const navContainer = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationControls')
+        }, this.contentWrapper);
+
+        // Render first/previous buttons
+        if (this.options.controls?.firstLastButtons) {
+            this.renderFirstButton(navContainer);
+        }
+
+        // Render previous button
+        if (this.options.controls?.previousNextButtons) {
+            this.renderPrevButton(navContainer);
+        }
+
+        // Render page numbers
+        if (this.options.controls?.pageButtons) {
+            this.renderPageNumbers(navContainer);
+        }
+
+        // Render next button
+        if (this.options.controls?.previousNextButtons) {
+            this.renderNextButton(navContainer);
+        }
+
+        // Render last/first buttons
+        if (this.options.controls?.firstLastButtons) {
+            this.renderLastButton(navContainer);
+        }
+    }
+
+    /**
+     * Render the first page button.
+     *
+     * @param container
+     * The container element for the first page button.
+     *
+     */
+    public renderFirstButton(container: HTMLElement): void {
+        const firstLastButtons = this.options.controls?.firstLastButtons;
+        if (
+            firstLastButtons === false ||
+            (isObject(firstLastButtons) && firstLastButtons.enabled === false)
+        ) {
+            return;
+        }
+
+        this.firstButton = makeHTMLElement('button', {
+            innerHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 9L1 5L5 1M9 9L5 5L9 1" stroke="currentColor" stroke-width="1.34" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+            className: Globals.getClassName('paginationButton')
+        }, container);
+        this.firstButton.title = this.lang.firstPage;
+
+        this.firstButton.addEventListener('click', (): void => {
+            void this.goToPage(1);
+        });
+
+        this.setButtonState(this.firstButton, this.currentPage === 1);
+    }
+
+    /**
+     * Render the previous page button.
+     *
+     * @param container
+     * The container element for the previous page button.
+     */
+    public renderPrevButton(container: HTMLElement): void {
+        const previousNextButtons = this.options.controls?.previousNextButtons;
+        if (
+            previousNextButtons === false ||
+            (
+                isObject(previousNextButtons) &&
+                previousNextButtons.enabled === false
+            )
+        ) {
+            return;
+        }
+
+        this.prevButton = makeHTMLElement('button', {
+            innerHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 10" fill="none"><path d="M5 9L1 5L5 1" stroke="currentColor" stroke-width="1.34" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+            className: Globals.getClassName('paginationButton')
+        }, container);
+        this.prevButton.title = this.lang.previousPage;
+
+        this.prevButton.addEventListener('click', (): void => {
+            void this.goToPage(this.currentPage - 1);
+        });
+
+        this.setButtonState(this.prevButton, this.currentPage === 1);
+    }
+
+    /**
+     * Render the next page button.
+     *
+     * @param container
+     * The container element for the next page button.
+     */
+    public renderNextButton(container: HTMLElement): void {
+        const previousNextButtons = this.options.controls?.previousNextButtons;
+        if (
+            previousNextButtons === false ||
+            (
+                isObject(previousNextButtons) &&
+                previousNextButtons.enabled === false
+            )
+        ) {
+            return;
+        }
+
+        this.nextButton = makeHTMLElement('button', {
+            innerHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 4 10" fill="none"><path d="M1 1L5 5L1 9" stroke="currentColor" stroke-width="1.34" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+            className: Globals.getClassName('paginationButton')
+        }, container);
+        this.nextButton.title = this.lang.nextPage;
+
+        this.nextButton.addEventListener('click', (): void => {
+            void this.goToPage(this.currentPage + 1);
+        });
 
         this.setButtonState(
             this.nextButton,
-            (originalDataTable?.rowCount || 0) <= this.itemsPerPage
+            this.currentPage >= this.totalPages
         );
+    }
+
+    /**
+     * Render the last page button.
+     *
+     * @param container
+     * The container element for the last page button.
+     */
+    public renderLastButton(container: HTMLElement): void {
+        const firstLastButtons = this.options.controls?.firstLastButtons;
+        if (
+            firstLastButtons === false ||
+            (isObject(firstLastButtons) && firstLastButtons.enabled === false)
+        ) {
+            return;
+        }
+
+        this.lastButton = makeHTMLElement('button', {
+            innerHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1L9 5L5 9M1 1L5 5L1 9" stroke="currentColor" stroke-width="1.34" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+            className: Globals.getClassName('paginationButton')
+        }, container);
+        this.lastButton.title = this.lang.lastPage;
+
+        this.lastButton.addEventListener('click', (): void => {
+            void this.goToPage(this.totalPages);
+        });
+
+        this.setButtonState(
+            this.lastButton,
+            this.currentPage >= this.totalPages
+        );
+    }
+
+    /**
+     * Render page number buttons with ellipsis.
+     *
+     * @param container
+     * The container element for the page number buttons.
+     */
+    public renderPageNumbers(container: HTMLElement): void {
+        const pageButtons = this.options.controls?.pageButtons;
+        if (
+            pageButtons === false ||
+            (isObject(pageButtons) && pageButtons.enabled === false)
+        ) {
+            return;
+        }
+
+        this.pageNumbersContainer = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationPageButton')
+        }, container);
+
+        this.updatePageNumbers();
+    }
+
+    /**
+     * Update page number buttons based on current page and total pages.
+     */
+    public updatePageNumbers(): void {
+        if (!this.pageNumbersContainer) {
+            return;
+        }
+
+        // Clear existing page numbers
+        this.pageNumbersContainer.innerHTML = '';
+
+        const pageButtons = this.options.controls?.pageButtons;
+        const maxPageNumbers = isObject(pageButtons) ?
+            pageButtons.count :
+            (Pagination.defaultOptions.controls.pageButtons as PageButtonsOptions).count; // eslint-disable-line
+
+        const totalPages = this.totalPages;
+        const currentPage = this.currentPage;
+
+        if (totalPages <= maxPageNumbers) {
+            // Show all page numbers if total pages is less than max
+            for (let i = 1; i <= totalPages; i++) {
+                this.createPageButton(i, i === currentPage);
+            }
+        } else {
+            // Show page numbers with ellipsis
+            const halfMax = Math.floor(maxPageNumbers / 2);
+            let startPage = Math.max(1, currentPage - halfMax);
+            const endPage = Math.min(
+                totalPages,
+                startPage + maxPageNumbers - 1
+            );
+
+            // Adjust start and end to show maxPageNumbers
+            if (endPage - startPage + 1 < maxPageNumbers) {
+                startPage = Math.max(1, endPage - maxPageNumbers + 1);
+            }
+
+            // First page and ellipsis
+            if (startPage > 1) {
+                this.createPageButton(1, false);
+                // Only show ellipsis if there's a gap between page 1 and
+                // startPage.
+                if (startPage > 2) {
+                    this.createEllipsis();
+                }
+            }
+
+            // Page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                this.createPageButton(i, i === currentPage);
+            }
+
+            // Last page and ellipsis
+            if (endPage < totalPages) {
+                // Only show ellipsis if there's a gap between endPage and
+                // totalPages.
+                if (endPage < totalPages - 1) {
+                    this.createEllipsis();
+                }
+                this.createPageButton(totalPages, false);
+            }
+        }
+    }
+
+    /**
+     * Create a page number button.
+     *
+     * @param pageNumber
+     * The page number to create a button for.
+     *
+     * @param isActive
+     * Whether the page number button is active.
+     */
+    public createPageButton(pageNumber: number, isActive: boolean): void {
+        if (!this.pageNumbersContainer) {
+            return;
+        }
+
+        const button = makeHTMLElement('button', {
+            innerHTML: pageNumber.toString(),
+            className: Globals.getClassName(
+                isActive ? 'paginationPageButtonActive' : 'paginationPageButton'
+            )
+        }, this.pageNumbersContainer);
+        button.title = this.formatText(
+            this.lang.pageNumber,
+            { page: pageNumber }
+        );
+
+        button.addEventListener('click', (): void => {
+            void this.goToPage(pageNumber);
+        });
+    }
+
+    /**
+     * Create an ellipsis element.
+     */
+    public createEllipsis(): void {
+        if (!this.pageNumbersContainer) {
+            return;
+        }
+
+        const ellipsisElement = makeHTMLElement('span', {
+            innerHTML: '...',
+            className: Globals.getClassName('paginationEllipsis')
+        }, this.pageNumbersContainer);
+        ellipsisElement.title = this.lang.ellipsis;
+    }
+
+    /**
+     * Render the page size selector.
+     */
+    public renderPageSizeSelector(): void {
+
+        const pageSizeSelector = this.options.controls.pageSizeSelector;
+        if (
+            pageSizeSelector === false ||
+            (
+                isObject(pageSizeSelector) &&
+                pageSizeSelector.enabled === false
+            )
+        ) {
+            return;
+        }
+
+        const container = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationPageSizeContainer')
+        }, this.contentWrapper);
+
+        makeHTMLElement('span', {
+            innerHTML: this.lang.pageSizeLabel
+        }, container);
+
+        this.pageSizeSelect = makeHTMLElement('select', {
+            className: Globals.getClassName('paginationPageSizeSelect')
+        }, container) as HTMLSelectElement;
+
+        this.pageSizeOptions.forEach((option: number): void => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.toString();
+            optionElement.innerHTML = option.toString();
+
+            if (option === this.currentPageSize) {
+                optionElement.selected = true;
+            }
+
+            this.pageSizeSelect?.appendChild(optionElement);
+        });
+
+        this.pageSizeSelect.addEventListener('change', (): void => {
+            if (!this.pageSizeSelect) {
+                return;
+            }
+
+            void this.setPageSize(parseInt(this.pageSizeSelect.value, 10));
+        });
+    }
+
+    /**
+     * Set the page size and recalculate pagination.
+     *
+     * @param newPageSize
+     * The new page size to set.
+     */
+    public async setPageSize(newPageSize: number): Promise<void> {
+        const pageSize = this.currentPageSize;
+
+        fireEvent(
+            this,
+            'beforePageSizeChange',
+            {
+                pageSize: pageSize,
+                newPageSize: newPageSize
+            }
+        );
+        this.currentPageSize = newPageSize;
+
+        // Recalculate total pages
+        this.updateTotalPages();
+
+        // Reset to first page when changing page size
+        this.currentPage = 1;
+
+        // Update the grid's pagination range
+        await this.updateGridPagination();
+
+        // Update UI
+        this.updatePageInfo();
+        this.updatePageNumbers();
+        this.updateButtonStates();
+
+        fireEvent(
+            this,
+            'afterPageSizeChange',
+            {
+                pageSize: newPageSize,
+                previousPageSize: pageSize
+            }
+        );
+    }
+
+    /**
+     * Navigate to a specific page.
+     *
+     * @param pageNumber
+     * The page number to navigate to.
+     */
+    public async goToPage(pageNumber: number): Promise<void> {
+        if (
+            pageNumber < 1 ||
+            pageNumber > this.totalPages ||
+            pageNumber === this.currentPage
+        ) {
+            return;
+        }
+
+        const previousPage = this.currentPage;
+
+        fireEvent(
+            this,
+            'beforePageChange',
+            {
+                currentPage: this.currentPage,
+                nextPage: pageNumber,
+                pageSize: this.currentPageSize
+            }
+        );
+
+        this.currentPage = pageNumber;
+
+        await this.updateGridPagination();
+        this.updatePageInfo();
+        this.updatePageNumbers();
+        this.updateButtonStates();
+
+        fireEvent(
+            this,
+            'afterPageChange',
+            {
+                currentPage: this.currentPage,
+                previousPage: previousPage,
+                pageSize: this.currentPageSize
+            }
+        );
+    }
+
+    /**
+     * Update the grid's pagination state.
+     *
+     * @param ignoreDataRange
+     * Whether to ignore the data range update. Used when updating the data
+     * range is not needed, for example when updating the data range from
+     * the server.
+     * @internal
+     */
+    public async updateGridPagination(
+        ignoreDataRange: boolean = false
+    ): Promise<void> {
+        if (!this.grid.querying?.pagination) {
+            return;
+        }
+
+        this.grid.querying.pagination.setRange(
+            ignoreDataRange ? 1 : this.currentPage
+        );
+
+        // Trigger the grid to update its data and viewport
+        this.grid.querying.shouldBeUpdated = true;
+
+        // Force the querying controller to proceed with updates
+        await this.grid.querying.proceed(true);
+
+        // Update the viewport to reflect the new data
+        await this.grid.viewport?.updateRows();
+        this.grid.viewport?.header?.reflow();
+
+        // Scroll to top after page change
+        const tBody = this.grid.viewport?.tbodyElement;
+        if (tBody) {
+            tBody.scrollTop = 0;
+        }
+    }
+
+    /**
+     * Update total pages based on total items and items per page.
+     */
+    public updateTotalPages(): void {
+        const originalDataTable = this.grid.dataTable;
+        this.totalItems = this.totalItems || originalDataTable?.rowCount || 0;
+        this.totalPages =
+            Math.ceil(this.totalItems / this.currentPageSize) || 1;
+
+        // Ensure current page is within valid range
+        if (this.currentPage > this.totalPages) {
+            this.currentPage = this.totalPages;
+        }
+    }
+
+    /**
+     * Update button states based on current page.
+     */
+    public updateButtonStates(): void {
+        if (this.firstButton) {
+            this.setButtonState(this.firstButton, this.currentPage === 1);
+        }
+        if (this.prevButton) {
+            this.setButtonState(this.prevButton, this.currentPage === 1);
+        }
+        if (this.nextButton) {
+            this.setButtonState(
+                this.nextButton,
+                this.currentPage >= this.totalPages
+            );
+        }
+        if (this.lastButton) {
+            this.setButtonState(
+                this.lastButton,
+                this.currentPage >= this.totalPages
+            );
+        }
     }
 
     /**
@@ -217,86 +878,30 @@ class Pagination {
      * @returns
      */
     public async updatePage(isNextPage: boolean = true): Promise<void> {
-        const pg = this;
-        const grid = pg.grid;
-        const originalDataTable = grid.dataTable;
-        const { beforePageChange, afterPageChange } = this.options.events || {};
-
-        if (!originalDataTable || !this.prevButton || !this.nextButton) {
-            return;
-        }
-
-        // Event trigger before page change, defined by user
-        if (beforePageChange) {
-            fireEvent(
-                this,
-                'beforePageChange',
-                {
-                    currentPage: pg.currentPage
-                },
-                beforePageChange
-            );
-        }
-
-        if (!isNextPage) {
-            pg.currentPage--;
-        }
-
-        // Set the range of the pagination
-        this.grid.querying.pagination.setRange(pg.currentPage, isNextPage);
-
-        if (isNextPage) {
-            pg.currentPage++;
-        }
-
-        pg.isNextPage = isNextPage;
-
-        this.setButtonState(this.prevButton, pg.currentPage === 1);
-        this.setButtonState(
-            this.nextButton,
-            Math.ceil(
-                originalDataTable.rowCount / this.itemsPerPage
-            ) === pg.currentPage
-        );
-
-        await grid.viewport?.updateRows();
-        grid.viewport?.header?.reflow();
-
-        // Scroll tbody to top of table after page change
-        const tBody = grid.viewport?.tbodyElement;
-        if (tBody) {
-            tBody.scrollTop = 0;
-        }
-
-        // Event trigger after page change, defined by user
-        if (afterPageChange) {
-            fireEvent(
-                this,
-                'afterPageChange',
-                {
-                    currentPage: pg.currentPage
-                },
-                afterPageChange
-            );
-        }
+        const newPage =
+            isNextPage ? this.currentPage + 1 : this.currentPage - 1;
+        await this.goToPage(newPage);
     }
 
     /**
-     * Set the state of the button.
+     * Set button state (enabled/disabled).
      *
      * @param button
-     * The button to set the state of.
+     * The button to set the state for.
+     *
      * @param disabled
      * Whether the button should be disabled.
      */
     public setButtonState(button: HTMLElement, disabled?: boolean): void {
-        if (!button || disabled === void 0) {
-            return;
-        }
-
         if (disabled) {
-            button.setAttribute('disabled', true);
+            button.classList.add(
+                Globals.getClassName('paginationButtonDisabled')
+            );
+            button.setAttribute('disabled', 'disabled');
         } else {
+            button.classList.remove(
+                Globals.getClassName('paginationButtonDisabled')
+            );
             button.removeAttribute('disabled');
         }
     }
@@ -305,22 +910,49 @@ class Pagination {
      * Reflow the pagination container.
      */
     public reflow(): void {
-        if (!this.cell) {
+        const position = this.options.position;
+
+        if (!this.paginationContainer) {
             return;
         }
 
-        this.cell.style.width = this.grid.tableElement?.offsetWidth + 'px';
+        if (position === 'footer') {
+            // Set the width to match the table width
+            this.paginationContainer.style.width =
+                this.grid.tableElement?.offsetWidth + 'px';
+            return;
+        }
     }
 
     /**
-     * The pagination will be removed from the container.
+     * Destroy the pagination instance.
      */
     public destroy(): void {
-        this.row?.remove();
+        const position = this.options.position;
+
+        if (position === 'footer') {
+            // For footer position, remove the entire tfoot element.
+            this.paginationContainer?.parentElement?.parentElement?.remove();
+        } else if (typeof position === 'string' && position.startsWith('#')) {
+            // Don't remove the custom container itself
+            this.contentWrapper?.remove();
+        } else {
+            // For top/bottom positions, remove the entire pagination container
+            this.paginationContainer?.remove();
+        }
+
         this.grid.querying.pagination.reset();
     }
 }
 
+namespace Pagination {
+    export type PaginationState = {
+        currentPage?: number;
+        currentPageSize?: number;
+        totalItems?: number;
+        totalPages?: number;
+    };
+}
 
 /* *
  *

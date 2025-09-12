@@ -1,13 +1,20 @@
 function generateRandomData(rows) {
     const names = ['John', 'Jane', 'Alex', 'Chris', 'Katie', 'Michael'];
     const departments = ['HR', 'Engineering', 'Sales', 'Marketing', 'Finance'];
-    const positions = ['Manager', 'Developer', 'Analyst', 'Director'];
+    const positions = [
+        'Manager',
+        'Software Developer',
+        'Sales Executive',
+        'Marketing Specialist',
+        'Financial Analyst'
+    ];
     const columns = {
         ID: [],
         Name: [],
         Department: [],
         Position: [],
-        Email: []
+        Email: [],
+        Phone: []
     };
 
     for (let i = 0; i < rows; i++) {
@@ -15,15 +22,17 @@ function generateRandomData(rows) {
         const departmentIndex = Math.floor(Math.random() * departments.length);
         const positionIndex = Math.floor(Math.random() * positions.length);
         const id = i + 1;
-        const name = names[nameIndex];
-        const department = departments[departmentIndex];
-        const position = positions[positionIndex];
+        const email = `${names[nameIndex].toLowerCase()}${id}@example.com`;
+        const phone = `123-456-7${Math.floor(Math.random() * 1000)
+            .toString()
+            .padStart(3, '0')}`;
 
         columns.ID.push(id);
-        columns.Name.push(name);
-        columns.Department.push(department);
-        columns.Position.push(position);
-        columns.Email.push(`${name.toLowerCase()}@company.com`);
+        columns.Name.push(names[nameIndex]);
+        columns.Department.push(departments[departmentIndex]);
+        columns.Position.push(positions[positionIndex]);
+        columns.Email.push(email);
+        columns.Phone.push(phone);
     }
 
     return columns;
@@ -31,15 +40,22 @@ function generateRandomData(rows) {
 
 Grid.grid('container', {
     dataTable: {
-        columns: generateRandomData(254) // 254 items to match the design
+        columns: generateRandomData(254)
+    },
+    lang: {
+        pagination: {
+            pageInfo: `Showing {start} - {end} of {total}
+                (page {currentPage} of {totalPages})`,
+            rowsPerPage: 'rows per page'
+        }
     },
     pagination: {
         enabled: true,
-        pageSize: 22,
+        pageSize: 20,
         controls: {
             pageSizeSelector: {
                 enabled: true,
-                options: [10, 20, 50, 100]
+                options: [20, 50, 100]
             },
             pageInfo: true,
             firstLastButtons: true,
