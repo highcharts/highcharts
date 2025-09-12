@@ -405,7 +405,10 @@ class TreegraphSeries extends TreemapSeries {
                 link.options.link?.type,
                 this.options.link?.type,
                 'default'
-            );
+            ),
+            bendScope = link.options.link?.bendScope ??
+                this.options.link?.bendScope ??
+                'level';
 
         if (fromNode.shapeArgs && toNode.shapeArgs) {
 
@@ -434,12 +437,23 @@ class TreegraphSeries extends TreemapSeries {
                 x1 -= fromNodeWidth;
                 x2 += (toNode.shapeArgs.width || 0);
             }
-            const diff = toNode.node.xPosition - fromNode.node.xPosition;
+
+            const xDiff = toNode.node.xPosition - fromNode.node.xPosition,
+                fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
+                scopeWidth = bendScope === 'level' ?
+                    fullWidth / xDiff :
+                    fullWidth,
+                width = scopeWidth - fromNodeWidth,
+                offset = width * factor * (inverted ? -1 : 1),
+                xMiddle = crisp((x2 + x1) / 2, linkWidth),
+                bendAt = relativeLength(
+                    link.options.link?.bendAt ??
+                    this.options.link?.bendAt ??
+                    '50%',
+                    fullWidth - fromNodeWidth
+                );
+
             link.shapeType = 'path';
-            const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
-                width = (fullWidth / diff) - fromNodeWidth,
-                offset = width * factor * (inverted ? -1 : 1);
-            const xMiddle = crisp((x2 + x1) / 2, linkWidth);
             link.plotX = xMiddle;
             link.plotY = y2;
 
@@ -453,7 +467,8 @@ class TreegraphSeries extends TreemapSeries {
                     offset,
                     inverted,
                     parentVisible: toNode.visible,
-                    radius: this.options.link?.radius
+                    radius: this.options.link?.radius,
+                    bendAt
                 })
             };
 

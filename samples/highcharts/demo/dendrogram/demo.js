@@ -11,7 +11,7 @@ const data = [
     ['tremarctinae', 'spectacled', 'Spectacled Bear', 0, 'spectacled-icon'],
     ['tremarctinae', 'ursus', '', -4],
     ['ursus', 'black', 'Black Bear', 0, 'blackbear-icon'],
-    ['ursus', 'brown_polar', '', -0.5],
+    ['ursus', 'brown_polar', '', -0.3],
     ['brown_polar', 'polar', 'Polar Bear', 0, 'polarbear-icon'],
     ['brown_polar', 'brown', 'Brown Bear', 0, 'brownbear-icon']
 ];
@@ -52,8 +52,10 @@ Highcharts.chart('container', {
                 radius: 0.1
             },
             link: {
+                bendScope: 'full',
+                bendAt: 0,
                 type: 'default',
-                radius: 0
+                radius: 4
             },
             dataLabels: {
                 crop: false,
@@ -63,7 +65,8 @@ Highcharts.chart('container', {
                 verticalAlign: 'bottom',
                 style: {
                     color: 'var(--highcharts-neutral-color-60, #a1a1a1)',
-                    fontWeight: 'normal'
+                    fontWeight: 'normal',
+                    whiteSpace: 'nowrap'
                 }
             },
             levels: [{
@@ -74,8 +77,7 @@ Highcharts.chart('container', {
                     pointFormat: '{point.name}<br>{point.custom.iconSVG}',
                     style: {
                         color: 'var(--highcharts-neutral-color-100, #000000)',
-                        fontWeight: 'bold',
-                        whiteSpace: 'nowrap'
+                        fontWeight: 'bold'
                     },
                     verticalAlign: 'top',
                     useHTML: true,
