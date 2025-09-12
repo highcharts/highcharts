@@ -287,10 +287,8 @@ export async function getSample(path: string) {
     obj.script = resolveJSON(obj.script ?? '');
     if (path.includes('unit-tests') && /styledMode:\s+true/.test(obj.script)) {
         // Inject css
-        obj.script =`window.highchartsCSS = \`${highchartsCSS}\`;`
-            + `
-            `
-            + obj.script;
+        obj.script = `window.highchartsCSS = \`${highchartsCSS}\`;
+${obj.script}`;
     }
 
     return obj;
