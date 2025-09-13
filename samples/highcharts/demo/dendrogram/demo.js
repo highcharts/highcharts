@@ -3,50 +3,44 @@
 const data = [
     [undefined, 'root', '', -45],
     ['root', 'procyonidae_ailuridae', '', -30],
-    ['procyonidae_ailuridae', 'red', 'Red Panda', 0, 'redpanda-icon'],
-    ['procyonidae_ailuridae', 'raccoon', 'Raccoon', 0, 'raccoon-icon'],
+    ['procyonidae_ailuridae', 'red', 'Red Panda', 0, 0, 'redpanda-icon'],
+    ['procyonidae_ailuridae', 'raccoon', 'Raccoon', 0, 0, 'raccoon-icon'],
     ['root', 'ursidae', '', -20],
-    ['ursidae', 'giant', 'Giant Panda', 0, 'panda-icon'],
+    ['ursidae', 'giant', 'Giant Panda', 0, 0, 'panda-icon'],
     ['ursidae', 'tremarctinae', '', -10],
-    ['tremarctinae', 'spectacled', 'Spectacled Bear', 0, 'spectacled-icon'],
+    ['tremarctinae', 'spectacled', 'Spectacled Bear', 0, 0, 'spectacled-icon'],
     ['tremarctinae', 'ursus', '', -4],
-    ['ursus', 'black', 'Black Bear', 0, 'blackbear-icon'],
+    ['ursus', 'black', 'Black Bear', 0, 0, 'blackbear-icon'],
     ['ursus', 'brown_polar', '', -0.3],
-    ['brown_polar', 'polar', 'Polar Bear', 0, 'polarbear-icon'],
-    ['brown_polar', 'brown', 'Brown Bear', 0, 'brownbear-icon']
+    ['brown_polar', 'polar', 'Polar Bear', 0, 0, 'polarbear-icon'],
+    ['brown_polar', 'brown', 'Brown Bear', 0, 0, 'brownbear-icon']
 ];
 
 Highcharts.chart('container', {
     chart: {
         inverted: true,
         marginBottom: 90,
-        marginLeft: 80,
         marginRight: 40
     },
     title: {
         text: 'Evolution dendrogram'
     },
-    xAxis: [{
-    }, {
-        max: 45,
-        min: 0,
-        reversed: false,
+    xAxis: {
         offset: 20,
         title: {
             text: 'Million years ago'
-        }
-    }],
+        },
+        visible: true
+    },
     series: [
-        // Empty series, workaround to show axis:
-        { showInLegend: false },
-        // Dendrogram:
         {
             type: 'treegraph',
-            keys: ['parent', 'id', 'name', 'level', 'custom.iconSVG'],
+            keys: ['parent', 'id', 'name', 'x', 'level', 'custom.iconSVG'],
             data: data.map(e => [
-                e[0], e[1], e[2], e[3], // Pass these through as is
-                e[4] && document.getElementById(e[4]).innerHTML // icon
+                e[0], e[1], e[2], e[3], e[4], // Pass these through as is
+                e[5] && document.getElementById(e[5]).innerHTML // icon
             ]),
+            reversed: true,
             clip: false,
             marker: {
                 radius: 0.1
@@ -60,7 +54,7 @@ Highcharts.chart('container', {
             dataLabels: {
                 crop: false,
                 allowOverlap: true,
-                pointFormat: '~{multiply -1 point.level} Mya',
+                pointFormat: '~{multiply -1 point.x} Mya',
                 align: 'left',
                 verticalAlign: 'bottom',
                 style: {

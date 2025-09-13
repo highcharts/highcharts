@@ -305,7 +305,7 @@ class TreegraphSeries extends TreemapSeries {
         parent?: string
     ): this['tree'] {
         const point = this.points[index];
-        level = (point && point.level) ?? level;
+        level = point?.level ?? level;
         return super.buildTree.call(this, id, index, level, list, parent);
     }
 
@@ -401,14 +401,13 @@ class TreegraphSeries extends TreemapSeries {
             toNode = link.toNode,
             linkWidth = this.options.link?.lineWidth || 0,
             factor = pick(this.options.link?.curveFactor, 0.5),
+            hasXData = toNode.x !== toNode.node.level ||
+                fromNode.x !== fromNode.node.level,
             type = pick(
                 link.options.link?.type,
                 this.options.link?.type,
                 'default'
-            ),
-            bendScope = link.options.link?.bendScope ??
-                this.options.link?.bendScope ??
-                'level';
+            );
 
         if (fromNode.shapeArgs && toNode.shapeArgs) {
 
@@ -440,9 +439,7 @@ class TreegraphSeries extends TreemapSeries {
 
             const xDiff = toNode.node.xPosition - fromNode.node.xPosition,
                 fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
-                scopeWidth = bendScope === 'level' ?
-                    fullWidth / xDiff :
-                    fullWidth,
+                scopeWidth = hasXData ? fullWidth : (fullWidth / xDiff),
                 width = scopeWidth - fromNodeWidth,
                 offset = width * factor * (inverted ? -1 : 1),
                 xMiddle = crisp((x2 + x1) / 2, linkWidth),

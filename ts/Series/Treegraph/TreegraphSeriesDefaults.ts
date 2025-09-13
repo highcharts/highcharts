@@ -105,21 +105,6 @@ const TreegraphSeriesDefaults = {
          */
 
         /**
-         * The bend scope defines how many levels the link bends or curves
-         * across. When set to `level`, the link will only bend across one
-         * level. This may be more visually appealing when there are many levels
-         * in the graph, making sure the links are not crossing. When set to
-         * `full`, the link will bend across all levels from the `from` node to
-         * the `to` node.
-         *
-         * @type      {'level'|'full'}
-         * @since     next
-         * @product   highcharts
-         * @default   level
-         * @apioption plotOptions.treegraph.link.bendScope
-         */
-
-        /**
          * The color of the links between nodes.
          *
          * @type {Highcharts.ColorString}

@@ -61,18 +61,6 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
     bendAt?: number|string;
 
     /**
-     * The bend scope defines how many levels the link bends or curves across.
-     * When set to `level`, the link will only bend across one level. This may
-     * be more visually appealing when there are many levels in the graph,
-     * making sure the links are not crossing. When set to `full`, the link will
-     * bend across all levels from the `from` node to the `to` node.
-     *
-     * @since next
-     * @default level
-     */
-    bendScope?: 'level'|'full';
-
-    /**
      * Radius for the rounded corners of the links between nodes. Works for
      * `default` link type.
      */
