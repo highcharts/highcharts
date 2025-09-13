@@ -123,8 +123,6 @@ function onSeriesAfterBindAxes(
             // hidden by default.
             const treeAxisDefaults: Partial<AxisOptions> = {
                 endOnTick: false,
-                minPadding: 0,
-                maxPadding: 0,
                 startOnTick: false,
                 visible: false
             };

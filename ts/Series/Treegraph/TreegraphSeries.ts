@@ -662,12 +662,14 @@ class TreegraphSeries extends TreemapSeries {
      */
     public translateNode(point: TreegraphPoint): void {
         const chart = this.chart,
-            node = point.node,
+            { node, plotX = 0 } = point,
             plotSizeY = chart.plotSizeY as number,
             plotSizeX = chart.plotSizeX as number,
             // Get the layout modifiers which are common for all nodes.
             { ax, bx, ay, by } = this.layoutModifier,
-            x = ax * node.xPosition + bx,
+            x = this.isCartesian ?
+                (chart.inverted ? plotSizeX - plotX : plotX) :
+                ax * node.xPosition + bx,
             y = ay * node.yPosition + by,
             level = this.mapOptionsToLevel[node.level] || {},
             markerOptions = merge(

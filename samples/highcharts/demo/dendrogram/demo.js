@@ -19,13 +19,13 @@ const data = [
 Highcharts.chart('container', {
     chart: {
         inverted: true,
-        marginBottom: 90,
         marginRight: 40
     },
     title: {
         text: 'Evolution dendrogram'
     },
     xAxis: {
+        height: '85%',
         offset: 20,
         title: {
             text: 'Million years ago'
@@ -41,7 +41,6 @@ Highcharts.chart('container', {
                 e[5] && document.getElementById(e[5]).innerHTML // icon
             ]),
             reversed: true,
-            clip: false,
             marker: {
                 radius: 0.1
             },
