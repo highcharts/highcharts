@@ -49,6 +49,16 @@ const {
 
 export interface TreegraphLinkOptions extends OrganizationLinkOptions {
 
+    /**
+     * For the orthogonal link type, this defines how far down the link bends.
+     * A number defines the pixel offset from the start of the link, and a
+     * percentage defines the relative position on the link. For example, a
+     * `bendAt` of `50%` means that the link bends in the middle.
+     *
+     * @since next
+     * @default '50%'
+     */
+    bendAt?: number|string;
 
     /**
      * Radius for the rounded corners of the links between nodes. Works for

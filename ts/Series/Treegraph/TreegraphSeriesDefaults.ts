@@ -88,7 +88,20 @@ const TreegraphSeriesDefaults = {
          * @default   0.5
          * @product   highcharts
          * @since 10.3.0
-         * @apioption series.treegraph.link.curveFactor
+         * @apioption plotOptions.treegraph.link.curveFactor
+         */
+
+        /**
+         * For the orthogonal link type, this defines how far down the link
+         * bends. A number defines the pixel offset from the start of the link,
+         * and a percentage defines the relative position on the link. For
+         * example, a `bendAt` of `50%` means that the link bends in the middle.
+         *
+         * @type      {number|string}
+         * @since     next
+         * @product   highcharts
+         * @default   50%
+         * @apioption plotOptions.treegraph.link.bendAt
          */
 
         /**

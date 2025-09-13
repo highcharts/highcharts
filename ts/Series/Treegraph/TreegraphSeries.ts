@@ -263,7 +263,7 @@ class TreegraphSeries extends TreemapSeries {
         const links = [] as TreegraphLink[];
         this.data.forEach((point): void => {
             const levelOptions =
-                (series.mapOptionsToLevel as any)[point.node.level || 0] || {};
+                (series.mapOptionsToLevel as any)[point.node.level ?? 0] || {};
             if (point.node.parent) {
                 const pointOptions = merge(levelOptions, point.options);
                 if (!point.linkToParent || point.linkToParent.destroyed) {
@@ -305,7 +305,7 @@ class TreegraphSeries extends TreemapSeries {
         parent?: string
     ): this['tree'] {
         const point = this.points[index];
-        level = (point && point.level) || level;
+        level = point?.level ?? level;
         return super.buildTree.call(this, id, index, level, list, parent);
     }
 
@@ -401,6 +401,8 @@ class TreegraphSeries extends TreemapSeries {
             toNode = link.toNode,
             linkWidth = this.options.link?.lineWidth || 0,
             factor = pick(this.options.link?.curveFactor, 0.5),
+            hasXData = toNode.x !== toNode.node.level ||
+                fromNode.x !== fromNode.node.level,
             type = pick(
                 link.options.link?.type,
                 this.options.link?.type,
@@ -434,12 +436,21 @@ class TreegraphSeries extends TreemapSeries {
                 x1 -= fromNodeWidth;
                 x2 += (toNode.shapeArgs.width || 0);
             }
-            const diff = toNode.node.xPosition - fromNode.node.xPosition;
+
+            const xDiff = toNode.node.xPosition - fromNode.node.xPosition,
+                fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
+                scopeWidth = hasXData ? fullWidth : (fullWidth / xDiff),
+                width = scopeWidth - fromNodeWidth,
+                offset = width * factor * (inverted ? -1 : 1),
+                xMiddle = crisp((x2 + x1) / 2, linkWidth),
+                bendAt = relativeLength(
+                    link.options.link?.bendAt ??
+                    this.options.link?.bendAt ??
+                    '50%',
+                    fullWidth - fromNodeWidth
+                );
+
             link.shapeType = 'path';
-            const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
-                width = (fullWidth / diff) - fromNodeWidth,
-                offset = width * factor * (inverted ? -1 : 1);
-            const xMiddle = crisp((x2 + x1) / 2, linkWidth);
             link.plotX = xMiddle;
             link.plotY = y2;
 
@@ -453,7 +464,8 @@ class TreegraphSeries extends TreemapSeries {
                     offset,
                     inverted,
                     parentVisible: toNode.visible,
-                    radius: this.options.link?.radius
+                    radius: this.options.link?.radius,
+                    bendAt
                 })
             };
 
@@ -594,7 +606,7 @@ class TreegraphSeries extends TreemapSeries {
     ): SVGAttributes {
         const series = this,
             levelOptions = point &&
-                (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
+                (series.mapOptionsToLevel as any)[point.node.level ?? 0] || {},
             options = point && point.options,
             stateOptions =
                 (levelOptions.states &&
@@ -650,12 +662,14 @@ class TreegraphSeries extends TreemapSeries {
      */
     public translateNode(point: TreegraphPoint): void {
         const chart = this.chart,
-            node = point.node,
+            { node, plotX = 0 } = point,
             plotSizeY = chart.plotSizeY as number,
             plotSizeX = chart.plotSizeX as number,
             // Get the layout modifiers which are common for all nodes.
             { ax, bx, ay, by } = this.layoutModifier,
-            x = ax * node.xPosition + bx,
+            x = this.isCartesian ?
+                (chart.inverted ? plotSizeX - plotX : plotX) :
+                ax * node.xPosition + bx,
             y = ay * node.yPosition + by,
             level = this.mapOptionsToLevel[node.level] || {},
             markerOptions = merge(
