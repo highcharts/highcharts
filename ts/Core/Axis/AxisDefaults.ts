@@ -1066,6 +1066,7 @@ namespace AxisDefaults {
             /**
              * Rotation of the labels in degrees. When `undefined`, the
              * `autoRotation` option takes precedence.
+             * Supported range is -360° to 360°.
              *
              * @sample {highcharts} highcharts/xaxis/labels-rotation/
              *         X axis labels rotated 90°
