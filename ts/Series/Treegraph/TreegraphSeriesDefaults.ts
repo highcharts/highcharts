@@ -228,7 +228,7 @@ const TreegraphSeriesDefaults = {
          * @product highcharts
          */
         linkFormat: '{point.fromNode.id} \u2192 {point.toNode.id}',
-        nodeFormat: '{point.id}'
+        pointFormat: '{point.id}'
         /**
          * A callback function for formatting the HTML output for a
          * single link in the tooltip. Like the `linkFormat` string,
@@ -275,22 +275,22 @@ const TreegraphSeriesDefaults = {
          * The
          * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
          * specifying what to show for _nodes_ in the treegraph. Overrides
-         * `format`. Use `nodeFormat` and `linkFormat` to differentiate between
+         * `format`. Use `pointFormat` and `linkFormat` to differentiate between
          * node and link data labels.
          *
          * @type {string}
          */
-        nodeFormat: void 0,
+        pointFormat: void 0,
         padding: 5,
         style: {
             textOverflow: 'none'
         }
         /**
          * Callback function to format data labels for _nodes_ in the
-         * treegraph, when `nodeFormat` is not sufficient.
+         * treegraph, when `pointFormat` is not sufficient.
          *
          * @type {function}
-         * @apioption series.treegraph.dataLabels.nodeFormatter
+         * @apioption series.treegraph.dataLabels.pointFormatter
          */
 
     },

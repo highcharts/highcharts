@@ -65,7 +65,6 @@ class TreegraphPoint extends TreemapPoint {
     public collapseButtonOptions?: CollapseButtonOptions;
     public collapsed?: boolean;
     public dataLabelOnHidden = true;
-    public formatPrefix = 'node';
     public isLink = false;
     public level?: number;
     public linkToParent?: TreegraphLink;

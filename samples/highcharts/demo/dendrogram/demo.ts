@@ -50,7 +50,7 @@ Highcharts.chart('container', {
                 radius: 4
             },
             dataLabels: [{
-                nodeFormat: `{#unless point.node.isLeaf}
+                pointFormat: `{#unless point.node.isLeaf}
                     ~{multiply -1 point.x} Mya
                 {/unless}`,
                 align: 'left',
@@ -64,7 +64,7 @@ Highcharts.chart('container', {
                 crop: false,
                 align: 'center',
                 overflow: 'allow',
-                nodeFormat: `{#if point.node.isLeaf}
+                pointFormat: `{#if point.node.isLeaf}
                     {point.name}<br>{point.custom.iconSVG}
                 {/if}`,
                 style: {

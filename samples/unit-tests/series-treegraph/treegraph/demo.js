@@ -12,7 +12,7 @@ QUnit.test(
                         id: 'B'
                     }],
                     dataLabels: {
-                        nodeFormat: '{point.id}'
+                        pointFormat: '{point.id}'
                     },
                     levels: [{
                         level: 2,
