@@ -406,7 +406,7 @@ class TreegraphSeries extends TreemapSeries {
             type = pick(
                 link.options.link?.type,
                 this.options.link?.type,
-                'orthogonal'
+                'default'
             );
 
         if (fromNode.shapeArgs && toNode.shapeArgs) {
@@ -455,7 +455,7 @@ class TreegraphSeries extends TreemapSeries {
             link.plotY = y2;
 
             link.shapeArgs = {
-                d: (getLinkPath[type] || getLinkPath.default)({
+                d: getLinkPath[type]({
                     x1,
                     y1,
                     x2,
@@ -662,14 +662,12 @@ class TreegraphSeries extends TreemapSeries {
      */
     public translateNode(point: TreegraphPoint): void {
         const chart = this.chart,
-            { node, plotX = 0 } = point,
+            node = point.node,
             plotSizeY = chart.plotSizeY as number,
             plotSizeX = chart.plotSizeX as number,
             // Get the layout modifiers which are common for all nodes.
             { ax, bx, ay, by } = this.layoutModifier,
-            x = this.isCartesian ?
-                (chart.inverted ? plotSizeX - plotX : plotX) :
-                ax * node.xPosition + bx,
+            x = ax * node.xPosition + bx,
             y = ay * node.yPosition + by,
             level = this.mapOptionsToLevel[node.level] || {},
             markerOptions = merge(
@@ -857,8 +855,8 @@ export default TreegraphSeries;
  * An array of data points for the series. For the `treegraph` series type,
  * points can be given in the following ways:
  *
- * 1. An array of arrays, with the `keys` property, which defines how the fields
- *    in the array should be interpreted
+ * 1. The array of arrays, with `keys` property, which defines how the fields in
+ *     array should be interpreted
  *    ```js
  *       keys: ['id', 'parent'],
  *       data: [

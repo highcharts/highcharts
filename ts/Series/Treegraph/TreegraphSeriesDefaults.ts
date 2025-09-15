@@ -215,13 +215,12 @@ const TreegraphSeriesDefaults = {
      */
     tooltip: {
         /**
-         * The HTML of the point's line in the tooltip. Variables are
-         * enclosed by curly brackets. Available variables are
-         * `point.id`,  `point.fromNode.id`, `point.toNode.id`,
-         * `series.name`, `series.color` and other properties on the
-         * same form. Furthermore, This can also be overridden for each
-         * series, which makes it a good hook for displaying units. In
-         * styled mode, the dot is colored by a class name rather than
+         * The HTML of the point's line in the tooltip. Variables are enclosed
+         * by curly brackets. Available variables are `point.id`,
+         * `point.fromNode.id`, `point.toNode.id`, `series.name`, `series.color`
+         * and other properties on the same form. Furthermore, This can also be
+         * overridden for each series, which makes it a good hook for displaying
+         * units. In styled mode, the dot is colored by a class name rather than
          * the point color.
          *
          * @type {string}
@@ -229,7 +228,7 @@ const TreegraphSeriesDefaults = {
          * @product highcharts
          */
         linkFormat: '{point.fromNode.id} \u2192 {point.toNode.id}',
-        pointFormat: '{point.id}'
+        nodeFormat: '{point.id}'
         /**
          * A callback function for formatting the HTML output for a
          * single link in the tooltip. Like the `linkFormat` string,

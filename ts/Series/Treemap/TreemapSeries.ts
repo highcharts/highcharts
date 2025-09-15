@@ -1195,6 +1195,10 @@ class TreemapSeries extends ScatterSeries {
             );
             height = Math.max(child.height + 1, height);
             children.push(child);
+
+            if (series.is('treegraph')) {
+                child.visible = true;
+            }
         }
 
         const node = new series.NodeClass().init(
@@ -1715,7 +1719,11 @@ class TreemapSeries extends ScatterSeries {
             childrenTotal: childrenTotal,
             // Ignore this node if point is not visible
             ignore: !(pick(point?.visible, true) && (val > 0)),
-            isLeaf: tree.visible && !childrenTotal,
+            isLeaf: tree.visible && !(
+                series.type === 'treegraph' ?
+                    children.length > 0 :
+                    childrenTotal
+            ),
             isGroup: point?.isGroup,
             levelDynamic: (
                 tree.level - (levelIsConstant ? 0 : nodeRoot.level)

@@ -1,5 +1,5 @@
 // Data for the tree.
-// [Parent, ID, visible name, million years ago, icon]
+// [Parent, ID, visible name, million years ago, level, icon]
 const treeData = [
     [undefined, 'root', '', -45],
     ['root', 'procyonidae-ailuridae', '', -30],
@@ -49,10 +49,10 @@ Highcharts.chart('container', {
                 type: 'orthogonal',
                 radius: 4
             },
-            dataLabels: {
-                crop: false,
-                allowOverlap: true,
-                nodeFormat: '~{multiply -1 point.x} Mya',
+            dataLabels: [{
+                nodeFormat: `{#unless point.node.isLeaf}
+                    ~{multiply -1 point.x} Mya
+                {/unless}`,
                 align: 'left',
                 verticalAlign: 'bottom',
                 style: {
@@ -60,21 +60,20 @@ Highcharts.chart('container', {
                     fontWeight: 'normal',
                     whiteSpace: 'nowrap'
                 }
-            },
-            levels: [{
-                level: 6,
-                dataLabels: {
-                    align: 'center',
-                    overflow: 'allow',
-                    nodeFormat: '{point.name}<br>{point.custom.iconSVG}',
-                    style: {
-                        color: 'var(--highcharts-neutral-color-100, #000000)',
-                        fontWeight: 'bold'
-                    },
-                    verticalAlign: 'top',
-                    useHTML: true,
-                    y: 10
-                }
+            }, {
+                crop: false,
+                align: 'center',
+                overflow: 'allow',
+                nodeFormat: `{#if point.node.isLeaf}
+                    {point.name}<br>{point.custom.iconSVG}
+                {/if}`,
+                style: {
+                    color: 'var(--highcharts-neutral-color-100, #000000)',
+                    fontWeight: 'bold'
+                },
+                verticalAlign: 'top',
+                useHTML: true,
+                y: 10
             }]
         }
     ]
