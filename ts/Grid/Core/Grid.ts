@@ -45,7 +45,6 @@ const {
     getStyle,
     merge,
     pick,
-    defined,
     isObject
 } = U;
 
@@ -390,7 +389,7 @@ class Grid {
             {
                 ...paginationState
             }
-        )
+        );
 
         if (paginationOptions?.enabled) {
             this.pagination = new Pagination(this, paginationOptions);
@@ -597,8 +596,6 @@ class Grid {
 
             this.loadDataTable(this.options?.dataTable);
             this.querying.shouldBeUpdated = true;
-
-            this.initVirtualization();
         }
 
         if (!render) {
@@ -607,6 +604,7 @@ class Grid {
 
         this.initAccessibility();
         this.initPagination();
+        this.initVirtualization();
 
         this.querying.loadOptions();
 
@@ -1185,18 +1183,29 @@ class Grid {
      * the data table is loaded.
      */
     private initVirtualization(): void {
+        // Makes sure all nested options are defined.
+        ((this.options ??= {}).rendering ??= {}).rows ??= {};
+        this.options.rendering.rows.virtualization = this.shouldVirtualize();
+    }
+
+    /**
+     * Checks if virtualization should be enabled.
+     *
+     * @returns
+     * Whether virtualization should be enabled.
+     */
+    public shouldVirtualize(): boolean {
         const rows = this.userOptions.rendering?.rows;
-        const virtualization = rows?.virtualization;
         const threshold = Number(
             rows?.virtualizationThreshold ||
             Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
         );
         const rowCount = Number(this.dataTable?.rowCount);
+        const paginationPageSize = this.pagination?.currentPageSize;
 
-        // Makes sure all nested options are defined.
-        ((this.options ??= {}).rendering ??= {}).rows ??= {};
-        this.options.rendering.rows.virtualization =
-            defined(virtualization) ? virtualization : rowCount >= threshold;
+        return paginationPageSize ?
+            paginationPageSize >= threshold :
+            rowCount >= threshold;
     }
 }
 

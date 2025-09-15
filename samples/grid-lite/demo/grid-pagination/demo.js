@@ -49,6 +49,11 @@ Grid.grid('container', {
             rowsPerPage: 'rows per page'
         }
     },
+    rendering: {
+        rows: {
+            minVisibleRows: 10
+        }
+    },
     pagination: {
         enabled: true,
         pageSize: 10,
