@@ -1,5 +1,5 @@
 ---
-name: Dendrogram chart
+name: Treegraph chart
 authors:
   - Andrzej Bułeczka
 js_wrap: b

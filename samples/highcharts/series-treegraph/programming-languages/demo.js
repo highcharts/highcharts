@@ -209,13 +209,11 @@ const data = [
 
 Highcharts.chart('container', {
     chart: {
-        inverted: true
+        inverted: true,
+        marginBottom: 100
     },
     title: {
         text: 'Programming Languages by Paradigm'
-    },
-    subtitle: {
-        text: 'Sample dendrogram using the treegraph series type'
     },
     series: [
         {
@@ -231,6 +229,7 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 crop: false,
+                allowOverlap: true,
                 style: {
                     whiteSpace: 'nowrap',
                     color: '#000000',
