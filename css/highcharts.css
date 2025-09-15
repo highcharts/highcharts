@@ -755,7 +755,7 @@ circle.highcharts-legend-nav-inactive { /* tracker */
 }
 
 .highcharts-organization-series .highcharts-null-point {
-    --highcharts-neutral-color-3: transparent;
+    fill: transparent;
 }
 
 .highcharts-polygon-series .highcharts-graph {
