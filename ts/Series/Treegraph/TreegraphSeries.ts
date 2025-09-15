@@ -857,8 +857,8 @@ export default TreegraphSeries;
  * An array of data points for the series. For the `treegraph` series type,
  * points can be given in the following ways:
  *
- * 1. The array of arrays, with `keys` property, which defines how the fields in
- *     array should be interpreted
+ * 1. An array of arrays, with the `keys` property, which defines how the fields
+ *    in the array should be interpreted
  *    ```js
  *       keys: ['id', 'parent'],
  *       data: [

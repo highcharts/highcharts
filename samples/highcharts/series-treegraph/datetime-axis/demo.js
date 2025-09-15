@@ -10,6 +10,10 @@ Highcharts.chart('container', {
         offset: 20
     },
 
+    tooltip: {
+        pointFormat: '<b>{point.id}</b>: {point.x:%[Yeb]}'
+    },
+
     series: [{
         type: 'treegraph',
         keys: ['id', 'parent', 'x'],

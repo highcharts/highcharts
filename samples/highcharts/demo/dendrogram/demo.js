@@ -2,31 +2,31 @@
 // [Parent, ID, visible name, million years ago, icon]
 const data = [
     [undefined, 'root', '', -45],
-    ['root', 'procyonidae_ailuridae', '', -30],
-    ['procyonidae_ailuridae', 'red', 'Red Panda', 0, 0, 'redpanda-icon'],
-    ['procyonidae_ailuridae', 'raccoon', 'Raccoon', 0, 0, 'raccoon-icon'],
+    ['root', 'procyonidae-ailuridae', '', -30],
+    ['procyonidae-ailuridae', 'red', 'Red Panda', 0, 6, 'redpanda-icon'],
+    ['procyonidae-ailuridae', 'raccoon', 'Raccoon', 0, 6, 'raccoon-icon'],
     ['root', 'ursidae', '', -20],
-    ['ursidae', 'giant', 'Giant Panda', 0, 0, 'panda-icon'],
+    ['ursidae', 'giant', 'Giant Panda', 0, 6, 'panda-icon'],
     ['ursidae', 'tremarctinae', '', -10],
-    ['tremarctinae', 'spectacled', 'Spectacled Bear', 0, 0, 'spectacled-icon'],
+    ['tremarctinae', 'spectacled', 'Spectacled Bear', 0, 6, 'spectacled-icon'],
     ['tremarctinae', 'ursus', '', -4],
-    ['ursus', 'black', 'Black Bear', 0, 0, 'blackbear-icon'],
-    ['ursus', 'brown_polar', '', -0.3],
-    ['brown_polar', 'polar', 'Polar Bear', 0, 0, 'polarbear-icon'],
-    ['brown_polar', 'brown', 'Brown Bear', 0, 0, 'brownbear-icon']
+    ['ursus', 'black', 'Black Bear', 0, 6, 'blackbear-icon'],
+    ['ursus', 'brown-polar', '', -0.3],
+    ['brown-polar', 'polar', 'Polar Bear', 0, 6, 'polarbear-icon'],
+    ['brown-polar', 'brown', 'Brown Bear', 0, 6, 'brownbear-icon']
 ];
 
 Highcharts.chart('container', {
     chart: {
         inverted: true,
-        marginRight: 40
+        marginRight: 40,
+        marginBottom: 80
     },
     title: {
         text: 'Evolution dendrogram'
     },
     xAxis: {
-        height: '85%',
-        offset: 20,
+        offset: 40,
         title: {
             text: 'Million years ago'
         },
@@ -45,7 +45,6 @@ Highcharts.chart('container', {
                 radius: 0.1
             },
             link: {
-                bendScope: 'full',
                 bendAt: 0,
                 type: 'default',
                 radius: 4
@@ -63,7 +62,7 @@ Highcharts.chart('container', {
                 }
             },
             levels: [{
-                level: 0,
+                level: 6,
                 dataLabels: {
                     align: 'center',
                     overflow: 'allow',

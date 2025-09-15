@@ -1217,6 +1217,8 @@ class TreemapSeries extends ScatterSeries {
         if (point) {
             point.node = node;
             node.point = point;
+
+            // Handle x-axis value for treegraph
             if (!defined(point.options.x)) {
                 point.x = level;
             }
