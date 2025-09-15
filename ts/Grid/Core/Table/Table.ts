@@ -35,7 +35,6 @@ import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import Defaults from '../Defaults.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -279,14 +278,10 @@ class Table {
      * performance reasons).
      */
     private updateVirtualization(): void {
-        const rows = this.grid.options?.rendering?.rows;
-        const threshold = Number(
-            rows?.virtualizationThreshold ||
-            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
-        );
-        const rowCount = Number(this.dataTable?.rowCount);
-
-        if (rows?.virtualization !== (rowCount >= threshold)) {
+        if (
+            this.grid.options?.rendering?.rows?.virtualization !==
+            this.grid.shouldVirtualize()
+        ) {
             void this.grid.update();
         }
     }
