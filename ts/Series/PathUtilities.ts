@@ -19,7 +19,8 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 const getLinkPath = {
-    'default': getDefaultPath,
+    'default': getOrthogonalPath,
+    orthogonal: getOrthogonalPath,
     straight: getStraightPath,
     curved: getCurvedPath
 };
@@ -44,7 +45,7 @@ interface PathParams {
 /**
  *
  */
-function getDefaultPath(pathParams: PathParams): SVGPath {
+function getOrthogonalPath(pathParams: PathParams): SVGPath {
     const {
         x1,
         y1,

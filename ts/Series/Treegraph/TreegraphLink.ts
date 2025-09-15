@@ -97,7 +97,7 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
      *
      * @product highcharts
      */
-    type?: ('curved'|'default'|'straight');
+    type?: 'curved' | 'orthogonal' | 'straight';
 
 }
 

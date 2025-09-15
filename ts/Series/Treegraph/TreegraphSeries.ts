@@ -406,7 +406,7 @@ class TreegraphSeries extends TreemapSeries {
             type = pick(
                 link.options.link?.type,
                 this.options.link?.type,
-                'default'
+                'orthogonal'
             );
 
         if (fromNode.shapeArgs && toNode.shapeArgs) {
@@ -455,7 +455,7 @@ class TreegraphSeries extends TreemapSeries {
             link.plotY = y2;
 
             link.shapeArgs = {
-                d: getLinkPath[type]({
+                d: (getLinkPath[type] || getLinkPath.default)({
                     x1,
                     y1,
                     x2,

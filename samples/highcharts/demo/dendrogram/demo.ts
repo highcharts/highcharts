@@ -46,7 +46,7 @@ Highcharts.chart('container', {
             },
             link: {
                 bendAt: 0,
-                type: 'default',
+                type: 'orthogonal',
                 radius: 4
             },
             dataLabels: {

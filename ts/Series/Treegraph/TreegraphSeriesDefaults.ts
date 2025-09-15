@@ -132,7 +132,7 @@ const TreegraphSeriesDefaults = {
          * @sample   highcharts/series-treegraph/link-types
          *           Different link types
          *
-         * @type {'default' | 'curved' | 'straight'}
+         * @type {'orthogonal' | 'curved' | 'straight'}
          * @product highcharts
          *
          */
