@@ -145,8 +145,8 @@ class HeaderCell extends Cell {
     public override render(): void {
         const { column } = this;
         const options = createOptionsProxy(
-            column?.options || {},
-            this.superColumnOptions
+            this.superColumnOptions,
+            column?.options
         );
         const headerCellOptions = options.header || {};
         const isSortableData = options.sorting?.sortable && column?.data;
