@@ -677,7 +677,7 @@ class Pagination {
             }
 
             // Render all elements
-            elements.forEach(element => {
+            elements.forEach((element): void => {
                 if (element.type === 'button' && defined(element.page)) {
                     this.createPageButton(
                         element.page,
