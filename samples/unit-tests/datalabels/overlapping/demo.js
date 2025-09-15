@@ -215,7 +215,7 @@ QUnit.test(
                     width: markerWidth
                 },
                 dataLabels: {
-                    pointFormat: '{point.id}'
+                    nodeFormat: '{point.id}'
                 }
             }]
         });

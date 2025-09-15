@@ -1,6 +1,6 @@
 // Data for the tree.
 // [Parent, ID, visible name, million years ago, icon]
-const data = [
+const treeData = [
     [undefined, 'root', '', -45],
     ['root', 'procyonidae-ailuridae', '', -30],
     ['procyonidae-ailuridae', 'red', 'Red Panda', 0, 6, 'redpanda-icon'],
@@ -14,7 +14,10 @@ const data = [
     ['ursus', 'brown-polar', '', -0.3],
     ['brown-polar', 'polar', 'Polar Bear', 0, 6, 'polarbear-icon'],
     ['brown-polar', 'brown', 'Brown Bear', 0, 6, 'brownbear-icon']
-];
+].map(e => [
+    e[0], e[1], e[2], e[3], e[4], // Pass these through as is
+    typeof e[5] === 'string' && document.getElementById(e[5]).innerHTML // icon
+]);
 
 Highcharts.chart('container', {
     chart: {
@@ -36,10 +39,7 @@ Highcharts.chart('container', {
         {
             type: 'treegraph',
             keys: ['parent', 'id', 'name', 'x', 'level', 'custom.iconSVG'],
-            data: data.map(e => [
-                e[0], e[1], e[2], e[3], e[4], // Pass these through as is
-                e[5] && document.getElementById(e[5]).innerHTML // icon
-            ]),
+            data: treeData,
             reversed: true,
             marker: {
                 radius: 0.1
@@ -52,7 +52,7 @@ Highcharts.chart('container', {
             dataLabels: {
                 crop: false,
                 allowOverlap: true,
-                pointFormat: '~{multiply -1 point.x} Mya',
+                nodeFormat: '~{multiply -1 point.x} Mya',
                 align: 'left',
                 verticalAlign: 'bottom',
                 style: {
@@ -66,7 +66,7 @@ Highcharts.chart('container', {
                 dataLabels: {
                     align: 'center',
                     overflow: 'allow',
-                    pointFormat: '{point.name}<br>{point.custom.iconSVG}',
+                    nodeFormat: '{point.name}<br>{point.custom.iconSVG}',
                     style: {
                         color: 'var(--highcharts-neutral-color-100, #000000)',
                         fontWeight: 'bold'
@@ -78,4 +78,4 @@ Highcharts.chart('container', {
             }]
         }
     ]
-});
+} satisfies Highcharts.Options);

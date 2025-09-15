@@ -139,6 +139,16 @@ const TreegraphSeriesDefaults = {
         type: 'curved'
     },
     /**
+     * Can set the options of dataLabels on each point which lies on the
+     * level.
+     * [plotOptions.treegraph.dataLabels](#plotOptions.treegraph.dataLabels)
+     * for possible values.
+     *
+     * @extends   plotOptions.treegraph.dataLabels
+     * @product   highcharts
+     * @apioption plotOptions.treegraph.levels.dataLabels
+     */
+    /**
      * Options applied to collapse Button. The collape button is the
      * small button which indicates, that the node is collapsable.
      */
@@ -262,10 +272,28 @@ const TreegraphSeriesDefaults = {
         },
         enabled: true,
         linkFormatter: (): string => '',
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in the treegraph. Overrides
+         * `format`. Use `nodeFormat` and `linkFormat` to differentiate between
+         * node and link data labels.
+         *
+         * @type {string}
+         */
+        nodeFormat: void 0,
         padding: 5,
         style: {
             textOverflow: 'none'
         }
+        /**
+         * Callback function to format data labels for _nodes_ in the
+         * treegraph, when `nodeFormat` is not sufficient.
+         *
+         * @type {function}
+         * @apioption series.treegraph.dataLabels.nodeFormatter
+         */
+
     },
     /**
      * The distance between nodes in a tree graph in the longitudinal direction.
