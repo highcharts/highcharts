@@ -650,6 +650,7 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         this.graphic = renderer
             .g('annotation')
+            .addClass(this.options.className || '')
             .attr({
                 opacity: 0,
                 zIndex: this.options.zIndex,

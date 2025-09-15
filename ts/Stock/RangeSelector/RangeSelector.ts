@@ -2017,7 +2017,7 @@ class RangeSelector {
                 inputGroup.getBBox().width >
                 chart.plotWidth
             ) {
-                if (dropdown === 'responsive') {
+                if (dropdown === 'responsive' || dropdown === 'always') {
                     this.collapseButtons();
                 } else {
                     moveInputsDown();
@@ -2124,9 +2124,7 @@ class RangeSelector {
         if (dropdown) {
             this.dropdownLabel.hide();
             css(dropdown, {
-                visibility: 'hidden',
-                width: '1px',
-                height: '1px'
+                visibility: 'hidden'
             });
             this.hasVisibleDropdown = false;
         }
