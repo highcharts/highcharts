@@ -5,7 +5,7 @@ describe('Pagination.', () => {
 
     it('Render pagination container.', () => {
         // Check pagination wrapper is visible
-        cy.get('.hcg-pagination-container').should('be.visible');
+        cy.get('.hcg-pagination-wrapper').should('be.visible');
 
         // Check page info is displayed with correct initial page size
         cy.get('.hcg-pagination-info').should('be.visible');
@@ -190,12 +190,12 @@ describe('Pagination.', () => {
             });
 
             // Check that pagination container is before the table
-            cy.get('.hcg-pagination-container').should('exist');
+            cy.get('.hcg-pagination-wrapper').should('exist');
             
             // Verify the DOM order: pagination should be before table
             cy.get('.hcg-container').then(($container) => {
                 const paginationIndex =
-                    $container.find('.hcg-pagination-container').index();
+                    $container.find('.hcg-pagination-wrapper').index();
                 const tableIndex = $container.find('.hcg-table').index();
                 expect(paginationIndex).to.be.lessThan(tableIndex);
 
@@ -209,7 +209,7 @@ describe('Pagination.', () => {
                 // Verify the DOM order: pagination should be after table
                 cy.get('.hcg-container').then(($container) => {
                     const paginationIndex =
-                        $container.find('.hcg-pagination-container').index();
+                        $container.find('.hcg-pagination-wrapper').index();
                     const tableIndex = $container.find('.hcg-table').index();
                     expect(paginationIndex).to.be.greaterThan(tableIndex);
 
@@ -226,9 +226,6 @@ describe('Pagination.', () => {
                     cy.get('.hcg-table tfoot').should('exist');
                     cy.get('.hcg-table tfoot .hcg-pagination-wrapper')
                         .should('exist');
-                    
-                    // Verify that pagination container doesn't exist
-                    cy.get('.hcg-pagination-container').should('not.exist');
                 });
             });
         });

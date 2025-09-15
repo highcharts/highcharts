@@ -157,7 +157,7 @@ export interface PaginationOptions {
      *
      * @default 10
      */
-    pageSize?: number;
+    pageSize: number;
 
     /**
      * Position of the pagination container relative to the table.

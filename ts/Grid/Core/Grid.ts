@@ -379,16 +379,18 @@ class Grid {
         this.pagination?.destroy();
         delete this.pagination;
 
+
+        const currentPaginationOptions = this.options?.pagination;
         const paginationOptions = merge(
             (
-                isObject(this.options?.pagination) ?
-                    this.options?.pagination :
-                    { enabled: this.options?.pagination }
+                isObject(currentPaginationOptions) ?
+                    currentPaginationOptions :
+                    { enabled: currentPaginationOptions }
             ),
             {
                 ...paginationState
             }
-        );
+        )
 
         if (paginationOptions?.enabled) {
             this.pagination = new Pagination(this, paginationOptions);

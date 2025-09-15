@@ -54,11 +54,11 @@ namespace PaginationComposition {
             PaginationClass,
             'beforePageChange',
             (e: PaginationEvent): void => {
-                const pg = e.target;
-                pg.options.events?.beforePageChange?.call(pg, {
-                    currentPage: e.currentPage,
-                    nextPage: e.nextPage,
-                    pageSize: e.pageSize
+                const { target, currentPage, nextPage, pageSize } = e;
+                target.options.events?.beforePageChange?.call(target, {
+                    currentPage: currentPage,
+                    nextPage: nextPage,
+                    pageSize: pageSize
                 });
             }
         );
@@ -67,11 +67,11 @@ namespace PaginationComposition {
             PaginationClass,
             'afterPageChange',
             (e: PaginationEvent): void => {
-                const pg = e.target;
-                pg.options.events?.afterPageChange?.call(pg, {
-                    currentPage: e.currentPage,
-                    previousPage: e.previousPage,
-                    pageSize: e.pageSize
+                const { target, currentPage, previousPage, pageSize } = e;
+                target.options.events?.afterPageChange?.call(target, {
+                    currentPage: currentPage,
+                    previousPage: previousPage,
+                    pageSize: pageSize
                 });
             }
         );
@@ -80,10 +80,10 @@ namespace PaginationComposition {
             PaginationClass,
             'beforePageSizeChange',
             (e: PaginationEvent): void => {
-                const pg = e.target;
-                pg.options.events?.beforePageSizeChange?.call(pg, {
-                    pageSize: e.pageSize,
-                    newPageSize: e.newPageSize
+                const { target, newPageSize, pageSize } = e;
+                target.options.events?.beforePageSizeChange?.call(target, {
+                    pageSize: pageSize,
+                    newPageSize: newPageSize
                 });
             }
         );
@@ -92,10 +92,10 @@ namespace PaginationComposition {
             PaginationClass,
             'afterPageSizeChange',
             (e: PaginationEvent): void => {
-                const pg = e.target;
-                pg.options.events?.afterPageSizeChange?.call(pg, {
-                    pageSize: e.pageSize,
-                    previousPageSize: e.previousPageSize
+                const { target, previousPageSize, pageSize } = e;
+                target.options.events?.afterPageSizeChange?.call(target, {
+                    pageSize: pageSize,
+                    previousPageSize: previousPageSize
                 });
             }
         );

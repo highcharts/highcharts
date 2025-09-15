@@ -51,11 +51,11 @@ Grid.grid('container', {
     },
     pagination: {
         enabled: true,
-        pageSize: 20,
+        pageSize: 10,
         controls: {
             pageSizeSelector: {
                 enabled: true,
-                options: [20, 50, 100]
+                options: [10, 20, 50]
             },
             pageInfo: true,
             firstLastButtons: true,
