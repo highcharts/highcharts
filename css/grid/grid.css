@@ -989,9 +989,9 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Hover state - only border change */
 .hcg-pagination-wrapper button:hover:not(:disabled),
-.hcg-pagination-wrapper button:focus:not(:disabled),
+.hcg-pagination-wrapper button:focus-visible:not(:disabled),
 .hcg-pagination-wrapper .hcg-pagination-page-size-select:hover,
-.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus {
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus-visible {
     border-color: var(--ig-pagination-button-border-hover);
     outline: none;
 }

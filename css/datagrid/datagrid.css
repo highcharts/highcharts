@@ -1217,12 +1217,12 @@ button + .hcg-pagination-page,
 /* Hover state - only border change */
 .hcg-pagination-wrapper button:hover:not(:disabled),
 .highcharts-datagrid-pagination-wrapper button:hover:not(:disabled),
-.hcg-pagination-wrapper button:focus:not(:disabled),
-.highcharts-datagrid-pagination-wrapper button:focus:not(:disabled),
+.hcg-pagination-wrapper button:focus-visible:not(:disabled),
+.highcharts-datagrid-pagination-wrapper button:focus-visible:not(:disabled),
 .hcg-pagination-wrapper .hcg-pagination-page-size-select:hover,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-select:hover,
-.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-select:focus {
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus-visible,
+.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-select:focus-visible {
     border-color: var(--ig-pagination-button-border-hover);
     outline: none;
 }
