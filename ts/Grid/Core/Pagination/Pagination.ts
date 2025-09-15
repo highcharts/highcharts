@@ -586,7 +586,7 @@ class Pagination {
                 const pagesToShow = maxPageNumbers - 2;
                 const maxPages = Math.min(pagesToShow, totalPages - 1);
 
-                for (let i = 1; i < maxPages; i++) {
+                for (let i = 1; i <= maxPages; i++) {
                     elements.push({ type: 'button', page: i });
                 }
 
