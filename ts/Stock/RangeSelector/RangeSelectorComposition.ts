@@ -317,8 +317,8 @@ function onChartGetMargins(
         const { min, max } = this.xAxis[0].getExtremes();
         if (
             isNumber(min) &&
-            rangeSelector?.inputGroup &&
-            rangeSelector.inputGroup?.getBBox().width < 20
+            rangeSelector.inputGroup &&
+            rangeSelector.inputGroup.getBBox().width < 20
         ) {
             rangeSelector.render(min, max);
         }
