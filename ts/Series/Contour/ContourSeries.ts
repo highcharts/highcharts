@@ -188,12 +188,12 @@ class ContourSeries extends ScatterSeries {
                 });
 
                 const vertices = this.get3DData();
-                // Const indices = this.triangulateData().triangles;
-                const indices = new Delaunator(new Float64Array([
-                    377, 479, 453, 434, 326, 387, 444, 359, 511, 389,
-                    586, 429, 470, 315, 622, 493, 627, 367, 570, 314
-                ])).triangles;
-
+                const indices = this.triangulateData().triangles;
+                // Const indices = new Delaunator(new Float64Array([
+                //     377, 479, 453, 434, 326, 387, 444, 359, 511, 389,
+                //     586, 429, 470, 315, 622, 493, 627, 367, 570, 314
+                // ])).triangles;
+                //
                 const extremesUniform = this.extremesUniform = new Float32Array(
                     this.getWebGPUExtremes()
                 );
@@ -706,10 +706,10 @@ class ContourSeries extends ScatterSeries {
         // If (!colorAxis) {
         return {
             array: new Float32Array([
-                1, 0.7, 0.3, 0.4,
-                0.3, 0.5, 1, 1
+                0, 0, 0, 0,
+                1, 1, 1, 1
             ]),
-            length: 8
+            length: 2
         };
         // }
 
