@@ -46,7 +46,7 @@ Grid.grid('container', {
             previousNextButtons: true,
             pageButtons: {
                 enabled: true,
-                count: 5
+                count: 9
             }
         }
     }

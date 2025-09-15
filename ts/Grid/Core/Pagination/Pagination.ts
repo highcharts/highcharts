@@ -36,7 +36,7 @@ import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { merge, fireEvent, isObject } = Utilities;
+const { merge, fireEvent, isObject, defined } = Utilities;
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -320,7 +320,9 @@ class Pagination {
         this.paginationContainer = customContainer;
 
         // Set content wrapper to the custom container
-        this.contentWrapper = customContainer;
+        this.contentWrapper = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationContainer')
+        }, customContainer);
     }
 
     /**
@@ -573,43 +575,118 @@ class Pagination {
                 this.createPageButton(i, i === currentPage);
             }
         } else {
-            // Show page numbers with ellipsis
-            const halfMax = Math.floor(maxPageNumbers / 2);
-            let startPage = Math.max(1, currentPage - halfMax);
-            const endPage = Math.min(
-                totalPages,
-                startPage + maxPageNumbers - 1
-            );
+            const elements = [];
 
-            // Adjust start and end to show maxPageNumbers
-            if (endPage - startPage + 1 < maxPageNumbers) {
-                startPage = Math.max(1, endPage - maxPageNumbers + 1);
+            // Determine layout based on current page position
+            const isNearStart = currentPage <= 3;
+            const isNearEnd = currentPage >= totalPages - 2;
+
+            if (isNearStart) {
+                // -2 for ellipsis and last page
+                const pagesToShow = maxPageNumbers - 2;
+                const maxPages = Math.min(pagesToShow, totalPages - 1);
+
+                for (let i = 1; i < maxPages; i++) {
+                    elements.push({ type: 'button', page: i });
+                }
+
+                if (totalPages > pagesToShow + 1) {
+                    elements.push({ type: 'ellipsis' });
+                    elements.push({ type: 'button', page: totalPages });
+                }
+
+            } else if (isNearEnd) {
+                // -2 for first page and ellipsis
+                const pagesToShow = maxPageNumbers - 2;
+                let i = totalPages - pagesToShow + 1;
+
+                elements.push({ type: 'button', page: 1 });
+                elements.push({ type: 'ellipsis' });
+
+                for (i; i <= totalPages; i++) {
+                    elements.push({ type: 'button', page: i });
+                }
+
+            } else {
+                // Always add first page
+                elements.push({ type: 'button', page: 1 });
+
+                // -4 for first, last, and two ellipsis
+                const maxMiddlePages = maxPageNumbers - 4;
+                const halfMiddle = Math.floor(maxMiddlePages / 2);
+
+                let startPage = Math.max(2, currentPage - halfMiddle);
+                let endPage = Math.min(
+                    totalPages - 1,
+                    currentPage + halfMiddle
+                );
+
+                // Adjust to ensure we have exactly maxMiddlePages
+                if (endPage - startPage + 1 > maxMiddlePages) {
+                    if (startPage === 2) {
+                        endPage = startPage + maxMiddlePages - 1;
+                    } else {
+                        startPage = endPage - maxMiddlePages + 1;
+                    }
+                }
+
+                // Check if we actually need ellipsis
+                const needFirstEllipsis = startPage > 2;
+                const needLastEllipsis = endPage < totalPages - 1;
+
+                if (!needFirstEllipsis && !needLastEllipsis) {
+                    // -2 for first and last
+                    const availableSlots = maxPageNumbers - 2;
+                    startPage = 2;
+                    endPage = Math.min(
+                        totalPages - 1,
+                        startPage + availableSlots - 1
+                    );
+                } else if (!needFirstEllipsis) {
+                    // -3 for first, last, and one ellipsis
+                    const availableSlots = maxPageNumbers - 3;
+                    startPage = 2;
+                    endPage = Math.min(
+                        totalPages - 1,
+                        startPage + availableSlots - 1
+                    );
+                } else if (!needLastEllipsis) {
+                    // -3 for first, last, and one ellipsis
+                    const availableSlots = maxPageNumbers - 3;
+                    endPage = totalPages - 1;
+                    startPage = Math.max(2, endPage - availableSlots + 1);
+                }
+
+                // Add first ellipsis
+                if (needFirstEllipsis) {
+                    elements.push({ type: 'ellipsis' });
+                }
+
+                // Add middle pages
+                for (let i = startPage; i <= endPage; i++) {
+                    elements.push({ type: 'button', page: i });
+                }
+
+                // Add last ellipsis
+                if (needLastEllipsis) {
+                    elements.push({ type: 'ellipsis' });
+                }
+
+                // Always add last page
+                elements.push({ type: 'button', page: totalPages });
             }
 
-            // First page and ellipsis
-            if (startPage > 1) {
-                this.createPageButton(1, false);
-                // Only show ellipsis if there's a gap between page 1 and
-                // startPage.
-                if (startPage > 2) {
+            // Render all elements
+            elements.forEach(element => {
+                if (element.type === 'button' && defined(element.page)) {
+                    this.createPageButton(
+                        element.page,
+                        element.page === currentPage
+                    );
+                } else if (element.type === 'ellipsis') {
                     this.createEllipsis();
                 }
-            }
-
-            // Page numbers
-            for (let i = startPage; i <= endPage; i++) {
-                this.createPageButton(i, i === currentPage);
-            }
-
-            // Last page and ellipsis
-            if (endPage < totalPages) {
-                // Only show ellipsis if there's a gap between endPage and
-                // totalPages.
-                if (endPage < totalPages - 1) {
-                    this.createEllipsis();
-                }
-                this.createPageButton(totalPages, false);
-            }
+            });
         }
     }
 
@@ -934,12 +1011,8 @@ class Pagination {
         if (position === 'footer') {
             // For footer position, remove the entire tfoot element.
             this.paginationContainer?.parentElement?.parentElement?.remove();
-        } else if (typeof position === 'string' && position.startsWith('#')) {
-            // Don't remove the custom container itself
-            this.contentWrapper?.remove();
         } else {
-            // For top/bottom positions, remove the entire pagination container
-            this.paginationContainer?.remove();
+            this.contentWrapper?.remove();
         }
 
         this.grid.querying.pagination.reset();

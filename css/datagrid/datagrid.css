@@ -1132,6 +1132,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     font-size: var(--ig-font-size);
 }
 
+.hcg-pagination-wrapper .hcg-pagination-ellipsis,
+.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-ellipsis {
+    cursor: default;
+}
+
 /* SVG icon styling for pagination buttons */
 .hcg-pagination-wrapper button svg,
 .highcharts-datagrid-pagination-wrapper button svg {
@@ -1211,8 +1216,15 @@ button + .hcg-pagination-page,
 
 /* Hover state - only border change */
 .hcg-pagination-wrapper button:hover:not(:disabled),
-.highcharts-datagrid-pagination-wrapper button:hover:not(:disabled) {
+.highcharts-datagrid-pagination-wrapper button:hover:not(:disabled),
+.hcg-pagination-wrapper button:focus:not(:disabled),
+.highcharts-datagrid-pagination-wrapper button:focus:not(:disabled),
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:hover,
+.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-select:hover,
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus,
+.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-select:focus {
     border-color: var(--ig-pagination-button-border-hover);
+    outline: none;
 }
 
 /* Disabled state */

@@ -10,17 +10,21 @@
     height: 400px;
 }
 
-.custom-pagination-container {
+.hcg-pagination-container {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 20px;
 }
 
-.hcg-pagination-controls {
+.hcg-pagination-controls,
+.hcg-pagination-page-size-container {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.hcg-pagination-controls {
     padding: 0 20px;
 }
 

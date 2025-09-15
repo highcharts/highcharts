@@ -94,6 +94,7 @@ namespace Globals {
         loadingWrapper: 'loading-wrapper',
         loadingSpinner: 'spinner',
         loadingMessage: 'loading-message',
+        paginationContainer: 'pagination-container',
         paginationWrapper: 'pagination-wrapper',
         paginationPageInfo: 'pagination-info',
         paginationControls: 'pagination-controls',

@@ -66,7 +66,7 @@ export interface PaginationControlsOptions {
      *
      * @default true
      */
-    previousNextButtons?: boolean | previousNextButtonsOptions;
+    previousNextButtons?: boolean | PreviousNextButtonsOptions;
 
     /**
      * Page number buttons configuration.
@@ -218,7 +218,7 @@ export interface FirstLastButtonsOptions {
 /**
  * Previous/next page navigation buttons configuration options.
  */
-export interface previousNextButtonsOptions {
+export interface PreviousNextButtonsOptions {
     /**
      * Whether to show the previous/next page navigation buttons.
      *

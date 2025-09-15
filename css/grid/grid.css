@@ -920,6 +920,10 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     font-size: var(--ig-font-size);
 }
 
+.hcg-pagination-wrapper .hcg-pagination-ellipsis {
+    cursor: default;
+}
+
 /* SVG icon styling for pagination buttons */
 .hcg-pagination-wrapper button svg {
     color: var(--ig-pagination-icon-color);
@@ -984,8 +988,12 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 /* Hover state - only border change */
-.hcg-pagination-wrapper button:hover:not(:disabled) {
+.hcg-pagination-wrapper button:hover:not(:disabled),
+.hcg-pagination-wrapper button:focus:not(:disabled),
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:hover,
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus {
     border-color: var(--ig-pagination-button-border-hover);
+    outline: none;
 }
 
 /* Disabled state */
