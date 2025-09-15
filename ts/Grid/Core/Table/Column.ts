@@ -42,6 +42,10 @@ const {
     fireEvent
 } = Utils;
 
+const {
+    createOptionsProxy
+} = GridUtils;
+
 
 /* *
  *
@@ -140,7 +144,7 @@ class Column {
 
         this.dataType = this.assumeDataType();
 
-        this.options = GridUtils.createOptionsProxy(
+        this.options = createOptionsProxy(
             grid.columnOptionsMap?.[id]?.options ?? {},
             grid.options?.columnDefaults
         );

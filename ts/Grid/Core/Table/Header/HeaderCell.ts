@@ -34,11 +34,11 @@ import Utilities from '../../../../Core/Utilities.js';
 
 const {
     makeHTMLElement,
-    setHTMLContent
+    setHTMLContent,
+    createOptionsProxy
 } = GridUtils;
 const {
     fireEvent,
-    merge,
     isString
 } = Utilities;
 
@@ -66,9 +66,11 @@ class HeaderCell extends Cell {
     public headerContent?: HTMLElement;
 
     /**
-     * Reference to options in settings header.
+     * Reference to options taken from the header settings, that will override
+     * the column options.
+     * @internal
      */
-    public readonly options: Partial<Column.Options> = {};
+    public readonly superColumnOptions: Partial<Column.Options> = {};
 
     /**
      * List of columns that are subordinated to the header cell.
@@ -142,7 +144,10 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const { column } = this;
-        const options = merge(column?.options || {}, this.options);
+        const options = createOptionsProxy(
+            column?.options || {},
+            this.superColumnOptions
+        );
         const headerCellOptions = options.header || {};
         const isSortableData = options.sorting?.sortable && column?.data;
 
@@ -168,9 +173,9 @@ class HeaderCell extends Cell {
 
         this.htmlElement.setAttribute('scope', 'col');
 
-        if (this.options.className) {
+        if (this.superColumnOptions.className) {
             this.htmlElement.classList.add(
-                ...this.options.className.split(/\s+/g)
+                ...this.superColumnOptions.className.split(/\s+/g)
             );
         }
 
