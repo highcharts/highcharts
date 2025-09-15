@@ -126,8 +126,8 @@ class PaginationController {
         );
 
         return new RangeModifier({
-            start: start,
-            end: end
+            start,
+            end
         });
     }
 
