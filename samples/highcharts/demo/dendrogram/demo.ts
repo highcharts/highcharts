@@ -1,17 +1,17 @@
 // Data for the tree.
 // [Parent, ID, visible name, million years ago, level, icon]
 const treeData = [
-    [undefined, 'root', '', -45],
-    ['root', 'procyonidae-ailuridae', '', -30],
+    [undefined, 'root', '', 45],
+    ['root', 'procyonidae-ailuridae', '', 30],
     ['procyonidae-ailuridae', 'red', 'Red Panda', 0, 6, 'redpanda-icon'],
     ['procyonidae-ailuridae', 'raccoon', 'Raccoon', 0, 6, 'raccoon-icon'],
-    ['root', 'ursidae', '', -20],
+    ['root', 'ursidae', '', 20],
     ['ursidae', 'giant', 'Giant Panda', 0, 6, 'panda-icon'],
-    ['ursidae', 'tremarctinae', '', -10],
+    ['ursidae', 'tremarctinae', '', 10],
     ['tremarctinae', 'spectacled', 'Spectacled Bear', 0, 6, 'spectacled-icon'],
-    ['tremarctinae', 'ursus', '', -4],
+    ['tremarctinae', 'ursus', '', 4],
     ['ursus', 'black', 'Black Bear', 0, 6, 'blackbear-icon'],
-    ['ursus', 'brown-polar', '', -0.3],
+    ['ursus', 'brown-polar', '', 0.3],
     ['brown-polar', 'polar', 'Polar Bear', 0, 6, 'polarbear-icon'],
     ['brown-polar', 'brown', 'Brown Bear', 0, 6, 'brownbear-icon']
 ].map(e => [
@@ -33,6 +33,7 @@ Highcharts.chart('container', {
         title: {
             text: 'Million years ago'
         },
+        reversed: false,
         visible: true
     },
     tooltip: {
@@ -56,7 +57,7 @@ Highcharts.chart('container', {
                 // Data labels for non-leaf nodes, the splits
                 {
                     pointFormat: `{#unless point.node.isLeaf}
-                        ~{multiply -1 point.x} Mya
+                        ~{point.x} Mya
                     {/unless}`,
                     align: 'left',
                     verticalAlign: 'bottom',
