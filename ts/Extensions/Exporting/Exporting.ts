@@ -394,7 +394,7 @@ class Exporting {
                     resultArray.push(cssText);
                 }
             }
-        } catch (err) {
+        } catch {
             if (sheet.href) {
                 const newSheet = await Exporting.fetchCSS(sheet.href);
                 await Exporting.handleStyleSheet(newSheet, resultArray);
@@ -503,6 +503,7 @@ class Exporting {
 
             // Reject in case of fail
             image.onerror = (error): void => {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 reject(error);
             };
 
@@ -2023,6 +2024,7 @@ class Exporting {
                     // won't do)
                     const s = win.getComputedStyle(dummy, null),
                         defaults: Record<string, string> = {};
+                    // eslint-disable-next-line @typescript-eslint/no-for-in-array
                     for (const key in s) {
                         if (
                             key.length < RegexLimits.shortLimit &&

@@ -275,7 +275,7 @@ class TextareaContent extends CellContentPro {
 
 }
 ```
-2. The next step is to create a new class, such as **TextareaContent**, which extends the imported `CellContentPro` class and is responsible for creating and managing the <textarea> element.
+2. The next step is to create a new class, such as **TextareaContent**, which extends the imported `CellContentPro` class and is responsible for creating and managing the `<textarea>` element.
 
 ```js
 class TextareaContent extends CellContentPro {

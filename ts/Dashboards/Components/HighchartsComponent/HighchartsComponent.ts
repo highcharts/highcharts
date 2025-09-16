@@ -733,7 +733,6 @@ class HighchartsComponent extends Component {
             sidebar.editMode.board.dataPool.getConnectorIds();
 
         let options: Partial<Options> = {
-            cell: '',
             type: 'Highcharts',
             chartOptions: {
                 chart: {

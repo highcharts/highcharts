@@ -326,6 +326,7 @@ class Table {
                 this.rows[i].update();
             }
             this.rowsVirtualizer.adjustRowHeights();
+            this.reflow();
         }
 
         if (focusedRowId !== void 0 && vp.focusCursor) {
@@ -345,26 +346,6 @@ class Table {
                 });
             }
         }
-    }
-
-    /**
-     * Loads the modified data from the data table and renders the rows. Always
-     * removes all rows and re-renders them, so it's better to use `updateRows`
-     * instead, because it is more performant in some cases.
-     *
-     * @deprecated
-     * Use `updateRows` instead. This method is kept for backward compatibility
-     * reasons, but it will be removed in the next major version.
-     */
-    public loadPresentationData(): void {
-        this.dataTable = this.grid.presentationTable as DataTable;
-
-        for (const column of this.columns) {
-            column.loadData();
-        }
-
-        this.updateVirtualization();
-        this.rowsVirtualizer.rerender();
     }
 
     /**
