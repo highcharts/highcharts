@@ -33,7 +33,8 @@ class ContourSeries extends ScatterSeries {
     public adapter?: GPUAdapter | null;
     public device?: GPUDevice;
     public image?: SVGElement;
-
+    public data!: Array<ContourPoint>;
+    public points!: Array<ContourPoint>;
     private extremesUniform?: Float32Array;
     private extremesUniformBuffer?: GPUBuffer;
     private valueExtremesUniform?: Float32Array;
@@ -99,7 +100,7 @@ class ContourSeries extends ScatterSeries {
         this.points.forEach((point, i): void => {
             points3d[i * 3] = point.x;
             points3d[i * 3 + 1] = point.y || 0;
-            points3d[i * 3 + 2] = (point as any).value || 0;
+            points3d[i * 3 + 2] = point.value || 0;
         });
 
         return points3d;
