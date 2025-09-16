@@ -1105,10 +1105,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .hcg-pagination-wrapper,
 .highcharts-datagrid-pagination-wrapper {
     padding: var(--ig-pagination-padding);
-    box-sizing: border-box;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
 }
 
 .hcg-table tfoot td .hcg-pagination-wrapper,
@@ -1162,7 +1163,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 /* Fix horizontal layout for pagination pages */
 .hcg-pagination-wrapper .hcg-pagination-page,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 2px;
     justify-content: center;
@@ -1187,7 +1188,6 @@ button + .hcg-pagination-page,
     color: var(--ig-pagination-button-color);
     font-size: var(--ig-font-size);
     white-space: nowrap;
-    margin-right: 30px;
     align-items: center;
     font-weight: 500;
     display: inline-flex;
@@ -1216,14 +1216,18 @@ button + .hcg-pagination-page,
 
 /* Hover state - only border change */
 .hcg-pagination-wrapper button:hover:not(:disabled),
-.highcharts-datagrid-pagination-wrapper button:hover:not(:disabled),
-.hcg-pagination-wrapper button:focus-visible:not(:disabled),
-.highcharts-datagrid-pagination-wrapper button:focus-visible:not(:disabled),
 .hcg-pagination-wrapper .hcg-pagination-page-size-select:hover,
-.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-select:hover,
+.highcharts-datagrid-pagination-wrapper button:hover:not(:disabled),
+.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-select:hover {
+    border-color: var(--ig-pagination-button-border-hover);
+    outline: none;
+}
+
+.hcg-pagination-wrapper button:focus-visible:not(:disabled),
 .hcg-pagination-wrapper .hcg-pagination-page-size-select:focus-visible,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-select:focus-visible {
     border-color: var(--ig-pagination-button-border-hover);
+    box-shadow: 0 0 0 1px var(--ig-pagination-button-border-hover) inset;
     outline: none;
 }
 
@@ -1244,7 +1248,7 @@ button + .hcg-pagination-page,
 /* Page size selector */
 .hcg-pagination-wrapper .hcg-pagination-page-size-container,
 .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container {
-    margin-left: 30px;
+    text-align: right;
     font-weight: 500;
 }
 
@@ -1267,6 +1271,21 @@ button + .hcg-pagination-page,
     background-position: right 12px center;
     background-size: 10px;
     padding-right: 25px;
+}
+
+/* Mobile page selector - hidden by default */
+.hcg-pagination-wrapper .hcg-pagination-mobile-selector,
+.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-mobile-selector {
+    display: none;
+    margin-left: 0;
+    min-width: 200px;
+    text-align: center;
+}
+
+/* Mobile page size selector - hidden by default */
+.hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector,
+.highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-mobile-page-size-selector {
+    display: none;
 }
 
 /* Helpers */
@@ -1423,18 +1442,33 @@ button + .hcg-pagination-page,
 @media (max-width: 1024px) {
     .hcg-pagination-wrapper,
     .highcharts-datagrid-pagination-wrapper {
+        display: flex;
         flex-direction: column;
-        float: none;
         gap: 20px;
         align-items: center;
+        width: 100%;
+        margin-bottom: 20px;
     }
 
-    .hcg-pagination-wrapper .hcg-pagination-info,
-    .hcg-pagination-wrapper .hcg-pagination-page-size-container,
-    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-info,
-    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container {
-        margin-left: 0;
-        margin-right: 0;
+    /* Show mobile selectors on mobile */
+    .hcg-pagination-wrapper .hcg-pagination-mobile-selector,
+    .hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-mobile-selector,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-mobile-page-size-selector {
+        display: block;
+    }
+
+    .hcg-pagination-wrapper .hcg-pagination-page,
+    .hcg-pagination-wrapper .hcg-pagination-first,
+    .hcg-pagination-wrapper .hcg-pagination-last,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-first,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-last,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container span,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container .hcg-pagination-page-size-select,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container span,
+    .highcharts-datagrid-pagination-wrapper .highcharts-datagrid-pagination-page-size-container .highcharts-datagrid-pagination-page-size-select {
+        display: none;
     }
 }
 

@@ -100,9 +100,16 @@ namespace Globals {
         paginationControls: 'pagination-controls',
         paginationButton: 'pagination-btn',
         paginationButtonDisabled: 'pagination-btn-disabled',
+        paginationFirstButton: 'pagination-first',
+        paginationPrevButton: 'pagination-prev',
+        paginationNextButton: 'pagination-next',
+        paginationLastButton: 'pagination-last',
         paginationPageButton: 'pagination-page',
         paginationPageButtonActive: 'pagination-page-active',
         paginationEllipsis: 'pagination-ellipsis',
+        paginationMobileSelector: 'pagination-mobile-selector',
+        paginationMobilePageSizeSelector:
+            'pagination-mobile-page-size-selector',
         paginationPageSizeContainer: 'pagination-page-size-container',
         paginationPageSizeSelect: 'pagination-page-size-select'
     } as const;

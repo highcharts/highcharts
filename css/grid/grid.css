@@ -898,10 +898,11 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 .hcg-pagination-wrapper {
     padding: var(--ig-pagination-padding);
-    box-sizing: border-box;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
 }
 
 .hcg-table tfoot td .hcg-pagination-wrapper {
@@ -946,7 +947,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Fix horizontal layout for pagination pages */
 .hcg-pagination-wrapper .hcg-pagination-page {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 2px;
     justify-content: center;
@@ -962,7 +963,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     color: var(--ig-pagination-button-color);
     font-size: var(--ig-font-size);
     white-space: nowrap;
-    margin-right: 30px;
     align-items: center;
     display: inline-flex;
     font-weight: 500;
@@ -989,10 +989,15 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Hover state - only border change */
 .hcg-pagination-wrapper button:hover:not(:disabled),
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:hover {
+    border-color: var(--ig-pagination-button-border-hover);
+    outline: none;
+}
+
 .hcg-pagination-wrapper button:focus-visible:not(:disabled),
-.hcg-pagination-wrapper .hcg-pagination-page-size-select:hover,
 .hcg-pagination-wrapper .hcg-pagination-page-size-select:focus-visible {
     border-color: var(--ig-pagination-button-border-hover);
+    box-shadow: 0 0 0 1px var(--ig-pagination-button-border-hover) inset;
     outline: none;
 }
 
@@ -1010,8 +1015,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Page size selector */
 .hcg-pagination-wrapper .hcg-pagination-page-size-container {
-    margin-left: 30px;
     font-weight: 500;
+    text-align: right;
 }
 
 .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
@@ -1031,6 +1036,19 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     background-position: right 12px center;
     background-size: 10px;
     padding-right: 25px;
+}
+
+/* Mobile page selector - hidden by default */
+.hcg-pagination-wrapper .hcg-pagination-mobile-selector {
+    display: none;
+    margin-left: 0;
+    min-width: 200px;
+    text-align: center;
+}
+
+/* Mobile page size selector - hidden by default */
+.hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector {
+    display: none;
 }
 
 /* Start Grid CSS Helpers Classes */
@@ -1228,16 +1246,26 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 @media (max-width: 1024px) {
     .hcg-pagination-wrapper {
+        display: flex;
         flex-direction: column;
-        float: none;
         gap: 20px;
         align-items: center;
+        width: 100%;
+        margin-bottom: 20px;
     }
 
-    .hcg-pagination-wrapper .hcg-pagination-info,
-    .hcg-pagination-wrapper .hcg-pagination-page-size-container {
-        margin-left: 0;
-        margin-right: 0;
+    /* Show mobile selectors on mobile */
+    .hcg-pagination-wrapper .hcg-pagination-mobile-selector,
+    .hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector {
+        display: block;
+    }
+
+    .hcg-pagination-wrapper .hcg-pagination-page,
+    .hcg-pagination-wrapper .hcg-pagination-first,
+    .hcg-pagination-wrapper .hcg-pagination-last,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container span,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container .hcg-pagination-page-size-select {
+        display: none;
     }
 }
 

@@ -72,7 +72,7 @@ class Pagination {
             },
             pageButtons: {
                 enabled: true,
-                count: 5
+                count: 7
             }
         }
     };
@@ -133,6 +133,16 @@ class Pagination {
      * Items per page selector dropdown
      */
     public pageSizeSelect?: HTMLSelectElement;
+
+    /**
+     * Mobile page selector dropdown
+     */
+    public mobilePageSelector?: HTMLSelectElement;
+
+    /**
+     * Mobile page size selector dropdown
+     */
+    public mobilePageSizeSelector?: HTMLSelectElement;
 
     /**
      * Page info text element
@@ -392,6 +402,9 @@ class Pagination {
             this.renderPageNumbers(navContainer);
         }
 
+        // Render mobile page selector
+        this.renderMobilePageSelector(navContainer);
+
         // Render next button
         if (this.options.controls?.previousNextButtons) {
             this.renderNextButton(navContainer);
@@ -421,7 +434,8 @@ class Pagination {
 
         this.firstButton = makeHTMLElement('button', {
             innerHTML: Icons.first,
-            className: Globals.getClassName('paginationButton')
+            className: Globals.getClassName('paginationButton') + ' ' +
+                Globals.getClassName('paginationFirstButton')
         }, container);
         this.firstButton.title = this.lang.firstPage;
 
@@ -452,7 +466,8 @@ class Pagination {
 
         this.prevButton = makeHTMLElement('button', {
             innerHTML: Icons.previous,
-            className: Globals.getClassName('paginationButton')
+            className: Globals.getClassName('paginationButton') + ' ' +
+                Globals.getClassName('paginationPrevButton')
         }, container);
         this.prevButton.title = this.lang.previousPage;
 
@@ -483,7 +498,8 @@ class Pagination {
 
         this.nextButton = makeHTMLElement('button', {
             innerHTML: Icons.next,
-            className: Globals.getClassName('paginationButton')
+            className: Globals.getClassName('paginationButton') + ' ' +
+                Globals.getClassName('paginationNextButton')
         }, container);
         this.nextButton.title = this.lang.nextPage;
 
@@ -514,7 +530,8 @@ class Pagination {
 
         this.lastButton = makeHTMLElement('button', {
             innerHTML: Icons.last,
-            className: Globals.getClassName('paginationButton')
+            className: Globals.getClassName('paginationButton') + ' ' +
+                Globals.getClassName('paginationLastButton')
         }, container);
         this.lastButton.title = this.lang.lastPage;
 
@@ -688,6 +705,11 @@ class Pagination {
                 }
             });
         }
+
+        // Update mobile selector if it exists
+        if (this.mobilePageSelector) {
+            this.mobilePageSelector.value = this.currentPage.toString();
+        }
     }
 
     /**
@@ -782,6 +804,9 @@ class Pagination {
 
             void this.setPageSize(parseInt(this.pageSizeSelect.value, 10));
         });
+
+        // Render mobile page size selector in the same container
+        this.renderMobilePageSizeSelector(container);
     }
 
     /**
@@ -816,6 +841,11 @@ class Pagination {
         this.updatePageInfo();
         this.updatePageNumbers();
         this.updateButtonStates();
+
+        // Update mobile page size selector if it exists
+        if (this.mobilePageSizeSelector) {
+            this.mobilePageSizeSelector.value = this.currentPageSize.toString();
+        }
 
         fireEvent(
             this,
@@ -1016,6 +1046,81 @@ class Pagination {
         }
 
         this.grid.querying.pagination.reset();
+    }
+
+    /**
+     * Render the mobile page selector (select dropdown).
+     *
+     * @param container
+     * The container element for the mobile page selector.
+     */
+    public renderMobilePageSelector(container: HTMLElement): void {
+        const totalPages = this.totalPages;
+        if (totalPages <= 1) {
+            return;
+        }
+
+        const mobileSelect: HTMLSelectElement = makeHTMLElement('select', {
+            className: Globals.getClassName('paginationMobileSelector')
+        }, container);
+
+        // Add options for each page
+        for (let i = 1; i <= totalPages; i++) {
+            const option: HTMLOptionElement =
+                makeHTMLElement('option', {}, mobileSelect);
+            option.value = i.toString();
+            option.textContent = `Page ${i} of ${totalPages}`;
+        }
+
+        // Set current page as selected
+        mobileSelect.value = this.currentPage.toString();
+
+        this.mobilePageSelector = mobileSelect;
+
+        // Add event listener for page change
+        mobileSelect.addEventListener('change', (): void => {
+            const newPage = parseInt(mobileSelect.value, 10);
+            if (newPage !== this.currentPage) {
+                void this.goToPage(newPage);
+            }
+        });
+    }
+
+    /**
+     * Render the mobile page size selector (select dropdown).
+     *
+     * @param container
+     * The container element for the mobile page size selector.
+     */
+    public renderMobilePageSizeSelector(container: HTMLElement): void {
+        const mobilePageSizeSelect: HTMLSelectElement =
+            makeHTMLElement('select', {
+                className:
+                    Globals.getClassName('paginationMobilePageSizeSelector')
+            }, container);
+
+        this.pageSizeOptions.forEach((option: number): void => {
+            const optionElement: HTMLOptionElement =
+                makeHTMLElement('option', {}, mobilePageSizeSelect);
+            optionElement.value = option.toString();
+            optionElement.textContent = `${option} ${this.lang.pageSizeLabel}`;
+
+            if (option === this.currentPageSize) {
+                optionElement.selected = true;
+            }
+        });
+
+        this.mobilePageSizeSelector = mobilePageSizeSelect;
+
+        mobilePageSizeSelect.addEventListener('change', (): void => {
+            if (!this.mobilePageSizeSelector) {
+                return;
+            }
+
+            void this.setPageSize(
+                parseInt(this.mobilePageSizeSelector.value, 10)
+            );
+        });
     }
 }
 
