@@ -88,7 +88,8 @@ test.describe('QUnit tests', () => {
         ignore: [
             // Also ignored in karma, should maybe just delete
             'samples/unit-tests/themes/**'
-        ]
+        ],
+        absolute: true
     });
 
     for (const qunitTest of unitTests){
