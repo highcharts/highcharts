@@ -28,9 +28,48 @@
 
 .icon {
     width: 48px;
-    margin: -10px 0;
+    margin: -5px 0;
 }
 
 .hidden {
     display: none;
+}
+
+:root,
+.highcharts-light {
+    .icon-light {
+        fill: #fff;
+        stroke-width: 20px;
+        stroke: #141414;
+    }
+
+    .icon-dark {
+        fill: #141414;
+    }
+}
+
+.highcharts-dark {
+    .icon-light {
+        stroke-width: 0;
+    }
+
+    .icon-dark {
+        filter: drop-shadow(5px 5px 10px #fff);
+        stroke-width: 20px;
+        stroke: #ccc;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        .icon-light {
+            stroke-width: 0;
+        }
+
+        .icon-dark {
+            filter: drop-shadow(5px 5px 10px #fff);
+            stroke-width: 20px;
+            stroke: #ccc;
+        }
+    }
 }
