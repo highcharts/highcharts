@@ -16,6 +16,11 @@
         sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 #container {
     padding: 10px;
     background-color: var(--highcharts-neutral-color-5);

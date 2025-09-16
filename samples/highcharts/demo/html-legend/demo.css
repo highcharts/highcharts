@@ -57,6 +57,11 @@
         sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 #custom-title {
     color: var(--font-color-1);
     font-weight: 700;

@@ -16,6 +16,11 @@
         sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 .highcharts-background-color {
     fill: #f0f0f0;
 }

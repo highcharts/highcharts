@@ -14,6 +14,11 @@
         sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 .highcharts-pie-series .highcharts-point {
     stroke: #ede;
     stroke-width: 2px;

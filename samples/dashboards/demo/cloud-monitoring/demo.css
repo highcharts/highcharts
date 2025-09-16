@@ -34,7 +34,8 @@
 }
 
 body {
-    background-color: var(--highcharts-neutral-color-5);
+    background: var(--highcharts-neutral-color-5);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-wrapper {

@@ -15,6 +15,11 @@
         sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 h1,
 a {
     text-align: center;

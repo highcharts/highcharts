@@ -2,6 +2,11 @@
     font-family: sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 #wrapper {
     height: 500px;
     width: 1000px;

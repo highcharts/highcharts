@@ -15,6 +15,11 @@
         sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 .highcharts-title {
     font-size: 1em;
     font-weight: normal;

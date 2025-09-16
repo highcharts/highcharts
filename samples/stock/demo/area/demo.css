@@ -12,6 +12,11 @@
         sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 #container {
     height: 600px;
     min-width: 310px;

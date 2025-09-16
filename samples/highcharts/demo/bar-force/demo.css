@@ -12,6 +12,11 @@
         sans-serif;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 .highcharts-figure {
     margin: 1em auto;
     max-width: 1000px;
