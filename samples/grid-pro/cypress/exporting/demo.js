@@ -1,9 +1,8 @@
-const jsonBtn = document.querySelector('#json'),
-    result = document.querySelector('#result');
+const csvExport = document.querySelector('#csvExport');
+const jsonBtn = document.querySelector('#jsonExport');
+const csvDownload = document.querySelector('#csvDownload');
+const result = document.querySelector('#result');
 
-/**
- * Grid init
- */
 const grid = Grid.grid('container', {
     dataTable: {
         columns: {
@@ -13,33 +12,24 @@ const grid = Grid.grid('container', {
             metaData: ['a', 'b', 'c', 'd']
         }
     },
-    columns: [{
-        id: 'product',
+    columnDefaults: {
         cells: {
             editMode: {
                 enabled: true
             }
         }
-    }, {
-        id: 'weight',
-        cells: {
-            editMode: {
-                enabled: true
-            }
-        }
-    }, {
-        id: 'metaData',
-        cells: {
-            editMode: {
-                enabled: true
-            }
-        }
-    }]
+    }
 });
 
-/**
- * Grid init
- */
+csvExport.addEventListener('click', () => {
+    result.innerHTML =  grid.exporting.getCSV();
+});
+
 jsonBtn.addEventListener('click', () => {
     result.innerHTML = grid.getJSON();
+});
+
+
+csvDownload.addEventListener('click', () => {
+    grid.exporting.downloadCSV();
 });

@@ -129,6 +129,7 @@ module.exports = {
             'grid/cell-renderers',
             'grid/sparklines',
             'grid/events',
+            'grid/exporting',
             {
                 'Theming': [
                     'grid/theming/theming',
