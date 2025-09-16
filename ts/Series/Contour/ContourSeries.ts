@@ -21,8 +21,11 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
+import ContourPoint from './ContourPoint.js';
 import Delaunator from '../../Core/Delauney';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import U from '../../Core/Utilities.js';
+const { extend } = U;
 
 class ContourSeries extends ScatterSeries {
     public canvas?: HTMLCanvasElement;
@@ -777,6 +780,12 @@ class ContourSeries extends ScatterSeries {
         }
     }
 }
+
+extend(ContourSeries.prototype, {
+    pointClass: ContourPoint,
+    pointArrayMap: ['x', 'y', 'value'],
+    keysAffectYAxis: ['y']
+});
 
 // Registry
 declare module '../../Core/Series/SeriesType' {
