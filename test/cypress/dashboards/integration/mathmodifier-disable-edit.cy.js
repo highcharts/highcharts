@@ -8,6 +8,7 @@ describe('MathModifier created columns and interaction.', () => {
         const mComponents = board.mountedComponents,
             hcComponent = mComponents[0].component,
             dgComponent = mComponents[1].component;
+            console.log(dgComponent.dataGrid.options.columns);
             assert.deepEqual(
                 dgComponent.dataGrid.options.columns,
                 [{
@@ -17,6 +18,12 @@ describe('MathModifier created columns and interaction.', () => {
                             enabled: false
                         }
                     }
+                }, {
+                    id: 'Day'
+                }, {
+                    id: 'EUR'
+                }, {
+                    id: 'Rate'
                 }],
                 'USD column is not editable'
             );
