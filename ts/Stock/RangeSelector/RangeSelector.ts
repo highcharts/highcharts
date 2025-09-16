@@ -41,7 +41,6 @@ import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import T from '../../Core/Templating.js';
 const { format } = T;
 import U from '../../Core/Utilities.js';
-import OrdinalAxis from '../../Core/Axis/OrdinalAxis.js';
 const {
     addEvent,
     createElement,
@@ -598,25 +597,8 @@ class RangeSelector {
                 actualRange < range
             ) {
                 // Handle ordinal ranges
-                const positions = baseAxis.ordinal.positions,
-                    prevOrdinalPosition =
-                        OrdinalAxis.Additions.findIndexOf(
-                            positions,
-                            baseAxis.min as number,
-                            true
-                        ),
-                    nextOrdinalPosition =
-                        Math.min(
-                            OrdinalAxis.Additions.findIndexOf(
-                                positions,
-                                baseAxis.max as number,
-                                true
-                            ) + 1, positions.length - 1);
-
-                if (
-                    positions[nextOrdinalPosition] -
-                        positions[prevOrdinalPosition] > range
-                ) {
+                const positions = baseAxis.ordinal.positions;
+                if (positions[positions.length - 1] - positions[0] > range) {
                     isSameRange = true;
                 }
             } else if (
