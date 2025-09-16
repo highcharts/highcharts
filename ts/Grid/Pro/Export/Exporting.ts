@@ -26,11 +26,9 @@ import type { ExportingOptions } from '../../Core/Options';
 
 import U from '../../../Core/Utilities.js';
 import DownloadURL from '../../../Shared/DownloadURL.js';
-import Globals from '../../Core/Globals.js';
 
-const { downloadURL } = DownloadURL;
+const { downloadURL, getBlobFromContent } = DownloadURL;
 const { merge } = U;
-const { win } = Globals;
 
 
 /* *
@@ -105,7 +103,7 @@ class Exporting {
         const csv = this.getCSV();
 
         downloadURL(
-            this.getBlobFromContent(csv, 'text/csv') ||
+            getBlobFromContent(csv, 'text/csv') ||
                 'data:text/csv,\uFEFF' + encodeURIComponent(csv),
             this.getFilename() + '.csv'
         );
@@ -203,42 +201,6 @@ class Exporting {
         }
 
         return csvRows.join(lineDelimiter);
-    }
-
-    /**
-     * Get a blob object from content, if blob is supported.
-     *
-     * @param content
-     * The content to create the blob from.
-
-     * @param type
-     * The type of the content.
-     *
-     * @returns
-     * The blob object, or undefined if not supported.
-     */
-    private getBlobFromContent(
-        content: string,
-        type: string
-    ): (string | undefined) {
-        const nav = win.navigator,
-            domurl = win.URL || win.webkitURL || win;
-
-        try {
-            // MS specific
-            if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
-                const blob = new win.MSBlobBuilder();
-                blob.append(content);
-                return blob.getBlob('image/svg+xml');
-            }
-
-            return domurl.createObjectURL(new win.Blob(
-                ['\uFEFF' + content], // #7084
-                { type: type }
-            ));
-        } catch (e) {
-            // Ignore
-        }
     }
 
     /**

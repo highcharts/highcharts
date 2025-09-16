@@ -222,6 +222,47 @@ function getScript(
     });
 }
 
+/**
+ * Get a blob object from content, if blob is supported.
+ *
+ * @private
+ * @function Highcharts.getBlobFromContent
+ *
+ * @param {string} content
+ * The content to create the blob from.
+ * @param {string} type
+ * The type of the content.
+ *
+ * @return {string | undefined}
+ * The blob object, or undefined if not supported.
+ *
+ * @requires modules/exporting
+ * @requires modules/export-data
+ */
+function getBlobFromContent(
+    content: string,
+    type: string
+): (string | undefined) {
+    const nav = win.navigator,
+        domurl = win.URL || win.webkitURL || win;
+
+    try {
+        // MS specific
+        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
+            const blob = new win.MSBlobBuilder();
+            blob.append(content);
+            return blob.getBlob('image/svg+xml');
+        }
+
+        return domurl.createObjectURL(new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: type }
+        ));
+    } catch (e) {
+        // Ignore
+    }
+}
+
 /* *
  *
  *  Default Export
@@ -231,6 +272,7 @@ function getScript(
 const DownloadURL = {
     dataURLtoBlob,
     downloadURL,
+    getBlobFromContent,
     getScript
 };
 
