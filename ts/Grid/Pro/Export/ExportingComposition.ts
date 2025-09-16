@@ -72,7 +72,7 @@ declare module '../../Core/Options' {
         /**
          * Options for the exporting.
          *
-         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/exporting-csv | Export to CSV}
+         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/exporting | Export to CSV}
          */
         exporting?: ExportingOptions;
     }
