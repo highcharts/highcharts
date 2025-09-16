@@ -29,7 +29,6 @@ import Column from '../Column';
 import Row from '../Row';
 import GridUtils from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
-import ColumnFiltering from '../Actions/ColumnFiltering/ColumnFiltering.js';
 import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 import HeaderIconManager from './HeaderIconManager.js';
@@ -158,51 +157,43 @@ class HeaderCell extends Cell {
 
     /**
      * Render the cell container.
-     *
-     * @param filtering
-     * Whether the cell is part of the filtering row.
      */
-    public override render(filtering?: boolean): void {
+    public override render(): void {
         const { column } = this;
         const options = merge(column?.options || {}, this.options);
+        const headerCellOptions = options.header || {};
+        const isSortableData = options.sorting?.sortable && column?.data;
 
-        if (!filtering) {
-            const headerCellOptions = options.header || {};
-            const isSortableData = options.sorting?.sortable && column?.data;
 
-            if (headerCellOptions.formatter) {
-                this.value = headerCellOptions.formatter.call(this).toString();
-            } else if (isString(headerCellOptions.format)) {
-                this.value = column ?
-                    column.format(headerCellOptions.format) :
-                    headerCellOptions.format;
-            } else {
-                this.value = column?.id || '';
-            }
-
-            this.headerContent = makeHTMLElement('span', {
-                className: Globals.getClassName('headerCellContent')
-            }, this.htmlElement);
-
-            // Render the header cell element content.
-            setHTMLContent(this.headerContent, this.value);
-
-            if (isSortableData) {
-                column.viewport.grid.accessibility?.addSortableColumnHint(
-                    this.headerContent
-                );
-            }
-
-            // Add sorting
-            this.initColumnSorting();
-
-            // Add filtering
-            this.initColumnFiltering();
+        if (headerCellOptions.formatter) {
+            this.value = headerCellOptions.formatter.call(this).toString();
+        } else if (isString(headerCellOptions.format)) {
+            this.value = column ?
+                column.format(headerCellOptions.format) :
+                headerCellOptions.format;
+        } else {
+            this.value = column?.id || '';
         }
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
 
+        // Create flex container for header content and icons
+        const headerCellContainer = makeHTMLElement('div', {
+            className: Globals.getClassName('headerCell')
+        }, this.htmlElement);
+
+        this.headerContent = makeHTMLElement('span', {
+            className: Globals.getClassName('headerCellContent')
+        }, headerCellContainer);
+
+        // Render the header cell element content.
+        setHTMLContent(this.headerContent, this.value);
+
+        // Initialize icon manager
+        this.iconManager = new HeaderIconManager(this);
+        this.setupHeaderIcons();
+        headerCellContainer.appendChild(this.iconManager.getContainer());
         this.htmlElement.setAttribute('scope', 'col');
 
         if (this.options.className) {
@@ -213,6 +204,12 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
+
+            if (isSortableData) {
+                column.viewport.grid.accessibility?.addSortableColumnHint(
+                    this.headerContent
+                );
+            }
 
             // Add user column classname
             if (column.options.className) {
@@ -226,11 +223,14 @@ class HeaderCell extends Cell {
                 column,
                 this
             );
+
+            // Add sorting
+            this.initColumnSorting();
         }
 
         this.setCustomClassName(options.header?.className);
 
-        fireEvent(this, 'afterRender', { column, filtering });
+        fireEvent(this, 'afterRender', { column });
     }
 
     public override reflow(): void {
@@ -380,18 +380,6 @@ class HeaderCell extends Cell {
             column,
             this.htmlElement
         );
-    }
-
-    /**
-     * Add filtering option to the column.
-     */
-    private initColumnFiltering(): void {
-        const { column } = this;
-        if (!column || !column.options?.filtering?.enabled) {
-            return;
-        }
-
-        column.filtering = new ColumnFiltering(column);
     }
 
     /**

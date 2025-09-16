@@ -150,6 +150,10 @@ class Column {
             grid.columnOptionsMap?.[id]?.options ?? {}
         );
 
+        if (this.options.filtering?.enabled) {
+            this.filtering = new ColumnFiltering(this);
+        }
+
         fireEvent(this, 'afterInit');
     }
 

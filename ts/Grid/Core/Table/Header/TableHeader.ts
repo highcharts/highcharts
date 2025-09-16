@@ -28,7 +28,7 @@ import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
 import FilterPopup from './FilterPopup.js';
-import ColumnFiltering from '../Actions/ColumnFiltering/ColumnFiltering.js';
+import FilterRow from '../Actions/ColumnFiltering/FilterRow.js';
 
 
 /* *
@@ -66,6 +66,7 @@ class TableHeader {
 
     /**
      * Amount of levels in the header, that is used in creating correct rows.
+     * Excludes any extra levels, like filtering row.
      */
     public levels: number = 1;
 
@@ -98,6 +99,7 @@ class TableHeader {
         }
     }
 
+
     /* *
     *
     *  Methods
@@ -117,12 +119,18 @@ class TableHeader {
         // Render regular, multiple level rows.
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
             const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
-            row.renderMultipleLevel(i);
+            row.renderContent(i);
             this.rows.push(row);
         }
 
-        // Render a row with empty cells for filtering.
-        ColumnFiltering.renderFilterRow(vp, this.levels);
+        // Render an extra row for inline filtering.
+        if (vp.columns.some((column): boolean =>
+            column.options?.filtering?.enabled || false
+        )) {
+            const row = new FilterRow(vp);
+            row.renderContent();
+            this.rows.push(row);
+        }
     }
 
     /**

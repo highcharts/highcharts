@@ -96,8 +96,10 @@ class HeaderRow extends Row {
      *
      * @param level
      * The current level in the header tree
+     *
+     * @internal
      */
-    public renderMultipleLevel(level: number): void {
+    public renderContent(level: number): void {
         const header = this.viewport.grid.options?.header;
         const vp = this.viewport;
         const enabledColumns = vp.grid.enabledColumns || [];

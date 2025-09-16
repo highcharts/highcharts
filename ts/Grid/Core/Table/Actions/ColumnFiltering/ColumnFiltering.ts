@@ -26,12 +26,11 @@
 
 import type Column from '../../Column';
 import type { FilteringCondition } from '../../../Options';
-import type Table from '../../Table';
+import type FilterCell from './FilterCell.js';
 
 import U from '../../../../../Core/Utilities.js';
 import GU from '../../../GridUtils.js';
 import Globals from '../../../Globals.js';
-import HeaderRow from '../../Header/HeaderRow.js';
 import {
     booleanConditions,
     conditionsMap,
@@ -54,75 +53,11 @@ const { makeHTMLElement } = GU;
  */
 class ColumnFiltering {
 
-
     /* *
-    *
-    *  Static Methods
-    *
-    * */
-
-    /**
-     * Renders a row with empty cells for filtering.
      *
-     * @param vp
-     * The viewport of the table.
+     *  Properties
      *
-     * @param levels
-     * The levels of the header.
-     *
-     */
-    public static renderFilterRow(vp: Table, levels: number): void {
-        const columns = vp.columns;
-        const header = vp.header;
-        const enabledColumns = vp.grid.enabledColumns || [];
-
-        // Stop the execution if there is no header or the filtering is not
-        // enabled for any column.
-        if (
-            !header ||
-            columns.every((column): boolean =>
-                !column.options?.filtering?.enabled
-            )
-        ) {
-            return;
-        }
-
-        const row = new HeaderRow(vp, 1, { 'aria-rowindex': levels + 1 });
-
-        vp.theadElement?.appendChild(row.htmlElement);
-        row.htmlElement.classList.add(Globals.getClassName('headerRow'));
-
-        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const column = columns[i];
-            if (enabledColumns?.indexOf(column.id) < 0) {
-                continue;
-            }
-
-            const headerCell = row.createCell(column);
-
-            // Add class to disable left border on first column
-            if (column?.index === 0 && i === 0) {
-                headerCell.htmlElement.classList.add(
-                    Globals.getClassName('columnFirst')
-                );
-            }
-
-            headerCell.render(true);
-            headerCell.column?.filtering?.renderFilteringContent(
-                headerCell.htmlElement
-            );
-        }
-
-        row.setLastCellClass();
-
-        header.rows.push(row);
-    }
-
-    /* *
-    *
-    *  Properties
-    *
-    * */
+     * */
 
     /**
      * The filtered column of the table.
@@ -130,9 +65,14 @@ class ColumnFiltering {
     public column: Column;
 
     /**
-     * The head element of the column.
+     * The filter cell of the column.
      */
-    public headerCellElement?: HTMLElement;
+    public inlineCell?: FilterCell;
+
+    /**
+     * The container element of the filtering content.
+     */
+    public container?: HTMLElement;
 
     /**
      * The input element for the filtering. Can be of type `text`, `number`
@@ -208,13 +148,14 @@ class ColumnFiltering {
      * @param columnType
      * Reference to the column type.
      */
-    public renderFilteringInput(
+    private renderFilteringInput(
         filteringOptions: FilteringCondition,
         inputWrapper: HTMLElement,
         columnType: Exclude<Column.DataType, 'boolean'>
     ): void {
         // Render the input element.
         this.filterInput = makeHTMLElement('input', {}, inputWrapper);
+        this.filterInput.setAttribute('tabindex', '-1');
         this.filterInput.placeholder = 'value...';
 
         if (columnType === 'number') {
@@ -279,13 +220,14 @@ class ColumnFiltering {
      * @param conditions
      * Reference to the conditions, different for each condition type.
      */
-    public renderConditionSelect(
+    private renderConditionSelect(
         filteringOptions: FilteringCondition,
         inputWrapper: HTMLElement,
         conditions: readonly Condition[]
     ): void {
         // Render the select element.
         this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
+        this.filterSelect.setAttribute('tabindex', '-1');
 
         // Render the options.
         for (const condition of conditions) {
@@ -323,13 +265,13 @@ class ColumnFiltering {
     }
 
     /**
-     * Render the filtering content in the header.
+     * Render the filtering content in the container.
      *
-     * @param headerCellElement
-     * The header cell element.
+     * @param container
+     * The container element.
      */
-    public renderFilteringContent(headerCellElement: HTMLElement): void {
-        this.headerCellElement = headerCellElement;
+    public renderFilteringContent(container: HTMLElement): void {
+        this.container = container;
         const column = this.column;
 
         if (!column || !column.options?.filtering?.enabled) {
@@ -339,7 +281,7 @@ class ColumnFiltering {
         // Render the input wrapper.
         const inputWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('columnFilterWrapper')
-        }, this.headerCellElement);
+        }, container);
         const filteringOptions = column.options.filtering;
         const columnType = column.dataType;
 
@@ -365,6 +307,7 @@ class ColumnFiltering {
             case 'boolean':
                 // Render the select element.
                 this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
+                this.filterSelect.setAttribute('tabindex', '-1');
 
                 // Render the options.
                 for (const option of booleanConditions) {
@@ -400,7 +343,7 @@ class ColumnFiltering {
 
         // Set the padding bottom of the header content to the height of the
         // filter select or input element.
-        const headerContent = this.headerCellElement.querySelector(
+        const headerContent = container.querySelector(
             Globals.getClassName('headerCellContent')
         ) as HTMLElement;
         if (headerContent) {
