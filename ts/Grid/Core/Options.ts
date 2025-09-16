@@ -604,45 +604,6 @@ export interface CreditsOptions {
     position?: 'bottom' | 'top';
 }
 
-export interface ExportingOptions {
-    /**
-     * The decimal point to use in the CSV string.
-     */
-    decimalPoint?: string;
-
-    /**
-     * The file name to use for exported the grid.
-     */
-    filename?: string;
-
-    /**
-     * Whether to export the first row as column names.
-     *
-     * @default true
-     */
-    firstRowAsNames?: boolean;
-
-    /**
-     * The delimiter used to separate the values in the CSV string.
-     *
-     * @default ','
-     * */
-    itemDelimiter?: string;
-
-    /**
-     * The delimiter used to separate the lines in the CSV string.
-     *
-     * @default '\n'
-     */
-    lineDelimiter?: string;
-
-    /**
-     * Whether to use the local decimal point as detected from the browser.
-     *
-     * @default true
-     */
-    useLocalDecimalPoint?: boolean;
-}
 
 /**
  * Language options for the grid.
