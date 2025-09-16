@@ -144,6 +144,17 @@ class Column {
 
         this.dataType = this.assumeDataType();
 
+        // Populate column options map if not exists, to prepare option
+        // references for each column.
+        if (grid.options && !grid.columnOptionsMap?.[id]) {
+            const columnOptions: IndividualColumnOptions = { id };
+            (grid.options.columns ??= []).push(columnOptions);
+            grid.columnOptionsMap[id] = {
+                index: grid.options.columns.length - 1,
+                options: columnOptions
+            };
+        }
+
         this.options = createOptionsProxy(
             grid.columnOptionsMap?.[id]?.options ?? {},
             grid.options?.columnDefaults
