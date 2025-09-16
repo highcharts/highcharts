@@ -87,3 +87,18 @@ Highcharts.chart('container', {
         }
     ]
 } satisfies Highcharts.Options);
+
+// Add button functionality
+document.querySelectorAll('.button-row button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-value');
+        Highcharts.charts[0].series[0].update({
+            link: {
+                type: val as ('curved' | 'orthogonal' | 'straight')
+            }
+        } as Highcharts.SeriesTreegraphOptions);
+        document.querySelectorAll('.button-row button')
+            .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
