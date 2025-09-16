@@ -12,22 +12,9 @@
         sans-serif;
 }
 
-body,
-.highcharts-light {
+body {
     background: var(--highcharts-background-color, #fff);
     color: var(--highcharts-neutral-color-100, #000);
-}
-
-.highcharts-dark {
-    background: var(--highcharts-background-color, #141414);
-    color: var(--highcharts-neutral-color-100, #fff);
-}
-
-@media (prefers-color-scheme: dark) {
-    body {
-        background: var(--highcharts-background-color, #141414);
-        color: var(--highcharts-neutral-color-100, #fff);
-    }
 }
 
 #container {
