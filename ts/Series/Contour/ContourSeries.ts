@@ -23,7 +23,6 @@ const {
 } = SeriesRegistry;
 import Delaunay from '../../Shared/Delaunay.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-// Import basicShader from './shaders/shader.wgsl';
 
 class ContourSeries extends ScatterSeries {
     public canvas?: HTMLCanvasElement;
@@ -151,7 +150,14 @@ class ContourSeries extends ScatterSeries {
         //         height: this.yAxis.len
         //     }).add(this.group);
         // }
+        // this.setCanvasSize();
+        this.setExtremes();
 
+        // Canvas.width = this.chart.chartWidth * window.devicePixelRatio;
+        // canvas.height = this.chart.chartHeight * window.devicePixelRatio;
+
+
+        // Canvas.height = canvas.clientHeight * window.devicePixelRatio;
         this.context = canvas.getContext('webgpu');
         this.run();
         // This.context = canvas.getContext('webgpu');
@@ -182,12 +188,12 @@ class ContourSeries extends ScatterSeries {
                 });
 
                 const vertices = this.get3DData();
-                // Const indices = this.triangulateData().triangles;
-                const indices = new Delaunay(new Float64Array([
-                    377, 479, 453, 434, 326, 387, 444, 359, 511, 389,
-                    586, 429, 470, 315, 622, 493, 627, 367, 570, 314
-                ])).triangles;
-
+                const indices = this.triangulateData().triangles;
+                // Const indices = new Delaunator(new Float64Array([
+                //     377, 479, 453, 434, 326, 387, 444, 359, 511, 389,
+                //     586, 429, 470, 315, 622, 493, 627, 367, 570, 314
+                // ])).triangles;
+                //
                 const extremesUniform = this.extremesUniform = new Float32Array(
                     this.getWebGPUExtremes()
                 );
@@ -468,49 +474,78 @@ class ContourSeries extends ScatterSeries {
                     }
                 });
 
+                /*
+                Const buffers = {
+                    'extremesUniformBuffer': extremesUniformBuffer,
+                    'valueExtremesUniformBuffer': valueExtremesUniformBuffer,
+                    'colorAxisStopsBuffer': colorAxisStopsBuffer,
+                    'colorAxisStopsCountBuffer': colorAxisStopsCountBuffer,
+                    'contourIntervalUniformBuffer': (
+                        this.contourIntervalUniformBuffer
+                    ),
+                    'smoothColoringUniformBuffer': (
+                        this.smoothColoringUniformBuffer
+                    ),
+                    'showContourLinesUniformBuffer': (
+                        this.showContourLinesUniformBuffer
+                    )
+                };
+
+                for (const [key, val] of Object.entries(buffers)) {
+                    console.log(key, val);
+                }
+                */
+
                 // Note: Overkill with casting all of the buffers
                 const bindGroup = device.createBindGroup({
                     layout: pipeline.getBindGroupLayout(0),
                     entries: [{
                         binding: 0,
                         resource: {
-                            buffer: extremesUniformBuffer as GPUBuffer
+                            buffer: extremesUniformBuffer as GPUBuffer,
+                            label: 'extremesUniformBuffer'
                         }
                     }, {
                         binding: 1,
                         resource: {
-                            buffer: valueExtremesUniformBuffer as GPUBuffer
+                            buffer: valueExtremesUniformBuffer as GPUBuffer,
+                            label: 'valueExtremesUniformBuffer'
                         }
                     }, {
                         binding: 2,
                         resource: {
-                            buffer: colorAxisStopsBuffer as GPUBuffer
+                            buffer: colorAxisStopsBuffer as GPUBuffer,
+                            label: 'colorAxisStopsBuffer'
                         }
                     }, {
                         binding: 3,
                         resource: {
-                            buffer: colorAxisStopsCountBuffer as GPUBuffer
+                            buffer: colorAxisStopsCountBuffer as GPUBuffer,
+                            label: 'colorAxisStopsCountBuffer'
                         }
                     }, {
                         binding: 4,
                         resource: {
                             buffer: (
                                 this.contourIntervalUniformBuffer as GPUBuffer
-                            )
+                            ),
+                            label: 'contourIntervalUniformBuffer'
                         }
                     }, {
                         binding: 5,
                         resource: {
                             buffer: (
                                 this.smoothColoringUniformBuffer as GPUBuffer
-                            )
+                            ),
+                            label: 'smoothColoringUniformBuffer'
                         }
                     }, {
                         binding: 6,
                         resource: {
                             buffer: (
                                 this.showContourLinesUniformBuffer as GPUBuffer
-                            )
+                            ),
+                            label: 'showContourLinesUniformBuffer'
                         }
                     }]
                 });
@@ -568,7 +603,7 @@ class ContourSeries extends ScatterSeries {
     public setSmoothColoringUniform(rerender = false): void {
         if (this.device && this.smoothColoringUniformBuffer) {
             this.device.queue.writeBuffer(
-                this.smoothColoringUniformBuffer,
+                this.smoothColoringUniformBuffer || true,
                 0,
                 new Float32Array([this.getSmoothColoring()])
             );
@@ -585,7 +620,7 @@ class ContourSeries extends ScatterSeries {
     public setShowContourLinesUniform(rerender = false): void {
         if (this.device && this.showContourLinesUniformBuffer) {
             this.device.queue.writeBuffer(
-                this.showContourLinesUniformBuffer,
+                this.showContourLinesUniformBuffer || true,
                 0,
                 new Float32Array([this.getShowContourLines()])
             );
@@ -705,8 +740,8 @@ class ContourSeries extends ScatterSeries {
             canvas.style.width = xAxis.len + 'px';
             canvas.style.height = yAxis.len + 'px';
 
-            canvas.width = canvas.clientWidth * window.devicePixelRatio;
-            canvas.height = canvas.clientHeight * window.devicePixelRatio;
+            canvas.width = this.chart.chartWidth * window.devicePixelRatio;
+            canvas.height = this.chart.chartHeight * window.devicePixelRatio;
         }
     }
 
