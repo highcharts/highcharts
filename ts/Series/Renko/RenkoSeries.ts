@@ -68,7 +68,7 @@ class RenkoSeries extends ColumnSeries {
     public setData(
         data: (PointOptions | PointShortOptions)[],
         redraw?: boolean,
-        animation?: boolean | Partial<AnimationOptions> | undefined
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
         this.renkoData = [];
         super.setData(data, redraw, animation, false);

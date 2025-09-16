@@ -33,6 +33,7 @@ import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 import HeaderIconManager from './HeaderIconManager.js';
 import TableHeader from './TableHeader.js';
+import GridIcons from '../../../Icons/GridIcons.js';
 
 const {
     makeHTMLElement,
@@ -440,7 +441,7 @@ class HeaderCell extends Cell {
                         iconName = 'chevronDown';
                     }
 
-                    const newIcon = (Globals as any).GridIcons.createGridIcon(
+                    const newIcon = GridIcons.createGridIcon(
                         iconName,
                         20
                     );

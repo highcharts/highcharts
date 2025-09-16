@@ -179,11 +179,10 @@ QUnit.test('Respect reversed-flag of linked axis (#7911)', function (assert) {
             }
         ]
     });
+    const axis1 = chart.xAxis[0],
+        axis2 = chart.xAxis[1];
 
-    const axis1 = chart.axes[0],
-        axis2 = chart.axes[1];
-
-    assert.equal(
+    assert.strictEqual(
         axis1.ticks[0].label.xy.y,
         axis2.ticks[0].label.xy.y,
         'Axes should share the same reversed y offset (#7911)'
@@ -990,6 +989,46 @@ QUnit.test('Label reserve space', function (assert) {
             bBox.x + bBox.width < chart.chartWidth,
         'opposite: true, reserveSpace: true, align: center. - ' +
             'Labels should not overlap plot area'
+    );
+
+    // #21172)
+    chart.update({
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            opposite: false
+        },
+        yAxis: [{
+            opposite: false,
+            categories: ['Long label should not be clipped'],
+            labels: {
+                style: {
+                    fontSize: '13px'
+                }
+            }
+        }]
+    });
+
+    const baseBBox = chart.yAxis[0].ticks[0].label.element.getBBox();
+
+    // Compare with opposite
+    chart.update({
+        chart: {
+            marginLeft: 5,
+            spacingLeft: 10
+        },
+        yAxis: [{
+            opposite: true
+        }]
+    });
+
+    const oppositeBBox = chart.yAxis[0].ticks[0].label.element.getBBox();
+
+    assert.ok(
+        oppositeBBox.width >= baseBBox.width * 0.95,
+        `#21172,
+            Opposite yAxis label should not be narrower than normal yAxis label`
     );
 });
 

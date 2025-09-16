@@ -662,7 +662,7 @@ class BubbleSeries extends ScatterSeries {
         minSize: number,
         maxSize: number,
         value: (number|null|undefined),
-        yValue?: (number|null|undefined)
+        yValue?: (number|null)
     ): (number|null) {
         const options = this.options,
             sizeByArea = options.sizeBy !== 'width',
