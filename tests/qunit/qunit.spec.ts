@@ -93,7 +93,7 @@ test.describe('QUnit tests', () => {
 
     for (const qunitTest of unitTests){
         test(qunitTest + '', async () =>{
-            const sample = await getSample(dirname(qunitTest));
+            const sample = getSample(dirname(qunitTest));
 
             if(!sample.script) {
                 // eslint-disable-next-line playwright/no-skipped-test

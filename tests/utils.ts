@@ -4,9 +4,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { JSHandle, Page } from '@playwright/test';
 
-import { readFile } from 'fs/promises';
 import { join, extname, normalize } from 'node:path';
-import { glob } from 'glob';
+import { globSync } from 'glob';
 import { load as yamlLoad } from 'js-yaml';
 import { readFileSync } from 'node:fs';
 
@@ -262,7 +261,7 @@ const highchartsCSS = readFileSync(
     'utf8'
 );
 
-export async function getSample(path: string) {
+export function getSample(path: string) {
     path = normalize(path);
     const files = {
         html: 'demo.html',
@@ -275,9 +274,8 @@ export async function getSample(path: string) {
 
     for (const [type, file] of Object.entries(files)) {
         try {
-            // TODO: check if faster to skip glob if not a pattern?
-            const [globPath] = await glob(join(path, file), { absolute: true });
-            const content = await readFile(globPath, { encoding: 'utf8'});
+            const [globPath] = globSync(join(path, file), { absolute: true });
+            const content = readFileSync(globPath, { encoding: 'utf8'});
 
             obj[type] = type === 'details' ?
                 yamlLoad(content) as object :

@@ -7,9 +7,9 @@ test('Karma scripts', async () => {
 });
 
 test.describe('Demo folder assembly', () =>{
-    test('demo.js', async () => {
+    test('demo.js', () => {
         const demoPath = 'samples/highcharts/demo/line-chart';
-        const demo = await getSample(demoPath);
+        const demo = getSample(demoPath);
 
         expect(demo).toHaveProperty('script');
         expect(demo).toHaveProperty('html');
