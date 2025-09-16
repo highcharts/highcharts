@@ -2,6 +2,7 @@
 import { Page } from '@playwright/test';
 import { test, expect, setupRoutes } from '../fixtures.ts';
 import { getKarmaScripts, getSample } from '../utils.ts';
+import { join, dirname } from 'node:path';
 
 import { glob } from 'glob';
 
@@ -31,14 +32,13 @@ test.describe('QUnit tests', () => {
 
         const scripts = [
             ...(await getKarmaScripts()),
-            'test/call-analyzer.js',
-            'test/test-controller.js',
-            'test/test-utilities.js',
-            'tmp/json-sources.js',
-            'test/test-template.js',
+            join('test', 'call-analyzer.js'),
+            join('test', 'test-controller.js'),
+            join('test', 'test-utilities.js'),
+            join('tmp', 'json-sources.js'),
+            join('test', 'test-template.js'),
             ...(await glob('test/templates/**/*.js')),
-            'test/karma-setup.js',
-
+            join('test', 'karma-setup.js')
         ];
 
         await page.addScriptTag({ url: 'https://code.jquery.com/qunit/qunit-2.4.0.js' });
@@ -93,11 +93,11 @@ test.describe('QUnit tests', () => {
 
     for (const qunitTest of unitTests){
         test(qunitTest + '', async () =>{
-            const sample = await getSample(qunitTest.replace('/demo.js', ''));
+            const sample = await getSample(dirname(qunitTest));
 
             if(!sample.script) {
                 // eslint-disable-next-line playwright/no-skipped-test
-                test.skip('Skipping as there\'s no script');
+                test.skip(true, 'Skipping as there\'s no script');
                 return;
             }
             if (!sample.script.includes('QUnit.test')) {
