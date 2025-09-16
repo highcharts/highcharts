@@ -14,6 +14,10 @@
  * */
 
 import AST from '../../Core/Renderer/HTML/AST.js';
+import U from '../../Core/Utilities.js';
+const {
+    isObject
+} = U;
 
 AST.allowedAttributes.push(
     'srcset',
@@ -188,23 +192,6 @@ namespace GridUtils {
     }
 
     /**
-     * Checks if the value is a plain object (not an array or null).
-     *
-     * @param value
-     * The value to check.
-     *
-     * @returns
-     * True if the value is a plain object.
-     */
-    export function isPlainObject(value: unknown): value is object {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            !Array.isArray(value)
-        );
-    }
-
-    /**
      * Creates a proxy that, when reading a property, first returns the value
      * from the original options of a given entity; if it is not defined, it
      * falls back to the value from the defaults (default options), recursively
@@ -231,7 +218,7 @@ namespace GridUtils {
                 const targetValue = target[prop as keyof U];
                 const defaultValue = defaults[prop as keyof U];
 
-                if (isPlainObject(targetValue)) {
+                if (isObject(targetValue, true)) {
                     return new Proxy(
                         targetValue,
                         handler(defaultValue ?? {})
