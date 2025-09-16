@@ -5,7 +5,7 @@
 import type { JSHandle, Page } from '@playwright/test';
 
 import { readFile } from 'fs/promises';
-import { join, extname } from 'node:path/posix';
+import { join, extname, normalize } from 'node:path';
 import { glob } from 'glob';
 import { load as yamlLoad } from 'js-yaml';
 import { readFileSync } from 'node:fs';
@@ -263,6 +263,7 @@ const highchartsCSS = readFileSync(
 );
 
 export async function getSample(path: string) {
+    path = normalize(path);
     const files = {
         html: 'demo.html',
         css: 'demo.css',
