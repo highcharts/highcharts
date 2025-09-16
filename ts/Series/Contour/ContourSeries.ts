@@ -696,35 +696,36 @@ class ContourSeries extends ScatterSeries {
         return [min || 0, max || 0];
     }
     private colorToArray(color: string): [number, number, number] {
+
+
         const hex = color.replace('#', '');
         const r = parseInt(hex.substring(0, 2), 16) / 255;
         const g = parseInt(hex.substring(2, 4), 16) / 255;
         const b = parseInt(hex.substring(4, 6), 16) / 255;
 
+
         return [r, g, b];
     }
     private getColorAxisStopsData() : { array: Float32Array, length: number } {
-        // Const colorAxis = this.colorAxis;
+        const colorAxisStops = (this.chart?.options?.colorAxis as any).stops;
+        let ret = new Float32Array([
+            0, 0, 0, 0,
+            1, 1, 1, 1
+        ]);
 
-        // If (!colorAxis) {
+        if (colorAxisStops) {
+            const flattenedData = [];
+
+            for (const stop of colorAxisStops) {
+                flattenedData.push(...this.colorToArray(stop[1]));
+            }
+            ret = new Float32Array(flattenedData);
+        }
+
         return {
-            array: new Float32Array([
-                0, 0, 0, 0,
-                1, 1, 1, 1
-            ]),
-            length: 2
+            array: ret,
+            length: colorAxisStops?.length || 2
         };
-        // }
-
-        // const flattenedData = new Float32Array(colorAxis.stops.map(stop => [
-        //     stop[0],
-        //     ...this.colorToArray(stop[1] as string)
-        // ]).flat());
-        //
-        // return {
-        //     array: flattenedData,
-        //     length: colorAxis.stops.length
-        // };
 
     }
 
