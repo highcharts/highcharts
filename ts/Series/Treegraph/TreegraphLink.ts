@@ -62,7 +62,7 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
 
     /**
      * Radius for the rounded corners of the links between nodes. Works for
-     * `default` link type.
+     * `orthogonal` link type.
      */
     radius?: number;
 

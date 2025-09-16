@@ -35,6 +35,9 @@ Highcharts.chart('container', {
         },
         visible: true
     },
+    tooltip: {
+        enabled: false
+    },
     series: [
         {
             type: 'treegraph',
@@ -47,34 +50,39 @@ Highcharts.chart('container', {
             link: {
                 bendAt: 0,
                 type: 'orthogonal',
-                radius: 4
+                radius: 6
             },
-            dataLabels: [{
-                pointFormat: `{#unless point.node.isLeaf}
-                    ~{multiply -1 point.x} Mya
-                {/unless}`,
-                align: 'left',
-                verticalAlign: 'bottom',
-                style: {
-                    color: 'var(--highcharts-neutral-color-60, #a1a1a1)',
-                    fontWeight: 'normal',
-                    whiteSpace: 'nowrap'
-                }
-            }, {
-                crop: false,
-                align: 'center',
-                overflow: 'allow',
-                pointFormat: `{#if point.node.isLeaf}
-                    {point.name}<br>{point.custom.iconSVG}
-                {/if}`,
-                style: {
-                    color: 'var(--highcharts-neutral-color-100, #000000)',
-                    fontWeight: 'bold'
+            dataLabels: [
+                // Data labels for non-leaf nodes, the splits
+                {
+                    pointFormat: `{#unless point.node.isLeaf}
+                        ~{multiply -1 point.x} Mya
+                    {/unless}`,
+                    align: 'left',
+                    verticalAlign: 'bottom',
+                    style: {
+                        color: 'var(--highcharts-neutral-color-60, #a1a1a1)',
+                        fontWeight: 'normal',
+                        whiteSpace: 'nowrap'
+                    }
                 },
-                verticalAlign: 'top',
-                useHTML: true,
-                y: 10
-            }]
+                // Data labels for leaf nodes, the current species
+                {
+                    pointFormat: `{#if point.node.isLeaf}
+                        {point.name}<br>{point.custom.iconSVG}
+                    {/if}`,
+                    crop: false,
+                    align: 'center',
+                    verticalAlign: 'top',
+                    overflow: 'allow',
+                    style: {
+                        color: 'var(--highcharts-neutral-color-100, #000000)',
+                        fontWeight: 'bold'
+                    },
+                    useHTML: true,
+                    y: 10
+                }
+            ]
         }
     ]
 } satisfies Highcharts.Options);
