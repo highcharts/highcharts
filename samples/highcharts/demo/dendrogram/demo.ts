@@ -65,7 +65,7 @@ Highcharts.chart('container', {
                     style: {
                         color: 'var(--highcharts-neutral-color-60, #a1a1a1)',
                         fontWeight: 'normal',
-                        textOutline: '3px contrast',
+                        textOutline: '3px var(--highcharts-background-color)',
                         whiteSpace: 'nowrap'
                     }
                 },
