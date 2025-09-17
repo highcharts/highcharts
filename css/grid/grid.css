@@ -995,7 +995,9 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-pagination-wrapper button:focus-visible:not(:disabled),
-.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus-visible {
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus-visible,
+.hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector:focus-visible,
+.hcg-pagination-wrapper .hcg-pagination-controls select:focus-visible {
     border-color: var(--ig-pagination-button-border-hover);
     box-shadow: 0 0 0 1px var(--ig-pagination-button-border-hover) inset;
     outline: none;

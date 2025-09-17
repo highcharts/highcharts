@@ -1069,7 +1069,7 @@ class Pagination {
             const option: HTMLOptionElement =
                 makeHTMLElement('option', {}, mobileSelect);
             option.value = i.toString();
-            option.textContent = `Page ${i}`;
+            option.textContent = `Page ${i} of ${totalPages}`;
         }
 
         // Set current page as selected
@@ -1082,6 +1082,7 @@ class Pagination {
             const newPage = parseInt(mobileSelect.value, 10);
             if (newPage !== this.currentPage) {
                 void this.goToPage(newPage);
+                console.log(mobileSelect);
             }
         });
     }
