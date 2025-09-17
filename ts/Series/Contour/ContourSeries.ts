@@ -22,7 +22,7 @@ const {
     }
 } = SeriesRegistry;
 import ContourPoint from './ContourPoint.js';
-import Delaunay from '../../Shared/Delaunay.js'
+import Delaunay from '../../Shared/Delaunay.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
@@ -93,7 +93,7 @@ class ContourSeries extends ScatterSeries {
 
         // Canvas.classList.add('contourmap-canvas');
 
-        // this.setExtremes();
+        this.setExtremes();
         this.setCanvasSize();
         this.context = canvas.getContext('webgpu');
         this.run();
@@ -666,15 +666,6 @@ class ContourSeries extends ScatterSeries {
         const { canvas, xAxis, yAxis } = this;
 
         if (canvas) {
-
-            // Canvas.style.left = xAxis.toPixels(
-            //     xAxis.toValue(0, true),
-            //     false
-            // ) + 'px';
-            // canvas.style.top = yAxis.toPixels(
-            //     yAxis.toValue(0, true), false
-            // ) + 'px';
-            //
             canvas.style.width = xAxis.len + 'px';
             canvas.style.height = yAxis.len + 'px';
 
@@ -687,6 +678,7 @@ class ContourSeries extends ScatterSeries {
      * Set the extremes of the Contourmap axes.
      */
     public setExtremes(): void {
+
         if (!this.render) {
             return;
         }
@@ -711,7 +703,8 @@ class ContourSeries extends ScatterSeries {
                     this.valueExtremesUniform as GPUAllowSharedBufferSource
                 );
             }
-            this?.render();
+
+            // This?.render();
         }
     }
 }
