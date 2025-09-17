@@ -3307,7 +3307,6 @@ class Series {
 
         // Generate it on first call
         if (!group) {
-
             this[prop] = group = this.chart.renderer
                 .g()
                 .add(parent);
@@ -4240,7 +4239,8 @@ class Series {
                 'group',
                 'markerGroup',
                 'dataLabelsGroup',
-                'transformGroup'
+                'transformGroup',
+                'dataLabelsGroupParent'
             ],
             optionsToCheck = [
                 'dataGrouping',
