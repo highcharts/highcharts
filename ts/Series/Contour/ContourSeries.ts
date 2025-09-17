@@ -43,38 +43,28 @@ class ContourSeries extends ScatterSeries {
     private smoothColoringUniformBuffer?: GPUBuffer;
     private showContourLinesUniformBuffer?: GPUBuffer;
 
-    public triangulateData(): any {
-        const points2d: Float64Array = new Float64Array(this.points.length * 2);
+    public triangulateData(): Delaunay<Float64Array> {
+        const points = this.points,
+            length = points.length,
+            points2d: Float64Array = new Float64Array(length * 2),
+            { xAxis, yAxis } = this,
+            xDivider = (Math.abs(xAxis.toValue(0, true)) > 10e6) ?
+                10e6 :
+                1,
+            yDivider = (Math.abs(yAxis.toValue(yAxis.len, true)) > 10e6) ?
+                10e6 :
+                1;
 
-        const { xAxis, yAxis } = this;
-
-        const extremes = [
-            xAxis.toValue(0, true), // XMin
-            xAxis.toValue(xAxis.len, true), // XMax
-            yAxis.toValue(yAxis.len, true), // YMin
-            yAxis.toValue(0, true) // YMax
-        ];
-
-        let xDivider = 1,
-            yDivider = 1;
-        if (Math.abs(extremes[0]) > 10e6) {
-            xDivider = 10e6;
-        }
-        if (Math.abs(extremes[2]) > 10e6) {
-            yDivider = 10e6;
+        for (let i = 0; i < length; i++) {
+            const { x, y } = points[i];
+            points2d[i * 2] = x / xDivider;
+            points2d[i * 2 + 1] = y && (y / yDivider) || 0;
         }
 
-        this.points.forEach((point, i): void => {
-            points2d[i * 2] = point.x / xDivider;
-            points2d[i * 2 + 1] = point.y && (point.y / yDivider) || 0;
-        });
-
-        const result = new Delaunay(points2d);
-
-        return result;
+        return new Delaunay(points2d);
     }
 
-    public get3DData(): any {
+    public get3DData(): Float32Array {
         const points3d: Float32Array = new Float32Array(this.points.length * 3);
 
         this.points.forEach((point, i): void => {
@@ -188,7 +178,11 @@ class ContourSeries extends ScatterSeries {
                     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                 });
 
-                device.queue.writeBuffer(vertexBuffer, 0, vertices);
+                device.queue.writeBuffer(
+                    vertexBuffer,
+                    0,
+                    vertices as GPUAllowSharedBufferSource
+                );
                 device.queue.writeBuffer(
                     indexBuffer as GPUBuffer,
                     0,
