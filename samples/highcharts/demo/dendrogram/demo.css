@@ -31,12 +31,24 @@
     margin: -5px 0;
 }
 
+.dendrogram-small .icon {
+    width: 32px;
+    transform: rotate(-90deg);
+    vertical-align: middle;
+    margin: 0 5px 0 -5px;
+}
+
 .hidden {
     display: none;
 }
 
 .button-row {
-    margin: 1em 10px;
+    margin: 1em 0;
+}
+
+.button-row label {
+    display: block;
+    margin-left: 10px;
 }
 
 .highcharts-demo-button {

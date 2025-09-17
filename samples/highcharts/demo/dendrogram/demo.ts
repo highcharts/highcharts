@@ -72,12 +72,15 @@ Highcharts.chart('container', {
                     pointFormat: `{#if point.node.isLeaf}
                         {point.name}<br>{point.custom.iconSVG}
                     {/if}`,
+                    padding: 0,
                     crop: false,
                     align: 'center',
                     verticalAlign: 'top',
                     overflow: 'allow',
+                    rotation: 0,
                     style: {
                         color: 'var(--highcharts-neutral-color-100, #000000)',
+                        fontSize: '0.9em',
                         fontWeight: 'bold'
                     },
                     useHTML: true,
@@ -85,7 +88,36 @@ Highcharts.chart('container', {
                 }
             ]
         }
-    ]
+    ],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                chart: {
+                    marginBottom: 170,
+                    className: 'dendrogram-small'
+                },
+                xAxis: {
+                    offset: 20
+                },
+                series: [{
+                    type: 'treegraph',
+                    dataLabels: [
+                        {},
+                        // Smaller icons and rotated labels for small screens
+                        {
+                            pointFormat: `{#if point.node.isLeaf}
+                                {point.custom.iconSVG}{point.name}
+                            {/if}`,
+                            rotation: 90
+                        }
+                    ]
+                }]
+            }
+        }]
+    }
 } satisfies Highcharts.Options);
 
 // Add button functionality
