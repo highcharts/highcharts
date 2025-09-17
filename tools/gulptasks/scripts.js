@@ -186,17 +186,18 @@ function task() {
             gulp.series(...(
                 argv.assembler ?
                     [
-                        'scripts-css',
                         'scripts-ts',
                         'scripts-es5',
                         'scripts-js',
-                        'scripts-code'
+                        'scripts-code',
+                        'scripts-css'
                     ] :
                     [
                         'scripts-css',
                         'scripts-ts',
                         'scripts-webpack',
-                        'scripts-code'
+                        'scripts-code',
+                        'scripts-css'
                     ]
             ))(
                 function (error) {
