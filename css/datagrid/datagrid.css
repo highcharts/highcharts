@@ -448,7 +448,6 @@
     text-overflow: ellipsis;
     margin: 0;
     padding: 0;
-    position: relative;
     user-select: none; /* Standard syntax */
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
@@ -480,7 +479,14 @@
     transition: all 0.3s ease;
 }
 
-/* Generic icon button styling for Grid Pro (shared with Lite) */
+/* Legacy filter icon styles (deprecated - now handled by generic .hcg-header-cell-icons) */
+.hcg-header-cell-filter-icon img {
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+/* Generic button styling for Grid */
 .hcg-button {
     background: var(--ig-button-background);
     padding: var(--ig-button-padding);
@@ -491,7 +497,6 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--ig-button-color);
 }
 
 .hcg-button:hover {
@@ -522,10 +527,10 @@
     color: var(--ig-icon-hover-color);
 }
 
-/* Icons container */
+/* Header cell icons container - generic for all icon types */
 .hcg-header-cell-icons,
 .highcharts-datagrid-header-cell-icons {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 4px;
     max-width: 0;
@@ -534,7 +539,6 @@
     overflow: hidden;
     cursor: pointer;
     transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
-    vertical-align: middle;
 }
 
 /* Reveal icons on hover/focus or when active */
@@ -556,32 +560,15 @@
     opacity: 1;
 }
 
-/* Force-show icon wrappers in reveal states even if inline style hides them */
-.hcg-table thead th:hover .hcg-header-cell-icons > *,
-.hcg-table thead th:focus-visible .hcg-header-cell-icons > *,
-.hcg-table thead th:focus-within .hcg-header-cell-icons > *,
-.highcharts-datagrid-table thead th:hover .hcg-header-cell-icons > *,
-.highcharts-datagrid-table thead th:focus-visible .hcg-header-cell-icons > *,
-.highcharts-datagrid-table thead th:focus-within .hcg-header-cell-icons > *,
-.highcharts-datagrid-table thead th:hover .highcharts-datagrid-header-cell-icons > *,
-.highcharts-datagrid-table thead th:focus-visible .highcharts-datagrid-header-cell-icons > *,
-.highcharts-datagrid-table thead th:focus-within .highcharts-datagrid-header-cell-icons > *,
-.hcg-header-cell-icons:hover > *,
-.hcg-header-cell-icons.has-active-icons > *,
-.highcharts-datagrid-header-cell-icons:hover > *,
-.highcharts-datagrid-header-cell-icons.has-active-icons > * {
-    display: inline-flex !important;
-}
-
-/* Individual icon wrappers */
+/* Individual icon containers */
 .hcg-header-cell-filter-icon,
 .hcg-header-cell-sort-icon,
 .hcg-header-cell-menu-icon {
-    display: inline-flex;
+    display: flex;
     align-items: center;
 }
 
-/* Icon button within container */
+/* Generic icon button styling - applies to all header icons */
 .hcg-header-cell-icons .hcg-button,
 .highcharts-datagrid-header-cell-icons .hcg-button {
     width: 24px;
@@ -591,7 +578,6 @@
     align-items: center;
     justify-content: center;
     margin-right: 2px;
-    vertical-align: middle;
 }
 
 /* Sort icon states */
@@ -600,12 +586,16 @@
 .hcg-header-cell-sort-icon.sort-none .hcg-icon { opacity: 0.6; }
 .hcg-header-cell-sort-icon .hcg-icon { transition: transform 0.2s ease, opacity 0.2s ease; }
 
-/* Active icon visuals */
+/* Active icon styling - icons that are in an active state */
 .hcg-header-cell-icons .hcg-button.active,
-.highcharts-datagrid-header-cell-icons .hcg-button.active { background: var(--ig-button-hover-background); }
+.highcharts-datagrid-header-cell-icons .hcg-button.active {
+    background: var(--ig-button-hover-background);
+}
 
 .hcg-header-cell-icons .hcg-button.active .hcg-icon,
-.highcharts-datagrid-header-cell-icons .hcg-button.active .hcg-icon { color: var(--ig-icon-hover-color); }
+.highcharts-datagrid-header-cell-icons .hcg-button.active .hcg-icon {
+    color: var(--ig-icon-hover-color);
+}
 
 /* Active indicator dot - positioned at top right of button */
 .hcg-active-indicator,
