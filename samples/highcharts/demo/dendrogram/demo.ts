@@ -65,6 +65,7 @@ Highcharts.chart('container', {
                     style: {
                         color: 'var(--highcharts-neutral-color-60, #a1a1a1)',
                         fontWeight: 'normal',
+                        textOutline: '3px contrast',
                         whiteSpace: 'nowrap'
                     }
                 },
@@ -106,7 +107,9 @@ Highcharts.chart('container', {
                 series: [{
                     type: 'treegraph',
                     dataLabels: [
-                        {},
+                        {
+                            align: 'center'
+                        },
                         // Smaller icons and rotated labels for small screens
                         {
                             pointFormat: `{#if point.node.isLeaf}
