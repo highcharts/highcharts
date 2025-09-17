@@ -74,6 +74,7 @@ namespace Globals {
         virtualization: 'virtualization',
         scrollableContent: 'scrollable-content',
         headerCell: 'header-cell',
+        headerCellContainer: 'header-cell-container',
         headerCellContent: 'header-cell-content',
         headerCellFilterIcon: 'header-cell-filter-icon',
         headerCellIcons: 'header-cell-icons',

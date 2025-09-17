@@ -180,7 +180,7 @@ class HeaderCell extends Cell {
 
         // Create flex container for header content and icons
         const headerCellContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('headerCell')
+            className: Globals.getClassName('headerCellContainer')
         }, this.htmlElement);
 
         this.headerContent = makeHTMLElement('span', {
@@ -189,12 +189,6 @@ class HeaderCell extends Cell {
 
         // Render the header cell element content.
         setHTMLContent(this.headerContent, this.value);
-
-        // Initialize icon manager
-        this.iconManager = new HeaderIconManager(this);
-        this.setupHeaderIcons();
-        headerCellContainer.appendChild(this.iconManager.getContainer());
-        this.htmlElement.setAttribute('scope', 'col');
 
         if (this.options.className) {
             this.htmlElement.classList.add(
@@ -223,6 +217,12 @@ class HeaderCell extends Cell {
                 column,
                 this
             );
+
+            // Initialize icon manager
+            this.iconManager = new HeaderIconManager(this);
+            this.setupHeaderIcons();
+            headerCellContainer.appendChild(this.iconManager.getContainer());
+            this.htmlElement.setAttribute('scope', 'col');
 
             // Add sorting
             this.initColumnSorting();

@@ -461,16 +461,13 @@
     text-overflow: ellipsis;
 }
 
-.hcg-head-row-content,
-.highcharts-datagrid-head-row-content {
-    display: flex;
-}
-
-.hcg-header-cell,
-.highcharts-datagrid-header-cell {
+/* Header cell flex container */
+.hcg-header-cell-container,
+.highcharts-datagrid-header-cell-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    min-height: 24px;
     width: 100%;
 }
 

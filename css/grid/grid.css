@@ -446,15 +446,12 @@
     border-bottom-right-radius: var(--ig-border-radius);
 }
 
-.hcg-head-row-content {
-    display: flex;
-}
-
 /* Header cell flex container */
-.hcg-header-cell {
+.hcg-header-cell-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    min-height: 24px;
     width: 100%;
 }
 
