@@ -7,12 +7,6 @@ describe('Multiple connectors', () => {
         cy.get('.highcharts-series.highcharts-series-1').children().should('have.length', 5);
         cy.get('.highcharts-series.highcharts-series-3').children().should('have.length', 3);
     });
-});
-
-describe('Multiple connectors with Grid hover sync', () => {
-    before(()=>{
-        cy.visit('dashboards/highcharts-components/multiple-connectors');
-    });
 
     it('Should highlight series from multiple connectors.', () => {
         cy.get('#dashboard-col-2 tr.hcg-row').eq(0).trigger('mouseover');
@@ -43,5 +37,3 @@ describe('Highlight sync affected series id option (with Grid)', () => {
         });
     });
 });
-
-// Grid-dependent highlight tests are moved to dashboards-grid suite
