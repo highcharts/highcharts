@@ -22,7 +22,7 @@ const {
     }
 } = SeriesRegistry;
 import ContourPoint from './ContourPoint.js';
-import Delaunator from '../../Core/Delauney';
+import Delaunay from '../../Shared/Delaunay.js'
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
@@ -69,7 +69,7 @@ class ContourSeries extends ScatterSeries {
             points2d[i * 2 + 1] = point.y && (point.y / yDivider) || 0;
         });
 
-        const result = new Delaunator(points2d);
+        const result = new Delaunay(points2d);
 
         return result;
     }
