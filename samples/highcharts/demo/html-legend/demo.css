@@ -43,7 +43,7 @@
     --border-color-2: rgba(40, 40, 40, 1);
 }
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -55,9 +55,6 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
-}
-
-body {
     background: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
 }

@@ -2,7 +2,7 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -14,9 +14,6 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
-}
-
-body {
     background: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
 }
