@@ -1850,10 +1850,27 @@ class Pointer {
         // In case we are dealing with overflow, reset the chart position when
         // scrolling parent elements
         let parent = this.chart.renderTo.parentElement;
+
+        if (!parent) {
+            const renderToRootNode = this.chart.renderTo.getRootNode();
+            if (renderToRootNode instanceof ShadowRoot) {
+                parent = renderToRootNode.host?.parentElement;
+            }
+        }
+
         while (parent && parent.tagName !== 'BODY') {
             this.eventsToUnbind.push(addEvent(parent, 'scroll', (): void => {
                 delete this.chartPosition;
             }));
+
+            if (!parent.parentElement) {
+                const parentRootNode = parent.getRootNode();
+                if (parentRootNode instanceof ShadowRoot) {
+                    parent = parentRootNode.host?.parentElement;
+                    continue;
+                }
+            }
+
             parent = parent.parentElement;
         }
 
