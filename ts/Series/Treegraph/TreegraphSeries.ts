@@ -433,8 +433,8 @@ class TreegraphSeries extends TreemapSeries {
                 x2 = crisp(toNode.shapeArgs.x || 0, linkWidth);
 
             if (inverted) {
-                x1 -= fromNodeWidth;
-                x2 += (toNode.shapeArgs.width || 0);
+                x1 -= Math.round(fromNodeWidth);
+                x2 += Math.round(toNode.shapeArgs.width || 0);
             }
 
             const xDiff = toNode.node.xPosition - fromNode.node.xPosition,
