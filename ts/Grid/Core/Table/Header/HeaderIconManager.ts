@@ -21,10 +21,12 @@
  *
  * */
 
-import type HeaderCell from './HeaderCell.js';
+import type HeaderCell from './HeaderCell';
 
 import GridUtils from '../../GridUtils.js';
 import Globals from '../../Globals.js';
+import FilterPopup from './FilterPopup.js';
+import GridIcons from '../../../Icons/GridIcons.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -150,7 +152,13 @@ class HeaderIconManager {
             className: 'headerCellFilterIcon',
             size: 20,
             alwaysVisible: false,
-            tooltip: 'Filter column'
+            tooltip: 'Filter column',
+            onClick: (event: MouseEvent, headerCell: HeaderCell): void => {
+                const iconManager = headerCell.iconManager;
+                if (iconManager) {
+                    iconManager.toggleFilterPopup();
+                }
+            }
         },
 
         sort: {
@@ -277,8 +285,8 @@ class HeaderIconManager {
         }
 
         // Create icon using GridIcons
-        const iconElement = (Globals as any).GridIcons.createGridIcon(
-            config.icon,
+        const iconElement = GridIcons.createGridIcon(
+            config.icon as GridIcons.GridIconName,
             config.size || 20
         );
 
@@ -573,7 +581,7 @@ class HeaderIconManager {
             });
 
             // Create the dot SVG
-            const dotIcon = (Globals as any).GridIcons.createGridIcon(
+            const dotIcon = GridIcons.createGridIcon(
                 'activeIndicator',
                 6,
                 'hcg-active-indicator-icon'
@@ -582,6 +590,25 @@ class HeaderIconManager {
             indicator.appendChild(dotIcon);
             button.appendChild(indicator);
         }
+    }
+
+    /**
+     * Toggles the filter popup for this header cell.
+     */
+    public toggleFilterPopup(): void {
+        const tHeader = this.headerCell.tableHeader;
+
+        // Initialize filter popup if it doesn't exist
+        if (!tHeader.filterPopup) {
+            tHeader.filterPopup = new FilterPopup(this.headerCell);
+        }
+
+        const filterIcon = this.getIconElement('filter');
+        if (!filterIcon) {
+            return;
+        }
+
+        tHeader.filterPopup.toggle(filterIcon);
     }
 }
 

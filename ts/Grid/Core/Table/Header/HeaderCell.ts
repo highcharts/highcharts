@@ -32,6 +32,8 @@ import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 import HeaderIconManager from './HeaderIconManager.js';
+import TableHeader from './TableHeader.js';
+import GridIcons from '../../../Icons/GridIcons.js';
 
 const {
     makeHTMLElement,
@@ -82,6 +84,11 @@ class HeaderCell extends Cell {
     public override value: string = '';
 
     /**
+     * The table header that this header cell belongs to.
+     */
+    public tableHeader: TableHeader;
+
+    /**
      * Icon manager for this header cell.
      */
     public iconManager?: HeaderIconManager;
@@ -112,6 +119,11 @@ class HeaderCell extends Cell {
         columnsTree?: GroupedHeaderOptions[]
     ) {
         super(row, column);
+        const header = this.row.viewport.header;
+        if (!header) {
+            throw new Error('No header found.');
+        }
+        this.tableHeader = header;
 
         if (column) {
             column.header = this;
@@ -429,7 +441,7 @@ class HeaderCell extends Cell {
                         iconName = 'chevronDown';
                     }
 
-                    const newIcon = (Globals as any).GridIcons.createGridIcon(
+                    const newIcon = GridIcons.createGridIcon(
                         iconName,
                         20
                     );
@@ -444,15 +456,7 @@ class HeaderCell extends Cell {
         // Register filter icon (enabled by default unless explicitly disabled)
         this.iconManager.registerIcon('filter', {
             icon: 'filter',
-            enabled: iconOptions?.filter !== false,
-            onClick: (event: MouseEvent, headerCell: HeaderCell): void => {
-                // Toggle filter active state for demonstration
-                const currentConfig = headerCell.iconManager?.getIconConfig(
-                    'filter'
-                );
-                const newActiveState = !currentConfig?.isActive;
-                headerCell.setFilterActive(newActiveState);
-            }
+            enabled: iconOptions?.filter !== false
         });
 
         // Register menu icon if enabled

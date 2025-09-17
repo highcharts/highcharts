@@ -31,6 +31,7 @@ import Table from './Table.js';
 import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
 import ColumnSorting from './Actions/ColumnSorting';
+import ColumnFiltering from './Actions/ColumnFiltering/ColumnFiltering.js';
 import Templating from '../../../Core/Templating.js';
 import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
@@ -105,6 +106,11 @@ class Column {
      */
     public sorting?: ColumnSorting;
 
+    /**
+     * Filtering column module.
+     */
+    public filtering?: ColumnFiltering;
+
 
     /* *
     *
@@ -143,6 +149,10 @@ class Column {
             grid.options?.columnDefaults ?? {},
             grid.columnOptionsMap?.[id]?.options ?? {}
         );
+
+        if (this.options.filtering?.enabled) {
+            this.filtering = new ColumnFiltering(this);
+        }
 
         fireEvent(this, 'afterInit');
     }

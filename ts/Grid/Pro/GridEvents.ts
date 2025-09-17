@@ -106,7 +106,10 @@ function compose(
 
     ([ // Column Events
         'afterResize',
-        'afterSorting'
+        'beforeSorting',
+        'afterSorting',
+        'beforeFiltering',
+        'afterFiltering'
     ] as const).forEach((name): void => {
         addEvent(ColumnClass, name, (e: GridEvent<Column>): void => {
             const column = e.target;
@@ -207,7 +210,25 @@ export interface CellEvents {
  */
 export interface ColumnEvents {
     /**
-     * Callback function to be called when the column is sorted for instance,
+     * Callback function to be called when the column is filtered, after input
+     * keypress or select change events, but before the filtering is applied.
+     */
+    beforeFiltering?: ColumnEventCallback;
+
+    /**
+     * Callback function to be called when the column is filtered, after input
+     * keypress or select change events, and the filtering is applied.
+     */
+    afterFiltering?: ColumnEventCallback;
+
+    /**
+     * Callback function to be called when the column is sorted,
+     * before clicking on header.
+     */
+    beforeSorting?: ColumnEventCallback;
+
+    /**
+     * Callback function to be called when the column is sorted,
      * after clicking on header.
      */
     afterSorting?: ColumnEventCallback;

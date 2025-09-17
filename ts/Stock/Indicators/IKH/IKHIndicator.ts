@@ -495,9 +495,7 @@ class IKHIndicator extends SMAIndicator {
                 [],
                 []
             ],
-            ikhMap: Record<string,
-            Array<IKHPoint>
-            > = {
+            ikhMap: Record<string, Array<IKHPoint>> = {
                 tenkanLine: allIchimokuPoints[0],
                 kijunLine: allIchimokuPoints[1],
                 chikouLine: allIchimokuPoints[2],

@@ -326,6 +326,7 @@ class Table {
                 this.rows[i].update();
             }
             this.rowsVirtualizer.adjustRowHeights();
+            this.reflow();
         }
 
         if (focusedRowId !== void 0 && vp.focusCursor) {
@@ -479,6 +480,7 @@ class Table {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
+        this.header?.destroy();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
