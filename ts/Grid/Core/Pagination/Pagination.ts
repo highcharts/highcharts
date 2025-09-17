@@ -1082,7 +1082,6 @@ class Pagination {
             const newPage = parseInt(mobileSelect.value, 10);
             if (newPage !== this.currentPage) {
                 void this.goToPage(newPage);
-                console.log(mobileSelect);
             }
         });
     }
