@@ -25,6 +25,7 @@ import ContourPoint from './ContourPoint.js';
 import Delaunay from '../../Shared/Delaunay.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import U from '../../Core/Utilities.js';
+import ContourSeriesOptions from './ContourSeriesOptions';
 const { extend } = U;
 
 class ContourSeries extends ScatterSeries {
@@ -35,6 +36,7 @@ class ContourSeries extends ScatterSeries {
     public image?: SVGElement;
     public data!: Array<ContourPoint>;
     public points!: Array<ContourPoint>;
+    public options!: ContourSeriesOptions;
     private extremesUniform?: Float32Array;
     private extremesUniformBuffer?: GPUBuffer;
     private valueExtremesUniform?: Float32Array;

@@ -54,8 +54,6 @@ const {
     getContext
 } = IU;
 
-import Delaunay from '../../Shared/Delaunay';
-
 /* *
  *
  *  Declarations
@@ -128,35 +126,11 @@ class HeatmapSeries extends ScatterSeries {
 
     public isDirtyCanvas: boolean = true;
 
-    public adapter?: GPUAdapter | null;
-
-    public device?: GPUDevice;
-
     /* *
      *
      *  Functions
      *
      * */
-
-    // Dummy func for test for now
-    public d(): boolean {
-        const coords = new Delaunay(new Float64Array([
-            377, 479, 453, 434, 326, 387, 444, 359, 511, 389,
-            586, 429, 470, 315, 622, 493, 627, 367, 570, 314
-        ])).triangles;
-        const tris = [
-            0, 2, 1, 7, 0, 1, 8, 7, 5, 9, 8, 5, 6, 9, 4, 2, 6, 3,
-            1, 2, 3, 7, 1, 5, 9, 5, 4, 6, 4, 3, 1, 3, 4, 5, 1, 4
-        ];
-
-        for (let i = 0; i < coords.length; i++) {
-            if (tris[i] !== coords[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
 
     /**
      * @private
@@ -553,40 +527,6 @@ class HeatmapSeries extends ScatterSeries {
         }
 
         fireEvent(series, 'afterTranslate');
-    }
-
-    private get3DData(): any {
-        const points3d: Float32Array = new Float32Array(this.points.length * 3);
-
-        this.points.forEach((point, i): void => {
-            points3d[i * 3] = point.x;
-            points3d[i * 3 + 1] = point.y;
-            points3d[i * 3 + 2] = point.value ?? 0;
-        });
-
-        return points3d;
-    }
-
-    public async run(): Promise<void> {
-        const context = this.context as GPUCanvasContext;
-        let adapter, device;
-
-        if (!this.adapter) {
-            adapter = this.adapter = await navigator?.gpu.requestAdapter();
-        }
-
-        if (!this.device && adapter) {
-            device = this.device = await adapter.requestDevice();
-        }
-
-        const canvasFormat = (navigator as any)?.gpu.getPreferredCanvasFormat();
-
-        if (device) {
-            context?.configure({
-                device: device,
-                format: canvasFormat
-            });
-        }
     }
 
     /* eslint-enable valid-jsdoc */
