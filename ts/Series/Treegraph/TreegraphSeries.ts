@@ -176,6 +176,7 @@ class TreegraphSeries extends TreemapSeries {
             series = this,
             plotSizeX = chart.plotSizeX as number,
             plotSizeY = chart.plotSizeY as number,
+            linkWidth = series.options.link?.lineWidth || 0,
             columnCount = arrayMax(
                 this.points.map((p): number => p.node.xPosition)
             );
@@ -210,6 +211,10 @@ class TreegraphSeries extends TreemapSeries {
                     markerOptions.radius || 0,
                     Math.min(plotSizeX, plotSizeY)
                 ),
+                lineWidth = Math.max(
+                    markerOptions.lineWidth || 0,
+                    linkWidth
+                ),
                 symbol = markerOptions.symbol,
                 nodeSizeY = (symbol === 'circle' || !markerOptions.height) ?
                     radius * 2 :
@@ -221,25 +226,20 @@ class TreegraphSeries extends TreemapSeries {
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
-            let lineWidth;
             if (node.xPosition <= minX) {
                 minX = node.xPosition;
-                lineWidth = markerOptions.lineWidth || 0;
                 minXSize = Math.max(nodeSizeX + lineWidth, minXSize);
             }
             if (node.xPosition >= maxX) {
                 maxX = node.xPosition;
-                lineWidth = markerOptions.lineWidth || 0;
                 maxXSize = Math.max(nodeSizeX + lineWidth, maxXSize);
             }
             if (node.yPosition <= minY) {
                 minY = node.yPosition;
-                lineWidth = markerOptions.lineWidth || 0;
                 minYSize = Math.max(nodeSizeY + lineWidth, minYSize);
             }
             if (node.yPosition >= maxY) {
                 maxY = node.yPosition;
-                lineWidth = markerOptions.lineWidth || 0;
                 maxYSize = Math.max(nodeSizeY + lineWidth, maxYSize);
             }
         });

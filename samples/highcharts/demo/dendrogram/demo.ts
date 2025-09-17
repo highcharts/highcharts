@@ -46,11 +46,12 @@ Highcharts.chart('container', {
             data: treeData,
             reversed: true,
             marker: {
-                radius: 0.1
+                radius: 0
             },
             link: {
                 bendAt: 0,
                 type: 'orthogonal',
+                lineWidth: 2,
                 radius: 6
             },
             dataLabels: [
