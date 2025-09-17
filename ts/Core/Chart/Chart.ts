@@ -2953,7 +2953,7 @@ class Chart {
             const containerStyle = win.getComputedStyle(this.container);
 
             if (containerStyle.zIndex !== '0') {
-                error(35);
+                error(35, false, this);
             }
         }
     }
