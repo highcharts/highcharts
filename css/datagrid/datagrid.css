@@ -536,7 +536,6 @@
     max-width: 0;
     margin-left: 0;
     opacity: 0;
-    overflow: hidden;
     cursor: pointer;
     transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
 }
