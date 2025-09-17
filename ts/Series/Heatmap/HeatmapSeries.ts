@@ -110,7 +110,7 @@ class HeatmapSeries extends ScatterSeries {
 
     public colorAxis!: ColorAxis;
 
-    public context?: CanvasRenderingContext2D;
+    public context?: CanvasRenderingContext2D | GPUCanvasContext;
 
     public data!: Array<HeatmapPoint>;
 
@@ -340,6 +340,11 @@ class HeatmapSeries extends ScatterSeries {
         // evaluation of borderRadius would be moved to `markerAttribs`.
         if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
+        }
+
+        const canvas = this.canvas = document.createElement('canvas');
+        if (canvas) {
+            this.context = canvas?.getContext('webgpu') as any;
         }
     }
 
