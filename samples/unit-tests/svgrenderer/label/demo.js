@@ -155,7 +155,7 @@ QUnit.test('Image labels should have no fill (#4324)', function (assert) {
             '',
             100,
             100,
-            'url(https://smartview.antaris-solutions.net//images/icons/view_alerts.png)'
+            'url(test/testimage.png)'
         )
         .attr({
             'stroke-width': 1,

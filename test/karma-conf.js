@@ -196,34 +196,12 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
-// Create JSONSources and write to a temporary file
-const JSONSources = {};
-if (!fs.existsSync(path.join(__dirname, '../tmp'))) {
-    fs.mkdirSync(path.join(__dirname, '../tmp'));
-}
-aliases.forEach(alias => {
-    const data = fs.readFileSync(
-        path.join(
-            __dirname,
-            '..',
-            'samples/data/json-sources',
-            alias.filename
-        ),
-        'utf8'
-    );
-    JSONSources[alias.url] = alias.filename.endsWith('csv') ?
-        data :
-        JSON.parse(data);
-});
-fs.writeFileSync(
-    path.join(__dirname, '../tmp/json-sources.js'),
-    `window.JSONSources = ${JSON.stringify(JSONSources)};`
-);
 
 
 module.exports = function (config) {
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
+    require('../tools/create-json-sources.js')();
 
     if (argv.ts) {
         const ChildProcess = require('child_process');
