@@ -94,7 +94,24 @@ namespace Globals {
         loadingWrapper: 'loading-wrapper',
         loadingSpinner: 'spinner',
         loadingMessage: 'loading-message',
-        paginationWrapper: 'pagination-wrapper'
+        paginationContainer: 'pagination-container',
+        paginationWrapper: 'pagination-wrapper',
+        paginationPageInfo: 'pagination-info',
+        paginationControls: 'pagination-controls',
+        paginationButton: 'pagination-btn',
+        paginationButtonDisabled: 'pagination-btn-disabled',
+        paginationFirstButton: 'pagination-first',
+        paginationPrevButton: 'pagination-prev',
+        paginationNextButton: 'pagination-next',
+        paginationLastButton: 'pagination-last',
+        paginationPageButton: 'pagination-page',
+        paginationPageButtonActive: 'pagination-page-active',
+        paginationEllipsis: 'pagination-ellipsis',
+        paginationMobileSelector: 'pagination-mobile-selector',
+        paginationMobilePageSizeSelector:
+            'pagination-mobile-page-size-selector',
+        paginationPageSizeContainer: 'pagination-page-size-container',
+        paginationPageSizeSelect: 'pagination-page-size-select'
     } as const;
 
     export const win = window;
