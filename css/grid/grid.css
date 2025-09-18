@@ -1292,7 +1292,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-column-filter-wrapper input,
-.highcharts-datagrid-column-filter-wrapper input {
+.hcg-column-filter-wrapper select {
     border: 1px solid var(--header-utils-dropdown-stroke-default, #d1d1d1);
     border-radius: var(--hcg-border-radius);
     padding-right: 7px;
@@ -1306,12 +1306,12 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-column-filter-wrapper input:hover,
-.highcharts-datagrid-column-filter-wrapper input:hover {
+.hcg-column-filter-wrapper select:hover {
     border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
 }
 
 .hcg-column-filter-wrapper input:focus,
-.highcharts-datagrid-column-filter-wrapper input:focus {
+.hcg-column-filter-wrapper select:focus {
     z-index: 1;
     outline: none;
     border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
