@@ -19,7 +19,9 @@ Grid.grid('container', {
             }
         },
         cells: {
-            editable: true,
+            editMode: {
+                enabled: true
+            },
             events: {
                 click: function () {
                     doc.getElementById('cellClick').value = 'cellClick';
@@ -72,7 +74,9 @@ Grid.grid('container', {
             }
         },
         cells: {
-            editable: true,
+            editMode: {
+                enabled: true
+            },
             events: {
                 click: function () {
                     doc.getElementById('cellClick').value =

@@ -159,7 +159,7 @@ namespace GridUtils {
         try {
             return new DOMParser().parseFromString(text, 'text/html')
                 .body.textContent || '';
-        } catch (error) {
+        } catch {
             return '';
         }
     }
@@ -179,6 +179,7 @@ namespace GridUtils {
         content: string
     ): void {
         if (isHTML(content)) {
+            element.innerHTML = AST.emptyHTML;
             const formattedNodes = new AST(content);
             formattedNodes.addToDOM(element);
         } else {

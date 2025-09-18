@@ -1856,8 +1856,8 @@ class Chart {
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
             colorAxis = chart.colorAxis,
             margin = chart.margin,
-            getOffset = function (axes: Array<Axis>): void {
-                axes.forEach(function (axis): void {
+            getOffset = (axes: Array<Axis>): void => {
+                axes.forEach((axis): void => {
                     if (axis.visible) {
                         axis.getOffset();
                     }
@@ -1873,9 +1873,9 @@ class Chart {
         }
 
         // Add the axis offsets
-        marginNames.forEach(function (m: string, side: number): void {
+        marginNames.forEach((marginName, side): void => {
             if (!defined(margin[side])) {
-                (chart as any)[m] += axisOffset[side];
+                chart[marginName] += axisOffset[side];
             }
         });
 
@@ -2214,29 +2214,30 @@ class Chart {
             halfWidth = Math.round(plotBorderWidth) / 2;
 
         // Create margin and spacing array
-        ['margin', 'spacing'].forEach(function splashArrays(
-            target: string
-        ): void {
-            const value = (chartOptions as any)[target],
+        (['margin', 'spacing'] as ('margin'|'spacing')[]).forEach((
+            target
+        ): void => {
+            const value = chartOptions[target],
                 values = isObject(value) ? value : [value, value, value, value];
 
-            [
+            ([
                 'Top',
                 'Right',
                 'Bottom',
                 'Left'
-            ].forEach(function (sideName: string, side: number): void {
-                (chart as any)[target][side] = pick(
-                    (chartOptions as any)[target + sideName],
+            ] as ('Top'|'Right'|'Bottom'|'Left')[]
+            ).forEach((sideName, side): void => {
+                chart[target][side] = (
+                    chartOptions[`${target}${sideName}`] ??
                     values[side]
-                );
+                ) as any;
             });
         });
 
         // Set margin names like chart.plotTop, chart.plotLeft,
         // chart.marginRight, chart.marginBottom.
-        marginNames.forEach(function (m: string, side: number): void {
-            (chart as any)[m] = pick(chart.margin[side], chart.spacing[side]);
+        marginNames.forEach((marginName, side): void => {
+            chart[marginName] = chart.margin[side] ?? chart.spacing[side];
         });
         chart.axisOffset = [0, 0, 0, 0]; // Top, right, bottom, left
         chart.clipOffset = [

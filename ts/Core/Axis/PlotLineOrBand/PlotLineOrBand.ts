@@ -259,7 +259,7 @@ class PlotLineOrBand {
         // Common for lines and bands. Add events only if they were not added
         // before.
         if (!this.eventsAdded && events) {
-            objectEach(events, (event, eventType): void => {
+            objectEach(events, (_event, eventType): void => {
                 svgElem?.on(
                     eventType,
                     (e: any): void => {
@@ -356,6 +356,11 @@ class PlotLineOrBand {
 
             if (!axis.chart.styledMode) {
                 label.css(merge({
+                    // To allow theming, and in lack of a general place to set
+                    // default options for plot lines and bands, default to the
+                    // title color. If we expose the palette, we should use that
+                    // instead.
+                    color: axis.chart.options.title?.style?.color,
                     fontSize: '0.8em',
                     textOverflow: (isBand && !inside) ? '' : 'ellipsis'
                 }, optionsLabel.style));

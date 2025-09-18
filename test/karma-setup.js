@@ -545,7 +545,7 @@ Highcharts.prepareShot = function (chart) {
 
         while (i--) {
             if (
-                points[i] &&
+                points[i]?.visible &&
                 !points[i].isNull &&
                 !( // Map point with no extent, like Aruba
                     points[i].shapeArgs &&

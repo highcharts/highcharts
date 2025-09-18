@@ -20,7 +20,7 @@
  * */
 
 import type Column from '../Core/Table/Column';
-import type TableCell from '../Core/Table/Content/TableCell';
+import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 
@@ -124,15 +124,23 @@ function compose(
         'click',
         'afterRender'
     ] as const).forEach((name): void => {
-        addEvent(HeaderCellClass, name, (e: GridEvent<Column>): void => {
-            const column = e.target;
-            const headerEvent =
-                column.options?.header?.events?.[name] ||
-                // Backward compatibility
-                column.viewport.grid.options?.events?.header?.[name];
+        addEvent(
+            HeaderCellClass,
+            name,
+            (e: GridEvent<HeaderCell> & { column?: Column }): void => {
+                const { column } = e;
+                if (!column) {
+                    return;
+                }
 
-            headerEvent?.call(column);
-        });
+                const headerEvent =
+                    column.options?.header?.events?.[name] ||
+                    // Backward compatibility
+                    column.viewport.grid.options?.events?.header?.[name];
+
+                headerEvent?.call(column);
+            }
+        );
     });
 }
 

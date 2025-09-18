@@ -1596,9 +1596,10 @@ QUnit.test('defaultOptions.borderWidth', function (assert) {
     axis.chart = {
         options: {
             chart: {}
-        }
+        },
+        // Mock with correct inernal type requirements.
+        userOptions: {}
     };
-
     /**
      * grid.borderWidth should default to 1
      */
@@ -2302,5 +2303,49 @@ QUnit.test('slotWidth', assert => {
         2,
         `For inverted chart, grid x-axis should be closed from both sides
         with two ticks.`
+    );
+
+    const chartOptions = {
+        chart: {
+            styledMode: false
+        },
+        yAxis: {
+            labels: {
+                useHTML: true,
+                formatter: function () {
+                    return `<div>${this.value} 123abc<div>`;
+                }
+            }
+        },
+        series: [
+            {
+                data: [
+                    {
+                        start: 1753488000000,
+                        end: 1755648000000
+                    }
+                ]
+            }
+        ]
+    };
+
+    chart = Highcharts.ganttChart('container', chartOptions);
+
+    const normalLabelWidth = chart.yAxis[0].ticks[0].label.getBBox().width;
+
+    chart = Highcharts.ganttChart('container', {
+        ...chartOptions,
+        chart: {
+            styledMode: true
+        }
+    });
+
+    const styledLabelWidth = chart.yAxis[0].ticks[0].label.getBBox().width;
+
+    assert.close(
+        normalLabelWidth,
+        styledLabelWidth,
+        10,
+        'Non-styled and styled mode labels width should be the similar, #22943'
     );
 });

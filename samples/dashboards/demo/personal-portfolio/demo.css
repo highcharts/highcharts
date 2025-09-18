@@ -38,6 +38,10 @@
     stroke-width: 0;
 }
 
+.highcharts-solidgauge-series.highcharts-color-0 path.highcharts-point {
+    fill: var(--highcharts-color-0);
+}
+
 .highcharts-datagrid-table {
     border: 0;
 }

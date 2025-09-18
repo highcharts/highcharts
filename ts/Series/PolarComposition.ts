@@ -45,6 +45,10 @@ import type Tick from '../Core/Axis/Tick';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import BorderRadius from '../Extensions/BorderRadius.js';
+const { optionsToObject } = BorderRadius;
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { composed } = H;
 import Series from '../Core/Series/Series.js';
@@ -56,6 +60,7 @@ const {
     defined,
     find,
     isNumber,
+    isObject,
     merge,
     pick,
     pushUnique,
@@ -374,8 +379,10 @@ function onChartCreateAxes(
     if (!this.pane) {
         this.pane = [];
     }
+
     this.options.pane = splat(this.options.pane || {});
-    this.options.pane.forEach((paneOptions): void => {
+
+    splat(this.userOptions.pane || {}).forEach((paneOptions): void => {
         new Pane( // eslint-disable-line no-new
             paneOptions,
             this as any
@@ -646,6 +653,48 @@ function onSeriesAfterInit(
             this.isRadialSeries = true;
             if (this.is('column')) {
                 this.isRadialBar = true;
+            }
+        }
+    }
+}
+
+/**
+ * Apply conditional rounding to polar bars
+ */
+function onSeriesAfterColumnTranslate(
+    this: Series
+): void {
+    const { chart, options, yAxis } = this;
+    if (
+        options.borderRadius &&
+        chart.polar &&
+        chart.inverted
+    ) {
+        const seriesDefault = defaultOptions.plotOptions
+                ?.[this.type]
+                ?.borderRadius,
+            { scope, where = 'end' } = optionsToObject(
+                options.borderRadius,
+                isObject(seriesDefault) ? seriesDefault : {}
+            );
+
+        for (const point of this.points) {
+            const { shapeArgs } = point;
+            if (point.shapeType === 'arc' && shapeArgs) {
+                let brStart = where === 'all',
+                    brEnd = true;
+
+                if (options.stacking && scope === 'stack') {
+                    brStart = point.stackY === point.y && where === 'all',
+                    brEnd = point.stackY === point.stackTotal;
+                }
+
+                if (yAxis.reversed) {
+                    [brStart, brEnd] = [brEnd, brStart];
+                }
+
+                shapeArgs.brStart = brStart;
+                shapeArgs.brEnd = brEnd;
             }
         }
     }
@@ -1516,6 +1565,15 @@ class PolarAdditions {
             );
 
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
+            addEvent(
+                SeriesClass,
+                'afterColumnTranslate',
+                onSeriesAfterColumnTranslate,
+                {
+                    // After columnrange and polar column modifications
+                    order: 9
+                }
+            );
             addEvent(
                 SeriesClass,
                 'afterTranslate',

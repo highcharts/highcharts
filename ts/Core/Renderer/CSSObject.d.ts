@@ -45,6 +45,7 @@ export interface CSSObject {
     '-webkit-transform'?: string;
     background?: string;
     backgroundColor?: ColorString;
+    backgroundImage?: string;
     borderRadius?: string;
     borderWidth?: number;
     border?: string|0;
@@ -52,7 +53,7 @@ export interface CSSObject {
     bottom?: string;
     boxShadow?: string;
     clip?: string;
-    color?: ('contrast'|ColorString);
+    color?: ColorString; // @todo ('contrast'|ColorString);
     cursor?: CursorValue;
     direction?: string;
     display?: string;

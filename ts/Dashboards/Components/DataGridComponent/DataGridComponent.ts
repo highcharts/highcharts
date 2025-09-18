@@ -85,46 +85,6 @@ class DataGridComponent extends Component {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Function to create a Grid Component from JSON.
-     *
-     * @param json
-     * The JSON to create the Grid Component from.
-     *
-     * @param cell
-     * The cell to create the Grid Component in.
-     *
-     * @returns
-     * The Grid Component created from the JSON.
-     */
-    public static fromJSON(
-        json: DataGridComponent.ClassJSON,
-        cell: Cell
-    ): DataGridComponent {
-        const options = json.options;
-        const gridOptions = JSON.parse(
-            (options.gridOptions || options.dataGridOptions) ?? ''
-        );
-
-        const component = new DataGridComponent(
-            cell,
-            merge<Options>(options as any, { gridOptions })
-        );
-
-        component.emit({
-            type: 'fromJSON',
-            json
-        });
-
-        return component;
-    }
-
-    /* *
-     *
      *  Properties
      *
      * */
@@ -240,9 +200,50 @@ class DataGridComponent extends Component {
     }
 
     public override onTableChanged(): void {
-        this.grid?.update({
-            dataTable: this.getFirstConnector()?.table?.modified
-        });
+        const { grid } = this;
+        if (!grid) {
+            return;
+        }
+
+        const dataTable = this.connectorHandlers[0]?.presentationTable;
+        if (!dataTable?.modified) {
+            grid.update({ dataTable: void 0 });
+            return;
+        }
+
+        if (!grid.options?.header) {
+            // If the header is not defined, we need to check if the column
+            // names have changed, so we can update the whole grid. If they
+            // have not changed, we can just update the rows (more efficient).
+
+            const newColumnNames = dataTable.modified.getColumnNames();
+            const { columnOptionsMap, enabledColumns } = grid;
+
+            let index = 0;
+            for (const newColumn of newColumnNames) {
+                if (columnOptionsMap[newColumn]?.options?.enabled === false) {
+                    continue;
+                }
+
+                if (enabledColumns?.[index] !== newColumn) {
+                    // If the visible columns have changed,
+                    // update the whole grid.
+                    grid.update({ dataTable: dataTable.modified });
+                    return;
+                }
+
+                index++;
+            }
+        }
+
+        grid.dataTable = dataTable?.modified;
+
+        // Data has changed and the whole grid is not re-rendered, so mark in
+        // the querying that data table was modified.
+        grid.querying.shouldBeUpdated = true;
+
+        // If the column names have not changed, just update the rows.
+        grid.viewport?.updateRows();
     }
 
     public getEditableOptions(): Options {
@@ -288,9 +289,10 @@ class DataGridComponent extends Component {
      * @internal
      */
     public override getOptions(): Partial<Options> {
+        const optionsCopy = merge(this.options);
+        optionsCopy.gridOptions = this.grid?.getOptions();
 
         // Remove the table from the options copy if the connector is set.
-        const optionsCopy = merge(this.options);
         if (optionsCopy.connector?.id) {
             delete optionsCopy.gridOptions?.dataTable;
         } else if (optionsCopy.gridOptions?.dataTable?.id) {
@@ -345,7 +347,7 @@ class DataGridComponent extends Component {
             throw new Error('Grid not connected.');
         }
 
-        const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey),
+        const dataTable = this.connectorHandlers[0]?.presentationTable,
             options = this.options,
             gridOptions = merge(
                 {},
@@ -384,47 +386,7 @@ namespace DataGridComponent {
     export type ComponentType = DataGridComponent;
 
     /** @private */
-    export type ChartComponentEvents = JSONEvent | Component.EventTypes;
-
-    /** @private */
-    export type JSONEvent = Component.Event<
-    'toJSON' | 'fromJSON',
-    {
-        json: ClassJSON;
-    }
-    >;
-
-    /** @private */
-    export interface ComponentJSONOptions
-        extends Component.ComponentOptionsJSON {
-
-        /** @private */
-        gridOptions?: string;
-
-        /** @private */
-        gridClassName?: string;
-
-        /**
-         * @private
-         * @deprecated
-         **/
-        dataGridOptions?: string;
-
-        /**
-         * @private
-         * @deprecated
-         **/
-        dataGridClassName?: string;
-
-        /** @private */
-        chartID?: string;
-    }
-
-    /** @private */
-    export interface ClassJSON extends Component.JSON {
-        /** @private */
-        options: ComponentJSONOptions;
-    }
+    export type ChartComponentEvents = Component.EventTypes;
 }
 
 /* *

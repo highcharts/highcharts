@@ -22,6 +22,7 @@ import type AxisType from '../Axis/AxisType';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
+import type DataLabelOptions from './DataLabelOptions';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type { EventCallback } from '../Callback';
@@ -4419,7 +4420,7 @@ class Series {
                 chart.options.chart.type
             );
         const keepPoints = !(
-            // Indicators, histograms etc recalculate the data. It should be
+            // Indicators etc recalculate the data. It should be
             // possible to omit this.
             this.hasDerivedData ||
             // New type requires new point classes
@@ -4459,6 +4460,14 @@ class Series {
             }
         } else {
             this.dataTable.modified = this.dataTable;
+        }
+
+        // Merge in multiple data label options (#23560)
+        if (options.dataLabels && oldOptions.dataLabels) {
+            options.dataLabels = this.mergeArrays(
+                oldOptions.dataLabels as DataLabelOptions,
+                options.dataLabels as DataLabelOptions
+            );
         }
 
         // Do the merge, with some forced options

@@ -126,6 +126,8 @@ module.exports = {
             'grid/columns',
             'grid/header',
             'grid/cell-editing',
+            'grid/cell-renderers',
+            'grid/sparklines',
             'grid/events',
             {
                 'Theming': [
@@ -239,6 +241,8 @@ module.exports = {
                     'morningstar/security-details',
                     'morningstar/security-compare',
                     'morningstar/x-ray',
+                    'morningstar/performance',
+                    'morningstar/hypo-performance',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',
@@ -293,7 +297,9 @@ module.exports = {
             'extending-highcharts/extending-highcharts'
         ],
         'Flutter': [
-            'flutter/getting-started'
+            'flutter/getting-started',
+            'flutter/your-first-chart',
+            'flutter/highcharts-bundling'
         ],
         'React integration (beta)': [
             'react/getting-started',
