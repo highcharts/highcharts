@@ -1,7 +1,6 @@
 ---
- name: Series table option study
+ name: Multiple data tables
  authors:
    - Torstein Hønsi
- skipTest: true
  js_wrap: b
 ...

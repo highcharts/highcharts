@@ -142,12 +142,14 @@ class XRangePoint extends ColumnPoint {
      *
      * @private
      */
-    public constructor(series: XRangeSeries, options: XRangePointOptions) {
-        super(series, options);
+    public constructor(
+        series: XRangeSeries,
+        options: XRangePointOptions,
+        x: number
+    ) {
+        super(series, options, x);
 
-        if (!this.y) {
-            this.y = 0;
-        }
+        this.y ||= 0;
     }
 
     /**
