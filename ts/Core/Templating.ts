@@ -182,12 +182,36 @@ function format(
     owner?: Templating.Owner
 ): string {
 
+    const languages =
+        'a-zA-Z' + // ASCII
+        '\u00C0-\u017F' + // Latin Extended
+        '\u0370-\u03FF' + // Greek
+        '\u0400-\u04FF\u0500-\u052F' + // Cyrillic
+        '\u0590-\u05FF' + // Hebrew
+        '\u0600-\u06FF\u0750-\u077F' + // Arabic + Extended
+        '\u0900-\u097F' + // Devanagari
+        '\u3040-\u30FF' + // Hiragana + Katakana
+        '\u3130-\u318F\uAC00-\uD7AF' + // Hangul Jamo + Syllables
+        '\u4E00-\u9FFF'; // CJK Unified Ideographs
+
     // Notice: using u flag will require a refactor for ES5 (#22450).
-    const regex = /\{([a-zA-Z\u00C0-\u017F\u0600-\u06FF\u4E00-\u9FFF\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/g, // eslint-disable-line max-len
+    /* eslint-disable-next-line no-misleading-character-class */
+    const regex = new RegExp(
+            '\\{([' +
+            languages +
+            '\\d:\\.,;\\-/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
+            'g'
+        ),
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([a-zA-Z\u00C0-\u017F\u0600-\u06FF\u4E00-\u9FFF\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/g, // eslint-disable-line max-len
+        /* eslint-disable-next-line no-misleading-character-class */
+        subRegex = new RegExp(
+            '\\(([' +
+            languages +
+            '\\d:\\.,;\\-/<>\\[\\]%_@+"\'= ]+)\\)',
+            'g'
+        ),
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
