@@ -1554,7 +1554,7 @@ class Series {
                 // Extend the data column keys with the keys from the column
                 // assignment
                 if (columnAssignment) {
-                    columnAssignment?.forEach((assignment): void => {
+                    columnAssignment.forEach((assignment): void => {
                         pushUnique(keys, assignment.key);
                     });
                     this.dataColumnKeys = keys;

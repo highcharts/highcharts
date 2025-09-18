@@ -67,12 +67,6 @@ document.getElementById('addrow').addEventListener('click', e => {
     e.target.disabled = true;
 });
 
-// @todo: Support for setColumn too. Fails to update the point because in
-// generatePoints, before the `new PointClass` call, the point already exists.
-// Probably need to refactor the `updateData` method to a true data-matching
-// method between old table and updated table, instead of working on options.
-// This could run either at the end of setData, or possibly within
-// generatePoints.
 document.getElementById('updaterow').addEventListener('click', () => {
     dataTable.setRow({
         cost: Math.round(15 * Math.random()),
@@ -85,4 +79,19 @@ document.getElementById('deleterow').addEventListener('click', e => {
     dataTable.deleteRows(0);
     e.target.disabled = true;
     previewTable();
+});
+
+// @todo: Support for setColumn too. Fails to update the point because in
+// generatePoints, before the `new PointClass` call, the point already exists.
+// Probably need to refactor the `updateData` method to a true data-matching
+// method between old table and updated table, instead of working on options.
+// This could run either at the end of setData, or possibly within
+// generatePoints.
+document.getElementById('setcolumn').addEventListener('click', () => {
+    dataTable.setColumn(
+        'revenue',
+        dataTable.columns.revenue.map(() => Math.round(10 * Math.random()))
+    );
+    previewTable();
+    console.log('@todo: Support for setColumn');
 });
