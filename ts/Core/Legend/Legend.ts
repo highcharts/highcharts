@@ -477,8 +477,7 @@ class Legend {
             Series|Point
         )
     ): void {
-        const checkbox = item.checkbox,
-            legendItem = item.legendItem || {};
+        const legendItem = item.legendItem || {};
 
         // Destroy SVG elements
         for (const key of ['group', 'label', 'line', 'symbol'] as const) {
@@ -487,9 +486,7 @@ class Legend {
             }
         }
 
-        if (checkbox) {
-            discardElement(checkbox);
-        }
+        item.checkbox = discardElement(item.checkbox);
 
         item.legendItem = void 0;
     }
@@ -974,21 +971,21 @@ class Legend {
                 /(rtv|rm|rbv)/,
                 /(rbh|cb|lbh)/,
                 /(lbv|lm|ltv)/
-            ]).forEach(function (alignments: RegExp, side: number): void {
+            ]).forEach((alignments: RegExp, side): void => {
                 if (alignments.test(alignment) && !defined(margin[side])) {
 
                     // Now we have detected on which side of the chart we should
                     // reserve space for the legend
-                    (chart as any)[marginNames[side]] = Math.max(
-                        (chart as any)[marginNames[side]],
+                    chart[marginNames[side]] = Math.max(
+                        chart[marginNames[side]] as number,
                         (
                             chart.legend[
                                 (side + 1) % 2 ? 'legendHeight' : 'legendWidth'
                             ] +
                             [1, -1, -1, 1][side] * (options[
                                 (side % 2) ? 'x' : 'y'
-                            ] as any) +
-                            pick(options.margin as any, 12) +
+                            ]) +
+                            (options.margin ?? 12) +
                             spacing[side] +
                             (chart.titleOffset[side] || 0)
                         )
@@ -1849,6 +1846,9 @@ export default Legend;
  * @type {Highcharts.SVGElement|undefined}
  *//**
  * @name Highcharts.LegendItemObject#symbol
+ * @type {Highcharts.SVGElement|undefined}
+ *//**
+ * @name Highcharts.LegendItemObject#label
  * @type {Highcharts.SVGElement|undefined}
  */
 

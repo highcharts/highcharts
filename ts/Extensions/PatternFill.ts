@@ -89,7 +89,7 @@ export interface PatternObject {
 }
 
 export interface PatternOptionsObject {
-    _inverted?: (Boolean);
+    _inverted?: boolean;
     _height?: (number|string);
     _width?: (number|string);
     _x?: number;
@@ -199,11 +199,10 @@ function createPatterns(): Array<PatternOptionsObject> {
     ) {
         patterns.push({
             path: pattern,
-            color: colors[i],
+            color: colors[i++],
             width: 10,
             height: 10
         });
-        i = i + 5;
     }
 
     return patterns;

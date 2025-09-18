@@ -330,11 +330,6 @@
 }
 
 .highcharts-tooltip-box {
-    stroke-width: 1px;
-    fill: var(--highcharts-background-color);
-}
-
-.highcharts-tooltip-box {
     stroke-width: 0;
     fill: var(--highcharts-background-color);
 }
@@ -757,6 +752,10 @@ circle.highcharts-legend-nav-inactive { /* tracker */
 .highcharts-gauge-series .highcharts-dial {
     fill: var(--highcharts-neutral-color-100);
     stroke-width: 0;
+}
+
+.highcharts-organization-series .highcharts-null-point {
+    fill: transparent;
 }
 
 .highcharts-polygon-series .highcharts-graph {

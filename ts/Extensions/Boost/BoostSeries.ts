@@ -504,19 +504,26 @@ function createAndAttachRenderer(
     boost.canvas.height = height;
 
     if (boost.clipRect) {
-        const box = getBoostClipRect(chart, target),
-
-            // When using panes, the image itself must be clipped. When not
-            // using panes, it is better to clip the target group, because then
-            // we preserve clipping on touch- and mousewheel zoom preview.
-            clippedElement = (
-                box.width === chart.clipBox.width &&
-                box.height === chart.clipBox.height
-            ) ? targetGroup :
-                (boost.targetFo || boost.target);
+        const box = getBoostClipRect(chart, target);
 
         boost.clipRect.attr(box);
-        clippedElement?.clip(boost.clipRect);
+
+        // When using panes, the image itself must be clipped. When not
+        // using panes, it is better to clip the target group, because then
+        // we preserve clipping on touch- and mousewheel zoom preview.
+        if (
+            box.width === chart.clipBox.width &&
+            box.height === chart.clipBox.height
+        ) {
+            targetGroup?.clip(chart.renderer.clipRect(
+                box.x - 4,
+                box.y,
+                box.width + 4,
+                box.height + 4
+            )); // #9799
+        } else {
+            (boost.targetFo || boost.target).clip(boost.clipRect);
+        }
     }
 
     boost.resize();
@@ -771,7 +778,7 @@ function hasExtremes(
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return dataLength > (options.boostThreshold || Number.MAX_VALUE) &&
+    return dataLength > pick(options.boostThreshold, Number.MAX_VALUE) &&
             // Defined yAxis extremes
             isNumber(yAxis.min) &&
             isNumber(yAxis.max) &&
@@ -803,7 +810,7 @@ const getSeriesBoosting = (
         isChartSeriesBoosting(series.chart) ||
         (
             (data ? data.length : 0) >=
-            (series.options.boostThreshold || Number.MAX_VALUE)
+            pick(series.options.boostThreshold, Number.MAX_VALUE)
         )
     );
 };
@@ -915,13 +922,15 @@ function getPoint(
             false
         ),
         pointIndex = boostPoint.i,
+        pointColor = (data?.[pointIndex] as { color?: string } | undefined)
+            ?.color,
         point = new PointClass(
             series as BoostSeriesComposition,
             (isScatter && xData && yData) ?
                 [xData[pointIndex], yData[pointIndex]] :
                 (
                     isArray(data) ? data : []
-                )[boostPoint.i],
+                )[pointIndex],
             xData ? xData[pointIndex] : void 0
         ) as BoostPointComposition;
 
@@ -957,6 +966,9 @@ function getPoint(
     point.index = pointIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
+    if (pointColor) {
+        point.color = pointColor; // Set color for hover effect #23370
+    }
     return point;
 }
 
@@ -1300,13 +1312,8 @@ function seriesRenderCanvas(this: Series): void {
 
     fireEvent(this, 'renderCanvas');
 
-    if (
-        this.is('line') &&
-        lineWidth > 1 &&
-        seriesBoost?.target &&
-        chartBoost &&
-        !chartBoost.lineWidthFilter
-    ) {
+    if (chartBoost && seriesBoost?.target && lineWidth > 1 && this.is('line')) {
+        chartBoost.lineWidthFilter?.remove();
         chartBoost.lineWidthFilter = chart.renderer.definition({
             tagName: 'filter',
             children: [

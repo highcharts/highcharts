@@ -160,7 +160,7 @@ function addEvent<T>(
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-function merge<T extends Object>(
+function merge<T extends object>(
     a: (true|T|undefined),
     ...n: Array<unknown>
 ) : T {
