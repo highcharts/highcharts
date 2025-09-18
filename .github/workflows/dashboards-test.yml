@@ -12,7 +12,6 @@ on:
     paths:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
       - 'css/grid*'
       - 'samples/dashboards/**'
       - 'samples/grid-lite/**'

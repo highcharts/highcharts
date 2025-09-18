@@ -530,8 +530,8 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                renderTo: 'forecast-grid',
-                type: 'DataGrid',
+                cell: 'forecast-grid',
+                type: 'Grid',
                 title: {
                     enabled: true,
                     text: 'Forecast for ' + currentDay
@@ -539,7 +539,7 @@ async function setupDashboard() {
                 sync: {
                     highlight: true
                 },
-                dataGridOptions: {
+                gridOptions: {
                     credits: {
                         enabled: false
                     },

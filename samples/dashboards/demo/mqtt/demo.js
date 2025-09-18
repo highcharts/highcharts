@@ -278,11 +278,11 @@ const chartComponent = {
     }
 };
 
-// Datagrid displaying the history of generated power
+// Grid displaying the history of generated power
 // over the last 'n' hours. Oldest measurements at the top.
-const datagridComponent = {
-    type: 'DataGrid',
-    renderTo: 'el-datagrid',
+const gridComponent = {
+    type: 'Grid',
+    renderTo: 'el-grid',
     connector: {
         id: defaultConnId
     },
@@ -292,7 +292,7 @@ const datagridComponent = {
             autoScroll: true
         }
     },
-    dataGridOptions: {
+    gridOptions: {
         credits: {
             enabled: false
         },
@@ -409,8 +409,8 @@ async function createDashboard() {
                 kpiComponent,
                 // Chart component for displaying generated power (history)
                 chartComponent,
-                // Datagrid component for displaying generated power (history)
-                datagridComponent
+                // Grid component for displaying generated power (history)
+                gridComponent
             ]
         };
 
@@ -695,7 +695,7 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
     // Update info component (Custom HTML)
     await updateInfoHtml(mqttData);
 
-    // Update KPI, chart and datagrid components
+    // Update KPI, chart and Grid components
 
     const idx = activeItem.generatorId - 1;
     const aggInfo = mqttData.aggs[idx];
@@ -728,7 +728,7 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
         title: aggName + ' (latest)'
     });
 
-    // Chart and data grid get automatically updated on every packet,
+    // Chart and data Grid get automatically updated on every packet,
     // so range and title are set only once.
     if (pktCount > 1) {
         return;
@@ -744,8 +744,8 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
         title: aggName + ' (history)'
     });
 
-    // Datagrid
-    const gridComp = dashboard.getComponentByCellId('el-datagrid');
+    // Grid
+    const gridComp = dashboard.getComponentByCellId('el-grid');
     await gridComp.update({
         connector: {
             id: connId

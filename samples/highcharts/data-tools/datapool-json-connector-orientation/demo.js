@@ -33,13 +33,13 @@ Dashboards.board('container', {
     },
     components: [{
         renderTo: 'dg-rows',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'rows'
         }
     }, {
         renderTo: 'dg-columns',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'columns'
         }

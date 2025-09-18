@@ -42,7 +42,7 @@ Dashboards.board('container', {
         connector: {
             id: 'data'
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             },

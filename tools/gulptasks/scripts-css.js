@@ -23,7 +23,6 @@ const highchartsConfig = {
     replacePath: '',
     exclude: [
         'dashboards/',
-        'datagrid/',
         'grid/',
         'dashboards-icons/'
     ]
@@ -36,13 +35,6 @@ const dashboardsConfig = {
     ],
     target: TARGET_DIRECTORY + '/dashboards',
     replacePath: 'dashboards/',
-    exclude: []
-};
-
-const datagridConfig = {
-    sources: 'css/datagrid/',
-    target: TARGET_DIRECTORY + '/datagrid',
-    replacePath: 'datagrid/',
     exclude: []
 };
 
@@ -92,23 +84,63 @@ function copyCSS(config) {
     );
 }
 
+function mergeAndCopyGridProCSS(config) {
+    const fslib = require('../libs/fs');
+    const path = require('path');
+
+    config = handleConfig(config);
+
+    // Read the original source files
+    const gridLiteCSS = fslib.getFile(path.join('css/grid', 'grid-lite.css'));
+    const gridProCSS = fslib.getFile(path.join('css/grid', 'grid-pro.css'));
+
+    // Extract Grid Pro license header
+    const gridProLicenseMatch = gridProCSS.match(/^\/\*\*[\s\S]*?\*\/\s*/);
+    const gridProLicense = gridProLicenseMatch ? gridProLicenseMatch[0] : '';
+
+    // Remove license header from Grid Lite CSS (everything until the first non-license content)
+    const gridLiteCSSNoLicense = gridLiteCSS.replace(/^\/\*\*[\s\S]*?\*\/\s*/, '');
+
+    // Remove license header, @import statement, and import comments from Grid Pro CSS
+    const gridProCSSClean = gridProCSS
+        .replace(/^\/\*\*[\s\S]*?\*\/\s*/, '') // Remove license header
+        .replace(/@import\s+url\s*\(\s*["']?grid-lite\.css["']?\s*\)\s*;?\s*/g, '') // Remove import
+        .replace(/^\/\*\s*Import Grid Lite styles\s*\*\/\s*/gm, '') // Remove import comment
+        .trim();
+
+    // Combine: Grid Pro license + Grid Lite CSS (no license) + cleaned Grid Pro CSS
+    const mergedCSS = gridProLicense + '\n' + gridLiteCSSNoLicense + '\n\n' + gridProCSSClean;
+
+    // Write the merged CSS to the target directory
+    fslib.setFile(path.join(config.target, 'css', 'grid-pro.css'), mergedCSS);
+}
+
 /**
  * Changes the HC Grid product version in the CSS files.
- *
- * @param  {string} version
- * Version to replace.
- *
  * @param  {string} folder
  * Folder to replace the version in.
+ * @param  {string} buildPropertiesPath
+ * Path to build properties file.
  */
-function replaceGridVersionInFile(folder) {
-    const { version } = require('./grid/build-properties.json');
+function replaceProductVersionInFiles(folder, buildPropertiesPath) {
     const fs = require('fs');
-    const files = fs.readdirSync(folder);
     const path = require('path');
+
+    const { version } = JSON.parse(
+        fs.readFileSync(
+            path.resolve(__dirname, buildPropertiesPath),
+            'utf8'
+        )
+    );
+    const files = fs.readdirSync(folder);
 
     files.forEach(file => {
         const filePath = path.join(folder, file);
+
+        if (fs.statSync(filePath).isDirectory()) {
+            return;
+        }
+
         const content = fs.readFileSync(filePath, 'utf8');
         const updatedContent = content.replace(/@product\.version@/gu, version);
 
@@ -138,12 +170,27 @@ function scriptCSS(argv) {
         if (argv.dashboards) {
             log.message('Generating css for Dashboards...');
             copyCSS(dashboardsConfig);
-            copyCSS(datagridConfig);
+            replaceProductVersionInFiles(
+                require('path').join(dashboardsConfig.target, 'css'),
+                './dashboards/build-properties.json'
+            );
+            log.success('Copied dashboards CSS');
+        } else if (argv.product === 'Dashboards') {
+            log.message('Generating css for Dashboards...');
+            copyCSS(dashboardsConfig);
+            replaceProductVersionInFiles(
+                require('path').join(dashboardsConfig.target, 'css'),
+                './dashboards/build-properties.json'
+            );
             log.success('Copied dashboards CSS');
         } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
-            replaceGridVersionInFile(gridConfig.target + '/css/');
+            mergeAndCopyGridProCSS(gridConfig);
+            replaceProductVersionInFiles(
+                require('path').join(gridConfig.target, 'css'),
+                './grid/build-properties.json'
+            );
             log.success('Copied grid CSS');
         } else {
             log.message('Generating css for Highcharts...');
@@ -158,7 +205,7 @@ function scriptCSS(argv) {
 scriptCSS.description = 'Creates CSS files for given product';
 scriptCSS.flags = {
     '--dashboards': 'Creates CSS files for dashboards',
-    '--product': 'Creates CSS files for product: Highcharts (default), Grid'
+    '--product': 'Creates CSS files for product: Highcharts (default), Grid, Dashboards'
 };
 
 gulp.task('scripts-css', () => scriptCSS(require('yargs').argv));

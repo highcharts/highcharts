@@ -4,8 +4,12 @@ describe('Add components through UI', () => {
         cy.viewport(1200, 1000);
         cy.toggleEditMode();
 
-        Cypress.on('uncaught:exception', () => {
-            cy.log('Uncaught exception. Check the console for more details.');
+        Cypress.on('uncaught:exception', (err) => {
+            // Avoid using cy.* commands inside this handler; keep it synchronous
+            // to not interfere with Cypress command queue.
+            // Log to console for debugging and prevent test failure.
+            // eslint-disable-next-line no-console
+            console.warn('Uncaught exception in test:', err);
             return false;
         })
     });
