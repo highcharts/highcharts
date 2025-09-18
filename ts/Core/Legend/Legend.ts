@@ -771,14 +771,11 @@ class Legend {
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
             label.css({
-                width: Math.min(
-                    (
-                        options.itemWidth ||
-                        legend.widthOption ||
-                        chart.spacingBox.width
-                    ) - itemExtraWidth,
-                    legend.maxLegendWidth
-                ) + 'px'
+                width: ((
+                    options.itemWidth ||
+                    legend.widthOption ||
+                    chart.spacingBox.width
+                ) - itemExtraWidth) + 'px'
             });
         }
 
@@ -1100,15 +1097,7 @@ class Legend {
             allowedWidth /= 2;
         }
 
-        legend.maxLegendWidth = Math.min(
-            legend.widthOption ||
-            allowedWidth,
-            relativeLength(
-                options.maxWidth as any,
-                chartSpacingBoxWidth - padding
-            ) ||
-            Infinity
-        );
+        legend.maxLegendWidth = legend.widthOption || allowedWidth;
 
         if (!legendGroup) {
             /**
@@ -1167,7 +1156,19 @@ class Legend {
         allItems.forEach(legend.layoutItem, legend);
 
         // Get the box
-        legendWidth = (legend.widthOption || legend.offsetWidth) + padding;
+        legendWidth = (
+            legend.options.maxWidth ?
+                Math.min(
+                    legend.widthOption ||
+                    allowedWidth,
+                    relativeLength(
+                        options.maxWidth as any,
+                        chartSpacingBoxWidth - padding
+                    ) ||
+                Infinity
+                ) :
+                (legend.widthOption || legend.offsetWidth)
+        ) + padding;
         legendHeight = legend.lastItemY + legend.lastLineHeight +
             legend.titleHeight;
         legendHeight = legend.handleOverflow(legendHeight);
@@ -1206,9 +1207,7 @@ class Legend {
                 box.crisp.call({}, { // #7260
                     x: 0,
                     y: 0,
-                    width: (options.maxWidth) ?
-                        legend.maxLegendWidth + legend.maxItemWidth :
-                        legendWidth,
+                    width: legendWidth,
                     height: legendHeight
                 }, box.strokeWidth())
             );
@@ -1274,11 +1273,7 @@ class Legend {
         }
 
         this.group.align(merge(options, {
-            width: (
-                this.options?.maxWidth ?
-                    this.maxLegendWidth :
-                    this.legendWidth
-            ),
+            width: this.legendWidth,
             height: this.legendHeight,
             verticalAlign: this.proximate ? 'top' : options.verticalAlign
         }), true, alignTo);
