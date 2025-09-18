@@ -14,7 +14,7 @@
  *
  * */
 
-export interface NavigationBindingsLike {
+export interface NavigationBindingsBase {
     // Declare module to add members to NavigationBindings
 
     // Private properties added by bindings:
@@ -48,4 +48,4 @@ export interface NavigationBindingsLike {
  *
  * */
 
-export default NavigationBindingsLike;
+export default NavigationBindingsBase;

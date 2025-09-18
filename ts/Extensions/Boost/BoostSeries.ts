@@ -73,8 +73,8 @@ import DataTableCore from '../../Data/DataTableCore.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike extends BoostTargetObject {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostSeriesAdditions;
         fill?: boolean;

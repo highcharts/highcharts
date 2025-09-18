@@ -25,7 +25,7 @@ import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
-import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
+import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
 import type Legend from '../Legend/Legend';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
@@ -35,7 +35,7 @@ import type {
     PointStateHoverOptions
 } from './PointOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
-import type SeriesLike from './SeriesLike';
+import type SeriesBase from './SeriesBase';
 import type {
     NonPlotOptions,
     SeriesDataSortingOptions,
@@ -113,27 +113,27 @@ const {
  *
  * */
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         runTrackerClick?: boolean;
     }
 }
 
-declare module '../Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         survive?: boolean;
     }
 }
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         plotX?: number;
         plotY?: number;
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         _hasPointMarkers?: boolean;
         keysAffectYAxis?: Array<string>;
         pointArrayMap?: Array<string>;
@@ -149,7 +149,7 @@ interface KDNode {
     right?: KDNode;
 }
 
-interface KDPointSearchObject extends KDPointSearchObjectLike {
+interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
 /* *
@@ -4927,7 +4927,7 @@ class Series {
  *
  * */
 
-interface Series extends SeriesLike {
+interface Series extends SeriesBase {
     axisTypes: Array<'xAxis'|'yAxis'|'colorAxis'|'zAxis'>;
     coll: 'series';
     colorCounter: number;

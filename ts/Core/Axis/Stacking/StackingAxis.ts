@@ -52,21 +52,21 @@ declare module '../AxisComposition' {
     }
 }
 
-declare module '../../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Chart/ChartBase'{
+    interface ChartBase {
         getStacks(): void;
     }
 }
 
-declare module '../../Series/PointLike' {
-    interface PointLike {
+declare module '../../Series/PointBase' {
+    interface PointBase {
         leftCliff?: number;
         rightCliff?: number;
     }
 }
 
-declare module '../../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Series/SeriesBase' {
+    interface SeriesBase {
         isRadialBar?: boolean;
         negStacks?: boolean;
         singleStacks?: false;
