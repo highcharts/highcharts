@@ -35,11 +35,23 @@ const HIGHCHARTS_DTS_COPY_EXCLUDES = [
  * Removes Highcharts files from the `js` folder.
  *
  * @param {boolean} removeFromCode
- * Whether to remove files from the `code` folder (only for Grid).
+ * Whether to remove files from the `code` folder (for Grid and Dashboards).
+ * @param {string} product
+ * Product name to determine correct path (Grid or Dashboards).
  */
-function removeHighcharts(removeFromCode = false) {
+function removeHighcharts(removeFromCode = false, product = 'Highcharts') {
     const fsLib = require('../libs/fs');
-    const folder = removeFromCode ? ['code', 'grid', 'es-modules'] : ['js'];
+    let folder;
+
+    if (!removeFromCode) {
+        folder = ['js'];
+    } else if (product === 'Grid') {
+        folder = ['code', 'grid', 'es-modules'];
+    } else if (product === 'Dashboards') {
+        folder = ['code', 'dashboards', 'es-modules'];
+    } else {
+        folder = ['js']; // fallback
+    }
 
     const pathsToDelete = [
         [...folder, 'Core', 'Axis'],
@@ -53,6 +65,11 @@ function removeHighcharts(removeFromCode = false) {
         [...folder, 'Stock'],
         [...folder, 'masters']
     ];
+
+    // Remove Grid from Dashboards
+    if (product === 'Dashboards') {
+        pathsToDelete.push([...folder, 'Grid']);
+    }
 
     for (const pathToDelete of pathsToDelete) {
         fsLib.deleteDirectory(fsLib.path(pathToDelete));
@@ -208,11 +225,10 @@ async function scriptsTS(argv) {
         if (product === 'Dashboards') {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-dashboards'])}`);
-            removeHighcharts(true);
+            removeHighcharts(true, product);
             // Copy Dashboards DTS files to dashboards es-modules
             [
                 'Data',
-                'Grid',
                 'Shared'
             ].forEach(dtsFolder => {
                 fsLib.copyAllFiles(
@@ -240,7 +256,7 @@ async function scriptsTS(argv) {
         } else if (product === 'Grid') {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
-            removeHighcharts(true);
+            removeHighcharts(true, product);
 
             [ // Copy dts files from the folders to the grid es-modules:
                 'Data',

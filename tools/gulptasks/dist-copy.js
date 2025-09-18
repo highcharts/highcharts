@@ -154,12 +154,7 @@ const CODE_FILTER = {
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
-    dashboards: [
-        ['dashboards', 'es-modules', 'Gantt'],
-        ['dashboards', 'es-modules', 'Grid'],
-        ['dashboards', 'es-modules', 'Maps'],
-        ['dashboards', 'es-modules', 'Stock']
-    ]
+    dashboards: []
 };
 
 /**
@@ -276,6 +271,15 @@ function distCopy() {
 
             if (distProduct === 'Grid') {
                 // No need to copy CSS, GFX, i18n, and Graphics for Grid from root
+                continue;
+            }
+            if (distProduct === 'Dashboards') {
+                const dashGfx = Path.join(CODE_DIRECTORY, product, 'gfx');
+                directory = Path.join(TARGET_DIRECTORY, product, 'code', 'gfx');
+                FsLib.copyAllFiles(dashGfx, directory, true, file => (
+                    file.includes('dashboards')
+                ));
+                LogLib.success('Created', directory);
                 continue;
             }
 

@@ -49,8 +49,6 @@ function dist(callback) {
             tasks.push('grid/api-docs');
             break;
         case 'Dashboards':
-            // Use webpack-based build for Dashboards
-            tasks.splice(tasks.indexOf('scripts'), 1, 'scripts-webpack');
             tasks.push('dashboards/api-docs');
             break;
         default:

@@ -333,6 +333,13 @@ function distExamples() {
                     title: 'Highcharts Grid Pro'
                 }
             };
+        } else if (distProduct === 'Dashboards') {
+            samplesSubfolder = {
+                dashboards: {
+                    path: ['dashboards', 'demo'],
+                    title: 'Highcharts Dashboards'
+                }
+            };
         }
 
         const template = FS
