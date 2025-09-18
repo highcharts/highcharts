@@ -48,7 +48,7 @@ class ToolbarButton {
     /**
      * The wrapper element for the button.
      */
-    public wrapperEl?: HTMLSpanElement;
+    public wrapper?: HTMLSpanElement;
 
     /**
      * The toolbar that the button belongs to.
@@ -109,7 +109,7 @@ class ToolbarButton {
         this.toolbar = toolbar;
         toolbar.buttons.push(this);
 
-        const wrapper = this.wrapperEl = makeHTMLElement('span', {
+        const wrapper = this.wrapper = makeHTMLElement('span', {
             className: Globals.getClassName(cfg.classNameKey)
         });
         toolbar.container?.appendChild(wrapper);
