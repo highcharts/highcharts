@@ -16,6 +16,7 @@
 
 'use strict';
 
+
 /* *
  *
  *  Imports
@@ -439,7 +440,7 @@ class Grid {
         overwrite = false
     ): void {
         if (!this.userOptions.columns) {
-            this.userOptions.columns = [];
+            this.userOptions.columns = this.options?.columns ?? [];
         }
         const columnOptions = this.userOptions.columns;
 

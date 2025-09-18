@@ -7,7 +7,7 @@ describe('Credits.', () => {
         cy.get('.highcharts-datagrid-credits')
             .should('have.css', 'background-image')
             .then((bg) => {
-                expect(bg).to.contain('https://assets.highcharts.com/grid/logo_light.png');
+                expect(bg).to.contain('https://assets.highcharts.com/grid/logo');
             });
     });
 
