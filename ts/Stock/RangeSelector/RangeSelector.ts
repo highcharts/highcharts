@@ -66,15 +66,15 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         newMax?: number;
         range?: (number|RangeSelectorButtonOptions);
     }
 }
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         extraBottomMargin?: boolean;
         extraTopMargin?: boolean;
         fixedRange?: number;
@@ -2016,7 +2016,7 @@ class RangeSelector {
                 inputGroup.getBBox().width >
                 chart.plotWidth
             ) {
-                if (dropdown === 'responsive') {
+                if (dropdown === 'responsive' || dropdown === 'always') {
                     this.collapseButtons();
                 } else {
                     moveInputsDown();
@@ -2123,9 +2123,7 @@ class RangeSelector {
         if (dropdown) {
             this.dropdownLabel.hide();
             css(dropdown, {
-                visibility: 'hidden',
-                width: '1px',
-                height: '1px'
+                visibility: 'hidden'
             });
             this.hasVisibleDropdown = false;
         }

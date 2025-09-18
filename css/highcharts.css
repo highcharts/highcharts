@@ -754,6 +754,10 @@ circle.highcharts-legend-nav-inactive { /* tracker */
     stroke-width: 0;
 }
 
+.highcharts-organization-series .highcharts-null-point {
+    fill: transparent;
+}
+
 .highcharts-polygon-series .highcharts-graph {
     fill: inherit;
     stroke-width: 0;
