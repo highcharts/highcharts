@@ -1168,6 +1168,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     min-width: 200px;
+    overflow: auto;
 }
 
 .hcg-popup-content {

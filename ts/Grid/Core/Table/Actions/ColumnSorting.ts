@@ -154,8 +154,6 @@ class ColumnSorting {
 
         for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();
-            // Update icon state for new header icon system
-            col.header?.updateSortIconState();
         }
 
         a11y?.userSortedColumn(order);
