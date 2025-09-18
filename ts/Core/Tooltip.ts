@@ -28,7 +28,6 @@ import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
-import type DOMElementType from './Renderer/DOMElementType';
 
 import A from './Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -559,47 +558,6 @@ class Tooltip {
                 .attr({ zIndex: 8 })
                 .shadow(options.shadow ?? !options.fixed)
                 .add();
-
-            // #23303
-            if (this.shouldStickOnContact() && this.label.element) {
-                const tooltipElement = this.label.element;
-
-                U.clearTimeout(this.hideTimer);
-
-                addEvent(tooltipElement, 'mouseover', (): void => {
-                    U.clearTimeout(this.hideTimer);
-                });
-
-                addEvent(
-                    tooltipElement,
-                    'mouseout',
-                    (e: PointerEvent): void => {
-                        const relatedTarget = e.relatedTarget as (
-                            DOMElementType | null
-                        );
-
-                        if (
-                            relatedTarget &&
-                            (
-                                this.pointer.inClass(
-                                    relatedTarget,
-                                    'highcharts-tooltip'
-                                ) ||
-                                this.pointer.inClass(
-                                    relatedTarget,
-                                    'highcharts-tooltip-box'
-                                ) ||
-                                this.pointer.inClass(
-                                    relatedTarget,
-                                    'highcharts-point'
-                                )
-                            )
-                        ) {
-                            U.clearTimeout(this.hideTimer);
-                        }
-                    }
-                );
-            }
         }
 
         if (container && !container.parentElement) {
@@ -1738,6 +1696,12 @@ class Tooltip {
                 .rect(box)
                 .addClass('highcharts-tracker')
                 .add(label);
+
+            // For a rapid move going outside of the elements keeping the
+            // tooltip visible, cancel the hide (#23512).
+            addEvent(tooltip.tracker.element, 'mouseenter', function (): void {
+                U.clearTimeout(tooltip.hideTimer);
+            });
 
             if (!chart.styledMode) {
                 tooltip.tracker.attr({
