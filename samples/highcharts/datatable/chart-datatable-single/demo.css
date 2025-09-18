@@ -2,10 +2,19 @@
     font-family: Helvetica, Arial, sans-serif;
 }
 
+.outer-container {
+    max-width: 1000px;
+    display: flex;
+    margin: 0 auto;
+}
+
 #container {
-    max-width: 800px;
     height: 400px;
-    margin: 1em auto;
+}
+
+.button-row {
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .highcharts-demo-button {
@@ -29,4 +38,15 @@
 #data-table th {
     border: 1px solid silver;
     padding: 0.125rem 1em;
+}
+
+@media screen and (max-width: 600px) {
+    .outer-container {
+        display: block;
+    }
+
+    #data-table {
+        margin: 10px auto;
+        width: 95%;
+    }
 }

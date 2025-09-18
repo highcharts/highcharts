@@ -1,7 +1,6 @@
 ---
- name: Common data table study
+ name: Single data table on chart
  authors:
    - Torstein Hønsi
- skipTest: true
  js_wrap: b
 ...

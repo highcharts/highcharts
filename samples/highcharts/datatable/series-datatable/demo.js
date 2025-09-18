@@ -1,11 +1,6 @@
 const { DataTableCore } = Highcharts;
 
 Highcharts.chart('container', {
-    plotOptions: {
-        series: {
-            boostThreshold: 0
-        }
-    },
     title: {
         text: 'The <em>series.dataTable</em> option'
     },
@@ -44,7 +39,3 @@ Highcharts.chart('container', {
         })
     }]
 });
-
-setTimeout(() => {
-    // chart.series[3].addPoint([7, 2]);
-}, 1234);

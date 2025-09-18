@@ -1547,7 +1547,7 @@ class Series {
 
             // Data table passed as option
             } else {
-                const dataTable = data || chart.dataTable,
+                const dataTable = data ? [data] : chart.dataTable,
                     columnAssignment = options.columnAssignment,
                     keys = dataColumnKeys.slice();
 
@@ -1562,83 +1562,97 @@ class Series {
 
                 // Resolve column assignment
                 const getTableSpecificColumns = (
-                    dataTable?: DataTableCore|DataTableOptions
+                    dataTable?: DataTableCore|DataTableOptions,
+                    index?: number
                 ): DataTable.ColumnCollection => keys
                     .reduce((acc, key): DataTable.ColumnCollection => {
                         const assignment = columnAssignment?.find(
-                            (assignment): boolean => assignment.key === key
-                        );
-                        acc[key] = dataTable?.columns?.[
-                            assignment?.columnName || key
-                        ] || [];
+                                (assignment): boolean => (
+                                    (assignment.dataTable ?? index) === index &&
+                                    assignment.key === key
+                                )
+                            ),
+                            column = dataTable?.columns?.[
+                                assignment?.columnName || key
+                            ];
+
+                        if (column) {
+                            acc[key] = column;
+                        }
                         return acc;
                     }, {} as DataTable.ColumnCollection);
 
-                // If a DataTable is passed and no column assignment is set,
-                // use it directly
-                if (columnAssignment || dataTable) {
-                    // Set the columns
-                    const columns = getTableSpecificColumns(dataTable);
-                    table.setColumns(columns);
-                }
-
-                // If a DataTable is passed directly by reference, bind events
-                // to keep the series updated
-                if (dataTable instanceof DataTableCore) {
-
-                    const queueRedraw = (): void => {
-                        clearTimeout(chart.redrawTimeout);
-                        chart.redrawTimeout = setTimeout(
-                            (): void => chart.redraw(),
-                            0
+                dataTable.forEach((dtItem, index): void => {
+                    // If a DataTable is passed and no column assignment is set,
+                    // use it directly
+                    if (columnAssignment || dtItem) {
+                        // Set the columns
+                        table.setColumns(
+                            getTableSpecificColumns(dtItem, index)
                         );
-                    };
+                    }
 
-                    addEvent(
-                        dataTable,
-                        'afterSetRows',
-                        (e: DataTable.RowEvent): void => {
-                            const row = dataTable.getRow.call({
-                                    columns: getTableSpecificColumns(dataTable)
-                                }, e.rowIndex),
-                                point = this.points[e.rowIndex];
+                    // If a DataTable is passed directly by reference, bind
+                    // events to keep the series updated
+                    if (dtItem instanceof DataTableCore) {
 
-                            if (row) {
-                                if (point) {
-                                    point.update(
-                                        row as unknown as PointOptions,
-                                        false
-                                    );
-                                } else {
-                                    this.addPoint(
-                                        row as unknown as PointOptions,
-                                        false
-                                    );
+                        const queueRedraw = (): void => {
+                            clearTimeout(chart.redrawTimeout);
+                            chart.redrawTimeout = setTimeout(
+                                (): void => chart.redraw(),
+                                0
+                            );
+                        };
+
+                        addEvent(
+                            dtItem,
+                            'afterSetRows',
+                            (e: DataTable.RowEvent): void => {
+                                const row = dtItem.getRow.call({
+                                        columns: getTableSpecificColumns(
+                                            dtItem,
+                                            index
+                                        )
+                                    }, e.rowIndex),
+                                    point = this.points[e.rowIndex];
+
+                                if (row) {
+                                    if (point) {
+                                        point.update(
+                                            row as unknown as PointOptions,
+                                            false
+                                        );
+                                    } else {
+                                        this.addPoint(
+                                            row as unknown as PointOptions,
+                                            false
+                                        );
+                                    }
+
+                                    queueRedraw();
+                                }
+                            }
+                        );
+
+                        addEvent(
+                            dtItem,
+                            'afterDeleteRows',
+                            (e: DataTable.RowEvent): void => {
+                                const { rowCount, rowIndex } = e;
+
+                                for (
+                                    let i = rowIndex + rowCount - 1;
+                                    i >= rowIndex;
+                                    i--
+                                ) {
+                                    this.removePoint(i, false);
                                 }
 
                                 queueRedraw();
                             }
-                        }
-                    );
-
-                    addEvent(
-                        dataTable,
-                        'afterDeleteRows',
-                        (e: DataTable.RowEvent): void => {
-                            const { rowCount, rowIndex } = e;
-
-                            for (
-                                let i = rowIndex + rowCount - 1;
-                                i >= rowIndex;
-                                i--
-                            ) {
-                                this.removePoint(i, false);
-                            }
-
-                            queueRedraw();
-                        }
-                    );
-                }
+                        );
+                    }
+                });
             }
 
             // Test for DataTable-based data handling

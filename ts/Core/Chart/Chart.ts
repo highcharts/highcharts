@@ -323,7 +323,7 @@ class Chart {
     public credits?: SVGElement;
     public caption?: SVGElement;
     public dataLabelsGroup?: SVGElement;
-    public dataTable?: DataTableCore;
+    public dataTable!: Array<DataTableCore>;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -566,11 +566,14 @@ class Chart {
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
-            if (options.dataTable instanceof DataTableCore) {
-                chart.dataTable = options.dataTable;
-            } else if (options.dataTable) {
-                chart.dataTable = new DataTableCore(options.dataTable);
-            }
+            // The chart.dataTable option
+            chart.dataTable = (
+                options.dataTable ? splat(options.dataTable) : []
+            ).map((dataTableOptions): DataTableCore => (
+                dataTableOptions instanceof DataTableCore ?
+                    dataTableOptions :
+                    new DataTableCore(dataTableOptions)
+            ));
 
             charts.push(chart);
             H.chartCount++;

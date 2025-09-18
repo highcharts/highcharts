@@ -160,7 +160,7 @@ function createGrid(chart) {
     gridElement.id = 'grid';
     document.getElementById('container').appendChild(gridElement);
     chart.grid = Grid.grid('grid', {
-        dataTable: chart.dataTable,
+        dataTable: chart.dataTable[0],
         rendering: {
             columns: {
                 resizing: {

@@ -49,6 +49,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 export interface ColumnAssignmentItem {
     key: string;
     columnName: string;
+    dataTable: number;
 }
 
 export type NonPlotOptions = (
