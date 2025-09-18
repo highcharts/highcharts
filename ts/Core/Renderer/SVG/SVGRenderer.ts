@@ -227,7 +227,9 @@ class SVGRenderer implements SVGRendererBase {
                 }),
             element = boxWrapper.element as SVGDOMElement;
 
-        if (!styledMode) {
+        if (styledMode) {
+            boxWrapper.addClass('highcharts-styled-mode');
+        } else {
             boxWrapper.css(this.getStyle(style || {}));
         }
 
