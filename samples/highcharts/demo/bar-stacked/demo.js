@@ -25,7 +25,11 @@ Highcharts.chart('container', {
         series: {
             stacking: 'normal',
             dataLabels: {
-                enabled: true
+                enabled: true,
+                backgroundColor: 'contrast',
+                style: {
+                    textOutline: 'none'
+                }
             }
         }
     },
