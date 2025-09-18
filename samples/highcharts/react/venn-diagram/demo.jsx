@@ -1,14 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Chart, Title, setHighcharts } from '@highcharts/react';
+import { Chart, Title } from '@highcharts/react';
 import { Accessibility } from '@highcharts/react/options/Accessibility';
 import { VennSeries } from '@highcharts/react/series/Venn';
-
-// Note: These imports are not necessary when using a build tool such as Vite
-import 'highcharts/esm/modules/venn.src.js'
-import HC from 'highcharts/esm/modules/accessibility.src.js'
-setHighcharts(HC)
 
 export default function ChartComponent() {
   const vennData = [
