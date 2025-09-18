@@ -156,3 +156,11 @@
 .a11y-debug__content ul {
     padding-left: 1.25rem;
 }
+
+pre {
+    display: none;
+}
+
+.placeholder {
+    display: none;
+}
