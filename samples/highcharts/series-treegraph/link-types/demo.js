@@ -25,7 +25,7 @@ Highcharts.chart('container', {
             data: [
                 ['A'],
                 ['B', 'A', 'curved'],
-                ['C', 'B', 'default'],
+                ['C', 'B', 'orthogonal'],
                 ['E', 'B'],
                 ['D', 'A']
             ],

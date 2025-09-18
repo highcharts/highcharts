@@ -238,7 +238,7 @@ class TreegraphLayout {
         // left to right with root node close to the chart border, this is why
         // x and y positions are switched.
         node.yPosition = node.preX + modSum;
-        node.xPosition = node.level;
+        node.xPosition = node.point?.x ?? node.level;
         for (const child of node.children) {
             treeLayout.secondWalk(child, modSum + node.mod);
         }
