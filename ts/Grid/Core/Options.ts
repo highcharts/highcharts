@@ -349,6 +349,11 @@ export interface ColumnOptions {
      * `width` option is used to set the width of the column.
      */
     width?: number | string;
+
+    /**
+     * Filtering options for the column.
+     */
+    filtering?: ColumnFilteringOptions;
 }
 
 /**
@@ -539,11 +544,6 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
-
-    /**
-     * Filtering options for the column.
-     */
-    filtering?: ColumnFilteringOptions;
 }
 
 export interface CaptionOptions {
@@ -702,6 +702,14 @@ export interface ColumnFilteringOptions extends FilteringCondition {
      * Whether the filtering is enabled or not.
      */
     enabled?: boolean;
+
+    /**
+     * Whether the filtering inputs should be rendered inline in the special
+     * table header row (`true`), or should be accessed via a popup (`false`).
+     *
+     * @default false
+     */
+    inline?: boolean;
 }
 
 /* *

@@ -273,8 +273,9 @@ class ColumnFiltering {
     public renderFilteringContent(container: HTMLElement): void {
         this.container = container;
         const column = this.column;
+        const filteringOptions = column.options?.filtering;
 
-        if (!column || !column.options?.filtering?.enabled) {
+        if (!column || !filteringOptions?.enabled || !filteringOptions.inline) {
             return;
         }
 
@@ -282,7 +283,6 @@ class ColumnFiltering {
         const inputWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('columnFilterWrapper')
         }, container);
-        const filteringOptions = column.options.filtering;
         const columnType = column.dataType;
 
         // Render the proper element based on the column type.

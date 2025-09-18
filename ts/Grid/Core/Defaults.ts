@@ -85,6 +85,9 @@ namespace Defaults {
         columnDefaults: {
             sorting: {
                 sortable: true
+            },
+            filtering: {
+                inline: false
             }
         }
     };

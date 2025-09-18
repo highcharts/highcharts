@@ -1414,6 +1414,24 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     text-align: left;
 }
 
+.hcg-popup,
+.highcharts-datagrid-popup {
+    position: absolute;
+    z-index: 1000;
+    background-color: var(--ig-neutral-default-background);
+    border: 1px solid var(--ig-neutral-default-border-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    overflow: auto;
+}
+
+.hcg-popup-content,
+.highcharts-datagrid-popup-content {
+    padding: 12px;
+    line-height: 1.4;
+}
+
 /* End CSS Helpers Classes */
 
 /* Start Grid Default Theme */
