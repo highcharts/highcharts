@@ -1,46 +1,33 @@
-const series = [
-    {
-        name: 'Year',
-        data: [
-            2010, 2011, 2012, 2013, 2014, 2015,
-            2016, 2017, 2018, 2019, 2020, 2021, 2022
-        ],
-        xAxis: 0
-    }, {
-        name: 'Installation & Developers',
-        data: [
-            43934, 48656, 65165, 81827, 112143, 142383,
-            171533, 165174, 155157, 161454, 154610, 168960, 171558
-        ]
-    }, {
-        name: 'Manufacturing',
-        data: [
-            24916, 37941, 29742, 29851, 32490, 30282,
-            38121, 36885, 33726, 34243, 31050, 33099, 33473
-        ]
-    }, {
-        name: 'Sales & Distribution',
-        data: [
-            11744, 30000, 16005, 19771, 20185, 24377,
-            32147, 30912, 29243, 29213, 25663, 28978, 30618
-        ]
-    }, {
-        name: 'Operations & Maintenance',
-        data: [
-            null, null, null, null, null, null, null,
-            null, 11164, 11218, 10077, 12530, 16585
-        ]
-    }, {
-        name: 'Other',
-        data: [
-            21908, 5548, 8105, 11248, 8989, 11816, 18274,
-            17300, 13053, 11906, 10073, 11471, 11648
-        ]
-    }];
-
-let grid = null;
-
 Highcharts.chart('chart', {
+
+    dataTable: {
+        columns: {
+            Year: [
+                2010, 2011, 2012, 2013, 2014, 2015,
+                2016, 2017, 2018, 2019, 2020, 2021, 2022
+            ],
+            'Installation & Developers': [
+                43934, 48656, 65165, 81827, 112143, 142383,
+                171533, 165174, 155157, 161454, 154610, 168960, 171558
+            ],
+            Manufacturing: [
+                24916, 37941, 29742, 29851, 32490, 30282,
+                38121, 36885, 33726, 34243, 31050, 33099, 33473
+            ],
+            'Sales & Distribution': [
+                11744, 30000, 16005, 19771, 20185, 24377,
+                32147, 30912, 29243, 29213, 25663, 28978, 30618
+            ],
+            'Operations & Maintenance': [
+                null, null, null, null, null, null, null,
+                null, 11164, 11218, 10077, 12530, 16585
+            ],
+            Other: [
+                21908, 5548, 8105, 11248, 8989, 11816, 18274,
+                17300, 13053, 11906, 10073, 11471, 11648
+            ]
+        }
+    },
 
     title: {
         text: 'U.S Solar Employment Growth',
@@ -79,20 +66,66 @@ Highcharts.chart('chart', {
         }
     },
 
+    series: [{
+        name: 'Installation & Developers',
+        columnAssignment: [{
+            key: 'x',
+            columnName: 'Year'
+        }, {
+            key: 'y',
+            columnName: 'Installation & Developers'
+        }]
+    }, {
+        name: 'Manufacturing',
+        columnAssignment: [{
+            key: 'x',
+            columnName: 'Year'
+        }, {
+            key: 'y',
+            columnName: 'Manufacturing'
+        }]
+    }, {
+        name: 'Sales & Distribution',
+        columnAssignment: [{
+            key: 'x',
+            columnName: 'Year'
+        }, {
+            key: 'y',
+            columnName: 'Sales & Distribution'
+        }]
+    }, {
+        name: 'Operations & Maintenance',
+        columnAssignment: [{
+            key: 'x',
+            columnName: 'Year'
+        }, {
+            key: 'y',
+            columnName: 'Operations & Maintenance'
+        }]
+    }, {
+        name: 'Other',
+        columnAssignment: [{
+            key: 'x',
+            columnName: 'Year'
+        }, {
+            key: 'y',
+            columnName: 'Other'
+        }]
+    }],
     exporting: {
         menuItemDefinitions: {
             viewData: {
                 onclick: function () {
-                    if (!grid) {
-                        createGrid();
+                    if (!this.grid) {
+                        createGrid(this);
                     } else {
-                        grid.container.classList.toggle('hide');
+                        this.grid.container.classList.toggle('hide');
                     }
-                    const isGridHidden = grid.container
+                    const isGridHidden = this.grid.container
                         .classList.contains(
                             'hide'
                         );
-                    const viewDataElement = this.exportDivElements[2];
+                    const viewDataElement = this.exporting.divElements[2];
                     viewDataElement.innerText =
                         `${isGridHidden ? 'Show' : 'Hide'} data table`;
                 }
@@ -104,8 +137,6 @@ Highcharts.chart('chart', {
             }
         }
     },
-
-    series,
 
     responsive: {
         rules: [{
@@ -124,19 +155,12 @@ Highcharts.chart('chart', {
 
 });
 
-const cols = {
-    ...Object.fromEntries(series.map(s => [s.name, s.data]))
-};
-
-function createGrid() {
+function createGrid(chart) {
     const gridElement = document.createElement('div');
     gridElement.id = 'grid';
     document.getElementById('container').appendChild(gridElement);
-    grid = Grid.grid('grid', {
-        dataTable:
-        {
-            columns: cols
-        },
+    chart.grid = Grid.grid('grid', {
+        dataTable: chart.dataTable,
         rendering: {
             columns: {
                 resizing: {

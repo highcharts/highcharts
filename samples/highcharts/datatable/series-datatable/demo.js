@@ -7,7 +7,7 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'DataTable as options'
+        text: 'The <em>series.dataTable</em> option'
     },
     series: [{
         name: 'Options + array',
