@@ -1697,6 +1697,12 @@ class Tooltip {
                 .addClass('highcharts-tracker')
                 .add(label);
 
+            // For a rapid move going outside of the elements keeping the
+            // tooltip visible, cancel the hide (#23512).
+            addEvent(tooltip.tracker.element, 'mouseenter', function (): void {
+                U.clearTimeout(tooltip.hideTimer);
+            });
+
             if (!chart.styledMode) {
                 tooltip.tracker.attr({
                     fill: 'rgba(0,0,0,0)'
