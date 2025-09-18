@@ -15,7 +15,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'TO DO: Implement<br>Multiple data tables, one series'
+        text: 'Multiple series-level data tables, one series'
     },
     series: [{
         name: 'Revenue',

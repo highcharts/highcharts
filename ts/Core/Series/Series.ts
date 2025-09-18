@@ -1547,7 +1547,14 @@ class Series {
 
             // Data table passed as option
             } else {
-                const dataTable = data ? [data] : chart.dataTable,
+                const seriesDataTable = chart.getDataTable(options),
+                    dataTable = data ? [data] : (
+                        // Use either dataTable from series options or from
+                        // the chart
+                        seriesDataTable.length ?
+                            seriesDataTable :
+                            chart.dataTable
+                    ),
                     columnAssignment = options.columnAssignment,
                     keys = dataColumnKeys.slice();
 

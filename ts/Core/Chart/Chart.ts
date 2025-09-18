@@ -86,6 +86,7 @@ import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
+import { DataTableOptions } from '../../Data/DataTableOptions';
 const {
     addEvent,
     attr,
@@ -567,13 +568,7 @@ class Chart {
             chart.index = charts.length; // Add the chart to the global lookup
 
             // The chart.dataTable option
-            chart.dataTable = (
-                options.dataTable ? splat(options.dataTable) : []
-            ).map((dataTableOptions): DataTableCore => (
-                dataTableOptions instanceof DataTableCore ?
-                    dataTableOptions :
-                    new DataTableCore(dataTableOptions)
-            ));
+            chart.dataTable = chart.getDataTable(options);
 
             charts.push(chart);
             H.chartCount++;
@@ -610,6 +605,22 @@ class Chart {
 
             chart.firstRender();
         });
+    }
+
+    public getDataTable(options: {
+        dataTable?: (
+            DataTableCore|
+            DataTableOptions|
+            Array<DataTableCore|DataTableOptions>
+        )
+    }): Array<DataTableCore> {
+        return (
+            options.dataTable ? splat(options.dataTable) : []
+        ).map((dataTableOptions): DataTableCore => (
+            dataTableOptions instanceof DataTableCore ?
+                dataTableOptions :
+                new DataTableCore(dataTableOptions)
+        ));
     }
 
     /**
