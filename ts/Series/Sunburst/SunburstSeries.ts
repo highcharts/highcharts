@@ -589,7 +589,7 @@ class SunburstSeries extends TreemapSeries {
                 animation &&
                 hasRendered &&
                 idRoot !== idPreviousRoot &&
-                series.dataLabelsGroup
+                series.dataLabelsGroup0
             );
 
         let animateLabels: (Function|undefined),
@@ -597,17 +597,15 @@ class SunburstSeries extends TreemapSeries {
             addedHack = false;
 
         if (hackDataLabelAnimation) {
-            (series.dataLabelsGroup as any).attr({ opacity: 0 });
+            series.dataLabelsGroup0?.attr({ opacity: 0 });
             animateLabels = function (): void {
                 const s = series;
 
                 animateLabelsCalled = true;
-                if (s.dataLabelsGroup) {
-                    s.dataLabelsGroup.animate({
-                        opacity: 1,
-                        visibility: 'inherit'
-                    });
-                }
+                s.dataLabelsGroup0?.animate({
+                    opacity: 1,
+                    visibility: 'inherit'
+                });
             };
         }
         for (const point of points) {

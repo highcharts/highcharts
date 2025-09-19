@@ -151,6 +151,10 @@ interface KDNode {
 interface KDPointSearchObject extends KDPointSearchObjectLike {
 }
 
+type FixedKeys = 'group' | 'markerGroup' | 'tracker' | 'tt';
+type DynamicKeys = `dataLabelsGroup${number}`;
+type SeriesKeys = FixedKeys | DynamicKeys;
+
 /* *
  *
  *  Class
@@ -3282,7 +3286,7 @@ class Series {
      * @function Highcharts.Series#plotGroup
      */
     public plotGroup(
-        prop: 'group'|'markerGroup'|'dataLabelsGroup',
+        prop: 'group' | 'markerGroup' | `dataLabelsGroup${number}`,
         name: string,
         visibility: 'hidden'|'inherit'|'visible',
         zIndex?: number,
@@ -3909,7 +3913,11 @@ class Series {
             [
                 series.tracker,
                 series.markerGroup,
-                series.dataLabelsGroup
+                ...Object.entries(series)
+                    .filter(([key]): boolean => (
+                        key.startsWith('dataLabelsGroup')
+                    ))
+                    .map(([, value]): SVGElement | undefined => value)
             ].forEach((tracker?: SVGElement): void => {
                 if (tracker) {
                     tracker.addClass('highcharts-tracker')
@@ -4237,9 +4245,7 @@ class Series {
             groups = [
                 'group',
                 'markerGroup',
-                'dataLabelsGroup',
-                'transformGroup',
-                'dataLabelsGroupParent'
+                'transformGroup'
             ],
             optionsToCheck = [
                 'dataGrouping',
@@ -4280,6 +4286,18 @@ class Series {
             optionsToCheck.some(
                 (option): boolean => series.hasOptionChanged(option)
             )
+        );
+
+        groups.push(
+            ...Object.keys(series).filter((k): boolean => (
+                k.startsWith('dataLabelsGroup')
+            ))
+        );
+
+        groups.push(
+            ...Object.keys(series).filter((k): boolean => (
+                k.startsWith('dataLabelsGroupParent')
+            ))
         );
 
         newType = newType || initialType;
@@ -4621,7 +4639,11 @@ class Series {
             [
                 series.group,
                 series.markerGroup,
-                series.dataLabelsGroup
+                ...Object.entries(series)
+                    .filter(([key]): boolean => (
+                        key.startsWith('dataLabelsGroup')
+                    ))
+                    .map(([, value]): SVGElement | undefined => value)
             ].forEach(function (
                 group: (SVGElement|undefined)
             ): void {
@@ -4684,7 +4706,11 @@ class Series {
                     [
                         series.group,
                         series.markerGroup,
-                        series.dataLabelsGroup,
+                        ...Object.entries(series)
+                            .filter(([key]): boolean => (
+                                key.startsWith('dataLabelsGroup')
+                            ))
+                            .map(([, value]): SVGElement | undefined => value),
                         series.labelBySeries
                     ].forEach(function (
                         group: (SVGElement|undefined)
@@ -4762,16 +4788,15 @@ class Series {
 
         const showOrHide = vis ? 'show' : 'hide';
 
-        // Show or hide elements
-        (
-            [
-                'group',
-                'dataLabelsGroup',
-                'markerGroup',
-                'tracker',
-                'tt'
-            ] as ('group'|'dataLabelsGroup'|'markerGroup'|'tracker'|'tt')[]
-        ).forEach((key): void => {
+        ([
+            'group',
+            'markerGroup',
+            'tracker',
+            'tt',
+            ...Object.keys(series).filter((k): k is DynamicKeys =>
+                k.startsWith('dataLabelsGroup')
+            )
+        ] as SeriesKeys[]).forEach((key): void => {
             series[key]?.[showOrHide]();
         });
 

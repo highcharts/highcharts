@@ -49,7 +49,7 @@ interface Zooming {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        dataLabelsGroupParent?: SVGElement;
+        [key: `dataLabelsGroupParent${number}`]: SVGElement | undefined;
         zooming?: Zooming
     }
 }
@@ -358,7 +358,11 @@ function onAfterDrawChartBox(this: Chart): void {
 
     chart.seriesGroup?.clip(clipRect);
     chart.series.forEach((series): void => {
-        series.dataLabelsGroupParent?.clip(clipRect);
+        Object.keys(series)
+            .filter((k): k is `dataLabelsGroupParent${number}` => k.startsWith('dataLabelsGroupParent'))
+            .forEach((key): void => {
+                series[key]?.clip(clipRect);
+            });
     });
 }
 
@@ -411,14 +415,14 @@ function onAfterSetChartSize(
  * Create data labels parent group for clipping purposes after zoom-in
  * @private
  */
-function onDrawDataLabels(
-    this: Series
+function onInitDataLabelsGroup(
+    this: Series,
+    { index, zIndex }: { index: number, zIndex: number }
 ): void {
     if (this.hasDataLabels?.()) {
-        this.dataLabelsGroupParent ||=
-            this.chart.renderer.g()
-                .attr({ zIndex: (this.options.dataLabels as any).zIndex || 6 })
-                .add();
+        this[`dataLabelsGroupParent${index}`] ||= this.chart.renderer.g()
+            .attr({ zIndex })
+            .add();
     }
 }
 
@@ -454,7 +458,7 @@ class NonCartesianSeriesZoom {
             addEvent(ChartClass, 'transform', onTransform);
             addEvent(ChartClass, 'afterSetChartSize', onAfterSetChartSize);
             addEvent(SeriesClass, 'getPlotBox', onGetPlotBox);
-            addEvent(SeriesClass, 'drawDataLabels', onDrawDataLabels);
+            addEvent(SeriesClass, 'initDataLabelsGroup', onInitDataLabelsGroup);
             addEvent(TooltipClass, 'getAnchor', onGetAnchor);
         }
     }

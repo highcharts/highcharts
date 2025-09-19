@@ -167,7 +167,14 @@ function columnAnimateDrilldown(
         });
 
         if (chart.drilldown) {
-            chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+            Object.keys(this)
+                .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
+                .forEach((key): void => {
+                    const group = this[key];
+                    if (group) {
+                        chart.drilldown?.fadeInGroup(group);
+                    }
+                });
         }
 
         // Reset to prototype
@@ -430,8 +437,16 @@ function mapAnimateDrilldown(
             });
 
             if (chart.drilldown) {
-                chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+                Object.keys(this)
+                    .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
+                    .forEach((key): void => {
+                        const group = this[key];
+                        if (group) {
+                            chart.drilldown?.fadeInGroup(group);
+                        }
+                    });
             }
+
         }
     }
 }
@@ -489,7 +504,14 @@ function mapAnimateDrillupTo(
             );
 
             if (chart.drilldown) {
-                chart.drilldown.fadeInGroup(series.dataLabelsGroup);
+                Object.keys(this)
+                    .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
+                    .forEach((key): void => {
+                        const group = this[key];
+                        if (group) {
+                            chart.drilldown?.fadeInGroup(group);
+                        }
+                    });
             }
         }
     }
@@ -678,7 +700,14 @@ function pieAnimateDrilldown(
             }
 
             if (chart.drilldown) {
-                chart.drilldown.fadeInGroup(series.dataLabelsGroup);
+                Object.keys(this)
+                    .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
+                    .forEach((key): void => {
+                        const group = this[key];
+                        if (group) {
+                            chart.drilldown?.fadeInGroup(group);
+                        }
+                    });
             }
 
             // Reset to prototype

@@ -59,10 +59,12 @@ function initDataLabelsDefer(this: SimulationSeries): void {
  */
 function initDataLabels(this: SimulationSeries): SVGElement {
     const series = this,
-        dlOptions = series.options.dataLabels;
+        dlOptions = series.options.dataLabels,
+        groupKey = 'dataLabelsGroup0' as const;
 
-    if (!series.dataLabelsGroup) {
-        const dataLabelsGroup = this.initDataLabelsGroup();
+    if (!series[groupKey]) {
+        // Those series support only one group of data labels (index 0)
+        const dataLabelsGroup = this.initDataLabelsGroup(0, dlOptions);
 
         // Apply the dataLabels.style not only to the
         // individual dataLabels but also to the entire group
@@ -88,14 +90,15 @@ function initDataLabels(this: SimulationSeries): SVGElement {
     }
 
     // Place it on first and subsequent (redraw) calls
-    series.dataLabelsGroup.attr(
+    series[groupKey]!.attr(
         merge(
             { opacity: 1 },
             this.getPlotBox('data-labels')
         )
     );
-    return series.dataLabelsGroup;
+    return series[groupKey]!;
 }
+
 
 const DataLabelsDeferUtils = {
     initDataLabels,

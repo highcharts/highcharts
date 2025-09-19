@@ -86,10 +86,16 @@ declare module './SeriesLike' {
     interface SeriesLike {
         dataLabelPositioners?: DataLabel.PositionersObject;
         dataLabelsGroup?: SVGElement;
+        [key: `dataLabelsGroup${number}`]: SVGElement | undefined;
         hasDataLabels?(): boolean;
-        initDataLabelsGroup(): SVGElement;
+        initDataLabelsGroup(
+            index: number,
+            dataLabelsOptions?: DataLabelOptions
+        ): SVGElement;
         initDataLabels(
-            animationConfig?: Partial<AnimationOptions>
+            index: number,
+            animationConfig?: Partial<AnimationOptions>,
+            dataLabelsOptions?: DataLabelOptions
         ): SVGElement;
         alignDataLabel(
             point: Point,
@@ -492,14 +498,30 @@ namespace DataLabel {
      * Create the SVGElement group for dataLabels
      * @private
      */
-    function initDataLabelsGroup(this: Series): SVGElement {
-        return this.plotGroup(
-            'dataLabelsGroup',
+    function initDataLabelsGroup(
+        this: Series,
+        index: number,
+        dataLabelsOptions?: DataLabelOptions
+    ): SVGElement {
+        fireEvent(
+            this,
+            'initDataLabelsGroup',
+            { index, zIndex: dataLabelsOptions?.zIndex || 6 }
+        );
+
+        const group = this.plotGroup(
+            `dataLabelsGroup${index}`,
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
-            (this.options.dataLabels as any).zIndex || 6,
-            this?.dataLabelsGroupParent
+            dataLabelsOptions?.zIndex || 6,
+            this[`dataLabelsGroupParent${index}`]
         );
+
+        if (index === 0) {
+            this.dataLabelsGroup = group;
+        }
+
+        return group;
     }
 
     /**
@@ -508,14 +530,17 @@ namespace DataLabel {
      */
     function initDataLabels(
         this: Series,
-        animationConfig: Partial<AnimationOptions>
+        index: number,
+        animationConfig: Partial<AnimationOptions>,
+        dataLabelsOptions?: DataLabelOptions
     ): SVGElement {
         const series = this,
             hasRendered = series.hasRendered || 0;
 
         // Create a separate group for the data labels to avoid rotation
-        const dataLabelsGroup = this.initDataLabelsGroup()
-            .attr({ opacity: +hasRendered }); // #3300
+        const dataLabelsGroup =
+            this.initDataLabelsGroup(index, dataLabelsOptions)
+                .attr({ opacity: +hasRendered }); // #3300
 
         if (!hasRendered && dataLabelsGroup) {
             if (series.visible) { // #2597, #3023, #3024
@@ -565,8 +590,6 @@ namespace DataLabel {
         fireEvent(this, 'drawDataLabels');
 
         if (series.hasDataLabels?.()) {
-            dataLabelsGroup = this.initDataLabels(animationConfig);
-
             // Make the labels for each point
             points.forEach((point): void => {
 
@@ -586,6 +609,11 @@ namespace DataLabel {
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
+                    // Create dataLabelsGroup for each data labels config
+                    // (can be multiple)
+                    dataLabelsGroup =
+                        this.initDataLabels(i, animationConfig, labelOptions);
+
                     // Options for one datalabel
                     const labelEnabled = (
                             labelOptions.enabled &&

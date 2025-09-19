@@ -907,8 +907,31 @@ class ColumnSeries extends Series {
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
             (series.trackerGroups as any).forEach(function (key: string): void {
-                if ((series as any)[key]) {
-                    // We don't always have dataLabelsGroup
+                if (key === 'dataLabelsGroup') {
+                    Object.keys(series)
+                        .filter((k): boolean => k.startsWith('dataLabelsGroup'))
+                        .forEach((dlKey): void => {
+                            const elem = (series as any)[dlKey];
+                            if (elem) {
+                                elem
+                                    .addClass('highcharts-tracker')
+                                    .on('mouseover', onMouseOver)
+                                    .on(
+                                        'mouseout',
+                                        function (e: PointerEvent): void {
+                                            pointer?.onTrackerMouseOut(e);
+                                        })
+                                    .on('touchstart', onMouseOver);
+
+                                if (
+                                    !chart.styledMode &&
+                                    series.options.cursor
+                                ) {
+                                    elem.css({ cursor: series.options.cursor });
+                                }
+                            }
+                        });
+                } else if ((series as any)[key]) {
                     (series as any)[key]
                         .addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
@@ -923,6 +946,7 @@ class ColumnSeries extends Series {
                     }
                 }
             });
+
             series._hasTracking = true;
         }
 
