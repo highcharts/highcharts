@@ -2906,6 +2906,7 @@ class Chart {
         }
 
         this.warnIfA11yModuleNotLoaded();
+        this.warnIfCSSNotLoaded();
 
         // Don't run again
         this.hasLoaded = true;
@@ -2939,6 +2940,20 @@ class Chart {
                     'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
                     false, this
                 );
+            }
+        }
+    }
+
+    /**
+     * Emit console warning if the highcharts.css file is not loaded.
+     * @private
+     */
+    public warnIfCSSNotLoaded(): void {
+        if (this.styledMode) {
+            const containerStyle = win.getComputedStyle(this.container);
+
+            if (containerStyle.zIndex !== '0') {
+                error(35, false, this);
             }
         }
     }
