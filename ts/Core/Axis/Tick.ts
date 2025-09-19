@@ -29,7 +29,6 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
-import type Time from '../Time.js';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
 
 import F from '../Templating.js';
@@ -234,25 +233,41 @@ class Tick {
         }
 
 
-        // Set the datetime label format. If a higher rank is set for this
-        // position, use that. If not, use the general format.
+        // Set the datetime label format. If a higher or lower rank is set for
+        // this position, use that. If not, use the general format.
         if (axis.dateTime) {
+            const DTLFormats = options.dateTimeLabelFormats as any;
             if (tickPositionInfo) {
+                let format;
+
+                const gridDisabled = !options.grid?.enabled;
+                let rankKey: string | undefined;
+                let rankType: 'higherRanks' | 'lowerRanks' | undefined;
+
+                if (gridDisabled && tickPositionInfo.higherRanks[pos]) {
+                    rankKey = tickPositionInfo.higherRanks[pos];
+                    rankType = 'higherRanks';
+                } else if (gridDisabled && tickPositionInfo.lowerRanks[pos]) {
+                    rankKey = tickPositionInfo.lowerRanks[pos];
+                    rankType = 'lowerRanks';
+                }
+
+                if (rankKey && rankType) {
+                    const labelFormat = DTLFormats[rankKey];
+                    if (rankType === 'higherRanks') {
+                        format = labelFormat.higherRank || labelFormat.main;
+                    } else {
+                        format = labelFormat.lowerRank || labelFormat.main;
+                    }
+                }
+
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(
-                    (options.dateTimeLabelFormats as any)[
-                        (
-                            !options.grid?.enabled &&
-                            tickPositionInfo.higherRanks[pos]
-                        ) ||
-                        tickPositionInfo.unitName
-                    ]
+                    format || DTLFormats[tickPositionInfo.unitName]
                 );
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
-                    value,
-                    options.dateTimeLabelFormats ||
-                        {} as Time.DateTimeLabelFormatsOption
+                    value, DTLFormats || {}
                 );
             }
         }

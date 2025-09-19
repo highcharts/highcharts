@@ -74,6 +74,7 @@ class Time extends TimeBase {
         const time = this,
             tickPositions = [] as TickPositionsArray,
             higherRanks = {} as Record<string, string>,
+            lowerRanks = {} as Record<string, string>,
             { count = 1, unitRange } = normalizedInterval;
 
         let [
@@ -245,18 +246,35 @@ class Time extends TimeBase {
             // Handle higher ranks. Mark new days if the time is on midnight
             // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
             // to prevent looping over dense data grouping (#6156).
-            if (unitRange <= timeUnits.hour && tickPositions.length < 10000) {
-                tickPositions.forEach((t: number): void => {
-                    if (
-                        // Speed optimization, no need to run dateFormat unless
-                        // we're on a full or half hour
-                        t % 1800000 === 0 &&
-                        // Check for local or global midnight
-                        time.dateFormat('%H%M%S%L', t) === '000000000'
-                    ) {
-                        higherRanks[t] = 'day';
-                    }
-                });
+            if (tickPositions.length < 10000) {
+                if (unitRange <= timeUnits.hour) {
+                    tickPositions.forEach((t: number): void => {
+                        if (
+                            // Speed optimization, no need to run dateFormat
+                            // unless we're on a full or half hour
+                            t % 1800000 === 0 &&
+                            // Check for local or global midnight
+                            time.dateFormat('%H%M%S%L', t) === '000000000'
+                        ) {
+                            higherRanks[t] = 'day';
+                        }
+                    });
+                }
+
+                if (
+                    unitRange <= timeUnits.month &&
+                    unitRange >= timeUnits.week
+                ) {
+                    tickPositions.forEach((t: number): void => {
+                        if (
+                            time.dateFormat('%m%d', t) === '0101'
+                        ) {
+                            higherRanks[t] = 'year';
+                        } else {
+                            lowerRanks[t] = 'month';
+                        }
+                    });
+                }
             }
         }
 
@@ -266,6 +284,7 @@ class Time extends TimeBase {
             normalizedInterval,
             {
                 higherRanks,
+                lowerRanks,
                 totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;
