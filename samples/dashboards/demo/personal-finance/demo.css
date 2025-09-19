@@ -9,6 +9,11 @@
     --highcharts-dashboards-green-transparent: #20d17e30;
 }
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 /* General */
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
