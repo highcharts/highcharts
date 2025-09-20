@@ -263,13 +263,13 @@ class Time extends TimeBase {
 
                 if (
                     unitRange <= timeUnits.month &&
-                    unitRange >= timeUnits.week
+                    unitRange > timeUnits.week
                 ) {
                     tickPositions.forEach((t: number): void => {
                         if (
                             time.dateFormat('%m%d', t) === '0101'
                         ) {
-                            higherRanks[t] = 'year';
+                            higherRanks[t] = 'month';
                         } else {
                             lowerRanks[t] = 'month';
                         }
@@ -315,6 +315,8 @@ namespace Time {
         from?: DateTimeFormat;
         list?: DateTimeFormat[];
         main: DateTimeFormat;
+        higherRank?: DateTimeFormat;
+        lowerRank?: DateTimeFormat;
         range?: boolean;
         to?: DateTimeFormat;
     }

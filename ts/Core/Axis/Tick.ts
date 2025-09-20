@@ -241,24 +241,16 @@ class Tick {
                 let format;
 
                 const gridDisabled = !options.grid?.enabled;
-                let rankKey: string | undefined;
-                let rankType: 'higherRanks' | 'lowerRanks' | undefined;
 
                 if (gridDisabled && tickPositionInfo.higherRanks[pos]) {
-                    rankKey = tickPositionInfo.higherRanks[pos];
-                    rankType = 'higherRanks';
-                } else if (gridDisabled && tickPositionInfo.lowerRanks[pos]) {
-                    rankKey = tickPositionInfo.lowerRanks[pos];
-                    rankType = 'lowerRanks';
-                }
+                    const rankKey = tickPositionInfo.higherRanks[pos];
+                    format = DTLFormats[rankKey].higherRank ||
+                        DTLFormats[rankKey].main;
 
-                if (rankKey && rankType) {
-                    const labelFormat = DTLFormats[rankKey];
-                    if (rankType === 'higherRanks') {
-                        format = labelFormat.higherRank || labelFormat.main;
-                    } else {
-                        format = labelFormat.lowerRank || labelFormat.main;
-                    }
+                } else if (gridDisabled && tickPositionInfo.lowerRanks[pos]) {
+                    const rankKey = tickPositionInfo.lowerRanks[pos];
+                    format = DTLFormats[rankKey].lowerRank ||
+                        DTLFormats[rankKey].main;
                 }
 
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(

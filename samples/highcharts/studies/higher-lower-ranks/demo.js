@@ -29,10 +29,8 @@ Highcharts.stockChart('container1', {
     }],
     xAxis: {
         dateTimeLabelFormats: {
-            year: {
-                higherRank: '%Y'
-            },
             month: {
+                higherRank: '%Y',
                 lowerRank: '%b'
             }
         }
