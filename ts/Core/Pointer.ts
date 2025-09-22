@@ -160,8 +160,6 @@ class Pointer {
 
     public selectionMarker?: SVGElement;
 
-    public tooltipTimeout?: number;
-
     public eventsToUnbind: Array<Function> = [];
 
     public unDocMouseMove?: Function;
@@ -266,9 +264,6 @@ class Pointer {
                 );
             }
         }
-
-        // Memory and CPU leak
-        clearInterval(pointer.tooltipTimeout);
 
         objectEach(pointer, function (_val, prop): void {
             pointer[prop] = void 0 as any;
