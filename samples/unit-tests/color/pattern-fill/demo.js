@@ -870,3 +870,113 @@ QUnit.test('#19980/pattern-fill/topojson', function (assert) {
             done();
         });
 });
+
+QUnit.test(
+    'anchorToPoint option creates unique pattern instances',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                series: [{
+                    type: 'column',
+                    data: [5, 10, 15],
+                    color: {
+                        pattern: {
+                            path: 'M 0 0 L 5 5',
+                            width: 10,
+                            height: 10,
+                            color: '#ff0000',
+                            anchorToPoint: true
+                        }
+                    }
+                }]
+            }),
+            points = chart.series[0].points,
+            firstPatternId = getPointFillId(points[0]),
+            secondPatternId = getPointFillId(points[1]),
+            thirdPatternId = getPointFillId(points[2]);
+
+        assert.notStrictEqual(
+            firstPatternId,
+            secondPatternId,
+            'First and second points should have different pattern IDs'
+        );
+
+        assert.notStrictEqual(
+            secondPatternId,
+            thirdPatternId,
+            'Second and third points should have different pattern IDs'
+        );
+
+        assert.ok(
+            firstPatternId.includes('anchored'),
+            'Pattern ID should indicate it is anchored'
+        );
+
+        const firstPattern = doc.getElementById(firstPatternId);
+
+        assert.strictEqual(
+            firstPattern.getAttribute('patternUnits'),
+            'objectBoundingBox',
+            'Anchored pattern should use objectBoundingBox units'
+        );
+
+        assert.strictEqual(
+            firstPattern.getAttribute('width'),
+            '1',
+            'Anchored pattern width should be normalized to 1'
+        );
+
+        assert.strictEqual(
+            firstPattern.getAttribute('height'),
+            '1',
+            'Anchored pattern height should be normalized to 1'
+        );
+    });
+
+QUnit.test(
+    'anchorToPoint false creates shared pattern instances',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                series: [{
+                    type: 'column',
+                    data: [5, 10, 15],
+                    color: {
+                        pattern: {
+                            path: 'M 0 0 L 5 5',
+                            width: 10,
+                            height: 10,
+                            color: '#ff0000',
+                            anchorToPoint: false
+                        }
+                    }
+                }]
+            }),
+            points = chart.series[0].points,
+            firstPatternId = getPointFillId(points[0]),
+            secondPatternId = getPointFillId(points[1]),
+            thirdPatternId = getPointFillId(points[2]);
+
+        assert.strictEqual(
+            firstPatternId,
+            secondPatternId,
+            'First and second points should have the same pattern ID'
+        );
+
+        assert.strictEqual(
+            secondPatternId,
+            thirdPatternId,
+            'Second and third points should have the same pattern ID'
+        );
+
+        assert.ok(
+            !firstPatternId.includes('anchored'),
+            'Pattern ID should not indicate it is anchored'
+        );
+
+        const pattern = doc.getElementById(firstPatternId);
+
+        assert.strictEqual(
+            pattern.getAttribute('patternUnits'),
+            'userSpaceOnUse',
+            'Global pattern should use userSpaceOnUse units'
+        );
+    });
