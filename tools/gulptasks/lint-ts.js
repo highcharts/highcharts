@@ -50,7 +50,7 @@ function lintTS(argv) {
         logLib.message(`Linting TS files (.ts) for ${product} ...`);
 
         processLib
-            .exec('npx eslint --quiet "' + SOURCE_GLOB + '"', {
+            .exec('npx eslint "' + SOURCE_GLOB + '"', {
                 cwd: productTSFolder
             })
             .then(() => logLib.success('Finished linting'))
