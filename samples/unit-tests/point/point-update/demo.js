@@ -412,20 +412,13 @@ QUnit.test(
 
         assert.deepEqual(
             chart.series[0].options.data[0],
-            chart.series[0].useDataTable ?
-                // x is not preserved in options, see comment in generatePoints
-                {
-                    y: 2,
-                    marker: {
-                        lineColor: 'red'
-                    }
-                } : {
-                    x: 1,
-                    y: 2,
-                    marker: {
-                        lineColor: 'red'
-                    }
-                },
+            {
+                x: 1,
+                y: 2,
+                marker: {
+                    lineColor: 'red'
+                }
+            },
             'Object with data preserved'
         );
     }

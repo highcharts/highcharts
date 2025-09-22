@@ -1520,12 +1520,20 @@ class Series {
 
                 if (!runTurbo) {
                     const columns = {
-                        x: []
-                    } as DataTable.ColumnCollection;
+                            x: []
+                        } as DataTable.ColumnCollection,
+                        xOption = [];
                     for (i = 0; i < dataLength; i++) {
                         const pt = series.pointClass.prototype.applyOptions
                             .call({ series }, data[i], void 0, true);
                         columns.x[i] = pt.x;
+
+                        // When `relativeXValue` is used, `options.x` is not the
+                        // same as the actual x value.
+                        if (defined(pt.options.x)) {
+                            xOption[i] = pt.options.x;
+                        }
+
                         for (const key of Object.keys(pt.options)) {
                             if (key !== 'x') {
                                 columns[key] ||= new Array(dataLength);
@@ -1542,6 +1550,9 @@ class Series {
                         }
                     }
 
+                    if (xOption.length) {
+                        columns['xOption'] = xOption;
+                    }
                     table.setColumns(columns);
                 }
 
@@ -2038,28 +2049,19 @@ class Series {
                         ) as unknown as PointOptions;
                 } else {
                     pOptions = table.getRowObject(i) as unknown as PointOptions;
-
-                    // We need to read the data options to be able to
-                    // distinguish between an explicit x value and a computed
-                    // one, for example when doing uniqueNames. The data table
-                    // doesn't make this distinction. Maybe we need to address
-                    // this in a different way in order to make this work with
-                    // data table as an option.
-                    const dataOption = dataOptions?.[cursor];
-                    if (!(
-                        dataOption &&
-                        isObject(dataOption, true) &&
-                        isNumber(dataOption.x)
-                    )) {
-                        delete pOptions.x;
-                    }
                 }
 
-                // #970:
-                if (
-                    !point &&
-                    pOptions !== void 0
-                ) {
+                // #970
+                if (!point && pOptions !== void 0) {
+                    if (
+                        this.useDataTable &&
+                        pOptions &&
+                        isObject(pOptions)
+                    ) {
+                        (pOptions as any).x = (pOptions as any).xOption;
+                        delete (pOptions as any).xOption;
+                    }
+
                     data[cursor] = point = new PointClass(
                         series,
                         pOptions,
