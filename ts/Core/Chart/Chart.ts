@@ -34,7 +34,7 @@ import type {
     NumberFormatterCallbackFunction,
     Options
 } from '../Options';
-import type ChartLike from './ChartLike';
+import type ChartBase from './ChartBase';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
@@ -121,16 +121,16 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Axis/AxisBase' {
+    interface AxisBase {
         extKey?: string;
         index?: number;
         touched?: boolean;
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+declare module './ChartBase' {
+    interface ChartBase {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
@@ -157,14 +157,14 @@ declare module '../Options' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike {
+declare module '../Series/PointBase' {
+    interface PointBase {
         touched?: boolean;
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         index?: number;
         touched?: boolean;
     }
@@ -4027,7 +4027,7 @@ class Chart {
  *
  * */
 
-interface Chart extends ChartLike {
+interface Chart extends ChartBase {
     callbacks: Array<Chart.CallbackFunction>;
     collectionsWithInit: Record<string, [Function, Array<any>?]>;
     collectionsWithUpdate: Array<string>;

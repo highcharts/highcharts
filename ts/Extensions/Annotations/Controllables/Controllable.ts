@@ -14,7 +14,7 @@
 
 import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
-import type ControllableLike from './ControllableLike';
+import type ControllableBase from './ControllableBase';
 import type ControllableOptions from './ControllableOptions';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -328,7 +328,7 @@ abstract class Controllable implements ControlTarget {
  *
  * */
 
-interface Controllable extends ControllableLike, ControlTarget {
+interface Controllable extends ControllableBase, ControlTarget {
     // Placeholder for additional class members
 }
 

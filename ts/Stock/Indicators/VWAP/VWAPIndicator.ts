@@ -19,7 +19,7 @@
  * */
 
 import type Chart from '../../../Core/Chart/Chart';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -108,7 +108,7 @@ class VWAPIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indicator = this,

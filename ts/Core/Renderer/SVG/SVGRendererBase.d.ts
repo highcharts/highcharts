@@ -15,17 +15,17 @@
  * */
 
 /**
- * Optional properties for the Fx class. Should be defined outside of this file
- * by `declare module` pattern.
+ * Optional properties for the SVGElement class. Should be defined outside of
+ * this file by `declare module` pattern.
  */
-export interface FxLike {
+export interface SVGRendererBase {
     // Nothing here yet
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
-export default FxLike;
+export default SVGRendererBase;

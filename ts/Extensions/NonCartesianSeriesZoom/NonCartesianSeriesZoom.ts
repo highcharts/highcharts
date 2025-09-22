@@ -47,8 +47,8 @@ interface Zooming {
     panY: number;
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         [key: `dataLabelsGroupParent${number}`]: SVGElement | undefined;
         zooming?: Zooming
     }
