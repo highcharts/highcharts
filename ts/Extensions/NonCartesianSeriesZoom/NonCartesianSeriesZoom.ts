@@ -49,7 +49,7 @@ interface Zooming {
 
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
-        [key: `dataLabelsGroupParent${number}`]: SVGElement | undefined;
+        [key: `dataLabelsParentGroup${number}`]: SVGElement | undefined;
         zooming?: Zooming
     }
 }
@@ -359,7 +359,10 @@ function onAfterDrawChartBox(this: Chart): void {
     chart.seriesGroup?.clip(clipRect);
     chart.series.forEach((series): void => {
         Object.keys(series)
-            .filter((k): k is `dataLabelsGroupParent${number}` => k.startsWith('dataLabelsGroupParent'))
+            .filter(
+                (key): key is `dataLabelsParentGroup${number}` =>
+                    key.startsWith('dataLabelsParentGroup')
+            )
             .forEach((key): void => {
                 series[key]?.clip(clipRect);
             });
@@ -420,7 +423,7 @@ function onInitDataLabelsGroup(
     { index, zIndex }: { index: number, zIndex: number }
 ): void {
     if (this.hasDataLabels?.()) {
-        this[`dataLabelsGroupParent${index}`] ||= this.chart.renderer.g()
+        this[`dataLabelsParentGroup${index}`] ||= this.chart.renderer.g()
             .attr({ zIndex })
             .add();
     }

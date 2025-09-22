@@ -313,7 +313,10 @@ class ChartAdditions {
 
                 // Hide and disable dataLabels
                 Object.keys(series)
-                    .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
+                    .filter(
+                        (k): k is `dataLabelsGroup${number}` =>
+                            k.startsWith('dataLabelsGroup')
+                    )
                     .forEach((key): void => {
                         series[key]?.destroy();
                         delete series[key];
@@ -810,7 +813,10 @@ class ChartAdditions {
                     } else {
                         // Hide and disable dataLabels
                         Object.keys(oldSeries)
-                            .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
+                            .filter(
+                                (k): k is `dataLabelsGroup${number}` =>
+                                    k.startsWith('dataLabelsGroup')
+                            )
                             .forEach((key): void => {
                                 oldSeries[key]?.destroy();
                                 delete oldSeries[key];

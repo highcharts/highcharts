@@ -514,7 +514,7 @@ namespace DataLabel {
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
             dataLabelsOptions?.zIndex || 6,
-            this[`dataLabelsGroupParent${index}`]
+            this[`dataLabelsParentGroup${index}`]
         );
 
         if (index === 0) {

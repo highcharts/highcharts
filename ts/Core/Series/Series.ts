@@ -4297,7 +4297,7 @@ class Series {
 
         groups.push(
             ...Object.keys(series).filter((k): boolean => (
-                k.startsWith('dataLabelsGroupParent')
+                k.startsWith('dataLabelsParentGroup')
             ))
         );
 
