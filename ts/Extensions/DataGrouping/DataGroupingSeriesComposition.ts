@@ -688,7 +688,7 @@ function groupData(
                         .optionsToObject.call(
                             { series },
                             this.useDataTable ?
-                                topTable.getRow(
+                                topTable.getRowObject(
                                     cropStart + start
                                 ) as unknown as PointOptions :
                                 (dataOptions?.[cropStart + start] || {})
