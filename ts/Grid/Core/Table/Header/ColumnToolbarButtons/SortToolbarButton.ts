@@ -22,7 +22,6 @@
  *
  * */
 
-import type ColumnSorting from '../../Actions/ColumnSorting.js';
 import type ColumnToolbar from '../ColumnToolbar.js';
 
 import ToolbarButton from '../../../UI/ToolbarButton.js';
@@ -47,11 +46,6 @@ class SortToolbarButton extends ToolbarButton {
      * */
 
     public override toolbar?: ColumnToolbar;
-
-    /**
-     * Used to remove the event listeners when the button is destroyed.
-     */
-    private eventListenerDestroyers: Function[] = [];
 
 
     /* *
@@ -79,6 +73,26 @@ class SortToolbarButton extends ToolbarButton {
         this.toolbar?.column.sorting?.toggle();
     }
 
+    protected override refreshState(): void {
+        const {
+            currentSorting
+        } = this.toolbar?.column.viewport.grid.querying.sorting || {};
+
+        if (
+            currentSorting?.columnId === this.toolbar?.column.id &&
+            currentSorting?.order
+        ) {
+            this.setIcon(
+                currentSorting.order === 'asc' ? 'chevronUp' : 'chevronDown'
+            );
+            this.setActive(true);
+            return;
+        }
+
+        this.setIcon('chevronSelector');
+        this.setActive(false);
+    }
+
     protected override addEventListeners(): void {
         super.addEventListeners();
 
@@ -87,48 +101,18 @@ class SortToolbarButton extends ToolbarButton {
             return;
         }
 
-        // If this column is currently sorted, update the icon
+        // If this grid is currently sorted, update the state
         this.eventListenerDestroyers.push(
             addEvent(
                 column.viewport.grid,
                 'afterSorting',
-                (e: ColumnSorting.Event): void => {
-
-                    if (e.target !== column) {
-                        this.setIcon('chevronSelector');
-                        this.setActive(false);
-                        return;
-                    }
-
-                    switch (e.order) {
-                        case 'asc':
-                            this.setIcon('chevronDown');
-                            this.setActive(true);
-                            break;
-                        case 'desc':
-                            this.setIcon('chevronUp');
-                            this.setActive(true);
-                            break;
-                        default:
-                            this.setIcon('chevronSelector');
-                            this.setActive(false);
-                            break;
-                    }
-                }
+                (): void => this.refreshState()
             )
         );
     }
 
     protected override renderActiveIndicator(): void {
         // Do nothing
-    }
-
-    protected override removeEventListeners(): void {
-        super.removeEventListeners();
-
-        for (const destroyer of this.eventListenerDestroyers) {
-            destroyer();
-        }
     }
 }
 

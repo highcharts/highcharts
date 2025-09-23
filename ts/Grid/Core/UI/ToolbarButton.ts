@@ -56,6 +56,16 @@ class ToolbarButton {
     public toolbar?: Toolbar;
 
     /**
+     * Used to remove the event listeners when the button is destroyed.
+     */
+    protected eventListenerDestroyers: Function[] = [];
+
+    /**
+     * Whether the button is active.
+     */
+    protected isActive: boolean = false;
+
+    /**
      * The options for the toolbar button.
      */
     private options: ToolbarButton.Options;
@@ -66,11 +76,6 @@ class ToolbarButton {
     private icon?: SVGElement;
 
     /**
-     * Whether the button is active.
-     */
-    private isActive: boolean = false;
-
-    /**
      * The button element.
      */
     private buttonEl?: HTMLButtonElement;
@@ -79,11 +84,6 @@ class ToolbarButton {
      * The active indicator for the button.
      */
     private activeIndicator?: HTMLDivElement;
-
-    /**
-     * The click listener for the button.
-     */
-    private clickListener?: (event: MouseEvent) => void;
 
 
     /* *
@@ -135,6 +135,7 @@ class ToolbarButton {
         }
 
         this.setIcon(cfg.icon);
+        this.refreshState();
         this.addEventListeners();
 
         return this;
@@ -179,10 +180,18 @@ class ToolbarButton {
      */
     public destroy(): void {
         this.removeEventListeners();
+        this.wrapper?.remove();
 
         // Unregister from toolbar
         this.toolbar?.buttons.splice(this.toolbar.buttons.indexOf(this), 1);
         delete this.toolbar;
+    }
+
+    /**
+     * Initializes the state of the button.
+     */
+    protected refreshState(): void {
+        // Do nothing, to be overridden by subclasses
     }
 
     /**
@@ -225,20 +234,22 @@ class ToolbarButton {
      * Adds event listeners to the button.
      */
     protected addEventListeners(): void {
-        this.clickListener = (event: MouseEvent): void => {
+        const clickListener = (event: MouseEvent): void => {
             this.clickHandler(event);
         };
 
-        this.buttonEl?.addEventListener('click', this.clickListener);
+        this.buttonEl?.addEventListener('click', clickListener);
+        this.eventListenerDestroyers.push((): void => {
+            this.buttonEl?.removeEventListener('click', clickListener);
+        });
     }
 
     /**
      * Removes event listeners from the button.
      */
-    protected removeEventListeners(): void {
-        if (this.clickListener) {
-            this.buttonEl?.removeEventListener('click', this.clickListener);
-            delete this.clickListener;
+    private removeEventListeners(): void {
+        for (const destroyer of this.eventListenerDestroyers) {
+            destroyer();
         }
     }
 }

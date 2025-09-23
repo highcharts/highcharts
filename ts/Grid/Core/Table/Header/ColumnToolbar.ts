@@ -29,6 +29,8 @@ import GridUtils from '../../GridUtils.js';
 import Globals from '../../Globals.js';
 import ToolbarButton from '../../UI/ToolbarButton.js';
 import SortToolbarButton from './ColumnToolbarButtons/SortToolbarButton.js';
+import FilterToolbarButton from './ColumnToolbarButtons/FilterToolbarButton.js';
+import MenuToolbarButton from './ColumnToolbarButtons/MenuToolbarButton.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -40,6 +42,8 @@ const { makeHTMLElement } = GridUtils;
  * */
 
 class HeaderCellToolbar implements Toolbar {
+
+    static MINIMIZED_COLUMN_WIDTH: number = 120;
 
     /* *
      *
@@ -55,6 +59,10 @@ class HeaderCellToolbar implements Toolbar {
     public buttons: ToolbarButton[] = [];
 
     public container?: HTMLDivElement;
+
+    private isMinimized?: boolean;
+
+    private columnResizeObserver?: ResizeObserver;
 
 
     /* *
@@ -77,7 +85,7 @@ class HeaderCellToolbar implements Toolbar {
     /**
      * Initializes the buttons of the toolbar.
      */
-    private addButtons(): void {
+    private renderFull(): void {
         const columnOptions = this.column.options;
 
         if (columnOptions.sorting?.sortable) {
@@ -88,36 +96,64 @@ class HeaderCellToolbar implements Toolbar {
             columnOptions.filtering?.enabled &&
             !columnOptions.filtering.inline
         ) {
-            new ToolbarButton({
-                icon: 'filter',
-                classNameKey: 'headerCellFilterIcon'
-            }).add(this);
+            new FilterToolbarButton().add(this);
         }
+    }
+
+    private renderMinimized(): void {
+        new MenuToolbarButton().add(this);
     }
 
     /**
      * Render the toolbar.
      */
-    public render(): void {
+    public add(): void {
         const headerCell = this.column.header;
         if (!headerCell?.container) {
             return;
         }
 
+        if (this.columnResizeObserver) {
+            this.columnResizeObserver.disconnect();
+            delete this.columnResizeObserver;
+        }
+
+        this.columnResizeObserver = new ResizeObserver(
+            (): void => this.reflow()
+        );
+        this.columnResizeObserver.observe(headerCell.container);
+
         const container = this.container = makeHTMLElement('div', {
             className: Globals.getClassName('headerCellIcons')
         });
 
-        this.addButtons();
-
         headerCell.container.appendChild(container);
+    }
+
+    public clearButtons(): void {
+        while (this.buttons.length > 0) {
+            this.buttons[this.buttons.length - 1].destroy();
+        }
     }
 
     /**
      * Reflows the toolbar. It is called when the column is resized.
      */
     public reflow(): void {
-        // TODO: Implement
+        const width = this.column.getWidth();
+        const shouldBeMinimized =
+            width <= HeaderCellToolbar.MINIMIZED_COLUMN_WIDTH;
+
+        if (this.isMinimized !== shouldBeMinimized) {
+            this.isMinimized = shouldBeMinimized;
+
+            this.clearButtons();
+            if (shouldBeMinimized) {
+                this.renderMinimized();
+            } else {
+                this.renderFull();
+            }
+        }
     }
 
     /**
@@ -138,7 +174,8 @@ class HeaderCellToolbar implements Toolbar {
      * Destroy the toolbar.
      */
     public destroy(): void {
-        // TODO: Implement
+        this.columnResizeObserver?.disconnect();
+        delete this.columnResizeObserver;
     }
 }
 

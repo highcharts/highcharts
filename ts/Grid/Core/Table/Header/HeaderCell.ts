@@ -225,7 +225,7 @@ class HeaderCell extends Cell {
 
             // Add toolbar
             this.toolbar = new ColumnToolbar(column);
-            this.toolbar.render();
+            this.toolbar.add();
 
             // Add sorting
             this.initColumnSorting();
