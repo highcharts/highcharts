@@ -260,9 +260,7 @@ class HeaderCell extends Cell {
         }
 
         if (e.key === 'Enter') {
-            if (this.toolbar) {
-                this.toolbar.buttons[0].focus();
-            }
+            this.toolbar?.focus();
             e.preventDefault();
             return;
         }
@@ -323,17 +321,6 @@ class HeaderCell extends Cell {
         this.toolbar?.destroy();
         super.destroy();
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace HeaderCell {
-
 }
 
 

@@ -43,6 +43,9 @@ const { makeHTMLElement } = GridUtils;
 
 class HeaderCellToolbar implements Toolbar {
 
+    /**
+     * The maximum width of the column to be minimized.
+     */
     static MINIMIZED_COLUMN_WIDTH: number = 120;
 
     /* *
@@ -83,7 +86,7 @@ class HeaderCellToolbar implements Toolbar {
     private eventListenerDestroyers: Function[] = [];
 
     /**
-     * The focus cursor of the toolbar.
+     * The index of the focused button in the toolbar.
      */
     private focusCursor: number = 0;
 
@@ -204,22 +207,30 @@ class HeaderCellToolbar implements Toolbar {
     }
 
     /**
+     * Focuses the first button of the toolbar.
+     */
+    public focus(): void {
+        this.focusCursor = 0;
+        this.buttons[0]?.focus();
+    }
+
+    /**
      * Handles the key down event on the toolbar.
      *
      * @param e
      * Keyboard event object.
      */
     private keyDownHandler(e: KeyboardEvent): void {
-        const bLen = this.buttons.length;
+        const len = this.buttons.length;
         switch (e.key) {
             case 'ArrowLeft':
                 this.focusCursor = Math.abs(
-                    (this.focusCursor - 1 + bLen) % bLen
+                    (this.focusCursor - 1 + len) % len
                 );
                 this.buttons[this.focusCursor].focus();
                 break;
             case 'ArrowRight':
-                this.focusCursor = (this.focusCursor + 1) % bLen;
+                this.focusCursor = (this.focusCursor + 1) % len;
                 this.buttons[this.focusCursor].focus();
                 break;
             case 'Escape':
