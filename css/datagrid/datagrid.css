@@ -191,7 +191,7 @@
     /* Header padding */
     --ig-header-horizontal-padding: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
     --ig-header-vertical-padding: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
-    --ig-header-padding: var(--ig-header-vertical-padding) max(var(--ig-header-horizontal-padding), 20px) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
+    --ig-header-padding: var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
 
     /* Caption padding */
     --ig-caption-horizontal-padding: var(--hcg-caption-horizontal-padding, var(--hcg-caption-padding, var(--ig-horizontal-padding)));

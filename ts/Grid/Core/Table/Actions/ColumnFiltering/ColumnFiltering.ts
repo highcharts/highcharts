@@ -70,11 +70,6 @@ class ColumnFiltering {
     public inlineCell?: FilterCell;
 
     /**
-     * The container element of the filtering content.
-     */
-    public container?: HTMLElement;
-
-    /**
      * The input element for the filtering. Can be of type `text`, `number`
      * or `date`.
      */
@@ -271,11 +266,10 @@ class ColumnFiltering {
      * The container element.
      */
     public renderFilteringContent(container: HTMLElement): void {
-        this.container = container;
         const column = this.column;
         const filteringOptions = column.options?.filtering;
 
-        if (!column || !filteringOptions?.enabled || !filteringOptions.inline) {
+        if (!column || !filteringOptions?.enabled) {
             return;
         }
 

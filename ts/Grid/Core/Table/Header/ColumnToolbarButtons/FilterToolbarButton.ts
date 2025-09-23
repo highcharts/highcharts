@@ -72,10 +72,28 @@ class FilterToolbarButton extends ToolbarButton {
      * */
 
     protected override refreshState(): void {
-        const filterOptions = this.toolbar?.column.options.filtering;
-        this.setActive(
-            !!(filterOptions?.condition && filterOptions.value) || false
-        );
+        const {
+            condition,
+            value
+        } = this.toolbar?.column.options.filtering || {};
+
+        this.setActive(!!(condition && (
+            ['empty', 'notEmpty'].includes(condition) ||
+            value !== void 0
+        )));
+    }
+
+    protected override addEventListeners(): void {
+        super.addEventListeners();
+
+        const toolbar = this.toolbar;
+        if (!toolbar) {
+            return;
+        }
+
+        addEvent(toolbar.column, 'afterFiltering', (): void => {
+            this.refreshState();
+        });
     }
 
     protected override clickHandler(event: MouseEvent): void {
@@ -99,7 +117,7 @@ class FilterToolbarButton extends ToolbarButton {
             );
         }
 
-        this.popup?.toggle(this.wrapper);
+        this.popup.toggle(this.wrapper);
     }
 }
 
