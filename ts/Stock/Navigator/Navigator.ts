@@ -2064,7 +2064,9 @@ class Navigator {
         if (navigatorSeries && !navigator.hasNavigatorData) {
             navigatorSeries.options.pointStart = baseSeries.getColumn('x')[0];
             navigatorSeries.setData(
-                baseSeries.options.data,
+                baseSeries.useDataTable ?
+                    baseSeries.dataTable :
+                    baseSeries.options.data,
                 false,
                 void 0,
                 false
