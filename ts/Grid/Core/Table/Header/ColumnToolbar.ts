@@ -157,20 +157,6 @@ class HeaderCellToolbar implements Toolbar {
     }
 
     /**
-     * Hide the toolbar.
-     */
-    public hideInactiveButtons(): void {
-        // TODO: Implement
-    }
-
-    /**
-     * Show the toolbar.
-     */
-    public showInactiveButtons(): void {
-        // TODO: Implement
-    }
-
-    /**
      * Destroy the toolbar.
      */
     public destroy(): void {

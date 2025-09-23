@@ -65,6 +65,13 @@ class FilterToolbarButton extends ToolbarButton {
      *
      * */
 
+    protected override refreshState(): void {
+        const filterOptions = this.toolbar?.column.options.filtering;
+        this.setActive(
+            !!(filterOptions?.condition && filterOptions.value) || false
+        );
+    }
+
     protected override clickHandler(event: MouseEvent): void {
         super.clickHandler(event);
         this.setActive(!this.isActive);

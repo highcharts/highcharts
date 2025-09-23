@@ -317,6 +317,11 @@ class HeaderCell extends Cell {
 
         return lastViewportColumn === lastCellColumn;
     }
+
+    public override destroy(): void {
+        this.toolbar?.destroy();
+        super.destroy();
+    }
 }
 
 
