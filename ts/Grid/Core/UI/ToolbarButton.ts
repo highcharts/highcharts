@@ -142,6 +142,13 @@ class ToolbarButton {
     }
 
     /**
+     * Focuses the button.
+     */
+    public focus(): void {
+        this.buttonEl?.focus();
+    }
+
+    /**
      * Sets the icon for the button.
      *
      * @param icon

@@ -56,13 +56,36 @@ class HeaderCellToolbar implements Toolbar {
      */
     public column: Column;
 
+    /**
+     * The buttons of the toolbar.
+     */
     public buttons: ToolbarButton[] = [];
 
+    /**
+     * The container of the toolbar.
+     */
     public container?: HTMLDivElement;
 
+    /**
+     * Whether the toolbar is minimized. If true, the toolbar will only show
+     * the context menu button.
+     */
     private isMinimized?: boolean;
 
+    /**
+     * The resize observer of the column.
+     */
     private columnResizeObserver?: ResizeObserver;
+
+    /**
+     * The event listener destroyers of the toolbar.
+     */
+    private eventListenerDestroyers: Function[] = [];
+
+    /**
+     * The focus cursor of the toolbar.
+     */
+    private focusCursor: number = 0;
 
 
     /* *
@@ -128,11 +151,23 @@ class HeaderCellToolbar implements Toolbar {
         });
 
         headerCell.container.appendChild(container);
+
+        const onKeyDown = (e: KeyboardEvent): void => {
+            this.keyDownHandler(e);
+        };
+        container.addEventListener('keydown', onKeyDown);
+        this.eventListenerDestroyers.push((): void => {
+            container.removeEventListener('keydown', onKeyDown);
+        });
     }
 
+    /**
+     * Destroys all buttons of the toolbar.
+     */
     public clearButtons(): void {
-        while (this.buttons.length > 0) {
-            this.buttons[this.buttons.length - 1].destroy();
+        const { buttons } = this;
+        while (buttons.length > 0) {
+            buttons[buttons.length - 1].destroy();
         }
     }
 
@@ -144,7 +179,7 @@ class HeaderCellToolbar implements Toolbar {
         const shouldBeMinimized =
             width <= HeaderCellToolbar.MINIMIZED_COLUMN_WIDTH;
 
-        if (this.isMinimized !== shouldBeMinimized) {
+        if (shouldBeMinimized !== this.isMinimized) {
             this.isMinimized = shouldBeMinimized;
 
             this.clearButtons();
@@ -160,8 +195,37 @@ class HeaderCellToolbar implements Toolbar {
      * Destroy the toolbar.
      */
     public destroy(): void {
+        for (const destroyer of this.eventListenerDestroyers) {
+            destroyer();
+        }
+
         this.columnResizeObserver?.disconnect();
         delete this.columnResizeObserver;
+    }
+
+    /**
+     * Handles the key down event on the toolbar.
+     *
+     * @param e
+     * Keyboard event object.
+     */
+    private keyDownHandler(e: KeyboardEvent): void {
+        const bLen = this.buttons.length;
+        switch (e.key) {
+            case 'ArrowLeft':
+                this.focusCursor = Math.abs(
+                    (this.focusCursor - 1 + bLen) % bLen
+                );
+                this.buttons[this.focusCursor].focus();
+                break;
+            case 'ArrowRight':
+                this.focusCursor = (this.focusCursor + 1) % bLen;
+                this.buttons[this.focusCursor].focus();
+                break;
+            case 'Escape':
+                this.column.header?.htmlElement.focus();
+                break;
+        }
     }
 }
 

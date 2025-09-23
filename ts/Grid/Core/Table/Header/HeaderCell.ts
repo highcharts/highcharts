@@ -260,9 +260,10 @@ class HeaderCell extends Cell {
         }
 
         if (e.key === 'Enter') {
-            if (this.column.options.sorting?.sortable) {
-                this.column.sorting?.toggle();
+            if (this.toolbar) {
+                this.toolbar.buttons[0].focus();
             }
+            e.preventDefault();
             return;
         }
 
