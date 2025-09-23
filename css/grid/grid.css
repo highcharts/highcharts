@@ -463,13 +463,6 @@
     transition: all 0.3s ease;
 }
 
-/* Legacy filter icon styles (deprecated - now handled by generic .hcg-header-cell-icons) */
-.hcg-header-cell-filter-icon img {
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-}
-
 /* Generic button styling for Grid */
 .hcg-button {
     background: var(--ig-button-background);
@@ -490,7 +483,12 @@
 /* Focus/A11Y - keyboard accessibility */
 .hcg-button:focus-visible {
     outline: none;
+    background: var(--ig-button-hover-background);
     box-shadow: 0 0 0 2px var(--hcg-header-background, #ffffff), 0 0 0 5px var(--hcg-focus-ring-color, #626bd0);
+}
+
+.hcg-button:focus-visible .hcg-icon {
+    color: var(--ig-icon-hover-color);
 }
 
 /* Generic icon styling for Grid */
@@ -528,18 +526,11 @@
 .hcg-table thead th:focus-visible .hcg-header-cell-icons,
 .hcg-table thead th:focus-within .hcg-header-cell-icons,
 .hcg-header-cell-icons:hover,
-.hcg-header-cell-icons.has-active-icons {
+.hcg-header-cell-icons:has(.hcg-button.highlighted),
+.hcg-header-cell-icons:has(.hcg-button.active) {
     max-width: 100px;
     margin-left: 8px;
     opacity: 1;
-}
-
-/* Individual icon containers */
-.hcg-header-cell-filter-icon,
-.hcg-header-cell-sort-icon,
-.hcg-header-cell-menu-icon {
-    display: flex;
-    align-items: center;
 }
 
 /* Generic icon button styling - applies to all header icons */
@@ -553,29 +544,12 @@
     margin-right: 2px;
 }
 
-/* Sort icon state styles */
-.hcg-header-cell-sort-icon.sort-asc .hcg-icon {
-    transform: rotate(180deg);
-}
-
-.hcg-header-cell-sort-icon.sort-desc .hcg-icon {
-    transform: rotate(0deg);
-}
-
-.hcg-header-cell-sort-icon.sort-none .hcg-icon {
-    opacity: 0.6;
-}
-
-/* Sort icon transitions */
-.hcg-header-cell-sort-icon .hcg-icon {
-    transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
 /* Active icon styling - icons that are in an active state */
-.hcg-header-cell-icons .hcg-button.active {
+.hcg-header-cell-icons .hcg-button.highlighted {
     background: var(--ig-button-hover-background);
 }
 
+.hcg-header-cell-icons .hcg-button.highlighted .hcg-icon,
 .hcg-header-cell-icons .hcg-button.active .hcg-icon {
     color: var(--ig-icon-hover-color);
 }
@@ -583,21 +557,13 @@
 /* Active indicator dot - positioned at top right of button */
 .hcg-active-indicator {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
+    top: 2px;
+    right: 2px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    background: var(--hcg-focus-ring-color, #626bd0);
+    background: var(--ig-icon-hover-color, #626bd0);
     pointer-events: none;
-}
-
-/* Active indicator icon styling */
-.hcg-active-indicator-icon {
-    width: 6px;
-    height: 6px;
-    color: var(--hcg-focus-ring-color, #626bd0);
-    fill: currentcolor;
 }
 
 /* Make button relative for absolute positioning of indicator */

@@ -102,7 +102,8 @@ namespace Globals {
         paginationWrapper: 'pagination-wrapper',
         popup: 'popup',
         popupContent: 'popup-content',
-        columnFilterWrapper: 'column-filter-wrapper'
+        columnFilterWrapper: 'column-filter-wrapper',
+        toolbarButtonActiveIndicator: 'active-indicator'
     } as const;
 
     export const win = window;

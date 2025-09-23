@@ -56,10 +56,8 @@ namespace SvgIcons {
 
         chevronDown: 'M6 9L12 15L18 9',
 
-        chevronSelector: 'M7 15L12 20L17 15M7 9L12 4L17 9',
+        chevronSelector: 'M7 15L12 20L17 15M7 9L12 4L17 9'
 
-        // Active indicator dot - small circle for showing active state
-        activeIndicator: 'M12 12m-3 0a3 3 0 1 1 6 0a3 3 0 1 1 -6 0'
     } as const;
 
 

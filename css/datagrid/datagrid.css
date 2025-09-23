@@ -479,15 +479,9 @@
     transition: all 0.3s ease;
 }
 
-/* Legacy filter icon styles (deprecated - now handled by generic .hcg-header-cell-icons) */
-.hcg-header-cell-filter-icon img {
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-}
-
 /* Generic button styling for Grid */
-.hcg-button {
+.hcg-button,
+.highcharts-datagrid-button {
     background: var(--ig-button-background);
     padding: var(--ig-button-padding);
     border-radius: var(--ig-button-border-radius);
@@ -499,18 +493,27 @@
     justify-content: center;
 }
 
-.hcg-button:hover {
+.hcg-button:hover,
+.highcharts-datagrid-button:hover {
     background: var(--ig-button-hover-background);
 }
 
 /* Focus/A11Y - keyboard accessibility */
-.hcg-button:focus-visible {
+.hcg-button:focus-visible,
+.highcharts-datagrid-button:focus-visible {
     outline: none;
+    background: var(--ig-button-hover-background);
     box-shadow: 0 0 0 2px var(--hcg-header-background, #ffffff), 0 0 0 5px var(--hcg-focus-ring-color, #626bd0);
 }
 
+.hcg-button:focus-visible .hcg-icon,
+.highcharts-datagrid-button:focus-visible .highcharts-datagrid-icon {
+    color: var(--ig-icon-hover-color);
+}
+
 /* Generic icon styling */
-.hcg-icon {
+.hcg-icon,
+.highcharts-datagrid-icon {
     width: 20px;
     height: 20px;
     color: var(--ig-icon-color);
@@ -519,11 +522,13 @@
 }
 
 /* Icons inherit currentColor */
-.hcg-icon path {
+.hcg-icon path,
+.highcharts-datagrid-icon path {
     stroke: currentcolor;
 }
 
-.hcg-button:hover .hcg-icon {
+.hcg-button:hover .hcg-icon,
+.highcharts-datagrid-button:hover .highcharts-datagrid-icon {
     color: var(--ig-icon-hover-color);
 }
 
@@ -551,9 +556,9 @@
 .highcharts-datagrid-table thead th:focus-visible .highcharts-datagrid-header-cell-icons,
 .highcharts-datagrid-table thead th:focus-within .highcharts-datagrid-header-cell-icons,
 .hcg-header-cell-icons:hover,
-.hcg-header-cell-icons.has-active-icons,
+.hcg-header-cell-icons:has(.hcg-button.highlighted),
 .highcharts-datagrid-header-cell-icons:hover,
-.highcharts-datagrid-header-cell-icons.has-active-icons {
+.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button.highlighted) {
     max-width: 100px;
     margin-left: 8px;
     opacity: 1;
@@ -562,7 +567,10 @@
 /* Individual icon containers */
 .hcg-header-cell-filter-icon,
 .hcg-header-cell-sort-icon,
-.hcg-header-cell-menu-icon {
+.hcg-header-cell-menu-icon,
+.highcharts-datagrid-header-cell-filter-icon,
+.highcharts-datagrid-header-cell-sort-icon,
+.highcharts-datagrid-header-cell-menu-icon {
     display: flex;
     align-items: center;
 }
@@ -579,18 +587,14 @@
     margin-right: 2px;
 }
 
-/* Sort icon states */
-.hcg-header-cell-sort-icon.sort-asc .hcg-icon { transform: rotate(180deg); }
-.hcg-header-cell-sort-icon.sort-desc .hcg-icon { transform: rotate(0deg); }
-.hcg-header-cell-sort-icon.sort-none .hcg-icon { opacity: 0.6; }
-.hcg-header-cell-sort-icon .hcg-icon { transition: transform 0.2s ease, opacity 0.2s ease; }
-
 /* Active icon styling - icons that are in an active state */
-.hcg-header-cell-icons .hcg-button.active,
-.highcharts-datagrid-header-cell-icons .hcg-button.active {
+.hcg-header-cell-icons .hcg-button.highlighted,
+.highcharts-datagrid-header-cell-icons .hcg-button.highlighted {
     background: var(--ig-button-hover-background);
 }
 
+.hcg-header-cell-icons .hcg-button.highlighted .hcg-icon,
+.highcharts-datagrid-header-cell-icons .hcg-button.highlighted .hcg-icon,
 .hcg-header-cell-icons .hcg-button.active .hcg-icon,
 .highcharts-datagrid-header-cell-icons .hcg-button.active .hcg-icon {
     color: var(--ig-icon-hover-color);
@@ -600,12 +604,12 @@
 .hcg-active-indicator,
 .highcharts-datagrid-active-indicator {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
+    top: 2px;
+    right: 2px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    background: var(--hcg-focus-ring-color, #626bd0);
+    background: var(--ig-icon-hover-color, #626bd0);
     pointer-events: none;
 }
 

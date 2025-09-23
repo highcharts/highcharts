@@ -28,6 +28,7 @@ import type Column from '../Column';
 import GridUtils from '../../GridUtils.js';
 import Globals from '../../Globals.js';
 import ToolbarButton from '../../UI/ToolbarButton.js';
+import SortToolbarButton from './ColumnToolbarButtons/SortToolbarButton.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -80,10 +81,7 @@ class HeaderCellToolbar implements Toolbar {
         const columnOptions = this.column.options;
 
         if (columnOptions.sorting?.sortable) {
-            new ToolbarButton({
-                icon: 'chevronSelector',
-                classNameKey: 'headerCellSortIcon'
-            }).add(this);
+            new SortToolbarButton().add(this);
         }
 
         if (

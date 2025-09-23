@@ -53,7 +53,7 @@ class ToolbarButton {
     /**
      * The toolbar that the button belongs to.
      */
-    private toolbar?: Toolbar;
+    public toolbar?: Toolbar;
 
     /**
      * The options for the toolbar button.
@@ -74,6 +74,11 @@ class ToolbarButton {
      * The button element.
      */
     private buttonEl?: HTMLButtonElement;
+
+    /**
+     * The active indicator for the button.
+     */
+    private activeIndicator?: HTMLDivElement;
 
     /**
      * The click listener for the button.
@@ -156,6 +161,17 @@ class ToolbarButton {
     public setActive(active: boolean): void {
         this.isActive = active;
         this.buttonEl?.classList.toggle('active', active);
+        this.renderActiveIndicator(active);
+    }
+
+    /**
+     * Sets the highlighted state of the button.
+     *
+     * @param highlighted
+     * Whether the button should be highlighted.
+     */
+    public setHighlighted(highlighted: boolean): void {
+        this.buttonEl?.classList.toggle('highlighted', highlighted);
     }
 
     /**
@@ -170,13 +186,47 @@ class ToolbarButton {
     }
 
     /**
+     * Handles the click event for the button.
+     *
+     * @param event
+     * The mouse event.
+     */
+    protected clickHandler(event: MouseEvent): void {
+        if (this.options.onClick) {
+            this.options.onClick(event, this);
+        }
+    }
+
+    /**
+     * Renders the active indicator for the button.
+     *
+     * @param render
+     * Whether the active indicator should be rendered.
+     */
+    protected renderActiveIndicator(render: boolean): void {
+        const button = this.buttonEl;
+        if (!button) {
+            return;
+        }
+
+        this.activeIndicator?.remove();
+
+        if (!render) {
+            delete this.activeIndicator;
+            return;
+        }
+
+        this.activeIndicator = makeHTMLElement('div', {
+            className: Globals.getClassName('toolbarButtonActiveIndicator')
+        }, button);
+    }
+
+    /**
      * Adds event listeners to the button.
      */
-    private addEventListeners(): void {
+    protected addEventListeners(): void {
         this.clickListener = (event: MouseEvent): void => {
-            if (this.options.onClick) {
-                this.options.onClick(event, this);
-            }
+            this.clickHandler(event);
         };
 
         this.buttonEl?.addEventListener('click', this.clickListener);
@@ -185,7 +235,7 @@ class ToolbarButton {
     /**
      * Removes event listeners from the button.
      */
-    private removeEventListeners(): void {
+    protected removeEventListeners(): void {
         if (this.clickListener) {
             this.buttonEl?.removeEventListener('click', this.clickListener);
             delete this.clickListener;
