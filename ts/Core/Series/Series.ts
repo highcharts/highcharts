@@ -1617,7 +1617,7 @@ class Series {
                         const queueRedraw = (): void => {
                             clearTimeout(chart.redrawTimeout);
                             chart.redrawTimeout = setTimeout(
-                                (): void => chart.redraw(),
+                                (): void => chart.renderer && chart.redraw(),
                                 0
                             );
                         };
