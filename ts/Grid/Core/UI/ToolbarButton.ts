@@ -146,6 +146,11 @@ class ToolbarButton {
      */
     public focus(): void {
         this.buttonEl?.focus();
+
+        const tb = this.toolbar;
+        if (tb) {
+            tb.focusCursor = tb.buttons.indexOf(this);
+        }
     }
 
     /**

@@ -88,24 +88,7 @@ class FilterCell extends HeaderCell {
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {
-        const filtering = this.column.filtering;
-        if (!filtering) {
-            return;
-        }
-
-        const contentOrder: HTMLElement[] = [];
-        if (filtering.filterInput) {
-            contentOrder.push(filtering.filterInput);
-        }
-        if (filtering.filterSelect) {
-            contentOrder.push(filtering.filterSelect);
-        }
-
-        if (e.key === 'Enter') {
-            const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
-            contentOrder[(currentIndex + 1) % contentOrder.length].focus();
-            return;
-        }
+        this.column.filtering?.onKeyDown(e);
 
         if (e.target === this.htmlElement) {
             super.onKeyDown(e);

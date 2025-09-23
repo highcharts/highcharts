@@ -105,7 +105,7 @@ class FilterToolbarButton extends ToolbarButton {
         }
 
         if (!this.popup) {
-            this.popup = new FilterPopup(filtering);
+            this.popup = new FilterPopup(filtering, this);
 
             this.eventListenerDestroyers.push(
                 addEvent(this.popup, 'afterShow', (): void => {

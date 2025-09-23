@@ -22,6 +22,8 @@
  *
  * */
 
+import type FilterToolbarButton from '../../Header/ColumnToolbarButtons/FilterToolbarButton.js';
+
 import ColumnFiltering from './ColumnFiltering.js';
 import Popup from '../../../UI/Popup.js';
 
@@ -49,6 +51,11 @@ class FilterPopup extends Popup {
      */
     public filtering: ColumnFiltering;
 
+    /**
+     * The toolbar button that opened the popup.
+     */
+    public button: FilterToolbarButton;
+
 
     /* *
      *
@@ -61,10 +68,17 @@ class FilterPopup extends Popup {
      *
      * @param filtering
      * The column filtering.
+     *
+     * @param toolbarButton
+     * The toolbar button that opened the popup.
      */
-    constructor(filtering: ColumnFiltering) {
+    constructor(
+        filtering: ColumnFiltering,
+        toolbarButton: FilterToolbarButton
+    ) {
         super(filtering.column.viewport.grid);
         this.filtering = filtering;
+        this.button = toolbarButton;
     }
 
 
@@ -76,6 +90,20 @@ class FilterPopup extends Popup {
 
     protected override renderContent(contentElement: HTMLElement): void {
         this.filtering.renderFilteringContent(contentElement);
+    }
+
+    public override show(anchorElement?: HTMLElement): void {
+        super.show(anchorElement);
+        this.filtering.filterSelect?.focus();
+    }
+
+    protected override onKeyDown(event: KeyboardEvent): void {
+        this.filtering.onKeyDown(event);
+
+        if (event.key === 'Escape') {
+            this.hide();
+            this.button.focus();
+        }
     }
 }
 

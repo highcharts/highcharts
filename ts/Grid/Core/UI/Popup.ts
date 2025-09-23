@@ -75,14 +75,9 @@ abstract class Popup {
     public anchorElement?: HTMLElement;
 
     /**
-     * Event listener for click outside the popup.
+     * Event listener destroyers.
      */
-    private clickOutsideListener?: (event: MouseEvent) => void;
-
-    /**
-     * Event listener for escape key.
-     */
-    private escapeKeyListener?: (event: KeyboardEvent) => void;
+    protected eventListenerDestroyers: (() => void)[] = [];
 
 
     /* *
@@ -225,11 +220,17 @@ abstract class Popup {
         ) ? '0' : 'auto';
     }
 
+    protected onKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            this.hide();
+        }
+    }
+
     /**
      * Adds event listeners for click outside and escape key.
      */
-    private addEventListeners(): void {
-        this.clickOutsideListener = (event: MouseEvent): void => {
+    protected addEventListeners(): void {
+        const clickOutsideListener = (event: MouseEvent): void => {
             if (
                 !this.container?.contains(event.target as Node) &&
                 !this.anchorElement?.contains(event.target as Node)
@@ -238,29 +239,29 @@ abstract class Popup {
             }
         };
 
-        this.escapeKeyListener = (event: KeyboardEvent): void => {
-            if (event.key === 'Escape') {
-                this.hide();
-            }
+        const escapeKeyListener = (event: KeyboardEvent): void => {
+            this.onKeyDown(event);
         };
 
-        document.addEventListener('mousedown', this.clickOutsideListener);
-        document.addEventListener('keydown', this.escapeKeyListener);
+        document.addEventListener('mousedown', clickOutsideListener);
+        document.addEventListener('keydown', escapeKeyListener);
+
+        this.eventListenerDestroyers.push(
+            (): void => {
+                document.removeEventListener('mousedown', clickOutsideListener);
+                document.removeEventListener('keydown', escapeKeyListener);
+            }
+        );
     }
 
     /**
      * Removes event listeners.
      */
     private removeEventListeners(): void {
-        if (this.clickOutsideListener) {
-            document.removeEventListener('click', this.clickOutsideListener);
-            delete this.clickOutsideListener;
+        for (const destroyer of this.eventListenerDestroyers) {
+            destroyer();
         }
-
-        if (this.escapeKeyListener) {
-            document.removeEventListener('keydown', this.escapeKeyListener);
-            delete this.escapeKeyListener;
-        }
+        this.eventListenerDestroyers.length = 0;
     }
 }
 

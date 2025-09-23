@@ -284,18 +284,18 @@ class ColumnFiltering {
             case 'string':
             case 'number':
             case 'datetime':
-                // Render the input element.
-                this.renderFilteringInput(
-                    filteringOptions,
-                    inputWrapper,
-                    columnType
-                );
-
                 // Render the condition select element.
                 this.renderConditionSelect(
                     filteringOptions,
                     inputWrapper,
                     conditionsMap[columnType]
+                );
+
+                // Render the input element.
+                this.renderFilteringInput(
+                    filteringOptions,
+                    inputWrapper,
+                    columnType
                 );
                 break;
             case 'boolean':
@@ -353,6 +353,29 @@ class ColumnFiltering {
             }
         }
     }
+
+    /**
+     * Handles the keydown event for the filtering content. Used externally,
+     * not in the class itself.
+     *
+     * @param e
+     * The keyboard event.
+     */
+    public onKeyDown = (e: KeyboardEvent): void => {
+        const contentOrder: HTMLElement[] = [];
+        if (this.filterSelect) {
+            contentOrder.push(this.filterSelect);
+        }
+        if (this.filterInput) {
+            contentOrder.push(this.filterInput);
+        }
+
+        if (e.key === 'Enter') {
+            const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
+            contentOrder[(currentIndex + 1) % contentOrder.length].focus();
+            return;
+        }
+    };
 
     /**
      * Parses a camel case string to a readable string.

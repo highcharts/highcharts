@@ -59,15 +59,11 @@ class HeaderCellToolbar implements Toolbar {
      */
     public column: Column;
 
-    /**
-     * The buttons of the toolbar.
-     */
     public buttons: ToolbarButton[] = [];
 
-    /**
-     * The container of the toolbar.
-     */
     public container?: HTMLDivElement;
+
+    public focusCursor: number = 0;
 
     /**
      * Whether the toolbar is minimized. If true, the toolbar will only show
@@ -84,11 +80,6 @@ class HeaderCellToolbar implements Toolbar {
      * The event listener destroyers of the toolbar.
      */
     private eventListenerDestroyers: Function[] = [];
-
-    /**
-     * The index of the focused button in the toolbar.
-     */
-    private focusCursor: number = 0;
 
 
     /* *
@@ -210,7 +201,6 @@ class HeaderCellToolbar implements Toolbar {
      * Focuses the first button of the toolbar.
      */
     public focus(): void {
-        this.focusCursor = 0;
         this.buttons[0]?.focus();
     }
 
@@ -222,16 +212,14 @@ class HeaderCellToolbar implements Toolbar {
      */
     private keyDownHandler(e: KeyboardEvent): void {
         const len = this.buttons.length;
+        const cursor = this.focusCursor;
+
         switch (e.key) {
             case 'ArrowLeft':
-                this.focusCursor = Math.abs(
-                    (this.focusCursor - 1 + len) % len
-                );
-                this.buttons[this.focusCursor].focus();
+                this.buttons[Math.abs((cursor - 1 + len) % len)].focus();
                 break;
             case 'ArrowRight':
-                this.focusCursor = (this.focusCursor + 1) % len;
-                this.buttons[this.focusCursor].focus();
+                this.buttons[(cursor + 1) % len].focus();
                 break;
             case 'Escape':
                 this.column.header?.htmlElement.focus();

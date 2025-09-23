@@ -40,6 +40,11 @@ interface Toolbar {
      * The container element of the toolbar.
      */
     container?: HTMLDivElement;
+
+    /**
+     * The index of the focused button in the toolbar.
+     */
+    focusCursor: number;
 }
 
 export default Toolbar;

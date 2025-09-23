@@ -1422,18 +1422,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-popup {
     position: absolute;
     z-index: 1000;
-    background-color: var(--ig-neutral-default-background);
-    border: 1px solid var(--ig-neutral-default-border-color);
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    min-width: 200px;
-    overflow: auto;
-}
-
-.hcg-popup-content,
-.highcharts-datagrid-popup-content {
-    padding: 12px;
-    line-height: 1.4;
 }
 
 /* End CSS Helpers Classes */
@@ -1547,6 +1535,33 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
                 var(--hcg-background, #ffffff)
             )
         );
+}
+
+/* Column header menu */
+.hcg-theme-default .hcg-popup,
+.highcharts-datagrid-theme-default .highcharts-datagrid-popup {
+    background-color: var(--ig-header-background);
+    border: 1px solid var(--ig-header-row-border-color);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+    min-width: 200px;
+    overflow: auto;
+}
+
+.hcg-theme-default .hcg-popup-content,
+.highcharts-datagrid-theme-default .highcharts-datagrid-popup-content {
+    padding: 4px;
+}
+
+.hcg-theme-default .hcg-popup-content input,
+.hcg-theme-default .hcg-popup-content select,
+.highcharts-datagrid-theme-default .highcharts-datagrid-popup-content input,
+.highcharts-datagrid-theme-default .highcharts-datagrid-popup-content select {
+    border-radius: 6px;
+    border-color: var(--ig-icon-color);
+    background-color: var(--ig-header-background);
+    color: var(--ig-color);
+    line-height: normal;
 }
 
 /* End Grid Default Theme */
