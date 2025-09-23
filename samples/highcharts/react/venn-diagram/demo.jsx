@@ -27,7 +27,7 @@ export default function ChartComponent() {
   return (
       <div>
           <Chart>
-              <Title text="Simple Venn Diagram" />
+              <Title>Simple Venn Diagram</Title>
               <Accessibility />
               <VennSeries options={{ name: 'Products' }} data={vennData} />
           </Chart>

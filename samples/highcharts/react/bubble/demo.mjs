@@ -149,9 +149,7 @@ export default function ChartComponent() {
             98
         ]
     ];
-    return /*#__PURE__*/ React.createElement("div", null, /*#__PURE__*/ React.createElement(Chart, null, /*#__PURE__*/ React.createElement(Title, {
-        text: "Simple Bubble Chart"
-    }), /*#__PURE__*/ React.createElement(Accessibility, null), /*#__PURE__*/ React.createElement(BubbleSeries, {
+    return /*#__PURE__*/ React.createElement("div", null, /*#__PURE__*/ React.createElement(Chart, null, /*#__PURE__*/ React.createElement(Title, null, "Simple Bubble Chart"), /*#__PURE__*/ React.createElement(Accessibility, null), /*#__PURE__*/ React.createElement(BubbleSeries, {
         data: series1
     }), /*#__PURE__*/ React.createElement(BubbleSeries, {
         data: series2

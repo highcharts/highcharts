@@ -43,7 +43,7 @@ export default function ChartComponent() {
     return (
         <div>
           <Chart>
-            <Title text="Simple Bubble Chart" />
+            <Title>Simple Bubble Chart</Title>
             <Accessibility />
             <BubbleSeries data={series1} />
             <BubbleSeries data={series2} />
