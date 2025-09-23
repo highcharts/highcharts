@@ -79,7 +79,7 @@ class FilterToolbarButton extends ToolbarButton {
 
         this.setActive(!!(condition && (
             ['empty', 'notEmpty'].includes(condition) ||
-            value !== void 0
+            (value !== void 0 && value !== '') // Accept null and 0
         )));
     }
 
