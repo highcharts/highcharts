@@ -22,15 +22,15 @@
  *
  * */
 
-import type Toolbar from '../../UI/Toolbar';
-import type Column from '../Column';
+import type Toolbar from '../../../UI/Toolbar';
+import type Column from '../../Column';
 
-import GridUtils from '../../GridUtils.js';
-import Globals from '../../Globals.js';
-import ToolbarButton from '../../UI/ToolbarButton.js';
-import SortToolbarButton from './ColumnToolbarButtons/SortToolbarButton.js';
-import FilterToolbarButton from './ColumnToolbarButtons/FilterToolbarButton.js';
-import MenuToolbarButton from './ColumnToolbarButtons/MenuToolbarButton.js';
+import GridUtils from '../../../GridUtils.js';
+import Globals from '../../../Globals.js';
+import ToolbarButton from '../../../UI/ToolbarButton.js';
+import SortToolbarButton from './Buttons/SortToolbarButton.js';
+import FilterToolbarButton from './Buttons/FilterToolbarButton.js';
+import MenuToolbarButton from './Buttons/MenuToolbarButton.js';
 
 const { makeHTMLElement } = GridUtils;
 

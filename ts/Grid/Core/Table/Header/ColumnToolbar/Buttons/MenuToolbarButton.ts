@@ -24,7 +24,11 @@
 
 import type ColumnToolbar from '../ColumnToolbar.js';
 
-import ToolbarButton from '../../../UI/ToolbarButton.js';
+import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import MenuPopup from '../MenuPopup.js';
+import U from '../../../../../../Core/Utilities.js';
+
+const { addEvent } = U;
 
 
 /* *
@@ -43,6 +47,8 @@ class MenuToolbarButton extends ToolbarButton {
      * */
 
     public override toolbar?: ColumnToolbar;
+
+    private popup?: MenuPopup;
 
 
     /* *
@@ -67,7 +73,26 @@ class MenuToolbarButton extends ToolbarButton {
 
     protected override clickHandler(event: MouseEvent): void {
         super.clickHandler(event);
-        this.setActive(!this.isActive);
+
+        const grid = this.toolbar?.column.viewport.grid;
+        if (!grid) {
+            return;
+        }
+
+        if (!this.popup) {
+            this.popup = new MenuPopup(grid, this);
+
+            this.eventListenerDestroyers.push(
+                addEvent(this.popup, 'afterShow', (): void => {
+                    this.setHighlighted(true);
+                }),
+                addEvent(this.popup, 'afterHide', (): void => {
+                    this.setHighlighted(false);
+                })
+            );
+        }
+
+        this.popup.toggle(this.wrapper);
     }
 }
 

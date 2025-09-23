@@ -62,7 +62,7 @@ abstract class Popup {
     /**
      * Parent element of the popup.
      */
-    public wrapper: HTMLElement;
+    public grid: Grid;
 
     /**
      * Whether the popup is currently visible.
@@ -93,12 +93,7 @@ abstract class Popup {
      * The grid that will own this popup.
      */
     constructor(grid: Grid) {
-        const wrapper = grid.contentWrapper;
-        if (!wrapper) {
-            throw new Error('No content element found.');
-        }
-
-        this.wrapper = wrapper;
+        this.grid = grid;
     }
 
     /* *
@@ -138,9 +133,11 @@ abstract class Popup {
         this.anchorElement = anchorElement;
         this.isVisible = true;
 
-        this.wrapper.appendChild(this.container);
+        this.grid.contentWrapper?.appendChild(this.container);
         this.positionPopup(anchorElement);
         this.addEventListeners();
+
+        this.grid.popups.add(this);
 
         fireEvent(this, 'afterShow');
     }
@@ -152,6 +149,8 @@ abstract class Popup {
         if (!this.container) {
             return;
         }
+
+        this.grid.popups.delete(this);
 
         this.isVisible = false;
 
@@ -181,6 +180,17 @@ abstract class Popup {
     }
 
     /**
+     * Reflows the popup.
+     */
+    public reflow(): void {
+        if (this.anchorElement?.isConnected) {
+            this.positionPopup(this.anchorElement);
+        } else {
+            this.hide();
+        }
+    }
+
+    /**
      * Positions the popup relative to the anchor element.
      *
      * @param anchorElement
@@ -188,12 +198,13 @@ abstract class Popup {
      * positioned relative to the parent element.
      */
     private positionPopup(anchorElement?: HTMLElement): void {
-        if (!this.container || !this.content) {
+        const wrapper = this.grid.contentWrapper;
+        if (!this.container || !this.content || !wrapper) {
             return;
         }
 
         const popupRect = this.container.getBoundingClientRect();
-        const parentRect = this.wrapper.getBoundingClientRect();
+        const parentRect = wrapper.getBoundingClientRect();
         const anchorRect = anchorElement?.getBoundingClientRect() ?? parentRect;
 
         const top = anchorRect.bottom + 4; // 4px gap

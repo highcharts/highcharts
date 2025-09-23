@@ -24,9 +24,9 @@
 
 import type ColumnToolbar from '../ColumnToolbar.js';
 
-import FilterPopup from '../../Actions/ColumnFiltering/FilterPopup.js';
-import ToolbarButton from '../../../UI/ToolbarButton.js';
-import U from '../../../../../Core/Utilities.js';
+import FilterPopup from '../FilterPopup.js';
+import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import U from '../../../../../../Core/Utilities.js';
 
 const { addEvent } = U;
 

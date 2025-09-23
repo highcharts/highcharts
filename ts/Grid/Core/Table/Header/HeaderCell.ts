@@ -33,7 +33,7 @@ import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 import TableHeader from './TableHeader.js';
-import ColumnToolbar from './ColumnToolbar.js';
+import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
 
 const {
     makeHTMLElement,
@@ -252,6 +252,7 @@ class HeaderCell extends Cell {
         // Set the width of the column. Max width is needed for the
         // overflow: hidden to work.
         th.style.width = th.style.maxWidth = width + 'px';
+        this.toolbar?.reflow();
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {

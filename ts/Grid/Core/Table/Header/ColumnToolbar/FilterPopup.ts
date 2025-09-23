@@ -22,9 +22,9 @@
  *
  * */
 
-import type FilterToolbarButton from '../../Header/ColumnToolbarButtons/FilterToolbarButton.js';
+import type FilterToolbarButton from './Buttons/FilterToolbarButton.js';
 
-import ColumnFiltering from './ColumnFiltering.js';
+import ColumnFiltering from '../../Actions/ColumnFiltering/ColumnFiltering.js';
 import Popup from '../../../UI/Popup.js';
 
 

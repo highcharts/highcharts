@@ -24,8 +24,8 @@
 
 import type ColumnToolbar from '../ColumnToolbar.js';
 
-import ToolbarButton from '../../../UI/ToolbarButton.js';
-import U from '../../../../../Core/Utilities.js';
+import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import U from '../../../../../../Core/Utilities.js';
 
 const { addEvent } = U;
 

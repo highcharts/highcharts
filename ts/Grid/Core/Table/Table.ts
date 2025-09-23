@@ -382,6 +382,11 @@ class Table {
 
         // Reflow the pagination
         this.grid.pagination?.reflow();
+
+        // Reflow popups
+        this.grid.popups.forEach((popup): void => {
+            popup.reflow();
+        });
     }
 
     /**
