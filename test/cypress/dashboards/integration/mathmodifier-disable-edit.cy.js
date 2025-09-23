@@ -17,6 +17,12 @@ describe('MathModifier created columns and interaction.', () => {
                             enabled: false
                         }
                     }
+                }, {
+                    id: 'Day'
+                }, {
+                    id: 'EUR'
+                }, {
+                    id: 'Rate'
                 }],
                 'USD column is not editable'
             );
