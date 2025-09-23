@@ -24,7 +24,11 @@
 
 import type ColumnToolbar from '../ColumnToolbar.js';
 
+import FilterPopup from '../../Actions/ColumnFiltering/FilterPopup.js';
 import ToolbarButton from '../../../UI/ToolbarButton.js';
+import U from '../../../../../Core/Utilities.js';
+
+const { addEvent } = U;
 
 
 /* *
@@ -43,6 +47,8 @@ class FilterToolbarButton extends ToolbarButton {
      * */
 
     public override toolbar?: ColumnToolbar;
+
+    private popup?: FilterPopup;
 
 
     /* *
@@ -74,7 +80,26 @@ class FilterToolbarButton extends ToolbarButton {
 
     protected override clickHandler(event: MouseEvent): void {
         super.clickHandler(event);
-        this.setActive(!this.isActive);
+        const filtering = this.toolbar?.column.filtering;
+
+        if (!filtering) {
+            return;
+        }
+
+        if (!this.popup) {
+            this.popup = new FilterPopup(filtering);
+
+            this.eventListenerDestroyers.push(
+                addEvent(this.popup, 'afterShow', (): void => {
+                    this.setHighlighted(true);
+                }),
+                addEvent(this.popup, 'afterHide', (): void => {
+                    this.setHighlighted(false);
+                })
+            );
+        }
+
+        this.popup?.toggle(this.wrapper);
     }
 }
 

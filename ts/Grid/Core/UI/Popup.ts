@@ -26,8 +26,10 @@ import type Grid from '../Grid';
 
 import GridUtils from '../GridUtils.js';
 import Globals from '../Globals.js';
+import U from '../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
+const { fireEvent } = U;
 
 
 /* *
@@ -65,7 +67,7 @@ abstract class Popup {
     /**
      * Whether the popup is currently visible.
      */
-    public isVisible: boolean;
+    public isVisible: boolean = false;
 
     /**
      * The anchor element that the popup is positioned relative to.
@@ -102,7 +104,6 @@ abstract class Popup {
         }
 
         this.wrapper = wrapper;
-        this.isVisible = false;
     }
 
     /* *
@@ -145,6 +146,8 @@ abstract class Popup {
         this.wrapper.appendChild(this.container);
         this.positionPopup(anchorElement);
         this.addEventListeners();
+
+        fireEvent(this, 'afterShow');
     }
 
     /**
@@ -163,6 +166,8 @@ abstract class Popup {
 
         delete this.container;
         delete this.content;
+
+        fireEvent(this, 'afterHide');
     }
 
     /**
