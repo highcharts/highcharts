@@ -86,7 +86,7 @@ declare module './SeriesBase' {
     interface SeriesBase {
         dataLabelPositioners?: DataLabel.PositionersObject;
         dataLabelsGroup?: SVGElement;
-        [key: `dataLabelsGroup${number}`]: SVGElement | undefined;
+        dataLabelsGroups?: Array<SVGElement|undefined>;
         hasDataLabels?(): boolean;
         initDataLabelsGroup(
             index: number,
@@ -473,8 +473,17 @@ namespace DataLabel {
         return true;
     }
 
+
     /**
+     * Compose the data label composition onto a series class.
+     *
      * @private
+     * @function compose
+     *
+     * @param {Highcharts.Series} SeriesClass
+     * The series class to compose onto.
+     *
+     * @return {void}
      */
     export function compose(
         SeriesClass: typeof Series
@@ -509,17 +518,22 @@ namespace DataLabel {
             { index, zIndex: dataLabelsOptions?.zIndex || 6 }
         );
 
+        // Existing group or first time
+        this.dataLabelsGroup = this.dataLabelsGroups?.[index];
+
         const group = this.plotGroup(
-            `dataLabelsGroup${index}`,
+            'dataLabelsGroup',
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
             dataLabelsOptions?.zIndex || 6,
-            this[`dataLabelsParentGroup${index}`]
+            this.dataLabelsParentGroups?.[index]
         );
 
-        if (index === 0) {
-            this.dataLabelsGroup = group;
-        }
+        this.dataLabelsGroups ||= [];
+        this.dataLabelsGroups[index] = group;
+
+        // Keep reference to the 1st group
+        this.dataLabelsGroup = this.dataLabelsGroups[0];
 
         return group;
     }

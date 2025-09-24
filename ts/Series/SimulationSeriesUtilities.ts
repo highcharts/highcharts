@@ -17,7 +17,6 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import U from '../Core/Utilities.js';
 const {
-    merge,
     syncTimeout
 } = U;
 
@@ -59,10 +58,9 @@ function initDataLabelsDefer(this: SimulationSeries): void {
  */
 function initDataLabels(this: SimulationSeries): SVGElement {
     const series = this,
-        dlOptions = series.options.dataLabels,
-        groupKey = 'dataLabelsGroup0' as const;
+        dlOptions = series.options.dataLabels;
 
-    if (!series[groupKey]) {
+    if (!series.dataLabelsGroup) {
         // Those series support only one group of data labels (index 0)
         const dataLabelsGroup = this.initDataLabelsGroup(0, dlOptions);
 
@@ -78,7 +76,7 @@ function initDataLabels(this: SimulationSeries): SVGElement {
         if (series.visible) { // #2597, #3023, #3024
             // #19663, initial data labels animation
             if (series.options.animation && dlOptions?.animation) {
-                dataLabelsGroup.animate({ opacity: 1 }, dlOptions?.animation);
+                dataLabelsGroup.animate({ opacity: 1 }, dlOptions.animation);
             } else {
                 dataLabelsGroup.attr({ opacity: 1 });
             }
@@ -90,13 +88,11 @@ function initDataLabels(this: SimulationSeries): SVGElement {
     }
 
     // Place it on first and subsequent (redraw) calls
-    series[groupKey]!.attr(
-        merge(
-            { opacity: 1 },
-            this.getPlotBox('data-labels')
-        )
-    );
-    return series[groupKey]!;
+    series.dataLabelsGroup.attr({
+        opacity: 1,
+        ...this.getPlotBox('data-labels')
+    });
+    return series.dataLabelsGroup;
 }
 
 

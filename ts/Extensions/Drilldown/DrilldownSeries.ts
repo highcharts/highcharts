@@ -119,16 +119,14 @@ function columnAnimateDrilldown(
 ): void {
     const series = this,
         chart = series.chart as Drilldown.ChartComposition,
-        drilldownLevels = chart.drilldownLevels,
-        animationOptions =
-            animObject((chart.options.drilldown || {}).animation),
-        xAxis = this.xAxis,
-        styledMode = chart.styledMode;
+        { drilldownLevels, styledMode } = chart,
+        animationOptions = animObject(chart.options.drilldown?.animation),
+        xAxis = this.xAxis;
 
     if (!init) {
         let animateFrom: (SVGAttributes|undefined);
 
-        (drilldownLevels || []).forEach((
+        drilldownLevels?.forEach((
             level: Drilldown.LevelObject
         ): void => {
             if (
@@ -166,16 +164,9 @@ function columnAnimateDrilldown(
             }
         });
 
-        if (chart.drilldown) {
-            Object.keys(this)
-                .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
-                .forEach((key): void => {
-                    const group = this[key];
-                    if (group) {
-                        chart.drilldown?.fadeInGroup(group);
-                    }
-                });
-        }
+        this.dataLabelsGroups?.forEach(
+            (g): void => chart.drilldown?.fadeInGroup(g)
+        );
 
         // Reset to prototype
         delete (this as AnyRecord).animate;
@@ -202,10 +193,13 @@ function columnAnimateDrillupFrom(
             animObject((series.chart.options.drilldown || {}).animation);
 
     // Cancel mouse events on the series group (#2787)
-    (series.trackerGroups || []).forEach((key: string): void => {
-        // We don't always have dataLabelsGroup
-        if ((series as AnyRecord)[key]) {
-            (series as AnyRecord)[key].on('mouseover');
+    series.trackerGroups?.forEach((key): void => {
+        if (key === 'dataLabelsGroup') {
+            series.dataLabelsGroups?.forEach((g): void => {
+                g?.on('mouseover', (): void => {});
+            });
+        } else {
+            (series as AnyRecord)[key]?.on('mouseover');
         }
     });
 
@@ -403,14 +397,11 @@ function mapAnimateDrilldown(
         chart &&
         group &&
         series.options &&
-        chart.options.drilldown &&
-        chart.options.drilldown.animation
+        chart.options.drilldown?.animation
     ) {
         // Initialize the animation
         if (init && chart.mapView) {
-            group.attr({
-                opacity: 0.01
-            });
+            group.attr({ opacity: 0.01 });
             chart.mapView.allowTransformAnimation = false;
             // Stop duplicating and overriding animations
             series.options.inactiveOtherPoints = true;
@@ -418,35 +409,23 @@ function mapAnimateDrilldown(
 
         // Run the animation
         } else {
-            group.animate({
-                opacity: 1
-            },
-            chart.options.drilldown.animation,
-            (): void => {
-                if (series.options) {
-                    series.options.inactiveOtherPoints = false;
-                    series.options.enableMouseTracking =
-                        pick(
-                            (
-                                series.userOptions &&
-                                series.userOptions.enableMouseTracking
-                            ),
+            group.animate(
+                { opacity: 1 },
+                chart.options.drilldown.animation,
+                (): void => {
+                    if (series.options) {
+                        series.options.inactiveOtherPoints = false;
+                        series.options.enableMouseTracking = pick(
+                            series.userOptions?.enableMouseTracking,
                             true
                         );
+                    }
                 }
-            });
+            );
 
-            if (chart.drilldown) {
-                Object.keys(this)
-                    .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
-                    .forEach((key): void => {
-                        const group = this[key];
-                        if (group) {
-                            chart.drilldown?.fadeInGroup(group);
-                        }
-                    });
-            }
-
+            series.dataLabelsGroups?.forEach(
+                (g): void => chart.drilldown?.fadeInGroup(g)
+            );
         }
     }
 }
@@ -463,7 +442,7 @@ function mapAnimateDrillupFrom(
     const series = this,
         chart = series.chart as Drilldown.ChartComposition;
 
-    if (chart && chart.mapView) {
+    if (chart?.mapView) {
         chart.mapView.allowTransformAnimation = false;
     }
     // Stop duplicating and overriding animations
@@ -503,16 +482,9 @@ function mapAnimateDrillupTo(
                 (chart.options.drilldown || {}).animation
             );
 
-            if (chart.drilldown) {
-                Object.keys(this)
-                    .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
-                    .forEach((key): void => {
-                        const group = this[key];
-                        if (group) {
-                            chart.drilldown?.fadeInGroup(group);
-                        }
-                    });
-            }
+            series.dataLabelsGroups?.forEach(
+                (g): void => chart.drilldown?.fadeInGroup(g)
+            );
         }
     }
 }
@@ -699,16 +671,9 @@ function pieAnimateDrilldown(
                 }
             }
 
-            if (chart.drilldown) {
-                Object.keys(this)
-                    .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
-                    .forEach((key): void => {
-                        const group = this[key];
-                        if (group) {
-                            chart.drilldown?.fadeInGroup(group);
-                        }
-                    });
-            }
+            series.dataLabelsGroups?.forEach(
+                (g): void => chart.drilldown?.fadeInGroup(g)
+            );
 
             // Reset to prototype
             delete (series as Partial<typeof series>).animate;

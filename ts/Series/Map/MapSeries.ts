@@ -234,14 +234,10 @@ class MapSeries extends ScatterSeries {
      */
     public drawMapDataLabels(): void {
         super.drawDataLabels();
-        Object.keys(this)
-            .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
-            .forEach((key): void => {
-                const group = this[key];
-                if (group) {
-                    group.clip(this.chart.clipRect);
-                }
-            });
+
+        this.dataLabelsGroups?.forEach(
+            (g): SVGElement|undefined => g?.clip(this.chart.clipRect)
+        );
     }
 
     /**

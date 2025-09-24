@@ -97,14 +97,9 @@ class MapPointSeries extends ScatterSeries {
     public drawDataLabels(): void {
         super.drawDataLabels();
 
-        Object.keys(this)
-            .filter((k): k is `dataLabelsGroup${number}` => k.startsWith('dataLabelsGroup'))
-            .forEach((key): void => {
-                const group = this[key];
-                if (group) {
-                    group.clip(this.chart.clipRect);
-                }
-            });
+        this.dataLabelsGroups?.forEach((g): void => {
+            g?.clip(this.chart.clipRect);
+        });
     }
 
     /**

@@ -589,7 +589,7 @@ class SunburstSeries extends TreemapSeries {
                 animation &&
                 hasRendered &&
                 idRoot !== idPreviousRoot &&
-                series.dataLabelsGroup0
+                series.dataLabelsGroup
             );
 
         let animateLabels: (Function|undefined),
@@ -597,12 +597,10 @@ class SunburstSeries extends TreemapSeries {
             addedHack = false;
 
         if (hackDataLabelAnimation) {
-            series.dataLabelsGroup0?.attr({ opacity: 0 });
+            series.dataLabelsGroup!.attr({ opacity: 0 });
             animateLabels = function (): void {
-                const s = series;
-
                 animateLabelsCalled = true;
-                s.dataLabelsGroup0?.animate({
+                series.dataLabelsGroup!.animate({
                     opacity: 1,
                     visibility: 'inherit'
                 });
@@ -630,16 +628,16 @@ class SunburstSeries extends TreemapSeries {
 
             if (hasRendered && animation) {
                 animationInfo = getAnimation(shape, {
-                    center: center,
-                    point: point,
-                    radians: radians,
-                    innerR: innerR,
-                    idRoot: idRoot,
-                    idPreviousRoot: idPreviousRoot,
-                    shapeExisting: shapeExisting,
-                    shapeRoot: shapeRoot,
-                    shapePreviousRoot: shapePreviousRoot,
-                    visible: visible
+                    center,
+                    point,
+                    radians,
+                    innerR,
+                    idRoot,
+                    idPreviousRoot,
+                    shapeExisting,
+                    shapeRoot,
+                    shapePreviousRoot,
+                    visible
                 });
             } else {
                 // When animation is disabled, attr is called from animation.
@@ -660,8 +658,8 @@ class SunburstSeries extends TreemapSeries {
                 isNull: !visible // Used for dataLabels & point.draw
             });
             point.dlOptions = getDlOptions({
-                point: point,
-                level: level,
+                point,
+                level,
                 optionsPoint: point.options,
                 shapeArgs: shape
             });
@@ -678,9 +676,9 @@ class SunburstSeries extends TreemapSeries {
                         (point.selected && 'select') as any
                     ) as any)
                 ),
-                onComplete: onComplete,
-                group: group,
-                renderer: renderer,
+                onComplete,
+                group,
+                renderer,
                 shapeType: 'arc',
                 shapeArgs: shape
             });
@@ -696,7 +694,7 @@ class SunburstSeries extends TreemapSeries {
             // If animateLabels is called before labels were hidden, then call
             // it again.
             if (animateLabelsCalled) {
-                (animateLabels as any)();
+                animateLabels?.();
             }
         } else {
             ColumnSeries.prototype.drawDataLabels.call(series);

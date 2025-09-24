@@ -619,7 +619,7 @@ namespace ColumnDataLabel {
 
 
             this.points.forEach((point): void => {
-                (point.dataLabels || []).forEach((dataLabel, i): void => {
+                point.dataLabels?.forEach((dataLabel, i): void => {
                     // #8864: every connector can have individual options
                     const {
                             connectorColor,
@@ -637,7 +637,6 @@ namespace ColumnDataLabel {
                             isNew = !connector;
 
                             if (!connector) {
-                                const groupKey = `dataLabelsGroup${i}` as const;
                                 dataLabel.connector = connector = chart.renderer
                                     .path()
                                     .addClass(
@@ -650,7 +649,7 @@ namespace ColumnDataLabel {
                                                 ''
                                         )
                                     )
-                                    .add(series[groupKey]);
+                                    .add(series.dataLabelsGroups?.[i]);
                             }
 
                             if (!chart.styledMode) {
