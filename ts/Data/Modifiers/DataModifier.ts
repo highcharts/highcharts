@@ -173,7 +173,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
                     detail: eventDetail,
                     table
                 });
-                reject(e);
+                reject(e instanceof Error ? e : new Error('' + e));
             }
         });
     }

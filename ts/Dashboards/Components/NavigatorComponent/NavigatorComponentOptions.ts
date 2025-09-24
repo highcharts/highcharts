@@ -77,11 +77,6 @@ export interface Options extends Component.Options {
     columnAssignment?: Record<string, string | null>;
 
     /**
-     * @deprecated
-     */
-    columnAssignments?: Record<string, string | null>;
-
-    /**
      * Connector options
      */
     connector?: Component.ConnectorOptions;

@@ -1086,18 +1086,6 @@ class Grid {
     }
 
     /**
-     * Returns the current grid data as a JSON string.
-     *
-     * @return
-     * JSON representation of the data
-     *
-     * @deprecated
-     */
-    public getJSON(): string {
-        return this.getData();
-    }
-
-    /**
      * Returns the current Grid options.
      *
      * @param onlyUserOptions
@@ -1118,22 +1106,6 @@ class Grid {
         }
 
         return options;
-    }
-
-    /**
-     * Returns the current Grid options.
-     *
-     * @param onlyUserOptions
-     * Whether to return only the user options or all options (user options
-     * merged with the default ones). Default is `true`.
-     *
-     * @returns
-     * Options as a JSON string
-     *
-     * @deprecated
-     */
-    public getOptionsJSON(onlyUserOptions = true): string {
-        return JSON.stringify(this.getOptions(onlyUserOptions));
     }
 
     /**

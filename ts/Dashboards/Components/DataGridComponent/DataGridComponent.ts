@@ -265,7 +265,6 @@ class DataGridComponent extends Component {
     public override getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
-            cell: '',
             type: 'Grid'
         };
 

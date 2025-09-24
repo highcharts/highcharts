@@ -172,7 +172,7 @@ const setupDashboard = instanceId => {
             }]
         },
         components: [{
-            cell: 'instance',
+            renderTo: 'instance',
             type: 'HTML',
             title: 'Instance type:',
             elements: [{
@@ -184,7 +184,7 @@ const setupDashboard = instanceId => {
                 textContent: instance.InstanceType
             }]
         }, {
-            cell: 'zone',
+            renderTo: 'zone',
             type: 'HTML',
             title: 'Zone:',
             elements: [{
@@ -196,7 +196,7 @@ const setupDashboard = instanceId => {
                 textContent: instance.Zone
             }]
         }, {
-            cell: 'ami',
+            renderTo: 'ami',
             type: 'HTML',
             title: 'AMI:',
             elements: [{
@@ -208,7 +208,7 @@ const setupDashboard = instanceId => {
                 textContent: instance.AMI
             }]
         }, {
-            cell: 'os',
+            renderTo: 'os',
             type: 'HTML',
             title: 'OS:',
             elements: [{
@@ -220,7 +220,7 @@ const setupDashboard = instanceId => {
                 textContent: instance.OS
             }]
         }, {
-            cell: 'disk-usage',
+            renderTo: 'disk-usage',
             title: 'Disk usage',
             type: 'Highcharts',
             connector: {
@@ -314,7 +314,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'cpu-utilization',
+            renderTo: 'cpu-utilization',
             title: 'CPU utilization',
             type: 'Highcharts',
             connector: {
@@ -365,7 +365,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'cpu',
+            renderTo: 'cpu',
             type: 'KPI',
             connector: {
                 id: 'instanceDetails'
@@ -411,7 +411,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'memory',
+            renderTo: 'memory',
             type: 'KPI',
             connector: {
                 id: 'instanceDetails'
@@ -461,7 +461,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'health',
+            renderTo: 'health',
             type: 'HTML',
             class: 'health-indicator',
             elements: [{
@@ -478,7 +478,7 @@ const setupDashboard = instanceId => {
                 textContent: 'Health'
             }]
         }, {
-            cell: 'disk',
+            renderTo: 'disk',
             type: 'KPI',
             connector: {
                 id: 'instanceDetails'
@@ -518,7 +518,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'network-opt',
+            renderTo: 'network-opt',
             type: 'Highcharts',
             title: 'Network (bytes)',
             connector: {
@@ -579,7 +579,7 @@ const setupDashboard = instanceId => {
                 }]
             }
         }, {
-            cell: 'disk-opt',
+            renderTo: 'disk-opt',
             type: 'Highcharts',
             title: 'Disk operations',
             connector: {
@@ -633,7 +633,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'instances-table',
+            renderTo: 'instances-table',
             type: 'DataGrid',
             title: 'Instances',
             dataGridOptions: {

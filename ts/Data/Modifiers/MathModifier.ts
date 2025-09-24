@@ -107,7 +107,7 @@ class MathModifier extends DataModifier {
 
     public override modifyTable(
         table: DataTable,
-        eventDetail?: (DataEvent.Detail|undefined)
+        eventDetail?: DataEvent.Detail
     ): DataTable {
         const modifier = this;
 

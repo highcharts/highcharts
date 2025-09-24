@@ -450,7 +450,7 @@ const createBoard = async () => {
                     data: ['azimuth', 'angle']
                 }]
             },
-            cell: 'horizon-chart',
+            renderTo: 'horizon-chart',
             id: 'horizon-chart',
             type: 'Highcharts',
             events: {
@@ -796,7 +796,7 @@ const createBoard = async () => {
                 }]
             }
         }, {
-            cell: 'controls',
+            renderTo: 'controls',
             type: 'HTML',
             style: {
                 padding: '10px'
@@ -987,7 +987,7 @@ const createBoard = async () => {
             }
 
         }, {
-            cell: 'times',
+            renderTo: 'times',
             connector: {
                 id: 'times'
             },
@@ -1030,7 +1030,7 @@ const createBoard = async () => {
                 }]
             }
         }, {
-            cell: 'horizon-map',
+            renderTo: 'horizon-map',
             id: 'horizon-map',
             type: 'Highcharts',
             chartConstructor: 'mapChart',
