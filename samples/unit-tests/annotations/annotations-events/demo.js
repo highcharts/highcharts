@@ -224,7 +224,8 @@ QUnit.test('Annotations events - general', function (assert) {
                     strokeWidth: [1, 'number']
                 }
             ],
-            type: 'basicAnnotation'
+            type: 'basicAnnotation',
+            typeOptions: {}
         },
         'Annotations\' popup should get correct config for fields (#11716)'
     );

@@ -388,6 +388,17 @@ const AnnotationDefaults: AnnotationOptions = {
      */
 
     /**
+     * The array of control points.
+     *
+     * @sample highcharts/annotations/ellipse
+     *         Ellipse annotation
+     *
+     * @extends annotations.controlPointOptions
+     * @type {Array<Annotations.controlPointOptions>}
+     * @apioption annotations.labels.controlPoints
+     */
+
+    /**
      * This option defines the point to which the label will be
      * connected. It can be either the point which exists in the
      * series - it is referenced by the point's id - or a new point
@@ -416,6 +427,17 @@ const AnnotationDefaults: AnnotationOptions = {
      * @type      {Array<*>}
      * @extends   annotations.shapeOptions
      * @apioption annotations.shapes
+     */
+
+    /**
+     * The array of control points.
+     *
+     * @sample highcharts/annotations-advanced/controllable-image
+     *         Controllable image annotation
+     *
+     * @extends annotations.controlPointOptions
+     * @type {Array<Annotations.controlPointOptions>}
+     * @apioption annotations.shapes.controlPoints
      */
 
     /**
