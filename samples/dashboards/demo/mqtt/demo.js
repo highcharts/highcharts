@@ -699,7 +699,7 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
 
     // Get data from connector
     const dataTable = await dashboard.dataPool
-        .getConnector(connId)
+        .getConnector(connId || defaultConnId)
         .then(connector => connector.getTable());
     const rowCount = await dataTable.getRowCount();
     if (rowCount === 0) {
@@ -904,7 +904,7 @@ class ControlBar {
 
         // Subscribe to the new power plant topic
         const topic = powPlantList[plant].topic;
-        const connName = topicMap[topic];
+        const connName = topicMap[topic] || defaultConnId;
         const connector = await dashboard.dataPool.getConnector(connName);
         await connector.subscribe();
 
@@ -1378,36 +1378,21 @@ class MQTTConnector extends DataConnector {
             return; // Skip invalid packets
         }
 
-        converter.parse({ data });
-        const convTable = converter.getTable();
+        const columns = converter.parse({ data });
         const nRowsCurrent = connTable.getRowCount();
 
         if (nRowsCurrent === 0) {
             // Initialize the table on first packet
-            connTable.setColumns(convTable.getColumns());
+            connTable.setColumns(columns);
         } else {
-            const maxRows = connector.options.maxRows;
-            const nRowsParsed = convTable.getRowCount();
-
-            if (nRowsParsed === 1) {
-                const rows = convTable.getRows();
-                // One row, append to table
-                if (nRowsCurrent === maxRows) {
-                    // Remove the oldest row
-                    connTable.deleteRows(0, 1);
-                }
-                connTable.setRows(rows);
-            } else {
-                // Multiple rows, replace table content
-                const rows = convTable.getRows();
-
-                if (nRowsParsed >= maxRows) {
-                    // Get the newest 'maxRows' rows
-                    rows.splice(0, nRowsParsed - maxRows);
-                    connTable.deleteRows();
-                }
-                connTable.setRows(rows);
+            // Remove the oldest row if at max capacity
+            if (nRowsCurrent >= connector.options.maxRows) {
+                connTable.deleteRows(0, 1);
             }
+
+            // Add a new row from parsed columns
+            const newRow = Object.values(columns).map(col => col[0]);
+            connTable.setRows([newRow], connTable.getRowCount());
         }
         connector.packetCount++;
 
