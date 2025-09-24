@@ -560,13 +560,25 @@ class SMAIndicator extends LineSeries {
         }
 
         if (overwriteData) {
-            table.setColumns({
-                x: processedData.xData as Array<number>,
-                ...valueColumns
-            });
-            if (!this.useDataTable) {
+            const columns = valueColumns;
+            columns.x = processedData.xData;
+
+            if (this.useDataTable) {
+                // Add the processedData.values to the data table
+                processedData.values.reduce((columns, val, i): any => {
+                    Object.keys(val).forEach((key): void => {
+                        if (!columns[key]) {
+                            columns[key] = [];
+                        }
+                        columns[key][i] = val[key as any];
+                    });
+                    return columns;
+                }, columns);
+            } else {
                 indicator.options.data = (processedData.values as any);
             }
+
+            table.setColumns(columns);
         }
 
         if (
