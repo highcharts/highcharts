@@ -1959,8 +1959,7 @@ class Series {
         max: number
     ): Series.CropDataObject {
         const xData = table.getColumn('x', true) as Array<number> || [],
-            dataLength = xData.length,
-            columns: DataTable.ColumnCollection = {};
+            dataLength = xData.length;
 
         let i,
             j,
@@ -1983,12 +1982,15 @@ class Series {
             }
         }
 
-        for (const key of this.getDataColumnKeys()) {
-            const column = table.getColumn(key, true);
-            if (column) {
-                columns[key] = column.slice(start, end);
-            }
-        }
+        // Slice all the columns and return a copy
+        const columns = Object.keys(table.columns)
+            .reduce((columns, key): DataTable.ColumnCollection => {
+                columns[key] = (
+                    table.getColumn(key, true) || []
+                ).slice(start, end);
+                return columns;
+            }, {} as DataTable.ColumnCollection);
+
         return {
             modified: new DataTableCore({ columns }),
             start,
