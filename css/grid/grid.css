@@ -1332,4 +1332,9 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     line-height: normal;
 }
 
+.hcg-theme-default .hcg-popup-content input:disabled,
+.hcg-theme-default .hcg-popup-content select:disabled {
+    opacity: 0.4;
+}
+
 /* End Grid Default Theme */

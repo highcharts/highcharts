@@ -1564,4 +1564,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     line-height: normal;
 }
 
+.hcg-theme-default .hcg-popup-content input:disabled,
+.hcg-theme-default .hcg-popup-content select:disabled,
+.highcharts-datagrid-theme-default .highcharts-datagrid-popup-content input:disabled,
+.highcharts-datagrid-theme-default .highcharts-datagrid-popup-content select:disabled {
+    opacity: 0.4;
+}
+
 /* End Grid Default Theme */
