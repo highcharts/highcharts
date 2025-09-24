@@ -420,6 +420,11 @@ class Series {
 
     public trackerGroups?: Array<string>;
 
+    /**
+     * Preliminary flag for migration. When true, series.options.data is deleted
+     * in setData, and all further data operations should be done on the data
+     * table.
+     */
     public useDataTable = false;
 
     public userOptions!: DeepPartial<SeriesTypeOptions>;
@@ -4177,10 +4182,15 @@ class Series {
         // Get options and push the point to xData, yData and series.options. In
         // series.generatePoints the Point instance will be created on demand
         // and pushed to the series.data array.
-        const point = { series: series } as any;
-        series.pointClass.prototype.applyOptions
-            .call(point, options, void 0, false);
-        const x: (number|null) = point.x;
+        const {
+                applyOptions,
+                optionsToObject
+            } = series.pointClass.prototype,
+            point = { series } as any,
+            pointOptions = optionsToObject.call(point, options);
+        applyOptions.call(point, pointOptions, void 0, false);
+        const x: (number|null) = point.x,
+            xOption = pointOptions.x;
 
         // Get the insertion point
         i = xData.length;
@@ -4192,7 +4202,11 @@ class Series {
         }
 
         // Insert the row at the given index
-        table.setRow(extend({ x }, point.options), i, true);
+        const row: DataTable.RowObject = { x };
+        if (defined(xOption)) {
+            row.xOption = xOption;
+        }
+        table.setRow(extend(row, point.options), i, true);
 
         if (names && point.name) {
             names[x as any] = point.name;
