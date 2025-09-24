@@ -165,7 +165,7 @@ class ColumnSorting {
 
         a11y?.userSortedColumn(order);
 
-        fireEvent(this.column, 'afterSorting', {
+        fireEvent(this.column, 'afterSort', {
             target: this.column
         });
     }

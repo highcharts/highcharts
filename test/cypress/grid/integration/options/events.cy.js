@@ -90,15 +90,15 @@ describe('Grid Pro - events.', () => {
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
     });
 
-    it('AfterSorting column event.', () => {
+    it('AfterSort column event.', () => {
         // ColumnDefaults
         cy.get('th[data-column-id="product"]').click();
-        cy.get('#columnSorting').should('have.value', 'afterSorting');
+        cy.get('#columnSorting').should('have.value', 'afterSort');
         cy.get('#headerClick').should('have.value', 'headerClick');
 
         // ColumnOptions
         cy.get('th[data-column-id="weight"]').click();
-        cy.get('#columnSorting').should('have.value', 'afterSortingColumnOption');
+        cy.get('#columnSorting').should('have.value', 'afterSortColumnOption');
         cy.get('#headerClick').should('have.value', 'headerClickColumnOption');
     });
 

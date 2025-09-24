@@ -27,7 +27,7 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterResize`      | Triggered after resizing a column.                       | `this: Column`        |
-| `afterSorting`     | Triggered after sorting a column.                        | `this: Column`        |
+| `afterSort`     | Triggered after sorting a column.                        | `this: Column`        |
 
 ## header
 
@@ -46,7 +46,7 @@ columnDefaults: {
         afterResize: function () {
             console.log('Column resized:', this);
         },
-        afterSorting: function () {
+        afterSort: function () {
             console.log('Column sorted:', this);
         }
     },

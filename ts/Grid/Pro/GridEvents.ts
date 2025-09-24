@@ -101,7 +101,7 @@ function compose(
 
     ([ // Column Events
         'afterResize',
-        'afterSorting'
+        'afterSort'
     ] as const).forEach((name): void => {
         addEvent(ColumnClass, name, (e: GridEvent<Column>): void => {
             const column = e.target;
@@ -181,7 +181,7 @@ export interface ColumnEvents {
      * Callback function to be called when the column is sorted for instance,
      * after clicking on header.
      */
-    afterSorting?: ColumnEventCallback;
+    afterSort?: ColumnEventCallback;
 
     /**
      * Callback function to be called when the column is resized.

@@ -11,8 +11,8 @@ Grid.grid('container', {
     },
     columnDefaults: {
         events: {
-            afterSorting: function () {
-                doc.getElementById('columnSorting').value = 'afterSorting';
+            afterSort: function () {
+                doc.getElementById('columnSorting').value = 'afterSort';
             },
             afterResize: function () {
                 doc.getElementById('columnResizing').value = 'columnResizing';
@@ -64,9 +64,9 @@ Grid.grid('container', {
     columns: [{
         id: 'weight',
         events: {
-            afterSorting: function () {
+            afterSort: function () {
                 doc.getElementById('columnSorting').value =
-                    'afterSortingColumnOption';
+                    'afterSortColumnOption';
             },
             afterResize: function () {
                 doc.getElementById('columnResizing').value =
@@ -140,8 +140,8 @@ Grid.grid('container', {
             }
         },
         column: {
-            afterSorting: function () {
-                doc.getElementById('columnSorting').value = 'afterSorting';
+            afterSort: function () {
+                doc.getElementById('columnSorting').value = 'afterSort';
             },
             afterResize: function () {
                 doc.getElementById('columnResizing').value = 'columnResizing';

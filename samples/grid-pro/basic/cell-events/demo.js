@@ -47,7 +47,7 @@ Grid.grid('container', {
                 msgTable.innerText = `Resized the column '${this.id}' to ` +
                     `${Math.round(this.width * 1000) / 10}%.`;
             },
-            afterSorting: function () {
+            afterSort: function () {
                 const { order } =
                     this.viewport.grid.querying.sorting.currentSorting;
 
