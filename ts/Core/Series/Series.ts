@@ -1985,9 +1985,11 @@ class Series {
         // Slice all the columns and return a copy
         const columns = Object.keys(table.columns)
             .reduce((columns, key): DataTable.ColumnCollection => {
-                columns[key] = (
-                    table.getColumn(key, true) || []
-                ).slice(start, end);
+                if (key !== 'xOption') {
+                    columns[key] = (
+                        table.getColumn(key, true) || []
+                    ).slice(start, end);
+                }
                 return columns;
             }, {} as DataTable.ColumnCollection);
 
