@@ -394,7 +394,7 @@ const AnnotationDefaults: AnnotationOptions = {
      *         Ellipse annotation
      *
      * @extends annotations.controlPointOptions
-     * @type {Array<Annotations.controlPointOptions>}
+     * @type {Array<AnnotationControlPointOptionsObject>}
      * @apioption annotations.labels.controlPoints
      */
 
@@ -436,7 +436,7 @@ const AnnotationDefaults: AnnotationOptions = {
      *         Controllable image annotation
      *
      * @extends annotations.controlPointOptions
-     * @type {Array<Annotations.controlPointOptions>}
+     * @type {Array<AnnotationControlPointOptionsObject>}
      * @apioption annotations.shapes.controlPoints
      */
 
