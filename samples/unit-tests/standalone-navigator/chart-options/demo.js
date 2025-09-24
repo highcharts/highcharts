@@ -1,6 +1,6 @@
 QUnit.test('Chart options in Standalone Navigator', function (assert) {
     const navigator = Highcharts.navigator('container', {
-        chart: {
+        chartOptions: {
             credits: {
                 enabled: false
             }

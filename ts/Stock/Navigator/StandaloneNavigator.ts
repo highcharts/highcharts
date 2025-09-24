@@ -114,7 +114,7 @@ class StandaloneNavigator {
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
-            userOptions.chart,
+            userOptions.chartOptions,
             { navigator: userOptions }
         );
 
@@ -126,13 +126,8 @@ class StandaloneNavigator {
 
         chart.options = merge(
             chart.options,
-            { navigator: { enabled: true }, scrollbar: { enabled: true } }
+            { navigator: { enabled: true } }
         );
-
-        if (this.chartOptions.navigator && this.chartOptions.scrollbar) {
-            this.chartOptions.navigator.enabled = true;
-            this.chartOptions.scrollbar.enabled = true;
-        }
 
         this.navigator = new Navigator(chart);
         chart.navigator = this.navigator;
@@ -313,7 +308,7 @@ class StandaloneNavigator {
         this.chartOptions = merge(
             this.chartOptions,
             newOptions.height && { chart: { height: newOptions.height } },
-            newOptions.chart,
+            newOptions.chartOptions,
             { navigator: newOptions }
         );
 
