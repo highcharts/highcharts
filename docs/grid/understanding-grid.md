@@ -173,3 +173,50 @@ pagination: {
     }
 }
 ```
+
+## column filtering
+Column filtering in Highcharts Grid allows users to filter data based on specific conditions and values for each column. This feature enhances data exploration and helps users focus on relevant information within large datasets.
+
+The main options include:
+* `enabled`: Set to `true` to activate filtering for the column.
+* `inline`: Set to `true` to render filter inputs directly in the header row, or `false` to use a popup interface.
+* `condition`: The initial filtering condition (e.g., 'contains', 'equals', 'greaterThan').
+* `value`: The initial filter value to apply.
+
+Filtering supports different data types with appropriate conditions:
+
+| **Data Type** | **Available Conditions** |
+|---------------|--------------------------|
+| String | contains, doesNotContain, equals, doesNotEqual, beginsWith, endsWith, empty, notEmpty |
+| Number | equals, doesNotEqual, greaterThan, greaterThanOrEqualTo, lessThan, lessThanOrEqualTo, empty, notEmpty |
+| DateTime | equals, doesNotEqual, before, after, empty, notEmpty |
+| Boolean | all, true, false, empty |
+
+```js
+columnDefaults: {
+    filtering: {
+        enabled: true,
+        inline: false
+    }
+},
+columns: [{
+    id: "product",
+    filtering: {
+        enabled: true,
+        inline: true,
+        condition: "contains",
+        value: "Apple"
+    }
+}, {
+    id: "price",
+    filtering: {
+        enabled: true,
+        condition: "greaterThan",
+        value: 2.0
+    }
+}]
+```
+
+The `filtering` option object can be used to enable or disable filtering for individual columns, configure the filtering interface (inline or popup), and set initial filter conditions.
+
+For more information on pagination options and events, see the [Column filtering article](https://www.highcharts.com/docs/grid/column-filtering) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnFilteringOptions).
