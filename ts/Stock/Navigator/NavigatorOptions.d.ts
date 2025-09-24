@@ -23,7 +23,7 @@ import type RangeSelector from '../RangeSelector/RangeSelector';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type Utilities from '../../Core/Utilities';
-import Options from '../../Core/Options';
+import type Options from '../../Core/Options';
 
 /* *
  *
