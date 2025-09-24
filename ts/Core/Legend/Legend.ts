@@ -770,13 +770,27 @@ class Legend {
 
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
-            label.css({
-                width: ((
-                    options.itemWidth ||
+            if (options.maxWidth) {
+                const m = Math.min(
                     legend.widthOption ||
-                    chart.spacingBox.width
-                ) - itemExtraWidth) + 'px'
-            });
+                    chart.spacingBox.width - 2 * this.padding - options.x,
+                    relativeLength(
+                        options.maxWidth as any,
+                        chart.spacingBox.width - this.padding
+                    ) ||
+                Infinity
+                );
+
+                label.css({ width: m - itemExtraWidth });
+            } else {
+                label.css({
+                    width: ((
+                        options.itemWidth ||
+                        legend.widthOption ||
+                        chart.spacingBox.width
+                    ) - itemExtraWidth) + 'px'
+                });
+            }
         }
 
         // Always update the text
