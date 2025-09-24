@@ -91,9 +91,11 @@ class FilterToolbarButton extends ToolbarButton {
             return;
         }
 
-        addEvent(toolbar.column, 'afterFiltering', (): void => {
-            this.refreshState();
-        });
+        this.eventListenerDestroyers.push(
+            addEvent(toolbar.column, 'afterFiltering', (): void => {
+                this.refreshState();
+            })
+        );
     }
 
     protected override clickHandler(event: MouseEvent): void {

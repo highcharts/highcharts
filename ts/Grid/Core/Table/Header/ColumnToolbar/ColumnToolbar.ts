@@ -192,6 +192,7 @@ class HeaderCellToolbar implements Toolbar {
         for (const destroyer of this.eventListenerDestroyers) {
             destroyer();
         }
+        this.eventListenerDestroyers.length = 0;
 
         this.columnResizeObserver?.disconnect();
         delete this.columnResizeObserver;

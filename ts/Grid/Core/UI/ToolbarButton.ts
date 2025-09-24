@@ -263,6 +263,7 @@ class ToolbarButton {
         for (const destroyer of this.eventListenerDestroyers) {
             destroyer();
         }
+        this.eventListenerDestroyers.length = 0;
     }
 }
 

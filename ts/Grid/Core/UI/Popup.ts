@@ -77,7 +77,7 @@ abstract class Popup {
     /**
      * Event listener destroyers.
      */
-    protected eventListenerDestroyers: (() => void)[] = [];
+    protected eventListenerDestroyers: Function[] = [];
 
 
     /* *
