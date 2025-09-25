@@ -92,7 +92,7 @@ class FilterToolbarButton extends ToolbarButton {
         }
 
         this.eventListenerDestroyers.push(
-            addEvent(toolbar.column, 'afterFiltering', (): void => {
+            addEvent(toolbar.column, 'afterFilter', (): void => {
                 this.refreshState();
             })
         );
