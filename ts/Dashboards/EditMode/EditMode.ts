@@ -823,20 +823,37 @@ class EditMode {
             );
         }
 
-        // Create context menu button
+        // Create context a menu button or edit mode toggle
         if (options.contextMenu && options.contextMenu.enabled) {
-            tools.contextButtonElement = EditRenderer.renderContextButton(
-                tools.container,
-                editMode
-            );
-
-            // Init contextMenu if doesn't exist.
-            if (!editMode.tools.contextMenu) {
-                editMode.tools.contextMenu = new EditContextMenu(
-                    editMode.board.container,
-                    editMode.options.contextMenu || {},
+            if (options.contextMenu.items?.length) {
+                tools.contextButtonElement = EditRenderer.renderContextButton(
+                    tools.container,
                     editMode
                 );
+
+                // Init contextMenu if doesn't exist.
+                if (!editMode.tools.contextMenu) {
+                    editMode.tools.contextMenu = new EditContextMenu(
+                        editMode.board.container,
+                        editMode.options.contextMenu || {},
+                        editMode
+                    );
+                }
+            } else {
+                // Render the edit mode toggle when no items are provided
+                tools.standaloneEditToggle = 
+                    EditRenderer.renderToggle(tools.container, {
+                        id: EditContextMenu.items.editMode.id,
+                        name: EditContextMenu.items.editMode.id,
+                        className: EditGlobals.classNames.editStandaloneToggle,
+                        title: editMode.lang.editMode,
+                        value: editMode.isActive(),
+                        lang: editMode.lang,
+                        langKey: 'editMode',
+                        onchange(): void {
+                            editMode.toggleEditMode();
+                        }
+                    });
             }
         }
 
@@ -1169,6 +1186,10 @@ namespace EditMode {
         * @internal
         */
         contextButtonElement?: HTMLDOMElement;
+        /**
+        * @internal
+        */
+        standaloneEditToggle?: HTMLDOMElement;
         /**
         * @internal
         */
