@@ -143,7 +143,8 @@ abstract class Popup {
     }
 
     /**
-     * Hides the popup.
+     * Hides the popup. In reality, it just destroys the popup container and
+     * removes the event listeners.
      */
     public hide(): void {
         if (!this.container) {

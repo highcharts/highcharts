@@ -394,6 +394,15 @@ class ColumnFiltering {
             .split(/\s+/).join(' ');
     }
 
+    /**
+     * Sets the value and condition for the filtering.
+     *
+     * @param value
+     * The value to set.
+     *
+     * @param condition
+     * The condition to set.
+     */
     public async set(value?: string, condition?: Condition): Promise<void> {
         if (this.filterInput) {
             this.filterInput.value = value ?? '';
