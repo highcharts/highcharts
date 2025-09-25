@@ -55,7 +55,7 @@ columnDefaults: {
         afterSorting: function () {
             console.log('Column sorted:', this);
         },
-        beforeFiltering: function () {
+        beforeFilter: function () {
             console.log('Before filtering column:', this.id);
         },
         afterFiltering: function () {
