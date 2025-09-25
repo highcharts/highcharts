@@ -58,7 +58,7 @@ columnDefaults: {
         beforeFilter: function () {
             console.log('Before filtering column:', this.id);
         },
-        afterFiltering: function () {
+        afterFilter: function () {
             console.log('After filtering column:', this.id);
         }
     },
