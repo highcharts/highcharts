@@ -276,7 +276,7 @@ Triggered after filtering has been applied and the grid has been updated:
             enabled: true
         },
         events: {
-            afterFiltering: function () {
+            afterFilter: function () {
                 console.log('Column filtered:', this.id);
             }
         }
