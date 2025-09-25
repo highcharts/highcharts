@@ -105,7 +105,7 @@ class SortToolbarButton extends ToolbarButton {
         this.eventListenerDestroyers.push(
             addEvent(
                 column.viewport.grid,
-                'afterSorting',
+                'afterSort',
                 (): void => this.refreshState()
             )
         );

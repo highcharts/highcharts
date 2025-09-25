@@ -114,7 +114,7 @@ class ColumnFiltering {
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
 
-        fireEvent(this.column, 'beforeFiltering', {
+        fireEvent(this.column, 'beforeFilter', {
             target: this.column
         });
 
@@ -126,7 +126,7 @@ class ColumnFiltering {
         await querying.proceed();
         await viewport.updateRows();
 
-        fireEvent(this.column, 'afterFiltering', {
+        fireEvent(this.column, 'afterFilter', {
             target: this.column
         });
     }
