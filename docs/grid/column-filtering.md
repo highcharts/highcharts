@@ -221,7 +221,6 @@ You can use different interface modes for different columns:
         id: "price",
         filtering: {
             enabled: true,
-            inline: false,
             condition: "greaterThan",
             value: 2.0
         }
