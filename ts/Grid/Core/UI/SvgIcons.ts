@@ -18,6 +18,15 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+import Globals from '../Globals.js';
+
+
+/* *
+ *
  *  Constants
  *
  * */
@@ -55,6 +64,8 @@ namespace SvgIcons {
         chevronUp: 'M18 15L12 9L6 15',
 
         chevronDown: 'M6 9L12 15L18 9',
+
+        chevronRight: 'M9 18L15 12L9 6',
 
         chevronSelector: 'M7 15L12 20L17 15M7 9L12 4L17 9'
 
@@ -97,7 +108,7 @@ namespace SvgIcons {
     export function createGridIcon(
         name: GridIconName,
         size: number = 16,
-        className: string = 'hcg-icon'
+        className: string = Globals.getClassName('icon')
     ): SVGElement {
         const svg =
             document.createElementNS('http://www.w3.org/2000/svg', 'svg');

@@ -122,7 +122,10 @@ class ToolbarButton {
         const button = this.buttonEl = makeHTMLElement<HTMLButtonElement>(
             'button',
             {
-                className: this.isActive ? 'hcg-button active' : 'hcg-button'
+                className: (
+                    Globals.getClassName('button') +
+                    (this.isActive ? ' active' : '')
+                )
             },
             wrapper
         );

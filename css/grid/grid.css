@@ -487,10 +487,6 @@
     box-shadow: 0 0 0 2px var(--hcg-header-background, #ffffff), 0 0 0 5px var(--hcg-focus-ring-color, #626bd0);
 }
 
-.hcg-button:focus-visible .hcg-icon {
-    color: var(--ig-icon-hover-color);
-}
-
 /* Generic icon styling for Grid */
 .hcg-icon {
     width: 20px;
@@ -505,7 +501,10 @@
     stroke: currentcolor;
 }
 
-.hcg-button:hover .hcg-icon {
+.hcg-button:hover .hcg-icon,
+.hcg-button:focus-visible .hcg-icon,
+.hcg-header-cell-icons .hcg-button.highlighted .hcg-icon,
+.hcg-header-cell-icons .hcg-button.active .hcg-icon {
     color: var(--ig-icon-hover-color);
 }
 
@@ -513,7 +512,7 @@
 .hcg-header-cell-icons {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     max-width: 0;
     margin-left: 0;
     opacity: 0;
@@ -529,29 +528,22 @@
 .hcg-header-cell-icons:has(.hcg-button.highlighted),
 .hcg-header-cell-icons:has(.hcg-button.active) {
     max-width: 100px;
-    margin-left: 8px;
     opacity: 1;
 }
 
 /* Generic icon button styling - applies to all header icons */
 .hcg-header-cell-icons .hcg-button {
-    width: 24px;
-    height: 24px;
-    padding: 2px;
+    width: 26px;
+    height: 26px;
+    padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 2px;
 }
 
 /* Active icon styling - icons that are in an active state */
 .hcg-header-cell-icons .hcg-button.highlighted {
     background: var(--ig-button-hover-background);
-}
-
-.hcg-header-cell-icons .hcg-button.highlighted .hcg-icon,
-.hcg-header-cell-icons .hcg-button.active .hcg-icon {
-    color: var(--ig-icon-hover-color);
 }
 
 /* Active indicator dot - positioned at top right of button */
@@ -1266,14 +1258,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
 }
 
-.hcg-column-filter-wrapper input:focus,
-.hcg-column-filter-wrapper select:focus {
-    z-index: 1;
-    outline: none;
-    border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
-    box-shadow: 0 0 0 2px var(--hcg-surface-ui-background-0, #ffffff), 0 0 0 5px var(--primitives-brand-600, #626bd0);
-}
-
 .hcg-column-filter-wrapper input {
     padding-left: 27px;
 }
@@ -1311,12 +1295,17 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 /* Column header menu */
 
 .hcg-theme-default .hcg-popup {
-    background-color: var(--ig-header-background);
-    border: 1px solid var(--ig-header-row-border-color);
+    background-color: #272727; /* light mode: #F6F6F6 */
+    border: 1px solid #3b3b3b; /* light mode: #E8E8E8 */
     border-radius: 6px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
     min-width: 200px;
     overflow: auto;
+}
+
+.highcharts-light .hcg-theme-default .hcg-popup {
+    background-color: #f6f6f6;
+    border: 1px solid #e8e8e8;
 }
 
 .hcg-theme-default .hcg-popup-content {
@@ -1330,6 +1319,101 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     background-color: var(--ig-header-background);
     color: var(--ig-color);
     line-height: normal;
+}
+
+.hcg-theme-default .hcg-popup-content input:disabled,
+.hcg-theme-default .hcg-popup-content select:disabled {
+    opacity: 0.4;
+}
+
+.hcg-menu-popup-header {
+    font-size: 0.75rem;
+    padding: 3px;
+    margin-bottom: 5px;
+}
+
+.hcg-menu-popup-header-category {
+    color: var(--ig-color-secondary);
+    opacity: 0.5;
+    user-select: none;
+}
+
+.hcg-menu-popup-container {
+    --icon-size: 16px;
+
+    list-style: none;
+    margin: 5px 0 0;
+    padding: 0;
+}
+
+.hcg-menu-popup-item {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+    min-width: 185px;
+    min-height: 2rem;
+    padding: 8px 8px 8px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+.hcg-menu-popup-item:not(:disabled) {
+    cursor: pointer;
+}
+
+.hcg-menu-popup-item:not(:disabled):hover,
+.hcg-menu-popup-item.highlighted {
+    background-color: #3b3b3b; /* light mode: #FFFFFF */
+    border: 1px solid #4f4f4f; /* light mode: #E8E8E8 */
+    border-radius: 5px;
+}
+
+.hcg-menu-popup-item.active {
+    background-color: #3f4699; /* light mode: #E1E3FF */
+    border: 1px solid #4a55c9; /* light mode: #C3C8FF */
+    border-radius: 5px;
+}
+
+.hcg-menu-popup-item-icon {
+    flex: 0 0 var(--icon-size);
+    width: var(--icon-size);
+    height: var(--icon-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+}
+
+.hcg-menu-popup-item.active .hcg-menu-popup-item-icon,
+.hcg-menu-popup-item.highlighted .hcg-menu-popup-item-icon,
+.hcg-menu-popup-item:not(:disabled):hover .hcg-menu-popup-item-icon {
+    opacity: 1;
+}
+
+.hcg-menu-popup-item-icon .hcg-icon {
+    width: 100%;
+    height: 100%;
+    color: var(--ig-color);
+}
+
+.hcg-menu-popup-item-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    padding-left: 0.75rem;
+}
+
+.hcg-menu-popup-divider {
+    margin: 5px 0;
+    border-top: 1px solid #3b3b3b; /* light mode: #E8E8E8 */
+    height: 0;
+}
+
+.highcharts-light .hcg-menu-popup-divider {
+    border-top: 1px solid #e8e8e8;
 }
 
 /* End Grid Default Theme */
