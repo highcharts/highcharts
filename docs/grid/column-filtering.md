@@ -257,7 +257,7 @@ Triggered before filtering is applied to the data:
             enabled: true
         },
         events: {
-            beforeFiltering: function () {
+            beforeFilter: function () {
                 console.log('About to filter column:', this.id);
             }
         }
