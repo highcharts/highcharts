@@ -252,11 +252,6 @@ You can disable filtering for specific columns while keeping it enabled globally
         }
     },
     columns: [{
-        id: "product",
-        filtering: {
-            enabled: true
-        }
-    }, {
         id: "id",
         filtering: {
             enabled: false
