@@ -265,7 +265,7 @@ Triggered before filtering is applied to the data:
 }
 ```
 
-### afterFiltering
+### afterFilter
 
 Triggered after filtering has been applied and the grid has been updated:
 
