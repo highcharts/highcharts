@@ -296,14 +296,10 @@ const grid = Highcharts.Grid('container', options);
 const productColumn = grid.getColumn('product');
 
 // Set a filter programmatically
-if (productColumn.filtering) {
-    productColumn.filtering.set('Apple', 'contains');
-}
+productColumn.filtering.set('Apple', 'contains');
 
 // Clear a filter
-if (productColumn.filtering) {
-    productColumn.filtering.set('', '');
-}
+productColumn.filtering.set();
 ```
 
 ## Example
