@@ -37,7 +37,7 @@ When `inline` is set to `true`, filter inputs are rendered directly in a special
 
 ### Popup Filtering
 
-When `inline` is set to `false` (default), filtering is accessed via a popup that opens when clicking the filter icon in the column header.
+When `inline` is set to `false` (default), a filter icon is rendered in the column header, and clicking it opens a popup with the filtering interface.
 
 ```js
 {
