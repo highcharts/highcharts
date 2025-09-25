@@ -203,12 +203,6 @@ You can use different interface modes for different columns:
 
 ```js
 {
-    columnDefaults: {
-        filtering: {
-            enabled: true,
-            inline: false
-        }
-    },
     columns: [{
         id: "product",
         filtering: {
