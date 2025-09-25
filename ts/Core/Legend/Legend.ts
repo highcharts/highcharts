@@ -772,11 +772,12 @@ class Legend {
         if (chart.styledMode || !(itemStyle as any).width) {
             if (options.maxWidth) {
                 const m = Math.min(
+                    options.itemWidth ||
                     legend.widthOption ||
                     chart.spacingBox.width - 2 * this.padding - options.x,
                     relativeLength(
                         options.maxWidth as any,
-                        chart.spacingBox.width - this.padding
+                        chart.chartWidth
                     ) ||
                 Infinity
                 );
@@ -1177,7 +1178,7 @@ class Legend {
                     allowedWidth,
                     relativeLength(
                         options.maxWidth as any,
-                        chartSpacingBoxWidth - padding
+                        chart.chartWidth
                     ) ||
                 Infinity
                 ) :
