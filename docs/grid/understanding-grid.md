@@ -193,12 +193,6 @@ Filtering supports different data types with appropriate conditions:
 | `boolean` | `all`, `true`, `false`, `empty` |
 
 ```js
-columnDefaults: {
-    filtering: {
-        enabled: true,
-        inline: false
-    }
-},
 columns: [{
     id: "product",
     filtering: {
