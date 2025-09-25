@@ -841,7 +841,7 @@ class EditMode {
                 }
             } else {
                 // Render the edit mode toggle when no items are provided
-                tools.standaloneEditToggle = 
+                tools.standaloneEditToggle =
                     EditRenderer.renderToggle(tools.container, {
                         id: EditContextMenu.items.editMode.id,
                         name: EditContextMenu.items.editMode.id,
