@@ -32,7 +32,7 @@ Grid.grid('container', {
     }],
     events: {
         column: {
-            afterSorting: function () {
+            afterSort: function () {
                 const { sorting } = this.viewport.dataGrid.querying;
 
                 columnSelectEl.value = this.id;
