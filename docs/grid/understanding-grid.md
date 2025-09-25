@@ -179,7 +179,7 @@ Column filtering in Highcharts Grid allows users to filter data based on specifi
 
 The main options include:
 * `enabled`: Set to `true` to activate filtering for the column.
-* `inline`: Set to `true` to render filter inputs directly in the header row, or `false` to use a popup interface.
+* `inline`: Set to `true` to render filter inputs directly in the header row, or `false` (default) to use a popup interface.
 * `condition`: The initial filtering condition (e.g., 'contains', 'equals', 'greaterThan').
 * `value`: The initial filter value to apply.
 
