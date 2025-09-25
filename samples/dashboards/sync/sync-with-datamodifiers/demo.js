@@ -65,7 +65,7 @@ Dashboards.board('container', {
             highlight: true
         }
     }, {
-        type: 'DataGrid',
+        type: 'Grid',
         renderTo: 'dashboard-col-1',
         connector: {
             id: 'conn-id'
@@ -77,8 +77,8 @@ Dashboards.board('container', {
             }
         }
     }, {
-        // Mirror of the editable datagrid
-        type: 'DataGrid',
+        // Mirror of the editable grid
+        type: 'Grid',
         renderTo: 'dashboard-col-2',
         connector: {
             id: 'conn-id'

@@ -243,7 +243,7 @@ You can also write a custom renderer. To do so, define:
 3. Add the renderer type to [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) so it can be used in Grid Options.
 
     ```ts
-    declare module 'highcharts/datagrid/es-modules/Grid/Pro/CellRendering/CellRendererType' {
+    declare module 'highcharts/grid/es-modules/Grid/Pro/CellRendering/CellRendererType' {
         interface CellRendererTypeRegistry {
             customRenderer: typeof CustomRenderer;
         }

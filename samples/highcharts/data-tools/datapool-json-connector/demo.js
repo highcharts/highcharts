@@ -87,31 +87,31 @@ Dashboards.board('container', {
     },
     components: [{
         renderTo: 'dg-rows',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'rows'
         }
     }, {
         renderTo: 'dg-columns',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'columns'
         }
     }, {
         renderTo: 'dg-no-first-names',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'no-first-names'
         }
     }, {
         renderTo: 'dg-to-parse',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'to-parse'
         }
     }, {
         renderTo: 'dg-array-of-objects',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'array-of-objects'
         }

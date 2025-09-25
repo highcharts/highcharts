@@ -9,25 +9,25 @@ describe('Multiple connectors', () => {
     });
 
     it('Should highlight series from multiple connectors.', () => {
-        cy.get('#dashboard-col-2 tr.highcharts-datagrid-row').eq(0).trigger('mouseover');
+        cy.get('#dashboard-col-2 tr.hcg-row').eq(0).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.ok(
                 chart.series[3].points[0].state === 'hover',
-                'When hovering over DataGrid, pie should have point hovered.'
+                'When hovering over Grid, pie should have point hovered.'
             );
         });
     });
 });
 
-describe('Highlight sync affected series id option', () => {
+describe('Highlight sync affected series id option (with Grid)', () => {
     before(()=>{
         cy.visit('dashboards/sync/highcharts-highlight-affected-series');
     });
 
     it('Should highlight the proper series when affected series id is defined.', () => {
         cy.get('#radio-2022').click({ force: true });
-        cy.get('#dashboard-col-1 tr.highcharts-datagrid-row').eq(0).trigger('mouseover');
+        cy.get('#dashboard-col-1 tr.hcg-row').eq(0).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.ok(

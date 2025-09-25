@@ -132,15 +132,15 @@ const chart = new Highcharts.chart('container', {
 ```
 
 
-### DataTable in DataGrid
+### DataTable in Grid
 
-DataGrid shows and optionally modifies cell content in a table. DataGrid can
+Grid shows and optionally modifies cell content in a table. Grid can
 also change the order of cells, but DataTable provides only limited information
 about the original order of a source. Therefore, a DataConnector might be needed
 to retrieve the original order.
 
 ```TypeScript
-const dataGrid = DataGrid.dataGrid('container', {
+const grid = Grid.grid('container', {
     dataTable: new DataTable({
         columns: {
             Value: [ 12.34, 45.67, 78.90 ],
@@ -153,7 +153,7 @@ const dataGrid = DataGrid.dataGrid('container', {
 If a row reference is needed, an index column has to be part of the dataTable:
 
 ```TypeScript
-const dataGrid = new DataGrid('container', {
+const grid = new Grid('container', {
     dataTable: new DataTable({
         columns: {
             '': [1, 2, 3],
@@ -162,7 +162,7 @@ const dataGrid = new DataGrid('container', {
         }
     }
 });
-dataGrid.dataTable.getRow(dataGrid.table.getRowIndexBy('', 2));
+grid.dataTable.getRow(grid.table.getRowIndexBy('', 2));
 ```
 
 

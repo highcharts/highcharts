@@ -93,15 +93,15 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'dashboard-col-1',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'sample'
         },
-        className: 'datagrid',
+        className: 'grid',
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             },

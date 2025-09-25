@@ -1,5 +1,4 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import Grid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';
 
@@ -61,7 +60,7 @@ Dashboards.board('container', {
                 }
             }
         }, {
-            renderTo: 'dashboard-col-datagrid',
+            renderTo: 'dashboard-col-grid',
             type: 'Grid',
             connector: {
                 id: 'connector-1'

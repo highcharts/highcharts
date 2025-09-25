@@ -123,9 +123,7 @@ const syncPair: Sync.SyncPair = {
             'afterSetExtremes',
             function (extremes: Axis.ExtremesObject): void {
                 clearTimeout(delay);
-                delay = setTimeout((): void => {
-                    void afterSetExtremes(extremes);
-                }, 50);
+                delay = setTimeout(afterSetExtremes, 50, this, extremes);
             }
         );
     },

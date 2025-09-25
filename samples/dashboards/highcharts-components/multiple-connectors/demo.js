@@ -96,7 +96,7 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'dashboard-col-1',
-        type: 'DataGrid',
+        type: 'Grid',
         title: {
             text: 'csv 1'
         },
@@ -106,7 +106,7 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             columnDefaults: {
                 cells: {
                     editMode: {
@@ -117,7 +117,7 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'dashboard-col-2',
-        type: 'DataGrid',
+        type: 'Grid',
         title: {
             text: 'csv 2'
         },
@@ -127,7 +127,7 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             columnDefaults: {
                 cells: {
                     editMode: {

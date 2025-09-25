@@ -105,7 +105,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        type: 'DataGrid',
+        type: 'Grid',
         renderTo: 'cell-id-2',
         connector: {
             id: 'data'
@@ -113,7 +113,7 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             columns: [{
                 id: 'Revenue',
                 header: {

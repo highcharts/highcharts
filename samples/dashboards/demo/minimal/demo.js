@@ -234,12 +234,12 @@ Dashboards.board('container', {
         connector: {
             id: 'micro-element'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         sync: {
             highlight: true,
             visibility: true
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             }
