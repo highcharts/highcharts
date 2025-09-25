@@ -140,6 +140,7 @@ const CODE_FILTER = {
     ),
     'grid-lite': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
+        ['grid', 'css', 'grid-pro.css'],
         ['grid', 'es-modules', 'Grid', 'Pro'],
         ['grid', 'es-modules', 'masters', 'grid-pro.'],
         ['grid', 'grid-pro.']
@@ -148,6 +149,7 @@ const CODE_FILTER = {
     ),
     'grid-pro': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
+        ['grid', 'css', 'grid-lite.css'],
         ['grid', 'es-modules', 'Grid', 'Lite'],
         ['grid', 'es-modules', 'masters', 'grid-lite.'],
         ['grid', 'grid-lite.']
