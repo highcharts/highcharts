@@ -187,10 +187,10 @@ Filtering supports different data types with appropriate conditions:
 
 | **Data Type** | **Available Conditions** |
 |---------------|--------------------------|
-| String | contains, doesNotContain, equals, doesNotEqual, beginsWith, endsWith, empty, notEmpty |
-| Number | equals, doesNotEqual, greaterThan, greaterThanOrEqualTo, lessThan, lessThanOrEqualTo, empty, notEmpty |
-| DateTime | equals, doesNotEqual, before, after, empty, notEmpty |
-| Boolean | all, true, false, empty |
+| `string` | `contains`, `doesNotContain`, `equals`, `doesNotEqual`, `beginsWith`, `endsWith`, `empty`, `notEmpty` |
+| `number` | `equals`, `doesNotEqual`, `greaterThan`, `greaterThanOrEqualTo`, `lessThan`, `lessThanOrEqualTo`, `empty`, `notEmpty` |
+| `datetime` | `equals`, `doesNotEqual`, `before`, `after`, `empty`, `notEmpty` |
+| `boolean` | `all`, `true`, `false`, `empty` |
 
 ```js
 columnDefaults: {
