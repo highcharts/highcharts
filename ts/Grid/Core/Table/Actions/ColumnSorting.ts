@@ -146,7 +146,7 @@ class ColumnSorting {
         const a11y = viewport.grid.accessibility;
 
         [this.column, viewport.grid].forEach((source): void => {
-            fireEvent(source, 'beforeSorting', {
+            fireEvent(source, 'beforeSort', {
                 target: this.column,
                 order
             });
@@ -162,7 +162,7 @@ class ColumnSorting {
         a11y?.userSortedColumn(order);
 
         [this.column, viewport.grid].forEach((source): void => {
-            fireEvent(source, 'afterSorting', {
+            fireEvent(source, 'afterSort', {
                 target: this.column,
                 order
             });

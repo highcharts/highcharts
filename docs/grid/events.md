@@ -27,10 +27,10 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterResize`      | Triggered after resizing a column.                       | `this: Column`        |
-| `beforeSorting`    | Triggered before sorting a column.                       | `this: Column`        |
-| `afterSorting`     | Triggered after sorting a column.                        | `this: Column`        |
-| `beforeFiltering`  | Triggered before filtering a column.                     | `this: Column`        |
-| `afterFiltering`   | Triggered after filtering a column.                      | `this: Column`        |
+| `beforeSort`    | Triggered before sorting a column.                       | `this: Column`        |
+| `afterSort`     | Triggered after sorting a column.                        | `this: Column`        |
+| `beforeFilter`  | Triggered before filtering a column.                     | `this: Column`        |
+| `afterFilter`   | Triggered after filtering a column.                      | `this: Column`        |
 
 ## header
 
@@ -47,18 +47,18 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
 columnDefaults: {
     events: {
         afterResize: function () {
-            console.log('Column resized:', this);
+            console.log('Column resized:', this.id);
         },
-        beforeSorting: function () {
-            console.log('Column sorted:', this);
+        beforeSort: function () {
+            console.log('Before sorting column:', this.id);
         },
-        afterSorting: function () {
-            console.log('Column sorted:', this);
+        afterSort: function () {
+            console.log('After sorting column:', this.id);
         },
-        beforeFiltering: function () {
+        beforeFilter: function () {
             console.log('Before filtering column:', this.id);
         },
-        afterFiltering: function () {
+        afterFilter: function () {
             console.log('After filtering column:', this.id);
         }
     },

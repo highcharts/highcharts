@@ -269,7 +269,7 @@ You can disable filtering for specific columns while keeping it enabled globally
 
 Column filtering supports two events that you can use to respond to filtering actions:
 
-### beforeFiltering
+### beforeFilter
 
 Triggered before filtering is applied to the data:
 
@@ -280,7 +280,7 @@ Triggered before filtering is applied to the data:
             enabled: true
         },
         events: {
-            beforeFiltering: function () {
+            beforeFilter: function () {
                 console.log('About to filter column:', this.id);
             }
         }
@@ -288,7 +288,7 @@ Triggered before filtering is applied to the data:
 }
 ```
 
-### afterFiltering
+### afterFilter
 
 Triggered after filtering has been applied and the grid has been updated:
 
@@ -299,7 +299,7 @@ Triggered after filtering has been applied and the grid has been updated:
             enabled: true
         },
         events: {
-            afterFiltering: function () {
+            afterFilter: function () {
                 console.log('Column filtered:', this.id);
             }
         }
