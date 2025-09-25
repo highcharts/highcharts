@@ -52,7 +52,7 @@ When `inline` is set to `false` (default), filtering is accessed via a popup tha
 
 ## Filtering Conditions by Data Type
 
-The available filtering conditions depend on the column's data type. Highcharts Grid automatically detects the data type, but you can also explicitly set it using the `dataType` option.
+The available filtering conditions depend on the column's data type. Highcharts Grid automatically detects the data type if possible, but you can also explicitly set it using the `dataType` option.
 
 ### String Columns
 
