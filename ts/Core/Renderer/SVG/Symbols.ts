@@ -61,10 +61,7 @@ function arc(
             // bubble demo (#20585).
             // See "Arc proximity" tests at
             // samples/unit-tests/svgrenderer/symbol/demo.js
-            proximity = (
-                // When placed at large pixels, larger proximity (#22163)
-                0.0002 * (Math.max(cx, 4000) / 4000)
-            ) / (options.borderRadius ? 1 : Math.max(rx, 1)),
+            proximity = 0.0002 / (options.borderRadius ? 1 : Math.max(rx, 1)),
             fullCircle = (
                 Math.abs(end - start - 2 * Math.PI) <
                 proximity
@@ -94,7 +91,7 @@ function arc(
             0, // Slanting
             longArc, // Long or short arc
             pick(options.clockwise, 1), // Clockwise
-            cx + rx * cosEnd,
+            cx + (fullCircle ? 0.001 : rx * cosEnd),
             cy + ry * sinEnd
         ];
         arcSegment.params = { start, end, cx, cy }; // Memo for border radius
