@@ -122,10 +122,10 @@ class StandaloneNavigator {
             this.chartOptions.chart.height = userOptions.height;
         }
 
-        const chart = new Chart(element, this.chartOptions);
-        const scrollbarEnabled = pick(
-            userOptions.chartOptions?.scrollbar?.enabled, true
-        );
+        const chart = new Chart(element, this.chartOptions),
+            scrollbarEnabled = pick(
+                userOptions.chartOptions?.scrollbar?.enabled, true
+            );
 
         chart.options = merge(
             chart.options,
@@ -142,6 +142,10 @@ class StandaloneNavigator {
         this.navigator = new Navigator(chart);
         chart.navigator = this.navigator;
         this.initNavigator();
+        // Adjust fake chart size to fit the navigator added after the chart was
+        // created. Without it, navigator elements were rendered incorrectly
+        // during the first render.
+        chart.setSize(void 0, void 0, false);
     }
 
     /**
