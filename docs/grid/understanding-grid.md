@@ -131,6 +131,42 @@ The `rendering` option object can be used to configure options related to perfor
 
 For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/performance) or see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings).
 
+## pagination
+The `pagination` option object enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls.
+
+```js
+{
+    pagination: {
+        enabled: true,
+        pageSize: 25,
+        position: 'bottom',
+        controls: {
+            pageSizeSelector: {
+                enabled: true,
+                options: [10, 25, 50, 100]
+            },
+            pageInfo: {
+                enabled: true
+            },
+            firstLastButtons: {
+                enabled: true
+            },
+            previousNextButtons: {
+                enabled: true
+            },
+            pageButtons: {
+                enabled: true,
+                count: 5
+            }
+        }
+    }
+}
+```
+
+The pagination controls include page size selection, page information display, first/last page buttons, previous/next buttons, and numbered page buttons. You can also configure pagination events (in the Grid Pro version) to respond to page changes and page size modifications.
+
+For more information on pagination options and events, see the [Pagination article](https://www.highcharts.com/docs/grid/pagination) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.PaginationOptions).
+
 ## events __grid_pro__
 Highcharts Grid Pro supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of Grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).
 
@@ -148,28 +184,3 @@ Grid.setOptions({
 ```
 This example disables end user sorting for every Grid on the page.
 
-## pagination
-Pagination in Highcharts Grid allows you to split your data into manageable pages, improving both performance and user experience when working with large datasets.
-The `pagination` option object can be used to enable or disable pagination, set the number of items per page, and attach event listeners for actions before and after a page change.
-
-The main options include:
-* `enabled`: Set to `true` to activate pagination.
-* `itemsPerPage`: Specifies how many rows are displayed per page.
-* `events`: An object with optional `beforePageChange` and `afterPageChange` callback functions, which are triggered before and after the page changes, respectively.
-
-By configuring these options, you can control how users navigate through your data and respond to pagination events for custom behaviors.
-
-```js
-pagination: {
-    enabled: true,
-    itemsPerPage: 6,
-    events: {
-        beforePageChange: function (pg) {
-            console.log('beforePageChange', pg.currentPage);
-        },
-        afterPageChange: function (pg) {
-            console.log('afterPageChange', pg.currentPage);
-        }
-    }
-}
-```
