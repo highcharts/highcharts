@@ -123,10 +123,20 @@ class StandaloneNavigator {
         }
 
         const chart = new Chart(element, this.chartOptions);
+        const scrollbarEnabled = pick(
+            userOptions.chartOptions?.scrollbar?.enabled, true
+        );
 
         chart.options = merge(
             chart.options,
-            { navigator: { enabled: true } }
+            { navigator: { enabled: true } },
+            { scrollbar: { enabled: scrollbarEnabled } }
+        );
+
+        this.chartOptions = merge(
+            this.chartOptions,
+            { navigator: { enabled: true } },
+            { scrollbar: { enabled: scrollbarEnabled } }
         );
 
         this.navigator = new Navigator(chart);
