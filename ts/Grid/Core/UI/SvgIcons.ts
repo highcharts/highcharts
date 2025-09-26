@@ -1,6 +1,6 @@
 /* *
  *
- *  Grid Icons Registry
+ *  Grid Svg Icons Registry
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -15,6 +15,16 @@
 
 'use strict';
 
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import Globals from '../Globals.js';
+
+
 /* *
  *
  *  Constants
@@ -22,12 +32,12 @@
  * */
 
 /**
- * Registry of all Grid icons with their SVG path data.
+ * Registry of all Grid Svg icons with their SVG path data.
  * Icons are designed for a 24x24 viewBox and use stroke-based rendering.
  */
 
-namespace GridIcons {
-    export const GridIcons = {
+namespace SvgIcons {
+    export const icons = {
         filter: 'M2.2571 3.77791C1.75287 3.21437 1.50076 2.93259 1.49125 ' +
             '2.69312C1.48299 2.48509 1.57238 2.28515 1.73292 2.15259C1.91773 ' +
             '2  2.29583 2 3.05202 2H12.9473C13.7035 2 14.0816 2 14.2664 ' +
@@ -55,11 +65,12 @@ namespace GridIcons {
 
         chevronDown: 'M6 9L12 15L18 9',
 
-        chevronSelector: 'M7 15L12 20L17 15M7 9L12 4L17 9',
+        chevronRight: 'M9 18L15 12L9 6',
 
-        // Active indicator dot - small circle for showing active state
-        activeIndicator: 'M12 12m-3 0a3 3 0 1 1 6 0a3 3 0 1 1 -6 0'
+        chevronSelector: 'M7 15L12 20L17 15M7 9L12 4L17 9'
+
     } as const;
+
 
     /* *
     *
@@ -68,9 +79,10 @@ namespace GridIcons {
     * */
 
     /**
-     * Type-safe icon names from the GridIcons registry.
+     * Type-safe icon names from the SvgIcons registry.
      */
-    export type GridIconName = keyof typeof GridIcons;
+    export type GridIconName = keyof typeof icons;
+
 
     /* *
     *
@@ -79,17 +91,24 @@ namespace GridIcons {
     * */
 
     /**
-     * Creates an SVG icon element from the Grid icons registry.
+     * Creates an SVG icon element from the SvgIcons registry.
      *
-     * @param name The name of the icon from GridIcons registry
-     * @param size The size of the icon in pixels (default: 16)
-     * @param className CSS class name for the SVG element (default: 'hcg-icon')
-     * @returns SVG element with the specified icon
+     * @param name
+     * The name of the icon from SvgIcons registry
+     *
+     * @param size
+     * The size of the icon in pixels (default: 16)
+     *
+     * @param className
+     * CSS class name for the SVG element (default: 'hcg-icon')
+     *
+     * @returns
+     * SVG element with the specified icon
      */
     export function createGridIcon(
         name: GridIconName,
         size: number = 16,
-        className: string = 'hcg-icon'
+        className: string = Globals.getClassName('icon')
     ): SVGElement {
         const svg =
             document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -107,7 +126,7 @@ namespace GridIcons {
         svg.setAttribute('class', className);
 
         // Handle icons with multiple paths (like menu icon)
-        const pathData = GridIcons[name];
+        const pathData = icons[name];
         if (name === 'menu') {
             // Menu icon has multiple circles, create separate paths
             const circles = [
@@ -148,10 +167,12 @@ namespace GridIcons {
         return svg;
     }
 }
+
+
 /* *
  *
  *  Default Export
  *
  * */
 
-export default GridIcons;
+export default SvgIcons;

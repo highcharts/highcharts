@@ -109,26 +109,26 @@ describe('Grid Pro - events.', () => {
     it('Sorting column event.', () => {
         // ColumnDefaults
         cy.get('th[data-column-id="product"]').click({ force: true });
-        cy.get('#beforeColumnSorting').should('have.value', 'beforeSorting');
+        cy.get('#beforeColumnSorting').should('have.value', 'beforeSort');
         cy.get('#headerClick').should('have.value', 'headerClick');
-        cy.get('#afterColumnSorting').should('have.value', 'afterSorting');
+        cy.get('#afterColumnSorting').should('have.value', 'afterSort');
 
         // ColumnOptions
         cy.get('th[data-column-id="weight"]').click({ force: true });
-        cy.get('#beforeColumnSorting').should('have.value', 'beforeSortingColumnOption');
+        cy.get('#beforeColumnSorting').should('have.value', 'beforeSortColumnOption');
         cy.get('#headerClick').should('have.value', 'headerClickColumnOption');
-        cy.get('#afterColumnSorting').should('have.value', 'afterSortingColumnOption');
+        cy.get('#afterColumnSorting').should('have.value', 'afterSortColumnOption');
     });
 
     it('Filtering column event.', () => {
         // ColumnDefaults
         cy.get('th[data-column-id="product"] input').type('Apples');
-        cy.get('#beforeColumnFiltering').should('have.value', 'beforeFiltering');
-        cy.get('#afterColumnFiltering').should('have.value', 'afterFiltering');
+        cy.get('#beforeColumnFiltering').should('have.value', 'beforeFilter');
+        cy.get('#afterColumnFiltering').should('have.value', 'afterFilter');
 
         // // ColumnOptions
         cy.get('th[data-column-id="weight"]').type(100);
-        cy.get('#beforeColumnFiltering').should('have.value', 'beforeFilteringColumnOption');
-        cy.get('#afterColumnFiltering').should('have.value', 'afterFilteringColumnOption');
+        cy.get('#beforeColumnFiltering').should('have.value', 'beforeFilterColumnOption');
+        cy.get('#afterColumnFiltering').should('have.value', 'afterFilterColumnOption');
     });
 });

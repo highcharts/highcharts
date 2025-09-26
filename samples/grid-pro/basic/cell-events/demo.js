@@ -47,11 +47,11 @@ Grid.grid('container', {
                 msgTable.innerText = `Resized the column '${this.id}' to ` +
                     `${Math.round(this.width * 1000) / 10}%.`;
             },
-            beforeSorting: function () {
+            beforeSort: function () {
                 msgTable.innerText = 'Before sorting the column ' +
                     `'${this.id}'.`;
             },
-            afterSorting: function () {
+            afterSort: function () {
                 const { order } =
                     this.viewport.grid.querying.sorting.currentSorting;
 
@@ -66,11 +66,11 @@ Grid.grid('container', {
                     msgTable.innerText += ' Unsorted.';
                 }
             },
-            beforeFiltering: function () {
+            beforeFilter: function () {
                 msgTable.innerText = 'Before filtering the column ' +
                     `'${this.id}'.`;
             },
-            afterFiltering: function () {
+            afterFilter: function () {
                 msgTable.innerText = 'After filtering the column ' +
                     `'${this.id}'.`;
             }

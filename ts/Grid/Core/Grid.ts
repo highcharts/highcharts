@@ -25,6 +25,7 @@
 import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Column from './Table/Column';
+import type Popup from './UI/Popup.js';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -273,6 +274,11 @@ class Grid {
      * The unique ID of the Grid.
      */
     public id: string;
+
+    /**
+     * The list of currently shown popups.
+     */
+    public popups: Set<Popup> = new Set();
 
     /**
      * Functions that unregister events attached to the grid's data table,

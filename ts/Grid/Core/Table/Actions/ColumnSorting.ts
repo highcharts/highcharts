@@ -145,8 +145,11 @@ class ColumnSorting {
         const sortingController = querying.sorting;
         const a11y = viewport.grid.accessibility;
 
-        fireEvent(this.column, 'beforeSorting', {
-            target: this.column
+        [this.column, viewport.grid].forEach((source): void => {
+            fireEvent(source, 'beforeSort', {
+                target: this.column,
+                order
+            });
         });
 
         sortingController.setSorting(order, this.column.id);
@@ -154,14 +157,15 @@ class ColumnSorting {
 
         for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();
-            // Update icon state for new header icon system
-            col.header?.updateSortIconState();
         }
 
         a11y?.userSortedColumn(order);
 
-        fireEvent(this.column, 'afterSorting', {
-            target: this.column
+        [this.column, viewport.grid].forEach((source): void => {
+            fireEvent(source, 'afterSort', {
+                target: this.column,
+                order
+            });
         });
     }
 
@@ -191,6 +195,20 @@ class ColumnSorting {
 
         void this.setOrder(consequents[currentOrder]);
     };
+}
+
+
+/* *
+ *
+ *  Interface
+ *
+ * */
+
+namespace ColumnSorting {
+    export interface Event {
+        target: Column;
+        order: ColumnSortingOrder;
+    }
 }
 
 
