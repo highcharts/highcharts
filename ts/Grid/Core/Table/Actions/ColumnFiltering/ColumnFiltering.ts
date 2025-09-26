@@ -166,6 +166,10 @@ class ColumnFiltering {
             this.filterInput.value = filteringOptions.value.toString();
         }
 
+        if (this.filterSelect) {
+            this.disableInputIfNeeded(this.filterSelect.value as Condition);
+        }
+
         // Attach keyup event listener (string type only).
         if (columnType === 'string' || columnType === 'number') {
             addEvent(this.filterInput, 'keyup', (e): void => {
@@ -242,21 +246,40 @@ class ColumnFiltering {
             filteringOptions.condition = conditions[0];
         }
 
+        this.disableInputIfNeeded(this.filterSelect.value as Condition);
+
         // Attach event listener.
         addEvent(this.filterSelect, 'change', (e): void => {
             const option: Condition = e.target.value;
             filteringOptions.condition = option;
 
-            // Disable the input since the `empty` or `notEmpty` condition
-            // doesn't require a value.
-            if (option === 'empty' || option === 'notEmpty') {
-                this.filterInput && (this.filterInput.disabled = true);
-            } else if (this.filterInput?.disabled) {
-                this.filterInput.disabled = false;
-            }
+            this.disableInputIfNeeded(option);
 
             void this.applyFilter(filteringOptions);
         });
+    }
+
+    /**
+     * Disables the input element if the condition is `empty` or `notEmpty`.
+     *
+     * @param condition
+     * The selected condition.
+     */
+    private disableInputIfNeeded(condition: Condition): void {
+        const {
+            filterSelect: select,
+            filterInput: input
+        } = this;
+
+        if (!input || !select) {
+            return;
+        }
+
+        if (condition === 'empty' || condition === 'notEmpty') {
+            input.disabled = true;
+        } else if (input?.disabled) {
+            input.disabled = false;
+        }
     }
 
     /**
