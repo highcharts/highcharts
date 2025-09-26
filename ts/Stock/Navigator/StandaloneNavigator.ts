@@ -118,7 +118,12 @@ class StandaloneNavigator {
             { navigator: userOptions }
         );
 
-        if (this.chartOptions.chart && userOptions.height) {
+        // If the chart is not inverted, set navigator height as chart height.
+        if (
+            this.chartOptions.chart &&
+            !this.chartOptions.chart.inverted &&
+            userOptions.height
+        ) {
             this.chartOptions.chart.height = userOptions.height;
         }
 
