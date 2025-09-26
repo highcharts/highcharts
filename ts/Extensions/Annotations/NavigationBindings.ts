@@ -1082,7 +1082,10 @@ class NavigationBindings {
         }
 
         objectEach(options, (option, key): void => {
-            if (key === 'typeOptions') {
+            if (
+                key === 'typeOptions' &&
+                visualOptions['type'] !== 'basicAnnotation' // #23575
+            ) {
                 visualOptions[key] = {};
                 objectEach(
                     options[key],

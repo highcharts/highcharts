@@ -39,11 +39,14 @@ if (defaultOptions.annotations) {
          * @optionparent annotations.types.pitchfork
          */
         {
+            /**
+             * @excluding line
+             */
             typeOptions: {
                 /**
                  * Inner background options.
                  *
-                 * @extends   annotations.types.crookedLine.shapeOptions
+                 * @extends   annotations.shapeOptions
                  * @excluding height, r, type, width
                  */
                 innerBackground: {
@@ -53,7 +56,7 @@ if (defaultOptions.annotations) {
                 /**
                  * Outer background options.
                  *
-                 * @extends   annotations.types.crookedLine.shapeOptions
+                 * @extends   annotations.shapeOptions
                  * @excluding height, r, type, width
                  */
                 outerBackground: {
