@@ -42,9 +42,9 @@ describe('Multiple dataTables rendering', () => {
                 dataPool.connectors[CONNECTOR_ID].getTable(DATA_TABLE_KEY);
 
             assert.deepEqual(
-                dataPoolOptions.columnNames,
-                table.getColumnNames(),
-                'The dataTable columnNames option should match the user options.'
+                dataPoolOptions.columnIds,
+                table.getColumnIds(),
+                'The dataTable columnIds option should match the user options.'
             );
 
             assert.deepEqual(

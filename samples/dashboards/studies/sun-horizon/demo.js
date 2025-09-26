@@ -382,52 +382,49 @@ Highcharts.setOptions({
     }
 });
 
+// Retrieve a connector data table.
+async function getConnectorTable(dataPool, connectorId) {
+    return dataPool
+        .getConnector(connectorId)
+        .then(connector => connector.getTable());
+}
+
 const createBoard = async () => {
     board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 id: 'horizon',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: horizon.elevationProfile
-                }
+                firstRowAsNames: false,
+                data: horizon.elevationProfile
             }, {
                 id: 'sun-trajectory-data',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: getTrajectory('sun', horizon.elevationProfile)
-                }
+                firstRowAsNames: false,
+                data: getTrajectory('sun', horizon.elevationProfile)
             }, {
                 id: 'moon-trajectory-data',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: getTrajectory('moon', horizon.elevationProfile)
-                }
+                firstRowAsNames: false,
+                data: getTrajectory('moon', horizon.elevationProfile)
             }, {
                 id: 'contours-data',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: horizon.contours?.reduce((data, contourLine) => {
-                        if (data.length) {
-                            data.push([null, null]); // Gap
-                        }
-                        [].push.apply(data, contourLine.map(p => [
-                            p.azimuth, p.angle
-                        ]));
-                        return data;
-                    }, [])
-                }
+                firstRowAsNames: false,
+                data: horizon.contours?.reduce((data, contourLine) => {
+                    if (data.length) {
+                        data.push([null, null]); // Gap
+                    }
+                    [].push.apply(data, contourLine.map(p => [
+                        p.azimuth, p.angle
+                    ]));
+                    return data;
+                }, [])
             }, {
                 id: 'times',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: getTimes(date)
-                }
+                firstRowAsNames: false,
+                data: getTimes(date)
             }]
         },
         gui: {
@@ -462,7 +459,8 @@ const createBoard = async () => {
                     // @todo Is it possible to apply multiple connectors to one
                     // chart through config?
                     const dataPool = this.board.dataPool,
-                        sunTrajectoryTable = await dataPool.getConnectorTable(
+                        sunTrajectoryTable = await getConnectorTable(
+                            dataPool,
                             'sun-trajectory-data'
                         ),
                         sunData = sunTrajectoryTable.getRowObjects(),
@@ -471,7 +469,8 @@ const createBoard = async () => {
                                 x: p.x,
                                 title: p.flag
                             })),
-                        moonTrajectoryTable = await dataPool.getConnectorTable(
+                        moonTrajectoryTable = await getConnectorTable(
+                            dataPool,
                             'moon-trajectory-data'
                         ),
                         moonData = moonTrajectoryTable.getRowObjects(),
@@ -480,7 +479,8 @@ const createBoard = async () => {
                                 x: p.x,
                                 title: p.flag
                             })),
-                        contoursTable = await dataPool.getConnectorTable(
+                        contoursTable = await getConnectorTable(
+                            dataPool,
                             'contours-data'
                         );
 
@@ -887,7 +887,8 @@ const createBoard = async () => {
                         // programmatically connected in the mount event.
                         /*
                         const sunTrajectory = await this.board.dataPool
-                            .getConnectorTable('sun-trajectory-data');
+                            .getConnector('sun-trajectory-data')
+                            .then(connector => connector.getTable());
                         sunTrajectory.setRows(sunTrajectoryData, 0);
                         */
                         chart.get('sun-trajectory').setData(
@@ -920,7 +921,7 @@ const createBoard = async () => {
                         const dataTable = this.board.dataPool
                             .connectors
                             .times
-                            .table;
+                            .getTable();
                         const rows = getTimes(date);
                         dataTable.setRows(rows, 0);
                     };

@@ -8609,7 +8609,7 @@ highed.DataTable = function (parent, attributes) {
 
     function getHeaderTextArr(quoteStrings, section) {
 
-        const columnNames = [];
+        const columnIds = [];
 
 
         function cleanData(data) {
@@ -8621,7 +8621,7 @@ highed.DataTable = function (parent, attributes) {
                 title = '"' + title + '"';
             }
 
-            columnNames.push(title);
+            columnIds.push(title);
         }
 
         if (section) {
@@ -8639,7 +8639,7 @@ highed.DataTable = function (parent, attributes) {
 
         }, []);
 
-        return columnNames;
+        return columnIds;
     }
 
     function checkSections(sections, index) {

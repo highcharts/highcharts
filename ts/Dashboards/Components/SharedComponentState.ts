@@ -96,8 +96,8 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
         return (this.columnOrder || []).slice();
     }
 
-    public getColumnVisibility(columnName: string): boolean | undefined {
-        return this.columnVisibilityMap[columnName];
+    public getColumnVisibility(columnId: string): boolean | undefined {
+        return this.columnVisibilityMap[columnId];
     }
 
     /**
@@ -429,7 +429,7 @@ namespace SharedComponentState {
 
     export type ColumnVisibilityType = Record<string, boolean>;
 
-    export type SelectionObjectType = Record<string, { columnName?: string; min?: number; max?: number }>;
+    export type SelectionObjectType = Record<string, { columnId?: string; min?: number; max?: number }>;
 
     export type PresentationHoverPointType = Partial<Globals.AnyRecord>;
 
