@@ -190,7 +190,7 @@
     stroke: var(--highcharts-neutral-color-20);
 }
 
-#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-color-0 .highcharts-point {
     fill: var(--color-gauge);
     stroke: none;
 }
