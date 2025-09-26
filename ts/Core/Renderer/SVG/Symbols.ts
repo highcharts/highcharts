@@ -59,6 +59,8 @@ function arc(
             // proximity is too small, the arc disappears. If it is too great, a
             // gap appears. This can be seen in the animation of the official
             // bubble demo (#20585).
+            // See "Arc proximity" tests at
+            // samples/unit-tests/svgrenderer/symbol/demo.js
             proximity = 0.0002 / (options.borderRadius ? 1 : Math.max(rx, 1)),
             fullCircle = (
                 Math.abs(end - start - 2 * Math.PI) <
@@ -89,7 +91,7 @@ function arc(
             0, // Slanting
             longArc, // Long or short arc
             pick(options.clockwise, 1), // Clockwise
-            cx + rx * cosEnd,
+            cx + (fullCircle ? 0.001 : rx * cosEnd),
             cy + ry * sinEnd
         ];
         arcSegment.params = { start, end, cx, cy }; // Memo for border radius
