@@ -26,6 +26,73 @@ In order to use a series that is not part of the main Highcharts bundle, you can
 either [load the required module](https://www.highcharts.com/docs/react/options#setting-a-custom-highcharts-instance)
 from the main `highcharts` package, or use the series component for that series.
 
+## Add series dynamically
+
+Because `Series` components are regular React components, you can create them from
+state or props. This makes it straightforward to add new series at runtime:
+
+```jsx
+import React from 'react';
+import { Chart, Series, Subtitle, Title } from '@highcharts/react';
+
+const seriesCatalog = [
+  { id: 'line', name: 'Line', type: 'line', data: [5, 7, 6, 8, 9] },
+  { id: 'area', name: 'Area', type: 'area', data: [3, 4, 3, 5, 6] },
+  { id: 'column', name: 'Column', type: 'column', data: [2, 3, 4, 3, 5] }
+];
+
+export default function DynamicBasics() {
+  const [activeSeriesIds, setActiveSeriesIds] = React.useState([seriesCatalog[0].id]);
+
+  const toggleSeries = React.useCallback(seriesId => {
+    setActiveSeriesIds(current => (
+      current.includes(seriesId)
+        ? current.filter(id => id !== seriesId)
+        : [...current, seriesId]
+    ));
+  }, []);
+
+  return (
+    <>
+      <Chart>
+        <Title>Dynamic series (line, area & column)</Title>
+        <Subtitle>Toggle series on and off at runtime</Subtitle>
+
+        {seriesCatalog
+          .filter(series => activeSeriesIds.includes(series.id))
+          .map(series => (
+            <Series
+              key={series.id}
+              type={series.type}
+              data={series.data}
+              options={{ id: series.id, name: series.name }}
+            />
+          ))}
+      </Chart>
+
+      <div role="group" aria-label="Series controls">
+        {seriesCatalog.map(series => (
+          <button
+            key={series.id}
+            type="button"
+            aria-pressed={activeSeriesIds.includes(series.id)}
+            onClick={() => toggleSeries(series.id)}
+          >
+            {activeSeriesIds.includes(series.id) ? `Remove ${series.name}` : `Add ${series.name}`}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+```
+
+This basic example uses the generic `Series` component for built-in chart types. For a more advanced
+pattern that wires up Stock indicators dynamically, see the dedicated
+[`Dynamic React indicators` sample](https://www.highcharts.com/samples/highcharts/react/dynamic-indicators).
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/dynamic-basics" style="width: 100%; height: 600px; border: 0;"></iframe>
+
 
 ## Series type components
 

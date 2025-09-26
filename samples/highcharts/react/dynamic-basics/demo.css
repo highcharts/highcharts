@@ -1,0 +1,34 @@
+.dynamic-basics-demo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.series-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.series-controls button {
+    background-color: #e0e3ff;
+    border: 1px solid #545ecc;
+    border-radius: 4px;
+    color: #242424;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 12px;
+    transition: background-color 0.2s ease;
+}
+
+.series-controls button.is-active {
+    background-color: #545ecc;
+    color: #fff;
+}
+
+.series-controls button[disabled] {
+    background-color: #f3f4ff;
+    border-color: #d8dcff;
+    color: #7f84ad;
+    cursor: not-allowed;
+}
