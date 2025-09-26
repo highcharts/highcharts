@@ -340,6 +340,50 @@ function setVisibility(visible) {
     }
 }
 
+function dataParser(data) {
+    if (!data.aggs) {
+        return data;
+    }
+
+    // Extract power production data
+    const modifiedData = [];
+    const idx = activeItem.generatorId - 1;
+    const aggData = data.aggs[idx];
+
+    // Timezone offset in milliseconds
+    const tzOffset = new Date().getTimezoneOffset() * 60000;
+
+    if (useHistoricalData) {
+        // Get measurement history
+        const hist = aggData.P_hist;
+        let ts = new Date(hist.start).valueOf() - tzOffset;
+        const interval = dataBugWorkaround ? 1000 : hist.res * 1000;
+        const histLen = hist.values.length;
+
+        for (let j = 0; j < histLen; j++) {
+            const power = hist.values[j];
+
+            // Add row with historical data
+            modifiedData.push([ts, power]);
+
+            // Next measurement
+            ts += interval;
+        }
+    } else {
+        // Use latest measurement only
+        let ts;
+        if (dataBugWorkaround) {
+            ts = new Date().valueOf();
+        } else {
+            ts = aggData.ts_iso;
+        }
+        ts -= tzOffset;
+        modifiedData.push([ts, aggData.P_gen]);
+    }
+
+    return modifiedData;
+}
+
 // Creates the dashboard
 async function createDashboard() {
 
@@ -352,50 +396,6 @@ async function createDashboard() {
         },
         components: dashConfig.components
     });
-
-    function dataParser(data) {
-        if (!data.aggs) {
-            return data;
-        }
-
-        // Extract power production data
-        const modifiedData = [];
-        const idx = activeItem.generatorId - 1;
-        const aggData = data.aggs[idx];
-
-        // Timezone offset in milliseconds
-        const tzOffset = new Date().getTimezoneOffset() * 60000;
-
-        if (useHistoricalData) {
-            // Get measurement history
-            const hist = aggData.P_hist;
-            let ts = new Date(hist.start).valueOf() - tzOffset;
-            const interval = dataBugWorkaround ? 1000 : hist.res * 1000;
-            const histLen = hist.values.length;
-
-            for (let j = 0; j < histLen; j++) {
-                const power = hist.values[j];
-
-                // Add row with historical data
-                modifiedData.push([ts, power]);
-
-                // Next measurement
-                ts += interval;
-            }
-        } else {
-            // Use latest measurement only
-            let ts;
-            if (dataBugWorkaround) {
-                ts = new Date().valueOf();
-            } else {
-                ts = aggData.ts_iso;
-            }
-            ts -= tzOffset;
-            modifiedData.push([ts, aggData.P_gen]);
-        }
-
-        return modifiedData;
-    }
 
     async function createDashConfig() {
         const dashConfig = {
@@ -954,6 +954,7 @@ function startTopicDiscovery() {
         topic: 'prod/+/+/overview',
         autoConnect: true,
         autoSubscribe: true,
+        beforeParse: data => dataParser(data),
         connectEvent: event => {
             const { connected, host, port } = event.detail;
             controlBar.setConnectState(connected);
