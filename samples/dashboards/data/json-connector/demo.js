@@ -86,7 +86,7 @@ async function setupBoard() {
             }]
         },
         components: [{
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             connector: {
                 id: 'micro-element',
                 columnAssignment: [{
