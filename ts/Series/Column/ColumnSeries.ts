@@ -906,23 +906,34 @@ class ColumnSeries extends Series {
 
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
-            (series.trackerGroups as any).forEach(function (key: string): void {
-                if ((series as any)[key]) {
-                    // We don't always have dataLabelsGroup
-                    (series as any)[key]
-                        .addClass('highcharts-tracker')
-                        .on('mouseover', onMouseOver)
-                        .on('mouseout', function (e: PointerEvent): void {
-                            pointer?.onTrackerMouseOut(e);
-                        })
-                        .on('touchstart', onMouseOver);
-
-                    if (!chart.styledMode && series.options.cursor) {
-                        (series as any)[key]
-                            .css({ cursor: series.options.cursor });
+            series.trackerGroups?.reduce(
+                (acc, key): (SVGElement|undefined)[] => {
+                    if (key === 'dataLabelsGroup') {
+                        acc.push(...(series.dataLabelsGroups || []));
+                    } else {
+                        acc.push((series as any)[key]);
                     }
+                    return acc;
+                },
+                [] as (SVGElement|undefined)[]
+            ).forEach((group: SVGElement|undefined): void => {
+                if (!group) {
+                    // Skip undefined
+                    return;
+                }
+
+                group.addClass('highcharts-tracker')
+                    .on('mouseover', onMouseOver)
+                    .on('mouseout', function (e: PointerEvent): void {
+                        pointer?.onTrackerMouseOut(e);
+                    })
+                    .on('touchstart', onMouseOver);
+
+                if (!chart.styledMode && series.options.cursor) {
+                    group.css({ cursor: series.options.cursor });
                 }
             });
+
             series._hasTracking = true;
         }
 

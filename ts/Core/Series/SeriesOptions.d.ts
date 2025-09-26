@@ -187,7 +187,7 @@ export interface SeriesStateNormalOptions extends StateNormalOptions {
 }
 
 export interface SeriesStateSelectOptions extends StateSelectOptions {
-    // Nothing here yet
+    enabled?: boolean;
 }
 
 export interface SeriesStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {

@@ -96,9 +96,10 @@ class MapPointSeries extends ScatterSeries {
 
     public drawDataLabels(): void {
         super.drawDataLabels();
-        if (this.dataLabelsGroup) {
-            this.dataLabelsGroup.clip(this.chart.clipRect);
-        }
+
+        this.dataLabelsGroups?.forEach((g): void => {
+            g?.clip(this.chart.clipRect);
+        });
     }
 
     /**
