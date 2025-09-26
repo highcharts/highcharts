@@ -425,7 +425,7 @@ class Series {
      * in setData, and all further data operations should be done on the data
      * table.
      */
-    public useDataTable = false;
+    public useDataTable = true;
 
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 

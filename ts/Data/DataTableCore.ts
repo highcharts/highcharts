@@ -404,9 +404,7 @@ class DataTableCore {
             }
         });
 
-        if (indexRowCount > this.rowCount) {
-            this.applyRowCount(indexRowCount);
-        }
+        this.applyRowCount(Math.max(indexRowCount, this.rowCount));
 
         if (!eventDetail?.silent) {
             fireEvent(this, 'afterSetRows', { rowIndex });

@@ -1066,7 +1066,7 @@ class Point {
      */
     public update(
         options: (PointOptions|PointShortOptions),
-        redraw?: boolean,
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
     ): void {
@@ -1076,8 +1076,6 @@ class Point {
             chart = series.chart,
             seriesOptions = series.options,
             dataOptions = seriesOptions.data;
-        let i: number;
-        redraw = pick(redraw, true);
 
         /**
          * @private
@@ -1102,9 +1100,8 @@ class Point {
                 if (graphic?.element) {
                     // "null" is also a valid symbol
                     if (
-                        options &&
-                        (options as any).marker &&
-                        typeof (options as any).marker.symbol !== 'undefined'
+                        options?.marker &&
+                        typeof options.marker.symbol !== 'undefined'
                     ) {
                         point.graphic = graphic.destroy();
                     }
@@ -1115,17 +1112,20 @@ class Point {
             }
 
             // Record changes in the data table
-            i = point.index;
-            const row: DataTable.RowObject = {};
-            for (const key of series.getDataColumnKeys()) {
+            const row: DataTable.RowObject = {},
+                keys = series.getDataColumnKeys()
+                    .concat(Object.keys(options || {}));
+
+            for (const key of keys) {
                 row[key] = (point as any)[key];
             }
-            series.dataTable.setRow(row, i);
+            series.dataTable.setRow(row, point.index);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
             if (dataOptions) {
+                const i = point.index;
                 dataOptions[i] = (
                     isObject(dataOptions[i], true) ||
                     isObject(options, true)
