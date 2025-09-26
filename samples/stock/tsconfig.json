@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "ES2017.SharedMemory"
+        ],
+    },
+    "files": [
+        "../tsglobal.d.ts",
+        "tsstock.d.ts"
+    ],
+}
