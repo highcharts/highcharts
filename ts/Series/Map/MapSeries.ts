@@ -772,6 +772,12 @@ class MapSeries extends ScatterSeries {
         Object.entries(dataTable.columns).forEach(([key, column]): void => {
             modified.setColumn(key, column);
         });
+        if (joinBy[0] === '_i') {
+            modified.setColumn(
+                '_i',
+                Array.from({ length: modified.rowCount }, (x, i): number => i)
+            );
+        }
 
         if (mapData) {
             this.mapData = mapData;
@@ -794,10 +800,12 @@ class MapSeries extends ScatterSeries {
             if (joinBy[1]) {
                 const joinKey = joinBy[1];
                 for (let i = 0; i < modified.rowCount; i++) {
-                    const mapKey = getNestedProperty(
-                        joinKey,
-                        modified.getRowObject(i)
-                    ) as string;
+                    const mapKey = joinKey === '_i' ?
+                        i :
+                        getNestedProperty(
+                            joinKey,
+                            modified.getRowObject(i)
+                        ) as string;
                     if (mapMap[mapKey]) {
                         dataUsed.push(mapMap[mapKey]);
                     }
