@@ -150,7 +150,7 @@ class StandaloneNavigator {
         // Adjust fake chart size to fit the navigator added after the chart was
         // created. Without it, navigator elements were rendered incorrectly
         // during the first render.
-        chart.setSize(void 0, void 0, false);
+        chart.redraw(false);
     }
 
     /**
