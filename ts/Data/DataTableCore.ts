@@ -249,6 +249,53 @@ class DataTableCore {
     }
 
     /**
+     * Retrieves the row at a given index.
+     *
+     * @param {number} rowIndex
+     * Row index to retrieve. First row has index 0.
+     *
+     * @param {Array<string>} [columnNames]
+     * Column names to retrieve.
+     *
+     * @return {Record<string, number|string|undefined>|undefined}
+     * Returns the row values, or `undefined` if not found.
+     */
+    public getRowObject(
+        rowIndex: number,
+        columnNames?: Array<string>
+    ): (DataTable.RowObject|undefined) {
+        const row = {} as DataTable.RowObject,
+            columns = this.columns;
+
+        columnNames ??= Object.keys(this.columns);
+
+        for (const columnName of columnNames) {
+            row[columnName] = columns[columnName]?.[rowIndex];
+        }
+        return row;
+    }
+
+    /**
+     * Output the table in the console.
+     * @todo remove/comment out this method before production
+     */
+    public log(msg = '', limit = 10, start = 0): void {
+        /* eslint-disable no-console */
+        console.group(
+            (msg ? msg + ' / ' : '') + `Limit: ${limit}, Start: ${start}`
+        );
+        console.table(
+            new Array(Math.min(this.rowCount, limit))
+                .fill(void 0)
+                .map((_, i): DataTable.RowObject =>
+                    this.getRowObject(i + start) || {}
+                )
+        );
+        console.groupEnd();
+        /* eslint-enable no-console */
+    }
+
+    /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
      * @param {string} columnName
@@ -340,8 +387,7 @@ class DataTableCore {
             indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
 
         objectEach(row, (cellValue, columnName): void => {
-            let column = columns[columnName] ||
-                eventDetail?.addColumns !== false && new Array(indexRowCount);
+            let column = columns[columnName] || new Array(indexRowCount);
             if (column) {
                 if (insert) {
                     column = splice(
@@ -358,12 +404,10 @@ class DataTableCore {
             }
         });
 
-        if (indexRowCount > this.rowCount) {
-            this.applyRowCount(indexRowCount);
-        }
+        this.applyRowCount(Math.max(indexRowCount, this.rowCount));
 
         if (!eventDetail?.silent) {
-            fireEvent(this, 'afterSetRows');
+            fireEvent(this, 'afterSetRows', { rowIndex });
             this.versionTag = uniqueKey();
         }
     }

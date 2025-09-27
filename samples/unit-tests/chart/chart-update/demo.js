@@ -425,7 +425,7 @@
             'ganttChart',
             'mapChart'
         ].forEach(constructor => {
-            if (constructor === 'mapChart') {
+            if (constructor === 'mapChart' || constructor === 'ganttChart') {
                 options.series[0].data = [];
                 cfg = JSON.stringify(options, null, '  ');
             }
