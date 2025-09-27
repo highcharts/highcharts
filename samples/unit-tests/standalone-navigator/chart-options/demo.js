@@ -1,5 +1,5 @@
 QUnit.test('Chart options in Standalone Navigator', function (assert) {
-    const navigator = Highcharts.navigator('container', {
+    const standaloneNavigator = Highcharts.navigator('container', {
         chartOptions: {
             credits: {
                 enabled: false
@@ -11,18 +11,33 @@ QUnit.test('Chart options in Standalone Navigator', function (assert) {
     });
 
     assert.notOk(
-        navigator.navigator.chart.credits,
+        standaloneNavigator.navigator.chart.credits,
         'Credits should not exist.'
     );
 
-    navigator.navigator.chart.update({
-        chart: {
-            inverted: true
+    standaloneNavigator.update({
+        chartOptions: {
+            scrollbar: {
+                enabled: false
+            }
+        }
+    });
+
+    assert.notOk(
+        standaloneNavigator.navigator.chart.scrollbar.enabled,
+        'Scrollbar should be disabled via chartOptions config.'
+    );
+
+    standaloneNavigator.update({
+        chartOptions: {
+            chart: {
+                inverted: true
+            }
         }
     });
 
     assert.ok(
-        navigator.navigator.chart.inverted,
+        standaloneNavigator.navigator.chart.inverted,
         'Standalone navigator chart should be inverted after chart update.'
     );
 });
