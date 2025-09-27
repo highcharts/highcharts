@@ -94,7 +94,8 @@ function onSeriesAfterRender(
 
     if (
         (lastVisiblePrice || lastPrice) &&
-         seriesOptions.id !== 'highcharts-navigator-series'
+         seriesOptions.id !== 'highcharts-navigator-series' &&
+         series.visible
     ) {
         const xAxis = series.xAxis,
             yAxis = series.yAxis,
