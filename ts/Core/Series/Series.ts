@@ -4778,8 +4778,14 @@ class Series {
                 'dataLabelsGroup',
                 'markerGroup',
                 'tracker',
-                'tt'
-            ] as ('group'|'dataLabelsGroup'|'markerGroup'|'tracker'|'tt')[]
+                'tt',
+                'lastPrice',
+                'lastPriceLabel',
+                'lastVisiblePrice',
+                'lastVisiblePriceLabel'
+            ] as ('group'|'dataLabelsGroup'|'markerGroup'|'tracker'|'tt'|
+                'lastPrice'|'lastPriceLabel'|'lastVisiblePrice'|
+                'lastVisiblePriceLabel')[]
         ).forEach((key): void => {
             series[key]?.[showOrHide]();
         });
