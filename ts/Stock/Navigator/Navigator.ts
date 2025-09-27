@@ -700,12 +700,17 @@ class Navigator {
             }
         }
 
-        navigator.left = pick(
-            xAxis.left,
-            // In case of scrollbar only, without navigator
-            chart.plotLeft + scrollButtonSize +
-            (inverted ? chart.plotWidth : 0)
-        );
+        if (chart.inverted) {
+            navigator.left = navigator.opposite ?
+                chart.chartWidth - scrollbarHeight -
+                    navigator.height :
+                chart.spacing[3] + scrollbarHeight;
+        } else {
+            navigator.left = pick(
+                xAxis.left,
+                chart.plotLeft + scrollButtonSize
+            );
+        }
 
         let zoomedMax = navigator.size = navigatorSize = pick(
             xAxis.len,

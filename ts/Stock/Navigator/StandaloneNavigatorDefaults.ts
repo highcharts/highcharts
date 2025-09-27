@@ -36,7 +36,8 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
         enabled: false
     },
     navigator: {
-        enabled: false
+        enabled: false,
+        opposite: false
     },
     plotOptions: {
         series: {
