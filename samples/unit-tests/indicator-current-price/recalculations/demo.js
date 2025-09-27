@@ -101,9 +101,6 @@ QUnit.test(
                     ]
                 }
             },
-            legend: {
-                enabled: true
-            },
             series: [{
                 compare: 'percent',
                 data: [100, 1, 1, 10, 1],
