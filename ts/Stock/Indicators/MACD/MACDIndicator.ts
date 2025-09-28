@@ -204,7 +204,8 @@ class MACDIndicator extends SMAIndicator {
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
-        const originalColor = this.color;
+        const originalColor = this.color,
+            originalColorIndex = this.colorIndex;
 
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
@@ -252,6 +253,7 @@ class MACDIndicator extends SMAIndicator {
 
         // Reset color and index #15608.
         this.color = originalColor;
+        this.colorIndex = originalColorIndex;
     }
 
     public toYData(
