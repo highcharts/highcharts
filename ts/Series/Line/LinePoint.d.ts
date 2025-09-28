@@ -27,8 +27,8 @@ import type Series from '../../Core/Series/Series';
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         category?: (number|string);
         clientX?: number;
         dist?: number;

@@ -39,8 +39,8 @@ declare module '../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         redrawTrigger?: string;
         initiatedScale?: boolean;
         /** @requires modules/static-scale */

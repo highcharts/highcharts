@@ -54,8 +54,8 @@ import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         showLine?: WaterfallSeries['showLine'];
     }
 }

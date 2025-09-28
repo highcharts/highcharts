@@ -43,8 +43,8 @@ const {
  *
  * */
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         getMarkerVector(
             radians: number,
             markerRadius: number,

@@ -57,8 +57,8 @@ import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
 
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         sonification?: Sonification;
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
         toggleSonify: (
@@ -68,13 +68,13 @@ declare module '../../Core/Chart/ChartLike' {
         updateSonificationEnabled: () => void;
     }
 }
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
     }
 }
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         sonify: () => void;
     }
 }

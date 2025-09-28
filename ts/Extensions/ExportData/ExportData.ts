@@ -67,8 +67,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         /**
          * Deprecated in favor of [Exporting.downloadCSV](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadCSV).
          *
@@ -135,15 +135,15 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         exportKey?: string;
         keyToAxis?: Record<string, string>;
     }
 }
 
-declare module '../../Extensions/Exporting/ExportingLike' {
-    interface ExportingLike {
+declare module '../../Extensions/Exporting/ExportingBase' {
+    interface ExportingBase {
         ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
         isDataTableVisible?: boolean;
