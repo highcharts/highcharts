@@ -1505,6 +1505,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     font-weight: 600;
     background-color: transparent;
     border: 1px solid transparent;
+    color: var(--ig-color);
+    border-radius: 5px;
 }
 
 .hcg-menu-popup-item:not(:disabled),
@@ -1518,7 +1520,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-menu-popup-item.highlighted {
     background-color: var(--hcg-context-menu-item-hover-background);
     border: var(--hcg-context-menu-item-hover-border);
-    border-radius: 5px;
 }
 
 .hcg-menu-popup-item.active:not(:disabled):hover,
@@ -1529,7 +1530,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-menu-popup-item.active {
     background-color: var(--hcg-context-menu-item-active-background);
     border: var(--hcg-context-menu-item-active-border);
-    border-radius: 5px;
 }
 
 .hcg-menu-popup-item-icon,

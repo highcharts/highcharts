@@ -1212,9 +1212,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     font-weight: 600;
     background-color: transparent;
     border: 1px solid transparent;
-}
-
-.hcg-menu-popup-item {
+    border-radius: 5px;
     color: var(--ig-color);
 }
 
@@ -1226,7 +1224,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 .hcg-menu-popup-item.highlighted {
     background-color: var(--hcg-context-menu-item-hover-background);
     border: var(--hcg-context-menu-item-hover-border);
-    border-radius: 5px;
 }
 
 .hcg-menu-popup-item.active,
@@ -1234,7 +1231,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 .hcg-menu-popup-item.active.highlighted {
     background-color: var(--hcg-context-menu-item-active-background);
     border: var(--hcg-context-menu-item-active-border);
-    border-radius: 5px;
 }
 
 .hcg-menu-popup-item-icon {
