@@ -25,6 +25,7 @@
 import type ColumnToolbar from '../ColumnToolbar.js';
 
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import StateHelpers from '../StateHelpers.js';
 import U from '../../../../../../Core/Utilities.js';
 
 const { addEvent } = U;
@@ -74,23 +75,23 @@ class SortToolbarButton extends ToolbarButton {
     }
 
     protected override refreshState(): void {
-        const {
-            currentSorting
-        } = this.toolbar?.column.viewport.grid.querying.sorting || {};
-
-        if (
-            currentSorting?.columnId === this.toolbar?.column.id &&
-            currentSorting?.order
-        ) {
-            this.setIcon(
-                currentSorting.order === 'asc' ? 'chevronUp' : 'chevronDown'
-            );
-            this.setActive(true);
+        const column = this.toolbar?.column;
+        if (!column) {
             return;
         }
 
-        this.setIcon('chevronSelector');
-        this.setActive(false);
+        if (!StateHelpers.isSorted(column)) {
+            this.setActive(false);
+            this.setIcon('chevronSelector');
+            return;
+        }
+
+        const { currentSorting } = column.viewport.grid.querying.sorting;
+
+        this.setActive(true);
+        this.setIcon(
+            currentSorting?.order === 'asc' ? 'chevronUp' : 'chevronDown'
+        );
     }
 
     protected override addEventListeners(): void {

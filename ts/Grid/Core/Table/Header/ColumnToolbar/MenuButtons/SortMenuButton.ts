@@ -25,6 +25,7 @@
 import type MenuPopup from '../MenuPopup';
 
 import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
+import StateHelpers from '../StateHelpers.js';
 import U from '../../../../../../Core/Utilities.js';
 
 const { addEvent } = U;
@@ -73,20 +74,12 @@ class SortMenuButton extends ContextMenuButton {
      * */
 
     protected override refreshState(): void {
-        const toolbar = this.contextMenu?.button?.toolbar;
-        const {
-            currentSorting
-        } = toolbar?.column.viewport.grid.querying.sorting || {};
-
-        if (
-            currentSorting?.columnId === toolbar?.column.id &&
-            currentSorting?.order === this.direction
-        ) {
-            this.setActive(true);
+        const column = this.contextMenu?.button?.toolbar?.column;
+        if (!column) {
             return;
         }
 
-        this.setActive(false);
+        this.setActive(StateHelpers.isSorted(column, this.direction));
     }
 
     protected override addEventListeners(): void {

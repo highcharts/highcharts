@@ -25,6 +25,7 @@
 import type MenuPopup from '../MenuPopup';
 
 import FilterPopup from '../FilterPopup.js';
+import StateHelpers from '../StateHelpers.js';
 import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
 import U from '../../../../../../Core/Utilities.js';
 
@@ -73,15 +74,10 @@ class FilterToolbarButton extends ContextMenuButton {
      * */
 
     protected override refreshState(): void {
-        const {
-            condition,
-            value
-        } = this.contextMenu?.button.toolbar?.column.options.filtering || {};
-
-        this.setActive(!!(condition && (
-            ['empty', 'notEmpty'].includes(condition) ||
-            (value !== void 0 && value !== '') // Accept null and 0
-        )));
+        const column = this.contextMenu?.button.toolbar?.column;
+        if (column) {
+            this.setActive(StateHelpers.isFiltered(column));
+        }
     }
 
     protected override addEventListeners(): void {

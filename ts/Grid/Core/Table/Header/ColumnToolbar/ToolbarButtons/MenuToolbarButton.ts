@@ -25,7 +25,11 @@
 import type ColumnToolbar from '../ColumnToolbar.js';
 
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import StateHelpers from '../StateHelpers.js';
 import MenuPopup from '../MenuPopup.js';
+import U from '../../../../../../Core/Utilities.js';
+
+const { addEvent } = U;
 
 
 /* *
@@ -81,6 +85,35 @@ class MenuToolbarButton extends ToolbarButton {
         }
 
         this.popup.toggle(this.wrapper);
+    }
+
+    protected override refreshState(): void {
+        const column = this.toolbar?.column;
+        if (!column) {
+            return;
+        }
+
+        this.setActive(
+            StateHelpers.isSorted(column) ||
+            StateHelpers.isFiltered(column)
+        );
+    }
+
+    protected override addEventListeners(): void {
+        super.addEventListeners();
+        const column = this.toolbar?.column;
+        if (!column) {
+            return;
+        }
+
+        this.eventListenerDestroyers.push(
+            addEvent(column.viewport.grid, 'afterSort', (): void => {
+                this.refreshState();
+            }),
+            addEvent(column, 'afterFilter', (): void => {
+                this.refreshState();
+            })
+        );
     }
 }
 

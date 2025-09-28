@@ -26,6 +26,7 @@ import type ColumnToolbar from '../ColumnToolbar.js';
 
 import FilterPopup from '../FilterPopup.js';
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import StateHelpers from '../StateHelpers.js';
 import U from '../../../../../../Core/Utilities.js';
 
 const { addEvent } = U;
@@ -72,15 +73,10 @@ class FilterToolbarButton extends ToolbarButton {
      * */
 
     protected override refreshState(): void {
-        const {
-            condition,
-            value
-        } = this.toolbar?.column.options.filtering || {};
-
-        this.setActive(!!(condition && (
-            ['empty', 'notEmpty'].includes(condition) ||
-            (value !== void 0 && value !== '') // Accept null and 0
-        )));
+        const column = this.toolbar?.column;
+        if (column) {
+            this.setActive(StateHelpers.isFiltered(column));
+        }
     }
 
     protected override addEventListeners(): void {
