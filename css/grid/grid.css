@@ -34,6 +34,14 @@
 
     /* Header background - pure white in light mode */
     --hcg-header-background: #ffffff;
+
+    /* GUI elements - Light mode */
+    --hcg-popup-background: #f6f6f6;
+    --hcg-popup-border: 1px solid #e8e8e8;
+    --hcg-context-menu-item-hover-background: #ffffff;
+    --hcg-context-menu-item-hover-border: 1px solid #e8e8e8;
+    --hcg-context-menu-item-active-background: #e1e3ff;
+    --hcg-context-menu-item-active-border: 1px solid #c3c8ff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -53,6 +61,16 @@
 
         /* Icon styles - Dark mode */
         --hcg-icon-hover-color: #ffffff;
+
+        /* GUI elements - Dark mode */
+        --hcg-popup-background: #272727;
+        --hcg-popup-border: 1px solid #4f4f4f;
+        --hcg-context-menu-item-hover-background: #3b3b3b;
+        --hcg-context-menu-item-hover-border: 1px solid #4f4f4f;
+        --hcg-context-menu-item-active-background: #3f4699;
+        --hcg-context-menu-item-active-border: 1px solid #4a55c9;
+        --hcg-input-background: #ffffff;
+        --hcg-input-border: 1px solid #d1d1d1;
     }
 }
 
@@ -72,6 +90,16 @@
 
     /* Icon styles - Dark mode */
     --hcg-icon-hover-color: #ffffff;
+
+    /* GUI elements - Dark mode */
+    --hcg-popup-background: #272727;
+    --hcg-popup-border: 1px solid #4f4f4f;
+    --hcg-popup-item-hover-background: #3b3b3b;
+    --hcg-popup-item-hover-border: 1px solid #4f4f4f;
+    --hcg-popup-item-active-background: #3f4699;
+    --hcg-popup-item-active-border: 1px solid #4a55c9;
+    --hcg-input-background: #272727;
+    --hcg-input-border: 1px solid #4f4f4f;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -1123,6 +1151,127 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     z-index: 1000;
 }
 
+/* Column header menu */
+
+.hcg-popup {
+    background-color: var(--hcg-popup-background);
+    border: var(--hcg-popup-border);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+    min-width: 200px;
+    overflow: auto;
+}
+
+.hcg-popup-content {
+    padding: 4px;
+}
+
+.hcg-popup-content input,
+.hcg-popup-content select {
+    border-radius: 6px;
+    border-color: var(--ig-icon-color);
+    background-color: var(--ig-header-background);
+    color: var(--ig-color);
+    line-height: normal;
+}
+
+.hcg-popup-content input:disabled,
+.hcg-popup-content select:disabled {
+    opacity: 0.4;
+}
+
+.hcg-menu-popup-header {
+    font-size: 0.75rem;
+    padding: 3px;
+    margin-bottom: 5px;
+}
+
+.hcg-menu-popup-header-category {
+    color: var(--ig-color-secondary);
+    opacity: 0.5;
+    user-select: none;
+}
+
+.hcg-menu-popup-container {
+    --icon-size: 16px;
+
+    list-style: none;
+    margin: 5px 0 0;
+    padding: 0;
+}
+
+.hcg-menu-popup-item {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+    min-width: 185px;
+    min-height: 2rem;
+    padding: 8px 8px 8px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+.hcg-menu-popup-item {
+    color: var(--ig-color);
+}
+
+.hcg-menu-popup-item:not(:disabled) {
+    cursor: pointer;
+}
+
+.hcg-menu-popup-item:not(:disabled):hover,
+.hcg-menu-popup-item.highlighted {
+    background-color: var(--hcg-context-menu-item-hover-background);
+    border: var(--hcg-context-menu-item-hover-border);
+    border-radius: 5px;
+}
+
+.hcg-menu-popup-item.active,
+.hcg-menu-popup-item.active:hover,
+.hcg-menu-popup-item.active.highlighted {
+    background-color: var(--hcg-context-menu-item-active-background);
+    border: var(--hcg-context-menu-item-active-border);
+    border-radius: 5px;
+}
+
+.hcg-menu-popup-item-icon {
+    flex: 0 0 var(--icon-size);
+    width: var(--icon-size);
+    height: var(--icon-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+}
+
+.hcg-menu-popup-item.active .hcg-menu-popup-item-icon,
+.hcg-menu-popup-item.highlighted .hcg-menu-popup-item-icon,
+.hcg-menu-popup-item:not(:disabled):hover .hcg-menu-popup-item-icon {
+    opacity: 1;
+}
+
+.hcg-menu-popup-item-icon .hcg-icon {
+    width: 100%;
+    height: 100%;
+    color: var(--ig-color);
+}
+
+.hcg-menu-popup-item-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    padding-left: 0.75rem;
+}
+
+.hcg-menu-popup-divider {
+    margin: 5px 0;
+    border-top: 1px solid var(--hcg-context-menu-item-hover-background);
+    height: 0;
+}
+
 /* End Grid CSS Helpers Classes */
 
 /* Start Grid Default Theme */
@@ -1241,13 +1390,14 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 .hcg-column-filter-wrapper input,
 .hcg-column-filter-wrapper select {
-    border: 1px solid var(--header-utils-dropdown-stroke-default, #d1d1d1);
-    border-radius: var(--hcg-border-radius);
+    background: var(--hcg-input-background);
+    border: var(--hcg-input-border);
+    border-radius: 6px;
     padding-right: 7px;
     height: 28px;
     max-height: 28px;
     width: 100%;
-    color: var(--header-utils-dropdown-text-default, #141414);
+    color: var(--ig-color);
     font-size: 12px;
     font-weight: 500;
     line-height: 1em;
@@ -1290,132 +1440,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     background-position: right 8px center;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-
-/* Column header menu */
-
-.hcg-theme-default .hcg-popup {
-    background-color: #272727; /* light mode: #F6F6F6 */
-    border: 1px solid #3b3b3b; /* light mode: #E8E8E8 */
-    border-radius: 6px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
-    min-width: 200px;
-    overflow: auto;
-}
-
-.highcharts-light .hcg-theme-default .hcg-popup {
-    background-color: #f6f6f6;
-    border: 1px solid #e8e8e8;
-}
-
-.hcg-theme-default .hcg-popup-content {
-    padding: 4px;
-}
-
-.hcg-theme-default .hcg-popup-content input,
-.hcg-theme-default .hcg-popup-content select {
-    border-radius: 6px;
-    border-color: var(--ig-icon-color);
-    background-color: var(--ig-header-background);
-    color: var(--ig-color);
-    line-height: normal;
-}
-
-.hcg-theme-default .hcg-popup-content input:disabled,
-.hcg-theme-default .hcg-popup-content select:disabled {
-    opacity: 0.4;
-}
-
-.hcg-menu-popup-header {
-    font-size: 0.75rem;
-    padding: 3px;
-    margin-bottom: 5px;
-}
-
-.hcg-menu-popup-header-category {
-    color: var(--ig-color-secondary);
-    opacity: 0.5;
-    user-select: none;
-}
-
-.hcg-menu-popup-container {
-    --icon-size: 16px;
-
-    list-style: none;
-    margin: 5px 0 0;
-    padding: 0;
-}
-
-.hcg-menu-popup-item {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    width: 100%;
-    min-width: 185px;
-    min-height: 2rem;
-    padding: 8px 8px 8px 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background-color: transparent;
-    border: 1px solid transparent;
-}
-
-.hcg-menu-popup-item:not(:disabled) {
-    cursor: pointer;
-}
-
-.hcg-menu-popup-item:not(:disabled):hover,
-.hcg-menu-popup-item.highlighted {
-    background-color: #3b3b3b; /* light mode: #FFFFFF */
-    border: 1px solid #4f4f4f; /* light mode: #E8E8E8 */
-    border-radius: 5px;
-}
-
-.hcg-menu-popup-item.active,
-.hcg-menu-popup-item.active:hover,
-.hcg-menu-popup-item.active.highlighted {
-    background-color: #3f4699; /* light mode: #E1E3FF */
-    border: 1px solid #4a55c9; /* light mode: #C3C8FF */
-    border-radius: 5px;
-}
-
-.hcg-menu-popup-item-icon {
-    flex: 0 0 var(--icon-size);
-    width: var(--icon-size);
-    height: var(--icon-size);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.6;
-}
-
-.hcg-menu-popup-item.active .hcg-menu-popup-item-icon,
-.hcg-menu-popup-item.highlighted .hcg-menu-popup-item-icon,
-.hcg-menu-popup-item:not(:disabled):hover .hcg-menu-popup-item-icon {
-    opacity: 1;
-}
-
-.hcg-menu-popup-item-icon .hcg-icon {
-    width: 100%;
-    height: 100%;
-    color: var(--ig-color);
-}
-
-.hcg-menu-popup-item-label {
-    flex: 1 1 auto;
-    min-width: 0;
-    text-align: left;
-    padding-left: 0.75rem;
-}
-
-.hcg-menu-popup-divider {
-    margin: 5px 0;
-    border-top: 1px solid #3b3b3b; /* light mode: #E8E8E8 */
-    height: 0;
-}
-
-.highcharts-light .hcg-menu-popup-divider {
-    border-top: 1px solid #e8e8e8;
 }
 
 /* End Grid Default Theme */

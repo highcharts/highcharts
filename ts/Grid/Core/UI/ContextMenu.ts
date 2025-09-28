@@ -181,10 +181,12 @@ abstract class ContextMenu extends Popup {
         switch (e.key) {
             case 'ArrowUp':
             case 'ArrowLeft':
+                e.preventDefault();
                 this.buttons[Math.abs((cursor - 1 + len) % len)].focus();
                 break;
             case 'ArrowDown':
             case 'ArrowRight':
+                e.preventDefault();
                 this.buttons[(cursor + 1) % len].focus();
                 break;
         }

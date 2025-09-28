@@ -394,6 +394,7 @@ class ColumnFiltering {
         }
 
         if (e.key === 'Enter') {
+            e.preventDefault();
             const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
             contentOrder[(currentIndex + 1) % contentOrder.length].focus();
             return;

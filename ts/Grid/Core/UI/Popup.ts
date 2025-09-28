@@ -272,6 +272,7 @@ abstract class Popup {
      */
     protected onKeyDown(e: KeyboardEvent): void {
         if (e.key === 'Escape') {
+            e.preventDefault();
             this.hide();
             this.button?.focus();
         }
@@ -296,21 +297,26 @@ abstract class Popup {
      * Adds event listeners for click outside and escape key.
      */
     protected addEventListeners(): void {
+        const container = this.container;
+        if (!container) {
+            return;
+        }
+
         const clickOutsideListener = (event: MouseEvent): void => {
             this.onClickOutside(event);
         };
 
-        const escapeKeyListener = (event: KeyboardEvent): void => {
+        const keyDownListener = (event: KeyboardEvent): void => {
             this.onKeyDown(event);
         };
 
         document.addEventListener('mousedown', clickOutsideListener);
-        document.addEventListener('keydown', escapeKeyListener);
+        container.addEventListener('keydown', keyDownListener);
 
         this.eventListenerDestroyers.push(
             (): void => {
                 document.removeEventListener('mousedown', clickOutsideListener);
-                document.removeEventListener('keydown', escapeKeyListener);
+                container.removeEventListener('keydown', keyDownListener);
             }
         );
     }
