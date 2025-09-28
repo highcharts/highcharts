@@ -108,7 +108,9 @@ class FilterToolbarButton extends ContextMenuButton {
         }
 
         if (!this.popup) {
-            this.popup = new FilterPopup(filtering, this);
+            this.popup = new FilterPopup(filtering, this, {
+                nextToAnchor: true
+            });
         }
 
         this.popup.toggle(this.wrapper);

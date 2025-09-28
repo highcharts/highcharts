@@ -66,12 +66,16 @@ class FilterPopup extends Popup {
      *
      * @param button
      * The button that opened the popup.
+     *
+     * @param options
+     * Popup options.
      */
     constructor(
         filtering: ColumnFiltering,
-        button: Button
+        button: Button,
+        options?: Popup.Options
     ) {
-        super(filtering.column.viewport.grid, button);
+        super(filtering.column.viewport.grid, button, options);
         this.filtering = filtering;
     }
 

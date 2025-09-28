@@ -85,6 +85,11 @@ abstract class Popup {
      */
     protected eventListenerDestroyers: Function[] = [];
 
+    /**
+     * Options for the popup.
+     */
+    private options: Popup.Options;
+
 
     /* *
      *
@@ -100,10 +105,14 @@ abstract class Popup {
      *
      * @param button
      * The button that opened the popup, if any.
+     *
+     * @param options
+     * Popup options.
      */
-    constructor(grid: Grid, button?: Button) {
+    constructor(grid: Grid, button?: Button, options?: Popup.Options) {
         this.grid = grid;
         this.button = button;
+        this.options = options || {};
     }
 
     /* *
@@ -218,19 +227,22 @@ abstract class Popup {
             return;
         }
 
+        const next = this.options.nextToAnchor || false;
         const popupRect = this.container.getBoundingClientRect();
         const parentRect = wrapper.getBoundingClientRect();
         const anchorRect = anchorElement?.getBoundingClientRect() ?? parentRect;
 
-        const top = anchorRect.bottom + 4; // 4px gap
-        let left = anchorRect.left;
+        const top = next ? anchorRect.top : anchorRect.bottom + 4;
+        let left = next ? anchorRect.right + 3 : anchorRect.left;
 
         if (left < parentRect.left) {
             left = parentRect.left;
         }
 
         if (left + popupRect.width > parentRect.width) {
-            left = anchorRect.right - popupRect.width;
+            left = -popupRect.width + (
+                next ? anchorRect.left + 4 : anchorRect.right
+            );
         }
 
         // Apply positioning
@@ -240,10 +252,16 @@ abstract class Popup {
         // If the content is too tall, constrain the container to the bottom
         // of the parent to enable content Y-scrolling.
         const contentRect = this.content.getBoundingClientRect();
-        this.container.style.bottom = (
+        if (
             contentRect.height + contentRect.top - parentRect.top >
             parentRect.height
-        ) ? '0' : 'auto';
+        ) {
+            this.container.style.top = 'auto';
+            this.container.style.bottom = '0';
+        } else {
+            this.container.style.top = `${top - parentRect.top}px`;
+            this.container.style.bottom = 'auto';
+        }
     }
 
     protected onKeyDown(event: KeyboardEvent): void {
@@ -293,6 +311,23 @@ abstract class Popup {
             destroyer();
         }
         this.eventListenerDestroyers.length = 0;
+    }
+}
+
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace Popup {
+    export interface Options {
+        /**
+         * Whether to position the popup next to the anchor element (`true`), or
+         * directly below it (`false`). Defaults to `false`.
+         */
+        nextToAnchor?: boolean;
     }
 }
 
