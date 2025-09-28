@@ -32,7 +32,9 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
-import type { Condition } from './Table/Actions/ColumnFiltering/FilteringTypes';
+import type {
+    Condition as ColumnFilteringCondition
+} from './Table/Actions/ColumnFiltering/FilteringTypes';
 
 
 /* *
@@ -424,40 +426,6 @@ export interface ColumnHeaderOptions {
      * A string to be set as a header cell's content.
      */
     formatter?: CellFormatterCallback;
-
-    /**
-     * Configuration for header icons. Allows enabling/disabling and customizing
-     * filter, sort, and menu icons.
-     *
-     * @default undefined
-     */
-    icons?: ColumnHeaderIconsOptions;
-}
-
-/**
- * Configuration options for header icons in columns.
- */
-export interface ColumnHeaderIconsOptions {
-    /**
-     * Whether to show the filter icon.
-     *
-     * @default true
-     */
-    filter?: boolean;
-
-    /**
-     * Whether to show the sort icon (only visible for sortable columns).
-     *
-     * @default true
-     */
-    sort?: boolean;
-
-    /**
-     * Whether to show the menu icon.
-     *
-     * @default false
-     */
-    menu?: boolean;
 }
 
 /**
@@ -689,7 +657,7 @@ export interface FilteringCondition {
     /**
      * The condition to use for filtering the column.
      */
-    condition?: Condition;
+    condition?: ColumnFilteringCondition;
 
     /**
      * The value that is used with the condition to filter the column.
