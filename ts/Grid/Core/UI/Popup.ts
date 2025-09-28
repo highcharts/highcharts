@@ -264,17 +264,29 @@ abstract class Popup {
         }
     }
 
-    protected onKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Escape') {
+    /**
+     * Handles key down events.
+     *
+     * @param e
+     * Keyboard event
+     */
+    protected onKeyDown(e: KeyboardEvent): void {
+        if (e.key === 'Escape') {
             this.hide();
             this.button?.focus();
         }
     }
 
-    protected onClickOutside(event: MouseEvent): void {
+    /**
+     * Handles click outside events.
+     *
+     * @param e
+     * Mouse event
+     */
+    protected onClickOutside(e: MouseEvent): void {
         if (
-            !this.container?.contains(event.target as Node) &&
-            !this.anchorElement?.contains(event.target as Node)
+            !this.container?.contains(e.target as Node) &&
+            !this.anchorElement?.contains(e.target as Node)
         ) {
             this.hide();
         }

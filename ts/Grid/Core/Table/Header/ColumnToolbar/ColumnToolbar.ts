@@ -216,9 +216,11 @@ class HeaderCellToolbar implements Toolbar {
         const cursor = this.focusCursor;
 
         switch (e.key) {
+            case 'ArrowUp':
             case 'ArrowLeft':
                 this.buttons[Math.abs((cursor - 1 + len) % len)].focus();
                 break;
+            case 'ArrowDown':
             case 'ArrowRight':
                 this.buttons[(cursor + 1) % len].focus();
                 break;

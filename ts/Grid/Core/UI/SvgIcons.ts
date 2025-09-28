@@ -67,7 +67,9 @@ namespace SvgIcons {
 
         chevronRight: 'M9 18L15 12L9 6',
 
-        chevronSelector: 'M7 15L12 20L17 15M7 9L12 4L17 9'
+        chevronSelector: 'M7 15L12 20L17 15M7 9L12 4L17 9',
+
+        checkmark: 'M20 6L7 18L2 11'
 
     } as const;
 

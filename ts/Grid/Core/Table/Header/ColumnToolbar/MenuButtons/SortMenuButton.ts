@@ -59,7 +59,8 @@ class SortMenuButton extends ContextMenuButton {
     constructor(direction: typeof SortMenuButton.prototype.direction) {
         super({
             // TODO: Use lang option
-            label: 'Sort ' + (direction === 'asc' ? 'Ascending' : 'Descending')
+            label: 'Sort ' + (direction === 'asc' ? 'Ascending' : 'Descending'),
+            activeIcon: 'checkmark'
         });
         this.direction = direction;
     }

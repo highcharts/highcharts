@@ -55,7 +55,7 @@ abstract class ContextMenu extends Popup {
     /**
      * The index of the focused button in the context menu.
      */
-    public focusCursor: number = -1;
+    public focusCursor: number = 0;
 
     /**
      * The items container element.
@@ -89,6 +89,22 @@ abstract class ContextMenu extends Popup {
         }, this.content);
 
         return this.itemsContainer;
+    }
+
+    public override show(anchorElement?: HTMLElement): void {
+        super.show(anchorElement);
+        this.buttons[0]?.focus();
+    }
+
+    public override hide(): void {
+        for (const btn of this.buttons) {
+            btn.destroy();
+        }
+        this.buttons.length = 0;
+
+        this.itemsContainer?.remove();
+        delete this.itemsContainer;
+        super.hide();
     }
 
     /**
@@ -146,12 +162,6 @@ abstract class ContextMenu extends Popup {
         }, this.itemsContainer);
     }
 
-    public override hide(): void {
-        this.itemsContainer?.remove();
-        delete this.itemsContainer;
-        super.hide();
-    }
-
     protected override onClickOutside(event: MouseEvent): void {
         const buttons = this.buttons;
         for (let i = 0, iEnd = buttons.length; i < iEnd; ++i) {
@@ -161,6 +171,23 @@ abstract class ContextMenu extends Popup {
         }
 
         super.onClickOutside(event);
+    }
+
+    protected override onKeyDown(e: KeyboardEvent): void {
+        super.onKeyDown(e);
+        const len = this.buttons.length;
+        const cursor = this.focusCursor;
+
+        switch (e.key) {
+            case 'ArrowUp':
+            case 'ArrowLeft':
+                this.buttons[Math.abs((cursor - 1 + len) % len)].focus();
+                break;
+            case 'ArrowDown':
+            case 'ArrowRight':
+                this.buttons[(cursor + 1) % len].focus();
+                break;
+        }
     }
 }
 

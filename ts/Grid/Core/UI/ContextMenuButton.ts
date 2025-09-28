@@ -179,8 +179,12 @@ class ContextMenuButton implements Button {
      * @param icon
      * The icon to set.
      */
-    public setIcon(icon: SvgIcons.GridIconName): void {
+    public setIcon(icon?: SvgIcons.GridIconName): void {
         this.icon?.remove();
+        if (!icon) {
+            return;
+        }
+
         this.icon = SvgIcons.createGridIcon(icon);
         this.iconWrapper?.appendChild(this.icon);
     }
@@ -188,6 +192,11 @@ class ContextMenuButton implements Button {
     public setActive(active: boolean): void {
         this.isActive = active;
         this.buttonEl?.classList.toggle('active', active);
+
+        const { activeIcon, icon } = this.options;
+        if (activeIcon) {
+            this.setIcon(active ? activeIcon : icon);
+        }
     }
 
     public setHighlighted(highlighted: boolean): void {
@@ -199,6 +208,14 @@ class ContextMenuButton implements Button {
      */
     public destroy(): void {
         this.removeEventListeners();
+        this.wrapper?.remove();
+
+        // Unregister from the context menu
+        const cm = this.contextMenu;
+        if (cm) {
+            cm.buttons.splice(cm.buttons.indexOf(this), 1);
+            delete this.contextMenu;
+        }
     }
 
     /**

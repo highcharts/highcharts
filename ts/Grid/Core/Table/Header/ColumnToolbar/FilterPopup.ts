@@ -86,13 +86,18 @@ class FilterPopup extends Popup {
      *
      * */
 
+    public override show(anchorElement?: HTMLElement): void {
+        super.show(anchorElement);
+        this.filtering.filterSelect?.focus();
+    }
+
     protected override renderContent(contentElement: HTMLElement): void {
         this.filtering.renderFilteringContent(contentElement);
     }
 
-    public override show(anchorElement?: HTMLElement): void {
-        super.show(anchorElement);
-        this.filtering.filterSelect?.focus();
+    protected override onKeyDown(event: KeyboardEvent): void {
+        super.onKeyDown(event);
+        this.filtering.onKeyDown(event);
     }
 }
 
