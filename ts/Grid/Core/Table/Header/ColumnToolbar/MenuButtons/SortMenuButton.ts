@@ -1,0 +1,127 @@
+/* *
+ *
+ *  Grid Sort Context Menu Button class
+ *
+ *  (c) 2020-2025 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Dawid Dragula
+ *
+ * */
+
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type MenuPopup from '../MenuPopup';
+
+import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
+import U from '../../../../../../Core/Utilities.js';
+
+const { addEvent } = U;
+
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class SortMenuButton extends ContextMenuButton {
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public override contextMenu?: MenuPopup;
+
+    private direction: ('asc'|'desc');
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    constructor(direction: typeof SortMenuButton.prototype.direction) {
+        super({
+            // TODO: Use lang option
+            label: 'Sort ' + (direction === 'asc' ? 'Ascending' : 'Descending')
+        });
+        this.direction = direction;
+    }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
+
+    protected override refreshState(): void {
+        const toolbar = this.contextMenu?.button?.toolbar;
+        const {
+            currentSorting
+        } = toolbar?.column.viewport.grid.querying.sorting || {};
+
+        if (
+            currentSorting?.columnId === toolbar?.column.id &&
+            currentSorting?.order === this.direction
+        ) {
+            this.setActive(true);
+            return;
+        }
+
+        this.setActive(false);
+    }
+
+    protected override addEventListeners(): void {
+        super.addEventListeners();
+
+        const column = this.contextMenu?.button?.toolbar?.column;
+        if (!column) {
+            return;
+        }
+
+        // If this grid is currently sorted, update the state
+        this.eventListenerDestroyers.push(
+            addEvent(
+                column.viewport.grid,
+                'afterSort',
+                (): void => this.refreshState()
+            )
+        );
+    }
+
+    protected override clickHandler(event: MouseEvent): void {
+        super.clickHandler(event);
+        const sorting = this.contextMenu?.button?.toolbar?.column.sorting;
+        if (!sorting) {
+            return;
+        }
+
+        void sorting.setOrder(this.isActive ? null : this.direction);
+    }
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default SortMenuButton;

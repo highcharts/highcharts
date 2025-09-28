@@ -23,9 +23,9 @@
  * */
 
 import Popup from './Popup.js';
-import SvgIcons from './SvgIcons.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
+import ContextMenuButton from './ContextMenuButton.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -48,6 +48,16 @@ abstract class ContextMenu extends Popup {
      * */
 
     /**
+     * The array of buttons in the context menu.
+     */
+    public readonly buttons: ContextMenuButton[] = [];
+
+    /**
+     * The index of the focused button in the context menu.
+     */
+    public focusCursor: number = -1;
+
+    /**
      * The items container element.
      */
     private itemsContainer?: HTMLElement;
@@ -65,7 +75,7 @@ abstract class ContextMenu extends Popup {
      * @returns
      * The items container element.
      */
-    private ensureItemsContainer(): HTMLElement | undefined {
+    public ensureItemsContainer(): HTMLElement | undefined {
         if (!this.content) {
             return;
         }
@@ -121,62 +131,6 @@ abstract class ContextMenu extends Popup {
     }
 
     /**
-     * Adds an item to the context menu.
-     *
-     * @param label
-     * The label shown in the item of the context menu.
-     *
-     * @param icon
-     * The icon shown in the item of the context menu.
-     *
-     * @param collapsable
-     * Whether the item is collapsable.
-     *
-     * @returns
-     * The item element.
-     */
-    protected addItem(
-        label: string,
-        icon?: SvgIcons.GridIconName,
-        collapsable: boolean = false
-    ): HTMLElement | undefined {
-        if (!this.ensureItemsContainer()) {
-            return;
-        }
-
-        const liEl = makeHTMLElement('li', void 0, this.itemsContainer);
-
-        const buttonEl = makeHTMLElement('button', {
-            className: Globals.getClassName('menuPopupItem')
-        }, liEl);
-
-        const iconEl = makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupItemIcon')
-        }, buttonEl);
-        iconEl.setAttribute('aria-hidden', 'true');
-
-        makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupItemLabel'),
-            innerText: label
-        }, buttonEl);
-
-        const chevronEl = makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupItemIcon')
-        }, buttonEl);
-        chevronEl.setAttribute('aria-hidden', 'true');
-
-        if (icon) {
-            iconEl.appendChild(SvgIcons.createGridIcon(icon));
-        }
-
-        if (collapsable) {
-            chevronEl.appendChild(SvgIcons.createGridIcon('chevronRight'));
-        }
-
-        return liEl;
-    }
-
-    /**
      * Adds a divider to the context menu.
      *
      * @returns
@@ -196,6 +150,17 @@ abstract class ContextMenu extends Popup {
         this.itemsContainer?.remove();
         delete this.itemsContainer;
         super.hide();
+    }
+
+    protected override onClickOutside(event: MouseEvent): void {
+        const buttons = this.buttons;
+        for (let i = 0, iEnd = buttons.length; i < iEnd; ++i) {
+            if (buttons[i].popup?.container?.contains(event.target as Node)) {
+                return;
+            }
+        }
+
+        super.onClickOutside(event);
     }
 }
 

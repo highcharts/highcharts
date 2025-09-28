@@ -1,6 +1,6 @@
 /* *
  *
- *  Grid Filter Toolbar Button class
+ *  Grid Filter Context Menu Button class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -22,10 +22,10 @@
  *
  * */
 
-import type ColumnToolbar from '../ColumnToolbar.js';
+import type MenuPopup from '../MenuPopup';
 
 import FilterPopup from '../FilterPopup.js';
-import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
 import U from '../../../../../../Core/Utilities.js';
 
 const { addEvent } = U;
@@ -37,7 +37,7 @@ const { addEvent } = U;
  *
  * */
 
-class FilterToolbarButton extends ToolbarButton {
+class FilterToolbarButton extends ContextMenuButton {
 
 
     /* *
@@ -46,9 +46,9 @@ class FilterToolbarButton extends ToolbarButton {
      *
      * */
 
-    public override toolbar?: ColumnToolbar;
+    public override contextMenu?: MenuPopup;
 
-    private popup?: FilterPopup;
+    public override popup?: FilterPopup;
 
 
     /* *
@@ -59,8 +59,9 @@ class FilterToolbarButton extends ToolbarButton {
 
     constructor() {
         super({
+            label: 'Filter', // TODO: Use lang option
             icon: 'filter',
-            classNameKey: 'headerCellFilterIcon'
+            chevron: true
         });
     }
 
@@ -75,7 +76,7 @@ class FilterToolbarButton extends ToolbarButton {
         const {
             condition,
             value
-        } = this.toolbar?.column.options.filtering || {};
+        } = this.contextMenu?.button.toolbar?.column.options.filtering || {};
 
         this.setActive(!!(condition && (
             ['empty', 'notEmpty'].includes(condition) ||
@@ -86,7 +87,7 @@ class FilterToolbarButton extends ToolbarButton {
     protected override addEventListeners(): void {
         super.addEventListeners();
 
-        const toolbar = this.toolbar;
+        const toolbar = this.contextMenu?.button.toolbar;
         if (!toolbar) {
             return;
         }
@@ -100,7 +101,7 @@ class FilterToolbarButton extends ToolbarButton {
 
     protected override clickHandler(event: MouseEvent): void {
         super.clickHandler(event);
-        const filtering = this.toolbar?.column.filtering;
+        const filtering = this.contextMenu?.button.toolbar?.column.filtering;
 
         if (!filtering) {
             return;
@@ -108,15 +109,6 @@ class FilterToolbarButton extends ToolbarButton {
 
         if (!this.popup) {
             this.popup = new FilterPopup(filtering, this);
-
-            this.eventListenerDestroyers.push(
-                addEvent(this.popup, 'afterShow', (): void => {
-                    this.setHighlighted(true);
-                }),
-                addEvent(this.popup, 'afterHide', (): void => {
-                    this.setHighlighted(false);
-                })
-            );
         }
 
         this.popup.toggle(this.wrapper);

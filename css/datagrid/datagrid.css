@@ -1598,6 +1598,10 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-radius: 5px;
 }
 
+.hcg-menu-popup-item.active:not(:disabled):hover,
+.hcg-menu-popup-item.active.highlighted,
+.highcharts-datagrid-menu-popup-item.active:not(:disabled):hover,
+.highcharts-datagrid-menu-popup-item.active.highlighted,
 .hcg-menu-popup-item.active,
 .highcharts-datagrid-menu-popup-item.active {
     background-color: #3f4699; /* light mode: #E1E3FF */

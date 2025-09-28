@@ -22,10 +22,12 @@
  *
  * */
 
-import type MenuToolbarButton from './Buttons/MenuToolbarButton.js';
+import type MenuToolbarButton from './ToolbarButtons/MenuToolbarButton.js';
 import type Grid from '../../../Grid.js';
 
 import ContextMenu from '../../../UI/ContextMenu.js';
+import FilterMenuButton from './MenuButtons/FilterMenuButton.js';
+import SortMenuButton from './MenuButtons/SortMenuButton.js';
 
 
 /* *
@@ -45,7 +47,7 @@ class MenuPopup extends ContextMenu {
      *
      * */
 
-    public button: MenuToolbarButton;
+    public override button: MenuToolbarButton;
 
 
     /* *
@@ -55,7 +57,7 @@ class MenuPopup extends ContextMenu {
      * */
 
     constructor(grid: Grid, button: MenuToolbarButton) {
-        super(grid);
+        super(grid, button);
         this.button = button;
     }
 
@@ -71,10 +73,10 @@ class MenuPopup extends ContextMenu {
             this.button.toolbar?.column.header?.value || '',
             'Column'
         );
-        this.addItem('Sort descending');
-        this.addItem('Sort ascending');
+        new SortMenuButton('desc').add(this);
+        new SortMenuButton('asc').add(this);
         this.addDivider();
-        this.addItem('Filter', 'filter', true);
+        new FilterMenuButton().add(this);
     }
 }
 

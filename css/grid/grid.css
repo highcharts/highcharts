@@ -1371,7 +1371,9 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     border-radius: 5px;
 }
 
-.hcg-menu-popup-item.active {
+.hcg-menu-popup-item.active,
+.hcg-menu-popup-item.active:hover,
+.hcg-menu-popup-item.active.highlighted {
     background-color: #3f4699; /* light mode: #E1E3FF */
     border: 1px solid #4a55c9; /* light mode: #C3C8FF */
     border-radius: 5px;

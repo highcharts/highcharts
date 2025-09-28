@@ -23,6 +23,7 @@
  * */
 
 import type Grid from '../Grid';
+import type Button from './Button';
 
 import GridUtils from '../GridUtils.js';
 import Globals from '../Globals.js';
@@ -75,6 +76,11 @@ abstract class Popup {
     public anchorElement?: HTMLElement;
 
     /**
+     * The button that opened the popup, if any.
+     */
+    protected button?: Button;
+
+    /**
      * Event listener destroyers.
      */
     protected eventListenerDestroyers: Function[] = [];
@@ -91,9 +97,13 @@ abstract class Popup {
      *
      * @param grid
      * The grid that will own this popup.
+     *
+     * @param button
+     * The button that opened the popup, if any.
      */
-    constructor(grid: Grid) {
+    constructor(grid: Grid, button?: Button) {
         this.grid = grid;
+        this.button = button;
     }
 
     /* *
@@ -120,6 +130,8 @@ abstract class Popup {
         if (this.container) {
             return;
         }
+
+        this.button?.setHighlighted(true);
 
         this.container = makeHTMLElement('div', {
             className: Globals.getClassName('popup')
@@ -161,6 +173,8 @@ abstract class Popup {
 
         delete this.container;
         delete this.content;
+
+        this.button?.setHighlighted(false);
 
         fireEvent(this, 'afterHide');
     }
@@ -235,6 +249,16 @@ abstract class Popup {
     protected onKeyDown(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
             this.hide();
+            this.button?.focus();
+        }
+    }
+
+    protected onClickOutside(event: MouseEvent): void {
+        if (
+            !this.container?.contains(event.target as Node) &&
+            !this.anchorElement?.contains(event.target as Node)
+        ) {
+            this.hide();
         }
     }
 
@@ -243,12 +267,7 @@ abstract class Popup {
      */
     protected addEventListeners(): void {
         const clickOutsideListener = (event: MouseEvent): void => {
-            if (
-                !this.container?.contains(event.target as Node) &&
-                !this.anchorElement?.contains(event.target as Node)
-            ) {
-                this.hide();
-            }
+            this.onClickOutside(event);
         };
 
         const escapeKeyListener = (event: KeyboardEvent): void => {

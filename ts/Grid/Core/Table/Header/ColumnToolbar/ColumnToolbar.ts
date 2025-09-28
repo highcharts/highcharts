@@ -28,9 +28,9 @@ import type Column from '../../Column';
 import GridUtils from '../../../GridUtils.js';
 import Globals from '../../../Globals.js';
 import ToolbarButton from '../../../UI/ToolbarButton.js';
-import SortToolbarButton from './Buttons/SortToolbarButton.js';
-import FilterToolbarButton from './Buttons/FilterToolbarButton.js';
-import MenuToolbarButton from './Buttons/MenuToolbarButton.js';
+import SortToolbarButton from './ToolbarButtons/SortToolbarButton.js';
+import FilterToolbarButton from './ToolbarButtons/FilterToolbarButton.js';
+import MenuToolbarButton from './ToolbarButtons/MenuToolbarButton.js';
 
 const { makeHTMLElement } = GridUtils;
 

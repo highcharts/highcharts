@@ -47,4 +47,11 @@ interface Toolbar {
     focusCursor: number;
 }
 
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default Toolbar;

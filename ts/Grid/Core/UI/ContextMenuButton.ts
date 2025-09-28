@@ -1,6 +1,6 @@
 /* *
  *
- *  Grid Toolbar Button class
+ *  Grid Context Menu Button class
  *
  *  (c) 2020-2025 Highsoft AS
  *
@@ -22,7 +22,7 @@
  *
  * */
 
-import type Toolbar from './Toolbar';
+import type ContextMenu from './ContextMenu';
 import type Button from './Button';
 import type Popup from './Popup';
 
@@ -39,7 +39,7 @@ const { makeHTMLElement } = GridUtils;
  *
  * */
 
-class ToolbarButton implements Button {
+class ContextMenuButton implements Button {
 
     /* *
      *
@@ -48,14 +48,14 @@ class ToolbarButton implements Button {
      * */
 
     /**
-     * The wrapper element for the button.
+     * The wrapper `<li>` element for the button.
      */
-    public wrapper?: HTMLSpanElement;
+    public wrapper?: HTMLLIElement;
 
     /**
-     * The toolbar that the button belongs to.
+     * The context menu that the button belongs to.
      */
-    public toolbar?: Toolbar;
+    public contextMenu?: ContextMenu;
 
     public popup?: Popup;
 
@@ -70,12 +70,17 @@ class ToolbarButton implements Button {
     protected isActive: boolean = false;
 
     /**
-     * The options for the toolbar button.
+     * The options for the context menu button.
      */
-    private options: ToolbarButton.Options;
+    private options: ContextMenuButton.Options;
 
     /**
-     * The default icon for the toolbar button.
+     * The container for the icon element.
+     */
+    private iconWrapper?: HTMLElement;
+
+    /**
+     * The default icon for the context menu button.
      */
     private icon?: SVGElement;
 
@@ -84,11 +89,6 @@ class ToolbarButton implements Button {
      */
     private buttonEl?: HTMLButtonElement;
 
-    /**
-     * The active indicator for the button.
-     */
-    private activeIndicator?: HTMLDivElement;
-
 
     /* *
      *
@@ -96,7 +96,7 @@ class ToolbarButton implements Button {
      *
      * */
 
-    constructor(options: ToolbarButton.Options) {
+    constructor(options: ContextMenuButton.Options) {
         this.options = options;
     }
 
@@ -108,41 +108,57 @@ class ToolbarButton implements Button {
      * */
 
     /**
-     * Adds the button to the toolbar.
+     * Adds the button to the context menu.
      *
-     * @param toolbar
-     * The toolbar to add the button to.
+     * @param contextMenu
+     * The context menu to add the button to.
      */
-    public add(toolbar: Toolbar): this {
+    public add(contextMenu: ContextMenu): this | undefined {
         const cfg = this.options;
-        this.toolbar = toolbar;
-        toolbar.buttons.push(this);
+        this.contextMenu = contextMenu;
+        contextMenu.buttons.push(this);
 
-        const wrapper = makeHTMLElement('span', cfg.classNameKey && {
-            className: Globals.getClassName(cfg.classNameKey)
-        }, toolbar.container);
-        this.wrapper = wrapper;
-
-        const button = this.buttonEl = makeHTMLElement<HTMLButtonElement>(
-            'button',
-            {
-                className: (
-                    Globals.getClassName('button') +
-                    (this.isActive ? ' active' : '')
-                )
-            },
-            wrapper
-        );
-        button.setAttribute('type', 'button');
-        button.setAttribute('tabindex', '-1');
-
-        if (cfg.tooltip) {
-            button.title = cfg.tooltip;
-            button.setAttribute('aria-label', cfg.tooltip);
+        const container = contextMenu.ensureItemsContainer();
+        if (!container) {
+            return;
         }
 
-        this.setIcon(cfg.icon);
+        const liEl = this.wrapper = makeHTMLElement('li', cfg.classNameKey && {
+            className: Globals.getClassName(cfg.classNameKey)
+        }, container);
+
+        const buttonEl = this.buttonEl = makeHTMLElement('button', {
+            className: Globals.getClassName('menuPopupItem')
+        }, liEl);
+
+        const iconEl = this.iconWrapper = makeHTMLElement('span', {
+            className: Globals.getClassName('menuPopupItemIcon')
+        }, buttonEl);
+
+        makeHTMLElement('span', {
+            className: Globals.getClassName('menuPopupItemLabel'),
+            innerText: cfg.label
+        }, buttonEl);
+
+        const chevronEl = makeHTMLElement('span', {
+            className: Globals.getClassName('menuPopupItemIcon')
+        }, buttonEl);
+
+        iconEl.setAttribute('aria-hidden', 'true');
+        chevronEl.setAttribute('aria-hidden', 'true');
+        buttonEl.setAttribute('type', 'button');
+        buttonEl.setAttribute('tabindex', '-1');
+
         this.refreshState();
+
+        if (cfg.chevron) {
+            chevronEl.appendChild(SvgIcons.createGridIcon('chevronRight'));
+        }
+
+        if (cfg.icon) {
+            this.setIcon(cfg.icon);
+        }
+
         this.addEventListeners();
 
         return this;
@@ -151,9 +167,9 @@ class ToolbarButton implements Button {
     public focus(): void {
         this.buttonEl?.focus();
 
-        const tb = this.toolbar;
-        if (tb) {
-            tb.focusCursor = tb.buttons.indexOf(this);
+        const cm = this.contextMenu;
+        if (cm) {
+            cm.focusCursor = cm.buttons.indexOf(this);
         }
     }
 
@@ -165,14 +181,13 @@ class ToolbarButton implements Button {
      */
     public setIcon(icon: SvgIcons.GridIconName): void {
         this.icon?.remove();
-        this.icon = SvgIcons.createGridIcon(icon, this.options.size ?? 20);
-        this.buttonEl?.appendChild(this.icon);
+        this.icon = SvgIcons.createGridIcon(icon);
+        this.iconWrapper?.appendChild(this.icon);
     }
 
     public setActive(active: boolean): void {
         this.isActive = active;
         this.buttonEl?.classList.toggle('active', active);
-        this.renderActiveIndicator(active);
     }
 
     public setHighlighted(highlighted: boolean): void {
@@ -184,11 +199,6 @@ class ToolbarButton implements Button {
      */
     public destroy(): void {
         this.removeEventListeners();
-        this.wrapper?.remove();
-
-        // Unregister from toolbar
-        this.toolbar?.buttons.splice(this.toolbar.buttons.indexOf(this), 1);
-        delete this.toolbar;
     }
 
     /**
@@ -206,30 +216,6 @@ class ToolbarButton implements Button {
      */
     protected clickHandler(event: MouseEvent): void {
         this.options.onClick?.(event, this);
-    }
-
-    /**
-     * Renders the active indicator for the button.
-     *
-     * @param render
-     * Whether the active indicator should be rendered.
-     */
-    protected renderActiveIndicator(render: boolean): void {
-        const button = this.buttonEl;
-        if (!button) {
-            return;
-        }
-
-        this.activeIndicator?.remove();
-
-        if (!render) {
-            delete this.activeIndicator;
-            return;
-        }
-
-        this.activeIndicator = makeHTMLElement('div', {
-            className: Globals.getClassName('toolbarButtonActiveIndicator')
-        }, button);
     }
 
     /**
@@ -264,21 +250,36 @@ class ToolbarButton implements Button {
  *
  * */
 
-namespace ToolbarButton {
+namespace ContextMenuButton {
 
     /**
-     * Options for the toolbar button.
+     * Options for the context menu button.
      */
     export interface Options {
         /**
-         * The icon for the button.
+         * The label for the button.
          */
-        icon: SvgIcons.GridIconName;
+        label: string;
 
         /**
-         * The class name key for the button.
+         * The icon for the button.
+         */
+        icon?: SvgIcons.GridIconName;
+
+        /**
+         * A class name key applied to the `<li>` wrapper of the button.
          */
         classNameKey?: Globals.ClassNameKey;
+
+        /**
+         * The icon for the active state of the button.
+         */
+        activeIcon?: SvgIcons.GridIconName;
+
+        /**
+         * The icon for the highlighted state of the button.
+         */
+        highlightedIcon?: SvgIcons.GridIconName;
 
         /**
          * The tooltip string for the button.
@@ -286,19 +287,14 @@ namespace ToolbarButton {
         tooltip?: string;
 
         /**
-         * The size of the button.
+         * If the chevron icon should be rendered.
          */
-        size?: number;
-
-        /**
-         * Whether the button should be always visible.
-         */
-        alwaysVisible?: boolean;
+        chevron?: boolean;
 
         /**
          * The click handler for the button.
          */
-        onClick?: (event: MouseEvent, button: ToolbarButton) => void;
+        onClick?: (event: MouseEvent, button: ContextMenuButton) => void;
     }
 
 }
@@ -310,4 +306,4 @@ namespace ToolbarButton {
  *
  * */
 
-export default ToolbarButton;
+export default ContextMenuButton;
