@@ -118,7 +118,15 @@ class HeaderCellToolbar implements Toolbar {
     }
 
     private renderMinimized(): void {
-        new MenuToolbarButton().add(this);
+        const columnOptions = this.column.options;
+        if (
+            columnOptions.sorting?.sortable || (
+                columnOptions.filtering?.enabled &&
+                !columnOptions.filtering.inline
+            )
+        ) {
+            new MenuToolbarButton().add(this);
+        }
     }
 
     /**

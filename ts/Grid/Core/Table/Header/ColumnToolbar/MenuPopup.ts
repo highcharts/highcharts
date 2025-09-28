@@ -69,14 +69,30 @@ class MenuPopup extends ContextMenu {
      * */
 
     protected override renderContent(): void {
+        const columnOptions = this.button.toolbar?.column.options || {};
+        const filteringEnabled = (
+            columnOptions.filtering?.enabled &&
+            !columnOptions.filtering.inline
+        );
+        const sortingEnabled = columnOptions.sorting?.sortable;
+
         this.addHeader(
             this.button.toolbar?.column.header?.value || '',
             'Column'
         );
-        new SortMenuButton('desc').add(this);
-        new SortMenuButton('asc').add(this);
-        this.addDivider();
-        new FilterMenuButton().add(this);
+
+        if (sortingEnabled) {
+            new SortMenuButton('desc').add(this);
+            new SortMenuButton('asc').add(this);
+
+            if (filteringEnabled) {
+                this.addDivider();
+            }
+        }
+
+        if (filteringEnabled) {
+            new FilterMenuButton().add(this);
+        }
     }
 }
 

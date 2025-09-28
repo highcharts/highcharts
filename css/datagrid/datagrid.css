@@ -580,13 +580,15 @@
 .hcg-table thead th:hover .hcg-header-cell-icons,
 .hcg-table thead th:focus-visible .hcg-header-cell-icons,
 .hcg-table thead th:focus-within .hcg-header-cell-icons,
+.hcg-header-cell-icons:hover,
+.hcg-header-cell-icons:has(.hcg-button.highlighted),
+.hcg-header-cell-icons:has(.hcg-button.active),
 .highcharts-datagrid-table thead th:hover .highcharts-datagrid-header-cell-icons,
 .highcharts-datagrid-table thead th:focus-visible .highcharts-datagrid-header-cell-icons,
 .highcharts-datagrid-table thead th:focus-within .highcharts-datagrid-header-cell-icons,
-.hcg-header-cell-icons:hover,
-.hcg-header-cell-icons:has(.hcg-button.highlighted),
 .highcharts-datagrid-header-cell-icons:hover,
-.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button.highlighted) {
+.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button.highlighted),
+.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button.active) {
     max-width: 100px;
     opacity: 1;
 }
