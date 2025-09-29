@@ -138,7 +138,16 @@ jobs:
         if: ${{ always() }}
         run: |
           cd highcharts
+          echo "🔍 Checking lighthouse reports..."
+          ls -la tmp/lighthouseReports/ || echo "No lighthouse reports directory"
+          ls -la tmp/lighthouseReports/base/ || echo "No base reports"
+          ls -la tmp/lighthouseReports/actual/ || echo "No actual reports"
+          echo "🔄 Running lighthouse comparison..."
           node test/cypress/lighthouseCompare.mjs --reportsDir ./tmp/lighthouseReports > ./tmp/lighthousetable.md
+          echo "📄 Generated lighthousetable.md:"
+          ls -la tmp/lighthousetable.md
+          echo "📊 Content:"
+          cat tmp/lighthousetable.md || echo "Empty or missing file"
 
       - name: Add to summary
         if: ${{ always() }}

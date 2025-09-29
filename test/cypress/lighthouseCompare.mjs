@@ -100,7 +100,13 @@ function printReport(outPutColumns, reportName = undefined) {
 }
 
 // Loop over the actuals, as we are most interested in changes
-const actualFiles = await readdir(join(reportsDir, 'actual'));
+const actualFiles = await readdir(join(reportsDir, 'actual')).catch(() => []);
+
+if (actualFiles.length === 0) {
+    console.log('### No lighthouse reports found');
+    process.exit(0);
+}
+
 const reportFiles = actualFiles.map((file) => {
     return {
         actual: file,
