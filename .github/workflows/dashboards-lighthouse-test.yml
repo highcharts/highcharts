@@ -132,7 +132,7 @@ jobs:
         with:
           name: tmp-files
           path: |
-            tmp
+            highcharts/tmp
 
       - name: Write markdown to file
         if: ${{ always() }}

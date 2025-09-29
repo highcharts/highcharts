@@ -525,8 +525,7 @@ class Board {
      * The component with the given identifier.
      */
     public getComponentById(id: string): ComponentType | undefined {
-        const board = this;
-        return board.mountedComponents.find(
+        return this.mountedComponents.find(
             (c): boolean => c.component.id === id
         )?.component;
     }
@@ -541,7 +540,8 @@ class Board {
      * The component with the given cell identifier.
      */
     public getComponentByCellId(id: string): ComponentType | undefined {
-        return this.mountedComponents.find(
+        const board = this;
+        return board.mountedComponents.find(
             (c): boolean => c.cell.id === id
         )?.component;
     }
