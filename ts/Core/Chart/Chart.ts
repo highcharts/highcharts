@@ -615,17 +615,6 @@ class Chart {
             ) as string,
             SeriesClass = seriesTypes[type];
 
-        if (options.linkedTo) {
-            const linkedSeries = chart.get(options.linkedTo);
-
-            if (linkedSeries instanceof Series) {
-                options.compare = pick(
-                    options.compare,
-                    linkedSeries.options.compare
-                );
-            }
-        }
-
         // No such series type
         if (!SeriesClass) {
             error(17, true, chart, { missingModuleFor: type });

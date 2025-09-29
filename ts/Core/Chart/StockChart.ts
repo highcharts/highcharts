@@ -27,7 +27,6 @@ import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 import type PointerEvent from '../PointerEvent';
-import type Series from '../Series/Series';
 import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
@@ -35,6 +34,7 @@ import type {
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type SeriesOptions from '../Series/SeriesOptions';
 
 import Chart from '../Chart/Chart.js';
 import F from '../Templating.js';
@@ -45,6 +45,7 @@ import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
 import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaults.js';
+import Series from '../Series/Series.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
@@ -323,6 +324,27 @@ class StockChart extends Chart {
         ));
 
         super.init(options, callback);
+    }
+
+    /**
+     * Extends Chart#initSeries function to add stock-specific functionality.
+     *
+     * @private
+     * @function Highcharts.Chart#initSeries
+     */
+    public initSeries(options: SeriesOptions): Series {
+        if (options.linkedTo) {
+            const linkedSeries = this.get(options.linkedTo);
+
+            if (linkedSeries instanceof Series) {
+                options.compare = pick(
+                    options.compare,
+                    linkedSeries.options.compare
+                );
+            }
+        }
+
+        return super.initSeries(options);
     }
 
     /**
