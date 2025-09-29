@@ -406,8 +406,9 @@ class Board {
         components: Array<Partial<ComponentType['options']>>
     ): Array<Promise<Component | void>> {
         const promises = [];
+        const board = this;
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            promises.push(Bindings.addComponent(components[i], this));
+            promises.push(Bindings.addComponent(components[i], board));
         }
         return promises;
     }
@@ -457,13 +458,11 @@ class Board {
      * layouts and its cells.
      */
     public reflow(): void {
-        const board = this;
+        if (this.editMode) {
+            const editModeTools = this.editMode.tools;
 
-        if (board.editMode) {
-            const editModeTools = board.editMode.tools;
-
-            board.editMode.hideToolbars(['cell', 'row']);
-            board.editMode.hideContextPointer();
+            this.editMode.hideToolbars(['cell', 'row']);
+            this.editMode.hideContextPointer();
 
             // Update expanded context menu container
             if (editModeTools.contextMenu) {
@@ -539,7 +538,8 @@ class Board {
      * The component with the given cell identifier.
      */
     public getComponentByCellId(id: string): ComponentType | undefined {
-        return this.mountedComponents.find(
+        const board = this;
+        return board.mountedComponents.find(
             (c): boolean => c.cell.id === id
         )?.component;
     }
