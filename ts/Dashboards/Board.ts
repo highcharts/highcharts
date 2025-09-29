@@ -364,8 +364,6 @@ class Board {
      * The DOM element to render to, or its id.
      */
     private initContainer(renderTo: (string | HTMLElement)): void {
-        const board = this;
-
         if (typeof renderTo === 'string') {
             renderTo = window.document.getElementById(renderTo) as HTMLElement;
         }
@@ -375,7 +373,7 @@ class Board {
             error(13, true);
         }
 
-        board.container = renderTo;
+        this.container = renderTo;
     }
 
     /**
@@ -540,8 +538,7 @@ class Board {
      * The component with the given cell identifier.
      */
     public getComponentByCellId(id: string): ComponentType | undefined {
-        const board = this;
-        return board.mountedComponents.find(
+        return this.mountedComponents.find(
             (c): boolean => c.cell.id === id
         )?.component;
     }
