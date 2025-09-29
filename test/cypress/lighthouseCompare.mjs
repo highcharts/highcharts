@@ -40,7 +40,7 @@ async function loadJSON(path) {
             const content = readFileSync(join(cwd(), path), 'utf-8');
             return JSON.parse(content);
         } catch (fallbackError) {
-            console.log(`❌ Both import methods failed for ${path}:`, fallbackError.message);
+            console.error(`❌ Failed to load JSON file ${path}:`, fallbackError.message);
             return null;
         }
     }
@@ -136,17 +136,14 @@ for (const report of reportFiles) {
     for (const [context, fileName] of Object.entries(report)) {
         if (fileName) {
             const filePath = join(reportsDir, context, fileName);
-            console.log(`🔍 Loading ${context} report: ${filePath}`);
             const reportData = await loadJSON(filePath);
 
-            if (reportData) {
-                console.log(`✅ Successfully loaded ${context} report with ${Object.keys(reportData).length} keys`);
-            } else {
-                console.log(`❌ Failed to load ${context} report from ${filePath}`);
+            if (!reportData) {
+                console.error(`❌ Failed to load ${context} report from ${filePath}`);
+                continue;
             }
 
             if (reportData) {
-                console.log(`🔍 Processing metrics for ${context}:`, compareMetrics);
                 compareMetrics.forEach((metric) => {
                     if (metric.startsWith('categories.')) {
                         const category = metric.replace('categories.', '');
@@ -179,6 +176,5 @@ for (const report of reportFiles) {
         }
     }
 
-    console.log(`📊 Final output columns:`, JSON.stringify(outPutColumns, null, 2));
     printReport(outPutColumns, report.actual);
 }
