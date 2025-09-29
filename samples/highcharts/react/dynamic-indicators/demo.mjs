@@ -6,6 +6,7 @@ import { StockChart } from '@highcharts/react/Stock';
 import { SMASeries } from '@highcharts/react/indicators/SMA';
 import { EMASeries } from '@highcharts/react/indicators/EMA';
 import { PSARSeries } from '@highcharts/react/indicators/PSAR';
+import { Accessibility } from '@highcharts/react/options/Accessibility';
 const priceSeriesId = 'price-series';
 const priceData = [
     [
@@ -162,10 +163,7 @@ function IndicatorControls({ activeIndicators, onAddIndicator, onReset }) {
             type: "button",
             disabled: isActive
         }, isActive ? `${indicator.name} added` : `Add ${indicator.name}`);
-    }), activeIndicators.length > 0 && /*#__PURE__*/ React.createElement("p", {
-        className: "active-indicators",
-        role: "status"
-    }, "Active indicators: ", activeIndicators.map((entry)=>entry.name).join(', ')), /*#__PURE__*/ React.createElement("button", {
+    }), /*#__PURE__*/ React.createElement("button", {
         disabled: activeIndicators.length === 0,
         onClick: onReset,
         type: "button"
@@ -192,7 +190,7 @@ export default function ChartComponent() {
     }, []);
     return /*#__PURE__*/ React.createElement("div", {
         className: "dynamic-series-demo"
-    }, /*#__PURE__*/ React.createElement(StockChart, null, /*#__PURE__*/ React.createElement(Title, null, "Dynamic stock indicators"), /*#__PURE__*/ React.createElement(Subtitle, null, "Add technical indicator series at runtime"), /*#__PURE__*/ React.createElement(Series, {
+    }, /*#__PURE__*/ React.createElement(StockChart, null, /*#__PURE__*/ React.createElement(Title, null, "Dynamic stock indicators"), /*#__PURE__*/ React.createElement(Subtitle, null, "Add technical indicator series at runtime"), /*#__PURE__*/ React.createElement(Accessibility, null), /*#__PURE__*/ React.createElement(Series, {
         id: priceSeriesId,
         name: "Demo stock",
         type: "candlestick",
