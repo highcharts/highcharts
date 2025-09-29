@@ -257,12 +257,12 @@ function resolveJSON(js: string) {
     return codeblocks.join('\n');
 }
 const highchartsCSS = readFileSync(
-    join('code/css/highcharts.css'),
+    join(__dirname, '..', 'code', 'css', 'highcharts.css'),
     'utf8'
 );
 
 export function getSample(path: string) {
-    path = normalize(path);
+    path = normalize(path.replace(/\\/g, '/'));
     const files = {
         html: 'demo.html',
         css: 'demo.css',
@@ -293,5 +293,3 @@ ${obj.script}`;
 
     return obj;
 }
-
-

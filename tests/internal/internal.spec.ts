@@ -3,8 +3,8 @@ import { getSample } from '../utils.ts';
 
 test.describe('getSample', () => {
     test('should get sample with Windows-style path', () => {
-        const sample = getSample('samples\\unit-tests\\chart\\addseries');
-        expect(sample.script).toContain('QUnit.test(\'#addSeries');
+        const sample = getSample('samples\\unit-tests\\chart\\alignthresholds');
+        expect(sample.script).toContain('QUnit.test(\'alignThresholds');
     });
 });
 
