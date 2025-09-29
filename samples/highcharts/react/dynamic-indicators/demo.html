@@ -59,6 +59,7 @@ details {
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">SMASeries</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@highcharts/react/indicators/SMA&#x27;</span>;
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">EMASeries</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@highcharts/react/indicators/EMA&#x27;</span>;
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">PSARSeries</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@highcharts/react/indicators/PSAR&#x27;</span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Accessibility</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@highcharts/react/options/Accessibility&#x27;</span>;
 
 
 
@@ -139,12 +140,6 @@ details {
                 );
             })}
 
-            {activeIndicators.length &gt; 0 &amp;&amp; (
-                <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;active-indicators&quot;</span> <span class="hljs-attr">role</span>=<span class="hljs-string">&quot;status&quot;</span>&gt;</span>
-                    Active indicators: {activeIndicators.map(entry =&gt; entry.name).join(&#x27;, &#x27;)}
-                <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
-            )}
-
             <span class="hljs-tag">&lt;<span class="hljs-name">button</span>
                 <span class="hljs-attr">disabled</span>=<span class="hljs-string">{activeIndicators.length</span> === <span class="hljs-string">0}</span>
                 <span class="hljs-attr">onClick</span>=<span class="hljs-string">{onReset}</span>
@@ -184,6 +179,8 @@ details {
             <span class="hljs-tag">&lt;<span class="hljs-name">StockChart</span>&gt;</span>
                 <span class="hljs-tag">&lt;<span class="hljs-name">Title</span>&gt;</span>Dynamic stock indicators<span class="hljs-tag">&lt;/<span class="hljs-name">Title</span>&gt;</span>
                 <span class="hljs-tag">&lt;<span class="hljs-name">Subtitle</span>&gt;</span>Add technical indicator series at runtime<span class="hljs-tag">&lt;/<span class="hljs-name">Subtitle</span>&gt;</span>
+
+                <span class="hljs-tag">&lt;<span class="hljs-name">Accessibility</span> /&gt;</span>
 
                 <span class="hljs-tag">&lt;<span class="hljs-name">Series</span>
                     <span class="hljs-attr">id</span>=<span class="hljs-string">{priceSeriesId}</span>

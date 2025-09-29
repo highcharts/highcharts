@@ -5,6 +5,7 @@ import { StockChart } from '@highcharts/react/Stock';
 import { SMASeries } from '@highcharts/react/indicators/SMA';
 import { EMASeries } from '@highcharts/react/indicators/EMA';
 import { PSARSeries } from '@highcharts/react/indicators/PSAR';
+import { Accessibility } from '@highcharts/react/options/Accessibility';
 
 
 
@@ -85,12 +86,6 @@ function IndicatorControls({ activeIndicators, onAddIndicator, onReset }) {
                 );
             })}
 
-            {activeIndicators.length > 0 && (
-                <p className="active-indicators" role="status">
-                    Active indicators: {activeIndicators.map(entry => entry.name).join(', ')}
-                </p>
-            )}
-
             <button
                 disabled={activeIndicators.length === 0}
                 onClick={onReset}
@@ -130,6 +125,8 @@ export default function ChartComponent() {
             <StockChart>
                 <Title>Dynamic stock indicators</Title>
                 <Subtitle>Add technical indicator series at runtime</Subtitle>
+
+                <Accessibility />
 
                 <Series
                     id={priceSeriesId}

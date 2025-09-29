@@ -108,7 +108,7 @@ export default function ChartComponent() {
     ]);
     return /*#__PURE__*/ React.createElement("div", {
         className: "dynamic-basics-demo"
-    }, /*#__PURE__*/ React.createElement(Chart, null, /*#__PURE__*/ React.createElement(Title, null, "Dynamic series (line, area & column)"), /*#__PURE__*/ React.createElement(Subtitle, null, "Toggle between the built-in Highcharts series types at runtime"), /*#__PURE__*/ React.createElement(YAxis, {
+    }, /*#__PURE__*/ React.createElement(Chart, null, /*#__PURE__*/ React.createElement(Title, null, "Dynamic series (line, area & column)"), /*#__PURE__*/ React.createElement(Subtitle, null, "Toggle between the built-in Highcharts series types"), /*#__PURE__*/ React.createElement(YAxis, {
         title: {
             text: 'Users'
         }
@@ -116,9 +116,7 @@ export default function ChartComponent() {
         categories: categories
     }), /*#__PURE__*/ React.createElement(Legend, {
         enabled: false
-    }), /*#__PURE__*/ React.createElement(Accessibility, {
-        enabled: true
-    }), activeSeries.map((series)=>/*#__PURE__*/ React.createElement(Series, {
+    }), /*#__PURE__*/ React.createElement(Accessibility, null), activeSeries.map((series)=>/*#__PURE__*/ React.createElement(Series, {
             key: series.id,
             type: series.type,
             data: series.data,

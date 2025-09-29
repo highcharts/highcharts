@@ -97,11 +97,11 @@ export default function ChartComponent() {
         <div className="dynamic-basics-demo">
             <Chart>
                 <Title>Dynamic series (line, area & column)</Title>
-                <Subtitle>Toggle between the built-in Highcharts series types at runtime</Subtitle>
+                <Subtitle>Toggle between the built-in Highcharts series types</Subtitle>
                 <YAxis title={{ text: 'Users' }} />
                 <XAxis categories={categories} />
                 <Legend enabled={false} />
-                <Accessibility enabled={true} />
+                <Accessibility />
 
             {activeSeries.map(series => (
                 <Series
