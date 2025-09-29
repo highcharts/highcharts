@@ -45,9 +45,10 @@ export default async function benchmarkTest(
 
     // Update the Grid with new options
     grid.update({
-        pagination: {
-            enabled: true,
-            pageSize: 20
+        columnDefaults: {
+            sorting: {
+                order: 'desc'
+            }
         }
     });
 
