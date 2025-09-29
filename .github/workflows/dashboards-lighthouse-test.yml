@@ -134,6 +134,12 @@ jobs:
           path: |
             tmp
 
+      - name: Check report files
+        run: |
+          echo "Checking for report files..."
+          ls -la highcharts/tmp/lighthouseReports/base/ || echo "No base directory"
+          ls -la highcharts/tmp/lighthouseReports/actual/ || echo "No actual directory"
+
       - name: Write markdown to file
         if: ${{ always() }}
         run: |

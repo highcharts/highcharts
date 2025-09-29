@@ -406,9 +406,8 @@ class Board {
         components: Array<Partial<ComponentType['options']>>
     ): Array<Promise<Component | void>> {
         const promises = [];
-        const board = this;
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            promises.push(Bindings.addComponent(components[i], board));
+            promises.push(Bindings.addComponent(components[i], this));
         }
         return promises;
     }
