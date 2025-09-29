@@ -438,10 +438,13 @@ class ArcDiagramSeries extends SankeySeries {
 
             if (this.mapOptionsToLevel) {
                 // Calculate data label options for the point
-                node.dlOptions = SankeySeries.getDLOptions({
-                    level: this.mapOptionsToLevel[node.level],
-                    optionsPoint: node.options
-                });
+                node.dlOptions = {
+                    ...SankeySeries.getDLOptions({
+                        level: this.mapOptionsToLevel[node.level],
+                        optionsPoint: node.options
+                    }),
+                    zIndex: void 0
+                };
             }
 
             // Pass test in drawPoints

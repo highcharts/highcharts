@@ -69,7 +69,7 @@ declare module './PointBase' {
         dataLabels?: Array<SVGElement>;
         distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
-        dlOptions?: DataLabelOptions;
+        dlOptions?: DataLabelOptions & { zIndex?: undefined };
         top?: number;
         getDataLabelPath(dataLabel: SVGElement): SVGElement;
     }
@@ -505,7 +505,17 @@ namespace DataLabel {
 
     /**
      * Create the SVGElement group for dataLabels
+     *
      * @private
+     * @function initDataLabelsGroup
+     *
+     * @param {number} index
+     * The index of the data labels group.
+     * @param {Highcharts.DataLabelOptions} [dataLabelsOptions]
+     * Data label options for the group.
+     *
+     * @return {Highcharts.SVGElement}
+     * The SVGElement group.
      */
     function initDataLabelsGroup(
         this: Series,
@@ -515,7 +525,10 @@ namespace DataLabel {
         fireEvent(
             this,
             'initDataLabelsGroup',
-            { index, zIndex: dataLabelsOptions?.zIndex || 6 }
+            {
+                index,
+                zIndex: dataLabelsOptions?.zIndex ?? 6
+            }
         );
 
         // Existing group or first time
@@ -525,7 +538,7 @@ namespace DataLabel {
             'dataLabelsGroup',
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
-            dataLabelsOptions?.zIndex || 6,
+            dataLabelsOptions?.zIndex ?? 6,
             this.dataLabelsParentGroups?.[index]
         );
 
@@ -539,8 +552,20 @@ namespace DataLabel {
     }
 
     /**
-     * Init the data labels with the correct animation
+     * Init the data labels with the correct animation.
+     *
      * @private
+     * @function initDataLabels
+     *
+     * @param {number} index
+     * The index of the data labels group.
+     * @param {Highcharts.AnimationOptions} animationConfig
+     * The animation options.
+     * @param {Highcharts.DataLabelOptions} [dataLabelsOptions]
+     * Data label options for the group.
+     *
+     * @return {Highcharts.SVGElement}
+     * The SVGElement group.
      */
     function initDataLabels(
         this: Series,
@@ -549,7 +574,7 @@ namespace DataLabel {
         dataLabelsOptions?: DataLabelOptions
     ): SVGElement {
         const series = this,
-            hasRendered = series.hasRendered || 0;
+            hasRendered = !!series.hasRendered;
 
         // Create a separate group for the data labels to avoid rotation
         const dataLabelsGroup =
@@ -615,9 +640,16 @@ namespace DataLabel {
                 // the need for dlOptions, and simplify the section below.
                 pointOptions = splat(
                     mergeArrays(
-                        seriesDlOptions,
-                        // The dlOptions prop is used in treemaps
-                        point.dlOptions || point.options?.dataLabels
+                        mergeArrays(
+                            seriesDlOptions,
+                            // The dlOptions prop is used in treemaps
+                            point.dlOptions || point.options?.dataLabels
+                        ),
+                        // Override unsupported point level options with series
+                        // level - even if undefined.
+                        seriesDlOptions.map((o): Partial<DataLabelOptions> => ({
+                            zIndex: o.zIndex
+                        }))
                     )
                 );
 

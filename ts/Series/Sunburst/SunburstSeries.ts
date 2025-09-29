@@ -657,12 +657,15 @@ class SunburstSeries extends TreemapSeries {
                 isInside: visible,
                 isNull: !visible // Used for dataLabels & point.draw
             });
-            point.dlOptions = getDlOptions({
-                point,
-                level,
-                optionsPoint: point.options,
-                shapeArgs: shape
-            });
+            point.dlOptions = {
+                ...getDlOptions({
+                    point,
+                    level,
+                    optionsPoint: point.options,
+                    shapeArgs: shape
+                }),
+                zIndex: void 0
+            };
             if (!addedHack && visible) {
                 addedHack = true;
                 onComplete = animateLabels;
