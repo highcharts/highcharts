@@ -10,6 +10,15 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+import type PointOptions from './PointOptions';
+import type SeriesBase from './SeriesBase';
+
+/* *
+ *
  *  Declarations
  *
  * */
@@ -18,12 +27,12 @@
  * Helper interface for point types to add optional members to all point
  * instances.
  *
- * Use the `declare module './PointLike'` pattern to overload the interface in
+ * Use the `declare module './PointBase'` pattern to overload the interface in
  * this definition file.
  */
-export interface KDPointSearchObjectLike {
-    clientX?: number;
-    plotY?: number;
+export interface PointBase {
+    options: PointOptions;
+    series: SeriesBase;
 }
 
 /* *
@@ -32,4 +41,4 @@ export interface KDPointSearchObjectLike {
  *
  * */
 
-export default KDPointSearchObjectLike;
+export default PointBase;

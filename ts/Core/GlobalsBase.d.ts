@@ -29,10 +29,10 @@ import type Time from './Time';
 /**
  * Helper interface to add property types to `Globals`.
  *
- * Use the `declare module 'GlobalsLike'` pattern to overload the interface in
+ * Use the `declare module 'GlobalsBase'` pattern to overload the interface in
  * this definition file.
  */
-export interface GlobalsLike {
+export interface GlobalsBase {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
     chartCount: number;
@@ -71,4 +71,4 @@ export interface GlobalsLike {
  *
  * */
 
-export default GlobalsLike;
+export default GlobalsBase;

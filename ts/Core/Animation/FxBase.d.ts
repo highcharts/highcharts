@@ -15,18 +15,17 @@
  * */
 
 /**
- *
- * Helper interface for Tick.
- *
+ * Optional properties for the Fx class. Should be defined outside of this file
+ * by `declare module` pattern.
  */
-export interface TickLike {
-    // Add with `declare module` pattern
+export interface FxBase {
+    // Nothing here yet
 }
 
 /* *
  *
- *  Default Export
+ *  Export
  *
  * */
 
-export default TickLike;
+export default FxBase;

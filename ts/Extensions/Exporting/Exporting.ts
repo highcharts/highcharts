@@ -27,7 +27,7 @@ import type {
     ExportingOptions,
     ExportingButtonOptions
 } from './ExportingOptions';
-import type ExportingLike from './ExportingLike';
+import type ExportingBase from './ExportingBase';
 import type {
     DOMElementType,
     HTMLDOMElement,
@@ -133,8 +133,8 @@ declare module '../../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         exporting?: Exporting;
         /**
          * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
@@ -174,8 +174,8 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
         /**
          * Deprecated in favor of [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG).
          *
@@ -2474,7 +2474,7 @@ class Exporting {
  *
  * */
 
-interface Exporting extends ExportingLike {}
+interface Exporting extends ExportingBase {}
 
 /* *
  *
