@@ -406,9 +406,8 @@ class Board {
         components: Array<Partial<ComponentType['options']>>
     ): Array<Promise<Component | void>> {
         const promises = [];
-        const board = this;
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            promises.push(Bindings.addComponent(components[i], board));
+            promises.push(Bindings.addComponent(components[i], this));
         }
         return promises;
     }
@@ -458,11 +457,13 @@ class Board {
      * layouts and its cells.
      */
     public reflow(): void {
-        if (this.editMode) {
-            const editModeTools = this.editMode.tools;
+        const board = this;
 
-            this.editMode.hideToolbars(['cell', 'row']);
-            this.editMode.hideContextPointer();
+        if (board.editMode) {
+            const editModeTools = board.editMode.tools;
+
+            board.editMode.hideToolbars(['cell', 'row']);
+            board.editMode.hideContextPointer();
 
             // Update expanded context menu container
             if (editModeTools.contextMenu) {
