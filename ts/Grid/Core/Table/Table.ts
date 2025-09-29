@@ -35,7 +35,6 @@ import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import Defaults from '../Defaults.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -84,11 +83,6 @@ class Table {
      * The HTML element of the table body.
      */
     public readonly tbodyElement: HTMLElement;
-
-    /**
-     * The HTML element of the table footer.
-     */
-    public readonly tfootElement?: HTMLElement;
 
     /**
      * The head of the table.
@@ -204,11 +198,6 @@ class Table {
         // Init Table
         this.init();
 
-        // Init pagination container
-        if (this.grid.pagination) {
-            this.tfootElement = makeHTMLElement('tfoot', {}, tableElement);
-        }
-
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
@@ -289,14 +278,10 @@ class Table {
      * performance reasons).
      */
     private updateVirtualization(): void {
-        const rows = this.grid.options?.rendering?.rows;
-        const threshold = Number(
-            rows?.virtualizationThreshold ||
-            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
-        );
-        const rowCount = Number(this.dataTable?.rowCount);
-
-        if (rows?.virtualization !== (rowCount >= threshold)) {
+        if (
+            this.grid.options?.rendering?.rows?.virtualization !==
+            this.grid.shouldVirtualize()
+        ) {
             void this.grid.update();
         }
     }
