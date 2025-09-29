@@ -41,49 +41,48 @@ const seriesCatalog = [
   { id: 'column', name: 'Column', type: 'column', data: [2, 3, 4, 3, 5] }
 ];
 
-export default function DynamicBasics() {
-  const [activeSeriesIds, setActiveSeriesIds] = React.useState([seriesCatalog[0].id]);
+export default function ChartComponent() {
+    const [activeSeriesIds, setActiveSeriesIds] = React.useState(() => [seriesCatalog[0].id]);
 
-  const toggleSeries = React.useCallback(seriesId => {
-    setActiveSeriesIds(current => (
-      current.includes(seriesId)
-        ? current.filter(id => id !== seriesId)
-        : [...current, seriesId]
-    ));
-  }, []);
+    const toggleSeries = React.useCallback(seriesId => {
+        setActiveSeriesIds(current => {
+            if (current.includes(seriesId)) {
+                return current.filter(id => id !== seriesId);
+            }
 
-  return (
-    <>
-      <Chart>
-        <Title>Dynamic series (line, area & column)</Title>
-        <Subtitle>Toggle series on and off at runtime</Subtitle>
+            return [...current, seriesId];
+        });
+    }, []);
 
-        {seriesCatalog
-          .filter(series => activeSeriesIds.includes(series.id))
-          .map(series => (
-            <Series
-              key={series.id}
-              type={series.type}
-              data={series.data}
-              options={{ id: series.id, name: series.name }}
+    const activeSeries = React.useMemo(
+        () => seriesCatalog.filter(series => activeSeriesIds.includes(series.id)),
+        [activeSeriesIds]
+    );
+
+    return (
+        <div className="dynamic-basics-demo">
+            <Chart>
+            {/* ... chart options ... */}
+            {activeSeries.map(series => (
+                <Series
+                    key={series.id}
+                    type={series.type}
+                    data={series.data}
+                    options={{
+                            ...series.options,
+                            id: series.id,
+                            name: series.name
+                        }}
+                    />
+                ))}
+            </Chart>
+
+            <SeriesControls
+                activeSeriesIds={activeSeriesIds}
+                onToggleSeries={toggleSeries}
             />
-          ))}
-      </Chart>
-
-      <div role="group" aria-label="Series controls">
-        {seriesCatalog.map(series => (
-          <button
-            key={series.id}
-            type="button"
-            aria-pressed={activeSeriesIds.includes(series.id)}
-            onClick={() => toggleSeries(series.id)}
-          >
-            {activeSeriesIds.includes(series.id) ? `Remove ${series.name}` : `Add ${series.name}`}
-          </button>
-        ))}
-      </div>
-    </>
-  );
+        </div>
+    );
 }
 ```
 
