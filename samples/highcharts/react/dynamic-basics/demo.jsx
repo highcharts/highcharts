@@ -63,7 +63,6 @@ function SeriesControls({ activeSeriesIds, onToggleSeries, onReset }) {
             <button
                 type="button"
                 onClick={onReset}
-                disabled={activeSeriesIds.length === 1 && activeSeriesIds[0] === seriesCatalog[0].id}
             >
                 Reset chart
             </button>

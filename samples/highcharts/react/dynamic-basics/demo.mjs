@@ -79,8 +79,7 @@ function SeriesControls({ activeSeriesIds, onToggleSeries, onReset }) {
         }, isActive ? `Remove ${series.name}` : `Add ${series.name}`);
     }), /*#__PURE__*/ React.createElement("button", {
         type: "button",
-        onClick: onReset,
-        disabled: activeSeriesIds.length === 1 && activeSeriesIds[0] === seriesCatalog[0].id
+        onClick: onReset
     }, "Reset chart"));
 }
 export default function ChartComponent() {
