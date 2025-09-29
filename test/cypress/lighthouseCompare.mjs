@@ -26,11 +26,24 @@ const valueTypes = ['score', 'numericValue', 'numericUnit'];
  * @param {string} path
  */
 async function loadJSON(path) {
-    const { default: jsonData } = await import(join(cwd(), path), {
-        assert: { type: 'json' },
-    }).catch(() => ({ default: null }));
-
-    return jsonData;
+    try {
+        // Try dynamic import first (newer Node.js)
+        const { default: jsonData } = await import(join(cwd(), path), {
+            assert: { type: 'json' },
+        });
+        return jsonData;
+    } catch (error) {
+        console.log(`⚠️ Dynamic import failed for ${path}, trying readFileSync:`, error.message);
+        try {
+            // Fallback to readFileSync (more compatible)
+            const { readFileSync } = await import('node:fs');
+            const content = readFileSync(join(cwd(), path), 'utf-8');
+            return JSON.parse(content);
+        } catch (fallbackError) {
+            console.log(`❌ Both import methods failed for ${path}:`, fallbackError.message);
+            return null;
+        }
+    }
 }
 
 /**
@@ -122,11 +135,18 @@ for (const report of reportFiles) {
 
     for (const [context, fileName] of Object.entries(report)) {
         if (fileName) {
-            const reportData = await loadJSON(
-                join(reportsDir, context, fileName),
-            );
+            const filePath = join(reportsDir, context, fileName);
+            console.log(`🔍 Loading ${context} report: ${filePath}`);
+            const reportData = await loadJSON(filePath);
 
             if (reportData) {
+                console.log(`✅ Successfully loaded ${context} report with ${Object.keys(reportData).length} keys`);
+            } else {
+                console.log(`❌ Failed to load ${context} report from ${filePath}`);
+            }
+
+            if (reportData) {
+                console.log(`🔍 Processing metrics for ${context}:`, compareMetrics);
                 compareMetrics.forEach((metric) => {
                     if (metric.startsWith('categories.')) {
                         const category = metric.replace('categories.', '');
@@ -159,5 +179,6 @@ for (const report of reportFiles) {
         }
     }
 
+    console.log(`📊 Final output columns:`, JSON.stringify(outPutColumns, null, 2));
     printReport(outPutColumns, report.actual);
 }
