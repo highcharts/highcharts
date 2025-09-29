@@ -137,7 +137,8 @@ jobs:
       - name: Write markdown to file
         if: ${{ always() }}
         run: |
-          node highcharts/test/cypress/lighthouseCompare.mjs  --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
+          cd highcharts
+          node test/cypress/lighthouseCompare.mjs --reportsDir ./tmp/lighthouseReports > ./tmp/lighthousetable.md
 
       - name: Add to summary
         if: ${{ always() }}
