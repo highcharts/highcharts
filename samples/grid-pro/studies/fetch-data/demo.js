@@ -59,7 +59,7 @@ Grid.grid('container', {
             }
         },
         events: {
-            beforePageChange: function (e) {
+            beforePageChange: function () {
                 // Fetch data from server
                 const data = generateRandomData(10);
 
@@ -74,7 +74,8 @@ Grid.grid('container', {
                 this.grid.pagination.updateGridPagination(true);
             },
             afterPageChange: function (e) {
-                console.log('afterPageChange');
+                document.getElementById('afterPageChange').value =
+                    e.currentPage;
             },
             beforePageSizeChange: function (e) {
                 document.getElementById('beforePageSizeChange').value =

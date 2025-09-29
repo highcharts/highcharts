@@ -207,7 +207,7 @@ class DataGridComponent extends Component {
         }
 
         const dataTable = this.connectorHandlers[0]?.presentationTable;
-        if (!dataTable?.modified) {
+        if (!dataTable?.getModified()) {
             grid.update({ dataTable: void 0 });
             return;
         }
