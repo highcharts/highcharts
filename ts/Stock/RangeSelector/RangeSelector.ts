@@ -2200,7 +2200,7 @@ class RangeSelector {
             return this.init(chart);
         }
 
-        this.isDirty = !!options.buttons;
+        this.isDirty = true;
 
         if (redraw) {
             this.render();
