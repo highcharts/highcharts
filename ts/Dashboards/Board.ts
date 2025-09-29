@@ -364,6 +364,8 @@ class Board {
      * The DOM element to render to, or its id.
      */
     private initContainer(renderTo: (string | HTMLElement)): void {
+        const board = this;
+
         if (typeof renderTo === 'string') {
             renderTo = window.document.getElementById(renderTo) as HTMLElement;
         }
@@ -373,7 +375,7 @@ class Board {
             error(13, true);
         }
 
-        this.container = renderTo;
+        board.container = renderTo;
     }
 
     /**
@@ -456,13 +458,11 @@ class Board {
      * layouts and its cells.
      */
     public reflow(): void {
-        const board = this;
+        if (this.editMode) {
+            const editModeTools = this.editMode.tools;
 
-        if (board.editMode) {
-            const editModeTools = board.editMode.tools;
-
-            board.editMode.hideToolbars(['cell', 'row']);
-            board.editMode.hideContextPointer();
+            this.editMode.hideToolbars(['cell', 'row']);
+            this.editMode.hideContextPointer();
 
             // Update expanded context menu container
             if (editModeTools.contextMenu) {
@@ -538,7 +538,8 @@ class Board {
      * The component with the given cell identifier.
      */
     public getComponentByCellId(id: string): ComponentType | undefined {
-        return this.mountedComponents.find(
+        const board = this;
+        return board.mountedComponents.find(
             (c): boolean => c.cell.id === id
         )?.component;
     }
