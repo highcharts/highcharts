@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,8 +14,14 @@
  *
  * */
 
-export interface ExportingLike {}
-
+/**
+ *
+ * Helper interface for Tick.
+ *
+ */
+export interface TickBase {
+    // Add with `declare module` pattern
+}
 
 /* *
  *
@@ -23,4 +29,4 @@ export interface ExportingLike {}
  *
  * */
 
-export default ExportingLike;
+export default TickBase;

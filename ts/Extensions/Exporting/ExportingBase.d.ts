@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,9 +14,8 @@
  *
  * */
 
-export interface LegendLike {
+export interface ExportingBase {}
 
-}
 
 /* *
  *
@@ -24,4 +23,4 @@ export interface LegendLike {
  *
  * */
 
-export default LegendLike;
+export default ExportingBase;

@@ -54,8 +54,8 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         data?: Data;
         hasDataDef?: boolean;
         liveDataURL?: string;

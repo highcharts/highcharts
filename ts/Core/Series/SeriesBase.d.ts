@@ -14,7 +14,7 @@
  *
  * */
 
-import type PointLike from './PointLike';
+import type PointBase from './PointBase';
 import type SeriesOptions from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -32,19 +32,19 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
  * Use the `declare module 'Types'` pattern to overload the interface in this
  * definition file.
  */
-export interface SeriesLike {
+export interface SeriesBase {
     colorIndex?: number;
     finishedAnimating?: boolean;
     index?: number;
     isDirty?: boolean;
     group?: SVGElement;
-    linkedParent?: SeriesLike;
-    linkedSeries: Array<SeriesLike>;
+    linkedParent?: SeriesBase;
+    linkedSeries: Array<SeriesBase>;
     markerGroup?: SVGElement;
     name: string;
     opacity?: number;
     options: SeriesOptions;
-    points: Array<PointLike>;
+    points: Array<PointBase>;
     state?: StatesOptionsKey;
     type: string;
     userOptions: DeepPartial<SeriesOptions>;
@@ -60,4 +60,4 @@ export interface SeriesLike {
  *
  * */
 
-export default SeriesLike;
+export default SeriesBase;

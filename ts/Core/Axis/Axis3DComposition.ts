@@ -75,8 +75,8 @@ declare module '../Renderer/Position3DObject' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike {
+declare module '../Series/PointBase' {
+    interface PointBase {
         crosshairPos?: number;
         axisXpos?: number;
         axisYpos?: number;

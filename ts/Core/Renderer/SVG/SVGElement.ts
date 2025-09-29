@@ -32,7 +32,7 @@ import type GradientColor from '../../Color/GradientColor';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
-import type SVGElementLike from './SVGElementLike';
+import type SVGElementBase from './SVGElementBase';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 
@@ -128,7 +128,7 @@ declare module '../CSSObject' {
  * @class
  * @name Highcharts.SVGElement
  */
-class SVGElement implements SVGElementLike {
+class SVGElement implements SVGElementBase {
 
     /* *
      *
@@ -2395,7 +2395,7 @@ class SVGElement implements SVGElementLike {
  *
  * */
 
-interface SVGElement extends SVGElementLike {
+interface SVGElement extends SVGElementBase {
     // Takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginXSetter(value: number|null, key?: string): void;

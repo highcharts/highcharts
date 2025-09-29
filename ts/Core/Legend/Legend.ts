@@ -25,7 +25,7 @@ import type ColorAxis from '../Axis/Color/ColorAxis';
 import type CSSObject from '../Renderer/CSSObject';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type LegendLike from './LegendLike';
+import type LegendBase from './LegendBase';
 import type { LegendItemObject } from './LegendItem';
 import type LegendOptions from './LegendOptions';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
@@ -74,8 +74,8 @@ const {
  *
  * */
 
-declare module '../Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Chart/ChartBase' {
+    interface ChartBase {
         legend: Legend;
     }
 }
@@ -1774,7 +1774,7 @@ class Legend {
  *
  * */
 
-interface Legend extends LegendLike {
+interface Legend extends LegendBase {
     // Use declare module pattern to add
 }
 
