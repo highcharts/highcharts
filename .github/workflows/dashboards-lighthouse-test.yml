@@ -143,7 +143,7 @@ jobs:
         if: ${{ always() }}
         run: |
           echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
-          cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
+          cat ./highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
 
       - name: Comment on PR
         uses: actions/github-script@v7

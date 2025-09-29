@@ -525,7 +525,8 @@ class Board {
      * The component with the given identifier.
      */
     public getComponentById(id: string): ComponentType | undefined {
-        return this.mountedComponents.find(
+        const board = this;
+        return board.mountedComponents.find(
             (c): boolean => c.component.id === id
         )?.component;
     }

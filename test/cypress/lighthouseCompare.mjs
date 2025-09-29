@@ -155,5 +155,3 @@ for (const report of reportFiles) {
 
     printReport(outPutColumns, report.actual);
 }
-
-// TEST 1
