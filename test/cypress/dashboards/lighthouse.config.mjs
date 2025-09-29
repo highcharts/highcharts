@@ -33,7 +33,7 @@ export default defineConfig({
                             outputDir,
                             `${demo}.json`
                         ),
-                        lighthouseReport.report
+                        JSON.stringify(lighthouseReport.lhr, null, 2)
                     );
 
                     if (config.env.type === 'actual') {
