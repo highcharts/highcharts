@@ -206,8 +206,8 @@ class DataGridComponent extends Component {
             return;
         }
 
-        const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey);
-        if (!dataTable?.getModified()) {
+        const dataTable = this.connectorHandlers[0]?.presentationTable;
+        if (!dataTable?.modified) {
             grid.update({ dataTable: void 0 });
             return;
         }
@@ -347,7 +347,7 @@ class DataGridComponent extends Component {
             throw new Error('Grid not connected.');
         }
 
-        const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey),
+        const dataTable = this.connectorHandlers[0]?.presentationTable,
             options = this.options,
             gridOptions = merge(
                 {},

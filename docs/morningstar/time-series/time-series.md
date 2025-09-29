@@ -34,8 +34,10 @@ or `currencyId`.
 
 ```js
 const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     series: {
         type: 'Dividend'
@@ -67,19 +69,23 @@ Dashboards.board('container', {
         connectors: [{
             id: 'time-series',
             type: 'MorningstarTimeSeries',
-            postman: {
-                environmentJSON: postmanJSON
-            },
-            series: {
-                type: 'Dividend'
-            },
-            securities: [{
-                id: 'F0GBR04S23',
-                idType: 'MSID'
-            }],
-            startDate: '2000-01-01',
-            endDate: '2020-12-31',
-            currencyId: 'EUR'
+            options: {
+                api: {
+                    access: {
+                        token: 'your_access_token'
+                    }
+                },
+                series: {
+                    type: 'Dividend'
+                },
+                securities: [{
+                    id: 'F0GBR04S23',
+                    idType: 'MSID'
+                }],
+                startDate: '2000-01-01',
+                endDate: '2020-12-31',
+                currencyId: 'EUR'
+            }
         }]
     },
     components: [

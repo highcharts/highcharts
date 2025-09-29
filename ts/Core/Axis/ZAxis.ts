@@ -16,7 +16,7 @@
  *
  * */
 
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 
@@ -43,8 +43,8 @@ declare module './AxisType' {
     }
 }
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         zAxis?: Array<ZAxis>;
         addZAxis(options: DeepPartial<AxisOptions>): Axis;
     }
@@ -103,7 +103,7 @@ function onChartAfterCreateAxes(this: Chart): void {
  * 3D axis for z coordinates.
  * @private
  */
-class ZAxis extends Axis implements AxisLike {
+class ZAxis extends Axis implements AxisBase {
 
     /* *
      *

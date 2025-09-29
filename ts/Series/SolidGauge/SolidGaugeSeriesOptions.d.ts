@@ -57,6 +57,16 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
 
     /**
+     * The corner radius of the border surrounding solid gauge. A number
+     * signifies pixels and percentage string, like for example `50%`,
+     * signifies a relative size.
+     *
+     * @sample highcharts/series-solidgauge/pane-borderradius
+     *         Solid gauge with rounded border.
+     */
+    borderRadius?: number | string;
+
+    /**
      * Whether to give each point an individual color.
      */
     colorByPoint?: boolean;

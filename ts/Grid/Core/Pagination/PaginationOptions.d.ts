@@ -164,7 +164,7 @@ export interface PaginationOptions {
      *
      * @default 'bottom'
      */
-    position?: 'top' | 'bottom' | 'footer' | string;
+    position?: string;
 
     /**
      * Controls options for pagination UI elements.

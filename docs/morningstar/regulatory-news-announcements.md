@@ -18,8 +18,10 @@ or `maxStories`.
 
 ```js
 const rnaNewsConnector = new HighchartsConnectors.Morningstar.RNANewsConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     security: {
         id: 'GB00BLGZ9862',
@@ -54,15 +56,19 @@ Dashboards.board('container', {
         connectors: [{
             id: 'rna',
             type: 'MorningstarRNANews',
-            postman: {
-                environmentJSON: postmanJSON
-            },
-            security: {
-                id: 'GB00BLGZ9862',
-                idType: 'ISIN'
-            },
-            startDate: '2000-01-01',
-            endDate: '2020-12-31'
+            options: {
+                api: {
+                    access: {
+                        token: 'your_access_token'
+                    }
+                },
+                security: {
+                    id: 'GB00BLGZ9862',
+                    idType: 'ISIN'
+                },
+                startDate: '2000-01-01',
+                endDate: '2020-12-31'
+            }
         }]
     },
     components: [

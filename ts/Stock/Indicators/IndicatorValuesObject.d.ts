@@ -11,7 +11,7 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesLike } from './IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from './IndicatorBase';
 import type LineSeries from '../../Series/Line/LineSeries';
 
 /* *
@@ -25,11 +25,11 @@ export interface IndicatorValuesObject<
     TLinkedSeries extends LineSeries
 > {
     values: Array<Array<(
-        ExtractArrayType<IndicatorLinkedSeriesLike['xData']>|
-        ExtractArrayType<IndicatorLinkedSeriesLike['yData']>
+        ExtractArrayType<IndicatorLinkedSeriesBase['xData']>|
+        ExtractArrayType<IndicatorLinkedSeriesBase['yData']>
     )>>;
-    xData: NonNullable<IndicatorLinkedSeriesLike['xData']>;
-    yData: NonNullable<IndicatorLinkedSeriesLike['yData']>;
+    xData: NonNullable<IndicatorLinkedSeriesBase['xData']>;
+    yData: NonNullable<IndicatorLinkedSeriesBase['yData']>;
 }
 
 export default IndicatorValuesObject;

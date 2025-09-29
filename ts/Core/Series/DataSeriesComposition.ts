@@ -45,8 +45,8 @@ const {
  *
  * */
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         datas?: DataSeriesAdditions;
     }
 }

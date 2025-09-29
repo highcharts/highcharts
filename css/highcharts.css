@@ -754,6 +754,10 @@ circle.highcharts-legend-nav-inactive { /* tracker */
     stroke-width: 0;
 }
 
+.highcharts-organization-series .highcharts-null-point {
+    fill: transparent;
+}
+
 .highcharts-polygon-series .highcharts-graph {
     fill: inherit;
     stroke-width: 0;
@@ -950,7 +954,7 @@ input.highcharts-range-selector {
 
 .highcharts-crosshair-label text {
     fill: var(--highcharts-background-color);
-    font-size: 1.7em;
+    font-size: 1em;
 }
 
 .highcharts-crosshair-label .highcharts-label-box {

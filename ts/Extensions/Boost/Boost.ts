@@ -221,6 +221,8 @@ export default Boost;
  *         Scatter chart
  * @sample highcharts/boost/scatter-pointcolor
  *         Scatter chart with colored points
+ * @sample highcharts/boost/scatter-colorbypoint
+ *         Scatter chart with colorByPoint
  * @sample highcharts/boost/area
  *         Area chart
  * @sample highcharts/boost/arearange

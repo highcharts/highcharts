@@ -85,6 +85,8 @@ import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SelectRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/TextInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/DateInputRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/DateTimeInputRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/TimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 

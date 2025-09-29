@@ -39,8 +39,8 @@ const {
  *
  * */
 
-declare module './GlobalsLike' {
-    interface GlobalsLike {
+declare module './GlobalsBase' {
+    interface GlobalsBase {
         defaultOptions: DefaultOptions;
         time: Time;
     }
