@@ -150,9 +150,9 @@ export default function ChartComponent() {
                         linkedTo: priceSeriesId,
                         id: indicator.id,
                         name: indicator.name,
-                        ...(indicator.color ? { color: indicator.color } : {}),
-                        ...(indicator.params ? { params: indicator.params } : {}),
-                        ...(indicator.zIndex ? { zIndex: indicator.zIndex } : {})
+                        color: indicator.color,
+                        params: indicator.params,
+                        zIndex: indicator.zIndex,
                     };
 
                     return (
