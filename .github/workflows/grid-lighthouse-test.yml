@@ -94,7 +94,7 @@ jobs:
     echo "=== Find all .cy.js files ==="
     find . -name "*.cy.js" -type f
 
-- name: Debug working directory paths
+    - name: Debug working directory paths
   working-directory: highcharts
   run: |
     echo "=== Current directory in working-directory ==="
