@@ -59,7 +59,8 @@ const syncPair: Sync.SyncPair = {
             extremes: Axis.ExtremesObject
         ): Promise<void> => {
             if (component.connectorHandlers?.[0]?.connector) {
-                const table = component.connectorHandlers[0].connector.table,
+                const table =
+                    component.connectorHandlers[0].connector.getTable(),
                     dataCursor = component.board.dataCursor,
                     filterColumn = component.getColumnAssignment()[0],
                     [min, max] = component.getAxisExtremes();
@@ -78,11 +79,11 @@ const syncPair: Sync.SyncPair = {
                         condition: {
                             operator: 'and',
                             conditions: [{
-                                columnName: filterColumn,
+                                columnId: filterColumn,
                                 operator: '>=',
                                 value: min
                             }, {
-                                columnName: filterColumn,
+                                columnId: filterColumn,
                                 operator: '<=',
                                 value: max
                             }]

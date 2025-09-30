@@ -15,12 +15,10 @@ Dashboards.board('container', {
         connectors: [{
             id: 'connector-1',
             type: 'CSV',
-            options: {
-                csv: `ABC,DEF
+            csv: `ABC,DEF
                     4,5
                     1,5
                     41,23`
-            }
         }]
     },
     editMode: {

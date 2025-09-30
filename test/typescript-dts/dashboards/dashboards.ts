@@ -19,9 +19,7 @@ function test_board() {
             connectors: [{
                 id: "My Data",
                 type: "CSV",
-                options: {
-                    csv: ''
-                }
+                csv: ''
             }]
         },
         gui: {

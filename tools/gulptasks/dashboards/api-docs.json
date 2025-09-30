@@ -47,6 +47,13 @@
         "../../../ts/Data/Connectors/DataConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/GoogleSheetsConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/HTMLTableConnectorOptions.d.ts",
+
+        // Converters
+        "../../../ts/Data/Converters/JSONConverterOptions.d.ts",
+        "../../../ts/Data/Converters/CSVConverterOptions.d.ts",
+        "../../../ts/Data/Converters/GoogleSheetsConverterOptions.d.ts",
+        "../../../ts/Data/Converters/HTMLTableConverterOptions.d.ts",
+
         // Modifiers
         "../../../ts/Data/Modifiers/DataModifier.ts",
         "../../../ts/Data/Modifiers/DataModifierOptions.ts",
@@ -65,9 +72,9 @@
         "../../../ts/Data/Modifiers/FilterModifierOptions.ts",
         // DataLayer
         "../../../ts/Data/DataPool.ts",
-        "../../../ts/Data/DataPoolOptions.ts",
+        "../../../ts/Data/DataPoolOptions.d.ts",
         "../../../ts/Data/DataTable.ts",
-        "../../../ts/Data/DataTableOptions.ts",
+        "../../../ts/Data/DataTableOptions.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,

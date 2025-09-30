@@ -107,7 +107,9 @@ class RangeModifier extends DataModifier {
 
 
     /**
-     * Replaces table rows with ranged rows.
+     * Replaces table rows with ranged rows. If the given table does not have
+     * defined a `modified` property, the filtering is applied in-place on the
+     * original table rather than on a `modified` copy.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -116,12 +118,13 @@ class RangeModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * Table with `modified` property as a reference.
+     * Table with `modified` property as a reference or modified table, if
+     * `modified` property of the original table is undefined.
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
+    public override modifyTable(
+        table: DataTable,
         eventDetail?: DataEvent.Detail
-    ): T {
+    ): DataTable {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
@@ -131,7 +134,8 @@ class RangeModifier extends DataModifier {
         end = Math.min(end || Infinity, table.getRowCount());
         const length = Math.max(end - start, 0);
 
-        const modified = table.modified;
+        const modified = table.getModified();
+
         modified.deleteRows();
         modified.setRows(table.getRows(start, length));
         modified.setOriginalRowIndexes(Array.from(

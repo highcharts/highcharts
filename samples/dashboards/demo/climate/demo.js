@@ -25,6 +25,26 @@ const tempRange = {
     maxF: 122
 };
 
+// Convert a cell value to a number.
+function convertToNumber(value, useNaN) {
+    switch (typeof value) {
+    case 'boolean':
+        return value ? 1 : 0;
+    case 'number':
+        return (isNaN(value) && !useNaN ? null : value);
+    default:
+        value = parseFloat(`${value ?? ''}`);
+        return (isNaN(value) && !useNaN ? null : value);
+    }
+}
+
+// Retrieve a connector data table.
+async function getConnectorTable(dataPool, connectorId) {
+    return dataPool
+        .getConnector(connectorId)
+        .then(connector => connector.getTable());
+}
+
 setupBoard();
 
 const KPIChartOptions = {
@@ -85,20 +105,16 @@ async function setupBoard() {
             connectors: [{
                 id: 'Range Selection',
                 type: 'CSV',
-                options: {
-                    dataModifier: {
-                        type: 'Filter'
-                    }
+                dataModifier: {
+                    type: 'Filter'
                 }
             }, {
                 id: 'Cities',
                 type: 'CSV',
-                options: {
-                    csvURL: (
-                        'https://www.highcharts.com/samples/data/' +
+                csvURL: (
+                    'https://www.highcharts.com/samples/data/' +
                         'climate-cities-limited.csv'
-                    )
-                }
+                )
             }]
         },
         editMode: {
@@ -370,7 +386,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnName: 'TN' + activeScale,
+            columnId: 'TN' + activeScale,
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -399,7 +415,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnName: 'TX' + activeScale,
+            columnId: 'TX' + activeScale,
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -428,7 +444,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnName: 'RR1',
+            columnId: 'RR1',
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -641,7 +657,7 @@ async function setupBoard() {
         }]
     }, true);
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities');
+    const citiesTable = await getConnectorTable(dataPool, 'Cities');
     const cityRows = citiesTable.getRowObjects();
 
     // Add city sources
@@ -649,9 +665,7 @@ async function setupBoard() {
         dataPool.setConnectorOptions({
             id: cityRows[i].city,
             type: 'CSV',
-            options: {
-                csvURL: cityRows[i].csv
-            }
+            csvURL: cityRows[i].csv
         });
     }
 
@@ -678,8 +692,8 @@ async function setupBoard() {
 
 async function setupCity(board, city, column, scale) {
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities');
-    const cityTable = await dataPool.getConnectorTable(city);
+    const citiesTable = await getConnectorTable(dataPool, 'Cities');
+    const cityTable = await getConnectorTable(dataPool, city);
     const latestTime = board.mountedComponents[0].component.chart.axes[0].max;
     const worldMap = board.mountedComponents[1].component.chart.series[1];
 
@@ -702,7 +716,7 @@ async function setupCity(board, city, column, scale) {
             formula: 'F1*1.8-459.67'
         }]
     }));
-    cityTable.modified.setColumn(
+    cityTable.getModified().setColumn(
         'Date',
         (cityTable.getColumn('time') || []).map(
             timestamp => new Date(timestamp)
@@ -715,10 +729,10 @@ async function setupCity(board, city, column, scale) {
         citiesTable.getRowIndexBy('city', city)
     );
 
-    const pointValue = cityTable.modified.getCellAsNumber(
+    const pointValue = convertToNumber(cityTable.getModified().getCell(
         column,
-        cityTable.modified.getRowIndexBy('time', latestTime)
-    );
+        cityTable.getModified().getRowIndexBy('time', latestTime)
+    ));
 
     // Add city to world map
     worldMap.addPoint({
@@ -745,11 +759,11 @@ async function updateBoard(board, city, column, scale, newData) {
             colorStopsDays :
             colorStopsTemperature
     );
-    const selectionTable = await dataPool.getConnectorTable('Range Selection');
+    const selectionTable = await getConnectorTable(dataPool, 'Range Selection');
     // Climate data for selected city
-    const cityTable = await dataPool.getConnectorTable(city);
+    const cityTable = await getConnectorTable(dataPool, city);
     // Geographical data
-    const citiesTable = await dataPool.getConnectorTable('Cities');
+    const citiesTable = await getConnectorTable(dataPool, 'Cities');
 
     const [
         timeRangeSelector,
@@ -768,11 +782,11 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update data of time range selector
     if (newData) {
         timeRangeSelector.chart.series[0].update({
-            data: cityTable.modified
+            data: cityTable.getModified()
                 .getRows(void 0, void 0, ['time', column])
         });
 
-        selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+        selectionTable.setColumns(cityTable.getModified().getColumns(), 0);
     }
 
     // Update range selection
@@ -791,11 +805,11 @@ async function updateBoard(board, city, column, scale, newData) {
         selectionModifier.options.condition = {
             operator: 'and',
             conditions: [{
-                columnName: 'time',
+                columnId: 'time',
                 operator: '>=',
                 value: timeRangeMin
             }, {
-                columnName: 'time',
+                columnId: 'time',
                 operator: '<=',
                 value: timeRangeMax
             }]
@@ -803,12 +817,12 @@ async function updateBoard(board, city, column, scale, newData) {
         await selectionTable.setModifier(selectionModifier);
     }
 
-    const rangeTable = selectionTable.modified;
+    const rangeTable = selectionTable.getModified();
     const rangeEnd = rangeTable.getRowCount() - 1;
 
     // Update world map
     const mapPoints = worldMap.chart.series[1].data;
-    const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
+    const lastTime = convertToNumber(rangeTable.getCell('time', rangeEnd));
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
         // Get elevation of city
@@ -816,17 +830,17 @@ async function updateBoard(board, city, column, scale, newData) {
         const cityInfo = citiesTable.getRowObject(
             citiesTable.getRowIndexBy('city', cityName)
         );
-        const pointTable = await dataPool.getConnectorTable(cityName);
+        const pointTable = await getConnectorTable(dataPool, cityName);
 
         mapPoints[i].update({
             custom: {
                 elevation: cityInfo.elevation,
                 yScale: scale
             },
-            y: pointTable.modified.getCellAsNumber(
+            y: convertToNumber(pointTable.getModified().getCell(
                 column,
-                pointTable.modified.getRowIndexBy('time', lastTime)
-            )
+                pointTable.getModified().getRowIndexBy('time', lastTime)
+            ))
         }, false);
     }
     worldMap.chart.update({
@@ -837,20 +851,20 @@ async function updateBoard(board, city, column, scale, newData) {
         }
     });
     kpiTemperature.update({
-        columnName: 'TN' + scale
+        columnId: 'TN' + scale
     });
     kpiMaxTemperature.update({
-        columnName: 'TX' + scale
+        columnId: 'TX' + scale
     });
 
     if (newData) {
         // Update KPIs
         await kpiData.update({
             title: city,
-            value: citiesTable.getCellAsNumber(
+            value: convertToNumber(citiesTable.getCell(
                 'elevation',
                 citiesTable.getRowIndexBy('city', city)
-            ) || '--'
+            )) || '--'
         });
 
         // Update data grid and city chart

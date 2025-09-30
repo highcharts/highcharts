@@ -204,3 +204,4 @@ sparklines
 preconfigured
 datepicker
 specific
+EMEA

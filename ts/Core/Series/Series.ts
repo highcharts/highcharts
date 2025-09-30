@@ -22,9 +22,10 @@ import type AxisType from '../Axis/AxisType';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
+import type DataLabelOptions from './DataLabelOptions';
 import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
-import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
+import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
 import type Legend from '../Legend/Legend';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
@@ -34,7 +35,7 @@ import type {
     PointStateHoverOptions
 } from './PointOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
-import type SeriesLike from './SeriesLike';
+import type SeriesBase from './SeriesBase';
 import type {
     NonPlotOptions,
     SeriesDataSortingOptions,
@@ -112,27 +113,27 @@ const {
  *
  * */
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         runTrackerClick?: boolean;
     }
 }
 
-declare module '../Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         survive?: boolean;
     }
 }
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         plotX?: number;
         plotY?: number;
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         _hasPointMarkers?: boolean;
         keysAffectYAxis?: Array<string>;
         pointArrayMap?: Array<string>;
@@ -148,7 +149,7 @@ interface KDNode {
     right?: KDNode;
 }
 
-interface KDPointSearchObject extends KDPointSearchObjectLike {
+interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
 /* *
@@ -1021,13 +1022,10 @@ class Series {
      * @private
      * @function Highcharts.Series#getColumn
      */
-    public getColumn(
-        columnName: string,
-        modified?: boolean
-    ): Array<number> {
+    public getColumn(columnId: string, modified?: boolean): Array<number> {
         return (
-            (modified ? this.dataTable.modified : this.dataTable)
-                .getColumn(columnName, true) as Array<number>
+            (modified ? this.dataTable.getModified() : this.dataTable)
+                .getColumn(columnId, true) as Array<number>
         ) || [];
     }
 
@@ -1452,9 +1450,9 @@ class Series {
                         }
 
                         table.setColumns(dataColumnKeys.reduce(
-                            (columns, columnName, i):
+                            (columns, columnId, i):
                             DataTable.ColumnCollection => {
-                                columns[columnName] = colArray[i];
+                                columns[columnId] = colArray[i];
                                 return columns;
                             }, {} as DataTable.ColumnCollection));
 
@@ -1499,9 +1497,9 @@ class Series {
 
             if (!runTurbo) {
                 const columns = dataColumnKeys.reduce(
-                    (columns, columnName):
+                    (columns, columnId):
                     DataTable.ColumnCollection => {
-                        columns[columnName] = [];
+                        columns[columnId] = [];
                         return columns;
                     }, {} as DataTable.ColumnCollection);
                 for (i = 0; i < dataLength; i++) {
@@ -1839,7 +1837,7 @@ class Series {
         const series = this,
             options = series.options,
             dataOptions = series.processedData || options.data,
-            table = series.dataTable.modified,
+            table = series.dataTable.getModified(),
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
             processedDataLength = table.rowCount,
@@ -2038,7 +2036,7 @@ class Series {
                 this.options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
                 this.dataTable :
-                this.dataTable.modified,
+                this.dataTable.getModified(),
             rowCount = table.rowCount,
             customData = yData || this.stackedYData,
             yAxisData = customData ?
@@ -4305,6 +4303,14 @@ class Series {
             this.dataTable.modified = this.dataTable;
         }
 
+        // Merge in multiple data label options (#23560)
+        if (options.dataLabels && oldOptions.dataLabels) {
+            options.dataLabels = this.mergeArrays(
+                oldOptions.dataLabels as DataLabelOptions,
+                options.dataLabels as DataLabelOptions
+            );
+        }
+
         // Do the merge, with some forced options
         options = merge(
             oldOptions,
@@ -4918,7 +4924,7 @@ class Series {
  *
  * */
 
-interface Series extends SeriesLike {
+interface Series extends SeriesBase {
     axisTypes: Array<'xAxis'|'yAxis'|'colorAxis'|'zAxis'>;
     coll: 'series';
     colorCounter: number;

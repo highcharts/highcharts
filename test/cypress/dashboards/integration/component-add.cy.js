@@ -175,8 +175,8 @@ describe('Add components through UI', () => {
 
             // check values connector
             assert.deepEqual(
-                m[m.length - 2].component.grid.columnNames,
-                component.grid.columnNames,
+                m[m.length - 2].component.grid.columnIds,
+                component.grid.columnIds,
                 `Grid should display values from CSV data table.`
             );
         });

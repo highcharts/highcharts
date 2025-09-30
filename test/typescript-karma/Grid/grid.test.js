@@ -58,6 +58,7 @@ test('Grid update methods', async function (assert) {
             }
         }]
     }, true);
+    grid.viewport?.resizeObserver?.disconnect();
 
     const newOptionsObject = {
         columns: [{

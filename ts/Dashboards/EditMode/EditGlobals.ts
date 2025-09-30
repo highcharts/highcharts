@@ -73,6 +73,7 @@ const EditGlobals: EditGlobals = {
         editToolsBtn: PREFIX + 'tools-btn',
         editTools: PREFIX + 'tools',
         editGridItems: PREFIX + 'grid-items',
+        editStandaloneToggle: PREFIX + 'standalone-toggle',
 
         // Confirmation popup
         confirmationPopup: PREFIX + 'confirmation-popup',
@@ -202,6 +203,7 @@ namespace EditGlobals {
         dropdownIcon: string;
         editGridItems: string;
         editModeEnabled: string;
+        editStandaloneToggle: string;
         editOverlay: string;
         editOverlayActive: string;
         editSidebar: string;

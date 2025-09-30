@@ -3,16 +3,14 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                data: [
-                    ['Name', 'Value', 'Marker Radius', 'Data Label'],
-                    ['A', 5, 4, true],
-                    ['B', 6, 20, false],
-                    ['C', 7, 10, false],
-                    ['D', 6, 0, true],
-                    ['E', 4, 6, true]
-                ]
-            }
+            data: [
+                ['Name', 'Value', 'Marker Radius', 'Data Label'],
+                ['A', 5, 4, true],
+                ['B', 6, 20, false],
+                ['C', 7, 10, false],
+                ['D', 6, 0, true],
+                ['E', 4, 6, true]
+            ]
         }]
     },
     gui: {

@@ -55,7 +55,8 @@ const syncPair: Sync.SyncPair = {
             extremes: Axis.ExtremesObject
         ): void => {
             if (component.connectorHandlers?.[0]?.connector) {
-                const table = component.connectorHandlers[0].connector.table,
+                const table =
+                    component.connectorHandlers[0].connector.getTable(),
                     dataCursor = component.board.dataCursor,
                     filterColumn = component.getColumnAssignment()[0],
                     [min, max] = component.getAxisExtremes();
@@ -112,10 +113,10 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            const table = component.connectorHandlers[0].connector.table;
+            const table = component.connectorHandlers[0].connector.getTable();
 
             // Assume first column with unique keys as fallback
-            let extremesColumn = table.getColumnNames()[0],
+            let extremesColumn = table.getColumnIds()[0],
                 maxIndex = table.getRowCount(),
                 minIndex = 0;
 
@@ -157,7 +158,8 @@ const syncPair: Sync.SyncPair = {
         };
 
         const registerCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table =
+                component.connectorHandlers?.[0]?.connector?.getTable();
 
             if (table) {
                 dataCursor.addListener(
@@ -179,7 +181,8 @@ const syncPair: Sync.SyncPair = {
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table =
+                component.connectorHandlers?.[0]?.connector?.getTable();
 
             if (table) {
                 dataCursor.removeListener(

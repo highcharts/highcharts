@@ -48,19 +48,15 @@ const board = Dashboards.board('container', {
         connectors: [{
             id: 'conn-orig',
             type: 'GoogleSheets',
-            options: {
-                googleAPIKey: googleApiKey,
-                googleSpreadsheetKey: googleSpreadsheetKey
-            }
+            googleAPIKey: googleApiKey,
+            googleSpreadsheetKey: googleSpreadsheetKey
         }, {
             id: 'conn-mod',
             type: 'GoogleSheets',
-            options: {
-                googleAPIKey: googleApiKey,
-                googleSpreadsheetKey: googleSpreadsheetKey,
-                beforeParse: data =>
-                    beforeParseFunction[beforeParseSelector](data)
-            }
+            googleAPIKey: googleApiKey,
+            googleSpreadsheetKey: googleSpreadsheetKey,
+            beforeParse: data =>
+                beforeParseFunction[beforeParseSelector](data)
         }]
     },
     components: [{
@@ -193,7 +189,7 @@ const dataModifiers = [null, mathModifier, sortModifier, filterModifier];
 
 async function applyDataModifier(idx) {
     const connector = board.dataPool.connectors['conn-mod'];
-    await connector.table.setModifier(dataModifiers[idx]);
+    await connector.getTable().setModifier(dataModifiers[idx]);
 }
 
 dataModifierSelect.addEventListener('input', async e => {

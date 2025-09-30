@@ -52,14 +52,14 @@ const {
  *
  * */
 
-declare module '../Animation/FxLike' {
-    interface FxLike {
+declare module '../Animation/FxBase' {
+    interface FxBase {
         matrixSetter?(): void;
     }
 }
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         chart3d?: Chart3D.Additions;
         frameShapes?: Record<string, SVGElement3D>;
         is3d(): boolean;

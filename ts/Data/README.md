@@ -13,7 +13,7 @@ Sub-folders:
   table
 
 * Modifiers - modify table data into a second table, accessible via the
-  `DataTable.modified` property.
+  `DataTable.getModified()` method.
 
 
 
@@ -83,9 +83,9 @@ help of modifiers. Each table can have only one modifier, but this modifier
 might call additional modifiers.
 
 Modifications usually do not change the table. Instead modifiers produce a
-second table, accessible under `DataTable.modified`. Changes in the original
-table will also result in changes in the second table, unless the modifier
-explicitly dismisses incoming changes.
+second table, accessible under `DataTable.getModified()` method. Changes in the
+original table will also result in changes in the second table, unless the 
+modifier explicitly dismisses incoming changes.
 
 ```TypeScript
 table.setModifier(new FilterModifier({
@@ -103,14 +103,14 @@ table.setModifier(new FilterModifier({
     }
 });
 table.getRowCount() === 2;
-table.modified.getRowCount() === 1;
+table.getModified().getRowCount() === 1;
 
 table.setRows([
     [1983, 'Gremlins Teaser'],
     [2023, 'Gremlins 3']
 ]);
 table.getRowCount() === 4;
-table.modified.getRowCount() === 2;
+table.getModified().getRowCount() === 2;
 ```
 
 
@@ -162,7 +162,7 @@ const grid = new Grid('container', {
         }
     }
 });
-grid.dataTable.getRow(grid.table.getRowIndexBy('', 2));
+grid.dataTable.getRow(grid.getTable().getRowIndexBy('', 2));
 ```
 
 
@@ -213,7 +213,7 @@ const connector = new CSVConnector({
     csv: 'a;b\n1,2;3,4\n5,6;7,8'
 });
 await connector.load();
-connector.table.getRowCount() === 2;
+connector.getTable().getRowCount() === 2;
 ```
 
 
@@ -226,10 +226,10 @@ provide a table with existing data.
 
 ```TypeScript
 const connector = new CSVConnector();
-connector.table.getRowCount() === 0;
+connector.getTable().getRowCount() === 0;
 const table = new DataTable({ columns: { column: [1, 2, 3] } });
 const connector2 = new CSVConnector(table);
-connector.table.getRowCount() === 3;
+connector.getTable().getRowCount() === 3;
 ```
 
 Depending on the connector type you have to provide different mandatory options
@@ -246,7 +246,7 @@ try {
 catch (error) {
     console.error(error);
 }
-connector.table.getRowCount() > 0;
+connector.getTable().getRowCount() > 0;
 ```
 
 
@@ -297,21 +297,20 @@ const dataPool = new DataPool({
     connectors: [{
         id: 'my-google-spreadsheet',
         type: 'GoogleSheets',
-        options: {
-            googleAPIKey: 'XXXXX',
-            googleSpreadsheetKey: 'XXXXX',
-        }
+        googleAPIKey: 'XXXXX',
+        googleSpreadsheetKey: 'XXXXX',
     }]
 });
 dataPool.setConnectorOptions({
     name: 'my-csv',
     type: 'CSV',
-    options: {
-        csvURL: 'https://domain.example/data.csv'
-    }
+    csvURL: 'https://domain.example/data.csv'
 });
 const googleConnector = await dataPool.getConnector('my-google-spreadsheet');
-const csvTable = await dataPool.getConnectorTable('my-csv');
+const csvTable =
+    await dataPool
+        .getConnector('my-csv')
+        .then(connector => connector.getTable());
 ```
 
 DataPool can be used to coordinate and share connectors and their

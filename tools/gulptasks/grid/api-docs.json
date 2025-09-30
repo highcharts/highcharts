@@ -50,6 +50,9 @@
 
         "../../../ts/Grid/Pro/CellRendering/Renderers/CheckboxRenderer.ts",
         "../../../ts/Grid/Pro/CellRendering/Renderers/DateInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/DateTimeInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/TimeInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/NumberInputRenderer.ts",
         "../../../ts/Grid/Pro/CellRendering/Renderers/SelectRenderer.ts",
         "../../../ts/Grid/Pro/CellRendering/Renderers/SparklineRenderer.ts",
         "../../../ts/Grid/Pro/CellRendering/Renderers/TextInputRenderer.ts",
@@ -57,6 +60,9 @@
 
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/CheckboxContent.ts",
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/DateInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/DateTimeInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/TimeInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/NumberInputContent.ts",
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/SelectContent.ts",
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/SparklineContent.ts",
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/TextInputContent.ts",

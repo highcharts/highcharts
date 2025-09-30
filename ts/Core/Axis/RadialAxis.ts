@@ -76,8 +76,8 @@ declare module './AxisType' {
         RadialAxis: RadialAxis.AxisComposition;
     }
 }
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         inverted?: boolean;
     }
 }
@@ -513,12 +513,15 @@ namespace RadialAxis {
             },
             center = this.center,
             startAngleRad = this.startAngleRad,
+            borderRadius = options.borderRadius,
             fullRadius = center[2] / 2,
             offset = Math.min(this.offset, 0),
             left = this.left || 0,
             top = this.top || 0,
             percentRegex = /%$/,
-            isCircular = this.isCircular; // X axis in a polar chart
+            isCircular = this.isCircular, // X axis in a polar chart
+            trueBands = this.options.plotBands || [],
+            index = trueBands.indexOf(options);
 
         let start,
             end,
@@ -531,7 +534,19 @@ namespace RadialAxis {
                 fullRadius
             ),
             innerRadius = radiusToPixels(options.innerRadius),
-            thickness = pick(radiusToPixels(options.thickness), 10);
+            thickness = pick(radiusToPixels(options.thickness), 10),
+            brStart = true,
+            brEnd = true;
+
+        // Apply conditional border radius, only for ends of band stacks
+        if (borderRadius && index > -1) {
+            if (trueBands[index - 1] && trueBands[index - 1].to === from) {
+                brStart = false;
+            }
+            if (trueBands[index + 1] && trueBands[index + 1].from === to) {
+                brEnd = false;
+            }
+        }
 
         // Polygonal plot bands
         if (this.options.gridLineInterpolation === 'polygon') {
@@ -583,7 +598,9 @@ namespace RadialAxis {
                         outerRadius - thickness
                     ),
                     open,
-                    borderRadius: options.borderRadius
+                    borderRadius,
+                    brStart,
+                    brEnd
                 }
             );
 

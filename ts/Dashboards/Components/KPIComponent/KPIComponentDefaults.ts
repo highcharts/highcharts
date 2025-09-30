@@ -55,7 +55,7 @@ const KPIComponentDefaults: Globals.DeepPartial<Options> = {
         }, {
             name: 'Column name',
             type: 'input',
-            propertyPath: ['columnName']
+            propertyPath: ['columnId']
         }, {
             name: 'Value format',
             type: 'input',

@@ -27,6 +27,11 @@ Here is an example of how to use the Investment Screener connector:
 
 ```js
 const screenerConnector = new HighchartsConnectors.Morningstar.InvestmentScreenerConnector({
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
+    },
     page: 1,
     pageSize: 20,
     languageId: 'en-GB',
@@ -52,10 +57,7 @@ const screenerConnector = new HighchartsConnectors.Morningstar.InvestmentScreene
         'holdingTypeId',
         'universe'
     ],
-    universeIds: ['FOALL$$ALL'],
-    postman: {
-        environmentJSON: postmanJSON
-    }
+    universeIds: ['FOALL$$ALL']
 });
 ```
 

@@ -63,8 +63,8 @@ const {
  *
  * */
 
-declare module './Chart/ChartLike'{
-    interface ChartLike {
+declare module './Chart/ChartBase'{
+    interface ChartBase {
         cancelClick?: boolean;
         hoverPoint?: Point;
         hoverPoints?: Array<Point>;
@@ -159,8 +159,6 @@ class Pointer {
     public runChartClick?: boolean;
 
     public selectionMarker?: SVGElement;
-
-    public tooltipTimeout?: number;
 
     public eventsToUnbind: Array<Function> = [];
 
@@ -266,9 +264,6 @@ class Pointer {
                 );
             }
         }
-
-        // Memory and CPU leak
-        clearInterval(pointer.tooltipTimeout);
 
         objectEach(pointer, function (_val, prop): void {
             pointer[prop] = void 0 as any;
