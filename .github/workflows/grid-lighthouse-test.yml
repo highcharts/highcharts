@@ -2,7 +2,7 @@ name: Grid Lighthouse tests
 on:
   pull_request:
     branches:
-      - 'master'
+      - 'bugfix/dash-grid-lighthouse'
     paths:
       - '.github/workflows/grid-lighthouse-test.yml'
       - 'css/grid*'
@@ -26,12 +26,6 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      # First, checkout current branch to get the config file
-      - name: Checkout current branch (for config file)
-        uses: actions/checkout@v4
-        with:
-          path: bugfix/dash-grid-lighthouse
-
       - uses: actions/checkout@v4
         with:
           ref: master
@@ -79,7 +73,7 @@ jobs:
           wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=base
           working-directory: highcharts
-          config-file: ../bugfix/dash-grid-lighthouse/test/cypress/grid/lighthouse.config.mjs
+          config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
       - name: Stop server
