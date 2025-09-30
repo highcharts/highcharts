@@ -282,7 +282,7 @@ class DataTableCore {
     public log(msg = '', limit = 10, start = 0): void {
         /* eslint-disable no-console */
         console.group(
-            (msg ? msg + ' / ' : '') + `Limit: ${limit}, Start: ${start}`
+            (msg ? msg + ' / ' : '') + `Showing ${limit} rows out of ${this.rowCount}, start at ${start}`
         );
         console.table(
             new Array(Math.min(this.rowCount, limit))
