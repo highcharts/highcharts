@@ -19,7 +19,6 @@
  * */
 
 import type ColorType from '../Color/ColorType';
-import type Options from '../Options';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type SVGElement3D from '../Renderer/SVG/SVGElement3D';
@@ -68,21 +67,19 @@ declare module '../Chart/ChartBase'{
 
 declare module '../Chart/ChartOptions'{
     interface ChartOptions {
-        options3d?: Options;
+        options3d?: ChartOptions3D;
     }
 }
 
-declare module '../Options'{
-    export interface Options {
-        alpha?: number;
-        axisLabelPosition?: ('auto'|null);
-        beta?: number;
-        depth?: number;
-        enabled?: boolean;
-        fitToPlot?: boolean;
-        frame?: Chart3D.FrameOptions;
-        viewDistance?: number;
-    }
+interface ChartOptions3D {
+    alpha?: number;
+    axisLabelPosition?: ('auto'|null);
+    beta?: number;
+    depth?: number;
+    enabled?: boolean;
+    fitToPlot?: boolean;
+    frame?: Chart3D.FrameOptions;
+    viewDistance?: number;
 }
 
 /* *
