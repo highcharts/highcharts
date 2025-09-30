@@ -72,7 +72,7 @@ jobs:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=base
-          working-directory: grid
+          working-directory: highcharts
           config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
@@ -107,7 +107,7 @@ jobs:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=actual
-          working-directory: grid
+          working-directory: highcharts
           config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
