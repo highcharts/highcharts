@@ -775,7 +775,7 @@ class Legend {
                     Math.min(
                         options.itemWidth ||
                         legend.widthOption ||
-                        chart.spacingBox.width - 2 * this.padding - options.x,
+                        chart.spacingBox.width,
                         options.maxWidth ? relativeLength(
                             options.maxWidth as any,
                             chart.chartWidth
@@ -1166,6 +1166,7 @@ class Legend {
             legend.options.maxWidth ?
                 Math.min(
                     legend.widthOption ||
+                    legend.offsetWidth ||
                     allowedWidth,
                     relativeLength(
                         options.maxWidth as any,
