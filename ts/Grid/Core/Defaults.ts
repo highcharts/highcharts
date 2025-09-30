@@ -29,7 +29,6 @@ import Utils from '../../Core/Utilities.js';
 
 const { merge } = Utils;
 
-
 /**
  * Namespace for default options.
  */
