@@ -136,6 +136,31 @@ The sorting options are available for individual columns, but the default value 
 
 Alternatively, you can programmatically sort a column using the `column.sorting.setOrder` method, even if the sortable option is turned off.
 
+## Filtering
+Column filtering in Highcharts Grid allows users to filter data based on specific conditions and values for each column. This feature enhances data exploration and helps users focus on relevant information within large datasets.
+
+The main options include:
+* `enabled`: Set to `true` to activate filtering for the column.
+* `inline`: Set to `true` to render filter inputs directly in the header row, or `false` (default) to use a popup interface.
+* `condition`: The initial filtering condition (e.g., 'contains', 'equals', 'greaterThan').
+* `value`: The initial filter value to apply.
+
+```js
+columns: [{
+    id: "product",
+    filtering: {
+        enabled: true,
+        inline: true,
+        condition: "contains",
+        value: "Apple"
+    }
+}]
+```
+
+The `columns[].filtering` property can be used to enable/disable filtering, configure the filtering interface (inline or dropdown), and set initial filter conditions for individual columns. Use `columnDefaults.filtering` to set the default configuration for all columns.
+
+For more information on filtering options and events, see the [Column filtering article](https://www.highcharts.com/docs/grid/column-filtering) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnFilteringOptions).
+
 ## Formatting
 
 ### Time formatting

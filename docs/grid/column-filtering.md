@@ -15,6 +15,7 @@ To enable column filtering, you need to set the `filtering.enabled` option to `t
         }
     }]
 }
+```
 
 ## Filtering Interface
 
