@@ -19,6 +19,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';

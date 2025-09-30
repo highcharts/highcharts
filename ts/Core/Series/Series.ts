@@ -24,6 +24,7 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type DataTable from '../../Data/DataTable';
+import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
 import type Legend from '../Legend/Legend';

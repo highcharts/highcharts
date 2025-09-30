@@ -21,6 +21,7 @@
  * */
 
 import type Component from '../Components/Component';
+import type { DeepPartial } from '../../Shared/Types';
 import type EditableOptions from '../Components/EditableOptions';
 import type Globals from '../Globals';
 import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions';

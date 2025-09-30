@@ -22,6 +22,7 @@
 
 import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
