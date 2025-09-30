@@ -9,8 +9,8 @@ on:
       - 'samples/grid-lite/**'
       - 'samples/grid-pro/**'
       - 'test/cypress/grid/performance/**'
-      - 'ts/Data/**'
       - 'ts/Grid/**'
+      - 'ts/Data/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -42,14 +42,17 @@ jobs:
         run: |
           cd highcharts
           npm ci
+
       - name: Build Highcharts
         run: |
           cd highcharts
           npx gulp scripts
+
       - name: Build Grid
         run: |
           cd highcharts
           npx gulp scripts --product Grid
+
       - name: Checkout utils
         uses: actions/checkout@v4
         with:
@@ -61,12 +64,13 @@ jobs:
         run: |
           cd utils
           npm i
+
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/grid-lite.js'
+          wait-on: 'http://localhost:3031/datagrid.js'
           env: type=base
           working-directory: highcharts
           config-file: test/cypress/grid/lighthouse.config.mjs
@@ -85,91 +89,55 @@ jobs:
         run: |
           cd highcharts
           npm ci
+
       - name: Build Highcharts
         run: |
           cd highcharts
           npx gulp scripts
+
       - name: Build Grid
         run: |
           cd highcharts
           npx gulp scripts --product Grid
-          - name: Debug Cypress config
 
+      - name: Run cypress via action
+        uses: cypress-io/github-action@v5
+        with:
+          browser: chrome
+          start: node ../utils/server --localOnly
+          wait-on: 'http://localhost:3031/datagrid.js'
+          env: type=actual
+          working-directory: highcharts
+          config-file: test/cypress/grid/lighthouse.config.mjs
+          install: false
 
-- name: Debug directory structure
-  run: |
-    echo "=== Current directory ==="
-    pwd
-    echo ""
-    echo "=== List root ==="
-    ls -la
-    echo ""
-    echo "=== List highcharts ==="
-    ls -la highcharts/
-    echo ""
-    echo "=== List highcharts/test ==="
-    ls -la highcharts/test/ || echo "test dir not found"
-    echo ""
-    echo "=== List highcharts/test/cypress ==="
-    ls -la highcharts/test/cypress/ || echo "cypress dir not found"
-    echo ""
-    echo "=== List highcharts/test/cypress/grid ==="
-    ls -la highcharts/test/cypress/grid/ || echo "grid dir not found"
-    echo ""
-    echo "=== Find all lighthouse.config.mjs files ==="
-    find . -name "lighthouse.config.mjs" -type f
-    echo ""
-    echo "=== Find all .cy.js files ==="
-    find . -name "*.cy.js" -type f
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tmp-files
+          path: |
+            highcharts/tmp
 
-- name: Debug working directory paths
-  working-directory: highcharts
-  run: |
-    echo "=== Current directory in working-directory ==="
-    pwd
-    echo ""
-    echo "=== Resolved config file path ==="
-    ls -la test/cypress/grid/lighthouse.config.mjs || echo "Config not found at this path"
-    echo ""
-    echo "=== Resolved spec pattern path ==="
-    ls -la test/cypress/grid/performance/ || echo "Performance dir not found"
+      - name: Write markdown to file
+        if: ${{ always() }}
+        run: |
+          node highcharts/test/cypress/lighthouseCompare.mjs  --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
 
-- name: Run cypress via action
-  uses: cypress-io/github-action@v5
-  with:
-    browser: chrome
-    start: node ../utils/server --localOnly
-    wait-on: 'http://localhost:3031/grid-lite.js'
-    env: type=actual
-    working-directory: highcharts
-    config-file: test/cypress/grid/lighthouse.config.mjs
-    install: false
+      - name: Add to summary
+        if: ${{ always() }}
+        run: |
+          echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
+          cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
 
-- name: Store artifacts
-  uses: actions/upload-artifact@v4
-  with:
-    name: tmp-files
-    path: |
-      highcharts/tmp
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        if: ${{ always() }}
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
+            const { readFileSync } = require('node:fs')
 
-- name: Write markdown to file
-  if: ${{ always() }}
-  run: |
-    node highcharts/test/cypress/lighthouseCompare.mjs --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
+            const markdown = readFileSync('./highcharts/tmp/lighthousetable.md');
 
-- name: Add to summary
-  if: ${{ always() }}
-  run: |
-    echo "## Grid Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
-    cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
-
-- name: Comment on PR
-  uses: actions/github-script@v8
-  if: ${{ always() }}
-  with:
-    github-token: ${{secrets.PR_COMMENT_TOKEN}}
-    script: |
-      const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
-      const { readFileSync } = require('node:fs')
-      const markdown = readFileSync('./highcharts/tmp/lighthousetable.md');
-      await createOrUpdateComment(github, context, 'Grid Lighthouse report', markdown || 'No table to show');
+            await createOrUpdateComment(github, context, 'Lighthouse report', markdown || 'No table to show');
