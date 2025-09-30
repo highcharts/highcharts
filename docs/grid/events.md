@@ -50,7 +50,7 @@ columnDefaults: {
             console.log('Column resized:', this);
         },
         beforeSort: function () {
-            console.log('Before sorting column', this.id);
+            console.log('Before sorting column:', this.id);
         },
         afterSort: function () {
             console.log('After sorting column:', this.id);
