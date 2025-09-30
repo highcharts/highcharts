@@ -114,29 +114,43 @@ class StandaloneNavigator {
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
-            userOptions.chart,
+            userOptions.chartOptions,
             { navigator: userOptions }
         );
 
-        if (this.chartOptions.chart && userOptions.height) {
+        // If the chart is not inverted, set navigator height as chart height.
+        if (
+            this.chartOptions.chart &&
+            !this.chartOptions.chart.inverted &&
+            userOptions.height
+        ) {
             this.chartOptions.chart.height = userOptions.height;
         }
 
-        const chart = new Chart(element, this.chartOptions);
+        const chart = new Chart(element, this.chartOptions),
+            scrollbarEnabled = pick(
+                userOptions.chartOptions?.scrollbar?.enabled, true
+            );
 
         chart.options = merge(
             chart.options,
-            { navigator: { enabled: true }, scrollbar: { enabled: true } }
+            { navigator: { enabled: true } },
+            { scrollbar: { enabled: scrollbarEnabled } }
         );
 
-        if (this.chartOptions.navigator && this.chartOptions.scrollbar) {
-            this.chartOptions.navigator.enabled = true;
-            this.chartOptions.scrollbar.enabled = true;
-        }
+        this.chartOptions = merge(
+            this.chartOptions,
+            { navigator: { enabled: true } },
+            { scrollbar: { enabled: scrollbarEnabled } }
+        );
 
         this.navigator = new Navigator(chart);
         chart.navigator = this.navigator;
         this.initNavigator();
+        // Adjust fake chart size to fit the navigator added after the chart was
+        // created. Without it, navigator elements were rendered incorrectly
+        // during the first render.
+        chart.redraw(false);
     }
 
     /**
@@ -313,7 +327,7 @@ class StandaloneNavigator {
         this.chartOptions = merge(
             this.chartOptions,
             newOptions.height && { chart: { height: newOptions.height } },
-            newOptions.chart,
+            newOptions.chartOptions,
             { navigator: newOptions }
         );
 
