@@ -709,7 +709,6 @@
 .hcg-resize-handle-line,
 .highcharts-datagrid-resize-handle-line {
     position: absolute;
-    bottom: 0;
     width: 1px;
     background: var(--ig-header-color);
 }

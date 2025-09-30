@@ -160,14 +160,13 @@ class ColumnsResizer {
         const tbodyBox = vp.tbodyElement.getBoundingClientRect();
         const handleBox = handle.getBoundingClientRect();
         const left = Math.floor(
-            handleBox.left + handleBox.width / 2 - tbodyBox.left
+            handleBox.left + handleBox.width / 2 - parentBox.left
         );
-        const bottom = Math.floor(parentBox.bottom - tbodyBox.bottom);
         const top = Math.floor(handleBox.bottom - parentBox.top);
 
-        line.style.bottom = bottom + 'px';
-        line.style.top = top + 'px';
         line.style.left = left + 'px';
+        line.style.top = top + 'px';
+        line.style.bottom = parentBox.bottom - tbodyBox.bottom + 'px';
     }
 
     /**
@@ -205,10 +204,10 @@ class ColumnsResizer {
         this.draggedColumn?.header?.htmlElement?.classList.remove(
             Globals.getClassName('resizedColumn')
         );
+        this.draggedResizeHandle?.classList.remove('hovered');
 
         this.resizeHandleLine?.remove();
         delete this.resizeHandleLine;
-        this.draggedResizeHandle?.classList.remove('hovered');
 
         this.dragStartX = void 0;
         this.draggedColumn = void 0;
@@ -238,6 +237,7 @@ class ColumnsResizer {
             const vp = column.viewport;
 
             this.isResizing = true;
+            handle.classList.add('hovered');
 
             vp.reflow();
 

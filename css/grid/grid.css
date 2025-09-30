@@ -604,7 +604,6 @@
     cursor: col-resize;
     user-select: none;
     z-index: 10;
-    overflow: visible;
 }
 
 .hcg-table thead th .hcg-column-resizer.hovered,
