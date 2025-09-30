@@ -7,7 +7,7 @@ import type { JSHandle, Page } from '@playwright/test';
 import { join, extname, normalize } from 'node:path';
 import { globSync } from 'glob';
 import { load as yamlLoad } from 'js-yaml';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 export async function setTestingOptions(
     page: Page, HC: JSHandle<typeof Highcharts> | undefined = undefined
@@ -256,10 +256,17 @@ function resolveJSON(js: string) {
 
     return codeblocks.join('\n');
 }
-const highchartsCSS = readFileSync(
+const highchartsCssPath = [
     join(__dirname, '..', 'code', 'css', 'highcharts.css'),
-    'utf8'
-);
+    join(__dirname, '..', 'css', 'highcharts.css')
+].find(existsSync);
+
+if (!highchartsCssPath) {
+    throw new Error('Unable to locate highcharts.css for Playwright tests');
+}
+
+// Prefer the built CSS but fall back to the source file when dist assets are absent.
+const highchartsCSS = readFileSync(highchartsCssPath, 'utf8');
 
 export function getSample(path: string) {
     path = normalize(path.replace(/\\/g, '/'));
