@@ -770,21 +770,18 @@ class Legend {
 
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
-
-            const maxW = options.maxWidth ? relativeLength(
-                options.maxWidth as any,
-                chart.chartWidth
-            ) : Infinity;
-
-            const w = (Math.min(
-                options.itemWidth ||
-                legend.widthOption ||
-                chart.spacingBox.width - 2 * this.padding - options.x,
-                maxW
-            ) - itemExtraWidth) + 'px';
-
             label.css({
-                width: w
+                width: (
+                    Math.min(
+                        options.itemWidth ||
+                        legend.widthOption ||
+                        chart.spacingBox.width - 2 * this.padding - options.x,
+                        options.maxWidth ? relativeLength(
+                            options.maxWidth as any,
+                            chart.chartWidth
+                        ) : Infinity
+                    ) - itemExtraWidth
+                ) + 'px'
             });
         }
 
