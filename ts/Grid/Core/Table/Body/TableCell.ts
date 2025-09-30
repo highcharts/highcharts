@@ -198,14 +198,13 @@ class TableCell extends Cell {
      * Handles the focus event on the cell.
      */
     protected override onFocus(): void {
-        const cell = this;
         super.onFocus();
 
-        const vp = cell.row.viewport;
+        const vp = this.row.viewport;
 
         vp.focusCursor = [
-            cell.row.index,
-            cell.column.index
+            this.row.index,
+            this.column.index
         ];
     }
 
@@ -218,12 +217,13 @@ class TableCell extends Cell {
      * @internal
      */
     protected onMouseDown(e: MouseEvent): void {
-        if (e.target === this.htmlElement) {
-            this.htmlElement.focus();
+        const cell = this;
+        if (e.target === cell.htmlElement) {
+            cell.htmlElement.focus();
         }
 
-        fireEvent(this, 'mouseDown', {
-            target: this,
+        fireEvent(cell, 'mouseDown', {
+            target: cell,
             originalEvent: e
         });
     }
