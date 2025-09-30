@@ -1166,7 +1166,6 @@ class Legend {
             legend.options.maxWidth ?
                 Math.min(
                     legend.widthOption ||
-                    legend.offsetWidth ||
                     allowedWidth,
                     relativeLength(
                         options.maxWidth as any,
