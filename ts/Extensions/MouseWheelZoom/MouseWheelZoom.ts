@@ -292,9 +292,8 @@ export default MouseWheelZoomComposition;
 /**
  * Whether to enable the reset zoom button when zooming with the mouse wheel.
  *
- * @type      {string}
+ * @type      {boolean}
  * @default   false
- * @validvalue ["x", "y", "xy"]
  * @since {next}
  * @requires  modules/mouse-wheel-zoom
  * @sample    {highcharts} highcharts/mouse-wheel-zoom/reset-zoom-button
