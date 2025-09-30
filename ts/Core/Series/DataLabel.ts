@@ -640,16 +640,9 @@ namespace DataLabel {
                 // the need for dlOptions, and simplify the section below.
                 pointOptions = splat(
                     mergeArrays(
-                        mergeArrays(
-                            seriesDlOptions,
-                            // The dlOptions prop is used in treemaps
-                            point.dlOptions || point.options?.dataLabels
-                        ),
-                        // Override unsupported point level options with series
-                        // level - even if undefined.
-                        seriesDlOptions.map((o): Partial<DataLabelOptions> => ({
-                            zIndex: o.zIndex
-                        }))
+                        seriesDlOptions,
+                        // The dlOptions prop is used in treemaps
+                        point.dlOptions || point.options?.dataLabels
                     )
                 );
 
