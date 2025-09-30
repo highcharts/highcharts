@@ -897,7 +897,9 @@ class TreemapSeries extends ScatterSeries {
             }
 
             // Merge custom options with point options
-            point.dlOptions = merge(options, point.options.dataLabels);
+            point.dlOptions = merge(options, point.options.dataLabels, {
+                zIndex: void 0
+            });
         }
         super.drawDataLabels(points);
     }
