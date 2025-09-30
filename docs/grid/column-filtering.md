@@ -243,7 +243,7 @@ You can disable filtering for specific columns while keeping it enabled globally
 }
 ```
 
-## Events (Grid Pro)
+## Events __grid_pro__
 
 Column filtering supports two events that you can use to respond to filtering actions:
 
