@@ -598,28 +598,24 @@
 .hcg-table thead th .hcg-column-resizer {
     position: absolute;
     top: 0;
-    width: 16px;
-    right: -9px;
+    width: 5px;
+    right: -3px;
     height: 100%;
     cursor: col-resize;
     user-select: none;
     z-index: 10;
+    overflow: visible;
 }
 
-.hcg-table thead th .hcg-column-resizer::after {
-    content: "";
+.hcg-table thead th .hcg-column-resizer.hovered,
+.hcg-table thead th .hcg-column-resizer:hover {
+    background: var(--ig-header-color);
+}
+
+.hcg-resize-handle-line {
     position: absolute;
-    display: block;
-    height: 20px;
-    width: 7px;
-    margin-top: -10px;
-    top: 50%;
-    left: 2px;
-}
-
-.hcg-table thead th .hcg-column-resizer:hover::after {
-    border-left: 2px solid var(--ig-header-color);
-    border-right: 2px solid var(--ig-header-color);
+    width: 1px;
+    background: var(--ig-header-color);
 }
 
 /* Sorting */

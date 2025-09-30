@@ -95,6 +95,12 @@ class ColumnsResizer {
      */
     private handles: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
 
+    /**
+     * The line that is displayed when resizing a column.
+     * @internal
+     */
+    private resizeHandleLine?: HTMLElement;
+
 
     /* *
      *
@@ -141,6 +147,29 @@ class ColumnsResizer {
         }
     }
 
+    private reflowResizeHandleLine(): void {
+        const vp = this.viewport;
+        const line = this.resizeHandleLine;
+        const handle = this.draggedResizeHandle;
+
+        if (!line || !handle) {
+            return;
+        }
+
+        const parentBox = vp.grid.contentWrapper!.getBoundingClientRect();
+        const tbodyBox = vp.tbodyElement.getBoundingClientRect();
+        const handleBox = handle.getBoundingClientRect();
+        const left = Math.floor(
+            handleBox.left + handleBox.width / 2 - tbodyBox.left
+        );
+        const bottom = Math.floor(parentBox.bottom - tbodyBox.bottom);
+        const top = Math.floor(handleBox.bottom - parentBox.top);
+
+        line.style.bottom = bottom + 'px';
+        line.style.top = top + 'px';
+        line.style.left = left + 'px';
+    }
+
     /**
      * Handles the mouse move event on the document.
      *
@@ -161,6 +190,7 @@ class ColumnsResizer {
 
         vp.reflow();
         vp.rowsVirtualizer.adjustRowHeights();
+        this.reflowResizeHandleLine();
 
         fireEvent(this.draggedColumn, 'afterResize', {
             target: this.draggedColumn,
@@ -175,6 +205,10 @@ class ColumnsResizer {
         this.draggedColumn?.header?.htmlElement?.classList.remove(
             Globals.getClassName('resizedColumn')
         );
+
+        this.resizeHandleLine?.remove();
+        delete this.resizeHandleLine;
+        this.draggedResizeHandle?.classList.remove('hovered');
 
         this.dragStartX = void 0;
         this.draggedColumn = void 0;
@@ -207,6 +241,12 @@ class ColumnsResizer {
 
             vp.reflow();
 
+            if (!this.resizeHandleLine) {
+                this.resizeHandleLine = makeHTMLElement('div', {
+                    className: Globals.getClassName('resizerHandleLine')
+                }, column.viewport.grid.contentWrapper);
+            }
+
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
             this.draggedResizeHandle = handle;
@@ -217,6 +257,7 @@ class ColumnsResizer {
             column.header?.htmlElement.classList.add(
                 Globals.getClassName('resizedColumn')
             );
+            this.reflowResizeHandleLine();
         };
 
         this.handles.push([handle, onHandleMouseDown]);

@@ -691,30 +691,27 @@
 .highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer {
     position: absolute;
     top: 0;
-    width: 16px;
-    right: -9px;
+    width: 5px;
+    right: -3px;
     height: 100%;
     cursor: col-resize;
     user-select: none;
     z-index: 10;
 }
 
-.hcg-table thead th .hcg-column-resizer::after,
-.highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer::after {
-    content: "";
-    position: absolute;
-    display: block;
-    height: 20px;
-    width: 7px;
-    margin-top: -10px;
-    top: 50%;
-    left: 2px;
+.hcg-table thead th .hcg-column-resizer.hovered,
+.hcg-table thead th .hcg-column-resizer:hover,
+.highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer.hovered,
+.highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer:hover {
+    background: var(--ig-header-color);
 }
 
-.hcg-table thead th .hcg-column-resizer:hover::after,
-.highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer:hover::after {
-    border-left: 2px solid var(--ig-header-color);
-    border-right: 2px solid var(--ig-header-color);
+.hcg-resize-handle-line,
+.highcharts-datagrid-resize-handle-line {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    background: var(--ig-header-color);
 }
 
 /* Sorting */
