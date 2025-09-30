@@ -607,12 +607,13 @@ class Grid {
         render: boolean = true,
         overwrite = false
     ): Promise<void> {
-        this.setColumnOptions([{
+        const grid = this;
+        grid.setColumnOptions([{
             id: columnId,
             ...options
         }], overwrite);
 
-        await this.update(void 0, render);
+        await grid.update(void 0, render);
     }
 
     /**
