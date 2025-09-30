@@ -1035,9 +1035,8 @@ class Grid {
      * Removes the loading indicator.
      */
     public hideLoading(): void {
-        const grid = this;
-        grid.loadingWrapper?.remove();
-        delete grid.loadingWrapper;
+        this.loadingWrapper?.remove();
+        delete this.loadingWrapper;
     }
 
     /**

@@ -198,13 +198,14 @@ class TableCell extends Cell {
      * Handles the focus event on the cell.
      */
     protected override onFocus(): void {
+        const cell = this;
         super.onFocus();
 
-        const vp = this.row.viewport;
+        const vp = cell.row.viewport;
 
         vp.focusCursor = [
-            this.row.index,
-            this.column.index
+            cell.row.index,
+            cell.column.index
         ];
     }
 
