@@ -1,3 +1,4 @@
+/// <reference types="qunit" />
 /* eslint-disable playwright/no-conditional-in-test */
 import { Page } from '@playwright/test';
 import { test, expect, setupRoutes } from '../fixtures.ts';
@@ -5,6 +6,20 @@ import { getKarmaScripts, getSample } from '../utils.ts';
 import { join, dirname } from 'node:path';
 
 import { glob } from 'glob';
+
+type QUnitTestCounts = Pick<QUnit.DoneDetails, 'failed' | 'passed' | 'total'>;
+
+declare global {
+    interface Window {
+        __qunitResults__?: QUnitTestCounts | null;
+        __qunitFailedTests__?: Array<{
+            module?: string;
+            name: string;
+            failures: string[];
+        }> | null;
+        __qunitFailedAssertions__?: Array<QUnit.LogDetails> | null;
+    }
+}
 
 test.describe('QUnit tests', () => {
     test.describe.configure({
@@ -81,6 +96,13 @@ test.describe('QUnit tests', () => {
             if (window.__qunitResults__) {
                 window.__qunitResults__ = null;
             }
+            if (window.__qunitFailedTests__) {
+                window.__qunitFailedTests__ = null;
+            }
+            if (window.__qunitFailedAssertions__) {
+                window.__qunitFailedAssertions__ = null;
+            }
+
         });
     });
 
@@ -96,11 +118,6 @@ test.describe('QUnit tests', () => {
         test(qunitTest + '', async () =>{
             const sample = getSample(dirname(qunitTest));
 
-            if(!sample.script) {
-                // eslint-disable-next-line playwright/no-skipped-test
-                test.skip(true, 'Skipping as there\'s no script');
-                return;
-            }
             if (!sample.script.includes('QUnit.test')) {
                 sample.script =
                     sample.script +
@@ -112,6 +129,49 @@ test.describe('QUnit tests', () => {
                     // Optionally expose to Playwright
                     window.__qunitResults__ = details.testCounts;
                 });
+                QUnit.on('testEnd', function (data) {
+                    if (data.failed) {
+                        window.__qunitFailedTests__ ??= [];
+                        const failures = (data?.errors && data.errors.length ?
+                            data.errors : data?.assertions || []
+                        ).filter(assertion => {
+                            if (typeof assertion === 'string') {
+                                return true;
+                            }
+                            return assertion?.result === false ||
+                                assertion?.passed === false;
+                        }).map(assertion => {
+                            if (typeof assertion === 'string') {
+                                return assertion;
+                            }
+                            if (assertion?.message) {
+                                return assertion.message;
+                            }
+                            const actual = assertion?.actual ??
+                                assertion?.value;
+                            const expected = assertion?.expected;
+                            return `${actual ?? 'actual'} !== ${expected ?? 'expected'}`;
+                        });
+
+                        window.__qunitFailedTests__?.push({
+                            module: data.module,
+                            name: data.name,
+                            failures
+                        });
+                    }
+                });
+                QUnit.log(function (details) {
+                    if (!details.result) {
+                        window.__qunitFailedAssertions__ ??= [];
+                        window.__qunitFailedAssertions__.push({
+                            module: details.module,
+                            name: details.name,
+                            message: details.message,
+                            actual: details.actual,
+                            expected: details.expected
+                        });
+                    }
+                });
             });
 
 
@@ -119,9 +179,6 @@ test.describe('QUnit tests', () => {
                 content: sample.script
             });
             await script.evaluate(s => (s as HTMLScriptElement).id = 'test-script');
-
-            // const testResults = page.locator('#qunit-testresult-display');
-            // await expect(testResults).toBeInViewport();
 
             const results = await page.waitForFunction(
                 () => window.__qunitResults__
@@ -133,12 +190,14 @@ test.describe('QUnit tests', () => {
 
             if (Number(failed) > 0){
                 console.log(`QUnit results: ${passed}/${total} passed, ${Number(failed)} failed`);
+                console.log(await page.evaluate(() => JSON.stringify({
+                    tests: window.__qunitFailedTests__,
+                    assertions: window.__qunitFailedAssertions__
+                }, null, 2)));
             }
 
             // Fail the Playwright test if any QUnit test failed
             expect(Number(failed)).toBe(0);
-
-
         });
     }
 });
