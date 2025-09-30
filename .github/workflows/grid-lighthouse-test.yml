@@ -65,47 +65,6 @@ jobs:
           cd utils
           npm i
 
-          - name: Debug directory structure
-  run: |
-    echo "=== Current directory ==="
-    pwd
-    echo ""
-    echo "=== List root ==="
-    ls -la
-    echo ""
-    echo "=== List highcharts ==="
-    ls -la highcharts/
-
-        echo "=== List tmp ==="
-    ls -la tmp
-    echo ""
-    echo "=== List highcharts/test ==="
-    ls -la highcharts/test/ || echo "test dir not found"
-    echo ""
-    echo "=== List highcharts/test/cypress ==="
-    ls -la highcharts/test/cypress/ || echo "cypress dir not found"
-    echo ""
-    echo "=== List highcharts/test/cypress/grid ==="
-    ls -la highcharts/test/cypress/grid/ || echo "grid dir not found"
-    echo ""
-    echo "=== Find all lighthouse.config.mjs files ==="
-    find . -name "lighthouse.config.mjs" -type f
-    echo ""
-    echo "=== Find all .cy.js files ==="
-    find . -name "*.cy.js" -type f
-
-    - name: Debug working directory paths
-  working-directory: highcharts
-  run: |
-    echo "=== Current directory in working-directory ==="
-    pwd
-    echo ""
-    echo "=== Resolved config file path ==="
-    ls -la test/cypress/grid/lighthouse.config.mjs || echo "Config not found at this path"
-    echo ""
-    echo "=== Resolved spec pattern path ==="
-    ls -la test/cypress/grid/performance/ || echo "Performance dir not found"
-
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
@@ -152,6 +111,19 @@ jobs:
           config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
+      # DEBUG: List tmp directory contents
+      - name: Debug - List tmp directory structure
+        if: ${{ always() }}
+        run: |
+          echo "=== Listing highcharts/tmp directory ==="
+          ls -la highcharts/tmp/ || echo "tmp directory does not exist"
+          echo ""
+          echo "=== Tree view of tmp directory ==="
+          tree highcharts/tmp/ || find highcharts/tmp/ -type f || echo "No files found in tmp"
+          echo ""
+          echo "=== Checking for lighthouseReports ==="
+          ls -la highcharts/tmp/lighthouseReports/ || echo "lighthouseReports directory does not exist"
+
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -159,16 +131,49 @@ jobs:
           path: |
             highcharts/tmp
 
+      # DEBUG: Check if lighthouseCompare.mjs exists and is executable
+      - name: Debug - Check lighthouseCompare.mjs
+        if: ${{ always() }}
+        run: |
+          echo "=== Checking lighthouseCompare.mjs ==="
+          ls -la highcharts/test/cypress/lighthouseCompare.mjs || echo "lighthouseCompare.mjs not found"
+          echo ""
+          echo "=== Current working directory ==="
+          pwd
+          echo ""
+          echo "=== Directory structure ==="
+          ls -la highcharts/test/cypress/
+
       - name: Write markdown to file
         if: ${{ always() }}
         run: |
-          node highcharts/test/cypress/lighthouseCompare.mjs  --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
+          echo "=== Running lighthouseCompare.mjs ==="
+          node highcharts/test/cypress/lighthouseCompare.mjs --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
+          echo "=== Script completed ==="
+
+      # DEBUG: Verify markdown file was created
+      - name: Debug - Check if markdown file exists
+        if: ${{ always() }}
+        run: |
+          echo "=== Checking for lighthousetable.md ==="
+          ls -la highcharts/tmp/lighthousetable.md || echo "lighthousetable.md was NOT created"
+          echo ""
+          if [ -f highcharts/tmp/lighthousetable.md ]; then
+            echo "=== Content of lighthousetable.md ==="
+            cat highcharts/tmp/lighthousetable.md
+          else
+            echo "File does not exist, cannot display content"
+          fi
 
       - name: Add to summary
         if: ${{ always() }}
         run: |
           echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
-          cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
+          if [ -f highcharts/tmp/lighthousetable.md ]; then
+            cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No lighthouse table file found" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Comment on PR
         uses: actions/github-script@v7
@@ -177,8 +182,15 @@ jobs:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
             const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
-            const { readFileSync } = require('node:fs')
+            const { readFileSync, existsSync } = require('node:fs');
 
-            const markdown = readFileSync('./highcharts/tmp/lighthousetable.md');
+            const filePath = './highcharts/tmp/lighthousetable.md';
+            let markdown = 'No table to show - file was not generated';
 
-            await createOrUpdateComment(github, context, 'Lighthouse report', markdown || 'No table to show');
+            if (existsSync(filePath)) {
+              markdown = readFileSync(filePath, 'utf8');
+            } else {
+              console.log('Warning: lighthousetable.md does not exist at:', filePath);
+            }
+
+            await createOrUpdateComment(github, context, 'Lighthouse report', markdown);
