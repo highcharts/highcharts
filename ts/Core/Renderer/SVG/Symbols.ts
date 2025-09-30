@@ -54,14 +54,9 @@ function arc(
         const rx = pick(options.r, w),
             ry = pick(options.r, h || w),
             // Subtract a small number to prevent cos and sin of start and end
-            // from becoming equal on 360 arcs (#1561). The size of the circle
-            // affects the constant, therefore the division by `rx`. If the
-            // proximity is too small, the arc disappears. If it is too great, a
-            // gap appears. This can be seen in the animation of the official
-            // bubble demo (#20585).
-            // See "Arc proximity" tests at
-            // samples/unit-tests/svgrenderer/symbol/demo.js
-            proximity = 0.0002 / (options.borderRadius ? 1 : Math.max(rx, 1)),
+            // from becoming equal on 360 arcs (#1561). See "Arc proximity"
+            // tests at samples/unit-tests/svgrenderer/symbol/demo.js
+            proximity = 0.0001,
             fullCircle = (
                 Math.abs(end - start - 2 * Math.PI) <
                 proximity
@@ -91,6 +86,7 @@ function arc(
             0, // Slanting
             longArc, // Long or short arc
             pick(options.clockwise, 1), // Clockwise
+            // Use a static pixel offset for full circle (#21701)
             cx + (fullCircle ? 0.001 : rx * cosEnd),
             cy + ry * sinEnd
         ];
