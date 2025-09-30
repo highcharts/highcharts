@@ -100,6 +100,44 @@ jobs:
           cd highcharts
           npx gulp scripts --product Grid
 
+          - name: Debug Cypress config
+  working-directory: highcharts
+  run: |
+    echo "=== Current directory in working-directory ==="
+    pwd
+    echo ""
+    echo "=== Resolved config file path ==="
+    ls -la test/cypress/grid/lighthouse.config.mjs || echo "Config not found at this path"
+    echo ""
+    echo "=== Resolved spec pattern path ==="
+    ls -la test/cypress/grid/performance/ || echo "Performance dir not found"
+
+              - name: Debug directory structure
+              run: |
+                echo "=== Current directory ==="
+                pwd
+                echo ""
+                echo "=== List root ==="
+                ls -la
+                echo ""
+                echo "=== List highcharts ==="
+                ls -la highcharts/
+                echo ""
+                echo "=== List highcharts/test ==="
+                ls -la highcharts/test/ || echo "test dir not found"
+                echo ""
+                echo "=== List highcharts/test/cypress ==="
+                ls -la highcharts/test/cypress/ || echo "cypress dir not found"
+                echo ""
+                echo "=== List highcharts/test/cypress/grid ==="
+                ls -la highcharts/test/cypress/grid/ || echo "grid dir not found"
+                echo ""
+                echo "=== Find all lighthouse.config.mjs files ==="
+                find . -name "lighthouse.config.mjs" -type f
+                echo ""
+                echo "=== Find all .cy.js files ==="
+                find . -name "*.cy.js" -type f
+
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
