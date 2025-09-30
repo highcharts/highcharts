@@ -1,7 +1,7 @@
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
-import { setupDOM } from '../../test-utils';
+import { setupDOM, mockObservers } from '../../test-utils';
 import { generateGridData } from '../../data-generators';
 
 export const config = {
@@ -24,12 +24,15 @@ export default async function benchmarkTest(
 ): Promise<BenchmarkResult> {
 
     const { win, doc, el } = setupDOM();
+    mockObservers(win);
 
     global.window = win;
     global.document = doc;
+    global.ResizeObserver = win.ResizeObserver;
+    global.MutationObserver = win.MutationObserver;
     
     // Load Grid module
-    let Grid = require(join(CODE_PATH, '/grid/grid-lite.src.js'));
+    let Grid = await import(join(CODE_PATH, '/grid/grid-lite.src.js'));
     if (typeof Grid === 'function') {
         Grid = Grid(win); // old UMD pattern
     } else if (!Grid.win) {
@@ -39,9 +42,11 @@ export default async function benchmarkTest(
     performance.mark('Start');
 
     // Create and render the Grid
-    Grid.grid(el, {
-        dataTable: data
-    });
+    await Grid.grid(el, {
+        dataTable: {
+            columns: data.columns
+        }
+    }, true);
 
     performance.mark('End');
 

@@ -357,8 +357,14 @@ class RowsVirtualizer {
         }
 
         // Set the focus anchor cell
-        if (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) {
-            vp.setFocusAnchorCell(rows[rowCursor - rows[0].index].cells[0]);
+        if (
+            (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
+            rows.length > 0
+        ) {
+            const rowIndex = rowCursor - rows[0].index;
+            if (rows[rowIndex]) {
+                vp.setFocusAnchorCell(rows[rowIndex].cells[0]);
+            }
         }
     }
 
