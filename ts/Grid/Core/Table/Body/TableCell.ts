@@ -217,13 +217,12 @@ class TableCell extends Cell {
      * @internal
      */
     protected onMouseDown(e: MouseEvent): void {
-        const cell = this;
-        if (e.target === cell.htmlElement) {
-            cell.htmlElement.focus();
+        if (e.target === this.htmlElement) {
+            this.htmlElement.focus();
         }
 
-        fireEvent(cell, 'mouseDown', {
-            target: cell,
+        fireEvent(this, 'mouseDown', {
+            target: this,
             originalEvent: e
         });
     }
