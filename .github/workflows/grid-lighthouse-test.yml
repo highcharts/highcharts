@@ -1,18 +1,14 @@
-name: Dashboards and Grid lighthouse tests
+name: Grid lighthouse tests
 on:
   pull_request:
     branches:
       - 'master'
     paths:
-      - '.github/workflows/dashboards-lighthouse-test.yml'
-      - 'css/dashboards*'
-      - 'css/datagrid*'
+      - '.github/workflows/grid-lighthouse-test.yml'
       - 'css/grid*'
-      - 'samples/dashboards/**'
       - 'samples/grid-lite/**'
       - 'samples/grid-pro/**'
-      - 'test/cypress/dashboards/performance/**'
-      - 'ts/Dashboards/**'
+      - 'test/cypress/grid/performance/**'
       - 'ts/Data/**'
       - 'ts/Grid/**'
 
@@ -58,11 +54,6 @@ jobs:
           cd highcharts
           npx gulp scripts --product Grid
 
-      - name: Build Dashboards
-        run: |
-          cd highcharts
-          npx gulp dashboards/scripts
-
       - name: Checkout utils
         uses: actions/checkout@v4
         with:
@@ -81,10 +72,10 @@ jobs:
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/dashboards.js'
+          wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=base
           working-directory: highcharts
-          config-file: test/cypress/dashboards/lighthouse.config.mjs
+          config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
       - name: Stop server
@@ -111,20 +102,15 @@ jobs:
           cd highcharts
           npx gulp scripts --product Grid
 
-      - name: Build Dashboards
-        run: |
-          cd highcharts
-          npx gulp dashboards/scripts
-
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/dashboards.js'
+          wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=actual
           working-directory: highcharts
-          config-file: test/cypress/dashboards/lighthouse.config.mjs
+          config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
       - name: Store artifacts
@@ -142,11 +128,11 @@ jobs:
       - name: Add to summary
         if: ${{ always() }}
         run: |
-          echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
+          echo "## Grid Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
           cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
 
       - name: Comment on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         if: ${{ always() }}
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
@@ -156,4 +142,4 @@ jobs:
 
             const markdown = readFileSync('./highcharts/tmp/lighthousetable.md');
 
-            await createOrUpdateComment(github, context, 'Lighthouse report', markdown || 'No table to show');
+            await createOrUpdateComment(github, context, 'Grid Lighthouse report', markdown || 'No table to show');

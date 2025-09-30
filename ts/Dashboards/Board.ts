@@ -458,11 +458,13 @@ class Board {
      * layouts and its cells.
      */
     public reflow(): void {
-        if (this.editMode) {
-            const editModeTools = this.editMode.tools;
+        const board = this;
 
-            this.editMode.hideToolbars(['cell', 'row']);
-            this.editMode.hideContextPointer();
+        if (board.editMode) {
+            const editModeTools = board.editMode.tools;
+
+            board.editMode.hideToolbars(['cell', 'row']);
+            board.editMode.hideContextPointer();
 
             // Update expanded context menu container
             if (editModeTools.contextMenu) {
@@ -538,8 +540,7 @@ class Board {
      * The component with the given cell identifier.
      */
     public getComponentByCellId(id: string): ComponentType | undefined {
-        const board = this;
-        return board.mountedComponents.find(
+        return this.mountedComponents.find(
             (c): boolean => c.cell.id === id
         )?.component;
     }

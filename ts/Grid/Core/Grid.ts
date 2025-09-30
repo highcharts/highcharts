@@ -1109,7 +1109,8 @@ class Grid {
      * @deprecated
      */
     public getOptionsJSON(onlyUserOptions = true): string {
-        return JSON.stringify(this.getOptions(onlyUserOptions));
+        const grid = this;
+        return JSON.stringify(grid.getOptions(onlyUserOptions));
     }
 
     /**
