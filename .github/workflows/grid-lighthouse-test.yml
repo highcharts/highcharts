@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: master
+          ref: bugfix/dash-grid-lighthouse
           path: highcharts
 
       - name: Use Node.js ${{ matrix.node-version }}
