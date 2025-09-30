@@ -50,16 +50,16 @@ columnDefaults: {
             console.log('Column resized:', this);
         },
         beforeSort: function () {
-            console.log('Column sorted:', this);
+            console.log('Before sorting column:', this.id);
         },
         afterSort: function () {
-            console.log('Column sorted:', this);
+            console.log('After sorting column:', this.id);
         },
         beforeFilter: function () {
-            console.log('Column filtered:', this);
+            console.log('Before filtering column:', this.id);
         },
         afterFilter: function () {
-            console.log('Column filtered:', this);
+            console.log('After filtering column:', this.id);
         }
     },
     cells: {
