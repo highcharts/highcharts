@@ -65,15 +65,36 @@ jobs:
           cd utils
           npm i
 
+      # DEBUG: Find the lighthouse config file
+      - name: Debug - Find lighthouse config file location
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          echo ""
+          echo "=== Searching for lighthouse.config.mjs everywhere ==="
+          find . -name "lighthouse.config.mjs" -type f 2>/dev/null || echo "No lighthouse.config.mjs found"
+          echo ""
+          echo "=== Searching for any lighthouse config files ==="
+          find . -name "*lighthouse*.config.*" -type f 2>/dev/null || echo "No lighthouse config files found"
+          echo ""
+          echo "=== Searching for cypress.config files ==="
+          find . -name "cypress.config.*" -type f 2>/dev/null || echo "No cypress.config files found"
+          echo ""
+          echo "=== Contents of highcharts/test/cypress/ ==="
+          ls -laR highcharts/test/cypress/ 2>/dev/null || echo "Directory does not exist"
+          echo ""
+          echo "=== All .mjs files in test directory ==="
+          find highcharts/test -name "*.mjs" -type f 2>/dev/null || echo "No .mjs files found"
+
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/datagrid.js'
+          wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=base
           working-directory: highcharts
-          config-file: test/cypress/grid/lighthouse.config.mjs
+          command: npx cypress run --config-file test/cypress/grid/lighthouse.config.mjs --browser chrome
           install: false
 
       - name: Stop server
@@ -100,15 +121,36 @@ jobs:
           cd highcharts
           npx gulp scripts --product Grid
 
+      # DEBUG: Find the lighthouse config file again
+      - name: Debug - Find lighthouse config file location (current branch)
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          echo ""
+          echo "=== Searching for lighthouse.config.mjs everywhere ==="
+          find . -name "lighthouse.config.mjs" -type f 2>/dev/null || echo "No lighthouse.config.mjs found"
+          echo ""
+          echo "=== Searching for any lighthouse config files ==="
+          find . -name "*lighthouse*.config.*" -type f 2>/dev/null || echo "No lighthouse config files found"
+          echo ""
+          echo "=== Searching for cypress.config files ==="
+          find . -name "cypress.config.*" -type f 2>/dev/null || echo "No cypress.config files found"
+          echo ""
+          echo "=== Contents of highcharts/test/cypress/ ==="
+          ls -laR highcharts/test/cypress/ 2>/dev/null || echo "Directory does not exist"
+          echo ""
+          echo "=== All .mjs files in test directory ==="
+          find highcharts/test -name "*.mjs" -type f 2>/dev/null || echo "No .mjs files found"
+
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/datagrid.js'
+          wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=actual
           working-directory: highcharts
-          config-file: test/cypress/grid/lighthouse.config.mjs
+          command: npx cypress run --config-file test/cypress/grid/lighthouse.config.mjs --browser chrome
           install: false
 
       # DEBUG: List tmp directory contents
