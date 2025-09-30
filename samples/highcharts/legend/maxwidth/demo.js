@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     legend: {
-        maxWidth: '7%', // Only allow legend to be up to 7% of chart width.
+        maxWidth: '20%', // Only allow legend to be up to 20% of chart width.
         borderWidth: 1
     },
     series: [{
