@@ -22,7 +22,6 @@ concurrency:
 jobs:
   cypress_lighthouse:
     runs-on: ubuntu-latest
-    continue-on-error: true
     strategy:
       matrix:
         node-version: [lts/*]
@@ -68,13 +67,12 @@ jobs:
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
-        continue-on-error: true
         with:
           browser: chrome
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=base
-          working-directory: highcharts
+          # working-directory: highcharts
           config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
@@ -109,7 +107,7 @@ jobs:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=actual
-          working-directory: highcharts
+          # working-directory: highcharts
           config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
