@@ -18,6 +18,7 @@
  *
  * */
 
+import type { AxisOptions } from '../../Core/Axis/AxisOptions';
 import type { BreadcrumbOptions } from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
@@ -116,25 +117,46 @@ function onSeriesAfterBindAxes(
         xAxis = series.xAxis,
         yAxis = series.yAxis;
 
-    let treeAxis;
-
     if (xAxis && yAxis) {
         if (series.is('treemap')) {
-            treeAxis = {
+            // Treemap and treegraph axes are used for the layout, but are
+            // hidden by default.
+            const treeAxisDefaults: Partial<AxisOptions> = {
                 endOnTick: false,
-                gridLineWidth: 0,
-                lineWidth: 0,
-                min: 0,
-                minPadding: 0,
-                max: axisMax,
-                maxPadding: 0,
                 startOnTick: false,
-                title: void 0,
-                tickPositions: []
+                visible: false
             };
 
-            extend(yAxis.options, treeAxis);
-            extend(xAxis.options, treeAxis);
+            // Treemap layout depends on specific scaling of both axes
+            if (!series.is('treegraph')) {
+                treeAxisDefaults.min = 0;
+                treeAxisDefaults.max = axisMax;
+                treeAxisDefaults.tickPositions = [];
+            }
+
+            merge(
+                true,
+                xAxis.options,
+                treeAxisDefaults,
+                xAxis.userOptions
+            );
+            merge(
+                true,
+                yAxis.options,
+                treeAxisDefaults,
+                yAxis.userOptions
+            );
+
+            // Set the propertys on the axis object
+            xAxis.visible = xAxis.options.visible;
+            yAxis.visible = yAxis.options.visible;
+
+            // Set `isCartesian` conditionally. Because non-cartesian zoom won't
+            // work if it is true, and the axis will not show if it is false.
+            if (series.is('treegraph')) {
+                this.isCartesian = xAxis.visible;
+            }
+
             treemapAxisDefaultValues = true;
 
         } else if (treemapAxisDefaultValues) {
@@ -1175,6 +1197,10 @@ class TreemapSeries extends ScatterSeries {
             );
             height = Math.max(child.height + 1, height);
             children.push(child);
+
+            if (series.is('treegraph')) {
+                child.visible = true;
+            }
         }
 
         const node = new series.NodeClass().init(
@@ -1197,6 +1223,11 @@ class TreemapSeries extends ScatterSeries {
         if (point) {
             point.node = node;
             node.point = point;
+
+            // Handle x-axis value for treegraph
+            if (!defined(point.options.x)) {
+                point.x = level;
+            }
         }
 
         return node;
@@ -1690,7 +1721,11 @@ class TreemapSeries extends ScatterSeries {
             childrenTotal: childrenTotal,
             // Ignore this node if point is not visible
             ignore: !(pick(point?.visible, true) && (val > 0)),
-            isLeaf: tree.visible && !childrenTotal,
+            isLeaf: tree.visible && !(
+                series.type === 'treegraph' ?
+                    children.length > 0 :
+                    childrenTotal
+            ),
             isGroup: point?.isGroup,
             levelDynamic: (
                 tree.level - (levelIsConstant ? 0 : nodeRoot.level)
