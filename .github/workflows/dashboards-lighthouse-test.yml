@@ -1,10 +1,10 @@
-name: Dashboards and Grid lighthouse tests
+name: Dashboards Lighthouse tests
 on:
   pull_request:
     branches:
       - 'master'
     paths:
-      - '.github/workflows/dashboards-lighthouse-test.yml'
+      # - '.github/workflows/dashboards-lighthouse-test.yml'
       - 'css/dashboards*'
       - 'samples/dashboards/**'
       - 'test/cypress/dashboards/performance/**'
