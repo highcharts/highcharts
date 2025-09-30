@@ -1109,8 +1109,7 @@ class Grid {
      * @deprecated
      */
     public getOptionsJSON(onlyUserOptions = true): string {
-        const grid = this;
-        return JSON.stringify(grid.getOptions(onlyUserOptions));
+        return JSON.stringify(this.getOptions(onlyUserOptions));
     }
 
     /**
@@ -1119,7 +1118,8 @@ class Grid {
      * the data table is loaded.
      */
     private initVirtualization(): void {
-        const rows = this.userOptions.rendering?.rows;
+        const grid = this;
+        const rows = grid.userOptions.rendering?.rows;
         const virtualization = rows?.virtualization;
         const threshold = Number(
             rows?.virtualizationThreshold ||
