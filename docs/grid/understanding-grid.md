@@ -211,6 +211,6 @@ columns: [{
 }]
 ```
 
-The `filtering` option object can be used to enable or disable filtering for individual columns, configure the filtering interface (inline or popup), and set initial filter conditions.
+The `columns[].filtering` property can be used to enable/disable filtering, configure the filtering interface (inline or dropdown), and set initial filter conditions for individual columns. Use `columnDefaults.filtering` to set the default configuration for all columns.
 
 For more information on pagination options and events, see the [Column filtering article](https://www.highcharts.com/docs/grid/column-filtering) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnFilteringOptions).
