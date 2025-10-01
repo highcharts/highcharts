@@ -107,10 +107,6 @@ test.describe('QUnit tests', () => {
     });
 
     const unitTests = glob.sync('samples/unit-tests/**/demo.js', {
-        ignore: [
-            // Also ignored in karma, should maybe just delete
-            'samples/unit-tests/themes/**'
-        ],
         absolute: true
     });
 

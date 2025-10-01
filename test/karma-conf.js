@@ -331,11 +331,6 @@ module.exports = function (config) {
 
         // These ones fail
         exclude: [
-            // Themes alter the whole default options structure. Set up a
-            // separate test suite? Or perhaps somehow decouple the options so
-            // they are not mutated for later tests?
-            'samples/unit-tests/themes/*/demo.js',
-
             // --- VISUAL TESTS ---
 
             // Custom data source
