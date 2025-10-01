@@ -164,3 +164,8 @@ pre {
 .placeholder {
     display: none;
 }
+
+.new {
+    color: hotpink;
+    font-weight: 800;
+}

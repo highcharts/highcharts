@@ -70,7 +70,7 @@ const chart4desc  = `
 
 // Stacked column
 const chart5desc  = `
-    <p> Manchester United dominates in total trophies</p>
+    <p>Manchester United leads in both BPL and overall total.</p>
     <ul>
         <li>X-axis: Arsenal, Chelsea, Liverpool, Manchester United</li>
         <li>Y-axis: Count trophies, range 0–30</li>
@@ -79,9 +79,6 @@ const chart5desc  = `
         <li>Highest value: 28 total trophies for Manchester United</li>
         <li>Lowest value: 15 total trophies, shared by Chelsea and 
         Liverpool</li>
-        <li>Arsenal leads in FA Cup wins</li>
-        <li>Manchester United leads in both BPL and overall total</li>
-        <li>Liverpool has the most Champions League titles</li>
     </ul>
 `;
 
@@ -358,9 +355,6 @@ const chart24desc = `
     </p>
     <ul>
         <li>Root: Carnivora</li>
-        <li>Colors and pictures of the animals distinguish the 
-        family branches. Some of the leaf nodes include images 
-        and tooltips with short descriptions.</li>
     </ul>
 `;
 
@@ -390,7 +384,8 @@ const chart27desc = `
 // Timeline
 const chart28desc = `
     <ul>
-        <li>Axis: Timeline (events listed chronologically, 2000–2024)</li>
+        <li>Axis: Timeline with 6 events listed chronologically from 2000
+        to 2024)</li>
     </ul>
 `;
 
