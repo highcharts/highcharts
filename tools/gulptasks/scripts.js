@@ -196,8 +196,7 @@ function task() {
                         'scripts-css',
                         'scripts-ts',
                         'scripts-webpack',
-                        'scripts-code',
-                        'scripts-css'
+                        'scripts-code'
                     ]
             ))(
                 function (error) {
