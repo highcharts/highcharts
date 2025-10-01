@@ -260,15 +260,33 @@ class Pagination {
      */
     public render(): void {
         const position = this.options.position;
+        const grid = this.grid;
 
-        if (position === 'footer') {
-            this.renderFooter();
-        } else if (typeof position === 'string' && position.startsWith('#')) {
+        // Set row count for a11y
+        grid.tableElement?.setAttribute('aria-current', 'page');
+        this.updateA11yRowsCount(this.currentPageSize);
+
+        // Render pagination container
+        if (typeof position === 'string' && position.startsWith('#')) {
             this.renderCustomContainer(position);
         } else {
-            this.contentWrapper = makeHTMLElement('div', {
-                className: Globals.getClassName('paginationWrapper')
-            }, this.grid.contentWrapper);
+            if (position === 'footer') {
+                this.renderFooter();
+            }
+
+            this.contentWrapper = makeHTMLElement(
+                'nav',
+                {
+                    className: Globals.getClassName('paginationWrapper')
+                },
+                position === 'footer' ?
+                    this.paginationContainer : grid.contentWrapper
+            );
+
+            this.contentWrapper.setAttribute(
+                'aria-label',
+                'Results pagination'
+            );
         }
 
         // Update total pages first to ensure correct calculations
@@ -306,11 +324,6 @@ class Pagination {
         );
 
         this.reflow();
-
-        // Set content wrapper to the tfoot cell
-        this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationWrapper')
-        }, this.paginationContainer);
     }
 
     /**
@@ -432,6 +445,7 @@ class Pagination {
             return;
         }
 
+        // Create first button
         this.firstButton = makeHTMLElement('button', {
             innerHTML: Icons.first,
             className: Globals.getClassName('paginationButton') + ' ' +
@@ -439,6 +453,13 @@ class Pagination {
         }, container);
         this.firstButton.title = this.lang.firstPage;
 
+        // Set aria-label for a11y
+        this.firstButton.setAttribute(
+            'aria-label',
+            this.lang.firstPage
+        );
+
+        // Add click event
         this.firstButton.addEventListener('click', (): void => {
             void this.goToPage(1);
         });
@@ -464,6 +485,7 @@ class Pagination {
             return;
         }
 
+        // Create previous button
         this.prevButton = makeHTMLElement('button', {
             innerHTML: Icons.previous,
             className: Globals.getClassName('paginationButton') + ' ' +
@@ -471,6 +493,13 @@ class Pagination {
         }, container);
         this.prevButton.title = this.lang.previousPage;
 
+        // Set aria-label for a11y
+        this.prevButton.setAttribute(
+            'aria-label',
+            this.lang.previousPage
+        );
+
+        // Add click event
         this.prevButton.addEventListener('click', (): void => {
             void this.goToPage(this.currentPage - 1);
         });
@@ -496,6 +525,7 @@ class Pagination {
             return;
         }
 
+        // Create next button
         this.nextButton = makeHTMLElement('button', {
             innerHTML: Icons.next,
             className: Globals.getClassName('paginationButton') + ' ' +
@@ -503,6 +533,13 @@ class Pagination {
         }, container);
         this.nextButton.title = this.lang.nextPage;
 
+        // Set aria-label for a11y
+        this.nextButton.setAttribute(
+            'aria-label',
+            this.lang.nextPage
+        );
+
+        // Add click event
         this.nextButton.addEventListener('click', (): void => {
             void this.goToPage(this.currentPage + 1);
         });
@@ -528,6 +565,7 @@ class Pagination {
             return;
         }
 
+        // Create last button
         this.lastButton = makeHTMLElement('button', {
             innerHTML: Icons.last,
             className: Globals.getClassName('paginationButton') + ' ' +
@@ -535,6 +573,13 @@ class Pagination {
         }, container);
         this.lastButton.title = this.lang.lastPage;
 
+        // Set aria-label for a11y
+        this.lastButton.setAttribute(
+            'aria-label',
+            this.lang.lastPage
+        );
+
+        // Add click event
         this.lastButton.addEventListener('click', (): void => {
             void this.goToPage(this.totalPages);
         });
@@ -737,6 +782,13 @@ class Pagination {
             { page: pageNumber }
         );
 
+        // Set aria-label for a11y
+        button.setAttribute(
+            'aria-label',
+            this.formatText(this.lang.pageNumber, { page: pageNumber })
+        );
+
+        // Add click event
         button.addEventListener('click', (): void => {
             void this.goToPage(pageNumber);
         });
@@ -755,6 +807,9 @@ class Pagination {
             className: Globals.getClassName('paginationEllipsis')
         }, this.pageNumbersContainer);
         ellipsisElement.title = this.lang.ellipsis;
+
+        // Set aria-label for a11y
+        ellipsisElement.setAttribute('aria-hidden', true);
     }
 
     /**
@@ -841,6 +896,9 @@ class Pagination {
         this.updatePageInfo();
         this.updatePageNumbers();
         this.updateButtonStates();
+
+        // Update row count for a11y
+        this.updateA11yRowsCount(this.currentPageSize);
 
         // Update mobile page size selector if it exists
         if (this.mobilePageSizeSelector) {
@@ -1121,6 +1179,20 @@ class Pagination {
                 parseInt(this.mobilePageSizeSelector.value, 10)
             );
         });
+    }
+
+    /**
+     * Update the row count for a11y.
+     *
+     * @param currentPageSize
+     * The current page size.
+     */
+    public updateA11yRowsCount(currentPageSize: number): void {
+        const grid = this.grid;
+        grid.tableElement?.setAttribute(
+            'aria-rowcount',
+            currentPageSize || grid.dataTable?.getRowCount() || 0
+        );
     }
 }
 
