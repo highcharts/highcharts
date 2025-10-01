@@ -105,7 +105,7 @@ function onSeriesHide(
         ] as ('lastPrice'|'lastPriceLabel'|'lastVisiblePrice'|
             'lastVisiblePriceLabel')[]
     ).forEach((key): void => {
-        series[key]?.['hide']();
+        series[key]?.hide();
     });
 }
 
@@ -121,8 +121,7 @@ function onSeriesAfterRender(
 
     if (
         (lastVisiblePrice || lastPrice) &&
-         seriesOptions.id !== 'highcharts-navigator-series' &&
-         series.visible
+         seriesOptions.id !== 'highcharts-navigator-series'
     ) {
         const xAxis = series.xAxis,
             yAxis = series.yAxis,
