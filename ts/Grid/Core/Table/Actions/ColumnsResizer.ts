@@ -23,6 +23,8 @@
  *
  * */
 
+import type { GridEventListener } from '../../GridUtils.js';
+
 import Table from '../Table.js';
 import Column from '../Column.js';
 import GridUtils from '../../GridUtils.js';
@@ -93,7 +95,7 @@ class ColumnsResizer {
     /**
      * The handles and their mouse down event listeners.
      */
-    private handles: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
+    private handles: Array<[HTMLElement, GridEventListener[]]> = [];
 
     /**
      * The line that is displayed when resizing a column.
@@ -147,11 +149,11 @@ class ColumnsResizer {
         }
     }
 
-    private reflowResizeHandleLine(): void {
+    private reflowResizeHandleLine(
+        handle: HTMLElement | undefined = this.draggedResizeHandle
+    ): void {
         const vp = this.viewport;
         const line = this.resizeHandleLine;
-        const handle = this.draggedResizeHandle;
-
         if (!line || !handle) {
             return;
         }
@@ -233,7 +235,7 @@ class ColumnsResizer {
         handle: HTMLElement,
         column: Column
     ): void {
-        const onHandleMouseDown = (e: MouseEvent): void => {
+        const onHandleMouseDown = (e: Event): void => {
             const vp = column.viewport;
 
             this.isResizing = true;
@@ -241,13 +243,7 @@ class ColumnsResizer {
 
             vp.reflow();
 
-            if (!this.resizeHandleLine) {
-                this.resizeHandleLine = makeHTMLElement('div', {
-                    className: Globals.getClassName('resizerHandleLine')
-                }, column.viewport.grid.contentWrapper);
-            }
-
-            this.dragStartX = e.pageX;
+            this.dragStartX = (e as MouseEvent).pageX;
             this.draggedColumn = column;
             this.draggedResizeHandle = handle;
             this.columnStartWidth = column.getWidth();
@@ -257,11 +253,39 @@ class ColumnsResizer {
             column.header?.htmlElement.classList.add(
                 Globals.getClassName('resizedColumn')
             );
-            this.reflowResizeHandleLine();
         };
 
-        this.handles.push([handle, onHandleMouseDown]);
-        handle.addEventListener('mousedown', onHandleMouseDown);
+        const onHandleMouseOver = (): void => {
+            if (!this.resizeHandleLine) {
+                this.resizeHandleLine = makeHTMLElement('div', {
+                    className: Globals.getClassName('resizerHandleLine')
+                }, this.viewport.grid.contentWrapper);
+            }
+            this.reflowResizeHandleLine(handle);
+        };
+
+        const onHandleMouseOut = (): void => {
+            if (!handle.classList.contains('hovered')) {
+                this.resizeHandleLine?.remove();
+                delete this.resizeHandleLine;
+            }
+        };
+
+        const handleListeners: GridEventListener[] = [{
+            eventName: 'mousedown',
+            listener: onHandleMouseDown
+        }, {
+            eventName: 'mouseover',
+            listener: onHandleMouseOver
+        }, {
+            eventName: 'mouseout',
+            listener: onHandleMouseOut
+        }];
+
+        for (const { eventName, listener } of handleListeners) {
+            handle.addEventListener(eventName, listener);
+        }
+        this.handles.push([handle, handleListeners]);
     }
 
     /**
@@ -273,8 +297,11 @@ class ColumnsResizer {
         document.removeEventListener('mouseup', this.onDocumentMouseUp);
 
         for (let i = 0, iEnd = this.handles.length; i < iEnd; i++) {
-            const [handle, listener] = this.handles[i];
-            handle.removeEventListener('mousedown', listener);
+            const [handle, listeners] = this.handles[i];
+
+            for (const { eventName, listener } of listeners) {
+                handle.removeEventListener(eventName, listener);
+            }
         }
     }
 }
