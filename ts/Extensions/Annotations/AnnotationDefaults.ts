@@ -799,16 +799,18 @@ const AnnotationDefaults: AnnotationOptions = {
          */
 
         /**
-         * This number defines which xAxis the point is connected to. It refers
-         * to either the axis id or the index of the axis in the xAxis array.
+         * This number defines which `xAxis` the point is connected to.
+         * It refers to either the axis id or the index of the axis
+         * in the `xAxis` array.
          *
          * @type {number}
          * @apioption annotations.typeOptions.xAxis
          */
 
         /**
-         * This number defines which yAxis the point is connected to. It refers
-         * to either the axis id or the index of the axis in the xAxis array.
+         * This number defines which `yAxis` the point is connected to.
+         * It refers to either the axis id or the index of the axis
+         * in the `yAxis` array.
          *
          * @type {number}
          * @apioption annotations.typeOptions.yAxis
