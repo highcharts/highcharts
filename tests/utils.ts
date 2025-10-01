@@ -269,7 +269,7 @@ if (!highchartsCssPath) {
 const highchartsCSS = readFileSync(highchartsCssPath, 'utf8');
 
 export function getSample(path: string) {
-    path = normalize(path.replace(/\\/g, '/'));
+    path = normalize(path.replace(/\\/g, '/')).replace(/\\/g, '/');
     const files = {
         html: 'demo.html',
         css: 'demo.css',
@@ -281,7 +281,8 @@ export function getSample(path: string) {
 
     for (const [type, file] of Object.entries(files)) {
         try {
-            const [globPath] = globSync(join(path, file), { absolute: true });
+            const pattern = join(path, file).replace(/\\/g, '/');
+            const [globPath] = globSync(pattern, { absolute: true });
             const content = readFileSync(globPath, { encoding: 'utf8'});
 
             obj[type] = type === 'details' ?
