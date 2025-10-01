@@ -224,8 +224,7 @@ class NavigatorComponent extends Component {
      * Navigator column assignment.
      */
     public getColumnAssignment(): [string, string] {
-        const columnAssignment = this.options.columnAssignment ??
-            this.options.columnAssignments ?? {};
+        const columnAssignment = this.options.columnAssignment ?? {};
 
         let columnsAssignment: (string|null);
 

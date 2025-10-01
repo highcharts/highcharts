@@ -26,7 +26,7 @@ csvExport.addEventListener('click', () => {
 });
 
 jsonBtn.addEventListener('click', () => {
-    result.innerHTML = grid.getJSON();
+    result.innerHTML = grid.getData();
 });
 
 

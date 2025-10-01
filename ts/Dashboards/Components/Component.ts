@@ -232,10 +232,6 @@ abstract class Component {
      */
     public id: string;
     /**
-     * Reference to the specific connector data table.
-     */
-    public dataTableKey?: string;
-    /**
      * An array of options marked as editable by the UI.
      *
      */
@@ -304,7 +300,7 @@ abstract class Component {
         options: Partial<Component.Options>,
         board?: Board
     ) {
-        const renderTo = options.renderTo || options.cell;
+        const renderTo = options.renderTo;
         this.board = board || cell?.row?.layout?.board || {};
         this.parentElement =
             cell?.container || document.querySelector('#' + renderTo);
@@ -329,11 +325,6 @@ abstract class Component {
                     new ConnectorHandler(this, connectorOptions)
                 );
             }
-
-            // Assign the data table key to define the proper dataTable.
-            this.dataTableKey = isArray(this.options.connector) ?
-                this.options.connector[0].dataTableKey :
-                this.options.connector.dataTableKey;
         }
 
         this.editableOptions =
@@ -666,10 +657,13 @@ abstract class Component {
 
         if (!connectorsHaveChanged) {
             for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
-                const oldConnectorId = this.connectorHandlers[i]?.options.id;
-                const newConnectorId = connectorOptions[i]?.id;
+                const oldOpt = this.connectorHandlers[i]?.options;
+                const newOpt = connectorOptions[i];
 
-                if (oldConnectorId !== newConnectorId) {
+                if (
+                    newOpt?.id !== oldOpt?.id ||
+                    newOpt?.dataTableKey !== oldOpt?.dataTableKey
+                ) {
                     connectorsHaveChanged = true;
                     break;
                 }
@@ -690,12 +684,6 @@ abstract class Component {
                 );
             }
             await this.initConnectors();
-        }
-
-        // Assign the data table key to define the proper dataTable.
-        const firstConnectorDataTableKey = connectorOptions[0]?.dataTableKey;
-        if (firstConnectorDataTableKey) {
-            this.dataTableKey = firstConnectorDataTableKey;
         }
 
         if (shouldRerender || eventObject.shouldForceRerender) {
@@ -1037,14 +1025,6 @@ namespace Component {
         } & EventRecord;
 
     export interface Options {
-
-        /**
-         * Cell id, where component is attached.
-         * Deprecated, use `renderTo` instead.
-         *
-         * @deprecated
-         */
-        cell?: string;
 
         /**
          * Cell id, where component is attached.

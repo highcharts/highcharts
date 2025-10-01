@@ -20,7 +20,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
-import type PointLike from './PointLike';
+import type PointBase from './PointBase';
 import type {
     PointEventsOptions,
     PointMarkerOptions,
@@ -68,8 +68,8 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         className?: string;
         events?: PointEventsOptions;
         importedUserEvent?: Function;
@@ -1666,11 +1666,11 @@ class Point {
  *
  * */
 
-interface Point extends PointLike {
+interface Point extends PointBase {
     // Merge extensions with point class
     hcEvents?: Record<
-    string,
-    Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+        string,
+        Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
     >;
 }
 

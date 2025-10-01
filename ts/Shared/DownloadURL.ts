@@ -214,7 +214,9 @@ function getScript(
 
         // Reject in case of fail
         script.onerror = (): void => {
-            reject(error(`Error loading script ${scriptLocation}`));
+            const msg = `Error loading script ${scriptLocation}`;
+            error(msg);
+            reject(new Error(msg));
         };
 
         // Append the newly created script
@@ -258,6 +260,7 @@ function getBlobFromContent(
             ['\uFEFF' + content], // #7084
             { type: type }
         ));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
         // Ignore
     }

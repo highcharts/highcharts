@@ -30,7 +30,7 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
@@ -3088,7 +3088,8 @@ class Axis {
                 return parseInt(String(cssWidth), 10);
             }
 
-            if (marginLeft) {
+            // Skip marginLeft for opposite axis to avoid label cutoff, #22821
+            if (!this.opposite && marginLeft) {
                 return marginLeft - chart.spacing[3];
             }
         }
@@ -4412,7 +4413,7 @@ class Axis {
  *
  * */
 
-interface Axis extends AxisComposition, AxisLike {
+interface Axis extends AxisComposition, AxisBase {
     // Nothing here yet
 }
 

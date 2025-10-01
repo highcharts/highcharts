@@ -23,7 +23,7 @@ import type {
     IKHSenkouSpanOptions
 } from './IKHOptions';
 import type IKHPoint from './IKHPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -54,8 +54,8 @@ const {
  *
  * */
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         fillGraph?: boolean;
     }
 }
@@ -495,9 +495,7 @@ class IKHIndicator extends SMAIndicator {
                 [],
                 []
             ],
-            ikhMap: Record<string,
-            Array<IKHPoint>
-            > = {
+            ikhMap: Record<string, Array<IKHPoint>> = {
                 tenkanLine: allIchimokuPoints[0],
                 kijunLine: allIchimokuPoints[1],
                 chikouLine: allIchimokuPoints[2],
@@ -801,7 +799,7 @@ class IKHIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
         const period: number = params.period as any,

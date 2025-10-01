@@ -67,8 +67,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         /**
          * Deprecated in favor of [Exporting.downloadCSV](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadCSV).
          *
@@ -135,15 +135,15 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         exportKey?: string;
         keyToAxis?: Record<string, string>;
     }
 }
 
-declare module '../../Extensions/Exporting/ExportingLike' {
-    interface ExportingLike {
+declare module '../../Extensions/Exporting/ExportingBase' {
+    interface ExportingBase {
         ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
         isDataTableVisible?: boolean;
@@ -216,7 +216,7 @@ namespace ExportData {
         chart: Chart;
         options: SeriesOptions;
         pointArrayMap?: Array<string>;
-        index: Number;
+        index: number;
     }
 
     /* *
@@ -1054,10 +1054,13 @@ namespace ExportData {
 
                 // Convert to string if number
                 if (typeof textContent === 'number') {
-                    textContent = textContent.toString();
-                    if (decimalPoint === ',') {
-                        textContent = textContent.replace('.', decimalPoint);
-                    }
+                    textContent = chart.numberFormatter(
+                        textContent,
+                        -1,
+                        decimalPoint,
+                        tagName === 'th' ? '' : void 0
+                    );
+
                     className = 'highcharts-number';
                 } else if (!value) {
                     className = 'highcharts-empty';
@@ -1125,6 +1128,7 @@ namespace ExportData {
                             if (cur === subheaders[i]) {
                                 if (exporting.options.useRowspanHeaders) {
                                     rowspan = 2;
+                                    // eslint-disable-next-line @typescript-eslint/no-array-delete
                                     delete subheaders[i];
                                 } else {
                                     rowspan = 1;

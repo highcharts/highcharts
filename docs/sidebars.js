@@ -130,6 +130,7 @@ module.exports = {
             'grid/sparklines',
             'grid/events',
             'grid/exporting',
+            'grid/pagination',
             {
                 'Theming': [
                     'grid/theming/theming',
@@ -242,6 +243,8 @@ module.exports = {
                     'morningstar/security-details',
                     'morningstar/security-compare',
                     'morningstar/x-ray',
+                    'morningstar/performance',
+                    'morningstar/hypo-performance',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',

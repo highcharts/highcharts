@@ -48,6 +48,8 @@ import ExportingComposition from '../Grid/Pro/Export/ExportingComposition.js';
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
+import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.js';
+import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
@@ -86,6 +88,8 @@ import '../Grid/Pro/CellRendering/Renderers/CheckboxRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SelectRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/TextInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/DateInputRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/DateTimeInputRenderer.js';
+import '../Grid/Pro/CellRendering/Renderers/TimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
@@ -132,6 +136,7 @@ declare global {
         Column: typeof Column;
         HeaderCell: typeof HeaderCell;
         TableCell: typeof TableCell;
+        Pagination: typeof Pagination;
         Templating: typeof Templating;
         CellContentPro: typeof CellContentPro;
         merge: typeof Utilities.merge;
@@ -184,6 +189,7 @@ G.Table = G.Table || Table;
 G.Column = G.Column || Column;
 G.HeaderCell = G.HeaderCell || HeaderCell;
 G.TableCell = G.TableCell || TableCell;
+G.Pagination = G.Pagination || Pagination;
 
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
@@ -192,6 +198,7 @@ ExportingComposition.compose(G.Grid);
 Dash3Compatibility.compose(G.Table);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
+PaginationComposition.compose(G.Pagination);
 
 G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
 G.CellContentPro = CellContentPro;

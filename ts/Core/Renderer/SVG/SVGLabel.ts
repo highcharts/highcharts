@@ -87,7 +87,7 @@ class SVGLabel extends SVGElement {
         str: string,
         x: number,
         y?: number,
-        shape?: (SymbolKey|string),
+        shape?: string, // @todo (SymbolKey|string),
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -269,7 +269,11 @@ class SVGLabel extends SVGElement {
         // If we have a text string and the DOM bBox was 0, it typically means
         // that the label was first rendered hidden, so we need to update the
         // bBox (#15246)
-        if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
+        if (
+            (
+                this.textStr && this.bBox.width === 0 && this.bBox.height === 0
+            ) || this.rotation
+        ) {
             this.updateBoxSize();
         }
         const {

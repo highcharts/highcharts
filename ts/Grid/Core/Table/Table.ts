@@ -35,7 +35,7 @@ import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import Defaults from '../Defaults.js';
+import Cell from './Cell.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -84,11 +84,6 @@ class Table {
      * The HTML element of the table body.
      */
     public readonly tbodyElement: HTMLElement;
-
-    /**
-     * The HTML element of the table footer.
-     */
-    public readonly tfootElement?: HTMLElement;
 
     /**
      * The head of the table.
@@ -141,6 +136,12 @@ class Table {
      * table cell is not focused.
      */
     public focusCursor?: [number, number];
+
+    /**
+     * The only cell that is to be focusable using tab key - a table focus
+     * entry point.
+     */
+    public focusAnchorCell?: Cell;
 
     /**
      * The flag that indicates if the table rows are virtualized.
@@ -203,11 +204,6 @@ class Table {
 
         // Init Table
         this.init();
-
-        // Init pagination container
-        if (this.grid.pagination) {
-            this.tfootElement = makeHTMLElement('tfoot', {}, tableElement);
-        }
 
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
@@ -289,14 +285,10 @@ class Table {
      * performance reasons).
      */
     private updateVirtualization(): void {
-        const rows = this.grid.options?.rendering?.rows;
-        const threshold = Number(
-            rows?.virtualizationThreshold ||
-            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
-        );
-        const rowCount = Number(this.dataTable?.rowCount);
-
-        if (rows?.virtualization !== (rowCount >= threshold)) {
+        if (
+            this.grid.options?.rendering?.rows?.virtualization !==
+            this.grid.shouldVirtualize()
+        ) {
             void this.grid.update();
         }
     }
@@ -326,6 +318,7 @@ class Table {
                 this.rows[i].update();
             }
             this.rowsVirtualizer.adjustRowHeights();
+            this.reflow();
         }
 
         if (focusedRowId !== void 0 && vp.focusCursor) {
@@ -345,26 +338,6 @@ class Table {
                 });
             }
         }
-    }
-
-    /**
-     * Loads the modified data from the data table and renders the rows. Always
-     * removes all rows and re-renders them, so it's better to use `updateRows`
-     * instead, because it is more performant in some cases.
-     *
-     * @deprecated
-     * Use `updateRows` instead. This method is kept for backward compatibility
-     * reasons, but it will be removed in the next major version.
-     */
-    public loadPresentationData(): void {
-        this.dataTable = this.grid.presentationTable as DataTable;
-
-        for (const column of this.columns) {
-            column.loadData();
-        }
-
-        this.updateVirtualization();
-        this.rowsVirtualizer.rerender();
     }
 
     /**
@@ -521,6 +494,18 @@ class Table {
             const row = this.rows[rowIndex - this.rows[0].index];
             row?.cells[columnIndex]?.htmlElement.focus();
         }
+    }
+
+    /**
+     * Sets the focus anchor cell.
+     *
+     * @param cell
+     * The cell to set as the focus anchor cell.
+     */
+    public setFocusAnchorCell(cell: Cell): void {
+        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
+        this.focusAnchorCell = cell;
+        this.focusAnchorCell.htmlElement.setAttribute('tabindex', '0');
     }
 
     /**

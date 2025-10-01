@@ -51,8 +51,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         breadcrumbsBottomMargin?: boolean;
         breadcrumbsTopMargin?: boolean;
         breadcrumbs?: Breadcrumbs;
@@ -567,7 +567,7 @@ class Breadcrumbs {
                 breadcrumbs.getButtonText(breadcrumb),
                 posX,
                 posY,
-                function (e: (Event|any)): void {
+                function (e: any /* @todo (Event|any) */): void {
                     // Extract events from button object and call
                     const buttonEvents = breadcrumbsOptions.events &&
                         breadcrumbsOptions.events.click;

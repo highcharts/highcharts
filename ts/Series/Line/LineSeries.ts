@@ -490,7 +490,7 @@ export default LineSeries;
  *
  * @type      {string}
  * @since     5.0.0
- * @product   highcharts gantt
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.className
  */
 

@@ -21,4 +21,4 @@ The `Grid.exporting` module also provides a method for exporting the grid data t
 
 * `Grid.exporting.getJSON()`: Returns the JSON string.
 
-Try it - [the exporting sample](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/exporting-json/)
+Try it - [the exporting sample](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/exporting/)

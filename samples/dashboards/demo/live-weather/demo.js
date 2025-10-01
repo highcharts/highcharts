@@ -247,7 +247,7 @@ async function setupDashboard() {
         // Adapted from https://www.highcharts.com/demo/dashboards/climate
         components: [
             {
-                cell: 'station-map',
+                renderTo: 'station-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 chartOptions: {
@@ -366,7 +366,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'html-geo-info',
+                renderTo: 'html-geo-info',
                 type: 'HTML',
                 elements: [{
                     tagName: 'div',
@@ -402,7 +402,7 @@ async function setupDashboard() {
                 }]
             },
             {
-                cell: 'kpi-temperature',
+                renderTo: 'kpi-temperature',
                 type: 'KPI',
                 columnId: 'temperature',
                 chartOptions: {
@@ -453,7 +453,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'kpi-wind',
+                renderTo: 'kpi-wind',
                 type: 'KPI',
                 columnId: 'wind',
                 chartOptions: {
@@ -498,7 +498,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'kpi-precipitation',
+                renderTo: 'kpi-precipitation',
                 type: 'KPI',
                 columnId: 'precipitation',
                 chartOptions: {
@@ -548,7 +548,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'forecast-grid',
+                renderTo: 'forecast-grid',
                 type: 'DataGrid',
                 title: {
                     enabled: true,
@@ -608,7 +608,7 @@ async function setupDashboard() {
                     }]
                 }
             }, {
-                cell: 'forecast-chart',
+                renderTo: 'forecast-chart',
                 type: 'Highcharts',
                 sync: {
                     highlight: true

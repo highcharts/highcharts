@@ -303,7 +303,7 @@ class HighchartsComponent extends Component {
         point: Point,
         connectorHandler: HighchartsComponent.HCConnectorHandler
     ): void {
-        const table = connectorHandler.connector?.getTable(this.dataTableKey);
+        const table = connectorHandler.presentationTable;
         const columnAssignment = connectorHandler.columnAssignment;
         const seriesId = point.series.options.id;
         const converter = new DataConverter();
@@ -399,7 +399,7 @@ class HighchartsComponent extends Component {
 
             // Set the new data table based on the data table key.
             const connector = connectorHandler.connector;
-            const dataTableKey = this.dataTableKey;
+            const dataTableKey = connectorHandler.options.dataTableKey;
             if (connector && dataTableKey) {
                 connectorHandler.setTable(connector.dataTables[dataTableKey]);
             }
@@ -715,7 +715,6 @@ class HighchartsComponent extends Component {
             sidebar.editMode.board.dataPool.getConnectorIds();
 
         let options: Partial<Options> = {
-            cell: '',
             type: 'Highcharts',
             chartOptions: {
                 chart: {

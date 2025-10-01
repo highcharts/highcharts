@@ -32,7 +32,7 @@ import type GradientColor from '../../Color/GradientColor';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
-import type SVGElementLike from './SVGElementLike';
+import type SVGElementBase from './SVGElementBase';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 
@@ -128,7 +128,7 @@ declare module '../CSSObject' {
  * @class
  * @name Highcharts.SVGElement
  */
-class SVGElement implements SVGElementLike {
+class SVGElement implements SVGElementBase {
 
     /* *
      *
@@ -1499,8 +1499,8 @@ class SVGElement implements SVGElementLike {
                     if (isFunction(toggleTextShadowShim)) {
                         toggleTextShadowShim('');
                     }
-                } catch (e) {
-                    '';
+                } catch {
+                    // Ignore error
                 }
 
                 // If the bBox is not set, the try-catch block above failed. The
@@ -1644,19 +1644,21 @@ class SVGElement implements SVGElementLike {
             boxWidth = Math.max(aX, bX, cX, dX) - x,
             boxHeight = Math.max(aY, bY, cY, dY) - y;
 
-        /* Uncomment to debug boxes
-        this.renderer.path([
+        /* Uncomment to visualize boxes
+        this.bBoxViz ??= this.renderer.path()
+            .attr({
+                stroke: 'red',
+                'stroke-width': 1,
+                zIndex: 20
+            })
+            .add();
+        this.bBoxViz.attr('d', [
             ['M', aX, aY],
             ['L', bX, bY],
             ['L', cX, cY],
             ['L', dX, dY],
             ['Z']
-        ])
-            .attr({
-                stroke: 'red',
-                'stroke-width': 1
-            })
-            .add();
+        ]);
         // */
 
         return {
@@ -2393,7 +2395,7 @@ class SVGElement implements SVGElementLike {
  *
  * */
 
-interface SVGElement extends SVGElementLike {
+interface SVGElement extends SVGElementBase {
     // Takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginXSetter(value: number|null, key?: string): void;

@@ -58,7 +58,6 @@ class JSONConverter extends DataConverter {
      */
     protected static readonly defaultOptions: JSONConverterOptions = {
         ...DataConverter.defaultOptions,
-        data: [],
         orientation: 'rows'
     };
 
