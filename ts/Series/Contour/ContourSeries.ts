@@ -50,10 +50,13 @@ class ContourSeries extends ScatterSeries {
             length = points.length,
             points2d: Float64Array = new Float64Array(length * 2),
             { xAxis, yAxis } = this,
-            xDivider = (Math.abs(xAxis.toValue(0, true)) > 10e6) ?
+            [horiAxis, vertAxis] = this.chart.inverted ?
+                [yAxis, xAxis] :
+                [xAxis, yAxis],
+            xDivider = (Math.abs(horiAxis.toValue(0, true)) > 10e6) ?
                 10e6 :
                 1,
-            yDivider = (Math.abs(yAxis.toValue(yAxis.len, true)) > 10e6) ?
+            yDivider = (Math.abs(vertAxis.toValue(vertAxis.len, true)) > 10e6) ?
                 10e6 :
                 1;
 
@@ -69,9 +72,17 @@ class ContourSeries extends ScatterSeries {
     public get3DData(): Float32Array {
         const points3d: Float32Array = new Float32Array(this.points.length * 3);
 
+        const getXY = (
+            this.chart.inverted ?
+                (p: ContourPoint): [number, number] => [p.y || 0, p.x] :
+                (p: ContourPoint): [number, number] => [p.x, p.y || 0]
+        );
+
         this.points.forEach((point, i): void => {
-            points3d[i * 3] = point.x;
-            points3d[i * 3 + 1] = point.y || 0;
+            const [x, y] = getXY(point);
+
+            points3d[i * 3] = x;
+            points3d[i * 3 + 1] = y;
             points3d[i * 3 + 2] = point.value || 0;
         });
 
@@ -583,13 +594,16 @@ class ContourSeries extends ScatterSeries {
 
     // Place-holder
     private getWebGPUExtremes(): number[] {
-        const { xAxis, yAxis } = this;
+        const { xAxis, yAxis } = this,
+            [horiAxis, vertAxis] = this.chart.inverted ?
+                [yAxis, xAxis] :
+                [xAxis, yAxis];
 
         return [
-            xAxis.toValue(0, true), // XMin
-            xAxis.toValue(xAxis.len, true), // XMax
-            yAxis.toValue(yAxis.len, true), // YMin
-            yAxis.toValue(0, true) // YMax
+            horiAxis.toValue(0, true),
+            horiAxis.toValue(horiAxis.len, true),
+            vertAxis.toValue(vertAxis.len, true),
+            vertAxis.toValue(0, true)
         ];
     }
     private getDataExtremes(): number[] {
