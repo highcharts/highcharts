@@ -93,21 +93,19 @@ class ContourSeries extends ScatterSeries {
 
 
     async run(): Promise<void> {
-        const { context } = this;
+        const context = this.context;
 
         if (context) {
-
+            let device = this.device;
 
             if (!this.adapter) {
                 this.adapter = await navigator.gpu.requestAdapter();
             }
-            if (!this.device && this.adapter) {
-                this.device = await this.adapter.requestDevice();
+            if (!device && this.adapter) {
+                device = this.device = await this.adapter.requestDevice();
             }
 
             const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
-
-            const { device } = this;
 
             if (device && this.canvas) {
                 context.configure({
@@ -282,21 +280,21 @@ class ContourSeries extends ScatterSeries {
                             }
 
                             for (
-                                var i: u32 = 0u; 
-                                i < stopCount - 1u; 
+                                var i: u32 = 0u;
+                                i < stopCount - 1u;
                                 i = i + 1u
                             ) {
                                 if (value < colorStops[i + 1u].x) {
                                     let t = (
-                                        (value - colorStops[i].x) / 
+                                        (value - colorStops[i].x) /
                                         (
-                                            colorStops[i + 1u].x - 
+                                            colorStops[i + 1u].x -
                                             colorStops[i].x
                                         )
                                     );
                                     return mix(
-                                        colorStops[i].yzw, 
-                                        colorStops[i + 1u].yzw, 
+                                        colorStops[i].yzw,
+                                        colorStops[i + 1u].yzw,
                                         t
                                     );
                                 }
@@ -323,31 +321,31 @@ class ContourSeries extends ScatterSeries {
 
                             let valDiv: f32 = val / contourInterval;
                             let valMod: f32 = (
-                                val - 
-                                contourInterval * 
+                                val -
+                                contourInterval *
                                 floor(valDiv)
                             );
 
                             let lineMask: f32 = (
                                 smoothstep(0.0, adjustedLineWidth, valMod) *
                                 (
-                                    1.0 - 
+                                    1.0 -
                                     smoothstep(
-                                        contourInterval - adjustedLineWidth, 
-                                        contourInterval, 
+                                        contourInterval - adjustedLineWidth,
+                                        contourInterval,
                                         valMod
                                     )
                                 )
                             );
 
                             let contourIndex: f32 = floor(
-                                val / 
+                                val /
                                 contourInterval
                             );
                             let averageValInBand : f32 = (
-                                contourIndex * 
-                                contourInterval + 
-                                contourInterval / 
+                                contourIndex *
+                                contourInterval +
+                                contourInterval /
                                 2.0
                             );
 
@@ -355,11 +353,11 @@ class ContourSeries extends ScatterSeries {
                             let minHeight: f32 = input.valExtremes.x;
                             let maxHeight: f32 = input.valExtremes.y;
                             let normVal: f32 = (
-                                (val - minHeight) / 
+                                (val - minHeight) /
                                 (maxHeight - minHeight)
                             );
                             let averageNormVal: f32 = (
-                                (averageValInBand - minHeight) / 
+                                (averageValInBand - minHeight) /
                                 (maxHeight - minHeight)
                             );
 
@@ -375,8 +373,8 @@ class ContourSeries extends ScatterSeries {
 
                             if (showContourLines > 0) {
                                 pixelColor = mix(
-                                    contourColor, 
-                                    pixelColor, 
+                                    contourColor,
+                                    pixelColor,
                                     lineMask
                                 );
                             }
