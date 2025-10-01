@@ -23,6 +23,7 @@
 
 import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
+import type DataTable from '../../../Data/DataTable';
 
 import U from '../../../Core/Utilities.js';
 import DownloadURL from '../../../Shared/DownloadURL.js';
@@ -126,7 +127,7 @@ class Exporting {
             this.grid.options?.exporting || Exporting.defaultOptions;
         const { useLocalDecimalPoint, lineDelimiter, firstRowAsNames } =
             options;
-        const exportNames = (firstRowAsNames !== false);
+        const exportNames = firstRowAsNames !== false;
         let { decimalPoint, itemDelimiter } = options;
 
         if (!decimalPoint) {
@@ -141,12 +142,11 @@ class Exporting {
             itemDelimiter = (decimalPoint === ',' ? ';' : ',');
         }
 
-        const columns = dataTable.getColumns(),
-            columnIds = Object.keys(columns),
-            csvRows: string[] = [],
-            columnsCount = columnIds.length;
-
-        const rowArray: any[] = [];
+        const columns = dataTable.getColumns();
+        const columnIds = Object.keys(columns);
+        const csvRows: string[] = [];
+        const columnsCount = columnIds.length;
+        const rowArray: DataTable.CellType[][] = [];
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
