@@ -5,6 +5,7 @@ import { join } from 'node:path/posix';
 
 import logger from '../tools/libs/log.js';
 import { run } from '../tools/gulptasks/lib/gulp.js';
+import createJSONSources from '../tools/create-json-sources.js';
 
 import '../tools/gulptasks/scripts.js';
 import '../tools/gulptasks/scripts-css.js';
@@ -12,6 +13,8 @@ import '../tools/gulptasks/scripts-messages.js';
 import '../tools/gulptasks/scripts-webpack.js';
 import '../tools/gulptasks/scripts-code.js';
 import '../tools/gulptasks/scripts-ts.js';
+
+createJSONSources();
 
 await run('scripts');
 

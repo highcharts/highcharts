@@ -2,7 +2,10 @@ name: Test tooling
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [
+      'master',
+      'tools/*'
+    ]
     paths:
       - 'package.json'
       - 'tools/**/*'
@@ -43,4 +46,7 @@ jobs:
 
       - name: Run Playwright tests
         run: npx playwright test --project internal
+
+      - name: Run Playwright QUnit tests
+        run: npx playwright test --project qunit
 
