@@ -1,6 +1,6 @@
 /**
  * @license Highmaps JS v@product.version@ (@product.date@)
- * @module highcharts/modules/heatmap
+ * @module highcharts/modules/contour
  * @requires highcharts
  *
  * (c) 2009-2025 Torstein Honsi
