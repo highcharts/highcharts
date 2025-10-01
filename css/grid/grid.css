@@ -517,8 +517,6 @@
 
 /* Generic icon styling for Grid */
 .hcg-icon {
-    width: 20px;
-    height: 20px;
     color: var(--ig-icon-color);
     transition: color 0.2s ease;
     flex-shrink: 0;
@@ -1245,9 +1243,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-menu-popup-item-icon .hcg-icon {
-    width: 100%;
-    height: 100%;
-    color: var(--ig-color);
+    color: var(--ig-icon-hover-color);
 }
 
 .hcg-menu-popup-item-label {

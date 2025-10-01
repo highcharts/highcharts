@@ -57,7 +57,7 @@ class SortToolbarButton extends ToolbarButton {
 
     constructor() {
         super({
-            icon: 'chevronSelector',
+            icon: 'upDownArrows',
             classNameKey: 'headerCellSortIcon'
         });
     }
@@ -82,7 +82,7 @@ class SortToolbarButton extends ToolbarButton {
 
         if (!StateHelpers.isSorted(column)) {
             this.setActive(false);
-            this.setIcon('chevronSelector');
+            this.setIcon('upDownArrows');
             return;
         }
 
@@ -90,7 +90,7 @@ class SortToolbarButton extends ToolbarButton {
 
         this.setActive(true);
         this.setIcon(
-            currentSorting?.order === 'asc' ? 'chevronUp' : 'chevronDown'
+            currentSorting?.order === 'asc' ? 'sortAsc' : 'sortDesc'
         );
     }
 

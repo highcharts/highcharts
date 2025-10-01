@@ -539,8 +539,6 @@
 /* Generic icon styling */
 .hcg-icon,
 .highcharts-datagrid-icon {
-    width: 20px;
-    height: 20px;
     color: var(--ig-icon-color);
     transition: color 0.2s ease;
     flex-shrink: 0;
@@ -1552,9 +1550,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .hcg-menu-popup-item-icon .hcg-icon,
 .highcharts-datagrid-menu-popup-item-icon .highcharts-datagrid-icon {
-    width: 100%;
-    height: 100%;
-    color: var(--ig-color);
+    color: var(--ig-icon-hover-color);
 }
 
 .hcg-menu-popup-item-label,

@@ -165,7 +165,7 @@ class ToolbarButton implements Button {
      */
     public setIcon(icon: SvgIcons.GridIconName): void {
         this.icon?.remove();
-        this.icon = SvgIcons.createGridIcon(icon, this.options.size ?? 20);
+        this.icon = SvgIcons.createGridIcon(icon);
         this.buttonEl?.appendChild(this.icon);
     }
 
@@ -284,11 +284,6 @@ namespace ToolbarButton {
          * The tooltip string for the button.
          */
         tooltip?: string;
-
-        /**
-         * The size of the button.
-         */
-        size?: number;
 
         /**
          * Whether the button should be always visible.
