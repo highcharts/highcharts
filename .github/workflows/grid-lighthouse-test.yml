@@ -1,14 +1,15 @@
-name: Dashboards Lighthouse tests
+name: Grid Lighthouse tests
 on:
   pull_request:
     branches:
       - 'master'
     paths:
-      - '.github/workflows/dashboards-lighthouse-test.yml'
-      - 'css/dashboards*'
-      - 'samples/dashboards/**'
-      - 'test/cypress/dashboards/performance/**'
-      - 'ts/Dashboards/**'
+      - '.github/workflows/grid-lighthouse-test.yml'
+      - 'css/grid*'
+      - 'samples/grid-lite/**'
+      - 'samples/grid-pro/**'
+      - 'test/cypress/grid/performance/**'
+      - 'ts/Grid/**'
       - 'ts/Data/**'
 
 permissions:
@@ -53,11 +54,6 @@ jobs:
           cd highcharts
           npx gulp scripts --product Grid
 
-      - name: Build Dashboards
-        run: |
-          cd highcharts
-          npx gulp dashboards/scripts
-
       - name: Checkout utils
         uses: actions/checkout@v4
         with:
@@ -76,10 +72,10 @@ jobs:
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/dashboards.js'
+          wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=base
           working-directory: highcharts
-          config-file: test/cypress/dashboards/lighthouse.config.mjs
+          config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
       - name: Stop server
@@ -106,20 +102,15 @@ jobs:
           cd highcharts
           npx gulp scripts --product Grid
 
-      - name: Build Dashboards
-        run: |
-          cd highcharts
-          npx gulp dashboards/scripts
-
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/dashboards.js'
+          wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=actual
           working-directory: highcharts
-          config-file: test/cypress/dashboards/lighthouse.config.mjs
+          config-file: test/cypress/grid/lighthouse.config.mjs
           install: false
 
       - name: Store artifacts
@@ -132,7 +123,7 @@ jobs:
       - name: Write markdown to file
         if: ${{ always() }}
         run: |
-          node highcharts/test/cypress/lighthouseCompare.mjs  --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
+          node highcharts/test/cypress/lighthouseCompare.mjs --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
 
       - name: Add to summary
         if: ${{ always() }}
