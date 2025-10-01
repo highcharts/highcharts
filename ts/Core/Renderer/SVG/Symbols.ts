@@ -69,10 +69,10 @@ function arc(
 
         const innerRadius = options.innerR,
             open = pick(options.open, fullCircle),
-            cosStart = Math.cos(start),
-            sinStart = Math.sin(start),
-            cosEnd = Math.cos(end),
-            sinEnd = Math.sin(end),
+            cosStart = fullCircle ? 0 : Math.cos(start),
+            sinStart = fullCircle ? 1 : Math.sin(start),
+            cosEnd = fullCircle ? 0 : Math.cos(end),
+            sinEnd = fullCircle ? 1 : Math.sin(end),
             // Proximity takes care of rounding errors around PI (#6971)
             longArc = pick(
                 options.longArc,
@@ -109,7 +109,7 @@ function arc(
                 longArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
-                cx + innerRadius * cosStart,
+                cx + (fullCircle ? -0.001 : innerRadius * cosStart),
                 cy + innerRadius * sinStart
             ];
             // Memo for border radius
