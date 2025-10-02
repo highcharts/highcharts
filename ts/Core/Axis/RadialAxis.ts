@@ -76,8 +76,8 @@ declare module './AxisType' {
         RadialAxis: RadialAxis.AxisComposition;
     }
 }
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         inverted?: boolean;
     }
 }
