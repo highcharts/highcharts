@@ -1,29 +1,19 @@
-/// <reference types="qunit" />
 /* eslint-disable playwright/no-conditional-in-test */
 import { Page } from '@playwright/test';
 import { test, expect, setupRoutes } from '../fixtures.ts';
 import { getKarmaScripts, getSample } from '../utils.ts';
 import { join, dirname } from 'node:path';
-
 import { glob } from 'glob';
-
-type QUnitTestCounts = Pick<QUnit.DoneDetails, 'failed' | 'passed' | 'total'>;
+import type { 
+    QUnit240TestDoneDetails, 
+    QUnit240LogDetails, 
+    QUnit240DoneDetails
+} from './types.ts';
+import './types.ts'; // Import for global type declarations
 
 const QUNIT_VERSION = '2.4.0';
 const QUNIT_SCRIPT = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.js`);
 const QUNIT_STYLES = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.css`);
-
-declare global {
-    interface Window {
-        __qunitResults__?: QUnitTestCounts | null;
-        __qunitFailedTests__?: Array<{
-            module?: string;
-            name: string;
-            failures: string[];
-        }> | null;
-        __qunitFailedAssertions__?: Array<QUnit.LogDetails> | null;
-    }
-}
 
 test.describe('QUnit tests', () => {
     test.describe.configure({
@@ -69,20 +59,24 @@ test.describe('QUnit tests', () => {
             });
         }
 
-        await page.evaluate(()=>{
-            QUnit.testStart(()=>{
-                Highcharts.setOptions({
-                    chart: {
-                        events: {
-                            load: function () {
-                                (window as any).setHCStyles(this);
+        await page.evaluate(() => {
+            const qunit = window.QUnit;
+            
+            qunit.testStart(() => {
+                if (window.Highcharts) {
+                    window.Highcharts.setOptions({
+                        chart: {
+                            events: {
+                                load: function () {
+                                    (window as any).setHCStyles(this);
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             });
 
-            QUnit.testDone(() => {
+            qunit.testDone(() => {
                 document.querySelector('#test-hc-styles')?.remove();
             });
         });
@@ -124,33 +118,42 @@ test.describe('QUnit tests', () => {
                     'QUnit.test("", (assert) => { assert.ok(true)  })';
             }
 
-            await page.evaluate(()=>{
-                QUnit.on('runEnd', function (details) {
-                    // Optionally expose to Playwright
-                    window.__qunitResults__ = details.testCounts;
+            await page.evaluate(() => {
+                const qunit = window.QUnit;
+                
+                qunit.done(function (details: QUnit240DoneDetails) {
+                    // Expose results to Playwright
+                    window.__qunitResults__ = {
+                        failed: details.failed,
+                        passed: details.passed,
+                        total: details.total
+                    };
                 });
-                QUnit.on('testEnd', function (data) {
-                    if (data.failed) {
+                
+                qunit.testDone(function (data: QUnit240TestDoneDetails) {
+                    if (data.failed > 0) {
                         window.__qunitFailedTests__ ??= [];
                         const failures = (data?.errors && data.errors.length ?
                             data.errors : data?.assertions || []
-                        ).filter(assertion => {
+                        ).filter((assertion: any) => {
                             if (typeof assertion === 'string') {
                                 return true;
                             }
                             return assertion?.result === false ||
                                 assertion?.passed === false;
-                        }).map(assertion => {
+                        }).map((assertion: any) => {
                             if (typeof assertion === 'string') {
                                 return assertion;
                             }
                             if (assertion?.message) {
                                 return assertion.message;
                             }
-                            const actual = assertion?.actual ??
+                            const actual = assertion?.actual ?? 
                                 assertion?.value;
                             const expected = assertion?.expected;
-                            return `${actual ?? 'actual'} !== ${expected ?? 'expected'}`;
+                            return `${actual ?? 'actual'} !== ${
+                                expected ?? 'expected'
+                            }`;
                         });
 
                         window.__qunitFailedTests__?.push({
@@ -160,15 +163,19 @@ test.describe('QUnit tests', () => {
                         });
                     }
                 });
-                QUnit.log(function (details) {
+                
+                qunit.log(function (details: QUnit240LogDetails) {
                     if (!details.result) {
                         window.__qunitFailedAssertions__ ??= [];
                         window.__qunitFailedAssertions__.push({
-                            module: details.module,
-                            name: details.name,
-                            message: details.message,
+                            result: details.result,
                             actual: details.actual,
-                            expected: details.expected
+                            expected: details.expected,
+                            message: details.message,
+                            source: details.source || '',
+                            module: details.module || '',
+                            name: details.name || '',
+                            runtime: details.runtime || 0
                         });
                     }
                 });
