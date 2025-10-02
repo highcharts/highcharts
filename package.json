@@ -180,7 +180,7 @@
       "npm run glint"
     ],
     "*.css": [
-      "stylelint"
+      "stylelint --allow-empty-input"
     ],
     "./docs/**/*.md": [
       "npx cspell -c ./tools/cspell/cspell.json"

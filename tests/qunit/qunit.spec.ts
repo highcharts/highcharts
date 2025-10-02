@@ -9,6 +9,10 @@ import { glob } from 'glob';
 
 type QUnitTestCounts = Pick<QUnit.DoneDetails, 'failed' | 'passed' | 'total'>;
 
+const QUNIT_VERSION = '2.4.0';
+const QUNIT_SCRIPT = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.js`);
+const QUNIT_STYLES = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.css`);
+
 declare global {
     interface Window {
         __qunitResults__?: QUnitTestCounts | null;
@@ -56,8 +60,8 @@ test.describe('QUnit tests', () => {
             join('test', 'karma-setup.js')
         ];
 
-        await page.addScriptTag({ url: 'https://code.jquery.com/qunit/qunit-2.4.0.js' });
-        await page.addStyleTag({ url: 'https://code.jquery.com/qunit/qunit-2.4.0.css' });
+        await page.addScriptTag({ path: QUNIT_SCRIPT });
+        await page.addStyleTag({ path: QUNIT_STYLES });
 
         for (const script of scripts) {
             await page.addScriptTag({
