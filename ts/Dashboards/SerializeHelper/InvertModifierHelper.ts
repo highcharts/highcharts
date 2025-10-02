@@ -19,7 +19,7 @@
  *
  * */
 
-import type Globals from '../Globals';
+import type { AnyRecord } from '../../Shared/Types';
 import type InvertModifierOptions from '../../Data/Modifiers/InvertModifierOptions';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
@@ -59,7 +59,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: Globals.AnyRecord
+    obj: AnyRecord
 ): obj is InvertModifier {
     return obj instanceof InvertModifier;
 }

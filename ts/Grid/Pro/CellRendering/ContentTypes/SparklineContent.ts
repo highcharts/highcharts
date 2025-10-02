@@ -22,6 +22,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../../../Shared/Types';
 import type SparklineRenderer from '../Renderers/SparklineRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import * as HighchartsNamespace from '../../highcharts';
@@ -46,7 +47,7 @@ const {
  */
 class SparklineContent extends CellContentPro {
 
-    public static defaultChartOptions: Globals.DeepPartial<
+    public static defaultChartOptions: DeepPartial<
         HighchartsNamespace.Options
     > = {
             chart: {

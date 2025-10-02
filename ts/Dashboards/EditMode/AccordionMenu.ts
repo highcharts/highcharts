@@ -20,9 +20,9 @@
  *
  * */
 
+import type { AnyRecord, DeepPartial } from '../../Shared/Types';
 import type Component from '../Components/Component';
 import type EditableOptions from '../Components/EditableOptions';
-import type Globals from '../Globals';
 import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions';
 
 import EditRenderer from './EditRenderer.js';
@@ -194,7 +194,7 @@ class AccordionMenu {
     ): void {
         const pathLength = propertyPath.length - 1;
 
-        let currentLevel = this.changedOptions as Globals.AnyRecord;
+        let currentLevel = this.changedOptions as AnyRecord;
         let currentChartOptionsLevel;
         let currentOldChartOptionsBufferLevel;
         let currentDataGridOptionsLevel;
@@ -227,12 +227,12 @@ class AccordionMenu {
 
                 if (realGridOptions) {
                     const oldOptionsBuffer =
-                        this.oldOptionsBuffer as Globals.AnyRecord;
+                        this.oldOptionsBuffer as AnyRecord;
                     if (!oldOptionsBuffer.gridOptions) {
                         oldOptionsBuffer.gridOptions = {};
                     }
                     currentOldDataGridOptionsBufferLevel =
-                        oldOptionsBuffer.gridOptions as Globals.AnyRecord;
+                        oldOptionsBuffer.gridOptions as AnyRecord;
                     currentDataGridOptionsLevel = realGridOptions;
                 }
             } else if (
@@ -254,12 +254,12 @@ class AccordionMenu {
 
                 if (realChartOptions) {
                     const oldOptionsBuffer =
-                        this.oldOptionsBuffer as Globals.AnyRecord;
+                        this.oldOptionsBuffer as AnyRecord;
                     if (!oldOptionsBuffer.chartOptions) {
                         oldOptionsBuffer.chartOptions = {};
                     }
                     currentOldChartOptionsBufferLevel =
-                        oldOptionsBuffer.chartOptions as Globals.AnyRecord;
+                        oldOptionsBuffer.chartOptions as AnyRecord;
                     currentChartOptionsLevel = realChartOptions;
                 }
             } else if (

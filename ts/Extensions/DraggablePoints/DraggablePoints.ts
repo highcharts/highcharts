@@ -58,8 +58,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/draggable-points */
         getDropValues(
             origin: DragDropPositionObject,
@@ -77,8 +77,8 @@ declare module '../../Core/Series/PointOptions' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         /** @requires modules/draggable-points */
         dragDropProps?: (Record<string, Partial<SeriesDragDropPropsObject>>|null);
         /** @requires modules/draggable-points */

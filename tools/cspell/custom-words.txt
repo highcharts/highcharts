@@ -206,3 +206,5 @@ sparklines
 preconfigured
 datepicker
 specific
+EMEA
+dendrogram

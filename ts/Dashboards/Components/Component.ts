@@ -22,15 +22,16 @@
  *
  * */
 
+import type { AnyRecord } from '../../Shared/Types';
 import type Board from '../Board';
 import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
-import type TextOptions from './TextOptions';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
-import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import type TextOptions from './TextOptions';
 
 import Cell from '../Layout/Cell.js';
 import CellHTML from '../Layout/CellHTML.js';
@@ -1021,7 +1022,7 @@ namespace Component {
         EventRecord extends Record<string, any>> = {
             readonly type: EventType;
             target?: Component;
-            detail?: Globals.AnyRecord;
+            detail?: AnyRecord;
         } & EventRecord;
 
     export interface Options {
@@ -1054,7 +1055,7 @@ namespace Component {
          * Allow overwriting gui elements.
          * @internal
          */
-        navigationBindings?: Array<Globals.AnyRecord>;
+        navigationBindings?: Array<AnyRecord>;
         /**
          * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
          *

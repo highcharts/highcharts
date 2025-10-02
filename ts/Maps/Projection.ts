@@ -16,6 +16,7 @@
  *
  * */
 
+import type { DeepPartial } from '../Shared/Types';
 import type { GeoJSONGeometryMultiPoint } from './GeoJSON';
 import type {
     LonLatArray,
