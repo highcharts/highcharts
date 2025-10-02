@@ -73,6 +73,7 @@ export interface AnnotationTypeOptions {
     line?: Partial<ControllableShapeOptions>;
     point: MockPointOptions;
     points?: Array<AnnotationTypePointsOptions>;
+    type?: string;
     xAxis?: number;
     yAxis?: number;
 }
