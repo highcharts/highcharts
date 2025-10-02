@@ -44,10 +44,8 @@ Alternatively, you can download the files from [highcharts.com](https://www.high
 
 ```html
 <script src="../code/grid/grid-lite.js"></script>
-<link rel="stylesheet" href="../code/grid/css/grid.css" />
+<link rel="stylesheet" href="../code/grid/css/grid-lite.css" />
 ```
 
 ### Get Started
 Once installed, you are ready to use **Grid Lite**. Check out [Your First Grid](https://www.highcharts.com/docs/grid/general) to learn more.
-
-
