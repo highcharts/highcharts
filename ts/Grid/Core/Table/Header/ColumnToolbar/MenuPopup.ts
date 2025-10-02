@@ -69,6 +69,7 @@ class MenuPopup extends ContextMenu {
      * */
 
     protected override renderContent(): void {
+        const lang = this.grid.options?.lang || {};
         const columnOptions = this.button.toolbar?.column.options || {};
         const filteringEnabled = (
             columnOptions.filtering?.enabled &&
@@ -78,12 +79,12 @@ class MenuPopup extends ContextMenu {
 
         this.addHeader(
             this.button.toolbar?.column.header?.value || '',
-            'Column'
+            lang.column
         );
 
         if (sortingEnabled) {
-            new SortMenuButton('desc').add(this);
-            new SortMenuButton('asc').add(this);
+            new SortMenuButton(lang, 'desc').add(this);
+            new SortMenuButton(lang, 'asc').add(this);
 
             if (filteringEnabled) {
                 this.addDivider();
@@ -91,7 +92,7 @@ class MenuPopup extends ContextMenu {
         }
 
         if (filteringEnabled) {
-            new FilterMenuButton().add(this);
+            new FilterMenuButton(lang || {}).add(this);
         }
     }
 }

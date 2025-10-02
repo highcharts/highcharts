@@ -635,6 +635,41 @@ export interface LangOptions extends LangOptionsCore {
      * @default 'No data to display'
      */
     noData?: string;
+
+    /**
+     * `Filter` translation.
+     *
+     * @default 'Filter'
+     */
+    filter?: string;
+
+    /**
+     * `Sort ascending` translation.
+     *
+     * @default 'Sort ascending'
+     */
+    sortAscending?: string;
+
+    /**
+     * `Sort descending` translation.
+     *
+     * @default 'Sort descending'
+     */
+    sortDescending?: string;
+
+    /**
+     * `Column` translation.
+     *
+     * @default 'Column'
+     */
+    column?: string;
+
+    /**
+     * `Set filter` translation.
+     *
+     * @default 'Set filter'
+     */
+    setFilter?: string;
 }
 
 /**

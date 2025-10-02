@@ -23,6 +23,7 @@
  * */
 
 import type MenuPopup from '../MenuPopup';
+import type { LangOptions } from '../../../../Options';
 
 import FilterPopup from '../FilterPopup.js';
 import StateHelpers from '../StateHelpers.js';
@@ -58,9 +59,9 @@ class FilterToolbarButton extends ContextMenuButton {
      *
      * */
 
-    constructor() {
+    constructor(langOptions: LangOptions) {
         super({
-            label: 'Filter', // TODO: Use lang option
+            label: langOptions.filter,
             icon: 'filter',
             chevron: true
         });

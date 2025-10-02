@@ -23,6 +23,7 @@
  * */
 
 import type MenuPopup from '../MenuPopup';
+import type { LangOptions } from '../../../../Options';
 
 import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
 import StateHelpers from '../StateHelpers.js';
@@ -57,13 +58,16 @@ class SortMenuButton extends ContextMenuButton {
      *
      * */
 
-    constructor(direction: typeof SortMenuButton.prototype.direction) {
-        super({
-            // TODO: Use lang option
-            label: 'Sort ' + (direction === 'asc' ? 'Ascending' : 'Descending'),
-            activeIcon: 'checkmark'
-        });
+    constructor(
+        langOptions: LangOptions,
+        direction: typeof SortMenuButton.prototype.direction
+    ) {
+        super({ activeIcon: 'checkmark' });
+
         this.direction = direction;
+        this.options.label = langOptions[
+            direction === 'asc' ? 'sortAscending' : 'sortDescending'
+        ];
     }
 
 

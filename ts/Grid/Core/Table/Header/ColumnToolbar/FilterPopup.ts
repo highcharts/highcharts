@@ -78,9 +78,10 @@ class FilterPopup extends Popup {
         button: Button,
         options?: Popup.Options
     ) {
-        super(filtering.column.viewport.grid, button, merge({
+        const grid = filtering.column.viewport.grid;
+        super(grid, button, merge({
             header: {
-                category: 'Set filter',
+                category: grid.options?.lang?.setFilter,
                 label: filtering.column.header?.value || ''
             }
         }, options));

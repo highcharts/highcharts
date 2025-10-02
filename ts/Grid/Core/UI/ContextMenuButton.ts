@@ -72,7 +72,7 @@ class ContextMenuButton implements Button {
     /**
      * The options for the context menu button.
      */
-    private options: ContextMenuButton.Options;
+    protected options: ContextMenuButton.Options;
 
     /**
      * The container for the icon element.
@@ -88,6 +88,11 @@ class ContextMenuButton implements Button {
      * The button element.
      */
     private buttonEl?: HTMLButtonElement;
+
+    /**
+     * The span element for the label.
+     */
+    private spanEl?: HTMLSpanElement;
 
 
     /* *
@@ -135,9 +140,9 @@ class ContextMenuButton implements Button {
             className: Globals.getClassName('menuPopupItemIcon')
         }, buttonEl);
 
-        makeHTMLElement('span', {
+        this.spanEl = makeHTMLElement('span', {
             className: Globals.getClassName('menuPopupItemLabel'),
-            innerText: cfg.label
+            innerText: cfg.label || ''
         }, buttonEl);
 
         const chevronEl = makeHTMLElement('span', {
@@ -170,6 +175,12 @@ class ContextMenuButton implements Button {
         const cm = this.contextMenu;
         if (cm) {
             cm.focusCursor = cm.buttons.indexOf(this);
+        }
+    }
+
+    public setLabel(label: string): void {
+        if (this.spanEl) {
+            this.spanEl.innerText = label;
         }
     }
 
@@ -276,7 +287,7 @@ namespace ContextMenuButton {
         /**
          * The label for the button.
          */
-        label: string;
+        label?: string;
 
         /**
          * The icon for the button.
