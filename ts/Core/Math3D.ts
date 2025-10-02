@@ -38,9 +38,21 @@ declare module './Chart/ChartBase'{
 }
 
 interface Rotation3DObject {
+    /**
+     * Cosine of the alpha (roll) angle.
+     */
     cosA: number;
+    /**
+     * Cosine of the beta (pitch) angle.
+     */
     cosB: number;
+    /**
+     * Sine of the alpha (roll) angle.
+     */
     sinA: number;
+    /**
+     * Sine of the beta (pitch) angle.
+     */
     sinB: number;
 }
 

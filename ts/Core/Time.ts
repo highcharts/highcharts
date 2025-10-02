@@ -319,8 +319,17 @@ namespace Time {
         (this: Time, timestamp: number): string;
     }
     export interface TimeNormalizedObject {
+        /**
+         * The count of the interval.
+         */
         count: number;
+        /**
+         * The name of the time unit.
+         */
         unitName: TimeUnit;
+        /**
+         * The interval in axis values (ms).
+         */
         unitRange: number;
     }
     export type TimeUnit = (

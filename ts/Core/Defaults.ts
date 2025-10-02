@@ -42,6 +42,12 @@ const {
 
 declare module './GlobalsBase' {
     interface GlobalsBase {
+        /**
+         * Global default settings.
+         *
+         * @name Highcharts.defaultOptions
+         * @type {Highcharts.Options}
+         */
         defaultOptions: DefaultOptions;
         time: Time;
     }

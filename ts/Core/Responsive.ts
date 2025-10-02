@@ -81,30 +81,79 @@ namespace Responsive {
         ): void;
         /** @requires Core/Responsive */
         setResponsive(redraw?: boolean, reset?: boolean): void;
+        /**
+         * A flag to prevent responsive updates from running recursively.
+         * @private
+         */
         updatingResponsive: boolean;
     }
 
     export interface CurrentObject {
+        /**
+         * The merged chart options from active rules.
+         * @private
+         */
         mergedOptions: Partial<GlobalOptions>;
+        /**
+         * A stringified key of the rules that currently apply.
+         * @private
+         */
         ruleIds: string;
+        /**
+         * The options to revert to when the rules are no longer active.
+         * @private
+         */
         undoOptions: Partial<GlobalOptions>;
     }
 
     export interface Options {
+        /**
+         * A set of rules for responsive settings. The rules are executed from
+         * the top down.
+         */
         rules?: Array<RuleOptions>;
     }
 
     export interface RuleConditionOptions {
+        /**
+         * A callback function to gain complete control on when the responsive
+         * rule applies.
+         */
         callback?: CallbackFunction;
+        /**
+         * The responsive rule applies if the chart height is less than this.
+         */
         maxHeight?: number;
+        /**
+         * The responsive rule applies if the chart width is less than this.
+         */
         maxWidth?: number;
+        /**
+         * The responsive rule applies if the chart height is greater than
+         * this.
+         */
         minHeight?: number;
+        /**
+         * The responsive rule applies if the chart width is greater than this.
+         */
         minWidth?: number;
     }
 
     export interface RuleOptions {
+        /**
+         * Unique rule id.
+         * @private
+         */
         _id?: string;
+        /**
+         * A full set of chart options to apply as overrides to the general
+         * chart options. The chart options are applied when the given rule
+         * is active.
+         */
         chartOptions?: GlobalOptions;
+        /**
+         * Under which conditions the rule applies.
+         */
         condition: RuleConditionOptions;
     }
 

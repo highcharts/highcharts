@@ -53,8 +53,11 @@ declare global {
     interface MSPointerEvent extends Partial<PointerEvent> {
         /** @deprecated */
         readonly MSPOINTER_TYPE_TOUCH: string;
+        /** @deprecated */
         readonly currentTarget?: EventTarget;
+        /** @deprecated */
         readonly pointerId: number;
+        /** @deprecated */
         readonly pointerType?: undefined;
         /** @deprecated */
         readonly toElement: Element;
@@ -141,6 +144,15 @@ class MSPointer extends Pointer {
      *
      * */
 
+    /**
+     * The isRequired method is required for Highcharts to decide whether to use
+     * this module.
+     *
+     * @private
+     *
+     * @return {boolean}
+     * Returns true if the module is required.
+     */
     public static isRequired(): boolean {
         return !!(!win.TouchEvent && (win.PointerEvent || win.MSPointerEvent));
     }

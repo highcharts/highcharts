@@ -124,10 +124,20 @@ class Pointer {
      *
      * */
 
+    /**
+     * The chart that the Pointer belongs to.
+     */
     public chart: Chart;
 
+    /**
+     * The position of the chart on the page.
+     */
     public chartPosition?: Pointer.ChartPositionObject;
 
+    /**
+     * The distance by which the mouse has been dragged since the last
+     * `mousedown` event.
+     */
     public hasDragged: number = 0;
 
     public hasPinched?: boolean;
@@ -138,38 +148,91 @@ class Pointer {
      */
     public hasPinchMoved?: boolean;
 
+    /**
+     * Whether the browser is using pointer capture.
+     */
     public hasPointerCapture?: boolean;
 
+    /**
+     * Whether the chart has zooming in any direction.
+     */
     public hasZoom?: boolean;
 
+    /**
+     * True, if a pinch gesture is in progress.
+     */
     public initiated?: boolean;
 
+    /**
+     * True, if the pointer is hovering over a point that is not the current
+     * `hoverPoint`.
+     */
     public isDirectTouch?: boolean;
 
+    /**
+     * The last touch events from a touch/pinch gesture.
+     */
     public lastTouches?: Array<PointerEvent>;
 
+    /**
+     * The options for the Pointer.
+     */
     public options: Options;
 
+    /**
+     * The touch points that are participating in a pinch gesture.
+     */
     public pinchDown?: Array<PointerEvent>;
 
+    /**
+     * A list of events to unbind when the pointer is destroyed.
+     */
     public pointerCaptureEventsToUnbind: Array<Function> = [];
 
+    /**
+     * A flag to indicate that the target has been reset since the last touch
+     * event.
+     */
     public res?: boolean;
 
+    /**
+     * Whether to run the chart-level click handler.
+     */
     public runChartClick?: boolean;
 
+    /**
+     * The selection marker element.
+     */
     public selectionMarker?: SVGElement;
 
+    /**
+     * A list of events to unbind when the pointer is destroyed.
+     */
     public eventsToUnbind: Array<Function> = [];
 
+    /**
+     * The document mousemove event handler.
+     */
     public unDocMouseMove?: Function;
 
+    /**
+     * Whether to zoom horizontally.
+     */
     public zoomHor?: boolean;
 
+    /**
+     * Whether to zoom vertically.
+     */
     public zoomVert?: boolean;
 
+    /**
+     * Whether to zoom on the X axis.
+     */
     public zoomX?: boolean;
 
+    /**
+     * Whether to zoom on the Y axis.
+     */
     public zoomY?: boolean;
 
     /* *
@@ -2113,50 +2176,127 @@ namespace Pointer {
      * */
 
     export interface ChartPositionObject {
+        /**
+         * Left offset of the chart container.
+         */
         left: number;
+        /**
+         * Horizontal scale of the chart container.
+         */
         scaleX: number;
+        /**
+         * Vertical scale of the chart container.
+         */
         scaleY: number;
+        /**
+         * Top offset of the chart container.
+         */
         top: number;
     }
     export interface AxesCoordinatesObject {
+        /**
+         * Positions on the x-axis.
+         */
         xAxis: Array<AxisCoordinateObject>;
+        /**
+         * Positions on the y-axis.
+         */
         yAxis: Array<AxisCoordinateObject>;
     }
     export interface AxisCoordinateObject {
+        /**
+         * Related axis.
+         */
         axis: Axis;
+        /**
+         * Axis value.
+         */
         value: number;
     }
     export interface CoordinatesObject {
+        /**
+         * The X coordinate of the pointer interaction relative to the chart.
+         */
         chartX: number;
+        /**
+         * The Y coordinate of the pointer interaction relative to the chart.
+         */
         chartY: number;
     }
     export interface EventArgsObject {
+        /**
+         * Chart X position of the pointer.
+         */
         chartX?: number;
+        /**
+         * Chart Y position of the pointer.
+         */
         chartY?: number;
+        /**
+         * Filter to apply to the series.
+         */
         filter?: Function;
+        /**
+         * The point currently being hovered.
+         */
         hoverPoint?: Point;
+        /**
+         * Whether the tooltip is shared.
+         */
         shared?: boolean;
     }
     export interface HoverDataObject {
+        /**
+         * The hovered point.
+         */
         hoverPoint?: Point;
+        /**
+         * All hovered points.
+         */
         hoverPoints: Array<Point>;
+        /**
+         * The hovered series.
+         */
         hoverSeries: Series;
     }
     export interface SelectDataObject {
+        /**
+         * The selected Axis.
+         */
         axis: Axis;
+        /**
+         * The maximum axis value, either automatic or set manually.
+         */
         max: number;
+        /**
+         * The minimum axis value, either automatic or set manually.
+         */
         min: number;
     }
     export interface SelectEventObject {
         animation?: boolean,
         height?: number;
+        /**
+         * The related browser event.
+         */
         originalEvent: Event;
+        /**
+         * Indicates a reset event to restore default state.
+         */
         resetSelection?: boolean;
         trigger?: string;
         width?: number;
         x?: number;
+        /**
+         * Arrays containing the axes of each dimension and each axis' min and
+         * max values.
+         */
         xAxis: Array<SelectDataObject>;
         y?: number;
+        /**
+         * Arrays containing the axes of each dimension and each axis' min and
+         * max values.
+         */
         yAxis: Array<SelectDataObject>;
     }
 

@@ -155,10 +155,32 @@ class Tooltip {
      * */
     public allowShared: boolean = true;
 
+    /**
+     * Chart of the tooltip.
+     *
+     * @readonly
+     * @name Highcharts.Tooltip#chart
+     * @type {Highcharts.Chart}
+     */
     public chart: Chart;
 
+    /**
+     * Reference to the tooltip's container, when
+     * [Highcharts.Tooltip#outside] is set to true, otherwise it's undefined.
+     *
+     * @name Highcharts.Tooltip#container
+     * @type {Highcharts.HTMLDOMElement|undefined}
+     */
     public container?: globalThis.HTMLElement;
 
+    /**
+     * List of crosshairs.
+     *
+     * @private
+     * @readonly
+     * @name Highcharts.Tooltip#crosshairs
+     * @type {Array<null>}
+     */
     public crosshairs: Array<null> = [];
 
     public distance: number = 0;
@@ -167,6 +189,14 @@ class Tooltip {
 
     public hideTimer?: number;
 
+    /**
+     * Tooltips are initially hidden.
+     *
+     * @private
+     * @readonly
+     * @name Highcharts.Tooltip#isHidden
+     * @type {boolean}
+     */
     public isHidden: boolean = true;
 
     public isSticky: boolean = false;
@@ -175,16 +205,67 @@ class Tooltip {
 
     public len?: number;
 
+    /**
+     * Used tooltip options.
+     *
+     * @readonly
+     * @name Highcharts.Tooltip#options
+     * @type {Highcharts.TooltipOptions}
+     */
     public options: TooltipOptions = {} as any;
 
+    /**
+     * Whether to allow the tooltip to render outside the chart's SVG
+     * element box. By default (false), the tooltip is rendered within the
+     * chart's SVG element, which results in the tooltip being aligned
+     * inside the chart area.
+     *
+     * @readonly
+     * @name Highcharts.Tooltip#outside
+     * @type {boolean}
+     *
+     * @todo
+     * Split tooltip does not support outside in the first iteration. Should
+     * not be too complicated to implement.
+     */
     public outside: boolean = false;
 
+    /**
+     * The pointer instance.
+     *
+     * @readonly
+     * @name Highcharts.Tooltip#pointer
+     * @type {Highcharts.Pointer}
+     */
     public pointer: Pointer;
 
+    /**
+     * Reference to the tooltip's renderer, when
+     * [Highcharts.Tooltip#outside] is set to true, otherwise it's undefined.
+     *
+     * @name Highcharts.Tooltip#renderer
+     * @type {Highcharts.SVGRenderer|undefined}
+     */
     public renderer?: SVGRenderer;
 
+    /**
+     * When the tooltip is shared, the entire plot area will capture mouse
+     * movement or touch events.
+     *
+     * @readonly
+     * @name Highcharts.Tooltip#shared
+     * @type {boolean|undefined}
+     */
     public shared?: boolean;
 
+    /**
+     * True, if the tooltip is split into one label per series, with the
+     * header close to the axis.
+     *
+     * @readonly
+     * @name Highcharts.Tooltip#split
+     * @type {boolean|undefined}
+     */
     public split?: boolean;
 
     public tracker?: SVGElement;

@@ -37,13 +37,34 @@ export interface AjaxErrorCallbackFunction {
 }
 
 export interface AjaxSettingsObject {
+    /**
+     * The payload to send.
+     */
     data?: (string | JSON.Type | JSON.Builder | JSON);
+    /**
+     * The data type expected.
+     */
     dataType?: string; // @todo ('json' | 'text' | 'xml' | 'octet' | string);
+    /**
+     * Function to call on error.
+     */
     error?: AjaxErrorCallbackFunction;
+    /**
+     * The headers; keyed on header name.
+     */
     headers?: Record<string, string>;
     responseType?: ('arraybuffer' | 'blob' | 'document' | 'json' | 'text');
+    /**
+     * Function to call on success.
+     */
     success?: AjaxSuccessCallbackFunction;
+    /**
+     * The HTTP method to use. For example GET or POST.
+     */
     type?: ('get' | 'post' | 'update' | 'delete');
+    /**
+     * The URL to call.
+     */
     url: string;
 }
 

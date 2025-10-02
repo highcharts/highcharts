@@ -2113,17 +2113,44 @@ if ((win as any).jQuery) {
 namespace Utilities {
     export type RelativeSize = (number|string);
     export interface ErrorMessageEventObject {
+        /**
+         * The chart that causes the error.
+         */
         chart?: Chart;
+        /**
+         * The error code.
+         */
         code: number;
+        /**
+         * The error message.
+         */
         message?: string;
+        /**
+         * Additional parameters for the generated message.
+         */
         params?: Record<string, string>;
     }
     export interface EventOptions {
+        /**
+         * The order the event handler should be called. This opens for having
+         * one handler be called before another, independent of in which order
+         * they were added.
+         */
         order?: number;
+        /**
+         * Whether an event should be passive or not. When set to `true`, the
+         * function specified by listener will never call `preventDefault()`.
+         */
         passive?: boolean;
     }
     export interface EventWrapperObject<T> {
+        /**
+         * The function callback to execute when the event is fired.
+         */
         fn: EventCallback<T>;
+        /**
+         * The order the event handler should be called.
+         */
         order: number;
     }
     export interface FindCallback<T> {
@@ -2141,9 +2168,21 @@ namespace Utilities {
         ): void;
     }
     export interface OffsetObject {
+        /**
+         * Height of the element.
+         */
         height: number;
+        /**
+         * Left distance to the page border.
+         */
         left: number;
+        /**
+         * Top distance to the page border.
+         */
         top: number;
+        /**
+         * Width of the element.
+         */
         width: number;
     }
     export interface WrapProceedFunction<T extends ArrowFunction> {

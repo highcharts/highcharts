@@ -113,6 +113,15 @@ declare global {
     }
 
     interface Math {
+        /**
+         * Easing definition
+         *
+         * @param pos
+         *        Current position, ranging from 0 to 1.
+         *
+         * @return
+         *         Ease result
+         */
         easeInOutSine(pos: number): number;
     }
 
@@ -140,6 +149,16 @@ declare global {
     }
 
     interface GlobalOptions {
+        /**
+         * General theme for buttons. This applies to the zoom button, exporting
+         * context menu, map navigation, range selector buttons and custom
+         * buttons generated using the `SVGRenderer.button` function. However,
+         * each of these may be overridden with more specific options.
+         *
+         * @sample highcharts/global/buttontheme
+         *         General button theme
+         * @since 11.4.2
+         */
         buttonTheme: ButtonThemeObject;
         /** @deprecated */
         canvasToolsURL?: string;
