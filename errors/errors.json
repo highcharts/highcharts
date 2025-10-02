@@ -66,7 +66,7 @@
 	},
 	"26": {
 		"title": "WebGL not supported, and no fallback module included",
-		"text": "<h1>WebGL not supported, and no fallback module included</h1><p>This happens when the browser doesn't support WebGL,<b>and</b> the canvas fallback module (<code>boost-canvas.js</code>) hasn't been included OR if the fallback module was included<b>after</b> the boost module.</p><p>If a fallback is required, make sure to include <code>boost-canvas.js</code>, and that it's included before <code>boost.js</code>.</p><p>Please note that the fallback module is not intended as a fully-featured one. Rather, it's a minimal implementation of the WebGL counterpart.</p>"
+		"text": "<h1>WebGL not supported, and no fallback module included</h1><p>This happens when the browser doesn't support WebGL, <b>and</b> the canvas fallback module (<code>boost-canvas.js</code>) hasn't been included OR if the fallback module was included <b>after</b> the boost module.</p><p>If a fallback is required, make sure to include <code>boost-canvas.js</code>, and that it's included before <code>boost.js</code>.</p><p>Please note that the fallback module is not intended as a fully-featured one. Rather, it's a minimal implementation of the WebGL counterpart.</p>"
 	},
 	"28": {
 		"title": "Fallback to export server disabled",
@@ -95,5 +95,9 @@
 	"34": {
 		"title": "Unknown time zone",
 		"text": "<h1>Unknown time zone</h1><p>This error occurs if the browser doesn't recognize the <a href=\"https://api.highcharts.com/highcharts/time.timezone\">timezone</a> option. Possible workarounds are to use a time zone definition that all browsers recognize, or create your own <a href=\"https://api.highcharts.com/highcharts/time.getTimezoneOffset\">getTimezoneOffset</a> callback.</p>"
+	},
+	"35": {
+		"title": "Missing highcharts.css file",
+		"text": "<h1>Missing <b>highcharts.css</b> file</h1><p>This error occurs if you enable <a href=\"https://api.highcharts.com/highcharts/chart.styledMode\">styled mode</a> (<code>chart.styledMode = true</code>) without including the required **highcharts.css** file. Without this stylesheet, charts cannot be rendered correctly.</p><p>To fix this, make sure to load the official stylesheet in your page: <a href=\"https://www.highcharts.com/docs/chart-design-and-style/style-by-css\">Style by CSS</a>.</p>"
 	}
 }

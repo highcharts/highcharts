@@ -14,6 +14,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type PointBase from './PointBase';
 import type SeriesOptions from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';

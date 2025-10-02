@@ -23,13 +23,14 @@
  *
  * */
 
+import type CellRendererType from '../CellRendering/CellRendererType';
+import type Column from '../../Core/Table/Column';
+import type { DeepPartial } from '../../../Shared/Types';
+import type { EditModeRenderer } from './CellEditMode';
+import type { GridEvent } from '../../Core/GridUtils';
+import type Options from '../../Core/Options';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
-import type Column from '../../Core/Table/Column';
-import type { GridEvent } from '../../Core/GridUtils';
-import type CellRendererType from '../CellRendering/CellRendererType';
-import type { EditModeRenderer } from './CellEditMode';
-import type Options from '../../Core/Options';
 
 import Defaults from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -63,7 +64,7 @@ namespace CellEditingComposition {
     /**
      * Default options for the cell editing.
      */
-    const defaultOptions: Globals.DeepPartial<Options> = {
+    const defaultOptions: DeepPartial<Options> = {
         accessibility: {
             announcements: {
                 cellEditing: true
