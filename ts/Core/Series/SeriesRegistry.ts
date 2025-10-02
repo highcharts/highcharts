@@ -138,10 +138,11 @@ namespace SeriesRegistry {
 
         // Create the class
         delete seriesTypes[type];
-        const parentClass =
-                seriesTypes[parent] as typeof Series || (H as any).Series,
-            childClass =
-                extendClass(parentClass, seriesProto) as typeof Series;
+        const parentClass = (
+                seriesTypes[parent] as typeof Series ||
+                (H as unknown as { Series: typeof Series }).Series
+            ),
+            childClass = extendClass(parentClass, seriesProto) as typeof Series;
 
         registerSeriesType(type, childClass);
         seriesTypes[type].prototype.type = type;
