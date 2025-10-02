@@ -110,7 +110,7 @@ class HeatmapSeries extends ScatterSeries {
 
     public colorAxis!: ColorAxis;
 
-    public context?: CanvasRenderingContext2D | GPUCanvasContext;
+    public context?: CanvasRenderingContext2D;
 
     public data!: Array<HeatmapPoint>;
 
