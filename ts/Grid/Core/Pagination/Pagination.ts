@@ -872,6 +872,7 @@ class Pagination {
      */
     public async setPageSize(newPageSize: number): Promise<void> {
         const pageSize = this.currentPageSize;
+        const langAccessibility = this.grid.options?.lang?.accessibility;
 
         fireEvent(
             this,
@@ -900,6 +901,12 @@ class Pagination {
         // Update row count for a11y
         this.updateA11yRowsCount(this.currentPageSize);
 
+        // Announce the page size change
+        this.grid.accessibility?.announce(
+            langAccessibility?.pagination?.announcements?.pageSizeChange +
+                ' ' + newPageSize
+        );
+
         // Update mobile page size selector if it exists
         if (this.mobilePageSizeSelector) {
             this.mobilePageSizeSelector.value = this.currentPageSize.toString();
@@ -922,6 +929,8 @@ class Pagination {
      * The page number to navigate to.
      */
     public async goToPage(pageNumber: number): Promise<void> {
+        const langAccessibility = this.grid.options?.lang?.accessibility;
+
         if (
             pageNumber < 1 ||
             pageNumber > this.totalPages ||
@@ -948,6 +957,13 @@ class Pagination {
         this.updatePageInfo();
         this.updatePageNumbers();
         this.updateButtonStates();
+
+
+        // Announce the page change
+        this.grid.accessibility?.announce(
+            langAccessibility?.pagination?.announcements?.pageChange +
+                ' ' + this.currentPage
+        );
 
         fireEvent(
             this,
