@@ -687,7 +687,7 @@ class ContourSeries extends ScatterSeries {
                     0,
                     this.extremesUniform as GPUAllowSharedBufferSource
                 );
-                this.extremesUniform?.set(this.getExtremes() as Array<number>);
+                this.extremesUniform?.set(this.getWebGPUExtremes() as Array<number>);
             }
 
             if (this.valueExtremesUniform && this.valueExtremesUniformBuffer) {
