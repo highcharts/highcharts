@@ -41,13 +41,14 @@ import type {
     ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
+import type { DeepPartial } from '../../Shared/Types';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions
 } from '../Series/SeriesType';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 import A from '../Animation/AnimationUtilities.js';

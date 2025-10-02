@@ -26,6 +26,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';

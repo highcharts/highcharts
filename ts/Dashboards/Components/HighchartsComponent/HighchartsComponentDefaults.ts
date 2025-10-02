@@ -20,7 +20,7 @@
  *
  * */
 
-import type Globals from '../../Globals';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Options from './HighchartsComponentOptions';
 
 import Component from '../Component.js';
@@ -37,7 +37,7 @@ const {
  *
  * */
 
-const HighchartsComponentDefaults: Globals.DeepPartial<Options> = {
+const HighchartsComponentDefaults: DeepPartial<Options> = {
     allowConnectorUpdate: true,
     className: [
         Component.defaultOptions.className,
