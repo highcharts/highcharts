@@ -27,7 +27,10 @@ export default tseslint.config(
         }
     },
     {
-       ignores: [ "eslint.config.mjs" ]
+       ignores: [
+            'eslint.config.mjs',
+            'qunit/vendor/**'
+        ]
     },
     eslint.configs.recommended,
     tseslint.configs.recommended,

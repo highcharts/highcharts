@@ -71,6 +71,31 @@ test('Redirects are applied for code', async ({ page }) => {
     });
 });
 
+test('QUnit assets are served locally', async ({ page }) => {
+    const template = `<html>
+    <head>
+        <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
+    </head>
+    <body></body>
+    </html>`;
+
+    await page.setContent(template);
+
+    await expect.poll(() => test.info().annotations).toContainEqual({
+        type: 'redirect',
+        description: 'https://code.jquery.com/qunit/qunit-2.4.0.js --> tests/qunit/vendor/qunit-2.4.0.js'
+    });
+
+    await expect.poll(() => test.info().annotations).toContainEqual({
+        type: 'redirect',
+        description: 'https://code.jquery.com/qunit/qunit-2.4.0.css --> tests/qunit/vendor/qunit-2.4.0.css'
+    });
+
+    await expect.poll(() => page.evaluate(() => window.QUnit?.version))
+        .toBe('2.4.0');
+});
+
 test.describe('Redirects for data', () => {
     test('jsonSources', async ({ page }) => {
         const template = `<html>

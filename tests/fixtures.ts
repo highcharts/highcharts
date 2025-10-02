@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import type {
     Route,
     Request,
@@ -201,6 +203,36 @@ export async function setupRoutes(page: Page){
                 handler: replaceHCCode
             },
             {
+                pattern: 'https://code.jquery.com/qunit/**',
+                handler: async (route) => {
+                    const url = new URL(route.request().url());
+                    const filename = url.pathname.split('/').pop();
+
+                    if (!filename) {
+                        await route.abort();
+                        throw new Error('Invalid QUnit asset request');
+                    }
+
+                    const localPath = join('tests', 'qunit', 'vendor', filename);
+
+                    try {
+                        await route.fulfill({
+                            path: localPath,
+                            contentType: contentTypes[extname(filename)] ??
+                                'application/octet-stream'
+                        });
+
+                        test.info().annotations.push({
+                            type: 'redirect',
+                            description: `${url} --> ${localPath}`
+                        });
+                    } catch {
+                        await route.abort();
+                        throw new Error(`Missing local QUnit asset for ${filename}`);
+                    }
+                }
+            },
+            {
                 pattern: '**/**/{samples/data}/**',
                 handler: replaceSampleData
             },
@@ -350,7 +382,7 @@ export type CreateChartConfig = {
      *
      * @defaultValue `undefined`
      */
-    chartCallback: Highcharts.ChartCallbackFunction | undefined;
+    chartCallback?: (chart: Highcharts.Chart) => void;
 };
 
 const defaultCreateChartConfig: CreateChartConfig = {
@@ -446,33 +478,46 @@ export async function createChart(
         await setTestingOptions(page, ccc.HC);
     }
 
-    let chartCallbackBody = '';
+    let chartCallbackBody: string | undefined;
 
     if (ccc.chartCallback) {
-        chartCallbackBody = ccc.chartCallback.toString();
+        const callbackFn = ccc.chartCallback;
+        chartCallbackBody = callbackFn.toString();
         chartCallbackBody = chartCallbackBody.substring(
             chartCallbackBody.indexOf('{') + 1,
             chartCallbackBody.lastIndexOf('}')
-        ).trim()
-        ;
+        ).trim();
         ccc.chartCallback = undefined;
     }
 
     const handle = await page.evaluateHandle(
-        ([{ chartConstructor, container, HC }, cc, chartCallbackBody]) => {
+        ([{ chartConstructor, container, HC }, cc, serializedCallback]) => {
+            type ChartFactories = Record<
+                CreateChartConfig['chartConstructor'],
+                (
+                    container: CreateChartConfig['container'],
+                    options: Partial<Highcharts.Options>,
+                    callback?: (chart: Highcharts.Chart) => void
+                ) => ReturnType<typeof Highcharts.chart>
+            >;
 
-            const HCInstance = HC ?? window.Highcharts;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+            const HCInstance =
+                (HC ?? window.Highcharts) as unknown as ChartFactories;
+
+            const callback = serializedCallback ?
+                (chart: Highcharts.Chart) => {
+                    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+                    new Function(
+                        'chart',
+                        serializedCallback
+                    )(chart);
+                } :
+                undefined;
+
             return HCInstance[chartConstructor](
-                container, cc, chartCallbackBody ?
-                    (chart: Highcharts.Chart) => {
-                        // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-call
-                        new Function(
-                            'chart',
-                            chartCallbackBody
-                        )(chart);
-                    } :
-                    undefined
+                container,
+                cc,
+                callback
             );
         },
         [
