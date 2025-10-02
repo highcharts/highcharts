@@ -21,9 +21,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'connector-1',
             type: 'CSV',
-            options: {
-                csv: csvData
-            }
+            csv: csvData
         }]
     },
     editMode: {

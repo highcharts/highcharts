@@ -56,19 +56,17 @@ Dashboards.board('container', {
         connectors: [{
             id: 'rna',
             type: 'MorningstarRNANews',
-            options: {
-                api: {
-                    access: {
-                        token: 'your_access_token'
-                    }
-                },
-                security: {
-                    id: 'GB00BLGZ9862',
-                    idType: 'ISIN'
-                },
-                startDate: '2000-01-01',
-                endDate: '2020-12-31'
-            }
+            api: {
+                access: {
+                    token: 'your_access_token'
+                }
+            },
+            security: {
+                id: 'GB00BLGZ9862',
+                idType: 'ISIN'
+            },
+            startDate: '2000-01-01',
+            endDate: '2020-12-31'
         }]
     },
     components: [

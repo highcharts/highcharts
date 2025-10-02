@@ -18,6 +18,7 @@ Grid.grid('container', {
     columns: [{
         id: 'weight',
         className: 'custom-column-class-name',
+        width: '40%',
         cells: {
             formatter: function () {
                 return 'V: ' + this.value;

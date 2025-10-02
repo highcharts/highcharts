@@ -97,7 +97,7 @@ describe('layout resize on window changes', () => {
             points[lastPointIndex].update(2000);
             // grid component
             try {
-                board.mountedComponents[1].component.connectorHandlers[0].connector.table.emit({
+                board.mountedComponents[1].component.connectorHandlers[0].connector.getTable().emit({
                     type: 'afterSetCell'
                 });
             } catch (e) {
@@ -143,7 +143,7 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-dropdown.highcharts-dashboards-edit-collapsable-content-header')
             .eq(1)
             .find('.highcharts-dashboards-edit-dropdown-button-content > span')
-            .should('have.text', '');
+            .should('have.text', 'adjacent');
 
         cy.get('.highcharts-dashboards-edit-label-text').contains('Cell text truncation').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')

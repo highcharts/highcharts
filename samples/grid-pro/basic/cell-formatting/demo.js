@@ -42,6 +42,7 @@ Grid.dataGrid('container', {
     }, {
         id: 'weight',
         className: 'custom-column-class-name',
+        width: '40%',
         cells: {
             format: '{value:,.1f} kg'
         }

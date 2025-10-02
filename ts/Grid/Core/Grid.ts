@@ -37,6 +37,7 @@ import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
+import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
@@ -45,7 +46,7 @@ const {
     getStyle,
     merge,
     pick,
-    defined
+    isObject
 } = U;
 
 
@@ -144,6 +145,11 @@ class Grid {
      * The accessibility controller.
      */
     public accessibility?: Accessibility;
+
+    /**
+     * The Pagination controller.
+     */
+    public pagination?: Pagination;
 
     /**
      * The caption element of the Grid.
@@ -306,6 +312,7 @@ class Grid {
 
         this.initContainers(renderTo);
         this.initAccessibility();
+        this.initPagination();
         this.loadDataTable(this.options?.dataTable);
         this.initVirtualization();
 
@@ -343,6 +350,50 @@ class Grid {
 
         if (this.options?.accessibility?.enabled) {
             this.accessibility = new Accessibility(this);
+        }
+    }
+
+    /*
+     * Initializes the pagination.
+     */
+    private initPagination(): void {
+
+        let paginationState = {};
+
+        if (this.pagination) {
+            const {
+                currentPageSize,
+                currentPage,
+                totalItems,
+                totalPages
+            } = this.pagination || {};
+
+            paginationState = {
+                currentPageSize,
+                currentPage,
+                totalItems,
+                totalPages
+            };
+        }
+
+        this.pagination?.destroy();
+        delete this.pagination;
+
+
+        const currentPaginationOptions = this.options?.pagination;
+        const paginationOptions = merge(
+            (
+                isObject(currentPaginationOptions) ?
+                    currentPaginationOptions :
+                    { enabled: currentPaginationOptions }
+            ),
+            {
+                ...paginationState
+            }
+        );
+
+        if (paginationOptions?.enabled) {
+            this.pagination = new Pagination(this, paginationOptions);
         }
     }
 
@@ -539,18 +590,22 @@ class Grid {
         oneToOne = false
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
-        this.initAccessibility();
 
-        let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
             this.userOptions.dataTable = options.dataTable;
             (this.options ?? {}).dataTable = options.dataTable;
 
             this.loadDataTable(this.options?.dataTable);
-            newDataTable = true;
-
-            this.initVirtualization();
+            this.querying.shouldBeUpdated = true;
         }
+
+        if (!render) {
+            return;
+        }
+
+        this.initAccessibility();
+        this.initPagination();
+        this.initVirtualization();
 
         this.querying.loadOptions();
 
@@ -564,10 +619,8 @@ class Grid {
             ));
         }
 
-        if (render) {
-            await this.querying.proceed(newDataTable);
-            this.renderViewport();
-        }
+        await this.querying.proceed();
+        this.renderViewport();
     }
 
     public updateColumn(
@@ -797,6 +850,8 @@ class Grid {
      */
     public renderViewport(): void {
         const viewportMeta = this.viewport?.getStateMeta();
+        const pagination = this.pagination;
+        const paginationPosition = pagination?.options.position;
 
         this.enabledColumns = this.getEnabledColumnIDs();
 
@@ -808,6 +863,11 @@ class Grid {
         this.resetContentWrapper();
         this.renderCaption();
 
+        // Render top pagination if enabled (before table)
+        if (paginationPosition === 'top') {
+            pagination?.render();
+        }
+
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
             if (viewportMeta && this.viewport) {
@@ -817,9 +877,15 @@ class Grid {
             this.renderNoData();
         }
 
-        this.renderDescription();
-
         this.accessibility?.setA11yOptions();
+
+        // Render bottom pagination, footer pagination,
+        // or custom container pagination (after table).
+        if (paginationPosition !== 'top') {
+            pagination?.render();
+        }
+
+        this.renderDescription();
 
         fireEvent(this, 'afterRenderViewport');
 
@@ -860,7 +926,7 @@ class Grid {
         const headerColumns = this.getColumnIds(header || [], false);
         const columnsIncluded = this.options?.rendering?.columns?.included || (
             headerColumns && headerColumns.length > 0 ?
-                headerColumns : this.dataTable?.getColumnNames()
+                headerColumns : this.dataTable?.getColumnIds()
         );
 
         if (!columnsIncluded?.length) {
@@ -871,12 +937,12 @@ class Grid {
             return columnsIncluded;
         }
 
-        let columnName: string;
+        let columnId: string;
         const result: string[] = [];
         for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
-            columnName = columnsIncluded[i];
-            if (columnOptionsMap?.[columnName]?.options?.enabled !== false) {
-                result.push(columnName);
+            columnId = columnsIncluded[i];
+            if (columnOptionsMap?.[columnId]?.options?.enabled !== false) {
+                result.push(columnId);
             }
         }
 
@@ -899,7 +965,7 @@ class Grid {
         // creating a new one.
         if ((tableOptions as DataTable)?.clone) {
             this.dataTable = tableOptions as DataTable;
-            this.presentationTable = this.dataTable.modified;
+            this.presentationTable = this.dataTable.getModified();
             return;
         }
 
@@ -1046,7 +1112,7 @@ class Grid {
      * JSON representation of the data
      */
     public getData(): string {
-        const json = this.viewport?.dataTable.modified.columns;
+        const json = this.viewport?.dataTable.getModified().columns;
 
         if (!this.enabledColumns || !json) {
             return '{}';
@@ -1059,18 +1125,6 @@ class Grid {
         }
 
         return JSON.stringify(json);
-    }
-
-    /**
-     * Returns the current grid data as a JSON string.
-     *
-     * @return
-     * JSON representation of the data
-     *
-     * @deprecated
-     */
-    public getJSON(): string {
-        return this.getData();
     }
 
     /**
@@ -1097,39 +1151,34 @@ class Grid {
     }
 
     /**
-     * Returns the current Grid options.
-     *
-     * @param onlyUserOptions
-     * Whether to return only the user options or all options (user options
-     * merged with the default ones). Default is `true`.
-     *
-     * @returns
-     * Options as a JSON string
-     *
-     * @deprecated
-     */
-    public getOptionsJSON(onlyUserOptions = true): string {
-        return JSON.stringify(this.getOptions(onlyUserOptions));
-    }
-
-    /**
      * Enables virtualization if the row count is greater than or equal to the
      * threshold or virtualization is enabled externally. Should be fired after
      * the data table is loaded.
      */
     private initVirtualization(): void {
+        // Makes sure all nested options are defined.
+        ((this.options ??= {}).rendering ??= {}).rows ??= {};
+        this.options.rendering.rows.virtualization = this.shouldVirtualize();
+    }
+
+    /**
+     * Checks if virtualization should be enabled.
+     *
+     * @returns
+     * Whether virtualization should be enabled.
+     */
+    public shouldVirtualize(): boolean {
         const rows = this.userOptions.rendering?.rows;
-        const virtualization = rows?.virtualization;
         const threshold = Number(
             rows?.virtualizationThreshold ||
             Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
         );
         const rowCount = Number(this.dataTable?.rowCount);
+        const paginationPageSize = this.pagination?.currentPageSize;
 
-        // Makes sure all nested options are defined.
-        ((this.options ??= {}).rendering ??= {}).rows ??= {};
-        this.options.rendering.rows.virtualization =
-            defined(virtualization) ? virtualization : rowCount >= threshold;
+        return paginationPageSize ?
+            paginationPageSize >= threshold :
+            rowCount >= threshold;
     }
 }
 

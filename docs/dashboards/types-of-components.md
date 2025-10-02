@@ -90,17 +90,15 @@ dataPool: {
     connectors: [{
         id: 'micro-element',
         type: 'JSON',
-        options: {
-            firstRowAsNames: false,
-            columnNames: ['Food', 'Vitamin A',  'Iron'],
-            data: [
-                ['Beef Liver', 6421, 6.5],
-                ['Lamb Liver', 2122, 6.5],
-                ['Cod Liver Oil', 1350, 0.9],
-                ['Mackerel', 388, 1],
-                ['Tuna', 214, 0.6]
-            ]
-        }
+        firstRowAsNames: false,
+        columnIds: ['Food', 'Vitamin A',  'Iron'],
+        data: [
+            ['Beef Liver', 6421, 6.5],
+            ['Lamb Liver', 2122, 6.5],
+            ['Cod Liver Oil', 1350, 0.9],
+            ['Mackerel', 388, 1],
+            ['Tuna', 214, 0.6]
+        ]
     }]
 },
 components: [
@@ -118,7 +116,7 @@ components: [
 ```
 The above code snippet is part of a [Highcharts Component example](https://www.highcharts.com/samples/dashboards/demo/minimal-html) that uses data shared via a `DataConnector`.
 
-When using a Data Connector, the data is parsed and organized in rows, with `columnNames` either given explicitly or used as column names in the first row.
+When using a Data Connector, the data is parsed and organized in rows, with `columnIds` either given explicitly or used as column names in the first row.
 
 The chart then uses the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map the values of a specific column to the chart's series.
 Here is an [example](https://www.highcharts.com/samples/embed/dashboards/demo/minimal) that uses column assignment.
@@ -169,18 +167,16 @@ dataPool: {
     connectors: [{
         id: 'data',
         type: 'JSON',
-        options: {
-            data: [
-                ['Product Name', 'Quantity', 'Revenue', 'Category'],
-                ['Laptop', 100, 2000, 'Electronics'],
-                ['Smartphone', 150, 3300, 'Electronics'],
-                ['Desk Chair', 120, 2160, 'Furniture'],
-                ['Coffee Maker', 90, 1890, 'Appliances'],
-                ['Headphones', 200, 3200, 'Electronics'],
-                ['Dining Table', 130, 2470, 'Furniture'],
-                ['Refrigerator', 170, 2890, 'Appliances']
-            ]
-        }
+        data: [
+            ['Product Name', 'Quantity', 'Revenue', 'Category'],
+            ['Laptop', 100, 2000, 'Electronics'],
+            ['Smartphone', 150, 3300, 'Electronics'],
+            ['Desk Chair', 120, 2160, 'Furniture'],
+            ['Coffee Maker', 90, 1890, 'Appliances'],
+            ['Headphones', 200, 3200, 'Electronics'],
+            ['Dining Table', 130, 2470, 'Furniture'],
+            ['Refrigerator', 170, 2890, 'Appliances']
+        ]
     }]
 },
 {

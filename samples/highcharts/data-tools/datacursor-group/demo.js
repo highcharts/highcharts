@@ -27,15 +27,15 @@ const table3 = sort3.modifyTable(table1.clone());
 // Render HTML Tables
 
 function renderTable(container, table) {
-    const columnNames = table.getColumnNames();
+    const columnIds = table.getColumnIds();
     const html = [];
 
     html.push('<table>');
     // Render column header
     html.push('<thead>');
     html.push('<tr>');
-    for (const columnName of columnNames) {
-        html.push(`<th>${columnName}</th>`);
+    for (const columnId of columnIds) {
+        html.push(`<th>${columnId}</th>`);
     }
     html.push('</tr>');
     html.push('</thead>');
@@ -48,7 +48,7 @@ function renderTable(container, table) {
         for (let i = 0, iEnd = row.length; i < iEnd; ++i) {
             html.push(
                 // We use the column name to identify a cell
-                `<td data-column="${columnNames[i]}">`,
+                `<td data-column="${columnIds[i]}">`,
                 `${row[i]}`,
                 '</td>'
             );

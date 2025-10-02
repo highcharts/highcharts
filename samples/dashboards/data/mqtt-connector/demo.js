@@ -100,7 +100,7 @@ const dataGridOptions = {
 const connConfig = {
     autoSubscribe: true,
     maxRows: 10,
-    columnNames: [
+    columnIds: [
         'time',
         'value'
     ],
@@ -162,17 +162,13 @@ async function createDashboard() {
             connectors: [{
                 type: 'MQTT',
                 id: 'mqtt-data-1',
-                options: {
-                    topic: Object.keys(topicMap)[0],
-                    ...connConfig
-                }
+                topic: Object.keys(topicMap)[0],
+                ...connConfig
             }, {
                 type: 'MQTT',
                 id: 'mqtt-data-2',
-                options: {
-                    topic: Object.keys(topicMap)[1],
-                    ...connConfig
-                }
+                topic: Object.keys(topicMap)[1],
+                ...connConfig
             }]
         },
         components: [{
@@ -427,7 +423,7 @@ class MQTTConnector extends DataConnector {
      **/
     async reset() {
         const connector = this,
-            table = connector.table;
+            table = connector.getTable();
 
         connector.packetCount = 0;
         await table.deleteColumns();
@@ -549,7 +545,7 @@ class MQTTConnector extends DataConnector {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
-            connTable = connector.table;
+            connTable = connector.getTable();
 
         // Parse the packets
         let data;
@@ -568,36 +564,21 @@ class MQTTConnector extends DataConnector {
             return; // Skip invalid packets
         }
 
-        converter.parse({ data });
-        const convTable = converter.getTable();
+        const columns = converter.parse({ data });
         const nRowsCurrent = connTable.getRowCount();
 
         if (nRowsCurrent === 0) {
             // Initialize the table on first packet
-            connTable.setColumns(convTable.getColumns());
+            connTable.setColumns(columns);
         } else {
-            const maxRows = connector.options.maxRows;
-            const nRowsParsed = convTable.getRowCount();
-
-            if (nRowsParsed === 1) {
-                const rows = convTable.getRows();
-                // One row, append to table
-                if (nRowsCurrent === maxRows) {
-                    // Remove the oldest row
-                    connTable.deleteRows(0, 1);
-                }
-                connTable.setRows(rows);
-            } else {
-                // Multiple rows, replace table content
-                const rows = convTable.getRows();
-
-                if (nRowsParsed >= maxRows) {
-                    // Get the newest 'maxRows' rows
-                    rows.splice(0, nRowsParsed - maxRows);
-                    connTable.deleteRows();
-                }
-                connTable.setRows(rows);
+            // Remove the oldest row if at max capacity
+            if (nRowsCurrent >= connector.options.maxRows) {
+                connTable.deleteRows(0, 1);
             }
+
+            // Add a new row from parsed columns
+            const newRow = Object.values(columns).map(col => col[0]);
+            connTable.setRows([newRow], connTable.getRowCount());
         }
         connector.packetCount++;
 

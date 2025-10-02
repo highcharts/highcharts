@@ -70,7 +70,7 @@ const {
  *          }]
  *      },
  *      components: [{
- *          cell: 'dashboard-col-0',
+ *          renderTo: 'dashboard-col-0',
  *          type: 'Highcharts',
  *          chartOptions: {
  *              series: [{

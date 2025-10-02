@@ -127,6 +127,26 @@ const weatherStationConfig = {
     }
 };
 
+// Convert a cell value to a number.
+function convertToNumber(value, useNaN) {
+    switch (typeof value) {
+    case 'boolean':
+        return value ? 1 : 0;
+    case 'number':
+        return (isNaN(value) && !useNaN ? null : value);
+    default:
+        value = parseFloat(`${value ?? ''}`);
+        return (isNaN(value) && !useNaN ? null : value);
+    }
+}
+
+// Retrieve a connector data table.
+async function getConnectorTable(dataPool, connectorId) {
+    return dataPool
+        .getConnector(connectorId)
+        .then(connector => connector.getTable());
+}
+
 // Common options for KPI charts
 // - Adapted from https://www.highcharts.com/demo/dashboards/climate
 const kpiGaugeOptions = {
@@ -182,10 +202,8 @@ async function setupDashboard() {
                 {
                     id: 'Stations',
                     type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        data: weatherStationConfig.location.points
-                    }
+                    firstRowAsNames: true,
+                    data: weatherStationConfig.location.points
                 }
             ]
         },
@@ -229,7 +247,7 @@ async function setupDashboard() {
         // Adapted from https://www.highcharts.com/demo/dashboards/climate
         components: [
             {
-                cell: 'station-map',
+                renderTo: 'station-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 chartOptions: {
@@ -348,7 +366,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'html-geo-info',
+                renderTo: 'html-geo-info',
                 type: 'HTML',
                 elements: [{
                     tagName: 'div',
@@ -384,9 +402,9 @@ async function setupDashboard() {
                 }]
             },
             {
-                cell: 'kpi-temperature',
+                renderTo: 'kpi-temperature',
                 type: 'KPI',
-                columnName: 'temperature',
+                columnId: 'temperature',
                 chartOptions: {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,
@@ -435,9 +453,9 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'kpi-wind',
+                renderTo: 'kpi-wind',
                 type: 'KPI',
-                columnName: 'wind',
+                columnId: 'wind',
                 chartOptions: {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,
@@ -480,9 +498,9 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'kpi-precipitation',
+                renderTo: 'kpi-precipitation',
                 type: 'KPI',
-                columnName: 'precipitation',
+                columnId: 'precipitation',
                 chartOptions: {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,
@@ -530,7 +548,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'forecast-grid',
+                renderTo: 'forecast-grid',
                 type: 'DataGrid',
                 title: {
                     enabled: true,
@@ -590,7 +608,7 @@ async function setupDashboard() {
                     }]
                 }
             }, {
-                cell: 'forecast-chart',
+                renderTo: 'forecast-chart',
                 type: 'Highcharts',
                 sync: {
                     highlight: true
@@ -683,7 +701,7 @@ async function setupDashboard() {
     }, true);
 
     const dataPool = board.dataPool;
-    const stationsTable = await dataPool.getConnectorTable('Stations');
+    const stationsTable = await getConnectorTable(dataPool, 'Stations');
     const stationRows = stationsTable.getRowObjects();
 
     // Add weather station sources
@@ -698,41 +716,39 @@ async function setupDashboard() {
         dataPool.setConnectorOptions({
             id: station,
             type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                dataUrl: url,
-                // Pre-parsing for filtering incoming data
-                beforeParse: function (data) {
-                    const retData = [];
-                    const forecastData = data.properties.timeseries;
+            firstRowAsNames: false,
+            dataUrl: url,
+            // Pre-parsing for filtering incoming data
+            beforeParse: function (data) {
+                const retData = [];
+                const forecastData = data.properties.timeseries;
 
-                    // Get the time difference for the current station
-                    const timeDifference = getTimeDifference(station);
+                // Get the time difference for the current station
+                const timeDifference = getTimeDifference(station);
 
-                    for (let i = 0; i < rangeConfig.hours; i++) {
-                        const item = forecastData[i];
+                for (let i = 0; i < rangeConfig.hours; i++) {
+                    const item = forecastData[i];
 
-                        // Instant data
-                        const instantData = item.data.instant.details;
+                    // Instant data
+                    const instantData = item.data.instant.details;
 
-                        // Data for the next hour
-                        const hourSpan = item.data.next_1_hours.details;
+                    // Data for the next hour
+                    const hourSpan = item.data.next_1_hours.details;
 
-                        // Convert UTC time to local time
-                        const localTime = new Date(item.time).getTime() -
+                    // Convert UTC time to local time
+                    const localTime = new Date(item.time).getTime() -
                             timeDifference * 3600000;
 
-                        // Picks the parameters this application uses
-                        retData.push({
-                            time: localTime,
-                            temperature: instantData.air_temperature,
-                            precipitation: hourSpan.precipitation_amount,
-                            wind: instantData.wind_speed,
-                            windDir: instantData.wind_from_direction
-                        });
-                    }
-                    return retData;
+                    // Picks the parameters this application uses
+                    retData.push({
+                        time: localTime,
+                        temperature: instantData.air_temperature,
+                        precipitation: hourSpan.precipitation_amount,
+                        wind: instantData.wind_speed,
+                        windDir: instantData.wind_from_direction
+                    });
                 }
+                return retData;
             }
         });
     }
@@ -777,7 +793,7 @@ async function setupDashboard() {
 
 // Add weather station to map
 async function addStationToMap(board, stationsTable, stationMap, station) {
-    const forecastTable = await board.dataPool.getConnectorTable(station);
+    const forecastTable = await getConnectorTable(board.dataPool, station);
     const stationInfo = stationsTable.getRowObject(
         stationsTable.getRowIndexBy('station', station)
     );
@@ -820,7 +836,7 @@ async function updateBoard(
     const dataPool = board.dataPool;
 
     // Geographical information
-    const stationsTable = await dataPool.getConnectorTable('Stations');
+    const stationsTable = await getConnectorTable(dataPool, 'Stations');
 
     const [
         // The order here must be the same as in the component
@@ -875,7 +891,7 @@ async function updateBoard(
 
     if (isWind) {
         // Add Windbarb series
-        const forecastTable = await dataPool.getConnectorTable(station);
+        const forecastTable = await getConnectorTable(dataPool, station);
 
         // Create series data
         const data = [];
@@ -904,10 +920,10 @@ async function updateBoard(
         for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
             // Forecast for station
             const station = mapPoints[i].name;
-            const forecastTable = await dataPool.getConnectorTable(station);
-            const elevation = stationsTable.getCellAsNumber(
+            const forecastTable = await getConnectorTable(dataPool, station);
+            const elevation = convertToNumber(stationsTable.getCell(
                 'elevation', stationsTable.getRowIndexBy('station', station)
-            );
+            ));
 
             mapPoints[i].update({
                 y: getObservation(forecastTable, paramName),
@@ -930,7 +946,7 @@ async function updateBoard(
     if (stationChanged) {
         // Weather station changed: e.g. New York -> Winnipeg
         // Affects: KPIs and grid.
-        const forecastTable = await dataPool.getConnectorTable(station);
+        const forecastTable = await getConnectorTable(dataPool, station);
 
         await kpiTemperature.update({
             value: getObservation(forecastTable, 'temperature')
@@ -954,7 +970,8 @@ async function updateBoard(
         const geoInfo = html.children[1].children;
         for (let i = 0; i < geoInfo.length; i++) {
             const attr = geoInfo[i].attributes;
-            const value = stationsTable.getCellAsNumber(attr.id, stationRow);
+            const value =
+                convertToNumber(stationsTable.getCell(attr.id, stationRow));
             const unit = attr.id === 'elevation' ? 'm.' : 'degr.';
 
             geoInfo[i].textContent = `${attr.name}: ${value} ${unit}`;

@@ -69,6 +69,7 @@ const syncPair: Sync.SyncPair = {
             if (!cursor) {
                 return;
             }
+
             const table = component.connectorHandlers?.[0]?.presentationTable;
 
             if (!table) {
