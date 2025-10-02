@@ -26,6 +26,8 @@ import Delaunay from '../../Shared/Delaunay.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import U from '../../Core/Utilities.js';
 import ContourSeriesOptions from './ContourSeriesOptions';
+import ColorAxisOptions from '../../Core/Axis/Color/ColorAxisOptions.js';
+import ColorType from '../../Core/Color/ColorType.js';
 const { extend } = U;
 
 class ContourSeries extends ScatterSeries {
@@ -622,19 +624,21 @@ class ContourSeries extends ScatterSeries {
 
         return [min || 0, max || 0];
     }
-    private colorToArray(color: string): [number, number, number] {
 
-
-        const hex = color.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16) / 255;
-        const g = parseInt(hex.substring(2, 4), 16) / 255;
-        const b = parseInt(hex.substring(4, 6), 16) / 255;
-
-
-        return [r, g, b];
-    }
     private getColorAxisStopsData() : { array: Float32Array, length: number } {
-        const colorAxisStops = (this.chart?.options?.colorAxis as any)?.stops;
+        const colorAxisStops = (
+                this.chart?.options?.colorAxis as ColorAxisOptions
+            )?.stops,
+            colorToArray = (color: ColorType): [number, number, number] => {
+                const hex = (color as string).replace('#', '');
+                // RGB array
+                return [
+                    parseInt(hex.substring(0, 2), 16) / 255,
+                    parseInt(hex.substring(2, 4), 16) / 255,
+                    parseInt(hex.substring(4, 6), 16) / 255
+                ];
+            };
+
         let ret = new Float32Array([
             0, 0, 0, 0,
             1, 1, 1, 1
@@ -644,7 +648,7 @@ class ContourSeries extends ScatterSeries {
             const flattenedData = [];
 
             for (const stop of colorAxisStops) {
-                flattenedData.push(...this.colorToArray(stop[1]));
+                flattenedData.push(...colorToArray(stop[1]));
             }
             ret = new Float32Array(flattenedData);
         }
