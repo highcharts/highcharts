@@ -634,7 +634,7 @@ class ContourSeries extends ScatterSeries {
         return [r, g, b];
     }
     private getColorAxisStopsData() : { array: Float32Array, length: number } {
-        const colorAxisStops = (this.chart?.options?.colorAxis as any).stops;
+        const colorAxisStops = (this.chart?.options?.colorAxis as any)?.stops;
         let ret = new Float32Array([
             0, 0, 0, 0,
             1, 1, 1, 1
