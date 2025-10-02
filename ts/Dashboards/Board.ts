@@ -383,7 +383,7 @@ class Board {
      * @internal
      *
      */
-    private initEditMode():void {
+    private initEditMode(): void {
         if (Dashboards.EditMode) {
             this.editMode = new Dashboards.EditMode(
                 this,
@@ -591,7 +591,7 @@ namespace Board {
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | Datagrid component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | grid component}
          *
          **/
         components?: Array<Partial<ComponentType['options']>>;

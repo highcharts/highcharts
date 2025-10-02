@@ -98,8 +98,8 @@ Dashboards.board('container', {
         connector: {
             id: 'climate-data'
         },
-        type: 'DataGrid',
-        dataGridOptions: {
+        type: 'Grid',
+        gridOptions: {
             credits: {
                 enabled: false
             },

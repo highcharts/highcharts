@@ -33,7 +33,7 @@ const rnaNewsConnector = new HighchartsConnectors.Morningstar.RNANewsConnector({
 
 await rnaNewsConnector.load();
 
-new DataGrid.DataGrid('container', {
+new Grid.Grid('container', {
     dataTable: rnaNewsConnector,
     editable: false,
     columns: {
@@ -75,9 +75,9 @@ Dashboards.board('container', {
             connector: {
                 id: 'rna'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             title: 'Regulatory News for Tesco',
-            dataGridOptions: {
+            gridOptions: {
                 editable: false,
                 columns: {
                     Day: {

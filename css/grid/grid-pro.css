@@ -1,0 +1,256 @@
+/**
+ * @license Highcharts Grid Pro v@product.version@
+ *
+ * (c) 2009-2025 Highsoft AS
+ *
+ * License: www.highcharts.com/license
+ */
+
+@import url("./grid-lite.css");
+
+/* Grid Pro specific styles */
+
+.hcg-container {
+    /* CSS helpers */
+    --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
+
+    /* Negative colors */
+    --ig-negative-border-size: var(--hcg-negative-border-size, var(--ig-highlight-border-size));
+
+    /* Neutral colors */
+    --ig-neutral-border-size: var(--hcg-neutral-border-size, var(--ig-highlight-border-size));
+
+    /* Positive colors */
+    --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
+
+    /* Notification fonts */
+    --ig-notification-font-weight: var(--hcg-notification-font-weight, var(--ig-font-weight));
+    --ig-notification-font-size: var(--hcg-notification-font-size, var(--ig-font-size));
+    --ig-notification-font-family:
+        var(
+            --hcg-notification-font-family,
+            var(--ig-font-family)
+        );
+    --ig-notification-color: var(--hcg-notification-color, var(--ig-color));
+    --ig-notification-font:
+        var(--ig-notification-font-weight)
+        var(--ig-notification-font-size)
+        var(--ig-notification-font-family);
+    --ig-notification-text-align:
+        var(
+            --hcg-notification-text-align,
+            var(--ig-text-align)
+        );
+
+    /* Notification padding */
+    --ig-notification-horizontal-padding:
+        var(
+            --hcg-notification-horizontal-padding,
+            var(--hcg-notification-padding, var(--ig-horizontal-padding))
+        );
+    --ig-notification-vertical-padding:
+        var(
+            --hcg-notification-vertical-padding,
+            var(
+                --hcg-notification-padding,
+                var(--ig-vertical-padding)
+            )
+        );
+    --ig-notification-padding: var(--ig-notification-vertical-padding) var(--ig-notification-horizontal-padding);
+
+    /* Notification border */
+    --ig-notification-border-radius: var(--hcg-notification-border-radius, var(--ig-border-radius));
+    --ig-notification-border-width: var(--hcg-notification-border-width, 1px);
+    --ig-notification-border-style: var(--hcg-notification-border-style, solid);
+    --ig-notification-border-color: var(--hcg-notification-border-color, var(--ig-color));
+    --ig-notification-border:
+        var(
+            --ig-notification-border-width
+        ) var(--ig-notification-border-style) var(--ig-notification-border-color);
+}
+
+.hcg-table tbody tr td.hcg-negative::before,
+.hcg-table tbody tr:has(.hcg-negative-row) td::before,
+.hcg-table tbody tr td.hcg-neutral::before,
+.hcg-table tbody tr:has(.hcg-neutral-row) td::before,
+.hcg-table tbody tr td.hcg-positive::before,
+.hcg-table tbody tr:has(.hcg-positive-row) td::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.hcg-table tbody tr td.hcg-negative,
+.hcg-table tbody tr:has(.hcg-negative-row) td {
+    background: var(--ig-negative-background) !important;
+    color: var(--ig-negative-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-negative::before {
+    border: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+}
+
+.hcg-table tbody tr:has(.hcg-negative-row) td::before {
+    border-top: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+    border-bottom: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-neutral,
+.hcg-table tbody tr:has(.hcg-neutral-row) td {
+    background: var(--ig-neutral-background) !important;
+    color: var(--ig-neutral-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-neutral::before {
+    border: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+}
+
+.hcg-table tbody tr:has(.hcg-neutral-row) td::before {
+    border-top: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+    border-bottom: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-positive,
+.hcg-table tbody tr:has(.hcg-positive-row) td {
+    background: var(--ig-positive-background) !important;
+    color: var(--ig-positive-color) !important;
+}
+
+.hcg-table tbody tr td.hcg-positive::before {
+    border: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+}
+
+.hcg-table tbody tr:has(.hcg-positive-row) td::before {
+    border-top: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+    border-bottom: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+}
+
+.hcg-no-padding {
+    padding: 0 !important;
+}
+
+.hcg-table tbody td.hcg-edited-cell {
+    padding: 0;
+}
+
+.hcg-cell-editing-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    padding-left: inherit;
+    z-index: 1;
+    background: #b7d4ff;
+    box-shadow: inset 0 0 0 1px #0000ed;
+    display: flex;
+    align-items: center;
+}
+
+.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width),
+.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width):focus,
+.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width),
+.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width):focus {
+    border-width: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    outline: none;
+    float: left;
+    font: var(--ig-font);
+    padding-left: inherit;
+    background: transparent;
+}
+
+.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width),
+.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width):focus,
+.hcg-table tbody td.hcg-edited-cell-error select,
+.hcg-table tbody td.hcg-edited-cell-error select:focus {
+    color: var(--ig-color);
+    box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
+    background-color: var(--ig-negative-background) !important;
+}
+
+/* Grid Pro Credits Pro styles */
+.hcg-credits-container.hcg-credits-pro {
+    text-align: var(--ig-credits-text-align);
+    padding: var(--ig-credits-padding);
+}
+
+.hcg-credits-container.hcg-credits-pro .hcg-credits {
+    color: var(--ig-credits-color);
+    font-size: var(--ig-credits-font-size);
+    text-decoration: none;
+    display: inline-block;
+}
+
+/*
+ * When custom credits text is provided in Grid Pro, the anchor element
+ * is no longer empty. In that case, hide the default logo background
+ * coming from Grid Lite and let the text be visible instead.
+ */
+.hcg-credits-container.hcg-credits-pro .hcg-credits:not(:empty) {
+    background-image: none;
+
+    /* Allow text to size naturally instead of the fixed logo size */
+    width: auto;
+    height: auto;
+}
+
+/* Notification container */
+.hcg-notification {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 10px;
+    width: calc(100% - 20px);
+    display: none;
+    padding: var(--ig-notification-padding);
+    font: var(--ig-notification-font);
+    background: var(--ig-background);
+    border-radius: var(--ig-notification-border-radius);
+    border: var(--ig-notification-border);
+    box-shadow: 0 0 15px 1px #00000030;
+}
+
+/* Notification states */
+.hcg-notification-error {
+    color: var(--ig-negative-color);
+    background: var(--ig-negative-background);
+    border-color: var(--ig-negative-border-color);
+}
+
+.hcg-notification-warning {
+    color: var(--ig-neutral-color);
+    background: var(--ig-neutral-background);
+    border-color: var(--ig-neutral-border-color);
+}
+
+.hcg-notification-success {
+    color: var(--ig-positive-color);
+    background: var(--ig-positive-background);
+    border-color: var(--ig-positive-border-color);
+}
+
+/* Notification animation */
+.hcg-notification-animation {
+    display: block;
+    animation: notification-animation 0.5s;
+}
+
+@keyframes notification-animation {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

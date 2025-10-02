@@ -22,7 +22,7 @@
 
 import type Component from '../Component';
 import type Globals from '../../Globals';
-import type Options from './DataGridComponentOptions';
+import type { Options } from './GridComponentOptions';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import U from '../../../Core/Utilities.js';
@@ -36,9 +36,9 @@ const {
  *
  * */
 
-const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
-    gridClassName: 'dataGrid-container',
-    gridID: 'dataGrid-' + uniqueKey(),
+const GridComponentDefaults: Globals.DeepPartial<Options> = {
+    gridClassName: 'grid-container',
+    gridID: 'grid-' + uniqueKey(),
     gridOptions: {},
     editableOptions: [
         {
@@ -140,8 +140,8 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
             const parentRow = inputElement
-                .closest('.highcharts-datagrid-row');
-            const cell = inputElement.closest('.highcharts-datagrid-cell');
+                .closest('.highcharts-grid-row');
+            const cell = inputElement.closest('.highcharts-grid-cell');
 
             if (
                 parentRow &&
@@ -186,4 +186,4 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
  *
  * */
 
-export default DataGridComponentDefaults;
+export default GridComponentDefaults;

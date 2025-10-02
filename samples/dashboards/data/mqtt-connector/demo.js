@@ -25,11 +25,11 @@ let dashboard;
 const topicMap = {
     'highcharts/topic1': {
         chart: 'column-chart-1',
-        dataGrid: 'data-grid-1'
+        grid: 'data-grid-1'
     },
     'highcharts/topic2': {
         chart: 'column-chart-2',
-        dataGrid: 'data-grid-2'
+        grid: 'data-grid-2'
     }
 };
 
@@ -67,8 +67,8 @@ const chartOptions = {
     }
 };
 
-// Options for datagrid
-const dataGridOptions = {
+// Options for grid
+const gridOptions = {
     cellHeight: 30,
     editable: false,
     credits: {
@@ -192,7 +192,7 @@ async function createDashboard() {
             }
         }, {
             renderTo: 'data-grid-1',
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'mqtt-data-1'
             },
@@ -202,7 +202,7 @@ async function createDashboard() {
                     autoScroll: true
                 }
             },
-            dataGridOptions
+            gridOptions
         }, {
             renderTo: 'column-chart-2',
             type: 'Highcharts',
@@ -224,7 +224,7 @@ async function createDashboard() {
             }
         }, {
             renderTo: 'data-grid-2',
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'mqtt-data-2'
             },
@@ -234,7 +234,7 @@ async function createDashboard() {
                     autoScroll: true
                 }
             },
-            dataGridOptions: dataGridOptions
+            gridOptions: gridOptions
         }],
         gui: {
             layouts: [{

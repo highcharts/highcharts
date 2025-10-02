@@ -37,14 +37,14 @@ Dashboards.board('container', {
         connector: {
             id: 'conn-raw'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         title: 'Google Sheet Raw'
     }, {
         renderTo: 'dashboard-col-1',
         connector: {
             id: 'conn-mod'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         title: 'Google Sheet Modified'
     }]
 });

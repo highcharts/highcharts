@@ -508,7 +508,7 @@ function climate() {
         // const showCelsius = scale === 'C';
         if (newData) {
             // await selectionGrid.update({
-            //     dataGridOptions: {
+            //     gridOptions: {
             //         columns: {
             //             TNC: {
             //                 show: showCelsius
@@ -540,7 +540,7 @@ function climate() {
             // });
         }
 
-        // selectionGrid.dataGrid.scrollToRow(
+        // selectionGrid.grid.scrollToRow(
         //   selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
         // );
 
@@ -660,7 +660,7 @@ function minimal() {
             connector: {
                 id: 'Vitamin'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             sync: {
                 highlight: true
             }
@@ -1034,7 +1034,7 @@ function extremes() {
             connector: {
                 id: 'Population'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             sync: {
                 extremes: true
             }

@@ -11,7 +11,7 @@ Dashboards.board('container', {
     },
     components: [{
         renderTo: 'fetched-columns',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'fetched-data'
         }

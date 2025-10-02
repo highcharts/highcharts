@@ -1,4 +1,4 @@
-describe('Keyboard navigation in DataGrid.', () => {
+describe('Keyboard navigation in Grid.', () => {
     before(() => {
         cy.visit('/grid-pro/basic/overview');
     });

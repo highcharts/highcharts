@@ -41,7 +41,7 @@ const {
  * table instance.
  */
 class SharedComponentState
-implements Serializable<SharedComponentState, SharedComponentState.JSON> {
+    implements Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /* *
      *
@@ -233,23 +233,23 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
         point?: SharedComponentState.PresentationHoverPointType | HTMLElement,
         eventDetail?: SharedComponentState.HoverPointEventDetails
     ): void {
-        const isDataGrid = eventDetail && eventDetail.isDataGrid;
-        this.hoverPoint = isDataGrid ? void 0 : point;
+        const isGrid = eventDetail && eventDetail.isGrid;
+        this.hoverPoint = isGrid ? void 0 : point;
 
         if (point instanceof HTMLElement) {
-            this.hoverRow = isDataGrid ? point : void 0;
+            this.hoverRow = isGrid ? point : void 0;
         }
 
         this.emit({
             type: 'afterHoverPointChange',
-            hoverPoint: isDataGrid ? void 0 : this.hoverPoint,
-            hoverRow: isDataGrid ? this.hoverRow : void 0,
+            hoverPoint: isGrid ? void 0 : this.hoverPoint,
+            hoverRow: isGrid ? this.hoverRow : void 0,
             detail: eventDetail
         });
     }
 
     public getHoverPoint():
-    (SharedComponentState.PresentationHoverPointType|undefined) {
+        (SharedComponentState.PresentationHoverPointType | undefined) {
         return this.hoverPoint;
     }
 
@@ -360,7 +360,7 @@ namespace SharedComponentState {
      * Event types related to the column order.
      */
     export type ColumnOrderEventType = (
-        'columnOrderChange'|'afterColumnOrderChange'
+        'columnOrderChange' | 'afterColumnOrderChange'
     );
 
     export type ColumnVisibilityEventType = (
@@ -388,7 +388,7 @@ namespace SharedComponentState {
 
     export interface HoverPointEventDetails {
         detail?: Globals.AnyRecord;
-        isDataGrid?: boolean;
+        isGrid?: boolean;
         sender?: string
     }
 
@@ -437,7 +437,7 @@ namespace SharedComponentState {
         type: selectionEventType;
         detail?: Globals.AnyRecord,
         reset: boolean;
-        selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
+        selection: Record<string, { min?: number | undefined; max?: number | undefined }>;
     }
 
     /**

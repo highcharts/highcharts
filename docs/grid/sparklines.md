@@ -14,7 +14,7 @@ Line, bar, column, area and pie are preconfigured as generic, minimalistic spark
 
 
 ## Setup
-If you’re simply including the `highcharts.js` file, just make sure to load it before `datagrid.js`. If you’re using ES Modules or importing the bundles in the opposite order, you’ll also need to manually register Highcharts by calling `SparklineRenderer.useHighcharts(Highcharts)` or `Grid.ColumnRendererRegistry.types.sparkline.useHighcharts(Highcharts)`.
+If you’re simply including the `highcharts.js` file, just make sure to load it before `grid-pro.js`. If you’re using ES Modules or importing the bundles in the opposite order, you’ll also need to manually register Highcharts by calling `SparklineRenderer.useHighcharts(Highcharts)` or `Grid.ColumnRendererRegistry.types.sparkline.useHighcharts(Highcharts)`.
 
 Check out the [sparklines demo](https://www.highcharts.com/demo/grid/sparklines) for how to implement sparklines with different configuration options and read more below.
 

@@ -1,4 +1,4 @@
-describe('Highlight sync after sorting datagrid column.', () => {
+describe('Highlight sync after sorting grid column.', () => {
     before(()=>{
         cy.visit('/dashboards/cypress/component-grid');
     });

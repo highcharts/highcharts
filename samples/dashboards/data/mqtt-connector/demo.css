@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 :root {
@@ -37,7 +37,7 @@
 
 /**
  *
- *  Dashboards/Datagrid specific
+ *  Dashboards/grid specific
  *
  **/
 .highcharts-dashboards-wrapper {
@@ -50,7 +50,7 @@
     max-height: var(--chart-height);
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     font-size: 0.8em;
     max-height: 100%;
 }

@@ -13,8 +13,6 @@ import './es-modules/Grid/Pro/CellEditing/CellEditingComposition';
 import './es-modules/Grid/Pro/Dash3Compatibility';
 import './es-modules/Grid/Pro/Credits/CreditsProComposition';
 import './es-modules/Grid/Pro/ColumnTypes/ValidatorComposition';
-import './es-modules/Grid/Pro/CellRendering/CellRenderer';
-import './es-modules/Grid/Pro/CellRendering/CellContentPro';
 import './es-modules/Grid/Pro/CellRendering/CellRenderersComposition';
 import './es-modules/Grid/Pro/CellRendering/Renderers/TextRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/CheckboxRenderer';
@@ -26,7 +24,6 @@ import './es-modules/Grid/Pro/CellRendering/Renderers/TimeInputRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/NumberInputRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/SparklineRenderer';
 
-export { /** @deprecated Use `Grid` instead. */ default as DataGrid } from './es-modules/Grid/Core/Grid.js';
 export { default as Grid } from './es-modules/Grid/Core/Grid.js';
 export { default as Column } from './es-modules/Grid/Core/Table/Column.js';
 export { default as ColumnResizing } from "./es-modules/Grid/Core/Table/ColumnResizing/ColumnResizing";
@@ -42,10 +39,6 @@ export { default as DataModifier } from './es-modules/Data/Modifiers/DataModifie
 export { default as DataPool } from './es-modules/Data/DataPool';
 export { default as DataTable } from './es-modules/Data/DataTable';
 
-/** @deprecated Use `grid` instead. */
-export const dataGrid: typeof Grid.grid;
-/** @deprecated Use `grids` instead. */
-export const dataGrids: typeof Grid.grids;
 export const grid: typeof Grid.grid;
 export const grids: typeof Grid.grids;
 export const product: 'Grid Pro';
@@ -53,6 +46,4 @@ export const defaultOptions: typeof Defaults.defaultOptions;
 export const setOptions: typeof Defaults.setOptions;
 export const win: typeof Globals.win;
 
-/** @deprecated Use `Grid` instead. */
-export as namespace DataGrid;
-export as namespace Grid;
+export as namespace Grid; 

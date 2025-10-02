@@ -92,7 +92,7 @@
             "Core/Defaults",
             "Core/Globals",
             "Core/Renderer/RendererUtilities",
-            "Core/Utilities"
+            "Dashboards/Globals"
         ],
         "included": [],
         "namespacePath": ""

@@ -17,7 +17,6 @@ import "./es-modules/Data/Modifiers/ChainModifier";
 import "./es-modules/Data/Modifiers/InvertModifier";
 import "./es-modules/Data/Modifiers/RangeModifier";
 import "./es-modules/Data/Modifiers/SortModifier";
-import "./es-modules/Data/Modifiers/FilterModifier";
 
 export { default as AST } from './es-modules/Core/Renderer/HTML/AST'
 export { default as Board } from "./es-modules/Dashboards/Board";
@@ -26,8 +25,7 @@ export { default as ComponentRegistry } from "./es-modules/Dashboards/Components
 export { default as PluginHandler } from "./es-modules/Dashboards/PluginHandler";
 export { default as Sync } from "./es-modules/Dashboards/Components/Sync/Sync";
 export { default as HighchartsPlugin } from "./es-modules/Dashboards/Plugins/HighchartsPlugin";
-export { /** @deprecated Use `GridPlugin` instead. */  default as DataGridPlugin } from "./es-modules/Dashboards/Plugins/DataGridPlugin";
-export { default as GridPlugin } from "./es-modules/Dashboards/Plugins/DataGridPlugin";
+export { default as GridPlugin } from "./es-modules/Dashboards/Plugins/GridPlugin";
 
 export { default as DataConnector } from "./es-modules/Data/Connectors/DataConnector";
 export { default as DataConverter } from "./es-modules/Data/Converters/DataConverter";

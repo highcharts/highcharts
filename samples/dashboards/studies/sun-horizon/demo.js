@@ -991,8 +991,8 @@ const createBoard = async () => {
             connector: {
                 id: 'times'
             },
-            type: 'DataGrid',
-            dataGridOptions: {
+            type: 'Grid',
+            gridOptions: {
                 credits: {
                     enabled: false
                 },

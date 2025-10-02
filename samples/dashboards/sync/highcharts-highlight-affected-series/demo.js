@@ -57,7 +57,7 @@ const board = Dashboards.board('container', {
         }
     }, {
         renderTo: 'dashboard-col-1',
-        type: 'DataGrid',
+        type: 'Grid',
         title: {
             text: 'csv 1'
         },
@@ -67,7 +67,7 @@ const board = Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             }
