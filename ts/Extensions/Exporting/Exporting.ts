@@ -210,7 +210,6 @@ export const domurl = win.URL || win.webkitURL || win;
  *
  * @param {Highcharts.Chart} chart
  * The chart instance.
- *
  */
 class Exporting {
 

@@ -135,8 +135,8 @@ function arrowHalf(
  *
  * @private
  *
- * @param {typeof SVGRenderer} SVGRendererClass
- *        The SVGRenderer class to extend.
+ * @param SVGRendererClass
+ * The SVGRenderer class to extend.
  */
 function compose(
     SVGRendererClass: typeof SVGRenderer
