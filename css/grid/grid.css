@@ -599,14 +599,13 @@
     width: 5px;
     right: -3px;
     height: 100%;
-    cursor: col-resize;
     user-select: none;
     z-index: 10;
 }
 
-.hcg-table thead th .hcg-column-resizer.hovered,
-.hcg-table thead th .hcg-column-resizer:hover {
+.hcg-table thead th .hcg-column-resizer.hovered {
     background: var(--ig-header-color);
+    cursor: col-resize;
 }
 
 .hcg-resize-handle-line {

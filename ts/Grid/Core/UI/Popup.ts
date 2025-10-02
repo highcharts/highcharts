@@ -148,6 +148,12 @@ abstract class Popup {
         this.content = makeHTMLElement('div', {
             className: Globals.getClassName('popupContent')
         });
+
+        const { header } = this.options;
+        if (header) {
+            this.addHeader(header.label, header.category);
+        }
+
         this.renderContent(this.content);
         this.container.appendChild(this.content);
 
@@ -265,6 +271,45 @@ abstract class Popup {
     }
 
     /**
+     * Adds a header to the context menu.
+     *
+     * @param label
+     * The label shown in the header of the context menu.
+     *
+     * @param category
+     * The category shown in the header of the context menu, before the label.
+     *
+     * @returns
+     * The header element.
+     */
+    protected addHeader(
+        label: string,
+        category?: string
+    ): HTMLElement | undefined {
+        if (!this.content) {
+            return;
+        }
+
+        const container = makeHTMLElement('div', {
+            className: Globals.getClassName('menuPopupHeader')
+        }, this.content);
+
+        if (category) {
+            makeHTMLElement('span', {
+                className: Globals.getClassName('menuPopupHeaderCategory'),
+                innerText: category + ' '
+            }, container);
+        }
+
+        makeHTMLElement('span', {
+            className: Globals.getClassName('menuPopupHeaderName'),
+            innerText: label
+        }, container);
+
+        return container;
+    }
+
+    /**
      * Handles key down events.
      *
      * @param e
@@ -346,6 +391,20 @@ namespace Popup {
          * directly below it (`false`). Defaults to `false`.
          */
         nextToAnchor?: boolean;
+
+        /**
+         * The header of the popup.
+         */
+        header?: {
+            /**
+             * The prefix of the header label, placed before the label.
+             */
+            category?: string;
+            /**
+             * The label of the header.
+             */
+            label: string;
+        };
     }
 }
 

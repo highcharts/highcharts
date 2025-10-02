@@ -26,6 +26,9 @@ import type Button from '../../../UI/Button';
 
 import ColumnFiltering from '../../Actions/ColumnFiltering/ColumnFiltering.js';
 import Popup from '../../../UI/Popup.js';
+import U from '../../../../../Core/Utilities.js';
+
+const { merge } = U;
 
 
 /* *
@@ -75,7 +78,12 @@ class FilterPopup extends Popup {
         button: Button,
         options?: Popup.Options
     ) {
-        super(filtering.column.viewport.grid, button, options);
+        super(filtering.column.viewport.grid, button, merge({
+            header: {
+                category: 'Set filter',
+                label: filtering.column.header?.value || ''
+            }
+        }, options));
         this.filtering = filtering;
     }
 

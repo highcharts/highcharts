@@ -206,10 +206,13 @@ class ColumnsResizer {
         this.draggedColumn?.header?.htmlElement?.classList.remove(
             Globals.getClassName('resizedColumn')
         );
-        this.draggedResizeHandle?.classList.remove('hovered');
 
-        this.resizeHandleLine?.remove();
-        delete this.resizeHandleLine;
+
+        if (!this.draggedResizeHandle?.matches(':hover')) {
+            this.draggedResizeHandle?.classList.remove('hovered');
+            this.resizeHandleLine?.remove();
+            delete this.resizeHandleLine;
+        }
 
         this.dragStartX = void 0;
         this.draggedColumn = void 0;
@@ -256,6 +259,11 @@ class ColumnsResizer {
         };
 
         const onHandleMouseOver = (): void => {
+            if (this.draggedResizeHandle) {
+                return;
+            }
+            handle.classList.add('hovered');
+
             if (!this.resizeHandleLine) {
                 this.resizeHandleLine = makeHTMLElement('div', {
                     className: Globals.getClassName('resizerHandleLine')
@@ -265,10 +273,13 @@ class ColumnsResizer {
         };
 
         const onHandleMouseOut = (): void => {
-            if (!handle.classList.contains('hovered')) {
-                this.resizeHandleLine?.remove();
-                delete this.resizeHandleLine;
+            if (this.draggedResizeHandle) {
+                return;
             }
+
+            handle.classList.remove('hovered');
+            this.resizeHandleLine?.remove();
+            delete this.resizeHandleLine;
         };
 
         const handleListeners: GridEventListener[] = [{

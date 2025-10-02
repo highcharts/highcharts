@@ -108,45 +108,6 @@ abstract class ContextMenu extends Popup {
     }
 
     /**
-     * Adds a header to the context menu.
-     *
-     * @param label
-     * The label shown in the header of the context menu.
-     *
-     * @param category
-     * The category shown in the header of the context menu, before the label.
-     *
-     * @returns
-     * The header element.
-     */
-    protected addHeader(
-        label: string,
-        category?: string
-    ): HTMLElement | undefined {
-        if (!this.content) {
-            return;
-        }
-
-        const container = makeHTMLElement('div', {
-            className: Globals.getClassName('menuPopupHeader')
-        }, this.content);
-
-        if (category) {
-            makeHTMLElement('span', {
-                className: Globals.getClassName('menuPopupHeaderCategory'),
-                innerText: category + ' '
-            }, container);
-        }
-
-        makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupHeaderName'),
-            innerText: label
-        }, container);
-
-        return container;
-    }
-
-    /**
      * Adds a divider to the context menu.
      *
      * @returns
