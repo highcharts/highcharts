@@ -4,6 +4,13 @@ describe('Column Header Toolbar', () => {
         cy.visit('grid-lite/cypress/filtering');
     });
 
+    it('Inline filtering is rendered correctly.', () => {
+        cy.viewport(1900, 600);
+        cy.get('.highcharts-datagrid-column-filter-wrapper').should('have.length', 1);
+        cy.get('.highcharts-datagrid-header-cell[data-column-id="url"] .highcharts-datagrid-header-cell-icons')
+            .children().should('have.length', 1);
+    });
+
     it('One active button is present.', () => {
         cy.viewport(1900, 600);
         cy.get('.highcharts-datagrid-button.active').should('have.length', 1);
@@ -17,7 +24,8 @@ describe('Column Header Toolbar', () => {
 
     it('Clearing filter condition disactivates button.', () => {
         cy.viewport(1900, 600);
-        cy.get('.highcharts-datagrid-column-filter-wrapper').find('input').type('{backspace}{backspace}{backspace}{backspace}');
+        cy.get('.highcharts-datagrid-popup-content input')
+            .type('{backspace}{backspace}{backspace}{backspace}');
         cy.get('.highcharts-datagrid-button.active').should('have.length', 0);
         cy.get('#container').click();
         cy.get('.highcharts-datagrid-popup-content').should('not.exist');
@@ -46,7 +54,8 @@ describe('Column Header Toolbar', () => {
     it('Can navigate menu with keyboard to filtering.', () => {
         cy.viewport(800, 600);
         cy.get('.highcharts-datagrid-popup').type('{downarrow}{downarrow}{enter}');
-        cy.get('.highcharts-datagrid-column-filter-wrapper input').should('exist').type('2025-10-06{esc}{esc}{esc}{downArrow}');
+        cy.get('.highcharts-datagrid-popup-content input').should('exist')
+            .type('2025-10-06{esc}{esc}{esc}{downArrow}{downArrow}');
         cy.focused().should('have.attr', 'data-column-id', 'date')
             .parent().should('have.attr', 'data-row-id', '5');
     });
