@@ -59,7 +59,8 @@ export interface NumberFormatterCallbackFunction {
         number: number,
         decimals: number,
         decimalPoint?: string,
-        thousandsSep?: string
+        thousandsSep?: string,
+        ctx?: Chart|Object|void
     ): string;
 }
 
