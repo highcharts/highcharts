@@ -94,9 +94,17 @@ namespace OrdinalAxis {
      * */
 
     export declare class Composition extends Axis {
+
+        /** @internal */
         forceOrdinal?: boolean;
+
+        /** @internal */
         isInternal?: boolean;
+
+        /** @internal */
         ordinal: Additions;
+
+        /** @internal */
         getTimeTicks(
             normalizedInterval: Time.TimeNormalizedObject,
             min: number,
@@ -106,10 +114,19 @@ namespace OrdinalAxis {
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
+
+        /** @internal */
         index2val(val: number): number;
+
+        /** @internal */
         lin2val(val: number): number;
+
+        /** @internal */
         ordinal2lin: Composition['val2lin'];
+
+        /** @internal */
         val2lin(val: number, toIndex?: boolean): number;
+
     }
 
     /* *
@@ -888,13 +905,29 @@ namespace OrdinalAxis {
          *
          * */
 
+
+        /** @internal */
         public axis: Composition;
+
+        /** @internal */
         public groupIntervalFactor?: number;
+
+        /** @internal */
         public index?: Record<string, Array<number>> = {};
+
+        /** @internal */
         public offset?: number;
+
+        /** @internal */
         public overscrollPointsRange?: number;
+
+        /** @internal */
         public positions?: Array<number>;
+
+        /** @internal */
         public slope?: number;
+
+        /** @internal */
         public originalOrdinalRange?: number;
 
         /* *

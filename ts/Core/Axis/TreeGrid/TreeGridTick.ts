@@ -61,12 +61,25 @@ interface LabelIconObject {
 }
 
 export interface TreeGridTick extends Tick {
+
+    /** @internal */
     axis: TreeGridAxisComposition;
+
+    /** @internal */
     options: TreeGridAxisOptions;
+
+    /** @internal */
     treeGrid: TreeGridTickAdditions;
+
+    /** @internal */
     collapse(redraw?: boolean): void;
+
+    /** @internal */
     expand(redraw?: boolean): void;
+
+    /** @internal */
     toggleCollapse(redraw?: boolean): void;
+
 }
 
 /* *
@@ -430,7 +443,10 @@ class TreeGridTickAdditions {
      *
      * */
 
+    /** @internal */
     public tick: TreeGridTick;
+
+    /** @internal */
     public labelIcon?: SVGElement;
 
     /* *

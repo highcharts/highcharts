@@ -521,11 +521,23 @@ class AxisAdditions {
      *
      * */
 
+
+    /** @internal */
     axis: StackingAxis;
+
+    /** @internal */
     oldStacks: Record<string, Record<string, StackItem>> = {};
+
+    /** @internal */
     stacks: Record<string, Record<string, StackItem>> = {};
+
+    /** @internal */
     stacksTouched: number = 0;
+
+    /** @internal */
     stackTotalGroup?: SVGElement;
+
+    /** @internal */
     usePercentage?: boolean;
 
     /* *

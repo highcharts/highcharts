@@ -150,25 +150,96 @@ class StackItem {
      *
      * */
 
+    /**
+     * Alignment settings
+     * @name Highcharts.StackItemObject#alignOptions
+     * @type {Highcharts.AlignObject}
+     */
     public alignOptions: AlignOptions;
+
+    /**
+     * Related axis
+     * @name Highcharts.StackItemObject#axis
+     * @type {Highcharts.Axis}
+     */
     public axis: StackingAxis;
+
+    /** @internal */
     public base?: string;
+
+    /**
+     * Cumulative value of the stacked data points
+     * @name Highcharts.StackItemObject#cumulative
+     * @type {number}
+     */
     public cumulative: number | null;
+
+    /** @internal */
     public hasValidPoints: boolean;
+
+    /**
+     * True if on the negative side
+     * @name Highcharts.StackItemObject#isNegative
+     * @type {boolean}
+     */
     public isNegative: boolean;
+
+    /**
+     * Related SVG element
+     * @name Highcharts.StackItemObject#label
+     * @type {Highcharts.SVGElement}
+     */
     public label?: SVGLabel;
+
+    /** @internal */
     public leftCliff: number;
+
+    /**
+     * Related stack options
+     * @name Highcharts.StackItemObject#options
+     * @type {Highcharts.YAxisStackLabelsOptions}
+     */
     public options: StackLabelOptions;
+
+    /** @internal */
     public padding?: number;
+
+    /** @internal */
     public points: Record<string, Array<number>>;
+
+    /** @internal */
     public rightCliff: number;
+
+    /** @internal */
     public rotation?: number;
+
+    /** @internal */
     public shadow?: SVGElement;
+
+    /** @internal */
     public shadowGroup?: SVGElement;
+
+    /** @internal */
     public stack?: string|number;
+
+    /** @internal */
     public textAlign: AlignValue;
+
+    /**
+     * Total value of the stacked data points
+     * @name Highcharts.StackItemObject#total
+     * @type {number}
+     */
     public total: number | null;
+
+    /** @internal */
     public touched?: number;
+
+    /**
+     * Shared x value of the stack
+     * @name Highcharts.StackItemObject#x
+     * @type {number}
+     */
     public x: number;
 
     /* *

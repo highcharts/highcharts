@@ -149,42 +149,100 @@ class Tick {
      *
      * */
 
+    /**
+     * The related axis of the tick.
+     * @name Highcharts.Tick#axis
+     * @type {Highcharts.Axis}
+     */
     public axis: Axis;
 
+    /**
+     * The rendered grid line of the tick.
+     * @name Highcharts.Tick#gridLine
+     * @type {Highcharts.SVGElement|undefined}
+     */
     public gridLine?: SVGElement;
 
+    /** @internal */
     public isActive?: boolean;
 
+    /**
+     * True if the tick is the first one on the axis.
+     * @name Highcharts.Tick#isFirst
+     * @readonly
+     * @type {boolean|undefined}
+     */
     public isFirst?: boolean;
 
+    /** @internal */
     public isNew: boolean = true;
 
+    /** @internal */
     public isNewLabel: boolean = true;
 
+    /**
+     * True if the tick is the last one on the axis.
+     * @name Highcharts.Tick#isLast
+     * @readonly
+     * @type {boolean|undefined}
+     */
     public isLast?: boolean;
 
+    /**
+     * The rendered text label of the tick.
+     * @name Highcharts.Tick#label
+     * @type {Highcharts.SVGElement|undefined}
+     */
     public label?: SVGElement;
 
+    /** @internal */
     public labelPos?: PositionObject;
 
+    /**
+     * The rendered mark of the tick.
+     * @name Highcharts.Tick#mark
+     * @type {Highcharts.SVGElement|undefined}
+     */
     public mark?: SVGElement;
 
+    /** @internal */
     public movedLabel?: SVGElement;
 
+    /** @internal */
     public options?: DeepPartial<AxisOptions>;
 
+    /** @internal */
     public parameters: Tick.ParametersObject;
 
+    /**
+     * The logical position of the tick on the axis in terms of axis values.
+     * @name Highcharts.Tick#pos
+     * @type {number}
+     */
     public pos: number;
 
+    /** @internal */
     public rotation?: number;
 
+    /** @internal */
     public shortenLabel?: Function;
 
+    /** @internal */
     public slotWidth?: number;
 
+    /**
+     * The mark offset of the tick on the axis. Usually `undefined`, numeric
+     * for grid axes.
+     * @name Highcharts.Tick#tickmarkOffset
+     * @type {number|undefined}
+     */
     public tickmarkOffset?: number;
 
+    /**
+     * The tick type, which can be `"minor"`, or an empty string.
+     * @name Highcharts.Tick#type
+     * @type {string}
+     */
     public type: string;
 
     /* *

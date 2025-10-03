@@ -72,6 +72,15 @@ class PlotLineOrBand {
      *
      * */
 
+    /**
+     * Composes `PlotLineOrBand` with `Axis` and `Chart`.
+     *
+     * @param {Highcharts.Chart} ChartClass
+     * Chart class to compose.
+     *
+     * @param {Highcharts.Axis} AxisClass
+     * Axis class to compose.
+     */
     public static compose<T extends typeof Axis>(
         ChartClass: Chart,
         AxisClass: T
@@ -133,6 +142,12 @@ class PlotLineOrBand {
      *
      * */
 
+    /**
+     * Related axis.
+     *
+     * @name Highcharts.PlotLineOrBand#axis
+     * @type {Highcharts.Axis}
+     */
     public axis: PlotLineOrBandAxis.Composition;
 
     /**
@@ -142,10 +157,35 @@ class PlotLineOrBand {
      * @type {string}
      */
     public id?: string;
+
+    /** @internal */
     public isActive?: boolean;
+
+    /** @internal */
     public eventsAdded?: boolean;
+
+    /**
+     * SVG element of the label.
+     *
+     * @name Highcharts.PlotLineOrBand#label
+     * @type {Highcharts.SVGElement}
+     */
     public label?: SVGElement;
+
+    /**
+     * Options of the plot line or band.
+     *
+     * @name Highcharts.PlotLineOrBand#options
+     * @type {AxisPlotBandsOptions|AxisPlotLinesOptions}
+     */
     public options: (PlotBandOptions|PlotLineOptions);
+
+    /**
+     * SVG element of the plot line or band.
+     *
+     * @name Highcharts.PlotLineOrBand#svgElem
+     * @type {Highcharts.SVGElement}
+     */
     public svgElem?: SVGElement;
 
     /* *

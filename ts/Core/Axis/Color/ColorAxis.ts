@@ -132,6 +132,8 @@ class ColorAxis extends Axis implements AxisBase {
      *
      * */
 
+
+    /** @internal */
     public static defaultLegendLength: number = 200;
 
     /**
@@ -147,6 +149,8 @@ class ColorAxis extends Axis implements AxisBase {
      *
      * */
 
+
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart,
         FxClass: typeof Fx,
@@ -185,15 +189,35 @@ class ColorAxis extends Axis implements AxisBase {
      *
      * */
 
+
+    /** @internal */
     public added?: boolean;
+
+    /** @internal */
     public chart!: Chart;
+
+    /** @internal */
     public coll = 'colorAxis' as const;
+
+    /** @internal */
     public dataClasses!: Array<ColorAxis.DataClassesOptions>;
+
+    /** @internal */
     public legendColor?: GradientColor;
+
+    /** @internal */
     public legendItem?: LegendItemObject;
+
+    /** @internal */
     public name?: string;
+
+    /** @internal */
     public options!: ColorAxis.Options;
+
+    /** @internal */
     public stops!: GradientColor['stops'];
+
+    /** @internal */
     public visible: boolean = true;
 
     /* *
@@ -701,7 +725,10 @@ class ColorAxis extends Axis implements AxisBase {
         chart.isDirtyLegend = true;
     }
 
-    //   Removing the whole axis (#14283)
+    /**
+     * Removing the whole axis (#14283)
+     * @internal
+     */
     public destroy(): void {
         this.chart.isDirtyLegend = true;
 

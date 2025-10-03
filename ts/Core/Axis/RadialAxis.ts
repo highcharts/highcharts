@@ -135,59 +135,200 @@ namespace RadialAxis {
     }
 
     export declare class AxisComposition extends Axis {
+
+        /** @internal */
         angleRad: number;
+
+        /** @internal */
         autoConnect?: boolean;
+
+        /** @internal */
         center: Array<number>;
+
+        /** @internal */
         endAngleRad: number;
+
+        /** @internal */
         isCircular?: boolean;
+
+        /** @internal */
         isHidden?: boolean;
+
+        /** @internal */
         labelCollector?: Chart.LabelCollectorFunction;
+
+        /** @internal */
         max: number;
+
+        /** @internal */
         min: number;
+
+        /** @internal */
         minPointOffset: number;
+
+        /** @internal */
         normalizedEndAngleRad: number;
+
+        /** @internal */
         normalizedStartAngleRad: number;
+
+        /** @internal */
         offset: number;
+
+        /** @internal */
         options: RadialAxisOptions;
+
+        /** @internal */
         pane: Pane;
+
+        /** @internal */
         isRadial: boolean;
+
+        /** @internal */
         sector?: number;
+
+        /** @internal */
         startAngleRad: number;
+
+        /**
+         * Attach and return collecting function for labels in radial axis for
+         * anti-collision.
+         *
+         * @internal
+         */
         createLabelCollector(): Chart.LabelCollectorFunction;
+
+        /**
+         * In case of auto connect, add one closestPointRange to the max value
+         * right before tickPositions are computed, so that ticks will extend
+         * passed the real max.
+         * @internal
+         */
         beforeSetTickPositions(): void;
+
+        /**
+         * Find the correct end values of crosshair in polar.
+         * @internal
+         */
         getCrosshairPosition(
             options: PlotLineOptions,
             x1: number,
             y1: number
         ): [(number | undefined), number, number];
+
+        /**
+         * Get the path for the axis line. This method is also referenced in the
+         * getPlotLinePath method.
+         *
+         * @internal
+         *
+         * @param {number} _lineWidth
+         * Line width is not used.
+         *
+         * @param {number} [radius]
+         * Radius of radial path.
+         *
+         * @param {number} [innerRadius]
+         * Inner radius of radial path.
+         */
         getLinePath(
             lineWidth: number,
             radius?: number,
             innerRadius?: number
         ): SVGPath;
+
+        /**
+         * Wrap the getOffset method to return zero offset for title or labels
+         * in a radial axis.
+         * @internal
+         */
         getOffset(): void;
+
+        /**
+         * Find the path for plot bands along the radial axis.
+         * @internal
+         */
         getPlotBandPath(
             from: number,
             to: number,
             options: PlotBandOptions
         ): SVGPath;
+
+        /**
+         * Find the path for plot lines perpendicular to the radial axis.
+         * @internal
+         */
         getPlotLinePath(options: PlotLineOptions): SVGPath;
+
+        /**
+         * Returns the x, y coordinate of a point given by a value and a pixel
+         * distance from center.
+         *
+         * @internal
+         *
+         * @param {number} value
+         * Point value.
+         *
+         * @param {number} [length]
+         * Distance from center.
+         */
         getPosition(
             value: number,
             length?: number
         ): PositionObject;
+
+        /**
+         * Find the position for the axis title, by default inside the gauge.
+         * @internal
+         */
         getTitlePosition(): PositionObject;
+
+        /**
+         * Translate from intermediate plotX (angle), plotY (axis.len - radius)
+         * to final chart coordinates.
+         *
+         * @internal
+         *
+         * @param {number} angle
+         * Translation angle.
+         *
+         * @param {number} radius
+         * Translation radius.
+         */
         postTranslate(
             angle: number,
             radius: number
         ): PositionObject;
+
+        /**
+         * Override the setAxisSize method to use the arc's circumference as
+         * length. This allows tickPixelInterval to apply to pixel lengths along
+         * the perimeter.
+         * @internal
+         */
         setAxisSize(): void;
+
+        /**
+         * Override setAxisTranslation by setting the translation to the
+         * difference in rotation. This allows the translate method to return
+         * angle for any given value.
+         * @internal
+         */
         setAxisTranslation(): void;
+
+        /**
+         * Merge and set options.
+         * @internal
+         */
         setOptions(userOptions: DeepPartial<RadialAxisOptions>): void;
+
     }
 
     export declare class TickComposition extends Tick {
+
+        /** @internal */
         axis: RadialAxis.AxisComposition;
+
     }
 
     export const radialDefaultOptions: RadialDefaultOptions =

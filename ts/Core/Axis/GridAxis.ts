@@ -1349,12 +1349,25 @@ class GridAxisAdditions {
     *
     * */
 
+    /** @internal */
     axis: GridAxisComposition;
+
+    /** @internal */
     axisLineExtra?: SVGElement;
+
+    /** @internal */
     upperBorder?: SVGElement;
+
+    /** @internal */
     lowerBorder?: SVGElement;
+
+    /** @internal */
     columnIndex?: number;
+
+    /** @internal */
     columns?: Array<GridAxisComposition>;
+
+    /** @internal */
     isColumn?: boolean;
 
     /* *

@@ -74,16 +74,37 @@ namespace WaterfallAxis {
     }
 
     export interface StacksItemObject {
+
+        /** @internal */
         absoluteNeg?: number;
+
+        /** @internal */
         absolutePos?: number;
+
+        /** @internal */
         connectorThreshold?: number;
+
+        /** @internal */
         label?: SVGLabel;
+
+        /** @internal */
         negTotal: number;
+
+        /** @internal */
         posTotal: number;
+
+        /** @internal */
         stackState: Array<number>;
+
+        /** @internal */
         stackTotal: number;
+
+        /** @internal */
         stateIndex: number;
+
+        /** @internal */
         threshold: number;
+
     }
 
     /* *
@@ -174,6 +195,7 @@ namespace WaterfallAxis {
      *
      * */
 
+    /** @internal */
     export class Composition {
 
         /* *
@@ -196,7 +218,9 @@ namespace WaterfallAxis {
          * */
 
         public axis: WaterfallAxis;
+
         public dummyStackItem?: StackItem;
+
         public stacks: StacksObject;
 
         /* *

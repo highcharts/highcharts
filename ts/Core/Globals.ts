@@ -117,10 +117,10 @@ declare global {
          * Easing definition
          *
          * @param pos
-         *        Current position, ranging from 0 to 1.
+         * Current position, ranging from 0 to 1.
          *
          * @return
-         *         Ease result
+         * Ease result
          */
         easeInOutSine(pos: number): number;
     }

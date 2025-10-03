@@ -153,7 +153,14 @@ namespace LogarithmicAxis {
         *
         * */
 
+        /**
+         * The axis instance.
+         */
         public axis: Composition;
+
+        /**
+         * The calculated minor tick interval.
+         */
         public minorAutoInterval?: number;
 
         /* *
@@ -278,10 +285,32 @@ namespace LogarithmicAxis {
             return positions;
         }
 
+        /**
+         * Converts a linear value to a logarithmic value.
+         *
+         * @internal
+         *
+         * @param {number} num
+         * The linear value.
+         *
+         * @return {number}
+         * The logarithmic value.
+         */
         public lin2log(num: number): number {
             return Math.pow(10, num);
         }
 
+        /**
+         * Converts a logarithmic value to a linear value.
+         *
+         * @internal
+         *
+         * @param {number} num
+         * The logarithmic value.
+         *
+         * @return {number}
+         * The linear value.
+         */
         public log2lin(num: number): number {
             return Math.log(num) / Math.LN10;
         }

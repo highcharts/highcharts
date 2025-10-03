@@ -609,6 +609,7 @@ namespace BrokenAxis {
          *
          * */
 
+        /** @internal */
         public constructor(axis: Composition) {
             this.axis = axis;
         }
@@ -619,9 +620,16 @@ namespace BrokenAxis {
          *
          * */
 
+        /** @internal */
         public axis: Composition;
+
+        /** @internal */
         public breakArray?: Array<AxisBreakObject>;
+
+        /** @internal */
         public hasBreaks?: boolean;
+
+        /** @internal */
         public unitLength?: number;
 
         /* *

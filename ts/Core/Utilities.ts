@@ -1355,10 +1355,10 @@ const timeUnits: Record<Time.TimeUnit, number> = {
  * @function Math.easeInOutSine
  *
  * @param {number} pos
- *        Current position, ranging from 0 to 1.
+ * Current position, ranging from 0 to 1.
  *
  * @return {number}
- *         Ease result
+ * Ease result
  */
 Math.easeInOutSine = function (pos: number): number {
     return -0.5 * (Math.cos(Math.PI * pos) - 1);

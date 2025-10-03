@@ -921,12 +921,26 @@ class TreeGridAxisAdditions {
      *
      * */
 
+
+    /** @internal */
     public adjustedMax?: number;
+
+    /** @internal */
     public axis: TreeGridAxisComposition;
+
+    /** @internal */
     public collapsedNodes?: GridNode[];
+
+    /** @internal */
     public mapOfPosToGridNode?: Record<string, GridNode>;
+
+    /** @internal */
     public mapOptionsToLevel?: Record<string, TreeGridAxisLabelOptions>;
+
+    /** @internal */
     public pendingSizeAdjustment: number = 0;
+
+    /** @internal */
     public tree?: TreeNode;
 
     /* *

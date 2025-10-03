@@ -112,6 +112,7 @@ class ZAxis extends Axis implements AxisBase {
      *
      * */
 
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart
     ): void {
@@ -156,8 +157,12 @@ class ZAxis extends Axis implements AxisBase {
      *
      * */
 
+    /** @internal */
     public ignoreMaxPadding?: boolean;
+
+    /** @internal */
     public ignoreMinPadding?: boolean;
+
     public isZAxis: true = true;
 
     /* *

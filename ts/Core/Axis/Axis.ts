@@ -202,37 +202,137 @@ class Axis {
      *
      * */
 
+
+    /** @internal */
     public _addedPlotLB?: boolean;
+
+    /** @internal */
     public allExtremes?: Axis.AllExtremes;
+
+    /** @internal */
     public allowZoomOutside?: boolean;
+
+    /** @internal */
     public alternateBands!: Record<string, PlotLineOrBand>;
+
+    /** @internal */
     public autoRotation?: Array<number>;
+
+    /** @internal */
     public axisGroup?: SVGElement;
+
+    /** @internal */
     public axisLine?: SVGElement;
+
+    /** @internal */
     public axisParent?: SVGElement;
+
+    /** @internal */
     public axisPointRange?: number;
+
+    /** @internal */
     public axisTitle?: SVGElement;
+
+    /** @internal */
     public axisTitleMargin?: number;
+
+    /** @internal */
     public bottom!: number;
+
+    /**
+     * If categories are present for the axis, names are used instead of
+     * numbers for that axis.
+     *
+     * Since Highcharts 3.0, categories can also be extracted by giving each
+     * point a name and setting axis type to `category`. However, if you
+     * have multiple series, best practice remains defining the `categories`
+     * array.
+     *
+     * @see [xAxis.categories](/highcharts/xAxis.categories)
+     *
+     * @name Highcharts.Axis#categories
+     * @type {Array<string>}
+     * @readonly
+     */
     public categories?: Array<string>;
+
+    /**
+     * The Chart that the axis belongs to.
+     *
+     * @name Highcharts.Axis#chart
+     * @type {Highcharts.Chart}
+     */
     public chart!: Chart;
+
+    /** @internal */
     public closestPointRange?: number;
+
+    /**
+     * The collection where the axis belongs, for example `xAxis`, `yAxis`
+     * or `colorAxis`. Corresponds to properties on Chart, for example
+     * {@link Chart.xAxis}.
+     *
+     * @name Highcharts.Axis#coll
+     * @type {string}
+     */
     public coll!: AxisCollectionKey;
+
+    /** @internal */
     public cross?: SVGElement;
+
+    /**
+     * The processed crosshair options.
+     *
+     * @name Highcharts.Axis#crosshair
+     * @type {boolean|Highcharts.AxisCrosshairOptions}
+     */
     public crosshair?: AxisCrosshairOptions;
+
+    /** @internal */
     public dataMax?: number;
+
+    /** @internal */
     public dataMin?: number;
+
+    /** @internal */
     public eventArgs?: AxisSetExtremesEventObject;
+
+    /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
+
+    /** @internal */
     public expectedSpace: number|undefined;
+
+    /** @internal */
     public finalTickAmt?: number;
+
+    /** @internal */
     public forceRedraw?: boolean;
+
+    /** @internal */
     public gridGroup?: SVGElement;
+
+    /** @internal */
     public hasNames!: boolean;
+
+    /** @internal */
     public hasVisibleSeries!: boolean;
+
+    /** @internal */
     public height!: number;
+
+    /**
+     * Whether the axis is horizontal.
+     *
+     * @name Highcharts.Axis#horiz
+     * @type {boolean|undefined}
+     */
     public horiz?: boolean;
+
+    /** @internal */
     public index!: number;
+
+    /** @internal */
     public isDirty?: boolean;
     public isLinked!: boolean;
     public isOrdinal?: boolean;

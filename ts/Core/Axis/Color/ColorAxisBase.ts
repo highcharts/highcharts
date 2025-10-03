@@ -35,15 +35,34 @@ const { merge } = U;
  * */
 
 interface ColorAxisBase extends AxisComposition {
+
+    /** @internal */
     chart: Chart;
+
+    /** @internal */
     dataClasses: Array<ColorAxisBase.DataClassOptions>;
+
+    /** @internal */
     index: number;
+
+    /** @internal */
     options: ColorAxisBase.Options;
+
+    /** @internal */
     stops: Array<GradientColorStop>;
+
+    /** @internal */
     initDataClasses(userOptions: Partial<ColorAxisBase.Options>): void;
+
+    /** @internal */
     initStops(): void;
+
+    /** @internal */
     normalizedValue(value: number): number;
+
+    /** @internal */
     toColor(value: number, point: Point): (ColorType|undefined);
+
 }
 
 /* *
