@@ -16,13 +16,14 @@
  *
  * */
 
-import Series from './Series.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { SeriesTypeRegistry } from './SeriesType';
 
 import H from '../Globals.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
+import Series from './Series.js';
 import U from '../Utilities.js';
 const {
     extend,

@@ -22,6 +22,7 @@ import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Axis from '../../Core/Axis/Axis';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type EventCallback from '../../Core/EventCallback';
 import type {
     ExportingOptions,

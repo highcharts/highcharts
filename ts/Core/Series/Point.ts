@@ -485,7 +485,9 @@ class Point {
      *
      * @private
      * @function Highcharts.Point#destroyElements
+     *
      * @param {Highcharts.Dictionary<number>} [kinds]
+     * Kinds of elements to destroy
      */
     public destroyElements(kinds?: Record<string, number>): void {
         const point = this,
@@ -878,6 +880,8 @@ class Point {
     }
 
     /**
+     * Resolve the color of a point.
+     *
      * @private
      * @function Highcharts.Point#resolveColor
      */
@@ -892,7 +896,7 @@ class Point {
             colorIndex: number;
 
         // Remove points nonZonedColor for later recalculation
-        delete (this as any).nonZonedColor;
+        delete this.nonZonedColor;
 
         if (series.options.colorByPoint) {
             if (!styledMode) {
@@ -1078,6 +1082,8 @@ class Point {
             dataOptions = seriesOptions.data;
 
         /**
+         * Perform the actual update of the point.
+         *
          * @private
          */
         function update(): void {
@@ -1403,7 +1409,7 @@ class Point {
      * @emits Highcharts.Point#event:afterSetState
      */
     public setState(
-        state?: (StatesOptionsKey|''),
+        state?: StatesOptionsKey,
         move?: boolean
     ): void {
         const point = this,

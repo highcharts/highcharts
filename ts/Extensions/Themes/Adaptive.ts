@@ -20,6 +20,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../../Core/Options';
 import type Fibonacci from '../Annotations/Types/Fibonacci';
 import type Measure from '../Annotations/Types/Measure';
