@@ -222,7 +222,7 @@ QUnit.test('Update options', function (assert) {
     const handle = chart.navigator.handles[0];
     assert.strictEqual(
         handle.attr('d'),
-        'M -0.9999999999999991 30 A 15 15 0 1 1 -0.9998 29.999999998666667 Z',
+        'M -1 30 A 15 15 0 1 1 -0.999 30 Z',
         'Navigator handles should be updated to new symbol path (circle).'
     );
     assert.strictEqual(
