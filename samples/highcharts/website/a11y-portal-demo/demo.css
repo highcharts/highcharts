@@ -268,10 +268,11 @@ select {
 }
 
 .highcharts-tooltip,
-.highcharts-tooltip text tspan {
+.highcharts-tooltip text tspan:nth-child(1),
+.highcharts-tooltip text tspan:nth-child(2) {
     fill: var(--highcharts-neutral-color-100) !important;
     color: var(--highcharts-neutral-color-100) !important;
-    font-size: 0.5rem;
+    font-size: 0.8rem;
 }
 
 .highcharts-button text {

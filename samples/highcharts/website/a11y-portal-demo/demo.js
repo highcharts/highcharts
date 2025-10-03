@@ -50,6 +50,7 @@ const chart = Highcharts.chart('container', {
     },
     tooltip: {
         backgroundColor: 'var(--highcharts-neutral-color-3)',
+        valueDecimals: 2,
         style: {
             color: 'var(--highcharts-neutral-color-100)'
         }
