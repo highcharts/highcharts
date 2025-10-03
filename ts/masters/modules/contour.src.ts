@@ -9,5 +9,6 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+import './coloraxis.src.js';
 import '../../Series/Contour/ContourSeries.js';
 export default Highcharts;

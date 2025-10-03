@@ -28,23 +28,38 @@ import U from '../../Core/Utilities.js';
 import ContourSeriesOptions from './ContourSeriesOptions';
 import ColorAxisOptions from '../../Core/Axis/Color/ColorAxisOptions.js';
 import ColorType from '../../Core/Color/ColorType.js';
+
 const { extend } = U;
 
 class ContourSeries extends ScatterSeries {
     public canvas?: HTMLCanvasElement;
+
     public context?: GPUCanvasContext | null;
+
     public adapter?: GPUAdapter | null;
+
     public device?: GPUDevice;
+
     public image?: SVGElement;
+
     public data!: Array<ContourPoint>;
+
     public points!: Array<ContourPoint>;
+
     public options!: ContourSeriesOptions;
+
     private extremesUniform?: Float32Array;
+
     private extremesUniformBuffer?: GPUBuffer;
+
     private valueExtremesUniform?: Float32Array;
+
     private valueExtremesUniformBuffer?: GPUBuffer;
+
     private contourIntervalUniformBuffer?: GPUBuffer;
+
     private smoothColoringUniformBuffer?: GPUBuffer;
+
     private showContourLinesUniformBuffer?: GPUBuffer;
 
     public triangulateData(): Delaunay<Float64Array> {
@@ -61,6 +76,8 @@ class ContourSeries extends ScatterSeries {
 
         for (let i = 0; i < length; i++) {
             const { x, y } = points[i];
+            // Temporary solution, better to completely avoid gfx
+            points[i]?.graphic?.hide();
             points2d[i * 2] = x / xDivider;
             points2d[i * 2 + 1] = y && (y / yDivider) || 0;
         }
@@ -69,9 +86,10 @@ class ContourSeries extends ScatterSeries {
     }
 
     public get3DData(): Float32Array {
-        const points3d: Float32Array = new Float32Array(this.points.length * 3);
+        const points = this.points,
+            points3d: Float32Array = new Float32Array(points.length * 3);
 
-        this.points.forEach((point, i): void => {
+        points.forEach((point, i): void => {
             points3d[i * 3] = point.x;
             points3d[i * 3 + 1] = point.y || 0;
             points3d[i * 3 + 2] = point.value || 0;
