@@ -90,6 +90,7 @@ namespace Globals {
         columnSortedDesc: 'column-sorted-desc',
         resizableContent: 'resizable-content',
         resizerHandles: 'column-resizer',
+        resizerHandleLine: 'resize-handle-line',
         resizedColumn: 'column-resized',
         creditsContainer: 'credits-container',
         creditsText: 'credits',
@@ -101,8 +102,19 @@ namespace Globals {
         loadingMessage: 'loading-message',
         paginationWrapper: 'pagination-wrapper',
         popup: 'popup',
+        button: 'button',
+        icon: 'icon',
         popupContent: 'popup-content',
-        columnFilterWrapper: 'column-filter-wrapper'
+        columnFilterWrapper: 'column-filter-wrapper',
+        toolbarButtonActiveIndicator: 'active-indicator',
+        menuPopupContainer: 'menu-popup-container',
+        menuPopupItem: 'menu-popup-item',
+        menuPopupHeader: 'menu-popup-header',
+        menuPopupHeaderCategory: 'menu-popup-header-category',
+        menuPopupHeaderName: 'menu-popup-header-name',
+        menuPopupItemIcon: 'menu-popup-item-icon',
+        menuPopupItemLabel: 'menu-popup-item-label',
+        menuPopupDivider: 'menu-popup-divider'
     } as const;
 
     export const win = window;

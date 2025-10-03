@@ -85,7 +85,10 @@ class FilterRow extends HeaderRow {
             const cell = this.createCell(column);
 
             cell.render();
-            column.filtering?.renderFilteringContent(cell.htmlElement);
+
+            if (column.options.filtering?.inline) {
+                column.filtering?.renderFilteringContent(cell.htmlElement);
+            }
         }
 
         const firstCell = this.cells[0];

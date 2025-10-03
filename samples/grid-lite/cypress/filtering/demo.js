@@ -93,5 +93,10 @@ window.grid = Grid.grid('container', {
             condition: 'greaterThan',
             value: 1000
         }
+    }, {
+        id: 'url',
+        filtering: {
+            inline: true
+        }
     }]
 });

@@ -141,12 +141,21 @@ class ColumnSorting {
      */
     public async setOrder(order: ColumnSortingOrder): Promise<void> {
         const viewport = this.column.viewport;
+
+        // Do not call sorting when cell is currently edited and validated.
+        if (viewport.validator?.errorCell) {
+            return;
+        }
+
         const querying = viewport.grid.querying;
         const sortingController = querying.sorting;
         const a11y = viewport.grid.accessibility;
 
-        fireEvent(this.column, 'beforeSorting', {
-            target: this.column
+        [this.column, viewport.grid].forEach((source): void => {
+            fireEvent(source, 'beforeSort', {
+                target: this.column,
+                order
+            });
         });
 
         sortingController.setSorting(order, this.column.id);
@@ -154,14 +163,15 @@ class ColumnSorting {
 
         for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();
-            // Update icon state for new header icon system
-            col.header?.updateSortIconState();
         }
 
         a11y?.userSortedColumn(order);
 
-        fireEvent(this.column, 'afterSorting', {
-            target: this.column
+        [this.column, viewport.grid].forEach((source): void => {
+            fireEvent(source, 'afterSort', {
+                target: this.column,
+                order
+            });
         });
     }
 
@@ -172,11 +182,6 @@ class ColumnSorting {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const sortingController = querying.sorting;
-
-        // Do not call sorting when cell is currently edited and validated.
-        if (viewport.validator?.errorCell) {
-            return;
-        }
 
         const currentOrder = (
             sortingController.currentSorting?.columnId === this.column.id ?
@@ -191,6 +196,20 @@ class ColumnSorting {
 
         void this.setOrder(consequents[currentOrder]);
     };
+}
+
+
+/* *
+ *
+ *  Interface
+ *
+ * */
+
+namespace ColumnSorting {
+    export interface Event {
+        target: Column;
+        order: ColumnSortingOrder;
+    }
 }
 
 

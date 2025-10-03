@@ -59,7 +59,12 @@ namespace Defaults {
                 }
             },
             loading: 'Loading...',
-            noData: 'No data to display'
+            noData: 'No data to display',
+            filter: 'Filter',
+            sortAscending: 'Sort ascending',
+            sortDescending: 'Sort descending',
+            column: 'Column',
+            setFilter: 'Set filter'
         },
         time: {
             timezone: 'UTC'
@@ -85,6 +90,9 @@ namespace Defaults {
         columnDefaults: {
             sorting: {
                 sortable: true
+            },
+            filtering: {
+                inline: false
             }
         }
     };

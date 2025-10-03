@@ -32,7 +32,9 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
-import type { Condition } from './Table/Actions/ColumnFiltering/FilteringTypes';
+import type {
+    Condition as ColumnFilteringCondition
+} from './Table/Actions/ColumnFiltering/FilteringTypes';
 
 
 /* *
@@ -349,6 +351,11 @@ export interface ColumnOptions {
      * `width` option is used to set the width of the column.
      */
     width?: number | string;
+
+    /**
+     * Filtering options for the column.
+     */
+    filtering?: ColumnFilteringOptions;
 }
 
 /**
@@ -419,40 +426,6 @@ export interface ColumnHeaderOptions {
      * A string to be set as a header cell's content.
      */
     formatter?: CellFormatterCallback;
-
-    /**
-     * Configuration for header icons. Allows enabling/disabling and customizing
-     * filter, sort, and menu icons.
-     *
-     * @default undefined
-     */
-    icons?: ColumnHeaderIconsOptions;
-}
-
-/**
- * Configuration options for header icons in columns.
- */
-export interface ColumnHeaderIconsOptions {
-    /**
-     * Whether to show the filter icon.
-     *
-     * @default true
-     */
-    filter?: boolean;
-
-    /**
-     * Whether to show the sort icon (only visible for sortable columns).
-     *
-     * @default true
-     */
-    sort?: boolean;
-
-    /**
-     * Whether to show the menu icon.
-     *
-     * @default false
-     */
-    menu?: boolean;
 }
 
 /**
@@ -539,11 +512,6 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
-
-    /**
-     * Filtering options for the column.
-     */
-    filtering?: ColumnFilteringOptions;
 }
 
 export interface CaptionOptions {
@@ -667,6 +635,41 @@ export interface LangOptions extends LangOptionsCore {
      * @default 'No data to display'
      */
     noData?: string;
+
+    /**
+     * `Filter` translation.
+     *
+     * @default 'Filter'
+     */
+    filter?: string;
+
+    /**
+     * `Sort ascending` translation.
+     *
+     * @default 'Sort ascending'
+     */
+    sortAscending?: string;
+
+    /**
+     * `Sort descending` translation.
+     *
+     * @default 'Sort descending'
+     */
+    sortDescending?: string;
+
+    /**
+     * `Column` translation.
+     *
+     * @default 'Column'
+     */
+    column?: string;
+
+    /**
+     * `Set filter` translation.
+     *
+     * @default 'Set filter'
+     */
+    setFilter?: string;
 }
 
 /**
@@ -689,7 +692,7 @@ export interface FilteringCondition {
     /**
      * The condition to use for filtering the column.
      */
-    condition?: Condition;
+    condition?: ColumnFilteringCondition;
 
     /**
      * The value that is used with the condition to filter the column.
@@ -702,6 +705,14 @@ export interface ColumnFilteringOptions extends FilteringCondition {
      * Whether the filtering is enabled or not.
      */
     enabled?: boolean;
+
+    /**
+     * Whether the filtering inputs should be rendered inline in the special
+     * table header row (`true`), or should be accessed via a popup (`false`).
+     *
+     * @default false
+     */
+    inline?: boolean;
 }
 
 /* *

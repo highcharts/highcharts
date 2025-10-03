@@ -70,11 +70,6 @@ class ColumnFiltering {
     public inlineCell?: FilterCell;
 
     /**
-     * The container element of the filtering content.
-     */
-    public container?: HTMLElement;
-
-    /**
      * The input element for the filtering. Can be of type `text`, `number`
      * or `date`.
      */
@@ -119,7 +114,7 @@ class ColumnFiltering {
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
 
-        fireEvent(this.column, 'beforeFiltering', {
+        fireEvent(this.column, 'beforeFilter', {
             target: this.column
         });
 
@@ -131,7 +126,7 @@ class ColumnFiltering {
         await querying.proceed();
         await viewport.updateRows();
 
-        fireEvent(this.column, 'afterFiltering', {
+        fireEvent(this.column, 'afterFilter', {
             target: this.column
         });
     }
@@ -169,6 +164,10 @@ class ColumnFiltering {
         // Assign the default input value.
         if (filteringOptions.value) {
             this.filterInput.value = filteringOptions.value.toString();
+        }
+
+        if (this.filterSelect) {
+            this.disableInputIfNeeded(this.filterSelect.value as Condition);
         }
 
         // Attach keyup event listener (string type only).
@@ -247,21 +246,40 @@ class ColumnFiltering {
             filteringOptions.condition = conditions[0];
         }
 
+        this.disableInputIfNeeded(this.filterSelect.value as Condition);
+
         // Attach event listener.
         addEvent(this.filterSelect, 'change', (e): void => {
             const option: Condition = e.target.value;
             filteringOptions.condition = option;
 
-            // Disable the input since the `empty` or `notEmpty` condition
-            // doesn't require a value.
-            if (option === 'empty' || option === 'notEmpty') {
-                this.filterInput && (this.filterInput.disabled = true);
-            } else if (this.filterInput?.disabled) {
-                this.filterInput.disabled = false;
-            }
+            this.disableInputIfNeeded(option);
 
             void this.applyFilter(filteringOptions);
         });
+    }
+
+    /**
+     * Disables the input element if the condition is `empty` or `notEmpty`.
+     *
+     * @param condition
+     * The selected condition.
+     */
+    private disableInputIfNeeded(condition: Condition): void {
+        const {
+            filterSelect: select,
+            filterInput: input
+        } = this;
+
+        if (!input || !select) {
+            return;
+        }
+
+        if (condition === 'empty' || condition === 'notEmpty') {
+            input.disabled = true;
+        } else if (input?.disabled) {
+            input.disabled = false;
+        }
     }
 
     /**
@@ -271,10 +289,10 @@ class ColumnFiltering {
      * The container element.
      */
     public renderFilteringContent(container: HTMLElement): void {
-        this.container = container;
         const column = this.column;
+        const filteringOptions = column.options?.filtering;
 
-        if (!column || !column.options?.filtering?.enabled) {
+        if (!column || !filteringOptions?.enabled) {
             return;
         }
 
@@ -282,7 +300,6 @@ class ColumnFiltering {
         const inputWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('columnFilterWrapper')
         }, container);
-        const filteringOptions = column.options.filtering;
         const columnType = column.dataType;
 
         // Render the proper element based on the column type.
@@ -290,18 +307,18 @@ class ColumnFiltering {
             case 'string':
             case 'number':
             case 'datetime':
-                // Render the input element.
-                this.renderFilteringInput(
-                    filteringOptions,
-                    inputWrapper,
-                    columnType
-                );
-
                 // Render the condition select element.
                 this.renderConditionSelect(
                     filteringOptions,
                     inputWrapper,
                     conditionsMap[columnType]
+                );
+
+                // Render the input element.
+                this.renderFilteringInput(
+                    filteringOptions,
+                    inputWrapper,
+                    columnType
                 );
                 break;
             case 'boolean':
@@ -361,6 +378,30 @@ class ColumnFiltering {
     }
 
     /**
+     * Handles the keydown event for the filtering content. Used externally,
+     * not in the class itself.
+     *
+     * @param e
+     * The keyboard event.
+     */
+    public onKeyDown = (e: KeyboardEvent): void => {
+        const contentOrder: HTMLElement[] = [];
+        if (this.filterSelect) {
+            contentOrder.push(this.filterSelect);
+        }
+        if (this.filterInput) {
+            contentOrder.push(this.filterInput);
+        }
+
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
+            contentOrder[(currentIndex + 1) % contentOrder.length].focus();
+            return;
+        }
+    };
+
+    /**
      * Parses a camel case string to a readable string.
      *
      * @param value
@@ -377,6 +418,15 @@ class ColumnFiltering {
             .split(/\s+/).join(' ');
     }
 
+    /**
+     * Sets the value and condition for the filtering.
+     *
+     * @param value
+     * The value to set.
+     *
+     * @param condition
+     * The condition to set.
+     */
     public async set(value?: string, condition?: Condition): Promise<void> {
         if (this.filterInput) {
             this.filterInput.value = value ?? '';

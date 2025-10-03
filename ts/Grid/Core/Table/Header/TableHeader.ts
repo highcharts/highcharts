@@ -27,7 +27,6 @@ import type { GroupedHeaderOptions } from '../../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
-import FilterPopup from './FilterPopup.js';
 import FilterRow from '../Actions/ColumnFiltering/FilterRow.js';
 
 
@@ -69,11 +68,6 @@ class TableHeader {
      * Excludes any extra levels, like filtering row.
      */
     public levels: number = 1;
-
-    /**
-     * Filter popup instance for this table header.
-     */
-    public filterPopup?: FilterPopup;
 
 
     /* *
@@ -125,7 +119,10 @@ class TableHeader {
 
         // Render an extra row for inline filtering.
         if (vp.columns.some((column): boolean =>
-            column.options?.filtering?.enabled || false
+            (
+                column.options.filtering?.enabled &&
+                column.options.filtering.inline
+            ) || false
         )) {
             const row = new FilterRow(vp);
             row.renderContent();
@@ -204,11 +201,6 @@ class TableHeader {
     public destroy(): void {
         for (const row of this.rows) {
             row.destroy();
-        }
-
-        if (this.filterPopup) {
-            this.filterPopup.destroy();
-            delete this.filterPopup;
         }
     }
 }

@@ -39,6 +39,17 @@
 
     /* Header background (for focus ring edge) */
     --hcg-header-background: #ffffff;
+
+    /* GUI elements - Light mode */
+    --hcg-popup-background: #f6f6f6;
+    --hcg-popup-border-color: #e8e8e8;
+    --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+    --hcg-context-menu-item-hover-background: #ffffff;
+    --hcg-context-menu-item-hover-border: 1px solid #e8e8e8;
+    --hcg-context-menu-item-active-background: #e1e3ff;
+    --hcg-context-menu-item-active-border: 1px solid #c3c8ff;
+    --hcg-input-background: #ffffff;
+    --hcg-input-border: 1px solid #d1d1d1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,6 +73,17 @@
 
         /* Icon styles - Dark mode */
         --hcg-icon-hover-color: #ffffff;
+
+        /* GUI elements - Dark mode */
+        --hcg-popup-background: #272727;
+        --hcg-popup-border-color: #4f4f4f;
+        --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+        --hcg-context-menu-item-hover-background: #3b3b3b;
+        --hcg-context-menu-item-hover-border: 1px solid #4f4f4f;
+        --hcg-context-menu-item-active-background: #3f4699;
+        --hcg-context-menu-item-active-border: 1px solid #4a55c9;
+        --hcg-input-background: #272727;
+        --hcg-input-border: 1px solid #4f4f4f;
     }
 }
 
@@ -82,6 +104,17 @@
 
     /* Icon styles - Dark mode */
     --hcg-icon-hover-color: #ffffff;
+
+    /* GUI elements - Dark mode */
+    --hcg-popup-background: #272727;
+    --hcg-popup-border-color: #4f4f4f;
+    --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+    --hcg-context-menu-item-hover-background: #3b3b3b;
+    --hcg-context-menu-item-hover-border: 1px solid #4f4f4f;
+    --hcg-context-menu-item-active-background: #3f4699;
+    --hcg-context-menu-item-active-border: 1px solid #4a55c9;
+    --hcg-input-background: #272727;
+    --hcg-input-border: 1px solid #4f4f4f;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -191,7 +224,7 @@
     /* Header padding */
     --ig-header-horizontal-padding: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
     --ig-header-vertical-padding: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
-    --ig-header-padding: var(--ig-header-vertical-padding) max(var(--ig-header-horizontal-padding), 20px) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
+    --ig-header-padding: var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
 
     /* Caption padding */
     --ig-caption-horizontal-padding: var(--hcg-caption-horizontal-padding, var(--hcg-caption-padding, var(--ig-horizontal-padding)));
@@ -479,15 +512,9 @@
     transition: all 0.3s ease;
 }
 
-/* Legacy filter icon styles (deprecated - now handled by generic .hcg-header-cell-icons) */
-.hcg-header-cell-filter-icon img {
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-}
-
 /* Generic button styling for Grid */
-.hcg-button {
+.hcg-button,
+.highcharts-datagrid-button {
     background: var(--ig-button-background);
     padding: var(--ig-button-padding);
     border-radius: var(--ig-button-border-radius);
@@ -499,31 +526,41 @@
     justify-content: center;
 }
 
-.hcg-button:hover {
+.hcg-button:hover,
+.highcharts-datagrid-button:hover {
     background: var(--ig-button-hover-background);
 }
 
 /* Focus/A11Y - keyboard accessibility */
-.hcg-button:focus-visible {
+.hcg-button:focus-visible,
+.highcharts-datagrid-button:focus-visible {
     outline: none;
+    background: var(--ig-button-hover-background);
     box-shadow: 0 0 0 2px var(--hcg-header-background, #ffffff), 0 0 0 5px var(--hcg-focus-ring-color, #626bd0);
 }
 
 /* Generic icon styling */
-.hcg-icon {
-    width: 20px;
-    height: 20px;
+.hcg-icon,
+.highcharts-datagrid-icon {
     color: var(--ig-icon-color);
     transition: color 0.2s ease;
     flex-shrink: 0;
 }
 
 /* Icons inherit currentColor */
-.hcg-icon path {
+.hcg-icon path,
+.highcharts-datagrid-icon path {
     stroke: currentcolor;
 }
 
-.hcg-button:hover .hcg-icon {
+.hcg-button:hover .hcg-icon,
+.hcg-button:focus-visible .hcg-icon,
+.hcg-header-cell-icons .hcg-button.highlighted .hcg-icon,
+.hcg-header-cell-icons .hcg-button.active .hcg-icon,
+.highcharts-datagrid-button:hover .highcharts-datagrid-icon,
+.highcharts-datagrid-button:focus-visible .highcharts-datagrid-icon,
+.highcharts-datagrid-header-cell-icons .highcharts-datagrid-button.highlighted .highcharts-datagrid-icon,
+.highcharts-datagrid-header-cell-icons .highcharts-datagrid-button.active .highcharts-datagrid-icon {
     color: var(--ig-icon-hover-color);
 }
 
@@ -532,9 +569,9 @@
 .highcharts-datagrid-header-cell-icons {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     max-width: 0;
-    margin-left: 0;
+    margin-left: 4px;
     opacity: 0;
     cursor: pointer;
     transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
@@ -543,69 +580,58 @@
 /* Reveal icons on hover/focus or when active */
 .hcg-table thead th:hover .hcg-header-cell-icons,
 .hcg-table thead th:focus-visible .hcg-header-cell-icons,
-.hcg-table thead th:focus-within .hcg-header-cell-icons,
-.highcharts-datagrid-table thead th:hover .hcg-header-cell-icons,
-.highcharts-datagrid-table thead th:focus-visible .hcg-header-cell-icons,
-.highcharts-datagrid-table thead th:focus-within .hcg-header-cell-icons,
+.hcg-header-cell-icons:hover,
+.hcg-header-cell-icons:has(.hcg-button.highlighted),
+.hcg-header-cell-icons:has(.hcg-button.active),
+.hcg-header-cell-icons:has(.hcg-button:focus-visible),
 .highcharts-datagrid-table thead th:hover .highcharts-datagrid-header-cell-icons,
 .highcharts-datagrid-table thead th:focus-visible .highcharts-datagrid-header-cell-icons,
-.highcharts-datagrid-table thead th:focus-within .highcharts-datagrid-header-cell-icons,
-.hcg-header-cell-icons:hover,
-.hcg-header-cell-icons.has-active-icons,
 .highcharts-datagrid-header-cell-icons:hover,
-.highcharts-datagrid-header-cell-icons.has-active-icons {
+.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button.highlighted),
+.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button.active),
+.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button:focus-visible) {
     max-width: 100px;
-    margin-left: 8px;
     opacity: 1;
 }
 
 /* Individual icon containers */
 .hcg-header-cell-filter-icon,
 .hcg-header-cell-sort-icon,
-.hcg-header-cell-menu-icon {
+.hcg-header-cell-menu-icon,
+.highcharts-datagrid-header-cell-filter-icon,
+.highcharts-datagrid-header-cell-sort-icon,
+.highcharts-datagrid-header-cell-menu-icon {
     display: flex;
     align-items: center;
 }
 
 /* Generic icon button styling - applies to all header icons */
 .hcg-header-cell-icons .hcg-button,
-.highcharts-datagrid-header-cell-icons .hcg-button {
-    width: 24px;
-    height: 24px;
-    padding: 2px;
+.highcharts-datagrid-header-cell-icons .highcharts-datagrid-button {
+    width: 26px;
+    height: 26px;
+    padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 2px;
 }
-
-/* Sort icon states */
-.hcg-header-cell-sort-icon.sort-asc .hcg-icon { transform: rotate(180deg); }
-.hcg-header-cell-sort-icon.sort-desc .hcg-icon { transform: rotate(0deg); }
-.hcg-header-cell-sort-icon.sort-none .hcg-icon { opacity: 0.6; }
-.hcg-header-cell-sort-icon .hcg-icon { transition: transform 0.2s ease, opacity 0.2s ease; }
 
 /* Active icon styling - icons that are in an active state */
-.hcg-header-cell-icons .hcg-button.active,
-.highcharts-datagrid-header-cell-icons .hcg-button.active {
+.hcg-header-cell-icons .hcg-button.highlighted,
+.highcharts-datagrid-header-cell-icons .highcharts-datagrid-button.highlighted {
     background: var(--ig-button-hover-background);
-}
-
-.hcg-header-cell-icons .hcg-button.active .hcg-icon,
-.highcharts-datagrid-header-cell-icons .hcg-button.active .hcg-icon {
-    color: var(--ig-icon-hover-color);
 }
 
 /* Active indicator dot - positioned at top right of button */
 .hcg-active-indicator,
 .highcharts-datagrid-active-indicator {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
+    top: 2px;
+    right: 2px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    background: var(--hcg-focus-ring-color, #626bd0);
+    background: var(--ig-icon-hover-color, #626bd0);
     pointer-events: none;
 }
 
@@ -619,7 +645,7 @@
 }
 
 .hcg-header-cell-icons .hcg-button,
-.highcharts-datagrid-header-cell-icons .hcg-button { position: relative; }
+.highcharts-datagrid-header-cell-icons .highcharts-datagrid-button { position: relative; }
 
 .hcg-table thead th .hcg-header-cell-content span,
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content span {
@@ -666,30 +692,24 @@
 .highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer {
     position: absolute;
     top: 0;
-    width: 16px;
-    right: -9px;
+    width: 5px;
+    right: -3px;
     height: 100%;
-    cursor: col-resize;
     user-select: none;
     z-index: 10;
 }
 
-.hcg-table thead th .hcg-column-resizer::after,
-.highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer::after {
-    content: "";
-    position: absolute;
-    display: block;
-    height: 20px;
-    width: 7px;
-    margin-top: -10px;
-    top: 50%;
-    left: 2px;
+.hcg-table thead th .hcg-column-resizer.hovered,
+.highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer.hovered {
+    background: var(--ig-header-color);
+    cursor: col-resize;
 }
 
-.hcg-table thead th .hcg-column-resizer:hover::after,
-.highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer:hover::after {
-    border-left: 2px solid var(--ig-header-color);
-    border-right: 2px solid var(--ig-header-color);
+.hcg-resize-handle-line,
+.highcharts-datagrid-resize-handle-line {
+    position: absolute;
+    width: 1px;
+    background: var(--ig-header-color);
 }
 
 /* Sorting */
@@ -1288,13 +1308,14 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-column-filter-wrapper input,
 .hcg-column-filter-wrapper select,
 .highcharts-datagrid-column-filter-wrapper select {
-    border: 1px solid var(--header-utils-dropdown-stroke-default, #d1d1d1);
-    border-radius: var(--hcg-border-radius);
+    background: var(--hcg-input-background);
+    border: var(--hcg-input-border);
+    border-radius: 6px;
     padding-right: 7px;
     height: 28px;
     max-height: 28px;
     width: 100%;
-    color: var(--header-utils-dropdown-text-default, #141414);
+    color: var(--ig-color);
     font-size: 12px;
     font-weight: 500;
     line-height: 1em;
@@ -1305,16 +1326,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .hcg-column-filter-wrapper select:hover,
 .highcharts-datagrid-column-filter-wrapper select:hover {
     border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
-}
-
-.hcg-column-filter-wrapper input:focus,
-.highcharts-datagrid-column-filter-wrapper input:focus,
-.hcg-column-filter-wrapper select:focus,
-.highcharts-datagrid-column-filter-wrapper select:focus {
-    z-index: 1;
-    outline: none;
-    border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
-    box-shadow: 0 0 0 2px var(--hcg-surface-ui-background-0, #ffffff), 0 0 0 5px var(--primitives-brand-600, #626bd0);
 }
 
 .hcg-column-filter-wrapper input,
@@ -1414,13 +1425,170 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     text-align: left;
 }
 
+.hcg-popup,
+.highcharts-datagrid-popup {
+    position: absolute;
+    z-index: 1000;
+}
+
+.hcg-popup select:focus-visible,
+.highcharts-datagrid-popup select:focus-visible,
+.hcg-popup input:focus-visible,
+.highcharts-datagrid-popup input:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
+}
+
+/* Column header menu */
+
+.hcg-popup,
+.highcharts-datagrid-popup {
+    background-color: var(--hcg-popup-background);
+    border: var(--hcg-popup-border);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+    min-width: 200px;
+    overflow: auto;
+}
+
+.hcg-popup-content,
+.highcharts-datagrid-popup-content {
+    padding: 4px;
+}
+
+.hcg-popup-content input,
+.hcg-popup-content select,
+.highcharts-datagrid-popup-content input,
+.highcharts-datagrid-popup-content select {
+    border-radius: 6px;
+    border-color: var(--ig-icon-color);
+    background-color: var(--ig-header-background);
+    color: var(--ig-color);
+    line-height: normal;
+}
+
+.hcg-popup-content input:disabled,
+.hcg-popup-content select:disabled,
+.highcharts-datagrid-popup-content input:disabled,
+.highcharts-datagrid-popup-content select:disabled {
+    opacity: 0.4;
+}
+
+.hcg-menu-popup-header,
+.highcharts-datagrid-menu-popup-header {
+    font-size: 0.75rem;
+    padding: 3px;
+    margin-bottom: 5px;
+}
+
+.hcg-menu-popup-header-category,
+.highcharts-datagrid-menu-popup-header-category {
+    color: var(--ig-color-secondary);
+    opacity: 0.5;
+    user-select: none;
+}
+
+.hcg-menu-popup-container,
+.highcharts-datagrid-menu-popup-container {
+    --icon-size: 16px;
+
+    list-style: none;
+    margin: 5px 0 0;
+    padding: 0;
+}
+
+.hcg-menu-popup-item,
+.highcharts-datagrid-menu-popup-item {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+    min-width: 185px;
+    min-height: 2rem;
+    margin: 2px 0;
+    padding: 8px 8px 8px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: var(--ig-color);
+    border-radius: 5px;
+}
+
+.hcg-menu-popup-item:not(:disabled),
+.highcharts-datagrid-menu-popup-item:not(:disabled) {
+    cursor: pointer;
+}
+
+.hcg-menu-popup-item:not(:disabled):hover,
+.hcg-menu-popup-item.highlighted,
+.highcharts-datagrid-menu-popup-item:not(:disabled):hover,
+.highcharts-datagrid-menu-popup-item.highlighted {
+    background-color: var(--hcg-context-menu-item-hover-background);
+    border: var(--hcg-context-menu-item-hover-border);
+}
+
+.hcg-menu-popup-item.active:not(:disabled):hover,
+.hcg-menu-popup-item.active.highlighted,
+.highcharts-datagrid-menu-popup-item.active:not(:disabled):hover,
+.highcharts-datagrid-menu-popup-item.active.highlighted,
+.hcg-menu-popup-item.active,
+.highcharts-datagrid-menu-popup-item.active {
+    background-color: var(--hcg-context-menu-item-active-background);
+    border: var(--hcg-context-menu-item-active-border);
+}
+
+.highcharts-datagrid-menu-popup-item:focus-visible,
+.hcg-menu-popup-item:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
+}
+
+.hcg-menu-popup-item-icon,
+.highcharts-datagrid-menu-popup-item-icon {
+    flex: 0 0 var(--icon-size);
+    width: var(--icon-size);
+    height: var(--icon-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+}
+
+.hcg-menu-popup-item.active .hcg-menu-popup-item-icon,
+.hcg-menu-popup-item.highlighted .hcg-menu-popup-item-icon,
+.hcg-menu-popup-item:not(:disabled):hover .hcg-menu-popup-item-icon,
+.highcharts-datagrid-menu-popup-item.active .highcharts-datagrid-menu-popup-item-icon,
+.highcharts-datagrid-menu-popup-item.highlighted .highcharts-datagrid-menu-popup-item-icon,
+.highcharts-datagrid-menu-popup-item:not(:disabled):hover .highcharts-datagrid-menu-popup-item-icon {
+    opacity: 1;
+}
+
+.hcg-menu-popup-item-icon .hcg-icon,
+.highcharts-datagrid-menu-popup-item-icon .highcharts-datagrid-icon {
+    color: var(--ig-icon-hover-color);
+}
+
+.hcg-menu-popup-item-label,
+.highcharts-datagrid-menu-popup-item-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    padding-left: 0.75rem;
+}
+
+.hcg-menu-popup-divider,
+.highcharts-datagrid-menu-popup-divider {
+    margin: 5px 0;
+    border-top: 1px solid var(--hcg-popup-border-color);
+    height: 0;
+}
+
 /* End CSS Helpers Classes */
 
 /* Start Grid Default Theme */
 .hcg-theme-default,
-.highcharts-datagrid-theme-default,
-.highcharts-light .hcg-theme-default,
-.highcharts-light .highcharts-datagrid-theme-default {
+.highcharts-light .hcg-theme-default {
     /* Primary colors */
     --hcg-color: var(--highcharts-neutral-color-100, #000000);
     --hcg-background: var(--highcharts-background-color, #ffffff);
@@ -1438,8 +1606,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 @media (prefers-color-scheme: dark) {
-    .hcg-theme-default,
-    .highcharts-datagrid-theme-default {
+    .hcg-theme-default {
         --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
         --hcg-background: var(--highcharts-background-color, #141414);
     }
@@ -1454,14 +1621,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     }
 }
 
-.highcharts-dark .hcg-theme-default,
-.highcharts-dark .highcharts-datagrid-theme-default {
+.highcharts-dark .hcg-theme-default {
     --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
     --hcg-background: var(--highcharts-background-color, #141414);
 }
 
-.hcg-theme-default,
-.highcharts-datagrid-theme-default {
+.hcg-theme-default {
     --hcg-border-color:
         var(
             --highcharts-neutral-color-20,
