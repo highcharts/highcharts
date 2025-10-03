@@ -261,6 +261,19 @@ namespace DataModifyComposition {
      * @function Highcharts.Series#init
      */
     function afterInit(this: Series): void {
+        // If linked series does not have compare option set, use the parent
+        // series' compare option, #21119.
+        if (this.options.linkedTo) {
+            const linkedSeries = this.chart.get(this.options.linkedTo);
+
+            if (linkedSeries instanceof Series) {
+                this.options.compare = pick(
+                    this.userOptions.compare,
+                    linkedSeries.options.compare
+                );
+            }
+        }
+
         const compare = this.options.compare;
         let dataModify: Additions|undefined;
 
