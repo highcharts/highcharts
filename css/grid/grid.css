@@ -554,8 +554,8 @@
 /* Show icons on header cell hover, focus, or when has active icons */
 .hcg-table thead th:hover .hcg-header-cell-icons,
 .hcg-table thead th:focus-visible .hcg-header-cell-icons,
-.hcg-table thead th:focus-within .hcg-header-cell-icons,
 .hcg-header-cell-icons:hover,
+.hcg-header-cell-icons:has(.hcg-button:focus-visible),
 .hcg-header-cell-icons:has(.hcg-button.highlighted),
 .hcg-header-cell-icons:has(.hcg-button.active) {
     max-width: 100px;
