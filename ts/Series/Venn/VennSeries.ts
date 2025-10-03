@@ -649,8 +649,9 @@ class VennSeries extends ScatterSeries {
                             width: dataLabelWidth
                         }
                     } as DataLabelOptions,
-                    isObject(dlOptions, true) ? dlOptions : void 0
-                );
+                    isObject(dlOptions, true) ? dlOptions : void 0,
+                    { zIndex: void 0 }
+                ) as DataLabelOptions & { zIndex: undefined };
             }
 
             // Set name for usage in tooltip and in data label.

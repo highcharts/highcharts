@@ -21,6 +21,7 @@ import type Axis from '../Axis';
 import type { AxisBreakOptions, AxisCollectionKey } from '../AxisOptions';
 import type Chart from '../../Chart/Chart';
 import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 import type GanttPoint from '../../../Series/Gantt/GanttPoint';
 import type GanttPointOptions from '../../../Series/Gantt/GanttPointOptions';
 import type GanttSeries from '../../../Series/Gantt/GanttSeries';

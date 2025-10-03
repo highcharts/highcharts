@@ -18,12 +18,13 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../../Core/Axis/AxisOptions';
+import type ChartOptions from '../../Core/Chart/ChartOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type { DeepPartial } from '../../Shared/Types';
 import type RangeSelector from '../RangeSelector/RangeSelector';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type Utilities from '../../Core/Utilities';
-import type ChartOptions from '../../Core/Chart/ChartOptions';
 
 /* *
  *
