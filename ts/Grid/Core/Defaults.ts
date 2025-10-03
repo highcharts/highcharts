@@ -59,8 +59,8 @@ namespace Defaults {
                 },
                 pagination: {
                     announcements: {
-                        pageSizeChange: 'Page size changed to.',
-                        pageChange: 'Page changed to.'
+                        pageSizeChange: 'Page size changed to',
+                        pageChange: 'Page changed to'
                     }
                 }
             },
