@@ -95,6 +95,11 @@
     height: 280px; /* tweak height as you like */
 }
 
+/* Taller charts for second row */
+.row-tall .chart-area {
+    height: 500px;
+}
+
 .highcharts-description {
     margin: 0.5rem 0 0;
     color: #6b7280;
@@ -115,6 +120,11 @@
 
     .chart-area {
         height: 240px;
+    }
+
+    /* Keep second row charts taller even on mobile */
+    .row-tall .chart-area {
+        height: 400px;
     }
 }
 
