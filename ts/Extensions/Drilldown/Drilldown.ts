@@ -439,10 +439,9 @@ class ChartAdditions {
                     if (series.useDataTable) {
                         const columns = series.dataTable.getColumns();
                         // Delete computed x and let xOption be used instead
-                        delete columns.x;
-                        if (columns.xOption) {
-                            columns.x = columns.xOption;
-                        }
+                        columns.x = columns.xOption ||
+                            new Array(series.dataTable.rowCount);
+                        delete columns.xOption;
                         series.purgedOptions.dataTable = { columns };
                     }
                     levelSeriesOptions.push(series.purgedOptions);

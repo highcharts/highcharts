@@ -432,6 +432,8 @@ class Series {
 
     public xAxis!: AxisType;
 
+    private xColumn?: Array<number>;
+
     public xIncrement?: (number|null);
 
     public yAxis!: AxisType;
@@ -1055,10 +1057,20 @@ class Series {
         columnName: string,
         modified?: boolean
     ): Array<number> {
-        return (
-            (modified ? this.dataTable.modified : this.dataTable)
-                .getColumn(columnName, true) as Array<number>
-        ) || [];
+        const table = modified ? this.dataTable.modified : this.dataTable,
+            column = table.getColumn(columnName, true) as Array<number>;
+
+        // When there is no x column in the data set, generate an internal x
+        // column for the series. The `xColumn` array is cached and reused, but
+        // cleared on series update.
+        if (columnName === 'x' && !column) {
+            this.xColumn ||= Array(table.rowCount).fill(0).map((): number =>
+                this.autoIncrement()
+            );
+            return this.xColumn;
+        }
+
+        return column || [];
     }
 
     /**
@@ -1889,7 +1901,7 @@ class Series {
         }
 
         // Find the closest distance between processed points
-        xData = modified.getColumn('x') as Array<number> || [];
+        xData = this.getColumn('x', true);
         const closestPointRange = getClosestDistance(
             [
                 logarithmic ?
