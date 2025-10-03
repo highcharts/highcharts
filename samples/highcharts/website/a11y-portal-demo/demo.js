@@ -57,6 +57,7 @@ const chart = Highcharts.chart('container', {
     },
     series: [{
         data: data,
+        name: 'Random data',
         colorByPoint: true,
         lineColor: 'transparent',
         marker: {
