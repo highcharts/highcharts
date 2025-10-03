@@ -56,6 +56,12 @@ namespace Defaults {
                         descending: 'Sorted descending.',
                         none: 'Not sorted.'
                     }
+                },
+                pagination: {
+                    announcements: {
+                        pageSizeChange: 'Page size changed to.',
+                        pageChange: 'Page changed to.'
+                    }
                 }
             },
             loading: 'Loading...',
