@@ -470,6 +470,8 @@ class SMAIndicator extends LineSeries {
                 ) || emptySet
             ) : emptySet;
 
+        processedData.xData.length = processedData.values.length;
+
         // Reset
         delete indicator.linkedParent.xData;
         indicator.linkedParent.yData = yData;
@@ -558,11 +560,25 @@ class SMAIndicator extends LineSeries {
         }
 
         if (overwriteData) {
-            table.setColumns({
-                ...valueColumns,
-                x: processedData.xData as Array<number>
-            });
-            indicator.options.data = (processedData.values as any);
+            const columns = valueColumns;
+            columns.x = processedData.xData;
+
+            if (this.useDataTable) {
+                // Add the processedData.values to the data table
+                processedData.values.reduce((columns, val, i): any => {
+                    Object.keys(val).forEach((key): void => {
+                        if (!columns[key]) {
+                            columns[key] = [];
+                        }
+                        columns[key][i] = val[key as any];
+                    });
+                    return columns;
+                }, columns);
+            } else {
+                indicator.options.data = (processedData.values as any);
+            }
+
+            table.setColumns(columns);
         }
 
         if (
