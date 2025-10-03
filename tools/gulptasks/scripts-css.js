@@ -104,7 +104,7 @@ function mergeAndCopyGridProCSS(config) {
     // Remove license header, @import statement, and import comments from Grid Pro CSS
     const gridProCSSClean = gridProCSS
         .replace(/^\/\*\*[\s\S]*?\*\/\s*/, '') // Remove license header
-        .replace(/@import\s+url\s*\(\s*["']?grid-lite\.css["']?\s*\)\s*;?\s*/g, '') // Remove import
+        .replace(/@import\s+url\s*\(\s*["']?(\.\/)?grid-lite\.css["']?\s*\)\s*;?\s*/g, '') // Remove import
         .replace(/^\/\*\s*Import Grid Lite styles\s*\*\/\s*/gm, '') // Remove import comment
         .trim();
 
