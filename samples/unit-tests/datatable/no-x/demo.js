@@ -84,6 +84,13 @@ QUnit.test('Input data table with no x', assert => {
         [0, 1, 2, 3],
         'X data should handle categories'
     );
+
+    chart.series[0].addPoint(10);
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        4,
+        'The added point should be included'
+    );
 });
 
 QUnit.test('Input data table with modified x', assert => {

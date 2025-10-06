@@ -1075,6 +1075,9 @@ class Series {
                 return this.xColumn;
             }
 
+            // Reset the counter
+            this.xIncrement = null;
+
             if (!column) {
 
                 // Handle name-to-x, uniqueNames
