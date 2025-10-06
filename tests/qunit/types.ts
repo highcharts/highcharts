@@ -27,6 +27,41 @@ export interface QUnit240LogDetails {
     runtime?: number;
 }
 
+export interface QUnitFailedTest {
+    module?: string;
+    name: string;
+    failures: string[];
+    runtime: number;
+    source?: string;
+    stack?: string;
+}
+
+export interface QUnitFailedAssertion {
+    module?: string;
+    name: string;
+    message: string;
+    actual: unknown;
+    expected: unknown;
+    source?: string;
+    stack?: string;
+    runtime: number;
+    result: boolean;
+}
+
+export interface QUnitErrorDetails {
+    testPath: string;
+    qunitResults: QUnitTestCounts;
+    failedTests: QUnitFailedTest[];
+    failedAssertions: QUnitFailedAssertion[];
+    browserLogs: string[];
+    consoleErrors: string[];
+    timing: {
+        scriptLoad: number;
+        testExecution: number;
+        total: number;
+    };
+}
+
 export interface QUnit240TestCounts {
     failed: number;
     passed: number;
@@ -52,12 +87,11 @@ export type QUnitTestCounts = QUnit240TestCounts;
 declare global {
     interface Window {
         __qunitResults__?: QUnitTestCounts | null;
-        __qunitFailedTests__?: Array<{
-            module?: string;
-            name: string;
-            failures: string[];
-        }> | null;
-        __qunitFailedAssertions__?: Array<QUnit240LogDetails> | null;
+        __qunitFailedTests__?: QUnitFailedTest[] | null;
+        __qunitFailedAssertions__?: QUnitFailedAssertion[] | null;
+        __qunitErrorDetails__?: QUnitErrorDetails | null;
+        __qunitBrowserLogs__?: string[] | null;
+        __qunitConsoleErrors__?: string[] | null;
         QUnit: QUnit240;
         Highcharts: unknown;
     }
