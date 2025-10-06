@@ -88,11 +88,6 @@
     --highcharts-annotation-color-5: rgba(169, 255, 101, 0.4);
 }
 
-/* Apply color scheme, but only inside our container */
-.highcharts-light .highcharts-container {
-    color-scheme: light;
-}
-
 @media (prefers-color-scheme: dark) {
     :root {
         /* Colors for data series and points */
@@ -150,10 +145,6 @@
     --highcharts-highlight-color-10: #16242b;
 }
 
-.highcharts-dark .highcharts-container {
-    color-scheme: dark;
-}
-
 .highcharts-container {
     position: relative;
     overflow: hidden;
@@ -163,6 +154,7 @@
     line-height: normal;
     z-index: 0; /* #1072 */
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    color-scheme: light dark;
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -178,6 +170,14 @@
     user-select: none;
     touch-action: manipulation;
     outline: none;
+}
+
+.highcharts-light .highcharts-container {
+    color-scheme: light;
+}
+
+.highcharts-dark .highcharts-container {
+    color-scheme: dark;
 }
 
 .highcharts-no-touch-action {

@@ -64,14 +64,6 @@
     --highcharts-neutral-color-100: #ffffff;
 }
 
-.highcharts-light .hcg-container {
-    color-scheme: light;
-}
-
-.highcharts-dark .hcg-container {
-    color-scheme: dark;
-}
-
 /*  ==== End Highcharts Variables  ==== */
 
 /* stylelint-disable max-line-length */
@@ -331,6 +323,15 @@
     overflow: hidden;
     box-sizing: border-box;
     font: var(--ig-font);
+    color-scheme: light dark;
+}
+
+.highcharts-light .hcg-container {
+    color-scheme: light;
+}
+
+.highcharts-dark .hcg-container {
+    color-scheme: dark;
 }
 
 .hcg-container * {
