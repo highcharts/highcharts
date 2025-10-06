@@ -622,6 +622,7 @@ class ContourSeries extends ScatterSeries {
     private getWebGPUExtremes(): number[] {
         const { xAxis, yAxis } = this;
 
+
         return [
             xAxis.toValue(0, true), // XMin
             xAxis.toValue(xAxis.len, true), // XMax
@@ -695,15 +696,24 @@ class ContourSeries extends ScatterSeries {
     }
 
     private setCanvasSize(): void {
-
-        const { canvas, xAxis, yAxis } = this;
+        const { canvas, xAxis, yAxis, chart } = this;
 
         if (canvas) {
             canvas.style.width = xAxis.len + 'px';
             canvas.style.height = yAxis.len + 'px';
 
-            canvas.width = this.chart.chartWidth * window.devicePixelRatio;
-            canvas.height = this.chart.chartHeight * window.devicePixelRatio;
+            const { chartWidth, chartHeight, inverted } = chart,
+                devicePixelRatio = window.devicePixelRatio,
+                [w, h] = inverted ? [
+                    chartHeight * devicePixelRatio,
+                    chartWidth * devicePixelRatio
+                ] : [
+                    chartWidth * devicePixelRatio,
+                    chartHeight * devicePixelRatio
+                ];
+
+            canvas.width = w;
+            canvas.height = h;
         }
     }
 
