@@ -88,6 +88,11 @@
     --highcharts-annotation-color-5: rgba(169, 255, 101, 0.4);
 }
 
+/* Apply color scheme, but only inside our container */
+.highcharts-light .highcharts-container {
+    color-scheme: light;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         /* Colors for data series and points */
@@ -143,6 +148,10 @@
     --highcharts-highlight-color-60: #2271a0;
     --highcharts-highlight-color-20: #193343;
     --highcharts-highlight-color-10: #16242b;
+}
+
+.highcharts-dark .highcharts-container {
+    color-scheme: dark;
 }
 
 .highcharts-container {

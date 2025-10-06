@@ -154,6 +154,10 @@ const styleSheet = `
     ${defaultRules}
 }
 
+.highcharts-light .highcharts-container {
+    color-scheme: light;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         ${darkRules}
@@ -162,6 +166,10 @@ const styleSheet = `
 
 .highcharts-dark {
     ${darkRules}
+}
+
+.highcharts-dark .highcharts-container {
+    color-scheme: dark;
 }
 `;
 
