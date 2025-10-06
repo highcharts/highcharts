@@ -95,10 +95,11 @@ Highcharts.chart('container', {
                 fillColor = '#ffc107';
             }
 
-            return '<b>' + this.series.name + '</b><br/>' +
-                   this.x +
-                   ': <span style="fill: ' +
-                   fillColor + '; font-weight: bold;">' + this.y + '</span>';
+            return `<b>${this.series.name}</b>
+                <br/>${this.key}:
+                <span style="fill: ${fillColor}; font-weight: bold;">
+                    ${this.y}
+                </span>`;
         }
     },
 
