@@ -225,15 +225,12 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
         'Column element is undefined after drillUp'
     );
 
-    if (chart.series[0].tempNoXColumn) {
-        // Temporarily disable the rest during migration. It fails because we
-        // run setData with point options on a series that already has dataTable
-        // driven data.
-        return;
-    }
     chart.update({
         xAxis: {
-            type: 'datetime'
+            type: 'datetime',
+            labels: {
+                format: '{value:%Y-%m-%d}'
+            }
         },
         drilldown: {
             series: [
@@ -270,11 +267,11 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
     label = chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label;
 
     assert.deepEqual(
-        labelParametersBefore,
         {
             text: label.textStr,
             pos: label.xy
         },
+        labelParametersBefore,
         'After drilling up, the label should not be changed or hidden, #22206.'
     );
 });

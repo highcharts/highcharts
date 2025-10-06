@@ -1226,6 +1226,7 @@ class Series {
             succeeded = true;
 
         this.xIncrement = null;
+        delete this.xColumn;
 
         // Iterate the new data
         data.forEach((pointOptions, i): void => {
@@ -1296,6 +1297,9 @@ class Series {
                 pointsToAdd.push(pointOptions);
             }
         }, this);
+
+        // Clear cache again, as findPointIndex has been using xColumn
+        delete this.xColumn;
 
         // Remove points that don't exist in the updated data set
         if (hasUpdatedByKey) {
@@ -1477,6 +1481,7 @@ class Series {
 
             // Reset properties
             series.xIncrement = null;
+            delete series.xColumn;
 
             series.colorCounter = 0; // For series with colorByPoint (#1547)
 
@@ -1508,10 +1513,11 @@ class Series {
                             x.push(this.autoIncrement());
                             valueData.push(value as number|null);
                         }
-                        table.setColumns({
-                            x,
-                            [pointValKey]: valueData
-                        });
+                        const columns = { [pointValKey]: valueData };
+                        if (!this.tempNoXColumn) {
+                            columns.x = x;
+                        }
+                        table.setColumns(columns);
 
                     // Assume all points are arrays when first point is
                     } else if (
@@ -1583,14 +1589,17 @@ class Series {
                 }
 
                 if (!runTurbo) {
-                    const columns = {
-                            x: []
-                        } as DataTable.ColumnCollection,
+                    const columns = this.tempNoXColumn ?
+                            {} as DataTable.ColumnCollection :
+                            { x: [] } as DataTable.ColumnCollection,
                         xOption = [];
                     for (i = 0; i < dataLength; i++) {
                         const pt = series.pointClass.prototype.applyOptions
                             .call({ series }, data[i], void 0, true);
-                        columns.x[i] = pt.x;
+
+                        if (!this.tempNoXColumn) {
+                            columns.x[i] = pt.x;
+                        }
 
                         // When `relativeXValue` is used, `options.x` is not the
                         // same as the actual x value.
@@ -1614,7 +1623,7 @@ class Series {
                         }
                     }
 
-                    if (xOption.length) {
+                    if (!this.tempNoXColumn && xOption.length) {
                         columns['xOption'] = xOption;
                     }
                     table.setColumns(columns);
@@ -4313,11 +4322,16 @@ class Series {
         }
 
         // Insert the row at the given index
-        const row: DataTable.RowObject = { x };
-        if (defined(xOption)) {
-            row.xOption = xOption;
+        if (this.tempNoXColumn) {
+            table.setRow(pointOptions as DataTable.RowObject, i, true);
+            delete this.xColumn;
+        } else {
+            const row: DataTable.RowObject = { x };
+            if (defined(xOption)) {
+                row.xOption = xOption;
+            }
+            table.setRow(extend(row, point.options), i, true);
         }
-        table.setRow(extend(row, point.options), i, true);
 
         if (names && point.name) {
             names[x as any] = point.name;

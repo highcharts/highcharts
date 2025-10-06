@@ -441,7 +441,7 @@ class ChartAdditions {
                         if (columns.xOption) {
                             // Delete computed x and let xOption be used instead
                             columns.x = columns.xOption;
-                        } else {
+                        } else if (!series.tempNoXColumn) {
                             delete columns.x;
                         }
                         delete columns.xOption;
