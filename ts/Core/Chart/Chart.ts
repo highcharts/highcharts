@@ -307,71 +307,352 @@ class Chart {
      *
      * */
 
+    /** @internal */
     public _cursor?: (CursorValue|null);
+
+    /**
+     * All the axes in the chart.
+     *
+     * @see  Highcharts.Chart.xAxis
+     * @see  Highcharts.Chart.yAxis
+     *
+     * @name Highcharts.Chart#axes
+     * @type {Array<Highcharts.Axis>}
+     */
     public axes!: Array<AxisType>;
+
+    /** @internal */
     public axisOffset!: Array<number>;
+
+    /** @internal */
     public callback?: Chart.CallbackFunction;
+
+    /** @internal */
     public chartBackground?: SVGElement;
+
+    /**
+     * The current pixel height of the chart.
+     *
+     * @name Highcharts.Chart#chartHeight
+     * @type {number}
+     */
     public chartHeight!: number;
+
+    /**
+     * The current pixel width of the chart.
+     *
+     * @name Highcharts.Chart#chartWidth
+     * @type {number}
+     */
     public chartWidth!: number;
+
+    /** @internal */
     public clipBox!: BBoxObject;
+
+    /** @internal */
     public clipOffset?: [number, number, number, number];
+
+    /** @internal */
     public clipRect?: SVGElement;
+
+    /** @internal */
     public colorCounter!: number;
+
+    /**
+     * The containing HTML element of the chart. The container is
+     * dynamically inserted into the element given as the `renderTo`
+     * parameter in the {@link Highcharts#chart} constructor.
+     *
+     * @name Highcharts.Chart#container
+     * @type {Highcharts.HTMLDOMElement}
+     */
     public container!: globalThis.HTMLElement;
+
+    /** @internal */
     public containerBox?: { height: number, width: number };
+
+    /**
+     * The chart's credits label. The label has an `update` method that
+     * allows setting new options as per the
+     * [credits options set](https://api.highcharts.com/highcharts/credits).
+     *
+     * @name Highcharts.Chart#credits
+     * @type {Highcharts.SVGElement}
+     */
     public credits?: SVGElement;
+
+    /**
+     * The chart's caption. The caption has an `update` method that
+     * allows modifying the options directly or indirectly via
+     * `chart.update`.
+     *
+     * @name Highcharts.Chart#caption
+     * @type {Highcharts.CaptionObject}
+     */
     public caption?: SVGElement;
+
+    /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
+
+    /** @internal */
     public hasCartesianSeries?: boolean;
+
+    /** @internal */
     public hasLoaded?: boolean;
+
+    /** @internal */
     public hasRendered?: boolean;
+
+    /**
+     * Index position of the chart in the {@link Highcharts#charts}
+     * property.
+     *
+     * @name Highcharts.Chart#index
+     * @type {number}
+     * @readonly
+     */
     public index!: number;
+
+    /** @internal */
     public isDirtyBox?: boolean;
+
+    /** @internal */
     public isDirtyLegend?: boolean;
+
+    /** @internal */
     public isResizing!: number;
+
+    /** @internal */
     public labelCollectors!: Array<Chart.LabelCollectorFunction>;
+
+    /** @internal */
     public loadingDiv?: HTMLDOMElement;
+
+    /** @internal */
     public loadingShown?: boolean;
+
+    /** @internal */
     public loadingSpan?: HTMLDOMElement;
+
+    /** @internal */
     public locale?: string|Array<string>;
+
+    /** @internal */
     public margin!: Array<number>;
+
+    /** @internal */
     public marginBottom?: number;
+
+    /**
+     * Callback function to override the default function that formats
+     * all the numbers in the chart. Returns a string with the formatted
+     * number.
+     *
+     * @name Highcharts.Chart#numberFormatter
+     * @type {Highcharts.NumberFormatterCallbackFunction}
+     */
     public numberFormatter!: NumberFormatterCallbackFunction;
+
+    /** @internal */
     public oldChartHeight?: number;
+
+    /** @internal */
     public oldChartWidth?: number;
+
+    /**
+     * The options structure for the chart after merging
+     * {@link #defaultOptions} and {@link #userOptions}. It contains
+     * members for the sub elements like series, legend, tooltip etc.
+     *
+     * @name Highcharts.Chart#options
+     * @type {Highcharts.Options}
+     */
     public options!: Options;
+
+    /** @internal */
     public plotBackground?: SVGElement;
+
+    /** @internal */
     public plotBGImage?: SVGElement;
+
+    /** @internal */
     public plotBorder?: SVGElement;
+
+    /** @internal */
     public plotBorderWidth?: number;
+
+    /** @internal */
     public plotBox!: BBoxObject;
+
+    /**
+     * The current height of the plot area in pixels.
+     *
+     * @name Highcharts.Chart#plotHeight
+     * @type {number}
+     */
     public plotHeight!: number;
+
+    /**
+     * The current left position of the plot area in pixels.
+     *
+     * @name Highcharts.Chart#plotLeft
+     * @type {number}
+     */
     public plotLeft!: number;
+
+    /** @internal */
     public plotSizeX?: number;
+
+    /** @internal */
     public plotSizeY?: number;
+
+    /**
+     * The current top position of the plot area in pixels.
+     *
+     * @name Highcharts.Chart#plotTop
+     * @type {number}
+     */
     public plotTop!: number;
+
+    /**
+     * The current width of the plot area in pixels.
+     *
+     * @name Highcharts.Chart#plotWidth
+     * @type {number}
+     */
     public plotWidth!: number;
+
+    /** @internal */
     public pointCount!: number;
+
+    /** @internal */
     public pointer?: Pointer;
+
+    /** @internal */
     public reflowTimeout?: number;
+
+    /**
+     * The renderer instance of the chart. Each chart instance has only one
+     * associated renderer.
+     *
+     * @name Highcharts.Chart#renderer
+     * @type {Highcharts.SVGRenderer}
+     */
     public renderer!: Chart.Renderer;
+
+    /** @internal */
     public renderTo!: globalThis.HTMLElement;
+
+    /**
+     * All the current series in the chart.
+     *
+     * @name Highcharts.Chart#series
+     * @type {Array<Highcharts.Series>}
+     */
     public series!: Array<Series>;
+
+    /** @internal */
     public seriesGroup?: SVGElement;
+
+    /** @internal */
     public sharedClips: Record<string, (SVGElement|undefined)> = {};
+
+    /** @internal */
     public spacing!: Array<number>;
+
+    /** @internal */
     public spacingBox!: BBoxObject;
+
+    /**
+     * Whether the chart is in styled mode, meaning all presentational
+     * attributes are avoided.
+     *
+     * @name Highcharts.Chart#styledMode
+     * @type {boolean}
+     */
     public styledMode?: boolean;
+
+    /**
+     * The chart subtitle. The subtitle has an `update` method that
+     * allows modifying the options directly or indirectly via
+     * `chart.update`.
+     *
+     * @name Highcharts.Chart#subtitle
+     * @type {Highcharts.SubtitleObject}
+     */
     public subtitle?: SVGElement;
+
+    /** @internal */
     public symbolCounter!: number;
+
+    /**
+     * The `Time` object associated with the chart. Since v6.0.5,
+     * time settings can be applied individually for each chart. If
+     * no individual settings apply, the `Time` object is shared by
+     * all instances.
+     *
+     * @name Highcharts.Chart#time
+     * @type {Highcharts.Time}
+     */
     public time!: Time;
+
+    /**
+     * The chart title. The title has an `update` method that allows
+     * modifying the options directly or indirectly via
+     * `chart.update`.
+     *
+     * @sample highcharts/members/title-update/
+     *         Updating titles
+     *
+     * @name Highcharts.Chart#title
+     * @type {Highcharts.TitleObject}
+     */
     public title?: SVGElement;
+
+    /** @internal */
     public titleOffset!: Array<number>;
+
+    /**
+     * The original options given to the constructor or a chart factory
+     * like {@link Highcharts.chart} and {@link Highcharts.stockChart}.
+     * The original options are shallow copied to avoid mutation. The
+     * copy, `chart.userOptions`, may later be mutated to reflect
+     * updated options throughout the lifetime of the chart.
+     *
+     * For collections, like `series`, `xAxis` and `yAxis`, the chart
+     * user options should always be reflected by the item user option,
+     * so for example the following should always be true:
+     *
+     * `chart.xAxis[0].userOptions === chart.userOptions.xAxis[0]`
+     *
+     * @name Highcharts.Chart#userOptions
+     * @type {Highcharts.Options}
+     */
     public userOptions!: Partial<Options>;
+
+    /**
+     * A collection of the X axes in the chart.
+     *
+     * @name Highcharts.Chart#xAxis
+     * @type {Array<Highcharts.Axis>}
+     */
     public xAxis!: Array<AxisType>;
+
+    /**
+     * A collection of the Y axes in the chart.
+     *
+     * @name Highcharts.Chart#yAxis
+     * @type {Array<Highcharts.Axis>}
+     *
+     * @todo
+     * Make events official: Fire the event `afterInit`.
+     */
     public yAxis!: Array<AxisType>;
+
+    /** @internal */
     public zooming!: ChartZoomingOptions;
+
+    /** @internal */
     public zoomClipRect?: SVGElement;
 
     /* *
@@ -384,7 +665,7 @@ class Chart {
      * Function setting zoom options after chart init and after chart update.
      * Offers support for deprecated options.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#setZoomOptions
      */
     public setZoomOptions(): void {
@@ -421,7 +702,6 @@ class Chart {
      * @param {Function} [callback]
      *        Function to run when the chart has loaded and all external
      *        images are loaded.
-     *
      *
      * @emits Highcharts.Chart#event:init
      * @emits Highcharts.Chart#event:afterInit
@@ -603,7 +883,7 @@ class Chart {
     /**
      * Internal function to unitialize an individual series.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#initSeries
      */
     public initSeries(options: SeriesOptions): Series {
@@ -631,7 +911,7 @@ class Chart {
     /**
      * Internal function to set data for all series with enabled sorting.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#setSortedData
      */
     public setSortedData(): void {
@@ -647,7 +927,7 @@ class Chart {
      * Sort and return chart series in order depending on the number of linked
      * series.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getSeriesOrderByLinks
      */
     public getSeriesOrderByLinks(): Array<Series> {
@@ -665,9 +945,12 @@ class Chart {
      * (#248, #1123, #2456, #6112). This function is called on series and axis
      * initialization and destroy.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#orderItems
-     * @param {string} coll The collection name
+     *
+     * @param {string} coll
+     * The collection name.
+     *
      * @param {number} [fromIndex=0]
      * If this is given, only the series above this index are handled.
      */
@@ -721,7 +1004,7 @@ class Chart {
      * Get the clipping for a series. Could be called for a series to initialate
      * animating the clip or to set the final clip (only width and x).
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#getClipBox
      */
     public getClipBox(series?: Series, chartCoords?: boolean): BBoxObject {
@@ -1084,7 +1367,7 @@ class Chart {
         const series = this.series;
 
         /**
-         * @private
+         * @internal
          */
         function itemById(item: (Axis|Series)): boolean {
             return (
@@ -1111,7 +1394,7 @@ class Chart {
     /**
      * Create the Axis instances based on the config options.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#createAxes
      * @emits Highcharts.Chart#event:afterCreateAxes
      * @emits Highcharts.Chart#event:createAxes
@@ -1226,10 +1509,12 @@ class Chart {
     /**
      * Apply a title, subtitle or caption for the chart
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#applyDescription
-     * @param key {string}
+     *
+     * @param {string} key
      * Either title, subtitle or caption
+     *
      * @param {Highcharts.TitleOptions|Highcharts.SubtitleOptions|Highcharts.CaptionOptions|undefined} explicitOptions
      * The options to set, will be merged with default options.
      */
@@ -1323,10 +1608,11 @@ class Chart {
      * cache the full offset height for use in `getMargins`. The result is
      * stored in `this.titleOffset`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#layOutTitles
      *
      * @param {boolean} [redraw=true]
+     *
      * @emits Highcharts.Chart#event:afterLayOutTitles
      */
     public layOutTitles(redraw = true): void {
@@ -1482,7 +1768,7 @@ class Chart {
     /**
      * Internal function to get the available size of the container element
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#getContainerBox
      */
     public getContainerBox(): { width: number, height: number } {
@@ -1517,7 +1803,7 @@ class Chart {
      * and container size. Sets {@link Chart.chartWidth} and
      * {@link Chart.chartHeight}.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#getChartSize
      */
     public getChartSize(): void {
@@ -1565,7 +1851,7 @@ class Chart {
      * parents, then save the original display properties, and when the true
      * size is retrieved, reset them. Used on first render and on redraws.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#temporaryDisplay
      *
      * @param {boolean} [revert]
@@ -1649,7 +1935,7 @@ class Chart {
      * Get the containing element, determine the size and create the inner
      * container div to hold the chart.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#afterGetContainer
      * @emits Highcharts.Chart#event:afterGetContainer
      */
@@ -1801,7 +2087,7 @@ class Chart {
      * Title, subtitle and legend have already been rendered at this stage, but
      * will be moved into their final positions.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#getMargins
      * @emits Highcharts.Chart#event:getMargins
      */
@@ -1838,7 +2124,7 @@ class Chart {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Chart#getAxisMargins
      */
     public getAxisMargins(): void {
@@ -1945,7 +2231,7 @@ class Chart {
      * Toggle the event handlers necessary for auto resizing, depending on the
      * `chart.reflow` option.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#setReflow
      */
     public setReflow(): void {
@@ -2087,7 +2373,7 @@ class Chart {
      * Set the public chart properties. This is done before and after the
      * pre-render to determine margin sizes.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#setChartSize
      * @emits Highcharts.Chart#event:afterSetChartSize
      */
@@ -2192,7 +2478,7 @@ class Chart {
     /**
      * Initial margins before auto size margins are applied.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#resetMargins
      */
     public resetMargins(): void {
@@ -2245,7 +2531,7 @@ class Chart {
      * Internal function to draw or redraw the borders and backgrounds for chart
      * and plot area.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#drawChartBox
      * @emits Highcharts.Chart#event:afterDrawChartBox
      */
@@ -2399,7 +2685,7 @@ class Chart {
      * options and series. This mainly applies to the chart.inverted property,
      * and in extensions to the chart.angular and chart.polar properties.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#propFromSeries
      */
     public propFromSeries(): void {
@@ -2452,7 +2738,7 @@ class Chart {
      * `linkedTo` option. This is done from `Chart.render`, and after
      * `Chart.addSeries` and `Series.remove`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#linkSeries
      * @emits Highcharts.Chart#event:afterLinkSeries
      */
@@ -2512,7 +2798,7 @@ class Chart {
     /**
      * Render series for the chart.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#renderSeries
      */
     public renderSeries(): void {
@@ -2525,7 +2811,7 @@ class Chart {
     /**
      * Render all graphics for the chart. Runs internally on initialization.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#render
      */
     public render(): void {
@@ -2817,7 +3103,7 @@ class Chart {
     /**
      * Prepare for first rendering after all data are loaded.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#firstRender
      * @emits Highcharts.Chart#event:beforeRender
      */
@@ -2875,7 +3161,7 @@ class Chart {
      * in the chart. Runs the callbacks and triggers the `load` and `render`
      * events.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#onload
      * @emits Highcharts.Chart#event:load
      * @emits Highcharts.Chart#event:render
@@ -2911,7 +3197,7 @@ class Chart {
 
     /**
      * Emit console warning if the a11y module is not loaded.
-     * @private
+     * @internal
      */
     public warnIfA11yModuleNotLoaded(): void {
         const { options, title } = this;
@@ -2942,7 +3228,7 @@ class Chart {
 
     /**
      * Emit console warning if the highcharts.css file is not loaded.
-     * @private
+     * @internal
      */
     public warnIfCSSNotLoaded(): void {
         if (this.styledMode) {
@@ -3106,17 +3392,17 @@ class Chart {
     /**
      * Factory for creating different axis types.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#createAxis
      *
      * @param {string} coll
-     *        An axis type.
+     * An axis type.
      *
      * @param {...Array<*>} arguments
-     *        All arguments for the constructor.
+     * All arguments for the constructor.
      *
      * @return {Highcharts.Axis}
-     *         The newly generated Axis object.
+     * The newly generated Axis object.
      */
     public createAxis(
         coll: AxisCollectionKey,
@@ -3642,9 +3928,7 @@ class Chart {
                     'plotBox'
             );
 
-        /**
-         * @private
-         */
+        /** @internal */
         function zoomOut(): void {
             chart.zoomOut();
         }
@@ -3692,7 +3976,7 @@ class Chart {
      * called on mouse move, and the distance to pan is computed from chartX
      * compared to the first chartX position in the dragging operation.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#pan
      * @param {Highcharts.PointerEventObject} event
      * @param {string} panning
@@ -3753,7 +4037,7 @@ class Chart {
      * - In a mousewheel zoom, the `to` rectangle is a 10x10 px square,
      *   while the `to` rectangle reflects the scale around that.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#transform
      */
     public transform(params: Chart.ChartTransformParams): boolean {
@@ -4063,7 +4347,7 @@ extend(Chart.prototype, {
      * Note: We need to define these references after initializers are bound to
      * chart's prototype.
      *
-     * @private
+     * @internal
      */
     collectionsWithInit: {
         // CollectionName: [ initializingMethod, [extraArguments] ]
@@ -4075,7 +4359,7 @@ extend(Chart.prototype, {
     /**
      * These collections (arrays) implement update() methods with support for
      * one-to-one option.
-     * @private
+     * @internal
      */
     collectionsWithUpdate: [
         'xAxis',
@@ -4086,7 +4370,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause isDirtyBox to be set to true when updating. Can be
      * extended from plugins.
-     * @private
+     * @internal
      */
     propsRequireDirtyBox: [
         'backgroundColor',
@@ -4104,7 +4388,7 @@ extend(Chart.prototype, {
     /**
      * These properties require a full reflow of chart elements, best
      * implemented through running `Chart.setSize` internally (#8190).
-     * @private
+     * @internal
      */
     propsRequireReflow: [
         'margin',
@@ -4122,7 +4406,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause all series to be updated when updating. Can be
      * extended from plugins.
-     * @private
+     * @internal
      */
     propsRequireUpdateSeries: [
         'chart.inverted',

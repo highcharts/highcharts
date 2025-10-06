@@ -143,8 +143,14 @@ class Color implements ColorBase {
         'color-mix(in srgb,red,blue 9%)'
     );
 
-    // Must be last static member for init cycle
-    public static readonly None = new Color('');
+
+    /**
+     * A static Color instance representing no color.
+     * @name Highcharts.Color.None
+     * @type {Highcharts.Color}
+     * @internal
+     */
+    public static readonly None = new Color(''); // Must be last static for init
 
     /* *
      *
@@ -224,9 +230,31 @@ class Color implements ColorBase {
      *
      * */
 
+    /**
+     * The original input color. This can be a color string, a gradient object,
+     * or a pattern object.
+     * @name Highcharts.Color#input
+     * @type {Highcharts.ColorType}
+     */
     public input: ColorType;
+
+    /**
+     * @internal
+     */
     public output?: string;
+
+    /**
+     * The RGBA color components, if the color is a solid color.
+     * @name Highcharts.Color#rgba
+     * @type {Highcharts.Color.RGBA}
+     */
     public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
+
+    /**
+     * The gradient stops, if the color is a gradient.
+     * @name Highcharts.Color#stops
+     * @type {Array<Highcharts.Color>|undefined}
+     */
     public stops?: Array<Color>;
 
     /* *

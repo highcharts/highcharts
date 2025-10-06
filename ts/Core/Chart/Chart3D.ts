@@ -1471,6 +1471,9 @@ namespace Chart3D {
          *
          * */
 
+        /**
+         * @internal
+         */
         public constructor(chart: Chart) {
             this.chart = chart as Composition;
         }
@@ -1481,7 +1484,14 @@ namespace Chart3D {
          *
          * */
 
+        /**
+         * @internal
+         */
         public chart: Composition;
+
+        /**
+         * @internal
+         */
         public frame3d!: FrameObject;
 
         /* *
@@ -1490,6 +1500,9 @@ namespace Chart3D {
          *
          * */
 
+        /**
+         * @internal
+         */
         public get3dFrame(): Chart3D.FrameObject {
             const chart = this.chart,
                 options3d = chart.options.chart.options3d as any,

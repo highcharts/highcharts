@@ -45,14 +45,23 @@ namespace ChartNavigationComposition {
      *
      * */
 
+    /**
+     * @internal
+     */
     export interface Composition extends Chart {
         navigation: Additions;
     }
 
+    /**
+     * @internal
+     */
     export interface UpdateFunction {
         (this: Composition, options: NavigationOptions, redraw?: boolean): void;
     }
 
+    /**
+     * @internal
+     */
     export interface UpdateObject {
         context: Composition;
         update: UpdateFunction;
@@ -98,6 +107,9 @@ namespace ChartNavigationComposition {
          *
          * */
 
+        /**
+         * @internal
+         */
         constructor(chart: Composition) {
             this.chart = chart;
         }
@@ -110,6 +122,9 @@ namespace ChartNavigationComposition {
 
         private chart: Composition;
 
+        /**
+         * @internal
+         */
         public updates: Array<UpdateFunction> = [];
 
         /* *
