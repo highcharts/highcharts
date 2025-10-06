@@ -428,11 +428,18 @@ class Series {
      */
     public useDataTable = true;
 
+    /**
+     * Preliminary flag for migration. When true, no x column is required for
+     * the data table, and it is not created unless there are actually x options
+     * from the user. Computed x data is held in the `Series.xColumn` array.
+     */
+    public tempNoXColumn = false;
+
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 
     public xAxis!: AxisType;
 
-    private xColumn?: Array<number>;
+    public xColumn?: Array<number>;
 
     public xIncrement?: (number|null);
 
@@ -1063,9 +1070,26 @@ class Series {
         // When there is no x column in the data set, generate an internal x
         // column for the series. The `xColumn` array is cached and reused, but
         // cleared on series update.
-        if (columnName === 'x') {
+        if (columnName === 'x' && this.tempNoXColumn) {
+            if (this.xColumn) {
+                return this.xColumn;
+            }
+
             if (!column) {
-                this.xColumn ||= Array(table.rowCount).fill(0).map((): number =>
+
+                // Handle name-to-x, uniqueNames
+                const nameColumn = table.getColumn('name');
+                if (this.xAxis?.hasNames && nameColumn) {
+                    this.xColumn = Array(table.rowCount).fill(0)
+                        .map((_, i): number => this.xAxis.nameToX({
+                            name: nameColumn[i] as string,
+                            series: this
+                        }));
+                    return this.xColumn;
+                }
+
+                // Vanilla auto-increment
+                this.xColumn = Array(table.rowCount).fill(0).map((): number =>
                     this.autoIncrement()
                 );
                 return this.xColumn;
@@ -1073,7 +1097,7 @@ class Series {
 
             // Else, if the x column exists
             if (this.options.relativeXValue) {
-                this.xColumn ||= (
+                this.xColumn = (
                     table.getColumn('xOption') as undefined|number[] || column
                 ).map((x): number =>
                     this.autoIncrement(x)

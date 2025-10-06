@@ -371,7 +371,7 @@ class Point {
             series.xAxis &&
             series.xAxis.hasNames
         ) {
-            point.x = series.xAxis.nameToX(point);
+            point.x = series.xAxis.nameToX(point, point.options.x);
         }
         if (typeof point.x === 'undefined' && series) {
             point.x = x ?? series.autoIncrement();
