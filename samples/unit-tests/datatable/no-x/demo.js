@@ -105,6 +105,13 @@ QUnit.test('Input data table with no x', assert => {
         [0, 6],
         'The added array point options should be included'
     );
+
+    chart.series[0].points[6].update({ x: 7 });
+    assert.deepEqual(
+        [chart.xAxis[0].min, chart.xAxis[0].max],
+        [0, 7],
+        'The updated point should be handled'
+    );
 });
 
 QUnit.test('Input data table with modified x', assert => {

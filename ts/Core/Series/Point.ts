@@ -1144,6 +1144,7 @@ class Point {
 
             // Redraw
             series.isDirty = series.isDirtyData = true;
+            delete series.xColumn;
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
                 chart.isDirtyBox = true;
             }
