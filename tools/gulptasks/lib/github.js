@@ -19,15 +19,7 @@ const DEFAULT_OPTIONS = {
 */
 function doRequest(options = {}) {
     logLib.message(options.method + ' request to ' + options.url);
-    return new Promise((resolve, reject) => {
-        fetch(options, (error, response, data) => {
-            if (error || response.statusCode >= 400) {
-                reject(error ? error : `HTTP ${response.statusCode} - ${data.message}`);
-            } else {
-                resolve(data);
-            }
-        });
-    });
+    return fetch(options);
 }
 
 /**
