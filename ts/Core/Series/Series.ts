@@ -1063,11 +1063,23 @@ class Series {
         // When there is no x column in the data set, generate an internal x
         // column for the series. The `xColumn` array is cached and reused, but
         // cleared on series update.
-        if (columnName === 'x' && !column) {
-            this.xColumn ||= Array(table.rowCount).fill(0).map((): number =>
-                this.autoIncrement()
-            );
-            return this.xColumn;
+        if (columnName === 'x') {
+            if (!column) {
+                this.xColumn ||= Array(table.rowCount).fill(0).map((): number =>
+                    this.autoIncrement()
+                );
+                return this.xColumn;
+            }
+
+            // Else, if the x column exists
+            if (this.options.relativeXValue) {
+                this.xColumn ||= (
+                    table.getColumn('xOption') as undefined|number[] || column
+                ).map((x): number =>
+                    this.autoIncrement(x)
+                );
+                return this.xColumn;
+            }
         }
 
         return column || [];

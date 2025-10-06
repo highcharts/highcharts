@@ -85,3 +85,51 @@ QUnit.test('Input data table with no x', assert => {
         'X data should handle categories'
     );
 });
+
+QUnit.test('Input data table with modified x', assert => {
+    const chart = Highcharts.chart('container', {
+        title: {
+            text: 'Input data table with modified x'
+        },
+        series: [{
+            dataTable: {
+                columns: {
+                    x: [1, 2, 3, 4],
+                    y: [1, 4, 3, 5]
+                }
+            },
+            pointStart: 2020,
+            pointInterval: 10,
+            relativeXValue: true,
+            type: 'column'
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series[0].getColumn('x'),
+        [2030, 2040, 2050, 2060],
+        'X column + relativeXValue => x data should be modified'
+    );
+
+    chart.update({
+        xAxis: {
+            type: 'datetime'
+        },
+        series: [{
+            pointStart: '2025-09-23',
+            // pointInterval: 10, // unchanged
+            pointIntervalUnit: 'day'
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series[0].getColumn('x').map(x => new Date(x).toUTCString()),
+        [
+            'Fri, 03 Oct 2025 00:00:00 GMT',
+            'Mon, 13 Oct 2025 00:00:00 GMT',
+            'Thu, 23 Oct 2025 00:00:00 GMT',
+            'Sun, 02 Nov 2025 00:00:00 GMT'
+        ],
+        'X column + relativeXvalue => should handle date inputs'
+    );
+});
