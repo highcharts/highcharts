@@ -1,0 +1,21 @@
+#container {
+    height: 500px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.performance-positive {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.performance-warning {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.performance-critical {
+    color: #dc3545;
+    font-weight: bold;
+}
