@@ -1107,6 +1107,15 @@ class Series {
                 );
                 return this.xColumn;
             }
+
+            // X column exists in the data table, but has gaps
+            const columnFilled = [...column];
+            if (columnFilled.some((x): boolean => !isNumber(x))) {
+                this.xColumn = columnFilled.map((x, i): number =>
+                    (isNumber(x) ? x : this.autoIncrement(i))
+                );
+                return this.xColumn;
+            }
         }
 
         return column || [];

@@ -89,7 +89,21 @@ QUnit.test('Input data table with no x', assert => {
     assert.strictEqual(
         chart.xAxis[0].max,
         4,
-        'The added point should be included'
+        'The added numeric point options should be included'
+    );
+
+    chart.series[0].addPoint({ x: 5, y: 5 });
+    assert.deepEqual(
+        [chart.xAxis[0].min, chart.xAxis[0].max],
+        [0, 5],
+        'The added object point options should be included'
+    );
+
+    chart.series[0].addPoint([6, 7]);
+    assert.deepEqual(
+        [chart.xAxis[0].min, chart.xAxis[0].max],
+        [0, 6],
+        'The added array point options should be included'
     );
 });
 
