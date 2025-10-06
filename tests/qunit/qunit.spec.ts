@@ -4,12 +4,13 @@ import { test, expect, setupRoutes } from '../fixtures.ts';
 import { getKarmaScripts, getSample } from '../utils.ts';
 import { join, dirname } from 'node:path';
 import { glob } from 'glob';
-import type { 
-    QUnit240TestDoneDetails, 
-    QUnit240LogDetails, 
-    QUnit240DoneDetails
-} from './types.ts';
+
 import './types.ts'; // Import for global type declarations
+import { setupErrorCapture, setupEnhancedQUnitCallbacks, captureQUnitErrorDetails, clearErrorCapture } from './utils/error-capture.ts';
+import { formatQUnitErrorDetails, createErrorSummary } from './utils/error-formatter.ts';
+import { setupConsoleCapture } from './utils/console-capture.ts';
+import { waitForQUnitWithTimeout, waitForScriptLoadWithTimeout, attemptTimeoutRecovery, type TimeoutError } from './utils/timeout-handler.ts';
+import { getOutputConfig, createProgressIndicator, createVerbosePassedOutput } from './utils/output-config.ts';
 
 const QUNIT_VERSION = '2.4.0';
 const QUNIT_SCRIPT = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.js`);
@@ -24,6 +25,13 @@ test.describe('QUnit tests', () => {
     // Set up page in advance to share browser between tests
     // which saves setup time for each test
     let page: Page;
+    
+    // Track test results for summary
+    const testResults = {
+        passed: 0,
+        failed: 0,
+        total: 0
+    };
 
     test.beforeAll(async ({ browser }) => {
         const context = await browser.newContext({
@@ -32,12 +40,14 @@ test.describe('QUnit tests', () => {
         page = await context.newPage();
         await setupRoutes(page); // need to setup routes separately
 
+        // Setup enhanced error capture and console logging
+        await setupErrorCapture(page);
+        await setupConsoleCapture(page);
 
         await page.setContent(`<div id="qunit"></div>
         <div id="qunit-fixture"></div>
         <div id="container" style="width: 600px; margin 0 auto"></div>
         <div id="output"></div>`);
-
 
         const scripts = [
             ...(await getKarmaScripts()),
@@ -89,19 +99,11 @@ test.describe('QUnit tests', () => {
     test.afterEach(async () => {
         await page.evaluate(() => {
             const testScript = document.querySelector('#test-script');
-
             if (testScript) testScript.remove();
-            if (window.__qunitResults__) {
-                window.__qunitResults__ = null;
-            }
-            if (window.__qunitFailedTests__) {
-                window.__qunitFailedTests__ = null;
-            }
-            if (window.__qunitFailedAssertions__) {
-                window.__qunitFailedAssertions__ = null;
-            }
-
         });
+        
+        // Clear all error capture data
+        await clearErrorCapture(page);
     });
 
     const unitTests = glob.sync('samples/unit-tests/**/demo.js', {
@@ -110,7 +112,10 @@ test.describe('QUnit tests', () => {
 
     for (const qunitTest of unitTests){
         test(qunitTest + '', async () =>{
+            const testStartTime = Date.now();
             const sample = getSample(dirname(qunitTest));
+            
+            testResults.total++;
 
             if (!sample.script.includes('QUnit.test')) {
                 sample.script =
@@ -118,93 +123,150 @@ test.describe('QUnit tests', () => {
                     'QUnit.test("", (assert) => { assert.ok(true)  })';
             }
 
-            await page.evaluate(() => {
-                const qunit = window.QUnit;
-                
-                qunit.done(function (details: QUnit240DoneDetails) {
-                    // Expose results to Playwright
-                    window.__qunitResults__ = {
-                        failed: details.failed,
-                        passed: details.passed,
-                        total: details.total
-                    };
-                });
-                
-                qunit.testDone(function (data: QUnit240TestDoneDetails) {
-                    if (data.failed > 0) {
-                        window.__qunitFailedTests__ ??= [];
-                        const failures = (data?.errors && data.errors.length ?
-                            data.errors : data?.assertions || []
-                        ).filter((assertion: any) => {
-                            if (typeof assertion === 'string') {
-                                return true;
-                            }
-                            return assertion?.result === false ||
-                                assertion?.passed === false;
-                        }).map((assertion: any) => {
-                            if (typeof assertion === 'string') {
-                                return assertion;
-                            }
-                            if (assertion?.message) {
-                                return assertion.message;
-                            }
-                            const actual = assertion?.actual ?? 
-                                assertion?.value;
-                            const expected = assertion?.expected;
-                            return `${actual ?? 'actual'} !== ${
-                                expected ?? 'expected'
-                            }`;
-                        });
+            // Setup enhanced QUnit callbacks
+            await setupEnhancedQUnitCallbacks(page);
 
-                        window.__qunitFailedTests__?.push({
-                            module: data.module,
-                            name: data.name,
-                            failures
-                        });
+            const scriptLoadStart = Date.now();
+            
+            try {
+                // Load script with timeout handling
+                const scriptPromise = page.addScriptTag({ 
+                    content: sample.script 
+                });
+                const script = await waitForScriptLoadWithTimeout(
+                    page,
+                    scriptPromise,
+                    qunitTest,
+                    10000 // 10 second timeout for script loading
+                );
+                await (script as any).evaluate((s: HTMLScriptElement) => {
+                    s.id = 'test-script';
+                });
+                const scriptLoadEnd = Date.now();
+
+                // Wait for QUnit results with enhanced timeout handling
+                const results = await waitForQUnitWithTimeout(
+                    page, 
+                    qunitTest, 
+                    30000
+                );
+                
+                const { failed, total } = await (results as any).jsonValue();
+
+                if (Number(failed) > 0){
+                    // Track failed test
+                    testResults.failed++;
+                    
+                    // Capture comprehensive error details
+                    const errorDetails = await captureQUnitErrorDetails(
+                        page, 
+                        qunitTest
+                    );
+                    const scriptLoadTime = scriptLoadEnd - scriptLoadStart;
+                    errorDetails.timing.scriptLoad = scriptLoadTime;
+                    errorDetails.timing.total = Date.now() - testStartTime;
+                    
+                    // Create formatted error output
+                    const errorSummary = createErrorSummary(errorDetails);
+                    const detailedError = formatQUnitErrorDetails(errorDetails);
+                    
+                    console.log(errorSummary);
+                    console.log(detailedError);
+                    
+                    // Fail the Playwright test with enhanced error message
+                    expect(Number(failed), detailedError).toBe(0);
+                } else {
+                    // Track passed test
+                    testResults.passed++;
+                    
+                    // Log success output based on verbose configuration
+                    const outputConfig = getOutputConfig();
+                    if (outputConfig.verbose) {
+                        // Verbose mode: show detailed information
+                        const testExecutionTime = Date.now() - testStartTime;
+                        const verboseOutput = createVerbosePassedOutput(
+                            qunitTest, 
+                            Number(total), 
+                            testExecutionTime
+                        );
+                        console.log(verboseOutput);
+                    } else {
+                        // Non-verbose mode: show concise progress indicator
+                        const progressOutput = createProgressIndicator(
+                            qunitTest, 
+                            Number(total)
+                        );
+                        console.log(progressOutput);
                     }
-                });
+                }
                 
-                qunit.log(function (details: QUnit240LogDetails) {
-                    if (!details.result) {
-                        window.__qunitFailedAssertions__ ??= [];
-                        window.__qunitFailedAssertions__.push({
-                            result: details.result,
-                            actual: details.actual,
-                            expected: details.expected,
-                            message: details.message,
-                            source: details.source || '',
-                            module: details.module || '',
-                            name: details.name || '',
-                            runtime: details.runtime || 0
-                        });
+            } catch (error) {
+                // Handle timeout errors with enhanced diagnostics
+                if (error && typeof error === 'object' && 'context' in error) {
+                    const timeoutError = error as TimeoutError;
+                    
+                    // Attempt recovery
+                    const recovery = await attemptTimeoutRecovery(
+                        page, 
+                        timeoutError
+                    );
+                    
+                    let errorMessage = `⏰ Timeout Error in ${timeoutError.context.phase}:\n`;
+                    errorMessage += `Test: ${qunitTest}\n`;
+                    errorMessage += `Timeout: ${timeoutError.context.timeout}ms\n`;
+                    errorMessage += `Recovery: ${recovery.message}\n\n`;
+                    errorMessage += timeoutError.message;
+                    
+                    console.error(errorMessage);
+                    
+                    if (recovery.recovered) {
+                        // If recovery was successful, try to get results
+                        try {
+                            const results = await page.evaluate(() => {
+                                return window.__qunitResults__;
+                            });
+                            if (results && results.failed === 0) {
+                                // Track recovered test as passed
+                                testResults.passed++;
+                                
+                                const outputConfig = getOutputConfig();
+                                if (outputConfig.verbose) {
+                                    const timing = Date.now() - testStartTime;
+                                    const verboseOutput = 
+                                        createVerbosePassedOutput(
+                                            qunitTest, 
+                                            results.total, 
+                                            timing
+                                        );
+                                    const recoveredMsg = `🔄 Recovered: ${verboseOutput}`;
+                                    console.log(recoveredMsg);
+                                } else {
+                                    const progressOutput = 
+                                        createProgressIndicator(
+                                            qunitTest, 
+                                            results.total
+                                        );
+                                    const msg = `🔄 ${progressOutput}`;
+                                    console.log(msg);
+                                }
+                                return;
+                            }
+                        } catch {
+                            // Recovery didn't work, fall through to error
+                        }
                     }
-                });
-            });
-
-
-            const script = await page.addScriptTag({
-                content: sample.script
-            });
-            await script.evaluate(s => (s as HTMLScriptElement).id = 'test-script');
-
-            const results = await page.waitForFunction(
-                () => window.__qunitResults__
-            );
-
-
-            const { failed, passed, total } = await results.jsonValue();
-
-
-            if (Number(failed) > 0){
-                console.log(`QUnit results: ${passed}/${total} passed, ${Number(failed)} failed`);
-                console.log(await page.evaluate(() => JSON.stringify({
-                    tests: window.__qunitFailedTests__,
-                    assertions: window.__qunitFailedAssertions__
-                }, null, 2)));
+                    
+                    // Track failed test
+                    testResults.failed++;
+                    throw new Error(errorMessage);
+                } else {
+                    // Handle other types of errors
+                    testResults.failed++;
+                    const errorMessage = `❌ Test execution error: ${error}\nTest: ${qunitTest}`;
+                    console.error(errorMessage);
+                    throw new Error(errorMessage);
+                }
             }
-
-            // Fail the Playwright test if any QUnit test failed
-            expect(Number(failed)).toBe(0);
         });
     }
 });
