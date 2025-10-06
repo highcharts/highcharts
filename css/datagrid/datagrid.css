@@ -180,7 +180,7 @@
 
     /* Default borders */
     --ig-border-radius: var(--hcg-border-radius, 0);
-    --ig-border-width: var(--hcg-border-width, 0);
+    --ig-border-width: var(--hcg-border-width, 0px);
     --ig-border-style: var(--hcg-border-style, solid);
     --ig-border-color: var(--hcg-border-color, var(--ig-color));
     --ig-border: var(--ig-border-width) var(--ig-border-style) var(--ig-border-color);
@@ -691,24 +691,23 @@
 .hcg-table thead th .hcg-column-resizer,
 .highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer {
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     top: 0;
-    width: 5px;
-    right: -3px;
+    width: 9px;
+    right: -5px;
     height: 100%;
     user-select: none;
     z-index: 10;
-}
-
-.hcg-table thead th .hcg-column-resizer.hovered,
-.highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer.hovered {
-    background: var(--ig-header-color);
     cursor: col-resize;
 }
 
-.hcg-resize-handle-line,
-.highcharts-datagrid-resize-handle-line {
-    position: absolute;
-    width: 1px;
+.hcg-column-resizer.hovered::after,
+.highcharts-datagrid-column-resizer.hovered::after {
+    content: "";
+    width: max(3px, calc(var(--ig-header-column-border-width) + 2px));
+    height: 100%;
     background: var(--ig-header-color);
 }
 
@@ -1600,10 +1599,10 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     --hcg-border-radius: 5px;
     --hcg-border-width: 1px;
     --hcg-caption-font-size: 18px;
-    --hcg-column-border-width: 0;
+    --hcg-column-border-width: 0px;
     --hcg-credits-padding: 5px;
     --hcg-font-size: 15px;
-    --hcg-header-column-border-width: 0;
+    --hcg-header-column-border-width: 0px;
     --hcg-header-vertical-padding: 10px;
     --hcg-padding: 15px;
 }

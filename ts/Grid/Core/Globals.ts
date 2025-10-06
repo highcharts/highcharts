@@ -90,7 +90,6 @@ namespace Globals {
         columnSortedDesc: 'column-sorted-desc',
         resizableContent: 'resizable-content',
         resizerHandles: 'column-resizer',
-        resizerHandleLine: 'resize-handle-line',
         resizedColumn: 'column-resized',
         creditsContainer: 'credits-container',
         creditsText: 'credits',

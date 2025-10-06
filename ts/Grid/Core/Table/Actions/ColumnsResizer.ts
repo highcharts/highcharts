@@ -97,12 +97,6 @@ class ColumnsResizer {
      */
     private handles: Array<[HTMLElement, GridEventListener[]]> = [];
 
-    /**
-     * The line that is displayed when resizing a column.
-     * @internal
-     */
-    private resizeHandleLine?: HTMLElement;
-
 
     /* *
      *
@@ -149,28 +143,6 @@ class ColumnsResizer {
         }
     }
 
-    private reflowResizeHandleLine(
-        handle: HTMLElement | undefined = this.draggedResizeHandle
-    ): void {
-        const vp = this.viewport;
-        const line = this.resizeHandleLine;
-        if (!line || !handle) {
-            return;
-        }
-
-        const parentBox = vp.grid.contentWrapper!.getBoundingClientRect();
-        const tbodyBox = vp.tbodyElement.getBoundingClientRect();
-        const handleBox = handle.getBoundingClientRect();
-        const left = Math.floor(
-            handleBox.left + handleBox.width / 2 - parentBox.left
-        );
-        const top = Math.floor(handleBox.bottom - parentBox.top);
-
-        line.style.left = left + 'px';
-        line.style.top = top + 'px';
-        line.style.bottom = parentBox.bottom - tbodyBox.bottom + 'px';
-    }
-
     /**
      * Handles the mouse move event on the document.
      *
@@ -191,7 +163,6 @@ class ColumnsResizer {
 
         vp.reflow();
         vp.rowsVirtualizer.adjustRowHeights();
-        this.reflowResizeHandleLine();
 
         fireEvent(this.draggedColumn, 'afterResize', {
             target: this.draggedColumn,
@@ -210,8 +181,6 @@ class ColumnsResizer {
 
         if (!this.draggedResizeHandle?.matches(':hover')) {
             this.draggedResizeHandle?.classList.remove('hovered');
-            this.resizeHandleLine?.remove();
-            delete this.resizeHandleLine;
         }
 
         this.dragStartX = void 0;
@@ -263,23 +232,13 @@ class ColumnsResizer {
                 return;
             }
             handle.classList.add('hovered');
-
-            if (!this.resizeHandleLine) {
-                this.resizeHandleLine = makeHTMLElement('div', {
-                    className: Globals.getClassName('resizerHandleLine')
-                }, this.viewport.grid.contentWrapper);
-            }
-            this.reflowResizeHandleLine(handle);
         };
 
         const onHandleMouseOut = (): void => {
             if (this.draggedResizeHandle) {
                 return;
             }
-
             handle.classList.remove('hovered');
-            this.resizeHandleLine?.remove();
-            delete this.resizeHandleLine;
         };
 
         const handleListeners: GridEventListener[] = [{
