@@ -62,7 +62,7 @@ class SortMenuButton extends ContextMenuButton {
         langOptions: LangOptions,
         direction: typeof SortMenuButton.prototype.direction
     ) {
-        super({ activeIcon: 'checkmark' });
+        super({ icon: direction === 'asc' ? 'sortAsc' : 'sortDesc' });
 
         this.direction = direction;
         this.options.label = langOptions[
