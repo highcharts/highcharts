@@ -18,6 +18,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type LangOptions from './LangOptions';
 
 /* *

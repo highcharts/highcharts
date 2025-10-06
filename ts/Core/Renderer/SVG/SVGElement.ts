@@ -22,6 +22,7 @@ import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
+import type { DeepPartial } from '../../../Shared/Types';
 import type {
     DOMElementType,
     HTMLDOMElement,

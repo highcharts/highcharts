@@ -21,7 +21,7 @@
  * */
 
 import type Component from '../Component';
-import type Globals from '../../Globals';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Options from './DataGridComponentOptions';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
@@ -36,7 +36,7 @@ const {
  *
  * */
 
-const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
+const DataGridComponentDefaults: DeepPartial<Options> = {
     gridClassName: 'dataGrid-container',
     gridID: 'dataGrid-' + uniqueKey(),
     gridOptions: {},

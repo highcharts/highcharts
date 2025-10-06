@@ -14,6 +14,7 @@
  *
  * */
 
+import type { DeepPartial } from '../Shared/Types';
 import type {
     LonLatArray,
     MapViewOptions

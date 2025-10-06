@@ -8,11 +8,11 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['kr-4194', 10], ['kr-kg', 11], ['kr-cb', 12], ['kr-kn', 13],
-        ['kr-2685', 14], ['kr-pu', 15], ['kr-2688', 16], ['kr-sj', 17],
-        ['kr-tj', 18], ['kr-ul', 19], ['kr-in', 20], ['kr-kw', 21],
-        ['kr-gn', 22], ['kr-cj', 23], ['kr-gb', 24], ['kr-so', 25],
-        ['kr-tg', 26], ['kr-kj', 27]
+        ['kr-kg', 10], ['kr-cb', 11], ['kr-kn', 12], ['kr-2685', 13],
+        ['kr-pu', 14], ['kr-2688', 15], ['kr-sj', 16], ['kr-tj', 17],
+        ['kr-ul', 18], ['kr-in', 19], ['kr-kw', 20], ['kr-gn', 21],
+        ['kr-cj', 22], ['kr-gb', 23], ['kr-so', 24], ['kr-tg', 25],
+        ['kr-kj', 26]
     ];
 
     // Create the chart
