@@ -81,7 +81,11 @@ function onSetClip(
         clipBox: BBoxObject
     }
 ): void {
-    if (!this.xAxis || !this.yAxis) {
+    if (
+        !this.xAxis ||
+        !this.yAxis ||
+        (!this.chart.angular && !this.chart.polar)
+    ) {
         return;
     }
 
