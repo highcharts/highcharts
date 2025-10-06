@@ -18,8 +18,9 @@ const DEFAULT_OPTIONS = {
 * @return {Promise<*> | Promise | Promise} Promise to keep
 */
 function doRequest(options = {}) {
-    logLib.message(options.method + ' request to ' + options.url);
-    return fetch(options);
+    const { url, ...fetchOptions } = options;
+    logLib.message(options.method + ' request to ' + url);
+    return fetch(url, fetchOptions);
 }
 
 /**
