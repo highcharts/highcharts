@@ -1633,6 +1633,10 @@ class Series {
                     columnAssignment = options.columnAssignment,
                     keys = dataColumnKeys.slice();
 
+                if (dataTable.length) {
+                    this.tempNoXColumn = true;
+                }
+
                 // Extend the data column keys with the keys from the column
                 // assignment
                 if (columnAssignment) {
