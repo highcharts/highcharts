@@ -182,6 +182,8 @@ class HeaderCell extends Cell {
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
 
+            this.htmlElement.setAttribute('aria-label', column.id);
+
             if (isSortableData) {
                 column.viewport.grid.accessibility?.addSortableColumnHint(
                     this.headerContent
