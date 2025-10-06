@@ -28,8 +28,8 @@ import U from '../../Core/Utilities.js';
 import ContourSeriesOptions from './ContourSeriesOptions';
 import ColorAxisOptions from '../../Core/Axis/Color/ColorAxisOptions.js';
 import ColorType from '../../Core/Color/ColorType.js';
-
-const { extend } = U;
+import Chart from '../../Core/Chart/Chart.js';
+const { extend, merge } = U;
 
 class ContourSeries extends ScatterSeries {
     public canvas?: HTMLCanvasElement;
@@ -61,6 +61,22 @@ class ContourSeries extends ScatterSeries {
     private smoothColoringUniformBuffer?: GPUBuffer;
 
     private showContourLinesUniformBuffer?: GPUBuffer;
+
+    public init(chart: Chart, options: ContourSeriesOptions): void {
+        if (!options?.marker) {
+            options = merge(options, {
+                marker: {
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+        }
+
+        super.init.apply(this, [chart, options]);
+    }
 
     public triangulateData(): Delaunay<Float64Array> {
         const points = this.points,
