@@ -1,4 +1,8 @@
 describe('Pagination.', () => {
+    beforeEach(() => {
+        cy.viewport(1200, 800);
+    });
+
     before(() => {
         cy.visit('/grid-lite/cypress/pagination');
     });
@@ -25,7 +29,7 @@ describe('Pagination.', () => {
         cy.get('.hcg-pagination-page-active').should('contain', '1');
 
         // Check initial data rows
-        cy.get('table tbody tr').should('have.length', 21);
+        cy.get('table tbody tr').should('have.length', 22);
     });
 
     it('Next/previous button.', () => {
@@ -39,7 +43,7 @@ describe('Pagination.', () => {
         cy.get('.hcg-pagination-page-active').should('contain', '2');
 
         // Check data rows update
-        cy.get('table tbody tr').should('have.length', 21);
+        cy.get('table tbody tr').should('have.length', 22);
 
         // Click previous button
         cy.get('.hcg-pagination-btn[title="Previous page"]').click();
@@ -111,7 +115,7 @@ describe('Pagination.', () => {
             });
 
             cy.get('.hcg-pagination-wrapper').should('exist');
-            cy.get('table tbody tr').should('have.length', 21);
+            cy.get('table tbody tr').should('have.length', 22);
         });
     });
 
@@ -229,5 +233,27 @@ describe('Pagination.', () => {
                 });
             });
         });
+    });
+
+    it('Position mobile view.', () => {
+        cy.viewport('iphone-x').wait(200);
+
+        cy.get('.hcg-pagination-btn[title="Last page"]')
+            .should('not.be.visible');
+        cy.get('.hcg-pagination-btn[title="First page"]')
+            .should('not.be.visible');
+        cy.get('.hcg-pagination-page-size-select')
+            .should('not.be.visible');
+
+        cy.get('.hcg-pagination-mobile-selector')
+            .should('be.visible')
+            .contains('Page 1 of 12');
+        cy.get('.hcg-pagination-mobile-page-size-selector')
+            .should('be.visible')
+            .contains('10 Items per page');
+        cy.get('.hcg-pagination-btn[title="Next page"]')
+            .should('be.visible');
+        cy.get('.hcg-pagination-btn[title="Previous page"]')
+            .should('be.visible');
     });
 });

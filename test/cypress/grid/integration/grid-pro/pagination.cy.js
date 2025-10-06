@@ -1,4 +1,8 @@
 describe('Pagination.', () => {
+    beforeEach(() => {
+        cy.viewport(1200, 800);
+    });
+
     before(() => {
         cy.visit('/grid-pro/cypress/pagination-events');
     });
