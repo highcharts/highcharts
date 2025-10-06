@@ -2125,13 +2125,17 @@ class Series {
 
                 // #970
                 if (!point && pOptions !== void 0) {
-                    if (
-                        this.useDataTable &&
-                        pOptions &&
-                        isObject(pOptions)
-                    ) {
-                        (pOptions as any).x = (pOptions as any).xOption;
-                        delete (pOptions as any).xOption;
+                    if (!this.tempNoXColumn) {
+                        if (
+                            this.useDataTable &&
+                            pOptions &&
+                            isObject(pOptions)
+                        ) {
+                            (pOptions as any).x = (pOptions as any).xOption;
+                            delete (pOptions as any).xOption;
+                        }
+                    } else if (isObject(pOptions, true)) {
+                        pOptions.x = xData[i];
                     }
 
                     data[cursor] = point = new PointClass(

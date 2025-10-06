@@ -1,4 +1,4 @@
-QUnit.skip('Column chart', assert => {
+QUnit.test('Column chart', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
