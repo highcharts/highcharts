@@ -2483,6 +2483,8 @@ class Series {
 
         let clipRect = sharedClips[sharedClipKey];
 
+        fireEvent(this, 'setClip', { clipBox });
+
         // If a clipping rectangle for the same set of axes does not exist,
         // create it
         if (!clipRect) {
