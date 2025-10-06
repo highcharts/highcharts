@@ -31,8 +31,10 @@ import type {
     CrossfilterSyncOptions,
     Options
 } from './NavigatorComponentOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 import type {
-    RangeModifierOptions, RangeModifierRangeOptions
+    RangeModifierOptions,
+    RangeModifierRangeOptions
 } from '../../../Data/Modifiers/RangeModifierOptions';
 
 import Component from '../Component.js';
@@ -82,42 +84,6 @@ class NavigatorComponent extends Component {
      * Predefined sync configuration for the Navigator component.
      */
     public static predefinedSyncConfig = NavigatorSyncs;
-
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Creates component from JSON.
-     *
-     * @param json
-     * Set of component options, used for creating the Highcharts component.
-     *
-     * @returns
-     * Highcharts component based on config from JSON.
-     *
-     * @private
-     */
-    public static fromJSON(
-        json: Component.JSON,
-        cell: Cell
-    ): NavigatorComponent {
-        const options = json.options,
-            component = new NavigatorComponent(
-                cell,
-                options as unknown as Options
-            );
-
-        component.emit({
-            type: 'fromJSON',
-            json
-        });
-
-        return component;
-    }
 
     /* *
      *
@@ -208,7 +174,7 @@ class NavigatorComponent extends Component {
                 this.contentElement.clientHeight
             ),
             width = this.contentElement.clientWidth,
-            chartUpdates: Globals.DeepPartial<HighchartsOptions> = {};
+            chartUpdates: DeepPartial<HighchartsOptions> = {};
 
         if (
             chart.chartHeight !== height ||

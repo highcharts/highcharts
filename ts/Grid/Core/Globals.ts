@@ -32,10 +32,6 @@ namespace Globals {
      *
      * */
 
-    export type DeepPartial<T> = {
-        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
-    };
-
     export type DeepRequired<T> = {
         [K in keyof T]-?: DeepRequired<T[K]>;
     };
@@ -77,6 +73,7 @@ namespace Globals {
         headerCellContent: 'header-cell-content',
         headerRow: 'head-row-content',
         noData: 'no-data',
+        noPadding: 'no-padding',
         columnFirst: 'column-first',
         columnSortable: 'column-sortable',
         columnSortableIcon: 'column-sortable-icon',

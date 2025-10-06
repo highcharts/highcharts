@@ -2,6 +2,22 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 /* Dashboards */
 
 :root {
@@ -22,6 +38,10 @@
 
 .highcharts-gauge-chart .highcharts-grid-line {
     stroke-width: 0;
+}
+
+.highcharts-solidgauge-series.highcharts-color-0 path.highcharts-point {
+    fill: var(--highcharts-color-0);
 }
 
 .highcharts-datagrid-table {

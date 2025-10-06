@@ -28,7 +28,38 @@ The `tickPixelInterval` option sets an approximate pixel interval of the tick m
 
 ### Minor ticks
 
-If the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTickInterval) option is set, minor ticks are laid out between the major ones. This includes minor tick marks, and minor grid lines, which have their own options for look and feel, but excludes labels. 
+If the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTickInterval) option is set, minor ticks are laid out between the major ones. This includes minor tick marks, and minor grid lines, which have their own options for look and feel, but excludes labels.
+
+### How are ticks calculated in Highcharts?
+Highcharts offers several options to control the appearance and placement of ticks on axes. By default, the axis extremes and tick positions are calculated so that all data values fit inside the chart. Ticks are placed at “round” values (like 1, 2, 5, 10, 20, 50, etc. for linear axes, or minute, hour, month, etc. for datetime axes). This makes charts easier to read and interpret.
+For example, if your data’s minimum is 2 and maximum is 16, the y-axis might automatically span from 0 to 20, with ticks at 0, 5, 10, 15, and 20. This default behavior can be modified using several options.
+
+#### Controlling tick placement
+ -   ​`tickInterval`​: Sets the interval between ticks to a fixed value.
+ -   ​`tickPixelInterval`​: Sets the approximate pixel distance between ticks. This helps with responsive layouts.
+ -   ​`tickPositions​`:
+    Explicitly sets the tick positions using an array of values. This overrides automatic calculation and the options above.
+ -   ​`tickPositioner`​: A callback function that returns an array of tick positions, allowing for full customization.
+
+#### Axis extremes and ticks
+By default, axes will start and end on a tick. This means the axis minimum and maximum are rounded to the nearest tick values. You can control this behavior using the `startOnTick` and `endOnTick` options. These options can even override explicit `min` and `max` settings, so the axis begins and ends on neat tick values.
+#### Related options
+There are several additional options that affect tick calculation and axis extremes:
+-   [`alignTicks`](https://api.highcharts.com/highcharts/xAxis.alignTicks)
+-   [`ceiling`](https://api.highcharts.com/highcharts/xAxis.ceiling)
+-   [`floor`](https://api.highcharts.com/highcharts/xAxis.floor)
+-   [`max`](https://api.highcharts.com/highcharts/xAxis.max)
+-   [`min`](https://api.highcharts.com/highcharts/xAxis.min)
+-   [`minTickInterval`](https://api.highcharts.com/highcharts/xAxis.minorTickInterval)
+-   [`minRange`](https://api.highcharts.com/highcharts/xAxis.minRange)
+-   [`softMax`](https://api.highcharts.com/highcharts/xAxis.softMax)
+-   [`softMin`](https://api.highcharts.com/highcharts/xAxis.softMin)
+-   [`startOnTick`](https://api.highcharts.com/highcharts/xAxis.startOnTick)
+-   [`tickAmount`](https://api.highcharts.com/highcharts/xAxis.tickAmount)
+-   [`tickInterval`](https://api.highcharts.com/highcharts/xAxis.tickInterval)
+-   [`tickPixelInterval`](https://api.highcharts.com/highcharts/xAxis.tickPixelInterval)
+-   [`tickPositioner`](https://api.highcharts.com/highcharts/xAxis.tickPositioner)
+-   [`tickPositions`](https://api.highcharts.com/highcharts/xAxis.tickPositions)
 
 ### Labels
 
@@ -189,7 +220,12 @@ If you would like to show zero and negative values on a logarithmic axis in High
 
 A datetime axis prints labels of round date values in appropriate intervals. Internally, a datetime axis is a linear numeric axis based on milliseconds since midnight Jan 1, 1970, as specified by the JavaScript Date object. Depending on the scale the datetime label will either be represented as time or a date.
 
-On datetime axes, all time settings may be given either as milliseconds, date strings (since v12), or Date objects. This includes options like `min` and `max`, arguments to `Axis.setExtremes`, as well as related options like `point.x` and `series.pointStart`. Date strings are parsed and assigned the current timezone as given in the chart-level [time.timezone](https://api.highcharts.com/highcharts/time.timezone) option, or to the timezone indicated in the time string itself.
+On datetime axes, all time settings may be given either as milliseconds, date strings (since v12), or Date objects. This includes options like `min` and `max`, arguments to `Axis.setExtremes`, as well as related options like `point.x` and `series.pointStart`.
+
+#### Timezone handling
+By default, Highcharts uses UTC for all date-time axes. You can control how dates are interpreted and displayed by setting the chart-level [time.timezone](https://api.highcharts.com/highcharts/time.timezone) option. Date strings without a timezone are interpreted in this timezone. If a date string contains a timezone offset, that offset is respected.
+
+Tip:​ For consistent behavior across all users and time zones, we recommend using ISO date strings (e.g., `2024-01-31`) or UTC timestamps (`Date.UTC(...)`). Avoid using local JavaScript `Date` objects (e.g., `new Date(2024, 0, 31)`) for axis values, as these depend on the user's local timezone and may produce unexpected results, especially near month boundaries.
 
 In Highcharts Stock the x-axis is always a datetime axis.
 

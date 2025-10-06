@@ -4,7 +4,7 @@
  *
  * */
 
-import type AnnotationOptions from './AnnotationOptions';
+import type { AnnotationOptions, AnnotationTypeOptions } from './AnnotationOptions';
 import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
@@ -19,20 +19,25 @@ const { defined } = U;
  * */
 
 /**
- * A basic type of an annotation. It allows to add custom labels
- * or shapes. The items can be tied to points, axis coordinates
- * or chart pixel coordinates.
+ * A collection of annotations to add to the chart. The basic annotation allows
+ * adding custom labels or shapes. The items can be tied to points, axis
+ * coordinates or chart pixel coordinates.
  *
- * @sample highcharts/annotations/basic/
- *         Basic annotations
- * @sample highcharts/demo/annotations/
- *         Advanced annotations
- * @sample highcharts/css/annotations
- *         Styled mode
- * @sample highcharts/annotations-advanced/controllable
- *         Controllable items
+ * General options for all annotations can be set using the
+ * `Highcharts.setOptions` function. In this case only single objects are
+ * supported, because it alters the defaults for all items. For initialization
+ * in the chart constructors however, arrays of annotations are supported.
+ *
+ * See more in the [general docs](https://www.highcharts.com/docs/advanced-chart-features/annotations).
+ *
+ * @sample highcharts/annotations/basic/ Basic annotations
+ * @sample highcharts/demo/annotations/ Annotated chart
+ * @sample highcharts/css/annotations Styled mode
+ * @sample highcharts/annotations-advanced/controllable Controllable items
  * @sample {highstock} stock/annotations/fibonacci-retracements
  *         Custom annotation, Fibonacci retracement
+ * @sample highcharts/annotations/shape/
+ *         Themed crooked line annotation
  *
  * @type         {Array<*>}
  * @since        6.0.0
@@ -49,6 +54,18 @@ const AnnotationDefaults: AnnotationOptions = {
      *
      * @type      {number|string}
      * @apioption annotations.id
+     */
+
+    /**
+     * For advanced annotations, this option defines the type of annotation. Can
+     * be one of the keys listed under the [types option](#annotations.types).
+     *
+     * @sample    highcharts/annotations-advanced/crooked-line
+     *            Crooked line annotation
+     * @requires  modules/annotations-advanced
+     * @product   highstock
+     * @type      {string}
+     * @apioption annotations.type
      */
 
     /**
@@ -371,6 +388,17 @@ const AnnotationDefaults: AnnotationOptions = {
      */
 
     /**
+     * The array of control points.
+     *
+     * @sample highcharts/annotations/ellipse
+     *         Ellipse annotation
+     *
+     * @extends annotations.controlPointOptions
+     * @type {Array<AnnotationControlPointOptionsObject>}
+     * @apioption annotations.labels.controlPoints
+     */
+
+    /**
      * This option defines the point to which the label will be
      * connected. It can be either the point which exists in the
      * series - it is referenced by the point's id - or a new point
@@ -399,6 +427,17 @@ const AnnotationDefaults: AnnotationOptions = {
      * @type      {Array<*>}
      * @extends   annotations.shapeOptions
      * @apioption annotations.shapes
+     */
+
+    /**
+     * The array of control points.
+     *
+     * @sample highcharts/annotations-advanced/controllable-image
+     *         Controllable image annotation
+     *
+     * @extends annotations.controlPointOptions
+     * @type {Array<AnnotationControlPointOptionsObject>}
+     * @apioption annotations.shapes.controlPoints
      */
 
     /**
@@ -703,11 +742,99 @@ const AnnotationDefaults: AnnotationOptions = {
     events: {},
 
     /**
+     *
+     * Additional options for an annotation with the type.
+     *
+     * @requires  modules/annotations
+     * @apioption annotations.typeOptions
+     */
+    typeOptions: {
+
+        /**
+         * Background shape options for the annotation.
+         *
+         * @extends annotations.shapeOptions
+         * @apioption annotations.typeOptions.background
+         */
+
+        /**
+         * Height of the annotation in pixels.
+         *
+         * @type {number}
+         * @apioption annotations.typeOptions.height
+         */
+
+        /**
+         * Line options.
+         *
+         * @extends annotations.shapeOptions
+         * @apioption annotations.typeOptions.line
+         */
+
+        /**
+         * A single point that the annotation is attached to. It can be either
+         * the point which exists in the series - it is referenced by the
+         * point's id - or a new point with defined x, y properties
+         * and optionally axes.
+         *
+         * @type {string|AnnotationMockPointFunction|AnnotationMockPointOptionsObject}
+         * @apioption annotations.typeOptions.point
+         */
+
+        /**
+         * An array of points that the annotation is attached to. Each point can
+         * the point which exists in the series - it is referenced by the
+         * point's id - or a new point with defined x, y properties
+         * and optionally axes.
+         *
+         * @type {Array<*>}
+         * @apioption annotations.typeOptions.points
+         */
+
+        /**
+         * The annotation type identifier.
+         *
+         * @type {string}
+         * @apioption annotations.typeOptions.type
+         */
+
+        /**
+         * This number defines which `xAxis` the point is connected to.
+         * It refers to either the axis id or the index of the axis
+         * in the `xAxis` array.
+         *
+         * @type {number}
+         * @apioption annotations.typeOptions.xAxis
+         */
+
+        /**
+         * This number defines which `yAxis` the point is connected to.
+         * It refers to either the axis id or the index of the axis
+         * in the `yAxis` array.
+         *
+         * @type {number}
+         * @apioption annotations.typeOptions.yAxis
+         */
+
+    } as AnnotationTypeOptions,
+
+    /**
+     * Option override for specific advanced annotation types. This collection
+     * is intended for general theming using `Highcharts.setOptions()`.
+     *
+     * @sample   highcharts/annotations/shape/
+     *           Themed crooked line annotation
+     * @product highstock
+     * @requires modules/annotations-advanced
+     */
+    types: {},
+
+    /**
      * The Z index of the annotation.
      */
     zIndex: 6
 
-} as AnnotationOptions; // Type options are expected but not set
+} as AnnotationOptions;
 
 /* *
  *

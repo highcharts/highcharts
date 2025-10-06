@@ -30,10 +30,11 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
@@ -875,7 +876,7 @@ class Axis {
                 axis.isOrdinal ||
                 axis.brokenAxis?.hasBreaks ||
                 (axis.logarithmic && handleLog)
-            ) && axis.lin2val;
+            ) && !!axis.lin2val;
 
         let sign = 1,
             cvsOffset = 0,
@@ -3088,7 +3089,8 @@ class Axis {
                 return parseInt(String(cssWidth), 10);
             }
 
-            if (marginLeft) {
+            // Skip marginLeft for opposite axis to avoid label cutoff, #22821
+            if (!this.opposite && marginLeft) {
                 return marginLeft - chart.spacing[3];
             }
         }
@@ -4121,7 +4123,7 @@ class Axis {
         }
 
         // Delete all properties and fall back to the prototype.
-        objectEach(axis, function (val: any, key: string): void {
+        objectEach(axis, function (_val: any, key: string): void {
             if (axis.getKeepProps().indexOf(key) === -1) {
                 delete (axis as any)[key];
             }
@@ -4412,7 +4414,7 @@ class Axis {
  *
  * */
 
-interface Axis extends AxisComposition, AxisLike {
+interface Axis extends AxisComposition, AxisBase {
     // Nothing here yet
 }
 

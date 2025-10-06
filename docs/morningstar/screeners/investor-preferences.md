@@ -22,6 +22,11 @@ Here is an example of how to use the Investor Preferences connector:
 
 ```js
 const investorPreferencesConnector = new HighchartsConnectors.Morningstar.InvestorPreferencesConnector({
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
+    },
     page: 1,
     pageSize: 20,
     languageId: 'en-GB',
@@ -63,10 +68,7 @@ const investorPreferencesConnector = new HighchartsConnectors.Morningstar.Invest
             }]
         }
     }],
-    universeIds: ['FOALL$$ALL'],
-    postman: {
-        environmentJSON: postmanJSON
-    }
+    universeIds: ['FOALL$$ALL']
 });
 ```
 

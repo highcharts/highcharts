@@ -12,12 +12,23 @@ import './es-modules/Grid/Pro/GridEvents';
 import './es-modules/Grid/Pro/CellEditing/CellEditingComposition';
 import './es-modules/Grid/Pro/Dash3Compatibility';
 import './es-modules/Grid/Pro/Credits/CreditsProComposition';
+import './es-modules/Grid/Pro/ColumnTypes/ValidatorComposition';
+import './es-modules/Grid/Pro/CellRendering/CellRenderersComposition';
+import './es-modules/Grid/Pro/CellRendering/Renderers/TextRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/CheckboxRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/SelectRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/TextInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/DateInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/DateTimeInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/TimeInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/NumberInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/SparklineRenderer';
 
 export { /** @deprecated Use `Grid` instead. */ default as DataGrid } from './es-modules/Grid/Core/Grid.js';
 export { default as Grid } from './es-modules/Grid/Core/Grid.js';
 export { default as Column } from './es-modules/Grid/Core/Table/Column.js';
-export { default as TableRow } from './es-modules/Grid/Core/Table/Content/TableRow.js';
-export { default as TableCell } from './es-modules/Grid/Core/Table/Content/TableCell.js';
+export { default as TableRow } from './es-modules/Grid/Core/Table/Body/TableRow.js';
+export { default as TableCell } from './es-modules/Grid/Core/Table/Body/TableCell.js';
 export { default as Options } from './es-modules/Grid/Core/Options.js';
 
 export { default as DataConnector } from './es-modules/Data/Connectors/DataConnector';

@@ -34,20 +34,21 @@ import type {
     NumberFormatterCallbackFunction,
     Options
 } from '../Options';
-import type ChartLike from './ChartLike';
+import type ChartBase from './ChartBase';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
     ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
+import type { DeepPartial } from '../../Shared/Types';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions
 } from '../Series/SeriesType';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 import A from '../Animation/AnimationUtilities.js';
@@ -121,16 +122,16 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Axis/AxisBase' {
+    interface AxisBase {
         extKey?: string;
         index?: number;
         touched?: boolean;
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+declare module './ChartBase' {
+    interface ChartBase {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
@@ -157,14 +158,14 @@ declare module '../Options' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike {
+declare module '../Series/PointBase' {
+    interface PointBase {
         touched?: boolean;
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         index?: number;
         touched?: boolean;
     }
@@ -321,7 +322,6 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
-    public dataLabelsGroup?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -1847,8 +1847,8 @@ class Chart {
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
             colorAxis = chart.colorAxis,
             margin = chart.margin,
-            getOffset = function (axes: Array<Axis>): void {
-                axes.forEach(function (axis): void {
+            getOffset = (axes: Array<Axis>): void => {
+                axes.forEach((axis): void => {
                     if (axis.visible) {
                         axis.getOffset();
                     }
@@ -1864,9 +1864,9 @@ class Chart {
         }
 
         // Add the axis offsets
-        marginNames.forEach(function (m: string, side: number): void {
+        marginNames.forEach((marginName, side): void => {
             if (!defined(margin[side])) {
-                (chart as any)[m] += axisOffset[side];
+                chart[marginName] += axisOffset[side];
             }
         });
 
@@ -1916,7 +1916,7 @@ class Chart {
         // Width and height checks for display:none. Target is doc in Opera
         // and win in Firefox, Chrome and IE9.
         if (
-            !chart.isPrinting &&
+            !chart.exporting?.isPrinting &&
             !chart.isResizing &&
             oldBox &&
             // When fired by resize observer inside hidden container
@@ -2205,29 +2205,30 @@ class Chart {
             halfWidth = Math.round(plotBorderWidth) / 2;
 
         // Create margin and spacing array
-        ['margin', 'spacing'].forEach(function splashArrays(
-            target: string
-        ): void {
-            const value = (chartOptions as any)[target],
+        (['margin', 'spacing'] as ('margin'|'spacing')[]).forEach((
+            target
+        ): void => {
+            const value = chartOptions[target],
                 values = isObject(value) ? value : [value, value, value, value];
 
-            [
+            ([
                 'Top',
                 'Right',
                 'Bottom',
                 'Left'
-            ].forEach(function (sideName: string, side: number): void {
-                (chart as any)[target][side] = pick(
-                    (chartOptions as any)[target + sideName],
+            ] as ('Top'|'Right'|'Bottom'|'Left')[]
+            ).forEach((sideName, side): void => {
+                chart[target][side] = (
+                    chartOptions[`${target}${sideName}`] ??
                     values[side]
-                );
+                ) as any;
             });
         });
 
         // Set margin names like chart.plotTop, chart.plotLeft,
         // chart.marginRight, chart.marginBottom.
-        marginNames.forEach(function (m: string, side: number): void {
-            (chart as any)[m] = pick(chart.margin[side], chart.spacing[side]);
+        marginNames.forEach((marginName, side): void => {
+            chart[marginName] = chart.margin[side] ?? chart.spacing[side];
         });
         chart.axisOffset = [0, 0, 0, 0]; // Top, right, bottom, left
         chart.clipOffset = [
@@ -2656,10 +2657,6 @@ class Chart {
             .shadow(chart.options.chart.seriesGroupShadow)
             .add();
 
-        chart.dataLabelsGroup ||= renderer.g('datalabels-group')
-            .attr({ zIndex: 6 })
-            .add();
-
         chart.renderSeries();
 
         // Credits
@@ -2905,6 +2902,7 @@ class Chart {
         }
 
         this.warnIfA11yModuleNotLoaded();
+        this.warnIfCSSNotLoaded();
 
         // Don't run again
         this.hasLoaded = true;
@@ -2938,6 +2936,20 @@ class Chart {
                     'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
                     false, this
                 );
+            }
+        }
+    }
+
+    /**
+     * Emit console warning if the highcharts.css file is not loaded.
+     * @private
+     */
+    public warnIfCSSNotLoaded(): void {
+        if (this.styledMode) {
+            const containerStyle = win.getComputedStyle(this.container);
+
+            if (containerStyle.zIndex !== '0') {
+                error(35, false, this);
             }
         }
     }
@@ -3798,29 +3810,25 @@ class Chart {
                 continue;
             }
 
-            let newMin = axis.toValue(minPx, true) +
-                // Don't apply offset for selection (#20784)
-                    (
-                        selection || axis.isOrdinal ?
-                            0 : minPointOffset * pointRangeDirection
-                    ),
-                newMax =
-                    axis.toValue(
-                        minPx + len / scale, true
-                    ) -
-                    (
-                        // Don't apply offset for selection (#20784)
-                        selection || axis.isOrdinal ?
-                            0 :
-                            (
-                                (minPointOffset * pointRangeDirection) ||
-                                // Polar zoom tests failed when this was not
-                                // commented:
-                                // (axis.isXAxis && axis.pointRangePadding) ||
-                                0
-                            )
-                    ),
+            // Adjust offset to ensure selection zoom triggers correctly
+            // (#22945)
+            const offset = (axis.chart.polar || axis.isOrdinal) ?
+                    0 :
+                    (minPointOffset * pointRangeDirection || 0),
+                eventMin = axis.toValue(minPx, true),
+                eventMax = axis.toValue(minPx + len / scale, true);
+
+            let newMin = eventMin + offset,
+                newMax = eventMax - offset,
                 allExtremes = axis.allExtremes;
+
+            if (selection) {
+                selection[axis.coll as 'xAxis' | 'yAxis'].push({
+                    axis,
+                    min: Math.min(eventMin, eventMax),
+                    max: Math.max(eventMin, eventMax)
+                });
+            }
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
@@ -4035,7 +4043,7 @@ class Chart {
  *
  * */
 
-interface Chart extends ChartLike {
+interface Chart extends ChartBase {
     callbacks: Array<Chart.CallbackFunction>;
     collectionsWithInit: Record<string, [Function, Array<any>?]>;
     collectionsWithUpdate: Array<string>;

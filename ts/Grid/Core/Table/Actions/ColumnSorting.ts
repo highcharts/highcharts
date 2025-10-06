@@ -143,6 +143,32 @@ class ColumnSorting {
     }
 
     /**
+     * Updates the column options with the new sorting state.
+     *
+     * @param col
+     * The column to update.
+     */
+    private updateColumnOptions(col: Column): void {
+        const order = col.viewport.grid.querying.sorting.currentSorting?.order;
+
+        if (col.id === this.column.id && order) {
+            col.update({
+                sorting: {
+                    order
+                }
+            }, false);
+        } else {
+            delete col.options.sorting?.order;
+            if (
+                col.options.sorting &&
+                Object.keys(col.options.sorting).length < 1
+            ) {
+                delete col.options.sorting;
+            }
+        }
+    }
+
+    /**
      * Set sorting order for the column. It will modify the presentation data
      * and rerender the rows.
      *
@@ -157,11 +183,10 @@ class ColumnSorting {
         const a11y = viewport.grid.accessibility;
 
         sortingController.setSorting(order, this.column.id);
-        await querying.proceed();
-
-        viewport.loadPresentationData();
+        await viewport.updateRows();
 
         for (const col of viewport.columns) {
+            this.updateColumnOptions(col);
             col.sorting?.addHeaderElementAttributes();
         }
 
@@ -179,6 +204,11 @@ class ColumnSorting {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const sortingController = querying.sorting;
+
+        // Do not call sorting when cell is currently edited and validated.
+        if (viewport.validator?.errorCell) {
+            return;
+        }
 
         const currentOrder = (
             sortingController.currentSorting?.columnId === this.column.id ?

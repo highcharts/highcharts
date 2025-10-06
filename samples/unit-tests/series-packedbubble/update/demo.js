@@ -1,4 +1,4 @@
-QUnit.test('Series update', function (assert) {
+QUnit.test('Packedbubble update', function (assert) {
     let chart = Highcharts.chart('container', {
         chart: {
             type: 'packedbubble',

@@ -13,8 +13,16 @@ describe('MathModifier created columns and interaction.', () => {
                 [{
                     id: 'USD',
                     cells: {
-                        editable: false
+                        editMode: {
+                            enabled: false
+                        }
                     }
+                }, {
+                    id: 'Day'
+                }, {
+                    id: 'EUR'
+                }, {
+                    id: 'Rate'
                 }],
                 'USD column is not editable'
             );

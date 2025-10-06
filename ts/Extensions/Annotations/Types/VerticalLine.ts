@@ -25,12 +25,75 @@ import type {
 import type MockPointOptions from '../MockPointOptions';
 
 import Annotation from '../Annotation.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+import { Palette } from '../../../Core/Color/Palettes';
 const {
     merge,
     pick
 } = U;
+
+if (defaultOptions.annotations) {
+    /**
+     * Options for the vertical line annotation type.
+     *
+     * @sample highcharts/annotations-advanced/vertical-line/
+     *         Vertical line
+     *
+     * @extends      annotations.types.crookedLine
+     * @excluding    labels, shapes, controlPointOptions
+     * @product      highstock
+     * @optionparent annotations.types.verticalLine
+     */
+    defaultOptions.annotations.types.verticalLine = {
+        typeOptions: {
+            /**
+             * @ignore
+             */
+            yOffset: 10,
+
+            /**
+             * Label options.
+             *
+             * @extends annotations.types.crookedLine.labelOptions
+             */
+            label: {
+                offset: -40,
+                point: function (
+                    target: Controllable
+                ): AnnotationPointType {
+                    return target.annotation.points[0];
+                } as any,
+                allowOverlap: true,
+                backgroundColor: 'none',
+                borderWidth: 0,
+                crop: true,
+                overflow: 'none' as any,
+                shape: 'rect',
+                text: '{y:.2f}'
+            },
+
+            /**
+             * Connector options.
+             *
+             * @extends   annotations.shapeOptions
+             * @excluding height, r, type, width
+             */
+            connector: {
+                strokeWidth: 1,
+                markerEnd: 'arrow'
+            }
+        } as any,
+        labelOptions: {
+            style: {
+                color: Palette.neutralColor80,
+                fontSize: '0.7em'
+            }
+        }
+    };
+}
 
 /* *
  *
@@ -39,12 +102,6 @@ const {
  * */
 
 class VerticalLine extends Annotation {
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
 
     public static connectorFirstPoint(
         target: Controllable
@@ -160,61 +217,6 @@ interface VerticalLine {
     defaultOptions: Annotation['defaultOptions'];
     options: VerticalLine.Options;
 }
-
-VerticalLine.prototype.defaultOptions = merge(
-    Annotation.prototype.defaultOptions,
-    /**
-     * A vertical line annotation.
-     *
-     * @sample highcharts/annotations-advanced/vertical-line/
-     *         Vertical line
-     *
-     * @extends      annotations.crookedLine
-     * @excluding    labels, shapes, controlPointOptions
-     * @product      highstock
-     * @optionparent annotations.verticalLine
-     */
-    {
-        typeOptions: {
-            /**
-             * @ignore
-             */
-            yOffset: 10,
-
-            /**
-             * Label options.
-             *
-             * @extends annotations.crookedLine.labelOptions
-             */
-            label: {
-                offset: -40,
-                point: function (
-                    target: Controllable
-                ): AnnotationPointType {
-                    return target.annotation.points[0];
-                } as any,
-                allowOverlap: true,
-                backgroundColor: 'none',
-                borderWidth: 0,
-                crop: true,
-                overflow: 'none' as any,
-                shape: 'rect',
-                text: '{y:.2f}'
-            },
-
-            /**
-             * Connector options.
-             *
-             * @extends   annotations.crookedLine.shapeOptions
-             * @excluding height, r, type, width
-             */
-            connector: {
-                strokeWidth: 1,
-                markerEnd: 'arrow'
-            }
-        }
-    }
-);
 
 /* *
  *

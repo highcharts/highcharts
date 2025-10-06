@@ -15,7 +15,8 @@
  * */
 
 import type ColorString from '../../../Core/Color/ColorString';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type ColumnSeries from '../../../Series/Column/ColumnSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -31,7 +32,6 @@ import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    column: ColumnSeries,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
@@ -378,7 +378,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indexToShift: number = (

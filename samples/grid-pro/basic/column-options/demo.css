@@ -1,5 +1,19 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 #container {
     padding: 8px;
 }
@@ -11,10 +25,4 @@
 .custom-column-class-name {
     color: #f00 !important;
     width: 40%;
-}
-
-@media (prefers-color-scheme: dark) {
-    #container {
-        background-color: #292929;
-    }
 }

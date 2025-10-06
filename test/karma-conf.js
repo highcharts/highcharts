@@ -38,7 +38,7 @@ function getProperties() {
             let lines = fs.readFileSync(
                 './git-ignore-me.properties', 'utf8'
             );
-            lines.split('\n').forEach(function (line) {
+            lines.split(/\r?\n/).forEach(function (line) {
                 line = line.split('=');
                 if (line[0]) {
                     properties[line[0]] = line[1];
@@ -412,6 +412,9 @@ module.exports = function (config) {
             'samples/highcharts/demo/pareto/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
             'samples/highcharts/demo/synchronized-charts/demo.js',
+
+            // Visual test fails due to external library used
+            'samples/highcharts/demo/combo-regression/demo.js',
         ],
         reporters: ['progress'],
         port: 9876,  // karma web server port

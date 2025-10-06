@@ -8,7 +8,7 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
-*  Authors:
+ *  Authors:
  *  - Dawid Dragula
  *  - Sebastian Bochan
  *
@@ -23,7 +23,7 @@
  * */
 
 import type Options from './Options';
-import type Globals from './Globals';
+import type { DeepPartial } from '../../Shared/Types';
 
 import Utils from '../../Core/Utilities.js';
 
@@ -39,7 +39,7 @@ namespace Defaults {
      * Default options for the Grid.
      * @internal
      */
-    export const defaultOptions: Globals.DeepPartial<Options> = {
+    export const defaultOptions: DeepPartial<Options> = {
         accessibility: {
             enabled: true,
             highContrastMode: 'auto',
@@ -74,13 +74,17 @@ namespace Defaults {
             header: {
                 enabled: true
             },
+            columns: {
+                resizing: {
+                    enabled: true
+                }
+            },
             theme: 'hcg-theme-default'
         },
         columnDefaults: {
             sorting: {
                 sortable: true
-            },
-            resizing: true
+            }
         }
     };
 
@@ -92,7 +96,7 @@ namespace Defaults {
      * The new custom chart options.
      */
     export function setOptions(
-        options: Globals.DeepPartial<Options>
+        options: DeepPartial<Options>
     ): void {
         merge(true, Defaults.defaultOptions, options);
     }

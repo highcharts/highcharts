@@ -17,6 +17,7 @@
  * */
 
 import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 /* *
  *

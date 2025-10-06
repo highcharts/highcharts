@@ -17,9 +17,10 @@
  * */
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisLike from '../AxisLike';
+import type AxisBase from '../AxisBase';
 import type Chart from '../../Chart/Chart.js';
 import type ColorType from '../../Color/ColorType';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
 import type Legend from '../../Legend/Legend';
@@ -33,7 +34,7 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 import Axis from '../Axis.js';
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
-import ColorAxisLike from './ColorAxisLike.js';
+import ColorAxisBase from './ColorAxisBase.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
 import LegendSymbol from '../../Legend/LegendSymbol.js';
@@ -58,15 +59,15 @@ const {
  *
  * */
 
-declare module '../../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Axis/AxisBase' {
+    interface AxisBase {
         labelLeft?: number;
         labelRight?: number;
     }
 }
 
-declare module '../../Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Chart/ChartBase' {
+    interface ChartBase {
         colorAxis?: Array<ColorAxis>;
     }
 }
@@ -80,14 +81,14 @@ declare module '../../../Core/Options'{
     }
 }
 
-declare module '../../Series/PointLike' {
-    interface PointLike {
+declare module '../../Series/PointBase' {
+    interface PointBase {
         dataClass?: number;
     }
 }
 
-declare module '../../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Series/SeriesBase' {
+    interface SeriesBase {
         axisTypes?: Array<string>;
         colorAxis?: ColorAxis;
         colorKey?: string;
@@ -123,7 +124,7 @@ defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
  * @param {Highcharts.ColorAxisOptions} userOptions
  * The color axis options for initialization.
  */
-class ColorAxis extends Axis implements AxisLike {
+class ColorAxis extends Axis implements AxisBase {
 
     /* *
      *
@@ -223,7 +224,7 @@ class ColorAxis extends Axis implements AxisLike {
                 legend.layout !== 'vertical';
 
         axis.side = userOptions.side || horiz ? 2 : 1;
-        axis.reversed = userOptions.reversed || !horiz;
+        axis.reversed = userOptions.reversed;
         axis.opposite = !horiz;
 
         super.init(chart, userOptions, 'colorAxis');
@@ -361,12 +362,11 @@ class ColorAxis extends Axis implements AxisLike {
 
             // First time only
             if (!axis.added) {
-
                 axis.added = true;
-
-                axis.labelLeft = 0;
-                axis.labelRight = axis.width;
             }
+
+            axis.labelLeft = 0;
+            axis.labelRight = axis.width;
             // Reset it to avoid color axis reserving space
             axis.chart.axisOffset[axis.side] = sideOffset;
         }
@@ -866,11 +866,11 @@ class ColorAxis extends Axis implements AxisLike {
  *
  * */
 
-interface ColorAxis extends ColorAxisLike {
+interface ColorAxis extends ColorAxisBase {
     // Nothing to add
 }
 
-extend(ColorAxis.prototype, ColorAxisLike);
+extend(ColorAxis.prototype, ColorAxisBase);
 
 /* *
  *
@@ -886,7 +886,7 @@ namespace ColorAxis {
      *
      * */
 
-    export type DataClassesOptions = ColorAxisLike.DataClassOptions;
+    export type DataClassesOptions = ColorAxisBase.DataClassOptions;
 
     export interface LegendItemObject extends DataClassesOptions {
         [key: string]: any;
@@ -906,12 +906,13 @@ namespace ColorAxis {
         width?: number;
     }
 
-    export interface Options extends ColorAxisLike.Options {
+    export interface Options extends ColorAxisBase.Options {
         dataClasses?: Array<DataClassesOptions>;
         layout?: 'horizontal'|'vertical';
         legend?: LegendOptions;
         marker?: MarkerOptions;
         showInLegend?: boolean;
+        labelRight?: number;
     }
 
 }

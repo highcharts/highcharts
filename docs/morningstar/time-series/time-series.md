@@ -6,12 +6,15 @@ period.
 
 ## Capabilities
 
-- [Cumulative Return](https://www.highcharts.com/docs/morningstar/time-series/cumulative-return.md)
-- [Dividend](https://www.highcharts.com/docs/morningstar/time-series/dividend.md)
-- [Growth](https://www.highcharts.com/docs/morningstar/time-series/growth.md)
-- [OHLCV](https://www.highcharts.com/docs/morningstar/time-series/ohlcv.md)
-- [Price](https://www.highcharts.com/docs/morningstar/time-series/price.md)
-- [Regulatory News Announcements](https://www.highcharts.com/docs/morningstar/regulatory-news-announcements.md)
+- [Cumulative Return](https://www.highcharts.com/docs/morningstar/time-series/cumulative-return)
+- [Dividend](https://www.highcharts.com/docs/morningstar/time-series/dividend)
+- [Growth](https://www.highcharts.com/docs/morningstar/time-series/growth)
+- [OHLCV](https://www.highcharts.com/docs/morningstar/time-series/ohlcv)
+- [Price](https://www.highcharts.com/docs/morningstar/time-series/price)
+- [Rating](https://www.highcharts.com/docs/morningstar/time-series/rating)
+- [Regulatory News Announcements](https://www.highcharts.com/docs/morningstar/regulatory-news-announcements)
+- [Return](https://www.highcharts.com/docs/morningstar/time-series/return)
+- [Rolling Return](https://www.highcharts.com/docs/morningstar/time-series/rolling-return)
 
 
 For more details, see [Morningstar’s Time Series API].
@@ -31,8 +34,10 @@ or `currencyId`.
 
 ```js
 const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     series: {
         type: 'Dividend'
@@ -65,8 +70,10 @@ Dashboards.board('container', {
             id: 'time-series',
             type: 'MorningstarTimeSeries',
             options: {
-                postman: {
-                    environmentJSON: postmanJSON
+                api: {
+                    access: {
+                        token: 'your_access_token'
+                    }
                 },
                 series: {
                     type: 'Dividend'

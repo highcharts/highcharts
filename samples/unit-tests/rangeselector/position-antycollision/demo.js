@@ -70,7 +70,7 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
 
     chart = Highcharts.stockChart('container', {
         chart: {
-            spacing: [10, 21, 10, 52],
+            // spacing: [10, 21, 10, 52],
             style: {
                 fontFamily: 'Helvetica, Arial, sans-serif'
             }
@@ -123,8 +123,9 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
 
     assert.close(
         chart.plotLeft + chart.plotWidth / 2,
-        (chart.plotLeft + selectorGroupBBox.x) + selectorGroupBBox.width / 2,
-        5,
+        chart.rangeSelector.buttonGroup.translateX + selectorGroupBBox.x +
+            selectorGroupBBox.width / 2,
+        1.001,
         'rangeSelector buttons should be centered correctly (#13014).'
     );
 
@@ -152,6 +153,32 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
             1,
         'rangeSelector buttons should be right aligned correctly when ' +
         'exporting enabled (#13014).'
+    );
+
+    chart.update({
+        rangeSelector: {
+            inputEnabled: true,
+            buttonPosition: {
+                align: 'left'
+            },
+            dropdown: 'always'
+        },
+        chart: {
+            width: 400
+        }
+    });
+
+    assert.ok(
+        parseFloat(chart.rangeSelector.dropdown.style.width) > 1 &&
+        parseFloat(chart.rangeSelector.dropdown.style.height) > 1,
+        'Dropdown select should be clickable'
+    );
+
+    assert.close(
+        chart.rangeSelector.buttonGroup.translateY,
+        chart.rangeSelector.inputGroup.translateY,
+        1,
+        'Dropdown should be aligned with the button group'
     );
 });
 

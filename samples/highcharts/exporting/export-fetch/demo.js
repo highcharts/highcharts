@@ -38,8 +38,8 @@ const chart = Highcharts.chart('container', {
 });
 
 
-document.getElementById('export-button').addEventListener('click', () => {
+document.getElementById('export-button').addEventListener('click', async () => {
     window.addEventListener('beforeunload', notifyOnUnload, { once: true });
 
-    chart.exportChart();
+    await chart.exporting.exportChart();
 });

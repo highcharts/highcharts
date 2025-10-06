@@ -16,6 +16,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type {
     XAxisOptions,
     YAxisOptions
@@ -755,15 +756,6 @@ namespace AxisDefaults {
          * @product   highcharts highstock gantt
          * @context   Highcharts.Axis
          * @apioption xAxis.events.pointInBreak
-         */
-
-        /**
-         * An event fired when a point is outside a break after zoom.
-         *
-         * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
-         * @product   highcharts highstock gantt
-         * @context   Highcharts.Axis
-         * @apioption xAxis.events.pointBreakOut
          */
 
         /**
@@ -1904,6 +1896,10 @@ namespace AxisDefaults {
          * An array defining where the ticks are laid out on the axis. This
          * overrides the default behaviour of [tickPixelInterval](
          * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
+         *
+         * Note: When working with date-time axes, be aware of time zone
+         * handling. See the [documentation on time options](https://www.highcharts.com/docs/chart-concepts/axes#datetime)
+         * for best practices.
          *
          * @see [tickPositioner](#xAxis.tickPositioner)
          *
@@ -3066,6 +3062,7 @@ namespace AxisDefaults {
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
+             * @apioption yAxis.title.text
              */
         },
 

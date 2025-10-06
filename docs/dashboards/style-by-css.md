@@ -152,26 +152,7 @@ To style the dashboard's **Grid Component** `div` and its content:
 }
 ```
 
-To style the dashboard's Grid header:
-```css
-.highcharts-datagrid-column-header {
-    background-color: gray;
-}
-```
-
-To style the dashboard's Grid row:
-```css
-.highcharts-datagrid-row {
-    background-color: gray;
-}
-```
-
-Note that you can use the `child selector` to style even and odd rows:
-```css
-.highcharts-datagrid-row:nth-child(even) {
-    background-color: white;
-}
-```
+For detailed guidance on styling the Grid component, refer to the [Introduction to Theming](https://www.highcharts.com/docs/grid/theming/theming) article.
 
 ### HTML component
 Since the user defines the whole structure of the HTML component, it differs between use cases.
@@ -222,7 +203,7 @@ Custom classes and IDs can be used to style the dashboard:
 
 The final result might look like:
 
-<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/personal-finance" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/personal-finance?force-light-theme" allow="fullscreen"></iframe>
 
 ## Edit Mode classes
 You can also change how the Edit Mode looks like. The Edit mode is based on the

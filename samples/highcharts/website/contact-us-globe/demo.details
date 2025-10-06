@@ -1,0 +1,7 @@
+---
+ name: Highcharts Office Locations Globe
+ authors:
+   - Nancy Dillon
+ requiresManualTesting: true
+ js_wrap: b
+...

@@ -176,6 +176,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
 
     private originalRowIndexes?: Array<number|undefined>;
 
+
     /* *
      *
      *  Functions
@@ -686,10 +687,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      * Returns all column names.
      */
     public getColumnNames(): Array<string> {
-        const table = this,
-            columnNames = Object.keys(table.columns);
-
-        return columnNames;
+        return Object.keys(this.columns);
     }
 
     public getColumns(

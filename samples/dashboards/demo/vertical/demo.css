@@ -22,6 +22,7 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
     color: var(--text-color);
 }
 

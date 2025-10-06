@@ -24,6 +24,7 @@
 
 import type { IndividualColumnOptions } from '../Options';
 import type Cell from './Cell';
+import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
@@ -31,9 +32,19 @@ import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import Templating from '../../../Core/Templating.js';
+import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
+import TableCell from './Body/TableCell';
+import GridUtils from '../GridUtils.js';
 
-const { merge } = Utils;
+const {
+    defined,
+    fireEvent
+} = Utils;
+
+const {
+    createOptionsProxy
+} = GridUtils;
 
 
 /* *
@@ -59,6 +70,11 @@ class Column {
     public readonly viewport: Table;
 
     /**
+     * Type of the data in the column.
+     */
+    public readonly dataType: Column.DataType;
+
+    /**
      * The cells of the column.
      */
     public cells: Cell[] = [];
@@ -74,7 +90,8 @@ class Column {
     public data?: DataTable.Column;
 
     /**
-     * The options of the column.
+     * The options of the column as a proxy that provides merged access to
+     * original options and defaults if not defined in the individual options.
      */
     public readonly options: Column.Options;
 
@@ -117,16 +134,33 @@ class Column {
         id: string,
         index: number
     ) {
-        this.options = merge(
-            viewport.grid.options?.columnDefaults ?? {},
-            viewport.grid.columnOptionsMap?.[id] ?? {}
-        );
+        const { grid } = viewport;
 
         this.id = id;
         this.index = index;
         this.viewport = viewport;
 
         this.loadData();
+
+        this.dataType = this.assumeDataType();
+
+        // Populate column options map if not exists, to prepare option
+        // references for each column.
+        if (grid.options && !grid.columnOptionsMap?.[id]) {
+            const columnOptions: IndividualColumnOptions = { id };
+            (grid.options.columns ??= []).push(columnOptions);
+            grid.columnOptionsMap[id] = {
+                index: grid.options.columns.length - 1,
+                options: columnOptions
+            };
+        }
+
+        this.options = createOptionsProxy(
+            grid.columnOptionsMap?.[id]?.options ?? {},
+            grid.options?.columnDefaults
+        );
+
+        fireEvent(this, 'afterInit');
     }
 
 
@@ -141,6 +175,66 @@ class Column {
      */
     public loadData(): void {
         this.data = this.viewport.dataTable.getColumn(this.id, true);
+    }
+
+    /**
+     * Creates a cell content instance.
+     *
+     * @param cell
+     * The cell that is to be edited.
+     *
+     */
+    public createCellContent(cell: TableCell): CellContent {
+        return new TextContent(cell);
+    }
+
+    /**
+     * Assumes the data type of the column based on the options or data in the
+     * column if not specified.
+     */
+    private assumeDataType(): Column.DataType {
+        const { grid } = this.viewport;
+
+        const type = grid.columnOptionsMap?.[this.id]?.options.dataType ??
+            grid.options?.columnDefaults?.dataType;
+        if (type) {
+            return type;
+        }
+
+        if (!this.data) {
+            return 'string';
+        }
+
+        if (!Array.isArray(this.data)) {
+            // Typed array
+            return 'number';
+        }
+
+        for (let i = 0, iEnd = Math.min(this.data.length, 30); i < iEnd; ++i) {
+            if (!defined(this.data[i])) {
+                // If the data is null or undefined, we should look
+                // at the next value to determine the type.
+                continue;
+            }
+
+            switch (typeof this.data[i]) {
+                case 'number':
+                    return 'number';
+                case 'boolean':
+                    return 'boolean';
+                default:
+                    return 'string';
+            }
+        }
+
+        // eslint-disable-next-line no-console
+        console.warn(
+            `Column "${this.id}" contains too few data points with ` +
+            'unambiguous types to correctly determine its dataType. It\'s ' +
+            'recommended to set the `dataType` option for it.'
+        );
+
+        return 'string';
     }
 
     /**
@@ -234,6 +328,27 @@ class Column {
     public format(template: string): string {
         return Templating.format(template, this, this.viewport.grid);
     }
+
+    public update(options: Column.Options, render?: boolean): void;
+
+    public update(options: Column.Options, render?: true): Promise<void>;
+
+    /**
+     * Updates the column with new options.
+     *
+     * @param newOptions
+     * The new options for the column.
+     *
+     * @param render
+     * Whether to re-render after the update. If `false`, the update will just
+     * extend the options object. Defaults to `true`.
+     */
+    public async update(
+        newOptions: Column.Options,
+        render: boolean = true
+    ): Promise<void> {
+        await this.viewport.grid.updateColumn(this.id, newOptions, render);
+    }
 }
 
 
@@ -245,6 +360,8 @@ class Column {
 
 namespace Column {
     export type Options = Omit<IndividualColumnOptions, 'id'>;
+
+    export type DataType = 'string' | 'number' | 'boolean' | 'datetime';
 }
 
 

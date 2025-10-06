@@ -104,12 +104,14 @@ QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
 });
 
 QUnit.test('Text word wrap with markup', function (assert) {
-    var renderer = new Highcharts.Renderer(
+    const renderer = new Highcharts.Renderer(
             document.getElementById('container'),
             400,
             300
         ),
-        width = 100;
+        width = 100,
+        fontSize = 12;
+
     renderer
         .rect(100, 20, width, 100)
         .attr({
@@ -118,7 +120,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
         })
         .add();
 
-    var text = renderer
+    const text = renderer
         .text(
             'The quick <span style="color:brown">brown</span> fox jumps <em>' +
             'over</em> the lazy dog',
@@ -127,7 +129,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
         )
         .css({
             fontFamily: 'Helvetica, Arial, sans-serif',
-            fontSize: '12px',
+            fontSize: fontSize + 'px',
             width: width + 'px'
         })
         .add();
@@ -154,9 +156,14 @@ QUnit.test('Text word wrap with markup', function (assert) {
         text: '<a href="https://www.highcharts.com">The quick brown fox jumps over the lazy dog</a>'
     });
 
+    const currentHeight = text.getBBox().height;
     assert.ok(
-        text.getBBox().width <= 100 + (Highcharts.isFirefox ? 2 : 0),
-        'Text directly inside anchor should be wrapped (#16173)'
+        Highcharts.clamp(
+            currentHeight,
+            3 * (fontSize + 1),
+            4 * (fontSize + 1)
+        ) === currentHeight,
+        'Text directly inside anchor should be wrapped (#16173) twice.'
     );
 
     text.attr({
@@ -509,7 +516,7 @@ QUnit.test('lineClamp', function (assert) {
         assert.close(
             textHTML.getBBox().height,
             height,
-            2,
+            2.5,
             'The HTML bounding box should be approximately the same as the SVG'
         );
     } finally {
@@ -856,6 +863,17 @@ QUnit.test('Text height', function (assert) {
                 textOutline: '6px silver'
             })
             .add();
+
+        // Backwards compatibility, #22807
+        assert.deepEqual(
+            renderer.fontMetrics(14),
+            {
+                h: 17,
+                b: 14,
+                f: 14
+            },
+            'Number should be supported by fontMetrics.'
+        );
 
         // Highcharts 4.1.1, Issue #3842:
         // Bar dataLabels positions in 4.1.x - Firefox, Internet Explorer
