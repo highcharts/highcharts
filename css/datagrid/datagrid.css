@@ -1301,7 +1301,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     width: 100%;
     display: flex;
     flex-flow: column;
-    row-gap: 3px;
+    row-gap: 5px;
 }
 
 .hcg-column-filter-wrapper input,
@@ -1453,7 +1453,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .hcg-popup-content,
 .highcharts-datagrid-popup-content {
-    padding: 4px;
+    padding: 5px;
 }
 
 .hcg-popup-content input,
@@ -1492,8 +1492,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-menu-popup-container {
     --icon-size: 16px;
 
+    margin: 0;
+    display: flex;
+    flex-direction: column;
     list-style: none;
-    margin: 5px 0 0;
+    row-gap: 5px;
     padding: 0;
 }
 
@@ -1505,7 +1508,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     width: 100%;
     min-width: 185px;
     min-height: 2rem;
-    margin: 2px 0;
     padding: 8px 8px 8px 12px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -1520,6 +1522,14 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     cursor: pointer;
 }
 
+.highcharts-datagrid-menu-popup-item:focus-visible,
+.hcg-menu-popup-item:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
+}
+
+.highcharts-datagrid-menu-popup-item:focus-visible,
+.hcg-menu-popup-item:focus-visible,
 .hcg-menu-popup-item:not(:disabled):hover,
 .hcg-menu-popup-item.highlighted,
 .highcharts-datagrid-menu-popup-item:not(:disabled):hover,
@@ -1536,12 +1546,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-menu-popup-item.active {
     background-color: var(--hcg-context-menu-item-active-background);
     border: var(--hcg-context-menu-item-active-border);
-}
-
-.highcharts-datagrid-menu-popup-item:focus-visible,
-.hcg-menu-popup-item:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
 }
 
 .hcg-menu-popup-item-icon,
@@ -1579,7 +1583,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .hcg-menu-popup-divider,
 .highcharts-datagrid-menu-popup-divider {
-    margin: 5px 0;
     border-top: 1px solid var(--hcg-popup-border-color);
     height: 0;
 }
