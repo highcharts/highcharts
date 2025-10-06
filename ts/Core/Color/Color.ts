@@ -246,7 +246,7 @@ class Color implements ColorBase {
     /**
      * The RGBA color components, if the color is a solid color.
      * @name Highcharts.Color#rgba
-     * @type {Highcharts.Color.RGBA}
+     * @type {Highcharts.RGBA}
      */
     public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
 
@@ -553,6 +553,14 @@ export default Color;
  * Radius relative to the shape. Float ranges 0-1.
  * @name Highcharts.RadialGradientColorObject#r
  * @type {number}
+ */
+
+/**
+ * @interface Highcharts.RGBA
+ * @extends Array<number>
+ *//**
+ * @name Highcharts.RGBA#length
+ * @type {4}
  */
 
 /**
