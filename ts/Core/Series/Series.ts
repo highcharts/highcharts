@@ -264,6 +264,7 @@ class Series {
         'navigatorSeries',
         'symbolIndex',
         'baseSeries',
+        'tempNoXColumn',
         'useDataTable'
     ];
 
@@ -1108,12 +1109,16 @@ class Series {
                 return this.xColumn;
             }
 
-            // X column exists in the data table, but has gaps
+            // X column exists in the data table, but has gaps or strings
             const columnFilled = [...column];
             if (columnFilled.some((x): boolean => !isNumber(x))) {
-                this.xColumn = columnFilled.map((x, i): number =>
-                    (isNumber(x) ? x : this.autoIncrement(i))
-                );
+                this.xColumn = columnFilled.map((x, i): number => (
+                    (
+                        isNumber(x) ? x :
+                            isString(x) ? this.chart.time.parse(x) :
+                                void 0
+                    ) ?? this.autoIncrement(i)
+                ));
                 return this.xColumn;
             }
         }
@@ -1606,32 +1611,57 @@ class Series {
                             { x: [] } as DataTable.ColumnCollection,
                         xOption = [];
                     for (i = 0; i < dataLength; i++) {
-                        const pt = series.pointClass.prototype.applyOptions
-                            .call({ series }, data[i], void 0, true);
-
                         if (!this.tempNoXColumn) {
+                            const pt = series.pointClass.prototype.applyOptions
+                                .call({ series }, data[i], void 0, true);
+
                             columns.x[i] = pt.x;
-                        }
 
-                        // When `relativeXValue` is used, `options.x` is not the
-                        // same as the actual x value.
-                        if (defined(pt.options.x)) {
-                            xOption[i] = pt.options.x;
-                        }
-
-                        for (const key of Object.keys(pt.options)) {
-                            if (key !== 'x') {
-                                columns[key] ||= new Array(dataLength);
-                                columns[key][i] = (pt as any)[key];
+                            // When `relativeXValue` is used, `options.x` is not the
+                            // same as the actual x value.
+                            if (defined(pt.options.x)) {
+                                xOption[i] = pt.options.x;
                             }
-                        }
-                        // Needed for 3d scatter because x is not part of
-                        // options, but appended in the `applyOptions` call
-                        // itself. z in pt is for scatter, indexOf is for
-                        // bubbles. Find a better solution for this.
-                        if ('z' in pt || dataColumnKeys.indexOf('z') !== -1) {
-                            columns.z ||= new Array(dataLength);
-                            columns.z[i] = pt.z;
+
+                            for (const key of Object.keys(pt.options)) {
+                                if (key !== 'x') {
+                                    columns[key] ||= new Array(dataLength);
+                                    columns[key][i] = (pt as any)[key];
+                                }
+                            }
+
+                            // Needed for 3d scatter because x is not part of
+                            // options, but appended in the `applyOptions` call
+                            // itself. z in pt is for scatter, indexOf is for
+                            // bubbles. Find a better solution for this.
+                            if (
+                                'z' in pt ||
+                                dataColumnKeys.indexOf('z') !== -1
+                            ) {
+                                columns.z ||= new Array(dataLength);
+                                columns.z[i] = pt.z;
+                            }
+                        } else {
+                            const ptOptions = series.pointClass.prototype
+                                .optionsToObject
+                                .call({ series }, data[i]);
+
+                            for (const key of Object.keys(ptOptions)) {
+                                columns[key] ||= new Array(dataLength);
+                                columns[key][i] = (ptOptions as any)[key];
+                            }
+
+                            // Needed for 3d scatter because x is not part of
+                            // options, but appended in the `applyOptions` call
+                            // itself. z in pt is for scatter, indexOf is for
+                            // bubbles. Find a better solution for this.
+                            if (
+                                'z' in ptOptions ||
+                                dataColumnKeys.indexOf('z') !== -1
+                            ) {
+                                columns.z ||= new Array(dataLength);
+                                columns.z[i] = (ptOptions as any).z;
+                            }
                         }
                     }
 
