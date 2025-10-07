@@ -1066,12 +1066,13 @@ class Series {
         modified?: boolean
     ): Array<number> {
         const table = modified ? this.dataTable.modified : this.dataTable,
+            usingModified = this.dataTable !== table,
             column = table.getColumn(columnName, true) as Array<number>;
 
         // When there is no x column in the data set, generate an internal x
         // column for the series. The `xColumn` array is cached and reused, but
         // cleared on series update.
-        if (columnName === 'x' && this.tempNoXColumn) {
+        if (columnName === 'x' && this.tempNoXColumn && !usingModified) {
             if (this.xColumn) {
                 return this.xColumn;
             }
@@ -2072,7 +2073,8 @@ class Series {
         min: number,
         max: number
     ): Series.CropDataObject {
-        const xData = table.getColumn('x', true) as Array<number> || [],
+        const xData = table.getColumn('x', true) as Array<number> ||
+                this.getColumn('x'),
             dataLength = xData.length;
 
         let i,
@@ -2099,13 +2101,18 @@ class Series {
         // Slice all the columns and return a copy
         const columns = Object.keys(table.columns)
             .reduce((columns, key): DataTable.ColumnCollection => {
-                if (key !== 'xOption') {
+                if (this.tempNoXColumn || key !== 'xOption') {
                     columns[key] = (
                         table.getColumn(key, true) || []
                     ).slice(start, end);
                 }
                 return columns;
             }, {} as DataTable.ColumnCollection);
+
+        if (this.tempNoXColumn) {
+            // Add cropped x data to modified table
+            columns.x = xData.slice(start, end);
+        }
 
         return {
             modified: new DataTableCore({ columns }),
