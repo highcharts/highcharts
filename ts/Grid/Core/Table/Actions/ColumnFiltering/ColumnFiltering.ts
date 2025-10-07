@@ -151,6 +151,13 @@ class ColumnFiltering {
         // Render the input element.
         this.filterInput = makeHTMLElement('input', {}, inputWrapper);
         this.filterInput.setAttribute('tabindex', '-1');
+
+        const column = this.column;
+        this.filterInput.setAttribute(
+            'id',
+            'filter-input-' + column.viewport.grid.id + '-' + column.id
+        );
+
         this.filterInput.placeholder = 'value...';
 
         if (columnType === 'number') {
@@ -227,6 +234,12 @@ class ColumnFiltering {
         // Render the select element.
         this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
         this.filterSelect.setAttribute('tabindex', '-1');
+
+        const column = this.column;
+        this.filterSelect.setAttribute(
+            'id',
+            'filter-select-' + column.viewport.grid.id + '-' + column.id
+        );
 
         // Render the options.
         for (const condition of conditions) {
