@@ -17,6 +17,11 @@
     --ig-positive-default-border-color: #008000;
     --ig-positive-default-background: #e0ebe0;
     --ig-highlight-color-5: #f3f6fe;
+    --ig-pagination-button-default-background: #ffffff;
+    --ig-pagination-button-default-color: #000000;
+    --ig-pagination-button-default-border: #e8e8e8;
+    --ig-pagination-button-default-color-active: #ffffff;
+    --ig-pagination-icon-default-color: #000000;
 
     /* Button styles - Light mode */
     --hcg-button-background: transparent;
@@ -58,6 +63,13 @@
         --ig-positive-default-background: #265a26;
         --ig-highlight-color-5: #2d2e36;
 
+        /* Dark mode pagination variables */
+        --ig-pagination-button-default-background: #272727;
+        --ig-pagination-button-default-border: transparent;
+        --ig-pagination-button-default-color: #ffffff;
+        --ig-pagination-button-default-color-active: #000000;
+        --ig-pagination-icon-default-color: #ffffff;
+
         /* Button styles - Dark mode */
         --hcg-button-hover-background: #3b3b3b;
         --hcg-button-color: #ffffff;
@@ -88,6 +100,13 @@
     --ig-positive-default-background: #265a26;
     --ig-highlight-color-5: #2d2e36;
 
+    /* Dark mode pagination variables */
+    --ig-pagination-button-default-background: #272727;
+    --ig-pagination-button-default-border: transparent;
+    --ig-pagination-button-default-color: #ffffff;
+    --ig-pagination-button-default-color-active: #000000;
+    --ig-pagination-icon-default-color: #ffffff;
+
     /* Button styles - Dark mode */
     --hcg-button-hover-background: #3b3b3b;
     --hcg-button-color: #ffffff;
@@ -108,6 +127,27 @@
 }
 
 /*  ==== End Grid Color Scheme  ==== */
+
+/*  ==== Start Highcharts Variables  ==== */
+:root,
+.highcharts-light {
+    --highcharts-background-color: #ffffff;
+    --highcharts-neutral-color-100: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-background-color: #141414;
+        --highcharts-neutral-color-100: #ffffff;
+    }
+}
+
+.highcharts-dark {
+    --highcharts-background-color: #141414;
+    --highcharts-neutral-color-100: #ffffff;
+}
+
+/*  ==== End Highcharts Variables  ==== */
 
 /* stylelint-disable max-line-length */
 
@@ -353,6 +393,16 @@
     --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+
+    /* Pagination variables */
+    --ig-pagination-button-background: var(--hcg-pagination-button-background, var(--ig-pagination-button-default-background));
+    --ig-pagination-button-color: var(--hcg-pagination-button-color, var(--ig-default-color));
+    --ig-pagination-button-background-active: var(--hcg-pagination-button-background-active, var(--ig-default-color));
+    --ig-pagination-button-color-active: var(--hcg-pagination-button-color-active, var(--ig-pagination-button-default-color-active));
+    --ig-pagination-button-border: var(--hcg-pagination-button-border, var(--ig-pagination-button-default-border));
+    --ig-pagination-button-border-hover: var(--hcg-pagination-button-border-hover, var(--ig-default-color));
+    --ig-pagination-padding: var(--hcg-pagination-padding, 14px 0 10px 0);
+    --ig-pagination-icon-color: var(--hcg-pagination-icon-color, var(--ig-pagination-icon-default-color));
 
     /* Button styles */
     --ig-button-background: var(--hcg-button-background, transparent);
@@ -1106,26 +1156,193 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 /* Pagination */
+
+/* Footer pagination (tfoot) */
 .hcg-table tfoot td {
-    border-top: var(--ig-header-row-border);
     background: var(--ig-header-background);
     padding: var(--ig-header-padding);
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper {
+.hcg-pagination-wrapper {
+    padding: var(--ig-pagination-padding);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.hcg-table tfoot td .hcg-pagination-wrapper {
+    padding: 0;
+}
+
+.hcg-pagination-wrapper .hcg-pagination-ellipsis,
+.hcg-pagination-wrapper button,
+.hcg-pagination-wrapper .hcg-pagination-page-size-container select,
+.hcg-pagination-wrapper select {
+    color: var(--ig-pagination-button-color);
+    padding: 6px 10px;
+    cursor: pointer;
+    min-width: 32px;
+    height: 32px;
+    font-size: var(--ig-font-size);
+}
+
+.hcg-pagination-wrapper .hcg-pagination-ellipsis {
+    cursor: default;
+}
+
+/* SVG icon styling for pagination buttons */
+.hcg-pagination-wrapper button svg {
+    color: var(--ig-pagination-icon-color);
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+/* Disabled state for SVG icons */
+.hcg-pagination-wrapper button:disabled svg {
+    color: #9d9d9d;
+}
+
+.hcg-pagination-wrapper .hcg-pagination-ellipsis {
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Fix horizontal layout for pagination pages */
+.hcg-pagination-wrapper .hcg-pagination-page {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    justify-content: center;
+}
+
+.hcg-pagination-wrapper div.hcg-pagination-page {
+    margin-right: 12px;
+    margin-left: 12px;
+}
+
+/* Pagination info text */
+.hcg-pagination-wrapper .hcg-pagination-info {
+    color: var(--ig-pagination-button-color);
+    font-size: var(--ig-font-size);
+    white-space: nowrap;
+    align-items: center;
+    display: inline-flex;
+    font-weight: 500;
+}
+
+/* Pagination controls - horizontal layout */
+.hcg-pagination-wrapper .hcg-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: nowrap;
+}
+
+/* Pagination button styling - unified approach */
+.hcg-pagination-wrapper button {
+    background: var(--ig-pagination-button-background);
+    border: 1px solid var(--ig-pagination-button-border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+/* Hover state - only border change */
+.hcg-pagination-wrapper button:hover:not(:disabled),
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:hover {
+    border-color: var(--ig-pagination-button-border-hover);
+    outline: none;
+}
+
+.hcg-pagination-wrapper button:focus-visible:not(:disabled),
+.hcg-pagination-wrapper .hcg-pagination-page-size-select:focus-visible,
+.hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector:focus-visible,
+.hcg-pagination-wrapper .hcg-pagination-controls select:focus-visible {
+    border-color: var(--ig-pagination-button-border-hover);
+    box-shadow: 0 0 0 1px var(--ig-pagination-button-border-hover) inset;
+    outline: none;
+}
+
+/* Disabled state */
+.hcg-pagination-wrapper button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.hcg-pagination-wrapper .hcg-pagination-page-active {
+    background: var(--ig-pagination-button-background-active);
+    color: var(--ig-pagination-button-color-active);
+    border-color: var(--ig-pagination-button-background-active);
+}
+
+/* Page size selector */
+.hcg-pagination-wrapper .hcg-pagination-page-size-container {
+    font-weight: 500;
     text-align: right;
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper button {
-    font-size: 1.25em;
-}
-
-.hcg-table tfoot .hcg-pagination-wrapper button:not(:disabled) {
+.hcg-pagination-wrapper .hcg-pagination-page-size-container select,
+.hcg-pagination-wrapper select {
+    background: var(--ig-pagination-button-background);
+    color: var(--ig-pagination-button-color);
+    border: 1px solid var(--ig-pagination-button-border);
+    border-radius: 4px;
+    margin-left: 8px;
     cursor: pointer;
+    min-height: 32px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+    padding-right: 25px;
 }
 
-.hcg-table tfoot .hcg-pagination-wrapper button:first-child {
-    margin-right: 5px;
+/* Mobile page selector - hidden by default */
+.hcg-pagination-wrapper .hcg-pagination-mobile-selector {
+    display: none;
+    margin-left: 0;
+    min-width: 200px;
+    text-align: center;
+}
+
+/* Mobile page size selector - hidden by default */
+.hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .hcg-pagination-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /* Show mobile selectors on mobile */
+    .hcg-pagination-wrapper .hcg-pagination-mobile-selector,
+    .hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector {
+        display: block;
+    }
+
+    .hcg-pagination-wrapper .hcg-pagination-page,
+    .hcg-pagination-wrapper .hcg-pagination-first,
+    .hcg-pagination-wrapper .hcg-pagination-last,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container span,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container .hcg-pagination-page-size-select {
+        display: none;
+    }
 }
 
 /* Start Grid CSS Helpers Classes */
@@ -1345,8 +1562,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 .hcg-theme-default,
 .highcharts-light .hcg-theme-default {
     /* Primary colors */
-    --hcg-color: var(--highcharts-neutral-color-100, #000000);
-    --hcg-background: var(--highcharts-background-color, #ffffff);
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-background: var(--highcharts-background-color);
 
     /* Other colors */
     --hcg-border-radius: 5px;
@@ -1362,8 +1579,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 @media (prefers-color-scheme: dark) {
     .hcg-theme-default {
-        --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
-        --hcg-background: var(--highcharts-background-color, #141414);
+        --hcg-color: var(--highcharts-neutral-color-100);
+        --hcg-background: var(--highcharts-background-color);
     }
 
     .hcg-credits {
@@ -1374,11 +1591,21 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
                 url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
             );
     }
+
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
+    .hcg-pagination-wrapper .hcg-pagination-controls select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+}
+
+.highcharts-dark .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
+.highcharts-dark .hcg-pagination-wrapper .hcg-pagination-controls select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .highcharts-dark .hcg-theme-default {
-    --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
-    --hcg-background: var(--highcharts-background-color, #141414);
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-background: var(--highcharts-background-color);
 }
 
 .hcg-theme-default {

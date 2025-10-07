@@ -78,7 +78,7 @@ namespace NavigatorSyncUtils {
                 !condition ||
                 typeof condition !== 'object' ||
                 !(condition.operator === '<=' || condition.operator === '>=') ||
-                condition.columnName !== column
+                condition.columnId !== column
             ) {
                 continue;
             }
@@ -99,7 +99,7 @@ namespace NavigatorSyncUtils {
         if (!changedMax) {
             conditions.push({
                 operator: '<=',
-                columnName: column,
+                columnId: column,
                 value: maxValue
             });
         }
@@ -107,7 +107,7 @@ namespace NavigatorSyncUtils {
         if (!changedMin) {
             conditions.push({
                 operator: '>=',
-                columnName: column,
+                columnId: column,
                 value: minValue
             });
         }
@@ -140,7 +140,7 @@ namespace NavigatorSyncUtils {
                 !condition ||
                 typeof condition !== 'object' ||
                 !(condition.operator === '<=' || condition.operator === '>=') ||
-                condition.columnName !== column
+                condition.columnId !== column
             ) {
                 continue;
             }
@@ -175,18 +175,18 @@ namespace NavigatorSyncUtils {
                 !condition ||
                 typeof condition !== 'object' ||
                 !(condition.operator === '<=' || condition.operator === '>=') ||
-                typeof condition.columnName !== 'string' ||
+                typeof condition.columnId !== 'string' ||
                 !defined(condition.value)
             ) {
                 continue;
             }
 
-            const colName = condition.columnName;
+            const colName = condition.columnId;
             if (!rangesMap[colName]) {
                 rangesMap[colName] = {
                     maxValue: Infinity,
                     minValue: -Infinity,
-                    columnName: colName
+                    columnId: colName
                 };
             }
 
@@ -208,7 +208,7 @@ namespace NavigatorSyncUtils {
         /**
          * Column containing the values to filter.
          */
-        columnName: string;
+        columnId: string;
 
         /**
          * Maximum including value (`<=` operator).

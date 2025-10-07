@@ -30,10 +30,11 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
@@ -4413,7 +4414,7 @@ class Axis {
  *
  * */
 
-interface Axis extends AxisComposition, AxisLike {
+interface Axis extends AxisComposition, AxisBase {
     // Nothing here yet
 }
 

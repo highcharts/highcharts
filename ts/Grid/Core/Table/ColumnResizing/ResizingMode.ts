@@ -143,8 +143,11 @@ abstract class ResizingMode {
         const minWidth = ResizingMode.getMinWidth(column);
 
         if (!defined(widthValue)) {
+            const tbody = vp.tbodyElement;
             const freeWidth =
-                vp.tbodyElement.clientWidth - this.calculateOccupiedWidth();
+                tbody.getBoundingClientRect().width -
+                this.calculateOccupiedWidth() -
+                tbody.offsetWidth + tbody.clientWidth;
             const freeColumns =
                 (vp.grid.enabledColumns?.length || 0) -
                 Object.keys(this.columnWidths).length;

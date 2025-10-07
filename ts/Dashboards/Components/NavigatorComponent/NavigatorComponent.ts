@@ -31,6 +31,7 @@ import type {
     CrossfilterSyncOptions,
     Options
 } from './NavigatorComponentOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 import type {
     FilterModifierOptions
 } from '../../../Data/Modifiers/FilterModifierOptions';
@@ -175,7 +176,7 @@ class NavigatorComponent extends Component {
                 this.contentElement.clientHeight
             ),
             width = this.contentElement.clientWidth,
-            chartUpdates: Globals.DeepPartial<HighchartsOptions> = {};
+            chartUpdates: DeepPartial<HighchartsOptions> = {};
 
         if (
             chart.chartHeight !== height ||
@@ -224,8 +225,7 @@ class NavigatorComponent extends Component {
      * Navigator column assignment.
      */
     public getColumnAssignment(): [string, string] {
-        const columnAssignment = this.options.columnAssignment ??
-            this.options.columnAssignments ?? {};
+        const columnAssignment = this.options.columnAssignment ?? {};
 
         let columnsAssignment: (string|null);
 
@@ -240,7 +240,7 @@ class NavigatorComponent extends Component {
         const connector = this.getFirstConnector();
 
         if (connector) {
-            const columns = connector.table.getColumnNames();
+            const columns = connector.getTable().getColumnIds();
 
             if (columns.length) {
                 return [columns[0], 'y'];
@@ -351,7 +351,7 @@ class NavigatorComponent extends Component {
         const connector = this.getFirstConnector();
 
         if (connector) {
-            const table = connector.table,
+            const table = connector.getTable(),
                 column = this.getColumnAssignment(),
                 columnValues = table.getColumn(column[0], true) || [];
 
@@ -383,7 +383,7 @@ class NavigatorComponent extends Component {
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
             this.sync.syncConfig.crossfilter as CrossfilterSyncOptions;
-        const table = this.getFirstConnector()?.table;
+        const table = this.getFirstConnector()?.getTable();
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];
@@ -438,10 +438,10 @@ class NavigatorComponent extends Component {
             );
 
             for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
-                if (ranges[i].columnName !== this.getColumnAssignment()[0]) {
+                if (ranges[i].columnId !== this.getColumnAssignment()[0]) {
                     appliedRanges.push(ranges[i]);
                     rangedColumns.push(table.getColumn(
-                        ranges[i].columnName, true
+                        ranges[i].columnId, true
                     ) || []);
                 }
             }

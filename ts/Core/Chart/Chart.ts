@@ -34,20 +34,21 @@ import type {
     NumberFormatterCallbackFunction,
     Options
 } from '../Options';
-import type ChartLike from './ChartLike';
+import type ChartBase from './ChartBase';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
     ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
+import type { DeepPartial } from '../../Shared/Types';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions
 } from '../Series/SeriesType';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 import A from '../Animation/AnimationUtilities.js';
@@ -121,16 +122,16 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Axis/AxisBase' {
+    interface AxisBase {
         extKey?: string;
         index?: number;
         touched?: boolean;
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+declare module './ChartBase' {
+    interface ChartBase {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
@@ -157,14 +158,14 @@ declare module '../Options' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike {
+declare module '../Series/PointBase' {
+    interface PointBase {
         touched?: boolean;
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         index?: number;
         touched?: boolean;
     }
@@ -321,7 +322,6 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
-    public dataLabelsGroup?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -2657,10 +2657,6 @@ class Chart {
             .shadow(chart.options.chart.seriesGroupShadow)
             .add();
 
-        chart.dataLabelsGroup ||= renderer.g('datalabels-group')
-            .attr({ zIndex: 6 })
-            .add();
-
         chart.renderSeries();
 
         // Credits
@@ -2906,6 +2902,7 @@ class Chart {
         }
 
         this.warnIfA11yModuleNotLoaded();
+        this.warnIfCSSNotLoaded();
 
         // Don't run again
         this.hasLoaded = true;
@@ -2939,6 +2936,20 @@ class Chart {
                     'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
                     false, this
                 );
+            }
+        }
+    }
+
+    /**
+     * Emit console warning if the highcharts.css file is not loaded.
+     * @private
+     */
+    public warnIfCSSNotLoaded(): void {
+        if (this.styledMode) {
+            const containerStyle = win.getComputedStyle(this.container);
+
+            if (containerStyle.zIndex !== '0') {
+                error(35, false, this);
             }
         }
     }
@@ -4032,7 +4043,7 @@ class Chart {
  *
  * */
 
-interface Chart extends ChartLike {
+interface Chart extends ChartBase {
     callbacks: Array<Chart.CallbackFunction>;
     collectionsWithInit: Record<string, [Function, Array<any>?]>;
     collectionsWithUpdate: Array<string>;

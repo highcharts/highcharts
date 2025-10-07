@@ -100,7 +100,7 @@ class HeaderRow extends Row {
      * @internal
      */
     public renderContent(level: number): void {
-        const header = this.viewport.grid.options?.header;
+        const headerOpt = this.viewport.grid.options?.header;
         const vp = this.viewport;
         const enabledColumns = vp.grid.enabledColumns || [];
 
@@ -108,10 +108,10 @@ class HeaderRow extends Row {
         vp.theadElement?.appendChild(this.htmlElement);
         this.htmlElement.classList.add(Globals.getClassName('headerRow'));
 
-        if (!header) {
+        if (!headerOpt) {
             super.render();
         } else {
-            const columnsOnLevel = this.getColumnsAtLevel(header, level);
+            const columnsOnLevel = this.getColumnsAtLevel(headerOpt, level);
 
             for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
                 const columnOnLevel = columnsOnLevel[i];
@@ -150,14 +150,14 @@ class HeaderRow extends Row {
                 }
 
                 if (isString(headerFormat)) {
-                    if (!headerCell.options.header) {
-                        headerCell.options.header = {};
+                    if (!headerCell.superColumnOptions.header) {
+                        headerCell.superColumnOptions.header = {};
                     }
-                    headerCell.options.header.format = headerFormat;
+                    headerCell.superColumnOptions.header.format = headerFormat;
                 }
 
                 if (className) {
-                    headerCell.options.className = className;
+                    headerCell.superColumnOptions.className = className;
                 }
 
                 // Add class to disable left border on first column

@@ -132,6 +132,32 @@ class ColumnSorting {
     }
 
     /**
+     * Updates the column options with the new sorting state.
+     *
+     * @param col
+     * The column to update.
+     */
+    private updateColumnOptions(col: Column): void {
+        const order = col.viewport.grid.querying.sorting.currentSorting?.order;
+
+        if (col.id === this.column.id && order) {
+            col.update({
+                sorting: {
+                    order
+                }
+            }, false);
+        } else {
+            delete col.options.sorting?.order;
+            if (
+                col.options.sorting &&
+                Object.keys(col.options.sorting).length < 1
+            ) {
+                delete col.options.sorting;
+            }
+        }
+    }
+
+    /**
      * Set sorting order for the column. It will modify the presentation data
      * and rerender the rows.
      *
@@ -162,6 +188,7 @@ class ColumnSorting {
         await viewport.updateRows();
 
         for (const col of viewport.columns) {
+            this.updateColumnOptions(col);
             col.sorting?.addHeaderElementAttributes();
         }
 

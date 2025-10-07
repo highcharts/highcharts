@@ -129,7 +129,7 @@ class FilteringController {
         switch (condition) {
             case 'contains':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: 'contains',
                     value: stringifiedValue
                 };
@@ -138,7 +138,7 @@ class FilteringController {
                 return {
                     operator: 'not',
                     condition: {
-                        columnName: columnId,
+                        columnId,
                         operator: 'contains',
                         value: stringifiedValue
                     }
@@ -146,77 +146,77 @@ class FilteringController {
 
             case 'equals':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: '===',
                     value
                 };
 
             case 'doesNotEqual':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: '!==',
                     value
                 };
 
             case 'beginsWith':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: 'startsWith',
                     value: stringifiedValue
                 };
 
             case 'endsWith':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: 'endsWith',
                     value: stringifiedValue
                 };
 
             case 'greaterThan':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: '>',
                     value
                 };
 
             case 'greaterThanOrEqualTo':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: '>=',
                     value
                 };
 
             case 'lessThan':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: '<',
                     value
                 };
 
             case 'lessThanOrEqualTo':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: '<=',
                     value
                 };
 
             case 'before':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: '<',
                     value
                 };
 
             case 'after':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: '>',
                     value
                 };
 
             case 'empty':
                 return {
-                    columnName: columnId,
+                    columnId,
                     operator: 'empty',
                     value
                 };
@@ -225,7 +225,7 @@ class FilteringController {
                 return {
                     operator: 'not',
                     condition: {
-                        columnName: columnId,
+                        columnId,
                         operator: 'empty',
                         value
                     }
