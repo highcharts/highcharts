@@ -1160,7 +1160,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     background-color: var(--hcg-popup-background);
     border: var(--hcg-popup-border);
     border-radius: 6px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08), 0 7px 7px 0 rgba(0, 0, 0, 0.07);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08), 0 7px 7px 0 rgba(0, 0, 0, 0.07), 0 17px 10px 0 rgba(0, 0, 0, 0.04), 0 30px 12px 0 rgba(0, 0, 0, 0.01);
     min-width: 200px;
     overflow: auto;
 }
