@@ -21,6 +21,7 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
+
 import ContourPoint from './ContourPoint.js';
 import Delaunay from '../../Shared/Delaunay.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -28,6 +29,7 @@ import U from '../../Core/Utilities.js';
 import ContourSeriesOptions from './ContourSeriesOptions';
 import ColorType from '../../Core/Color/ColorType.js';
 import Chart from '../../Core/Chart/Chart.js';
+
 const { extend, merge } = U;
 
 class ContourSeries extends ScatterSeries {
@@ -65,6 +67,7 @@ class ContourSeries extends ScatterSeries {
         if (!options?.marker) {
             options = merge(options, {
                 marker: {
+                    enabled: false,
                     states: {
                         hover: {
                             enabled: false
@@ -75,6 +78,9 @@ class ContourSeries extends ScatterSeries {
         }
 
         super.init.apply(this, [chart, options]);
+
+        // Without this the axis will stretch above the canvas
+        this.yAxis.axisPointRange = 1;
     }
 
     public triangulateData(): Delaunay<Float64Array> {
@@ -90,11 +96,10 @@ class ContourSeries extends ScatterSeries {
                 1;
 
         for (let i = 0; i < length; i++) {
-            const { x, y } = points[i];
-            // Temporary solution, better to completely avoid gfx
-            points[i]?.graphic?.hide();
-            points2d[i * 2] = x / xDivider;
-            points2d[i * 2 + 1] = y && (y / yDivider) || 0;
+            const { x, y } = points[i],
+                baseIndex = i * 2;
+            points2d[baseIndex] = x / xDivider;
+            points2d[baseIndex + 1] = y && (y / yDivider) || 0;
         }
 
         return new Delaunay(points2d);
@@ -105,9 +110,10 @@ class ContourSeries extends ScatterSeries {
             points3d: Float32Array = new Float32Array(points.length * 3);
 
         points.forEach((point, i): void => {
-            points3d[i * 3] = point.x;
-            points3d[i * 3 + 1] = point.y || 0;
-            points3d[i * 3 + 2] = point.value || 0;
+            const baseIndex = i * 3;
+            points3d[baseIndex] = point.x;
+            points3d[baseIndex + 1] = point.y || 0;
+            points3d[baseIndex + 2] = point.value || 0;
         });
 
         return points3d;
@@ -532,6 +538,7 @@ class ContourSeries extends ScatterSeries {
                 pass.end();
 
                 device.queue.submit([encoder.finish()]);
+
 
                 this.image = this.chart.renderer.image(
                     this.canvas.toDataURL('image/png', 1)
