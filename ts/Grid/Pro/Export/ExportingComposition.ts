@@ -86,7 +86,7 @@ declare module '../../Core/Options' {
         /**
          * Exporting options for the CSV.
          */
-        csv: {
+        csv?: {
             /**
              * The decimal point to use in the CSV string.
              */

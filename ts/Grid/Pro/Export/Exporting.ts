@@ -141,9 +141,9 @@ class Exporting {
         const options =
             this.grid.options?.exporting || Exporting.defaultOptions;
         const { useLocalDecimalPoint, lineDelimiter, firstRowAsNames } =
-            options.csv;
+            options.csv ?? {};
         const exportNames = firstRowAsNames !== false;
-        let { decimalPoint, itemDelimiter } = options.csv;
+        let { decimalPoint, itemDelimiter } = options.csv ?? {};
 
         if (!decimalPoint) {
             decimalPoint = (
