@@ -41,8 +41,9 @@ import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
-    fireEvent,
+    defined,
     extend,
+    fireEvent,
     getStyle,
     merge,
     pick,
@@ -1169,6 +1170,10 @@ class Grid {
      */
     public shouldVirtualize(): boolean {
         const rows = this.userOptions.rendering?.rows;
+        if (defined(rows?.virtualization)) {
+            return rows.virtualization;
+        }
+
         const threshold = Number(
             rows?.virtualizationThreshold ||
             Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
