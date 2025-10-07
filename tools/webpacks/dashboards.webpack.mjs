@@ -25,6 +25,11 @@ const dashboardsCfg = FSLib.getFile(
     true
 );
 
+const dashboardsBuildProps = FSLib.getFile(
+    Path.join('tools', 'gulptasks', 'dashboards', 'build-properties.json'),
+    true
+);
+
 const sourceFolder = Path.join('code', 'dashboards', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
 const targetFolder = Path.join('code', 'dashboards');
@@ -94,7 +99,7 @@ const webpacks = FSLib
                 }),
                 new ProductMetaPlugin({
                     productName: dashboardsCfg.product,
-                    productVersion: process.env.DASH_RELEASE || dashboardsCfg.version
+                    productVersion: process.env.DASH_RELEASE || dashboardsBuildProps.version
                 }),
                 new UMDExtensionPlugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)

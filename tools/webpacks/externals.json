@@ -87,6 +87,13 @@
         "namespacePath": ".{name}"
     },
     {
+        "files": ["Dashboards/Data/Modifiers/DataModifier"],
+        "included": [
+            "dashboards"
+        ],
+        "namespacePath": ".DataModifier"
+    },
+    {
         "files": [
             "Core/Animation/AnimationUtilities",
             "Core/Defaults",
