@@ -1,7 +1,11 @@
+body {
+    font-family: Arial, Verdana, sans-serif;
+}
+
 #container {
     height: 400px;
 }
 
-body {
-    font-family: Arial, Verdana, sans-serif;
+#report {
+    margin: 10px;
 }

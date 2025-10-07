@@ -38,7 +38,7 @@ import Sync from '../Sync/Sync';
  * */
 
 export interface Options extends Component.Options {
-    columnName: string;
+    columnId: string;
 
     /**
      * Connector options

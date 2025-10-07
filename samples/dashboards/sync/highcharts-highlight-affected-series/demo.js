@@ -3,9 +3,7 @@ const board = Dashboards.board('container', {
         connectors: [{
             id: 'csv',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv').innerText
-            }
+            csv: document.getElementById('csv').innerText
         }]
     },
     gui: {

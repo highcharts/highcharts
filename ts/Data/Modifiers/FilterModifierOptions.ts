@@ -43,7 +43,7 @@ export interface ComparisonCondition {
     /**
      * Name of the column to compare the value of the cell with.
      */
-    columnName: string;
+    columnId: string;
 
     /**
      * Value to compare the cell with.
@@ -65,7 +65,7 @@ export interface StringCondition {
     /**
      * Name of the column to compare the value of the cell with.
      */
-    columnName: string;
+    columnId: string;
 
     /**
      * Whether the comparison should ignore case.

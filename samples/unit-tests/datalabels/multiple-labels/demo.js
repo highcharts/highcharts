@@ -246,3 +246,79 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
         'Only the second point\'s data label should be rendered (#19457).'
     );
 });
+
+QUnit.test('Multiple data labels and update', function (assert) {
+    const chart = Highcharts.chart('container', {
+        title: {
+            text: 'Data label update'
+        },
+        chart: {
+            type: 'column',
+            width: 400,
+            height: 250
+        },
+        series: [
+            {
+                dataLabels: {
+                    enabled: true,
+                    format: 'Initial'
+                },
+                data: [1]
+            }
+        ]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.text.textStr,
+        'Initial',
+        'Initial value should be set'
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            format: 'Single to single'
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.text.textStr,
+        'Single to single',
+        'Updating single to single, updated value should be set'
+    );
+
+    chart.series[0].update({
+        dataLabels: [{
+            format: 'Single to array'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabels[0].text.textStr,
+        'Single to array',
+        'Updating single to array, updated value should be set'
+    );
+
+    chart.series[0].update({
+        dataLabels: [{
+            format: 'Array to array'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabels[0].text.textStr,
+        'Array to array',
+        'Updating array to array, updated value should be set'
+    );
+
+    chart.series[0].update({
+        dataLabels: [{
+            format: 'Array to single'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabels[0].text.textStr,
+        'Array to single',
+        'Updating array to single, updated value should be set'
+    );
+});

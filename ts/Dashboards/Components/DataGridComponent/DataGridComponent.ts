@@ -151,10 +151,11 @@ class DataGridComponent extends Component {
 
             if (
                 this.grid?.viewport?.dataTable?.id !==
-                this.getFirstConnector()?.table?.id
+                this.getFirstConnector()?.getTable()?.id
             ) {
                 this.grid.update({
-                    dataTable: this.getFirstConnector()?.table?.modified
+                    dataTable:
+                        this.getFirstConnector()?.getTable()?.getModified()
                 }, false);
             }
 
@@ -205,8 +206,8 @@ class DataGridComponent extends Component {
             return;
         }
 
-        const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey);
-        if (!dataTable?.modified) {
+        const dataTable = this.connectorHandlers[0]?.presentationTable;
+        if (!dataTable?.getModified()) {
             grid.update({ dataTable: void 0 });
             return;
         }
@@ -216,11 +217,11 @@ class DataGridComponent extends Component {
             // names have changed, so we can update the whole grid. If they
             // have not changed, we can just update the rows (more efficient).
 
-            const newColumnNames = dataTable.modified.getColumnNames();
+            const newColumnIds = dataTable.getModified().getColumnIds();
             const { columnOptionsMap, enabledColumns } = grid;
 
             let index = 0;
-            for (const newColumn of newColumnNames) {
+            for (const newColumn of newColumnIds) {
                 if (columnOptionsMap[newColumn]?.options?.enabled === false) {
                     continue;
                 }
@@ -228,7 +229,7 @@ class DataGridComponent extends Component {
                 if (enabledColumns?.[index] !== newColumn) {
                     // If the visible columns have changed,
                     // update the whole grid.
-                    grid.update({ dataTable: dataTable.modified });
+                    grid.update({ dataTable: dataTable.getModified() });
                     return;
                 }
 
@@ -236,7 +237,7 @@ class DataGridComponent extends Component {
             }
         }
 
-        grid.dataTable = dataTable?.modified;
+        grid.dataTable = dataTable?.getModified();
 
         // Data has changed and the whole grid is not re-rendered, so mark in
         // the querying that data table was modified.
@@ -264,7 +265,6 @@ class DataGridComponent extends Component {
     public override getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
-            cell: '',
             type: 'Grid'
         };
 
@@ -347,7 +347,7 @@ class DataGridComponent extends Component {
             throw new Error('Grid not connected.');
         }
 
-        const dataTable = this.getFirstConnector()?.getTable(this.dataTableKey),
+        const dataTable = this.connectorHandlers[0]?.presentationTable,
             options = this.options,
             gridOptions = merge(
                 {},
@@ -356,7 +356,7 @@ class DataGridComponent extends Component {
             );
 
         if (dataTable) {
-            gridOptions.dataTable = dataTable.modified;
+            gridOptions.dataTable = dataTable.getModified();
         }
 
         const dataGridInstance =

@@ -163,7 +163,7 @@ function addCustomEvents(isTodoGrid) {
     const targetGrid = Grid.grids[isTodoGrid ? 1 : 0];
 
     sourceGrid.dataTable.on('afterSetCell', function (e) {
-        if (e.columnName !== 'Done') {
+        if (e.columnId !== 'Done') {
             return;
         }
 

@@ -21,6 +21,8 @@ import './es-modules/Grid/Pro/CellRendering/Renderers/CheckboxRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/SelectRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/TextInputRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/DateInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/DateTimeInputRenderer';
+import './es-modules/Grid/Pro/CellRendering/Renderers/TimeInputRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/NumberInputRenderer';
 import './es-modules/Grid/Pro/CellRendering/Renderers/SparklineRenderer';
 

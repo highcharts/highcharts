@@ -24,6 +24,7 @@
  * */
 
 import type Column from '../../../Core/Table/Column';
+import type DateInputRendererBase from './DateInputRendererBase';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
 import type {
@@ -61,8 +62,7 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
      * Default options for the date input renderer.
      */
     public static defaultOptions: DateInputRenderer.Options = {
-        type: 'dateInput',
-        inputType: 'date'
+        type: 'dateInput'
     };
 
     public override options: DateInputRenderer.Options;
@@ -107,34 +107,8 @@ namespace DateInputRenderer {
     /**
      * Options to control the date input renderer content.
      */
-    export interface Options extends CellRenderer.Options {
+    export interface Options extends DateInputRendererBase.Options {
         type: 'dateInput';
-
-        /**
-         * The type of the date input.
-         *
-         * @default 'date'
-         */
-        inputType?: 'date' | 'datetime' | 'time';
-
-        /**
-         * Whether the date input is disabled.
-         */
-        disabled?: boolean;
-
-        /**
-         * Attributes to control the date input.
-         */
-        attributes?: DateInputAttributes;
-    }
-
-    /**
-     * Attributes to control the date input.
-     */
-    export interface DateInputAttributes {
-        min?: string;
-        max?: string;
-        step?: string;
     }
 }
 

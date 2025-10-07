@@ -36,12 +36,16 @@ import Templating from '../../../Core/Templating.js';
 import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
 import TableCell from './Body/TableCell';
+import GridUtils from '../GridUtils.js';
 
 const {
     defined,
-    merge,
     fireEvent
 } = Utils;
+
+const {
+    createOptionsProxy
+} = GridUtils;
 
 
 /* *
@@ -87,7 +91,8 @@ class Column {
     public data?: DataTable.Column;
 
     /**
-     * The options of the column.
+     * The options of the column as a proxy that provides merged access to
+     * original options and defaults if not defined in the individual options.
      */
     public readonly options: Column.Options;
 
@@ -145,9 +150,20 @@ class Column {
 
         this.dataType = this.assumeDataType();
 
-        this.options = merge(
-            grid.options?.columnDefaults ?? {},
-            grid.columnOptionsMap?.[id]?.options ?? {}
+        // Populate column options map if not exists, to prepare option
+        // references for each column.
+        if (grid.options && !grid.columnOptionsMap?.[id]) {
+            const columnOptions: IndividualColumnOptions = { id };
+            (grid.options.columns ??= []).push(columnOptions);
+            grid.columnOptionsMap[id] = {
+                index: grid.options.columns.length - 1,
+                options: columnOptions
+            };
+        }
+
+        this.options = createOptionsProxy(
+            grid.columnOptionsMap?.[id]?.options ?? {},
+            grid.options?.columnDefaults
         );
 
         if (this.options.filtering?.enabled) {

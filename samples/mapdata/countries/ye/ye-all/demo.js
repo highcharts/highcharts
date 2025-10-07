@@ -8,12 +8,12 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['ye-3662', 10], ['ye-hu', 11], ['ye-3415', 12], ['ye-3427', 13],
-        ['ye-ta', 14], ['ye-sd', 15], ['ye-mw', 16], ['ye-dh', 17],
-        ['ye-hj', 18], ['ye-am', 19], ['ye-ib', 20], ['ye-la', 21],
-        ['ye-mr', 22], ['ye-ba', 23], ['ye-dl', 24], ['ye-ja', 25],
-        ['ye-sh', 26], ['ye-ma', 27], ['ye-3426', 28], ['ye-3428', 29],
-        ['ye-ad', 30], ['ye-3430', 31]
+        ['ye-hu', 10], ['ye-3415', 11], ['ye-3427', 12], ['ye-ta', 13],
+        ['ye-sd', 14], ['ye-mw', 15], ['ye-dh', 16], ['ye-hj', 17],
+        ['ye-am', 18], ['ye-ib', 19], ['ye-la', 20], ['ye-mr', 21],
+        ['ye-ba', 22], ['ye-dl', 23], ['ye-ja', 24], ['ye-sh', 25],
+        ['ye-ma', 26], ['ye-3426', 27], ['ye-3428', 28], ['ye-ad', 29],
+        ['ye-3430', 30]
     ];
 
     // Create the chart
