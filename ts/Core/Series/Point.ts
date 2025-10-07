@@ -1120,14 +1120,21 @@ class Point {
             }
 
             // Record changes in the data table
-            const row: DataTable.RowObject = {},
-                keys = series.getDataColumnKeys()
-                    .concat(Object.keys(options || {}));
+            if (series.tempNoXColumn) {
+                series.dataTable.setRow(
+                    point.optionsToObject(options) as AnyRecord,
+                    point.index
+                );
+            } else {
+                const row: DataTable.RowObject = {},
+                    keys = series.getDataColumnKeys()
+                        .concat(Object.keys(options || {}));
 
-            for (const key of keys) {
-                row[key] = (point as any)[key];
+                for (const key of keys) {
+                    row[key] = (point as any)[key];
+                }
+                series.dataTable.setRow(row, point.index);
             }
-            series.dataTable.setRow(row, point.index);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
