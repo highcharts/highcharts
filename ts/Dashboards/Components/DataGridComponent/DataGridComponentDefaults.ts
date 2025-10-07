@@ -21,7 +21,7 @@
  * */
 
 import type Component from '../Component';
-import type Globals from '../../Globals';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Options from './DataGridComponentOptions';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
@@ -36,7 +36,7 @@ const {
  *
  * */
 
-const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
+const DataGridComponentDefaults: DeepPartial<Options> = {
     gridClassName: 'dataGrid-container',
     gridID: 'dataGrid-' + uniqueKey(),
     gridOptions: {},
@@ -150,26 +150,26 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 cell instanceof HTMLElement
             ) {
                 const dataTableRowIndex = parentRow.dataset.rowIndex;
-                const { columnName } = cell.dataset;
+                const { columnId } = cell.dataset;
 
                 if (
                     dataTableRowIndex !== void 0 &&
-                    columnName !== void 0
+                    columnId !== void 0
                 ) {
-                    const table = connector.table;
+                    const table = connector.getTable();
 
                     if (table) {
                         const converter = new DataConverter();
 
                         let valueToSet = converter
-                            .asGuessedType(inputElement.value);
+                            .convertByType(inputElement.value);
 
                         if (valueToSet instanceof Date) {
                             valueToSet = valueToSet.toString();
                         }
 
                         table.setCell(
-                            columnName,
+                            columnId,
                             Number(dataTableRowIndex),
                             valueToSet
                         );

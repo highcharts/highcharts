@@ -51,6 +51,11 @@ describe('Grid sorting.', () => {
                 grid.presentationTable.columns.weight,
                 'Weight column should be sorted.',
             ).to.deep.equal([200, 100, 40, 0.5]);
+
+            expect(
+                grid.columnOptionsMap.weight.options.sorting.order,
+                'Weight column sorting options should be updated.'
+            ).to.equal('desc');
         })
 
         cy.get('th[data-column-id="weight"]').should('have.class', 'highcharts-datagrid-column-sorted-desc');

@@ -21,7 +21,7 @@
  * */
 
 
-import type Globals from '../../Globals';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Options from './KPIComponentOptions';
 
 import Component from '../Component.js';
@@ -33,7 +33,7 @@ import Component from '../Component.js';
  *
  * */
 
-const KPIComponentDefaults: Globals.DeepPartial<Options> = {
+const KPIComponentDefaults: DeepPartial<Options> = {
     type: 'KPI',
     className: [
         Component.defaultOptions.className,
@@ -55,7 +55,7 @@ const KPIComponentDefaults: Globals.DeepPartial<Options> = {
         }, {
             name: 'Column name',
             type: 'input',
-            propertyPath: ['columnName']
+            propertyPath: ['columnId']
         }, {
             name: 'Value format',
             type: 'input',

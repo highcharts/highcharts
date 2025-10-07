@@ -2,5 +2,3 @@ Download as PDF and verify that the text is correct. Verify that the data labels
 
 (Some overlap may occur due to different text metrics in the browser font vs the
 PDF reader.)
-
-Verify that the boosted scatter series is visible in the exported PDF.

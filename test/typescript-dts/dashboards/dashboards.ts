@@ -21,9 +21,7 @@ function test_board() {
             connectors: [{
                 id: "My Data",
                 type: "CSV",
-                options: {
-                    csv: ''
-                }
+                csv: ''
             }]
         },
         gui: {
@@ -69,6 +67,11 @@ function test_grid() {
                 editMode: {
                     enabled: true
                 }
+            },
+            events: {
+                afterResize: function () {
+                    console.log(this.cells);
+                }
             }
         },
         credits: {
@@ -101,14 +104,7 @@ function test_grid() {
                     validationRules: ['notEmpty']
                 }
             }
-        }],
-        events: {
-            column: {
-                afterResize: function () {
-                    console.log(this.viewport.dataGrid);
-                }
-            }
-        }
+        }]
     });
 }
 

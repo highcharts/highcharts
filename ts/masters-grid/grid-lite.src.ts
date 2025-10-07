@@ -37,6 +37,7 @@ import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.
 import Utilities from '../Core/Utilities.js';
 import GridIcons from '../Grid/Icons/GridIcons.js';
 import HeaderIconManager from '../Grid/Core/Table/Header/HeaderIconManager.js';
+import Pagination from '../Grid/Core/Pagination/Pagination.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -71,6 +72,7 @@ declare global {
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
         Table: typeof Table;
+        Pagination: typeof Pagination;
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
@@ -115,6 +117,7 @@ G.GridIcons = GridIcons;
 G.HeaderIconManager = HeaderIconManager;
 
 G.Table = G.Table || Table;
+G.Pagination = G.Pagination || Pagination;
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
 

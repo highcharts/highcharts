@@ -823,20 +823,37 @@ class EditMode {
             );
         }
 
-        // Create context menu button
+        // Create context a menu button or edit mode toggle
         if (options.contextMenu && options.contextMenu.enabled) {
-            tools.contextButtonElement = EditRenderer.renderContextButton(
-                tools.container,
-                editMode
-            );
-
-            // Init contextMenu if doesn't exist.
-            if (!editMode.tools.contextMenu) {
-                editMode.tools.contextMenu = new EditContextMenu(
-                    editMode.board.container,
-                    editMode.options.contextMenu || {},
+            if (options.contextMenu.items?.length) {
+                tools.contextButtonElement = EditRenderer.renderContextButton(
+                    tools.container,
                     editMode
                 );
+
+                // Init contextMenu if doesn't exist.
+                if (!editMode.tools.contextMenu) {
+                    editMode.tools.contextMenu = new EditContextMenu(
+                        editMode.board.container,
+                        editMode.options.contextMenu || {},
+                        editMode
+                    );
+                }
+            } else {
+                // Render the edit mode toggle when no items are provided
+                tools.standaloneEditToggle =
+                    EditRenderer.renderToggle(tools.container, {
+                        id: EditContextMenu.items.editMode.id,
+                        name: EditContextMenu.items.editMode.id,
+                        className: EditGlobals.classNames.editStandaloneToggle,
+                        title: editMode.lang.editMode,
+                        value: editMode.isActive(),
+                        lang: editMode.lang,
+                        langKey: 'editMode',
+                        onchange(): void {
+                            editMode.toggleEditMode();
+                        }
+                    });
             }
         }
 
@@ -1153,15 +1170,6 @@ namespace EditMode {
         */
         addComponentBtn?: AddComponentBtn;
         /**
-         * RWD buttons options.
-         *
-         * RWD buttons are permanently disabled since the change from
-         * options-managed responsiveness to fully CSS-managed.
-         *
-         * @deprecated
-         */
-        rwdButtons?: RwdButtons;
-        /**
         * @internal
         */
         contextMenu?: EditContextMenu;
@@ -1169,6 +1177,10 @@ namespace EditMode {
         * @internal
         */
         contextButtonElement?: HTMLDOMElement;
+        /**
+        * @internal
+        */
+        standaloneEditToggle?: HTMLDOMElement;
         /**
         * @internal
         */
@@ -1193,55 +1205,6 @@ namespace EditMode {
          * URL to the Add Component button icon.
          */
         icon: string;
-    }
-
-    /**
-     * Deprecated RWD buttons options.
-     *
-     * RWD buttons are permanently disabled since the change from
-     * options-managed responsiveness to fully CSS-managed.
-     *
-     * @deprecated
-     */
-    export interface RwdButtons {
-        /**
-         * Whether the RWD buttons should be visible.
-         *
-         * @deprecated
-         */
-        enabled?: boolean;
-        /**
-         * RWD buttons icons options.
-         *
-         * @deprecated
-         */
-        icons: RwdIcons;
-    }
-
-    /**
-     * RWD Buttons icons options.
-     *
-     * @deprecated
-     */
-    export interface RwdIcons {
-        /**
-         * URL to small RWD button icon.
-         *
-         * @deprecated
-         */
-        small: string;
-        /**
-         * URL to medium RWD button icon.
-         *
-         * @deprecated
-         */
-        medium: string;
-        /**
-         * URL to large RWD button icon.
-         *
-         * @deprecated
-         */
-        large: string;
     }
 
     /**

@@ -23,7 +23,6 @@
  * */
 
 import type { RowsSettings } from '../../Options';
-import type Cell from '../Cell';
 
 import Table from '../Table.js';
 import TableRow from '../Body/TableRow.js';
@@ -78,12 +77,6 @@ class RowsVirtualizer {
      * flickering loops when scrolling to the last row.
      */
     private preventScroll = false;
-
-    /**
-     * The only cell that is to be focusable using tab key - a table focus
-     * entry point.
-     */
-    public focusAnchorCell?: Cell;
 
     /**
      * Rendering row settings.
@@ -363,11 +356,16 @@ class RowsVirtualizer {
             }
         }
 
-        // Reset the focus anchor cell
-        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
-        const firstVisibleRow = rows[rowCursor - rows[0].index];
-        this.focusAnchorCell = firstVisibleRow?.cells[0];
-        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '0');
+        // Set the focus anchor cell
+        if (
+            (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
+            rows.length > 0
+        ) {
+            const rowIndex = rowCursor - rows[0].index;
+            if (rows[rowIndex]) {
+                vp.setFocusAnchorCell(rows[rowIndex].cells[0]);
+            }
+        }
     }
 
     /**

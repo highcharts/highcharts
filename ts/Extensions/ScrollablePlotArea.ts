@@ -67,8 +67,8 @@ declare module '../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;
         scrollablePlotBox?: BBoxObject;

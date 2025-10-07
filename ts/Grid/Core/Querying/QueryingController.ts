@@ -163,10 +163,10 @@ class QueryingController {
         if (modifiers.length > 0) {
             const chainModifier = new ChainModifier({}, ...modifiers);
             const dataTableCopy = originalDataTable.clone();
-            await chainModifier.modify(dataTableCopy.modified);
-            this.grid.presentationTable = dataTableCopy.modified;
+            await chainModifier.modify(dataTableCopy.getModified());
+            this.grid.presentationTable = dataTableCopy.getModified();
         } else {
-            this.grid.presentationTable = originalDataTable.modified;
+            this.grid.presentationTable = originalDataTable.getModified();
         }
 
         this.shouldBeUpdated = false;
