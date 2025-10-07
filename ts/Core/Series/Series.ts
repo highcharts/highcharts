@@ -1080,19 +1080,19 @@ class Series {
             // Reset the counter
             this.xIncrement = null;
 
+            // Handle name-to-x, uniqueNames
+            const nameColumn = table.getColumn('name');
+            if (this.xAxis?.hasNames && nameColumn) {
+                this.xColumn = Array(table.rowCount).fill(0)
+                    .map((_, i): number => this.xAxis.nameToX({
+                        name: nameColumn[i] as string,
+                        series: this
+                    }, column?.[i]));
+
+                return this.xColumn;
+            }
+
             if (!column) {
-
-                // Handle name-to-x, uniqueNames
-                const nameColumn = table.getColumn('name');
-                if (this.xAxis?.hasNames && nameColumn) {
-                    this.xColumn = Array(table.rowCount).fill(0)
-                        .map((_, i): number => this.xAxis.nameToX({
-                            name: nameColumn[i] as string,
-                            series: this
-                        }));
-                    return this.xColumn;
-                }
-
                 // Vanilla auto-increment
                 this.xColumn = Array(table.rowCount).fill(0).map((): number =>
                     this.autoIncrement()
