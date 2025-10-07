@@ -101,9 +101,13 @@ class Exporting {
 
     /**
      * Downloads the CSV string as a file.
+     *
+     * @param modified
+     * Whether to return the modified data table (after filtering/sorting/etc.)
+     * or the unmodified, original one. Default value is set to `true`.
      */
-    public downloadCSV(): void {
-        const csv = this.getCSV();
+    public downloadCSV(modified: boolean = true): void {
+        const csv = this.getCSV(modified);
 
         downloadURL(
             getBlobFromContent(csv, 'text/csv') ||
@@ -114,9 +118,13 @@ class Exporting {
 
     /**
      * Downloads the JSON string as a file.
+     *
+     * @param modified
+     * Whether to return the modified data table (after filtering/sorting/etc.)
+     * or the unmodified, original one. Default value is set to `true`.
      */
-    public downloadJSON(): void {
-        const json = this.getJSON();
+    public downloadJSON(modified: boolean = true): void {
+        const json = this.getJSON(modified);
 
         downloadURL(
             getBlobFromContent(json, 'application/json') ||
@@ -128,11 +136,17 @@ class Exporting {
     /**
      * Creates a CSV string from the data table.
      *
+     * @param modified
+     * Whether to return the modified data table (after filtering/sorting/etc.)
+     * or the unmodified, original one. Default value is set to `true`.
+     *
      * @return
      * CSV string representing the data table.
      */
-    public getCSV(): string {
-        const dataTable = this.grid.dataTable;
+    public getCSV(modified: boolean = true): string {
+        const dataTable = modified ?
+            this.grid.viewport?.dataTable :
+            this.grid.dataTable;
 
         if (!dataTable) {
             return '';
@@ -221,23 +235,15 @@ class Exporting {
     /**
      * Returns the current grid data as a JSON string.
      *
+     * @param modified
+     * Whether to return the modified data table (after filtering/sorting/etc.)
+     * or the unmodified, original one. Default value is set to `true`.
+     *
      * @return
      * JSON representation of the data
      */
-    public getJSON(): string {
-        const json = this.grid.viewport?.dataTable.getModified().columns;
-
-        if (!this.grid.enabledColumns || !json) {
-            return '{}';
-        }
-
-        for (const key of Object.keys(json)) {
-            if (this.grid.enabledColumns.indexOf(key) === -1) {
-                delete json[key];
-            }
-        }
-
-        return JSON.stringify(json);
+    public getJSON(modified: boolean = true): string {
+        return this.grid.getData(modified);
     }
 
     /**
