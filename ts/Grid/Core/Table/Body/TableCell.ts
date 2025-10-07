@@ -173,7 +173,8 @@ class TableCell extends Cell {
             this.value
         );
 
-        if (vp.grid.querying.getModifiers().length < 1) {
+        // If no modifiers, don't update all rows
+        if (vp.grid.dataTable === vp.grid.presentationTable) {
             return false;
         }
 

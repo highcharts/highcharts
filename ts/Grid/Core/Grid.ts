@@ -363,43 +363,30 @@ class Grid {
      * Initializes the pagination.
      */
     private initPagination(): void {
-
-        let paginationState = {};
+        let state: Pagination.PaginationState | undefined;
 
         if (this.pagination) {
             const {
                 currentPageSize,
-                currentPage,
-                totalItems,
-                totalPages
+                currentPage
             } = this.pagination || {};
 
-            paginationState = {
+            state = {
                 currentPageSize,
-                currentPage,
-                totalItems,
-                totalPages
+                currentPage
             };
         }
 
         this.pagination?.destroy();
         delete this.pagination;
 
+        const rawOptions = this.options?.pagination;
+        const options = isObject(rawOptions) ? rawOptions : {
+            enabled: rawOptions
+        };
 
-        const currentPaginationOptions = this.options?.pagination;
-        const paginationOptions = merge(
-            (
-                isObject(currentPaginationOptions) ?
-                    currentPaginationOptions :
-                    { enabled: currentPaginationOptions }
-            ),
-            {
-                ...paginationState
-            }
-        );
-
-        if (paginationOptions?.enabled) {
-            this.pagination = new Pagination(this, paginationOptions);
+        if (options?.enabled) {
+            this.pagination = new Pagination(this, options, state);
         }
     }
 

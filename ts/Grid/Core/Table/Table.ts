@@ -321,6 +321,9 @@ class Table {
             this.reflow();
         }
 
+        // Update the pagination controls
+        this.grid.pagination?.updateControls();
+
         if (focusedRowId !== void 0 && vp.focusCursor) {
             const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
             if (newRowIndex !== void 0) {

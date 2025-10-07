@@ -34,6 +34,7 @@ import Defaults from '../Defaults.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
+import AST from '../../../Core/Renderer/HTML/AST.js';
 
 const { makeHTMLElement } = GridUtils;
 const { merge, fireEvent, isObject, defined } = Utilities;
@@ -170,14 +171,10 @@ class Pagination {
     public lang: PaginationLangOptions;
 
     /**
-     * Total number of pages
+     * Backup total number of items (rows) to compare with the current state.
      */
-    public totalPages: number = 1;
+    public backupTotalItems?: number;
 
-    /**
-     * Total number of items
-     */
-    public totalItems: number = 0;
 
     /* *
     *
@@ -193,10 +190,15 @@ class Pagination {
      *
      * @param options
      * The Pagination user options.
+     *
+     * @param state
+     * The Pagination state. Used to restore the previous state after the Grid
+     * is destroyed.
      */
     constructor(
         grid: Grid,
-        options: PaginationOptions & Pagination.PaginationState
+        options: PaginationOptions,
+        state: Pagination.PaginationState = {}
     ) {
         this.grid = grid;
         this.options = merge(Pagination.defaultOptions, options);
@@ -207,7 +209,7 @@ class Pagination {
             (Pagination.defaultOptions.controls.pageSizeSelector as PageSizeSelectorOptions).options; // eslint-disable-line
 
         this.currentPageSize =
-            options.currentPageSize ||
+            state.currentPageSize ||
             this.options.pageSize ||
             this.pageSizeOptions[0];
 
@@ -218,14 +220,8 @@ class Pagination {
         );
 
         // Set state
-        if (options.currentPage) {
-            this.currentPage = options.currentPage;
-        }
-        if (options.totalItems) {
-            this.totalItems = options.totalItems;
-        }
-        if (options.totalPages) {
-            this.totalPages = options.totalPages;
+        if (state.currentPage) {
+            this.currentPage = state.currentPage;
         }
     }
 
@@ -234,6 +230,20 @@ class Pagination {
     *  Methods
     *
     * */
+
+    /**
+     * Total number of items (rows)
+     */
+    public get totalItems(): number {
+        return this.grid.querying.pagination.totalItems || 0;
+    }
+
+    /**
+     * Total number of pages
+     */
+    public get totalPages(): number {
+        return Math.ceil(this.totalItems / this.currentPageSize) || 1;
+    }
 
     /**
      * Format text with placeholders.
@@ -262,6 +272,8 @@ class Pagination {
         const position = this.options.position;
         const grid = this.grid;
 
+        this.backupTotalItems = this.totalItems;
+
         // Set row count for a11y
         grid.tableElement?.setAttribute('aria-current', 'page');
         this.updateA11yRowsCount(this.currentPageSize);
@@ -289,8 +301,8 @@ class Pagination {
             );
         }
 
-        // Update total pages first to ensure correct calculations
-        this.updateTotalPages();
+        // Clamps the current page to the valid range
+        this.clampCurrentPage();
 
         // Render all components
         this.renderPageInfo();
@@ -427,6 +439,22 @@ class Pagination {
         if (this.options.controls?.firstLastButtons) {
             this.renderLastButton(navContainer);
         }
+    }
+
+    /**
+     * Update the pagination controls.
+     */
+    public updateControls(): void {
+        if (this.backupTotalItems === this.totalItems) {
+            return;
+        }
+
+        this.updatePageInfo();
+        this.updatePageNumbers();
+        this.updateButtonStates();
+        this.updateA11yRowsCount(this.currentPageSize);
+
+        this.backupTotalItems = this.totalItems;
     }
 
     /**
@@ -621,7 +649,7 @@ class Pagination {
         }
 
         // Clear existing page numbers
-        this.pageNumbersContainer.innerHTML = '';
+        this.pageNumbersContainer.innerHTML = AST.emptyHTML;
 
         const pageButtons = this.options.controls?.pageButtons;
         const maxPageNumbers = isObject(pageButtons) ?
@@ -884,9 +912,6 @@ class Pagination {
         );
         this.currentPageSize = newPageSize;
 
-        // Recalculate total pages
-        this.updateTotalPages();
-
         // Reset to first page when changing page size
         this.currentPage = 1;
 
@@ -1014,15 +1039,9 @@ class Pagination {
     }
 
     /**
-     * Update total pages based on total items and items per page.
+     * Ensures the current page is within valid range.
      */
-    public updateTotalPages(): void {
-        const originalDataTable = this.grid.dataTable;
-        this.totalItems = this.totalItems || originalDataTable?.rowCount || 0;
-        this.totalPages =
-            Math.ceil(this.totalItems / this.currentPageSize) || 1;
-
-        // Ensure current page is within valid range
+    public clampCurrentPage(): void {
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
         }
@@ -1207,7 +1226,7 @@ class Pagination {
         const grid = this.grid;
         grid.tableElement?.setAttribute(
             'aria-rowcount',
-            currentPageSize || grid.dataTable?.getRowCount() || 0
+            currentPageSize || this.totalItems
         );
     }
 }
@@ -1216,8 +1235,6 @@ namespace Pagination {
     export type PaginationState = {
         currentPage?: number;
         currentPageSize?: number;
-        totalItems?: number;
-        totalPages?: number;
     };
 }
 
