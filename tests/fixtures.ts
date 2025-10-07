@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import type {
     Route,
     Request,
@@ -5,6 +7,8 @@ import type {
     JSHandle,
     ElementHandle,
 } from '@playwright/test';
+
+import type Highcharts from '../code/esm/highcharts.src';
 
 import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path/posix';
@@ -199,6 +203,36 @@ export async function setupRoutes(page: Page){
                 handler: replaceHCCode
             },
             {
+                pattern: 'https://code.jquery.com/qunit/**',
+                handler: async (route) => {
+                    const url = new URL(route.request().url());
+                    const filename = url.pathname.split('/').pop();
+
+                    if (!filename) {
+                        await route.abort();
+                        throw new Error('Invalid QUnit asset request');
+                    }
+
+                    const localPath = join('tests', 'qunit', 'vendor', filename);
+
+                    try {
+                        await route.fulfill({
+                            path: localPath,
+                            contentType: contentTypes[extname(filename)] ??
+                                'application/octet-stream'
+                        });
+
+                        test.info().annotations.push({
+                            type: 'redirect',
+                            description: `${url} --> ${localPath}`
+                        });
+                    } catch {
+                        await route.abort();
+                        throw new Error(`Missing local QUnit asset for ${filename}`);
+                    }
+                }
+            },
+            {
                 pattern: '**/**/{samples/data}/**',
                 handler: replaceSampleData
             },
@@ -210,7 +244,43 @@ export async function setupRoutes(page: Page){
                 pattern: '**/**/mapdata/**',
                 handler: replaceMapData
             },
-            ...(await getJSONSources())
+            {
+                pattern: '**/**/{samples/graphics}/**',
+                handler: async (route) => {
+                    const url = new URL(route.request().url());
+                    const relativePath = url.pathname.split('/samples/graphics/')[1];
+                    const filePath = join('samples/graphics', relativePath);
+
+                    test.info().annotations.push({
+                        type: 'redirect',
+                        description: `${url} --> ${relativePath}`
+                    });
+
+                    await route.fulfill({
+                        path: filePath,
+                    });
+                }
+            },
+            {
+                pattern: '**/testimage.png',
+                handler(route) {
+                    return route.fulfill({
+                        path: 'test/testimage.png',  // serve this file instead
+                        contentType: 'image/png'
+                    });
+                },
+            },
+            ...(await getJSONSources()),
+            {
+                pattern:  '**/shim.html',
+                handler: (route) =>
+                    route.fulfill({
+                        status: 200,
+                        contentType: 'text/html',
+                        body: '<!DOCTYPE html><html><head></head><body></body></html>'
+                    })
+
+            }
         ];
 
         for (const route of routes) {
@@ -312,7 +382,7 @@ export type CreateChartConfig = {
      *
      * @defaultValue `undefined`
      */
-    chartCallback: Highcharts.ChartCallbackFunction | undefined;
+    chartCallback?: (chart: Highcharts.Chart) => void;
 };
 
 const defaultCreateChartConfig: CreateChartConfig = {
@@ -357,7 +427,8 @@ export function chartTemplate({
         })
         .join('\n');
 
-    return `<html>
+    return `<!DOCTYPE html>
+<html>
     <head>
         ${scriptString}
         <style>
@@ -407,32 +478,46 @@ export async function createChart(
         await setTestingOptions(page, ccc.HC);
     }
 
-    let chartCallbackBody = '';
+    let chartCallbackBody: string | undefined;
 
     if (ccc.chartCallback) {
-        chartCallbackBody = ccc.chartCallback.toString();
+        const callbackFn = ccc.chartCallback;
+        chartCallbackBody = callbackFn.toString();
         chartCallbackBody = chartCallbackBody.substring(
             chartCallbackBody.indexOf('{') + 1,
             chartCallbackBody.lastIndexOf('}')
-        ).trim()
-        ;
+        ).trim();
         ccc.chartCallback = undefined;
     }
 
     const handle = await page.evaluateHandle(
-        ([{ chartConstructor, container, HC }, cc, chartCallbackBody]) => {
-            const HCInstance = HC ?? Highcharts;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+        ([{ chartConstructor, container, HC }, cc, serializedCallback]) => {
+            type ChartFactories = Record<
+                CreateChartConfig['chartConstructor'],
+                (
+                    container: CreateChartConfig['container'],
+                    options: Partial<Highcharts.Options>,
+                    callback?: (chart: Highcharts.Chart) => void
+                ) => ReturnType<typeof Highcharts.chart>
+            >;
+
+            const HCInstance =
+                (HC ?? window.Highcharts) as unknown as ChartFactories;
+
+            const callback = serializedCallback ?
+                (chart: Highcharts.Chart) => {
+                    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+                    new Function(
+                        'chart',
+                        serializedCallback
+                    )(chart);
+                } :
+                undefined;
+
             return HCInstance[chartConstructor](
-                container, cc, chartCallbackBody ?
-                    (chart: Highcharts.Chart) => {
-                        // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-call
-                        new Function(
-                            'chart',
-                            chartCallbackBody
-                        )(chart);
-                    } :
-                    undefined
+                container,
+                cc,
+                callback
             );
         },
         [

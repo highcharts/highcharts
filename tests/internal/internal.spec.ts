@@ -1,4 +1,12 @@
 import { test, expect, createChart } from '../fixtures.ts';
+import { getSample } from '../utils.ts';
+
+test.describe('getSample', () => {
+    test('should get sample with Windows-style path', () => {
+        const sample = getSample('samples\\unit-tests\\chart\\alignthresholds');
+        expect(sample.script).toContain('QUnit.test(\'alignThresholds');
+    });
+});
 
 test('Chart creation', async ({ page }) => {
     await page.setContent('<div id="container"></container>');
@@ -61,6 +69,31 @@ test('Redirects are applied for code', async ({ page }) => {
         type: 'redirect',
         description: 'https://code.highcharts.com/dashboards/css/datagrid.css --> code/dashboards/css/datagrid.css'
     });
+});
+
+test('QUnit assets are served locally', async ({ page }) => {
+    const template = `<html>
+    <head>
+        <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
+    </head>
+    <body></body>
+    </html>`;
+
+    await page.setContent(template);
+
+    await expect.poll(() => test.info().annotations).toContainEqual({
+        type: 'redirect',
+        description: 'https://code.jquery.com/qunit/qunit-2.4.0.js --> tests/qunit/vendor/qunit-2.4.0.js'
+    });
+
+    await expect.poll(() => test.info().annotations).toContainEqual({
+        type: 'redirect',
+        description: 'https://code.jquery.com/qunit/qunit-2.4.0.css --> tests/qunit/vendor/qunit-2.4.0.css'
+    });
+
+    await expect.poll(() => page.evaluate(() => window.QUnit?.version))
+        .toBe('2.4.0');
 });
 
 test.describe('Redirects for data', () => {
