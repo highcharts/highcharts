@@ -93,11 +93,11 @@ table.setModifier(new FilterModifier({
         operator: 'and',
         conditions: [{
             operator: '>=',
-            columnName: 'year',
+            columnId: 'year',
             value: 1980
         }, {
             operator: '<=',
-            columnName: 'year',
+            columnId: 'year',
             value: 1989
         }]
     }
