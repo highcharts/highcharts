@@ -113,7 +113,8 @@ namespace Globals {
         menuPopupHeaderName: 'menu-popup-header-name',
         menuPopupItemIcon: 'menu-popup-item-icon',
         menuPopupItemLabel: 'menu-popup-item-label',
-        menuPopupDivider: 'menu-popup-divider'
+        menuPopupDivider: 'menu-popup-divider',
+        clearFilterButton: 'clear-filter-button'
     } as const;
 
     export const win = window;

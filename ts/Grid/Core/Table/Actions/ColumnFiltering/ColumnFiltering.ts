@@ -80,6 +80,11 @@ class ColumnFiltering {
      */
     public filterSelect?: HTMLSelectElement;
 
+    /**
+     * The button to clear the filtering.
+     */
+    public clearButton?: HTMLButtonElement;
+
 
     /* *
     *
@@ -119,7 +124,9 @@ class ColumnFiltering {
         });
 
         // Update the userOptions.
-        this.column.update({ filtering: options }, false);
+        void this.column.update({
+            filtering: options
+        }, false);
 
         filteringController.addColumnFilterCondition(this.column.id, options);
 
@@ -259,6 +266,18 @@ class ColumnFiltering {
         });
     }
 
+    private renderClearButton(inputWrapper: HTMLElement): void {
+        this.clearButton = makeHTMLElement('button', {
+            className: Globals.getClassName('clearFilterButton'),
+            innerText: 'Clear filter' // TODO: Lang
+        }, inputWrapper);
+        this.clearButton.setAttribute('tabindex', '-1');
+
+        addEvent(this.clearButton, 'click', (): void => {
+            void this.set();
+        });
+    }
+
     /**
      * Disables the input element if the condition is `empty` or `notEmpty`.
      *
@@ -357,6 +376,8 @@ class ColumnFiltering {
                 });
                 break;
         }
+
+        this.renderClearButton(inputWrapper);
 
         // Set the padding bottom of the header content to the height of the
         // filter select or input element.
