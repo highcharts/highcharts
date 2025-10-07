@@ -67,11 +67,6 @@ class FilteringController {
      */
     public modifier?: FilterModifier;
 
-    /**
-     * The flag that indicates if the data should be updated because of the
-     * change in the filtering options.
-     */
-    public shouldBeUpdated: boolean = false;
 
     /* *
     *
@@ -317,7 +312,7 @@ class FilteringController {
      */
     private updateModifier(): void {
         const columnConditions = Object.values(this.columnConditions);
-        this.shouldBeUpdated = true;
+        this.querying.shouldBeUpdated = true;
 
         if (columnConditions.length < 1) {
             delete this.modifier;
