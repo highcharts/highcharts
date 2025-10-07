@@ -1113,11 +1113,12 @@ class Series {
             // X column exists in the data table, but has gaps or strings
             const columnFilled = [...column];
             if (columnFilled.some((x): boolean => !isNumber(x))) {
-                this.xColumn = columnFilled.map((x, i): number => (
+                this.xColumn = columnFilled.map((x: unknown, i): number => (
                     (
                         isNumber(x) ? x :
                             isString(x) ? this.chart.time.parse(x) :
-                                void 0
+                                x instanceof Date ? x.getTime() :
+                                    void 0
                     ) ?? this.autoIncrement(i)
                 ));
                 return this.xColumn;
