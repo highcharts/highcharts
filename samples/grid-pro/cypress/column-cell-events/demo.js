@@ -11,7 +11,8 @@ Grid.grid('container', {
     },
     columnDefaults: {
         filtering: {
-            enabled: true
+            enabled: true,
+            inline: true
         },
         events: {
             beforeSort: function () {

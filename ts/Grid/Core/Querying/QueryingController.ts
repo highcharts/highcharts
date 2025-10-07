@@ -103,11 +103,7 @@ class QueryingController {
      * changed.
      */
     public async proceed(force: boolean = false): Promise<void> {
-        if (
-            force ||
-            this.shouldBeUpdated ||
-            this.filtering.shouldBeUpdated
-        ) {
+        if (force || this.shouldBeUpdated) {
             await this.modifyData();
         }
     }
@@ -131,6 +127,9 @@ class QueryingController {
         );
     }
 
+    /**
+     * Returns a list of modifiers that should be applied to the data table.
+     */
     public getModifiers(): DataModifier[] {
         const modifiers: DataModifier[] = [];
 
@@ -170,7 +169,6 @@ class QueryingController {
         }
 
         this.shouldBeUpdated = false;
-        this.filtering.shouldBeUpdated = false;
     }
 }
 

@@ -11,7 +11,7 @@ const booleanColumn = 'td[data-column-id="active"]';
 
 describe('Grid filtering.', () => {
     before(() => {
-        cy.visit('grid-lite/cypress/filtering');
+        cy.visit('grid-lite/cypress/inline-filtering');
     });
 
     // Init filtering

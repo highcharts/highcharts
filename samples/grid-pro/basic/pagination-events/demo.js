@@ -35,9 +35,19 @@ Grid.grid('container', {
     dataTable: {
         columns: generateRandomData(254)
     },
+    columnDefaults: {
+        filtering: {
+            enabled: true
+        }
+    },
+    rendering: {
+        rows: {
+            minVisibleRows: 10
+        }
+    },
     pagination: {
         enabled: true,
-        pageSize: 22,
+        pageSize: 10,
         controls: {
             pageSizeSelector: {
                 enabled: true,

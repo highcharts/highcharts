@@ -67,11 +67,6 @@ class FilteringController {
      */
     public modifier?: FilterModifier;
 
-    /**
-     * The flag that indicates if the data should be updated because of the
-     * change in the filtering options.
-     */
-    public shouldBeUpdated: boolean = false;
 
     /* *
     *
@@ -112,16 +107,13 @@ class FilteringController {
         const { condition, value } = options;
         const isStringValue = isString(value);
         const stringifiedValue = isStringValue ? value : '';
+        const nonValueConditions = ['empty', 'notEmpty', 'true', 'false'];
 
-        // Allow `null` (empty) and boolean `false` values.
         if (
             (
                 typeof value === 'undefined' ||
                 (isStringValue && !stringifiedValue)
-
-            // Don't check the `empty` and `notEmpty` conditions, since they
-            // work without a value.
-            ) && condition !== 'empty' && condition !== 'notEmpty'
+            ) && !nonValueConditions.includes(condition ?? '')
         ) {
             return;
         }
@@ -230,6 +222,20 @@ class FilteringController {
                         value
                     }
                 };
+
+            case 'true':
+                return {
+                    columnId,
+                    operator: '===',
+                    value: true
+                };
+
+            case 'false':
+                return {
+                    columnId,
+                    operator: '===',
+                    value: false
+                };
         }
     }
 
@@ -317,7 +323,7 @@ class FilteringController {
      */
     private updateModifier(): void {
         const columnConditions = Object.values(this.columnConditions);
-        this.shouldBeUpdated = true;
+        this.querying.shouldBeUpdated = true;
 
         if (columnConditions.length < 1) {
             delete this.modifier;
