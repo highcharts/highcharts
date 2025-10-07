@@ -1,20 +1,18 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'line',
-        backgroundColor: '#fafafa'
+        type: 'spline'
     },
 
     title: {
         text: 'Business Performance Dashboard',
         style: {
-            color: '#333333',
             fontSize: '24px',
             fontWeight: 'bold'
         }
     },
 
     subtitle: {
-        text: `Psychologically-informed color coding 
+        text: `Psychologically-informed color coding
         for intuitive data interpretation`
     },
 
@@ -33,7 +31,7 @@ Highcharts.chart('container', {
         plotBands: [{
             from: 0,
             to: 30,
-            color: 'rgba(220, 53, 69, 0.1)',
+            color: '#dc354528',
             label: {
                 text: 'Critical Zone',
                 style: { color: '#dc3545' },
@@ -42,7 +40,7 @@ Highcharts.chart('container', {
         }, {
             from: 30,
             to: 70,
-            color: 'rgba(255, 193, 7, 0.1)',
+            color: '#ffc10728',
             label: {
                 text: 'Warning Zone',
                 style: { color: '#ffc107' },
@@ -51,7 +49,7 @@ Highcharts.chart('container', {
         }, {
             from: 70,
             to: 100,
-            color: 'rgba(40, 167, 69, 0.1)',
+            color: '#28a74528',
             label: {
                 text: 'Optimal Zone',
                 style: { color: '#28a745' },
@@ -78,14 +76,12 @@ Highcharts.chart('container', {
             marker: {
                 enabled: true,
                 radius: 6,
-                lineWidth: 2,
-                lineColor: '#ffffff'
+                lineWidth: 2
             }
         }
     },
 
     tooltip: {
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         formatter: function () {
             let fillColor = '#28a745';
 
@@ -127,7 +123,7 @@ Highcharts.chart('container', {
 
     accessibility: {
         enabled: true,
-        description: `Business performance dashboard showing 
+        description: `Business performance dashboard showing
         five key metrics over twelve months`
     }
 });
