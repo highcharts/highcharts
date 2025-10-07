@@ -1670,7 +1670,13 @@ class Series {
                     if (!this.tempNoXColumn && xOption.length) {
                         columns['xOption'] = xOption;
                     }
-                    table.setColumns(columns);
+
+                    // Empty data, clear table
+                    if (dataLength) {
+                        table.setColumns(columns);
+                    } else {
+                        table.deleteRows(0, table.rowCount);
+                    }
                 }
 
             // Data table passed as option
