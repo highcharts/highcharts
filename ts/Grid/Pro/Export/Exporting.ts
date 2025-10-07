@@ -63,10 +63,12 @@ class Exporting {
      * Default options of the credits.
      */
     public static defaultOptions: ExportingOptions = {
-        firstRowAsNames: true,
-        itemDelimiter: ',',
-        lineDelimiter: '\n',
-        useLocalDecimalPoint: true
+        csv: {
+            firstRowAsNames: true,
+            useLocalDecimalPoint: true,
+            itemDelimiter: ',',
+            lineDelimiter: '\n'
+        }
     };
 
 
@@ -126,9 +128,9 @@ class Exporting {
         const options =
             this.grid.options?.exporting || Exporting.defaultOptions;
         const { useLocalDecimalPoint, lineDelimiter, firstRowAsNames } =
-            options;
+            options.csv;
         const exportNames = firstRowAsNames !== false;
-        let { decimalPoint, itemDelimiter } = options;
+        let { decimalPoint, itemDelimiter } = options.csv;
 
         if (!decimalPoint) {
             decimalPoint = (
@@ -231,17 +233,6 @@ class Exporting {
         return filename;
     }
 }
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Exporting {
-}
-
 
 /* *
  *
