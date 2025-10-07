@@ -108,13 +108,13 @@ describe('Grid Pro - events.', () => {
 
     it('Sorting column event.', () => {
         // ColumnDefaults
-        cy.get('th[data-column-id="product"]').click({ force: true });
+        cy.get('th[data-column-id="product"]').first().click({ force: true });
         cy.get('#beforeColumnSorting').should('have.value', 'beforeSort');
         cy.get('#headerClick').should('have.value', 'headerClick');
         cy.get('#afterColumnSorting').should('have.value', 'afterSort');
 
         // ColumnOptions
-        cy.get('th[data-column-id="weight"]').click({ force: true });
+        cy.get('th[data-column-id="weight"]').first().click({ force: true });
         cy.get('#beforeColumnSorting').should('have.value', 'beforeSortColumnOption');
         cy.get('#headerClick').should('have.value', 'headerClickColumnOption');
         cy.get('#afterColumnSorting').should('have.value', 'afterSortColumnOption');
@@ -122,12 +122,12 @@ describe('Grid Pro - events.', () => {
 
     it('Filtering column event.', () => {
         // ColumnDefaults
-        cy.get('th[data-column-id="product"] input').type('Apples');
+        cy.get('th[data-column-id="product"] input').first().type('Apples');
         cy.get('#beforeColumnFiltering').should('have.value', 'beforeFilter');
         cy.get('#afterColumnFiltering').should('have.value', 'afterFilter');
 
         // // ColumnOptions
-        cy.get('th[data-column-id="weight"]').type(100);
+        cy.get('th[data-column-id="weight"] input').first().type(100);
         cy.get('#beforeColumnFiltering').should('have.value', 'beforeFilterColumnOption');
         cy.get('#afterColumnFiltering').should('have.value', 'afterFilterColumnOption');
     });

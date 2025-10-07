@@ -107,16 +107,13 @@ class FilteringController {
         const { condition, value } = options;
         const isStringValue = isString(value);
         const stringifiedValue = isStringValue ? value : '';
+        const nonValueConditions = ['empty', 'notEmpty', 'true', 'false'];
 
-        // Allow `null` (empty) and boolean `false` values.
         if (
             (
                 typeof value === 'undefined' ||
                 (isStringValue && !stringifiedValue)
-
-            // Don't check the `empty` and `notEmpty` conditions, since they
-            // work without a value.
-            ) && condition !== 'empty' && condition !== 'notEmpty'
+            ) && !nonValueConditions.includes(condition ?? '')
         ) {
             return;
         }
@@ -224,6 +221,20 @@ class FilteringController {
                         operator: 'empty',
                         value
                     }
+                };
+
+            case 'true':
+                return {
+                    columnId,
+                    operator: '===',
+                    value: true
+                };
+
+            case 'false':
+                return {
+                    columnId,
+                    operator: '===',
+                    value: false
                 };
         }
     }

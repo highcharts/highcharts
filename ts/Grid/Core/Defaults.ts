@@ -72,8 +72,8 @@ namespace Defaults {
             column: 'Column',
             setFilter: 'Set filter',
             pagination: {
-                pageInfo: `Showing {start} - {end} of {total}
-                    (page {currentPage} of {totalPages})`,
+                pageInfo: 'Showing {start} - {end} of {total} ' +
+                    '(page {currentPage} of {totalPages})',
                 pageSizeLabel: 'rows per page',
                 firstPage: 'First page',
                 previousPage: 'Previous page',
