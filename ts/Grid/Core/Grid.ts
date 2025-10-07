@@ -1106,28 +1106,6 @@ class Grid {
     }
 
     /**
-     * Returns the current grid data as a JSON string.
-     *
-     * @return
-     * JSON representation of the data
-     */
-    public getData(): string {
-        const json = this.viewport?.dataTable.getModified().columns;
-
-        if (!this.enabledColumns || !json) {
-            return '{}';
-        }
-
-        for (const key of Object.keys(json)) {
-            if (this.enabledColumns.indexOf(key) === -1) {
-                delete json[key];
-            }
-        }
-
-        return JSON.stringify(json);
-    }
-
-    /**
      * Returns the current Grid options.
      *
      * @param onlyUserOptions

@@ -113,6 +113,19 @@ class Exporting {
     }
 
     /**
+     * Downloads the JSON string as a file.
+     */
+    public downloadJSON(): void {
+        const json = this.getJSON();
+
+        downloadURL(
+            getBlobFromContent(json, 'application/json') ||
+                'data:application/json,\uFEFF' + encodeURIComponent(json),
+            this.getFilename() + '.json'
+        );
+    }
+
+    /**
      * Creates a CSV string from the data table.
      *
      * @return
@@ -203,6 +216,28 @@ class Exporting {
         }
 
         return csvRows.join(lineDelimiter);
+    }
+
+    /**
+     * Returns the current grid data as a JSON string.
+     *
+     * @return
+     * JSON representation of the data
+     */
+    public getJSON(): string {
+        const json = this.grid.viewport?.dataTable.getModified().columns;
+
+        if (!this.grid.enabledColumns || !json) {
+            return '{}';
+        }
+
+        for (const key of Object.keys(json)) {
+            if (this.grid.enabledColumns.indexOf(key) === -1) {
+                delete json[key];
+            }
+        }
+
+        return JSON.stringify(json);
     }
 
     /**

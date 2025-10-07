@@ -1,6 +1,7 @@
 const csvExport = document.querySelector('#csvExport');
 const jsonBtn = document.querySelector('#jsonExport');
 const csvDownload = document.querySelector('#csvDownload');
+const jsonDownload = document.querySelector('#jsonDownload');
 const result = document.querySelector('#result');
 
 const grid = Grid.grid('container', {
@@ -26,10 +27,13 @@ csvExport.addEventListener('click', () => {
 });
 
 jsonBtn.addEventListener('click', () => {
-    result.innerHTML = grid.getData();
+    result.innerHTML = grid.exporting.getJSON();
 });
-
 
 csvDownload.addEventListener('click', () => {
     grid.exporting.downloadCSV();
+});
+
+jsonDownload.addEventListener('click', () => {
+    grid.exporting.downloadJSON();
 });
