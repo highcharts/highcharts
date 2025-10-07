@@ -83,10 +83,11 @@ class ContourSeries extends ScatterSeries {
         this.yAxis.axisPointRange = 1;
     }
 
-    public triangulateData(): Delaunay<Float64Array> {
+    public getContourData(): [Uint32Array, Float32Array] {
         const points = this.points,
-            length = points.length,
-            points2d: Float64Array = new Float64Array(length * 2),
+            len = points.length,
+            points3d: Float32Array = new Float32Array(len * 3),
+            points2d: Float64Array = new Float64Array(len * 2),
             { xAxis, yAxis } = this,
             xDivider = (Math.abs(xAxis.toValue(0, true)) > 10e6) ?
                 10e6 :
@@ -95,28 +96,20 @@ class ContourSeries extends ScatterSeries {
                 10e6 :
                 1;
 
-        for (let i = 0; i < length; i++) {
-            const { x, y } = points[i],
-                baseIndex = i * 2;
-            points2d[baseIndex] = x / xDivider;
-            points2d[baseIndex + 1] = y && (y / yDivider) || 0;
+        for (let i = 0; i < len; i++) {
+            const { x, y = 0, value } = points[i],
+                index2d = i * 2,
+                index3d = i * 3;
+
+            points2d[index2d] = x / xDivider;
+            points2d[index2d + 1] = y && (y / yDivider) || 0;
+
+            points3d[index3d] = x;
+            points3d[index3d + 1] = y;
+            points3d[index3d + 2] = value ?? 0;
         }
 
-        return new Delaunay(points2d);
-    }
-
-    public get3DData(): Float32Array {
-        const points = this.points,
-            points3d: Float32Array = new Float32Array(points.length * 3);
-
-        points.forEach((point, i): void => {
-            const baseIndex = i * 3;
-            points3d[baseIndex] = point.x;
-            points3d[baseIndex + 1] = point.y || 0;
-            points3d[baseIndex + 2] = point.value || 0;
-        });
-
-        return points3d;
+        return [new Delaunay(points2d).triangles, points3d];
     }
 
 
@@ -154,8 +147,8 @@ class ContourSeries extends ScatterSeries {
                     format: canvasFormat
                 });
 
-                const vertices = this.get3DData(),
-                    indices = this.triangulateData().triangles,
+                const
+                    [indices, vertices] = this.getContourData(),
                     extremesUniform = this.extremesUniform = (
                         new Float32Array(
                             this.getWebGPUExtremes()
