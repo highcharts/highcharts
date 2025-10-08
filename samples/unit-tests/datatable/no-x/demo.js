@@ -160,6 +160,19 @@ QUnit.test('Input data table with modified x', assert => {
         ],
         'X column + relativeXvalue => should handle date inputs'
     );
+
+    chart.series[0].points[3].update({ x: 'Sun, 02 Nov 2025 01:00:00 GMT' });
+
+    assert.deepEqual(
+        chart.series[0].getColumn('x').map(x => new Date(x).toUTCString()),
+        [
+            'Fri, 03 Oct 2025 00:00:00 GMT',
+            'Mon, 13 Oct 2025 00:00:00 GMT',
+            'Thu, 23 Oct 2025 00:00:00 GMT',
+            'Sun, 02 Nov 2025 01:00:00 GMT'
+        ],
+        'Point update with date string should be handled'
+    );
 });
 
 QUnit.test('Input data table, uniqueNames', assert => {

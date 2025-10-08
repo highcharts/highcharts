@@ -1067,7 +1067,8 @@ class Series {
     ): Array<number> {
         const table = modified ? this.dataTable.modified : this.dataTable,
             usingModified = this.dataTable !== table,
-            column = table.getColumn(columnName, true) as Array<number>;
+            column = table.getColumn(columnName, true) as Array<number>,
+            points = this.points || [];
 
         // When there is no x column in the data set, generate an internal x
         // column for the series. The `xColumn` array is cached and reused, but
@@ -1075,10 +1076,12 @@ class Series {
         if (columnName === 'x' && this.tempNoXColumn && !usingModified) {
             if (this.xColumn) {
 
-                // When addPoint has spliced in NaN values
+                // When addPoint or Point.update has inserted NaN values
                 if (this.xColumn.some(isNaN)) {
                     this.xColumn = this.xColumn.map((x, i): number => (
-                        isNaN(x) ? this.autoIncrement(i) : x
+                        isNaN(x) ?
+                            (points[i]?.x ?? this.autoIncrement(i)) :
+                            x
                     ));
                 }
 
