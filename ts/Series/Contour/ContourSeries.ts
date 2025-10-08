@@ -75,6 +75,14 @@ class ContourSeries extends ScatterSeries {
             }
         }, options.marker);
 
+        if (!options.states?.hover?.halo) {
+            (options as any).states = merge({
+                hover: {
+                    halo: null
+                }
+            }, options.states || {});
+        }
+
         super.init.apply(this, [chart, options]);
 
         // Without this the axis will stretch above the canvas
