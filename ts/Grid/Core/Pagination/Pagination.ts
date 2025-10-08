@@ -171,9 +171,9 @@ class Pagination {
     public lang: PaginationLangOptions;
 
     /**
-     * Backup total number of items (rows) to compare with the current state.
+     * Old total number of items (rows) to compare with the current total items.
      */
-    public backupTotalItems?: number;
+    private oldTotalItems?: number;
 
 
     /* *
@@ -272,7 +272,7 @@ class Pagination {
         const position = this.options.position;
         const grid = this.grid;
 
-        this.backupTotalItems = this.totalItems;
+        this.oldTotalItems = this.totalItems;
 
         // Set row count for a11y
         grid.tableElement?.setAttribute('aria-current', 'page');
@@ -445,7 +445,7 @@ class Pagination {
      * Update the pagination controls.
      */
     public updateControls(): void {
-        if (this.backupTotalItems === this.totalItems) {
+        if (this.oldTotalItems === this.totalItems) {
             return;
         }
 
@@ -454,7 +454,7 @@ class Pagination {
         this.updateButtonStates();
         this.updateA11yRowsCount(this.currentPageSize);
 
-        this.backupTotalItems = this.totalItems;
+        this.oldTotalItems = this.totalItems;
     }
 
     /**
