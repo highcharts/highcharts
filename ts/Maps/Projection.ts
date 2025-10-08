@@ -131,6 +131,7 @@ class Projection {
      *
      * */
 
+    /** @internal */
     public static registry = ProjectionRegistry;
 
     /* *
@@ -233,6 +234,7 @@ class Projection {
         return lineString;
     }
 
+    /** @internal */
     public static insertGeodesics(
         poly: LonLatArray[]
     ): void {
@@ -257,6 +259,7 @@ class Projection {
         }
     }
 
+    /** @internal */
     public static toString(
         options?: DeepPartial<ProjectionOptions>
     ): string|undefined {
@@ -274,23 +277,34 @@ class Projection {
      *
      * */
 
+    /** @internal */
     public bounds?: MapBounds;
 
+    /** @internal */
     public def?: ProjectionDefinition;
 
-    // Whether the chart has points, lines or polygons given as coordinates
-    // with positive up, as opposed to paths in the SVG plane with positive
-    // down.
+    /**
+     * Whether the chart has points, lines or polygons given as coordinates
+     * with positive up, as opposed to paths in the SVG plane with positive
+     * down.
+     * @internal
+     */
     public hasCoordinates: boolean = false;
 
-    // Whether the chart has true projection as opposed to pre-projected geojson
-    // as in the legacy map collection.
+    /**
+     * Whether the chart has true projection as opposed to pre-projected geojson
+     * as in the legacy map collection.
+     * @internal
+     */
     public hasGeoProjection: boolean = false;
 
+    /** @internal */
     public maxLatitude = 90;
 
+    /** @internal */
     public options: ProjectionOptions;
 
+    /** @internal */
     public rotator?: Projector;
 
     /* *
@@ -341,6 +355,7 @@ class Projection {
      *
      * */
 
+    /** @internal */
     public lineIntersectsBounds(
         line: ProjectedXYArray[]
     ): ProjectedXYArray {

@@ -199,6 +199,7 @@ class MapView {
      *
      * */
 
+    /** @internal */
     public static compose(
         MapChartClass: typeof MapChart
     ): void {
@@ -385,21 +386,57 @@ class MapView {
      *
      * */
 
+    /** @internal */
     public allowTransformAnimation: boolean = true;
+
+    /**
+     * The current center of the view in terms of `[longitude, latitude]`.
+     * @readonly
+     * @type {Highcharts.LonLatArray}
+     */
     public center: LonLatArray;
+
+    /** @internal */
     public chart: MapChart;
     protected eventsToUnbind: Array<Function> = [];
+
+    /** @internal */
     public fitToGeometryCache?: MapBounds;
+
+    /** @internal */
     public geoMap?: GeoJSON;
+
+    /** @internal */
     public group?: SVGElement;
+
+    /** @internal */
     public insets: MapViewInset[] = [];
+
+    /** @internal */
     public minZoom?: number;
+
+    /** @internal */
     public options: MapViewOptions;
+
+    /** @internal */
     public padding: [number, number, number, number] = [0, 0, 0, 0];
+
+    /** @internal */
     public playingField: BBoxObject;
+
+    /** @internal */
     public projection: Projection;
+
+    /** @internal */
     public recommendedMapView: DeepPartial<MapViewOptions> = {};
+
+    /** @internal */
     public userOptions: DeepPartial<MapViewOptions>;
+
+    /**
+     * The current zoom level of the view.
+     * @readonly
+     */
     public zoom: number;
 
     /* *
@@ -427,13 +464,13 @@ class MapView {
     }
 
     /**
-     * Fit the view to given bounds
+     * Fit the view to the given bounds.
      *
      * @function Highcharts.MapView#fitToBounds
-     * @param {Object} bounds
+     * @param {Highcharts.MapBounds} bounds
      *        Bounds in terms of projected units given as  `{ x1, y1, x2, y2 }`.
      *        If not set, fit to the bounds of the current data set
-     * @param {number|string} [padding=0]
+     * @param {Highcharts.MapViewPaddingType} [padding=0]
      *        Padding inside the bounds. A number signifies pixels, while a
      *        percentage string (like `5%`) can be used as a fraction of the
      *        plot area size.
@@ -483,6 +520,7 @@ class MapView {
         }
     }
 
+    /** @internal */
     public getField(padded: boolean = true): BBoxObject {
         const padding = padded ? this.padding : [0, 0, 0, 0];
         return {
@@ -493,6 +531,7 @@ class MapView {
         };
     }
 
+    /** @internal */
     public getGeoMap(map?: MapDataType): GeoJSON|undefined {
         if (isString(map)) {
             if (maps[map] && maps[map].type === 'Topology') {
@@ -511,6 +550,7 @@ class MapView {
         }
     }
 
+    /** @internal */
     public getMapBBox(): BBoxObject|undefined {
         const bounds = this.getProjectedBounds(),
             scale = this.getScale();
@@ -540,6 +580,7 @@ class MapView {
 
     }
 
+    /** @internal */
     public getProjectedBounds(): MapBounds|undefined {
         const projection = this.projection;
 
@@ -588,13 +629,17 @@ class MapView {
         return this.projection.bounds || MapView.compositeBounds(allBounds);
     }
 
+    /** @internal */
     public getScale(): number {
         // A zoom of 0 means the world (360x360 degrees) fits in a 256x256 px
         // tile
         return (tileSize / worldSize) * Math.pow(2, this.zoom);
     }
 
-    // Calculate the SVG transform to be applied to series groups
+    /**
+     * Calculate the SVG transform to be applied to series groups.
+     * @internal
+     */
     public getSVGTransform(): SVGTransformType {
         const { x, y, width, height } = this.playingField,
             projectedCenter = this.projection.forward(this.center),
@@ -880,6 +925,7 @@ class MapView {
         }
     }
 
+    /** @internal */
     public redraw(animation?: boolean|Partial<AnimationOptions>): void {
         this.chart.series.forEach((s): void => {
             if (s.useMapGeometry) {
@@ -1073,6 +1119,7 @@ class MapView {
         return { x: projectedX, y: projectedY };
     }
 
+    /** @internal */
     public setUpEvents(): void {
 
         const { chart } = this;
@@ -1216,7 +1263,6 @@ class MapView {
         addEvent(chart, 'pan', onPan);
         addEvent(chart, 'touchpan', onPan);
 
-
         // Perform the map zoom by selection
         addEvent(chart, 'selection', (evt: PointerEvent): void => {
             // Zoom in
@@ -1254,6 +1300,7 @@ class MapView {
 
     }
 
+    /** @internal */
     public render(): void {
 
         // We need a group for the insets
@@ -1358,7 +1405,6 @@ class MapView {
         if (redraw) {
             this.chart.redraw(animation);
         }
-
     }
 
     /**
@@ -1422,7 +1468,6 @@ class MapView {
         } else {
             this.fitToBounds(void 0, void 0, void 0, animation);
         }
-
     }
 }
 
@@ -1471,13 +1516,28 @@ class MapViewInset extends MapView {
      *
      * */
 
+    /** @internal */
     public allBounds: MapBounds[];
+
+    /** @internal */
     public border?: SVGElement;
+
+    /** @internal */
     public geoBoundsProjectedBox?: MapBounds;
+
+    /** @internal */
     public geoBoundsProjectedPolygon?: Array<Array<number>>;
+
+    /** @internal */
     public hitZone?: Polygon;
+
+    /** @internal */
     public id?: string;
+
+    /** @internal */
     public options: MapViewInsetsOptions;
+
+    /** @internal */
     public mapView: MapView;
 
     /* *
@@ -1516,7 +1576,6 @@ class MapViewInset extends MapView {
 
         // Fall back to plot area
         return super.getField.call(this, padded);
-
     }
 
     /**
@@ -1545,6 +1604,7 @@ class MapViewInset extends MapView {
         }
     }
 
+    /** @internal */
     public getProjectedBounds(): MapBounds|undefined {
         return MapView.compositeBounds(this.allBounds);
     }
@@ -1634,6 +1694,7 @@ class MapViewInset extends MapView {
         }
     }
 
+    /** @internal */
     public destroy(): void {
         if (this.border) {
             this.border = this.border.destroy();
@@ -1646,7 +1707,6 @@ class MapViewInset extends MapView {
      * @private
      */
     public setUpEvents(): void {}
-
 }
 
 /* *
