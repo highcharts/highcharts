@@ -334,6 +334,11 @@ class CSVConverter extends DataConverter {
             }
         }
 
+        // Normalize columns to same length to avoid truncation.
+        columnsArray.forEach((col): void => {
+            col.length = Math.max(...columnsArray.map((c): number => c.length));
+        });
+
         converter.emit({
             type: 'afterParse',
             columns: columnsArray,

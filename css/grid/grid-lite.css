@@ -70,6 +70,27 @@
 
 /*  ==== End Grid Color Scheme  ==== */
 
+/*  ==== Start Highcharts Variables  ==== */
+:root,
+.highcharts-light {
+    --highcharts-background-color: #ffffff;
+    --highcharts-neutral-color-100: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-background-color: #141414;
+        --highcharts-neutral-color-100: #ffffff;
+    }
+}
+
+.highcharts-dark {
+    --highcharts-background-color: #141414;
+    --highcharts-neutral-color-100: #ffffff;
+}
+
+/*  ==== End Highcharts Variables  ==== */
+
 /* stylelint-disable max-line-length */
 
 /* ==== Start Grid Variables ==== */
@@ -1054,8 +1075,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 .highcharts-light .hcg-theme-default,
 .highcharts-light .hcg-container {
     /* Primary colors */
-    --hcg-color: var(--highcharts-neutral-color-100, #000000);
-    --hcg-background: var(--highcharts-background-color, #ffffff);
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-background: var(--highcharts-background-color);
 
     /* Other properties */
     --hcg-border-radius: 5px;
@@ -1070,10 +1091,9 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 @media (prefers-color-scheme: dark) {
-    .hcg-theme-default,
-    .hcg-container {
-        --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
-        --hcg-background: var(--highcharts-background-color, #141414);
+    .hcg-theme-default {
+        --hcg-color: var(--highcharts-neutral-color-100);
+        --hcg-background: var(--highcharts-background-color);
     }
 
     .hcg-credits {
@@ -1096,10 +1116,9 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='10' viewBox='0 0 7 10' fill='none'%3E%3Cpath d='M1 6.5L3.5 9L6 6.5M1 3.5L3.5 1L6 3.5' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
-.highcharts-dark .hcg-theme-default,
-.highcharts-dark .hcg-container {
-    --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
-    --hcg-background: var(--highcharts-background-color, #141414);
+.highcharts-dark .hcg-theme-default {
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-background: var(--highcharts-background-color);
 }
 
 .hcg-theme-default,

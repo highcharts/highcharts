@@ -144,7 +144,7 @@ abstract class ResizingMode {
 
         if (!defined(widthValue)) {
             const tbody = vp.tbodyElement;
-            const freeWidth = 
+            const freeWidth =
                 tbody.getBoundingClientRect().width -
                 this.calculateOccupiedWidth() -
                 tbody.offsetWidth + tbody.clientWidth;

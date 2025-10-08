@@ -16,6 +16,7 @@ import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
 import type ControllableBase from './ControllableBase';
 import type ControllableOptions from './ControllableOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 

@@ -26,9 +26,10 @@
 
 import type Component from './Components/Component';
 import type ComponentType from './Components/ComponentType';
+import type DataPoolOptions from '../Data/DataPoolOptions';
+import type { DeepPartial } from '../Shared/Types';
 import type EditMode from './EditMode/EditMode';
 import type Fullscreen from './EditMode/Fullscreen';
-import type DataPoolOptions from '../Data/DataPoolOptions';
 
 import Bindings from './Actions/Bindings.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
@@ -481,9 +482,9 @@ class Board {
      * @returns
      * Dashboards options.
      */
-    public getOptions(): Globals.DeepPartial<Board.Options> {
+    public getOptions(): DeepPartial<Board.Options> {
         const board = this,
-            options: Globals.DeepPartial<Board.Options> = {
+            options: DeepPartial<Board.Options> = {
                 ...this.options,
                 components: []
             };

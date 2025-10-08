@@ -21,8 +21,8 @@
  * */
 
 import type Component from '../Component';
-import type Globals from '../../Globals';
 import type { Options } from './GridComponentOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import U from '../../../Core/Utilities.js';
@@ -36,7 +36,7 @@ const {
  *
  * */
 
-const GridComponentDefaults: Globals.DeepPartial<Options> = {
+const GridComponentDefaults: DeepPartial<Options> = {
     gridClassName: 'grid-container',
     gridID: 'grid-' + uniqueKey(),
     gridOptions: {},

@@ -1,4 +1,3 @@
-
 // Bring in other forms of Highcharts
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
@@ -41,7 +40,7 @@ Dashboards.board('container', {
 });
 
 Dashboards.board('container2', {
- gui: {
+    gui: {
         layouts: [{
             id: 'layout-1',
             rows: [{

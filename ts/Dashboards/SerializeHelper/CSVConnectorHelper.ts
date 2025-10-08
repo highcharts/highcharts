@@ -19,7 +19,7 @@
  *
  * */
 
-import type Globals from '../Globals';
+import type { AnyRecord } from '../../Shared/Types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type CSVConnectorOptions from '../../Data/Connectors/CSVConnectorOptions';
@@ -62,7 +62,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: Globals.AnyRecord
+    obj: AnyRecord
 ): obj is CSVConnector {
     return obj instanceof CSVConnector;
 }

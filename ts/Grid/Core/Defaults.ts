@@ -23,7 +23,7 @@
  * */
 
 import type Options from './Options';
-import type Globals from './Globals';
+import type { DeepPartial } from '../../Shared/Types';
 
 import Utils from '../../Core/Utilities.js';
 
@@ -39,7 +39,7 @@ namespace Defaults {
      * Default options for the Grid.
      * @internal
      */
-    export const defaultOptions: Globals.DeepPartial<Options> = {
+    export const defaultOptions: DeepPartial<Options> = {
         accessibility: {
             enabled: true,
             highContrastMode: 'auto',
@@ -55,6 +55,12 @@ namespace Defaults {
                         ascending: 'Sorted ascending.',
                         descending: 'Sorted descending.',
                         none: 'Not sorted.'
+                    }
+                },
+                pagination: {
+                    announcements: {
+                        pageSizeChange: 'Page size changed to',
+                        pageChange: 'Page changed to'
                     }
                 }
             },
@@ -108,7 +114,7 @@ namespace Defaults {
      * The new custom chart options.
      */
     export function setOptions(
-        options: Globals.DeepPartial<Options>
+        options: DeepPartial<Options>
     ): void {
         merge(true, Defaults.defaultOptions, options);
     }

@@ -23,6 +23,7 @@ import type ColorString from '../../Core/Color/ColorString';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataGroupingOptions from
     '../../Extensions/DataGrouping/DataGroupingOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type Time from '../../Core/Time';
 
 /* *
