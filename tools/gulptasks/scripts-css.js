@@ -167,15 +167,7 @@ function scriptCSS(argv) {
     const log = require('../libs/log');
 
     return new Promise(resolve => {
-        if (argv.dashboards) {
-            log.message('Generating css for Dashboards...');
-            copyCSS(dashboardsConfig);
-            replaceProductVersionInFiles(
-                require('path').join(dashboardsConfig.target, 'css'),
-                './dashboards/build-properties.json'
-            );
-            log.success('Copied dashboards CSS');
-        } else if (argv.product === 'Dashboards') {
+        if (argv.product === 'Dashboards') {
             log.message('Generating css for Dashboards...');
             copyCSS(dashboardsConfig);
             replaceProductVersionInFiles(
