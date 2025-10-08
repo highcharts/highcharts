@@ -63,6 +63,9 @@ class ContourSeries extends ScatterSeries {
 
     private showContourLinesUniformBuffer?: GPUBuffer;
 
+    private contourLineColorBuffer?: GPUBuffer;
+
+
     public init(chart: Chart, options: ContourSeriesOptions): void {
         options.marker = merge({
             symbol: 'cross',
@@ -174,6 +177,10 @@ class ContourSeries extends ScatterSeries {
                     // Caching bitwise operation
                     uniformUsage = (
                         GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    ),
+                    contourLineColor = new Float32Array(
+                        this.options.contourLineColor ||
+                        [0, 0, 0]
                     );
 
                 // WebGPU Buffers
@@ -225,6 +232,11 @@ class ContourSeries extends ScatterSeries {
                     usage: uniformUsage
                 });
 
+                this.contourLineColorBuffer = device.createBuffer({
+                    size: 12,
+                    usage: uniformUsage
+                });
+
                 device.queue.writeBuffer(
                     vertexBuffer,
                     0,
@@ -244,6 +256,11 @@ class ContourSeries extends ScatterSeries {
                     valueExtremesUniformBuffer,
                     0,
                     valueExtremesUniform
+                );
+                device.queue.writeBuffer(
+                    this.contourLineColorBuffer,
+                    0,
+                    contourLineColor
                 );
 
                 this.setContourIntervalUniform();
@@ -318,6 +335,7 @@ class ContourSeries extends ScatterSeries {
                         @group(0) @binding(4) var<uniform> contourInterval: f32;
                         @group(0) @binding(5) var<uniform> smoothColoring: u32;
                         @group(0) @binding(6) var<uniform> showContourLines: u32;
+                        @group(0) @binding(7) var<uniform> contourLineColor: vec3<f32>;
 
                         fn getColor(value: f32) -> vec3<f32> {
                             let stopCount = colorStopsCount;
@@ -355,7 +373,7 @@ class ContourSeries extends ScatterSeries {
 
                             // CONTOUR LINES
                             let lineWidth: f32 = 1.0;
-                            let contourColor = vec3f(0.0, 0.0, 0.0);
+                            //let contourColor = vec3f(0.0, 0.0, 0.0);
 
                             let val_dx: f32 = dpdx(val);
                             let val_dy: f32 = dpdy(val);
@@ -420,7 +438,7 @@ class ContourSeries extends ScatterSeries {
 
                             if (showContourLines > 0) {
                                 pixelColor = mix(
-                                    contourColor,
+                                    contourLineColor,
                                     pixelColor,
                                     lineMask
                                 );
@@ -523,6 +541,14 @@ class ContourSeries extends ScatterSeries {
                             ),
                             label: 'showContourLinesUniformBuffer'
                         }
+                    }, {
+                        binding: 7,
+                        resource: {
+                            buffer: (
+                                this.contourLineColorBuffer as GPUBuffer
+                            ),
+                            label: 'contourLineColorBuffer'
+                        }
                     }]
                 });
 
@@ -547,7 +573,7 @@ class ContourSeries extends ScatterSeries {
 
 
                 this.image = this.chart.renderer.image(
-                    this.canvas.toDataURL('image/png', 1)
+                    this.canvas.toDataURL('image/webp', 1)
                 ).attr({
                     width: this.xAxis.len,
                     height: this.yAxis.len
