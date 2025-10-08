@@ -2,12 +2,12 @@
 
 Highcharts Grid Pro supports exporting the grid data to CSV and JSON formats.
 
-## Exporting to CSV
-
-The `Grid.exporting` module provides two methods for exporting the grid data to CSV format:
+`Grid.exporting` provides methods for exporting grid data to CSV and JSON:
 
 * `Grid.exporting.downloadCSV()`: Downloads the CSV string as a file.
 * `Grid.exporting.getCSV()`: Returns the CSV string.
+* `Grid.exporting.downloadJSON()`: Downloads the JSON string as a file.
+* `Grid.exporting.getJSON()`: Returns the JSON string.
 
 See the [API reference](https://api.highcharts.com/grid/#classes/Grid_Core_Grid.Grid#exporting) for more information on the `Grid.exporting` options.
 
