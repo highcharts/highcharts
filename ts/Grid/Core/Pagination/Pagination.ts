@@ -1044,6 +1044,7 @@ class Pagination {
     public clampCurrentPage(): void {
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
+            this.grid.querying.pagination.setRange(this.currentPage);
         }
     }
 

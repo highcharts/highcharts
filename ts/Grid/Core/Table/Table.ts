@@ -303,26 +303,28 @@ class Table {
             focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
         }
 
+        vp.grid.pagination?.clampCurrentPage();
+
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
         await vp.grid.querying.proceed();
-        this.dataTable = this.grid.presentationTable as DataTable;
-        for (const column of this.columns) {
+        vp.dataTable = vp.grid.presentationTable as DataTable;
+        for (const column of vp.columns) {
             column.loadData();
         }
 
         if (oldRowsCount !== vp.dataTable.rowCount) {
-            this.updateVirtualization();
-            this.rowsVirtualizer.rerender();
+            vp.updateVirtualization();
+            vp.rowsVirtualizer.rerender();
         } else {
-            for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
-                this.rows[i].update();
+            for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
+                vp.rows[i].update();
             }
-            this.rowsVirtualizer.adjustRowHeights();
-            this.reflow();
+            vp.rowsVirtualizer.adjustRowHeights();
+            vp.reflow();
         }
 
         // Update the pagination controls
-        this.grid.pagination?.updateControls();
+        vp.grid.pagination?.updateControls();
 
         if (focusedRowId !== void 0 && vp.focusCursor) {
             const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
