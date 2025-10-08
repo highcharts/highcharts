@@ -102,12 +102,15 @@
 .highcharts-dark .hcg-container,
 .highcharts-dark .highcharts-datagrid-container {
     --ig-default-color: #ffffff;
-    --ig-negative-default-border-color: #a80000;
-    --ig-negative-default-background: #6b0000;
-    --ig-neutral-default-border-color: #b3b3b3;
-    --ig-neutral-default-background: #636363;
-    --ig-positive-default-border-color: #008000;
-    --ig-positive-default-background: #265a26;
+    --ig-negative-default-color: #ffb3b3;
+    --ig-negative-default-border-color: #7a1e1e;
+    --ig-negative-default-background: #3d0e0b;
+    --ig-neutral-default-color: #ffe8c1;
+    --ig-neutral-default-border-color: #7d5c20;
+    --ig-neutral-default-background: #3b2a11;
+    --ig-positive-default-color: #a6f8c1;
+    --ig-positive-default-border-color: #1e6f3e;
+    --ig-positive-default-background: #0a3e1a;
     --ig-highlight-color-5: #2d2e36;
 
     /* Dark mode pagination variables */
@@ -1331,6 +1334,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     display: flex;
     flex-flow: column;
     row-gap: 5px;
+    min-width: 50px;
 }
 
 .hcg-column-filter-wrapper input,
@@ -1348,6 +1352,38 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     font-size: 12px;
     font-weight: 500;
     line-height: 1em;
+}
+
+.hcg-popup-content input,
+.hcg-popup-content select,
+.highcharts-datagrid-popup-content input,
+.highcharts-datagrid-popup-content select {
+    background: var(--hcg-input-background);
+    border: var(--hcg-input-border);
+    border-radius: 6px;
+    padding-right: 7px;
+    height: 28px;
+    max-height: 28px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1em;
+    color: var(--ig-color);
+}
+
+.hcg-column-filter-wrapper input:disabled,
+.highcharts-datagrid-column-filter-wrapper input:disabled,
+.hcg-column-filter-wrapper select:disabled,
+.highcharts-datagrid-column-filter-wrapper select:disabled {
+    opacity: 0.4;
+}
+
+.hcg-column-filter-wrapper input:focus-visible,
+.highcharts-datagrid-column-filter-wrapper input:focus-visible,
+.hcg-column-filter-wrapper select:focus-visible,
+.highcharts-datagrid-column-filter-wrapper select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
 }
 
 .hcg-column-filter-wrapper input:hover,
@@ -1396,6 +1432,37 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     background-position: right 8px center;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.highcharts-datagrid-clear-filter-button,
+.hcg-clear-filter-button {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: inline;
+    vertical-align: baseline;
+    font: inherit;
+    color: var(--ig-color);
+    font-size: 0.6rem;
+    font-weight: normal;
+    align-self: end;
+}
+
+.highcharts-datagrid-clear-filter-button:hover,
+.hcg-clear-filter-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.highcharts-datagrid-clear-filter-button:disabled,
+.hcg-clear-filter-button:disabled,
+.highcharts-datagrid-clear-filter-button:disabled:hover,
+.hcg-clear-filter-button:disabled:hover {
+    opacity: 0.5;
+    text-decoration: none;
+    cursor: default;
 }
 
 /* Pagination */
@@ -1663,14 +1730,6 @@ button + .hcg-pagination-page,
     z-index: 1000;
 }
 
-.hcg-popup select:focus-visible,
-.highcharts-datagrid-popup select:focus-visible,
-.hcg-popup input:focus-visible,
-.highcharts-datagrid-popup input:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
-}
-
 /* Column header menu */
 
 .hcg-popup,
@@ -1686,24 +1745,6 @@ button + .hcg-pagination-page,
 .hcg-popup-content,
 .highcharts-datagrid-popup-content {
     padding: 5px;
-}
-
-.hcg-popup-content input,
-.hcg-popup-content select,
-.highcharts-datagrid-popup-content input,
-.highcharts-datagrid-popup-content select {
-    border-radius: 6px;
-    border-color: var(--ig-icon-color);
-    background-color: var(--ig-header-background);
-    color: var(--ig-color);
-    line-height: normal;
-}
-
-.hcg-popup-content input:disabled,
-.hcg-popup-content select:disabled,
-.highcharts-datagrid-popup-content input:disabled,
-.highcharts-datagrid-popup-content select:disabled {
-    opacity: 0.4;
 }
 
 .hcg-menu-popup-header,

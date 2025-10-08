@@ -99,6 +99,11 @@ class ColumnFiltering {
      */
     public filterSelect?: HTMLSelectElement;
 
+    /**
+     * The button to clear the filtering.
+     */
+    public clearButton?: HTMLButtonElement;
+
 
     /* *
     *
@@ -167,6 +172,8 @@ class ColumnFiltering {
         if (columnType !== 'boolean') {
             this.renderFilteringInput(inputWrapper, columnType);
         }
+
+        this.renderClearButton(inputWrapper);
     }
 
     /**
@@ -184,12 +191,33 @@ class ColumnFiltering {
         if (this.filterInput) {
             contentOrder.push(this.filterInput);
         }
+        if (this.clearButton && !this.clearButton.disabled) {
+            contentOrder.push(this.clearButton);
+        }
 
-        if (e.key === 'Enter') {
+        const direction = {
+            'ArrowDown': 1,
+            'ArrowUp': -1,
+            'ArrowLeft': 1,
+            'ArrowRight': -1
+        }[e.key];
+
+        if (direction) {
             e.preventDefault();
             const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
-            contentOrder[(currentIndex + 1) % contentOrder.length].focus();
+            contentOrder[
+                Math.abs(currentIndex + direction) % contentOrder.length
+            ].focus();
             return;
+        }
+
+        if (e.key === 'Enter') {
+            if (e.target === this.clearButton) {
+                e.preventDefault();
+                void this.set();
+                contentOrder[0]?.focus();
+                return;
+            }
         }
     };
 
@@ -228,6 +256,16 @@ class ColumnFiltering {
         fireEvent(this.column, 'beforeFilter', {
             target: this.column
         });
+
+        const filteringApplied = this.isFilteringApplied();
+        const clearButton = this.clearButton;
+        if (clearButton && filteringApplied === clearButton.disabled) {
+            clearButton.disabled = !filteringApplied;
+        }
+
+        if (this.column.dataType === 'number') {
+            condition.value = Number(condition.value);
+        }
 
         // Update the userOptions.
         this.column.update({ filtering: condition }, false);
@@ -340,6 +378,43 @@ class ColumnFiltering {
             this.disableInputIfNeeded();
             this.applyFilterFromForm();
         });
+    }
+
+    private renderClearButton(inputWrapper: HTMLElement): void {
+        this.clearButton = makeHTMLElement('button', {
+            className: Globals.getClassName('clearFilterButton'),
+            innerText: 'Clear filter' // TODO: Lang
+        }, inputWrapper);
+        this.clearButton.setAttribute('tabindex', '-1');
+        this.clearButton.disabled = !this.isFilteringApplied();
+        this.clearButton.addEventListener('click', (): void => {
+            void this.set();
+        });
+    }
+
+    /**
+     * Checks if filtering is applied to the column.
+     *
+     * @returns
+     * `true` if filtering is applied to the column, `false` otherwise.
+     */
+    private isFilteringApplied(): boolean {
+        const {
+            filterSelect: select,
+            filterInput: input
+        } = this;
+        const { dataType } = this.column;
+        const condition = select?.value as Condition;
+
+        if (dataType === 'boolean') {
+            return condition !== 'all';
+        }
+
+        if (condition === 'empty' || condition === 'notEmpty') {
+            return true;
+        }
+
+        return input?.value !== '';
     }
 
     /**

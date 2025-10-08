@@ -109,6 +109,7 @@ namespace Globals {
         menuPopupItemIcon: 'menu-popup-item-icon',
         menuPopupItemLabel: 'menu-popup-item-label',
         menuPopupDivider: 'menu-popup-divider',
+        clearFilterButton: 'clear-filter-button',
         paginationWrapper: 'pagination-wrapper',
         paginationContainer: 'pagination-container',
         paginationPageInfo: 'pagination-info',

@@ -91,7 +91,11 @@ class FilterCell extends HeaderCell {
         this.column.filtering?.onKeyDown(e);
 
         if (e.target === this.htmlElement) {
-            super.onKeyDown(e);
+            if (e.key === 'Enter') {
+                this.column.filtering?.filterSelect?.focus();
+            } else {
+                super.onKeyDown(e);
+            }
         } else {
             if (e.key === 'Escape') {
                 this.htmlElement.focus();

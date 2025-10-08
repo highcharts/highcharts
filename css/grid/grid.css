@@ -10,12 +10,15 @@
 .hcg-container,
 .highcharts-light .hcg-container {
     --ig-default-color: #000000;
-    --ig-negative-default-border-color: #ff0000;
-    --ig-negative-default-background: #ffe5e5;
-    --ig-neutral-default-border-color: #595959;
-    --ig-neutral-default-background: #d1d1d1;
-    --ig-positive-default-border-color: #008000;
-    --ig-positive-default-background: #e0ebe0;
+    --ig-negative-default-color: #c10008;
+    --ig-negative-default-border-color: #e7000b;
+    --ig-negative-default-background: #fef3f2;
+    --ig-neutral-default-color: #884b00;
+    --ig-neutral-default-border-color: #d18700;
+    --ig-neutral-default-background: #fefce8;
+    --ig-positive-default-color: #008236;
+    --ig-positive-default-border-color: #00a63e;
+    --ig-positive-default-background: #effdf4;
     --ig-highlight-color-5: #f3f6fe;
     --ig-pagination-button-default-background: #ffffff;
     --ig-pagination-button-default-color: #000000;
@@ -55,12 +58,15 @@
 @media (prefers-color-scheme: dark) {
     .hcg-container {
         --ig-default-color: #ffffff;
-        --ig-negative-default-border-color: #a80000;
-        --ig-negative-default-background: #6b0000;
-        --ig-neutral-default-border-color: #b3b3b3;
-        --ig-neutral-default-background: #636363;
-        --ig-positive-default-border-color: #008000;
-        --ig-positive-default-background: #265a26;
+        --ig-negative-default-color: #ffb3b3;
+        --ig-negative-default-border-color: #7a1e1e;
+        --ig-negative-default-background: #3d0e0b;
+        --ig-neutral-default-color: #ffe8c1;
+        --ig-neutral-default-border-color: #7d5c20;
+        --ig-neutral-default-background: #3b2a11;
+        --ig-positive-default-color: #a6f8c1;
+        --ig-positive-default-border-color: #1e6f3e;
+        --ig-positive-default-background: #0a3e1a;
         --ig-highlight-color-5: #2d2e36;
 
         /* Dark mode pagination variables */
@@ -92,12 +98,15 @@
 
 .highcharts-dark .hcg-container {
     --ig-default-color: #ffffff;
-    --ig-negative-default-border-color: #a80000;
-    --ig-negative-default-background: #6b0000;
-    --ig-neutral-default-border-color: #b3b3b3;
-    --ig-neutral-default-background: #636363;
-    --ig-positive-default-border-color: #008000;
-    --ig-positive-default-background: #265a26;
+    --ig-negative-default-color: #ffb3b3;
+    --ig-negative-default-border-color: #7a1e1e;
+    --ig-negative-default-background: #3d0e0b;
+    --ig-neutral-default-color: #ffe8c1;
+    --ig-neutral-default-border-color: #7d5c20;
+    --ig-neutral-default-background: #3b2a11;
+    --ig-positive-default-color: #a6f8c1;
+    --ig-positive-default-border-color: #1e6f3e;
+    --ig-positive-default-background: #0a3e1a;
     --ig-highlight-color-5: #2d2e36;
 
     /* Dark mode pagination variables */
@@ -1099,6 +1108,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     display: flex;
     flex-flow: column;
     row-gap: 5px;
+    min-width: 50px;
 }
 
 .hcg-column-filter-wrapper input,
@@ -1110,15 +1120,26 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     height: 28px;
     max-height: 28px;
     width: 100%;
-    color: var(--ig-color);
     font-size: 12px;
     font-weight: 500;
     line-height: 1em;
+    color: var(--ig-color);
+}
+
+.hcg-column-filter-wrapper input:disabled,
+.hcg-column-filter-wrapper select:disabled {
+    opacity: 0.4;
 }
 
 .hcg-column-filter-wrapper input:hover,
 .hcg-column-filter-wrapper select:hover {
     border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
+}
+
+.hcg-column-filter-wrapper input:focus-visible,
+.hcg-column-filter-wrapper select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
 }
 
 .hcg-column-filter-wrapper input {
@@ -1153,6 +1174,33 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     background-position: right 8px center;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.hcg-clear-filter-button {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: inline;
+    vertical-align: baseline;
+    font: inherit;
+    color: var(--ig-color);
+    font-size: 0.6rem;
+    font-weight: normal;
+    align-self: end;
+}
+
+.hcg-clear-filter-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.hcg-clear-filter-button:disabled,
+.hcg-clear-filter-button:disabled:hover {
+    opacity: 0.5;
+    text-decoration: none;
+    cursor: default;
 }
 
 /* Pagination */
@@ -1427,12 +1475,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     z-index: 1000;
 }
 
-.hcg-popup select:focus-visible,
-.hcg-popup input:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
-}
-
 /* Column header menu */
 
 .hcg-popup {
@@ -1446,20 +1488,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 .hcg-popup-content {
     padding: 5px;
-}
-
-.hcg-popup-content input,
-.hcg-popup-content select {
-    border-radius: 6px;
-    border-color: var(--ig-icon-color);
-    background-color: var(--ig-header-background);
-    color: var(--ig-color);
-    line-height: normal;
-}
-
-.hcg-popup-content input:disabled,
-.hcg-popup-content select:disabled {
-    opacity: 0.4;
 }
 
 .hcg-menu-popup-header {
