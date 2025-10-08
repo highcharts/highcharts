@@ -1,7 +1,5 @@
 # Getting started
 
-** Note: version 4 of our React integration is currently in beta. Features described may change at any time **
-
 ## Requirements
 
 The release has been tested with:
