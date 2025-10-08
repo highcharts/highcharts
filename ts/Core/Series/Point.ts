@@ -1094,7 +1094,8 @@ class Point {
 
             // Update visuals, #4146
             // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic;
+            const hasMockGraphic = graphic && point.hasMockGraphic,
+                index = point.index;
             const shouldDestroyGraphic = point.y === null ?
                 !hasMockGraphic :
                 hasMockGraphic;
@@ -1120,11 +1121,9 @@ class Point {
             }
 
             // Record changes in the data table
+            const pointOptions = point.optionsToObject(options) as AnyRecord;
             if (series.tempNoXColumn) {
-                series.dataTable.setRow(
-                    point.optionsToObject(options) as AnyRecord,
-                    point.index
-                );
+                series.dataTable.setRow(pointOptions, index);
             } else {
                 const row: DataTable.RowObject = {},
                     keys = series.getDataColumnKeys()
@@ -1133,25 +1132,27 @@ class Point {
                 for (const key of keys) {
                     row[key] = (point as any)[key];
                 }
-                series.dataTable.setRow(row, point.index);
+                series.dataTable.setRow(row, index);
             }
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
             if (dataOptions) {
-                const i = point.index;
-                dataOptions[i] = (
-                    isObject(dataOptions[i], true) ||
+                dataOptions[index] = (
+                    isObject(dataOptions[index], true) ||
                     isObject(options, true)
                 ) ?
                     point.options :
-                    options ?? dataOptions[i];
+                    options ?? dataOptions[index];
             }
 
             // Redraw
             series.isDirty = series.isDirtyData = true;
-            delete series.xColumn;
+            if (series.xColumn) {
+                series.xColumn[index] = pointOptions.x ?? NaN;
+            }
+
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
                 chart.isDirtyBox = true;
             }
