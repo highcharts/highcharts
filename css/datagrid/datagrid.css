@@ -102,12 +102,15 @@
 .highcharts-dark .hcg-container,
 .highcharts-dark .highcharts-datagrid-container {
     --ig-default-color: #ffffff;
-    --ig-negative-default-border-color: #a80000;
-    --ig-negative-default-background: #6b0000;
-    --ig-neutral-default-border-color: #b3b3b3;
-    --ig-neutral-default-background: #636363;
-    --ig-positive-default-border-color: #008000;
-    --ig-positive-default-background: #265a26;
+    --ig-negative-default-color: #ffb3b3;
+    --ig-negative-default-border-color: #7a1e1e;
+    --ig-negative-default-background: #3d0e0b;
+    --ig-neutral-default-color: #ffe8c1;
+    --ig-neutral-default-border-color: #7d5c20;
+    --ig-neutral-default-background: #3b2a11;
+    --ig-positive-default-color: #a6f8c1;
+    --ig-positive-default-border-color: #1e6f3e;
+    --ig-positive-default-background: #0a3e1a;
     --ig-highlight-color-5: #2d2e36;
 
     /* Dark mode pagination variables */
@@ -1451,6 +1454,15 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .hcg-clear-filter-button:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.highcharts-datagrid-clear-filter-button:disabled,
+.hcg-clear-filter-button:disabled,
+.highcharts-datagrid-clear-filter-button:disabled:hover,
+.hcg-clear-filter-button:disabled:hover {
+    opacity: 0.5;
+    text-decoration: none;
+    cursor: default;
 }
 
 /* Pagination */

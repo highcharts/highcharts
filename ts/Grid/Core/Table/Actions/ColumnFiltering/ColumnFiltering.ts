@@ -236,6 +236,12 @@ class ColumnFiltering {
             target: this.column
         });
 
+        const filteringApplied = this.isFilteringApplied();
+        const clearButton = this.clearButton;
+        if (clearButton && filteringApplied === clearButton.disabled) {
+            clearButton.disabled = !filteringApplied;
+        }
+
         // Update the userOptions.
         this.column.update({ filtering: condition }, false);
         filteringController.addColumnFilterCondition(this.column.id, condition);
@@ -355,10 +361,35 @@ class ColumnFiltering {
             innerText: 'Clear filter' // TODO: Lang
         }, inputWrapper);
         this.clearButton.setAttribute('tabindex', '-1');
-
+        this.clearButton.disabled = !this.isFilteringApplied();
         this.clearButton.addEventListener('click', (): void => {
             void this.set();
         });
+    }
+
+    /**
+     * Checks if filtering is applied to the column.
+     *
+     * @returns
+     * `true` if filtering is applied to the column, `false` otherwise.
+     */
+    private isFilteringApplied(): boolean {
+        const {
+            filterSelect: select,
+            filterInput: input
+        } = this;
+        const { dataType } = this.column;
+        const condition = select?.value as Condition;
+
+        if (dataType === 'boolean') {
+            return condition !== 'all';
+        }
+
+        if (condition === 'empty' || condition === 'notEmpty') {
+            return true;
+        }
+
+        return input?.value !== '';
     }
 
     /**

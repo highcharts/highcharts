@@ -41,7 +41,7 @@ namespace StateHelpers {
     export function isFiltered(column: Column): boolean {
         const { condition, value } = column.options.filtering || {};
         return !!(condition && (
-            ['empty', 'notEmpty'].includes(condition) ||
+            ['empty', 'notEmpty', 'true', 'false'].includes(condition) ||
             (value !== void 0 && value !== '') // Accept null and 0
         ));
     }
