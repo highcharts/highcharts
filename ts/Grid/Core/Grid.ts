@@ -1129,7 +1129,7 @@ class Grid {
             }
         }
 
-        return JSON.stringify(columns);
+        return JSON.stringify(columns, null, 2);
     }
 
     /**
