@@ -140,8 +140,8 @@ const GridComponentDefaults: DeepPartial<Options> = {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
             const parentRow = inputElement
-                .closest('.highcharts-grid-row');
-            const cell = inputElement.closest('.highcharts-grid-cell');
+                .closest('.hcg-row');
+            const cell = inputElement.closest('.hcg-cell');
 
             if (
                 parentRow &&
