@@ -191,12 +191,33 @@ class ColumnFiltering {
         if (this.filterInput) {
             contentOrder.push(this.filterInput);
         }
+        if (this.clearButton && !this.clearButton.disabled) {
+            contentOrder.push(this.clearButton);
+        }
 
-        if (e.key === 'Enter') {
+        const direction = {
+            'ArrowDown': 1,
+            'ArrowUp': -1,
+            'ArrowLeft': 1,
+            'ArrowRight': -1
+        }[e.key];
+
+        if (direction) {
             e.preventDefault();
             const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
-            contentOrder[(currentIndex + 1) % contentOrder.length].focus();
+            contentOrder[
+                Math.abs(currentIndex + direction) % contentOrder.length
+            ].focus();
             return;
+        }
+
+        if (e.key === 'Enter') {
+            if (e.target === this.clearButton) {
+                e.preventDefault();
+                void this.set();
+                contentOrder[0]?.focus();
+                return;
+            }
         }
     };
 
@@ -240,6 +261,10 @@ class ColumnFiltering {
         const clearButton = this.clearButton;
         if (clearButton && filteringApplied === clearButton.disabled) {
             clearButton.disabled = !filteringApplied;
+        }
+
+        if (this.column.dataType === 'number') {
+            condition.value = Number(condition.value);
         }
 
         // Update the userOptions.
