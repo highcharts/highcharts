@@ -1,3 +1,6 @@
+---
+tags: ["grid-pro"]
+---
 # Exporting Highcharts Grid
 
 Highcharts Grid Pro supports exporting the grid data to CSV and JSON formats.
