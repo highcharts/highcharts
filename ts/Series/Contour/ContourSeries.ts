@@ -64,18 +64,16 @@ class ContourSeries extends ScatterSeries {
     private showContourLinesUniformBuffer?: GPUBuffer;
 
     public init(chart: Chart, options: ContourSeriesOptions): void {
-        if (!options?.marker) {
-            options = merge(options, {
-                marker: {
-                    enabled: false,
-                    states: {
-                        hover: {
-                            enabled: false
-                        }
-                    }
+        options.marker = merge({
+            symbol: 'cross',
+            states: {
+                hover: {
+                    symbol: 'cross',
+                    lineColor: 'black',
+                    fillColor: 'transparent'
                 }
-            });
-        }
+            }
+        }, options.marker);
 
         super.init.apply(this, [chart, options]);
 
@@ -144,7 +142,9 @@ class ContourSeries extends ScatterSeries {
             if (device && this.canvas) {
                 context.configure({
                     device: device,
-                    format: canvasFormat
+                    format: canvasFormat,
+                    colorSpace: 'display-p3',
+                    alphaMode: 'premultiplied'
                 });
 
                 const
@@ -161,7 +161,12 @@ class ContourSeries extends ScatterSeries {
                             )
                         )
                     ),
-                    colorAxisStops = this.getColorAxisStopsData();
+                    colorAxisStops = this.getColorAxisStopsData(),
+
+                    // Caching bitwise operation
+                    uniformUsage = (
+                        GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    );
 
                 // WebGPU Buffers
                 const colorAxisStopsBuffer = device.createBuffer({
@@ -172,7 +177,7 @@ class ContourSeries extends ScatterSeries {
 
                 const colorAxisStopsCountBuffer = device.createBuffer({
                     size: 4,
-                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+                    usage: uniformUsage,
                     mappedAtCreation: true
                 });
 
@@ -189,27 +194,27 @@ class ContourSeries extends ScatterSeries {
                 const extremesUniformBuffer = (
                     this.extremesUniformBuffer = device.createBuffer({
                         size: extremesUniform.byteLength,
-                        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                        usage: uniformUsage
                     }));
 
                 const valueExtremesUniformBuffer = (
                     this.valueExtremesUniformBuffer = device.createBuffer({
                         size: valueExtremesUniform.byteLength,
-                        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                        usage: uniformUsage
                     }));
                 this.contourIntervalUniformBuffer = device.createBuffer({
                     size: 4,
-                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    usage: uniformUsage
                 });
 
                 this.smoothColoringUniformBuffer = device.createBuffer({
                     size: 4,
-                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    usage: uniformUsage
                 });
 
                 this.showContourLinesUniformBuffer = device.createBuffer({
                     size: 4,
-                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    usage: uniformUsage
                 });
 
                 device.queue.writeBuffer(
