@@ -203,3 +203,49 @@ QUnit.test('Input data table, uniqueNames', assert => {
         'X data should handle categories with uniqueNames set to false'
     );
 });
+
+QUnit.test('Initialized with data options', assert => {
+    const { series: [series] } = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Data options updates'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            colorByPoint: true,
+            data: [1, 3, 2, 4]
+        }]
+    });
+
+    series.addPoint(5, true, true);
+    assert.deepEqual(
+        series.getColumn('x'),
+        [1, 2, 3, 4],
+        'Add point with shift, x data should be shifted'
+    );
+
+    series.removePoint(0);
+    assert.deepEqual(
+        series.getColumn('x'),
+        [2, 3, 4],
+        'Remove point, x data should be shifted'
+    );
+
+    series.removePoint(1);
+    assert.deepEqual(
+        series.getColumn('x'),
+        [2, 4],
+        'Remove point inside, x data should be updated'
+    );
+
+    series.addPoint({ x: 3, y: 4 });
+    assert.deepEqual(
+        series.getColumn('x'),
+        [2, 3, 4],
+        'Add point inside, x data should be inserted'
+    );
+});

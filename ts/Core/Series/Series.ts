@@ -1074,11 +1074,19 @@ class Series {
         // cleared on series update.
         if (columnName === 'x' && this.tempNoXColumn && !usingModified) {
             if (this.xColumn) {
+
+                // When addPoint has spliced in NaN values
+                if (this.xColumn.some(isNaN)) {
+                    this.xColumn = this.xColumn.map((x, i): number => (
+                        isNaN(x) ? this.autoIncrement(i) : x
+                    ));
+                }
+
                 return this.xColumn;
             }
 
             // Reset the counter
-            this.xIncrement = null;
+            this.xIncrement = this.points?.[0]?.x;
 
             // Handle name-to-x, uniqueNames
             const nameColumn = table.getColumn('name');
@@ -4380,7 +4388,7 @@ class Series {
         // Insert the row at the given index
         if (this.tempNoXColumn) {
             table.setRow(pointOptions as DataTable.RowObject, i, true);
-            delete this.xColumn;
+            this.xColumn?.splice(i, 0, x ?? NaN);
         } else {
             const row: DataTable.RowObject = { x };
             if (defined(xOption)) {
@@ -4481,7 +4489,8 @@ class Series {
                     // #4935
                     points?.length === data.length ? points : void 0,
                     data,
-                    series.options.data
+                    series.options.data,
+                    series.xColumn
                 ].filter(defined).forEach((coll): void => {
                     coll.splice(i, 1);
                 });
