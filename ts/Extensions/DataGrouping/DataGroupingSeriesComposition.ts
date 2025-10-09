@@ -596,7 +596,7 @@ function groupData(
     approximation: (ApproximationKeyValue|Function)
 ): DataGroupingResultObject {
     const xData = table.getColumn('x', true) as Array<number> ||
-            this.getColumn('x', true),
+            this.getColumn('x'),
         yData = table.getColumn('y', true) as Array<number>,
         series = this,
         topTable = series.dataTable,
