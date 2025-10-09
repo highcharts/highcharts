@@ -34,7 +34,7 @@ import GU from '../../../GridUtils.js';
 import Globals from '../../../Globals.js';
 import { conditionsMap } from './FilteringTypes.js';
 
-const { fireEvent } = U;
+const { defined, fireEvent } = U;
 const { makeHTMLElement } = GU;
 
 /* *
@@ -252,6 +252,7 @@ class ColumnFiltering {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
+        const { value } = condition;
 
         fireEvent(this.column, 'beforeFilter', {
             target: this.column
@@ -263,12 +264,16 @@ class ColumnFiltering {
             clearButton.disabled = !filteringApplied;
         }
 
-        if (this.column.dataType === 'number') {
-            condition.value = Number(condition.value);
+        if (
+            this.column.dataType === 'number' &&
+            defined(value) &&
+            value !== ''
+        ) {
+            condition.value = Number(value);
         }
 
         // Update the userOptions.
-        this.column.update({ filtering: condition }, false);
+        void this.column.update({ filtering: condition }, false);
         filteringController.addColumnFilterCondition(this.column.id, condition);
 
         await querying.proceed();
