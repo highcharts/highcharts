@@ -55,20 +55,22 @@ class ColumnFiltering {
      * */
 
     /**
-     * Parses a camel case string to a readable string.
+     * Parses a camel case string to a readable string and capitalizes the first
+     * letter.
      *
      * @param value
      * The camel case string to parse.
      *
      * @returns
-     * The readable string.
+     * The readable string with the first letter capitalized.
      */
     private static parseCamelCaseToReadable(value: string): string {
-        return value
+        const readable = value
             .replace(/([A-Z])/g, ' $1')
             .trim()
             .toLowerCase()
             .split(/\s+/).join(' ');
+        return readable.charAt(0).toUpperCase() + readable.slice(1);
     }
 
 
@@ -358,12 +360,14 @@ class ColumnFiltering {
         );
 
         const conditions = conditionsMap[column.dataType];
+        const langConditions = this.column.viewport.grid.options
+            ?.lang?.columnFilteringConditions ?? {};
 
         // Render the options.
         for (const condition of conditions) {
             const optionElement = document.createElement('option');
             optionElement.value = condition;
-            optionElement.textContent =
+            optionElement.textContent = langConditions[condition] ??
                 ColumnFiltering.parseCamelCaseToReadable(condition);
             this.filterSelect.appendChild(optionElement);
         }

@@ -672,6 +672,13 @@ export interface LangOptions extends LangOptionsCore {
     setFilter?: string;
 
     /**
+     * Language options for column filtering conditions.
+     */
+    columnFilteringConditions?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
      * Language options for pagination text values.
      */
     pagination?: PaginationLangOptions;
