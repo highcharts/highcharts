@@ -1,0 +1,156 @@
+/** BUTTON STYLES **/
+
+.highcharts-uik-button {
+    margin-right: 5px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0.5em 1em;
+    font-size: 1em;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    transition:
+        background-color 0.1s ease-in-out,
+        box-shadow 0.1s ease-in-out;
+}
+
+.highcharts-uik-button:hover {
+    opacity: 0.9;
+    box-shadow: var(--shadow-50);
+}
+
+.highcharts-uik-button.default {
+    color: var(--color-neutral-0);
+    background-color: var(--color-brand-500);
+}
+
+.highcharts-uik-button.neutral {
+    background-color: var(--color-neutral-500);
+}
+
+.highcharts-uik-button.success {
+    color: var(--color-neutral-0);
+    background-color: var(--color-success-500);
+}
+
+.highcharts-uik-button.danger {
+    color: var(--color-neutral-0);
+    background-color: var(--color-danger-500);
+}
+
+/** TOOLTIP STYLES **/
+
+.highcharts-uik-tooltip {
+    position: fixed;
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-200);
+    background-color: var(--color-neutral-1000);
+    color: var(--color-neutral-0);
+    font-size: 0.875em;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/** TOGGLE SWITCH */
+
+.highcharts-uik-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.highcharts-uik-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.highcharts-uik-toggle-switch .ball {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: var(--color-neutral-300);
+    border-radius: 28px;
+    transition: background-color 0.2s;
+}
+
+.highcharts-uik-toggle-switch .ball::before {
+    content: "";
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    top: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.highcharts-uik-toggle-switch input:checked + .ball {
+    background-color: var(--color-brand-500);
+}
+
+.highcharts-uik-toggle-switch input:checked + .ball::before {
+    transform: translateX(26px);
+}
+
+/** BANNER STYLES */
+
+.highcharts-uik-banner {
+    margin: 4px;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+    padding: 6px 16px;
+    border-radius: 9px;
+    gap: 12px;
+    background-color: #f5f5f5;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 550;
+    height: 30px;
+    transition: opacity 0.4s ease;
+}
+
+.highcharts-uik-banner.fade-out {
+    opacity: 0;
+}
+
+.highcharts-uik-x-close {
+    cursor: pointer;
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.highcharts-uik-banner.default {
+    color: var(--color-neutral-1000);
+    background-color: var(--banner-default);
+}
+
+.highcharts-uik-banner.attention {
+    color: var(--color-neutral-1000);
+    background-color: var(--banner-attention);
+}
+
+.highcharts-uik-banner.brand {
+    color: var(--color-neutral-1000);
+    background-color: var(--banner-brand);
+}
+
+.highcharts-uik-banner.success {
+    color: var(--color-neutral-1000);
+    background-color: var(--banner-success);
+}
+
+.highcharts-uik-banner.danger {
+    color: var(--color-neutral-1000);
+    background-color: var(--banner-danger);
+}

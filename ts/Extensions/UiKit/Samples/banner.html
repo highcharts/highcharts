@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Banner sample</title>
+    <link rel="stylesheet" href="./../src/css/style.css" />
+    <style>
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+<script type="module">
+    import { appendEl, createEl } from '../dist/ts/dom.js';
+    import {
+        banner,
+        bannerAttention,
+        bannerBrand,
+        bannerSuccess,
+        bannerDanger
+    } from '../dist/ts/components/Banner.js';
+
+    const container = document.getElementById('container');
+
+    appendEl(
+        container,
+        createEl('h2', '', 'Banner Samples'),
+        banner('Click on the chart to start drawing'),
+        bannerAttention('This is important to know'),
+        bannerBrand('Check this out our latest version'),
+        bannerSuccess('Tests succeeded!'),
+        bannerDanger('Tests failed')
+    );
+</script>
+</html>
