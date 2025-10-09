@@ -34,7 +34,17 @@ export default defineConfig({
             testDir: './tests/qunit',
             use: {
                 ...devices['Desktop Chrome'],
-                ...devices['Desktop Firefox'],
+                headless: true,
+                launchOptions: {
+                    args: [
+                        '--enable-gpu',
+                        '--ignore-gpu-blocklist',
+                        '--enable-zero-copy',
+                        '--use-angle=gl',
+                        '--use-gl=angle',
+                        '--disable-software-rasterizer'
+                    ]
+                }
             },
             dependencies: ['setup-highcharts'],
         },
